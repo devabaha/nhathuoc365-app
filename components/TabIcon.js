@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const propTypes = {
     selected: PropTypes.bool,
@@ -16,7 +16,6 @@ const propTypes = {
     iconActive: PropTypes.string
 };
 
-@observer
 export default class TabIcon extends Component {
   constructor(props) {
     super(props);
@@ -33,8 +32,7 @@ export default class TabIcon extends Component {
         <View style={styles.iconBox}>
           <Icon style={[styles.iconTabbar, this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title]} name={this.props.iconName} size={this.props.size} color="#333333" />
         </View>
-      {//<Text style={[this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title, styles.titleDefault]}>{this.props.iconTitle}</Text>
-    }
+      <Text style={[this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title, styles.titleDefault]}>{this.props.iconTitle}</Text>
 
         {notifyCount > 0 && <View style={styles.notifyCountBox}><Text style={styles.notifyCount}>{notifyCount}</Text></View>}
       </View>
@@ -60,7 +58,7 @@ const styles = StyleSheet.create({
     color: "#7f7f7f",
   },
   titleDefault: {
-    fontSize: 14,
+    fontSize: 10,
     marginTop: 2,
     fontWeight: '400',
   },
