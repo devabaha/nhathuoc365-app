@@ -7,7 +7,8 @@ import {
   Image,
   StyleSheet,
   TouchableHighlight,
-  ScrollView
+  ScrollView,
+  RefreshControl
 } from 'react-native';
 
 //library
@@ -19,6 +20,14 @@ import { Button } from 'react-native-elements';
 @autobind
 @observer
 export default class Stores extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      refreshing: false
+    }
+  }
+
   componentWillMount() {
     Actions.refresh({
       renderRightButton: this._renderRightButton
@@ -105,11 +114,25 @@ export default class Stores extends Component {
     });
   }
 
+  _onRefresh() {
+    this.setState({refreshing: true});
+
+    setTimeout(() => {
+      this.setState({refreshing: false});
+    }, 1000);
+  }
+
   render() {
     return (
       <View style={styles.container}>
 
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh}
+            />
+          }>
 
           <View style={styles.store_heading_box}>
             <Text style={styles.store_heading_title}>— Tất cả sản phẩm —</Text>
