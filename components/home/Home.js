@@ -108,9 +108,11 @@ export default class Home extends Component {
 
     // store list
     return(
-      <TouchableHighlight onPress={() => {
-        Actions.stores({});
-      }}>
+      <TouchableHighlight
+        underlayColor={DEFAULT_COLOR}
+        onPress={() => {
+          Actions.stores({});
+        }}>
         <View style={styles.stores}>
 
           <Image style={styles.stores_image} source={{uri: row}} />
