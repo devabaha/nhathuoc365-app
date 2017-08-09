@@ -32,6 +32,7 @@ import Home from './components/home/Home';
 import Notification from './components/notification/Notification';
 import Orders from './components/orders/Orders';
 import Account from './components/account/Account';
+import Stores from './components/stores/Stores';
 
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
@@ -47,12 +48,13 @@ const custommerNav = {
 // StatusBar
 if (isIOS) {
   StatusBar.setBarStyle('light-content');
+  // StatusBar.setNetworkActivityIndicatorVisible(true);
 }
 
 const reducerCreate = params=>{
     const defaultReducer = Reducer(params);
     return (state, action)=>{
-        console.log("ACTION:", action);
+        // console.log("ACTION:", action);
         return defaultReducer(state, action);
     }
 };
@@ -69,7 +71,9 @@ export default class App extends React.Component {
       <Router createReducer={reducerCreate} store={Store}>
         <Scene key="root">
 
-          <Scene key="myTabBar" tabs={true} tabBarStyle={styles.tabBarStyle} pressOpacity={1}>
+          <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
+
+          <Scene key="myTabBar" initial={false} tabs={true} tabBarStyle={styles.tabBarStyle} pressOpacity={1}>
 
             {/**
             ************************ Tab 1 ************************
@@ -94,7 +98,7 @@ export default class App extends React.Component {
               key="myTab2"
               icon={TabIcon}
               iconTitle="Thông báo"
-              iconName="globe"
+              iconName="bell"
               size={20}
               onPress={()=> {
                 Actions._notification({type: ActionConst.REFRESH});
@@ -144,8 +148,8 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   tabBarStyle: {
-    borderTopWidth : .5,
-    borderColor    : '#b7b7b7',
+    borderTopWidth : Util.pixel,
+    borderColor    : '#cccccc',
     backgroundColor: 'white',
     opacity        : 1
   }
