@@ -7,7 +7,7 @@ import {
   Image,
   StyleSheet,
   TouchableHighlight,
-  ScrollView,
+  FlatList,
   RefreshControl
 } from 'react-native';
 
@@ -24,7 +24,19 @@ export default class Stores extends Component {
     super(props);
 
     this.state = {
-      refreshing: false
+      refreshing: false,
+      data: [
+        'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg',
+        'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg',
+        'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg',
+        'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg',
+        'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg',
+        'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg',
+        'https://dl.airtable.com/JNaHnxaoQqyU8wwDyNsV_1.1%20Ba%20roi%20rut%20suong-thumbnail%402x.jpg.jpg',
+        'https://dl.airtable.com/wJpDFze3T0mTRXvXiYIb_DF078%20-%202-thumbnail%402x.jpg',
+        'https://dl.airtable.com/UKLNZUjeT3u14Odw69OP_9-thumbnail%402x.jpg.jpg',
+        'https://dl.airtable.com/Q9spiMmGTWCuYT0s8kNa_CAT0147-thumbnail%402x.jpg.jpg',
+      ]
     }
   }
 
@@ -51,67 +63,53 @@ export default class Stores extends Component {
     );
   }
 
-  renderItems() {
-    var items = [
-      'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg',
-      'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg',
-      'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg',
-      'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg',
-      'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg',
-      'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg',
-      'https://dl.airtable.com/JNaHnxaoQqyU8wwDyNsV_1.1%20Ba%20roi%20rut%20suong-thumbnail%402x.jpg.jpg',
-      'https://dl.airtable.com/wJpDFze3T0mTRXvXiYIb_DF078%20-%202-thumbnail%402x.jpg',
-      'https://dl.airtable.com/UKLNZUjeT3u14Odw69OP_9-thumbnail%402x.jpg.jpg',
-      'https://dl.airtable.com/Q9spiMmGTWCuYT0s8kNa_CAT0147-thumbnail%402x.jpg.jpg',
-    ]
+  _keyExtractor = (item, index) => item;
 
-    return items.map((item, key) => {
-      return(
-        <TouchableHighlight
-          onPress={() => 1}
-          underlayColor={DEFAULT_COLOR}
-          key={key}>
-          <View style={[styles.item_box, {borderRightWidth: key%2 == 0 ? Util.pixel : 0}]}>
+  renderItems({item, index}) {
+    return(
+      <TouchableHighlight
+        onPress={() => 1}
+        underlayColor={DEFAULT_COLOR}>
+        <View style={[styles.item_box, {borderRightWidth: index%2 == 0 ? Util.pixel : 0}]}>
 
-            <View style={styles.item_image_box}>
-              <Image style={styles.item_image} source={{uri: item}} />
-            </View>
-
-            <View style={styles.item_info_box}>
-              <View style={styles.item_info_made}>
-                <Icon name="map-marker" size={12} color="#666666" />
-                <Text style={styles.item_info_made_title}>Đà Lạt</Text>
-
-                <View style={styles.item_info_weight}>
-                  <Text style={styles.item_info_made_title}>1 kg</Text>
-                </View>
-              </View>
-              <Text style={styles.item_info_name}>Thực phẩm sạch Đà Lạt</Text>
-              <Text style={styles.item_info_price}>48.000</Text>
-            </View>
-
-            <TouchableHighlight
-              style={styles.item_add_cart_btn}
-              underlayColor="transparent"
-              onPress={() => 1}>
-
-              <View style={styles.item_add_cart_box}>
-                <Icon name="shopping-cart" size={24} color={DEFAULT_COLOR} />
-                <Text style={styles.item_add_cart_title}>Chọn mua</Text>
-              </View>
-            </TouchableHighlight>
-
-            <View style={styles.item_safe_off}>
-              <View style={styles.item_safe_off_percent}>
-                <Text style={styles.item_safe_off_percent_val}>-23%</Text>
-              </View>
-              <Text style={styles.item_safe_off_price}>26,000</Text>
-            </View>
-
+          <View style={styles.item_image_box}>
+            <Image style={styles.item_image} source={{uri: item}} />
           </View>
-        </TouchableHighlight>
-      );
-    });
+
+          <View style={styles.item_info_box}>
+            <View style={styles.item_info_made}>
+              <Icon name="map-marker" size={12} color="#666666" />
+              <Text style={styles.item_info_made_title}>Đà Lạt</Text>
+            </View>
+            <Text style={styles.item_info_name}>Bưởi năm roi</Text>
+            <Text style={styles.item_info_price}>48.000</Text>
+          </View>
+
+          <TouchableHighlight
+            style={styles.item_add_cart_btn}
+            underlayColor="transparent"
+            onPress={() => 1}>
+
+            <View style={styles.item_add_cart_box}>
+              <Icon name="shopping-cart" size={24} color={DEFAULT_COLOR} />
+              <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+            </View>
+          </TouchableHighlight>
+
+          <View style={styles.item_safe_off}>
+            <View style={styles.item_safe_off_percent}>
+              <Text style={styles.item_safe_off_percent_val}>-23%</Text>
+            </View>
+            <Text style={styles.item_safe_off_price}>26,000</Text>
+
+            <View style={styles.item_info_weight}>
+              <Text style={styles.item_info_made_title}>1 kg</Text>
+            </View>
+          </View>
+
+        </View>
+      </TouchableHighlight>
+    );
   }
 
   _onRefresh() {
@@ -126,21 +124,22 @@ export default class Stores extends Component {
     return (
       <View style={styles.container}>
 
-        <ScrollView
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
-            />
-          }>
-
           <View style={styles.store_heading_box}>
             <Text style={styles.store_heading_title}>— Tất cả sản phẩm —</Text>
           </View>
-          <View style={styles.items_container}>
-            {this.renderItems()}
-          </View>
-        </ScrollView>
+
+          {this.state.data != null && <FlatList
+            data={this.state.data}
+            renderItem={this.renderItems}
+            keyExtractor={this._keyExtractor}
+            numColumns={2}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }
+          />}
 
       </View>
     );
@@ -175,11 +174,6 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
 
-  items_container: {
-    width: '100%',
-    flexDirection: 'row',
-    flexWrap: 'wrap'
-  },
   item_box: {
     width: Math.floor(Util.size.width / 2),
     height: Math.floor(Util.size.width / 2),
@@ -197,14 +191,13 @@ const styles = StyleSheet.create({
     resizeMode: 'center'
   },
   item_info_box: {
-    width: '100%',
+    width: Util.size.width / 2 - 60,
     minHeight: '34%',
     paddingHorizontal: 8,
     paddingTop: 4,
     paddingBottom: 2,
     position: 'absolute',
     left: 0,
-    right: 0,
     bottom: 0,
     backgroundColor: "rgba(255,255,255,0.7)"
   },
@@ -215,7 +208,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '600',
     color: '#666666',
-    paddingLeft: 4
+    paddingHorizontal: 8
   },
   item_info_weight: {
     flex: 1,
@@ -246,7 +239,7 @@ const styles = StyleSheet.create({
   },
   item_add_cart_btn: {
     position: 'absolute',
-    top: 4,
+    bottom: 4,
     right: 0,
     width: 60,
     height: 40,

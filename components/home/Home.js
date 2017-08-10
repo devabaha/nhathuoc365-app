@@ -6,9 +6,9 @@ import {
   Text,
   Image,
   StyleSheet,
-  ListView,
   RefreshControl,
-  TouchableHighlight
+  TouchableHighlight,
+  FlatList
 } from 'react-native';
 
 // library
@@ -22,15 +22,14 @@ import { Button } from 'react-native-elements';
 export default class Home extends Component {
   constructor() {
     super();
-    const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     this.state = {
-      dataSource: ds.cloneWithRows([
-        'http://cosp.com.vn/images/stores/2017/06/27/thiet-ke-shop-thuc-pham-sach.jpg',
-        'http://cosp.com.vn/images/stores/2017/01/05/shop-thuc-pham-sach-co-tam-dienbien2.jpg',
-        'http://cosp.com.vn/images/stores/2016/10/31/shop-thuc-pham-sach-anh-tinh-linh-dam.jpg',
-        'http://cosp.com.vn/images/stores/2016/09/06/thiet-ke-cua-hang-thuc-pham-sach%20(7).jpg',
-        {title: 'add_store'}
-      ]),
+      dataSource: [
+        {id: 1, image: 'http://cosp.com.vn/images/stores/2017/06/27/thiet-ke-shop-thuc-pham-sach.jpg'},
+        {id: 2, image: 'http://cosp.com.vn/images/stores/2017/01/05/shop-thuc-pham-sach-co-tam-dienbien2.jpg'},
+        {id: 3, image: 'http://cosp.com.vn/images/stores/2016/10/31/shop-thuc-pham-sach-anh-tinh-linh-dam.jpg'},
+        {id: 4, image: 'http://cosp.com.vn/images/stores/2016/09/06/thiet-ke-cua-hang-thuc-pham-sach%20(7).jpg'},
+        {id: 5, title: 'add_store'}
+      ],
       refreshing: false,
     };
   }
@@ -64,9 +63,11 @@ export default class Home extends Component {
     }, 1000);
   }
 
-  renderRow(row) {
+  _keyExtractor = (item, index) => item.id;
+
+  renderRow({item}) {
     // box add store
-    if (_.isObject(row) && row.title == 'add_store') {
+    if (_.isObject(item) && item.title == 'add_store') {
       return(
         <View style={styles.add_store_box}>
           <Text style={styles.add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
@@ -115,7 +116,7 @@ export default class Home extends Component {
         }}>
         <View style={styles.stores}>
 
-          <Image style={styles.stores_image} source={{uri: row}} />
+          <Image style={styles.stores_image} source={{uri: item.image}} />
 
           <View style={styles.stores_info}>
             <View style={styles.stores_info_text}>
@@ -162,9 +163,10 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
 
-        {this.state.dataSource != null && <ListView
-          dataSource={this.state.dataSource}
-          renderRow={this.renderRow}
+        {this.state.dataSource != null && <FlatList
+          data={this.state.dataSource}
+          renderItem={this.renderRow}
+          keyExtractor={this._keyExtractor}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
