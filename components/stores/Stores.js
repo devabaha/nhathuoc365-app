@@ -187,6 +187,38 @@ export default class Stores extends Component {
     });
   }
 
+  renderItemsCart({item}) {
+    return(
+      <View style={styles.store_cart_item}>
+        <View style={styles.store_cart_item_image_box}>
+          <Image style={styles.store_cart_item_image} source={{uri: item.name}} />
+        </View>
+        <View style={styles.store_cart_item_title_box}>
+          <Text style={styles.store_cart_item_title}>Bưởi năm roi Đà Lạt</Text>
+          <Text style={styles.store_cart_item_price}>48.000</Text>
+        </View>
+
+        <View style={styles.store_cart_calculator}>
+          <TouchableHighlight
+            onPress={this._item_qnt_decrement}
+            underlayColor="transparent"
+            style={styles.store_cart_item_qnt_change}>
+            <Icon name="minus" size={16} color="#404040" />
+          </TouchableHighlight>
+
+          <Text style={styles.store_cart_item_qnt}>2</Text>
+
+          <TouchableHighlight
+            onPress={this._item_qnt_increment}
+            underlayColor="transparent"
+            style={styles.store_cart_item_qnt_change}>
+            <Icon name="plus" size={16} color="#404040" />
+          </TouchableHighlight>
+        </View>
+      </View>
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -244,37 +276,7 @@ export default class Stores extends Component {
                 getItemLayout={(data, index) => {
                   return {length: Util.size.width - 172, offset: (Util.size.width - 172) * index, index};
                 }}
-                renderItem={({item}) => {
-                  return(
-                    <View style={styles.store_cart_item}>
-                      <View style={styles.store_cart_item_image_box}>
-                        <Image style={styles.store_cart_item_image} source={{uri: item.name}} />
-                      </View>
-                      <View style={styles.store_cart_item_title_box}>
-                        <Text style={styles.store_cart_item_title}>Bưởi năm roi Đà Lạt</Text>
-                        <Text style={styles.store_cart_item_price}>48.000 x 2 = 96.000</Text>
-                      </View>
-
-                      <View style={styles.store_cart_calculator}>
-                        <TouchableHighlight
-                          onPress={this._item_qnt_decrement}
-                          underlayColor="transparent"
-                          style={styles.store_cart_item_qnt_change}>
-                          <Icon name="minus" size={16} color="#404040" />
-                        </TouchableHighlight>
-
-                        <Text style={styles.store_cart_item_qnt}>2</Text>
-
-                        <TouchableHighlight
-                          onPress={this._item_qnt_increment}
-                          underlayColor="transparent"
-                          style={styles.store_cart_item_qnt_change}>
-                          <Icon name="plus" size={16} color="#404040" />
-                        </TouchableHighlight>
-                      </View>
-                    </View>
-                  );
-                }}
+                renderItem={this.renderItemsCart}
                 keyExtractor={item => item.id}
                 horizontal={true}
                 refreshControl={
