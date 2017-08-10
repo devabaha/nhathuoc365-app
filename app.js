@@ -33,6 +33,7 @@ import Notification from './components/notification/Notification';
 import Orders from './components/orders/Orders';
 import Account from './components/account/Account';
 import Stores from './components/stores/Stores';
+import Item from './components/item/Item';
 
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
@@ -72,8 +73,9 @@ export default class App extends React.Component {
         <Scene key="root">
 
           <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
+          <Scene initial={true} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
 
-          <Scene key="myTabBar" initial={false} tabs={true} tabBarStyle={styles.tabBarStyle} pressOpacity={1}>
+          <Scene key="myTabBar" tabs={true} tabBarStyle={styles.tabBarStyle} pressOpacity={1}>
 
             {/**
             ************************ Tab 1 ************************

@@ -85,7 +85,9 @@ export default class Stores extends Component {
   renderItems({item, index}) {
     return(
       <TouchableHighlight
-        onPress={() => 1}
+        onPress={() => {
+          Actions.item({});
+        }}
         underlayColor={DEFAULT_COLOR}>
         <View style={[styles.item_box, {borderRightWidth: index%2 == 0 ? Util.pixel : 0}]}>
 
