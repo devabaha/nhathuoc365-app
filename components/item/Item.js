@@ -64,9 +64,7 @@ export default class Item extends Component {
 
         <TouchableHighlight
           underlayColor="transparent"
-          onPress={() => {
-
-          }}>
+          onPress={() => Actions.cart({})}>
           <View style={styles.right_btn_add_store}>
             <Icon name="shopping-cart" size={22} color="#ffffff" />
             <View style={styles.stores_info_action_notify}>

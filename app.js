@@ -34,6 +34,7 @@ import Orders from './components/orders/Orders';
 import Account from './components/account/Account';
 import Stores from './components/stores/Stores';
 import Item from './components/item/Item';
+import Cart from './components/cart/Cart';
 
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
@@ -72,10 +73,11 @@ export default class App extends React.Component {
       <Router createReducer={reducerCreate} store={Store}>
         <Scene key="root">
 
+          <Scene key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
           <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
-          <Scene initial={true} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
+          <Scene key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
 
-          <Scene key="myTabBar" tabs={true} tabBarStyle={styles.tabBarStyle} pressOpacity={1}>
+          <Scene initial={true} key="myTabBar" tabs={true} tabBarStyle={styles.tabBarStyle} pressOpacity={1}>
 
             {/**
             ************************ Tab 1 ************************
