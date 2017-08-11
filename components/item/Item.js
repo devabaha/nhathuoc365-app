@@ -7,7 +7,9 @@ import {
   Image,
   TouchableHighlight,
   StyleSheet,
-  ScrollView
+  ScrollView,
+  FlatList,
+  RefreshControl
 } from 'react-native';
 
 //library
@@ -17,6 +19,11 @@ import Modal from 'react-native-modalbox';
 import { Button } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 
+// components
+import Items from '../stores/Items';
+import ListHeader from '../stores/ListHeader';
+import CartFooter from '../cart/CartFooter';
+
 @autobind
 @observer
 export default class Item extends Component {
@@ -25,17 +32,11 @@ export default class Item extends Component {
 
     this.state = {
       data: [
-       {id: 1, name: 'http://lamnong.net/wp-content/uploads/2015/08/rau-cai-co-tac-dung-gi3.jpg'},
+       {id: 1, name: 'https://dl.airtable.com/YaXzYWIcTqSxmTSJFdho_41026-large%402x.jpg'},
        {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
-       {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'},
-       {id: 4, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},
-       {id: 5, name: 'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg'},
-       {id: 6, name: 'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg'},
-       {id: 7, name: 'https://dl.airtable.com/JNaHnxaoQqyU8wwDyNsV_1.1%20Ba%20roi%20rut%20suong-thumbnail%402x.jpg.jpg'},
-       {id: 8, name: 'https://dl.airtable.com/wJpDFze3T0mTRXvXiYIb_DF078%20-%202-thumbnail%402x.jpg'},
-       {id: 9, name: 'https://dl.airtable.com/UKLNZUjeT3u14Odw69OP_9-thumbnail%402x.jpg.jpg'},
-       {id: 10, name: 'https://dl.airtable.com/Q9spiMmGTWCuYT0s8kNa_CAT0147-thumbnail%402x.jpg.jpg'},
-     ]
+       {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'}
+     ],
+     refreshing: false
     }
   }
 
@@ -47,19 +48,42 @@ export default class Item extends Component {
 
   _renderRightButton() {
     return(
-      <TouchableHighlight
-        underlayColor="transparent"
-        onPress={() => {
+      <View style={styles.right_btn_box}>
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
 
-        }}>
-        <View style={styles.right_btn_add_store}>
-          <Icon name="cart-plus" size={22} color="#ffffff" />
-          <View style={styles.stores_info_action_notify}>
-            <Text style={styles.stores_info_action_notify_value}>3</Text>
+          }}>
+          <View style={styles.right_btn_add_store}>
+            <Icon name="commenting" size={20} color="#ffffff" />
+            <View style={styles.stores_info_action_notify}>
+              <Text style={styles.stores_info_action_notify_value}>3</Text>
+            </View>
           </View>
-        </View>
-      </TouchableHighlight>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
+
+          }}>
+          <View style={styles.right_btn_add_store}>
+            <Icon name="shopping-cart" size={22} color="#ffffff" />
+            <View style={styles.stores_info_action_notify}>
+              <Text style={styles.stores_info_action_notify_value}>3</Text>
+            </View>
+          </View>
+        </TouchableHighlight>
+      </View>
     );
+  }
+
+  _onRefresh() {
+    this.setState({refreshing: true});
+
+    setTimeout(() => {
+      this.setState({refreshing: false});
+    }, 1000);
   }
 
   render() {
@@ -92,28 +116,42 @@ export default class Item extends Component {
 
           <View style={styles.item_heading_box}>
 
-            <Text style={styles.item_heading_title}>CẢI NGỌT HỮU CƠ</Text>
+            <Text style={styles.item_heading_title}>Combo 3 Quả Dưa Leo Tươi Mát</Text>
 
             <View style={styles.item_heading_price_box}>
-              <Text style={styles.item_heading_price}>30.000</Text>
-              <Text style={styles.item_heading_price_unit}>VND</Text>
+              <Text style={styles.item_heading_safe_off_value}>35,000</Text>
+              <Text style={styles.item_heading_price}>30,000</Text>
             </View>
 
-            <View style={styles.item_heading_safe_off}>
-              <Text style={styles.item_heading_safe_off_value}>35.000</Text>
+            <Text style={styles.item_heading_qnt}>250g x 2gói</Text>
+
+            <View style={styles.item_actions_box}>
+              <TouchableHighlight
+                onPress={() => 1}
+                underlayColor="transparent">
+                <View style={[styles.item_actions_btn, styles.item_actions_btn_chat]}>
+                  <Icon name="heart" size={20} color={DEFAULT_COLOR} />
+                  <Text style={[styles.item_actions_title, styles.item_actions_title_chat]}>Yêu thích</Text>
+                </View>
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                onPress={() => 1}
+                underlayColor="transparent">
+                <View style={[styles.item_actions_btn, styles.item_actions_btn_add_cart]}>
+                  <Icon name="cart-plus" size={24} color="#ffffff" />
+                  <Text style={[styles.item_actions_title, styles.item_actions_title_add_cart]}>Chọn mua</Text>
+                </View>
+              </TouchableHighlight>
             </View>
 
           </View>
-
-          <View style={styles.item_content_text}>
-            <Text style={styles.item_content_desc}>Được trồng tại trang trại Organica Đồng Nai. Sản phẩm được chứng nhận hữu cơ tiêu chuẩn EU và USDA/NOP bởi Control Union.</Text>
-          </View>
-
 
           <View style={styles.item_content_box}>
+
             <View style={[styles.item_content_item, styles.item_content_item_left]}>
               <View style={styles.item_content_icon_box}>
-                <Icon name="clock-o" size={16} color="#666666" />
+                <Icon name="clock-o" size={16} color="#999999" />
               </View>
               <Text style={styles.item_content_item_title}>GIAO SỚM NHẤT</Text>
             </View>
@@ -124,7 +162,7 @@ export default class Item extends Component {
 
             <View style={[styles.item_content_item, styles.item_content_item_left]}>
               <View style={styles.item_content_icon_box}>
-                <Icon name="user" size={16} color="#666666" />
+                <Icon name="user" size={16} color="#999999" />
               </View>
               <Text style={styles.item_content_item_title}>NHÃN HIỆU</Text>
             </View>
@@ -135,7 +173,7 @@ export default class Item extends Component {
 
             <View style={[styles.item_content_item, styles.item_content_item_left]}>
               <View style={styles.item_content_icon_box}>
-                <Icon name="map-marker" size={16} color="#666666" />
+                <Icon name="map-marker" size={16} color="#999999" />
               </View>
               <Text style={styles.item_content_item_title}>XUẤT XỨ</Text>
             </View>
@@ -146,18 +184,44 @@ export default class Item extends Component {
 
             <View style={[styles.item_content_item, styles.item_content_item_left]}>
               <View style={styles.item_content_icon_box}>
-                <Icon name="usd" size={16} color="#666666" />
+                <Icon name="usd" size={16} color="#999999" />
               </View>
               <Text style={styles.item_content_item_title}>GIÁ HIỂN THỊ</Text>
             </View>
 
             <View style={[styles.item_content_item, styles.item_content_item_right]}>
-              <Text style={styles.item_content_item_value}>Rẻ hơn cửa hàng</Text>
+              <Text style={styles.item_content_item_value}>Bằng giá cửa hàng</Text>
             </View>
 
           </View>
 
+
+          <View style={styles.item_content_text}>
+            <Text style={styles.item_content_desc}>Được trồng tại trang trại Organica Đồng Nai. Sản phẩm được chứng nhận hữu cơ tiêu chuẩn EU và USDA/NOP bởi Control Union. {'\n\n'}Ra đời vào năm 2012, Công ty cổ phần cà phê Nam Long là công ty chuyên cung cấp sỉ và lẻ cà phê chất lượng cao. {'\n\n'}Tại Nam Long, nguyên liệu đầu vào và chuỗi sản xuất luôn là vấn đề được chúng tôi tập trung quản trị tối đa nhằm đem lại những sản phẩm có chất lượng tốt nhất.</Text>
+          </View>
+
+          {this.state.data != null && <FlatList
+            onEndReached={(num) => {
+
+            }}
+            onEndReachedThreshold={0}
+            style={styles.items_box}
+            ListHeaderComponent={() => <ListHeader title="CÓ THỂ BẠN THÍCH" />}
+            data={this.state.data}
+            renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
+            keyExtractor={item => item.id}
+            numColumns={2}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh}
+              />
+            }
+          />}
+
         </ScrollView>
+
+        <CartFooter />
       </View>
     );
   }
@@ -173,6 +237,9 @@ const styles = StyleSheet.create({
   right_btn_add_store: {
     paddingVertical: 1,
     paddingHorizontal: 8
+  },
+  right_btn_box: {
+    flexDirection: 'row'
   },
   stores_info_action_notify: {
     position: 'absolute',
@@ -207,43 +274,66 @@ const styles = StyleSheet.create({
 
   item_heading_box: {
     width: '100%',
-    height: 50,
-    borderBottomWidth: 2,
-    borderBottomColor: DEFAULT_COLOR,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
     paddingHorizontal: 15,
-    paddingVertical: 4
+    paddingVertical: 4,
+    alignItems: 'center',
+    marginTop: 8
   },
   item_heading_title: {
-    fontSize: 18,
+    fontSize: 20,
     color: "#404040",
     fontWeight: '600'
   },
   item_heading_price_box: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    flexDirection: 'row'
-  },
-  item_heading_price: {
-    fontSize: 18,
-    color: DEFAULT_COLOR,
-    fontWeight: '600'
-  },
-  item_heading_price_unit: {
-    fontSize: 10,
-    color: DEFAULT_COLOR,
-    fontWeight: '600'
-  },
-  item_heading_safe_off: {
-    position: 'absolute',
-    right: 15,
-    top: 10
+    flexDirection: 'row',
+    marginTop: 4
   },
   item_heading_safe_off_value: {
+    fontSize: 20,
+    color: "#cccccc",
+    textDecorationLine: 'line-through',
+    paddingRight: 4
+  },
+  item_heading_price: {
+    fontSize: 20,
+    color: DEFAULT_COLOR,
+    fontWeight: '600',
+    paddingLeft: 4
+  },
+  item_heading_qnt: {
+    color: "#666666",
     fontSize: 12,
-    color: "#404040",
-    textDecorationLine: 'line-through'
+    marginTop: 4
+  },
+  item_actions_box: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20
+  },
+  item_actions_btn: {
+    borderWidth: Util.pixel,
+    borderColor: DEFAULT_COLOR,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 16
+  },
+  item_actions_btn_chat: {
+    marginRight: 8
+  },
+  item_actions_btn_add_cart: {
+    marginLeft: 8,
+    backgroundColor: DEFAULT_COLOR
+  },
+  item_actions_title: {
+    color: DEFAULT_COLOR,
+    marginLeft: 8
+  },
+  item_actions_title_add_cart: {
+    color: "#ffffff"
   },
 
   item_safe_off: {
@@ -271,14 +361,14 @@ const styles = StyleSheet.create({
   item_content_box: {
     width: '100%',
     flexDirection: 'row',
-    marginTop: 16,
+    marginTop: 20,
     borderLeftWidth: Util.pixel,
     borderTopWidth: Util.pixel,
     borderColor: "#dddddd",
     flexWrap: 'wrap'
   },
   item_content_item: {
-    height: 28,
+    height: 24,
     borderRightWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd",
@@ -293,28 +383,34 @@ const styles = StyleSheet.create({
     width: '55%'
   },
   item_content_icon_box: {
-    width: 20,
+    width: 24,
     alignItems: 'center'
   },
   item_content_item_title: {
     fontSize: 12,
-    color: "#333333",
+    color: "#999999",
     paddingLeft: 4
   },
   item_content_item_value: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
-    color: "#404040"
+    color: "#404040",
+    marginLeft: 4
   },
 
   item_content_text: {
     width: '100%',
-    paddingHorizontal: 15
+    padding: 15
   },
   item_content_desc: {
     fontSize: 16,
     color: '#404040',
-    lineHeight: 20,
-    marginTop: 8
+    lineHeight: 24,
+    marginTop: 4
+  },
+
+  items_box: {
+    marginBottom: 59,
+    marginTop: 20
   }
 });
