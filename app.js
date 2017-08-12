@@ -144,7 +144,7 @@ export default class App extends React.Component {
           <Scene initial={0} key="createAddress" title="THÊM ĐỊA CHỈ MỚI" component={CreateAddress} {...custommerNav} />
           <Scene initial={0} key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
           <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
-          <Scene initial={1} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
+          <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
 
         </Scene>
       </Router>
