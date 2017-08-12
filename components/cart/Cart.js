@@ -15,7 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
-import { Button } from 'react-native-elements';
+import { CheckBox } from '../../lib/react-native-elements';
 import Swiper from 'react-native-swiper';
 
 // components
@@ -35,27 +35,14 @@ export default class Cart extends Component {
             {id: 1, name: 'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg'},
             {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
             {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'},
-          ]
-        },
-        {
-          key: "Thực phẩm sạch Ngọc Sơn",
-          data: [
             {id: 4, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},
             {id: 5, name: 'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg'},
-            {id: 6, name: 'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg'},
-          ]
-        },
-        {
-          key: "Thực phẩm sạch Đào Tài",
-          data: [
-            {id: 7, name: 'https://dl.airtable.com/JNaHnxaoQqyU8wwDyNsV_1.1%20Ba%20roi%20rut%20suong-thumbnail%402x.jpg.jpg'},
-            {id: 8, name: 'https://dl.airtable.com/wJpDFze3T0mTRXvXiYIb_DF078%20-%202-thumbnail%402x.jpg'},
-            {id: 9, name: 'https://dl.airtable.com/UKLNZUjeT3u14Odw69OP_9-thumbnail%402x.jpg.jpg'},
-            {id: 10, name: 'https://dl.airtable.com/Q9spiMmGTWCuYT0s8kNa_CAT0147-thumbnail%402x.jpg.jpg'}
+            {id: 6, name: 'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg'}
           ]
         }
      ],
-     refreshing: false
+     refreshing: false,
+     cart_check_list: {}
     }
   }
 
@@ -92,6 +79,18 @@ export default class Cart extends Component {
     );
   }
 
+  _is_delete_cart_item(item_id) {
+    if (this.refs && this.refs.modal_delete_cart_item) {
+      this.refs.modal_delete_cart_item.open();
+    }
+  }
+
+  _delete_cart_item(item_id, flag) {
+    if (this.refs && this.refs.modal_delete_cart_item) {
+      this.refs.modal_delete_cart_item.close();
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -109,6 +108,29 @@ export default class Cart extends Component {
           renderItem={({item, index}) => {
             return(
               <View style={styles.cart_item_box}>
+                <View style={styles.cart_item_check_box}>
+                  <CheckBox
+                    containerStyle={styles.cart_item_check}
+                    checked={(() => {
+                      if (this.state.cart_check_list[item.id] === undefined) {
+                        this.state.cart_check_list[item.id] = true;
+                      }
+                      return this.state.cart_check_list[item.id];
+                    })()}
+                    checkedColor={DEFAULT_COLOR}
+                    hiddenTextElement
+                    onPress={() => {
+
+                      var check = this.state.cart_check_list[item.id] !== true;
+                      this.state.cart_check_list[item.id] = check;
+                      this.setState({
+                        cart_check_list: this.state.cart_check_list
+                      });
+
+                    }}
+                    />
+                </View>
+
                 <View style={styles.cart_item_image_box}>
                   <Image style={styles.cart_item_image} source={{uri: item.name}} />
                 </View>
@@ -116,13 +138,27 @@ export default class Cart extends Component {
                 <View style={styles.cart_item_info}>
                   <View style={styles.cart_item_info_content}>
                     <Text style={styles.cart_item_info_name}>Bưởi Năm Roi Đà Lạt</Text>
-                    <Text style={styles.cart_item_info_quantity}>0,5 kg</Text>
-                    <Text style={styles.cart_item_info_ship_status}>Giao hàng trong 1 giờ</Text>
-                  </View>
-                </View>
+                    <View style={styles.cart_item_actions}>
+                      <TouchableHighlight
+                        style={styles.cart_item_actions_btn}
+                        underlayColor="transparent"
+                        onPress={this._is_delete_cart_item}>
+                        <Icon name="minus" size={16} color="#666666" />
+                      </TouchableHighlight>
+                      <Text style={styles.cart_item_actions_quantity}>0,5 kg</Text>
+                      <TouchableHighlight
+                        style={styles.cart_item_actions_btn}
+                        underlayColor="transparent"
+                        onPress={() => 1}>
+                        <Icon name="plus" size={16} color="#666666" />
+                      </TouchableHighlight>
+                    </View>
 
-                <View style={styles.cart_item_price}>
-                  <Text style={styles.cart_item_price_value}>67,600</Text>
+                    <View style={styles.cart_item_price_box}>
+                      <Text style={styles.cart_item_price_price_safe_off}>120,000</Text>
+                      <Text style={styles.cart_item_price_price}>89,000</Text>
+                    </View>
+                  </View>
                 </View>
               </View>
             );
@@ -169,6 +205,27 @@ export default class Cart extends Component {
 
         </TouchableHighlight>
 
+        <Modal
+          entry="top"
+          style={[styles.modal, styles.modal_confirm]}
+          ref={"modal_delete_cart_item"}>
+          <Text style={styles.modal_confirm_title}>Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?</Text>
+          <View style={styles.modal_confirm_actions}>
+            <TouchableHighlight
+              style={[styles.modal_confirm_btn, styles.modal_confirm_btn_left]}
+              underlayColor="transparent"
+              onPress={() => this._delete_cart_item(false)}>
+              <Text style={styles.modal_confirm_label}>Không</Text>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              style={styles.modal_confirm_btn}
+              underlayColor="transparent"
+              onPress={() => this._delete_cart_item(true)}>
+              <Text style={styles.modal_confirm_label}>Có</Text>
+            </TouchableHighlight>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -219,10 +276,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 32,
     justifyContent: 'center',
-    backgroundColor: "#f1f1f1"
+    backgroundColor: "#fa7f50"
   },
   cart_section_title: {
-    color: "#999999",
+    color: "#ffffff",
     fontSize: 14,
     paddingLeft: 8,
     fontWeight: '600'
@@ -230,52 +287,83 @@ const styles = StyleSheet.create({
 
   cart_item_box: {
     width: '100%',
-    height: 80,
-    // paddingHorizontal: 8,
+    height: 100,
     paddingVertical: 8,
     flexDirection: 'row',
     backgroundColor: "#ffffff"
   },
   cart_item_image_box: {
-    width: '25%',
+    width: '20%',
     height: '100%',
-    backgroundColor: '#ebebeb'
+    marginLeft: 8
   },
   cart_item_image: {
     height: '100%',
     resizeMode: 'cover'
   },
   cart_item_info: {
-    width: '55%',
+    width: Util.size.width * 0.7 - 8,
     height: '100%'
   },
   cart_item_info_content: {
-    paddingHorizontal: 8
+    paddingHorizontal: 15
   },
   cart_item_info_name: {
     color: "#000000",
     fontSize: 14,
     fontWeight: '600',
   },
-  cart_item_info_quantity: {
-    color: 10,
-    color: "#666666",
-    marginTop: 4
+  cart_item_actions: {
+    flexDirection: 'row',
+    marginVertical: 8,
+    alignItems: 'center'
+  },
+  cart_item_actions_btn: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 28,
+    height: 28,
+    borderWidth: Util.pixel,
+    borderColor: "#666666",
+    borderRadius: 3
+  },
+  cart_item_actions_quantity: {
+    paddingHorizontal: 8,
+    minWidth: '30%',
+    textAlign: 'center'
   },
   cart_item_info_ship_status: {
     color: DEFAULT_COLOR,
     fontSize: 12,
-    marginTop: 4,
     fontWeight: '500'
   },
-  cart_item_price: {
-    width: '20%',
-    height: '100%'
+  cart_item_check_box: {
+    width: '10%',
+    justifyContent: 'center',
+
   },
-  cart_item_price_value: {
-    color: DEFAULT_COLOR,
+  cart_item_check: {
+    padding: 0,
+    margin: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: "#ffffff",
+    borderWidth: 0,
+    width: 24
+  },
+  cart_item_price_box: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  cart_item_price_price_safe_off: {
+    textDecorationLine: 'line-through',
     fontSize: 14,
-    fontWeight: '600'
+    color: "#666666",
+    marginRight: 4
+  },
+  cart_item_price_price: {
+    fontSize: 14,
+    color: DEFAULT_COLOR
   },
 
   cart_payment_box: {
@@ -285,14 +373,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     height: 170,
-    backgroundColor: "#f1f1f1",
+    backgroundColor: "#ffffff",
     paddingVertical: 4,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    borderTopWidth: 1,
+    borderTopColor: DEFAULT_COLOR
   },
   cart_payment_rows: {
     width: '100%',
     height: 28,
-    backgroundColor: '#f1f1f1',
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -346,5 +435,45 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     marginLeft: 8
+  },
+
+  modal_confirm: {
+    width: '80%',
+    height: 110,
+    borderRadius: 3
+  },
+  modal_confirm_title: {
+    paddingHorizontal: 20,
+    marginTop: 16,
+    textAlign: 'center',
+    color: "#666666",
+    fontSize: 14
+  },
+  modal_confirm_actions: {
+    position: 'absolute',
+    width: '100%',
+    height: 42,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: "#ffffff",
+    borderTopWidth: Util.pixel,
+    borderTopColor: "#dddddd",
+    flexDirection: 'row',
+    borderBottomLeftRadius: 3,
+    borderBottomRightRadius: 3
+  },
+  modal_confirm_btn: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '50%'
+  },
+  modal_confirm_btn_left: {
+    borderRightWidth: Util.pixel,
+    borderRightColor: "#dddddd"
+  },
+  modal_confirm_label: {
+    fontSize: 16,
+    color: DEFAULT_COLOR
   }
 });
