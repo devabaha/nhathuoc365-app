@@ -8,9 +8,7 @@ import {
 } from 'react-native';
 
 // library
-import autobind from 'autobind-decorator';
 
-@autobind
 @observer
 export default class Finish extends Component {
   render() {

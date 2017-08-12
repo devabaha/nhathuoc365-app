@@ -211,7 +211,7 @@ export default class Item extends Component {
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh}
+                onRefresh={this._onRefresh.bind(this)}
               />
             }
           />}
@@ -233,7 +233,8 @@ const styles = StyleSheet.create({
   },
   right_btn_add_store: {
     paddingVertical: 1,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
+    paddingTop: isAndroid ? 4 : 0
   },
   right_btn_box: {
     flexDirection: 'row'
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     backgroundColor: 'red',
-    top: -4,
+    top: isAndroid ? 0 : -4,
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',

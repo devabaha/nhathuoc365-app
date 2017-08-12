@@ -171,7 +171,7 @@ export default class Home extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
+              onRefresh={this._onRefresh.bind(this)}
             />
           }
         />}

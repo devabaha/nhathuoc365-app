@@ -242,7 +242,6 @@ const styles = StyleSheet.create({
     height: '50%',
     bottom: 0,
     right: 0,
-    backgroundColor: "rgba(255,255,255,0.7)",
     width: Util.size.width - 232,
     flexDirection: 'row',
     alignItems: 'center',

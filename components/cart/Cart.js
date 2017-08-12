@@ -146,7 +146,7 @@ export default class Cart extends Component {
                       </TouchableHighlight>
 
                       <Text style={styles.cart_item_actions_quantity}>0,5 kg</Text>
-                      
+
                       <TouchableHighlight
                         style={styles.cart_item_actions_btn}
                         underlayColor="transparent"
@@ -168,7 +168,7 @@ export default class Cart extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh}
+              onRefresh={this._onRefresh.bind(this)}
             />
           }
         />}
@@ -195,7 +195,7 @@ export default class Cart extends Component {
         </View>
 
         <TouchableHighlight
-          sytle={styles.cart_payment_btn_box}
+          style={styles.cart_payment_btn_box}
           underlayColor="transparent"
           onPress={() => Actions.payment({})}>
 
@@ -240,7 +240,8 @@ const styles = StyleSheet.create({
   },
   right_btn_add_store: {
     paddingVertical: 1,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
+    paddingTop: isAndroid ? 4 : 0
   },
   right_btn_box: {
     flexDirection: 'row'
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     backgroundColor: 'red',
-    top: -4,
+    top: isAndroid ? 0 : -4,
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
 
   separator: {
     width: '100%',
-    height: Util.pixel,
+    height: 1,
     backgroundColor: "#dddddd"
   },
 
@@ -338,7 +339,7 @@ const styles = StyleSheet.create({
   cart_item_btn_label: {
     color: "#404040",
     fontSize: 20,
-    lineHeight: 20
+    lineHeight: isIOS ? 20 : 24
   },
   cart_item_check_box: {
     width: '10%',
@@ -379,7 +380,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     paddingVertical: 4,
     paddingHorizontal: 15,
-    borderTopWidth: 1,
+    borderTopWidth: Util.pixel,
     borderTopColor: DEFAULT_COLOR
   },
   cart_payment_rows: {
@@ -422,12 +423,8 @@ const styles = StyleSheet.create({
     right: 0
   },
   cart_payment_btn: {
-    position: 'absolute',
     width: '100%',
-    height: 60,
-    bottom: 0,
-    left: 0,
-    right: 0,
+    height: '100%',
     backgroundColor: DEFAULT_COLOR,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -460,8 +457,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     right: 0,
     backgroundColor: "#ffffff",
-    borderTopWidth: Util.pixel,
-    borderTopColor: "#dddddd",
     flexDirection: 'row',
     borderBottomLeftRadius: 3,
     borderBottomRightRadius: 3
@@ -469,7 +464,10 @@ const styles = StyleSheet.create({
   modal_confirm_btn: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '50%'
+    width: '50%',
+
+    borderTopWidth: Util.pixel,
+    borderTopColor: "#dddddd",
   },
   modal_confirm_btn_left: {
     borderRightWidth: Util.pixel,

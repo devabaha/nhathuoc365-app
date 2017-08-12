@@ -14,9 +14,7 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import autobind from 'autobind-decorator';
 
-@autobind
 @observer
 export default class Address extends Component {
   constructor(props) {
@@ -48,7 +46,7 @@ export default class Address extends Component {
                 return(
                   <TouchableHighlight
                     underlayColor="transparent"
-                    onPress={this.props.parent_ctx._add_new}
+                    onPress={this.props.add_new}
                     style={styles.address_add_box}>
                     <View style={styles.address_add_content}>
                       <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
@@ -92,7 +90,7 @@ export default class Address extends Component {
 
         <TouchableHighlight
           underlayColor="transparent"
-          onPress={this.props.parent_ctx._go_confirm_page}
+          onPress={this.props.go_confirm_page}
           style={styles.address_continue}>
           <View style={styles.address_continue_content}>
             <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
@@ -112,7 +110,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     width: '100%',
-    height: Util.pixel,
+    height: 1,
     backgroundColor: "#dddddd"
   },
   address_list_box: {

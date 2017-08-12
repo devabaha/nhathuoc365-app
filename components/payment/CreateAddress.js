@@ -8,7 +8,8 @@ import {
   TextInput,
   TouchableHighlight,
   Switch,
-  Keyboard
+  Keyboard,
+  ScrollView
 } from 'react-native';
 
 // library
@@ -24,21 +25,28 @@ export default class CreateAddress extends Component {
       address_default: false,
       bottom: 0
     }
+
+    this._keyboardWillShow = this._keyboardWillShow.bind(this);
+    this._keyboardWillHide = this._keyboardWillHide.bind(this);
   }
 
   componentWillMount() {
-    this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
-    this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
+    this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow);
+    this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide);
 
     Actions.refresh({
       onBack: () => {
-        Keyboard.dismiss();
-        Keyboard.removeAllListeners('keyboardWillShow');
-        Keyboard.removeAllListeners('keyboardWillHide');
+        this._unMount();
 
         Actions.pop();
       }
-    })
+    });
+  }
+
+  _unMount() {
+    Keyboard.dismiss();
+    Keyboard.removeListener('keyboardWillShow', this._keyboardWillShow);
+    Keyboard.removeListener('keyboardWillHide', this._keyboardWillHide);
   }
 
   _keyboardWillShow(e) {
@@ -58,74 +66,80 @@ export default class CreateAddress extends Component {
   }
 
   _onSave() {
+    this._unMount();
+
     Actions.pop();
   }
 
   render() {
     return (
       <View style={styles.container}>
+        <ScrollView>
+          <View style={styles.input_box}>
+            <Text style={styles.input_label}>Tên</Text>
 
-        <View style={styles.input_box}>
-          <Text style={styles.input_label}>Tên</Text>
+            <View style={styles.input_text_box}>
+              <TextInput
+                style={styles.input_text}
+                keyboardType="default"
+                maxLength={30}
+                placeholder="Điền tên"
+                placeholderTextColor="#999999"
+                autoFocus={true}
+                underlineColorAndroid="#ffffff"
+                />
+            </View>
+          </View>
 
-          <View style={styles.input_text_box}>
+          <View style={styles.input_box}>
+            <Text style={styles.input_label}>Số điện thoại</Text>
+
+            <View style={styles.input_text_box}>
+              <TextInput
+                style={styles.input_text}
+                keyboardType="phone-pad"
+                maxLength={11}
+                placeholder="Điền số điện thoại"
+                placeholderTextColor="#999999"
+                underlineColorAndroid="#ffffff"
+                />
+            </View>
+          </View>
+
+          <View style={styles.input_address_box}>
+            <Text style={styles.input_label}>Địa chỉ</Text>
+            <Text style={styles.input_label_help}>(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)</Text>
+
             <TextInput
-              style={styles.input_text}
+              style={[styles.input_address_text, {height: this.state.address_height | 50}]}
               keyboardType="default"
-              maxLength={30}
-              placeholder="Điền tên"
+              maxLength={250}
+              placeholder="Nhập địa chỉ cụ thể"
               placeholderTextColor="#999999"
-              autoFocus={true}
-              />
-          </View>
-        </View>
-
-        <View style={styles.input_box}>
-          <Text style={styles.input_label}>Số điện thoại</Text>
-
-          <View style={styles.input_text_box}>
-            <TextInput
-              style={styles.input_text}
-              keyboardType="phone-pad"
-              maxLength={11}
-              placeholder="Điền số điện thoại"
-              placeholderTextColor="#999999"
-              />
-          </View>
-        </View>
-
-        <View style={styles.input_address_box}>
-          <Text style={styles.input_label}>Địa chỉ</Text>
-          <Text style={styles.input_label_help}>(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)</Text>
-
-          <TextInput
-            style={[styles.input_address_text, {height: this.state.address_height || 50}]}
-            keyboardType="default"
-            maxLength={250}
-            placeholder="Nhập địa chỉ cụ thể"
-            placeholderTextColor="#999999"
-            multiline={true}
-            onContentSizeChange={(e) => {
-              this.setState({address_height: e.nativeEvent.contentSize.height});
-            }}
-            />
-        </View>
-
-        <View style={[styles.input_box, {marginTop: 12}]}>
-          <Text style={styles.input_label}>Đăt làm địa chỉ mặc định</Text>
-
-          <View style={styles.input_text_box}>
-            <Switch
-              onValueChange={(value) => {
-                this.setState({
-                  address_default: value
-                });
+              multiline={true}
+              underlineColorAndroid="#ffffff"
+              onContentSizeChange={(e) => {
+                this.setState({address_height: e.nativeEvent.contentSize.height});
               }}
-              value={this.state.address_default}
-              onTintColor={DEFAULT_COLOR}
               />
           </View>
-        </View>
+
+          <View style={[styles.input_box, {marginTop: 12}]}>
+            <Text style={styles.input_label}>Đăt làm địa chỉ mặc định</Text>
+
+            <View style={styles.input_text_box}>
+              <Switch
+                onValueChange={(value) => {
+                  this.setState({
+                    address_default: value
+                  });
+                }}
+                value={this.state.address_default}
+                onTintColor={DEFAULT_COLOR}
+                />
+            </View>
+          </View>
+        </ScrollView>
 
         <TouchableHighlight
           underlayColor="transparent"
@@ -191,7 +205,6 @@ const styles = StyleSheet.create({
   },
   input_address_text: {
     width: '100%',
-    height: 38,
     color: "#000000",
     fontSize: 14,
     marginTop: 4

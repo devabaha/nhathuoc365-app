@@ -39,7 +39,6 @@ export default class Payment extends Component {
     this._renderRightButton = this._renderRightButton.bind(this);
     this._go_address_page = this._go_address_page.bind(this);
     this._go_confirm_page = this._go_confirm_page.bind(this);
-    this._go_finish_page = this._go_finish_page.bind(this);
   }
 
   _initial() {
@@ -79,13 +78,6 @@ export default class Payment extends Component {
 
   _go_confirm_page() {
     var key = 1;
-    var {id, index, title} = this.state.payments_data[key];
-
-    this._go_to_page_index(id, index, title);
-  }
-
-  _go_finish_page() {
-    var key = 2;
     var {id, index, title} = this.state.payments_data[key];
 
     this._go_to_page_index(id, index, title);
@@ -168,7 +160,7 @@ export default class Payment extends Component {
           renderItem={({item}) => {
             switch (item.id) {
               case 'address':
-                return <Address parent_ctx={this} />
+                return <Address go_confirm_page={this._go_confirm_page} add_new={this._add_new} />
                 break;
               case 'confirm':
                 return <Confirm />
