@@ -21,7 +21,7 @@ export default class CreateAddress extends Component {
     super(props);
 
     this.state = {
-      address_default: true,
+      address_default: false,
       bottom: 0
     }
   }
@@ -29,6 +29,16 @@ export default class CreateAddress extends Component {
   componentWillMount() {
     this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
     this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
+
+    Actions.refresh({
+      onBack: () => {
+        Keyboard.dismiss();
+        Keyboard.removeAllListeners('keyboardWillShow');
+        Keyboard.removeAllListeners('keyboardWillHide');
+
+        Actions.pop();
+      }
+    })
   }
 
   _keyboardWillShow(e) {
@@ -48,7 +58,7 @@ export default class CreateAddress extends Component {
   }
 
   _onSave() {
-
+    Actions.pop();
   }
 
   render() {
@@ -85,7 +95,7 @@ export default class CreateAddress extends Component {
         </View>
 
         <View style={styles.input_address_box}>
-          <Text style={styles.input_label}>Tên</Text>
+          <Text style={styles.input_label}>Địa chỉ</Text>
           <Text style={styles.input_label_help}>(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)</Text>
 
           <TextInput

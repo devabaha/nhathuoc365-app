@@ -73,12 +73,6 @@ export default class App extends React.Component {
       <Router createReducer={reducerCreate} store={Store}>
         <Scene key="root">
 
-          <Scene key="payment" title="ĐỊA CHỈ NHẬN HÀNG" component={Payment} {...custommerNav} />
-          <Scene initial={1} key="createAddress" title="THÊM ĐỊA CHỈ MỚI" component={CreateAddress} {...custommerNav} />
-          <Scene key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
-          <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
-          <Scene key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
-
           <Scene key="myTabBar" tabs={true} tabBarStyle={styles.tabBarStyle} pressOpacity={1}>
 
             {/**
@@ -145,6 +139,12 @@ export default class App extends React.Component {
                 <Scene key="_account" title="Tài khoản" component={Account} {...custommerNav} />
             </Scene>
           </Scene>
+
+          <Scene key="payment" title="ĐỊA CHỈ NHẬN HÀNG" component={Payment} {...custommerNav} />
+          <Scene initial={0} key="createAddress" title="THÊM ĐỊA CHỈ MỚI" component={CreateAddress} {...custommerNav} />
+          <Scene key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
+          <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
+          <Scene key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
 
         </Scene>
       </Router>
