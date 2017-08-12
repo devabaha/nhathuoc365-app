@@ -16,7 +16,6 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 
-@autobind
 @observer
 export default class CartFooter extends Component {
   constructor(props) {
@@ -126,20 +125,20 @@ export default class CartFooter extends Component {
           <TouchableHighlight
             style={[styles.store_cart_btn, styles.store_cart_btn_left]}
             underlayColor="#f1efef"
-            onPress={this._store_cart_prev}>
+            onPress={this._store_cart_prev.bind(this)}>
             <Icon name="chevron-left" size={24} color="#333333" />
           </TouchableHighlight>
 
           <TouchableHighlight
             style={[styles.store_cart_btn, styles.store_cart_btn_right]}
             underlayColor="#f1efef"
-            onPress={this._store_cart_next}>
+            onPress={this._store_cart_next.bind(this)}>
             <Icon name="chevron-right" size={24} color="#333333" />
           </TouchableHighlight>
         </View>
 
         <TouchableHighlight
-          onPress={() => 1}
+          onPress={() => Actions.cart({})}
           style={styles.checkout_btn}
           underlayColor="transparent"
           >

@@ -21,7 +21,6 @@ import Swiper from 'react-native-swiper';
 // components
 import ListHeader from '../stores/ListHeader';
 
-@autobind
 @observer
 export default class Cart extends Component {
   constructor(props) {
@@ -48,7 +47,7 @@ export default class Cart extends Component {
 
   componentWillMount() {
     Actions.refresh({
-      renderRightButton: this._renderRightButton
+      renderRightButton: this._renderRightButton.bind(this)
     });
   }
 
@@ -80,14 +79,14 @@ export default class Cart extends Component {
   }
 
   _is_delete_cart_item(item_id) {
-    if (this.refs && this.refs.modal_delete_cart_item) {
-      this.refs.modal_delete_cart_item.open();
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.open();
     }
   }
 
   _delete_cart_item(item_id, flag) {
-    if (this.refs && this.refs.modal_delete_cart_item) {
-      this.refs.modal_delete_cart_item.close();
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.close();
     }
   }
 
@@ -142,10 +141,12 @@ export default class Cart extends Component {
                       <TouchableHighlight
                         style={styles.cart_item_actions_btn}
                         underlayColor="transparent"
-                        onPress={this._is_delete_cart_item}>
+                        onPress={this._is_delete_cart_item.bind(this)}>
                         <Text style={styles.cart_item_btn_label}>-</Text>
                       </TouchableHighlight>
+
                       <Text style={styles.cart_item_actions_quantity}>0,5 kg</Text>
+                      
                       <TouchableHighlight
                         style={styles.cart_item_actions_btn}
                         underlayColor="transparent"
@@ -196,7 +197,7 @@ export default class Cart extends Component {
         <TouchableHighlight
           sytle={styles.cart_payment_btn_box}
           underlayColor="transparent"
-          onPress={() => 1}>
+          onPress={() => Actions.payment({})}>
 
           <View style={styles.cart_payment_btn}>
             <Icon name="shopping-cart" size={24} color="#ffffff" />
@@ -208,7 +209,7 @@ export default class Cart extends Component {
         <Modal
           entry="top"
           style={[styles.modal, styles.modal_confirm]}
-          ref={"modal_delete_cart_item"}>
+          ref={ref => this.refs_modal_delete_cart_item = ref}>
           <Text style={styles.modal_confirm_title}>Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?</Text>
           <View style={styles.modal_confirm_actions}>
             <TouchableHighlight
