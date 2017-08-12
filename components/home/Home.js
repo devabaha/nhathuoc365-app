@@ -17,7 +17,6 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 
-@autobind
 @observer
 export default class Home extends Component {
   constructor() {
@@ -36,7 +35,7 @@ export default class Home extends Component {
 
   componentWillMount() {
     Actions.refresh({
-      renderRightButton: this._renderRightButton
+      renderRightButton: this._renderRightButton.bind(this)
     });
   }
 
@@ -46,8 +45,8 @@ export default class Home extends Component {
         style={styles.right_btn_add_store}
         underlayColor="transparent"
         onPress={() => {
-          if (this.refs && this.refs.modal_add_store) {
-              this.refs.modal_add_store.open()
+          if (this.refs_modal_add_store) {
+              this.refs_modal_add_store.open()
           }
         }}>
         <Icon name="plus-square" size={20} color="#ffffff" />
@@ -110,7 +109,7 @@ export default class Home extends Component {
     // store list
     return(
       <TouchableHighlight
-        underlayColor={DEFAULT_COLOR}
+        underlayColor="transparent"
         onPress={() => {
           Actions.stores({});
         }}>
@@ -140,7 +139,9 @@ export default class Home extends Component {
               </TouchableHighlight>
 
               <TouchableHighlight
-                onPress={() => {}}
+                onPress={() => {
+                  Actions.cart({})
+                }}
                 underlayColor="transparent"
                 style={styles.stores_info_action}>
                 <View style={styles.stores_info_action_box}>
@@ -178,7 +179,7 @@ export default class Home extends Component {
         <Modal
           entry="top"
           style={[styles.modal, styles.modal_add_store]}
-          ref={"modal_add_store"}>
+          ref={ref => this.refs_modal_add_store = ref}>
 
           <Text style={styles.modal_add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
 

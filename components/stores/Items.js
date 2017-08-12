@@ -12,6 +12,7 @@ import {
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+@observer
 export default class Items extends Component {
   render() {
     let {item, index, onPress} = this.props;
@@ -19,7 +20,7 @@ export default class Items extends Component {
     return (
       <TouchableHighlight
         onPress={onPress}
-        underlayColor={DEFAULT_COLOR}>
+        underlayColor="transparent">
         <View style={[styles.item_box, {borderRightWidth: index%2 == 0 ? Util.pixel : 0}]}>
 
           <View style={styles.item_image_box}>

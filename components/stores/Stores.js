@@ -22,7 +22,6 @@ import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 
-@autobind
 @observer
 export default class Stores extends Component {
   constructor(props) {
@@ -55,24 +54,37 @@ export default class Stores extends Component {
 
   componentWillMount() {
     Actions.refresh({
-      renderRightButton: this._renderRightButton
+      renderRightButton: this._renderRightButton.bind(this)
     });
   }
 
   _renderRightButton() {
     return(
-      <TouchableHighlight
-        underlayColor="transparent"
-        onPress={() => {
+      <View style={styles.right_btn_box}>
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
 
-        }}>
-        <View style={styles.right_btn_add_store}>
-          <Icon name="shopping-cart" size={22} color="#ffffff" />
-          <View style={styles.stores_info_action_notify}>
-            <Text style={styles.stores_info_action_notify_value}>3</Text>
+          }}>
+          <View style={styles.right_btn_add_store}>
+            <Icon name="commenting" size={20} color="#ffffff" />
+            <View style={styles.stores_info_action_notify}>
+              <Text style={styles.stores_info_action_notify_value}>3</Text>
+            </View>
           </View>
-        </View>
-      </TouchableHighlight>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => Actions.cart({})}>
+          <View style={styles.right_btn_add_store}>
+            <Icon name="shopping-cart" size={22} color="#ffffff" />
+            <View style={styles.stores_info_action_notify}>
+              <Text style={styles.stores_info_action_notify_value}>3</Text>
+            </View>
+          </View>
+        </TouchableHighlight>
+      </View>
     );
   }
 
@@ -106,29 +118,30 @@ export default class Stores extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <View style={styles.categories_nav}>
+          <FlatList
+            ref="category_nav"
+            data={this.state.categories_data}
+            extraData={this.state}
+            keyExtractor={item => item.id}
+            horizontal={true}
+            style={styles.categories_nav}
+            renderItem={({item}) => {
+              let active = this.state.category_nav_index == item.id;
+              return(
+                <TouchableHighlight
+                  onPress={() => this._changeCategory(item.id)}
+                  underlayColor="transparent">
+                  <View style={styles.categories_nav_items}>
+                    <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
 
-        <FlatList
-          ref="category_nav"
-          data={this.state.categories_data}
-          extraData={this.state}
-          keyExtractor={item => item.id}
-          horizontal={true}
-          style={styles.categories_nav}
-          renderItem={({item}) => {
-            let active = this.state.category_nav_index == item.id;
-            return(
-              <TouchableHighlight
-                onPress={() => this._changeCategory(item.id)}
-                underlayColor="transparent">
-                <View style={styles.categories_nav_items}>
-                  <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
-
-                  {active && <View style={styles.categories_nav_items_active} />}
-                </View>
-              </TouchableHighlight>
-            );
-          }}
-        />
+                    {active && <View style={styles.categories_nav_items_active} />}
+                  </View>
+                </TouchableHighlight>
+              );
+            }}
+          />
+        </View>
 
         {this.state.data != null && <FlatList
           onEndReached={(num) => {
@@ -164,6 +177,9 @@ const styles = StyleSheet.create({
   right_btn_add_store: {
     paddingVertical: 1,
     paddingHorizontal: 8
+  },
+  right_btn_box: {
+    flexDirection: 'row'
   },
   stores_info_action_notify: {
     position: 'absolute',

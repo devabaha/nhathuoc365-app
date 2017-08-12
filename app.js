@@ -35,6 +35,8 @@ import Account from './components/account/Account';
 import Stores from './components/stores/Stores';
 import Item from './components/item/Item';
 import Cart from './components/cart/Cart';
+import Payment from './components/payment/Payment';
+import CreateAddress from './components/payment/CreateAddress';
 
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
@@ -63,9 +65,7 @@ const reducerCreate = params=>{
 
 export default class App extends React.Component {
   componentDidMount() {
-    setTimeout(() => {
-      Store.setValue('2');
-    }, 3000);
+
   }
 
   render() {
@@ -73,7 +73,9 @@ export default class App extends React.Component {
       <Router createReducer={reducerCreate} store={Store}>
         <Scene key="root">
 
-          <Scene initial={true} key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
+          <Scene key="payment" title="ĐỊA CHỈ NHẬN HÀNG" component={Payment} {...custommerNav} />
+          <Scene initial={1} key="createAddress" title="THÊM ĐỊA CHỈ MỚI" component={CreateAddress} {...custommerNav} />
+          <Scene key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
           <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
           <Scene key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
 

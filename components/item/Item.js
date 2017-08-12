@@ -24,7 +24,6 @@ import Items from '../stores/Items';
 import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
 
-@autobind
 @observer
 export default class Item extends Component {
   constructor(props) {

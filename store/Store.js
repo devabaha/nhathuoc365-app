@@ -1,4 +1,5 @@
 import {reaction, observable, observe, computed, autorun, action} from 'mobx';
+import autobind from 'autobind-decorator';
 
 @autobind
 class Store {
