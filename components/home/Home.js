@@ -15,7 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
-import { Button } from 'react-native-elements';
+import { Button } from '../../lib/react-native-elements';
 
 @autobind
 @observer
