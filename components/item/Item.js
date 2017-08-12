@@ -88,28 +88,21 @@ export default class Item extends Component {
       <View style={styles.container}>
 
         <ScrollView>
-
-          <View style={styles.wrapper_swiper}>
-            <Swiper
-              showsButtons={this.state.data.length > 1}
-              showsPagination={false}
-              paginationStyle={{marginTop: 100}}
-              style={styles.content_swiper}>
-              {
-                this.state.data.map((item, index) => {
-                  return(
-                    <Image style={styles.swiper_image} source={{uri: item.name}} key={index} />
-                  );
-                })
-              }
-            </Swiper>
-
-            <View style={styles.item_safe_off}>
-              <View style={styles.item_safe_off_percent}>
-                <Text style={styles.item_safe_off_percent_val}>-23%</Text>
-              </View>
-            </View>
-          </View>
+          <Swiper
+            showsButtons={this.state.data.length > 1}
+            showsPagination={false}
+            paginationStyle={{marginTop: 100}}
+            width={Util.size.width}
+            height={Util.size.width * 0.6}
+            >
+            {
+              this.state.data.map((item, index) => {
+                return(
+                  <Image style={styles.swiper_image} source={{uri: item.name}} key={index} />
+                );
+              })
+            }
+          </Swiper>
 
           <View style={styles.item_heading_box}>
 
@@ -216,6 +209,12 @@ export default class Item extends Component {
             }
           />}
 
+          <View style={styles.item_safe_off}>
+            <View style={styles.item_safe_off_percent}>
+              <Text style={styles.item_safe_off_percent_val}>-23%</Text>
+            </View>
+          </View>
+
         </ScrollView>
 
         <CartFooter />
@@ -259,14 +258,13 @@ const styles = StyleSheet.create({
 
   wrapper_swiper: {
     alignItems: 'center',
-    height: Util.size.width * 0.6,
+    // height: Util.size.width * 0.6,
   },
   content_swiper: {
-    height: '100%',
     backgroundColor: "#dddddd"
   },
   swiper_image: {
-    height: '100%',
+    height: Util.size.width * 0.6,
     resizeMode: 'cover'
   },
 
@@ -409,6 +407,7 @@ const styles = StyleSheet.create({
 
   items_box: {
     marginBottom: 59,
-    marginTop: 20
+    marginTop: 20,
+    backgroundColor: "#f1f1f1"
   }
 });
