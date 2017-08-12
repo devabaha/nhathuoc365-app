@@ -143,14 +143,14 @@ export default class Cart extends Component {
                         style={styles.cart_item_actions_btn}
                         underlayColor="transparent"
                         onPress={this._is_delete_cart_item}>
-                        <Icon name="minus" size={16} color="#666666" />
+                        <Text style={styles.cart_item_btn_label}>-</Text>
                       </TouchableHighlight>
                       <Text style={styles.cart_item_actions_quantity}>0,5 kg</Text>
                       <TouchableHighlight
                         style={styles.cart_item_actions_btn}
                         underlayColor="transparent"
                         onPress={() => 1}>
-                        <Icon name="plus" size={16} color="#666666" />
+                        <Text style={styles.cart_item_btn_label}>+</Text>
                       </TouchableHighlight>
                     </View>
 
@@ -321,8 +321,8 @@ const styles = StyleSheet.create({
   cart_item_actions_btn: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 28,
-    height: 28,
+    width: 26,
+    height: 26,
     borderWidth: Util.pixel,
     borderColor: "#666666",
     borderRadius: 3
@@ -330,12 +330,14 @@ const styles = StyleSheet.create({
   cart_item_actions_quantity: {
     paddingHorizontal: 8,
     minWidth: '30%',
-    textAlign: 'center'
-  },
-  cart_item_info_ship_status: {
-    color: DEFAULT_COLOR,
-    fontSize: 12,
+    textAlign: 'center',
+    color: "#404040",
     fontWeight: '500'
+  },
+  cart_item_btn_label: {
+    color: "#404040",
+    fontSize: 20,
+    lineHeight: 20
   },
   cart_item_check_box: {
     width: '10%',
