@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
 
   separator: {
     width: '100%',
-    height: 1,
+    height: Util.pixel,
     backgroundColor: "#dddddd"
   },
 
@@ -433,7 +433,6 @@ const styles = StyleSheet.create({
   cart_payment_btn_title: {
     color: "#ffffff",
     fontSize: 18,
-    fontWeight: '600',
     marginLeft: 8
   },
 

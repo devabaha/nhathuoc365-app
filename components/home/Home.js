@@ -145,7 +145,7 @@ export default class Home extends Component {
                 underlayColor="transparent"
                 style={styles.stores_info_action}>
                 <View style={styles.stores_info_action_box}>
-                  <Icon name="cart-plus" size={22} color="#ffffff" />
+                  <Icon name="shopping-cart" size={22} color="#ffffff" />
                   <Text style={styles.stores_info_action_label}>Giỏ hàng</Text>
 
                   <View style={styles.stores_info_action_notify}>

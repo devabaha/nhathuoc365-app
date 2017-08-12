@@ -45,7 +45,7 @@ export default class Items extends Component {
             onPress={() => 1}>
 
             <View style={styles.item_add_cart_box}>
-              <Icon name="shopping-cart" size={24} color={DEFAULT_COLOR} />
+              <Icon name="cart-plus" size={24} color={DEFAULT_COLOR} />
               <Text style={styles.item_add_cart_title}>Chọn mua</Text>
             </View>
           </TouchableHighlight>

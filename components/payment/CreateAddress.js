@@ -125,7 +125,7 @@ export default class CreateAddress extends Component {
           </View>
 
           <View style={[styles.input_box, {marginTop: 12}]}>
-            <Text style={styles.input_label}>Đăt làm địa chỉ mặc định</Text>
+            <Text style={styles.input_label}>Đặt làm địa chỉ mặc định</Text>
 
             <View style={styles.input_text_box}>
               <Switch

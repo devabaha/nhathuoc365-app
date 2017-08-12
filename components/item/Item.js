@@ -314,8 +314,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    height: 40
   },
   item_actions_btn_chat: {
     marginRight: 8
