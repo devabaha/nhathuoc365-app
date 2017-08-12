@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   address_name: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#000000",
 
   },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   address_content_phone: {
     color: "#404040",
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 4
   },
   address_content_address_detail: {
