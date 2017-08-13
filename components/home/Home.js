@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   },
   stores_image: {
     height: '100%',
-    resizeMode: 'center'
+    resizeMode: 'cover'
   },
   stores_info: {
     width: '100%',

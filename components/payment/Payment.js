@@ -163,7 +163,7 @@ export default class Payment extends Component {
                 return <Address go_confirm_page={this._go_confirm_page} add_new={this._add_new} />
                 break;
               case 'confirm':
-                return <Confirm />
+                return <Confirm go_address_page={this._go_address_page} />
                 break;
               default:
 

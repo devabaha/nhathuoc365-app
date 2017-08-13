@@ -196,7 +196,7 @@ export default class Item extends Component {
             }}
             onEndReachedThreshold={0}
             style={styles.items_box}
-            ListHeaderComponent={() => <ListHeader title="CÓ THỂ BẠN THÍCH" />}
+            ListHeaderComponent={() => <ListHeader title="— CÓ THỂ BẠN THÍCH —" />}
             data={this.state.data}
             renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
             keyExtractor={item => item.id}

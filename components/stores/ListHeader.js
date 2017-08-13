@@ -13,7 +13,7 @@ export default class ListHeader extends Component {
 
     return (
       <View style={styles.store_heading_box}>
-        <Text style={styles.store_heading_title}>— {title} —</Text>
+        <Text style={styles.store_heading_title}>{title}</Text>
       </View>
     );
   }
