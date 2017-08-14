@@ -83,7 +83,7 @@ export default class CreateAddress extends Component {
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
-                placeholder="Điền tên"
+                placeholder="Tên người nhận hàng"
                 placeholderTextColor="#999999"
                 autoFocus={true}
                 underlineColorAndroid="#ffffff"

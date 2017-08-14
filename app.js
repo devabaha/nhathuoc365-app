@@ -37,6 +37,7 @@ import Item from './components/item/Item';
 import Cart from './components/cart/Cart';
 import Payment from './components/payment/Payment';
 import CreateAddress from './components/payment/CreateAddress';
+import OrdersItem from './components/orders/OrdersItem';
 
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
@@ -115,12 +116,13 @@ export default class App extends React.Component {
               icon={TabIcon}
               iconTitle="Đơn hàng"
               iconName="shopping-cart"
+              initial={true}
               size={20}
               onPress={()=> {
                 Actions._orders({type: ActionConst.REFRESH});
               }}
              >
-                <Scene key="_orders" title="Đơn hàng" component={Orders} {...custommerNav} />
+                <Scene key="_orders" title="DANH SÁCH ĐƠN HÀNG" component={Orders} {...custommerNav} />
             </Scene>
 
             {/**
@@ -140,11 +142,12 @@ export default class App extends React.Component {
             </Scene>
           </Scene>
 
-          <Scene initial={1} key="payment" title="ĐỊA CHỈ NHẬN HÀNG" component={Payment} {...custommerNav} />
+          <Scene initial={0} key="payment" title="ĐỊA CHỈ NHẬN HÀNG" component={Payment} {...custommerNav} />
           <Scene initial={0} key="createAddress" title="THÊM ĐỊA CHỈ MỚI" component={CreateAddress} {...custommerNav} />
           <Scene initial={0} key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
           <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
           <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
+          <Scene initial={0} key="orders_item" title="CHI TIẾT ĐƠN HÀNG" component={OrdersItem} {...custommerNav} />
 
         </Scene>
       </Router>

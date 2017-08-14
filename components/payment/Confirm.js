@@ -19,6 +19,8 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 
 // components
 import ListHeader from '../stores/ListHeader';
+import PopupConfirm from '../PopupConfirm';
+import Sticker from '../Sticker';
 
 @observer
 export default class Confirm extends Component {
@@ -40,7 +42,9 @@ export default class Confirm extends Component {
         }
      ],
      refreshing: false,
-     cart_check_list: {}
+     cart_check_list: {},
+     single: this.props.from != 'orders_item',
+     coppy_sticker_flag: false
     }
   }
 
@@ -53,9 +57,11 @@ export default class Confirm extends Component {
   }
 
   render() {
+    var {single} = this.state;
+
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.content}>
+        <ScrollView style={[styles.content, single ? null : {marginBottom: 0}]}>
           <View style={[styles.rows]}>
             <View style={styles.address_name_box}>
               <View>
@@ -71,7 +77,7 @@ export default class Confirm extends Component {
                   onPress={() => 1}>
                   <View style={styles.orders_status_box}>
                     <Text style={styles.address_default_title}>Trạng thái</Text>
-                    <Text style={styles.orders_status}>Chưa đặt hàng</Text>
+                    <Text style={[styles.orders_status, single ? null : {color: DEFAULT_COLOR}]}>{single ? "Chưa đặt hàng" : "Đang giao hàng"}</Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -94,51 +100,75 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <ListHeader title="Thông tin này đã chính xác?" />
+          {single && <ListHeader title="Thông tin này đã chính xác?" />}
 
-          <View style={[styles.rows, styles.borderBottom]}>
+          <View style={[styles.rows, styles.borderBottom, single ? null : styles.mt12]}>
             <View style={styles.address_name_box}>
-              <Text style={styles.address_name}>Đặng Ngọc Sơn</Text>
+              <View style={styles.box_icon_label}>
+                <Icon style={styles.icon_label} name="truck" size={13} color="#999999" />
+                <Text style={styles.input_label}>Địa chỉ giao hàng</Text>
+              </View>
               <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={this.props.go_address_page}>
-                  <Text style={[styles.address_default_title, styles.title_active]}>NHẤN ĐỂ THAY ĐỔI</Text>
-                </TouchableHighlight>
+                {single ? (
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={this.props.go_address_page}>
+                    <Text style={[styles.address_default_title, styles.title_active]}>NHẤN ĐỂ THAY ĐỔI</Text>
+                  </TouchableHighlight>
+                ) : (
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={this._showSticker.bind(this)}>
+                    <Text style={[styles.address_default_title, styles.title_active]}>SAO CHÉP</Text>
+                  </TouchableHighlight>
+                )}
               </View>
             </View>
 
             <View style={styles.address_content}>
+              <Text style={styles.address_name}>Đặng Ngọc Sơn</Text>
               <Text style={styles.address_content_phone}>(+84) 1653538222</Text>
-              <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia</Text>
-              <Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
-              <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
-              <Text style={styles.address_content_tinh}>Hoà Bình</Text>
+              {single ? (
+                <View>
+                  <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia</Text>
+                  <Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
+                  <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
+                  <Text style={styles.address_content_tinh}>Hoà Bình</Text>
+                </View>
+              ) : (
+                <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia, Phường Phương Lâm, Thành Phố Hoà Bình, Hoà Bình</Text>
+              )}
             </View>
           </View>
 
-          <View style={[styles.rows, styles.borderBottom, styles.total_price]}>
+          <View style={[styles.rows, styles.borderBottom, styles.mt12]}>
             <View style={styles.box_icon_label}>
               <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
               <Text style={styles.input_label}>Ghi chú</Text>
             </View>
-            <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
+            {single ? (
+              <View>
+                <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
 
-              <TextInput
-                style={[styles.input_address_text, {height: this.state.address_height | 50}]}
-                keyboardType="default"
-                maxLength={250}
-                placeholder="Nhập ghi chú của bạn tại đây"
-                placeholderTextColor="#999999"
-                multiline={true}
-                underlineColorAndroid="#ffffff"
-                onContentSizeChange={(e) => {
-                  this.setState({address_height: e.nativeEvent.contentSize.height});
-                }}
-                />
+                <TextInput
+                  style={[styles.input_address_text, {height: this.state.address_height | 50}]}
+                  keyboardType="default"
+                  maxLength={250}
+                  placeholder="Nhập ghi chú của bạn tại đây"
+                  placeholderTextColor="#999999"
+                  multiline={true}
+                  underlineColorAndroid="#ffffff"
+                  onContentSizeChange={(e) => {
+                    this.setState({address_height: e.nativeEvent.contentSize.height});
+                  }}
+                  />
+              </View>
+            ) : (
+              <Text style={styles.input_note_value}>Giao hàng cho tôi trước 10 giờ trưa hôm nay</Text>
+            )}
           </View>
 
-          <View style={[styles.rows, styles.borderBottom, styles.total_price]}>
+          <View style={[styles.rows, styles.borderBottom, styles.mt12]}>
             <View style={styles.address_name_box}>
               <View style={styles.box_icon_label}>
                 <Icon style={styles.icon_label} name="usd" size={14} color="#999999" />
@@ -154,7 +184,14 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <ListHeader title="Mặt hàng đã chọn" />
+          <View style={[styles.rows, styles.borderBottom, styles.mt12]}>
+            <View style={styles.address_name_box}>
+              <View style={styles.box_icon_label}>
+                <Icon style={styles.icon_label} name="shopping-cart" size={14} color="#999999" />
+                <Text style={styles.input_label}>{single ? "Mặt hàng đã chọn" : "Mặt hàng đã mua"}</Text>
+              </View>
+            </View>
+          </View>
 
           {this.state.data != null && <SectionList
             //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
@@ -212,19 +249,94 @@ export default class Confirm extends Component {
 
         </ScrollView>
 
-        <TouchableHighlight
+        {single && <TouchableHighlight
           style={styles.cart_payment_btn_box}
           underlayColor="transparent"
-          onPress={() => Actions.payment({})}>
+          onPress={this._onSave.bind(this)}>
 
           <View style={styles.cart_payment_btn}>
             <Icon name="check" size={24} color="#ffffff" />
             <Text style={styles.cart_payment_btn_title}>ĐẶT HÀNG</Text>
           </View>
 
-        </TouchableHighlight>
+        </TouchableHighlight>}
+
+        <PopupConfirm
+          ref_popup={ref => this.popup_message = ref}
+          title="Đơn hàng của bạn sẽ được chúng tôi giao đúng hẹn. Xin cảm ơn"
+          noTitle="Xem đơn hàng"
+          noConfirm={this._viewOrders.bind(this)}
+          yesTitle="Tiếp tục mua hàng"
+          yesConfirm={this._continueShopping.bind(this)}
+          height={150}
+          otherClose={false}
+          content={(title) => {
+            return(
+              <View style={styles.success_box}>
+                <View style={styles.success_icon_box}>
+                  <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
+                  <Text style={styles.success_icon_label}>THÀNH CÔNG</Text>
+                </View>
+                <Text style={styles.success_title}>{title}</Text>
+              </View>
+            );
+          }}
+          />
+
+        <Sticker
+          active={this.state.coppy_sticker_flag}
+          message="Sao chép thành công."
+         />
       </View>
     );
+  }
+
+  _showSticker() {
+    this.setState({
+      coppy_sticker_flag: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          coppy_sticker_flag: false
+        });
+      }, 2000);
+    });
+  }
+
+  _onSave() {
+    if (this.popup_message) {
+      this.popup_message.open();
+    }
+  }
+
+  _popupClose() {
+    if (this.popup_message) {
+      this.popup_message.close();
+    }
+  }
+
+  _viewOrders() {
+    this._popupClose();
+
+    this._goStores();
+
+    setTimeout(() => {
+      Actions.orders_item({
+
+      });
+    }, 1000);
+  }
+
+  _continueShopping() {
+    this._popupClose();
+
+    this._goStores();
+  }
+
+  _goStores() {
+    Actions.stores({
+      type: ActionConst.RESET
+    });
   }
 }
 
@@ -248,9 +360,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   address_name: {
-    fontSize: 16,
+    fontSize: 14,
     color: "#000000",
-
+    fontWeight: '600'
   },
   address_default_box: {
     flex: 1,
@@ -265,17 +377,20 @@ const styles = StyleSheet.create({
     color: DEFAULT_COLOR
   },
   address_content: {
-    marginTop: 8
+    marginTop: 12,
+    marginLeft: 22
   },
   address_content_phone: {
     color: "#404040",
-    fontSize: 16,
-    marginTop: 4
+    fontSize: 14,
+    marginTop: 4,
+    fontWeight: '600'
   },
   address_content_address_detail: {
     color: "#404040",
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
+    lineHeight: 20
   },
   address_content_phuong: {
     color: "#404040",
@@ -296,7 +411,8 @@ const styles = StyleSheet.create({
   desc_content: {
     fontSize: 12,
     color: "#666666",
-    marginTop: 4
+    marginTop: 4,
+    marginLeft: 22
   },
   orders_status_box: {
     alignItems: 'center'
@@ -403,7 +519,7 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
 
-  total_price: {
+  mt12: {
     marginTop: 12
   },
   text_total_items: {
@@ -420,7 +536,7 @@ const styles = StyleSheet.create({
   input_label: {
     fontSize: 16,
     color: "#000000",
-    marginLeft: 4
+    marginLeft: 8
   },
   input_label_help: {
     fontSize: 12,
@@ -434,5 +550,32 @@ const styles = StyleSheet.create({
   },
   icon_label: {
   },
+
+  success_box: {
+    padding: 15
+  },
+  success_title: {
+    textAlign: 'center',
+    lineHeight: 20,
+    color: "#000000"
+  },
+  success_icon_box: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12
+  },
+  success_icon_label: {
+    color: DEFAULT_COLOR,
+    fontSize: 18,
+    fontWeight: '600',
+    marginLeft: 8
+  },
+  input_note_value: {
+    fontSize: 14,
+    marginTop: 8,
+    color: "#404040",
+    marginLeft: 22
+  }
 
 });

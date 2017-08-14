@@ -14,12 +14,11 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
 import { CheckBox } from '../../lib/react-native-elements';
-import Swiper from 'react-native-swiper';
 
 // components
 import ListHeader from '../stores/ListHeader';
+import PopupConfirm from '../PopupConfirm';
 
 @observer
 export default class Cart extends Component {
@@ -206,27 +205,13 @@ export default class Cart extends Component {
 
         </TouchableHighlight>
 
-        <Modal
-          entry="top"
-          style={[styles.modal, styles.modal_confirm]}
-          ref={ref => this.refs_modal_delete_cart_item = ref}>
-          <Text style={styles.modal_confirm_title}>Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?</Text>
-          <View style={styles.modal_confirm_actions}>
-            <TouchableHighlight
-              style={[styles.modal_confirm_btn, styles.modal_confirm_btn_left]}
-              underlayColor="transparent"
-              onPress={() => this._delete_cart_item(false)}>
-              <Text style={styles.modal_confirm_label}>Không</Text>
-            </TouchableHighlight>
-
-            <TouchableHighlight
-              style={styles.modal_confirm_btn}
-              underlayColor="transparent"
-              onPress={() => this._delete_cart_item(true)}>
-              <Text style={styles.modal_confirm_label}>Có</Text>
-            </TouchableHighlight>
-          </View>
-        </Modal>
+        <PopupConfirm
+          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
+          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          height={110}
+          noConfirm={this._delete_cart_item.bind(this, false)}
+          yesConfirm={this._delete_cart_item.bind(this, true)}
+          />
       </View>
     );
   }
@@ -435,45 +420,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 8
   },
-
-  modal_confirm: {
-    width: '80%',
-    height: 110,
-    borderRadius: 3
-  },
-  modal_confirm_title: {
-    paddingHorizontal: 20,
-    marginTop: 16,
-    textAlign: 'center',
-    color: "#666666",
-    fontSize: 14
-  },
-  modal_confirm_actions: {
-    position: 'absolute',
-    width: '100%',
-    height: 42,
-    left: 0,
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#ffffff",
-    flexDirection: 'row',
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3
-  },
-  modal_confirm_btn: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '50%',
-
-    borderTopWidth: Util.pixel,
-    borderTopColor: "#dddddd",
-  },
-  modal_confirm_btn_left: {
-    borderRightWidth: Util.pixel,
-    borderRightColor: "#dddddd"
-  },
-  modal_confirm_label: {
-    fontSize: 16,
-    color: DEFAULT_COLOR
-  }
 });

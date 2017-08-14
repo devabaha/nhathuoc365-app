@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  ScrollView
 } from 'react-native';
 
 //library
@@ -33,60 +34,74 @@ export default class Address extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <ScrollView style={styles.content}>
+          <View style={styles.address_list_box}>
+            {this.state.data != null && <FlatList
+              ref="address_list"
+              data={this.state.data}
+              extraData={this.state}
+              keyExtractor={item => item.id}
+              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+              renderItem={({item}) => {
+                if(item.type == 'address_add') {
+                  return(
+                    <TouchableHighlight
+                      underlayColor="transparent"
+                      onPress={this.props.add_new}
+                      style={styles.address_add_box}>
+                      <View style={styles.address_add_content}>
+                        <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
+                        <View style={styles.address_add_icon_box}>
+                          <Icon name="plus" size={18} color="#999999" />
+                        </View>
+                      </View>
+                    </TouchableHighlight>
+                  );
+                }
 
-        <View style={styles.address_list_box}>
-          {this.state.data != null && <FlatList
-            ref="address_list"
-            data={this.state.data}
-            extraData={this.state}
-            keyExtractor={item => item.id}
-            ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-            renderItem={({item}) => {
-              if(item.type == 'address_add') {
                 return(
                   <TouchableHighlight
                     underlayColor="transparent"
-                    onPress={this.props.add_new}
-                    style={styles.address_add_box}>
-                    <View style={styles.address_add_content}>
-                      <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
-                      <View style={styles.address_add_icon_box}>
-                        <Icon name="plus" size={18} color="#999999" />
+                    onPress={() => 1}>
+                    <View style={styles.address_box}>
+                      <View style={styles.address_name_box}>
+                        <Text style={styles.address_name}>Đặng Ngọc Sơn</Text>
+                        <View style={styles.address_default_box}>
+                          <Text style={styles.address_default_title}>[Mặc định]</Text>
+                        </View>
                       </View>
+
+                      <View style={styles.address_content}>
+                        <Text style={styles.address_content_phone}>(+84) 1653538222</Text>
+                        <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia</Text>
+                        <Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
+                        <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
+                        <Text style={styles.address_content_tinh}>Hoà Bình</Text>
+                      </View>
+
+                      <View style={styles.address_selected_box}>
+                        <Icon name="check" size={24} color={DEFAULT_COLOR} />
+                        <Text style={styles.address_label}>Giao tới địa chỉ này</Text>
+                      </View>
+
+                      <TouchableHighlight
+                        style={styles.address_edit_btn}
+                        underlayColor="transparent"
+                        onPress={() => {
+                          Actions.createAddress({})
+                        }}>
+                        <View style={styles.address_edit_box}>
+                          <Icon name="pencil-square-o" size={12} color="#999999" />
+                          <Text style={styles.address_edit_label}>Sửa</Text>
+                        </View>
+                      </TouchableHighlight>
                     </View>
                   </TouchableHighlight>
                 );
-              }
-
-              return(
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}>
-                  <View style={styles.address_box}>
-                    <View style={styles.address_name_box}>
-                      <Text style={styles.address_name}>Đặng Ngọc Sơn</Text>
-                      <View style={styles.address_default_box}>
-                        <Text style={styles.address_default_title}>[Mặc định]</Text>
-                      </View>
-                    </View>
-
-                    <View style={styles.address_content}>
-                      <Text style={styles.address_content_phone}>(+84) 1653538222</Text>
-                      <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia</Text>
-                      <Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
-                      <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
-                      <Text style={styles.address_content_tinh}>Hoà Bình</Text>
-                    </View>
-
-                    <View style={styles.address_selected_box}>
-                      <Icon name="check" size={24} color={DEFAULT_COLOR} />
-                    </View>
-                  </View>
-                </TouchableHighlight>
-              );
-            }}
-          />}
-        </View>
+              }}
+            />}
+          </View>
+        </ScrollView>
 
         <TouchableHighlight
           underlayColor="transparent"
@@ -108,18 +123,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#f1f1f1",
     width: Util.size.width
   },
+  content: {
+    marginBottom: 60
+  },
   separator: {
     width: '100%',
-    height: 1,
+    height: Util.pixel,
     backgroundColor: "#dddddd"
   },
   address_list_box: {
     marginTop: 12,
-    backgroundColor: "#ffffff",
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd",
-    paddingTop: 2,
-    marginBottom: 60
+    borderColor: "#dddddd"
   },
   address_box: {
     paddingVertical: 8,
@@ -174,16 +189,24 @@ const styles = StyleSheet.create({
   },
   address_selected_box: {
     position: 'absolute',
-    width: 60,
+    width: 100,
     height: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    top: '30%',
-    right: 0
+    top: 30,
+    right: 10
+  },
+  address_label: {
+    fontSize: 10,
+    color: "#666666",
+    marginTop: 4
   },
 
   address_add_box: {
-
+    marginTop: 8,
+    backgroundColor: "#ffffff",
+    borderTopWidth: Util.pixel,
+    borderTopColor: "#dddddd"
   },
   address_add_content: {
     width: '100%',
@@ -229,5 +252,23 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     marginRight: 8
+  },
+
+  address_edit_btn: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    paddingVertical: 8,
+    paddingHorizontal: 15
+  },
+  address_edit_box: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  address_edit_label: {
+    fontSize: 12,
+    color: "#999999",
+    marginLeft: 4
   }
 });
