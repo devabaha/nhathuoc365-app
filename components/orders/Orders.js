@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 180,
     paddingVertical: 8,
-    backgroundColor: "#fafafa",
+    backgroundColor: "#ffffff",
     marginBottom: 8,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
