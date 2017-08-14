@@ -38,6 +38,7 @@ import Cart from './components/cart/Cart';
 import Payment from './components/payment/Payment';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
+import NotifyItem from './components/notification/NotifyItem';
 
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
@@ -99,7 +100,6 @@ export default class App extends React.Component {
               key="myTab2"
               icon={TabIcon}
               iconTitle="Thông báo"
-              initial={true}
               iconName="bell"
               size={20}
               onPress={()=> {
@@ -148,6 +148,7 @@ export default class App extends React.Component {
           <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
           <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
           <Scene initial={0} key="orders_item" title="CHI TIẾT ĐƠN HÀNG" component={OrdersItem} {...custommerNav} />
+          <Scene initial={0} key="notify_item" title="THÔNG BÁO" component={NotifyItem} {...custommerNav} />
 
         </Scene>
       </Router>

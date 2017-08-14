@@ -64,7 +64,9 @@ export default class Notification extends Component {
             return(
               <TouchableHighlight
                 underlayColor="transparent"
-                onPress={() => 1}>
+                onPress={() => {
+                  Actions.notify_item({});
+                }}>
 
                 <View style={[styles.notify_item, index < 3 ? styles.notify_item_active : null]}>
                   <View style={styles.notify_item_image_box}>
@@ -77,7 +79,7 @@ export default class Notification extends Component {
                       <Text style={styles.notify_item_desc}>Tất cả sản phẩm sẽ được giảm giá lên tới 30% theo mỗi hoá đơn...</Text>
                       <View style={styles.notify_item_time_box}>
                         <Icon name="clock-o" size={12} color="#666666" />
-                        <Text style={styles.notify_item_time}>14:29 01/08</Text>
+                        <Text style={styles.notify_item_time}>14:29 01/08 | Cửa hàng Anh Thực</Text>
                       </View>
                     </View>
                   </View>
