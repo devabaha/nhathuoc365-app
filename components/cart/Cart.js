@@ -95,7 +95,7 @@ export default class Cart extends Component {
       <View style={styles.container}>
 
         {this.state.data != null && <SectionList
-          renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
+          //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
           onEndReached={(num) => {
 
           }}

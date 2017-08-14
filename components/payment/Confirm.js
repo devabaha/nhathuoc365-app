@@ -9,7 +9,8 @@ import {
   StyleSheet,
   ScrollView,
   SectionList,
-  RefreshControl
+  RefreshControl,
+  TextInput
 } from 'react-native';
 
 // library
@@ -58,7 +59,10 @@ export default class Confirm extends Component {
           <View style={[styles.rows]}>
             <View style={styles.address_name_box}>
               <View>
-                <Text style={styles.address_name}>Thông tin đơn hàng</Text>
+                <View style={styles.box_icon_label}>
+                  <Icon style={styles.icon_label} name="info-circle" size={16} color="#999999" />
+                  <Text style={styles.input_label}>Thông tin đơn hàng</Text>
+                </View>
                 <Text style={styles.desc_content}>Mã số: ABARA-696969</Text>
               </View>
               <View style={styles.address_default_box}>
@@ -76,7 +80,10 @@ export default class Confirm extends Component {
 
           <View style={[styles.rows, styles.borderBottom]}>
             <View style={styles.address_name_box}>
-              <Text style={styles.address_name}>Phương thức thanh toán</Text>
+              <View style={styles.box_icon_label}>
+                <Icon style={styles.icon_label} name="credit-card" size={12} color="#999999" />
+                <Text style={styles.input_label}>Phương thức thanh toán</Text>
+              </View>
               <View style={styles.address_default_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
@@ -89,7 +96,7 @@ export default class Confirm extends Component {
 
           <ListHeader title="Thông tin này đã chính xác?" />
 
-          <View style={[styles.rows]}>
+          <View style={[styles.rows, styles.borderBottom]}>
             <View style={styles.address_name_box}>
               <Text style={styles.address_name}>Đặng Ngọc Sơn</Text>
               <View style={styles.address_default_box}>
@@ -110,22 +117,33 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <View style={[styles.rows, styles.borderBottom]}>
-            <View style={styles.address_name_box}>
-              <Text style={styles.address_name}>Thời gian giao hàng</Text>
-              <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}>
-                  <Text style={styles.address_default_title}>Trước 10 giờ sáng</Text>
-                </TouchableHighlight>
-              </View>
+          <View style={[styles.rows, styles.borderBottom, styles.total_price]}>
+            <View style={styles.box_icon_label}>
+              <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
+              <Text style={styles.input_label}>Ghi chú</Text>
             </View>
+            <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
+
+              <TextInput
+                style={[styles.input_address_text, {height: this.state.address_height | 50}]}
+                keyboardType="default"
+                maxLength={250}
+                placeholder="Nhập ghi chú của bạn tại đây"
+                placeholderTextColor="#999999"
+                multiline={true}
+                underlineColorAndroid="#ffffff"
+                onContentSizeChange={(e) => {
+                  this.setState({address_height: e.nativeEvent.contentSize.height});
+                }}
+                />
           </View>
 
           <View style={[styles.rows, styles.borderBottom, styles.total_price]}>
             <View style={styles.address_name_box}>
-              <Text style={styles.address_name}>Thành tiền</Text>
+              <View style={styles.box_icon_label}>
+                <Icon style={styles.icon_label} name="usd" size={14} color="#999999" />
+                <Text style={styles.input_label}>Thành tiền</Text>
+              </View>
               <View style={styles.address_default_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
@@ -139,7 +157,7 @@ export default class Confirm extends Component {
           <ListHeader title="Mặt hàng đã chọn" />
 
           {this.state.data != null && <SectionList
-            renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
+            //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
             onEndReached={(num) => {
 
             }}
@@ -391,5 +409,30 @@ const styles = StyleSheet.create({
   text_total_items: {
     fontSize: 12,
     color: "#666666"
-  }
+  },
+
+  input_address_text: {
+    width: '100%',
+    color: "#000000",
+    fontSize: 14,
+    marginTop: 4
+  },
+  input_label: {
+    fontSize: 16,
+    color: "#000000",
+    marginLeft: 4
+  },
+  input_label_help: {
+    fontSize: 12,
+    marginTop: 2,
+    color: "#666666"
+  },
+
+  box_icon_label: {
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  icon_label: {
+  },
+
 });
