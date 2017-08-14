@@ -165,6 +165,10 @@ export default class Home extends Component {
       <View style={styles.container}>
 
         {this.state.dataSource != null && <FlatList
+          onEndReached={(num) => {
+
+          }}
+          onEndReachedThreshold={0}
           data={this.state.dataSource}
           renderItem={this.renderRow}
           keyExtractor={this._keyExtractor}

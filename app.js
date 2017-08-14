@@ -99,13 +99,14 @@ export default class App extends React.Component {
               key="myTab2"
               icon={TabIcon}
               iconTitle="Thông báo"
+              initial={true}
               iconName="bell"
               size={20}
               onPress={()=> {
                 Actions._notification({type: ActionConst.REFRESH});
               }}
              >
-                <Scene key="_notification" title="Thông báo" component={Notification} {...custommerNav} />
+                <Scene key="_notification" title="THÔNG BÁO" component={Notification} {...custommerNav} />
             </Scene>
 
             {/**
@@ -116,7 +117,6 @@ export default class App extends React.Component {
               icon={TabIcon}
               iconTitle="Đơn hàng"
               iconName="shopping-cart"
-              initial={true}
               size={20}
               onPress={()=> {
                 Actions._orders({type: ActionConst.REFRESH});

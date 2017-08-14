@@ -48,6 +48,33 @@ export default class Confirm extends Component {
     }
   }
 
+  componentWillMount() {
+    if (!this.state.single) {
+      Actions.refresh({
+        renderRightButton: this._renderRightButton.bind(this)
+      });
+    }
+  }
+
+  _renderRightButton() {
+    return(
+      <View style={styles.right_btn_box}>
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
+
+          }}>
+          <View style={styles.right_btn_add_store}>
+            <Icon name="commenting" size={20} color="#ffffff" />
+            <View style={styles.stores_info_action_notify}>
+              <Text style={styles.stores_info_action_notify_value}>3</Text>
+            </View>
+          </View>
+        </TouchableHighlight>
+      </View>
+    );
+  }
+
   _onRefresh() {
     this.setState({refreshing: true});
 
@@ -102,7 +129,7 @@ export default class Confirm extends Component {
 
           {single && <ListHeader title="Thông tin này đã chính xác?" />}
 
-          <View style={[styles.rows, styles.borderBottom, single ? null : styles.mt12]}>
+          <View style={[styles.rows, styles.borderBottom, single ? null : styles.mt8]}>
             <View style={styles.address_name_box}>
               <View style={styles.box_icon_label}>
                 <Icon style={styles.icon_label} name="truck" size={13} color="#999999" />
@@ -141,7 +168,7 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <View style={[styles.rows, styles.borderBottom, styles.mt12]}>
+          <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
             <View style={styles.box_icon_label}>
               <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
               <Text style={styles.input_label}>Ghi chú</Text>
@@ -168,7 +195,7 @@ export default class Confirm extends Component {
             )}
           </View>
 
-          <View style={[styles.rows, styles.borderBottom, styles.mt12]}>
+          <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
             <View style={styles.address_name_box}>
               <View style={styles.box_icon_label}>
                 <Icon style={styles.icon_label} name="usd" size={14} color="#999999" />
@@ -184,7 +211,7 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <View style={[styles.rows, styles.borderBottom, styles.mt12]}>
+          <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
             <View style={styles.address_name_box}>
               <View style={styles.box_icon_label}>
                 <Icon style={styles.icon_label} name="shopping-cart" size={14} color="#999999" />
@@ -345,6 +372,31 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f1f1f1",
     width: Util.size.width
+  },
+  right_btn_add_store: {
+    paddingVertical: 1,
+    paddingHorizontal: 8,
+    paddingTop: isAndroid ? 4 : 0
+  },
+  right_btn_box: {
+    flexDirection: 'row'
+  },
+  stores_info_action_notify: {
+    position: 'absolute',
+    width: 16,
+    height: 16,
+    backgroundColor: 'red',
+    top: isAndroid ? 0 : -4,
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
+  },
+  stores_info_action_notify_value: {
+    fontSize: 10,
+    color: '#ffffff',
+    fontWeight: '600'
   },
   content: {
     marginBottom: 60
@@ -519,8 +571,8 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
 
-  mt12: {
-    marginTop: 12
+  mt8: {
+    marginTop: 8
   },
   text_total_items: {
     fontSize: 12,
