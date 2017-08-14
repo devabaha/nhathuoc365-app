@@ -78,8 +78,8 @@ export default class Notification extends Component {
                       <Text style={styles.notify_item_title}>Tưng bừng khuyến mãi 30% mọi sản phẩm nhân dịp khai trương.</Text>
                       <Text style={styles.notify_item_desc}>Tất cả sản phẩm sẽ được giảm giá lên tới 30% theo mỗi hoá đơn...</Text>
                       <View style={styles.notify_item_time_box}>
-                        <Icon name="clock-o" size={12} color="#666666" />
-                        <Text style={styles.notify_item_time}>14:29 01/08 | Cửa hàng Anh Thực</Text>
+                        <Icon name="newspaper-o" size={14} color="#666666" />
+                        <Text style={styles.notify_item_time}>Cửa hàng Anh Thực | 14:29 01/08</Text>
                       </View>
                     </View>
                   </View>
