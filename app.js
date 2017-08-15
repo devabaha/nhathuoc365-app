@@ -39,6 +39,8 @@ import Payment from './components/payment/Payment';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
 import NotifyItem from './components/notification/NotifyItem';
+import SearchStore from './components/home/SearchStore';
+import ListStore from './components/home/ListStore';
 
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
@@ -145,10 +147,12 @@ export default class App extends React.Component {
           <Scene initial={0} key="payment" title="ĐỊA CHỈ NHẬN HÀNG" component={Payment} {...custommerNav} />
           <Scene initial={0} key="createAddress" title="THÊM ĐỊA CHỈ MỚI" component={CreateAddress} {...custommerNav} />
           <Scene initial={0} key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
-          <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
+          <Scene initial={0} key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
           <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
           <Scene initial={0} key="orders_item" title="CHI TIẾT ĐƠN HÀNG" component={OrdersItem} {...custommerNav} />
           <Scene initial={0} key="notify_item" title="THÔNG BÁO" component={NotifyItem} {...custommerNav} />
+          <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
+          <Scene initial={0} key="list_store" title="DANH SÁCH CỬA HÀNG" component={ListStore} {...custommerNav} />
 
         </Scene>
       </Router>

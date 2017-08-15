@@ -35,8 +35,7 @@ export default class Notification extends Component {
         {id: 11, image: 'http://cosp.com.vn/images/stores/2016/10/31/shop-thuc-pham-sach-anh-tinh-linh-dam.jpg'},
         {id: 12, image: 'http://cosp.com.vn/images/stores/2016/09/06/thiet-ke-cua-hang-thuc-pham-sach%20(7).jpg'}
       ],
-      refreshing: false,
-      cart_check_list: {}
+      refreshing: false
     }
   }
 

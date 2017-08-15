@@ -13,9 +13,13 @@ import {
   TouchableOpacity,
   View,
   ViewPropTypes,
+  TextInput,
+  Keyboard
 } from 'react-native';
 
-import { Actions } from 'react-native-router-flux';
+// librarys
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Actions, ActionConst } from 'react-native-router-flux';
 import _drawerImage from '../images/menu_burger.png';
 import _backButtonImage from '../images/back_chevron.png';
 
@@ -174,6 +178,10 @@ const propTypes = {
 
 const contextTypes = {
   drawer: PropTypes.object,
+
+  autoFocus: PropTypes.bool,
+  placeholder: PropTypes.string,
+  showSearchBar: PropTypes.bool
 };
 
 const defaultProps = {
@@ -192,6 +200,32 @@ class NavBar extends React.Component {
     this.renderLeftButton = this.renderLeftButton.bind(this);
     this.renderTitle = this.renderTitle.bind(this);
     this.renderImageTitle = this.renderImageTitle.bind(this);
+
+    this.state = {
+      search_width: Util.size.width * 0.75,
+      search_left: Util.size.width * 0.25 / 2,
+      autoFocus: false
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this._searchFocus(nextProps);
+  }
+
+  _searchFocus(nextProps) {
+    if (this.searchIsFocus) {
+      return;
+    }
+
+    this.searchIsFocus = true;
+
+    if (nextProps.autoFocus) {
+      setTimeout(() => {
+        if (this.refs_search_input) {
+          this.refs_search_input.focus();
+        }
+      }, 1000);
+    }
   }
 
   renderBackButton() {
@@ -441,43 +475,146 @@ class NavBar extends React.Component {
     if (typeof (title) === 'function') {
       title = title(childState);
     }
-    return (
-      <Animated.View
-        key={childState.key}
-        style={[
-          styles.titleWrapper,
-          this.props.titleWrapperStyle,
-        ]}
-      >
-        <Animated.Text
-          lineBreakMode="tail"
-          numberOfLines={1}
-          {...this.props.titleProps}
+
+    if (this.props.showSearchBar) {
+      return (
+        <Animated.View
+          key={childState.key}
           style={[
-            styles.title,
-            this.props.titleStyle,
-            this.props.navigationState.titleStyle,
-            childState.titleStyle,
+            styles.titleWrapper,
+            this.props.titleWrapperStyle,
             {
-              opacity: this.props.position.interpolate({
-                inputRange: [index - 1, index, index + 1],
-                outputRange: [0, this.props.titleOpacity, 0],
-              }),
-              left: this.props.position.interpolate({
-                inputRange: [index - 1, index + 1],
-                outputRange: [200, -200],
-              }),
-              right: this.props.position.interpolate({
-                inputRange: [index - 1, index + 1],
-                outputRange: [-200, 200],
-              }),
-            },
+              height: 34,
+              width: Util.size.width,
+              alignItems: 'flex-end'
+            }
           ]}
         >
-          {title}
-        </Animated.Text>
-      </Animated.View>
-    );
+          <Animated.View
+            lineBreakMode="tail"
+            numberOfLines={1}
+            {...this.props.titleProps}
+            style={[
+              {
+                opacity: this.props.position.interpolate({
+                  inputRange: [index - 1, index, index + 1],
+                  outputRange: [0, this.props.titleOpacity, 0],
+                }),
+                left: this.props.position.interpolate({
+                  inputRange: [index - 1, index + 1],
+                  outputRange: [200, -200],
+                }),
+                right: this.props.position.interpolate({
+                  inputRange: [index - 1, index + 1],
+                  outputRange: [-200, 200],
+                }),
+                backgroundColor: "rgba(0,0,0,0.6)",
+                width: this.state.search_width,
+                marginRight: Util.size.width * 0.25 / 2,
+                height: isIOS ? 28 : 32,
+                top: isIOS ? -3 : -2,
+                borderRadius: 3,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'flex-start'
+              }
+            ]}
+          >
+            <Icon
+              style={{
+                marginLeft: 8
+              }}
+              name="search" size={12} color="#999999" />
+            <TextInput
+              ref={ref => this.refs_search_input = ref}
+              placeholder={this.props.placeholder || "Tìm kiếm"}
+              returnKeyType="search"
+              placeholderTextColor="#999999"
+              underlineColorAndroid="transparent"
+              selectTextOnFocus
+              style={{
+                fontSize: 14,
+                color: "#ffffff",
+                paddingHorizontal: 4,
+                paddingVertical: 0,
+                width: '100%',
+                height: '100%'
+              }}
+              autoFocus={this.state.autoFocus}
+              onFocus={() => {
+                Actions.refresh({
+                  rightTitle: "Huỷ",
+                  onRight: () => {
+                    Keyboard.dismiss();
+                  },
+                  rightButtonTextStyle: {
+                    color: "#ebebeb",
+                    fontSize: 14,
+                    marginTop: isIOS ? 1 : 1,
+                    marginRight: 2
+                  },
+                  hideBackImage: true
+                });
+
+                this.setState({
+                  search_width: Util.size.width * 0.85
+                });
+                layoutAnimation();
+              }}
+              onBlur={() => {
+                Actions.refresh({
+                  rightTitle: undefined,
+                  onRight: undefined,
+                  hideBackImage: false
+                });
+                this.setState({
+                  search_width: Util.size.width * 0.75
+                });
+                layoutAnimation();
+              }}
+             />
+          </Animated.View>
+        </Animated.View>
+      );
+    } else {
+      return (
+        <Animated.View
+          key={childState.key}
+          style={[
+            styles.titleWrapper,
+            this.props.titleWrapperStyle,
+          ]}
+        >
+          <Animated.Text
+            lineBreakMode="tail"
+            numberOfLines={1}
+            {...this.props.titleProps}
+            style={[
+              styles.title,
+              this.props.titleStyle,
+              this.props.navigationState.titleStyle,
+              childState.titleStyle,
+              {
+                opacity: this.props.position.interpolate({
+                  inputRange: [index - 1, index, index + 1],
+                  outputRange: [0, this.props.titleOpacity, 0],
+                }),
+                left: this.props.position.interpolate({
+                  inputRange: [index - 1, index + 1],
+                  outputRange: [200, -200],
+                }),
+                right: this.props.position.interpolate({
+                  inputRange: [index - 1, index + 1],
+                  outputRange: [-200, 200],
+                }),
+              },
+            ]}
+          >
+            {title}
+          </Animated.Text>
+        </Animated.View>
+      );
+    }
   }
 
   renderImageTitle() {

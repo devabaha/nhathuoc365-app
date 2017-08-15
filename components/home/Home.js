@@ -31,6 +31,9 @@ export default class Home extends Component {
       ],
       refreshing: false,
     };
+
+    this._go_search_store = this._go_search_store.bind(this);
+    this._go_list_store = this._go_list_store.bind(this);
   }
 
   componentWillMount() {
@@ -54,6 +57,20 @@ export default class Home extends Component {
     );
   }
 
+  _go_search_store() {
+    if (this.refs_modal_add_store) {
+        this.refs_modal_add_store.close();
+    }
+    Actions.search_store({});
+  }
+
+  _go_list_store() {
+    if (this.refs_modal_add_store) {
+        this.refs_modal_add_store.close();
+    }
+    Actions.list_store({});
+  }
+
   _onRefresh() {
     this.setState({refreshing: true});
 
@@ -72,7 +89,7 @@ export default class Home extends Component {
           <Text style={styles.add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
 
           <View style={styles.add_store_actions_box}>
-            <TouchableHighlight
+            {/*<TouchableHighlight
               onPress={() => 1}
               underlayColor="transparent"
               style={styles.add_store_action_btn}>
@@ -80,10 +97,10 @@ export default class Home extends Component {
                 <Icon name="qrcode" size={28} color="#333333" />
                 <Text style={styles.add_store_action_label}>Quét QR code</Text>
               </View>
-            </TouchableHighlight>
+            </TouchableHighlight>*/}
 
             <TouchableHighlight
-              onPress={() => 1}
+              onPress={this._go_search_store}
               underlayColor="transparent"
               style={styles.add_store_action_btn}>
               <View style={styles.add_store_action_btn_box}>
@@ -93,7 +110,7 @@ export default class Home extends Component {
             </TouchableHighlight>
 
             <TouchableHighlight
-              onPress={() => 1}
+              onPress={this._go_list_store}
               underlayColor="transparent"
               style={styles.add_store_action_btn}>
               <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
@@ -170,7 +187,7 @@ export default class Home extends Component {
           }}
           onEndReachedThreshold={0}
           data={this.state.dataSource}
-          renderItem={this.renderRow}
+          renderItem={this.renderRow.bind(this)}
           keyExtractor={this._keyExtractor}
           refreshControl={
             <RefreshControl
@@ -187,21 +204,23 @@ export default class Home extends Component {
 
           <Text style={styles.modal_add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
 
-          <Button
+          {/*<Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#009588"
             icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Quét QR code' />
+            title='Quét QR code' />*/}
 
           <Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor={DEFAULT_COLOR}
+            onPress={this._go_search_store}
             icon={{name: 'shopping-cart', type: 'font-awesome'}}
             title='Nhập mã cửa hàng' />
 
           <Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#ffc109"
+            onPress={this._go_list_store}
             icon={{name: 'search-plus', type: 'font-awesome'}}
             title='Xem danh sách cửa hàng' />
         </Modal>
@@ -315,7 +334,7 @@ const styles = StyleSheet.create({
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    width: Math.floor((Util.size.width - 16) / 3),
+    width: Math.floor((Util.size.width - 16) / 2),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
@@ -332,7 +351,8 @@ const styles = StyleSheet.create({
 
   modal_add_store: {
     width: '90%',
-    height: 228,
+    // height: 228,
+    height: 180,
     borderRadius: 3
   },
   modal_add_store_title: {
