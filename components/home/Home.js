@@ -22,14 +22,9 @@ export default class Home extends Component {
   constructor() {
     super();
     this.state = {
-      dataSource: [
-        {id: 1, image: 'http://cosp.com.vn/images/stores/2017/06/27/thiet-ke-shop-thuc-pham-sach.jpg'},
-        {id: 2, image: 'http://cosp.com.vn/images/stores/2017/01/05/shop-thuc-pham-sach-co-tam-dienbien2.jpg'},
-        {id: 3, image: 'http://cosp.com.vn/images/stores/2016/10/31/shop-thuc-pham-sach-anh-tinh-linh-dam.jpg'},
-        {id: 4, image: 'http://cosp.com.vn/images/stores/2016/09/06/thiet-ke-cua-hang-thuc-pham-sach%20(7).jpg'},
-        {id: 5, title: 'add_store'}
-      ],
+      stores_data: null,
       refreshing: false,
+      loading: false
     };
 
     this._go_search_store = this._go_search_store.bind(this);
@@ -42,6 +37,56 @@ export default class Home extends Component {
     });
   }
 
+  componentDidMount() {
+
+    this._login();
+
+  }
+
+  // login khi mở app
+  async _login() {
+    this.setState({
+      loading: true
+    });
+
+    try {
+      var response = await APIHandler.user_login({
+        fb_access_token: ''
+      });
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          this.props.store.setUserInfo(response.data);
+
+          this._getData();
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  // lấy dữ liệu trang home
+  async _getData() {
+    this.setState({
+      loading: true
+    });
+
+    try {
+      var response = await APIHandler.user_home();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          loading: false,
+          stores_data: response.data
+        });
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+  }
+
+  // render button trên navbar
   _renderRightButton() {
     return(
       <TouchableHighlight
@@ -57,6 +102,7 @@ export default class Home extends Component {
     );
   }
 
+  // tới màn hình tìm cửa hàng theo mã CH
   _go_search_store() {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
@@ -64,6 +110,7 @@ export default class Home extends Component {
     Actions.search_store({});
   }
 
+  // tới màn hình tìm cửa hàng theo danh sách
   _go_list_store() {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
@@ -71,6 +118,18 @@ export default class Home extends Component {
     Actions.list_store({});
   }
 
+  // tới màn hình store
+  _go_stores(item) {
+    action(() => {
+      this.props.store.setStoreId(item.id);
+    })();
+
+    Actions.stores({
+      title: item.name
+    });
+  }
+
+  // pull to reload danh sách cửa hàng
   _onRefresh() {
     this.setState({refreshing: true});
 
@@ -79,8 +138,7 @@ export default class Home extends Component {
     }, 1000);
   }
 
-  _keyExtractor = (item, index) => item.id;
-
+  // render rows cửa hàng trong list
   renderRow({item}) {
     // box add store
     if (_.isObject(item) && item.title == 'add_store') {
@@ -127,17 +185,15 @@ export default class Home extends Component {
     return(
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={() => {
-          Actions.stores({});
-        }}>
+        onPress={this._go_stores.bind(this, item)}>
         <View style={styles.stores}>
 
-          <Image style={styles.stores_image} source={{uri: item.image}} />
+          <Image style={styles.stores_image} source={{uri: item.logo}} />
 
           <View style={styles.stores_info}>
             <View style={styles.stores_info_text}>
-              <Text style={styles.stores_info_name}>{"O'Green Chợ Long Biên"}</Text>
-              <Text style={styles.stores_info_address}>Số 01 Lương Yên, Long Biên, Hà Nội</Text>
+              <Text style={styles.stores_info_name}>{item.name}</Text>
+              <Text style={styles.stores_info_address}>{item.address}</Text>
             </View>
 
             <View style={styles.stores_info_cart}>
@@ -181,14 +237,14 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
 
-        {this.state.dataSource != null && <FlatList
+        {this.state.stores_data != null && <FlatList
           onEndReached={(num) => {
 
           }}
           onEndReachedThreshold={0}
-          data={this.state.dataSource}
+          data={this.state.stores_data}
           renderItem={this.renderRow.bind(this)}
-          keyExtractor={this._keyExtractor}
+          keyExtractor={item => item.id}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}

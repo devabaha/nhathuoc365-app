@@ -47,6 +47,27 @@ export default class SearchStore extends Component {
     });
   }
 
+
+  componentDidMount() {
+      this._add_site();
+  }
+
+  async _add_site() {
+    try {
+      var response = await APIHandler.user_add_site('BTNKT10');
+
+      if (response && response.status == STATUS_SUCCESS) {
+        console.warn(JSON.stringify(response));
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+
+
   _onRefresh() {
     this.setState({refreshing: true});
 

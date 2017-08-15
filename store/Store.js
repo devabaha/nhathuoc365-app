@@ -3,10 +3,15 @@ import autobind from 'autobind-decorator';
 
 @autobind
 class Store {
-  @observable value = '1'
+  @observable user_info = null;
+  @observable store_id = null;
 
-  @action setValue(value) {
-    this.value = value;
+  @action setUserInfo(data) {
+    this.user_info = data;
+  }
+
+  @action setStoreId(data) {
+    this.store_id = data;
   }
 }
 

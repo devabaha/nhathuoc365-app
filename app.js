@@ -92,7 +92,7 @@ export default class App extends React.Component {
                 Actions._home({type: ActionConst.REFRESH});
               }}
              >
-                <Scene key="_home" title="MY FOOD" component={Home} {...custommerNav} />
+                <Scene key="_home" title="CỬA HÀNG" component={Home} {...custommerNav} />
             </Scene>
 
             {/**
@@ -135,7 +135,6 @@ export default class App extends React.Component {
               icon={TabIcon}
               iconTitle="Tài khoản"
               iconName="user"
-              initial={true}
               size={20}
               onPress={()=> {
                 Actions._account({type: ActionConst.REFRESH});
