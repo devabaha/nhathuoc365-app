@@ -229,7 +229,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: Util.pixel,
     backgroundColor: "#dddddd",
-
   },
 
   items_box: {

@@ -135,12 +135,13 @@ export default class App extends React.Component {
               icon={TabIcon}
               iconTitle="Tài khoản"
               iconName="user"
+              initial={true}
               size={20}
               onPress={()=> {
                 Actions._account({type: ActionConst.REFRESH});
               }}
              >
-                <Scene key="_account" title="Tài khoản" component={Account} {...custommerNav} />
+                <Scene hideNavBar key="_account" title="Tài khoản" component={Account} {...custommerNav} />
             </Scene>
           </Scene>
 
