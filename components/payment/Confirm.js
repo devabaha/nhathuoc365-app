@@ -30,7 +30,7 @@ export default class Confirm extends Component {
     this.state = {
       data: [
         {
-          key: "Thực phẩm sạch Anh Thực",
+          key: "O'Green Nguyễn Trí Thanh",
           data: [
             {id: 1, name: 'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg'},
             {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},

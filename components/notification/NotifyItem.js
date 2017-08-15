@@ -30,7 +30,7 @@ export default class NotifyItem extends Component {
 
             <View style={styles.notify_time_box}>
               <Icon name="newspaper-o" size={14} color="#666666" />
-              <Text style={styles.notify_time}>Cửa hàng Anh Thực | 14:29 01/08</Text>
+              <Text style={styles.notify_time}>{"O'Green Cầu Giấy"} | 14:29 01/08</Text>
             </View>
 
             <View style={styles.notify_sort_content_box}>

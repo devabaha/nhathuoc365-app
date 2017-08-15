@@ -28,7 +28,7 @@ export default class Cart extends Component {
     this.state = {
       data: [
         {
-          key: "Thực phẩm sạch Anh Thực",
+          key: "O'Green Nguyễn Trí Thanh",
           image: "http://cosp.com.vn/images/stores/2017/06/27/thiet-ke-shop-thuc-pham-sach.jpg",
           data: [
             {id: 1, name: 'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg'},
@@ -37,7 +37,7 @@ export default class Cart extends Component {
           ]
         },
         {
-          key: "Thực phẩm sạch Anh Thực 02",
+          key: "O'Green Nguyễn Lương Bằng",
           image: "http://cosp.com.vn/images/stores/2017/06/27/thiet-ke-shop-thuc-pham-sach.jpg",
           data: [
             {id: 4, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},
@@ -46,7 +46,7 @@ export default class Cart extends Component {
           ]
         },
         {
-          key: "Thực phẩm sạch Anh Thực 03",
+          key: "O'Green Đào Duy Anh",
           image: "http://cosp.com.vn/images/stores/2017/06/27/thiet-ke-shop-thuc-pham-sach.jpg",
           data: [
             {id: 7, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},

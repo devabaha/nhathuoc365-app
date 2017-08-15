@@ -136,7 +136,7 @@ export default class Home extends Component {
 
           <View style={styles.stores_info}>
             <View style={styles.stores_info_text}>
-              <Text style={styles.stores_info_name}>Thực phẩm sạch Anh Thực 03</Text>
+              <Text style={styles.stores_info_name}>{"O'Green Chợ Long Biên"}</Text>
               <Text style={styles.stores_info_address}>Số 01 Lương Yên, Long Biên, Hà Nội</Text>
             </View>
 
@@ -255,7 +255,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    padding: 8
+    paddingVertical: 8,
+    paddingHorizontal: 15
   },
   stores_info_text: {
     width: Util.size.width - 130
@@ -313,8 +314,11 @@ const styles = StyleSheet.create({
   add_store_box: {
     width: '100%',
     backgroundColor: "#ffffff",
-    marginVertical: 4,
-    padding: 8
+    marginTop: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderTopWidth: Util.pixel,
+    borderColor: "#dddddd"
   },
   add_store_title: {
     color: "#404040",
