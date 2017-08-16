@@ -16,8 +16,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
 import Swiper from 'react-native-swiper';
+import HTMLView from 'react-native-htmlview';
 
 // components
 import Items from '../stores/Items';
@@ -35,7 +35,10 @@ export default class Item extends Component {
        {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
        {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'}
      ],
-     refreshing: false
+     refreshing: false,
+     item: props.item,
+     item_data: null,
+     loading: false
     }
   }
 
@@ -43,6 +46,47 @@ export default class Item extends Component {
     Actions.refresh({
       renderRightButton: this._renderRightButton
     });
+  }
+
+  componentDidMount() {
+    this.start_time = time();
+
+    this._getData();
+
+  }
+
+  // thời gian trễ khi chuyển màn hình
+  _delay() {
+    var delay = 450 - (Math.abs(time() - this.start_time));
+    return delay;
+  }
+
+  // Lấy chi tiết sản phẩm
+  async _getData() {
+    var {item} = this.state;
+
+    this.setState({
+      loading: true
+    });
+
+    try {
+      var response = await APIHandler.site_product(this.props.store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(() => {
+          this.setState({
+            item_data: response.data,
+            loading: false
+          });
+          layoutAnimation();
+        }, this._delay());
+      }
+
+    } catch (e) {
+
+    } finally {
+
+    }
   }
 
   _renderRightButton() {
@@ -84,6 +128,8 @@ export default class Item extends Component {
   }
 
   render() {
+    var {item, item_data} = this.state;
+
     return (
       <View style={styles.container}>
 
@@ -106,11 +152,11 @@ export default class Item extends Component {
 
           <View style={styles.item_heading_box}>
 
-            <Text style={styles.item_heading_title}>Combo 3 Quả Dưa Leo Tươi Mát</Text>
+            <Text style={styles.item_heading_title}>{item_data ? item_data.name : item.name}</Text>
 
             <View style={styles.item_heading_price_box}>
               <Text style={styles.item_heading_safe_off_value}>35,000</Text>
-              <Text style={styles.item_heading_price}>30,000</Text>
+              <Text style={styles.item_heading_price}>{item_data ? item_data.price_view : item.price}</Text>
             </View>
 
             <Text style={styles.item_heading_qnt}>250g x 2gói</Text>
@@ -137,57 +183,66 @@ export default class Item extends Component {
 
           </View>
 
-          <View style={styles.item_content_box}>
+          {item_data != null && (
+            <View style={styles.item_content_box}>
 
-            <View style={[styles.item_content_item, styles.item_content_item_left]}>
-              <View style={styles.item_content_icon_box}>
-                <Icon name="clock-o" size={16} color="#999999" />
+              <View style={[styles.item_content_item, styles.item_content_item_left]}>
+                <View style={styles.item_content_icon_box}>
+                  <Icon name="clock-o" size={16} color="#999999" />
+                </View>
+                <Text style={styles.item_content_item_title}>GIAO SỚM NHẤT</Text>
               </View>
-              <Text style={styles.item_content_item_title}>GIAO SỚM NHẤT</Text>
-            </View>
 
-            <View style={[styles.item_content_item, styles.item_content_item_right]}>
-              <Text style={[styles.item_content_item_value, {color: DEFAULT_COLOR}]}>Trong 1 giờ</Text>
-            </View>
-
-            <View style={[styles.item_content_item, styles.item_content_item_left]}>
-              <View style={styles.item_content_icon_box}>
-                <Icon name="user" size={16} color="#999999" />
+              <View style={[styles.item_content_item, styles.item_content_item_right]}>
+                <Text style={[styles.item_content_item_value, {color: DEFAULT_COLOR}]}>Trong 1 giờ</Text>
               </View>
-              <Text style={styles.item_content_item_title}>NHÃN HIỆU</Text>
-            </View>
 
-            <View style={[styles.item_content_item, styles.item_content_item_right]}>
-              <Text style={styles.item_content_item_value}>Organica</Text>
-            </View>
-
-            <View style={[styles.item_content_item, styles.item_content_item_left]}>
-              <View style={styles.item_content_icon_box}>
-                <Icon name="map-marker" size={16} color="#999999" />
+              <View style={[styles.item_content_item, styles.item_content_item_left]}>
+                <View style={styles.item_content_icon_box}>
+                  <Icon name="user" size={16} color="#999999" />
+                </View>
+                <Text style={styles.item_content_item_title}>NHÃN HIỆU</Text>
               </View>
-              <Text style={styles.item_content_item_title}>XUẤT XỨ</Text>
-            </View>
 
-            <View style={[styles.item_content_item, styles.item_content_item_right]}>
-              <Text style={styles.item_content_item_value}>Đà Lạt</Text>
-            </View>
-
-            <View style={[styles.item_content_item, styles.item_content_item_left]}>
-              <View style={styles.item_content_icon_box}>
-                <Icon name="usd" size={16} color="#999999" />
+              <View style={[styles.item_content_item, styles.item_content_item_right]}>
+                <Text style={styles.item_content_item_value}>Organica</Text>
               </View>
-              <Text style={styles.item_content_item_title}>GIÁ HIỂN THỊ</Text>
+
+              <View style={[styles.item_content_item, styles.item_content_item_left]}>
+                <View style={styles.item_content_icon_box}>
+                  <Icon name="map-marker" size={16} color="#999999" />
+                </View>
+                <Text style={styles.item_content_item_title}>XUẤT XỨ</Text>
+              </View>
+
+              <View style={[styles.item_content_item, styles.item_content_item_right]}>
+                <Text style={styles.item_content_item_value}>Đà Lạt</Text>
+              </View>
+
+              <View style={[styles.item_content_item, styles.item_content_item_left]}>
+                <View style={styles.item_content_icon_box}>
+                  <Icon name="usd" size={16} color="#999999" />
+                </View>
+                <Text style={styles.item_content_item_title}>GIÁ HIỂN THỊ</Text>
+              </View>
+
+              <View style={[styles.item_content_item, styles.item_content_item_right]}>
+                <Text style={styles.item_content_item_value}>Bằng giá cửa hàng</Text>
+              </View>
+
             </View>
-
-            <View style={[styles.item_content_item, styles.item_content_item_right]}>
-              <Text style={styles.item_content_item_value}>Bằng giá cửa hàng</Text>
-            </View>
-
-          </View>
-
+          )}
 
           <View style={styles.item_content_text}>
-            <Text style={styles.item_content_desc}>Được trồng tại trang trại Organica Đồng Nai. Sản phẩm được chứng nhận hữu cơ tiêu chuẩn EU và USDA/NOP bởi Control Union. {'\n\n'}Ra đời vào năm 2012, Công ty cổ phần cà phê Nam Long là công ty chuyên cung cấp sỉ và lẻ cà phê chất lượng cao. {'\n\n'}Tại Nam Long, nguyên liệu đầu vào và chuỗi sản xuất luôn là vấn đề được chúng tôi tập trung quản trị tối đa nhằm đem lại những sản phẩm có chất lượng tốt nhất.</Text>
+            {item_data != null ? (
+              <HTMLView
+                renderNode={this.renderNode.bind(this)}
+                value={item_data.content}
+                stylesheet={html_styles}
+              />
+            ) : (
+              <Indicator size="small" />
+            )}
           </View>
 
           {this.state.data != null && <FlatList
@@ -221,7 +276,56 @@ export default class Item extends Component {
       </View>
     );
   }
+
+  renderNode(node, index, siblings, parent, defaultRenderer) {
+    if (node.name == 'img') {
+      const element = node.attribs;
+
+      return (
+        <View
+          style={{
+            width: Util.size.width - 30,
+            height: 200,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginVertical: 12
+          }}>
+          <Image
+            style={{
+              width: Util.size.width * 0.8,
+              height: 200,
+              resizeMode: 'contain'
+            }}
+            source={{uri: element.src}}
+            />
+        </View>
+      );
+    }
+  }
 }
+
+const html_styles = StyleSheet.create({
+  div: {
+    color: "#404040",
+    fontSize: 14,
+    lineHeight: 24
+  },
+  p: {
+    color: "#404040",
+    fontSize: 14,
+    lineHeight: 24
+  },
+  a: {
+    fontWeight: '300',
+    color: "#FF3366",
+  },
+  img: {
+    width: "200",
+    height: "100",
+    padding: 10,
+    marginTop: 10
+  }
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -396,7 +500,8 @@ const styles = StyleSheet.create({
 
   item_content_text: {
     width: '100%',
-    padding: 15
+    paddingHorizontal: 15,
+    paddingTop: 16
   },
   item_content_desc: {
     fontSize: 16,

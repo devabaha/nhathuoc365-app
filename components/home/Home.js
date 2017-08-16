@@ -30,6 +30,7 @@ export default class Home extends Component {
 
     this._go_search_store = this._go_search_store.bind(this);
     this._go_list_store = this._go_list_store.bind(this);
+    this._getData = this._getData.bind(this);
   }
 
   componentWillMount() {
@@ -109,7 +110,9 @@ export default class Home extends Component {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
     }
-    Actions.search_store({});
+    Actions.search_store({
+      parent_reload: this._getData
+    });
   }
 
   // tới màn hình tìm cửa hàng theo danh sách
@@ -117,7 +120,9 @@ export default class Home extends Component {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
     }
-    Actions.list_store({});
+    Actions.list_store({
+      parent_reload: this._getData
+    });
   }
 
   // tới màn hình store
@@ -204,6 +209,7 @@ export default class Home extends Component {
         <ScrollView>
 
           {this.state.stores_data != null && <FlatList
+            style={styles.stores_box}
             onEndReached={(num) => {
 
             }}
@@ -294,6 +300,10 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN
   },
+  stores_box: {
+    marginBottom: 8
+  },
+  
   stores: {
     backgroundColor: '#cccccc',
     width: '100%',
@@ -373,7 +383,6 @@ const styles = StyleSheet.create({
   add_store_box: {
     width: '100%',
     backgroundColor: "#ffffff",
-    marginTop: 8,
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderTopWidth: Util.pixel,

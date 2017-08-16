@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 @observer
 export default class Items extends Component {
   render() {
-    let {item, index, onPress} = this.props;
+    let {item, index, onPress, cartOnPress} = this.props;
 
     return (
       <TouchableHighlight
@@ -42,7 +42,7 @@ export default class Items extends Component {
           <TouchableHighlight
             style={styles.item_add_cart_btn}
             underlayColor="transparent"
-            onPress={() => 1}>
+            onPress={cartOnPress}>
 
             <View style={styles.item_add_cart_box}>
               <Icon name="cart-plus" size={24} color={DEFAULT_COLOR} />
@@ -61,6 +61,13 @@ export default class Items extends Component {
       </TouchableHighlight>
     );
   }
+}
+
+Items.PropTypes = {
+  item: PropTypes.object.isRequired,
+  index: PropTypes.number.isRequired,
+  onPress: PropTypes.func.isRequired,
+  cartOnPress: PropTypes.func.isRequired
 }
 
 const styles = StyleSheet.create({

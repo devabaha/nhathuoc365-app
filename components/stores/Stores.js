@@ -164,6 +164,29 @@ export default class Stores extends Component {
     }
   }
 
+  // tới màn hình chi tiết item
+  _goItem(item) {
+
+    Actions.item({
+      title: item.name,
+      item
+    });
+  }
+
+  // add item vào giỏ hàng
+  async _addCart(item) {
+    try {
+      var response = await APIHandler.site_cart_adding(this.props.store.store_id, item.id);
+
+      console.warn(JSON.stringify(response));
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
   // render danh sách sản phẩm
   _renderItemsContent() {
     if (this.state.items_data) {
@@ -176,7 +199,14 @@ export default class Stores extends Component {
           style={styles.items_box}
           ListHeaderComponent={() => <ListHeader title="— Tất cả sản phẩm —" />}
           data={this.state.items_data}
-          renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
+          renderItem={({item, index}) => (
+            <Items
+              item={item}
+              index={index}
+              onPress={this._goItem.bind(this, item)}
+              cartOnPress={this._addCart.bind(this, item)}
+              />
+          )}
           keyExtractor={item => item.id}
           numColumns={2}
           refreshControl={

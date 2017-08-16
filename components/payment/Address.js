@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#dddddd"
   },
   address_list_box: {
-    marginTop: 12,
+    marginTop: 8,
     borderTopWidth: Util.pixel,
     borderColor: "#dddddd"
   },

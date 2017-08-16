@@ -8,13 +8,8 @@ import {
   StyleSheet,
 } from 'react-native';
 
+// librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-const propTypes = {
-    selected: PropTypes.bool,
-    title: PropTypes.string,
-    iconActive: PropTypes.string
-};
 
 export default class TabIcon extends Component {
   constructor(props) {
@@ -40,7 +35,11 @@ export default class TabIcon extends Component {
   }
 }
 
-TabIcon.PropTypes = propTypes;
+TabIcon.PropTypes = {
+  selected: PropTypes.bool,
+  title: PropTypes.string,
+  iconActive: PropTypes.string
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -20,7 +20,7 @@ export default class Indicator extends Component {
   render() {
     if (this.props.size == "small") {
       return (
-        <View style={styles.container}>
+        <View style={[styles.container, this.props.style]}>
           <ActivityIndicator
                  animating={this.state.animating}
                  color={this.props.color || "#666666"}
@@ -31,7 +31,7 @@ export default class Indicator extends Component {
     }
 
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, this.props.style]}>
         <View style={styles.loading_box}>
           <ActivityIndicator
                  animating={this.state.animating}
@@ -46,7 +46,8 @@ export default class Indicator extends Component {
 
 Indicator.propTypes = {
   size: PropTypes.string,
-  color: PropTypes.string
+  color: PropTypes.string,
+  style: PropTypes.object
 };
 
 const styles = StyleSheet.create({

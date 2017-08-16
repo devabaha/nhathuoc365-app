@@ -24,10 +24,26 @@ class APIHandler {
   }
 
   /**
+  * Tìm cửa hàng theo mã CH
+  */
+  async user_search_store(store_code) {
+    var api = url_for(API.USER_SEARCH_SITE + '/' + store_code);
+    return await this.getAPI(api)
+  }
+
+  /**
+  * Lấy d/s cửa hàng
+  */
+  async user_list_site() {
+    var api = url_for(API.USER_LIST_SITE);
+    return await this.getAPI(api)
+  }
+
+  /**
   * Thêm cửa hàng bằng mã cửa hàng
   */
-  async user_add_site(site_code) {
-    var api = url_for(API.USER_ADD_SITE + '/' + site_code);
+  async user_add_store(store_code) {
+    var api = url_for(API.USER_ADD_SITE + '/' + store_code);
     return await this.getAPI(api);
   }
 
@@ -44,6 +60,22 @@ class APIHandler {
   */
   async site_category_product(store_id, category_id) {
     var api = url_for(API.SITE_CATEGORY_PRODUCT + '/' + store_id + '/' + category_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Lấy chi tiết sản phẩm theo product id
+  */
+  async site_product(store_id, product_id) {
+    var api = url_for(API.SITE_PRODUCT + '/' + store_id + '/' + product_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Lấy chi tiết sản phẩm theo product id
+  */
+  async site_cart_adding(store_id, product_id) {
+    var api = url_for(API.SITE_CART_ADDING + '/' + store_id + '/' + product_id);
     return await this.getAPI(api);
   }
 

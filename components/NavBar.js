@@ -181,7 +181,11 @@ const contextTypes = {
 
   autoFocus: PropTypes.bool,
   placeholder: PropTypes.string,
-  showSearchBar: PropTypes.bool
+  showSearchBar: PropTypes.bool,
+  onChangeText: PropTypes.func,
+  onSubmitEditing: PropTypes.func,
+  searchValue: PropTypes.string,
+  onSearchCancel: PropTypes.func
 };
 
 const defaultProps = {
@@ -540,12 +544,19 @@ class NavBar extends React.Component {
                 width: '100%',
                 height: '100%'
               }}
+              value={this.props.searchValue}
+              onChangeText={this.props.onChangeText}
+              onSubmitEditing={this.props.onSubmitEditing}
               autoFocus={this.state.autoFocus}
               onFocus={() => {
                 Actions.refresh({
                   rightTitle: "Huỷ",
                   onRight: () => {
                     Keyboard.dismiss();
+
+                    if (this.props.onSearchCancel) {
+                      this.props.onSearchCancel();
+                    }
                   },
                   rightButtonTextStyle: {
                     color: "#ebebeb",

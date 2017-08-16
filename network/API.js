@@ -7,10 +7,21 @@
 */
 const MY_FOOD_API = 'http://test68.myfood.com.vn/';
 
+// Sites
 exports.USER_LOGIN = MY_FOOD_API + 'apiUser/login';
-exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
-exports.USER_ADD_SITE = MY_FOOD_API + 'apiUser/add_site';
 
-// Stores
+// Home
+exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
+
+// Store
+exports.USER_SEARCH_SITE = MY_FOOD_API + 'apiUser/search_site';
+exports.USER_ADD_SITE = MY_FOOD_API + 'apiUser/add_site';
+exports.USER_LIST_SITE = MY_FOOD_API + 'apiUser/list_site';
 exports.SITE_INFO = MY_FOOD_API + 'apiSite/info';
 exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
+
+// Item
+exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';
+
+// Cart
+exports.SITE_CART_ADDING = MY_FOOD_API + 'apiSite/cartadding';
