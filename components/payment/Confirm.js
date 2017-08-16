@@ -345,7 +345,7 @@ export default class Confirm extends Component {
   _viewOrders() {
     this._popupClose();
 
-    this._goStores();
+    this._goBack();
 
     setTimeout(() => {
       Actions.orders_item({
@@ -357,12 +357,12 @@ export default class Confirm extends Component {
   _continueShopping() {
     this._popupClose();
 
-    this._goStores();
+    this._goBack();
   }
 
-  _goStores() {
-    Actions.stores({
-      type: ActionConst.RESET
+  _goBack() {
+    Actions.pop({
+      popNum: 2
     });
   }
 }

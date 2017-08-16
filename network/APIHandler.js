@@ -31,6 +31,31 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Lấy thông tin cửa hàng
+  */
+  async site_info(site_id) {
+    var api = url_for(API.SITE_INFO + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Lấy d/s sản phẩm theo categofy id
+  */
+  async site_category_product(store_id, category_id) {
+    var api = url_for(API.SITE_CATEGORY_PRODUCT + '/' + store_id + '/' + category_id);
+    return await this.getAPI(api);
+  }
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -63,7 +88,7 @@ class APIHandler {
       if (response.status != HTTP_SUCCESS) {
           throw 'Error: ' + response.statusText;
       }
-      console.log('--- response: ', response.data);
+      console.log('--- response: ', JSON.stringify(response.data));
       return response.data;
   }
 };

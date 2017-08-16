@@ -49,12 +49,15 @@ export default class SearchStore extends Component {
 
 
   componentDidMount() {
-      this._add_site();
+      for(let i = 0; i <= 10; i++) {
+        let code = 'BTNKT' + i;
+        this._add_site(code);
+      }
   }
 
-  async _add_site() {
+  async _add_site(site_code) {
     try {
-      var response = await APIHandler.user_add_site('BTNKT10');
+      var response = await APIHandler.user_add_site(site_code);
 
       if (response && response.status == STATUS_SUCCESS) {
         console.warn(JSON.stringify(response));

@@ -21,10 +21,10 @@ export default class Items extends Component {
       <TouchableHighlight
         onPress={onPress}
         underlayColor="transparent">
-        <View style={[styles.item_box, {borderRightWidth: index%2 == 0 ? 1 : 0}]}>
+        <View style={[styles.item_box, {borderRightWidth: index%2 == 0 ? Util.pixel : 0}]}>
 
           <View style={styles.item_image_box}>
-            <Image style={styles.item_image} source={{uri: item.name}} />
+            <Image style={styles.item_image} source={{uri: item.image}} />
           </View>
 
           <View style={styles.item_info_box}>
@@ -35,8 +35,8 @@ export default class Items extends Component {
                 <Text style={styles.item_info_made_title}>1 kg</Text>
               </View>
             </View>
-            <Text style={styles.item_info_name}>Bưởi năm roi Đà Lạt</Text>
-            <Text style={styles.item_info_price}>48.000</Text>
+            <Text style={styles.item_info_name}>{item.name}</Text>
+            <Text style={styles.item_info_price}>{item.price}</Text>
           </View>
 
           <TouchableHighlight

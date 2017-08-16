@@ -8,7 +8,8 @@ import {
   StyleSheet,
   RefreshControl,
   TouchableHighlight,
-  FlatList
+  FlatList,
+  ScrollView
 } from 'react-native';
 
 // library
@@ -80,6 +81,7 @@ export default class Home extends Component {
           loading: false,
           stores_data: response.data
         });
+        layoutAnimation();
       }
     } catch (e) {
       console.warn(e);
@@ -140,47 +142,6 @@ export default class Home extends Component {
 
   // render rows cửa hàng trong list
   renderRow({item}) {
-    // box add store
-    if (_.isObject(item) && item.title == 'add_store') {
-      return(
-        <View style={styles.add_store_box}>
-          <Text style={styles.add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
-
-          <View style={styles.add_store_actions_box}>
-            {/*<TouchableHighlight
-              onPress={() => 1}
-              underlayColor="transparent"
-              style={styles.add_store_action_btn}>
-              <View style={styles.add_store_action_btn_box}>
-                <Icon name="qrcode" size={28} color="#333333" />
-                <Text style={styles.add_store_action_label}>Quét QR code</Text>
-              </View>
-            </TouchableHighlight>*/}
-
-            <TouchableHighlight
-              onPress={this._go_search_store}
-              underlayColor="transparent"
-              style={styles.add_store_action_btn}>
-              <View style={styles.add_store_action_btn_box}>
-                <Icon name="shopping-cart" size={28} color="#333333" />
-                <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
-              </View>
-            </TouchableHighlight>
-
-            <TouchableHighlight
-              onPress={this._go_list_store}
-              underlayColor="transparent"
-              style={styles.add_store_action_btn}>
-              <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                <Icon name="search-plus" size={28} color="#333333" />
-                <Text style={styles.add_store_action_label}>Danh sách</Text>
-              </View>
-            </TouchableHighlight>
-          </View>
-        </View>
-      );
-    }
-
     // store list
     return(
       <TouchableHighlight
@@ -234,24 +195,67 @@ export default class Home extends Component {
   }
 
   render() {
+    if (this.state.loading) {
+      return <Indicator />
+    }
+
     return (
       <View style={styles.container}>
+        <ScrollView>
 
-        {this.state.stores_data != null && <FlatList
-          onEndReached={(num) => {
+          {this.state.stores_data != null && <FlatList
+            onEndReached={(num) => {
 
-          }}
-          onEndReachedThreshold={0}
-          data={this.state.stores_data}
-          renderItem={this.renderRow.bind(this)}
-          keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
-        />}
+            }}
+            onEndReachedThreshold={0}
+            data={this.state.stores_data}
+            renderItem={this.renderRow.bind(this)}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+          />}
+
+          <View style={styles.add_store_box}>
+            <Text style={styles.add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
+
+            <View style={styles.add_store_actions_box}>
+              {/*<TouchableHighlight
+                onPress={() => 1}
+                underlayColor="transparent"
+                style={styles.add_store_action_btn}>
+                <View style={styles.add_store_action_btn_box}>
+                  <Icon name="qrcode" size={28} color="#333333" />
+                  <Text style={styles.add_store_action_label}>Quét QR code</Text>
+                </View>
+              </TouchableHighlight>*/}
+
+              <TouchableHighlight
+                onPress={this._go_search_store}
+                underlayColor="transparent"
+                style={styles.add_store_action_btn}>
+                <View style={styles.add_store_action_btn_box}>
+                  <Icon name="shopping-cart" size={28} color="#333333" />
+                  <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
+                </View>
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                onPress={this._go_list_store}
+                underlayColor="transparent"
+                style={styles.add_store_action_btn}>
+                <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
+                  <Icon name="search-plus" size={28} color="#333333" />
+                  <Text style={styles.add_store_action_label}>Danh sách</Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          </View>
+
+        </ScrollView>
 
         <Modal
           entry="top"
@@ -280,7 +284,6 @@ export default class Home extends Component {
             icon={{name: 'search-plus', type: 'font-awesome'}}
             title='Xem danh sách cửa hàng' />
         </Modal>
-
       </View>
     );
   }

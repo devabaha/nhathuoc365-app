@@ -29,26 +29,11 @@ export default class Stores extends Component {
 
     this.state = {
       refreshing: false,
+      loading: false,
       category_nav_index: 0,
       store_cart_index: 0,
-      data: [
-       {id: 1, name: 'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg'},
-       {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
-       {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'},
-       {id: 4, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},
-       {id: 5, name: 'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg'},
-       {id: 6, name: 'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg'},
-       {id: 7, name: 'https://dl.airtable.com/JNaHnxaoQqyU8wwDyNsV_1.1%20Ba%20roi%20rut%20suong-thumbnail%402x.jpg.jpg'},
-       {id: 8, name: 'https://dl.airtable.com/wJpDFze3T0mTRXvXiYIb_DF078%20-%202-thumbnail%402x.jpg'},
-       {id: 9, name: 'https://dl.airtable.com/UKLNZUjeT3u14Odw69OP_9-thumbnail%402x.jpg.jpg'},
-       {id: 10, name: 'https://dl.airtable.com/Q9spiMmGTWCuYT0s8kNa_CAT0147-thumbnail%402x.jpg.jpg'},
-     ],
-     categories_data: [
-       {id: 0, name: 'Tất cả'},
-       {id: 1, name: 'Rau hữu cơ'},
-       {id: 2, name: 'Thịt cá dân dã'},
-       {id: 3, name: 'Hải sản'},
-     ]
+      items_data: null,
+      categories_data: null
     }
   }
 
@@ -56,6 +41,68 @@ export default class Stores extends Component {
     Actions.refresh({
       renderRightButton: this._renderRightButton.bind(this)
     });
+  }
+
+  componentDidMount() {
+    this.start_time = time();
+
+    this._getCategoriesNav();
+
+    this._getItemByCateId(0);
+  }
+
+  // thời gian trễ khi chuyển màn hình
+  _delay() {
+    var delay = 450 - (Math.abs(time() - this.start_time));
+    return delay;
+  }
+
+  // lấy thông tin cửa hàng
+  async _getCategoriesNav() {
+    try {
+      var response = await APIHandler.site_info(this.props.store.store_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+        setTimeout(() => {
+          this.setState({
+            categories_data: [{id: 0, name: "Tất cả"}, ...response.data.categories],
+          });
+        }, this._delay());
+
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  // lấy d/s sản phẩm theo category_id
+  async _getItemByCateId(category_id) {
+    this.setState({
+      loading: true
+    });
+
+    try {
+      var response = await APIHandler.site_category_product(this.props.store.store_id, category_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+        setTimeout(() => {
+          this.setState({
+            items_data: response.data,
+            loading: false
+          });
+          layoutAnimation();
+        }, this._delay());
+
+      }
+
+    } catch (e) {
+      console.warn(e);
+    }
   }
 
   _renderRightButton() {
@@ -96,61 +143,39 @@ export default class Stores extends Component {
     }, 1000);
   }
 
-  _changeCategory(category_id) {
+  _changeCategory(item, index) {
     if (_.isObject(this.refs) && this.refs.category_nav) {
-      layoutAnimation();
+
+      this._getItemByCateId(item.id);
 
       var categories_count = this.state.categories_data.length;
-      var end_of_list = (categories_count - category_id - 1) >= 3;
+      var end_of_list = (categories_count - index - 1) >= 3;
 
-      if (category_id > 0 && end_of_list) {
-          this.refs.category_nav.scrollToIndex({index: category_id - 1, animated: true});
+      if (index > 0 && end_of_list) {
+          this.refs.category_nav.scrollToIndex({index: index - 1, animated: true});
       } else if (!end_of_list) {
         this.refs.category_nav.scrollToEnd();
       }
 
       this.setState({
-        category_nav_index: category_id
+        category_nav_index: index
       });
+      layoutAnimation();
     }
   }
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <View style={styles.categories_nav}>
-          <FlatList
-            ref="category_nav"
-            data={this.state.categories_data}
-            extraData={this.state}
-            keyExtractor={item => item.id}
-            horizontal={true}
-            style={styles.categories_nav}
-            renderItem={({item}) => {
-              let active = this.state.category_nav_index == item.id;
-              return(
-                <TouchableHighlight
-                  onPress={() => this._changeCategory(item.id)}
-                  underlayColor="transparent">
-                  <View style={styles.categories_nav_items}>
-                    <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
-
-                    {active && <View style={styles.categories_nav_items_active} />}
-                  </View>
-                </TouchableHighlight>
-              );
-            }}
-          />
-        </View>
-
-        {this.state.data != null && <FlatList
+  // render danh sách sản phẩm
+  _renderItemsContent() {
+    if (this.state.items_data) {
+      return(
+        <FlatList
           onEndReached={(num) => {
 
           }}
           onEndReachedThreshold={0}
           style={styles.items_box}
           ListHeaderComponent={() => <ListHeader title="— Tất cả sản phẩm —" />}
-          data={this.state.data}
+          data={this.state.items_data}
           renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
           keyExtractor={item => item.id}
           numColumns={2}
@@ -160,7 +185,48 @@ export default class Stores extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }
-        />}
+        />
+      );
+    } else if (this.state.loading) {
+      return <Indicator />
+    } else {
+      return <CenterText title="Chưa có sản phẩm nào" />
+    }
+  }
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.categories_nav}>
+          {this.state.categories_data != null ? (
+            <FlatList
+              ref="category_nav"
+              data={this.state.categories_data}
+              extraData={this.state}
+              keyExtractor={item => item.id}
+              horizontal={true}
+              style={styles.categories_nav}
+              renderItem={({item, index}) => {
+                let active = this.state.category_nav_index == index;
+                return(
+                  <TouchableHighlight
+                    onPress={() => this._changeCategory(item, index)}
+                    underlayColor="transparent">
+                    <View style={styles.categories_nav_items}>
+                      <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
+
+                      {active && <View style={styles.categories_nav_items_active} />}
+                    </View>
+                  </TouchableHighlight>
+                );
+              }}
+            />
+          ) : (
+            <Indicator size="small" />
+          )}
+        </View>
+
+        {this._renderItemsContent.call(this)}
 
         <CartFooter />
       </View>
@@ -221,7 +287,7 @@ const styles = StyleSheet.create({
     color: '#666666'
   },
   categories_nav_items_title_active: {
-    color: '#404040'
+    color: DEFAULT_COLOR
   },
   categories_nav_items_active: {
     position: 'absolute',

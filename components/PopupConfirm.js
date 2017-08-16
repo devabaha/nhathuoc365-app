@@ -21,7 +21,10 @@ export default class PopupConfirm extends Component {
         backdropPressToClose={this.props.otherClose}
         backButtonClose={this.props.otherClose}
         entry="top"
-        style={[styles.modal, styles.modal_confirm, {height: this.props.height || 110}]}
+        style={[styles.modal, styles.modal_confirm, {
+          height: this.props.height || 110,
+          marginTop: this.props.height ? -(this.props.height / 3) : -(110 / 3)
+        }]}
         ref={this.props.ref_popup}>
 
         {this.props.content ? this.props.content(this.props.title) : <Text style={styles.modal_confirm_title}>{this.props.title}</Text>}

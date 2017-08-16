@@ -10,3 +10,7 @@ const MY_FOOD_API = 'http://test68.myfood.com.vn/';
 exports.USER_LOGIN = MY_FOOD_API + 'apiUser/login';
 exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
 exports.USER_ADD_SITE = MY_FOOD_API + 'apiUser/add_site';
+
+// Stores
+exports.SITE_INFO = MY_FOOD_API + 'apiSite/info';
+exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
