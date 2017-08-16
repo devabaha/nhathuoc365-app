@@ -137,28 +137,23 @@ export default class SearchStore extends Component {
 
     if (this.state.searchValue == '') {
       this.setState({
-        search_data: null,
-        loading: false
+        search_data: null
       });
       return;
     }
 
-    this.setState({
-      loading: true
-    });
+    this.is_search = true;
 
     try {
       var response = await APIHandler.user_search_store(this.state.searchValue);
 
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({
-          search_data: [response.data],
-          loading: false
+          search_data: [response.data]
         });
       } else {
         this.setState({
-          search_data: null,
-          loading: false
+          search_data: null
         });
       }
 
@@ -191,7 +186,10 @@ export default class SearchStore extends Component {
 
   // bấm huỷ khi search
   _onSearchCancel() {
-    this._getData();
+    if (this.is_search) {
+      this.is_search = false;
+      this._getData();
+    }
 
     Actions.refresh({
       searchValue: ''
