@@ -25,3 +25,7 @@ exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';
 
 // Cart
 exports.SITE_CART_ADDING = MY_FOOD_API + 'apiSite/cartadding';
+exports.SITE_CART = MY_FOOD_API + 'apiSite/cart';
+exports.SITE_CART_DOWN = MY_FOOD_API + 'apiSite/cartdown';
+exports.SITE_CART_UP = MY_FOOD_API + 'apiSite/cartup';
+exports.SITE_CART_REMOVE = MY_FOOD_API + 'apiSite/cartremove';

@@ -79,6 +79,38 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Lấy thông tin giỏ hàng theo site id
+  */
+  async site_cart(store_id) {
+    var api = url_for(API.SITE_CART + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Giảm số lượng sản phẩm trong giỏ hàng
+  */
+  async site_cart_down(store_id, product_id) {
+    var api = url_for(API.SITE_CART_DOWN + '/' + store_id + '/' + product_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Tăng số lượng sản phẩm trong giỏ hàng
+  */
+  async site_cart_up(store_id, product_id) {
+    var api = url_for(API.SITE_CART_UP + '/' + store_id + '/' + product_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Xoá sản phẩm trong giỏ hàng
+  */
+  async site_cart_remove(store_id, product_id) {
+    var api = url_for(API.SITE_CART_REMOVE + '/' + store_id + '/' + product_id);
+    return await this.getAPI(api);
+  }
+
 
 
 

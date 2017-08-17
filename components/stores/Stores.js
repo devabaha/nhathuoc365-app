@@ -16,11 +16,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
+import store from '../../store/Store';
 
 // components
 import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
+import PopupConfirm from '../PopupConfirm';
 
 @observer
 export default class Stores extends Component {
@@ -29,7 +31,7 @@ export default class Stores extends Component {
 
     this.state = {
       refreshing: false,
-      loading: false,
+      loading: true,
       category_nav_index: 0,
       store_cart_index: 0,
       items_data: null,
@@ -60,7 +62,7 @@ export default class Stores extends Component {
   // lấy thông tin cửa hàng
   async _getCategoriesNav() {
     try {
-      var response = await APIHandler.site_info(this.props.store.store_id);
+      var response = await APIHandler.site_info(store.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
 
@@ -86,7 +88,7 @@ export default class Stores extends Component {
     });
 
     try {
-      var response = await APIHandler.site_category_product(this.props.store.store_id, category_id);
+      var response = await APIHandler.site_category_product(store.store_id, category_id);
 
       if (response && response.status == STATUS_SUCCESS) {
 
@@ -115,17 +117,6 @@ export default class Stores extends Component {
           }}>
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
-          </View>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => Actions.cart({})}>
-          <View style={styles.right_btn_add_store}>
-            <Icon name="shopping-cart" size={22} color="#ffffff" />
             <View style={styles.stores_info_action_notify}>
               <Text style={styles.stores_info_action_notify_value}>3</Text>
             </View>
@@ -176,9 +167,16 @@ export default class Stores extends Component {
   // add item vào giỏ hàng
   async _addCart(item) {
     try {
-      var response = await APIHandler.site_cart_adding(this.props.store.store_id, item.id);
+      var response = await APIHandler.site_cart_adding(store.store_id, item.id);
 
-      console.warn(JSON.stringify(response));
+      if (response && response.status == STATUS_SUCCESS) {
+
+
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+      }
 
     } catch (e) {
       console.warn(e);
@@ -190,13 +188,17 @@ export default class Stores extends Component {
   // render danh sách sản phẩm
   _renderItemsContent() {
     if (this.state.items_data) {
+      var {cart_data, cart_products} = store;
+
       return(
         <FlatList
           onEndReached={(num) => {
 
           }}
           onEndReachedThreshold={0}
-          style={styles.items_box}
+          style={[styles.items_box, {
+            marginBottom: cart_data && cart_products ? 59 : 0
+          }]}
           ListHeaderComponent={() => <ListHeader title="— Tất cả sản phẩm —" />}
           data={this.state.items_data}
           renderItem={({item, index}) => (
@@ -258,9 +260,62 @@ export default class Stores extends Component {
 
         {this._renderItemsContent.call(this)}
 
-        <CartFooter />
+        {this.state.loading == false && <CartFooter
+          confirmRemove={this._confirmRemoveCartItem.bind(this)}
+         />}
+
+        <PopupConfirm
+          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
+          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          height={110}
+          noConfirm={() => {
+            if (this.refs_modal_delete_cart_item) {
+              this.refs_modal_delete_cart_item.close();
+            }
+          }}
+          yesConfirm={this._removeCartItem.bind(this)}
+          />
       </View>
     );
+  }
+
+  _confirmRemoveCartItem(item) {
+    this.cartItemConfirmRemove = item;
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.open();
+    }
+  }
+
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.close();
+    }
+
+    var item = this.cartItemConfirmRemove;
+
+    try {
+      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+          // prev item in list
+          if (isAndroid && store.cart_item_index > 0) {
+            store.setCartItemIndex(store.cart_item_index - 1);
+          }
+        })();
+
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this.cartItemConfirmRemove = undefined;
+    }
   }
 }
 

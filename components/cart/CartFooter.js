@@ -15,6 +15,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
+import { reaction } from 'mobx';
+
+import store from '../../store/Store';
 
 @observer
 export default class CartFooter extends Component {
@@ -22,20 +25,107 @@ export default class CartFooter extends Component {
     super(props);
 
     this.state = {
-      data: [
-       {id: 1, name: 'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg'},
-       {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
-       {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'},
-       {id: 4, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},
-       {id: 5, name: 'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg'},
-       {id: 6, name: 'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg'},
-       {id: 7, name: 'https://dl.airtable.com/JNaHnxaoQqyU8wwDyNsV_1.1%20Ba%20roi%20rut%20suong-thumbnail%402x.jpg.jpg'},
-       {id: 8, name: 'https://dl.airtable.com/wJpDFze3T0mTRXvXiYIb_DF078%20-%202-thumbnail%402x.jpg'},
-       {id: 9, name: 'https://dl.airtable.com/UKLNZUjeT3u14Odw69OP_9-thumbnail%402x.jpg.jpg'},
-       {id: 10, name: 'https://dl.airtable.com/Q9spiMmGTWCuYT0s8kNa_CAT0147-thumbnail%402x.jpg.jpg'},
-     ],
-     store_cart_index: 0,
-     refreshing: false
+      data: null,
+      refreshing: false
+    }
+
+    reaction(() => store.cart_item_index, () => {
+      this._goTopIndex(store.cart_item_index);
+    });
+  }
+
+  componentDidMount() {
+    this._getCart();
+  }
+
+  async _getCart() {
+    try {
+      var response = await APIHandler.site_cart(store.store_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+      } else {
+        action(() => {
+          store.resetCartData();
+        })();
+
+      }
+
+    } catch (e) {
+
+    } finally {
+
+    }
+  }
+
+  _item_qnt_decrement_handler(item) {
+
+    if (item.quantity <= 1) {
+      if (this.props.confirmRemove) {
+        this.props.confirmRemove(item);
+      }
+    } else {
+      this._item_qnt_decrement(item);
+    }
+  }
+
+  async _item_qnt_decrement(item) {
+
+    try {
+      var response = await APIHandler.site_cart_down(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  async _item_qnt_increment(item) {
+    try {
+      var response = await APIHandler.site_cart_up(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  _store_cart_prev() {
+    if (store.cart_item_index <= 0) {
+      return;
+    }
+
+    store.setCartItemIndex(store.cart_item_index - 1);
+  }
+
+  _store_cart_next() {
+    if (store.cart_item_index + 1 >= store.cart_products.length) {
+      return;
+    }
+
+    store.setCartItemIndex(store.cart_item_index + 1);
+  }
+
+  _goTopIndex(index) {
+    if (this.refs_store_cart) {
+        this.refs_store_cart.scrollToIndex({index, animated: true});
     }
   }
 
@@ -43,25 +133,25 @@ export default class CartFooter extends Component {
     return(
       <View style={styles.store_cart_item}>
         <View style={styles.store_cart_item_image_box}>
-          <Image style={styles.store_cart_item_image} source={{uri: item.name}} />
+          <Image style={styles.store_cart_item_image} source={{uri: "https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg" || item.image}} />
         </View>
         <View style={styles.store_cart_item_title_box}>
-          <Text style={styles.store_cart_item_title}>Bưởi năm roi Đà Lạt</Text>
-          <Text style={styles.store_cart_item_price}>48.000</Text>
+          <Text style={styles.store_cart_item_title}>{item.name}</Text>
+          <Text style={styles.store_cart_item_price}>{item.price_view}</Text>
         </View>
 
         <View style={styles.store_cart_calculator}>
           <TouchableHighlight
-            onPress={this._item_qnt_decrement}
+            onPress={this._item_qnt_decrement_handler.bind(this, item)}
             underlayColor="transparent"
             style={styles.store_cart_item_qnt_change}>
             <Icon name="minus" size={16} color="#404040" />
           </TouchableHighlight>
 
-          <Text style={styles.store_cart_item_qnt}>2</Text>
+          <Text style={styles.store_cart_item_qnt}>{item.quantity_view}</Text>
 
           <TouchableHighlight
-            onPress={this._item_qnt_increment}
+            onPress={this._item_qnt_increment.bind(this, item)}
             underlayColor="transparent"
             style={styles.store_cart_item_qnt_change}>
             <Icon name="plus" size={16} color="#404040" />
@@ -71,55 +161,30 @@ export default class CartFooter extends Component {
     );
   }
 
-  _item_qnt_decrement() {
-
-  }
-
-  _item_qnt_increment() {
-
-  }
-
-  _store_cart_prev() {
-    if (this.state.store_cart_index <= 0) {
-      return;
-    }
-
-    this.setState({
-      store_cart_index: this.state.store_cart_index - 1
-    }, () => {
-      this.refs.store_cart.scrollToIndex({index: this.state.store_cart_index, animated: true});
-    });
-  }
-
-  _store_cart_next() {
-    if (this.state.store_cart_index + 1 >= this.state.data.length) {
-      return;
-    }
-
-    this.setState({
-      store_cart_index: this.state.store_cart_index + 1
-    }, () => {
-      this.refs.store_cart.scrollToIndex({index: this.state.store_cart_index, animated: true});
-    });
-  }
-
   render() {
+    var {cart_data, cart_products} = store;
+    if (cart_data == null || cart_products == null) {
+      return null;
+    }
+
     return (
       <View style={styles.store_cart_box}>
         <View style={styles.store_cart_container}>
           <View style={styles.store_cart_content}>
-            {this.state.data != null && <FlatList
-              ref="store_cart"
-              data={this.state.data}
+            <FlatList
+              ref={ref => this.refs_store_cart = ref}
+              data={cart_products}
               pagingEnabled
               scrollEnabled={false}
+              extraData={cart_products}
+              initialScrollIndex={store.cart_item_index}
               getItemLayout={(data, index) => {
                 return {length: Util.size.width - 172, offset: (Util.size.width - 172) * index, index};
               }}
-              renderItem={this.renderItems}
+              renderItem={this.renderItems.bind(this)}
               keyExtractor={item => item.id}
               horizontal={true}
-            />}
+            />
           </View>
 
           <TouchableHighlight
@@ -142,9 +207,42 @@ export default class CartFooter extends Component {
           style={styles.checkout_btn}
           underlayColor="transparent"
           >
-          <View style={styles.checkout_box}>
-            <Icon name="shopping-cart" size={22} color="#ffffff" />
-            <Text style={styles.checkout_title}>Giỏ hàng</Text>
+          <View style={{
+            width: '100%',
+            height: '100%',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: DEFAULT_COLOR
+          }}>
+            <View style={styles.checkout_box}>
+              <Icon name="shopping-cart" size={22} color="#ffffff" />
+              <Text style={styles.checkout_title}>GIỎ HÀNG</Text>
+
+              <View style={{
+                position: 'absolute',
+                left: 18,
+                top: 0,
+                backgroundColor: "red",
+                width: 16,
+                height: 16,
+                borderRadius: 8,
+                justifyContent: 'center',
+                alignItems: 'center',
+                overflow: 'hidden'
+              }}>
+                <Text style={{
+                  fontSize: 10,
+                  color: '#ffffff',
+                  fontWeight: '600'
+                }}>{cart_data.count}</Text>
+              </View>
+            </View>
+
+            <Text style={{
+              fontSize: 10,
+              color: "#ffffff",
+              fontWeight: '500'
+            }}>{cart_data.total}</Text>
           </View>
         </TouchableHighlight>
       </View>
@@ -193,15 +291,15 @@ const styles = StyleSheet.create({
   },
   checkout_box: {
     width: '100%',
-    height: '100%',
+    height: '60%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: DEFAULT_COLOR
+    overflow: 'hidden'
   },
   checkout_title: {
     color: "#ffffff",
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '500',
     paddingLeft: 4
   },

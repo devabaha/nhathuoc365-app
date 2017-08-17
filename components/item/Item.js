@@ -18,6 +18,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import Swiper from 'react-native-swiper';
 import HTMLView from 'react-native-htmlview';
+import store from '../../store/Store';
 
 // components
 import Items from '../stores/Items';
@@ -70,7 +71,7 @@ export default class Item extends Component {
     });
 
     try {
-      var response = await APIHandler.site_product(this.props.store.store_id, item.id);
+      var response = await APIHandler.site_product(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {

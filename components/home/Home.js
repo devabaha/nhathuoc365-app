@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
+import store from '../../store/Store';
 
 @observer
 export default class Home extends Component {
@@ -58,7 +59,7 @@ export default class Home extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
-          this.props.store.setUserInfo(response.data);
+          store.setUserInfo(response.data);
 
           this._getData();
         })();
@@ -128,7 +129,7 @@ export default class Home extends Component {
   // tới màn hình store
   _go_stores(item) {
     action(() => {
-      this.props.store.setStoreId(item.id);
+      store.setStoreId(item.id);
     })();
 
     Actions.stores({
@@ -303,7 +304,7 @@ const styles = StyleSheet.create({
   stores_box: {
     marginBottom: 8
   },
-  
+
   stores: {
     backgroundColor: '#cccccc',
     width: '100%',

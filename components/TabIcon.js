@@ -10,6 +10,7 @@ import {
 
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
+import store from '../store/Store';
 
 export default class TabIcon extends Component {
   constructor(props) {
@@ -19,7 +20,7 @@ export default class TabIcon extends Component {
   render() {
     var notifyCount = 0;
     if (this.props.notify) {
-      notifyCount = parseInt(this.props.store.notify[this.props.notify]);
+      notifyCount = parseInt(store.notify[this.props.notify]);
     }
 
     return(

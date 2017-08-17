@@ -27,7 +27,6 @@ import {
 import Store from './store/Store';
 
 // import components
-import Launch from './components/launch/Launch';
 import Home from './components/home/Home';
 import Notification from './components/notification/Notification';
 import Orders from './components/orders/Orders';
