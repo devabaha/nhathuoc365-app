@@ -95,7 +95,8 @@ export default class Stores extends Component {
         setTimeout(() => {
           this.setState({
             items_data: response.data,
-            loading: false
+            loading: false,
+            finish: true
           });
           layoutAnimation();
         }, this._delay());
@@ -260,7 +261,7 @@ export default class Stores extends Component {
 
         {this._renderItemsContent.call(this)}
 
-        {this.state.loading == false && <CartFooter
+        {this.state.finish == true && <CartFooter
           confirmRemove={this._confirmRemoveCartItem.bind(this)}
          />}
 

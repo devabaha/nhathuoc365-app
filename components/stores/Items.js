@@ -29,14 +29,21 @@ export default class Items extends Component {
 
           <View style={styles.item_info_box}>
             <View style={styles.item_info_made}>
-              <Icon name="map-marker" size={12} color="#666666" />
-              <Text style={styles.item_info_made_title}>Đà Lạt</Text>
+              {item.made_in != '' && (
+                <View style={styles.directionRow}>
+                  <Icon name="map-marker" size={12} color="#666666" />
+                  <Text style={styles.item_info_made_title}>{"Đà Lạt" || item.made_in}</Text>
+                </View>
+              )}
+
               <View style={styles.item_info_weight}>
-                <Text style={styles.item_info_made_title}>1 kg</Text>
+                <Text style={styles.item_info_made_title}>{item.unit_name}</Text>
               </View>
             </View>
             <Text style={styles.item_info_name}>{item.name}</Text>
-            <Text style={styles.item_info_price}>{item.price}</Text>
+            <Text style={[styles.item_info_price, {
+              color: item.discount_percent > 0 ? "#fa7f50" : DEFAULT_COLOR
+            }]}>{item.price}</Text>
           </View>
 
           <TouchableHighlight
@@ -50,12 +57,14 @@ export default class Items extends Component {
             </View>
           </TouchableHighlight>
 
-          <View style={styles.item_safe_off}>
-            <View style={styles.item_safe_off_percent}>
-              <Text style={styles.item_safe_off_percent_val}>-23%</Text>
+          {item.discount_percent > 0 && (
+            <View style={styles.item_safe_off}>
+              <View style={styles.item_safe_off_percent}>
+                <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
+              </View>
+              <Text style={styles.item_safe_off_price}>{item.discount}</Text>
             </View>
-            <Text style={styles.item_safe_off_price}>26,000</Text>
-          </View>
+          )}
 
         </View>
       </TouchableHighlight>
@@ -78,6 +87,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd",
     backgroundColor: "#ffffff"
+  },
+  directionRow: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   item_image_box: {
     width: '100%',

@@ -24,6 +24,7 @@ import store from '../../store/Store';
 import Items from '../stores/Items';
 import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
+import PopupConfirm from '../PopupConfirm';
 
 @observer
 export default class Item extends Component {
@@ -32,9 +33,9 @@ export default class Item extends Component {
 
     this.state = {
       data: [
-       {id: 1, name: 'https://dl.airtable.com/YaXzYWIcTqSxmTSJFdho_41026-large%402x.jpg'},
-       {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
-       {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'}
+       {id: 1, name: 'Combo 3 dưa leo'},
+       {id: 2, name: 'Combo 3 cà rốt'},
+       {id: 3, name: 'Combo 3 mướp'}
      ],
      refreshing: false,
      item: props.item,
@@ -105,17 +106,6 @@ export default class Item extends Component {
             </View>
           </View>
         </TouchableHighlight>
-
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => Actions.cart({})}>
-          <View style={styles.right_btn_add_store}>
-            <Icon name="shopping-cart" size={22} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
-          </View>
-        </TouchableHighlight>
       </View>
     );
   }
@@ -128,8 +118,30 @@ export default class Item extends Component {
     }, 1000);
   }
 
+  // add item vào giỏ hàng
+  async _addCart(item) {
+    try {
+      var response = await APIHandler.site_cart_adding(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
   render() {
     var {item, item_data} = this.state;
+    var {cart_data, cart_products} = store;
 
     return (
       <View style={styles.container}>
@@ -160,7 +172,7 @@ export default class Item extends Component {
               <Text style={styles.item_heading_price}>{item_data ? item_data.price_view : item.price}</Text>
             </View>
 
-            <Text style={styles.item_heading_qnt}>250g x 2gói</Text>
+            <Text style={styles.item_heading_qnt}>{item_data ? item_data.unit_name : item.unit_name}</Text>
 
             <View style={styles.item_actions_box}>
               <TouchableHighlight
@@ -173,7 +185,7 @@ export default class Item extends Component {
               </TouchableHighlight>
 
               <TouchableHighlight
-                onPress={() => 1}
+                onPress={this._addCart.bind(this, item_data ? item_data : item)}
                 underlayColor="transparent">
                 <View style={[styles.item_actions_btn, styles.item_actions_btn_add_cart]}>
                   <Icon name="cart-plus" size={24} color="#ffffff" />
@@ -251,7 +263,9 @@ export default class Item extends Component {
 
             }}
             onEndReachedThreshold={0}
-            style={styles.items_box}
+            style={[styles.items_box, {
+              marginBottom: cart_data && cart_products ? 59 : 0
+            }]}
             ListHeaderComponent={() => <ListHeader title="— CÓ THỂ BẠN THÍCH —" />}
             data={this.state.data}
             renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
@@ -273,9 +287,62 @@ export default class Item extends Component {
 
         </ScrollView>
 
-        <CartFooter />
+        <CartFooter
+          confirmRemove={this._confirmRemoveCartItem.bind(this)}
+         />
+
+        <PopupConfirm
+          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
+          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          height={110}
+          noConfirm={() => {
+            if (this.refs_modal_delete_cart_item) {
+              this.refs_modal_delete_cart_item.close();
+            }
+          }}
+          yesConfirm={this._removeCartItem.bind(this)}
+          />
       </View>
     );
+  }
+
+  _confirmRemoveCartItem(item) {
+    this.cartItemConfirmRemove = item;
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.open();
+    }
+  }
+
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.close();
+    }
+
+    var item = this.cartItemConfirmRemove;
+
+    try {
+      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+          // prev item in list
+          if (isAndroid && store.cart_item_index > 0) {
+            store.setCartItemIndex(store.cart_item_index - 1);
+          }
+        })();
+
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this.cartItemConfirmRemove = undefined;
+    }
   }
 
   renderNode(node, index, siblings, parent, defaultRenderer) {
