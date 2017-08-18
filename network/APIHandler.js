@@ -111,6 +111,38 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Danh sách địa chỉ
+  */
+  async user_address() {
+    var api = url_for(API.USER_ADDRESS);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Thêm/sửa địa chỉ
+  */
+  async user_add_address(address_id, data) {
+    var api = url_for(API.USER_ADD_ADDRESS + '/' + address_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+  * Chọn địa chỉ cho đơn hàng
+  */
+  async site_cart_address(store_id, address_id) {
+    var api = url_for(API.SITE_CART_ADDRESS + '/' + store_id + '/' + address_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Xoá địa chỉ
+  */
+  async user_delete_address(address_id) {
+    var api = url_for(API.USER_DELETE_ADDRESS + '/' + address_id);
+    return await this.getAPI(api);
+  }
+
 
 
 

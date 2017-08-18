@@ -71,6 +71,25 @@ class Store {
   @action setCartItemIndex(index) {
     this.cart_item_index = index;
   }
+
+
+
+
+
+  /*********** address begin **********/
+  @observable address_key_change = 0;
+
+  @action setAddressKeyChange(data) {
+    this.address_key_change = data;
+  }
+
+
+
+
+
+
+
+
 }
 
 export default new Store();

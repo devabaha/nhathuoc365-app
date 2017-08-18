@@ -9,21 +9,44 @@ import {
   TouchableHighlight,
   Switch,
   Keyboard,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
+
+// components
+import PopupConfirm from '../PopupConfirm';
 
 @observer
 export default class CreateAddress extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      address_default: false,
-      bottom: 0
+    var edit_data = props.edit_data;
+
+    if (edit_data) {
+      this.state = {
+        edit_mode: true,
+        address_id: edit_data.id,
+        bottom: 0,
+        name: edit_data.name,
+        tel: edit_data.tel,
+        address: edit_data.address,
+        default_flag: edit_data.default_flag == 1 ? true : false
+      }
+    } else {
+      this.state = {
+        address_id: 0,
+        bottom: 0,
+        name: '',
+        tel: '',
+        address: '',
+        default_flag: false
+      }
     }
 
     this._keyboardWillShow = this._keyboardWillShow.bind(this);
@@ -41,6 +64,14 @@ export default class CreateAddress extends Component {
         Actions.pop();
       }
     });
+  }
+
+  componentDidMount() {
+    if (!this.state.edit_mode && this.refs_name) {
+      setTimeout(() => {
+        this.refs_name.focus();
+      }, 450);
+    }
   }
 
   _unMount() {
@@ -65,28 +96,144 @@ export default class CreateAddress extends Component {
     }
   }
 
-  _onSave() {
+  async _onSave() {
     this._unMount();
 
-    Actions.pop();
+    var {name, tel, address, default_flag} = this.state;
+
+    name = name.trim();
+    tel = tel.trim();
+    address = address.trim();
+
+    if (!name) {
+      return Alert.alert(
+        'Thông báo',
+        'Hãy điền tên Người nhận hàng',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            this.refs_name.focus();
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
+    if (!tel) {
+      return Alert.alert(
+        'Thông báo',
+        'Hãy điền Số điện thoại',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            this.refs_tel.focus();
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
+    if (!address) {
+      return Alert.alert(
+        'Thông báo',
+        'Hãy điền Địa chỉ',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            this.refs_address.focus();
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
+    try {
+      var response = await APIHandler.user_add_address(this.state.address_id, {
+        name,
+        tel,
+        address,
+        default_flag: this.state.default_flag ? 1 : 0
+      });
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          Actions.pop();
+
+          // auto reload address list
+          setTimeout(() => {
+            store.setAddressKeyChange(store.address_key_change + 1);
+          }, 450);
+        })();
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  // show popup confirm delete
+  _confirmDeleteAddress() {
+    if (this.refs_remove_item_confirm) {
+      this.refs_remove_item_confirm.open();
+    }
+  }
+
+  // confirm is "yes", delete address
+  async _removeAddressItem() {
+    this._closePopupConfirm();
+
+    try {
+      var response = await APIHandler.user_delete_address(this.state.address_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          Actions.pop();
+
+          // auto reload address list
+          setTimeout(() => {
+            store.setAddressKeyChange(store.address_key_change + 1);
+          }, 450);
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  // close popup
+  _closePopupConfirm() {
+    if (this.refs_remove_item_confirm) {
+      this.refs_remove_item_confirm.close();
+    }
   }
 
   render() {
+    var { edit_mode } = this.state;
+
     return (
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView style={{
+          marginBottom: this.state.bottom + 60
+        }}>
           <View style={styles.input_box}>
             <Text style={styles.input_label}>Tên</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
+                ref={ref => this.refs_name = ref}
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
                 placeholder="Tên người nhận hàng"
                 placeholderTextColor="#999999"
-                autoFocus={true}
                 underlineColorAndroid="#ffffff"
+                onChangeText={(value) => {
+                  this.setState({
+                    name: value
+                  });
+                }}
+                value={this.state.name}
                 />
             </View>
           </View>
@@ -96,12 +243,19 @@ export default class CreateAddress extends Component {
 
             <View style={styles.input_text_box}>
               <TextInput
+                ref={ref => this.refs_tel = ref}
                 style={styles.input_text}
                 keyboardType="phone-pad"
-                maxLength={11}
+                maxLength={15}
                 placeholder="Điền số điện thoại"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="#ffffff"
+                onChangeText={(value) => {
+                  this.setState({
+                    tel: value.replaceAll(' ', '')
+                  });
+                }}
+                value={this.state.tel}
                 />
             </View>
           </View>
@@ -111,6 +265,7 @@ export default class CreateAddress extends Component {
             <Text style={styles.input_label_help}>(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)</Text>
 
             <TextInput
+              ref={ref => this.refs_address = ref}
               style={[styles.input_address_text, {height: this.state.address_height | 50}]}
               keyboardType="default"
               maxLength={250}
@@ -121,6 +276,12 @@ export default class CreateAddress extends Component {
               onContentSizeChange={(e) => {
                 this.setState({address_height: e.nativeEvent.contentSize.height});
               }}
+              onChangeText={(value) => {
+                this.setState({
+                  address: value
+                });
+              }}
+              value={this.state.address}
               />
           </View>
 
@@ -131,14 +292,23 @@ export default class CreateAddress extends Component {
               <Switch
                 onValueChange={(value) => {
                   this.setState({
-                    address_default: value
+                    default_flag: value
                   });
                 }}
-                value={this.state.address_default}
+                value={this.state.default_flag}
                 onTintColor={DEFAULT_COLOR}
                 />
             </View>
           </View>
+
+          {edit_mode && (
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={this._confirmDeleteAddress.bind(this)}
+              style={[styles.input_box, {marginTop: 12}]}>
+              <Text style={[styles.input_label, {color: "red"}]}>Xoá địa chỉ này</Text>
+            </TouchableHighlight>
+          )}
         </ScrollView>
 
         <TouchableHighlight
@@ -150,6 +320,15 @@ export default class CreateAddress extends Component {
               <Text style={styles.address_continue_title}>HOÀN THÀNH</Text>
           </View>
         </TouchableHighlight>
+
+        <PopupConfirm
+          ref_popup={ref => this.refs_remove_item_confirm = ref}
+          title="Bạn muốn xoá bỏ địa chỉ này?"
+          height={110}
+          noConfirm={this._closePopupConfirm.bind(this)}
+          yesConfirm={this._removeAddressItem.bind(this)}
+          otherClose={false}
+          />
       </View>
     );
   }

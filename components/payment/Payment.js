@@ -41,10 +41,6 @@ export default class Payment extends Component {
     this._go_confirm_page = this._go_confirm_page.bind(this);
   }
 
-  _initial() {
-
-  }
-
   componentWillMount() {
     Actions.refresh({
       renderRightButton: this._renderRightButton,
@@ -130,7 +126,11 @@ export default class Payment extends Component {
               let active = this.state.payment_nav_index >= item.index;
               return(
                 <TouchableHighlight
-                  onPress={() => this._go_to_page_index(item.id, item.index, item.title)}
+                  onPress={() => {
+                    if (item.id == "address") {
+                      this._go_to_page_index(item.id, item.index, item.title);
+                    }
+                  }}
                   underlayColor="transparent">
                   <View style={styles.payments_nav_items}>
                     <View style={[styles.payments_nav_icon_box, active ? styles.payments_nav_icon_box_active : null]}>

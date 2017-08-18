@@ -29,3 +29,9 @@ exports.SITE_CART = MY_FOOD_API + 'apiSite/cart';
 exports.SITE_CART_DOWN = MY_FOOD_API + 'apiSite/cartdown';
 exports.SITE_CART_UP = MY_FOOD_API + 'apiSite/cartup';
 exports.SITE_CART_REMOVE = MY_FOOD_API + 'apiSite/cartremove';
+
+// Address
+exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';
+exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiUser/add_address';
+exports.SITE_CART_ADDRESS = MY_FOOD_API + 'apiSite/cartaddress';
+exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
