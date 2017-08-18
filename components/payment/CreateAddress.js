@@ -33,9 +33,9 @@ export default class CreateAddress extends Component {
         edit_mode: true,
         address_id: edit_data.id,
         bottom: 0,
-        name: edit_data.name,
-        tel: edit_data.tel,
-        address: edit_data.address,
+        name: edit_data.name || '',
+        tel: edit_data.tel || '',
+        address: edit_data.address || '',
         default_flag: edit_data.default_flag == 1 ? true : false
       }
     } else {
@@ -76,8 +76,8 @@ export default class CreateAddress extends Component {
 
   _unMount() {
     Keyboard.dismiss();
-    Keyboard.removeListener('keyboardWillShow', this._keyboardWillShow);
-    Keyboard.removeListener('keyboardWillHide', this._keyboardWillHide);
+    this.keyboardWillShowListener.remove();
+    this.keyboardWillHideListener.remove();
   }
 
   _keyboardWillShow(e) {
@@ -97,8 +97,6 @@ export default class CreateAddress extends Component {
   }
 
   async _onSave() {
-    this._unMount();
-
     var {name, tel, address, default_flag} = this.state;
 
     name = name.trim();
@@ -153,14 +151,16 @@ export default class CreateAddress extends Component {
       });
 
       if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          Actions.pop();
+        this._unMount();
 
-          // auto reload address list
-          setTimeout(() => {
+        Actions.pop();
+
+        setTimeout(() => {
+          action(() => {
+            // auto reload address list
             store.setAddressKeyChange(store.address_key_change + 1);
-          }, 450);
-        })();
+          })();
+        }, 450);
       }
 
     } catch (e) {
@@ -185,14 +185,16 @@ export default class CreateAddress extends Component {
       var response = await APIHandler.user_delete_address(this.state.address_id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          Actions.pop();
+        this._unMount();
 
-          // auto reload address list
-          setTimeout(() => {
+        Actions.pop();
+
+        setTimeout(() => {
+          action(() => {
+            // auto reload address list
             store.setAddressKeyChange(store.address_key_change + 1);
-          }, 450);
-        })();
+          })();
+        }, 450);
       }
     } catch (e) {
       console.warn(e);
@@ -316,8 +318,8 @@ export default class CreateAddress extends Component {
           onPress={this._onSave.bind(this)}
           style={[styles.address_continue, {bottom: this.state.bottom}]}>
           <View style={styles.address_continue_content}>
-            <Icon name="check" size={20} color="#ffffff" />
-              <Text style={styles.address_continue_title}>HOÀN THÀNH</Text>
+            <Icon name={this.state.edit_mode ? "save" : "check"} size={20} color="#ffffff" />
+              <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "HOÀN THÀNH"}</Text>
           </View>
         </TouchableHighlight>
 

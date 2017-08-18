@@ -59,7 +59,7 @@ export default class CartFooter extends Component {
       }
 
     } catch (e) {
-
+      console.warn(e);
     } finally {
 
     }

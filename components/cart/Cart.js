@@ -87,6 +87,9 @@ export default class Cart extends Component {
 
       } else {
         action(() => {
+          this.setState({
+            loading: false
+          });
           store.resetCartData();
         })();
       }

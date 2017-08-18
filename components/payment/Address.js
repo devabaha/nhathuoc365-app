@@ -9,7 +9,8 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 //library
@@ -34,6 +35,8 @@ export default class Address extends Component {
     reaction(() => store.address_key_change, () => {
       this._getData();
     });
+
+    this._getData = this._getData.bind(this);
   }
 
   componentDidMount() {
@@ -49,9 +52,15 @@ export default class Address extends Component {
         if (response.data) {
           this.setState({
             data: [...response.data, {id: 0, type: 'address_add'}],
-            loading: false
+            loading: false,
+            item_selected: null
           });
           layoutAnimation();
+        } else {
+          this.setState({
+            data: null,
+            loading: false
+          });
         }
       }
 
@@ -62,7 +71,7 @@ export default class Address extends Component {
     }
   }
 
-  _renderSelected(item) {
+  _renderSelected(item, index) {
     const selected_box = (
       <View style={styles.address_selected_box}>
         <Icon name="check" size={24} color={DEFAULT_COLOR} />
@@ -74,27 +83,50 @@ export default class Address extends Component {
       if (this.state.item_selected == item.id) {
         return selected_box;
       }
-    } else if (item.default_flag == 1) {
+    } else if (index == 0) {
+      this.state.item_selected = item.id;
       return selected_box;
     }
   }
 
-  // chọn địa chỉ cho đơn hàng
-  async _addressSelectHanlder(item) {
+  async _goConfirmPage() {
+    if (this.state.data == null) {
+      return Alert.alert(
+        'Thông báo',
+        'Nhập địa chỉ nhận hàng trước khi Tiếp tục',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            if (this.props.add_new) {
+              this.props.add_new();
+            }
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
     try {
-      var response = await APIHandler.site_cart_address(store.store_id, item.id);
+      var response = await APIHandler.site_cart_address(store.store_id, this.state.item_selected);
 
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          item_selected: item.id
-        });
-        layoutAnimation();
+        // go confirm screen
+        if (this.props.go_confirm_page) {
+          this.props.go_confirm_page();
+        }
       }
     } catch (e) {
       console.warn(e);
     } finally {
 
     }
+  }
+
+  // chọn địa chỉ cho đơn hàng
+  async _addressSelectHanlder(item) {
+    this.setState({
+      item_selected: item.id
+    });
+    layoutAnimation();
   }
 
   render() {
@@ -115,7 +147,7 @@ export default class Address extends Component {
                     extraData={this.state}
                     keyExtractor={item => item.id}
                     ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-                    renderItem={({item}) => {
+                    renderItem={({item, index}) => {
                       if(item.type == 'address_add') {
                         return(
                           <TouchableHighlight
@@ -157,7 +189,7 @@ export default class Address extends Component {
                               <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
                             </View>
 
-                            {this._renderSelected.call(this, item)}
+                            {this._renderSelected.call(this, item, index)}
 
                             {item.default_flag == 1 && (
                               <View style={styles.address_edit_btn}>
@@ -206,7 +238,7 @@ export default class Address extends Component {
 
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={this.props.go_confirm_page}
+              onPress={this._goConfirmPage.bind(this)}
               style={styles.address_continue}>
               <View style={styles.address_continue_content}>
                 <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
@@ -259,9 +291,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     top: 0,
-    right: 0,
-    paddingVertical: 10,
-    paddingHorizontal: 15
+    right: 0
   },
   address_default_title: {
     color: '#999999',
@@ -373,7 +403,9 @@ const styles = StyleSheet.create({
   address_edit_box: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 15
   },
   address_edit_label: {
     fontSize: 12,
