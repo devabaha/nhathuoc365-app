@@ -7,7 +7,7 @@ import {
   Image,
   TouchableHighlight,
   StyleSheet,
-  SectionList,
+  FlatList,
   RefreshControl
 } from 'react-native';
 
@@ -15,6 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { CheckBox } from '../../lib/react-native-elements';
+import store from '../../store/Store';
 
 // components
 import ListHeader from '../stores/ListHeader';
@@ -40,7 +41,8 @@ export default class Cart extends Component {
         }
      ],
      refreshing: false,
-     cart_check_list: {}
+     cart_check_list: {},
+     loading: true
     }
   }
 
@@ -50,12 +52,57 @@ export default class Cart extends Component {
     });
   }
 
+  componentDidMount() {
+    this.start_time = time();
+
+    var {cart_data, cart_products, store_id} = store;
+
+    if (cart_data == null || cart_products == null || (cart_data && cart_data.site_id != store_id)) {
+      this._getCart();
+    } else {
+      setTimeout(() => {
+        this.setState({
+          loading: false
+        });
+      }, this._delay());
+    }
+  }
+
+  // lấy thông tin giỏ hàng
+  async _getCart(delay) {
+    try {
+      var response = await APIHandler.site_cart(store.store_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            this.setState({
+              refreshing: false,
+              loading: false
+            });
+          })();
+        }, delay || this._delay());
+
+      } else {
+        action(() => {
+          store.resetCartData();
+        })();
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  // pull to refresh
   _onRefresh() {
     this.setState({refreshing: true});
 
-    setTimeout(() => {
-      this.setState({refreshing: false});
-    }, 1000);
+    this._getCart(1000);
   }
 
   _renderRightButton() {
@@ -77,23 +124,130 @@ export default class Cart extends Component {
     );
   }
 
-  _is_delete_cart_item(item_id) {
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.open();
+  // show popup confirm remove item in cart
+  _removeItemCartConfirm(item) {
+    if (this.refs_remove_item_confirm) {
+      this.refs_remove_item_confirm.open();
+    }
+
+    this.cartItemConfirmRemove = item;
+  }
+
+  // xử lý trừ số lượng, số lượng = 0 confirm xoá
+  _item_qnt_decrement_handler(item) {
+
+    if (item.quantity <= 1) {
+      this._removeItemCartConfirm(item);
+    } else {
+      this._item_qnt_decrement(item);
     }
   }
 
-  _delete_cart_item(item_id, flag) {
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.close();
+  // giảm số lượng item trong giỏ hàng
+  async _item_qnt_decrement(item) {
+
+    try {
+      var response = await APIHandler.site_cart_down(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  // tăng số lượng sảm phẩm trong giỏ hàng
+  async _item_qnt_increment(item) {
+    try {
+      var response = await APIHandler.site_cart_up(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  // close popup confirm remove item in cart
+  _closePopupConfirm() {
+    if (this.refs_remove_item_confirm) {
+      this.refs_remove_item_confirm.close();
+    }
+  }
+
+  _delay() {
+    var delay = 450 - (Math.abs(time() - this.start_time));
+    return delay;
+  }
+
+  // xoá item trong giỏ hàng
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    this.start_time = time();
+
+    this._closePopupConfirm();
+
+    var item = this.cartItemConfirmRemove;
+
+    try {
+      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            // prev item in list
+            if (isAndroid && store.cart_item_index > 0) {
+              store.setCartItemIndex(store.cart_item_index - 1);
+            }
+            layoutAnimation();
+          })();
+        }, this._delay());
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this.cartItemConfirmRemove = undefined;
     }
   }
 
   render() {
+    // cart is loading
+    if (this.state.loading) {
+      return <Indicator />;
+    }
+
+    var {cart_data, cart_products} = store;
+
+    // cart is empty
+    if (cart_data == null || cart_products == null) {
+      return(
+        <CenterText
+          title="Chưa có sản phẩm nào"
+          />
+      );
+    }
+
     return (
       <View style={styles.container}>
 
-        {this.state.data != null && <SectionList
+        {cart_products != null && <FlatList
           //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
           onEndReached={(num) => {
 
@@ -101,8 +255,8 @@ export default class Cart extends Component {
           ItemSeparatorComponent={() => <View style={styles.separator}></View>}
           onEndReachedThreshold={0}
           style={styles.items_box}
-          sections={this.state.data}
-          extraData={this.state}
+          data={cart_products}
+          extraData={cart_products}
           renderItem={({item, index}) => {
             return(
               <View style={styles.cart_item_box}>
@@ -130,33 +284,33 @@ export default class Cart extends Component {
                 </View>
 
                 <View style={styles.cart_item_image_box}>
-                  <Image style={styles.cart_item_image} source={{uri: item.name}} />
+                  <Image style={styles.cart_item_image} source={{uri: item.image}} />
                 </View>
 
                 <View style={styles.cart_item_info}>
                   <View style={styles.cart_item_info_content}>
-                    <Text style={styles.cart_item_info_name}>Bưởi Năm Roi Đà Lạt</Text>
+                    <Text style={styles.cart_item_info_name}>{item.name}</Text>
                     <View style={styles.cart_item_actions}>
                       <TouchableHighlight
                         style={styles.cart_item_actions_btn}
                         underlayColor="transparent"
-                        onPress={this._is_delete_cart_item.bind(this)}>
+                        onPress={this._item_qnt_decrement_handler.bind(this, item)}>
                         <Text style={styles.cart_item_btn_label}>-</Text>
                       </TouchableHighlight>
 
-                      <Text style={styles.cart_item_actions_quantity}>0,5 kg</Text>
+                      <Text style={styles.cart_item_actions_quantity}>{item.quantity_view}</Text>
 
                       <TouchableHighlight
                         style={styles.cart_item_actions_btn}
                         underlayColor="transparent"
-                        onPress={() => 1}>
+                        onPress={this._item_qnt_increment.bind(this, item)}>
                         <Text style={styles.cart_item_btn_label}>+</Text>
                       </TouchableHighlight>
                     </View>
 
                     <View style={styles.cart_item_price_box}>
-                      <Text style={styles.cart_item_price_price_safe_off}>120,000</Text>
-                      <Text style={styles.cart_item_price_price}>89,000</Text>
+                      <Text style={styles.cart_item_price_price_safe_off}>{item.discount}</Text>
+                      <Text style={styles.cart_item_price_price}>{item.price_view}</Text>
                     </View>
                   </View>
                 </View>
@@ -173,22 +327,22 @@ export default class Cart extends Component {
         />}
 
         <View style={styles.cart_payment_box}>
-          <View style={styles.cart_payment_rows}>
+          {/*<View style={styles.cart_payment_rows}>
             <Text style={styles.cart_payment_label}>TIỀN HÀNG</Text>
             <View style={styles.cart_payment_price_box}>
-              <Text style={styles.cart_payment_price}>816,220</Text>
+              <Text style={styles.cart_payment_price}>{cart_data.total}</Text>
             </View>
           </View>
           <View style={[styles.cart_payment_rows, styles.borderBottom]}>
-            <Text style={styles.cart_payment_label}>PHÍ DỊCH VỤ (3 CỬA HÀNG)</Text>
+            <Text style={styles.cart_payment_label}>PHÍ DỊCH VỤ</Text>
             <View style={styles.cart_payment_price_box}>
               <Text style={styles.cart_payment_price}>MIỄN PHÍ</Text>
             </View>
-          </View>
+          </View>*/}
           <View style={[styles.cart_payment_rows, styles.mt12]}>
             <Text style={[styles.cart_payment_label, styles.text_both]}>TỔNG CỘNG</Text>
             <View style={styles.cart_payment_price_box}>
-              <Text style={[styles.cart_payment_price, styles.text_both]}>816,220</Text>
+              <Text style={[styles.cart_payment_price, styles.text_both]}>{cart_data.total}</Text>
             </View>
           </View>
         </View>
@@ -206,11 +360,12 @@ export default class Cart extends Component {
         </TouchableHighlight>
 
         <PopupConfirm
-          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
+          ref_popup={ref => this.refs_remove_item_confirm = ref}
           title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
           height={110}
-          noConfirm={this._delete_cart_item.bind(this, false)}
-          yesConfirm={this._delete_cart_item.bind(this, true)}
+          noConfirm={this._closePopupConfirm.bind(this)}
+          yesConfirm={this._removeCartItem.bind(this)}
+          otherClose={false}
           />
       </View>
     );
@@ -256,7 +411,7 @@ const styles = StyleSheet.create({
   },
 
   items_box: {
-    marginBottom: 170
+    marginBottom: 116
   },
 
   cart_section_box: {
@@ -274,7 +429,7 @@ const styles = StyleSheet.create({
 
   cart_item_box: {
     width: '100%',
-    height: 100,
+    height: 94,
     paddingVertical: 8,
     flexDirection: 'row',
     backgroundColor: "#ffffff"
@@ -361,8 +516,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     width: '100%',
-    height: 170,
-    backgroundColor: "#ffffff",
+    height: 116,
+    backgroundColor: "#f1f1f1",
     paddingVertical: 4,
     paddingHorizontal: 15,
     borderTopWidth: Util.pixel,

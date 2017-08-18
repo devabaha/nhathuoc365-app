@@ -33,9 +33,10 @@ export default class Stores extends Component {
       refreshing: false,
       loading: true,
       category_nav_index: 0,
-      store_cart_index: 0,
+      category_nav_id: 0,
       items_data: null,
-      categories_data: null
+      categories_data: null,
+      header_title: "— Tất cả sản phẩm —"
     }
   }
 
@@ -50,7 +51,7 @@ export default class Stores extends Component {
 
     this._getCategoriesNav();
 
-    this._getItemByCateId(0);
+    this._getItemByCateId(this.state.category_nav_id);
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -96,7 +97,8 @@ export default class Stores extends Component {
           this.setState({
             items_data: response.data,
             loading: false,
-            finish: true
+            finish: true,
+            refreshing: false
           });
           layoutAnimation();
         }, this._delay());
@@ -129,14 +131,11 @@ export default class Stores extends Component {
 
   _onRefresh() {
     this.setState({refreshing: true});
-
-    setTimeout(() => {
-      this.setState({refreshing: false});
-    }, 1000);
+    this._getItemByCateId(this.state.category_nav_id);
   }
 
   _changeCategory(item, index) {
-    if (_.isObject(this.refs) && this.refs.category_nav) {
+    if (this.refs_category_nav) {
 
       this._getItemByCateId(item.id);
 
@@ -144,13 +143,21 @@ export default class Stores extends Component {
       var end_of_list = (categories_count - index - 1) >= 3;
 
       if (index > 0 && end_of_list) {
-          this.refs.category_nav.scrollToIndex({index: index - 1, animated: true});
+          this.refs_category_nav.scrollToIndex({index: index - 1, animated: true});
       } else if (!end_of_list) {
-        this.refs.category_nav.scrollToEnd();
+        this.refs_category_nav.scrollToEnd();
+      }
+
+      if (item.id == 0) {
+        var header_title = "— Tất cả sản phẩm —";
+      } else {
+        var header_title = `— Sản phẩm ${item.name} —`;
       }
 
       this.setState({
-        category_nav_index: index
+        category_nav_index: index,
+        category_nav_id: item.id,
+        header_title
       });
       layoutAnimation();
     }
@@ -200,7 +207,7 @@ export default class Stores extends Component {
           style={[styles.items_box, {
             marginBottom: cart_data && cart_products ? 59 : 0
           }]}
-          ListHeaderComponent={() => <ListHeader title="— Tất cả sản phẩm —" />}
+          ListHeaderComponent={() => <ListHeader title={this.state.header_title} />}
           data={this.state.items_data}
           renderItem={({item, index}) => (
             <Items
@@ -233,7 +240,7 @@ export default class Stores extends Component {
         <View style={styles.categories_nav}>
           {this.state.categories_data != null ? (
             <FlatList
-              ref="category_nav"
+              ref={ref => this.refs_category_nav = ref}
               data={this.state.categories_data}
               extraData={this.state}
               keyExtractor={item => item.id}

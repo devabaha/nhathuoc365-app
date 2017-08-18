@@ -29,8 +29,8 @@ export default class Home extends Component {
       loading: false
     };
 
-    this._go_search_store = this._go_search_store.bind(this);
-    this._go_list_store = this._go_list_store.bind(this);
+    this._goSearchStore = this._goSearchStore.bind(this);
+    this._goListStore = this._goListStore.bind(this);
     this._getData = this._getData.bind(this);
   }
 
@@ -70,20 +70,23 @@ export default class Home extends Component {
   }
 
   // lấy dữ liệu trang home
-  async _getData() {
+  async _getData(delay) {
     this.setState({
-      loading: true
+      loading: delay ? false : true
     });
 
     try {
       var response = await APIHandler.user_home();
 
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          loading: false,
-          stores_data: response.data
-        });
-        layoutAnimation();
+        setTimeout(() => {
+          this.setState({
+            loading: false,
+            refreshing: false,
+            stores_data: response.data
+          });
+          layoutAnimation();
+        }, delay || 0);
       }
     } catch (e) {
       console.warn(e);
@@ -107,7 +110,7 @@ export default class Home extends Component {
   }
 
   // tới màn hình tìm cửa hàng theo mã CH
-  _go_search_store() {
+  _goSearchStore() {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
     }
@@ -117,7 +120,7 @@ export default class Home extends Component {
   }
 
   // tới màn hình tìm cửa hàng theo danh sách
-  _go_list_store() {
+  _goListStore() {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
     }
@@ -127,7 +130,7 @@ export default class Home extends Component {
   }
 
   // tới màn hình store
-  _go_stores(item) {
+  _goStores(item) {
     action(() => {
       store.setStoreId(item.id);
     })();
@@ -137,13 +140,22 @@ export default class Home extends Component {
     });
   }
 
+  // tới màn hình giỏ hàng
+  _goCart(item) {
+    action(() => {
+      store.setStoreId(item.id);
+
+      Actions.cart({
+
+      });
+    })();
+  }
+
   // pull to reload danh sách cửa hàng
   _onRefresh() {
     this.setState({refreshing: true});
 
-    setTimeout(() => {
-      this.setState({refreshing: false});
-    }, 1000);
+    this._getData(1000);
   }
 
   // render rows cửa hàng trong list
@@ -152,7 +164,7 @@ export default class Home extends Component {
     return(
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={this._go_stores.bind(this, item)}>
+        onPress={this._goStores.bind(this, item)}>
         <View style={styles.stores}>
 
           <Image style={styles.stores_image} source={{uri: item.logo}} />
@@ -179,9 +191,7 @@ export default class Home extends Component {
               </TouchableHighlight>
 
               <TouchableHighlight
-                onPress={() => {
-                  Actions.cart({})
-                }}
+                onPress={this._goCart.bind(this, item)}
                 underlayColor="transparent"
                 style={styles.stores_info_action}>
                 <View style={styles.stores_info_action_box}>
@@ -207,7 +217,13 @@ export default class Home extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+          />
+        }>
 
           {this.state.stores_data != null && <FlatList
             style={styles.stores_box}
@@ -218,12 +234,6 @@ export default class Home extends Component {
             data={this.state.stores_data}
             renderItem={this.renderRow.bind(this)}
             keyExtractor={item => item.id}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
           />}
 
           <View style={styles.add_store_box}>
@@ -241,7 +251,7 @@ export default class Home extends Component {
               </TouchableHighlight>*/}
 
               <TouchableHighlight
-                onPress={this._go_search_store}
+                onPress={this._goSearchStore}
                 underlayColor="transparent"
                 style={styles.add_store_action_btn}>
                 <View style={styles.add_store_action_btn_box}>
@@ -251,7 +261,7 @@ export default class Home extends Component {
               </TouchableHighlight>
 
               <TouchableHighlight
-                onPress={this._go_list_store}
+                onPress={this._goListStore}
                 underlayColor="transparent"
                 style={styles.add_store_action_btn}>
                 <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
@@ -280,14 +290,14 @@ export default class Home extends Component {
           <Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor={DEFAULT_COLOR}
-            onPress={this._go_search_store}
+            onPress={this._goSearchStore}
             icon={{name: 'shopping-cart', type: 'font-awesome'}}
             title='Nhập mã cửa hàng' />
 
           <Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#ffc109"
-            onPress={this._go_list_store}
+            onPress={this._goListStore}
             icon={{name: 'search-plus', type: 'font-awesome'}}
             title='Xem danh sách cửa hàng' />
         </Modal>

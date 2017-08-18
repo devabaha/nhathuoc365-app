@@ -35,7 +35,11 @@ export default class CartFooter extends Component {
   }
 
   componentDidMount() {
-    this._getCart();
+    var {cart_data, cart_products, site_id} = store;
+
+    if (cart_data == null || cart_products == null || store.store_id != site_id) {
+      this._getCart();
+    }
   }
 
   async _getCart() {
