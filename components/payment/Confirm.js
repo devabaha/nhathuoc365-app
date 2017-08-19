@@ -136,8 +136,9 @@ export default class Confirm extends Component {
     var {single} = this.state;
 
     var { cart_data, cart_products_confirm } = store;
+    var address_data = cart_data ? cart_data.address : null;
 
-    if (cart_data == null || cart_products_confirm == null) {
+    if (cart_data == null || cart_products_confirm == null || address_data == null) {
       return (
         <View style={styles.container}>
           <Indicator />
@@ -163,7 +164,7 @@ export default class Confirm extends Component {
                   onPress={() => 1}>
                   <View style={styles.orders_status_box}>
                     <Text style={styles.address_default_title}>Trạng thái</Text>
-                    <Text style={[styles.orders_status, single ? null : {color: DEFAULT_COLOR}]}>{single ? "Chưa đặt hàng" : "Đang giao hàng"}</Text>
+                    <Text style={[styles.orders_status, single ? null : {color: DEFAULT_COLOR}]}>{single ? cart_data.status_view : "Đang giao hàng"}</Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -180,7 +181,7 @@ export default class Confirm extends Component {
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={styles.address_default_title}>Khi nhận hàng</Text>
+                  <Text style={styles.address_default_title}>{cart_data.payment}</Text>
                 </TouchableHighlight>
               </View>
             </View>
@@ -212,14 +213,14 @@ export default class Confirm extends Component {
             </View>
 
             <View style={styles.address_content}>
-              <Text style={styles.address_name}>Đặng Ngọc Sơn</Text>
-              <Text style={styles.address_content_phone}>(+84) 1653538222</Text>
+              <Text style={styles.address_name}>{address_data.name}</Text>
+              <Text style={styles.address_content_phone}>{address_data.tel}</Text>
               {single ? (
                 <View>
-                  <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia</Text>
-                  <Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
+                  <Text style={styles.address_content_address_detail}>{address_data.address}</Text>
+                  {/*<Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
                   <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
-                  <Text style={styles.address_content_tinh}>Hoà Bình</Text>
+                  <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
                 </View>
               ) : (
                 <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia, Phường Phương Lâm, Thành Phố Hoà Bình, Hoà Bình</Text>
@@ -270,7 +271,7 @@ export default class Confirm extends Component {
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={[styles.address_default_title, styles.title_active]}>{cart_data.total}</Text>
+                  <Text style={[styles.address_default_title, styles.title_active]}>{cart_data.total_selected}</Text>
                 </TouchableHighlight>
               </View>
             </View>
@@ -351,7 +352,7 @@ export default class Confirm extends Component {
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={[styles.address_default_title, styles.title_active]}>Thành tiền: {cart_data.total}</Text>
+                  <Text style={[styles.address_default_title, styles.title_active]}>Thành tiền: {cart_data.total_selected}</Text>
                 </TouchableHighlight>
               </View>
             </View>

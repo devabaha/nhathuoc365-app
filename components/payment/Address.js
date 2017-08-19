@@ -109,6 +109,9 @@ export default class Address extends Component {
       var response = await APIHandler.site_cart_address(store.store_id, this.state.item_selected);
 
       if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
         // go confirm screen
         if (this.props.go_confirm_page) {
           this.props.go_confirm_page();

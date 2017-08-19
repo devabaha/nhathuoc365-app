@@ -64,10 +64,9 @@ class Store {
     this.cart_data = data;
 
     // object to array and reverse stack
-    var keys_data = Object.keys(data.products);
-    if (data && keys_data.length > 0) {
+    if (data && Object.keys(data.products).length > 0) {
       var cart_products = [], cart_products_confirm = [];
-      keys_data.map(key => {
+      Object.keys(data.products).map(key => {
         let product = data.products[key];
         cart_products.push(product);
         if (product.selected == 1) {

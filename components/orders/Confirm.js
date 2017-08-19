@@ -121,7 +121,7 @@ export default class Confirm extends Component {
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={styles.address_default_title}>Khi nhận hàng</Text>
+                  <Text style={styles.address_default_title}>{cart_data.payment}</Text>
                 </TouchableHighlight>
               </View>
             </View>

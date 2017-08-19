@@ -394,7 +394,7 @@ export default class Cart extends Component {
           <View style={[styles.cart_payment_rows, styles.mt12]}>
             <Text style={[styles.cart_payment_label, styles.text_both]}>TỔNG CỘNG</Text>
             <View style={styles.cart_payment_price_box}>
-              <Text style={[styles.cart_payment_price, styles.text_both]}>{cart_data.total}</Text>
+              <Text style={[styles.cart_payment_price, styles.text_both]}>{cart_data.total_selected}</Text>
             </View>
           </View>
         </View>

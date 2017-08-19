@@ -184,9 +184,11 @@ export default class Home extends Component {
                   <Icon name="commenting" size={20} color="#ffffff" />
                   <Text style={styles.stores_info_action_label}>Tin nhắn</Text>
 
-                  <View style={styles.stores_info_action_notify}>
-                    <Text style={styles.stores_info_action_notify_value}>3</Text>
-                  </View>
+                  {item.count_chat > 0 && (
+                    <View style={styles.stores_info_action_notify}>
+                      <Text style={styles.stores_info_action_notify_value}>{item.count_chat}</Text>
+                    </View>
+                  )}
                 </View>
               </TouchableHighlight>
 
@@ -198,9 +200,11 @@ export default class Home extends Component {
                   <Icon name="shopping-cart" size={22} color="#ffffff" />
                   <Text style={styles.stores_info_action_label}>Giỏ hàng</Text>
 
-                  <View style={styles.stores_info_action_notify}>
-                    <Text style={styles.stores_info_action_notify_value}>10</Text>
-                  </View>
+                  {item.count_cart > 0 && (
+                    <View style={styles.stores_info_action_notify}>
+                      <Text style={styles.stores_info_action_notify_value}>{item.count_cart}</Text>
+                    </View>
+                  )}
                 </View>
               </TouchableHighlight>
             </View>
@@ -366,7 +370,9 @@ const styles = StyleSheet.create({
     padding: 10
   },
   stores_info_action_box: {
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 46
   },
   stores_info_action_label: {
     fontSize: 9,
@@ -378,7 +384,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     backgroundColor: 'red',
-    top: -4,
+    top: 0,
     right: 0,
     justifyContent: 'center',
     alignItems: 'center',
