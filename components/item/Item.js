@@ -64,7 +64,7 @@ export default class Item extends Component {
   }
 
   // Lấy chi tiết sản phẩm
-  async _getData() {
+  async _getData(delay) {
     var {item} = this.state;
 
     this.setState({
@@ -81,11 +81,11 @@ export default class Item extends Component {
             loading: false
           });
           layoutAnimation();
-        }, this._delay());
+        }, delay || this._delay());
       }
 
     } catch (e) {
-
+      console.warn(e);
     } finally {
 
     }
@@ -113,9 +113,7 @@ export default class Item extends Component {
   _onRefresh() {
     this.setState({refreshing: true});
 
-    setTimeout(() => {
-      this.setState({refreshing: false});
-    }, 1000);
+    this._getData(1000);
   }
 
   // add item vào giỏ hàng
@@ -146,22 +144,39 @@ export default class Item extends Component {
     return (
       <View style={styles.container}>
 
-        <ScrollView>
-          <Swiper
-            showsButtons={this.state.data.length > 1}
-            showsPagination={false}
-            paginationStyle={{marginTop: 100}}
-            width={Util.size.width}
-            height={Util.size.width * 0.6}
-            >
-            {
-              this.state.data.map((item, index) => {
-                return(
-                  <Image style={styles.swiper_image} source={{uri: item.name}} key={index} />
-                );
-              })
-            }
-          </Swiper>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }>
+
+          {item_data == null ? (
+            <View
+              style={{
+                width: Util.size.width,
+                height: Util.size.width * 0.6
+              }}>
+              <Indicator size="small" />
+            </View>
+          ) : (
+            <Swiper
+              showsButtons={item_data.img.length > 1}
+              showsPagination={false}
+              paginationStyle={{marginTop: 100}}
+              width={Util.size.width}
+              height={Util.size.width * 0.6}
+              >
+              {
+                this.state.data.map((item, index) => {
+                  return(
+                    <Image style={styles.swiper_image} source={{uri: item.name}} key={index} />
+                  );
+                })
+              }
+            </Swiper>
+          )}
 
           <View style={styles.item_heading_box}>
 
@@ -271,12 +286,6 @@ export default class Item extends Component {
             renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
             keyExtractor={item => item.id}
             numColumns={2}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
           />}
 
           <View style={styles.item_safe_off}>

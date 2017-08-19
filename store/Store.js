@@ -32,15 +32,29 @@ class Store {
 
   @observable cart_data = null;
   @observable cart_products = null;
+  @observable cart_products_confirm = null;
   @observable cart_item_index = 0;
+  @observable payment_nav_show = true;
+  @observable user_cart_note = '';
   cart_empty = true;
+
+  @action setUserCartNote(data) {
+    this.user_cart_note = data;
+  }
+
+  @action setPaymentNavShow(flag) {
+    this.payment_nav_show = flag;
+  }
 
   // reset cart data on display
   @action resetCartData() {
     this.cart_data = null;
     this.cart_products = null;
+    this.cart_products_confirm = null;
     this.cart_item_index = 0;
     this.cart_empty = true;
+    this.payment_nav_show = true;
+    this.user_cart_note = '';
 
     layoutAnimation();
   }
@@ -52,12 +66,19 @@ class Store {
     // object to array and reverse stack
     var keys_data = Object.keys(data.products);
     if (data && keys_data.length > 0) {
-      var cart_products = [];
+      var cart_products = [], cart_products_confirm = [];
       keys_data.map(key => {
-        cart_products.push(data.products[key]);
+        let product = data.products[key];
+        cart_products.push(product);
+        if (product.selected == 1) {
+          cart_products_confirm.push(product);
+        }
       });
 
+      // set new data
       this.cart_products = cart_products.reverse();
+      this.cart_products_confirm = cart_products_confirm.reverse();
+
       if (this.cart_empty) {
         layoutAnimation();
       }

@@ -8,14 +8,14 @@ import {
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  Keyboard
 } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
+import store from '../../store/Store';
 
 // components
 import Address from './Address';
@@ -70,6 +70,9 @@ export default class Payment extends Component {
     var {id, index, title} = this.state.payments_data[key];
 
     this._go_to_page_index(id, index, title);
+
+    // Keyboard down
+    Keyboard.dismiss();
   }
 
   _go_confirm_page() {
@@ -114,37 +117,39 @@ export default class Payment extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.payments_nav}>
-          <FlatList
-            ref="payment_nav"
-            data={this.state.payments_data}
-            extraData={this.state}
-            keyExtractor={item => item.id}
-            horizontal={true}
-            style={styles.borderBottom}
-            renderItem={({item}) => {
-              let active = this.state.payment_nav_index >= item.index;
-              return(
-                <TouchableHighlight
-                  onPress={() => {
-                    if (item.id == "address") {
-                      this._go_to_page_index(item.id, item.index, item.title);
-                    }
-                  }}
-                  underlayColor="transparent">
-                  <View style={styles.payments_nav_items}>
-                    <View style={[styles.payments_nav_icon_box, active ? styles.payments_nav_icon_box_active : null]}>
-                      <Icon style={[styles.payments_nav_icon, active ? styles.payments_nav_icon_active : null]} name={item.icon} size={20} color="#999" />
-                    </View>
-                    <Text style={[styles.payments_nav_items_title, active ? styles.payments_nav_items_title_active : null]}>{item.name}</Text>
+        {store.payment_nav_show && (
+          <View style={styles.payments_nav}>
+            <FlatList
+              ref="payment_nav"
+              data={this.state.payments_data}
+              extraData={this.state}
+              keyExtractor={item => item.id}
+              horizontal={true}
+              style={styles.borderBottom}
+              renderItem={({item}) => {
+                let active = this.state.payment_nav_index >= item.index;
+                return(
+                  <TouchableHighlight
+                    onPress={() => {
+                      if (item.id == "address") {
+                        this._go_to_page_index(item.id, item.index, item.title);
+                      }
+                    }}
+                    underlayColor="transparent">
+                    <View style={styles.payments_nav_items}>
+                      <View style={[styles.payments_nav_icon_box, active ? styles.payments_nav_icon_box_active : null]}>
+                        <Icon style={[styles.payments_nav_icon, active ? styles.payments_nav_icon_active : null]} name={item.icon} size={20} color="#999" />
+                      </View>
+                      <Text style={[styles.payments_nav_items_title, active ? styles.payments_nav_items_title_active : null]}>{item.name}</Text>
 
-                    {active && <View style={styles.payments_nav_items_active} />}
-                  </View>
-                </TouchableHighlight>
-              );
-            }}
-          />
-        </View>
+                      {active && <View style={styles.payments_nav_items_active} />}
+                    </View>
+                  </TouchableHighlight>
+                );
+              }}
+            />
+          </View>
+        )}
 
         <FlatList
           ref={ref => this.refs_payment_page = ref}

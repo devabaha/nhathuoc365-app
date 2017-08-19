@@ -29,6 +29,10 @@ exports.SITE_CART = MY_FOOD_API + 'apiSite/cart';
 exports.SITE_CART_DOWN = MY_FOOD_API + 'apiSite/cartdown';
 exports.SITE_CART_UP = MY_FOOD_API + 'apiSite/cartup';
 exports.SITE_CART_REMOVE = MY_FOOD_API + 'apiSite/cartremove';
+exports.SITE_CART_SELECT = MY_FOOD_API + 'apiSite/cartselect';
+exports.SITE_CART_UNSELECT = MY_FOOD_API + 'apiSite/cartunselect';
+exports.SITE_CART_NODE = MY_FOOD_API + 'apiSite/cartnote';
+exports.SITE_CART_ORDERS = MY_FOOD_API + 'apiSite/cartorder';
 
 // Address
 exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';

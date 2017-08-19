@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   StyleSheet,
   ScrollView,
-  FlatList,
+  SectionList,
   RefreshControl,
   TextInput
 } from 'react-native';
@@ -16,7 +16,6 @@ import {
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import store from '../../store/Store';
 
 // components
 import ListHeader from '../stores/ListHeader';
@@ -29,6 +28,19 @@ export default class Confirm extends Component {
     super(props);
 
     this.state = {
+      data: [
+        {
+          key: "O'Green Nguyễn Trí Thanh",
+          data: [
+            {id: 1, name: 'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg'},
+            {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
+            {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'},
+            {id: 4, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},
+            {id: 5, name: 'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg'},
+            {id: 6, name: 'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg'}
+          ]
+        }
+     ],
      refreshing: false,
      cart_check_list: {},
      single: this.props.from != 'orders_item',
@@ -71,79 +83,8 @@ export default class Confirm extends Component {
     }, 1000);
   }
 
-  // update cart note
-  async _updateCartNote(callback) {
-    try {
-      var response = await APIHandler.site_cart_node(store.store_id, {
-        user_note: store.user_cart_note
-      });
-
-      if (response && response.status == STATUS_SUCCESS) {
-        if (typeof callback == 'function') {
-          callback();
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
-  }
-
-  // cart orders
-  async _siteCartOrders() {
-    try {
-      var response = await APIHandler.site_cart_orders(store.store_id);
-
-      if (response && response.status == STATUS_SUCCESS) {
-        if (this.popup_message) {
-          this.popup_message.open();
-
-          // hide back button
-          Actions.refresh({
-            hideBackImage: true
-          });
-
-          // hide payment nav
-          action(() => {
-            store.setPaymentNavShow(false);
-          })();
-        }
-      }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
-  }
-
-  // on save
-  _onSave() {
-
-    if (store.user_cart_note) {
-      // update cart note
-      this._updateCartNote(() => {
-        // cart orders
-        this._siteCartOrders();
-      });
-    } else {
-      // cart orders
-      this._siteCartOrders();
-    }
-  }
-
   render() {
     var {single} = this.state;
-
-    var { cart_data, cart_products_confirm } = store;
-
-    if (cart_data == null || cart_products_confirm == null) {
-      return (
-        <View style={styles.container}>
-          <Indicator />
-        </View>
-      );
-    }
 
     return (
       <View style={styles.container}>
@@ -155,7 +96,7 @@ export default class Confirm extends Component {
                   <Icon style={styles.icon_label} name="info-circle" size={16} color="#999999" />
                   <Text style={styles.input_label}>Thông tin đơn hàng</Text>
                 </View>
-                <Text style={styles.desc_content}>Mã số: {cart_data.cart_code}</Text>
+                <Text style={styles.desc_content}>Mã số: ABARA-696969</Text>
               </View>
               <View style={styles.address_default_box}>
                 <TouchableHighlight
@@ -247,12 +188,6 @@ export default class Confirm extends Component {
                   onContentSizeChange={(e) => {
                     this.setState({address_height: e.nativeEvent.contentSize.height});
                   }}
-                  onChangeText={(value) => {
-                    action(() => {
-                      store.setUserCartNote(value);
-                    })();
-                  }}
-                  value={store.user_cart_note}
                   />
               </View>
             ) : (
@@ -270,7 +205,7 @@ export default class Confirm extends Component {
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={[styles.address_default_title, styles.title_active]}>{cart_data.total}</Text>
+                  <Text style={[styles.address_default_title, styles.title_active]}>816,220</Text>
                 </TouchableHighlight>
               </View>
             </View>
@@ -285,73 +220,55 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          {cart_products_confirm != null && (
-            <FlatList
-              //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
-              onEndReached={(num) => {
+          {this.state.data != null && <SectionList
+            //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
+            onEndReached={(num) => {
 
-              }}
-              onEndReachedThreshold={0}
-              style={styles.items_box}
-              data={cart_products_confirm}
-              extraData={cart_products_confirm}
-              renderItem={({item, index}) => {
-                // hide item not selected
-                if (item.selected != 1) {
-                  return null;
-                }
-
-                return(
-                  <View style={styles.cart_item_box}>
-                    <View style={styles.cart_item_image_box}>
-                      <Image style={styles.cart_item_image} source={{uri: item.name}} />
-                    </View>
-
-                    <View style={styles.cart_item_info}>
-                      <View style={styles.cart_item_info_content}>
-                        <Text style={styles.cart_item_info_name}>{item.name}</Text>
-
-                        <View style={styles.cart_item_price_box}>
-                          {item.discount_percent > 0 && (
-                            <Text style={styles.cart_item_price_price_safe_off}>{item.discount}</Text>
-                          )}
-                          <Text style={styles.cart_item_price_price}>{item.price_view}</Text>
-                        </View>
-                      </View>
-                    </View>
-
-                    <Text style={styles.cart_item_weight}>{item.quantity_view}</Text>
-
-                    {item.discount_percent > 0 && (
-                      <View style={styles.item_safe_off}>
-                        <View style={styles.item_safe_off_percent}>
-                          <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
-                        </View>
-                      </View>
-                    )}
+            }}
+            ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+            onEndReachedThreshold={0}
+            style={styles.items_box}
+            sections={this.state.data}
+            extraData={this.state}
+            renderItem={({item, index}) => {
+              return(
+                <View style={styles.cart_item_box}>
+                  <View style={styles.cart_item_image_box}>
+                    <Image style={styles.cart_item_image} source={{uri: item.name}} />
                   </View>
-                );
-              }}
-              keyExtractor={item => item.id}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />
-              }
-            />
-          )}
 
-          <View style={[styles.rows, styles.borderBottom, {
-            borderTopWidth: 0
-          }]}>
+                  <View style={styles.cart_item_info}>
+                    <View style={styles.cart_item_info_content}>
+                      <Text style={styles.cart_item_info_name}>Bưởi Năm Roi Đà Lạt</Text>
+
+                      <View style={styles.cart_item_price_box}>
+                        <Text style={styles.cart_item_price_price_safe_off}>120,000</Text>
+                        <Text style={styles.cart_item_price_price}>89,000</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  <Text style={styles.cart_item_weight}>0.5 kg</Text>
+                </View>
+              );
+            }}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+          />}
+
+          <View style={[styles.rows, styles.borderBottom]}>
             <View style={styles.address_name_box}>
-              <Text style={styles.text_total_items}>{cart_data.count_selected} sản phẩm</Text>
+              <Text style={styles.text_total_items}>10 sản phẩm</Text>
               <View style={styles.address_default_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={[styles.address_default_title, styles.title_active]}>Thành tiền: {cart_data.total}</Text>
+                  <Text style={[styles.address_default_title, styles.title_active]}>Thành tiền: 816,220</Text>
                 </TouchableHighlight>
               </View>
             </View>
@@ -413,6 +330,12 @@ export default class Confirm extends Component {
     });
   }
 
+  _onSave() {
+    if (this.popup_message) {
+      this.popup_message.open();
+    }
+  }
+
   _popupClose() {
     if (this.popup_message) {
       this.popup_message.close();
@@ -441,11 +364,6 @@ export default class Confirm extends Component {
     Actions.pop({
       popNum: 2
     });
-
-    // clear cart data on app
-    action(() => {
-      store.resetCartData();
-    })();
   }
 }
 
@@ -580,9 +498,7 @@ const styles = StyleSheet.create({
     height: 80,
     paddingVertical: 8,
     flexDirection: 'row',
-    backgroundColor: "#ffffff",
-    borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    backgroundColor: "#ffffff"
   },
   cart_item_image_box: {
     width: '30%',
@@ -712,29 +628,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     color: "#404040",
     marginLeft: 22
-  },
-
-  item_safe_off: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    width: '100%',
-    height: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end'
-  },
-  item_safe_off_percent: {
-    backgroundColor: '#fa7f50',
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%'
-  },
-  item_safe_off_percent_val: {
-    color: "#ffffff",
-    fontSize: 12
   }
 
 });

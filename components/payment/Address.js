@@ -174,9 +174,7 @@ export default class Address extends Component {
                         <TouchableHighlight
                           underlayColor="transparent"
                           onPress={this._addressSelectHanlder.bind(this, item)}>
-                          <View style={[styles.address_box, {
-                            backgroundColor: is_selected ? "#ffffff" : "#fafafa"
-                          }]}>
+                          <View style={[styles.address_box]}>
                             <View style={styles.address_name_box}>
                               <Text style={styles.address_name}>{item.name}</Text>
                             </View>
@@ -212,6 +210,15 @@ export default class Address extends Component {
                                 </View>
                               </TouchableHighlight>
                             </View>
+
+                            {!is_selected && (
+                              <TouchableHighlight
+                                underlayColor="transparent"
+                                onPress={this._addressSelectHanlder.bind(this, item)}
+                                style={styles.uncheckOverlay}>
+                                <View></View>
+                              </TouchableHighlight>
+                            )}
                           </View>
                         </TouchableHighlight>
                       );
@@ -274,7 +281,7 @@ const styles = StyleSheet.create({
   address_box: {
     paddingVertical: 8,
     paddingHorizontal: 15,
-    backgroundColor: "#ebebeb",
+    backgroundColor: "#ffffff",
     minHeight: 120
   },
   address_name_box: {
@@ -291,7 +298,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     position: 'absolute',
     top: 0,
-    right: 0
+    right: 0,
+    zIndex: 2
   },
   address_default_title: {
     color: '#999999',
@@ -411,5 +419,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#999999",
     marginLeft: 4
+  },
+
+  uncheckOverlay: {
+    backgroundColor: "rgba(0,0,0,0.05)",
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   }
 });
