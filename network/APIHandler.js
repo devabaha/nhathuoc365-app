@@ -175,6 +175,22 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Danh sách đơn hàng (theo shop) của user
+  */
+  async site_cart_list(store_id) {
+    var api = url_for(API.SITE_CART_LIST + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Danh sách tất cả đơn hàng của user
+  */
+  async user_cart_list() {
+    var api = url_for(API.USER_CART_LIST);
+    return await this.getAPI(api);
+  }
+
 
 
 

@@ -15,6 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { CheckBox } from '../../lib/react-native-elements';
+import store from '../../store/Store';
 
 // components
 import ListHeader from '../stores/ListHeader';
@@ -64,6 +65,26 @@ export default class Cart extends Component {
     Actions.refresh({
       renderRightButton: this._renderRightButton.bind(this)
     });
+  }
+
+  componentDidMount() {
+    this._getData();
+  }
+
+  async _getData() {
+    try {
+      var response = await APIHandler.user_cart_list();
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+      }
+
+      console.warn(JSON.stringify(response));
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
   }
 
   _onRefresh() {

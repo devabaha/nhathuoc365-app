@@ -122,11 +122,7 @@ export default class Account extends Component {
                     underlayColor="transparent"
                     onPress={item.onPress}>
 
-                    <View style={[styles.profile_list_opt_btn, {
-                      marginBottom: item.marginBottom ? 8 : 0,
-                      borderBottomWidth: Util.pixel,
-                      borderColor: "#dddddd"
-                    }]}>
+                    <View style={[styles.profile_list_opt_btn]}>
 
                       <View style={styles.profile_list_icon_box}>
                         <Icon name={item.icon} size={16} color="#999999" />
@@ -216,7 +212,10 @@ const styles = StyleSheet.create({
   },
 
   profile_list_opt: {
-    marginTop: 8
+    marginTop: 8,
+    borderTopWidth: Util.pixel,
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
   },
   profile_list_opt_btn: {
     width: Util.size.width,
