@@ -145,7 +145,8 @@ export default class Orders extends Component {
                 }}
                 onPress={() => {
                   Actions.orders_item({
-                    data: item
+                    data: item,
+                    title: `Đơn hàng #${item.cart_code}`
                   });
                 }} />
             );

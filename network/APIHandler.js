@@ -191,6 +191,22 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Gửi chat
+  */
+  async site_send_chat(store_id, data) {
+    var api = url_for(API.SITE_SEND_CHAT + '/' + store_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+  * Load chat
+  */
+  async site_load_chat(store_id, chat_id) {
+    var api = url_for(API.SITE_LOAD_CHAT + '/' + store_id + '/' + chat_id);
+    return await this.getAPI(api);
+  }
+
 
 
 

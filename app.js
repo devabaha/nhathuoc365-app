@@ -27,6 +27,7 @@ import {
 import Store from './store/Store';
 
 // import components
+// screen
 import Home from './components/home/Home';
 import Notification from './components/notification/Notification';
 import Orders from './components/orders/Orders';
@@ -41,7 +42,9 @@ import OrdersItem from './components/orders/OrdersItem';
 import NotifyItem from './components/notification/NotifyItem';
 import SearchStore from './components/home/SearchStore';
 import ListStore from './components/home/ListStore';
+import Chat from './components/chat/Chat';
 
+// others
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
 
@@ -154,6 +157,7 @@ export default class App extends React.Component {
           <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
           <Scene initial={0} key="list_store" title="DANH SÁCH CỬA HÀNG" component={ListStore} {...custommerNav} />
           <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />
+          <Scene initial={0} key="chat" title="CHAT" component={Chat} {...custommerNav} />
 
         </Scene>
       </Router>

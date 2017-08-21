@@ -20,7 +20,6 @@ import store from '../../store/Store';
 // components
 import Address from './Address';
 import Confirm from './Confirm';
-import Finish from './Finish';
 
 @observer
 export default class Payment extends Component {
@@ -56,7 +55,7 @@ export default class Payment extends Component {
         style={styles.right_btn_add_store}
         underlayColor="transparent"
         onPress={this._add_new}>
-        <Icon name="plus-square" size={20} color="#ffffff" />
+        <Icon name="plus" size={20} color="#ffffff" />
       </TouchableHighlight>
     );
   }

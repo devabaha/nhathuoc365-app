@@ -43,3 +43,7 @@ exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
 // Orders
 exports.SITE_CART_LIST = MY_FOOD_API + 'apiSite/cart_list';
 exports.USER_CART_LIST = MY_FOOD_API + 'apiUser/cart_list';
+
+// Chat
+exports.SITE_SEND_CHAT = MY_FOOD_API + 'apiSite/send_chat';
+exports.SITE_LOAD_CHAT = MY_FOOD_API + 'apiSite/load_chat';

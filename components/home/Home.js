@@ -108,7 +108,7 @@ export default class Home extends Component {
               this.refs_modal_add_store.open()
           }
         }}>
-        <Icon name="plus-square" size={20} color="#ffffff" />
+        <Icon name="plus" size={20} color="#ffffff" />
       </TouchableHighlight>
     );
   }
@@ -155,6 +155,14 @@ export default class Home extends Component {
     })();
   }
 
+  // tới màn hình chat
+  _goChat(item) {
+    Actions.chat({
+      title: item.name,
+      store_id: item.id
+    });
+  }
+
   // pull to reload danh sách cửa hàng
   _onRefresh() {
     this.setState({refreshing: true});
@@ -171,7 +179,7 @@ export default class Home extends Component {
         onPress={this._goStores.bind(this, item)}>
         <View style={styles.stores}>
 
-          <Image style={styles.stores_image} source={{uri: item.logo}} />
+          <Image style={styles.stores_image} source={{uri: item.image_url}} />
 
           <View style={styles.stores_info}>
             <View style={styles.stores_info_text}>
@@ -181,7 +189,7 @@ export default class Home extends Component {
 
             <View style={styles.stores_info_cart}>
               <TouchableHighlight
-                onPress={() => {}}
+                onPress={this._goChat.bind(this, item)}
                 underlayColor="transparent"
                 style={styles.stores_info_action}>
                 <View style={styles.stores_info_action_box}>

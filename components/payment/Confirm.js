@@ -9,7 +9,6 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  RefreshControl,
   TextInput,
   Clipboard
 } from 'react-native';
@@ -30,7 +29,6 @@ export default class Confirm extends Component {
     super(props);
 
     this.state = {
-     refreshing: false,
      cart_check_list: {},
      single: this.props.from != 'orders_item',
      coppy_sticker_flag: false,
@@ -63,14 +61,6 @@ export default class Confirm extends Component {
         </TouchableHighlight>
       </View>
     );
-  }
-
-  _onRefresh() {
-    this.setState({refreshing: true});
-
-    setTimeout(() => {
-      this.setState({refreshing: false});
-    }, 1000);
   }
 
   // update cart note
@@ -192,7 +182,7 @@ export default class Confirm extends Component {
                   <Icon style={styles.icon_label} name="info-circle" size={16} color="#999999" />
                   <Text style={styles.input_label}>Thông tin đơn hàng</Text>
                 </View>
-                <Text style={styles.desc_content}>Mã số: {cart_data.cart_code}</Text>
+                <Text style={styles.desc_content}>Mã đơn hàng: #{cart_data.cart_code}</Text>
               </View>
               <View style={styles.address_default_box}>
                 <TouchableHighlight
@@ -370,12 +360,6 @@ export default class Confirm extends Component {
                 );
               }}
               keyExtractor={item => item.id}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />
-              }
             />
           )}
 
@@ -471,6 +455,7 @@ export default class Confirm extends Component {
 
     setTimeout(() => {
       Actions.orders_item({
+        title: `Đơn hàng #${store.cart_data.cart_code}`,
         data: store.cart_data,
         onBack: () => {
           action(() => {
