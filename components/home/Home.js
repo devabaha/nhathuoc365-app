@@ -18,6 +18,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
+import {reaction} from 'mobx';
 
 @observer
 export default class Home extends Component {
@@ -32,6 +33,9 @@ export default class Home extends Component {
     this._goSearchStore = this._goSearchStore.bind(this);
     this._goListStore = this._goListStore.bind(this);
     this._getData = this._getData.bind(this);
+
+    // auto refresh home
+    reaction(() => store.refresh_home_change, this._getData);
   }
 
   componentWillMount() {

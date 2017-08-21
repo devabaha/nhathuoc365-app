@@ -228,7 +228,7 @@ class NavBar extends React.Component {
         if (this.refs_search_input) {
           this.refs_search_input.focus();
         }
-      }, 1000);
+      }, 450);
     }
   }
 

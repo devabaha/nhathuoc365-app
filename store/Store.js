@@ -12,6 +12,9 @@ class Store {
 
   }
 
+  /*********** home begin **********/
+  @observable refresh_home_change = 0;
+
   /*********** store begin **********/
 
   @observable user_info = null;
@@ -56,6 +59,9 @@ class Store {
     this.payment_nav_show = true;
     this.user_cart_note = '';
 
+    // refresh home screen
+    this.refresh_home_change++;
+
     layoutAnimation();
   }
 
@@ -77,6 +83,9 @@ class Store {
       // set new data
       this.cart_products = cart_products.reverse();
       this.cart_products_confirm = cart_products_confirm.reverse();
+
+      // refresh home screen
+      this.refresh_home_change++;
 
       if (this.cart_empty) {
         layoutAnimation();
@@ -104,10 +113,12 @@ class Store {
   }
 
 
+  /*********** orders begin **********/
+  @observable orders_key_change = 0;
 
-
-
-
+  @action setOrdersKeyChange(data) {
+    this.orders_key_change = data;
+  }
 
 
 }

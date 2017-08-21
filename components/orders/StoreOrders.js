@@ -24,7 +24,7 @@ import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
 
 @observer
-export default class Orders extends Component {
+export default class StoreOrders extends Component {
   constructor(props) {
     super(props);
 
@@ -32,13 +32,9 @@ export default class Orders extends Component {
       data: null,
       refreshing: false,
       cart_check_list: {},
-      loading: true
+      loading: true,
+      store_id: props.data.site_id
     }
-
-    this._getData = this._getData.bind(this);
-
-    // refresh
-    reaction(() => store.orders_key_change, this._getData);
   }
 
   componentWillMount() {
@@ -53,7 +49,7 @@ export default class Orders extends Component {
 
   async _getData(delay) {
     try {
-      var response = await APIHandler.user_cart_list();
+      var response = await APIHandler.site_cart_list(this.state.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
@@ -137,12 +133,7 @@ export default class Orders extends Component {
             return(
               <OrdersItemComponent
                 item={item}
-                storeOnPress={() => {
-                  Actions.store_orders({
-                    data: item,
-                    title: item.shop_name
-                  });
-                }}
+                from="store_orders"
                 onPress={() => {
                   Actions.orders_item({
                     data: item
@@ -174,7 +165,8 @@ export default class Orders extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...MARGIN_SCREEN
+    ...MARGIN_SCREEN,
+    marginBottom: 0
   },
   right_btn_add_store: {
     paddingVertical: 1,

@@ -30,6 +30,7 @@ import Store from './store/Store';
 import Home from './components/home/Home';
 import Notification from './components/notification/Notification';
 import Orders from './components/orders/Orders';
+import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Stores from './components/stores/Stores';
 import Item from './components/item/Item';
@@ -152,6 +153,7 @@ export default class App extends React.Component {
           <Scene initial={0} key="notify_item" title="THÔNG BÁO" component={NotifyItem} {...custommerNav} />
           <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
           <Scene initial={0} key="list_store" title="DANH SÁCH CỬA HÀNG" component={ListStore} {...custommerNav} />
+          <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />
 
         </Scene>
       </Router>

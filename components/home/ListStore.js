@@ -219,7 +219,11 @@ export default class SearchStore extends Component {
               ItemSeparatorComponent={() => <View style={styles.separator}></View>}
               renderItem={({item, index}) => {
 
+                // check add status
                 let add_success = this.state.list_added[item.id] == true;
+                if (!add_success) {
+                  add_success = item.added == 1;
+                }
 
                 return(
                   <TouchableHighlight

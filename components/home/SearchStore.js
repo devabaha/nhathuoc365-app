@@ -147,7 +147,7 @@ export default class SearchStore extends Component {
     }, 1000);
   }
 
-  // click chọn địa điểm gợi ý 
+  // click chọn địa điểm gợi ý
   _onPressSuggest(store) {
     this.setState({
       searchValue: store.site_code
@@ -189,6 +189,10 @@ export default class SearchStore extends Component {
               onEndReachedThreshold={0}
               ItemSeparatorComponent={() => <View style={styles.separator}></View>}
               renderItem={({item, index}) => {
+
+                if (!add_success) {
+                  add_success = item.added == 1;
+                }
 
                 return(
                   <TouchableHighlight

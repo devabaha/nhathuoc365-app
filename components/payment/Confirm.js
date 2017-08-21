@@ -10,7 +10,8 @@ import {
   ScrollView,
   FlatList,
   RefreshControl,
-  TextInput
+  TextInput,
+  Clipboard
 } from 'react-native';
 
 // library
@@ -32,7 +33,8 @@ export default class Confirm extends Component {
      refreshing: false,
      cart_check_list: {},
      single: this.props.from != 'orders_item',
-     coppy_sticker_flag: false
+     coppy_sticker_flag: false,
+     address_height: 50
     }
   }
 
@@ -99,14 +101,22 @@ export default class Confirm extends Component {
         if (this.popup_message) {
           this.popup_message.open();
 
+          // update cart data
+          action(() => {
+            store.setCartData(response.data);
+          })();
+
           // hide back button
           Actions.refresh({
             hideBackImage: true
           });
 
-          // hide payment nav
           action(() => {
+            // hide payment nav
             store.setPaymentNavShow(false);
+
+            // reload orders list screen
+            store.setOrdersKeyChange(store.orders_key_change + 1);
           })();
         }
       }
@@ -135,9 +145,32 @@ export default class Confirm extends Component {
   render() {
     var {single} = this.state;
 
-    var { cart_data, cart_products_confirm } = store;
-    var address_data = cart_data ? cart_data.address : null;
+    // from this
+    if (single) {
+      var { cart_data, cart_products_confirm } = store;
+      var address_data = cart_data ? cart_data.address : null;
+    }
 
+    // from detail orders
+    else {
+      var cart_data = this.props.data;
+
+      if (cart_data && Object.keys(cart_data.products).length > 0) {
+        var cart_products_confirm = [];
+        Object.keys(cart_data.products).map(key => {
+          let product = cart_data.products[key];
+          if (product.selected == 1) {
+            cart_products_confirm.push(product);
+          }
+        });
+
+        // set new data
+        var cart_products_confirm = cart_products_confirm.reverse();
+        var address_data = cart_data.address;
+      }
+    }
+
+    // show loading
     if (cart_data == null || cart_products_confirm == null || address_data == null) {
       return (
         <View style={styles.container}>
@@ -148,7 +181,10 @@ export default class Confirm extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView style={[styles.content, single ? null : {marginBottom: 0}]}>
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          style={[styles.content, single ? null : {marginBottom: 0}]}>
+
           <View style={[styles.rows]}>
             <View style={styles.address_name_box}>
               <View>
@@ -164,7 +200,7 @@ export default class Confirm extends Component {
                   onPress={() => 1}>
                   <View style={styles.orders_status_box}>
                     <Text style={styles.address_default_title}>Trạng thái</Text>
-                    <Text style={[styles.orders_status, single ? null : {color: DEFAULT_COLOR}]}>{single ? cart_data.status_view : "Đang giao hàng"}</Text>
+                    <Text style={[styles.orders_status]}>{cart_data.status_view}</Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -205,7 +241,7 @@ export default class Confirm extends Component {
                 ) : (
                   <TouchableHighlight
                     underlayColor="transparent"
-                    onPress={this._showSticker.bind(this)}>
+                    onPress={this._coppyAddress.bind(this, address_data)}>
                     <Text style={[styles.address_default_title, styles.title_active]}>SAO CHÉP</Text>
                   </TouchableHighlight>
                 )}
@@ -223,7 +259,7 @@ export default class Confirm extends Component {
                   <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
                 </View>
               ) : (
-                <Text style={styles.address_content_address_detail}>Số 10 khu Chuyên Gia, Phường Phương Lâm, Thành Phố Hoà Bình, Hoà Bình</Text>
+                <Text style={styles.address_content_address_detail}>{address_data.address}</Text>
               )}
             </View>
           </View>
@@ -238,7 +274,7 @@ export default class Confirm extends Component {
                 <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
 
                 <TextInput
-                  style={[styles.input_address_text, {height: this.state.address_height | 50}]}
+                  style={[styles.input_address_text, {height: this.state.address_height}]}
                   keyboardType="default"
                   maxLength={250}
                   placeholder="Nhập ghi chú của bạn tại đây"
@@ -257,7 +293,7 @@ export default class Confirm extends Component {
                   />
               </View>
             ) : (
-              <Text style={styles.input_note_value}>Giao hàng cho tôi trước 10 giờ trưa hôm nay</Text>
+              <Text style={styles.input_note_value}>{cart_data.user_note || "Không có ghi chú"}</Text>
             )}
           </View>
 
@@ -414,6 +450,14 @@ export default class Confirm extends Component {
     });
   }
 
+  _coppyAddress(address) {
+    var address_string = `Địa chỉ giao hàng: ${address.name}, ${address.tel}, ${address.address}`;
+
+    Clipboard.setString(address_string);
+
+    this._showSticker();
+  }
+
   _popupClose() {
     if (this.popup_message) {
       this.popup_message.close();
@@ -427,7 +471,13 @@ export default class Confirm extends Component {
 
     setTimeout(() => {
       Actions.orders_item({
-
+        data: store.cart_data,
+        onBack: () => {
+          action(() => {
+            store.resetCartData();
+          })();
+          Actions.pop();
+        }
       });
     }, 1000);
   }
@@ -436,17 +486,17 @@ export default class Confirm extends Component {
     this._popupClose();
 
     this._goBack();
+
+    // clear cart data on app
+    action(() => {
+      store.resetCartData();
+    })();
   }
 
   _goBack() {
     Actions.pop({
       popNum: 2
     });
-
-    // clear cart data on app
-    action(() => {
-      store.resetCartData();
-    })();
   }
 }
 
