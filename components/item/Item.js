@@ -178,9 +178,9 @@ export default class Item extends Component {
               height={Util.size.width * 0.6}
               >
               {
-                this.state.data.map((item, index) => {
+                item_data.img.map((item, index) => {
                   return(
-                    <Image style={styles.swiper_image} source={{uri: item.name}} key={index} />
+                    <Image style={styles.swiper_image} source={{uri: item.image}} key={index} />
                   );
                 })
               }
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   },
   swiper_image: {
     height: Util.size.width * 0.6,
-    resizeMode: 'cover'
+    resizeMode: 'contain'
   },
 
   item_heading_box: {

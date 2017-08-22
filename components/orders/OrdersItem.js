@@ -19,6 +19,7 @@ export default class OrdersItem extends Component {
     return (
       <View style={styles.container}>
         <Confirm
+          store_data={this.props.store_data}
           data={this.props.data}
           from="orders_item" />
       </View>

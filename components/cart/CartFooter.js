@@ -137,7 +137,7 @@ export default class CartFooter extends Component {
     return(
       <View style={styles.store_cart_item}>
         <View style={styles.store_cart_item_image_box}>
-          <Image style={styles.store_cart_item_image} source={{uri: "https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg" || item.image}} />
+          <Image style={styles.store_cart_item_image} source={{uri: item.image}} />
         </View>
         <View style={styles.store_cart_item_title_box}>
           <Text style={styles.store_cart_item_title}>{item.name}</Text>

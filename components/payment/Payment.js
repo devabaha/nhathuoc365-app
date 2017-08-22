@@ -32,7 +32,8 @@ export default class Payment extends Component {
         {id: 'confirm', index: 1, name: '2. Xác nhận', icon: 'check', title: 'XÁC NHẬN ĐƠN HÀNG'}
       ],
       refreshing: false,
-      payment_nav_index: 0
+      payment_nav_index: 0,
+      store_data: props.store_data
     }
 
     this._renderRightButton = this._renderRightButton.bind(this);
@@ -114,6 +115,8 @@ export default class Payment extends Component {
   }
 
   render() {
+    var {store_data} = this.state;
+
     return (
       <View style={styles.container}>
         {store.payment_nav_show && (
@@ -164,10 +167,19 @@ export default class Payment extends Component {
           renderItem={({item}) => {
             switch (item.id) {
               case 'address':
-                return <Address go_confirm_page={this._go_confirm_page} add_new={this._add_new} />
+                return (
+                  <Address
+                    store_data={store_data}
+                    go_confirm_page={this._go_confirm_page} 
+                    add_new={this._add_new} />
+                );
                 break;
               case 'confirm':
-                return <Confirm go_address_page={this._go_address_page} />
+                return (
+                  <Confirm
+                    store_data={store_data}
+                    go_address_page={this._go_address_page} />
+                );
                 break;
               default:
 

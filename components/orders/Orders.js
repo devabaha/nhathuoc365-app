@@ -32,7 +32,8 @@ export default class Orders extends Component {
       data: null,
       refreshing: false,
       cart_check_list: {},
-      loading: true
+      loading: true,
+      empty: false
     }
 
     this._getData = this._getData.bind(this);
@@ -60,9 +61,14 @@ export default class Orders extends Component {
           this.setState({
             data: response.data,
             refreshing: false,
-            loading: false
+            loading: false,
+            empty: false
           });
         }, delay || 0);
+      } else {
+        this.setState({
+          empty: true
+        });
       }
     } catch (e) {
       console.warn(e);
@@ -111,6 +117,10 @@ export default class Orders extends Component {
   }
 
   render() {
+    if (this.state.empty) {
+      return <CenterText title="Chưa có đơn hàng nào" />
+    }
+
     if (this.state.loading) {
       return <Indicator />
     }
@@ -146,7 +156,11 @@ export default class Orders extends Component {
                 onPress={() => {
                   Actions.orders_item({
                     data: item,
-                    title: `Đơn hàng #${item.cart_code}`
+                    title: `Đơn hàng #${item.cart_code}`,
+                    store_data: {
+                      name: item.shop_name,
+                      id: item.site_id
+                    }
                   });
                 }} />
             );

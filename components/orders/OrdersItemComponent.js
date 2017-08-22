@@ -56,12 +56,12 @@ export default class OrdersItemComponent extends Component {
               {Object.keys(item.products).length > 0 && (
                 <View style={styles.orders_item_content_text}>
                   <Text style={styles.orders_item_content_value}>{(() => {
-                    var item_data = [];
+                    var items_string = '';
                     Object.keys(item.products).reverse().map(key => {
                       let item_product = item.products[key];
-                      item_data.push(item_product.name + ' (' + item_product.quantity_view + '), ');
+                      items_string += item_product.name + ' (' + item_product.quantity_view + '), ';
                     });
-                    return item_data;
+                    return sub_string(items_string, 100);
                   })()}</Text>
                 </View>
               )}

@@ -28,19 +28,6 @@ export default class Cart extends Component {
     super(props);
 
     this.state = {
-      data: [
-        {
-          key: "O'Green Nguyễn Trí Thanh",
-          data: [
-            {id: 1, name: 'https://dl.airtable.com/Qh7rvfKTpixsA8EJY8gN_DF084%20-%202-thumbnail%402x.jpg'},
-            {id: 2, name: 'https://dl.airtable.com/fHPF5j1wS4ygkQXajEJo_DF049%20-%203-thumbnail%402x.jpg'},
-            {id: 3, name: 'https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg'},
-            {id: 4, name: 'https://dl.airtable.com/49DRLvioQEmPia4ax2sB_CAT0169-thumbnail%402x.jpg.jpg'},
-            {id: 5, name: 'https://dl.airtable.com/h6BemcmSYqFCa846oZQg_IMG_9563-thumbnail%402x.jpg'},
-            {id: 6, name: 'https://dl.airtable.com/PFaOAMWQ4y1Tu8jmgxJV_DF059%20-%202-thumbnail%402x.jpg'}
-          ]
-        }
-     ],
      refreshing: false,
      cart_check_list: {},
      loading: true,
@@ -264,7 +251,9 @@ export default class Cart extends Component {
   // go payment screen
   _goPayment() {
     if (store.cart_data.count_selected > 0) {
-      Actions.payment({});
+      Actions.payment({
+        store_data: this.state.store_data
+      });
     } else {
       return Alert.alert(
         'Thông báo',
@@ -325,7 +314,7 @@ export default class Cart extends Component {
                 </View>
 
                 <View style={styles.cart_item_image_box}>
-                  <Image style={styles.cart_item_image} source={{uri: "https://dl.airtable.com/857k6KkTQjmYhntXG7bA_CAT0142-thumbnail%402x.jpg" || item.image}} />
+                  <Image style={styles.cart_item_image} source={{uri: item.image}} />
                 </View>
 
                 <View style={styles.cart_item_info}>

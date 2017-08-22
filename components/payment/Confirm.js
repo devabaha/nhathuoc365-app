@@ -32,7 +32,8 @@ export default class Confirm extends Component {
      cart_check_list: {},
      single: this.props.from != 'orders_item',
      coppy_sticker_flag: false,
-     address_height: 50
+     address_height: 50,
+     store_data: props.store_data
     }
   }
 
@@ -45,18 +46,23 @@ export default class Confirm extends Component {
   }
 
   _renderRightButton() {
+    var {store_data} = this.state;
+
     return(
       <View style={styles.right_btn_box}>
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
-
+            Actions.chat({
+              title: store_data.name,
+              store_id: store_data.id
+            });
           }}>
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
+            {/*<View style={styles.stores_info_action_notify}>
               <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
+            </View>*/}
           </View>
         </TouchableHighlight>
       </View>
@@ -264,7 +270,7 @@ export default class Confirm extends Component {
                 <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
 
                 <TextInput
-                  style={[styles.input_address_text, {height: this.state.address_height}]}
+                  style={[styles.input_address_text, {height: this.state.address_height > 50 ? this.state.address_height : 50}]}
                   keyboardType="default"
                   maxLength={250}
                   placeholder="Nhập ghi chú của bạn tại đây"
@@ -331,7 +337,7 @@ export default class Confirm extends Component {
                 return(
                   <View style={styles.cart_item_box}>
                     <View style={styles.cart_item_image_box}>
-                      <Image style={styles.cart_item_image} source={{uri: item.name}} />
+                      <Image style={styles.cart_item_image} source={{uri: item.image}} />
                     </View>
 
                     <View style={styles.cart_item_info}>
@@ -462,7 +468,8 @@ export default class Confirm extends Component {
             store.resetCartData();
           })();
           Actions.pop();
-        }
+        },
+        store_data: this.state.store_data
       });
     }, 1000);
   }
@@ -627,7 +634,7 @@ const styles = StyleSheet.create({
   },
   cart_item_image: {
     height: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'center'
   },
   cart_item_info: {
     width: Util.size.width * 0.7 - 8,
