@@ -207,7 +207,9 @@ export default class CartFooter extends Component {
         </View>
 
         <TouchableHighlight
-          onPress={() => Actions.cart({})}
+          onPress={() => Actions.cart({
+            ...this.props.goCartProps
+          })}
           style={styles.checkout_btn}
           underlayColor="transparent"
           >

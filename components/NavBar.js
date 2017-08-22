@@ -204,6 +204,7 @@ class NavBar extends React.Component {
     this.renderLeftButton = this.renderLeftButton.bind(this);
     this.renderTitle = this.renderTitle.bind(this);
     this.renderImageTitle = this.renderImageTitle.bind(this);
+    this._enableSearch = this._enableSearch.bind(this);
 
     this.state = {
       search_width: Util.size.width * 0.75,
@@ -217,7 +218,7 @@ class NavBar extends React.Component {
   }
 
   _searchFocus(nextProps) {
-    if (this.searchIsFocus) {
+    if (this.searchIsFocus && nextProps.searchValue === '') {
       return;
     }
 
@@ -471,6 +472,31 @@ class NavBar extends React.Component {
     return tryRender(this.props.component, this.props.wrapBy) || tryRender(this.props);
   }
 
+  _enableSearch() {
+    Actions.refresh({
+      rightTitle: "Huỷ",
+      onRight: () => {
+        Keyboard.dismiss();
+
+        if (this.props.onSearchCancel) {
+          this.props.onSearchCancel();
+        }
+      },
+      rightButtonTextStyle: {
+        color: "#ebebeb",
+        fontSize: 14,
+        marginTop: isIOS ? 1 : 1,
+        marginRight: 2
+      },
+      hideBackImage: true
+    });
+
+    this.setState({
+      search_width: Util.size.width * 0.85
+    });
+    layoutAnimation();
+  }
+
   renderTitle(childState, index:number) {
     let title = this.props.getTitle ? this.props.getTitle(childState) : childState.title;
     if (title === undefined && childState.component && childState.component.title) {
@@ -548,30 +574,7 @@ class NavBar extends React.Component {
               onChangeText={this.props.onChangeText}
               onSubmitEditing={this.props.onSubmitEditing}
               autoFocus={this.state.autoFocus}
-              onFocus={() => {
-                Actions.refresh({
-                  rightTitle: "Huỷ",
-                  onRight: () => {
-                    Keyboard.dismiss();
-
-                    if (this.props.onSearchCancel) {
-                      this.props.onSearchCancel();
-                    }
-                  },
-                  rightButtonTextStyle: {
-                    color: "#ebebeb",
-                    fontSize: 14,
-                    marginTop: isIOS ? 1 : 1,
-                    marginRight: 2
-                  },
-                  hideBackImage: true
-                });
-
-                this.setState({
-                  search_width: Util.size.width * 0.85
-                });
-                layoutAnimation();
-              }}
+              onFocus={this._enableSearch.bind(this)}
               onBlur={() => {
                 Actions.refresh({
                   rightTitle: undefined,

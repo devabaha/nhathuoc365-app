@@ -36,7 +36,8 @@ export default class Stores extends Component {
       category_nav_id: 0,
       items_data: null,
       categories_data: null,
-      header_title: "— Tất cả sản phẩm —"
+      header_title: "— Tất cả sản phẩm —",
+      store_data: props.store_data
     }
   }
 
@@ -111,18 +112,25 @@ export default class Stores extends Component {
   }
 
   _renderRightButton() {
+    var {store_data} = this.state;
+
     return(
       <View style={styles.right_btn_box}>
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
-
+            Actions.chat({
+              title: store_data.name,
+              store_id: store_data.id
+            });
           }}>
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
+            {store_data && store_data.count_chat > 0 && (
+              <View style={styles.stores_info_action_notify}>
+                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
+              </View>
+            )}
           </View>
         </TouchableHighlight>
       </View>
@@ -168,7 +176,8 @@ export default class Stores extends Component {
 
     Actions.item({
       title: item.name,
-      item
+      item,
+      store_data: this.state.store_data
     });
   }
 
@@ -269,6 +278,10 @@ export default class Stores extends Component {
         {this._renderItemsContent.call(this)}
 
         {this.state.finish == true && <CartFooter
+          goCartProps={{
+            title: this.state.store_data.name,
+            store_data: this.state.store_data
+          }}
           confirmRemove={this._confirmRemoveCartItem.bind(this)}
          />}
 

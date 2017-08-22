@@ -214,7 +214,7 @@ export default class SearchStore extends Component {
                           <View style={styles.store_result_item_add_box}>
                             <TouchableHighlight
                               underlayColor="transparent"
-                              onPress={this._add_store.bind(this, item)}>
+                              onPress={add_success ? null : this._add_store.bind(this, item)}>
                               <View style={[styles.add_btn_icon_box, add_success && styles.add_btn_icon_box_active]}>
                                 {add_success ? (
                                   <Icon name="check" size={14} color="#ffffff" />

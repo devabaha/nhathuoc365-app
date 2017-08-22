@@ -22,6 +22,8 @@ import { FormInput } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import {reaction} from 'mobx';
 
+const _CHAT_KEY = 'ChatKey';
+
 @observer
 export default class Chat extends Component {
   constructor(props) {
@@ -31,7 +33,7 @@ export default class Chat extends Component {
       bottom: 0,
       content: '',
       store_id: props.store_id,
-      data: null,
+      data: [],
       loading: true
     }
 
@@ -51,6 +53,9 @@ export default class Chat extends Component {
 
     Actions.refresh({
       onBack: () => {
+        clearTimeout(this._scrollDelay);
+        clearInterval(this._updateTimer);
+
         Keyboard.dismiss();
 
         this.keyboardWillShowListener.remove();
@@ -78,10 +83,72 @@ export default class Chat extends Component {
   }
 
   componentDidMount() {
-    this._getData();
+
+    var chat_key = _CHAT_KEY + this.state.store_id;
+
+    storage.load({
+    	key: chat_key,
+
+    	// autoSync(default true) means if data not found or expired,
+    	// then invoke the corresponding sync method
+    	autoSync: true,
+
+    	// syncInBackground(default true) means if data expired,
+    	// return the outdated data first while invoke the sync method.
+    	// It can be set to false to always return data provided by sync method when expired.(Of course it's slower)
+    	syncInBackground: true,
+
+    	// you can pass extra params to sync method
+    	// see sync example below for example
+    	syncParams: {
+    	  extraFetchOptions: {
+    	    // blahblah
+    	  },
+    	  someFlag: true,
+    	},
+    }).then(data => {
+    	// found data go to then()
+      this.setState({
+        data,
+        loading: false,
+        finish: true
+      }, () => {
+        this._scrollToEnd();
+
+        this._autoUpdate();
+      });
+    }).catch(err => {
+      this._getData();
+
+    	// any exception including data not found
+    	// goes to catch()
+    	// console.warn(err.message);
+    	switch (err.name) {
+    	    case 'NotFoundError':
+    	        // TODO;
+    	        break;
+            case 'ExpiredError':
+                // TODO
+                break;
+    	}
+    });
+  }
+
+  _autoUpdate() {
+    clearInterval(this._updateTimer);
+
+    this._updateTimer = setInterval(() => {
+      if (this.state.finish) {
+        this._getData();
+      }
+    }, 3000);
   }
 
   async _getData() {
+    this.setState({
+      finish: false
+    });
+
     try {
       var response = await APIHandler.site_load_chat(this.state.store_id, this.last_item_id);
 
@@ -91,13 +158,28 @@ export default class Chat extends Component {
 
           this.setState({
             data: this.state.data != null ? [...this.state.data, ...data] : data,
-            loading: false
-          }, this._scrollToEnd);
+            loading: false,
+            finish: true
+          }, () => {
+            this._scrollToEnd();
+
+            var chat_key = _CHAT_KEY + this.state.store_id;
+
+            storage.save({
+            	key: chat_key,   // Note: Do not use underscore("_") in key!
+            	data: this.state.data,
+
+            	// if not specified, the defaultExpires will be applied instead.
+            	// if set to null, then it will never expire.
+            	expires: null
+            });
+
+          });
         } else {
           this.setState({
-            data: [],
-            loading: false
-          }, this._scrollToEnd);
+            loading: false,
+            finish: true
+          });
         }
       }
     } catch (e) {
@@ -150,96 +232,104 @@ export default class Chat extends Component {
       return <Indicator />
     }
 
-    this.last_admin_id = undefined;
-
     return (
       <View style={styles.container}>
 
-        <View style={styles.chat_wrapper}>
+        <ScrollView
+          ref={ref => this.refs_chat = ref}
+          style={{
+            marginBottom: 42 + this.state.bottom
+          }}>
 
-          {data != null && <FlatList
-            ref={ref => this.refs_chat = ref}
-            style={{
-              marginBottom: 42 + this.state.bottom
-            }}
-            onEndReached={(num) => {
+          {data.length > 0 ? (
+            <FlatList
+              onEndReached={(num) => {
 
-            }}
-            onEndReachedThreshold={0}
-            data={data}
-            extraData={this.state}
-            renderItem={({item, index}) => {
+              }}
+              onEndReachedThreshold={0}
+              data={data}
+              extraData={this.state}
+              renderItem={({item, index}) => {
+                if (index == 0) {
+                  this.last_admin_id = undefined;
+                }
 
-              // show avatar logic
-              let just_user = item.admin_id === this.last_admin_id;
-              if (!just_user) {
-                this.last_admin_id = item.admin_id;
-              }
+                // show avatar logic
+                let just_user = item.admin_id === this.last_admin_id;
+                if (!just_user) {
+                  this.last_admin_id = item.admin_id;
+                }
 
-              // fixed
-              just_user = false;
+                // marginTop for last item
+                let last_item = this.state.data.length - 1 == index;
+                if (last_item) {
+                  this.last_item_id = item.id;
+                }
 
-              // marginTop for last item
-              let last_item = this.state.data.length - 1 == index;
+                if (item.admin_id == 0) {
+                  return (
+                    <View style={styles.chat_parent_right}>
+                      <View style={[styles.chat_box_item, styles.chat_box_item_right, {
+                        marginTop: !just_user ? 12 : 6
+                      }]}>
+                        <View style={styles.chat_box_avatar}>
+                          {!just_user && (
+                            <Image style={styles.chat_avatar} source={{uri: item.user_logo}} />
+                          )}
+                        </View>
 
-              this.last_item_id = item.id;
-
-              if (item.admin_id == 0) {
-                return (
-                  <View style={styles.chat_parent_right}>
-                    <View style={[styles.chat_box_item, styles.chat_box_item_right, {
-                      // marginTop: !just_user ? 12 : 6
-                    }]}>
-                      <View style={styles.chat_box_avatar}>
-                        {!just_user && (
-                          <Image style={styles.chat_avatar} source={{uri: item.user_logo}} />
-                        )}
+                        <View style={[styles.chat_content, styles.chat_content_right]}>
+                          <Text style={styles.chat_content_text}>{item.content}</Text>
+                        </View>
                       </View>
 
-                      <View style={[styles.chat_content, styles.chat_content_right]}>
-                        <Text style={styles.chat_content_text}>{item.content}</Text>
-                      </View>
+                      {last_item && (
+                        <View style={{
+                          height: 8,
+                          width: '100%'
+                        }} />
+                      )}
                     </View>
+                  );
+                } else {
+                  return (
+                    <View style={styles.chat_parent_left}>
+                      <View style={[styles.chat_box_item, styles.chat_box_item_left, {
+                        marginTop: !just_user ? 12 : 6
+                      }]}>
+                        <View style={styles.chat_box_avatar}>
+                          {!just_user && (
+                            <Image style={styles.chat_avatar} source={{uri: item.site_logo}} />
+                          )}
+                        </View>
 
-                    {last_item && (
-                      <View style={{
-                        height: 8,
-                        width: '100%'
-                      }} />
-                    )}
-                  </View>
-                );
-              } else {
-                return (
-                  <View style={styles.chat_parent_left}>
-                    <View style={[styles.chat_box_item, styles.chat_box_item_left, {
-                      // marginTop: !just_user ? 12 : 6
-                    }]}>
-                      <View style={styles.chat_box_avatar}>
-                        {!just_user && (
-                          <Image style={styles.chat_avatar} source={{uri: item.site_logo}} />
-                        )}
+                        <View style={[styles.chat_content, styles.chat_content_left]}>
+                          <Text style={styles.chat_content_text}>{item.content}</Text>
+                        </View>
                       </View>
 
-                      <View style={[styles.chat_content, styles.chat_content_left]}>
-                        <Text style={styles.chat_content_text}>{item.content}</Text>
-                      </View>
+                      {last_item && (
+                        <View style={{
+                          height: 8,
+                          width: '100%'
+                        }} />
+                      )}
                     </View>
+                  );
+                }
+              }}
+              keyExtractor={item => item.id}
+            />
+          ) : (
+            <View style={{
+              width: Util.size.width,
+              height: Util.size.height - NAV_HEIGHT - 40
+            }}>
+              <CenterText title="Bắt đầu cuộc trò chuyện :)" />
+            </View>
+          )}
 
-                    {last_item && (
-                      <View style={{
-                        height: 8,
-                        width: '100%'
-                      }} />
-                    )}
-                  </View>
-                );
-              }
-            }}
-            keyExtractor={item => item.id}
-          />}
-
-        </View>
+        </ScrollView>
 
       <View style={[styles.chat_input_box, {
         bottom: this.state.bottom
@@ -251,13 +341,16 @@ export default class Chat extends Component {
           value={this.state.content}
           onChangeText={(content) => this.setState({content})}
           placeholder="Nhập tin nhắn"
+          placeholderTextColor="#999999"
+          underlineColorAndroid="#ffffff"
+          onSubmitEditing={this._onSubmit.bind(this)}
           />
 
           <TouchableHighlight
             underlayColor="transparent"
             onPress={this._onSubmit.bind(this)}
             style={styles.chat_input_submit}>
-            <Icon  name="send" size={24} color={this.state.content ? DEFAULT_COLOR : "#cccccc"} />
+            <Icon  name="send" size={22} color={this.state.content ? DEFAULT_COLOR : "#cccccc"} />
           </TouchableHighlight>
       </View>
       </View>
@@ -301,7 +394,8 @@ const styles = StyleSheet.create({
   chat_avatar: {
     width: '100%',
     height: '100%',
-    borderRadius: 15
+    borderRadius: 15,
+    backgroundColor: "#ffffff"
   },
   chat_content: {
     borderRadius: 5,
@@ -328,8 +422,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     width: '100%',
-    borderTopWidth: 1,
-    borderTopColor: "#ebebeb"
+    borderTopWidth: Util.pixel,
+    borderTopColor: "#dddddd"
   },
   chat_input: {
     width: '100%',

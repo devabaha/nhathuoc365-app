@@ -40,13 +40,14 @@ export default class Item extends Component {
      refreshing: false,
      item: props.item,
      item_data: null,
-     loading: false
+     loading: false,
+     store_data: props.store_data
     }
   }
 
   componentWillMount() {
     Actions.refresh({
-      renderRightButton: this._renderRightButton
+      renderRightButton: this._renderRightButton.bind(this)
     });
   }
 
@@ -78,7 +79,8 @@ export default class Item extends Component {
         setTimeout(() => {
           this.setState({
             item_data: response.data,
-            loading: false
+            loading: false,
+            refreshing: false
           });
           layoutAnimation();
         }, delay || this._delay());
@@ -92,18 +94,25 @@ export default class Item extends Component {
   }
 
   _renderRightButton() {
+    var {store_data} = this.state;
+
     return(
       <View style={styles.right_btn_box}>
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
-
+            Actions.chat({
+              title: store_data.name,
+              store_id: store_data.id
+            });
           }}>
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
+            {store_data && store_data.count_chat > 0 && (
+              <View style={styles.stores_info_action_notify}>
+                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
+              </View>
+            )}
           </View>
         </TouchableHighlight>
       </View>
@@ -183,7 +192,9 @@ export default class Item extends Component {
             <Text style={styles.item_heading_title}>{item_data ? item_data.name : item.name}</Text>
 
             <View style={styles.item_heading_price_box}>
-              <Text style={styles.item_heading_safe_off_value}>35,000</Text>
+              {item.discount_percent > 0 && (
+                <Text style={styles.item_heading_safe_off_value}>{item_data ? item_data.discount : item.discount}</Text>
+              )}
               <Text style={styles.item_heading_price}>{item_data ? item_data.price_view : item.price}</Text>
             </View>
 
@@ -214,7 +225,7 @@ export default class Item extends Component {
           {item_data != null && (
             <View style={styles.item_content_box}>
 
-              <View style={[styles.item_content_item, styles.item_content_item_left]}>
+              {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
                 <View style={styles.item_content_icon_box}>
                   <Icon name="clock-o" size={16} color="#999999" />
                 </View>
@@ -223,7 +234,7 @@ export default class Item extends Component {
 
               <View style={[styles.item_content_item, styles.item_content_item_right]}>
                 <Text style={[styles.item_content_item_value, {color: DEFAULT_COLOR}]}>Trong 1 giờ</Text>
-              </View>
+              </View>*/}
 
               <View style={[styles.item_content_item, styles.item_content_item_left]}>
                 <View style={styles.item_content_icon_box}>
@@ -247,7 +258,7 @@ export default class Item extends Component {
                 <Text style={styles.item_content_item_value}>Đà Lạt</Text>
               </View>
 
-              <View style={[styles.item_content_item, styles.item_content_item_left]}>
+              {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
                 <View style={styles.item_content_icon_box}>
                   <Icon name="usd" size={16} color="#999999" />
                 </View>
@@ -256,7 +267,7 @@ export default class Item extends Component {
 
               <View style={[styles.item_content_item, styles.item_content_item_right]}>
                 <Text style={styles.item_content_item_value}>Bằng giá cửa hàng</Text>
-              </View>
+              </View>*/}
 
             </View>
           )}
@@ -281,22 +292,28 @@ export default class Item extends Component {
             style={[styles.items_box, {
               marginBottom: cart_data && cart_products ? 59 : 0
             }]}
-            ListHeaderComponent={() => <ListHeader title="— CÓ THỂ BẠN THÍCH —" />}
+            ListHeaderComponent={() => <ListHeader title="— SẢN PHẨM CÙNG DANH MỤC —" />}
             data={this.state.data}
             renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
             keyExtractor={item => item.id}
             numColumns={2}
           />}
 
-          <View style={styles.item_safe_off}>
-            <View style={styles.item_safe_off_percent}>
-              <Text style={styles.item_safe_off_percent_val}>-23%</Text>
+          {item.discount_percent > 0 && (
+            <View style={styles.item_safe_off}>
+              <View style={styles.item_safe_off_percent}>
+                <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
+              </View>
             </View>
-          </View>
+          )}
 
         </ScrollView>
 
         <CartFooter
+          goCartProps={{
+            title: this.state.store_data.name,
+            store_data: this.state.store_data
+          }}
           confirmRemove={this._confirmRemoveCartItem.bind(this)}
          />
 

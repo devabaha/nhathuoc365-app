@@ -140,7 +140,8 @@ export default class Home extends Component {
     })();
 
     Actions.stores({
-      title: item.name
+      title: item.name,
+      store_data: item
     });
   }
 
@@ -150,7 +151,8 @@ export default class Home extends Component {
       store.setStoreId(item.id);
 
       Actions.cart({
-
+        title: item.name,
+        store_data: item
       });
     })();
   }

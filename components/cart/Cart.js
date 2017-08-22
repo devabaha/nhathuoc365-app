@@ -43,7 +43,8 @@ export default class Cart extends Component {
      ],
      refreshing: false,
      cart_check_list: {},
-     loading: true
+     loading: true,
+     store_data: props.store_data
     }
   }
 
@@ -110,18 +111,25 @@ export default class Cart extends Component {
   }
 
   _renderRightButton() {
+    var {store_data} = this.state;
+
     return(
       <View style={styles.right_btn_box}>
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
-
+            Actions.chat({
+              title: store_data.name,
+              store_id: store_data.id
+            });
           }}>
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
+            {store_data && store_data.count_chat > 0 && (
+              <View style={styles.stores_info_action_notify}>
+                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
+              </View>
+            )}
           </View>
         </TouchableHighlight>
       </View>
