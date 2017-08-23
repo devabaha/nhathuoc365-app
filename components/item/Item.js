@@ -182,10 +182,11 @@ export default class Item extends Component {
           store.setCartData(response.data);
 
           var index = null;
-          if (store.cart_products) {
-            store.cart_products.some((value, key) => {
+          if (response.data.products) {
+            Object.keys(response.data.products).reverse().some((key, key_index) => {
+              let value = response.data.products[key];
               if (value.id == item.id) {
-                index = key;
+                index = key_index;
                 return true;
               }
             });
