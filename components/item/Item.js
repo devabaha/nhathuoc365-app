@@ -89,6 +89,8 @@ export default class Item extends Component {
       setTimeout(() => {
         this.setState({
           item_data: data,
+          loading: false,
+          refreshing: false
         });
       }, this._delay());
     }).catch(err => {
@@ -176,9 +178,22 @@ export default class Item extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
 
-
         action(() => {
           store.setCartData(response.data);
+
+          var index = null;
+          if (store.cart_products) {
+            store.cart_products.some((value, key) => {
+              if (value.id == item.id) {
+                index = key;
+                return true;
+              }
+            });
+          }
+
+          if (index !== null) {
+            store.setCartItemIndex(index);
+          }
         })();
 
       }

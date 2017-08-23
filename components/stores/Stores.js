@@ -274,9 +274,22 @@ export default class Stores extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
 
-
         action(() => {
           store.setCartData(response.data);
+
+          var index = null;
+          if (store.cart_products) {
+            store.cart_products.some((value, key) => {
+              if (value.id == item.id) {
+                index = key;
+                return true;
+              }
+            });
+          }
+
+          if (index !== null) {
+            store.setCartItemIndex(index);
+          }
         })();
 
       }
