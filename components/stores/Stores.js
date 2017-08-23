@@ -24,6 +24,9 @@ import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 
+const STORE_CATEGORY_KEY = 'KeyStoreCategory';
+const STORE_KEY = 'KeyStore';
+
 @observer
 export default class Stores extends Component {
   constructor(props) {
@@ -62,7 +65,33 @@ export default class Stores extends Component {
   }
 
   // lấy thông tin cửa hàng
-  async _getCategoriesNav() {
+  _getCategoriesNav() {
+    var store_key = STORE_KEY + store.store_id;
+
+    // load
+    storage.load({
+      key: store_key,
+      autoSync: true,
+      syncInBackground: true,
+      syncParams: {
+        extraFetchOptions: {
+        },
+        someFlag: true,
+      },
+    }).then(data => {
+      setTimeout(() => {
+        this.setState({
+          categories_data: data,
+        });
+      }, this._delay());
+    }).catch(err => {
+      this._getCategoriesNavFromServer();
+    });
+  }
+
+  async _getCategoriesNavFromServer() {
+    var store_key = STORE_KEY + store.store_id;
+
     try {
       var response = await APIHandler.site_info(store.store_id);
 
@@ -71,9 +100,15 @@ export default class Stores extends Component {
         setTimeout(() => {
           this.setState({
             categories_data: [{id: 0, name: "Tất cả"}, ...response.data.categories],
+          }, () => {
+            // cache in five minutes
+            storage.save({
+              key: store_key,
+              data: this.state.categories_data,
+              expires: STORE_CACHE
+            });
           });
         }, this._delay());
-
       }
 
     } catch (e) {
@@ -84,9 +119,49 @@ export default class Stores extends Component {
   }
 
   // lấy d/s sản phẩm theo category_id
-  async _getItemByCateId(category_id) {
+  _getItemByCateId(category_id) {
+    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id;
+
     this.setState({
-      loading: true
+      loading: true,
+      items_data: null
+    });
+
+    // load
+    storage.load({
+    	key: store_category_key,
+    	autoSync: true,
+    	syncInBackground: true,
+    	syncParams: {
+    	  extraFetchOptions: {
+    	  },
+    	  someFlag: true,
+    	},
+    }).then(data => {
+      // delay append data
+      setTimeout(() => {
+        this.setState({
+          items_data: data,
+          loading: false,
+          finish: true,
+          refreshing: false
+        });
+
+        // animate true
+        layoutAnimation();
+
+      }, this._delay());
+    }).catch(err => {
+      this._getItemByCateIdFromServer(category_id);
+    });
+  }
+
+  async _getItemByCateIdFromServer(category_id, delay) {
+    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id;
+
+    this.setState({
+      loading: true,
+      items_data: null
     });
 
     try {
@@ -94,6 +169,7 @@ export default class Stores extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
 
+        // delay append data
         setTimeout(() => {
           this.setState({
             items_data: response.data,
@@ -101,8 +177,18 @@ export default class Stores extends Component {
             finish: true,
             refreshing: false
           });
+
+          // cache in five minutes
+          storage.save({
+            key: store_category_key,
+            data: response.data,
+            expires: STORE_CATEGORY_CACHE
+          });
+
+          // animate true
           layoutAnimation();
-        }, this._delay());
+
+        }, delay || this._delay());
 
       }
 
@@ -139,7 +225,7 @@ export default class Stores extends Component {
 
   _onRefresh() {
     this.setState({refreshing: true});
-    this._getItemByCateId(this.state.category_nav_id);
+    this._getItemByCateIdFromServer(this.state.category_nav_id, 1000);
   }
 
   _changeCategory(item, index) {

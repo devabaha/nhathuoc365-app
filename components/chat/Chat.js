@@ -119,18 +119,6 @@ export default class Chat extends Component {
       });
     }).catch(err => {
       this._getData();
-
-    	// any exception including data not found
-    	// goes to catch()
-    	// console.warn(err.message);
-    	switch (err.name) {
-    	    case 'NotFoundError':
-    	        // TODO;
-    	        break;
-            case 'ExpiredError':
-                // TODO
-                break;
-    	}
     });
   }
 
@@ -166,12 +154,9 @@ export default class Chat extends Component {
             var chat_key = _CHAT_KEY + this.state.store_id;
 
             storage.save({
-            	key: chat_key,   // Note: Do not use underscore("_") in key!
+            	key: chat_key,
             	data: this.state.data,
-
-            	// if not specified, the defaultExpires will be applied instead.
-            	// if set to null, then it will never expire.
-            	expires: null
+            	expires: CHAT_CACHE
             });
 
           });

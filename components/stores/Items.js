@@ -97,8 +97,9 @@ const styles = StyleSheet.create({
     height: '80%'
   },
   item_image: {
+    width: '100%',
     height: '100%',
-    resizeMode: 'center'
+    resizeMode: 'contain'
   },
   item_info_box: {
     width: '100%',

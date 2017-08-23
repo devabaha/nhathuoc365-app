@@ -26,6 +26,8 @@ import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 
+const ITEM_KEY = 'ItemKey';
+
 @observer
 export default class Item extends Component {
   constructor(props) {
@@ -65,8 +67,38 @@ export default class Item extends Component {
   }
 
   // Lấy chi tiết sản phẩm
-  async _getData(delay) {
+  _getData(delay) {
     var {item} = this.state;
+    var item_key = ITEM_KEY + item.id;
+
+    this.setState({
+      loading: true
+    });
+
+    // load
+    storage.load({
+      key: item_key,
+      autoSync: true,
+      syncInBackground: true,
+      syncParams: {
+        extraFetchOptions: {
+        },
+        someFlag: true,
+      },
+    }).then(data => {
+      setTimeout(() => {
+        this.setState({
+          item_data: data,
+        });
+      }, this._delay());
+    }).catch(err => {
+      this._getDataFromServer(delay);
+    });
+  }
+
+  async _getDataFromServer(delay) {
+    var {item} = this.state;
+    var item_key = ITEM_KEY + item.id;
 
     this.setState({
       loading: true
@@ -76,13 +108,25 @@ export default class Item extends Component {
       var response = await APIHandler.site_product(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
+
+        // delay append data
         setTimeout(() => {
           this.setState({
             item_data: response.data,
             loading: false,
             refreshing: false
+          }, () => {
+            // cache in five minutes
+            storage.save({
+              key: item_key,
+              data: this.state.item_data,
+              expires: ITEM_CACHE
+            });
           });
+
+          // animate true
           layoutAnimation();
+
         }, delay || this._delay());
       }
 
@@ -122,7 +166,7 @@ export default class Item extends Component {
   _onRefresh() {
     this.setState({refreshing: true});
 
-    this._getData(1000);
+    this._getDataFromServer(1000);
   }
 
   // add item vào giỏ hàng

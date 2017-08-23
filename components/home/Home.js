@@ -118,9 +118,7 @@ export default class Home extends Component {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
     }
-    Actions.search_store({
-      parent_reload: this._getData
-    });
+    Actions.search_store();
   }
 
   // tới màn hình tìm cửa hàng theo danh sách
@@ -128,9 +126,7 @@ export default class Home extends Component {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
     }
-    Actions.list_store({
-      parent_reload: this._getData
-    });
+    Actions.list_store();
   }
 
   // tới màn hình store

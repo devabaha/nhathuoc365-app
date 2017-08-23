@@ -16,6 +16,7 @@ import {
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
 
 // components
 import Sticker from '../Sticker';
@@ -66,14 +67,14 @@ export default class SearchStore extends Component {
   }
 
   // thực hiện add cửa hàng vào account của user
-  async _add_store(store) {
+  async _add_store(item) {
     if (this._add_store_handler) {
       return;
     }
     this._add_store_handler = true;
 
     try {
-      var response = await APIHandler.user_add_store(store.site_code);
+      var response = await APIHandler.user_add_store(item.site_code);
 
       if (response && response.status == STATUS_SUCCESS) {
         Keyboard.dismiss();
@@ -83,9 +84,9 @@ export default class SearchStore extends Component {
           add_success: true
         }, () => {
           // reload home screen
-          if (this.props.parent_reload) {
-            this.props.parent_reload();
-          }
+          action(() => {
+            store.setRefreshHomeChange(store.refresh_home_change + 1);
+          })();
 
           setTimeout(() => {
             this.setState({

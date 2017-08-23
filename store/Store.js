@@ -15,6 +15,10 @@ class Store {
   /*********** home begin **********/
   @observable refresh_home_change = 0;
 
+  @action setRefreshHomeChange(data) {
+    this.refresh_home_change = data;
+  }
+
   /*********** store begin **********/
 
   @observable user_info = null;
