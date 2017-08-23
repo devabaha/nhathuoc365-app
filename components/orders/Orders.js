@@ -52,6 +52,10 @@ export default class Orders extends Component {
     this._getData();
   }
 
+  componentWillReceiveProps() {
+    this._getData();
+  }
+
   async _getData(delay) {
     try {
       var response = await APIHandler.user_cart_list();

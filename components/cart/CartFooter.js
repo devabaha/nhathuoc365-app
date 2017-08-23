@@ -128,6 +128,12 @@ export default class CartFooter extends Component {
   }
 
   _goTopIndex(index) {
+    if (store.cart_products && store.cart_products.length == 0) {
+      return;
+    }
+    if ((index + 1) >= store.cart_products.length) {
+      index = 0;
+    }
     if (this.refs_store_cart) {
         this.refs_store_cart.scrollToIndex({index, animated: true});
     }

@@ -193,7 +193,9 @@ export default class Item extends Component {
           }
 
           if (index !== null) {
-            store.setCartItemIndex(index);
+            setTimeout(() => {
+              store.setCartItemIndex(index);
+            }, 250);
           }
         })();
 
