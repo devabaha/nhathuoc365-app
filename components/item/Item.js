@@ -498,7 +498,8 @@ const styles = StyleSheet.create({
   },
   stores_info_action_notify: {
     position: 'absolute',
-    width: 16,
+    minWidth: 16,
+    paddingHorizontal: 2,
     height: 16,
     backgroundColor: 'red',
     top: isAndroid ? 0 : -4,

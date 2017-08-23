@@ -11,11 +11,20 @@ import {
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
+import store from '../../store/Store';
 
 @observer
 export default class Items extends Component {
   render() {
     let {item, index, onPress, cartOnPress} = this.props;
+
+    var quantity = 0;
+
+    if (store.cart_data && store.cart_data.products) {
+      if (store.cart_data.products[item.id]) {
+        quantity = store.cart_data.products[item.id].quantity;
+      }
+    }
 
     return (
       <TouchableHighlight
@@ -54,6 +63,11 @@ export default class Items extends Component {
             <View style={styles.item_add_cart_box}>
               <Icon name="cart-plus" size={24} color={DEFAULT_COLOR} />
               <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+              {quantity > 0 && (
+                <View style={styles.quantity_box}>
+                  <Text style={styles.quantity_value}>{quantity}</Text>
+                </View>
+              )}
             </View>
           </TouchableHighlight>
 
@@ -182,5 +196,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginLeft: 4,
     textDecorationLine: 'line-through'
+  },
+
+  quantity_box: {
+    position: 'absolute',
+    top: 0,
+    right: 8,
+    minWidth: 14,
+    height: 14,
+    borderRadius: 7,
+    overflow: 'hidden',
+    backgroundColor: "red",
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 2
+  },
+  quantity_value: {
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: '500'
   }
 });

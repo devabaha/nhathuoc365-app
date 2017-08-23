@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   },
   stores_info_action_notify: {
     position: 'absolute',
-    width: 16,
+    minWidth: 16,
     height: 16,
     backgroundColor: 'red',
     top: isAndroid ? 0 : -4,
@@ -464,7 +464,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 8,
+    paddingHorizontal: 2
   },
   stores_info_action_notify_value: {
     fontSize: 10,

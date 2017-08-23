@@ -229,12 +229,13 @@ export default class CartFooter extends Component {
                 left: 18,
                 top: 0,
                 backgroundColor: "red",
-                width: 16,
+                minWidth: 16,
                 height: 16,
                 borderRadius: 8,
                 justifyContent: 'center',
                 alignItems: 'center',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                paddingHorizontal: 2
               }}>
                 <Text style={{
                   fontSize: 10,
