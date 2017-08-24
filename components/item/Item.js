@@ -351,9 +351,7 @@ export default class Item extends Component {
 
             }}
             onEndReachedThreshold={0}
-            style={[styles.items_box, {
-              marginBottom: cart_data && cart_products ? 59 : 0
-            }]}
+            style={[styles.items_box]}
             ListHeaderComponent={() => <ListHeader title="— SẢN PHẨM CÙNG DANH MỤC —" />}
             data={this.state.data}
             renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
@@ -668,7 +666,7 @@ const styles = StyleSheet.create({
   },
 
   items_box: {
-    marginBottom: 59,
+    marginBottom: 69,
     marginTop: 20,
     backgroundColor: "#f1f1f1"
   }

@@ -9,7 +9,6 @@ import {
   FlatList,
   TouchableHighlight,
   RefreshControl,
-  TextInput,
   Keyboard,
   ScrollView
 } from 'react-native';
@@ -413,13 +412,15 @@ const styles = StyleSheet.create({
   chat_input: {
     width: '100%',
     borderColor: '#606060',
-    fontSize: 14
+    fontSize: 14,
+    paddingVertical: 0
   },
   chat_input_container: {
     borderBottomWidth: 0,
     height: 42,
     justifyContent: "center",
-    width: Util.size.width - 68
+    width: Util.size.width - 68,
+    paddingVertical: 0
   },
   chat_input_submit: {
     position: "absolute",

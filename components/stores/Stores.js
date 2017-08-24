@@ -40,13 +40,66 @@ export default class Stores extends Component {
       items_data: null,
       categories_data: null,
       header_title: "— Tất cả sản phẩm —",
-      store_data: props.store_data
+      store_data: props.store_data,
+      searching: false,
+      search_data: null,
+      search_value: ''
     }
   }
 
   componentWillMount() {
     Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this)
+      showSearchBar: true,
+      placeholder: `Tìm kiếm tại ${this.props.title}`,
+      // autoFocus: true,
+      onChangeText: (text) => {
+        Actions.refresh({
+          searchValue: text
+        });
+        this.setState({
+          searching: true,
+          search_value: text
+        });
+      },
+      searchValue: this.state.search_value,
+      onSubmitEditing: () => {
+
+      },
+      onSearchCancel: () => {
+        this.setState({
+          searching: false,
+          search_data: null
+        });
+
+        layoutAnimation();
+      },
+      onFocus: () => {
+        this.setState({
+          searching: true,
+          search_data: null
+        });
+      },
+      onCleanSearch: () => {
+        this.setState({
+          search_value: ''
+        });
+      },
+      onBack: () => {
+        if (this.state.searching) {
+          this.setState({
+            search_value: '',
+            searching: false
+          });
+
+          layoutAnimation();
+
+          Actions.refresh({
+            searchValue: ''
+          });
+        } else {
+          Actions.pop();
+        }
+      }
     });
   }
 
@@ -306,8 +359,53 @@ export default class Stores extends Component {
 
   // render danh sách sản phẩm
   _renderItemsContent() {
+    var {cart_data, cart_products} = store;
+
+    // show loading
+    if (this.state.loading) {
+      return <Indicator />
+    }
+
+    // show search
+    if (this.state.searching) {
+      if (this.state.search_data) {
+        return(
+          <FlatList
+            onEndReached={(num) => {
+
+            }}
+            onEndReachedThreshold={0}
+            style={[styles.items_box]}
+            ListHeaderComponent={() => <ListHeader title={`Kết quả cho "${this.state.search_value}"`} />}
+            data={this.state.search_data}
+            renderItem={({item, index}) => (
+              <Items
+                item={item}
+                index={index}
+                onPress={this._goItem.bind(this, item)}
+                cartOnPress={this._addCart.bind(this, item)}
+                />
+            )}
+            keyExtractor={item => item.id}
+            numColumns={2}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+          />
+        );
+      } else {
+        // no data
+        return(
+          <CenterText title="Không có kết quả phù hợp" />
+        );
+      }
+    }
+
+    // show products
     if (this.state.items_data) {
-      var {cart_data, cart_products} = store;
 
       return(
         <FlatList
@@ -315,9 +413,7 @@ export default class Stores extends Component {
 
           }}
           onEndReachedThreshold={0}
-          style={[styles.items_box, {
-            marginBottom: cart_data && cart_products ? 59 : 0
-          }]}
+          style={[styles.items_box]}
           ListHeaderComponent={() => <ListHeader title={this.state.header_title} />}
           data={this.state.items_data}
           renderItem={({item, index}) => (
@@ -338,44 +434,48 @@ export default class Stores extends Component {
           }
         />
       );
-    } else if (this.state.loading) {
-      return <Indicator />
     } else {
-      return <CenterText title="Chưa có sản phẩm nào" />
+      // no data
+      return(
+        <CenterText title="Chưa có sản phẩm nào" />
+      );
     }
   }
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.categories_nav}>
-          {this.state.categories_data != null ? (
-            <FlatList
-              ref={ref => this.refs_category_nav = ref}
-              data={this.state.categories_data}
-              extraData={this.state}
-              keyExtractor={item => item.id}
-              horizontal={true}
-              style={styles.categories_nav}
-              renderItem={({item, index}) => {
-                let active = this.state.category_nav_index == index;
-                return(
-                  <TouchableHighlight
-                    onPress={() => this._changeCategory(item, index)}
-                    underlayColor="transparent">
-                    <View style={styles.categories_nav_items}>
-                      <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
 
-                      {active && <View style={styles.categories_nav_items_active} />}
-                    </View>
-                  </TouchableHighlight>
-                );
-              }}
-            />
-          ) : (
-            <Indicator size="small" />
-          )}
-        </View>
+        {!this.state.searching && (
+          <View style={styles.categories_nav}>
+            {this.state.categories_data != null ? (
+              <FlatList
+                ref={ref => this.refs_category_nav = ref}
+                data={this.state.categories_data}
+                extraData={this.state}
+                keyExtractor={item => item.id}
+                horizontal={true}
+                style={styles.categories_nav}
+                renderItem={({item, index}) => {
+                  let active = this.state.category_nav_index == index;
+                  return(
+                    <TouchableHighlight
+                      onPress={() => this._changeCategory(item, index)}
+                      underlayColor="transparent">
+                      <View style={styles.categories_nav_items}>
+                        <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
+
+                        {active && <View style={styles.categories_nav_items_active} />}
+                      </View>
+                    </TouchableHighlight>
+                  );
+                }}
+              />
+            ) : (
+              <Indicator size="small" />
+            )}
+          </View>
+        )}
 
         {this._renderItemsContent.call(this)}
 
@@ -477,7 +577,7 @@ const styles = StyleSheet.create({
   },
 
   items_box: {
-    marginBottom: 59
+    marginBottom: 69
   },
 
   categories_nav: {

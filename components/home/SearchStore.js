@@ -167,9 +167,6 @@ export default class SearchStore extends Component {
       search_data: null,
       loading: false
     });
-    Actions.refresh({
-      searchValue: ''
-    });
   }
 
   render() {

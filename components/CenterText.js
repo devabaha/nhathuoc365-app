@@ -14,7 +14,9 @@ export default class CenterText extends Component {
         <Text style={{
           fontSize: this.props.fontSize || 14,
           color: this.props.color || "#404040",
-          marginTop: -NAV_HEIGHT / 2
+          marginTop: this.props.marginTop != undefined ? this.props.marginTop : (-NAV_HEIGHT / 2),
+          textAlign: 'center',
+          lineHeight: 20
         }}>{this.props.title || "Vui lòng nhập text"}</Text>
       </View>
     );
@@ -24,7 +26,8 @@ export default class CenterText extends Component {
 CenterText.propTypes = {
   title: PropTypes.string.isRequired,
   color: PropTypes.string,
-  fontSize: PropTypes.number
+  fontSize: PropTypes.number,
+  marginTop: PropTypes.number
 }
 
 const styles = StyleSheet.create({

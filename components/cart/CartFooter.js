@@ -26,7 +26,8 @@ export default class CartFooter extends Component {
 
     this.state = {
       data: null,
-      refreshing: false
+      refreshing: false,
+      loading: true
     }
 
     reaction(() => store.cart_item_index, () => {
@@ -61,7 +62,9 @@ export default class CartFooter extends Component {
     } catch (e) {
       console.warn(e);
     } finally {
-
+      this.setState({
+        loading: false
+      });
     }
   }
 
@@ -171,14 +174,20 @@ export default class CartFooter extends Component {
     );
   }
 
-  render() {
-    var {cart_data, cart_products} = store;
-    if (cart_data == null || cart_products == null) {
-      return null;
+  _renderContent() {
+    if (this.state.loading) {
+      return(
+        <View style={styles.store_cart_container}>
+          <Indicator size="small" />
+        </View>
+      );
     }
 
-    return (
-      <View style={styles.store_cart_box}>
+    var {cart_data, cart_products} = store;
+    var isset_cart = !(cart_data == null || cart_products == null);
+
+    if (isset_cart) {
+      return(
         <View style={styles.store_cart_container}>
           <View style={styles.store_cart_content}>
             <FlatList
@@ -211,6 +220,26 @@ export default class CartFooter extends Component {
             <Icon name="chevron-right" size={24} color="#333333" />
           </TouchableHighlight>
         </View>
+      );
+    } else {
+      return(
+        <View style={styles.store_cart_container}>
+          <CenterText
+            marginTop={-8}
+            title={"Giỏ hàng trống\nHãy Chọn mua mặt hàng ngay nào!"}
+            />
+        </View>
+      );
+    }
+  }
+
+  render() {
+    var {cart_data, cart_products} = store;
+    var isset_cart = !(cart_data == null || cart_products == null);
+
+    return (
+      <View style={styles.store_cart_box}>
+        {this._renderContent.call(this)}
 
         <TouchableHighlight
           onPress={() => Actions.cart({
@@ -228,34 +257,38 @@ export default class CartFooter extends Component {
           }}>
             <View style={styles.checkout_box}>
               <Icon name="shopping-cart" size={22} color="#ffffff" />
-              <Text style={styles.checkout_title}>GIỎ HÀNG</Text>
+              <Text style={styles.checkout_title}>{isset_cart ? "ĐẶT HÀNG" : "GIỎ HÀNG"}</Text>
 
-              <View style={{
-                position: 'absolute',
-                left: 18,
-                top: 0,
-                backgroundColor: "red",
-                minWidth: 16,
-                height: 16,
-                borderRadius: 8,
-                justifyContent: 'center',
-                alignItems: 'center',
-                overflow: 'hidden',
-                paddingHorizontal: 2
-              }}>
-                <Text style={{
-                  fontSize: 10,
-                  color: '#ffffff',
-                  fontWeight: '600'
-                }}>{cart_data.count}</Text>
-              </View>
+              {isset_cart && (
+                <View style={{
+                  position: 'absolute',
+                  left: 18,
+                  top: 0,
+                  backgroundColor: "red",
+                  minWidth: 16,
+                  height: 16,
+                  borderRadius: 8,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  overflow: 'hidden',
+                  paddingHorizontal: 2
+                }}>
+                  <Text style={{
+                    fontSize: 10,
+                    color: '#ffffff',
+                    fontWeight: '600'
+                  }}>{cart_data.count}</Text>
+                </View>
+              )}
             </View>
 
-            <Text style={{
-              fontSize: 10,
-              color: "#ffffff",
-              fontWeight: '500'
-            }}>{cart_data.total}</Text>
+            {isset_cart && (
+              <Text style={{
+                fontSize: 10,
+                color: "#ffffff",
+                fontWeight: '500'
+              }}>{cart_data.total}</Text>
+            )}
           </View>
         </TouchableHighlight>
       </View>
@@ -269,7 +302,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: 60,
+    height: 69,
     backgroundColor: '#ffffff',
     borderTopWidth: Util.pixel,
     borderTopColor: '#dddddd',
@@ -304,7 +337,7 @@ const styles = StyleSheet.create({
   },
   checkout_box: {
     width: '100%',
-    height: '60%',
+    height: '56%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
@@ -327,7 +360,8 @@ const styles = StyleSheet.create({
   },
   store_cart_item_image_box: {
     width: 60,
-    height: 50,
+    height: 60,
+    marginTop: 4,
     overflow: 'hidden',
     marginHorizontal: 4
   },

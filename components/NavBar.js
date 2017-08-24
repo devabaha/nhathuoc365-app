@@ -185,7 +185,9 @@ const contextTypes = {
   onChangeText: PropTypes.func,
   onSubmitEditing: PropTypes.func,
   searchValue: PropTypes.string,
-  onSearchCancel: PropTypes.func
+  onSearchCancel: PropTypes.func,
+  onFocus: PropTypes.func,
+  onCleanSearch: PropTypes.func
 };
 
 const defaultProps = {
@@ -481,6 +483,10 @@ class NavBar extends React.Component {
         if (this.props.onSearchCancel) {
           this.props.onSearchCancel();
         }
+
+        Actions.refresh({
+          searchValue: ''
+        });
       },
       rightButtonTextStyle: {
         color: "#ebebeb",
@@ -555,6 +561,7 @@ class NavBar extends React.Component {
                 marginLeft: 8
               }}
               name="search" size={12} color="#999999" />
+
             <TextInput
               ref={ref => this.refs_search_input = ref}
               placeholder={this.props.placeholder || "Tìm kiếm"}
@@ -567,14 +574,20 @@ class NavBar extends React.Component {
                 color: "#ffffff",
                 paddingHorizontal: 4,
                 paddingVertical: 0,
-                width: '100%',
+                width: this.state.search_width - (Util.size.width * 0.25 / 2),
                 height: '100%'
               }}
               value={this.props.searchValue}
               onChangeText={this.props.onChangeText}
               onSubmitEditing={this.props.onSubmitEditing}
               autoFocus={this.state.autoFocus}
-              onFocus={this._enableSearch.bind(this)}
+              onFocus={() => {
+                this._enableSearch();
+
+                if (this.props.onFocus) {
+                  this.props.onFocus();
+                }
+              }}
               onBlur={() => {
                 Actions.refresh({
                   rightTitle: undefined,
@@ -587,6 +600,28 @@ class NavBar extends React.Component {
                 layoutAnimation();
               }}
              />
+
+            {this.props.searchValue != '' && this.props.searchValue != null && (
+              <TouchableOpacity
+                underlayColor="transparent"
+                onPress={() => {
+                  Actions.refresh({
+                    searchValue: ''
+                  });
+                  if (this.props.onCleanSearch) {
+                    this.props.onCleanSearch();
+                  }
+                  if (this.refs_search_input) {
+                    this.refs_search_input.focus();
+                  }
+                }}>
+                <Icon
+                  style={{
+                    marginLeft: 8
+                  }}
+                  name="times-circle" size={14} color="#999999" />
+              </TouchableOpacity>
+            )}
           </Animated.View>
         </Animated.View>
       );

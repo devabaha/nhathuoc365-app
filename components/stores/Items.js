@@ -20,11 +20,11 @@ export default class Items extends Component {
 
     var quantity = 0;
 
-    if (store.cart_data && store.cart_data.products) {
-      if (store.cart_data.products[item.id]) {
-        quantity = store.cart_data.products[item.id].quantity;
-      }
-    }
+    // if (store.cart_data && store.cart_data.products) {
+    //   if (store.cart_data.products[item.id]) {
+    //     quantity = store.cart_data.products[item.id].quantity;
+    //   }
+    // }
 
     return (
       <TouchableHighlight
@@ -41,18 +41,24 @@ export default class Items extends Component {
               {item.made_in != '' && (
                 <View style={styles.directionRow}>
                   <Icon name="map-marker" size={12} color="#666666" />
-                  <Text style={styles.item_info_made_title}>{"Đà Lạt" || item.made_in}</Text>
+                  <Text style={styles.item_info_made_title}>{item.made_in}</Text>
                 </View>
               )}
 
               <View style={styles.item_info_weight}>
-                <Text style={styles.item_info_made_title}>{item.unit_name}</Text>
+                <Text style={styles.item_info_made_title}>{`${item.cart_step} ${item.unit_name}`}</Text>
               </View>
             </View>
             <Text style={styles.item_info_name}>{item.name}</Text>
-            <Text style={[styles.item_info_price, {
-              color: item.discount_percent > 0 ? "#fa7f50" : DEFAULT_COLOR
-            }]}>{item.price}</Text>
+            <View style={styles.price_box}>
+              {item.discount_percent > 0 && (
+                <Text style={styles.item_safe_off_price}>{item.discount}</Text>
+              )}
+
+              <Text style={[styles.item_info_price, {
+                color: item.discount_percent > 0 ? "#fa7f50" : DEFAULT_COLOR
+              }]}>{item.price}</Text>
+            </View>
           </View>
 
           <TouchableHighlight
@@ -76,7 +82,6 @@ export default class Items extends Component {
               <View style={styles.item_safe_off_percent}>
                 <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
               </View>
-              <Text style={styles.item_safe_off_price}>{item.discount}</Text>
             </View>
           )}
 
@@ -149,7 +154,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: DEFAULT_COLOR,
-    marginTop: 2
+    marginLeft: 4,
   },
   item_add_cart_btn: {
     position: 'absolute',
@@ -194,7 +199,6 @@ const styles = StyleSheet.create({
   item_safe_off_price: {
     color: "#404040",
     fontSize: 12,
-    marginLeft: 4,
     textDecorationLine: 'line-through'
   },
 
@@ -215,5 +219,10 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 10,
     fontWeight: '500'
+  },
+  price_box: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2
   }
 });

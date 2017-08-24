@@ -367,7 +367,8 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     color: "#000000",
     fontSize: 14,
-    textAlign: 'right'
+    textAlign: 'right',
+    paddingVertical: 0
   },
 
   input_address_box: {
@@ -388,7 +389,8 @@ const styles = StyleSheet.create({
     width: '100%',
     color: "#000000",
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
+    paddingVertical: 0
   },
 
   address_continue: {

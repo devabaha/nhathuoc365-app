@@ -170,7 +170,7 @@ export default class Payment extends Component {
                 return (
                   <Address
                     store_data={store_data}
-                    go_confirm_page={this._go_confirm_page} 
+                    go_confirm_page={this._go_confirm_page}
                     add_new={this._add_new} />
                 );
                 break;
@@ -227,6 +227,10 @@ const styles = StyleSheet.create({
   borderBottom: {
     borderBottomWidth: Util.pixel,
     borderBottomColor: "#dddddd"
+  },
+  right_btn_add_store: {
+    paddingVertical: 1,
+    paddingHorizontal: 8
   },
 
   payments_nav_icon_box: {
