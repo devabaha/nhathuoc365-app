@@ -282,7 +282,7 @@ export default class Item extends Component {
 
           </View>
 
-          {item_data != null && (
+          {item != null && (
             <View style={styles.item_content_box}>
 
               {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
@@ -296,27 +296,35 @@ export default class Item extends Component {
                 <Text style={[styles.item_content_item_value, {color: DEFAULT_COLOR}]}>Trong 1 giờ</Text>
               </View>*/}
 
-              <View style={[styles.item_content_item, styles.item_content_item_left]}>
-                <View style={styles.item_content_icon_box}>
-                  <Icon name="user" size={16} color="#999999" />
+              {item.brand != null && item.brand != '' && (
+                <View style={[styles.item_content_item, styles.item_content_item_left]}>
+                  <View style={styles.item_content_icon_box}>
+                    <Icon name="user" size={16} color="#999999" />
+                  </View>
+                  <Text style={styles.item_content_item_title}>NHÃN HIỆU</Text>
                 </View>
-                <Text style={styles.item_content_item_title}>NHÃN HIỆU</Text>
-              </View>
+              )}
 
-              <View style={[styles.item_content_item, styles.item_content_item_right]}>
-                <Text style={styles.item_content_item_value}>Organica</Text>
-              </View>
-
-              <View style={[styles.item_content_item, styles.item_content_item_left]}>
-                <View style={styles.item_content_icon_box}>
-                  <Icon name="map-marker" size={16} color="#999999" />
+              {item.brand != null && item.brand != '' && (
+                <View style={[styles.item_content_item, styles.item_content_item_right]}>
+                  <Text style={styles.item_content_item_value}>{item.brand}</Text>
                 </View>
-                <Text style={styles.item_content_item_title}>XUẤT XỨ</Text>
-              </View>
+              )}
 
-              <View style={[styles.item_content_item, styles.item_content_item_right]}>
-                <Text style={styles.item_content_item_value}>Đà Lạt</Text>
-              </View>
+              {item.made_in != null && item.made_in != '' && (
+                <View style={[styles.item_content_item, styles.item_content_item_left]}>
+                  <View style={styles.item_content_icon_box}>
+                    <Icon name="map-marker" size={16} color="#999999" />
+                  </View>
+                  <Text style={styles.item_content_item_title}>XUẤT XỨ</Text>
+                </View>
+              )}
+
+              {item.made_in != null && item.made_in != '' && (
+                <View style={[styles.item_content_item, styles.item_content_item_right]}>
+                  <Text style={styles.item_content_item_value}>{item.made_in}</Text>
+                </View>
+              )}
 
               {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
                 <View style={styles.item_content_icon_box}>

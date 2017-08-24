@@ -46,7 +46,7 @@ export default class Items extends Component {
               )}
 
               <View style={styles.item_info_weight}>
-                <Text style={styles.item_info_made_title}>{`${item.cart_step} ${item.unit_name_view}`}</Text>
+                <Text style={styles.item_info_made_title}>{item.unit_name_view}</Text>
               </View>
             </View>
             <Text style={styles.item_info_name}>{item.name}</Text>
