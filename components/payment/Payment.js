@@ -50,6 +50,12 @@ export default class Payment extends Component {
     });
   }
 
+  componentDidMount() {
+    if (this.props.goConfirm) {
+      this._go_confirm_page();
+    }
+  }
+
   _renderRightButton() {
     return(
       <TouchableHighlight
@@ -133,7 +139,7 @@ export default class Payment extends Component {
                 return(
                   <TouchableHighlight
                     onPress={() => {
-                      if (item.id == "address") {
+                      if (item.id == "address" || (store.cart_data && store.cart_data.address)) {
                         this._go_to_page_index(item.id, item.index, item.title);
                       }
                     }}

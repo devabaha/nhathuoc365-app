@@ -242,9 +242,18 @@ export default class CartFooter extends Component {
         {this._renderContent.call(this)}
 
         <TouchableHighlight
-          onPress={() => Actions.cart({
-            ...this.props.goCartProps
-          })}
+          onPress={() => {
+            if (isset_cart && cart_data.address) {
+              Actions.payment({
+                ...this.props.goCartProps,
+                goConfirm: true
+              });
+            } else {
+              Actions.cart({
+                ...this.props.goCartProps
+              });
+            }
+          }}
           style={styles.checkout_btn}
           underlayColor="transparent"
           >

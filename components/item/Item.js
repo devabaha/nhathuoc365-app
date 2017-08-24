@@ -34,17 +34,14 @@ export default class Item extends Component {
     super(props);
 
     this.state = {
-      data: [
-       {id: 1, name: 'Combo 3 dưa leo'},
-       {id: 2, name: 'Combo 3 cà rốt'},
-       {id: 3, name: 'Combo 3 mướp'}
-     ],
      refreshing: false,
      item: props.item,
      item_data: null,
      loading: false,
      store_data: props.store_data
     }
+
+    this._getData = this._getData.bind(this);
   }
 
   componentWillMount() {
@@ -92,7 +89,7 @@ export default class Item extends Component {
           loading: false,
           refreshing: false
         });
-      }, this._delay());
+      }, delay || this._delay());
     }).catch(err => {
       this._getDataFromServer(delay);
     });
@@ -216,6 +213,7 @@ export default class Item extends Component {
       <View style={styles.container}>
 
         <ScrollView
+          ref={ref => this.refs_body_item = ref}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -346,15 +344,22 @@ export default class Item extends Component {
             )}
           </View>
 
-          {this.state.data != null && <FlatList
+          {item_data != null && item_data.related && <FlatList
             onEndReached={(num) => {
 
             }}
             onEndReachedThreshold={0}
             style={[styles.items_box]}
             ListHeaderComponent={() => <ListHeader title="— SẢN PHẨM CÙNG DANH MỤC —" />}
-            data={this.state.data}
-            renderItem={({item, index}) => <Items item={item} index={index} onPress={() => Actions.item({})} />}
+            data={item_data.related}
+            renderItem={({item, index}) => (
+              <Items
+                item={item}
+                index={index}
+                onPress={this._itemRefresh.bind(this, item)}
+                cartOnPress={this._addCart.bind(this, item)}
+                />
+            )}
             keyExtractor={item => item.id}
             numColumns={2}
           />}
@@ -390,6 +395,21 @@ export default class Item extends Component {
           />
       </View>
     );
+  }
+
+  _itemRefresh(item) {
+    Actions.refresh({
+      title: item.name
+    });
+
+    if (this.refs_body_item) {
+      this.refs_body_item.scrollTo({x: 0, y: 0, animated: false});
+    }
+
+    this.setState({
+      item,
+      item_data: null
+    }, this._getData.bind(this, 500));
   }
 
   _confirmRemoveCartItem(item) {
