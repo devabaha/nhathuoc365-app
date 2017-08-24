@@ -258,7 +258,7 @@ export default class Item extends Component {
               <Text style={styles.item_heading_price}>{item_data ? item_data.price_view : item.price}</Text>
             </View>
 
-            <Text style={styles.item_heading_qnt}>{item_data ? item_data.unit_name : item.unit_name}</Text>
+            <Text style={styles.item_heading_qnt}>{item_data ? item_data.unit_name_view : item.unit_name_view}</Text>
 
             <View style={styles.item_actions_box}>
               <TouchableHighlight
