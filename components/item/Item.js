@@ -255,7 +255,7 @@ export default class Item extends Component {
               {item.discount_percent > 0 && (
                 <Text style={styles.item_heading_safe_off_value}>{item_data ? item_data.discount : item.discount}</Text>
               )}
-              <Text style={styles.item_heading_price}>{item_data ? item_data.price_view : item.price}</Text>
+              <Text style={styles.item_heading_price}>{item_data ? item_data.price_view : item.price_view}</Text>
             </View>
 
             <Text style={styles.item_heading_qnt}>{item_data ? item_data.unit_name_view : item.unit_name_view}</Text>
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   },
 
   items_box: {
-    marginBottom: 69,
+    // marginBottom: 69,
     marginTop: 20,
     backgroundColor: "#f1f1f1"
   }

@@ -307,10 +307,10 @@ export default class CartFooter extends Component {
 
 const styles = StyleSheet.create({
   store_cart_box: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
+    // position: 'absolute',
+    // left: 0,
+    // right: 0,
+    // bottom: 0,
     height: 69,
     backgroundColor: '#ffffff',
     borderTopWidth: Util.pixel,

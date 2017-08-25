@@ -57,7 +57,7 @@ export default class Items extends Component {
 
               <Text style={[styles.item_info_price, {
                 color: item.discount_percent > 0 ? "#fa7f50" : DEFAULT_COLOR
-              }]}>{item.price}</Text>
+              }]}>{item.price_view}</Text>
             </View>
           </View>
 

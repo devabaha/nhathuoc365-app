@@ -187,7 +187,9 @@ const contextTypes = {
   searchValue: PropTypes.string,
   onSearchCancel: PropTypes.func,
   onFocus: PropTypes.func,
-  onCleanSearch: PropTypes.func
+  onCleanSearch: PropTypes.func,
+  inputAnimate: PropTypes.bool,
+  cancelIsPop: PropTypes.func
 };
 
 const defaultProps = {
@@ -484,6 +486,10 @@ class NavBar extends React.Component {
           this.props.onSearchCancel();
         }
 
+        if (this.props.cancelIsPop) {
+          return Actions.pop();
+        }
+
         Actions.refresh({
           searchValue: ''
         });
@@ -494,13 +500,15 @@ class NavBar extends React.Component {
         marginTop: isIOS ? 1 : 1,
         marginRight: 2
       },
-      hideBackImage: true
+      hideBackImage: this.props.inputAnimate ? true : false
     });
 
-    this.setState({
-      search_width: Util.size.width * 0.85
-    });
-    layoutAnimation();
+    if (this.props.inputAnimate) {
+      this.setState({
+        search_width: Util.size.width * 0.85
+      });
+      layoutAnimation();
+    }
   }
 
   renderTitle(childState, index:number) {
