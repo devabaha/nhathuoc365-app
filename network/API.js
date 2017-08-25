@@ -19,6 +19,7 @@ exports.USER_ADD_SITE = MY_FOOD_API + 'apiUser/add_site';
 exports.USER_LIST_SITE = MY_FOOD_API + 'apiUser/list_site';
 exports.SITE_INFO = MY_FOOD_API + 'apiSite/info';
 exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
+exports.SEARCH_PRODUCT = MY_FOOD_API + 'apiSite/search_product';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';

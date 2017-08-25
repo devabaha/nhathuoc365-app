@@ -222,11 +222,9 @@ class NavBar extends React.Component {
   }
 
   _searchFocus(nextProps) {
-    if (this.searchIsFocus && nextProps.searchValue === '') {
+    if (nextProps.searchValue == this.props.searchValue) {
       return;
     }
-
-    this.searchIsFocus = true;
 
     if (nextProps.autoFocus) {
       setTimeout(() => {

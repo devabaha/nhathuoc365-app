@@ -52,7 +52,8 @@ export default class Stores extends Component {
       placeholder: title,
       onFocus: () => {
         Actions.search({
-          title
+          title,
+          store_data: this.state.store_data
         });
       },
       renderRightButton: this._renderRightButton.bind(this)

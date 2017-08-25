@@ -207,6 +207,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Tìm sản phẩm theo store_id
+  */
+  async search_product(store_id, data) {
+    var api = url_for(API.SEARCH_PRODUCT + '/' + store_id);
+    return await this.postAPI(api, data);
+  }
+
 
 
 
