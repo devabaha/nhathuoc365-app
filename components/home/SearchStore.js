@@ -35,17 +35,17 @@ export default class SearchStore extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Actions.refresh({
       showSearchBar: true,
       searchValue: '',
       placeholder: "Nhập mã cửa hàng",
-      autoFocus: true,
       onChangeText: this._onChangeSearch.bind(this),
-      searchValue: this.state.searchValue,
       onSubmitEditing: this._search_store.bind(this),
       onSearchCancel: this._onSearchCancel.bind(this),
-      inputAnimate: true
+      inputAnimate: true,
+      autoFocus: true,
+      cancelIsPop: true
     });
   }
 

@@ -44,17 +44,14 @@ export default class Item extends Component {
     this._getData = this._getData.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Actions.refresh({
       renderRightButton: this._renderRightButton.bind(this)
     });
-  }
 
-  componentDidMount() {
     this.start_time = time();
 
     this._getData();
-
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -89,6 +86,10 @@ export default class Item extends Component {
           loading: false,
           refreshing: false
         });
+
+        // animate true
+        layoutAnimation();
+        
       }, delay || this._delay());
     }).catch(err => {
       this._getDataFromServer(delay);

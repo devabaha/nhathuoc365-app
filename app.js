@@ -56,7 +56,8 @@ const custommerNav = {
   navBar,
   sceneStyle: {
     backgroundColor: "#f3f3f3"
-  }
+  },
+  direction: "fade"
 }
 
 // StatusBar
@@ -155,7 +156,7 @@ export default class App extends React.Component {
             <Scene initial={0} key="createAddress" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
             <Scene initial={0} key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
             <Scene initial={0} key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
-            <Scene initial={0} direction="fade" key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
+            <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
             <Scene initial={0} key="orders_item" title="CHI TIẾT ĐƠN HÀNG" component={OrdersItem} {...custommerNav} />
             <Scene initial={0} key="notify_item" title="THÔNG BÁO" component={NotifyItem} {...custommerNav} />

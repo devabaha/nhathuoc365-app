@@ -131,10 +131,10 @@ export default class CartFooter extends Component {
   }
 
   _goTopIndex(index) {
-    if (store.cart_products && store.cart_products.length == 0) {
+    if (_.isObject(store.cart_products) && store.cart_products.length == 0) {
       return;
     }
-    if ((index + 1) >= store.cart_products.length) {
+    if ((index + 1) > store.cart_products.length) {
       index = 0;
     }
     if (this.refs_store_cart) {
@@ -243,16 +243,10 @@ export default class CartFooter extends Component {
 
         <TouchableHighlight
           onPress={() => {
-            if (isset_cart && cart_data.address) {
-              Actions.payment({
-                ...this.props.goCartProps,
-                goConfirm: true
-              });
-            } else {
-              Actions.cart({
-                ...this.props.goCartProps
-              });
-            }
+            Actions.payment({
+              ...this.props.goCartProps,
+              goConfirm: (isset_cart && cart_data.address)
+            });
           }}
           style={styles.checkout_btn}
           underlayColor="transparent"
@@ -376,7 +370,7 @@ const styles = StyleSheet.create({
   },
   store_cart_item_image: {
     height: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'contain'
   },
   store_cart_item_title_box: {
     flex: 1

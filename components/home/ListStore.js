@@ -37,7 +37,7 @@ export default class SearchStore extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Actions.refresh({
       showSearchBar: true,
       searchValue: '',
@@ -49,9 +49,7 @@ export default class SearchStore extends Component {
       onSearchCancel: this._onSearchCancel.bind(this),
       inputAnimate: true
     });
-  }
 
-  componentDidMount() {
     this.start_time = time();
 
     this._getData();

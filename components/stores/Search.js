@@ -49,9 +49,11 @@ export default class Search extends Component {
     this._getHistory = this._getHistory.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
     this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
+
+    this._getHistory();
 
     Actions.refresh({
       showSearchBar: true,
@@ -59,9 +61,6 @@ export default class Search extends Component {
       placeholder: this.props.title,
       autoFocus: true,
       inputAnimate: true,
-      onFocus: () => {
-
-      },
       onChangeText: (text) => {
         Actions.refresh({
           searchValue: text
@@ -93,10 +92,6 @@ export default class Search extends Component {
         Actions.pop();
       }
     });
-  }
-
-  componentDidMount() {
-    this._getHistory();
   }
 
   _keyboardWillShow(e) {

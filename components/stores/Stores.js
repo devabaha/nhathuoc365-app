@@ -44,28 +44,28 @@ export default class Stores extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
+
     var title = `Tìm kiếm tại ${this.props.title}`;
 
     Actions.refresh({
       showSearchBar: true,
       placeholder: title,
-      onFocus: () => {
-        Actions.search({
+      searchOnpress: () => {
+        return Actions.search({
           title,
           store_data: this.state.store_data
         });
       },
       renderRightButton: this._renderRightButton.bind(this)
     });
-  }
 
-  componentDidMount() {
     this.start_time = time();
 
     this._getCategoriesNav();
 
     this._getItemByCateId(this.state.category_nav_id);
+
   }
 
   // thời gian trễ khi chuyển màn hình

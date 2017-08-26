@@ -90,8 +90,6 @@ export default class Payment extends Component {
 
   _go_to_page_index(id, index, title) {
     if (this.refs_payment_page) {
-        layoutAnimation();
-
         this.refs_payment_page.scrollToIndex({index, animated: true});
 
         this.setState({

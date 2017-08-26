@@ -174,10 +174,6 @@ const propTypes = {
   navigationBarShowImageSelection: PropTypes.bool,
   navigationBarSelecionStyle: ViewPropTypes.style,
   renderTitle: PropTypes.any,
-};
-
-const contextTypes = {
-  drawer: PropTypes.object,
 
   autoFocus: PropTypes.bool,
   placeholder: PropTypes.string,
@@ -189,7 +185,12 @@ const contextTypes = {
   onFocus: PropTypes.func,
   onCleanSearch: PropTypes.func,
   inputAnimate: PropTypes.bool,
-  cancelIsPop: PropTypes.func
+  cancelIsPop: PropTypes.bool,
+  searchOnpress: PropTypes.func
+};
+
+const contextTypes = {
+  drawer: PropTypes.object
 };
 
 const defaultProps = {
@@ -568,44 +569,67 @@ class NavBar extends React.Component {
               }}
               name="search" size={12} color="#999999" />
 
-            <TextInput
-              ref={ref => this.refs_search_input = ref}
-              placeholder={this.props.placeholder || "Tìm kiếm"}
-              returnKeyType="search"
-              placeholderTextColor="#999999"
-              underlineColorAndroid="transparent"
-              selectTextOnFocus
-              style={{
-                fontSize: 14,
-                color: "#ffffff",
-                paddingHorizontal: 4,
-                paddingVertical: 0,
-                width: this.state.search_width - (Util.size.width * 0.25 / 2),
-                height: '100%'
-              }}
-              value={this.props.searchValue}
-              onChangeText={this.props.onChangeText}
-              onSubmitEditing={this.props.onSubmitEditing}
-              autoFocus={this.state.autoFocus}
-              onFocus={() => {
-                this._enableSearch();
+            {this.props.searchOnpress ? (
+              <TouchableOpacity
+                style={{
+                  justifyContent: 'center',
+                  width: this.state.search_width - (Util.size.width * 0.25 / 2),
+                  height: '100%'
+                }}
+                onPress={this.props.searchOnpress}
+                returnKeyType="search"
+                placeholderTextColor="#999999"
+                underlineColorAndroid="transparent">
 
-                if (this.props.onFocus) {
-                  this.props.onFocus();
-                }
-              }}
-              onBlur={() => {
-                Actions.refresh({
-                  rightTitle: undefined,
-                  onRight: undefined,
-                  hideBackImage: false
-                });
-                this.setState({
-                  search_width: Util.size.width * 0.75
-                });
-                layoutAnimation();
-              }}
-             />
+                  <Text
+                    style={{
+                    fontSize: 14,
+                    color: "#999999",
+                    paddingHorizontal: 4,
+                    paddingVertical: 0
+                  }}>{this.props.placeholder || "Tìm kiếm"}</Text>
+
+                </TouchableOpacity>
+            ) : (
+              <TextInput
+                ref={ref => this.refs_search_input = ref}
+                placeholder={this.props.placeholder || "Tìm kiếm"}
+                returnKeyType="search"
+                placeholderTextColor="#999999"
+                underlineColorAndroid="transparent"
+                selectTextOnFocus
+                style={{
+                  fontSize: 14,
+                  color: "#ffffff",
+                  paddingHorizontal: 4,
+                  paddingVertical: 0,
+                  width: this.state.search_width - (Util.size.width * 0.25 / 2),
+                  height: '100%'
+                }}
+                value={this.props.searchValue}
+                onChangeText={this.props.onChangeText}
+                onSubmitEditing={this.props.onSubmitEditing}
+                autoFocus={this.state.autoFocus}
+                onFocus={() => {
+                  this._enableSearch();
+
+                  if (this.props.onFocus) {
+                    this.props.onFocus();
+                  }
+                }}
+                onBlur={() => {
+                  Actions.refresh({
+                    rightTitle: undefined,
+                    onRight: undefined,
+                    hideBackImage: false
+                  });
+                  this.setState({
+                    search_width: Util.size.width * 0.75
+                  });
+                  layoutAnimation();
+                }}
+               />
+            )}
 
             {this.props.searchValue != '' && this.props.searchValue != null && (
               <TouchableOpacity
