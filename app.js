@@ -109,14 +109,14 @@ export default class App extends React.Component {
               <Scene
                 key="myTab2"
                 icon={TabIcon}
-                iconTitle="Thông báo"
-                iconName="bell"
-                size={20}
+                iconTitle="Tin tức"
+                iconName="newspaper-o"
+                size={17}
                 onPress={()=> {
                   Actions._notification({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_notification" title="THÔNG BÁO" component={Notification} {...custommerNav} />
+                  <Scene key="_notification" title="TIN TỨC" component={Notification} {...custommerNav} />
               </Scene>
 
               {/**
@@ -159,7 +159,7 @@ export default class App extends React.Component {
             <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
             <Scene initial={0} key="orders_item" title="CHI TIẾT ĐƠN HÀNG" component={OrdersItem} {...custommerNav} />
-            <Scene initial={0} key="notify_item" title="THÔNG BÁO" component={NotifyItem} {...custommerNav} />
+            <Scene initial={0} key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
             <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
             <Scene initial={0} key="list_store" title="DANH SÁCH CỬA HÀNG" component={ListStore} {...custommerNav} />
             <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />

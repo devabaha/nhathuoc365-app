@@ -13,38 +13,83 @@ import {
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import HTMLView from 'react-native-htmlview';
 
 @observer
 export default class NotifyItem extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: true,
+      item: props.data,
+      item_data: null
+    }
+  }
+
+  componentDidMount() {
+    this._getData();
+  }
+
+  async _getData(delay) {
+    this.setState({
+      loading: true
+    });
+
+    try {
+      var response = await APIHandler.user_news(this.state.item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(() => {
+          this.setState({
+            item_data: response.data,
+            refreshing: false,
+            loading: false
+          });
+
+          layoutAnimation();
+        }, delay || 0);
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
   render() {
+    var {item, item_data} = this.state;
+
     return (
       <View style={styles.container}>
         <ScrollView style={styles.notify_container}>
           <View style={styles.notify_image_box}>
-            <Image style={styles.notify_image} source={{uri: "http://cosp.com.vn/images/stores/2017/01/05/shop-thuc-pham-sach-co-tam-dienbien2.jpg"}} />
+            <Image style={styles.notify_image} source={{uri: item.image_url}} />
           </View>
 
           <View style={styles.notify_content}>
-            <Text style={styles.notify_heading}>TOP GREEN Tưng Bừng Khuyến Mại - Tri Ân Khách Hàng
-  Mừng Sinh Nhật 3 tuổi - 12/10/2016</Text>
+            <Text style={styles.notify_heading}>{item.title}</Text>
 
             <View style={styles.notify_time_box}>
               <Icon name="newspaper-o" size={14} color="#666666" />
-              <Text style={styles.notify_time}>{"O'Green Cầu Giấy"} | 14:29 01/08</Text>
+              <Text style={styles.notify_time}>{item.shop_name} | {item.created_view}</Text>
             </View>
 
             <View style={styles.notify_sort_content_box}>
-              <Text style={styles.notify_sort_content}>Nhân dịp kỷ niệm sinh nhật 3 tuổi, Nhằm tri ân Quý khách hàng đã luôn tin dùng sản phẩm và dịch vụ của hệ thống Thực phẩm sạch OGreen.</Text>
+              <Text style={styles.notify_sort_content}>{item.short_content}</Text>
             </View>
 
             <View style={styles.notify_sort_content_box}>
-              <Text style={styles.notify_full_content}>1. Giảm giá toàn bộ hóa đơn lên tới 5% trong 03 ngày 12-13-14/10/2016
-    2. Tặng rau hữu cơ Đại Ngàn cho 50 khách hàng đầu tiên trong ngày 12-13-14/10/2016
-    3. Thưởng thức, dùng thử các sản phẩm tại cửa hàng:
-    Nhóm sản phẩm Trái cây: Nho Ninh Thuận, Bưởi Quế Dương, Cam xoàn, Dưa các loại...
-    Nhóm Thịt sạch: Thịt lợn hữu cơ Giang Nam, Thịt gà đồi Ba Vì...
-    Nhóm Thực phẩm chế biến: Bánh chưng Phì Điền Bắc Giang, các sản phẩm chế biến làm từ thịt lợn Giang Nam: pate, xúc xích, giò, chả… Sữa chua dê Ba Vì, Thạch an Cao Bằng,...
-    Cùng nhiều quà tặng hấp dẫn khác...</Text>
+              <Text style={styles.notify_full_content}></Text>
+              {item_data != null ? (
+                <HTMLView
+                  renderNode={this.renderNode.bind(this)}
+                  value={item_data.content}
+                  stylesheet={html_styles}
+                />
+              ) : (
+                <Indicator size="small" />
+              )}
             </View>
           </View>
 
@@ -52,7 +97,57 @@ export default class NotifyItem extends Component {
       </View>
     );
   }
+
+  renderNode(node, index, siblings, parent, defaultRenderer) {
+    if (node.name == 'img') {
+      const element = node.attribs;
+
+      return (
+        <View
+          key={index}
+          style={{
+            width: Util.size.width - 30,
+            height: 200,
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginVertical: 12
+          }}>
+          <Image
+            style={{
+              width: Util.size.width * 0.8,
+              height: 200,
+              resizeMode: 'contain'
+            }}
+            source={{uri: element.src}}
+            />
+        </View>
+      );
+    }
+  }
 }
+
+const html_styles = StyleSheet.create({
+  div: {
+    color: "#404040",
+    fontSize: 14,
+    lineHeight: 24
+  },
+  p: {
+    color: "#404040",
+    fontSize: 14,
+    lineHeight: 24
+  },
+  a: {
+    fontWeight: '300',
+    color: "#FF3366",
+  },
+  img: {
+    width: 200,
+    height: 100,
+    padding: 10,
+    marginTop: 10
+  }
+});
 
 const styles = StyleSheet.create({
   container: {

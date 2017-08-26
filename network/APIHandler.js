@@ -215,6 +215,22 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  /**
+  * Load news list
+  */
+  async user_news_list() {
+    var api = url_for(API.USER_NEWS_LIST);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Load a news by id
+  */
+  async user_news(news_id) {
+    var api = url_for(API.USER_NEWS + '/' + news_id);
+    return await this.getAPI(api);
+  }
+
 
 
 

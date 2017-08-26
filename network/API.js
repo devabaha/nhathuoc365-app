@@ -48,3 +48,7 @@ exports.USER_CART_LIST = MY_FOOD_API + 'apiUser/cart_list';
 // Chat
 exports.SITE_SEND_CHAT = MY_FOOD_API + 'apiSite/send_chat';
 exports.SITE_LOAD_CHAT = MY_FOOD_API + 'apiSite/load_chat';
+
+// News
+exports.USER_NEWS_LIST = MY_FOOD_API + 'apiUser/news_list';
+exports.USER_NEWS = MY_FOOD_API + 'apiUser/news';
