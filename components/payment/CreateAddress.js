@@ -187,6 +187,10 @@ export default class CreateAddress extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         this._unMount();
 
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
         Actions.pop();
 
         setTimeout(() => {

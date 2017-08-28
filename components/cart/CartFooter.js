@@ -146,7 +146,7 @@ export default class CartFooter extends Component {
   }
 
   _goTopIndex(index) {
-    if (store.cart_data != null && _.isArray(store.cart_products) && store.cart_products.length == 0) {
+    if (store.cart_data == null || store.cart_products == null) {
       return;
     }
     if ((index + 1) > store.cart_products.length) {

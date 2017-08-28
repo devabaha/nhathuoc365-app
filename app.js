@@ -132,7 +132,7 @@ export default class App extends React.Component {
                   Actions._orders({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_orders" title="DANH SÁCH ĐƠN HÀNG" component={Orders} {...custommerNav} />
+                  <Scene key="_orders" title="ĐƠN HÀNG" component={Orders} {...custommerNav} />
               </Scene>
 
               {/**
@@ -148,20 +148,20 @@ export default class App extends React.Component {
                   Actions._account({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene hideNavBar key="_account" title="Tài khoản" component={Account} {...custommerNav} />
+                  <Scene hideNavBar key="_account" title="TÀI KHOẢN" component={Account} {...custommerNav} />
               </Scene>
             </Scene>
 
-            <Scene initial={0} key="payment" title="ĐỊA CHỈ NHẬN HÀNG" component={Payment} {...custommerNav} />
+            <Scene initial={0} key="payment" title="ĐỊA CHỈ" component={Payment} {...custommerNav} />
             <Scene initial={0} key="createAddress" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
             <Scene initial={0} key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
             <Scene initial={0} key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
             <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
-            <Scene initial={0} key="orders_item" title="CHI TIẾT ĐƠN HÀNG" component={OrdersItem} {...custommerNav} />
+            <Scene initial={0} key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
             <Scene initial={0} key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
             <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
-            <Scene initial={0} key="list_store" title="DANH SÁCH CỬA HÀNG" component={ListStore} {...custommerNav} />
+            <Scene initial={0} key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
             <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />
             <Scene initial={0} key="chat" title="CHAT" component={Chat} {...custommerNav} />
 

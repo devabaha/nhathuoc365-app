@@ -28,8 +28,8 @@ export default class Payment extends Component {
 
     this.state = {
       payments_data: [
-        {id: 'address', index: 0, name: '1. Địa chỉ', icon: 'map-marker', title: 'ĐỊA CHỈ NHẬN HÀNG'},
-        {id: 'confirm', index: 1, name: '2. Xác nhận', icon: 'check', title: 'XÁC NHẬN ĐƠN HÀNG'}
+        {id: 'address', index: 0, name: '1. Địa chỉ', icon: 'map-marker', title: 'ĐỊA CHỈ'},
+        {id: 'confirm', index: 1, name: '2. Xác nhận', icon: 'check', title: 'XÁC NHẬN'}
       ],
       refreshing: false,
       payment_nav_index: 0,
@@ -41,19 +41,13 @@ export default class Payment extends Component {
     this._go_confirm_page = this._go_confirm_page.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Actions.refresh({
       renderRightButton: this._renderRightButton,
       onBack: () => {
         Actions.pop();
       }
     });
-  }
-
-  componentDidMount() {
-    if (this.props.goConfirm) {
-      this._go_confirm_page();
-    }
   }
 
   _renderRightButton() {
@@ -173,6 +167,7 @@ export default class Payment extends Component {
               case 'address':
                 return (
                   <Address
+                    goConfirm={this.props.goConfirm}
                     store_data={store_data}
                     go_confirm_page={this._go_confirm_page}
                     add_new={this._add_new} />

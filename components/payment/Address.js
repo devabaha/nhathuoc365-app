@@ -56,6 +56,12 @@ export default class Address extends Component {
             loading: false,
             item_selected: null
           });
+
+          if (this.props.goConfirm) {
+            // go confirm screen
+            this._goConfirmPage();
+          }
+
           layoutAnimation();
         } else {
           this.setState({
