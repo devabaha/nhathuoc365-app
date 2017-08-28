@@ -154,7 +154,11 @@ export default class Orders extends Component {
                 storeOnPress={() => {
                   Actions.store_orders({
                     data: item,
-                    title: item.shop_name
+                    title: item.shop_name,
+                    store_data: {
+                      name: item.shop_name,
+                      id: item.site_id
+                    }
                   });
                 }}
                 onPress={() => {

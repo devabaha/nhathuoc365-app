@@ -72,7 +72,7 @@ export default class NotifyItem extends Component {
 
             <View style={styles.notify_time_box}>
               <Icon name="newspaper-o" size={14} color="#666666" />
-              <Text style={styles.notify_time}>{item.shop_name} | {item.created_view}</Text>
+              <Text style={styles.notify_time}>{item.shop_name} | {item.created}</Text>
             </View>
 
             <View style={styles.notify_sort_content_box}>
@@ -103,35 +103,22 @@ export default class NotifyItem extends Component {
       const element = node.attribs;
 
       return (
-        <View
+        <Image
           key={index}
           style={{
             width: Util.size.width - 30,
-            height: 200,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginVertical: 12
-          }}>
-          <Image
-            style={{
-              width: Util.size.width * 0.8,
-              height: 200,
-              resizeMode: 'contain'
-            }}
-            source={{uri: element.src}}
-            />
-        </View>
+            height: Math.floor(Util.size.height * 0.3),
+            resizeMode: 'cover',
+            backgroundColor: "#ccc"
+          }}
+          source={{uri: element.src}}
+          />
       );
     }
   }
 }
 
 const html_styles = StyleSheet.create({
-  div: {
-    color: "#404040",
-    fontSize: 14,
-    lineHeight: 24
-  },
   p: {
     color: "#404040",
     fontSize: 14,
@@ -139,13 +126,7 @@ const html_styles = StyleSheet.create({
   },
   a: {
     fontWeight: '300',
-    color: "#FF3366",
-  },
-  img: {
-    width: 200,
-    height: 100,
-    padding: 10,
-    marginTop: 10
+    color: DEFAULT_COLOR,
   }
 });
 

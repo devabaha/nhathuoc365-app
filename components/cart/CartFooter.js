@@ -27,7 +27,9 @@ export default class CartFooter extends Component {
     this.state = {
       data: null,
       refreshing: false,
-      loading: true
+      loading: true,
+      increment_loading: false,
+      decrement_loading: false
     }
 
     reaction(() => store.cart_item_index, () => {
@@ -80,6 +82,9 @@ export default class CartFooter extends Component {
   }
 
   async _item_qnt_decrement(item) {
+    this.setState({
+      decrement_loading: true
+    });
 
     try {
       var response = await APIHandler.site_cart_down(store.store_id, item.id);
@@ -87,6 +92,9 @@ export default class CartFooter extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           store.setCartData(response.data);
+          this.setState({
+            decrement_loading: false
+          });
         })();
 
       }
@@ -98,12 +106,19 @@ export default class CartFooter extends Component {
   }
 
   async _item_qnt_increment(item) {
+    this.setState({
+      increment_loading: true
+    });
+
     try {
       var response = await APIHandler.site_cart_up(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           store.setCartData(response.data);
+          this.setState({
+            increment_loading: false
+          });
         })();
 
       }
@@ -131,7 +146,7 @@ export default class CartFooter extends Component {
   }
 
   _goTopIndex(index) {
-    if (_.isObject(store.cart_products) && store.cart_products.length == 0) {
+    if (store.cart_data != null && _.isArray(store.cart_products) && store.cart_products.length == 0) {
       return;
     }
     if ((index + 1) > store.cart_products.length) {
@@ -158,7 +173,13 @@ export default class CartFooter extends Component {
             onPress={this._item_qnt_decrement_handler.bind(this, item)}
             underlayColor="transparent"
             style={styles.store_cart_item_qnt_change}>
-            <Icon name="minus" size={16} color="#404040" />
+            <View>
+              {this.state.decrement_loading ? (
+                <Indicator size="small" />
+              ) : (
+                <Icon name="minus" size={16} color="#404040" />
+              )}
+            </View>
           </TouchableHighlight>
 
           <Text style={styles.store_cart_item_qnt}>{item.quantity_view}</Text>
@@ -167,7 +188,13 @@ export default class CartFooter extends Component {
             onPress={this._item_qnt_increment.bind(this, item)}
             underlayColor="transparent"
             style={styles.store_cart_item_qnt_change}>
-            <Icon name="plus" size={16} color="#404040" />
+            <View>
+              {this.state.increment_loading ? (
+                <Indicator size="small" />
+              ) : (
+                <Icon name="plus" size={16} color="#404040" />
+              )}
+            </View>
           </TouchableHighlight>
         </View>
       </View>

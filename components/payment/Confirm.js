@@ -33,7 +33,8 @@ export default class Confirm extends Component {
      single: this.props.from != 'orders_item',
      coppy_sticker_flag: false,
      address_height: 50,
-     store_data: props.store_data
+     store_data: props.store_data,
+     continue_loading: false
     }
   }
 
@@ -71,6 +72,10 @@ export default class Confirm extends Component {
 
   // update cart note
   async _updateCartNote(callback) {
+    this.setState({
+      continue_loading: true
+    });
+
     try {
       var response = await APIHandler.site_cart_node(store.store_id, {
         user_note: store.user_cart_note
@@ -84,12 +89,18 @@ export default class Confirm extends Component {
     } catch (e) {
       console.warn(e);
     } finally {
-
+      this.setState({
+        continue_loading: false
+      });
     }
   }
 
   // cart orders
   async _siteCartOrders() {
+    this.setState({
+      continue_loading: true
+    });
+
     try {
       var response = await APIHandler.site_cart_orders(store.store_id);
 
@@ -100,6 +111,9 @@ export default class Confirm extends Component {
           // update cart data
           action(() => {
             store.setCartData(response.data);
+            this.setState({
+              continue_loading: false
+            });
           })();
 
           // hide back button
@@ -392,7 +406,18 @@ export default class Confirm extends Component {
           onPress={this._onSave.bind(this)}>
 
           <View style={styles.cart_payment_btn}>
-            <Icon name="check" size={24} color="#ffffff" />
+            <View style={{
+              minWidth: 20,
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              {this.state.continue_loading ? (
+                <Indicator size="small" color="#ffffff" />
+              ) : (
+                <Icon name="check" size={20} color="#ffffff" />
+              )}
+            </View>
             <Text style={styles.cart_payment_btn_title}>ĐẶT HÀNG</Text>
           </View>
 
@@ -486,9 +511,7 @@ export default class Confirm extends Component {
   }
 
   _goBack() {
-    Actions.pop({
-      popNum: 2
-    });
+    Actions.pop();
   }
 }
 

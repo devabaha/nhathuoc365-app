@@ -28,7 +28,8 @@ export default class Address extends Component {
       refreshing: false,
       data: null,
       item_selected: null,
-      loading: true
+      loading: true,
+      continue_loading: false
     }
 
     // auto reload address list
@@ -105,12 +106,19 @@ export default class Address extends Component {
       );
     }
 
+    this.setState({
+      continue_loading: true
+    });
+
     try {
       var response = await APIHandler.site_cart_address(store.store_id, this.state.item_selected);
 
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           store.setCartData(response.data);
+          this.setState({
+            continue_loading: false
+          });
         })();
         // go confirm screen
         if (this.props.go_confirm_page) {
@@ -252,7 +260,18 @@ export default class Address extends Component {
               style={styles.address_continue}>
               <View style={styles.address_continue_content}>
                 <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
-                <Icon name="chevron-right" size={20} color="#ffffff" />
+                <View style={{
+                  minWidth: 20,
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}>
+                  {this.state.continue_loading ? (
+                    <Indicator size="small" color="#fff" />
+                  ) : (
+                    <Icon name="chevron-right" size={20} color="#ffffff" />
+                  )}
+                </View>
               </View>
             </TouchableHighlight>
           </View>

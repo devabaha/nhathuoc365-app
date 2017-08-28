@@ -26,6 +26,12 @@ export default class Items extends Component {
     //   }
     // }
 
+    var {buying_idx} = this.props;
+    var buying = null;
+    if (buying_idx) {
+      buying = buying_idx.indexOf(item.id) != -1;
+    }
+
     return (
       <TouchableHighlight
         onPress={onPress}
@@ -65,13 +71,21 @@ export default class Items extends Component {
             style={styles.item_add_cart_btn}
             underlayColor="transparent"
             onPress={cartOnPress}>
-
-            <View style={styles.item_add_cart_box}>
-              <Icon name="cart-plus" size={24} color={DEFAULT_COLOR} />
-              <Text style={styles.item_add_cart_title}>Chọn mua</Text>
-              {quantity > 0 && (
-                <View style={styles.quantity_box}>
-                  <Text style={styles.quantity_value}>{quantity}</Text>
+            <View style={{
+              width: '100%',
+              height: '100%'
+            }}>
+              {buying ? (
+                <Indicator size="small" />
+              ) : (
+                <View style={styles.item_add_cart_box}>
+                  <Icon name="cart-plus" size={24} color={DEFAULT_COLOR} />
+                  <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+                  {quantity > 0 && (
+                    <View style={styles.quantity_box}>
+                      <Text style={styles.quantity_value}>{quantity}</Text>
+                    </View>
+                  )}
                 </View>
               )}
             </View>

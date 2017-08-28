@@ -87,23 +87,25 @@ export default class Notification extends Component {
           ItemSeparatorComponent={() => <View style={styles.separator}></View>}
           renderItem={({item, index}) => {
 
+            let seen = false;
+
             return(
               <TouchableHighlight
                 underlayColor="transparent"
                 onPress={this._goDetail.bind(this, item)}>
 
-                <View style={[styles.notify_item, index < 3 ? styles.notify_item_active : null]}>
+                <View style={[styles.notify_item, seen ? styles.notify_item_active : null]}>
                   <View style={styles.notify_item_image_box}>
                     <Image style={styles.notify_item_image} source={{uri: item.image_url}} />
                   </View>
 
                   <View style={styles.notify_item_content}>
                     <View style={styles.notify_item_content_box}>
-                      <Text style={styles.notify_item_title}>{item.title}</Text>
-                      <Text style={styles.notify_item_desc}>{item.short_content}</Text>
+                      <Text style={styles.notify_item_title}>{sub_string(item.title, 60)}</Text>
+                      <Text style={styles.notify_item_desc}>{sub_string(item.short_content, 100)}</Text>
                       <View style={styles.notify_item_time_box}>
                         <Icon name="clock-o" size={14} color="#666666" />
-                        <Text style={styles.notify_item_time}>{item.shop_name} | {item.created_view}</Text>
+                        <Text style={styles.notify_item_time}>{item.shop_name} | {item.created}</Text>
                       </View>
                     </View>
                   </View>

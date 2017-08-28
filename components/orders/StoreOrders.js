@@ -33,8 +33,14 @@ export default class StoreOrders extends Component {
       refreshing: false,
       cart_check_list: {},
       loading: true,
-      store_id: props.data.site_id
+      store_id: props.data.site_id,
+      store_data: props.store_data
     }
+
+    this._getData = this._getData.bind(this);
+
+    // refresh
+    reaction(() => store.orders_key_change, this._getData);
   }
 
   componentWillMount() {
@@ -74,36 +80,27 @@ export default class StoreOrders extends Component {
   }
 
   _renderRightButton() {
-    return null;
+    var {store_data} = this.state;
 
     return(
       <View style={styles.right_btn_box}>
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
-
+            Actions.chat({
+              title: store_data.name,
+              store_id: store_data.id
+            });
           }}>
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
+            {/*<View style={styles.stores_info_action_notify}>
               <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
+            </View>*/}
           </View>
         </TouchableHighlight>
       </View>
     );
-  }
-
-  _is_delete_cart_item(item_id) {
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.open();
-    }
-  }
-
-  _delete_cart_item(item_id, flag) {
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.close();
-    }
   }
 
   render() {
@@ -136,7 +133,8 @@ export default class StoreOrders extends Component {
                 from="store_orders"
                 onPress={() => {
                   Actions.orders_item({
-                    data: item
+                    data: item,
+                    store_data: this.state.store_data
                   });
                 }} />
             );
@@ -149,14 +147,6 @@ export default class StoreOrders extends Component {
             />
           }
         />}
-
-        <PopupConfirm
-          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
-          height={110}
-          noConfirm={this._delete_cart_item.bind(this, false)}
-          yesConfirm={this._delete_cart_item.bind(this, true)}
-          />
       </View>
     );
   }

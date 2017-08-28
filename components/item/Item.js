@@ -38,7 +38,8 @@ export default class Item extends Component {
      item: props.item,
      item_data: null,
      loading: false,
-     store_data: props.store_data
+     store_data: props.store_data,
+     buying_idx: []
     }
 
     this._getData = this._getData.bind(this);
@@ -89,7 +90,7 @@ export default class Item extends Component {
 
         // animate true
         layoutAnimation();
-        
+
       }, delay || this._delay());
     }).catch(err => {
       this._getDataFromServer(delay);
@@ -171,6 +172,14 @@ export default class Item extends Component {
 
   // add item vào giỏ hàng
   async _addCart(item) {
+    var id_index = this.state.buying_idx.indexOf(item.id);
+    if (id_index == -1) {
+      this.state.buying_idx.push(item.id);
+      this.setState({
+        buying_idx: this.state.buying_idx
+      });
+    }
+
     try {
       var response = await APIHandler.site_cart_adding(store.store_id, item.id);
 
@@ -193,6 +202,14 @@ export default class Item extends Component {
           if (index !== null) {
             setTimeout(() => {
               store.setCartItemIndex(index);
+
+              id_index = this.state.buying_idx.indexOf(item.id);
+              if (id_index != -1) {
+                this.state.buying_idx.splice(id_index, 1);
+                this.setState({
+                  buying_idx: this.state.buying_idx
+                });
+              }
             }, 250);
           }
         })();
@@ -207,8 +224,10 @@ export default class Item extends Component {
   }
 
   render() {
-    var {item, item_data} = this.state;
+    var {item, item_data, buying_idx} = this.state;
     var {cart_data, cart_products} = store;
+
+    var buying = buying_idx.indexOf(item.id) != -1;
 
     return (
       <View style={styles.container}>
@@ -275,7 +294,18 @@ export default class Item extends Component {
                 onPress={this._addCart.bind(this, item_data ? item_data : item)}
                 underlayColor="transparent">
                 <View style={[styles.item_actions_btn, styles.item_actions_btn_add_cart]}>
-                  <Icon name="cart-plus" size={24} color="#ffffff" />
+                  <View style={{
+                    height: '100%',
+                    minWidth: 24,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {buying ? (
+                      <Indicator size="small" color="#ffffff" />
+                    ) : (
+                      <Icon name="cart-plus" size={24} color="#ffffff" />
+                    )}
+                  </View>
                   <Text style={[styles.item_actions_title, styles.item_actions_title_add_cart]}>Chọn mua</Text>
                 </View>
               </TouchableHighlight>

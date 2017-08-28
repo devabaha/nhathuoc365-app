@@ -40,7 +40,8 @@ export default class Stores extends Component {
       items_data: null,
       categories_data: null,
       header_title: "— Tất cả sản phẩm —",
-      store_data: props.store_data
+      store_data: props.store_data,
+      buying_idx: []
     }
   }
 
@@ -279,6 +280,14 @@ export default class Stores extends Component {
 
   // add item vào giỏ hàng
   async _addCart(item) {
+    var id_index = this.state.buying_idx.indexOf(item.id);
+    if (id_index == -1) {
+      this.state.buying_idx.push(item.id);
+      this.setState({
+        buying_idx: this.state.buying_idx
+      });
+    }
+
     try {
       var response = await APIHandler.site_cart_adding(store.store_id, item.id);
 
@@ -301,6 +310,14 @@ export default class Stores extends Component {
           if (index !== null) {
             setTimeout(() => {
               store.setCartItemIndex(index);
+
+              id_index = this.state.buying_idx.indexOf(item.id);
+              if (id_index != -1) {
+                this.state.buying_idx.splice(id_index, 1);
+                this.setState({
+                  buying_idx: this.state.buying_idx
+                });
+              }
             }, 250);
           }
         })();
@@ -323,8 +340,10 @@ export default class Stores extends Component {
       return <Indicator />
     }
 
+    var {items_data, buying_idx, header_title} = this.state;
+
     // show products
-    if (this.state.items_data) {
+    if (items_data, buying_idx) {
 
       return(
         <FlatList
@@ -333,12 +352,14 @@ export default class Stores extends Component {
           }}
           onEndReachedThreshold={0}
           style={[styles.items_box]}
-          ListHeaderComponent={() => <ListHeader title={this.state.header_title} />}
-          data={this.state.items_data}
+          ListHeaderComponent={() => <ListHeader title={header_title} />}
+          data={items_data}
+          extraData={this.state}
           renderItem={({item, index}) => (
             <Items
               item={item}
               index={index}
+              buying_idx={buying_idx}
               onPress={this._goItem.bind(this, item)}
               cartOnPress={this._addCart.bind(this, item)}
               />

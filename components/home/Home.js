@@ -146,7 +146,10 @@ export default class Home extends Component {
     action(() => {
       store.setStoreId(item.id);
 
-      Actions.cart({
+      Actions.store_orders({
+        data: {
+          site_id: item.id
+        },
         title: item.name,
         store_data: item
       });
@@ -208,7 +211,7 @@ export default class Home extends Component {
                 style={styles.stores_info_action}>
                 <View style={styles.stores_info_action_box}>
                   <Icon name="shopping-cart" size={22} color="#ffffff" />
-                  <Text style={styles.stores_info_action_label}>Giỏ hàng</Text>
+                  <Text style={styles.stores_info_action_label}>Đơn hàng</Text>
 
                   {item.count_cart > 0 && (
                     <View style={styles.stores_info_action_notify}>

@@ -42,7 +42,8 @@ export default class Search extends Component {
       store_data: props.store_data,
       keyboard_state: "always",
       history: null,
-      bottom: 0
+      bottom: 0,
+      buying_idx: []
     }
 
     this._onSearch = this._onSearch.bind(this);
@@ -201,7 +202,13 @@ export default class Search extends Component {
 
   // add item vào giỏ hàng
   async _addCart(item) {
-    this._updateHistory(item);
+    var id_index = this.state.buying_idx.indexOf(item.id);
+    if (id_index == -1) {
+      this.state.buying_idx.push(item.id);
+      this.setState({
+        buying_idx: this.state.buying_idx
+      });
+    }
 
     try {
       var response = await APIHandler.site_cart_adding(store.store_id, item.id);
@@ -225,6 +232,14 @@ export default class Search extends Component {
           if (index !== null) {
             setTimeout(() => {
               store.setCartItemIndex(index);
+
+              id_index = this.state.buying_idx.indexOf(item.id);
+              if (id_index != -1) {
+                this.state.buying_idx.splice(id_index, 1);
+                this.setState({
+                  buying_idx: this.state.buying_idx
+                });
+              }
             }, 250);
           }
         })();
@@ -285,7 +300,7 @@ export default class Search extends Component {
   }
 
   render() {
-    var {loading, finish, search_data, keyboard_state, history} = this.state;
+    var {loading, finish, search_data, keyboard_state, history, buying_idx} = this.state;
     // show loading
     if (loading) {
       return <Indicator />
@@ -309,6 +324,7 @@ export default class Search extends Component {
               <Items
                 item={item}
                 index={index}
+                buying_idx={buying_idx}
                 onPress={this._goItem.bind(this, item)}
                 cartOnPress={this._addCart.bind(this, item)}
                 />
