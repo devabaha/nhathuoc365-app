@@ -152,6 +152,17 @@ export default class Confirm extends Component {
     }
   }
 
+  _goAddress() {
+    if (this.props.goConfirm) {
+      Actions.address({
+        direction: 'vertical',
+        from: 'confirm'
+      });
+    } else {
+      Actions.pop();
+    }
+  }
+
   render() {
     var {single} = this.state;
 
@@ -191,6 +202,38 @@ export default class Confirm extends Component {
 
     return (
       <View style={styles.container}>
+        {single && (
+          <View style={styles.payments_nav}>
+            <TouchableHighlight
+              onPress={this._goAddress.bind(this)}
+              underlayColor="transparent">
+              <View style={styles.payments_nav_items}>
+                <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
+                  <Icon style={[styles.payments_nav_icon, styles.payments_nav_icon_active]} name="map-marker" size={20} color="#999" />
+                </View>
+                <Text style={[styles.payments_nav_items_title, styles.payments_nav_items_title_active]}>1. Địa chỉ</Text>
+
+                <View style={styles.payments_nav_items_active} />
+              </View>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              onPress={() => {
+
+              }}
+              underlayColor="transparent">
+              <View style={styles.payments_nav_items}>
+                <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
+                  <Icon style={[styles.payments_nav_icon, styles.payments_nav_icon_active]} name="check" size={20} color="#999" />
+                </View>
+                <Text style={[styles.payments_nav_items_title, styles.payments_nav_items_title_active]}>2. Xác nhận</Text>
+
+                <View style={styles.payments_nav_items_active} />
+              </View>
+            </TouchableHighlight>
+          </View>
+        )}
+
         <ScrollView
           keyboardShouldPersistTaps="always"
           style={[styles.content, single ? null : {marginBottom: 0}]}>
@@ -245,7 +288,7 @@ export default class Confirm extends Component {
                 {single ? (
                   <TouchableHighlight
                     underlayColor="transparent"
-                    onPress={this.props.go_address_page}>
+                    onPress={this._goAddress.bind(this)}>
                     <Text style={[styles.address_default_title, styles.title_active]}>NHẤN ĐỂ THAY ĐỔI</Text>
                   </TouchableHighlight>
                 ) : (
@@ -511,15 +554,17 @@ export default class Confirm extends Component {
   }
 
   _goBack() {
-    Actions.pop();
+    Actions.pop({
+      popNum: 2
+    });
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f1f1f1",
-    width: Util.size.width
+    ...MARGIN_SCREEN,
+    marginBottom: 0
   },
   right_btn_add_store: {
     paddingVertical: 1,
@@ -802,6 +847,59 @@ const styles = StyleSheet.create({
   item_safe_off_percent_val: {
     color: "#ffffff",
     fontSize: 12
-  }
+  },
 
+  payments_nav: {
+    backgroundColor: '#ffffff',
+    height: 60,
+    flexDirection: 'row'
+  },
+  payments_nav_items: {
+    justifyContent: 'center',
+    height: 60,
+    width: Util.size.width / 2,
+    alignItems: 'center'
+  },
+  payments_nav_items_title: {
+    paddingHorizontal: 10,
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#666666'
+  },
+  payments_nav_items_title_active: {
+    color: DEFAULT_COLOR
+  },
+  payments_nav_items_active: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: 3,
+    backgroundColor: DEFAULT_COLOR
+  },
+  borderBottom: {
+    borderBottomWidth: Util.pixel,
+    borderBottomColor: "#dddddd"
+  },
+  right_btn_add_store: {
+    paddingVertical: 1,
+    paddingHorizontal: 8
+  },
+
+  payments_nav_icon_box: {
+    borderWidth: Util.pixel,
+    borderColor: "#cccccc",
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4
+  },
+  payments_nav_icon_active: {
+    color: DEFAULT_COLOR
+  },
+  payments_nav_icon_box_active: {
+    borderColor: DEFAULT_COLOR
+  }
 });

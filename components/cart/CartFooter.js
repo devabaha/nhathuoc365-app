@@ -253,10 +253,25 @@ export default class CartFooter extends Component {
         <View style={styles.store_cart_container}>
           <CenterText
             marginTop={-8}
-            title={"Giỏ hàng trống\nHãy Chọn mua mặt hàng ngay nào!"}
+            title={"Giỏ hàng trống\nHãy Chọn mua hàng ngay nào!"}
             />
         </View>
       );
+    }
+  }
+
+  _goPayment() {
+    if (store.cart_data) {
+      if (store.cart_data.address) {
+        Actions.confirm({
+          goConfirm: true
+        });
+      } else {
+        Actions.address();
+      }
+
+    } else {
+
     }
   }
 
@@ -269,12 +284,7 @@ export default class CartFooter extends Component {
         {this._renderContent.call(this)}
 
         <TouchableHighlight
-          onPress={() => {
-            Actions.payment({
-              ...this.props.goCartProps,
-              goConfirm: (isset_cart && cart_data.address)
-            });
-          }}
+          onPress={this._goPayment.bind(this)}
           style={styles.checkout_btn}
           underlayColor="transparent"
           >

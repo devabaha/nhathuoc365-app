@@ -36,7 +36,8 @@ export default class CreateAddress extends Component {
         name: edit_data.name || '',
         tel: edit_data.tel || '',
         address: edit_data.address || '',
-        default_flag: edit_data.default_flag == 1 ? true : false
+        default_flag: edit_data.default_flag == 1 ? true : false,
+        finish_loading: false
       }
     } else {
       this.state = {
@@ -45,7 +46,8 @@ export default class CreateAddress extends Component {
         name: '',
         tel: '',
         address: '',
-        default_flag: false
+        default_flag: false,
+        finish_loading: false
       }
     }
 
@@ -142,6 +144,10 @@ export default class CreateAddress extends Component {
       );
     }
 
+    this.setState({
+      finish_loading: true
+    });
+
     try {
       var response = await APIHandler.user_add_address(this.state.address_id, {
         name,
@@ -152,6 +158,10 @@ export default class CreateAddress extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         this._unMount();
+
+        this.setState({
+          finish_loading: false
+        });
 
         Actions.pop();
 
@@ -307,14 +317,14 @@ export default class CreateAddress extends Component {
             </View>
           </View>
 
-          {edit_mode && (
+          {/*edit_mode && (
             <TouchableHighlight
               underlayColor="transparent"
               onPress={this._confirmDeleteAddress.bind(this)}
               style={[styles.input_box, {marginTop: 12}]}>
               <Text style={[styles.input_label, {color: "red"}]}>Xoá địa chỉ này</Text>
             </TouchableHighlight>
-          )}
+          )*/}
         </ScrollView>
 
         <TouchableHighlight
@@ -322,8 +332,19 @@ export default class CreateAddress extends Component {
           onPress={this._onSave.bind(this)}
           style={[styles.address_continue, {bottom: this.state.bottom}]}>
           <View style={styles.address_continue_content}>
-            <Icon name={this.state.edit_mode ? "save" : "check"} size={20} color="#ffffff" />
-              <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "HOÀN THÀNH"}</Text>
+            <View style={{
+              minWidth: 20,
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}>
+              {this.state.finish_loading ? (
+                <Indicator size="small" color="#ffffff" />
+              ) : (
+                <Icon name={this.state.edit_mode ? "save" : "check"} size={20} color="#ffffff" />
+              )}
+            </View>
+            <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "HOÀN THÀNH"}</Text>
           </View>
         </TouchableHighlight>
 

@@ -33,7 +33,8 @@ export default class Payment extends Component {
       ],
       refreshing: false,
       payment_nav_index: 0,
-      store_data: props.store_data
+      store_data: props.store_data,
+      initialScrollIndex: props.goConfirm ? 1 : 0
     }
 
     this._renderRightButton = this._renderRightButton.bind(this);
@@ -48,6 +49,10 @@ export default class Payment extends Component {
         Actions.pop();
       }
     });
+
+    if (this.props.goConfirm) {
+      this._go_confirm_page();
+    }
   }
 
   _renderRightButton() {
@@ -113,7 +118,7 @@ export default class Payment extends Component {
   }
 
   render() {
-    var {store_data} = this.state;
+    var {store_data, initialScrollIndex} = this.state;
 
     return (
       <View style={styles.container}>
@@ -154,11 +159,12 @@ export default class Payment extends Component {
         <FlatList
           ref={ref => this.refs_payment_page = ref}
           data={this.state.payments_data}
-          extraData={this.state}
+          extraData={this.state.payments_data}
           keyExtractor={item => item.id}
           horizontal={true}
           pagingEnabled
           scrollEnabled={false}
+          initialScrollIndex={initialScrollIndex}
           getItemLayout={(data, index) => {
             return {length: Util.size.width, offset: Util.size.width * index, index};
           }}
