@@ -413,7 +413,8 @@ export default class Item extends Component {
 
   _itemRefresh(item) {
     Actions.refresh({
-      title: item.name
+      title: item.name,
+      placeholder: item.name
     });
 
     if (this.refs_body_item) {

@@ -41,7 +41,8 @@ export default class Search extends Component {
       search_data: null,
       keyboard_state: "always",
       history: null,
-      buying_idx: []
+      buying_idx: [],
+      searchValue: ''
     }
 
     this._onSearch = this._onSearch.bind(this);
@@ -58,8 +59,15 @@ export default class Search extends Component {
       placeholder: this.props.title,
       autoFocus: true,
       inputAnimate: true,
+      onSubmitEditing: () => {
+        this._onSearch(this.state.searchValue);
+      },
       onChangeText: (text) => {
         Actions.refresh({
+          searchValue: text
+        });
+
+        this.setState({
           searchValue: text
         });
 
@@ -187,6 +195,9 @@ export default class Search extends Component {
 
   _insertName(item) {
     Actions.refresh({
+      searchValue: item.name
+    });
+    this.setState({
       searchValue: item.name
     });
   }

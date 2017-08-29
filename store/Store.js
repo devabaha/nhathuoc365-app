@@ -101,14 +101,14 @@ class Store {
       Object.keys(data.products).map(key => {
         let product = data.products[key];
         cart_products.push(product);
-        if (product.selected == 1) {
-          cart_products_confirm.push(product);
-        }
+        // if (product.selected == 1) {
+        //   cart_products_confirm.push(product);
+        // }
       });
 
       // set new data
       this.cart_products = cart_products.reverse();
-      this.cart_products_confirm = cart_products_confirm.reverse();
+      this.cart_products_confirm = cart_products.reverse();
 
       // refresh home screen
       this.refresh_home_change++;

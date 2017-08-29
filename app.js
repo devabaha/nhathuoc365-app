@@ -83,7 +83,12 @@ export default class App extends React.Component {
 
   render() {
     return(
-      <Router createReducer={reducerCreate} store={Store}>
+      <Router
+        onExitApp={() => true}
+        backAndroidHandler={() => true}
+        createReducer={reducerCreate}
+        store={Store}>
+
         <Scene key="modal" component={Modal} >
           <Scene key="root">
 
@@ -153,7 +158,7 @@ export default class App extends React.Component {
                   <Scene hideNavBar key="_account" title="TÀI KHOẢN" component={Account} {...custommerNav} />
               </Scene>
             </Scene>
-            
+
             <Scene initial={0} key="address" title="ĐỊA CHỈ" component={Address} {...custommerNav} />
             <Scene initial={0} key="confirm" title="XÁC NHẬN" component={Confirm} {...custommerNav} />
             <Scene initial={0} key="create_address" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />

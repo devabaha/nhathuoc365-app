@@ -10,7 +10,8 @@ import {
   ScrollView,
   FlatList,
   TextInput,
-  Clipboard
+  Clipboard,
+  Keyboard
 } from 'react-native';
 
 // library
@@ -23,6 +24,7 @@ import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 import RightButtonChat from '../RightButtonChat';
+import { CheckBox } from '../../lib/react-native-elements';
 
 @observer
 export default class Confirm extends Component {
@@ -30,7 +32,9 @@ export default class Confirm extends Component {
     super(props);
 
     this.state = {
-     cart_check_list: {},
+     check_loading: [],
+     increment_loading: [],
+     decrement_loading: [],
      single: this.props.from != 'orders_item',
      coppy_sticker_flag: false,
      address_height: 50,
@@ -47,6 +51,8 @@ export default class Confirm extends Component {
   }
 
   _renderRightButton() {
+    var cart_data = this.props.data || {};
+
     return(
       <View style={styles.right_btn_box}>
         <RightButtonChat
@@ -83,49 +89,51 @@ export default class Confirm extends Component {
   }
 
   // cart orders
-  async _siteCartOrders() {
+  _siteCartOrders() {
     this.setState({
       continue_loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_orders(store.store_id);
 
-    try {
-      var response = await APIHandler.site_cart_orders(store.store_id);
+        if (response && response.status == STATUS_SUCCESS) {
+          if (this.popup_message) {
+            this.popup_message.open();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        if (this.popup_message) {
-          this.popup_message.open();
+            // update cart data
+            action(() => {
+              store.setCartData(response.data);
+              this.setState({
+                continue_loading: false
+              });
+            })();
 
-          // update cart data
-          action(() => {
-            store.setCartData(response.data);
-            this.setState({
-              continue_loading: false
+            // hide back button
+            Actions.refresh({
+              hideBackImage: true
             });
-          })();
 
-          // hide back button
-          Actions.refresh({
-            hideBackImage: true
-          });
+            action(() => {
+              // hide payment nav
+              store.setPaymentNavShow(false);
 
-          action(() => {
-            // hide payment nav
-            store.setPaymentNavShow(false);
-
-            // reload orders list screen
-            store.setOrdersKeyChange(store.orders_key_change + 1);
-          })();
+              // reload orders list screen
+              store.setOrdersKeyChange(store.orders_key_change + 1);
+            })();
+          }
         }
-      }
-    } catch (e) {
-      console.warn(e);
-    } finally {
+      } catch (e) {
+        console.warn(e);
+      } finally {
 
-    }
+      }
+    });
   }
 
   // on save
   _onSave() {
+
+    Keyboard.dismiss();
 
     if (store.user_cart_note) {
       // update cart note
@@ -143,6 +151,182 @@ export default class Confirm extends Component {
     Actions.address({
       type: ActionConst.REPLACE
     });
+  }
+
+  _checkBoxHandler(item) {
+
+    // add to list loading
+    var indexOf = this.state.check_loading.indexOf(item.id);
+    if (indexOf == -1) {
+      this.state.check_loading.push(item.id);
+    }
+
+    this.setState({
+      check_loading: this.state.check_loading
+    }, async () => {
+      try {
+        if (item.selected == 1) {
+          var response = await APIHandler.site_cart_unselect(store.store_id, item.id);
+        } else {
+          var response = await APIHandler.site_cart_select(store.store_id, item.id);
+        }
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+        }
+
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // remove from list by id
+        indexOf = this.state.check_loading.indexOf(item.id);
+        if (indexOf != -1) {
+          this.state.check_loading.splice(indexOf, 1);
+          this.setState({
+            check_loading: this.state.check_loading
+          });
+        }
+      }
+    });
+  }
+
+  // show popup confirm remove item in cart
+  _removeItemCartConfirm(item) {
+    if (this.refs_remove_item_confirm) {
+      this.refs_remove_item_confirm.open();
+    }
+
+    this.cartItemConfirmRemove = item;
+  }
+
+  // xử lý trừ số lượng, số lượng = 0 confirm xoá
+  _item_qnt_decrement_handler(item) {
+
+    if (item.quantity <= 1) {
+      this._removeItemCartConfirm(item);
+    } else {
+      this._item_qnt_decrement(item);
+    }
+  }
+
+  // giảm số lượng item trong giỏ hàng
+  _item_qnt_decrement(item) {
+
+    // add to list loading
+    var indexOf = this.state.decrement_loading.indexOf(item.id);
+    if (indexOf == -1) {
+      this.state.decrement_loading.push(item.id);
+    }
+
+    this.setState({
+      decrement_loading: this.state.decrement_loading
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_down(store.store_id, item.id);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // remove from list by id
+        indexOf = this.state.decrement_loading.indexOf(item.id);
+        if (indexOf != -1) {
+          this.state.decrement_loading.splice(indexOf, 1);
+          this.setState({
+            decrement_loading: this.state.decrement_loading
+          });
+        }
+      }
+    });
+  }
+
+  // tăng số lượng sảm phẩm trong giỏ hàng
+  _item_qnt_increment(item) {
+    // add to list loading
+    var indexOf = this.state.increment_loading.indexOf(item.id);
+    if (indexOf == -1) {
+      this.state.increment_loading.push(item.id);
+    }
+
+    this.setState({
+      increment_loading: this.state.increment_loading
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_up(store.store_id, item.id);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // remove from list by id
+        indexOf = this.state.increment_loading.indexOf(item.id);
+        if (indexOf != -1) {
+          this.state.increment_loading.splice(indexOf, 1);
+          this.setState({
+            increment_loading: this.state.increment_loading
+          });
+        }
+      }
+    });
+  }
+
+  // close popup confirm remove item in cart
+  _closePopupConfirm() {
+    if (this.refs_remove_item_confirm) {
+      this.refs_remove_item_confirm.close();
+    }
+  }
+
+  _delay() {
+    var delay = 450 - (Math.abs(time() - this.start_time));
+    return delay;
+  }
+
+  // xoá item trong giỏ hàng
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    this.start_time = time();
+
+    this._closePopupConfirm();
+
+    var item = this.cartItemConfirmRemove;
+
+    try {
+      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            // prev item in list
+            if (isAndroid && store.cart_item_index > 0) {
+              store.setCartItemIndex(store.cart_item_index - 1);
+            }
+            layoutAnimation();
+          })();
+        }, this._delay());
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this.cartItemConfirmRemove = undefined;
+    }
   }
 
   render() {
@@ -362,7 +546,107 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          {cart_products_confirm != null && (
+          {single ? (
+            <FlatList
+              //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
+              onEndReached={(num) => {
+
+              }}
+              //ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+              onEndReachedThreshold={0}
+              style={styles.items_box}
+              data={cart_products_confirm}
+              extraData={cart_products_confirm}
+              renderItem={({item, index}) => {
+
+                var is_loading = this.state.check_loading.indexOf(item.id) != -1;
+                var is_decrement = this.state.decrement_loading.indexOf(item.id) != -1;
+                var is_increment = this.state.increment_loading.indexOf(item.id) != -1;
+
+                return(
+                  <View style={[styles.cart_item_box]}>
+                    <View style={styles.cart_item_check_box}>
+                      {is_loading ? (
+                        <Indicator size="small" />
+                      ) : (
+                        <CheckBox
+                          containerStyle={styles.cart_item_check}
+                          checked={item.selected == 1 ? true : false}
+                          checkedColor={DEFAULT_COLOR}
+                          hiddenTextElement
+                          onPress={this._checkBoxHandler.bind(this, item)}
+                          />
+                      )}
+                    </View>
+
+                    <View style={styles.cart_item_image_box}>
+                      <Image style={styles.cart_item_image} source={{uri: item.image}} />
+                    </View>
+
+                    <View style={styles.cart_item_info}>
+                      <View style={styles.cart_item_info_content}>
+                        <Text style={styles.cart_item_info_name}>{item.name}</Text>
+                        <View style={styles.cart_item_actions}>
+                          <TouchableHighlight
+                            style={styles.cart_item_actions_btn}
+                            underlayColor="transparent"
+                            onPress={this._item_qnt_decrement_handler.bind(this, item)}>
+                            <View>
+                              {is_decrement ? (
+                                <Indicator size="small" />
+                              ) : (
+                                <Text style={styles.cart_item_btn_label}>-</Text>
+                              )}
+                            </View>
+                          </TouchableHighlight>
+
+                          <Text style={styles.cart_item_actions_quantity}>{item.quantity_view}</Text>
+
+                          <TouchableHighlight
+                            style={styles.cart_item_actions_btn}
+                            underlayColor="transparent"
+                            onPress={this._item_qnt_increment.bind(this, item)}>
+                            <View>
+                              {is_increment ? (
+                                <Indicator size="small" />
+                              ) : (
+                                <Text style={styles.cart_item_btn_label}>+</Text>
+                              )}
+                            </View>
+                          </TouchableHighlight>
+                        </View>
+
+                        <View style={styles.cart_item_price_box}>
+                          {item.discount_percent > 0 && (
+                            <Text style={styles.cart_item_price_price_safe_off}>{item.discount}</Text>
+                          )}
+                          <Text style={styles.cart_item_price_price}>{item.price_view}</Text>
+                        </View>
+                      </View>
+                    </View>
+
+                    {item.discount_percent > 0 && (
+                      <View style={styles.item_safe_off}>
+                        <View style={styles.item_safe_off_percent}>
+                          <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
+                        </View>
+                      </View>
+                    )}
+
+                    {/*item.selected != 1 && (
+                      <TouchableHighlight
+                        underlayColor="transparent"
+                        onPress={this._checkBoxHandler.bind(this, item)}
+                        style={styles.uncheckOverlay}>
+                        <View></View>
+                      </TouchableHighlight>
+                    )*/}
+                  </View>
+                );
+              }}
+              keyExtractor={item => item.id}
+            />
+          ) : (
             <FlatList
               //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
               onEndReached={(num) => {
@@ -480,6 +764,15 @@ export default class Confirm extends Component {
         <Sticker
           active={this.state.coppy_sticker_flag}
           message="Sao chép thành công."
+         />
+
+       <PopupConfirm
+         ref_popup={ref => this.refs_remove_item_confirm = ref}
+         title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+         height={110}
+         noConfirm={this._closePopupConfirm.bind(this)}
+         yesConfirm={this._removeCartItem.bind(this)}
+         otherClose={false}
          />
       </View>
     );
@@ -653,7 +946,7 @@ const styles = StyleSheet.create({
 
   cart_item_box: {
     width: '100%',
-    height: 80,
+    height: 94,
     paddingVertical: 8,
     flexDirection: 'row',
     backgroundColor: "#ffffff",
@@ -661,16 +954,16 @@ const styles = StyleSheet.create({
     borderColor: "#dddddd"
   },
   cart_item_image_box: {
-    width: '30%',
+    width: '20%',
     height: '100%',
     marginLeft: 8
   },
   cart_item_image: {
     height: '100%',
-    resizeMode: 'center'
+    resizeMode: 'contain'
   },
   cart_item_info: {
-    width: Util.size.width * 0.7 - 8,
+    width: Util.size.width * 0.68 - 8,
     height: '100%'
   },
   cart_item_info_content: {
@@ -681,20 +974,48 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
   },
+  cart_item_actions: {
+    flexDirection: 'row',
+    marginVertical: 8,
+    alignItems: 'center'
+  },
+  cart_item_actions_btn: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 26,
+    height: 26,
+    borderWidth: Util.pixel,
+    borderColor: "#666666",
+    borderRadius: 3
+  },
+  cart_item_actions_quantity: {
+    paddingHorizontal: 8,
+    minWidth: '30%',
+    textAlign: 'center',
+    color: "#404040",
+    fontWeight: '500'
+  },
+  cart_item_btn_label: {
+    color: "#404040",
+    fontSize: 20,
+    lineHeight: isIOS ? 20 : 24
+  },
+  cart_item_check_box: {
+    width: '10%',
+    justifyContent: 'center',
+    marginLeft: '2%'
+  },
+  cart_item_check: {
+    padding: 0,
+    margin: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 0,
+    width: 24
+  },
   cart_item_price_box: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 4
-  },
-  cart_item_price_price_safe_off: {
-    textDecorationLine: 'line-through',
-    fontSize: 14,
-    color: "#666666",
-    marginRight: 4
-  },
-  cart_item_price_price: {
-    fontSize: 14,
-    color: DEFAULT_COLOR
+    alignItems: 'center'
   },
   separator: {
     width: '100%',
@@ -707,6 +1028,17 @@ const styles = StyleSheet.create({
     bottom: 8,
     color: "#666666",
     fontSize: 12
+  },
+
+  cart_item_price_price_safe_off: {
+    textDecorationLine: 'line-through',
+    fontSize: 14,
+    color: "#666666",
+    marginRight: 4
+  },
+  cart_item_price_price: {
+    fontSize: 14,
+    color: DEFAULT_COLOR
   },
 
   cart_payment_btn_box: {
@@ -865,5 +1197,14 @@ const styles = StyleSheet.create({
   },
   payments_nav_icon_box_active: {
     borderColor: DEFAULT_COLOR
+  },
+
+  uncheckOverlay: {
+    backgroundColor: "rgba(0,0,0,0.05)",
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0
   }
 });

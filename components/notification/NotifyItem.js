@@ -71,7 +71,7 @@ export default class NotifyItem extends Component {
             <Text style={styles.notify_heading}>{item.title}</Text>
 
             <View style={styles.notify_time_box}>
-              <Icon name="newspaper-o" size={14} color="#666666" />
+              <Icon name="map-marker" size={14} color="#666666" />
               <Text style={styles.notify_time}>{item.shop_name} | {item.created}</Text>
             </View>
 

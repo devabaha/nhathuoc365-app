@@ -104,7 +104,7 @@ export default class Notification extends Component {
                       <Text style={styles.notify_item_title}>{sub_string(item.title, 60)}</Text>
                       <Text style={styles.notify_item_desc}>{sub_string(item.short_content, 100)}</Text>
                       <View style={styles.notify_item_time_box}>
-                        <Icon name="clock-o" size={14} color="#666666" />
+                        <Icon name="map-marker" size={14} color="#666666" />
                         <Text style={styles.notify_item_time}>{item.shop_name} | {item.created}</Text>
                       </View>
                     </View>
