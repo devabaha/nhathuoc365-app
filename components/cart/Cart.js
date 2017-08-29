@@ -30,8 +30,7 @@ export default class Cart extends Component {
     this.state = {
      refreshing: false,
      cart_check_list: {},
-     loading: true,
-     store_data: props.store_data
+     loading: true
     }
   }
 
@@ -98,17 +97,14 @@ export default class Cart extends Component {
   }
 
   _renderRightButton() {
-    var {store_data} = this.state;
+    var {store_data} = store;
 
     return(
       <View style={styles.right_btn_box}>
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
-            Actions.chat({
-              title: store_data.name,
-              store_id: store_data.id
-            });
+            Actions.chat();
           }}>
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
@@ -251,9 +247,7 @@ export default class Cart extends Component {
   // go payment screen
   _goPayment() {
     if (store.cart_data.count_selected > 0) {
-      Actions.payment({
-        store_data: this.state.store_data
-      });
+      Actions.address();
     } else {
       return Alert.alert(
         'Thông báo',

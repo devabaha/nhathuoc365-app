@@ -41,6 +41,7 @@ class Store {
 
   @observable user_info = null;
   @observable store_id = null;
+  @observable store_data = null;
 
   @action setUserInfo(data) {
     this.user_info = data;
@@ -50,7 +51,10 @@ class Store {
     this.store_id = data;
   }
 
-
+  @action setStoreData(data) {
+    this.store_data = data;
+    this.store_id = data.id;
+  }
 
 
   /*********** cart begin **********/

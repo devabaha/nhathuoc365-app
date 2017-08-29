@@ -22,6 +22,7 @@ import store from '../../store/Store';
 import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
+import RightButtonChat from '../RightButtonChat';
 
 @observer
 export default class Confirm extends Component {
@@ -33,7 +34,6 @@ export default class Confirm extends Component {
      single: this.props.from != 'orders_item',
      coppy_sticker_flag: false,
      address_height: 50,
-     store_data: props.store_data,
      continue_loading: false
     }
   }
@@ -47,25 +47,12 @@ export default class Confirm extends Component {
   }
 
   _renderRightButton() {
-    var {store_data} = this.state;
-
     return(
       <View style={styles.right_btn_box}>
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-            Actions.chat({
-              title: store_data.name,
-              store_id: store_data.id
-            });
-          }}>
-          <View style={styles.right_btn_add_store}>
-            <Icon name="commenting" size={20} color="#ffffff" />
-            {/*<View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>*/}
-          </View>
-        </TouchableHighlight>
+        <RightButtonChat
+          store_id={cart_data.site_id || undefined}
+          title={cart_data.shop_name || undefined}
+         />
       </View>
     );
   }
@@ -538,8 +525,7 @@ export default class Confirm extends Component {
             store.resetCartData();
           })();
           Actions.pop();
-        },
-        store_data: this.state.store_data
+        }
       });
     }, 1000);
   }
@@ -566,32 +552,10 @@ const styles = StyleSheet.create({
     ...MARGIN_SCREEN,
     marginBottom: 0
   },
-  right_btn_add_store: {
-    paddingVertical: 1,
-    paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0
-  },
   right_btn_box: {
     flexDirection: 'row'
   },
-  stores_info_action_notify: {
-    position: 'absolute',
-    minWidth: 16,
-    paddingHorizontal: 2,
-    height: 16,
-    backgroundColor: 'red',
-    top: isAndroid ? 0 : -4,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8
-  },
-  stores_info_action_notify_value: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600'
-  },
+
   content: {
     marginBottom: 60
   },

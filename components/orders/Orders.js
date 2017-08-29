@@ -42,12 +42,6 @@ export default class Orders extends Component {
     reaction(() => store.orders_key_change, this._getData);
   }
 
-  componentWillMount() {
-    Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this)
-    });
-  }
-
   componentDidMount() {
     this._getData();
   }
@@ -85,27 +79,6 @@ export default class Orders extends Component {
     this.setState({refreshing: true});
 
     this._getData(1000);
-  }
-
-  _renderRightButton() {
-    return null;
-
-    return(
-      <View style={styles.right_btn_box}>
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-
-          }}>
-          <View style={styles.right_btn_add_store}>
-            <Icon name="commenting" size={20} color="#ffffff" />
-            <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>
-          </View>
-        </TouchableHighlight>
-      </View>
-    );
   }
 
   _is_delete_cart_item(item_id) {
@@ -153,22 +126,14 @@ export default class Orders extends Component {
                 item={item}
                 storeOnPress={() => {
                   Actions.store_orders({
-                    data: item,
-                    title: item.shop_name,
-                    store_data: {
-                      name: item.shop_name,
-                      id: item.site_id
-                    }
+                    store_id: item.site_id,
+                    title: item.shop_name
                   });
                 }}
                 onPress={() => {
                   Actions.orders_item({
                     data: item,
-                    title: `Đơn hàng #${item.cart_code}`,
-                    store_data: {
-                      name: item.shop_name,
-                      id: item.site_id
-                    }
+                    title: `Đơn hàng #${item.cart_code}`
                   });
                 }} />
             );

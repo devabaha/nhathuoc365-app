@@ -22,6 +22,7 @@ import {reaction} from 'mobx';
 import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
+import RightButtonChat from '../RightButtonChat';
 
 @observer
 export default class StoreOrders extends Component {
@@ -33,20 +34,20 @@ export default class StoreOrders extends Component {
       refreshing: false,
       cart_check_list: {},
       loading: true,
-      store_id: props.data.site_id,
-      store_data: props.store_data
+      store_id: props.store_id || store.store_id,
+      title: props.title || store.store_data.name
     }
 
     this._getData = this._getData.bind(this);
   }
 
-  componentWillMount() {
+  componentDidMount() {
+
     Actions.refresh({
+      title: this.state.title,
       renderRightButton: this._renderRightButton.bind(this)
     });
-  }
 
-  componentDidMount() {
     this._getData();
   }
 
@@ -81,25 +82,12 @@ export default class StoreOrders extends Component {
   }
 
   _renderRightButton() {
-    var {store_data} = this.state;
-
     return(
       <View style={styles.right_btn_box}>
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-            Actions.chat({
-              title: store_data.name,
-              store_id: store_data.id
-            });
-          }}>
-          <View style={styles.right_btn_add_store}>
-            <Icon name="commenting" size={20} color="#ffffff" />
-            {/*<View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>3</Text>
-            </View>*/}
-          </View>
-        </TouchableHighlight>
+        <RightButtonChat
+          title={this.state.title || undefined}
+          store_id={this.state.store_id || undefined}
+         />
       </View>
     );
   }
@@ -135,8 +123,7 @@ export default class StoreOrders extends Component {
                   from="store_orders"
                   onPress={() => {
                     Actions.orders_item({
-                      data: item,
-                      store_data: this.state.store_data
+                      data: item
                     });
                   }} />
               );
@@ -163,31 +150,8 @@ const styles = StyleSheet.create({
     ...MARGIN_SCREEN,
     marginBottom: 0
   },
-  right_btn_add_store: {
-    paddingVertical: 1,
-    paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0
-  },
   right_btn_box: {
     flexDirection: 'row'
-  },
-  stores_info_action_notify: {
-    position: 'absolute',
-    minWidth: 16,
-    paddingHorizontal: 2,
-    height: 16,
-    backgroundColor: 'red',
-    top: isAndroid ? 0 : -4,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8
-  },
-  stores_info_action_notify_value: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600'
   },
 
   separator: {

@@ -139,36 +139,30 @@ export default class Home extends Component {
   // tới màn hình store
   _goStores(item) {
     action(() => {
-      store.setStoreId(item.id);
+      store.setStoreData(item);
     })();
 
     Actions.stores({
-      title: item.name,
-      store_data: item
+      title: item.name
     });
   }
 
   // tới màn hình giỏ hàng
   _goCart(item) {
     action(() => {
-      store.setStoreId(item.id);
+      store.setStoreData(item);
 
-      Actions.store_orders({
-        data: {
-          site_id: item.id
-        },
-        title: item.name,
-        store_data: item
-      });
+      Actions.store_orders();
     })();
   }
 
   // tới màn hình chat
   _goChat(item) {
-    Actions.chat({
-      title: item.name,
-      store_id: item.id
-    });
+    action(() => {
+      store.setStoreData(item);
+    })();
+
+    Actions.chat();
   }
 
   // pull to reload danh sách cửa hàng

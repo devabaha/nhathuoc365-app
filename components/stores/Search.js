@@ -39,7 +39,6 @@ export default class Search extends Component {
       finish: false,
       header_title: '',
       search_data: null,
-      store_data: props.store_data,
       keyboard_state: "always",
       history: null,
       buying_idx: []
@@ -181,8 +180,7 @@ export default class Search extends Component {
     } else {
       Actions.item({
         title: item.name,
-        item,
-        store_data: this.state.store_data
+        item
       });
     }
   }
@@ -308,10 +306,6 @@ export default class Search extends Component {
         )}
 
         {search_data != null && store.keyboardTop == 0 && <CartFooter
-          goCartProps={{
-            title: this.state.store_data.name,
-            store_data: this.state.store_data
-          }}
           confirmRemove={this._confirmRemoveCartItem.bind(this)}
          />}
 

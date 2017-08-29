@@ -30,7 +30,7 @@ export default class Chat extends Component {
 
     this.state = {
       content: '',
-      store_id: props.store_id,
+      store_id: props.store_id || store.store_id,
       data: [],
       loading: true
     }
@@ -55,6 +55,10 @@ export default class Chat extends Component {
   }
 
   componentDidMount() {
+
+    Actions.refresh({
+      title: this.props.title || store.store_data.name
+    });
 
     var chat_key = _CHAT_KEY + this.state.store_id;
 

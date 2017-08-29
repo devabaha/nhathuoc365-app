@@ -39,7 +39,6 @@ import Stores from './components/stores/Stores';
 import Search from './components/stores/Search';
 import Item from './components/item/Item';
 import Cart from './components/cart/Cart';
-import Payment from './components/payment/Payment';
 import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
 import CreateAddress from './components/payment/CreateAddress';
@@ -154,8 +153,7 @@ export default class App extends React.Component {
                   <Scene hideNavBar key="_account" title="TÀI KHOẢN" component={Account} {...custommerNav} />
               </Scene>
             </Scene>
-
-            <Scene initial={0} key="payment" title="ĐỊA CHỈ" component={Payment} {...custommerNav} />
+            
             <Scene initial={0} key="address" title="ĐỊA CHỈ" component={Address} {...custommerNav} />
             <Scene initial={0} key="confirm" title="XÁC NHẬN" component={Confirm} {...custommerNav} />
             <Scene initial={0} key="create_address" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
@@ -169,7 +167,7 @@ export default class App extends React.Component {
             <Scene initial={0} key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
             <Scene initial={0} key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
             <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />
-            <Scene initial={0} key="chat" title="CHAT" component={Chat} {...custommerNav} />
+            <Scene initial={0} key="chat" title="" component={Chat} {...custommerNav} />
 
           </Scene>
 

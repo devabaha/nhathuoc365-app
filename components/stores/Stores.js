@@ -23,6 +23,8 @@ import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
+import RightButtonChat from '../RightButtonChat';
+import RightButtonOrders from '../RightButtonOrders';
 
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const STORE_KEY = 'KeyStore';
@@ -40,7 +42,6 @@ export default class Stores extends Component {
       items_data: null,
       categories_data: null,
       header_title: "— Tất cả sản phẩm —",
-      store_data: props.store_data,
       buying_idx: []
     }
   }
@@ -55,8 +56,7 @@ export default class Stores extends Component {
       placeholder: title,
       searchOnpress: () => {
         return Actions.search({
-          title,
-          store_data: this.state.store_data
+          title
         });
       },
       renderRightButton: this._renderRightButton.bind(this)
@@ -210,48 +210,10 @@ export default class Stores extends Component {
   }
 
   _renderRightButton() {
-    var {store_data} = this.state;
-
     return(
       <View style={styles.right_btn_box}>
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-            Actions.store_orders({
-              data: {
-                site_id: store.store_id
-              },
-              title: this.state.store_data.name,
-              store_data: this.state.store_data
-            });
-          }}>
-          <View style={styles.right_btn_add_store}>
-            <Icon name="shopping-cart" size={20} color="#ffffff" />
-            {store_data && store_data.count_chat > 0 && (
-              <View style={styles.stores_info_action_notify}>
-                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
-              </View>
-            )}
-          </View>
-        </TouchableHighlight>
-
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={() => {
-            Actions.chat({
-              title: store_data.name,
-              store_id: store_data.id
-            });
-          }}>
-          <View style={styles.right_btn_add_store}>
-            <Icon name="commenting" size={20} color="#ffffff" />
-            {store_data && store_data.count_chat > 0 && (
-              <View style={styles.stores_info_action_notify}>
-                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
-              </View>
-            )}
-          </View>
-        </TouchableHighlight>
+        <RightButtonOrders />
+        <RightButtonChat />
       </View>
     );
   }
@@ -295,8 +257,7 @@ export default class Stores extends Component {
 
     Actions.item({
       title: item.name,
-      item,
-      store_data: this.state.store_data
+      item
     });
   }
 
@@ -388,10 +349,6 @@ export default class Stores extends Component {
         {this._renderItemsContent.call(this)}
 
         {this.state.finish == true && <CartFooter
-          goCartProps={{
-            title: this.state.store_data.name,
-            store_data: this.state.store_data
-          }}
           confirmRemove={this._confirmRemoveCartItem.bind(this)}
          />}
 
@@ -458,31 +415,8 @@ const styles = StyleSheet.create({
     ...MARGIN_SCREEN,
     marginBottom: 0
   },
-  right_btn_add_store: {
-    paddingVertical: 1,
-    paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0
-  },
   right_btn_box: {
     flexDirection: 'row'
-  },
-  stores_info_action_notify: {
-    position: 'absolute',
-    minWidth: 16,
-    height: 16,
-    backgroundColor: 'red',
-    top: isAndroid ? 0 : -4,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8,
-    paddingHorizontal: 2
-  },
-  stores_info_action_notify_value: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600'
   },
 
   items_box: {
