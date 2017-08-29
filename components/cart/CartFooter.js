@@ -8,6 +8,7 @@ import {
   TouchableHighlight,
   StyleSheet,
   FlatList,
+  Alert
 } from 'react-native';
 
 //library
@@ -218,6 +219,8 @@ export default class CartFooter extends Component {
         <View style={styles.store_cart_container}>
           <View style={styles.store_cart_content}>
             <FlatList
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
               ref={ref => this.refs_store_cart = ref}
               data={cart_products}
               pagingEnabled
@@ -261,8 +264,8 @@ export default class CartFooter extends Component {
   }
 
   _goPayment() {
-    if (store.cart_data) {
-      if (store.cart_data.address) {
+    if (store.cart_data && store.cart_products) {
+      if (store.cart_data.address_id != 0) {
         Actions.confirm({
           goConfirm: true
         });
@@ -271,7 +274,18 @@ export default class CartFooter extends Component {
       }
 
     } else {
-
+      return Alert.alert(
+        'Thông báo',
+        'Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            if (this.props.add_new) {
+              this.props.add_new();
+            }
+          }},
+        ],
+        { cancelable: false }
+      );
     }
   }
 

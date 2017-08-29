@@ -15,6 +15,58 @@ import store from '../../store/Store';
 
 @observer
 export default class Items extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      buying: false
+    }
+  }
+
+  async _addCart(item) {
+    this.setState({
+      buying: true
+    });
+
+    try {
+      var response = await APIHandler.site_cart_adding(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+
+        action(() => {
+          store.setCartData(response.data);
+
+          var index = null;
+          if (response.data.products) {
+            Object.keys(response.data.products).reverse().some((key, key_index) => {
+              let value = response.data.products[key];
+              if (value.id == item.id) {
+                index = key_index;
+                return true;
+              }
+            });
+          }
+
+          if (index !== null) {
+            setTimeout(() => {
+              store.setCartItemIndex(index);
+
+              this.setState({
+                buying: false
+              });
+            }, 250);
+          }
+        })();
+
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
   render() {
     let {item, index, onPress, cartOnPress} = this.props;
 
@@ -25,12 +77,6 @@ export default class Items extends Component {
     //     quantity = store.cart_data.products[item.id].quantity;
     //   }
     // }
-
-    var {buying_idx} = this.props;
-    var buying = null;
-    if (buying_idx) {
-      buying = buying_idx.indexOf(item.id) != -1;
-    }
 
     return (
       <TouchableHighlight
@@ -70,12 +116,12 @@ export default class Items extends Component {
           <TouchableHighlight
             style={styles.item_add_cart_btn}
             underlayColor="transparent"
-            onPress={cartOnPress}>
+            onPress={this._addCart.bind(this, item)}>
             <View style={{
               width: '100%',
               height: '100%'
             }}>
-              {buying ? (
+              {this.state.buying ? (
                 <Indicator size="small" />
               ) : (
                 <View style={styles.item_add_cart_box}>

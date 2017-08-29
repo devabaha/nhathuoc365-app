@@ -32,7 +32,6 @@ export default class CreateAddress extends Component {
       this.state = {
         edit_mode: true,
         address_id: edit_data.id,
-        bottom: 0,
         name: edit_data.name || '',
         tel: edit_data.tel || '',
         address: edit_data.address || '',
@@ -42,7 +41,6 @@ export default class CreateAddress extends Component {
     } else {
       this.state = {
         address_id: 0,
-        bottom: 0,
         name: '',
         tel: '',
         address: '',
@@ -50,15 +48,9 @@ export default class CreateAddress extends Component {
         finish_loading: false
       }
     }
-
-    this._keyboardWillShow = this._keyboardWillShow.bind(this);
-    this._keyboardWillHide = this._keyboardWillHide.bind(this);
   }
 
   componentWillMount() {
-    this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow);
-    this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide);
-
     Actions.refresh({
       onBack: () => {
         this._unMount();
@@ -78,27 +70,9 @@ export default class CreateAddress extends Component {
 
   _unMount() {
     Keyboard.dismiss();
-    this.keyboardWillShowListener.remove();
-    this.keyboardWillHideListener.remove();
   }
 
-  _keyboardWillShow(e) {
-    if (e) {
-      this.setState({
-        bottom: e.endCoordinates.height
-      });
-    }
-  }
-
-  _keyboardWillHide(e) {
-    if (e) {
-      this.setState({
-        bottom: 0
-      });
-    }
-  }
-
-  async _onSave() {
+  _onSave() {
     var {name, tel, address, default_flag} = this.state;
 
     name = name.trim();
@@ -146,38 +120,39 @@ export default class CreateAddress extends Component {
 
     this.setState({
       finish_loading: true
-    });
-
-    try {
-      var response = await APIHandler.user_add_address(this.state.address_id, {
-        name,
-        tel,
-        address,
-        default_flag: this.state.default_flag ? 1 : 0
-      });
-
-      if (response && response.status == STATUS_SUCCESS) {
-        this._unMount();
-
-        this.setState({
-          finish_loading: false
+    }, async () => {
+      try {
+        var response = await APIHandler.user_add_address(this.state.address_id, {
+          name,
+          tel,
+          address,
+          default_flag: this.state.default_flag ? 1 : 0
         });
 
-        Actions.pop();
+        if (response && response.status == STATUS_SUCCESS) {
+          this._unMount();
 
-        setTimeout(() => {
+          this.setState({
+            finish_loading: false
+          });
+
           action(() => {
-            // auto reload address list
-            store.setAddressKeyChange(store.address_key_change + 1);
+            store.setCartData(response.data);
           })();
-        }, 450);
+
+          if (this.props.addressReload) {
+            this.props.addressReload(450);
+          }
+
+          Actions.pop();
+        }
+
+      } catch (e) {
+        console.warn(e);
+      } finally {
+
       }
-
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
+    });
   }
 
   // show popup confirm delete
@@ -199,16 +174,11 @@ export default class CreateAddress extends Component {
 
         action(() => {
           store.setCartData(response.data);
+          // auto reload address list
+          store.setAddressKeyChange(store.address_key_change + 1);
         })();
 
         Actions.pop();
-
-        setTimeout(() => {
-          action(() => {
-            // auto reload address list
-            store.setAddressKeyChange(store.address_key_change + 1);
-          })();
-        }, 450);
       }
     } catch (e) {
       console.warn(e);
@@ -230,7 +200,7 @@ export default class CreateAddress extends Component {
     return (
       <View style={styles.container}>
         <ScrollView style={{
-          marginBottom: this.state.bottom + 60
+          marginBottom: store.keyboardTop + 60
         }}>
           <View style={styles.input_box}>
             <Text style={styles.input_label}>Tên</Text>
@@ -330,7 +300,7 @@ export default class CreateAddress extends Component {
         <TouchableHighlight
           underlayColor="transparent"
           onPress={this._onSave.bind(this)}
-          style={[styles.address_continue, {bottom: this.state.bottom}]}>
+          style={[styles.address_continue, {bottom: store.keyboardTop}]}>
           <View style={styles.address_continue_content}>
             <View style={{
               minWidth: 20,

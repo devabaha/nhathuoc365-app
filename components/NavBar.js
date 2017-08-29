@@ -186,7 +186,8 @@ const propTypes = {
   onCleanSearch: PropTypes.func,
   inputAnimate: PropTypes.bool,
   cancelIsPop: PropTypes.bool,
-  searchOnpress: PropTypes.func
+  searchOnpress: PropTypes.func,
+  smallSearch: PropTypes.bool
 };
 
 const contextTypes = {
@@ -552,8 +553,8 @@ class NavBar extends React.Component {
                   outputRange: [-200, 200],
                 }),
                 backgroundColor: "rgba(0,0,0,0.6)",
-                width: this.state.search_width,
-                marginRight: Util.size.width * 0.25 / 2,
+                width: this.props.smallSearch ? (this.state.search_width - Util.size.width * 0.25 / 2) : this.state.search_width,
+                marginRight: this.props.smallSearch ? (Util.size.width * 0.25) : (Util.size.width * 0.25 / 2),
                 height: isIOS ? 28 : 32,
                 top: isIOS ? -3 : -2,
                 borderRadius: 3,

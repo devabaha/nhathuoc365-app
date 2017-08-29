@@ -1,6 +1,10 @@
 import {reaction, observable, observe, computed, autorun, action} from 'mobx';
 import autobind from 'autobind-decorator';
 
+import {
+  Keyboard
+} from 'react-native';
+
 @autobind
 class Store {
   constructor() {
@@ -10,6 +14,20 @@ class Store {
       this.setCartItemIndex(0);
     });
 
+    Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
+    Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
+  }
+
+  @observable keyboardTop = 0;
+
+  @action keyboardWillShow(e) {
+    if (e) {
+      this.keyboardTop = e.endCoordinates.height;
+    }
+  }
+
+  @action keyboardWillHide(e) {
+    this.keyboardTop = 0;
   }
 
   /*********** home begin **********/

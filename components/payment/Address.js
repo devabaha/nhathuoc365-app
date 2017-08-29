@@ -32,11 +32,6 @@ export default class Address extends Component {
       continue_loading: false
     }
 
-    // auto reload address list
-    reaction(() => store.address_key_change, () => {
-      this._getData();
-    });
-
     this._getData = this._getData.bind(this);
   }
 
@@ -45,19 +40,21 @@ export default class Address extends Component {
   }
 
   // get list address
-  async _getData() {
+  async _getData(delay) {
     try {
       var response = await APIHandler.user_address();
 
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
-          this.setState({
-            data: [...response.data, {id: 0, type: 'address_add'}],
-            loading: false,
-            item_selected: null
-          });
+          setTimeout(() => {
+            this.setState({
+              data: [...response.data, {id: 0, type: 'address_add'}],
+              loading: false,
+              item_selected: null
+            });
 
-          layoutAnimation();
+            layoutAnimation();
+          }, delay || 0);
         } else {
           this.setState({
             data: null,
@@ -73,28 +70,13 @@ export default class Address extends Component {
     }
   }
 
-  _renderSelected(is_selected) {
-    if (is_selected) {
-      return(
-        <View style={styles.address_selected_box}>
-          <Icon name="check" size={24} color={DEFAULT_COLOR} />
-          <Text style={styles.address_label}>Giao tới địa chỉ này</Text>
-        </View>
-      );
-    }
-  }
-
-  async _goConfirmPage() {
-    if (this.state.data == null) {
+  _goConfirmPage() {
+    if (this.state.item_selected == null) {
       return Alert.alert(
         'Thông báo',
         'Nhập địa chỉ nhận hàng trước khi Tiếp tục',
         [
-          {text: 'Đồng ý', onPress: () => {
-            if (this.props.add_new) {
-              this.props.add_new();
-            }
-          }},
+          {text: 'Đồng ý', onPress: this._createNew.bind(this)},
         ],
         { cancelable: false }
       );
@@ -102,31 +84,32 @@ export default class Address extends Component {
 
     this.setState({
       continue_loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_address(store.store_id, this.state.item_selected);
 
-    try {
-      var response = await APIHandler.site_cart_address(store.store_id, this.state.item_selected);
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+            this.setState({
+              continue_loading: false
+            });
+          })();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          this.setState({
-            continue_loading: false
-          });
-        })();
-
-        if (this.props.from == 'confirm') {
-          Actions.pop();
-        } else {
-          // go confirm screen
-          Actions.confirm();
+          this._goConfirm();
         }
-      }
-    } catch (e) {
-      console.warn(e);
-    } finally {
+      } catch (e) {
+        console.warn(e);
+      } finally {
 
-    }
+      }
+    });
+  }
+
+  _goConfirm() {
+    Actions.confirm({
+      type: ActionConst.REPLACE
+    });
   }
 
   // chọn địa chỉ cho đơn hàng
@@ -135,6 +118,12 @@ export default class Address extends Component {
       item_selected: item.id
     });
     layoutAnimation();
+  }
+
+  _createNew() {
+    Actions.create_address({
+      addressReload: this._getData
+    });
   }
 
   render() {
@@ -159,8 +148,12 @@ export default class Address extends Component {
           </TouchableHighlight>
 
           <TouchableHighlight
-            onPress={() => {
-
+            onPress={() =>  {
+              if (store.cart_data.address_id == 0) {
+                this._goConfirmPage();
+              } else {
+                this._goConfirm();
+              }
             }}
             underlayColor="transparent">
             <View style={styles.payments_nav_items}>
@@ -188,7 +181,7 @@ export default class Address extends Component {
                     return(
                       <TouchableHighlight
                         underlayColor="transparent"
-                        onPress={this.props.add_new}
+                        onPress={this._createNew.bind(this)}
                         style={styles.address_add_box}>
                         <View style={styles.address_add_content}>
                           <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
@@ -205,6 +198,11 @@ export default class Address extends Component {
                   if (this.state.item_selected) {
                     if (this.state.item_selected == item.id) {
                       is_selected = true;
+                    }
+                  } else if (store.cart_data && store.cart_data.address_id != 0) {
+                    is_selected = store.cart_data.address_id == item.id;
+                    if (is_selected) {
+                      this.state.item_selected = item.id;
                     }
                   } else if (index == 0) {
                     this.state.item_selected = item.id;
@@ -228,7 +226,12 @@ export default class Address extends Component {
                           <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
                         </View>
 
-                        {this._renderSelected.call(this, is_selected)}
+                        {is_selected && (
+                          <View style={styles.address_selected_box}>
+                            <Icon name="check" size={24} color={DEFAULT_COLOR} />
+                            <Text style={styles.address_label}>Giao tới địa chỉ này</Text>
+                          </View>
+                        )}
 
                         {item.default_flag == 1 && (
                           <View style={styles.address_edit_btn}>
@@ -240,9 +243,10 @@ export default class Address extends Component {
                           <TouchableHighlight
                             underlayColor="transparent"
                             onPress={() => {
-                              Actions.createAddress({
+                              Actions.create_address({
                                 edit_data: item,
-                                title: "SỬA ĐỊA CHỈ"
+                                title: "SỬA ĐỊA CHỈ",
+                                addressReload: this._getData
                               });
                             }}>
                             <View style={styles.address_edit_box}>
@@ -266,20 +270,30 @@ export default class Address extends Component {
                 }}
               />
             ) : (
-              <TouchableHighlight
-                underlayColor="transparent"
-                onPress={this.props.add_new}
-                style={[styles.address_add_box, {
-                  marginTop: 0,
-                  borderTopWidth: 0
-                }]}>
-                <View style={styles.address_add_content}>
-                  <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
-                  <View style={styles.address_add_icon_box}>
-                    <Icon name="plus" size={18} color="#999999" />
+              <View>
+                {this.state.loading && (
+                  <View style={{
+                    paddingVertical: 16
+                  }}>
+                    <Indicator size="small" />
                   </View>
-                </View>
-              </TouchableHighlight>
+                )}
+
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={this.props.add_new}
+                  style={[styles.address_add_box, {
+                    marginTop: 0,
+                    borderTopWidth: 0
+                  }]}>
+                  <View style={styles.address_add_content}>
+                    <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
+                    <View style={styles.address_add_icon_box}>
+                      <Icon name="plus" size={18} color="#999999" />
+                    </View>
+                  </View>
+                </TouchableHighlight>
+              </View>
             )}
           </View>
         </ScrollView>

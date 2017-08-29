@@ -38,9 +38,6 @@ export default class StoreOrders extends Component {
     }
 
     this._getData = this._getData.bind(this);
-
-    // refresh
-    reaction(() => store.orders_key_change, this._getData);
   }
 
   componentWillMount() {

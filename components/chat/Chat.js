@@ -29,16 +29,11 @@ export default class Chat extends Component {
     super(props);
 
     this.state = {
-      bottom: 0,
       content: '',
       store_id: props.store_id,
       data: [],
       loading: true
     }
-
-    reaction(() => 1, () => {
-
-    });
 
     this.last_item_id = '';
 
@@ -47,9 +42,6 @@ export default class Chat extends Component {
   }
 
   componentWillMount() {
-    this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
-    this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
-
     Actions.refresh({
       onBack: () => {
         clearTimeout(this._scrollDelay);
@@ -57,28 +49,9 @@ export default class Chat extends Component {
 
         Keyboard.dismiss();
 
-        this.keyboardWillShowListener.remove();
-        this.keyboardWillHideListener.remove();
-
         Actions.pop();
       }
     })
-  }
-
-  _keyboardWillShow(e) {
-    if (e) {
-      this.setState({
-        bottom: e.endCoordinates.height
-      }, this._scrollToEnd);
-    }
-  }
-
-  _keyboardWillHide(e) {
-    if (e) {
-      this.setState({
-        bottom: 0
-      }, this._scrollToEnd);
-    }
   }
 
   componentDidMount() {
@@ -131,46 +104,46 @@ export default class Chat extends Component {
     }, 3000);
   }
 
-  async _getData() {
+  _getData() {
     this.setState({
       finish: false
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.site_load_chat(this.state.store_id, this.last_item_id);
 
-    try {
-      var response = await APIHandler.site_load_chat(this.state.store_id, this.last_item_id);
+        if (response && response.status == STATUS_SUCCESS) {
+          if (response.data) {
+            var data = response.data.reverse();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        if (response.data) {
-          var data = response.data.reverse();
+            this.setState({
+              data: this.state.data != null ? [...this.state.data, ...data] : data,
+              loading: false,
+              finish: true
+            }, () => {
+              this._scrollToEnd();
 
-          this.setState({
-            data: this.state.data != null ? [...this.state.data, ...data] : data,
-            loading: false,
-            finish: true
-          }, () => {
-            this._scrollToEnd();
+              var chat_key = _CHAT_KEY + this.state.store_id;
 
-            var chat_key = _CHAT_KEY + this.state.store_id;
+              storage.save({
+              	key: chat_key,
+              	data: this.state.data,
+              	expires: CHAT_CACHE
+              });
 
-            storage.save({
-            	key: chat_key,
-            	data: this.state.data,
-            	expires: CHAT_CACHE
             });
-
-          });
-        } else {
-          this.setState({
-            loading: false,
-            finish: true
-          });
+          } else {
+            this.setState({
+              loading: false,
+              finish: true
+            });
+          }
         }
-      }
-    } catch (e) {
-      console.warn(e);
-    } finally {
+      } catch (e) {
+        console.warn(e);
+      } finally {
 
-    }
+      }
+    });
   }
 
   _scrollToEnd() {
@@ -222,7 +195,7 @@ export default class Chat extends Component {
         <ScrollView
           ref={ref => this.refs_chat = ref}
           style={{
-            marginBottom: 42 + this.state.bottom
+            marginBottom: 42 + store.keyboardTop
           }}>
 
           {data.length > 0 ? (
@@ -316,7 +289,7 @@ export default class Chat extends Component {
         </ScrollView>
 
       <View style={[styles.chat_input_box, {
-        bottom: this.state.bottom
+        bottom: store.keyboardTop
       }]}>
         <FormInput
           inputStyle={styles.chat_input}

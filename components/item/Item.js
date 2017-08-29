@@ -37,9 +37,9 @@ export default class Item extends Component {
      refreshing: false,
      item: props.item,
      item_data: null,
-     loading: false,
+     loading: true,
      store_data: props.store_data,
-     buying_idx: []
+     buying: false
     }
 
     this._getData = this._getData.bind(this);
@@ -47,6 +47,17 @@ export default class Item extends Component {
 
   componentDidMount() {
     Actions.refresh({
+      showSearchBar: true,
+      smallSearch: true,
+      placeholder: this.props.title,
+      searchOnpress: () => {
+        return Actions.search({
+          title: `Tìm kiếm tại ${this.state.store_data.name}`,
+          store_data: this.state.store_data,
+          from_item: true,
+          itemRefresh: this._itemRefresh.bind(this)
+        });
+      },
       renderRightButton: this._renderRightButton.bind(this)
     });
 
@@ -65,10 +76,6 @@ export default class Item extends Component {
   _getData(delay) {
     var {item} = this.state;
     var item_key = ITEM_KEY + item.id;
-
-    this.setState({
-      loading: true
-    });
 
     // load
     storage.load({
@@ -100,10 +107,6 @@ export default class Item extends Component {
   async _getDataFromServer(delay) {
     var {item} = this.state;
     var item_key = ITEM_KEY + item.id;
-
-    this.setState({
-      loading: true
-    });
 
     try {
       var response = await APIHandler.site_product(store.store_id, item.id);
@@ -146,6 +149,27 @@ export default class Item extends Component {
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
+            Actions.store_orders({
+              data: {
+                site_id: store.store_id
+              },
+              title: this.state.store_data.name,
+              store_data: this.state.store_data
+            });
+          }}>
+          <View style={styles.right_btn_add_store}>
+            <Icon name="shopping-cart" size={20} color="#ffffff" />
+            {store_data && store_data.count_chat > 0 && (
+              <View style={styles.stores_info_action_notify}>
+                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
+              </View>
+            )}
+          </View>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
             Actions.chat({
               title: store_data.name,
               store_id: store_data.id
@@ -172,13 +196,9 @@ export default class Item extends Component {
 
   // add item vào giỏ hàng
   async _addCart(item) {
-    var id_index = this.state.buying_idx.indexOf(item.id);
-    if (id_index == -1) {
-      this.state.buying_idx.push(item.id);
-      this.setState({
-        buying_idx: this.state.buying_idx
-      });
-    }
+    this.setState({
+      buying: true
+    });
 
     try {
       var response = await APIHandler.site_cart_adding(store.store_id, item.id);
@@ -203,13 +223,9 @@ export default class Item extends Component {
             setTimeout(() => {
               store.setCartItemIndex(index);
 
-              id_index = this.state.buying_idx.indexOf(item.id);
-              if (id_index != -1) {
-                this.state.buying_idx.splice(id_index, 1);
-                this.setState({
-                  buying_idx: this.state.buying_idx
-                });
-              }
+              this.setState({
+                buying: false
+              });
             }, 250);
           }
         })();
@@ -224,10 +240,8 @@ export default class Item extends Component {
   }
 
   render() {
-    var {item, item_data, buying_idx} = this.state;
+    var {item, item_data, buying} = this.state;
     var {cart_data, cart_products} = store;
-
-    var buying = buying_idx.indexOf(item.id) != -1;
 
     return (
       <View style={styles.container}>
@@ -413,18 +427,21 @@ export default class Item extends Component {
 
         </ScrollView>
 
-        <CartFooter
-          goCartProps={{
-            title: this.state.store_data.name,
-            store_data: this.state.store_data
-          }}
-          confirmRemove={this._confirmRemoveCartItem.bind(this)}
-         />
+        {this.state.loading == false && (
+          <CartFooter
+            goCartProps={{
+              title: this.state.store_data.name,
+              store_data: this.state.store_data
+            }}
+            confirmRemove={this._confirmRemoveCartItem.bind(this)}
+           />
+        )}
 
         <PopupConfirm
           ref_popup={ref => this.refs_modal_delete_cart_item = ref}
           title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
           height={110}
+          otherClose={false}
           noConfirm={() => {
             if (this.refs_modal_delete_cart_item) {
               this.refs_modal_delete_cart_item.close();
@@ -474,14 +491,15 @@ export default class Item extends Component {
       var response = await APIHandler.site_cart_remove(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          // prev item in list
-          if (isAndroid && store.cart_item_index > 0) {
-            store.setCartItemIndex(store.cart_item_index - 1);
-          }
-        })();
-
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            // prev item in list
+            if (isAndroid && store.cart_item_index > 0) {
+              store.setCartItemIndex(store.cart_item_index - 1);
+            }
+          })();
+        }, 450);
       }
     } catch (e) {
       console.warn(e);

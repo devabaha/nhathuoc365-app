@@ -51,6 +51,7 @@ export default class Stores extends Component {
 
     Actions.refresh({
       showSearchBar: true,
+      smallSearch: true,
       placeholder: title,
       searchOnpress: () => {
         return Actions.search({
@@ -216,6 +217,27 @@ export default class Stores extends Component {
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
+            Actions.store_orders({
+              data: {
+                site_id: store.store_id
+              },
+              title: this.state.store_data.name,
+              store_data: this.state.store_data
+            });
+          }}>
+          <View style={styles.right_btn_add_store}>
+            <Icon name="shopping-cart" size={20} color="#ffffff" />
+            {store_data && store_data.count_chat > 0 && (
+              <View style={styles.stores_info_action_notify}>
+                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
+              </View>
+            )}
+          </View>
+        </TouchableHighlight>
+
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
             Actions.chat({
               title: store_data.name,
               store_id: store_data.id
@@ -278,59 +300,6 @@ export default class Stores extends Component {
     });
   }
 
-  // add item vào giỏ hàng
-  async _addCart(item) {
-    var id_index = this.state.buying_idx.indexOf(item.id);
-    if (id_index == -1) {
-      this.state.buying_idx.push(item.id);
-      this.setState({
-        buying_idx: this.state.buying_idx
-      });
-    }
-
-    try {
-      var response = await APIHandler.site_cart_adding(store.store_id, item.id);
-
-      if (response && response.status == STATUS_SUCCESS) {
-
-        action(() => {
-          store.setCartData(response.data);
-
-          var index = null;
-          if (response.data.products) {
-            Object.keys(response.data.products).reverse().some((key, key_index) => {
-              let value = response.data.products[key];
-              if (value.id == item.id) {
-                index = key_index;
-                return true;
-              }
-            });
-          }
-
-          if (index !== null) {
-            setTimeout(() => {
-              store.setCartItemIndex(index);
-
-              id_index = this.state.buying_idx.indexOf(item.id);
-              if (id_index != -1) {
-                this.state.buying_idx.splice(id_index, 1);
-                this.setState({
-                  buying_idx: this.state.buying_idx
-                });
-              }
-            }, 250);
-          }
-        })();
-
-      }
-
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
-  }
-
   // render danh sách sản phẩm
   _renderItemsContent() {
     var {cart_data, cart_products} = store;
@@ -361,7 +330,6 @@ export default class Stores extends Component {
               index={index}
               buying_idx={buying_idx}
               onPress={this._goItem.bind(this, item)}
-              cartOnPress={this._addCart.bind(this, item)}
               />
           )}
           keyExtractor={item => item.id}
@@ -389,6 +357,8 @@ export default class Stores extends Component {
         <View style={styles.categories_nav}>
           {this.state.categories_data != null ? (
             <FlatList
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
               ref={ref => this.refs_category_nav = ref}
               data={this.state.categories_data}
               extraData={this.state}
@@ -464,14 +434,15 @@ export default class Stores extends Component {
       var response = await APIHandler.site_cart_remove(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          // prev item in list
-          if (isAndroid && store.cart_item_index > 0) {
-            store.setCartItemIndex(store.cart_item_index - 1);
-          }
-        })();
-
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            // prev item in list
+            if (isAndroid && store.cart_item_index > 0) {
+              store.setCartItemIndex(store.cart_item_index - 1);
+            }
+          })();
+        }, 450);
       }
     } catch (e) {
       console.warn(e);

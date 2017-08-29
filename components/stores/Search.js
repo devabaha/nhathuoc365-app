@@ -42,7 +42,6 @@ export default class Search extends Component {
       store_data: props.store_data,
       keyboard_state: "always",
       history: null,
-      bottom: 0,
       buying_idx: []
     }
 
@@ -51,8 +50,6 @@ export default class Search extends Component {
   }
 
   componentDidMount() {
-    this.keyboardWillShowListener = Keyboard.addListener('keyboardWillShow', this._keyboardWillShow.bind(this));
-    this.keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', this._keyboardWillHide.bind(this));
 
     this._getHistory();
 
@@ -95,27 +92,8 @@ export default class Search extends Component {
     });
   }
 
-  _keyboardWillShow(e) {
-    if (e) {
-      this.setState({
-        bottom: e.endCoordinates.height
-      });
-    }
-  }
-
-  _keyboardWillHide(e) {
-    if (e) {
-      this.setState({
-        bottom: 0
-      });
-    }
-  }
-
   _removeEventListener() {
     Keyboard.dismiss();
-
-    this.keyboardWillShowListener.remove();
-    this.keyboardWillHideListener.remove();
   }
 
   _getHistory() {
@@ -193,63 +171,19 @@ export default class Search extends Component {
 
     this._updateHistory(item);
 
-    Actions.item({
-      title: item.name,
-      item,
-      store_data: this.state.store_data
-    });
-  }
-
-  // add item vào giỏ hàng
-  async _addCart(item) {
-    var id_index = this.state.buying_idx.indexOf(item.id);
-    if (id_index == -1) {
-      this.state.buying_idx.push(item.id);
-      this.setState({
-        buying_idx: this.state.buying_idx
+    if (this.props.from_item) {
+      Actions.pop();
+      setTimeout(() => {
+        if (this.props.itemRefresh) {
+          this.props.itemRefresh(item);
+        }
+      }, 450);
+    } else {
+      Actions.item({
+        title: item.name,
+        item,
+        store_data: this.state.store_data
       });
-    }
-
-    try {
-      var response = await APIHandler.site_cart_adding(store.store_id, item.id);
-
-      if (response && response.status == STATUS_SUCCESS) {
-
-        action(() => {
-          store.setCartData(response.data);
-
-          var index = null;
-          if (response.data.products) {
-            Object.keys(response.data.products).reverse().some((key, key_index) => {
-              let value = response.data.products[key];
-              if (value.id == item.id) {
-                index = key_index;
-                return true;
-              }
-            });
-          }
-
-          if (index !== null) {
-            setTimeout(() => {
-              store.setCartItemIndex(index);
-
-              id_index = this.state.buying_idx.indexOf(item.id);
-              if (id_index != -1) {
-                this.state.buying_idx.splice(id_index, 1);
-                this.setState({
-                  buying_idx: this.state.buying_idx
-                });
-              }
-            }, 250);
-          }
-        })();
-
-      }
-
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
     }
   }
 
@@ -326,7 +260,6 @@ export default class Search extends Component {
                 index={index}
                 buying_idx={buying_idx}
                 onPress={this._goItem.bind(this, item)}
-                cartOnPress={this._addCart.bind(this, item)}
                 />
             )}
             keyExtractor={item => item.id}
@@ -339,7 +272,9 @@ export default class Search extends Component {
 
           return(
             <ScrollView
-              style={styles.items_box}
+              style={[styles.items_box, {
+                marginBottom: store.keyboardTop
+              }]}
               keyboardShouldPersistTaps={keyboard_state}>
               <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
 
@@ -372,7 +307,7 @@ export default class Search extends Component {
           <CenterText title="Nhập tên sản phẩm để tìm" marginTop={isIOS ? -(Util.size.height * 0.3) : undefined} />
         )}
 
-        {search_data != null && this.state.bottom == 0 && <CartFooter
+        {search_data != null && store.keyboardTop == 0 && <CartFooter
           goCartProps={{
             title: this.state.store_data.name,
             store_data: this.state.store_data

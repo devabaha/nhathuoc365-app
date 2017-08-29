@@ -153,14 +153,9 @@ export default class Confirm extends Component {
   }
 
   _goAddress() {
-    if (this.props.goConfirm) {
-      Actions.address({
-        direction: 'vertical',
-        from: 'confirm'
-      });
-    } else {
-      Actions.pop();
-    }
+    Actions.address({
+      type: ActionConst.REPLACE
+    });
   }
 
   render() {
@@ -235,10 +230,15 @@ export default class Confirm extends Component {
         )}
 
         <ScrollView
-          keyboardShouldPersistTaps="always"
-          style={[styles.content, single ? null : {marginBottom: 0}]}>
+          //keyboardShouldPersistTaps="always"
+          ref={ref => this.refs_confirm_page = ref}
+          style={[styles.content, {
+            marginBottom: single ? (store.keyboardTop + 60) : 0
+          }]}>
 
-          <View style={[styles.rows]}>
+          <View style={[styles.rows, {
+            marginTop: single ? 8 : 0
+          }]}>
             <View style={styles.address_name_box}>
               <View>
                 <View style={styles.box_icon_label}>
@@ -444,7 +444,9 @@ export default class Confirm extends Component {
         </ScrollView>
 
         {single && <TouchableHighlight
-          style={styles.cart_payment_btn_box}
+          style={[styles.cart_payment_btn_box, {
+            bottom: store.keyboardTop
+          }]}
           underlayColor="transparent"
           onPress={this._onSave.bind(this)}>
 
@@ -554,9 +556,7 @@ export default class Confirm extends Component {
   }
 
   _goBack() {
-    Actions.pop({
-      popNum: 2
-    });
+    Actions.pop();
   }
 }
 

@@ -176,7 +176,11 @@ export default class SearchStore extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView keyboardShouldPersistTaps="always">
+        <ScrollView
+          style={{
+            marginBottom: store.keyboardTop
+          }}
+          keyboardShouldPersistTaps="always">
 
           {this.state.search_data != null ? (
             <FlatList
