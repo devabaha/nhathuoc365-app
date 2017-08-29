@@ -62,6 +62,10 @@ export default class StoreOrders extends Component {
             loading: false
           });
         }, delay || 0);
+      } else {
+        this.setState({
+          loading: false
+        });
       }
     } catch (e) {
       console.warn(e);
@@ -108,42 +112,46 @@ export default class StoreOrders extends Component {
     return (
       <View style={styles.container}>
 
-        {this.state.data != null && <FlatList
-          // renderSectionHeader={({section}) => (
-          //   <View style={styles.cart_section_box}>
-          //     <Image style={styles.cart_section_image} source={{uri: section.image}} />
-          //     <Text style={styles.cart_section_title}>{section.key}</Text>
-          //   </View>
-          // )}
-          onEndReached={(num) => {
+        {this.state.data != null ? (
+          <FlatList
+            // renderSectionHeader={({section}) => (
+            //   <View style={styles.cart_section_box}>
+            //     <Image style={styles.cart_section_image} source={{uri: section.image}} />
+            //     <Text style={styles.cart_section_title}>{section.key}</Text>
+            //   </View>
+            // )}
+            onEndReached={(num) => {
 
-          }}
-          ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-          onEndReachedThreshold={0}
-          style={styles.items_box}
-          data={this.state.data}
-          extraData={this.state}
-          renderItem={({item, index}) => {
-            return(
-              <OrdersItemComponent
-                item={item}
-                from="store_orders"
-                onPress={() => {
-                  Actions.orders_item({
-                    data: item,
-                    store_data: this.state.store_data
-                  });
-                }} />
-            );
-          }}
-          keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
-        />}
+            }}
+            ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+            onEndReachedThreshold={0}
+            style={styles.items_box}
+            data={this.state.data}
+            extraData={this.state}
+            renderItem={({item, index}) => {
+              return(
+                <OrdersItemComponent
+                  item={item}
+                  from="store_orders"
+                  onPress={() => {
+                    Actions.orders_item({
+                      data: item,
+                      store_data: this.state.store_data
+                    });
+                  }} />
+              );
+            }}
+            keyExtractor={item => item.id}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+          />
+        ) : (
+          <CenterText title="Bạn chưa có đơn hàng nào" />
+        )}
       </View>
     );
   }
