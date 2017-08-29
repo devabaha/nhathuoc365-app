@@ -36,9 +36,11 @@ export default class SearchStore extends Component {
   }
 
   componentDidMount() {
+    var site_code = this.props.site_code;
+
     Actions.refresh({
       showSearchBar: true,
-      searchValue: '',
+      searchValue: site_code || '',
       placeholder: "Nhập mã cửa hàng",
       onChangeText: this._onChangeSearch.bind(this),
       onSubmitEditing: this._search_store.bind(this),
@@ -47,6 +49,19 @@ export default class SearchStore extends Component {
       autoFocus: true,
       cancelIsPop: true
     });
+
+    // search when has site_code
+    if (site_code) {
+      this.setState({
+        searchValue: site_code
+      }, () => {
+        this.search_handler = setTimeout(() => {
+
+          this._search_store();
+
+        }, 300);
+      });
+    }
   }
 
   // onchange text value for typing

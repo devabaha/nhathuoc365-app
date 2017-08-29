@@ -58,5 +58,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Cho phép ứng dụng sử dụng dụng Camera để quét QR Code</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Thư viện ảnh</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Micro</string>
 </dict>
 </plist>

@@ -129,6 +129,13 @@ export default class Home extends Component {
     Actions.list_store();
   }
 
+  _goScanQRCode() {
+    if (this.refs_modal_add_store) {
+        this.refs_modal_add_store.close();
+    }
+    Actions.scan_qr_code();
+  }
+
   // tới màn hình store
   _goStores(item) {
     action(() => {
@@ -257,15 +264,15 @@ export default class Home extends Component {
             <Text style={styles.add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
 
             <View style={styles.add_store_actions_box}>
-              {/*<TouchableHighlight
-                onPress={() => 1}
+              <TouchableHighlight
+                onPress={this._goScanQRCode}
                 underlayColor="transparent"
                 style={styles.add_store_action_btn}>
                 <View style={styles.add_store_action_btn_box}>
                   <Icon name="qrcode" size={28} color="#333333" />
                   <Text style={styles.add_store_action_label}>Quét QR code</Text>
                 </View>
-              </TouchableHighlight>*/}
+              </TouchableHighlight>
 
               <TouchableHighlight
                 onPress={this._goSearchStore}
@@ -298,11 +305,12 @@ export default class Home extends Component {
 
           <Text style={styles.modal_add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
 
-          {/*<Button
+          <Button
+            onPress={this._goScanQRCode}
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#009588"
             icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Quét QR code' />*/}
+            title='Quét QR code' />
 
           <Button
             buttonStyle={styles.modal_add_store_btn}
@@ -437,7 +445,7 @@ const styles = StyleSheet.create({
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    width: Math.floor((Util.size.width - 16) / 2),
+    width: Math.floor((Util.size.width - 16) / 3),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
@@ -454,8 +462,8 @@ const styles = StyleSheet.create({
 
   modal_add_store: {
     width: '90%',
-    // height: 228,
-    height: 180,
+    height: 228,
+    // height: 180,
     borderRadius: 3
   },
   modal_add_store_title: {

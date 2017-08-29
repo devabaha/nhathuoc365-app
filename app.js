@@ -47,6 +47,7 @@ import OrdersItem from './components/orders/OrdersItem';
 import NotifyItem from './components/notification/NotifyItem';
 import SearchStore from './components/home/SearchStore';
 import ListStore from './components/home/ListStore';
+import ScanQRCode from './components/home/ScanQRCode';
 import Chat from './components/chat/Chat';
 
 // others
@@ -165,6 +166,7 @@ export default class App extends React.Component {
             <Scene initial={0} key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
             <Scene initial={0} key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
             <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
+            <Scene initial={0} key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
             <Scene initial={0} key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
             <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />
             <Scene initial={0} key="chat" title="CHAT" component={Chat} {...custommerNav} />
