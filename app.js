@@ -59,7 +59,8 @@ const custommerNav = {
   sceneStyle: {
     backgroundColor: "#f3f3f3"
   },
-  direction: "fade"
+  direction: "horizontal",
+  
 }
 
 // StatusBar

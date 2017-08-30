@@ -259,7 +259,7 @@ export default class Home extends Component {
 
             <View style={styles.add_store_actions_box}>
               <TouchableHighlight
-                onPress={this._goScanQRCode}
+                onPress={this._goScanQRCode.bind(this)}
                 underlayColor="transparent"
                 style={styles.add_store_action_btn}>
                 <View style={styles.add_store_action_btn_box}>
@@ -300,7 +300,7 @@ export default class Home extends Component {
           <Text style={styles.modal_add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
 
           <Button
-            onPress={this._goScanQRCode}
+            onPress={this._goScanQRCode.bind(this)}
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#009588"
             icon={{name: 'qrcode', type: 'font-awesome'}}

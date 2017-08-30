@@ -37,7 +37,7 @@ exports.SITE_CART_ORDERS = MY_FOOD_API + 'apiSite/cartorder';
 
 // Address
 exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';
-exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiUser/add_address';
+exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiSite/add_address';
 exports.SITE_CART_ADDRESS = MY_FOOD_API + 'apiSite/cartaddress';
 exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
 

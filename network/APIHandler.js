@@ -122,8 +122,8 @@ class APIHandler {
   /**
   * Thêm/sửa địa chỉ
   */
-  async user_add_address(address_id, data) {
-    var api = url_for(API.USER_ADD_ADDRESS + '/' + address_id);
+  async user_add_address(site_id, address_id, data) {
+    var api = url_for(API.USER_ADD_ADDRESS + '/' + site_id + '/' + address_id);
     return await this.postAPI(api, data);
   }
 

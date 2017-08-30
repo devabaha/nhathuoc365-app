@@ -122,7 +122,7 @@ export default class CreateAddress extends Component {
       finish_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.user_add_address(this.state.address_id, {
+        var response = await APIHandler.user_add_address(store.store_id, this.state.address_id, {
           name,
           tel,
           address,
