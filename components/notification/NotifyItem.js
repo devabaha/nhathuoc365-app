@@ -41,13 +41,13 @@ export default class NotifyItem extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
+          layoutAnimation();
+          
           this.setState({
             item_data: response.data,
             refreshing: false,
             loading: false
           });
-
-          layoutAnimation();
         }, delay || 0);
       }
     } catch (e) {
@@ -107,7 +107,7 @@ export default class NotifyItem extends Component {
           key={index}
           style={{
             width: Util.size.width - 30,
-            height: Math.floor(Util.size.height * 0.3),
+            height: ~~(Util.size.height * 0.3),
             resizeMode: 'cover',
             backgroundColor: "#ccc"
           }}

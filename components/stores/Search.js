@@ -79,7 +79,7 @@ export default class Search extends Component {
       },
       cancelIsPop: true,
       onSearchCancel: () => {
-        this._removeEventListener();
+        Keyboard.dismiss();
       },
       onCleanSearch: () => {
         this._getHistory();
@@ -92,15 +92,11 @@ export default class Search extends Component {
         });
       },
       onBack: () => {
-        this._removeEventListener();
+        Keyboard.dismiss();
 
         Actions.pop();
       }
     });
-  }
-
-  _removeEventListener() {
-    Keyboard.dismiss();
   }
 
   _getHistory() {
@@ -144,6 +140,7 @@ export default class Search extends Component {
       });
 
       if (response && response.status == STATUS_SUCCESS) {
+        layoutAnimation();
 
         if (response.data) {
           this.setState({
@@ -163,8 +160,6 @@ export default class Search extends Component {
             keyboard_state: "always"
           });
         }
-
-        layoutAnimation();
       }
 
     } catch (e) {

@@ -18,6 +18,24 @@ class Store {
     Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
   }
 
+  storeUnMount = {};
+
+  runStoreUnMount() {
+    Object.keys(this.storeUnMount).map(key => {
+      let unMount = this.storeUnMount[key];
+
+      if (typeof unMount == 'function') {
+        unMount();
+      }
+    });
+
+    this.storeUnMount = {};
+  }
+
+  @action setStoreUnMount(key, unMount) {
+    this.storeUnMount[key] = unMount;
+  }
+
   @observable keyboardTop = 0;
 
   @action keyboardWillShow(e) {
@@ -65,7 +83,6 @@ class Store {
   @observable cart_item_index = 0;
   @observable payment_nav_show = true;
   @observable user_cart_note = '';
-  cart_empty = true;
 
   @action setUserCartNote(data) {
     this.user_cart_note = data;
@@ -81,14 +98,8 @@ class Store {
     this.cart_products = null;
     this.cart_products_confirm = null;
     this.cart_item_index = 0;
-    this.cart_empty = true;
     this.payment_nav_show = true;
     this.user_cart_note = '';
-
-    // refresh home screen
-    this.refresh_home_change++;
-
-    layoutAnimation();
   }
 
   // set cart data on display
@@ -109,14 +120,6 @@ class Store {
       // set new data
       this.cart_products = cart_products.reverse();
       this.cart_products_confirm = cart_products.reverse();
-
-      // refresh home screen
-      this.refresh_home_change++;
-
-      if (this.cart_empty) {
-        layoutAnimation();
-      }
-      this.cart_empty = false;
     } else {
       this.resetCartData();
     }

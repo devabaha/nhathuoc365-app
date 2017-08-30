@@ -504,10 +504,11 @@ class NavBar extends React.Component {
     });
 
     if (this.props.inputAnimate) {
+      layoutAnimation();
+
       this.setState({
         search_width: Util.size.width * 0.85
       });
-      layoutAnimation();
     }
   }
 
@@ -624,10 +625,12 @@ class NavBar extends React.Component {
                     onRight: undefined,
                     hideBackImage: false
                   });
+                  
+                  layoutAnimation();
+
                   this.setState({
                     search_width: Util.size.width * 0.75
                   });
-                  layoutAnimation();
                 }}
                />
             )}

@@ -205,13 +205,14 @@ export default class Cart extends Component {
       if (response && response.status == STATUS_SUCCESS) {
 
         setTimeout(() => {
+          layoutAnimation();
+          
           action(() => {
             store.setCartData(response.data);
             // prev item in list
             if (isAndroid && store.cart_item_index > 0) {
               store.setCartItemIndex(store.cart_item_index - 1);
             }
-            layoutAnimation();
           })();
         }, this._delay());
       }

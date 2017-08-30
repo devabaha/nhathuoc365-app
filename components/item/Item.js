@@ -89,15 +89,14 @@ export default class Item extends Component {
       },
     }).then(data => {
       setTimeout(() => {
+        // animate true
+        layoutAnimation();
+
         this.setState({
           item_data: data,
           loading: false,
           refreshing: false
         });
-
-        // animate true
-        layoutAnimation();
-
       }, delay || this._delay());
     }).catch(err => {
       this._getDataFromServer(delay);
@@ -115,6 +114,9 @@ export default class Item extends Component {
 
         // delay append data
         setTimeout(() => {
+          // animate true
+          layoutAnimation();
+          
           this.setState({
             item_data: response.data,
             loading: false,
@@ -127,10 +129,6 @@ export default class Item extends Component {
               expires: ITEM_CACHE
             });
           });
-
-          // animate true
-          layoutAnimation();
-
         }, delay || this._delay());
       }
 

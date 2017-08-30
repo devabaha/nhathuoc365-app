@@ -84,12 +84,13 @@ export default class Home extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
+          layoutAnimation();
+          
           this.setState({
             loading: false,
             refreshing: false,
             stores_data: response.data
           });
-          layoutAnimation();
         }, delay || 0);
       }
     } catch (e) {
@@ -337,7 +338,7 @@ const styles = StyleSheet.create({
   stores: {
     backgroundColor: '#cccccc',
     width: '100%',
-    height: Math.floor(CONTAINER_HEIGHT / 3),
+    height: ~~(CONTAINER_HEIGHT / 3),
     overflow: 'hidden',
     borderBottomWidth: Util.pixel,
     borderBottomColor: '#000000'
@@ -439,7 +440,7 @@ const styles = StyleSheet.create({
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    width: Math.floor((Util.size.width - 16) / 3),
+    width: ~~((Util.size.width - 16) / 3),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },

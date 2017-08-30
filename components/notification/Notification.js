@@ -42,13 +42,13 @@ export default class Notification extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
+          layoutAnimation();
+          
           this.setState({
             data: response.data,
             refreshing: false,
             loading: false
           });
-
-          layoutAnimation();
         }, delay || 0);
       }
     } catch (e) {

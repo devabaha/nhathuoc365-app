@@ -160,8 +160,8 @@ Items.PropTypes = {
 
 const styles = StyleSheet.create({
   item_box: {
-    width: Math.floor(Util.size.width / 2),
-    height: Math.floor(Util.size.width / 2),
+    width: ~~(Util.size.width / 2),
+    height: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd",

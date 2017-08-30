@@ -47,13 +47,13 @@ export default class Address extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           setTimeout(() => {
+            layoutAnimation();
+
             this.setState({
               data: [...response.data, {id: 0, type: 'address_add'}],
               loading: false,
               item_selected: null
             });
-
-            layoutAnimation();
           }, delay || 0);
         } else {
           this.setState({
@@ -114,10 +114,11 @@ export default class Address extends Component {
 
   // chọn địa chỉ cho đơn hàng
   async _addressSelectHanlder(item) {
+    layoutAnimation();
+    
     this.setState({
       item_selected: item.id
     });
-    layoutAnimation();
   }
 
   _createNew() {

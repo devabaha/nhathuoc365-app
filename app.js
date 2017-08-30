@@ -60,7 +60,7 @@ const custommerNav = {
     backgroundColor: "#f3f3f3"
   },
   direction: "horizontal",
-  
+
 }
 
 // StatusBar
@@ -69,19 +69,17 @@ if (isIOS) {
   // StatusBar.setNetworkActivityIndicatorVisible(true);
 }
 
-const reducerCreate = params=>{
-    const defaultReducer = Reducer(params);
-    return (state, action)=>{
-        // console.log("ACTION:", action);
-        return defaultReducer(state, action);
+const reducerCreate = params => {
+  const defaultReducer = Reducer(params);
+  return (state, action) => {
+    if (action.type == 'back') {
+      Store.runStoreUnMount();
     }
+    return defaultReducer(state, action);
+  }
 };
 
-export default class App extends React.Component {
-  componentDidMount() {
-
-  }
-
+export default class App extends Component {
   render() {
     return(
       <Router

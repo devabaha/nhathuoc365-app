@@ -152,16 +152,15 @@ export default class Stores extends Component {
     }).then(data => {
       // delay append data
       setTimeout(() => {
+        // animate true
+        layoutAnimation();
+
         this.setState({
           items_data: data,
           loading: false,
           finish: true,
           refreshing: false
         });
-
-        // animate true
-        layoutAnimation();
-
       }, this._delay());
     }).catch(err => {
       this._getItemByCateIdFromServer(category_id);
@@ -183,6 +182,9 @@ export default class Stores extends Component {
 
         // delay append data
         setTimeout(() => {
+          // animate true
+          layoutAnimation();
+
           this.setState({
             items_data: response.data,
             loading: false,
@@ -196,10 +198,6 @@ export default class Stores extends Component {
             data: response.data,
             expires: STORE_CATEGORY_CACHE
           });
-
-          // animate true
-          layoutAnimation();
-
         }, delay || this._delay());
 
       }
@@ -248,7 +246,6 @@ export default class Stores extends Component {
         category_nav_id: item.id,
         header_title
       });
-      layoutAnimation();
     }
   }
 

@@ -50,7 +50,7 @@ export default class CreateAddress extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     Actions.refresh({
       onBack: () => {
         this._unMount();
@@ -58,9 +58,7 @@ export default class CreateAddress extends Component {
         Actions.pop();
       }
     });
-  }
 
-  componentDidMount() {
     if (!this.state.edit_mode && this.refs_name) {
       setTimeout(() => {
         this.refs_name.focus();

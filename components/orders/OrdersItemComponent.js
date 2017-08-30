@@ -59,7 +59,9 @@ export default class OrdersItemComponent extends Component {
                     var items_string = '';
                     Object.keys(item.products).reverse().map(key => {
                       let item_product = item.products[key];
-                      items_string += item_product.name + ' (' + item_product.quantity_view + '), ';
+                      if (item_product.selected == 1) {
+                        items_string += item_product.name + ' (' + item_product.quantity_view + '), ';
+                      }
                     });
                     return sub_string(items_string, 100);
                   })()}</Text>

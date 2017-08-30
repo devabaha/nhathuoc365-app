@@ -41,23 +41,23 @@ export default class Chat extends Component {
     this._scrollToEnd = this._scrollToEnd.bind(this);
   }
 
-  componentWillMount() {
-    Actions.refresh({
-      onBack: () => {
-        clearTimeout(this._scrollDelay);
-        clearInterval(this._updateTimer);
+  _unMount() {
+    clearTimeout(this._scrollDelay);
+    clearInterval(this._updateTimer);
 
-        Keyboard.dismiss();
-
-        Actions.pop();
-      }
-    })
+    Keyboard.dismiss();
   }
 
   componentDidMount() {
+    store.setStoreUnMount('chat', this._unMount.bind(this));
 
     Actions.refresh({
-      title: this.props.title || store.store_data.name
+      title: this.props.title || store.store_data.name,
+      onBack: () => {
+        this._unMount();
+
+        Actions.pop();
+      }
     });
 
     var chat_key = _CHAT_KEY + this.state.store_id;
@@ -95,6 +95,8 @@ export default class Chat extends Component {
       });
     }).catch(err => {
       this._getData();
+
+      this._autoUpdate();
     });
   }
 
@@ -121,8 +123,7 @@ export default class Chat extends Component {
 
             this.setState({
               data: this.state.data != null ? [...this.state.data, ...data] : data,
-              loading: false,
-              finish: true
+              loading: false
             }, () => {
               this._scrollToEnd();
 
@@ -145,7 +146,9 @@ export default class Chat extends Component {
       } catch (e) {
         console.warn(e);
       } finally {
-
+        this.setState({
+          finish: true
+        });
       }
     });
   }

@@ -1,5 +1,7 @@
 'use strict';
 
+import {StatusBar} from 'react-native';
+
 import API from './API';
 import axios from 'axios';
 
@@ -245,12 +247,18 @@ class APIHandler {
 
 
 
-
+  _networkIndicator(flag = true) {
+    if (isIOS) {
+      StatusBar.setNetworkActivityIndicatorVisible(flag);
+    }
+  }
 
   /**
   * Gửi yêu cầu phương thức GET
   */
   async getAPI(api) {
+    this._networkIndicator();
+
     console.log(api);
     var response = await axios(api);
     return await this.processError(response);
@@ -260,6 +268,8 @@ class APIHandler {
   * Gửi yêu cầu phương thức POST
   */
   async postAPI(api, data){
+    this._networkIndicator();
+
     console.log(api);
     var response = await axios.post(api, encodeQueryData(data));
     return await this.processError(response);
@@ -269,11 +279,13 @@ class APIHandler {
   * Xử lý ngoại lệ
   */
   async processError(response) {
-      if (response.status != HTTP_SUCCESS) {
-          throw 'Error: ' + response.statusText;
-      }
-      console.log('--- response: ', JSON.stringify(response.data));
-      return response.data;
+    this._networkIndicator(false);
+
+    if (response.status != HTTP_SUCCESS) {
+        throw 'Error: ' + response.statusText;
+    }
+    console.log('--- response: ', JSON.stringify(response.data));
+    return response.data;
   }
 };
 

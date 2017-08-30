@@ -11,7 +11,8 @@ import {
   FlatList,
   TextInput,
   Clipboard,
-  Keyboard
+  Keyboard,
+  Alert
 } from 'react-native';
 
 // library
@@ -32,9 +33,6 @@ export default class Confirm extends Component {
     super(props);
 
     this.state = {
-     check_loading: [],
-     increment_loading: [],
-     decrement_loading: [],
      single: this.props.from != 'orders_item',
      coppy_sticker_flag: false,
      address_height: 50,
@@ -42,7 +40,7 @@ export default class Confirm extends Component {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (!this.state.single) {
       Actions.refresh({
         renderRightButton: this._renderRightButton.bind(this)
@@ -135,6 +133,21 @@ export default class Confirm extends Component {
 
     Keyboard.dismiss();
 
+    if (store.cart_data.count_selected <= 0) {
+      return Alert.alert(
+        'Thông báo',
+        'Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            if (this.props.add_new) {
+              this.props.add_new();
+            }
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
     if (store.user_cart_note) {
       // update cart note
       this._updateCartNote(() => {
@@ -153,45 +166,6 @@ export default class Confirm extends Component {
     });
   }
 
-  _checkBoxHandler(item) {
-
-    // add to list loading
-    var indexOf = this.state.check_loading.indexOf(item.id);
-    if (indexOf == -1) {
-      this.state.check_loading.push(item.id);
-    }
-
-    this.setState({
-      check_loading: this.state.check_loading
-    }, async () => {
-      try {
-        if (item.selected == 1) {
-          var response = await APIHandler.site_cart_unselect(store.store_id, item.id);
-        } else {
-          var response = await APIHandler.site_cart_select(store.store_id, item.id);
-        }
-
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-          })();
-        }
-
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // remove from list by id
-        indexOf = this.state.check_loading.indexOf(item.id);
-        if (indexOf != -1) {
-          this.state.check_loading.splice(indexOf, 1);
-          this.setState({
-            check_loading: this.state.check_loading
-          });
-        }
-      }
-    });
-  }
-
   // show popup confirm remove item in cart
   _removeItemCartConfirm(item) {
     if (this.refs_remove_item_confirm) {
@@ -199,87 +173,6 @@ export default class Confirm extends Component {
     }
 
     this.cartItemConfirmRemove = item;
-  }
-
-  // xử lý trừ số lượng, số lượng = 0 confirm xoá
-  _item_qnt_decrement_handler(item) {
-
-    if (item.quantity <= 1) {
-      this._removeItemCartConfirm(item);
-    } else {
-      this._item_qnt_decrement(item);
-    }
-  }
-
-  // giảm số lượng item trong giỏ hàng
-  _item_qnt_decrement(item) {
-
-    // add to list loading
-    var indexOf = this.state.decrement_loading.indexOf(item.id);
-    if (indexOf == -1) {
-      this.state.decrement_loading.push(item.id);
-    }
-
-    this.setState({
-      decrement_loading: this.state.decrement_loading
-    }, async () => {
-      try {
-        var response = await APIHandler.site_cart_down(store.store_id, item.id);
-
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-          })();
-
-        }
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // remove from list by id
-        indexOf = this.state.decrement_loading.indexOf(item.id);
-        if (indexOf != -1) {
-          this.state.decrement_loading.splice(indexOf, 1);
-          this.setState({
-            decrement_loading: this.state.decrement_loading
-          });
-        }
-      }
-    });
-  }
-
-  // tăng số lượng sảm phẩm trong giỏ hàng
-  _item_qnt_increment(item) {
-    // add to list loading
-    var indexOf = this.state.increment_loading.indexOf(item.id);
-    if (indexOf == -1) {
-      this.state.increment_loading.push(item.id);
-    }
-
-    this.setState({
-      increment_loading: this.state.increment_loading
-    }, async () => {
-      try {
-        var response = await APIHandler.site_cart_up(store.store_id, item.id);
-
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-          })();
-
-        }
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        // remove from list by id
-        indexOf = this.state.increment_loading.indexOf(item.id);
-        if (indexOf != -1) {
-          this.state.increment_loading.splice(indexOf, 1);
-          this.setState({
-            increment_loading: this.state.increment_loading
-          });
-        }
-      }
-    });
   }
 
   // close popup confirm remove item in cart
@@ -313,12 +206,13 @@ export default class Confirm extends Component {
 
         setTimeout(() => {
           action(() => {
+            layoutAnimation();
+
             store.setCartData(response.data);
             // prev item in list
             if (isAndroid && store.cart_item_index > 0) {
               store.setCartItemIndex(store.cart_item_index - 1);
             }
-            layoutAnimation();
           })();
         }, this._delay());
       }
@@ -327,6 +221,72 @@ export default class Confirm extends Component {
     } finally {
       this.cartItemConfirmRemove = undefined;
     }
+  }
+
+  _showSticker() {
+    this.setState({
+      coppy_sticker_flag: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          coppy_sticker_flag: false
+        });
+      }, 2000);
+    });
+  }
+
+  _coppyAddress(address) {
+    var address_string = `Địa chỉ giao hàng: ${address.name}, ${address.tel}, ${address.address}`;
+
+    Clipboard.setString(address_string);
+
+    this._showSticker();
+  }
+
+  _popupClose() {
+    if (this.popup_message) {
+      this.popup_message.close();
+    }
+  }
+
+  _viewOrders() {
+    this._popupClose();
+
+    this._goBack();
+
+    clearTimeout(this._delayViewOrders);
+    this._delayViewOrders = setTimeout(() => {
+      // define custom onback
+      const onBack = action(() => {
+        store.resetCartData();
+        Actions.pop();
+      });
+
+      // onback
+      Actions.orders_item({
+        title: `Đơn hàng #${store.cart_data.cart_code}`,
+        data: store.cart_data,
+        onBack
+      });
+
+      // add stack unmount
+      store.setStoreUnMount('confirm', onBack);
+    }, 1000);
+  }
+
+  _continueShopping() {
+    this._popupClose();
+
+    this._goBack();
+
+    // clear cart data on app
+    action(() => {
+      store.resetCartData();
+    })();
+  }
+
+  _goBack() {
+    Actions.pop();
   }
 
   render() {
@@ -558,90 +518,11 @@ export default class Confirm extends Component {
               data={cart_products_confirm}
               extraData={cart_products_confirm}
               renderItem={({item, index}) => {
-
-                var is_loading = this.state.check_loading.indexOf(item.id) != -1;
-                var is_decrement = this.state.decrement_loading.indexOf(item.id) != -1;
-                var is_increment = this.state.increment_loading.indexOf(item.id) != -1;
-
                 return(
-                  <View style={[styles.cart_item_box]}>
-                    <View style={styles.cart_item_check_box}>
-                      {is_loading ? (
-                        <Indicator size="small" />
-                      ) : (
-                        <CheckBox
-                          containerStyle={styles.cart_item_check}
-                          checked={item.selected == 1 ? true : false}
-                          checkedColor={DEFAULT_COLOR}
-                          hiddenTextElement
-                          onPress={this._checkBoxHandler.bind(this, item)}
-                          />
-                      )}
-                    </View>
-
-                    <View style={styles.cart_item_image_box}>
-                      <Image style={styles.cart_item_image} source={{uri: item.image}} />
-                    </View>
-
-                    <View style={styles.cart_item_info}>
-                      <View style={styles.cart_item_info_content}>
-                        <Text style={styles.cart_item_info_name}>{item.name}</Text>
-                        <View style={styles.cart_item_actions}>
-                          <TouchableHighlight
-                            style={styles.cart_item_actions_btn}
-                            underlayColor="transparent"
-                            onPress={this._item_qnt_decrement_handler.bind(this, item)}>
-                            <View>
-                              {is_decrement ? (
-                                <Indicator size="small" />
-                              ) : (
-                                <Text style={styles.cart_item_btn_label}>-</Text>
-                              )}
-                            </View>
-                          </TouchableHighlight>
-
-                          <Text style={styles.cart_item_actions_quantity}>{item.quantity_view}</Text>
-
-                          <TouchableHighlight
-                            style={styles.cart_item_actions_btn}
-                            underlayColor="transparent"
-                            onPress={this._item_qnt_increment.bind(this, item)}>
-                            <View>
-                              {is_increment ? (
-                                <Indicator size="small" />
-                              ) : (
-                                <Text style={styles.cart_item_btn_label}>+</Text>
-                              )}
-                            </View>
-                          </TouchableHighlight>
-                        </View>
-
-                        <View style={styles.cart_item_price_box}>
-                          {item.discount_percent > 0 && (
-                            <Text style={styles.cart_item_price_price_safe_off}>{item.discount}</Text>
-                          )}
-                          <Text style={styles.cart_item_price_price}>{item.price_view}</Text>
-                        </View>
-                      </View>
-                    </View>
-
-                    {item.discount_percent > 0 && (
-                      <View style={styles.item_safe_off}>
-                        <View style={styles.item_safe_off_percent}>
-                          <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
-                        </View>
-                      </View>
-                    )}
-
-                    {/*item.selected != 1 && (
-                      <TouchableHighlight
-                        underlayColor="transparent"
-                        onPress={this._checkBoxHandler.bind(this, item)}
-                        style={styles.uncheckOverlay}>
-                        <View></View>
-                      </TouchableHighlight>
-                    )*/}
-                  </View>
+                  <ItemCartComponent
+                    parentCtx={this}
+                    item={item}
+                  />
                 );
               }}
               keyExtractor={item => item.id}
@@ -778,64 +659,192 @@ export default class Confirm extends Component {
     );
   }
 
-  _showSticker() {
-    this.setState({
-      coppy_sticker_flag: true
-    }, () => {
-      setTimeout(() => {
-        this.setState({
-          coppy_sticker_flag: false
-        });
-      }, 2000);
-    });
-  }
+}
 
-  _coppyAddress(address) {
-    var address_string = `Địa chỉ giao hàng: ${address.name}, ${address.tel}, ${address.address}`;
+/* @flow */
 
-    Clipboard.setString(address_string);
+class ItemCartComponent extends Component {
+  constructor(props) {
+    super(props);
 
-    this._showSticker();
-  }
-
-  _popupClose() {
-    if (this.popup_message) {
-      this.popup_message.close();
+    this.state = {
+      check_loading: false,
+      increment_loading: false,
+      decrement_loading: false
     }
   }
 
-  _viewOrders() {
-    this._popupClose();
-
-    this._goBack();
-
-    setTimeout(() => {
-      Actions.orders_item({
-        title: `Đơn hàng #${store.cart_data.cart_code}`,
-        data: store.cart_data,
-        onBack: () => {
-          action(() => {
-            store.resetCartData();
-          })();
-          Actions.pop();
+  _checkBoxHandler(item) {
+    this.setState({
+      check_loading: true
+    }, async () => {
+      try {
+        if (item.selected == 1) {
+          var response = await APIHandler.site_cart_unselect(store.store_id, item.id);
+        } else {
+          var response = await APIHandler.site_cart_select(store.store_id, item.id);
         }
-      });
-    }, 1000);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+        }
+
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        this.setState({
+          check_loading: false
+        });
+      }
+    });
   }
 
-  _continueShopping() {
-    this._popupClose();
+  // xử lý trừ số lượng, số lượng = 0 confirm xoá
+  _item_qnt_decrement_handler(item) {
 
-    this._goBack();
-
-    // clear cart data on app
-    action(() => {
-      store.resetCartData();
-    })();
+    if (item.quantity <= 1) {
+      this.props.parentCtx._removeItemCartConfirm(item);
+    } else {
+      this._item_qnt_decrement(item);
+    }
   }
 
-  _goBack() {
-    Actions.pop();
+  // giảm số lượng item trong giỏ hàng
+  _item_qnt_decrement(item) {
+    this.setState({
+      decrement_loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_down(store.store_id, item.id);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        this.setState({
+          decrement_loading: false
+        });
+      }
+    });
+  }
+
+  // tăng số lượng sảm phẩm trong giỏ hàng
+  _item_qnt_increment(item) {
+    this.setState({
+      increment_loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_up(store.store_id, item.id);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        this.setState({
+          increment_loading: false
+        });
+      }
+    });
+  }
+
+  render() {
+    var item = this.props.item;
+
+    var {check_loading, increment_loading, decrement_loading} = this.state;
+    var is_processing = check_loading || increment_loading || decrement_loading;
+
+    return (
+      <View style={[styles.cart_item_box]}>
+        <View style={styles.cart_item_check_box}>
+          {check_loading ? (
+            <Indicator size="small" />
+          ) : (
+            <CheckBox
+              containerStyle={styles.cart_item_check}
+              checked={item.selected == 1 ? true : false}
+              checkedColor={DEFAULT_COLOR}
+              hiddenTextElement
+              onPress={is_processing ? null : this._checkBoxHandler.bind(this, item)}
+              />
+          )}
+        </View>
+
+        <View style={styles.cart_item_image_box}>
+          <Image style={styles.cart_item_image} source={{uri: item.image}} />
+        </View>
+
+        <View style={styles.cart_item_info}>
+          <View style={styles.cart_item_info_content}>
+            <Text style={styles.cart_item_info_name}>{item.name}</Text>
+            <View style={styles.cart_item_actions}>
+              <TouchableHighlight
+                style={styles.cart_item_actions_btn}
+                underlayColor="transparent"
+                onPress={is_processing ? null : this._item_qnt_decrement_handler.bind(this, item)}>
+                <View>
+                  {decrement_loading ? (
+                    <Indicator size="small" />
+                  ) : (
+                    <Text style={styles.cart_item_btn_label}>-</Text>
+                  )}
+                </View>
+              </TouchableHighlight>
+
+              <Text style={styles.cart_item_actions_quantity}>{item.quantity_view}</Text>
+
+              <TouchableHighlight
+                style={styles.cart_item_actions_btn}
+                underlayColor="transparent"
+                onPress={is_processing ? null : this._item_qnt_increment.bind(this, item)}>
+                <View>
+                  {increment_loading ? (
+                    <Indicator size="small" />
+                  ) : (
+                    <Text style={styles.cart_item_btn_label}>+</Text>
+                  )}
+                </View>
+              </TouchableHighlight>
+            </View>
+
+            <View style={styles.cart_item_price_box}>
+              {item.discount_percent > 0 && (
+                <Text style={styles.cart_item_price_price_safe_off}>{item.discount}</Text>
+              )}
+              <Text style={styles.cart_item_price_price}>{item.price_view}</Text>
+            </View>
+          </View>
+        </View>
+
+        {item.discount_percent > 0 && (
+          <View style={styles.item_safe_off}>
+            <View style={styles.item_safe_off_percent}>
+              <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
+            </View>
+          </View>
+        )}
+
+        {/*item.selected != 1 && (
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={this._checkBoxHandler.bind(this, item)}
+            style={styles.uncheckOverlay}>
+            <View></View>
+          </TouchableHighlight>
+        )*/}
+      </View>
+    );
   }
 }
 
