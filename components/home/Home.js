@@ -280,6 +280,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderTopWidth: Util.pixel,
+    borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
   },
   add_store_title: {
