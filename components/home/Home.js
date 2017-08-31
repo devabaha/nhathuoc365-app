@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     paddingTop: 8
   },
   add_store_action_btn: {
-    paddingVertical: 8
+    paddingVertical: 4
   },
   add_store_action_btn_box: {
     alignItems: 'center',
@@ -307,7 +307,7 @@ const styles = StyleSheet.create({
   add_store_action_label: {
     fontSize: 12,
     color: '#404040',
-    marginTop: 8
+    marginTop: 4
   },
 
   right_btn_add_store: {
