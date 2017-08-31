@@ -67,7 +67,6 @@ const custommerNav = {
 // StatusBar
 if (isIOS) {
   StatusBar.setBarStyle('light-content');
-  // StatusBar.setNetworkActivityIndicatorVisible(true);
 }
 
 const reducerCreate = params => {
@@ -82,24 +81,17 @@ const reducerCreate = params => {
 
 export default class App extends Component {
   componentWillMount() {
-    OneSignal.addEventListener('received', this.onReceived);
-    OneSignal.addEventListener('opened', this.onOpened);
-    OneSignal.addEventListener('registered', this.onRegistered);
-    OneSignal.addEventListener('ids', this.onIds);
+    OneSignal.addEventListener('received', this._onReceived);
+    OneSignal.addEventListener('opened', this._onOpened);
+    OneSignal.addEventListener('registered', this._onRegistered);
+    OneSignal.addEventListener('ids', this._onIds);
   }
 
-  componentWillUnmount() {
-    OneSignal.removeEventListener('received', this.onReceived);
-    OneSignal.removeEventListener('opened', this.onOpened);
-    OneSignal.removeEventListener('registered', this.onRegistered);
-    OneSignal.removeEventListener('ids', this.onIds);
-  }
-
-  onReceived(notification) {
+  _onReceived(notification) {
     console.log("Notification received: ", notification);
   }
 
-  onOpened(openResult) {
+  _onOpened(openResult) {
     console.log('Message: ', openResult.notification.payload.body);
     console.log('Data: ', openResult.notification.payload.additionalData);
     console.log('isActive: ', openResult.notification.isAppInFocus);
@@ -163,12 +155,27 @@ export default class App extends Component {
 
   }
 
-  onRegistered(notifData) {
+  _onRegistered(notifData) {
     console.log("Device had been registered for push notifications!", notifData);
   }
 
-  onIds(device) {
+  async _onIds(device) {
 	   console.log('Device info: ', device);
+     if (_.isObject(device)) {
+       var push_token = device.pushToken;
+       var player_id = device.userId;
+
+        try {
+          await APIHandler.add_push_token({
+            push_token,
+            player_id
+          });
+        } catch (e) {
+          console.warn(e);
+        } finally {
+
+        }
+     }
   }
 
   render() {

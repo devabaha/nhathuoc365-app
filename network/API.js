@@ -52,3 +52,6 @@ exports.SITE_LOAD_CHAT = MY_FOOD_API + 'apiSite/load_chat';
 // News
 exports.USER_NEWS_LIST = MY_FOOD_API + 'apiUser/news_list';
 exports.USER_NEWS = MY_FOOD_API + 'apiUser/news';
+
+// Push Notification
+exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';

@@ -233,7 +233,13 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
-
+  /**
+  * Tìm sản phẩm theo store_id
+  */
+  async add_push_token(data) {
+    var api = url_for(API.ADD_PUSH_TOKEN);
+    return await this.postAPI(api, data);
+  }
 
 
 

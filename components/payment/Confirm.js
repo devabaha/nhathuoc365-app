@@ -100,7 +100,11 @@ export default class Confirm extends Component {
 
             // update cart data
             action(() => {
+              // update cart
               store.setCartData(response.data);
+              // reload home screen
+              store.setRefreshHomeChange(store.refresh_home_change + 1);
+
               this.setState({
                 continue_loading: false
               });
@@ -212,6 +216,11 @@ export default class Confirm extends Component {
             // prev item in list
             if (isAndroid && store.cart_item_index > 0) {
               store.setCartItemIndex(store.cart_item_index - 1);
+            }
+
+            if (store.cart_data == null || store.cart_products == null) {
+              store.setRefreshHomeChange(store.refresh_home_change + 1);
+              Actions.pop();
             }
           })();
         }, this._delay());

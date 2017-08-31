@@ -74,7 +74,7 @@ export default class Stores extends Component {
     // get list products by category_id
     this._getItemByCateId(this.state.category_nav_id);
 
-    store.setStoreUnMount(this._unMount.bind(this));
+    store.setStoreUnMount('stores', this._unMount.bind(this));
   }
 
   _unMount() {
