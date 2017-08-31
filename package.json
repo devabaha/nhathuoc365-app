@@ -19,6 +19,7 @@
 		"react-native-htmlview": "^0.12.0",
 		"react-native-md5": "^1.0.0",
 		"react-native-modalbox": "^1.4.2",
+		"react-native-onesignal": "^3.0.5",
 		"react-native-qrcode-scanner": "0.0.17",
 		"react-native-router-flux": "^3.37.0",
 		"react-native-storage": "^0.2.2",

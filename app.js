@@ -24,6 +24,7 @@ import {
   Actions,
   ActionConst
 } from 'react-native-router-flux';
+import OneSignal from 'react-native-onesignal';
 
 // store
 import Store from './store/Store';
@@ -80,6 +81,96 @@ const reducerCreate = params => {
 };
 
 export default class App extends Component {
+  componentWillMount() {
+    OneSignal.addEventListener('received', this.onReceived);
+    OneSignal.addEventListener('opened', this.onOpened);
+    OneSignal.addEventListener('registered', this.onRegistered);
+    OneSignal.addEventListener('ids', this.onIds);
+  }
+
+  componentWillUnmount() {
+    OneSignal.removeEventListener('received', this.onReceived);
+    OneSignal.removeEventListener('opened', this.onOpened);
+    OneSignal.removeEventListener('registered', this.onRegistered);
+    OneSignal.removeEventListener('ids', this.onIds);
+  }
+
+  onReceived(notification) {
+    console.log("Notification received: ", notification);
+  }
+
+  onOpened(openResult) {
+    console.log('Message: ', openResult.notification.payload.body);
+    console.log('Data: ', openResult.notification.payload.additionalData);
+    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('openResult: ', openResult);
+
+    var data = openResult.notification.payload.additionalData;
+    if (data) {
+      // clear timer
+      Store.runStoreUnMount();
+
+      var {page, id} = data;
+
+      // go home screen
+      Actions.myTabBar({
+        type: ActionConst.RESET
+      });
+
+      // reload home screen
+      action(() => {
+        Store.setRefreshHomeChange(Store.refresh_home_change + 1);
+      })();
+
+      if (page) {
+        setTimeout(async () => {
+
+
+          switch (page) {
+            case 'store':
+              try {
+                var response = await APIHandler.site_info(id);
+                if (response && response.status == STATUS_SUCCESS) {
+                  action(() => {
+                    Store.setStoreData(response.data);
+
+                    Actions.stores({
+                      title: response.data.name
+                    });
+                  })();
+                }
+              } catch (e) {
+                console.warn(e);
+              } finally {
+
+              }
+              break;
+            case 'item':
+
+              break;
+            case 'payment':
+
+              break;
+            case 'orders':
+
+              break;
+          }
+
+
+        }, 1000);
+      }
+    }
+
+  }
+
+  onRegistered(notifData) {
+    console.log("Device had been registered for push notifications!", notifData);
+  }
+
+  onIds(device) {
+	   console.log('Device info: ', device);
+  }
+
   render() {
     return(
       <Router
