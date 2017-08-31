@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
   store_result_item_desc: {
     marginTop: 4,
     color: "#404040",
-    fontSize: 14,
+    fontSize: 12,
     lineHeight: isIOS ? 18 : 20
   },
   store_result_item_time: {

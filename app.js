@@ -197,7 +197,7 @@ export default class App extends Component {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_home" title="CỬA HÀNG" component={Home} {...custommerNav} />
+                  <Scene key="_home" title="MY FOOD" component={Home} {...custommerNav} />
               </Scene>
 
               {/**
@@ -206,14 +206,14 @@ export default class App extends Component {
               <Scene
                 key="myTab2"
                 icon={TabIcon}
-                iconTitle="Tin tức"
-                iconName="newspaper-o"
-                size={17}
+                iconTitle="Thông báo"
+                iconName="bell"
+                size={18}
                 onPress={()=> {
                   Actions._notification({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_notification" title="TIN TỨC" component={Notification} {...custommerNav} />
+                  <Scene key="_notification" title="THÔNG BÁO" component={Notification} {...custommerNav} />
               </Scene>
 
               {/**

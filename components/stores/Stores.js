@@ -59,15 +59,29 @@ export default class Stores extends Component {
           title
         });
       },
-      renderRightButton: this._renderRightButton.bind(this)
+      renderRightButton: this._renderRightButton.bind(this),
+      onBack: () => {
+        this._unMount();
+        Actions.pop();
+      }
     });
 
     this.start_time = time();
 
+    // get categories navigator
     this._getCategoriesNav();
 
+    // get list products by category_id
     this._getItemByCateId(this.state.category_nav_id);
 
+    store.setStoreUnMount(this._unMount.bind(this));
+  }
+
+  _unMount() {
+    // reload home screen
+    action(() => {
+      store.setRefreshHomeChange(store.refresh_home_change + 1);
+    })();
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -193,11 +207,13 @@ export default class Stores extends Component {
           });
 
           // cache in five minutes
-          storage.save({
-            key: store_category_key,
-            data: response.data,
-            expires: STORE_CATEGORY_CACHE
-          });
+          if (response.data) {
+            storage.save({
+              key: store_category_key,
+              data: response.data,
+              expires: STORE_CATEGORY_CACHE
+            });
+          }
         }, delay || this._delay());
 
       }

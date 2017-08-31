@@ -48,6 +48,8 @@ export default class StoreOrders extends Component {
       renderRightButton: this._renderRightButton.bind(this)
     });
 
+    this.start_time = time();
+
     this._getData();
   }
 
@@ -57,12 +59,14 @@ export default class StoreOrders extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
+          layoutAnimation();
+          
           this.setState({
             data: response.data,
             refreshing: false,
             loading: false
           });
-        }, delay || 0);
+        }, delay || this._delay());
       } else {
         this.setState({
           loading: false
@@ -73,6 +77,12 @@ export default class StoreOrders extends Component {
     } finally {
 
     }
+  }
+
+  // thời gian trễ khi chuyển màn hình
+  _delay() {
+    var delay = 450 - (Math.abs(time() - this.start_time));
+    return delay;
   }
 
   _onRefresh() {

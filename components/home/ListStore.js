@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   },
 
   stores_result_box: {
-    marginTop: 8,
+    // marginTop: 8,
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   store_result_item_desc: {
     marginTop: 4,
     color: "#404040",
-    fontSize: 14,
+    fontSize: 12,
     lineHeight: isIOS ? 18 : 20
   },
   store_result_item_time: {
@@ -371,9 +371,6 @@ const styles = StyleSheet.create({
     color: DEFAULT_COLOR,
     fontSize: 14,
     marginTop: -2
-  },
-  add_btn_icon_active: {
-    color: "#ffffff"
   },
   add_btn_label: {
     color: DEFAULT_COLOR,

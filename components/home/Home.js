@@ -20,6 +20,10 @@ import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import {reaction} from 'mobx';
 
+// components
+import ItemGrid from './ItemGrid';
+import ItemList from './ItemList';
+
 @observer
 export default class Home extends Component {
   constructor() {
@@ -85,11 +89,11 @@ export default class Home extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
           layoutAnimation();
-          
+
           this.setState({
             loading: false,
             refreshing: false,
-            stores_data: response.data
+            stores_data: response.data.sites
           });
         }, delay || 0);
       }
@@ -137,35 +141,6 @@ export default class Home extends Component {
     Actions.scan_qr_code();
   }
 
-  // tới màn hình store
-  _goStores(item) {
-    action(() => {
-      store.setStoreData(item);
-    })();
-
-    Actions.stores({
-      title: item.name
-    });
-  }
-
-  // tới màn hình giỏ hàng
-  _goCart(item) {
-    action(() => {
-      store.setStoreData(item);
-
-      Actions.store_orders();
-    })();
-  }
-
-  // tới màn hình chat
-  _goChat(item) {
-    action(() => {
-      store.setStoreData(item);
-    })();
-
-    Actions.chat();
-  }
-
   // pull to reload danh sách cửa hàng
   _onRefresh() {
     this.setState({refreshing: true});
@@ -177,55 +152,7 @@ export default class Home extends Component {
   renderRow({item}) {
     // store list
     return(
-      <TouchableHighlight
-        underlayColor="transparent"
-        onPress={this._goStores.bind(this, item)}>
-        <View style={styles.stores}>
-
-          <Image style={styles.stores_image} source={{uri: item.image_url}} />
-
-          <View style={styles.stores_info}>
-            <View style={styles.stores_info_text}>
-              <Text style={styles.stores_info_name}>{item.name}</Text>
-              <Text style={styles.stores_info_address}>{item.address}</Text>
-            </View>
-
-            <View style={styles.stores_info_cart}>
-              <TouchableHighlight
-                onPress={this._goChat.bind(this, item)}
-                underlayColor="transparent"
-                style={styles.stores_info_action}>
-                <View style={styles.stores_info_action_box}>
-                  <Icon name="commenting" size={20} color="#ffffff" />
-                  <Text style={styles.stores_info_action_label}>Tin nhắn</Text>
-
-                  {item.count_chat > 0 && (
-                    <View style={styles.stores_info_action_notify}>
-                      <Text style={styles.stores_info_action_notify_value}>{item.count_chat}</Text>
-                    </View>
-                  )}
-                </View>
-              </TouchableHighlight>
-
-              <TouchableHighlight
-                onPress={this._goCart.bind(this, item)}
-                underlayColor="transparent"
-                style={styles.stores_info_action}>
-                <View style={styles.stores_info_action_box}>
-                  <Icon name="shopping-cart" size={22} color="#ffffff" />
-                  <Text style={styles.stores_info_action_label}>Đơn hàng</Text>
-
-                  {item.count_cart > 0 && (
-                    <View style={styles.stores_info_action_notify}>
-                      <Text style={styles.stores_info_action_notify_value}>{item.count_cart}</Text>
-                    </View>
-                  )}
-                </View>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </View>
-      </TouchableHighlight>
+      <ItemList item={item} />
     );
   }
 
@@ -237,15 +164,24 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh.bind(this)}
-          />
-        }>
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }>
+
+          <View style={{
+            backgroundColor: "#ffffff",
+            paddingHorizontal: 15,
+            paddingVertical: 8
+          }}>
+            <Text style={styles.add_store_title}>Cửa hàng bạn yêu thích</Text>
+          </View>
 
           {this.state.stores_data != null && <FlatList
             style={styles.stores_box}
+            ItemSeparatorComponent={() => <View style={styles.separator}></View>}
             onEndReached={(num) => {
 
             }}
@@ -256,7 +192,7 @@ export default class Home extends Component {
           />}
 
           <View style={styles.add_store_box}>
-            <Text style={styles.add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
+            <Text style={styles.add_store_title}>Thêm cửa hàng bạn yêu thích</Text>
 
             <View style={styles.add_store_actions_box}>
               <TouchableHighlight
@@ -264,7 +200,7 @@ export default class Home extends Component {
                 underlayColor="transparent"
                 style={styles.add_store_action_btn}>
                 <View style={styles.add_store_action_btn_box}>
-                  <Icon name="qrcode" size={28} color="#333333" />
+                  <Icon name="qrcode" size={20} color="#333333" />
                   <Text style={styles.add_store_action_label}>Quét QR code</Text>
                 </View>
               </TouchableHighlight>
@@ -274,7 +210,7 @@ export default class Home extends Component {
                 underlayColor="transparent"
                 style={styles.add_store_action_btn}>
                 <View style={styles.add_store_action_btn_box}>
-                  <Icon name="shopping-cart" size={28} color="#333333" />
+                  <Icon name="shopping-cart" size={20} color="#333333" />
                   <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
                 </View>
               </TouchableHighlight>
@@ -284,7 +220,7 @@ export default class Home extends Component {
                 underlayColor="transparent"
                 style={styles.add_store_action_btn}>
                 <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                  <Icon name="search-plus" size={28} color="#333333" />
+                  <Icon name="search-plus" size={20} color="#333333" />
                   <Text style={styles.add_store_action_label}>Danh sách</Text>
                 </View>
               </TouchableHighlight>
@@ -298,7 +234,7 @@ export default class Home extends Component {
           style={[styles.modal, styles.modal_add_store]}
           ref={ref => this.refs_modal_add_store = ref}>
 
-          <Text style={styles.modal_add_store_title}>Chọn cách bạn thêm cửa hàng</Text>
+          <Text style={styles.modal_add_store_title}>Thêm cửa hàng bạn yêu thích</Text>
 
           <Button
             onPress={this._goScanQRCode.bind(this)}
@@ -332,86 +268,10 @@ const styles = StyleSheet.create({
     ...MARGIN_SCREEN
   },
   stores_box: {
-    marginBottom: 8
-  },
-
-  stores: {
-    backgroundColor: '#cccccc',
-    width: '100%',
-    height: ~~(CONTAINER_HEIGHT / 3),
-    overflow: 'hidden',
+    marginBottom: 8,
+    borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: '#000000'
-  },
-  stores_image: {
-    height: '100%',
-    resizeMode: 'cover'
-  },
-  stores_info: {
-    width: '100%',
-    minHeight: 56,
-    backgroundColor: "rgba(0,0,0,0.7)",
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    paddingVertical: 8,
-    paddingHorizontal: 15
-  },
-  stores_info_text: {
-    width: Util.size.width - 130
-  },
-  stores_info_name: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600'
-  },
-  stores_info_address: {
-    color: '#fafafa',
-    fontSize: 12,
-    marginTop: 4
-  },
-  stores_info_cart: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    top: 0,
-    width: 120,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
-    paddingRight: 10,
-  },
-  stores_info_action: {
-    padding: 10
-  },
-  stores_info_action_box: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 46
-  },
-  stores_info_action_label: {
-    fontSize: 9,
-    color: '#fafafa',
-    marginTop: 4
-  },
-  stores_info_action_notify: {
-    position: 'absolute',
-    minWidth: 16,
-    paddingHorizontal: 2,
-    height: 16,
-    backgroundColor: 'red',
-    top: 0,
-    right: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8
-  },
-  stores_info_action_notify_value: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600'
+    borderColor: "#dddddd"
   },
 
   add_store_box: {
@@ -470,5 +330,11 @@ const styles = StyleSheet.create({
   },
   modal_add_store_btn: {
     marginTop: 12
-  }
+  },
+
+  separator: {
+    width: '100%',
+    height: Util.pixel,
+    backgroundColor: "#cccccc"
+  },
 });
