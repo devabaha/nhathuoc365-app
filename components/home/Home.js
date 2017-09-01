@@ -35,7 +35,8 @@ export default class Home extends Component {
       refreshing: false,
       loading: false,
       user_notice: null,
-      finish: false
+      finish: false,
+      scrollTop: 0
     };
 
     this._goSearchStore = this._goSearchStore.bind(this);
@@ -60,6 +61,32 @@ export default class Home extends Component {
 
   componentWillReceiveProps() {
     // this._getData();
+
+    if (this.state.finish && store.is_stay_home) {
+      if (this.state.scrollTop == 0) {
+        this._scrollOverTopAndReload();
+      } else {
+        this._scrollToTop(0);
+      }
+    }
+
+    store.is_stay_home = true;
+  }
+
+  _scrollToTop(top = 0) {
+    if (this.refs_home) {
+      this.refs_home.scrollTo({x: 0, y: top, animated: true});
+    }
+  }
+
+  _scrollOverTopAndReload() {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this._scrollToTop(-60);
+
+      this._getData(1000);
+    });
   }
 
   // login khi mở app
@@ -180,6 +207,12 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
+          onScroll={(event) => {
+            this.setState({
+              scrollTop: event.nativeEvent.contentOffset.y
+            });
+          }}
+          ref={ref => this.refs_home = ref}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -269,7 +302,7 @@ export default class Home extends Component {
               borderColor: "#dddddd",
               marginTop: 8
             }}>
-              <Text style={styles.add_store_title}>Thông báo</Text>
+              <Text style={styles.add_store_title}>Tin khuyến mãi</Text>
             </View>
           )}
 
@@ -312,7 +345,7 @@ export default class Home extends Component {
               borderColor: "#dddddd",
               marginTop: 8
             }}>
-              <Text style={styles.add_store_title}>Cập nhật đơn hàng</Text>
+              <Text style={styles.add_store_title}>Thông báo đơn hàng</Text>
             </View>
           )}
 

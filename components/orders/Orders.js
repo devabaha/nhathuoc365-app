@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  ScrollView
 } from 'react-native';
 
 //library
@@ -33,7 +34,9 @@ export default class Orders extends Component {
       refreshing: false,
       cart_check_list: {},
       loading: true,
-      empty: false
+      empty: false,
+      finish: false,
+      scrollTop: 0
     }
 
     this._getData = this._getData.bind(this);
@@ -44,10 +47,38 @@ export default class Orders extends Component {
 
   componentDidMount() {
     this._getData();
+
+    store.is_stay_orders = true;
   }
 
   componentWillReceiveProps() {
-    this._getData();
+    // this._getData();
+
+    if (this.state.finish && store.is_stay_orders) {
+      if (this.state.scrollTop == 0) {
+        this._scrollOverTopAndReload();
+      } else {
+        this._scrollToTop(0);
+      }
+    }
+
+    store.is_stay_orders = true;
+  }
+
+  _scrollToTop(top = 0) {
+    if (this.refs_orders) {
+      this.refs_orders.scrollTo({x: 0, y: top, animated: true});
+    }
+  }
+
+  _scrollOverTopAndReload() {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this._scrollToTop(-60);
+
+      this._getData(1000);
+    });
   }
 
   async _getData(delay) {
@@ -56,17 +87,22 @@ export default class Orders extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
+          layoutAnimation();
+
           this.setState({
             data: response.data,
             refreshing: false,
             loading: false,
-            empty: false
+            empty: false,
+            finish: true
           });
         }, delay || 0);
       } else {
+        layoutAnimation();
+
         this.setState({
-          empty: true
-        });
+          loading: false
+        })
       }
     } catch (e) {
       console.warn(e);
@@ -76,84 +112,77 @@ export default class Orders extends Component {
   }
 
   _onRefresh() {
-    this.setState({refreshing: true});
-
-    this._getData(1000);
-  }
-
-  _is_delete_cart_item(item_id) {
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.open();
-    }
-  }
-
-  _delete_cart_item(item_id, flag) {
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.close();
-    }
+    this.setState({
+      refreshing: true
+    }, this._getData.bind(this, 1000));
   }
 
   render() {
-    if (this.state.empty) {
-      return <CenterText title="Chưa có đơn hàng nào" />
-    }
 
-    if (this.state.loading) {
+    var {loading, data} = this.state;
+
+    if (loading) {
       return <Indicator />
     }
 
     return (
       <View style={styles.container}>
 
-        {this.state.data != null && <FlatList
-          // renderSectionHeader={({section}) => (
-          //   <View style={styles.cart_section_box}>
-          //     <Image style={styles.cart_section_image} source={{uri: section.image}} />
-          //     <Text style={styles.cart_section_title}>{section.key}</Text>
-          //   </View>
-          // )}
-          onEndReached={(num) => {
+        {data != null ? (
+          <ScrollView
+            onScroll={(event) => {
+              this.setState({
+                scrollTop: event.nativeEvent.contentOffset.y
+              });
+            }}
+            ref={ref => this.refs_orders = ref}
+            // renderSectionHeader={({section}) => (
+            //   <View style={styles.cart_section_box}>
+            //     <Image style={styles.cart_section_image} source={{uri: section.image}} />
+            //     <Text style={styles.cart_section_title}>{section.key}</Text>
+            //   </View>
+            // )}
+            onEndReached={(num) => {
 
-          }}
-          ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-          onEndReachedThreshold={0}
-          style={styles.items_box}
-          data={this.state.data}
-          extraData={this.state}
-          renderItem={({item, index}) => {
-            return(
-              <OrdersItemComponent
-                item={item}
-                storeOnPress={() => {
-                  Actions.store_orders({
-                    store_id: item.site_id,
-                    title: item.shop_name
-                  });
-                }}
-                onPress={() => {
-                  Actions.orders_item({
-                    data: item,
-                    title: `Đơn hàng #${item.cart_code}`
-                  });
-                }} />
-            );
-          }}
-          keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
+            }}
+            onEndReachedThreshold={0}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }>
+            <FlatList
+              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+              style={styles.items_box}
+              data={this.state.data}
+              extraData={this.state}
+              renderItem={({item, index}) => {
+                return(
+                  <OrdersItemComponent
+                    item={item}
+                    />
+                );
+              }}
+              keyExtractor={item => item.id}
             />
-          }
-        />}
+          </ScrollView>
+        ) : (
+          <View style={styles.empty_box}>
+            <Icon name="shopping-basket" size={32} color={hexToRgbA(DEFAULT_COLOR, 0.6)} />
+            <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
 
-        <PopupConfirm
-          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
-          height={110}
-          noConfirm={this._delete_cart_item.bind(this, false)}
-          yesConfirm={this._delete_cart_item.bind(this, true)}
-          />
+            <TouchableHighlight
+              onPress={() => {
+                Actions._home({type: ActionConst.REFRESH});
+              }}
+              underlayColor="transparent">
+              <View style={styles.empty_box_btn}>
+                <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        )}
       </View>
     );
   }
@@ -195,6 +224,30 @@ const styles = StyleSheet.create({
     width: '100%',
     height: Util.pixel,
     backgroundColor: "#dddddd",
+  },
+
+  empty_box: {
+    alignItems: 'center',
+    marginTop: "50%"
+  },
+  empty_box_title: {
+    fontSize: 12,
+    marginTop: 8,
+    color: "#404040"
+  },
+  empty_box_btn: {
+    borderWidth: Util.pixel,
+    borderColor: DEFAULT_COLOR,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    borderRadius: 5,
+    backgroundColor: DEFAULT_COLOR
+  },
+  empty_box_btn_title: {
+    color: "#ffffff"
   }
 
 });

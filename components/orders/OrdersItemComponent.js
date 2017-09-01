@@ -12,8 +12,77 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
 
+@observer
 export default class OrdersItemComponent extends Component {
+
+  async _getCart(callback) {
+    try {
+      var response = await APIHandler.site_cart(store.store_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
+
+        if (typeof callback == 'function') {
+          callback();
+        }
+
+      } else {
+        action(() => {
+          store.resetCartData();
+        })();
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  _paymentHandler(item) {
+    if (store.cart_data && store.cart_data.address_id == 0) {
+      Actions.address();
+    } else {
+      this._goOrdersItem(item);
+    }
+  }
+
+  _goOrdersItemHandler(item) {
+    var is_paymenting = item.status == STATUS_PAYMENTING;
+    if (is_paymenting) {
+      action(() => {
+        store.setStoreId(item.site_id);
+
+        if (store.cart_data != null) {
+          this._paymentHandler(item);
+        } else {
+          this._getCart(this._paymentHandler.bind(this, item));
+        }
+      })();
+
+    } else {
+      this._goOrdersItem();
+    }
+  }
+
+  _goOrdersItem(item) {
+    Actions.orders_item({
+      data: item,
+      title: `Đơn hàng #${item.cart_code}`
+    });
+  }
+
+  _goStoreOrders(item) {
+    Actions.store_orders({
+      store_id: item.site_id,
+      title: item.shop_name
+    });
+  }
+
   render() {
     var {item, onPress, storeOnPress, from} = this.props;
     var single = from != "store_orders";
@@ -22,7 +91,7 @@ export default class OrdersItemComponent extends Component {
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={onPress}>
+        onPress={this._goOrdersItemHandler.bind(this, item)}>
 
         <View style={[styles.orders_item_box, {
           paddingTop: single ? 0 : 12
@@ -30,7 +99,7 @@ export default class OrdersItemComponent extends Component {
           {single && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={storeOnPress}>
+              onPress={this._goStoreOrders.bind(this, item)}>
               <View style={styles.cart_section_box}>
                 <Image style={styles.cart_section_image} source={{uri: item.shop_logo_url}} />
                 <Text style={styles.cart_section_title}>{item.shop_name}</Text>
@@ -82,13 +151,9 @@ export default class OrdersItemComponent extends Component {
                 alignItems: 'center'
               }}>
                 <TouchableHighlight
-                  underlayColor="transparent"
+                  underlayColor={hexToRgbA(DEFAULT_COLOR, 0.9)}
                   onPress={() => {
-                    Actions.pop();
-
-                    if (onPress) {
-                      onPress();
-                    }
+                    this._goOrdersItemHandler(item);
                   }}
                   style={{
                     paddingVertical: 6,
@@ -101,8 +166,8 @@ export default class OrdersItemComponent extends Component {
                     color: "#ffffff",
                     fontSize: 14
                   }}>
-                    <Icon name="check" size={14} color="#ffffff" />
-                    {' Đặt hàng'}
+                    {'Tiếp tục '}
+                    <Icon name="angle-right" size={14} color="#ffffff" />
                   </Text>
                 </TouchableHighlight>
               </View>

@@ -76,6 +76,15 @@ const reducerCreate = params => {
     if (action.type == 'back') {
       Store.runStoreUnMount();
     }
+    if (action.key && action.key != '_home') {
+      Store.is_stay_home = false;
+    }
+    if (action.key && action.key != '_main_notify') {
+      Store.is_stay_main_notify = false;
+    }
+    if (action.key && action.key != '_orders') {
+      Store.is_stay_orders = false;
+    }
     return defaultReducer(state, action);
   }
 };

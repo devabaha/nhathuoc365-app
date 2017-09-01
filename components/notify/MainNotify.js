@@ -8,12 +8,14 @@ import {
   StyleSheet,
   TouchableHighlight,
   FlatList,
+  RefreshControl,
   ScrollView
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
 
 // components
 import SelectionList from '../SelectionList';
@@ -58,16 +60,47 @@ export default class MainNotify extends Component {
         }
       ],
       loading: true,
-      notice_data: null
+      notice_data: null,
+      refreshing: false,
+      finish: false,
+      scrollTop: 0
     }
   }
 
   componentDidMount() {
     this._getData();
+
+    store.is_stay_main_notify = true;
   }
 
   componentWillReceiveProps() {
     // this._getData();
+
+    if (this.state.finish && store.is_stay_main_notify) {
+      if (this.state.scrollTop == 0) {
+        this._scrollOverTopAndReload();
+      } else {
+        this._scrollToTop(0);
+      }
+    }
+
+    store.is_stay_main_notify = true;
+  }
+
+  _scrollToTop(top = 0) {
+    if (this.refs_main_notify) {
+      this.refs_main_notify.scrollTo({x: 0, y: top, animated: true});
+    }
+  }
+
+  _scrollOverTopAndReload() {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this._scrollToTop(-60);
+
+      this._getData(1000);
+    });
   }
 
   _getData(delay) {
@@ -81,16 +114,21 @@ export default class MainNotify extends Component {
 
           layoutAnimation();
 
-          this.setState({
-            loading: false,
-            user_notice: response.data
-          });
+          setTimeout(() => {
+            this.setState({
+              loading: false,
+              user_notice: response.data,
+              refreshing: false,
+              finish: true
+            });
+          }, delay || 0);
 
         } else {
           layoutAnimation();
 
           this.setState({
-            loading: false
+            loading: false,
+            refreshing: false
           });
         }
       } catch (e) {
@@ -101,13 +139,32 @@ export default class MainNotify extends Component {
     });
   }
 
+  _onRefresh() {
+    this.setState({
+      refreshing: true
+    }, this._getData.bind(this, 1000));
+  }
+
   render() {
 
     var {user_notice, loading} = this.state;
 
     return (
       <View style={styles.container}>
-        <ScrollView>
+        <ScrollView
+          onScroll={(event) => {
+            this.setState({
+              scrollTop: event.nativeEvent.contentOffset.y
+            });
+          }}
+          ref={ref => this.refs_main_notify = ref}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }>
+
           <SelectionList data={this.state.navigators} />
 
           <View style={styles.boxTop} />

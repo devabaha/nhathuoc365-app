@@ -60,7 +60,7 @@ export default class StoreOrders extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
           layoutAnimation();
-          
+
           this.setState({
             data: response.data,
             refreshing: false,
@@ -103,14 +103,16 @@ export default class StoreOrders extends Component {
   }
 
   render() {
-    if (this.state.loading) {
+    var {loading, data} = this.state;
+
+    if (loading) {
       return <Indicator />
     }
 
     return (
       <View style={styles.container}>
 
-        {this.state.data != null ? (
+        {data != null ? (
           <FlatList
             // renderSectionHeader={({section}) => (
             //   <View style={styles.cart_section_box}>
@@ -131,11 +133,7 @@ export default class StoreOrders extends Component {
                 <OrdersItemComponent
                   item={item}
                   from="store_orders"
-                  onPress={() => {
-                    Actions.orders_item({
-                      data: item
-                    });
-                  }} />
+                  />
               );
             }}
             keyExtractor={item => item.id}
@@ -147,7 +145,20 @@ export default class StoreOrders extends Component {
             }
           />
         ) : (
-          <CenterText title="Bạn chưa có đơn hàng nào" />
+          <View style={styles.empty_box}>
+            <Icon name="shopping-basket" size={32} color={hexToRgbA(DEFAULT_COLOR, 0.6)} />
+            <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
+
+            <TouchableHighlight
+              onPress={() => {
+                Actions.pop();
+              }}
+              underlayColor="transparent">
+              <View style={styles.empty_box_btn}>
+                <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
         )}
       </View>
     );
@@ -168,6 +179,30 @@ const styles = StyleSheet.create({
     width: '100%',
     height: Util.pixel,
     backgroundColor: "#dddddd",
+  },
+
+  empty_box: {
+    alignItems: 'center',
+    marginTop: "50%"
+  },
+  empty_box_title: {
+    fontSize: 12,
+    marginTop: 8,
+    color: "#404040"
+  },
+  empty_box_btn: {
+    borderWidth: Util.pixel,
+    borderColor: DEFAULT_COLOR,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    borderRadius: 5,
+    backgroundColor: DEFAULT_COLOR
+  },
+  empty_box_btn_title: {
+    color: "#ffffff"
   }
 
 });
