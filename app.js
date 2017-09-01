@@ -32,7 +32,8 @@ import Store from './store/Store';
 // import components
 // screen
 import Home from './components/home/Home';
-import Notification from './components/notification/Notification';
+import Notifys from './components/notify/Notifys';
+import MainNotify from './components/notify/MainNotify';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
@@ -44,7 +45,7 @@ import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
-import NotifyItem from './components/notification/NotifyItem';
+import NotifyItem from './components/notify/NotifyItem';
 import SearchStore from './components/home/SearchStore';
 import ListStore from './components/home/ListStore';
 import ScanQRCode from './components/home/ScanQRCode';
@@ -87,17 +88,17 @@ export default class App extends Component {
     OneSignal.addEventListener('ids', this._onIds);
   }
 
-  _onReceived(notification) {
-    console.log("Notification received: ", notification);
+  _onReceived(notify) {
+    console.log("Notification received: ", notify);
   }
 
   _onOpened(openResult) {
-    console.log('Message: ', openResult.notification.payload.body);
-    console.log('Data: ', openResult.notification.payload.additionalData);
-    console.log('isActive: ', openResult.notification.isAppInFocus);
+    console.log('Message: ', openResult.notify.payload.body);
+    console.log('Data: ', openResult.notify.payload.additionalData);
+    console.log('isActive: ', openResult.notify.isAppInFocus);
     console.log('openResult: ', openResult);
 
-    var data = openResult.notification.payload.additionalData;
+    var data = openResult.notify.payload.additionalData;
     if (data) {
       // clear timer
       Store.runStoreUnMount();
@@ -156,7 +157,7 @@ export default class App extends Component {
   }
 
   _onRegistered(notifData) {
-    console.log("Device had been registered for push notifications!", notifData);
+    console.log("Device had been registered for push notifys!", notifData);
   }
 
   async _onIds(device) {
@@ -217,10 +218,10 @@ export default class App extends Component {
                 iconName="bell"
                 size={18}
                 onPress={()=> {
-                  Actions._notification({type: ActionConst.REFRESH});
+                  Actions._main_notify({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_notification" title="THÔNG BÁO" component={Notification} {...custommerNav} />
+                  <Scene initial={0} key="_main_notify" title="THÔNG BÁO" component={MainNotify} {...custommerNav} />
               </Scene>
 
               {/**
@@ -259,11 +260,12 @@ export default class App extends Component {
             <Scene initial={0} key="address" title="ĐỊA CHỈ" component={Address} {...custommerNav} />
             <Scene initial={0} key="confirm" title="XÁC NHẬN" component={Confirm} {...custommerNav} />
             <Scene initial={0} key="create_address" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
-            <Scene initial={0} key="cart" title="GIỎ HÀNG CỦA BẠN" component={Cart} {...custommerNav} />
+            <Scene initial={0} key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
             <Scene initial={0} key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
             <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
-            <Scene initial={0} key="item" title="THÔNG TIN SẢN PHẨM" component={Item} {...custommerNav} />
+            <Scene initial={0} key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
             <Scene initial={0} key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
+            <Scene initial={0} key="notifys" title="KHUYẾN MÃI" component={Notifys} {...custommerNav} />
             <Scene initial={0} key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
             <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
             <Scene initial={0} key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />

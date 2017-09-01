@@ -184,11 +184,6 @@ export default class Stores extends Component {
   async _getItemByCateIdFromServer(category_id, delay) {
     var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id;
 
-    this.setState({
-      loading: true,
-      items_data: null
-    });
-
     try {
       var response = await APIHandler.site_category_product(store.store_id, category_id);
 

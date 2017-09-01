@@ -18,6 +18,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { SocialIcon } from '../../lib/react-native-elements';
 
+// components
+import SelectionList from '../SelectionList';
+
 @observer
 export default class Account extends Component {
   constructor(props) {
@@ -30,21 +33,24 @@ export default class Account extends Component {
           icon: "heart",
           label: "Ưa thích",
           desc: "Xem sản phẩm đã thích",
-          onPress: () => 1
+          onPress: () => 1,
+          boxIconStyle: []
         },
         {
           key: 2,
           icon: "history",
           label: "Mới xem",
           desc: "Sản phẩm đã xem gần đây",
-          onPress: () => 1
+          onPress: () => 1,
+          boxIconStyle: []
         },
         {
           key: 3,
           icon: "question-circle",
           label: "Trung tâm trợ giúp",
           desc: "Xem trợ giúp",
-          onPress: () => 1
+          onPress: () => 1,
+          boxIconStyle: []
         }
       ],
       refreshing: false
@@ -107,42 +113,11 @@ export default class Account extends Component {
             </Image>
           </View>
 
-
-          <View style={styles.profile_list_opt}>
-            <FlatList
-              onEndReached={(num) => {
-
-              }}
-              onEndReachedThreshold={0}
-              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-              data={this.state.options}
-              renderItem={({item, index}) => {
-                return(
-                  <TouchableHighlight
-                    underlayColor="transparent"
-                    onPress={item.onPress}>
-
-                    <View style={[styles.profile_list_opt_btn]}>
-
-                      <View style={styles.profile_list_icon_box}>
-                        <Icon name={item.icon} size={16} color="#999999" />
-                      </View>
-
-                      <Text style={styles.profile_list_label}>{item.label}</Text>
-
-                      <View style={styles.profile_list_right_box}>
-                        <Text style={styles.profile_list_small_label}>{item.desc}</Text>
-                        <View style={styles.profile_list_icon_box}>
-                          <Icon name="angle-right" size={16} color="#999999" />
-                        </View>
-                      </View>
-                    </View>
-
-                  </TouchableHighlight>
-                );
-              }}
-            />
-          </View>
+          <SelectionList
+            containerStyle={{
+              marginTop: 8
+            }}
+            data={this.state.options} />
 
         </ScrollView>
       </View>
@@ -154,11 +129,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f1f1f1"
-  },
-  separator: {
-    width: '100%',
-    height: Util.pixel,
-    backgroundColor: "#dddddd",
   },
 
   profile_cover_box: {
@@ -209,42 +179,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#ffffff",
     marginLeft: 4
-  },
-
-  profile_list_opt: {
-    marginTop: 8,
-    borderTopWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
-  },
-  profile_list_opt_btn: {
-    width: Util.size.width,
-    height: 46,
-    backgroundColor: "#ffffff",
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 4
-  },
-  profile_list_icon_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 30,
-    height: 30
-  },
-  profile_list_label: {
-    fontSize: 14,
-    color: "#000000",
-    fontWeight: '400'
-  },
-  profile_list_right_box: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center'
-  },
-  profile_list_small_label: {
-    fontSize: 12,
-    color: "#404040"
   }
 });

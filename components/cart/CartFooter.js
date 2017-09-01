@@ -216,40 +216,48 @@ export default class CartFooter extends Component {
 
     if (isset_cart) {
       return(
-        <View style={styles.store_cart_container}>
-          <View style={styles.store_cart_content}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              ref={ref => this.refs_store_cart = ref}
-              data={cart_products}
-              pagingEnabled
-              scrollEnabled={false}
-              extraData={cart_products}
-              initialScrollIndex={store.cart_item_index}
-              getItemLayout={(data, index) => {
-                return {length: Util.size.width - 172, offset: (Util.size.width - 172) * index, index};
-              }}
-              renderItem={this.renderItems.bind(this)}
-              keyExtractor={item => item.id}
-              horizontal={true}
-            />
+        <TouchableHighlight
+          underlayColor="transparent"
+          onPress={() => {
+            Actions.cart({
+              direction: "vertical"
+            });
+          }}>
+          <View style={styles.store_cart_container}>
+            <View style={styles.store_cart_content}>
+              <FlatList
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                ref={ref => this.refs_store_cart = ref}
+                data={cart_products}
+                pagingEnabled
+                scrollEnabled={false}
+                extraData={cart_products}
+                initialScrollIndex={store.cart_item_index}
+                getItemLayout={(data, index) => {
+                  return {length: Util.size.width - 172, offset: (Util.size.width - 172) * index, index};
+                }}
+                renderItem={this.renderItems.bind(this)}
+                keyExtractor={item => item.id}
+                horizontal={true}
+              />
+            </View>
+
+            <TouchableHighlight
+              style={[styles.store_cart_btn, styles.store_cart_btn_left]}
+              underlayColor="#f1efef"
+              onPress={this._store_cart_prev.bind(this)}>
+              <Icon name="angle-left" size={36} color="#333333" />
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              style={[styles.store_cart_btn, styles.store_cart_btn_right]}
+              underlayColor="#f1efef"
+              onPress={this._store_cart_next.bind(this)}>
+              <Icon name="angle-right" size={36} color="#333333" />
+            </TouchableHighlight>
           </View>
-
-          <TouchableHighlight
-            style={[styles.store_cart_btn, styles.store_cart_btn_left]}
-            underlayColor="#f1efef"
-            onPress={this._store_cart_prev.bind(this)}>
-            <Icon name="chevron-left" size={24} color="#333333" />
-          </TouchableHighlight>
-
-          <TouchableHighlight
-            style={[styles.store_cart_btn, styles.store_cart_btn_right]}
-            underlayColor="#f1efef"
-            onPress={this._store_cart_next.bind(this)}>
-            <Icon name="chevron-right" size={24} color="#333333" />
-          </TouchableHighlight>
-        </View>
+        </TouchableHighlight>
       );
     } else {
       return(

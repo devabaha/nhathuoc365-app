@@ -287,17 +287,16 @@ const styles = StyleSheet.create({
   },
 
   stores_result_box: {
-    marginTop: 8,
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
   },
   store_result_item: {
     backgroundColor: "#ffffff",
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 15,
     flexDirection: 'row',
-    minHeight: 110
+    minHeight: 104
   },
   store_result_item_active: {
     // backgroundColor: "#ebebeb"
@@ -324,13 +323,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000000",
     fontWeight: '500',
-    lineHeight: isIOS ? 18 : 20
+    lineHeight: isIOS ? 16 : 18,
+    marginTop: 8
   },
   store_result_item_desc: {
     marginTop: 4,
     color: "#404040",
     fontSize: 12,
-    lineHeight: isIOS ? 18 : 20
+    lineHeight: isIOS ? 16 : 18
   },
   store_result_item_time: {
     fontSize: 12,

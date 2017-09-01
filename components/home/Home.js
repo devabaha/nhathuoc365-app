@@ -23,6 +23,8 @@ import {reaction} from 'mobx';
 // components
 import ItemGrid from './ItemGrid';
 import ItemList from './ItemList';
+import NotifyItemComponent from '../notify/NotifyItemComponent';
+import NewItemComponent from '../notify/NewItemComponent';
 
 @observer
 export default class Home extends Component {
@@ -31,7 +33,9 @@ export default class Home extends Component {
     this.state = {
       stores_data: null,
       refreshing: false,
-      loading: false
+      loading: false,
+      user_notice: null,
+      finish: false
     };
 
     this._goSearchStore = this._goSearchStore.bind(this);
@@ -52,6 +56,10 @@ export default class Home extends Component {
 
     this._login();
 
+  }
+
+  componentWillReceiveProps() {
+    // this._getData();
   }
 
   // login khi mở app
@@ -91,9 +99,12 @@ export default class Home extends Component {
           layoutAnimation();
 
           this.setState({
+            finish: true,
             loading: false,
             refreshing: false,
-            stores_data: response.data.sites
+            stores_data: response.data.sites.length > 0 ? response.data.sites : null,
+            user_notice: response.data.notices.length > 0 ? response.data.notices : null,
+            newses_data: response.data.newses.length > 0 ? response.data.newses : null
           });
         }, delay || 0);
       }
@@ -149,7 +160,13 @@ export default class Home extends Component {
   }
 
   // render rows cửa hàng trong list
-  renderRow({item}) {
+  renderRow({item, index}) {
+    if (index == 0) {
+      this.defaultBoxHeight = 0;
+    }
+
+    this.defaultBoxHeight += 104;
+
     // store list
     return(
       <ItemList item={item} />
@@ -157,9 +174,8 @@ export default class Home extends Component {
   }
 
   render() {
-    if (this.state.loading) {
-      return <Indicator />
-    }
+
+    var {loading, finish, stores_data, newses_data, user_notice} = this.state;
 
     return (
       <View style={styles.container}>
@@ -179,53 +195,149 @@ export default class Home extends Component {
             <Text style={styles.add_store_title}>Cửa hàng bạn yêu thích</Text>
           </View>
 
-          {this.state.stores_data != null && <FlatList
-            style={styles.stores_box}
-            ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-            onEndReached={(num) => {
-
-            }}
-            onEndReachedThreshold={0}
-            data={this.state.stores_data}
-            renderItem={this.renderRow.bind(this)}
-            keyExtractor={item => item.id}
-          />}
-
-          <View style={styles.add_store_box}>
-            <Text style={styles.add_store_title}>Thêm cửa hàng bạn yêu thích</Text>
-
-            <View style={styles.add_store_actions_box}>
-              <TouchableHighlight
-                onPress={this._goScanQRCode.bind(this)}
-                underlayColor="transparent"
-                style={styles.add_store_action_btn}>
-                <View style={styles.add_store_action_btn_box}>
-                  <Icon name="qrcode" size={20} color="#333333" />
-                  <Text style={styles.add_store_action_label}>Quét QR code</Text>
-                </View>
-              </TouchableHighlight>
-
-              <TouchableHighlight
-                onPress={this._goSearchStore}
-                underlayColor="transparent"
-                style={styles.add_store_action_btn}>
-                <View style={styles.add_store_action_btn_box}>
-                  <Icon name="shopping-cart" size={20} color="#333333" />
-                  <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
-                </View>
-              </TouchableHighlight>
-
-              <TouchableHighlight
-                onPress={this._goListStore}
-                underlayColor="transparent"
-                style={styles.add_store_action_btn}>
-                <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                  <Icon name="search-plus" size={20} color="#333333" />
-                  <Text style={styles.add_store_action_label}>Danh sách</Text>
-                </View>
-              </TouchableHighlight>
+          {loading ? (
+            <View style={[styles.defaultBox, {
+              height: this.defaultBoxHeight || 104
+            }]}>
+              <Indicator size="small" />
             </View>
-          </View>
+          ) : stores_data != null ? (
+            <FlatList
+              style={styles.stores_box}
+              onEndReached={(num) => {
+
+              }}
+              onEndReachedThreshold={0}
+              data={this.state.stores_data}
+              renderItem={this.renderRow.bind(this)}
+              keyExtractor={item => item.id}
+            />
+          ) : (
+            <View style={styles.defaultBox}>
+              <CenterText
+                marginTop={0}
+                title={"Chưa có cửa hàng\nThêm cửa hàng bạn yêu thích ngay!"} />
+            </View>
+          )}
+
+          {finish && (
+            <View style={styles.add_store_box}>
+              <Text style={styles.add_store_title}>Thêm cửa hàng bạn yêu thích</Text>
+
+              <View style={styles.add_store_actions_box}>
+                <TouchableHighlight
+                  onPress={this._goScanQRCode.bind(this)}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <Icon name="qrcode" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Quét QR code</Text>
+                  </View>
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  onPress={this._goSearchStore}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <Icon name="shopping-cart" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
+                  </View>
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  onPress={this._goListStore}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
+                    <Icon name="search-plus" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Danh sách</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            </View>
+          )}
+
+
+          {newses_data != null && (
+            <View style={{
+              backgroundColor: "#ffffff",
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderTopWidth: Util.pixel,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 8
+            }}>
+              <Text style={styles.add_store_title}>Thông báo</Text>
+            </View>
+          )}
+
+          {loading && newses_data != null ? (
+            <View style={[styles.defaultBox, {
+              height: this.defaultNewBoxHeight || 116,
+              marginBottom: 0,
+              borderTopWidth: 0
+            }]}>
+              <Indicator size="small" />
+            </View>
+          ) : newses_data ? (
+            <FlatList
+              data={newses_data}
+              renderItem={({item, index}) => {
+                if (index == 0) {
+                  this.defaultNewBoxHeight = 0;
+                }
+
+                this.defaultNewBoxHeight += 116;
+
+                return(
+                  <NewItemComponent
+                    item={item} />
+                );
+              }}
+              keyExtractor={item => item.id}
+            />
+          ) : (
+            null
+          )}
+
+          {user_notice && (
+            <View style={{
+              backgroundColor: "#ffffff",
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderTopWidth: Util.pixel,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 8
+            }}>
+              <Text style={styles.add_store_title}>Cập nhật đơn hàng</Text>
+            </View>
+          )}
+
+          {loading && user_notice != null ? (
+            <View style={[styles.defaultBox, {
+              borderTopWidth: 0
+            }]}>
+              <Indicator size="small" />
+            </View>
+          ) : user_notice ? (
+            <FlatList
+              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+              data={user_notice}
+              style={[styles.profile_list_opt]}
+              renderItem={({item, index}) => {
+                return(
+                  <NotifyItemComponent
+                    item={item} />
+                );
+              }}
+              keyExtractor={item => item.id}
+            />
+          ) : (
+            null
+          )}
 
         </ScrollView>
 
@@ -263,6 +375,16 @@ export default class Home extends Component {
 }
 
 const styles = StyleSheet.create({
+  defaultBox: {
+    width: '100%',
+    height: 104,
+    backgroundColor: "#ffffff",
+    borderTopWidth: Util.pixel,
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd",
+    marginBottom: 8
+  },
+
   container: {
     flex: 1,
     ...MARGIN_SCREEN
@@ -270,7 +392,6 @@ const styles = StyleSheet.create({
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
   },
 
@@ -338,4 +459,9 @@ const styles = StyleSheet.create({
     height: Util.pixel,
     backgroundColor: "#cccccc"
   },
+
+  profile_list_opt: {
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
+  }
 });

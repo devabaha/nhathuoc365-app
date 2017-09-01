@@ -49,6 +49,8 @@ export default class Cart extends Component {
       this._getCart();
     } else {
       setTimeout(() => {
+        layoutAnimation();
+
         this.setState({
           loading: false
         });
@@ -64,6 +66,8 @@ export default class Cart extends Component {
       if (response && response.status == STATUS_SUCCESS) {
 
         setTimeout(() => {
+          layoutAnimation();
+
           action(() => {
             store.setCartData(response.data);
             this.setState({
@@ -206,7 +210,7 @@ export default class Cart extends Component {
 
         setTimeout(() => {
           layoutAnimation();
-          
+
           action(() => {
             store.setCartData(response.data);
             // prev item in list
@@ -286,12 +290,6 @@ export default class Cart extends Component {
       <View style={styles.container}>
 
         {cart_products != null && <FlatList
-          //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
-          onEndReached={(num) => {
-
-          }}
-          //ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-          onEndReachedThreshold={0}
           style={styles.items_box}
           data={cart_products}
           extraData={cart_products}
@@ -362,12 +360,6 @@ export default class Cart extends Component {
             );
           }}
           keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
         />}
 
         <View style={styles.cart_payment_box}>

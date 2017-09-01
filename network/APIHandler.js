@@ -220,8 +220,8 @@ class APIHandler {
   /**
   * Load news list
   */
-  async user_news_list() {
-    var api = url_for(API.USER_NEWS_LIST);
+  async user_news_list(type = '') {
+    var api = url_for(API.USER_NEWS_LIST + type);
     return await this.getAPI(api);
   }
 
@@ -241,7 +241,13 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
-
+  /**
+  * Lấy danh sách thông báo
+  */
+  async user_notice() {
+    var api = url_for(API.USER_NOTICE);
+    return await this.getAPI(api);
+  }
 
 
 

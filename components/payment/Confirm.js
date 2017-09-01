@@ -32,8 +32,10 @@ export default class Confirm extends Component {
   constructor(props) {
     super(props);
 
+    var is_paymenting = props.data && props.data.status == STATUS_PAYMENTING;
+
     this.state = {
-     single: this.props.from != 'orders_item',
+     single: this.props.from != 'orders_item' || is_paymenting,
      coppy_sticker_flag: false,
      address_height: 50,
      continue_loading: false
@@ -517,12 +519,6 @@ export default class Confirm extends Component {
 
           {single ? (
             <FlatList
-              //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
-              onEndReached={(num) => {
-
-              }}
-              //ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-              onEndReachedThreshold={0}
               style={styles.items_box}
               data={cart_products_confirm}
               extraData={cart_products_confirm}
@@ -538,11 +534,6 @@ export default class Confirm extends Component {
             />
           ) : (
             <FlatList
-              //renderSectionHeader={({section}) => <View style={styles.cart_section_box}><Text style={styles.cart_section_title}>{section.key}</Text></View>}
-              onEndReached={(num) => {
-
-              }}
-              onEndReachedThreshold={0}
               style={styles.items_box}
               data={cart_products_confirm}
               extraData={cart_products_confirm}
@@ -553,7 +544,9 @@ export default class Confirm extends Component {
                 }
 
                 return(
-                  <View style={styles.cart_item_box}>
+                  <View style={[styles.cart_item_box, {
+                    height: 80
+                  }]}>
                     <View style={styles.cart_item_image_box}>
                       <Image style={styles.cart_item_image} source={{uri: item.image}} />
                     </View>
@@ -775,7 +768,9 @@ class ItemCartComponent extends Component {
     var is_processing = check_loading || increment_loading || decrement_loading;
 
     return (
-      <View style={[styles.cart_item_box]}>
+      <View style={[styles.cart_item_box, {
+        height: 94
+      }]}>
         <View style={styles.cart_item_check_box}>
           {check_loading ? (
             <Indicator size="small" />
@@ -964,7 +959,6 @@ const styles = StyleSheet.create({
 
   cart_item_box: {
     width: '100%',
-    height: 94,
     paddingVertical: 8,
     flexDirection: 'row',
     backgroundColor: "#ffffff",
@@ -1033,7 +1027,8 @@ const styles = StyleSheet.create({
   },
   cart_item_price_box: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    marginTop: 4
   },
   separator: {
     width: '100%',

@@ -17,6 +17,7 @@ export default class OrdersItemComponent extends Component {
   render() {
     var {item, onPress, storeOnPress, from} = this.props;
     var single = from != "store_orders";
+    var is_paymenting = item.status == STATUS_PAYMENTING;
 
     return (
       <TouchableHighlight
@@ -42,32 +43,70 @@ export default class OrdersItemComponent extends Component {
             <Text style={styles.orders_item_icon_title}>Đơn hàng #{item.cart_code}</Text>
 
             <View style={styles.orders_status_box}>
-              <Text style={styles.orders_status_box_title}>{item.status_view}</Text>
+              <Text style={[styles.orders_status_box_title, {
+                color: is_paymenting ? "#fa7f50" : DEFAULT_COLOR
+              }]}>{item.status_view}</Text>
             </View>
           </View>
 
-          <View style={styles.orders_item_content}>
-            <View style={styles.orders_item_time_box}>
-              <Icon style={styles.orders_item_icon} name="clock-o" size={14} color="#999999" />
-              <Text style={styles.orders_item_time_title}>{item.orders_time}</Text>
+          <View style={{
+            flexDirection: 'row'
+          }}>
+            <View style={styles.orders_item_content}>
+              <View style={styles.orders_item_time_box}>
+                <Icon style={styles.orders_item_icon} name="clock-o" size={14} color="#999999" />
+                <Text style={styles.orders_item_time_title}>{item.orders_time}</Text>
+              </View>
+
+              <View style={styles.orders_item_row}>
+                {Object.keys(item.products).length > 0 && (
+                  <View style={styles.orders_item_content_text}>
+                    <Text style={styles.orders_item_content_value}>{(() => {
+                      var items_string = '';
+                      Object.keys(item.products).reverse().map(key => {
+                        let item_product = item.products[key];
+                        if (item_product.selected == 1) {
+                          items_string += item_product.name + ' (' + item_product.quantity_view + '), ';
+                        }
+                      });
+                      return sub_string(items_string, 100);
+                    })()}</Text>
+                  </View>
+                )}
+              </View>
             </View>
 
-            <View style={styles.orders_item_row}>
-              {Object.keys(item.products).length > 0 && (
-                <View style={styles.orders_item_content_text}>
-                  <Text style={styles.orders_item_content_value}>{(() => {
-                    var items_string = '';
-                    Object.keys(item.products).reverse().map(key => {
-                      let item_product = item.products[key];
-                      if (item_product.selected == 1) {
-                        items_string += item_product.name + ' (' + item_product.quantity_view + '), ';
-                      }
-                    });
-                    return sub_string(items_string, 100);
-                  })()}</Text>
-                </View>
-              )}
-            </View>
+            {is_paymenting && (
+              <View style={{
+                flex: 1,
+                alignItems: 'center'
+              }}>
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Actions.pop();
+
+                    if (onPress) {
+                      onPress();
+                    }
+                  }}
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 8,
+                    borderRadius: 3,
+                    backgroundColor: DEFAULT_COLOR,
+                    marginTop: 20
+                  }}>
+                  <Text style={{
+                    color: "#ffffff",
+                    fontSize: 14
+                  }}>
+                    <Icon name="check" size={14} color="#ffffff" />
+                    {' Đặt hàng'}
+                  </Text>
+                </TouchableHighlight>
+              </View>
+            )}
           </View>
 
           <View style={[styles.orders_item_payment]}>

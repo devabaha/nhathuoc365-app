@@ -16,13 +16,6 @@ import store from '../../store/Store';
 
 @observer
 export default class ItemList extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-
-    }
-  }
 
   // tới màn hình store
   _goStores(item) {
@@ -80,8 +73,8 @@ export default class ItemList extends Component {
                 onPress={this._goChat.bind(this, item)}
                 underlayColor="transparent">
                 <View style={[styles.add_btn_icon_box, is_chat_active && styles.add_btn_icon_box_active]}>
-                  <Icon name="commenting" size={14} color={is_chat_active ? "#ffffff" : DEFAULT_COLOR} />
-                  <Text style={[styles.add_btn_label, is_chat_active && styles.add_btn_label_active]}>Tin nhắn{is_chat_active && ` (${item.count_chat})`}</Text>
+                  <Icon name="comments" size={14} color={is_chat_active ? "#ffffff" : DEFAULT_COLOR} />
+                  <Text style={[styles.add_btn_label, is_chat_active && styles.add_btn_label_active]}>Chat{is_chat_active && ` (${item.count_chat})`}</Text>
                 </View>
               </TouchableHighlight>
 
@@ -115,10 +108,12 @@ const styles = StyleSheet.create({
   },
   store_result_item: {
     backgroundColor: "#ffffff",
-    paddingVertical: 8,
+    paddingVertical: 4,
     paddingHorizontal: 15,
     flexDirection: 'row',
-    minHeight: 112
+    minHeight: 104,
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
   },
   store_result_item_active: {
     // backgroundColor: "#ebebeb"
@@ -145,13 +140,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#000000",
     fontWeight: '500',
-    lineHeight: isIOS ? 18 : 20
+    lineHeight: isIOS ? 16 : 18,
+    marginTop: 8
   },
   store_result_item_desc: {
     marginTop: 4,
     color: "#404040",
     fontSize: 12,
-    lineHeight: isIOS ? 18 : 20
+    lineHeight: isIOS ? 16 : 18
   },
   store_result_item_time: {
     fontSize: 12,
