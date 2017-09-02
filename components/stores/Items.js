@@ -23,6 +23,7 @@ export default class Items extends Component {
     }
   }
 
+  // add item vào giỏ hàng
   async _addCart(item) {
     this.setState({
       buying: true
@@ -36,8 +37,10 @@ export default class Items extends Component {
         action(() => {
           store.setCartData(response.data);
 
-          var index = null;
+          var index = null, length = 0;
           if (response.data.products) {
+            length = Object.keys(response.data.products).length;
+
             Object.keys(response.data.products).reverse().some((key, key_index) => {
               let value = response.data.products[key];
               if (value.id == item.id) {
@@ -47,7 +50,7 @@ export default class Items extends Component {
             });
           }
 
-          if (index !== null) {
+          if (index !== null && index < length) {
             store.setCartItemIndex(index);
             Events.trigger(NEXT_PREV_CART, {index});
 
@@ -67,7 +70,7 @@ export default class Items extends Component {
   }
 
   render() {
-    let {item, index, onPress, cartOnPress} = this.props;
+    let {item, index, onPress} = this.props;
 
     var quantity = 0;
 
@@ -147,8 +150,7 @@ export default class Items extends Component {
 Items.PropTypes = {
   item: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
-  onPress: PropTypes.func.isRequired,
-  cartOnPress: PropTypes.func.isRequired
+  onPress: PropTypes.func.isRequired
 }
 
 const styles = StyleSheet.create({

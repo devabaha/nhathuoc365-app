@@ -78,9 +78,6 @@ export default class Stores extends Component {
   }
 
   _unMount() {
-    // remove Listenner next and prev item in cart
-    Events.remove(NEXT_PREV_CART, NEXT_PREV_CART + 'stores');
-
     // reload home screen
     action(() => {
       store.setRefreshHomeChange(store.refresh_home_change + 1);

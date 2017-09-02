@@ -58,12 +58,22 @@ export default class Item extends Component {
           itemRefresh: this._itemRefresh.bind(this)
         });
       },
-      renderRightButton: this._renderRightButton.bind(this)
+      renderRightButton: this._renderRightButton.bind(this),
+      onBack: () => {
+        this._unMount();
+
+        Actions.pop();
+      }
     });
 
     this.start_time = time();
 
     this._getData();
+  }
+
+  _unMount() {
+    // remove Listenner next and prev item in cart
+    Events.remove(NEXT_PREV_CART, NEXT_PREV_CART + 'item');
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -168,8 +178,10 @@ export default class Item extends Component {
         action(() => {
           store.setCartData(response.data);
 
-          var index = null;
+          var index = null, length = 0;
           if (response.data.products) {
+            length = Object.keys(response.data.products).length;
+
             Object.keys(response.data.products).reverse().some((key, key_index) => {
               let value = response.data.products[key];
               if (value.id == item.id) {
@@ -179,15 +191,13 @@ export default class Item extends Component {
             });
           }
 
-          if (index !== null) {
-            setTimeout(() => {
-              store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, {index});
+          if (index !== null && index < length) {
+            store.setCartItemIndex(index);
+            Events.trigger(NEXT_PREV_CART, {index});
 
-              this.setState({
-                buying: false
-              });
-            }, 250);
+            this.setState({
+              buying: false
+            });
           }
         })();
 
@@ -371,7 +381,6 @@ export default class Item extends Component {
                 item={item}
                 index={index}
                 onPress={this._itemRefresh.bind(this, item)}
-                cartOnPress={this._addCart.bind(this, item)}
                 />
             )}
             keyExtractor={item => item.id}
