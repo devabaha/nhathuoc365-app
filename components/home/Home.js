@@ -456,7 +456,9 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
   },
   add_store_action_btn: {
     paddingVertical: 4
