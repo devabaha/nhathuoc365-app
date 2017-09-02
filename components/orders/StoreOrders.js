@@ -45,12 +45,28 @@ export default class StoreOrders extends Component {
 
     Actions.refresh({
       title: this.state.title,
-      renderRightButton: this._renderRightButton.bind(this)
+      renderRightButton: this._renderRightButton.bind(this),
+      onBack: () => {
+        this._unMount();
+
+        Actions.pop();
+      }
     });
 
     this.start_time = time();
 
+    // get data on this screen
     this._getData();
+
+    // callback when unmount this sreen
+    store.setStoreUnMount('StoreOrders', this._unMount);
+
+    // Listenner
+    Events.on(RELOAD_STORE_ORDERS, RELOAD_STORE_ORDERS + 'ID', this._getData);
+  }
+
+  _unMount() {
+    Events.removeAll(RELOAD_STORE_ORDERS);
   }
 
   async _getData(delay) {

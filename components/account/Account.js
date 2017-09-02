@@ -44,13 +44,27 @@ export default class Account extends Component {
           onPress: () => 1,
           boxIconStyle: []
         },
+
         {
           key: 3,
+          icon: "address-card-o",
+          label: "Địa chỉ của bạn",
+          desc: "Quản lý địa chỉ nhận hàng",
+          onPress: () => Actions.address({
+            from: "account"
+          }),
+          boxIconStyle: [],
+          marginTop: true
+        },
+
+        {
+          key: 4,
           icon: "question-circle",
           label: "Trung tâm trợ giúp",
           desc: "Xem trợ giúp",
           onPress: () => 1,
-          boxIconStyle: []
+          boxIconStyle: [],
+          marginTop: true
         }
       ],
       refreshing: false

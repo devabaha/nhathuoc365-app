@@ -42,10 +42,14 @@ class Store {
     if (e) {
       this.keyboardTop = e.endCoordinates.height;
     }
+
+    Events.trigger(KEY_BOARD_SHOW);
   }
 
   @action keyboardWillHide(e) {
     this.keyboardTop = 0;
+
+    Events.trigger(KEY_BOARD_HIDE);
   }
 
   /*********** home begin **********/

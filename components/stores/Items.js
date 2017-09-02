@@ -48,13 +48,12 @@ export default class Items extends Component {
           }
 
           if (index !== null) {
-            setTimeout(() => {
-              store.setCartItemIndex(index);
+            store.setCartItemIndex(index);
+            Events.trigger(NEXT_PREV_CART, {index});
 
-              this.setState({
-                buying: false
-              });
-            }, 250);
+            this.setState({
+              buying: false
+            });
           }
         })();
 
@@ -71,12 +70,6 @@ export default class Items extends Component {
     let {item, index, onPress, cartOnPress} = this.props;
 
     var quantity = 0;
-
-    // if (store.cart_data && store.cart_data.products) {
-    //   if (store.cart_data.products[item.id]) {
-    //     quantity = store.cart_data.products[item.id].quantity;
-    //   }
-    // }
 
     return (
       <TouchableHighlight

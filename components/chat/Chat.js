@@ -45,6 +45,9 @@ export default class Chat extends Component {
     clearTimeout(this._scrollDelay);
     clearInterval(this._updateTimer);
 
+    Events.removeAll(KEY_BOARD_SHOW);
+    Events.removeAll(KEY_BOARD_HIDE);
+
     Keyboard.dismiss();
   }
 
@@ -97,6 +100,16 @@ export default class Chat extends Component {
       this._getData();
 
       this._autoUpdate();
+    });
+
+
+    // Listenner
+    Events.on(KEY_BOARD_SHOW, KEY_BOARD_SHOW, () => {
+      this._scrollToEnd();
+    });
+
+    Events.on(KEY_BOARD_HIDE, KEY_BOARD_HIDE, () => {
+      this._scrollToEnd();
     });
   }
 
@@ -289,7 +302,7 @@ export default class Chat extends Component {
               width: Util.size.width,
               height: Util.size.height - NAV_HEIGHT - 40
             }}>
-              <CenterText title="Bắt đầu cuộc trò chuyện :)" />
+              <CenterText showIcon title="Xin chào, tôi có thể giúp gì cho bạn?" />
             </View>
           )}
 
@@ -314,7 +327,7 @@ export default class Chat extends Component {
             underlayColor="transparent"
             onPress={this._onSubmit.bind(this)}
             style={styles.chat_input_submit}>
-            <Icon  name="send" size={22} color={this.state.content ? DEFAULT_COLOR : "#cccccc"} />
+            <Icon name="send" size={22} color={this.state.content ? DEFAULT_COLOR : "#cccccc"} />
           </TouchableHighlight>
       </View>
       </View>

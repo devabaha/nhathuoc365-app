@@ -61,6 +61,9 @@ export default class Orders extends Component {
         this._scrollToTop(0);
       }
     }
+    if (!store.is_stay_orders) {
+      this._getData();
+    }
 
     store.is_stay_orders = true;
   }
@@ -96,6 +99,8 @@ export default class Orders extends Component {
             empty: false,
             finish: true
           });
+
+          this._scrollToTop(0);
         }, delay || 0);
       } else {
         layoutAnimation();

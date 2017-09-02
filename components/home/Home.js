@@ -44,7 +44,7 @@ export default class Home extends Component {
     this._getData = this._getData.bind(this);
 
     // auto refresh home
-    reaction(() => store.refresh_home_change, this._getData);
+    reaction(() => store.refresh_home_change, () => this._getData(450));
   }
 
   componentWillMount() {
@@ -115,7 +115,7 @@ export default class Home extends Component {
   // lấy dữ liệu trang home
   async _getData(delay) {
     this.setState({
-      loading: delay ? false : true
+      loading: true
     });
 
     try {
@@ -133,6 +133,8 @@ export default class Home extends Component {
             user_notice: response.data.notices.length > 0 ? response.data.notices : null,
             newses_data: response.data.newses.length > 0 ? response.data.newses : null
           });
+
+          this._scrollToTop(0);
         }, delay || 0);
       }
     } catch (e) {
@@ -146,14 +148,16 @@ export default class Home extends Component {
       <TouchableHighlight
         style={styles.right_btn_add_store}
         underlayColor="transparent"
-        onPress={() => {
-          if (this.refs_modal_add_store) {
-              this.refs_modal_add_store.open()
-          }
-        }}>
+        onPress={this._showPopupAddStore.bind(this)}>
         <Icon name="plus" size={20} color="#ffffff" />
       </TouchableHighlight>
     );
+  }
+
+  _showPopupAddStore() {
+    if (this.refs_modal_add_store) {
+        this.refs_modal_add_store.open()
+    }
   }
 
   // tới màn hình tìm cửa hàng theo mã CH
@@ -221,11 +225,11 @@ export default class Home extends Component {
           }>
 
           <View style={{
-            backgroundColor: "#ffffff",
+            backgroundColor: "#f1f1f1",
             paddingHorizontal: 15,
             paddingVertical: 8
           }}>
-            <Text style={styles.add_store_title}>Cửa hàng bạn yêu thích</Text>
+            <Text style={styles.add_store_title}>CỬA HÀNG BẠN YÊU THÍCH</Text>
           </View>
 
           {loading ? (
@@ -246,17 +250,28 @@ export default class Home extends Component {
               keyExtractor={item => item.id}
             />
           ) : (
-            <View style={styles.defaultBox}>
-              <CenterText
-                marginTop={0}
-                title={"Chưa có cửa hàng\nThêm cửa hàng bạn yêu thích ngay!"} />
-            </View>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={this._showPopupAddStore.bind(this)}
+              >
+              <View style={styles.defaultBox}>
+                <CenterText
+                  marginTop={0}
+                  title={"Chưa có cửa hàng\nThêm cửa hàng bạn yêu thích ngay!"} />
+              </View>
+            </TouchableHighlight>
           )}
 
           {finish && (
-            <View style={styles.add_store_box}>
-              <Text style={styles.add_store_title}>Thêm cửa hàng bạn yêu thích</Text>
-
+            <View>
+              <View style={{
+                paddingHorizontal: 15,
+                paddingVertical: 8,
+                borderBottomWidth: Util.pixel,
+                borderColor: "#dddddd"
+              }}>
+                <Text style={styles.add_store_title}>THÊM CỬA HÀNG BẠN YÊU THÍCH</Text>
+              </View>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight
                   onPress={this._goScanQRCode.bind(this)}
@@ -273,7 +288,7 @@ export default class Home extends Component {
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
-                    <Icon name="shopping-cart" size={20} color="#333333" />
+                    <Icon name="search-plus" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
                   </View>
                 </TouchableHighlight>
@@ -283,7 +298,7 @@ export default class Home extends Component {
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                    <Icon name="search-plus" size={20} color="#333333" />
+                    <Icon name="list-ul" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Danh sách</Text>
                   </View>
                 </TouchableHighlight>
@@ -294,21 +309,19 @@ export default class Home extends Component {
 
           {newses_data != null && (
             <View style={{
-              backgroundColor: "#ffffff",
               paddingHorizontal: 15,
               paddingVertical: 8,
-              borderTopWidth: Util.pixel,
               borderBottomWidth: Util.pixel,
               borderColor: "#dddddd",
-              marginTop: 8
+              marginTop: 4
             }}>
-              <Text style={styles.add_store_title}>Tin khuyến mãi</Text>
+              <Text style={styles.add_store_title}>TIN KHUYẾN MÃI</Text>
             </View>
           )}
 
           {loading && newses_data != null ? (
             <View style={[styles.defaultBox, {
-              height: this.defaultNewBoxHeight || 116,
+              height: this.defaultNewBoxHeight || (isIOS ? 116 : 124),
               marginBottom: 0,
               borderTopWidth: 0
             }]}>
@@ -322,7 +335,7 @@ export default class Home extends Component {
                   this.defaultNewBoxHeight = 0;
                 }
 
-                this.defaultNewBoxHeight += 116;
+                this.defaultNewBoxHeight += (isIOS ? 116 : 124);
 
                 return(
                   <NewItemComponent
@@ -337,15 +350,13 @@ export default class Home extends Component {
 
           {user_notice && (
             <View style={{
-              backgroundColor: "#ffffff",
               paddingHorizontal: 15,
               paddingVertical: 8,
-              borderTopWidth: Util.pixel,
               borderBottomWidth: Util.pixel,
               borderColor: "#dddddd",
-              marginTop: 8
+              marginTop: 4
             }}>
-              <Text style={styles.add_store_title}>Thông báo đơn hàng</Text>
+              <Text style={styles.add_store_title}>THÔNG BÁO ĐƠN HÀNG</Text>
             </View>
           )}
 
@@ -392,14 +403,14 @@ export default class Home extends Component {
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor={DEFAULT_COLOR}
             onPress={this._goSearchStore}
-            icon={{name: 'shopping-cart', type: 'font-awesome'}}
+            icon={{name: 'search-plus', type: 'font-awesome'}}
             title='Nhập mã cửa hàng' />
 
           <Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#ffc109"
             onPress={this._goListStore}
-            icon={{name: 'search-plus', type: 'font-awesome'}}
+            icon={{name: 'list-ul', type: 'font-awesome'}}
             title='Xem danh sách cửa hàng' />
         </Modal>
       </View>
@@ -415,7 +426,7 @@ const styles = StyleSheet.create({
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd",
-    marginBottom: 8
+    marginBottom: 4
   },
 
   container: {
@@ -431,24 +442,21 @@ const styles = StyleSheet.create({
   add_store_box: {
     width: '100%',
     backgroundColor: "#ffffff",
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderTopWidth: Util.pixel,
+    paddingBottom: 8,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
   },
   add_store_title: {
     color: "#404040",
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '500',
+    lineHeight: 20
   },
   add_store_actions_box: {
     width: '100%',
     flexDirection: 'row',
-    marginTop: 8,
-    borderTopWidth: Util.pixel,
-    borderTopColor: "#ebebeb",
-    paddingTop: 8
+    paddingVertical: 8,
+    backgroundColor: "#ffffff"
   },
   add_store_action_btn: {
     paddingVertical: 4

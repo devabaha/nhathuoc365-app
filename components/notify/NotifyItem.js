@@ -42,7 +42,7 @@ export default class NotifyItem extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
           layoutAnimation();
-          
+
           this.setState({
             item_data: response.data,
             refreshing: false,
@@ -71,8 +71,12 @@ export default class NotifyItem extends Component {
             <Text style={styles.notify_heading}>{item.title}</Text>
 
             <View style={styles.notify_time_box}>
-              <Icon name="map-marker" size={14} color="#666666" />
-              <Text style={styles.notify_time}>{item.shop_name} | {item.created}</Text>
+              <Text style={styles.notify_time}>
+                <Icon name="clock-o" size={11} color="#666666" />
+                {' ' + item.created + '    '}
+                <Icon name="map-marker" size={12} color="#666666" />
+                {' ' + item.shop_name}
+              </Text>
             </View>
 
             <View style={styles.notify_sort_content_box}>

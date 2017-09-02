@@ -65,7 +65,7 @@ export default class OrdersItemComponent extends Component {
       })();
 
     } else {
-      this._goOrdersItem();
+      this._goOrdersItem(item);
     }
   }
 
@@ -123,7 +123,7 @@ export default class OrdersItemComponent extends Component {
           }}>
             <View style={styles.orders_item_content}>
               <View style={styles.orders_item_time_box}>
-                <Icon style={styles.orders_item_icon} name="clock-o" size={14} color="#999999" />
+                <Icon style={styles.orders_item_icon} name="clock-o" size={12} color="#999999" />
                 <Text style={styles.orders_item_time_title}>{item.orders_time}</Text>
               </View>
 
@@ -212,7 +212,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     flexDirection: 'row',
     borderBottomWidth: Util.pixel,
-    borderTopWidth: Util.pixel,
     borderColor: "#dddddd",
     marginBottom: 8
   },
@@ -281,8 +280,7 @@ const styles = StyleSheet.create({
   },
   orders_item_content_value: {
     fontSize: 14,
-    color: "#404040",
-    lineHeight: 20
+    color: "#404040"
   },
   orders_item_payment: {
     width: '100%',
@@ -309,7 +307,7 @@ const styles = StyleSheet.create({
   orders_item_time_title: {
     fontSize: 12,
     color: "#666666",
-    marginLeft: 8
+    marginLeft: 4
   },
   note_label: {
     marginLeft: 22

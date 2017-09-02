@@ -41,8 +41,7 @@ export default class Stores extends Component {
       category_nav_id: 0,
       items_data: null,
       categories_data: null,
-      header_title: "— Tất cả sản phẩm —",
-      buying_idx: []
+      header_title: "— Tất cả sản phẩm —"
     }
   }
 
@@ -74,10 +73,14 @@ export default class Stores extends Component {
     // get list products by category_id
     this._getItemByCateId(this.state.category_nav_id);
 
+    // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
   }
 
   _unMount() {
+    // remove Listenner next and prev item in cart
+    Events.remove(NEXT_PREV_CART, NEXT_PREV_CART + 'stores');
+
     // reload home screen
     action(() => {
       store.setRefreshHomeChange(store.refresh_home_change + 1);
@@ -278,10 +281,10 @@ export default class Stores extends Component {
       return <Indicator />
     }
 
-    var {items_data, buying_idx, header_title} = this.state;
+    var {items_data, header_title} = this.state;
 
     // show products
-    if (items_data, buying_idx) {
+    if (items_data) {
 
       return(
         <FlatList
@@ -297,7 +300,6 @@ export default class Stores extends Component {
             <Items
               item={item}
               index={index}
-              buying_idx={buying_idx}
               onPress={this._goItem.bind(this, item)}
               />
           )}
@@ -356,9 +358,12 @@ export default class Stores extends Component {
 
         {this._renderItemsContent.call(this)}
 
-        {this.state.finish == true && <CartFooter
-          confirmRemove={this._confirmRemoveCartItem.bind(this)}
-         />}
+        {this.state.finish == true && (
+          <CartFooter
+            perfix="stores"
+            confirmRemove={this._confirmRemoveCartItem.bind(this)}
+           />
+        )}
 
         <PopupConfirm
           ref_popup={ref => this.refs_modal_delete_cart_item = ref}
@@ -404,7 +409,9 @@ export default class Stores extends Component {
             store.setCartData(response.data);
             // prev item in list
             if (isAndroid && store.cart_item_index > 0) {
-              store.setCartItemIndex(store.cart_item_index - 1);
+              var index = store.cart_item_index - 1;
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
             }
           })();
         }, 450);

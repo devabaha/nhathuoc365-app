@@ -30,12 +30,9 @@ export default class CartFooter extends Component {
       refreshing: false,
       loading: true,
       increment_loading: false,
-      decrement_loading: false
+      decrement_loading: false,
+      perfix: props.perfix || ''
     }
-
-    reaction(() => store.cart_item_index, () => {
-      this._goTopIndex(store.cart_item_index);
-    });
   }
 
   componentDidMount() {
@@ -44,6 +41,10 @@ export default class CartFooter extends Component {
     if (cart_data == null || cart_products == null || store.store_id != site_id) {
       this._getCart();
     }
+
+    Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.perfix, (data) => {
+      this._goTopIndex(data.index);
+    });
   }
 
   async _getCart() {
@@ -135,7 +136,9 @@ export default class CartFooter extends Component {
       return;
     }
 
-    store.setCartItemIndex(store.cart_item_index - 1);
+    var index = store.cart_item_index - 1;
+    store.setCartItemIndex(index);
+    Events.trigger(NEXT_PREV_CART, {index});
   }
 
   _store_cart_next() {
@@ -143,7 +146,9 @@ export default class CartFooter extends Component {
       return;
     }
 
-    store.setCartItemIndex(store.cart_item_index + 1);
+    var index = store.cart_item_index + 1;
+    store.setCartItemIndex(index);
+    Events.trigger(NEXT_PREV_CART, {index});
   }
 
   _goTopIndex(index) {
@@ -173,8 +178,9 @@ export default class CartFooter extends Component {
           <TouchableHighlight
             onPress={this._item_qnt_decrement_handler.bind(this, item)}
             underlayColor="transparent"
-            style={styles.store_cart_item_qnt_change}>
-            <View>
+            style={styles.p8}>
+
+            <View style={styles.store_cart_item_qnt_change}>
               {this.state.decrement_loading ? (
                 <Indicator size="small" />
               ) : (
@@ -188,8 +194,9 @@ export default class CartFooter extends Component {
           <TouchableHighlight
             onPress={this._item_qnt_increment.bind(this, item)}
             underlayColor="transparent"
-            style={styles.store_cart_item_qnt_change}>
-            <View>
+            style={styles.p8}>
+
+            <View style={styles.store_cart_item_qnt_change}>
               {this.state.increment_loading ? (
                 <Indicator size="small" />
               ) : (
@@ -218,11 +225,7 @@ export default class CartFooter extends Component {
       return(
         <TouchableHighlight
           underlayColor="transparent"
-          onPress={() => {
-            Actions.cart({
-              direction: "vertical"
-            });
-          }}>
+          onPress={null}>
           <View style={styles.store_cart_container}>
             <View style={styles.store_cart_content}>
               <FlatList
@@ -264,7 +267,7 @@ export default class CartFooter extends Component {
         <View style={styles.store_cart_container}>
           <CenterText
             marginTop={-8}
-            title={"Giỏ hàng trống\nHãy Chọn mua hàng ngay nào!"}
+            title={"Giỏ hàng trống\nHãy mua sắm ngay!"}
             />
         </View>
       );
@@ -446,7 +449,7 @@ const styles = StyleSheet.create({
   },
   store_cart_calculator: {
     position: 'absolute',
-    height: '50%',
+    height: '52%',
     bottom: 0,
     right: 0,
     width: Util.size.width - 232,
@@ -467,6 +470,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: "#404040",
     fontSize: 16,
-    paddingHorizontal: 16
+    paddingHorizontal: 8
+  },
+
+  p8: {
+    height: '100%',
+    width: 36,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });

@@ -116,7 +116,7 @@ export default class Item extends Component {
         setTimeout(() => {
           // animate true
           layoutAnimation();
-          
+
           this.setState({
             item_data: response.data,
             loading: false,
@@ -182,6 +182,7 @@ export default class Item extends Component {
           if (index !== null) {
             setTimeout(() => {
               store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
 
               this.setState({
                 buying: false
@@ -389,6 +390,7 @@ export default class Item extends Component {
 
         {this.state.loading == false && (
           <CartFooter
+            perfix="item"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
            />
         )}
@@ -453,7 +455,9 @@ export default class Item extends Component {
             store.setCartData(response.data);
             // prev item in list
             if (isAndroid && store.cart_item_index > 0) {
-              store.setCartItemIndex(store.cart_item_index - 1);
+              var index = store.cart_item_index - 1;
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
             }
           })();
         }, 450);

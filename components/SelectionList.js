@@ -28,7 +28,11 @@ export default class SelectionList extends Component {
               underlayColor="transparent"
               onPress={item.onPress}>
 
-              <View style={[styles.profile_list_opt_btn]}>
+              <View style={[styles.profile_list_opt_btn, {
+                marginTop: item.marginTop ? 8 : 0,
+                borderTopWidth: item.marginTop ? Util.pixel : 0,
+                borderColor: "#dddddd"
+              }]}>
 
                 <View style={[styles.profile_list_icon_box, ...item.boxIconStyle]}>
                   <Icon name={item.icon} size={16} color={item.iconColor || "#999999"} />
@@ -86,14 +90,14 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   profile_list_label: {
-    fontSize: 14,
+    fontSize: 16,
     color: "#000000",
     fontWeight: '400'
   },
   profile_list_small_label: {
-    fontSize: 11,
+    fontSize: 12,
     color: "#666666",
-    marginTop: 4
+    marginTop: 2
   },
   separator: {
     width: '100%',

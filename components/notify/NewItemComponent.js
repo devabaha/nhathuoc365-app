@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     flexDirection: 'row',
-    height: 116,
+    height: isIOS ? 116 : 124,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
   },

@@ -29,7 +29,8 @@ export default class Address extends Component {
       data: null,
       item_selected: null,
       loading: true,
-      continue_loading: false
+      continue_loading: false,
+      single: !props.from
     }
 
     this._getData = this._getData.bind(this);
@@ -115,7 +116,7 @@ export default class Address extends Component {
   // chọn địa chỉ cho đơn hàng
   async _addressSelectHanlder(item) {
     layoutAnimation();
-    
+
     this.setState({
       item_selected: item.id
     });
@@ -128,48 +129,65 @@ export default class Address extends Component {
   }
 
   render() {
-    var { loading } = this.state;
+    var { loading, single } = this.state;
 
     return (
       <View style={styles.container}>
-        <View style={styles.payments_nav}>
-          <TouchableHighlight
-            onPress={() => {
+        {single && (
+          <View style={styles.payments_nav}>
+            <TouchableHighlight
+              onPress={() => {
 
-            }}
-            underlayColor="transparent">
-            <View style={styles.payments_nav_items}>
-              <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
-                <Icon style={[styles.payments_nav_icon, styles.payments_nav_icon_active]} name="map-marker" size={20} color="#999" />
+              }}
+              underlayColor="transparent">
+              <View style={styles.payments_nav_items}>
+                <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
+                  <Icon style={[styles.payments_nav_icon, styles.payments_nav_icon_active]} name="map-marker" size={20} color="#999" />
+                </View>
+                <Text style={[styles.payments_nav_items_title, styles.payments_nav_items_title_active]}>1. Địa chỉ</Text>
+
+                <View style={styles.payments_nav_items_active} />
               </View>
-              <Text style={[styles.payments_nav_items_title, styles.payments_nav_items_title_active]}>1. Địa chỉ</Text>
+            </TouchableHighlight>
 
-              <View style={styles.payments_nav_items_active} />
-            </View>
-          </TouchableHighlight>
+            <TouchableHighlight
+              onPress={() =>  {
+                if (store.cart_data.address_id == 0) {
+                  this._goConfirmPage();
+                } else {
+                  this._goConfirm();
+                }
+              }}
+              underlayColor="transparent">
+              <View style={styles.payments_nav_items}>
+                <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
+                  <Icon style={[styles.payments_nav_icon]} name="check" size={20} color="#999" />
+                </View>
+                <Text style={[styles.payments_nav_items_title]}>2. Xác nhận</Text>
 
-          <TouchableHighlight
-            onPress={() =>  {
-              if (store.cart_data.address_id == 0) {
-                this._goConfirmPage();
-              } else {
-                this._goConfirm();
-              }
-            }}
-            underlayColor="transparent">
-            <View style={styles.payments_nav_items}>
-              <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
-                <Icon style={[styles.payments_nav_icon]} name="check" size={20} color="#999" />
+                {/*<View style={styles.payments_nav_items_active} />*/}
               </View>
-              <Text style={[styles.payments_nav_items_title]}>2. Xác nhận</Text>
+            </TouchableHighlight>
+          </View>
+        )}
 
-              {/*<View style={styles.payments_nav_items_active} />*/}
+        <ScrollView style={[styles.content, {
+          marginBottom: single ? 60 : 0
+        }]}>
+          {!single && (
+            <View style={{
+              backgroundColor: "#f1f1f1",
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderTopWidth: Util.pixel,
+              borderColor: "#dddddd"
+            }}>
+              <Text style={styles.add_store_title}>ĐỊA CHỈ NHẬN HÀNG</Text>
             </View>
-          </TouchableHighlight>
-        </View>
-
-        <ScrollView style={styles.content}>
-          <View style={styles.address_list_box}>
+          )}
+          <View style={[styles.address_list_box, {
+            marginTop: single ? 8 : 0
+          }]}>
             {this.state.data != null ? (
               <FlatList
                 ref="address_list"
@@ -227,7 +245,7 @@ export default class Address extends Component {
                           <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
                         </View>
 
-                        {is_selected && (
+                        {is_selected && single && (
                           <View style={styles.address_selected_box}>
                             <Icon name="check" size={24} color={DEFAULT_COLOR} />
                             <Text style={styles.address_label}>Giao tới địa chỉ này</Text>
@@ -257,7 +275,7 @@ export default class Address extends Component {
                           </TouchableHighlight>
                         </View>
 
-                        {!is_selected && (
+                        {!is_selected && single && (
                           <TouchableHighlight
                             underlayColor="transparent"
                             onPress={this._addressSelectHanlder.bind(this, item)}
@@ -282,7 +300,7 @@ export default class Address extends Component {
 
                 <TouchableHighlight
                   underlayColor="transparent"
-                  onPress={this.props.add_new}
+                  onPress={this._createNew.bind(this)}
                   style={[styles.address_add_box, {
                     marginTop: 0,
                     borderTopWidth: 0
@@ -299,32 +317,41 @@ export default class Address extends Component {
           </View>
         </ScrollView>
 
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={this._goConfirmPage.bind(this)}
-          style={styles.address_continue}>
-          <View style={styles.address_continue_content}>
-            <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
-            <View style={{
-              minWidth: 20,
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
-              {this.state.continue_loading ? (
-                <Indicator size="small" color="#fff" />
-              ) : (
-                <Icon name="chevron-right" size={20} color="#ffffff" />
-              )}
+        {single && (
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={this._goConfirmPage.bind(this)}
+            style={styles.address_continue}>
+            <View style={styles.address_continue_content}>
+              <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
+              <View style={{
+                minWidth: 20,
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                {this.state.continue_loading ? (
+                  <Indicator size="small" color="#fff" />
+                ) : (
+                  <Icon name="chevron-right" size={20} color="#ffffff" />
+                )}
+              </View>
             </View>
-          </View>
-        </TouchableHighlight>
+          </TouchableHighlight>
+        )}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  add_store_title: {
+    color: "#404040",
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 20
+  },
+
   container: {
     flex: 1,
     ...MARGIN_SCREEN,

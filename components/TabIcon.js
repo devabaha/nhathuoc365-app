@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 
 // librarys
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import store from '../store/Store';
 
 export default class TabIcon extends Component {

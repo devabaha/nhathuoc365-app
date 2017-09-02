@@ -107,6 +107,8 @@ export default class Confirm extends Component {
               // reload home screen
               store.setRefreshHomeChange(store.refresh_home_change + 1);
 
+              Events.trigger(RELOAD_STORE_ORDERS);
+
               this.setState({
                 continue_loading: false
               });
@@ -168,7 +170,12 @@ export default class Confirm extends Component {
 
   _goAddress() {
     Actions.address({
-      type: ActionConst.REPLACE
+      type: ActionConst.REPLACE,
+      onBack: () => {
+        Actions.confirm({
+          type: ActionConst.REPLACE
+        });
+      }
     });
   }
 
@@ -217,7 +224,9 @@ export default class Confirm extends Component {
             store.setCartData(response.data);
             // prev item in list
             if (isAndroid && store.cart_item_index > 0) {
-              store.setCartItemIndex(store.cart_item_index - 1);
+              var index = store.cart_item_index - 1;
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
             }
 
             if (store.cart_data == null || store.cart_products == null) {
@@ -420,21 +429,38 @@ export default class Confirm extends Component {
 
           {single && <ListHeader title="Thông tin này đã chính xác?" />}
 
-          <View style={[styles.rows, styles.borderBottom, single ? null : styles.mt8]}>
-            <View style={styles.address_name_box}>
+          <View style={[styles.rows, styles.borderBottom, single ? null : styles.mt8, {
+            paddingTop: 0,
+            paddingRight: 0
+          }]}>
+            <View style={[styles.address_name_box, {
+              paddingTop: 12
+            }]}>
               <View style={styles.box_icon_label}>
                 <Icon style={styles.icon_label} name="truck" size={13} color="#999999" />
                 <Text style={styles.input_label}>Địa chỉ giao hàng</Text>
               </View>
-              <View style={styles.address_default_box}>
+              <View style={[styles.address_default_box, {
+                position: 'absolute',
+                top: 0,
+                right: 0
+              }]}>
                 {single ? (
                   <TouchableHighlight
+                    style={{
+                      paddingVertical: 12,
+                      paddingHorizontal: 15
+                    }}
                     underlayColor="transparent"
                     onPress={this._goAddress.bind(this)}>
                     <Text style={[styles.address_default_title, styles.title_active]}>NHẤN ĐỂ THAY ĐỔI</Text>
                   </TouchableHighlight>
                 ) : (
                   <TouchableHighlight
+                    style={{
+                      paddingVertical: 12,
+                      paddingHorizontal: 15
+                    }}
                     underlayColor="transparent"
                     onPress={this._coppyAddress.bind(this, address_data)}>
                     <Text style={[styles.address_default_title, styles.title_active]}>SAO CHÉP</Text>

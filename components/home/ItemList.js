@@ -127,7 +127,8 @@ const styles = StyleSheet.create({
   store_result_item_image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'cover',
+    borderRadius: 2
   },
   store_result_item_content: {
     flex: 1

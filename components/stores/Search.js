@@ -311,9 +311,12 @@ export default class Search extends Component {
           <CenterText title="Nhập tên sản phẩm để tìm" marginTop={isIOS ? -(Util.size.height * 0.3) : undefined} />
         )}
 
-        {search_data != null && store.keyboardTop == 0 && <CartFooter
-          confirmRemove={this._confirmRemoveCartItem.bind(this)}
-         />}
+        {search_data != null && store.keyboardTop == 0 && (
+          <CartFooter
+            perfix="search"
+            confirmRemove={this._confirmRemoveCartItem.bind(this)}
+           />
+        )}
 
          <View style={{
            height: 0,
@@ -365,7 +368,9 @@ export default class Search extends Component {
           store.setCartData(response.data);
           // prev item in list
           if (isAndroid && store.cart_item_index > 0) {
-            store.setCartItemIndex(store.cart_item_index - 1);
+            var index = store.cart_item_index - 1;
+            store.setCartItemIndex(index);
+            Events.trigger(NEXT_PREV_CART, {index});
           }
         })();
 

@@ -207,9 +207,9 @@ export default class App extends Component {
               <Scene
                 key="myTab1"
                 icon={TabIcon}
-                iconTitle="My food"
-                iconName="home"
-                size={20}
+                iconTitle="My Food"
+                iconName="store"
+                size={24}
                 onPress={()=> {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
@@ -224,8 +224,8 @@ export default class App extends Component {
                 key="myTab2"
                 icon={TabIcon}
                 iconTitle="Thông báo"
-                iconName="bell"
-                size={18}
+                iconName="notifications"
+                size={24}
                 onPress={()=> {
                   Actions._main_notify({type: ActionConst.REFRESH});
                 }}
@@ -241,7 +241,7 @@ export default class App extends Component {
                 icon={TabIcon}
                 iconTitle="Đơn hàng"
                 iconName="shopping-cart"
-                size={20}
+                size={24}
                 onPress={()=> {
                   Actions._orders({type: ActionConst.REFRESH});
                 }}
@@ -256,8 +256,8 @@ export default class App extends Component {
                 key="myTab4"
                 icon={TabIcon}
                 iconTitle="Tài khoản"
-                iconName="user"
-                size={20}
+                iconName="account-circle"
+                size={24}
                 onPress={()=> {
                   Actions._account({type: ActionConst.REFRESH});
                 }}

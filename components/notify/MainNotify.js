@@ -83,6 +83,9 @@ export default class MainNotify extends Component {
         this._scrollToTop(0);
       }
     }
+    if (!store.is_stay_main_notify) {
+      this._getData();
+    }
 
     store.is_stay_main_notify = true;
   }
@@ -121,8 +124,9 @@ export default class MainNotify extends Component {
               refreshing: false,
               finish: true
             });
-          }, delay || 0);
 
+            this._scrollToTop(0);
+          }, delay || 0);
         } else {
           layoutAnimation();
 
@@ -170,7 +174,7 @@ export default class MainNotify extends Component {
           <View style={styles.boxTop} />
 
           <View style={styles.headding_box}>
-            <Text style={styles.headding_title}>Cập nhật đơn hàng</Text>
+            <Text style={styles.headding_title}>THÔNG BÁO ĐƠN HÀNG</Text>
           </View>
 
           <View style={styles.notice_box}>
@@ -224,8 +228,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    ...MARGIN_SCREEN,
-    backgroundColor: "#ffffff"
+    ...MARGIN_SCREEN
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
@@ -236,22 +239,20 @@ const styles = StyleSheet.create({
 
   boxTop: {
     width: '100%',
-    height: 8,
-    backgroundColor: "#f1f1f1"
+    height: 4
   },
 
   headding_box: {
-    backgroundColor: "#ffffff",
     paddingHorizontal: 15,
     paddingVertical: 8,
-    borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
   },
   headding_title: {
     color: "#404040",
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '500',
+    lineHeight: 20
   },
 
   notice_box: {
