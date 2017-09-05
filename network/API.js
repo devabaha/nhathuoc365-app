@@ -37,7 +37,8 @@ exports.SITE_CART_ORDERS = MY_FOOD_API + 'apiSite/cartorder';
 
 // Address
 exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';
-exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiSite/add_address';
+exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiUser/add_address';
+exports.SITE_ADD_ADDRESS = MY_FOOD_API + 'apiSite/add_address';
 exports.SITE_CART_ADDRESS = MY_FOOD_API + 'apiSite/cartaddress';
 exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
 
@@ -58,3 +59,9 @@ exports.USER_NOTICE = MY_FOOD_API + 'apiUser/notice';
 
 // Push Notification
 exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';
+
+// Users
+exports.USER_REGISTER = MY_FOOD_API + 'apiUser/register';
+exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
+exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
+exports.USER_LOGOUT = MY_FOOD_API + 'apiUser/logout';

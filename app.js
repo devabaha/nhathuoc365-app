@@ -37,6 +37,8 @@ import MainNotify from './components/notify/MainNotify';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
+import Register from './components/account/Register';
+import Login from './components/account/Login';
 import Stores from './components/stores/Stores';
 import Search from './components/stores/Search';
 import Item from './components/item/Item';
@@ -207,14 +209,14 @@ export default class App extends Component {
               <Scene
                 key="myTab1"
                 icon={TabIcon}
-                iconTitle="My Food"
+                iconTitle="MyFood"
                 iconName="store"
                 size={24}
                 onPress={()=> {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_home" title="MY FOOD" component={Home} {...custommerNav} />
+                  <Scene key="_home" title="MYFOOD" component={Home} {...custommerNav} />
               </Scene>
 
               {/**
@@ -269,6 +271,8 @@ export default class App extends Component {
             <Scene initial={0} key="address" title="ĐỊA CHỈ" component={Address} {...custommerNav} />
             <Scene initial={0} key="confirm" title="XÁC NHẬN" component={Confirm} {...custommerNav} />
             <Scene initial={0} key="create_address" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
+            <Scene initial={0} key="register" title="ĐĂNG KÝ" component={Register} {...custommerNav} />
+            <Scene initial={0} key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
             <Scene initial={0} key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
             <Scene initial={0} key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
             <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />

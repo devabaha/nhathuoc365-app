@@ -165,49 +165,49 @@ export default class Item extends Component {
   }
 
   // add item vào giỏ hàng
-  async _addCart(item) {
+  _addCart(item) {
     this.setState({
       buying: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_adding(store.store_id, item.id);
 
-    try {
-      var response = await APIHandler.site_cart_adding(store.store_id, item.id);
+        if (response && response.status == STATUS_SUCCESS) {
 
-      if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
 
-        action(() => {
-          store.setCartData(response.data);
+            var index = null, length = 0;
+            if (response.data.products) {
+              length = Object.keys(response.data.products).length;
 
-          var index = null, length = 0;
-          if (response.data.products) {
-            length = Object.keys(response.data.products).length;
+              Object.keys(response.data.products).reverse().some((key, key_index) => {
+                let value = response.data.products[key];
+                if (value.id == item.id) {
+                  index = key_index;
+                  return true;
+                }
+              });
+            }
 
-            Object.keys(response.data.products).reverse().some((key, key_index) => {
-              let value = response.data.products[key];
-              if (value.id == item.id) {
-                index = key_index;
-                return true;
-              }
-            });
-          }
+            if (index !== null && index < length) {
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
 
-          if (index !== null && index < length) {
-            store.setCartItemIndex(index);
-            Events.trigger(NEXT_PREV_CART, {index});
+              this.setState({
+                buying: false
+              });
+            }
+          })();
 
-            this.setState({
-              buying: false
-            });
-          }
-        })();
+        }
+
+      } catch (e) {
+        console.warn(e);
+      } finally {
 
       }
-
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
+    });
   }
 
   render() {

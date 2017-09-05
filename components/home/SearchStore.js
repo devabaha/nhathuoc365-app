@@ -122,7 +122,7 @@ export default class SearchStore extends Component {
   }
 
   // tìm cửa hàng theo mã CH
-  async _search_store() {
+  _search_store() {
 
     if (this.state.searchValue == '') {
       this.setState({
@@ -134,27 +134,27 @@ export default class SearchStore extends Component {
 
     this.setState({
       loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.user_search_store(this.state.searchValue);
 
-    try {
-      var response = await APIHandler.user_search_store(this.state.searchValue);
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({
+            search_data: [response.data],
+            loading: false
+          });
+        } else {
+          this.setState({
+            search_data: null,
+            loading: false
+          });
+        }
 
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          search_data: [response.data],
-          loading: false
-        });
-      } else {
-        this.setState({
-          search_data: null,
-          loading: false
-        });
+      } catch (e) {
+        console.warn(e);
+      } finally {
       }
-
-    } catch (e) {
-      console.warn(e);
-    } finally {
-    }
+    });
   }
 
   _onRefresh() {

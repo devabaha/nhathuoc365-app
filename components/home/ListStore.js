@@ -61,26 +61,26 @@ export default class SearchStore extends Component {
     return delay;
   }
 
-  async _getData() {
+  _getData() {
     this.setState({
       loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.user_list_site();
 
-    try {
-      var response = await APIHandler.user_list_site();
-
-      if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          this.setState({
-            search_data: response.data,
-            loading: false
-          });
-        }, this._delay());
+        if (response && response.status == STATUS_SUCCESS) {
+          setTimeout(() => {
+            this.setState({
+              search_data: response.data,
+              loading: false
+            });
+          }, this._delay());
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
       }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-    }
+    });
   }
 
   // onchange text value for typing

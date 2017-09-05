@@ -90,56 +90,56 @@ export default class Home extends Component {
   }
 
   // login khi mở app
-  async _login() {
+  _login() {
     this.setState({
       loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.user_login({
+          fb_access_token: ''
+        });
 
-    try {
-      var response = await APIHandler.user_login({
-        fb_access_token: ''
-      });
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setUserInfo(response.data);
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setUserInfo(response.data);
-
-          this._getData();
-        })();
+            this._getData();
+          })();
+        }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
-    }
+    });
   }
 
   // lấy dữ liệu trang home
-  async _getData(delay) {
+  _getData(delay) {
     this.setState({
       loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.user_home();
 
-    try {
-      var response = await APIHandler.user_home();
+        if (response && response.status == STATUS_SUCCESS) {
+          setTimeout(() => {
+            layoutAnimation();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          layoutAnimation();
+            this.setState({
+              finish: true,
+              loading: false,
+              refreshing: false,
+              stores_data: response.data.sites.length > 0 ? response.data.sites : null,
+              user_notice: response.data.notices.length > 0 ? response.data.notices : null,
+              newses_data: response.data.newses.length > 0 ? response.data.newses : null
+            });
 
-          this.setState({
-            finish: true,
-            loading: false,
-            refreshing: false,
-            stores_data: response.data.sites.length > 0 ? response.data.sites : null,
-            user_notice: response.data.notices.length > 0 ? response.data.notices : null,
-            newses_data: response.data.newses.length > 0 ? response.data.newses : null
-          });
-
-          this._scrollToTop(0);
-        }, delay || 0);
+            this._scrollToTop(0);
+          }, delay || 0);
+        }
+      } catch (e) {
+        console.warn(e);
       }
-    } catch (e) {
-      console.warn(e);
-    }
+    });
   }
 
   // render button trên navbar
@@ -229,7 +229,7 @@ export default class Home extends Component {
             paddingHorizontal: 15,
             paddingVertical: 8
           }}>
-            <Text style={styles.add_store_title}>CỬA HÀNG BẠN YÊU THÍCH</Text>
+            <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
           </View>
 
           {loading ? (
@@ -270,7 +270,7 @@ export default class Home extends Component {
                 borderBottomWidth: Util.pixel,
                 borderColor: "#dddddd"
               }}>
-                <Text style={styles.add_store_title}>THÊM CỬA HÀNG BẠN YÊU THÍCH</Text>
+                <Text style={styles.add_store_title}>THÊM CỬA HÀNG YÊU THÍCH</Text>
               </View>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight

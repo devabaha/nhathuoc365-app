@@ -31,30 +31,30 @@ export default class NotifyItem extends Component {
     this._getData();
   }
 
-  async _getData(delay) {
+  _getData(delay) {
     this.setState({
       loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.user_news(this.state.item.id);
 
-    try {
-      var response = await APIHandler.user_news(this.state.item.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          setTimeout(() => {
+            layoutAnimation();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          layoutAnimation();
+            this.setState({
+              item_data: response.data,
+              refreshing: false,
+              loading: false
+            });
+          }, delay || 0);
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
 
-          this.setState({
-            item_data: response.data,
-            refreshing: false,
-            loading: false
-          });
-        }, delay || 0);
       }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
+    });
   }
 
   render() {

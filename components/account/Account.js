@@ -10,12 +10,14 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  Alert
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
 import { SocialIcon } from '../../lib/react-native-elements';
 
 // components
@@ -28,26 +30,38 @@ export default class Account extends Component {
 
     this.state = {
       options: [
-        {
-          key: 1,
-          icon: "heart",
-          label: "Ưa thích",
-          desc: "Xem sản phẩm đã thích",
-          onPress: () => 1,
-          boxIconStyle: []
-        },
+        // {
+        //   key: 1,
+        //   icon: "heart",
+        //   label: "Ưa thích",
+        //   desc: "Xem sản phẩm đã thích",
+        //   onPress: () => 1,
+        //   boxIconStyle: []
+        // },
+        // {
+        //   key: 2,
+        //   icon: "history",
+        //   label: "Mới xem",
+        //   desc: "Sản phẩm đã xem gần đây",
+        //   onPress: () => 1,
+        //   boxIconStyle: []
+        // },
+
         {
           key: 2,
-          icon: "history",
-          label: "Mới xem",
-          desc: "Sản phẩm đã xem gần đây",
-          onPress: () => 1,
-          boxIconStyle: []
+          icon: "commenting-o",
+          label: "Gửi phản hồi tới quản trị ứng dụng",
+          desc: "Đóng góp, ý kiến của bạn",
+          onPress: () => {
+
+          },
+          boxIconStyle: [],
+          // marginTop: true
         },
 
         {
           key: 3,
-          icon: "address-card-o",
+          icon: "map-marker",
           label: "Địa chỉ của bạn",
           desc: "Quản lý địa chỉ nhận hàng",
           onPress: () => Actions.address({
@@ -59,15 +73,38 @@ export default class Account extends Component {
 
         {
           key: 4,
-          icon: "question-circle",
-          label: "Trung tâm trợ giúp",
-          desc: "Xem trợ giúp",
+          icon: "facebook-square",
+          label: "Fanpage MyFood",
+          desc: "Facebook fanpage của ứng dụng",
           onPress: () => 1,
           boxIconStyle: [],
           marginTop: true
+        },
+
+        {
+          key: 5,
+          icon: "handshake-o",
+          label: "Về MyFood - Điều khoản sử dụng",
+          desc: "Hướng dẫn sử dụng MyFood",
+          onPress: () => {
+
+          },
+          boxIconStyle: [],
+          // marginTop: true
+        },
+
+        {
+          key: 6,
+          icon: "question-circle",
+          label: "Thông tin ứng dụng",
+          desc: "Phiên bản phần mềm 1.0",
+          onPress: () => 1,
+          boxIconStyle: [],
+          // marginTop: true
         }
       ],
-      refreshing: false
+      refreshing: false,
+      logout_loading: false
     }
 
   }
@@ -82,6 +119,9 @@ export default class Account extends Component {
 
   render() {
 
+    var is_login = store.user_info != null && store.user_info.verify_flag == STATUS_VERIFYED;
+    var {user_info} = store;
+
     if (false) {
       var avatar = (
         <Image style={styles.profile_avatar} source={{uri: "https://scontent.fhan4-1.fna.fbcdn.net/v/t1.0-9/20228664_1934714413468593_6526539620669280594_n.jpg?oh=05127a03af9c2f04e3301b8d41fbc13f&oe=5A29DD78"}} />
@@ -91,6 +131,8 @@ export default class Account extends Component {
         <Icon name="user" size={36} color="#666666" />
       );
     }
+
+    var {logout_loading} = this.state;
 
     return (
       <View style={styles.container}>
@@ -113,16 +155,87 @@ export default class Account extends Component {
                 {avatar}
               </TouchableHighlight>
 
-              <TouchableHighlight
-                underlayColor="transparent"
-                onPress={() => 1}
-                style={styles.profile_button_box}>
+              {is_login ? (
+                <View style={{
+                  position: 'absolute',
+                  left: 120,
+                  bottom: 48,
+                  backgroundColor: "transparent"
+                }}>
 
-                <View style={styles.profile_button_login_box}>
-                  <Icon name="facebook" size={14} color="#ffffff" />
-                  <Text style={styles.profile_button_title}>Đăng nhập với Facebook</Text>
+                <Text style={{
+                  color: "#ffffff",
+                  fontSize: 16,
+
+                }}>{user_info.name}</Text>
+
+                <Text style={{
+                  color: "#ffffff",
+                  fontSize: 12,
+                  marginTop: 4
+                }}>{user_info.tel}</Text>
+
                 </View>
-              </TouchableHighlight>
+              ) : (
+                <View style={styles.profile_button_box}>
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={() => {
+                      Actions.register({});
+                    }}>
+
+                    <View style={[styles.profile_button_login_box, {
+                      marginRight: 8,
+                      backgroundColor: "#666666"
+                    }]}>
+                      <Icon name="user-plus" size={14} color="#ffffff" />
+                      <Text style={styles.profile_button_title}>Đăng ký</Text>
+                    </View>
+                  </TouchableHighlight>
+
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={() => {
+                      Actions.login();
+                    }}>
+
+                    <View style={[styles.profile_button_login_box, {
+                      backgroundColor: DEFAULT_COLOR
+                    }]}>
+                      <Icon name="sign-in" size={14} color="#ffffff" />
+                      <Text style={styles.profile_button_title}>Đăng nhập</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              )}
+
+              {is_login && (
+                <View style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0
+                }}>
+                  {logout_loading ? (
+                    <Indicator size="small" />
+                  ) : (
+                    <TouchableHighlight
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 15
+                      }}
+                      underlayColor="transparent"
+                      onPress={this._onLogout.bind(this)}>
+                      <Text style={{
+                        color: "#cccccc",
+                        fontSize: 10
+                      }}>
+                        <Icon name="sign-out" size={10} color="#cccccc" />
+                        {" Đăng xuất"}
+                      </Text>
+                    </TouchableHighlight>
+                  )}
+                </View>
+              )}
 
             </Image>
           </View>
@@ -135,6 +248,44 @@ export default class Account extends Component {
 
         </ScrollView>
       </View>
+    );
+  }
+
+  _onLogout() {
+    Alert.alert(
+      'Thông báo',
+      'Bạn chắc chắn muốn đăng xuất?',
+      [
+        {text: 'Không', onPress: () => {
+
+        }},
+        {text: 'Có', onPress: () => {
+          this.setState({
+            logout_loading: true
+          }, async () => {
+            try {
+              var response = await APIHandler.user_logout();
+
+              if (response && response.status == STATUS_SUCCESS) {
+                action(() => {
+                  store.setUserInfo(response.data);
+
+                  store.resetCartData();
+
+                  store.setRefreshHomeChange(store.refresh_home_change + 1);
+                })();
+              }
+            } catch (e) {
+              console.warn(e);
+            } finally {
+              this.setState({
+                logout_loading: false
+              });
+            }
+          });
+        }}
+      ],
+      { cancelable: false }
     );
   }
 }
@@ -179,7 +330,8 @@ const styles = StyleSheet.create({
   profile_button_box: {
     position: 'absolute',
     bottom: 42,
-    right: 15
+    right: 0,
+    flexDirection: 'row'
   },
   profile_button_login_box: {
     backgroundColor: "#4267b2",
@@ -187,7 +339,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 15,
-    borderRadius: 3
+    borderRadius: 3,
+    marginRight: 15
   },
   profile_button_title: {
     fontSize: 14,

@@ -17,12 +17,13 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
+import Modal from 'react-native-modalbox';
 
 // components
 import PopupConfirm from '../PopupConfirm';
 
 @observer
-export default class CreateAddress extends Component {
+export default class Register extends Component {
   constructor(props) {
     super(props);
 
@@ -31,22 +32,19 @@ export default class CreateAddress extends Component {
     if (edit_data) {
       this.state = {
         edit_mode: true,
-        address_id: edit_data.id,
         name: edit_data.name || '',
         tel: edit_data.tel || '',
-        address: edit_data.address || '',
-        default_flag: edit_data.default_flag == 1 ? true : false,
+        password: edit_data.password || '',
         finish_loading: false,
-        is_user_address: props.from == "account"
+        verify_loadding: false
       }
     } else {
       this.state = {
-        address_id: 0,
         name: '',
         tel: '',
-        address: '',
-        default_flag: false,
-        finish_loading: false
+        password: '',
+        finish_loading: false,
+        verify_loadding: false
       }
     }
   }
@@ -59,12 +57,6 @@ export default class CreateAddress extends Component {
         Actions.pop();
       }
     });
-
-    if (!this.state.edit_mode && this.refs_name) {
-      setTimeout(() => {
-        this.refs_name.focus();
-      }, 450);
-    }
   }
 
   _unMount() {
@@ -72,16 +64,16 @@ export default class CreateAddress extends Component {
   }
 
   _onSave() {
-    var {name, tel, address, default_flag} = this.state;
+    var {name, tel, password} = this.state;
 
     name = name.trim();
     tel = tel.trim();
-    address = address.trim();
+    password = password.trim();
 
     if (!name) {
       return Alert.alert(
         'Thông báo',
-        'Hãy điền tên Người nhận hàng',
+        'Hãy điền tên của bạn',
         [
           {text: 'Đồng ý', onPress: () => {
             this.refs_name.focus();
@@ -104,62 +96,66 @@ export default class CreateAddress extends Component {
       );
     }
 
-    if (!address) {
+    if (!password) {
       return Alert.alert(
         'Thông báo',
-        'Hãy điền Địa chỉ',
+        'Hãy điền Mật khẩu',
         [
           {text: 'Đồng ý', onPress: () => {
-            this.refs_address.focus();
+            this.refs_password.focus();
           }},
         ],
         { cancelable: false }
       );
     }
 
+    if (this.successfully || this.state.finish_loading) {
+      return;
+    }
+
     this.setState({
       finish_loading: true
     }, async () => {
       try {
-        var data_edit = {
+        var response = await APIHandler.user_register({
           name,
-          tel,
-          address,
-          default_flag: this.state.default_flag ? 1 : 0
-        }
-
-        var {is_user_address} = this.state;
-
-        if (is_user_address) {
-          var response = await APIHandler.user_add_address(this.state.address_id, data_edit);
-        } else {
-          var response = await APIHandler.site_add_address(store.store_id, this.state.address_id, data_edit);
-        }
+          username: tel,
+          password
+        });
 
         if (response && response.status == STATUS_SUCCESS) {
+          this.successfully = true;
+          
           this._unMount();
 
           this.setState({
             finish_loading: false
+          }, () => {
+
+            if (this.refs_modal_verify) {
+              this.refs_modal_verify.open();
+
+              Actions.refresh({
+                onBack: () => {
+                  Alert.alert(
+                    'Thông báo',
+                    'Quá trình đăng ký chưa hoàn tất, bạn có muốn huỷ bỏ?',
+                    [
+                      {text: 'Không', onPress: () => {
+
+                      }},
+                      {text: 'Có', onPress: () => {
+                        Actions.pop();
+                      }},
+                    ],
+                    { cancelable: false }
+                  );
+                }
+              });
+            }
+
           });
 
-          if (is_user_address) {
-
-            // refresh cart
-            this._getCart();
-          } else {
-
-            // update cart
-            action(() => {
-              store.setCartData(response.data);
-            })();
-          }
-
-          if (this.props.addressReload) {
-            this.props.addressReload(450);
-          }
-
-          Actions.pop();
         }
 
       } catch (e) {
@@ -170,70 +166,8 @@ export default class CreateAddress extends Component {
     });
   }
 
-  async _getCart() {
-    try {
-      var response = await APIHandler.site_cart(store.store_id);
-
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-        })();
-
-      } else {
-        action(() => {
-          store.resetCartData();
-        })();
-
-      }
-
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
-  }
-
-  // show popup confirm delete
-  _confirmDeleteAddress() {
-    if (this.refs_remove_item_confirm) {
-      this.refs_remove_item_confirm.open();
-    }
-  }
-
-  // confirm is "yes", delete address
-  async _removeAddressItem() {
-    this._closePopupConfirm();
-
-    try {
-      var response = await APIHandler.user_delete_address(this.state.address_id);
-
-      if (response && response.status == STATUS_SUCCESS) {
-        this._unMount();
-
-        action(() => {
-          store.setCartData(response.data);
-          // auto reload address list
-          store.setAddressKeyChange(store.address_key_change + 1);
-        })();
-
-        Actions.pop();
-      }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
-  }
-
-  // close popup
-  _closePopupConfirm() {
-    if (this.refs_remove_item_confirm) {
-      this.refs_remove_item_confirm.close();
-    }
-  }
-
   render() {
-    var { edit_mode } = this.state;
+    var { edit_mode, verify_loadding } = this.state;
 
     return (
       <View style={styles.container}>
@@ -249,7 +183,7 @@ export default class CreateAddress extends Component {
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
-                placeholder="Tên người nhận hàng"
+                placeholder="Điền họ và tên"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="#ffffff"
                 onChangeText={(value) => {
@@ -258,6 +192,11 @@ export default class CreateAddress extends Component {
                   });
                 }}
                 value={this.state.name}
+                onLayout={() => {
+                  if (this.refs_name) {
+                    this.refs_name.focus();
+                  }
+                }}
                 onSubmitEditing={() => {
                   if (this.refs_tel) {
                     this.refs_tel.focus();
@@ -290,55 +229,30 @@ export default class CreateAddress extends Component {
             </View>
           </View>
 
-          <View style={styles.input_address_box}>
-            <Text style={styles.input_label}>Địa chỉ</Text>
-            <Text style={styles.input_label_help}>(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)</Text>
-
-            <TextInput
-              ref={ref => this.refs_address = ref}
-              style={[styles.input_address_text, {height: this.state.address_height | 50}]}
-              keyboardType="default"
-              maxLength={250}
-              placeholder="Nhập địa chỉ cụ thể"
-              placeholderTextColor="#999999"
-              multiline={true}
-              underlineColorAndroid="#ffffff"
-              onContentSizeChange={(e) => {
-                this.setState({address_height: e.nativeEvent.contentSize.height});
-              }}
-              onChangeText={(value) => {
-                this.setState({
-                  address: value
-                });
-              }}
-              value={this.state.address}
-              />
-          </View>
-
-          <View style={[styles.input_box, {marginTop: 12}]}>
-            <Text style={styles.input_label}>Đặt làm địa chỉ mặc định</Text>
+          <View style={styles.input_box}>
+            <Text style={styles.input_label}>Mật khẩu</Text>
 
             <View style={styles.input_text_box}>
-              <Switch
-                onValueChange={(value) => {
+              <TextInput
+                ref={ref => this.refs_password = ref}
+                style={styles.input_text}
+                keyboardType="default"
+                maxLength={100}
+                placeholder="Điền mật khẩu"
+                placeholderTextColor="#999999"
+                underlineColorAndroid="#ffffff"
+                onChangeText={(value) => {
                   this.setState({
-                    default_flag: value
+                    password: value
                   });
                 }}
-                value={this.state.default_flag}
-                onTintColor={DEFAULT_COLOR}
+                value={this.state.password}
+                onSubmitEditing={this._onSave.bind(this)}
+                returnKeyType="go"
                 />
             </View>
           </View>
 
-          {/*edit_mode && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={this._confirmDeleteAddress.bind(this)}
-              style={[styles.input_box, {marginTop: 12}]}>
-              <Text style={[styles.input_label, {color: "red"}]}>Xoá địa chỉ này</Text>
-            </TouchableHighlight>
-          )*/}
         </ScrollView>
 
         <TouchableHighlight
@@ -355,27 +269,151 @@ export default class CreateAddress extends Component {
               {this.state.finish_loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : (
-                <Icon name={this.state.edit_mode ? "save" : "check"} size={20} color="#ffffff" />
+                <Icon name={this.state.edit_mode ? "save" : "user-plus"} size={20} color="#ffffff" />
               )}
             </View>
-            <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "HOÀN THÀNH"}</Text>
+            <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "ĐĂNG KÝ"}</Text>
           </View>
         </TouchableHighlight>
 
-        <PopupConfirm
-          ref_popup={ref => this.refs_remove_item_confirm = ref}
-          title="Bạn muốn xoá bỏ địa chỉ này?"
-          height={110}
-          noConfirm={this._closePopupConfirm.bind(this)}
-          yesConfirm={this._removeAddressItem.bind(this)}
-          otherClose={false}
-          />
+
+        <Modal
+
+          entry="top"
+          style={[styles.modal]}
+          swipeToClose={false}
+          backdropPressToClose={false}
+          backButtonClose={false}
+          ref={ref => this.refs_modal_verify = ref}>
+
+          <Text style={styles.verify_title}>NHẬP MÃ XÁC THỰC</Text>
+
+          <TextInput
+            ref={ref => {
+              if (ref) {
+                this.refs_verify = ref;
+                this.refs_verify.focus();
+              }
+            }}
+            style={styles.input_text_verify}
+            keyboardType="default"
+            maxLength={100}
+            placeholder="Điền mã xác thực"
+            placeholderTextColor="#999999"
+            underlineColorAndroid="#ffffff"
+            onChangeText={(value) => {
+              this.setState({
+                otp: value
+              });
+            }}
+            value={this.state.otp}
+            />
+
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={this._onVerify.bind(this)}>
+
+            <View style={styles.verify_btn}>
+              {verify_loadding ? (
+                <View style={{
+                  width: 16
+                }}>
+                  <Indicator size="small" />
+                </View>
+              ) : (
+                <Icon name="check" size={16} color="#ffffff" />
+              )}
+
+              <Text style={styles.verify_btn_title}>HOÀN THÀNH</Text>
+            </View>
+          </TouchableHighlight>
+
+        </Modal>
       </View>
     );
+  }
+
+  _onVerify() {
+    if (this.successfully || this.state.verify_loadding) {
+      return;
+    }
+
+    this.setState({
+      verify_loadding: true
+    }, async () => {
+
+      try {
+        var response = await APIHandler.user_verify_otp({
+          otp: this.state.otp
+        });
+
+        if (response && response.status == STATUS_SUCCESS) {
+          this.successfully = true;
+
+          action(() => {
+            this._unMount();
+
+            store.setUserInfo(response.data);
+
+            store.resetCartData();
+
+            store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+            Actions.pop();
+          })();
+        } else {
+
+        }
+
+      } catch (e) {
+        console.warn(e);
+
+      } finally {
+        this.setState({
+          verify_loadding: false
+        });
+
+      }
+    });
   }
 }
 
 const styles = StyleSheet.create({
+  modal: {
+    width: '90%',
+    height: 169,
+    borderRadius: 2,
+    marginTop: -NAV_HEIGHT,
+    alignItems: 'center'
+  },
+  verify_title: {
+    fontSize: 14,
+    marginTop: 16
+  },
+  input_text_verify: {
+    borderWidth: Util.pixel,
+    borderColor: "#cccccc",
+    marginTop: 20,
+    height: 40,
+    width: '69%',
+    paddingHorizontal: 15,
+    textAlign: 'center',
+    fontSize: 18,
+    color: "#404040"
+  },
+  verify_btn: {
+    backgroundColor: DEFAULT_COLOR,
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+    borderRadius: 2,
+    marginTop: 20,
+    flexDirection: 'row'
+  },
+  verify_btn_title: {
+    color: "#ffffff",
+    marginLeft: 4
+  },
+
   container: {
     flex: 1,
     ...MARGIN_SCREEN,

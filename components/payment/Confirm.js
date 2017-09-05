@@ -64,28 +64,28 @@ export default class Confirm extends Component {
   }
 
   // update cart note
-  async _updateCartNote(callback) {
+  _updateCartNote(callback) {
     this.setState({
       continue_loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_node(store.store_id, {
+          user_note: store.user_cart_note
+        });
 
-    try {
-      var response = await APIHandler.site_cart_node(store.store_id, {
-        user_note: store.user_cart_note
-      });
-
-      if (response && response.status == STATUS_SUCCESS) {
-        if (typeof callback == 'function') {
-          callback();
+        if (response && response.status == STATUS_SUCCESS) {
+          if (typeof callback == 'function') {
+            callback();
+          }
         }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        this.setState({
+          continue_loading: false
+        });
       }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-      this.setState({
-        continue_loading: false
-      });
-    }
+    });
   }
 
   // cart orders

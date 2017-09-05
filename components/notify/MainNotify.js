@@ -46,8 +46,8 @@ export default class MainNotify extends Component {
         },
         {
           key: 1,
-          label: "Từ My Food",
-          desc: "Thông báo từ My Food",
+          label: "Từ MyFood",
+          desc: "Thông báo từ MyFood",
           icon: "lemon-o",
           onPress: () => {
             Actions.notifys({

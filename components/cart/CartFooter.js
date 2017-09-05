@@ -38,8 +38,12 @@ export default class CartFooter extends Component {
   componentDidMount() {
     var {cart_data, cart_products, site_id} = store;
 
-    if (cart_data == null || cart_products == null || store.store_id != site_id) {
+    if (cart_data == null || cart_products == null) {
       this._getCart();
+    } else {
+      this.setState({
+        loading: false
+      });
     }
 
     Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.perfix, (data) => {
@@ -83,52 +87,52 @@ export default class CartFooter extends Component {
     }
   }
 
-  async _item_qnt_decrement(item) {
+  _item_qnt_decrement(item) {
     this.setState({
       decrement_loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_down(store.store_id, item.id);
 
-    try {
-      var response = await APIHandler.site_cart_down(store.store_id, item.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+            this.setState({
+              decrement_loading: false
+            });
+          })();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          this.setState({
-            decrement_loading: false
-          });
-        })();
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
 
       }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
+    });
   }
 
-  async _item_qnt_increment(item) {
+  _item_qnt_increment(item) {
     this.setState({
       increment_loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.site_cart_up(store.store_id, item.id);
 
-    try {
-      var response = await APIHandler.site_cart_up(store.store_id, item.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+            this.setState({
+              increment_loading: false
+            });
+          })();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          this.setState({
-            increment_loading: false
-          });
-        })();
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
 
       }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-
-    }
+    });
   }
 
   _store_cart_prev() {

@@ -265,7 +265,8 @@ export default class Address extends Component {
                               Actions.create_address({
                                 edit_data: item,
                                 title: "SỬA ĐỊA CHỈ",
-                                addressReload: this._getData
+                                addressReload: this._getData,
+                                from: this.props.from
                               });
                             }}>
                             <View style={styles.address_edit_box}>

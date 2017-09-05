@@ -124,8 +124,13 @@ class APIHandler {
   /**
   * Thêm/sửa địa chỉ
   */
-  async user_add_address(site_id, address_id, data) {
-    var api = url_for(API.USER_ADD_ADDRESS + '/' + site_id + '/' + address_id);
+  async site_add_address(site_id, address_id, data) {
+    var api = url_for(API.SITE_ADD_ADDRESS + '/' + site_id + '/' + address_id);
+    return await this.postAPI(api, data);
+  }
+
+  async user_add_address(address_id, data) {
+    var api = url_for(API.USER_ADD_ADDRESS + '/' + address_id);
     return await this.postAPI(api, data);
   }
 
@@ -246,6 +251,38 @@ class APIHandler {
   */
   async user_notice() {
     var api = url_for(API.USER_NOTICE);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * Đăng ký
+  */
+  async user_register(data) {
+    var api = url_for(API.USER_REGISTER);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+  * Xác thực otp đăng ký
+  */
+  async user_verify_otp(data) {
+    var api = url_for(API.USER_VERIFY_OTP);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+  * Đăng nhập
+  */
+  async user_login_password(data) {
+    var api = url_for(API.USER_LOGIN_PASSWORD);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+  * Đăng xuất
+  */
+  async user_logout() {
+    var api = url_for(API.USER_LOGOUT);
     return await this.getAPI(api);
   }
 

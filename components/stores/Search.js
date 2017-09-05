@@ -118,7 +118,7 @@ export default class Search extends Component {
     });
   }
 
-  async _onSearch(keyword) {
+  _onSearch(keyword) {
     if (keyword == null || keyword == '') {
       this.setState({
         search_data: null,
@@ -132,39 +132,39 @@ export default class Search extends Component {
 
     this.setState({
       loading: true
-    });
+    }, async () => {
+      try {
+        var response = await APIHandler.search_product(store.store_id, {
+          search: keyword
+        });
 
-    try {
-      var response = await APIHandler.search_product(store.store_id, {
-        search: keyword
-      });
+        if (response && response.status == STATUS_SUCCESS) {
+          layoutAnimation();
 
-      if (response && response.status == STATUS_SUCCESS) {
-        layoutAnimation();
+          if (response.data) {
+            this.setState({
+              search_data: response.data,
+              loading: false,
+              finish: true,
+              header_title: `— Kết quả cho "${keyword}" —`,
+              keyboard_state: "never"
+            });
+          } else {
+            this._getHistory();
 
-        if (response.data) {
-          this.setState({
-            search_data: response.data,
-            loading: false,
-            finish: true,
-            header_title: `— Kết quả cho "${keyword}" —`,
-            keyboard_state: "never"
-          });
-        } else {
-          this._getHistory();
-
-          this.setState({
-            search_data: null,
-            loading: false,
-            finish: true,
-            keyboard_state: "always"
-          });
+            this.setState({
+              search_data: null,
+              loading: false,
+              finish: true,
+              keyboard_state: "always"
+            });
+          }
         }
-      }
 
-    } catch (e) {
-      console.warn(e);
-    }
+      } catch (e) {
+        console.warn(e);
+      }
+    });
   }
 
   // tới màn hình chi tiết item
