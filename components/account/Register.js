@@ -125,7 +125,7 @@ export default class Register extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           this.successfully = true;
-          
+
           this._unMount();
 
           this.setState({
@@ -156,6 +156,14 @@ export default class Register extends Component {
 
           });
 
+        } else {
+          this.setState({
+            finish_loading: false
+          });
+
+          if (response) {
+            Toast.show(response.message, Toast.SHORT);
+          }
         }
 
       } catch (e) {
@@ -194,7 +202,7 @@ export default class Register extends Component {
                 value={this.state.name}
                 onLayout={() => {
                   if (this.refs_name) {
-                    this.refs_name.focus();
+                    setTimeout(() => this.refs_name.focus(), 300);
                   }
                 }}
                 onSubmitEditing={() => {

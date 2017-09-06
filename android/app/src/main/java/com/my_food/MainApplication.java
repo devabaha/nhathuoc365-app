@@ -3,6 +3,8 @@ package com.my_food;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.imagepicker.ImagePickerPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -27,6 +29,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ImagePickerPackage(),
+            new RNFetchBlobPackage(),
             new ReactNativeOneSignalPackage(),
             new RCTCameraPackage(),
           new VectorIconsPackage(),

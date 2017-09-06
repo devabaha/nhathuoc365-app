@@ -46,7 +46,8 @@ export default class CreateAddress extends Component {
         tel: '',
         address: '',
         default_flag: false,
-        finish_loading: false
+        finish_loading: false,
+        is_user_address: props.from == "account"
       }
     }
   }

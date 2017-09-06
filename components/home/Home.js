@@ -227,9 +227,21 @@ export default class Home extends Component {
           <View style={{
             backgroundColor: "#f1f1f1",
             paddingHorizontal: 15,
-            paddingVertical: 8
+            paddingVertical: 8,
+            flexDirection: 'row'
           }}>
             <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
+
+            {stores_data != null && stores_data.length > 3 && (
+              <View style={styles.right_title_btn_box}>
+                <TouchableHighlight
+                  style={styles.right_title_btn}
+                  underlayColor="transparent"
+                  onPress={() => {}}>
+                  <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                </TouchableHighlight>
+              </View>
+            )}
           </View>
 
           {loading ? (
@@ -313,9 +325,26 @@ export default class Home extends Component {
               paddingVertical: 8,
               borderBottomWidth: Util.pixel,
               borderColor: "#dddddd",
-              marginTop: 4
+              marginTop: 4,
+              flexDirection: 'row'
             }}>
               <Text style={styles.add_store_title}>TIN KHUYẾN MÃI</Text>
+
+              {newses_data != null && (
+                <View style={styles.right_title_btn_box}>
+                  <TouchableHighlight
+                    style={styles.right_title_btn}
+                    underlayColor="transparent"
+                    onPress={() => {
+                      Actions.notifys({
+                        title: "KHUYẾN MÃI",
+                        news_type: "/1"
+                      });
+                    }}>
+                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                  </TouchableHighlight>
+                </View>
+              )}
             </View>
           )}
 
@@ -354,9 +383,23 @@ export default class Home extends Component {
               paddingVertical: 8,
               borderBottomWidth: Util.pixel,
               borderColor: "#dddddd",
-              marginTop: 4
+              marginTop: 4,
+              flexDirection: 'row'
             }}>
               <Text style={styles.add_store_title}>THÔNG BÁO ĐƠN HÀNG</Text>
+
+              {user_notice != null && (
+                <View style={styles.right_title_btn_box}>
+                  <TouchableHighlight
+                    style={styles.right_title_btn}
+                    underlayColor="transparent"
+                    onPress={() => {
+                      Actions._main_notify({type: ActionConst.REFRESH});
+                    }}>
+                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                  </TouchableHighlight>
+                </View>
+              )}
             </View>
           )}
 
@@ -506,5 +549,10 @@ const styles = StyleSheet.create({
   profile_list_opt: {
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
+  },
+
+  right_title_btn_box: {
+    flex: 1,
+    alignItems: 'flex-end'
   }
 });

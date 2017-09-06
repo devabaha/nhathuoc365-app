@@ -52,6 +52,21 @@ class Store {
     Events.trigger(KEY_BOARD_HIDE);
   }
 
+  /*********** notify **********/
+  @observable notify = {
+    new_notice: 0,
+    new_site_news: 0,
+    new_sys_news: 0,
+    new_totals: 0
+  }
+
+  @action setNotify(data) {
+    this.notify = data;
+  }
+
+
+
+
   /*********** home begin **********/
   @observable refresh_home_change = 0;
 

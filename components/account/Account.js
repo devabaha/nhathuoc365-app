@@ -19,6 +19,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import { SocialIcon } from '../../lib/react-native-elements';
+import Communications from 'react-native-communications';
+import RNFetchBlob from 'react-native-fetch-blob';
+import ImagePicker from 'react-native-image-picker';
+import Sticker from '../Sticker';
 
 // components
 import SelectionList from '../SelectionList';
@@ -53,9 +57,19 @@ export default class Account extends Component {
           label: "Gửi phản hồi tới quản trị ứng dụng",
           desc: "Đóng góp, ý kiến của bạn",
           onPress: () => {
+            var user = {}
+            // edit...
+            var to = 'support@myfood.com.vn';
+            var subject = '';
 
+            var body = '';
+
+            Communications.email([to], null, null, subject, body);
           },
-          boxIconStyle: [],
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#ff6d64"
+          }],
+          iconColor: "#ffffff"
           // marginTop: true
         },
 
@@ -67,7 +81,10 @@ export default class Account extends Component {
           onPress: () => Actions.address({
             from: "account"
           }),
-          boxIconStyle: [],
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#fcb309"
+          }],
+          iconColor: "#ffffff",
           marginTop: true
         },
 
@@ -76,8 +93,11 @@ export default class Account extends Component {
           icon: "facebook-square",
           label: "Fanpage MyFood",
           desc: "Facebook fanpage của ứng dụng",
-          onPress: () => 1,
-          boxIconStyle: [],
+          onPress: () => Communications.web("http://fanpage.myfood.com.vn"),
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#4267b2"
+          }],
+          iconColor: "#ffffff",
           marginTop: true
         },
 
@@ -85,11 +105,15 @@ export default class Account extends Component {
           key: 5,
           icon: "handshake-o",
           label: "Về MyFood - Điều khoản sử dụng",
-          desc: "Hướng dẫn sử dụng MyFood",
-          onPress: () => {
-
-          },
-          boxIconStyle: [],
+          desc: "Điều khoản sử dụng MyFood",
+          onPress: () => Actions.webview({
+            title: "Về MyFood",
+            url: MY_FOOD_API + "info/privacy"
+          }),
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: DEFAULT_COLOR
+          }],
+          iconColor: "#ffffff",
           // marginTop: true
         },
 
@@ -97,14 +121,20 @@ export default class Account extends Component {
           key: 6,
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Phiên bản phần mềm 1.0",
+          desc: "Sản phẩm của MyFood - Phiên bản: 1.0.0",
           onPress: () => 1,
-          boxIconStyle: [],
-          // marginTop: true
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#688efb"
+          }],
+          iconColor: "#ffffff",
+          hideAngle: true,
+          marginTop: true
         }
       ],
       refreshing: false,
-      logout_loading: false
+      logout_loading: false,
+      sticker_flag: false,
+      avatar_loading: false
     }
 
   }
@@ -117,22 +147,92 @@ export default class Account extends Component {
     }, 1000);
   }
 
+  _showSticker() {
+    this.setState({
+      sticker_flag: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          sticker_flag: false
+        });
+      }, 2000);
+    });
+  }
+
+  _onTapAvatar() {
+    const options = {
+      title: 'Cập nhật ảnh đại diện',
+      cancelButtonTitle: 'Huỷ bỏ',
+      takePhotoButtonTitle: 'Chụp ảnh',
+      chooseFromLibraryButtonTitle: 'Chọn ảnh từ thư viện',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      }
+    }
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+
+      }
+      else if (response.error) {
+        console.warn(response.error);
+      }
+      else {
+        this.setState({
+          avatar_loading: true
+        }, () => {
+          const avatar = {
+            name: 'avatar',
+            filename: response.fileName,
+            data: response.data
+          }
+
+          // call api post my form data
+          RNFetchBlob.fetch('POST', APIHandler.url_user_add_avatar(), {
+              'Content-Type' : 'multipart/form-data',
+          }, [avatar]).then((resp) => {
+
+              var {data} = resp;
+              var response = JSON.parse(data);
+              if (response && response.status == STATUS_SUCCESS) {
+                this._showSticker();
+
+                action(() => {
+                  store.setUserInfo(response.data);
+                })();
+                this.setState({
+                  avatar_loading: false
+                });
+              }
+          }).catch((error) => {
+              console.warn(error);
+          });
+        });
+
+      }
+    });
+
+  }
+
   render() {
 
     var is_login = store.user_info != null && store.user_info.verify_flag == STATUS_VERIFYED;
     var {user_info} = store;
 
-    if (false) {
+    var {avatar_loading, logout_loading} = this.state;
+
+    if (avatar_loading) {
       var avatar = (
-        <Image style={styles.profile_avatar} source={{uri: "https://scontent.fhan4-1.fna.fbcdn.net/v/t1.0-9/20228664_1934714413468593_6526539620669280594_n.jpg?oh=05127a03af9c2f04e3301b8d41fbc13f&oe=5A29DD78"}} />
+        <View style={{width: '100%', height: '100%'}}>
+          <Indicator size="small" />
+        </View>
       );
     } else {
       var avatar = (
-        <Icon name="user" size={36} color="#666666" />
+        <Image style={styles.profile_avatar} source={{uri: store.user_info.img}} />
       );
     }
-
-    var {logout_loading} = this.state;
 
     return (
       <View style={styles.container}>
@@ -151,7 +251,7 @@ export default class Account extends Component {
               <TouchableHighlight
                 style={styles.profile_avatar_box}
                 underlayColor="#cccccc"
-                onPress={() => 1}>
+                onPress={this._onTapAvatar.bind(this)}>
                 {avatar}
               </TouchableHighlight>
 
@@ -247,6 +347,11 @@ export default class Account extends Component {
             data={this.state.options} />
 
         </ScrollView>
+
+        <Sticker
+          active={this.state.sticker_flag}
+          message="Thay ảnh đại diện thành công."
+         />
       </View>
     );
   }
@@ -294,6 +399,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f1f1f1"
+  },
+
+  boxIconStyle: {
+    backgroundColor: DEFAULT_COLOR,
+    marginRight: 10,
+    marginLeft: 6,
+    borderRadius: 15
   },
 
   profile_cover_box: {

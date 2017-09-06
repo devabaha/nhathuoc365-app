@@ -124,7 +124,8 @@ export default class Address extends Component {
 
   _createNew() {
     Actions.create_address({
-      addressReload: this._getData
+      addressReload: this._getData,
+      from: this.props.from
     });
   }
 

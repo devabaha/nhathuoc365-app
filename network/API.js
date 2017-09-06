@@ -5,7 +5,6 @@
 * Docs: https://docs.google.com/spreadsheets/d/1TmJAnrADprIjgkn1MWv5PFiUpTSmaKAVkfMCPKZ9L7A/edit#gid=0
 * E.g: in components dir import {USER_INFO, USER_LOGIN} from '../../network/api';
 */
-const MY_FOOD_API = 'http://test68.myfood.com.vn/';
 
 // Sites
 exports.USER_LOGIN = MY_FOOD_API + 'apiUser/login';
@@ -57,6 +56,9 @@ exports.USER_NEWS = MY_FOOD_API + 'apiUser/news';
 // Notices
 exports.USER_NOTICE = MY_FOOD_API + 'apiUser/notice';
 
+// Notify
+exports.USER_NOTIFY = MY_FOOD_API + 'apiUser/notify';
+
 // Push Notification
 exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';
 
@@ -65,3 +67,4 @@ exports.USER_REGISTER = MY_FOOD_API + 'apiUser/register';
 exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
 exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
 exports.USER_LOGOUT = MY_FOOD_API + 'apiUser/logout';
+exports.USER_ADD_AVATAR = MY_FOOD_API + 'apiUser/add_avatar';

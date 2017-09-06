@@ -165,6 +165,14 @@ export default class Login extends Component {
             })();
           });
 
+        } else {
+          this.setState({
+            finish_loading: false
+          });
+
+          if (response) {
+            Toast.show(response.message, Toast.SHORT);
+          }
         }
 
       } catch (e) {
@@ -213,7 +221,7 @@ export default class Login extends Component {
                 ref={ref => this.refs_tel = ref}
                 onLayout={() => {
                   if (this.refs_tel) {
-                    this.refs_tel.focus();
+                    setTimeout(() => this.refs_tel.focus(), 300);
                   }
                 }}
                 style={styles.input_text}

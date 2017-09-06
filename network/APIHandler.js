@@ -89,6 +89,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async site_cart_by_id(store_id, cart_id) {
+    var api = url_for(API.SITE_CART + '/' + store_id + '/' + cart_id);
+    return await this.getAPI(api);
+  }
+
   /**
   * Giảm số lượng sản phẩm trong giỏ hàng
   */
@@ -283,6 +288,21 @@ class APIHandler {
   */
   async user_logout() {
     var api = url_for(API.USER_LOGOUT);
+    return await this.getAPI(api);
+  }
+
+  /**
+  * URL upload avatar
+  */
+  url_user_add_avatar() {
+    return url_for(API.USER_ADD_AVATAR);
+  }
+
+  /**
+  * Lấy thông báo trong ứng dụng
+  */
+  async user_notify() {
+    var api = url_for(API.USER_NOTIFY);
     return await this.getAPI(api);
   }
 

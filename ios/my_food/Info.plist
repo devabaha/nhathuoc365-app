@@ -30,9 +30,9 @@
 		<true/>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Cho phép ứng dụng sử dụng dụng Camera để quét QR Code</string>
+	<string>Cho phép ứng dụng sử dụng dụng Camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Micro</string>
 	<key>NSPhotoLibraryUsageDescription</key>

@@ -12,7 +12,9 @@ import {
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../store/Store';
 
+@observer
 export default class SelectionList extends Component {
   render() {
     var {data, containerStyle} = this.props;
@@ -23,6 +25,11 @@ export default class SelectionList extends Component {
         data={data}
         style={[styles.profile_list_opt, containerStyle]}
         renderItem={({item, index}) => {
+          var notifyCount = 0;
+          if (item.notify) {
+            notifyCount = parseInt(store.notify[item.notify]);
+          }
+
           return(
             <TouchableHighlight
               underlayColor="transparent"
@@ -43,9 +50,13 @@ export default class SelectionList extends Component {
                   <Text style={styles.profile_list_small_label}>{item.desc}</Text>
                 </View>
 
-                <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
-                  <Icon name="angle-right" size={16} color="#999999" />
-                </View>
+                {!item.hideAngle && (
+                  <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                    <Icon name="angle-right" size={16} color="#999999" />
+                  </View>
+                )}
+
+                {notifyCount > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{notifyCount}</Text></View>}
               </View>
 
             </TouchableHighlight>
@@ -103,5 +114,24 @@ const styles = StyleSheet.create({
     width: '100%',
     height: Util.pixel,
     backgroundColor: "#dddddd",
-  }
+  },
+
+  stores_info_action_notify: {
+    position: 'absolute',
+    minWidth: 16,
+    paddingHorizontal: 2,
+    height: 16,
+    backgroundColor: 'red',
+    top: 4,
+    left: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
+  },
+  stores_info_action_notify_value: {
+    fontSize: 10,
+    color: '#ffffff',
+    fontWeight: '600'
+  },
 });

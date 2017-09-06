@@ -6,7 +6,8 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
-  Image
+  Image,
+  Animated
 } from 'react-native';
 
 // library
@@ -15,19 +16,64 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 
 export default class NotifyItemComponent extends Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+
+    }
+  }
+
+  componentWillMount() {
+    this.animatedValue = new Animated.Value(0);
+  }
+
+  componentDidMount() {
+    Animated.timing(this.animatedValue, {
+      toValue: 150,
+      duration: 3000
+    }).start();
+  }
+
   _goNoticeDetail(item) {
 
+    switch (item.page) {
+      case 'orders_item':
+
+        Actions.orders_item({
+          title: '#...',
+          passProps: {
+            notice_data: item
+          }
+        });
+        break;
+    }
   }
 
   render() {
     var {item} = this.props;
 
+    const interpolateColor = this.animatedValue.interpolate({
+      inputRange: [0, 150],
+      outputRange: [hexToRgbA(DEFAULT_COLOR, 1), 'rgb(255, 255, 255)']
+    });
+
+    const animatedStyle = {
+      backgroundColor: interpolateColor
+    }
+
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={this._goNoticeDetail.bind(this)}>
+        onPress={this._goNoticeDetail.bind(this, item)}>
 
-        <View style={[styles.store_result_item, item.read_flag == 0 ? styles.store_result_item_active : null]}>
+        <Animated.View
+          style={[
+            styles.store_result_item,
+            item.read_flag == 0 ? styles.store_result_item_active : null,
+            item.read_flag == 0 ? animatedStyle : null
+          ]}>
+
           <View style={styles.store_result_item_image_box}>
             <Image style={styles.store_result_item_image} source={{uri: item.image_url}} />
           </View>
@@ -42,7 +88,7 @@ export default class NotifyItemComponent extends Component {
               <Text style={styles.store_result_item_desc}>{item.content}</Text>
             </View>
           </View>
-        </View>
+        </Animated.View>
       </TouchableHighlight>
     );
   }

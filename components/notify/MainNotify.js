@@ -27,12 +27,24 @@ export default class MainNotify extends Component {
     super(props);
 
     this.state = {
+      navigators: null,
+      loading: true,
+      notice_data: null,
+      refreshing: false,
+      finish: false,
+      scrollTop: 0
+    }
+  }
+
+  _setOptionList() {
+    this.setState({
       navigators: [
         {
           key: 0,
           label: "Tin khuyến mãi",
           desc: "Khuyến mãi mới nhất từ các cửa hàng",
           icon: "bookmark",
+          notify: "new_site_news",
           onPress: () => {
             Actions.notifys({
               title: "KHUYẾN MÃI",
@@ -49,6 +61,7 @@ export default class MainNotify extends Component {
           label: "Từ MyFood",
           desc: "Thông báo từ MyFood",
           icon: "lemon-o",
+          notify: "new_sys_news",
           onPress: () => {
             Actions.notifys({
               title: "TỪ MY FOOD",
@@ -58,13 +71,12 @@ export default class MainNotify extends Component {
           boxIconStyle: [styles.boxIconStyle],
           iconColor: "#ffffff"
         }
-      ],
-      loading: true,
-      notice_data: null,
-      refreshing: false,
-      finish: false,
-      scrollTop: 0
-    }
+      ]
+    });
+  }
+
+  componentWillMount() {
+    this._setOptionList();
   }
 
   componentDidMount() {
@@ -169,7 +181,9 @@ export default class MainNotify extends Component {
             />
           }>
 
-          <SelectionList data={this.state.navigators} />
+          {this.state.navigators != null && (
+            <SelectionList data={this.state.navigators} />
+          )}
 
           <View style={styles.boxTop} />
 

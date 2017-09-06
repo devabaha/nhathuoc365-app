@@ -52,6 +52,7 @@ import SearchStore from './components/home/SearchStore';
 import ListStore from './components/home/ListStore';
 import ScanQRCode from './components/home/ScanQRCode';
 import Chat from './components/chat/Chat';
+import WebView from './components/webview/WebView';
 
 // others
 import TabIcon from './components/TabIcon';
@@ -190,6 +191,36 @@ export default class App extends Component {
      }
   }
 
+  componentDidMount() {
+
+    this.getNotifyFlag = true;
+
+    setInterval(() => {
+      if (this.getNotifyFlag) {
+        this._getNoitify();
+      }
+    }, 15000);
+
+  }
+
+  async _getNoitify() {
+    this.getNotifyFlag = false;
+
+    try {
+      var response = await APIHandler.user_notify();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          Store.setNotify(response.data);
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this.getNotifyFlag = true;
+    }
+  }
+
   render() {
     return(
       <Router
@@ -228,6 +259,7 @@ export default class App extends Component {
                 iconTitle="Thông báo"
                 iconName="notifications"
                 size={24}
+                notify="new_totals"
                 onPress={()=> {
                   Actions._main_notify({type: ActionConst.REFRESH});
                 }}
@@ -285,6 +317,7 @@ export default class App extends Component {
             <Scene initial={0} key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
             <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />
             <Scene initial={0} key="chat" title="" component={Chat} {...custommerNav} />
+            <Scene initial={0} key="webview" title="" component={WebView} {...custommerNav} />
 
           </Scene>
 

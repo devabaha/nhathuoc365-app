@@ -69,24 +69,26 @@ export default class ItemList extends Component {
               <Text style={styles.store_result_item_desc}>{item.address}</Text>
 
               <View style={styles.store_result_item_add_box}>
-              <TouchableHighlight
-                onPress={this._goChat.bind(this, item)}
-                underlayColor="transparent">
-                <View style={[styles.add_btn_icon_box, is_chat_active && styles.add_btn_icon_box_active]}>
-                  <Icon name="comments" size={14} color={is_chat_active ? "#ffffff" : DEFAULT_COLOR} />
-                  <Text style={[styles.add_btn_label, is_chat_active && styles.add_btn_label_active]}>Chat{is_chat_active && ` (${item.count_chat})`}</Text>
-                </View>
-              </TouchableHighlight>
+                <TouchableHighlight
+                  onPress={this._goChat.bind(this, item)}
+                  underlayColor="transparent">
+                  <View style={[styles.add_btn_icon_box, is_chat_active && styles.add_btn_icon_box_active]}>
+                    <Icon name="comments" size={14} color={is_chat_active ? "#ffffff" : DEFAULT_COLOR} />
+                    <Text style={[styles.add_btn_label, is_chat_active && styles.add_btn_label_active]}>Chat{is_chat_active && ` (${item.count_chat})`}</Text>
+                  </View>
+                </TouchableHighlight>
 
-              <TouchableHighlight
-                onPress={this._goCart.bind(this, item)}
-                underlayColor="transparent">
-                <View style={[styles.add_btn_icon_box, is_orders_active && styles.add_btn_icon_box_active]}>
-                  <Icon name="shopping-cart" size={14} color={is_orders_active ? "#ffffff" : DEFAULT_COLOR} />
-                  <Text style={[styles.add_btn_label, is_orders_active && styles.add_btn_label_active]}>Đơn hàng{is_orders_active && ` (${item.count_cart})`}</Text>
-                </View>
-              </TouchableHighlight>
+                <TouchableHighlight
+                  onPress={this._goCart.bind(this, item)}
+                  underlayColor="transparent">
+                  <View style={[styles.add_btn_icon_box, is_orders_active && styles.add_btn_icon_box_active]}>
+                    <Icon name="shopping-cart" size={14} color={is_orders_active ? "#ffffff" : DEFAULT_COLOR} />
+                    <Text style={[styles.add_btn_label, is_orders_active && styles.add_btn_label_active]}>Đơn hàng</Text>
+                  </View>
+                </TouchableHighlight>
               </View>
+
+              {is_orders_active > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{item.count_cart}</Text></View>}
             </View>
           </View>
         </View>
@@ -186,5 +188,24 @@ const styles = StyleSheet.create({
   },
   add_btn_label_active: {
     color: "#ffffff"
+  },
+
+  stores_info_action_notify: {
+    position: 'absolute',
+    minWidth: 16,
+    paddingHorizontal: 2,
+    height: 16,
+    backgroundColor: 'red',
+    bottom: 24,
+    right: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
+  },
+  stores_info_action_notify_value: {
+    fontSize: 10,
+    color: '#ffffff',
+    fontWeight: '600'
   }
 });

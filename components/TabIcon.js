@@ -12,6 +12,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import store from '../store/Store';
 
+@observer
 export default class TabIcon extends Component {
   constructor(props) {
     super(props);
@@ -30,7 +31,7 @@ export default class TabIcon extends Component {
         </View>
       <Text style={[this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title, styles.titleDefault]}>{this.props.iconTitle}</Text>
 
-        {notifyCount > 0 && <View style={styles.notifyCountBox}><Text style={styles.notifyCount}>{notifyCount}</Text></View>}
+        {notifyCount > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{notifyCount}</Text></View>}
       </View>
     );
   }
@@ -69,20 +70,23 @@ const styles = StyleSheet.create({
     height: 28,
     paddingTop: 4
   },
-  notifyCountBox: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+
+  stores_info_action_notify: {
     position: 'absolute',
+    minWidth: 16,
+    paddingHorizontal: 2,
+    height: 16,
+    backgroundColor: 'red',
     top: 4,
     right: 4,
-    alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'red',
-    overflow: 'hidden'
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
   },
-  notifyCount: {
+  stores_info_action_notify_value: {
+    fontSize: 10,
     color: '#ffffff',
-    fontSize: 12
-  }
+    fontWeight: '600'
+  },
 });
