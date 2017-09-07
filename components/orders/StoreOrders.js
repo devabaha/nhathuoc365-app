@@ -63,6 +63,9 @@ export default class StoreOrders extends Component {
 
     // Listenner
     Events.on(RELOAD_STORE_ORDERS, RELOAD_STORE_ORDERS + 'ID', this._getData);
+
+    // notify chat
+    store.getNoitifyChat();
   }
 
   _unMount() {
@@ -75,8 +78,6 @@ export default class StoreOrders extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
-          layoutAnimation();
-
           this.setState({
             data: response.data,
             refreshing: false,
@@ -97,7 +98,7 @@ export default class StoreOrders extends Component {
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 450 - (Math.abs(time() - this.start_time));
+    var delay = 300 - (Math.abs(time() - this.start_time));
     return delay;
   }
 

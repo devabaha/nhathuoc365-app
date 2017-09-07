@@ -16,6 +16,9 @@ import store from '../store/Store';
 @observer
 export default class RightButtonChat extends Component {
   render() {
+    var store_id = this.props.store_id || store.store_id;
+    var count_chat = parseInt(store.notify_chat[store_id]);
+
     return (
       <TouchableHighlight
         underlayColor="transparent"
@@ -27,9 +30,9 @@ export default class RightButtonChat extends Component {
         }}>
         <View style={styles.right_btn_add_store}>
           <Icon name="commenting" size={20} color="#ffffff" />
-          {false && (
+          {count_chat > 0 && (
             <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>{1}</Text>
+              <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text>
             </View>
           )}
         </View>

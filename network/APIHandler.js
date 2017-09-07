@@ -25,6 +25,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async user_sites() {
+    var api = url_for(API.USER_SITES);
+    return await this.getAPI(api);
+  }
+
   /**
   * Tìm cửa hàng theo mã CH
   */
@@ -306,7 +311,18 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Lấy số lượng chat chưa đọc
+  */
+  async site_notify_chat(store_id) {
+    var api = url_for(API.SITE_NOTIFY_CHAT + '/' + store_id);
+    return await this.getAPI(api);
+  }
 
+  async user_notify_chat() {
+    var api = url_for(API.USER_NOTIFY_CHAT);
+    return await this.getAPI(api);
+  }
 
 
 

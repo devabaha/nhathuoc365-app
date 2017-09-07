@@ -26,7 +26,6 @@ import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 
-const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const SEARCH_KEY = 'KeySearch';
 
 @observer
@@ -101,7 +100,7 @@ export default class Search extends Component {
 
   _getHistory() {
     storage.load({
-      key: SEARCH_KEY,
+      key: SEARCH_KEY + store.user_info.id,
       autoSync: true,
       syncInBackground: true,
       syncParams: {
@@ -139,7 +138,6 @@ export default class Search extends Component {
         });
 
         if (response && response.status == STATUS_SUCCESS) {
-          layoutAnimation();
 
           if (response.data) {
             this.setState({
@@ -212,7 +210,7 @@ export default class Search extends Component {
 
     // load
     storage.load({
-      key: SEARCH_KEY,
+      key: SEARCH_KEY + store.user_info.id,
       autoSync: true,
       syncInBackground: true,
       syncParams: {
@@ -231,7 +229,7 @@ export default class Search extends Component {
   _saveHistorey(data) {
     // cache in five minutes
     storage.save({
-      key: SEARCH_KEY,
+      key: SEARCH_KEY + store.user_info.id,
       data,
       expires: null
     });
@@ -264,6 +262,7 @@ export default class Search extends Component {
                 index={index}
                 buying_idx={buying_idx}
                 onPress={this._goItem.bind(this, item)}
+                buyPress={this._updateHistory.bind(this, item)}
                 />
             )}
             keyExtractor={item => item.id}

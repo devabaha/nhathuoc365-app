@@ -57,7 +57,9 @@ export default class ItemList extends Component {
 
     var {item} = this.props;
 
-    var is_chat_active = item.count_chat > 0;
+    var count_chat = parseInt(store.notify_chat[item.id]);
+    
+    var is_chat_active = count_chat > 0;
     var is_orders_active = item.count_cart > 0;
 
     return (
@@ -81,14 +83,18 @@ export default class ItemList extends Component {
                   underlayColor="transparent">
                   <View style={[styles.add_btn_icon_box, is_chat_active && styles.add_btn_icon_box_active]}>
                     <Icon name="comments" size={14} color={is_chat_active ? "#ffffff" : DEFAULT_COLOR} />
-                    <Text style={[styles.add_btn_label, is_chat_active && styles.add_btn_label_active]}>Chat{is_chat_active && ` (${item.count_chat})`}</Text>
+                    <Text style={[styles.add_btn_label, is_chat_active && styles.add_btn_label_active]}>Chat</Text>
                   </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight
                   onPress={this._goCart.bind(this, item)}
                   underlayColor="transparent">
-                  <View style={[styles.add_btn_icon_box, is_orders_active && styles.add_btn_icon_box_active]}>
+                  <View style={[
+                    styles.add_btn_icon_box,
+                    is_orders_active && styles.add_btn_icon_box_active,
+                    {marginRight: 15}
+                  ]}>
                     <Icon name="shopping-cart" size={14} color={is_orders_active ? "#ffffff" : DEFAULT_COLOR} />
                     <Text style={[styles.add_btn_label, is_orders_active && styles.add_btn_label_active]}>Đơn hàng</Text>
                   </View>
@@ -96,6 +102,7 @@ export default class ItemList extends Component {
               </View>
 
               {is_orders_active > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{item.count_cart}</Text></View>}
+              {is_chat_active > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}><Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
             </View>
           </View>
         </View>
@@ -118,7 +125,7 @@ const styles = StyleSheet.create({
   store_result_item: {
     backgroundColor: "#ffffff",
     paddingVertical: 4,
-    paddingHorizontal: 15,
+    paddingLeft: 15,
     flexDirection: 'row',
     minHeight: 104,
     borderBottomWidth: Util.pixel,
@@ -157,7 +164,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: "#404040",
     fontSize: 12,
-    lineHeight: isIOS ? 16 : 18
+    lineHeight: isIOS ? 16 : 18,
+    paddingRight: 15
   },
   store_result_item_time: {
     fontSize: 12,
@@ -203,12 +211,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     height: 16,
     backgroundColor: 'red',
-    bottom: 24,
-    right: 4,
+    bottom: 22,
+    right: 8,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
     borderRadius: 8
+  },
+  stores_info_action_notify_chat: {
+    right: isIOS ? 118 : 114
   },
   stores_info_action_notify_value: {
     fontSize: 10,

@@ -130,8 +130,6 @@ export default class MainNotify extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
 
-          layoutAnimation();
-
           setTimeout(() => {
             this.setState({
               loading: false,
@@ -143,7 +141,6 @@ export default class MainNotify extends Component {
             this._scrollToTop(0);
           }, delay || 0);
         } else {
-          layoutAnimation();
 
           this.setState({
             loading: false,

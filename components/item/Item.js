@@ -69,6 +69,9 @@ export default class Item extends Component {
     this.start_time = time();
 
     this._getData();
+
+    // notify chat
+    store.getNoitifyChat();
   }
 
   _unMount() {
@@ -78,14 +81,14 @@ export default class Item extends Component {
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 450 - (Math.abs(time() - this.start_time));
+    var delay = 300 - (Math.abs(time() - this.start_time));
     return delay;
   }
 
   // Lấy chi tiết sản phẩm
   _getData(delay) {
     var {item} = this.state;
-    var item_key = ITEM_KEY + item.id;
+    var item_key = ITEM_KEY + item.id + store.user_info.id;
 
     // load
     storage.load({
@@ -99,8 +102,6 @@ export default class Item extends Component {
       },
     }).then(data => {
       setTimeout(() => {
-        // animate true
-        layoutAnimation();
 
         this.setState({
           item_data: data,
@@ -115,7 +116,7 @@ export default class Item extends Component {
 
   async _getDataFromServer(delay) {
     var {item} = this.state;
-    var item_key = ITEM_KEY + item.id;
+    var item_key = ITEM_KEY + item.id + store.user_info.id;
 
     try {
       var response = await APIHandler.site_product(store.store_id, item.id);
@@ -124,8 +125,6 @@ export default class Item extends Component {
 
         // delay append data
         setTimeout(() => {
-          // animate true
-          layoutAnimation();
 
           this.setState({
             item_data: response.data,

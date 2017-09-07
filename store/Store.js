@@ -21,12 +21,14 @@ class Store {
 
     // Notify
     this.getNotifyFlag = true;
+    this.getNotifyChatFlag = true;
+    this.updateNotifyFlag = true;
 
     setInterval(() => {
       if (this.getNotifyFlag) {
         this.getNoitify();
       }
-    }, 15000);
+    }, DELAY_UPDATE_NOTICE);
   }
 
   async getNoitify() {
@@ -44,6 +46,29 @@ class Store {
       console.warn(e);
     } finally {
       this.getNotifyFlag = true;
+
+      // notify_chat
+      if (this.updateNotifyFlag) {
+        this.getNoitifyChat();
+      }
+    }
+  }
+
+  async getNoitifyChat() {
+    this.getNotifyChatFlag = false;
+
+    try {
+      var response = await APIHandler.user_notify_chat();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          this.setNotifyChat(response.data);
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this.getNotifyChatFlag = true;
     }
   }
 
@@ -88,9 +113,14 @@ class Store {
     new_sys_news: 0,
     new_totals: 0
   }
+  @observable notify_chat = {};
 
   @action setNotify(data) {
     this.notify = data;
+  }
+
+  @action setNotifyChat(data) {
+    this.notify_chat = data;
   }
 
 

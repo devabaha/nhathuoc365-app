@@ -40,7 +40,6 @@ export default class NotifyItem extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
-            layoutAnimation();
 
             this.setState({
               item_data: response.data,

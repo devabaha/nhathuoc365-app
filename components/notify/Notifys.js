@@ -41,7 +41,6 @@ export default class Notifys extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
-          layoutAnimation();
 
           this.setState({
             data: response.data,

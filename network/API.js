@@ -19,6 +19,7 @@ exports.USER_LIST_SITE = MY_FOOD_API + 'apiUser/list_site';
 exports.SITE_INFO = MY_FOOD_API + 'apiSite/info';
 exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
 exports.SEARCH_PRODUCT = MY_FOOD_API + 'apiSite/search_product';
+exports.USER_SITES = MY_FOOD_API + 'apiUser/sites';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';
@@ -48,6 +49,8 @@ exports.USER_CART_LIST = MY_FOOD_API + 'apiUser/cart_list';
 // Chat
 exports.SITE_SEND_CHAT = MY_FOOD_API + 'apiSite/send_chat';
 exports.SITE_LOAD_CHAT = MY_FOOD_API + 'apiSite/load_chat';
+exports.SITE_NOTIFY_CHAT = MY_FOOD_API + 'apiSite/notify_chat';
+exports.USER_NOTIFY_CHAT = MY_FOOD_API + 'apiUser/notify_chat';
 
 // News
 exports.USER_NEWS_LIST = MY_FOOD_API + 'apiUser/news_list';

@@ -49,9 +49,13 @@ export default class Chat extends Component {
     Events.removeAll(KEY_BOARD_HIDE);
 
     Keyboard.dismiss();
+
+    store.updateNotifyFlag = true;
   }
 
   componentDidMount() {
+    store.updateNotifyFlag = false;
+
     store.setStoreUnMount('chat', this._unMount.bind(this));
 
     Actions.refresh({
@@ -63,7 +67,7 @@ export default class Chat extends Component {
       }
     });
 
-    var chat_key = _CHAT_KEY + this.state.store_id;
+    var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
 
     storage.load({
     	key: chat_key,
@@ -140,7 +144,7 @@ export default class Chat extends Component {
             }, () => {
               this._scrollToEnd();
 
-              var chat_key = _CHAT_KEY + this.state.store_id;
+              var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
 
               storage.save({
               	key: chat_key,

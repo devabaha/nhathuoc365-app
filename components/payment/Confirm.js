@@ -225,7 +225,7 @@ export default class Confirm extends Component {
   }
 
   _delay() {
-    var delay = 450 - (Math.abs(time() - this.start_time));
+    var delay = 300 - (Math.abs(time() - this.start_time));
     return delay;
   }
 
@@ -248,7 +248,6 @@ export default class Confirm extends Component {
 
         setTimeout(() => {
           action(() => {
-            layoutAnimation();
 
             store.setCartData(response.data);
             // prev item in list

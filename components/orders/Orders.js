@@ -93,7 +93,6 @@ export default class Orders extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
-          layoutAnimation();
 
           this.setState({
             data: response.data,
@@ -106,7 +105,6 @@ export default class Orders extends Component {
           this._scrollToTop(0);
         }, delay || 0);
       } else {
-        layoutAnimation();
 
         setTimeout(() => {
           this.setState({

@@ -75,6 +75,9 @@ export default class Stores extends Component {
 
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
+
+    // notify chat
+    store.getNoitifyChat();
   }
 
   _unMount() {
@@ -86,13 +89,13 @@ export default class Stores extends Component {
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 450 - (Math.abs(time() - this.start_time));
+    var delay = 300 - (Math.abs(time() - this.start_time));
     return delay;
   }
 
   // lấy thông tin cửa hàng
   _getCategoriesNav() {
-    var store_key = STORE_KEY + store.store_id;
+    var store_key = STORE_KEY + store.store_id + store.user_info.id;
 
     // load
     storage.load({
@@ -116,7 +119,7 @@ export default class Stores extends Component {
   }
 
   async _getCategoriesNavFromServer() {
-    var store_key = STORE_KEY + store.store_id;
+    var store_key = STORE_KEY + store.store_id + store.user_info.id;
 
     try {
       var response = await APIHandler.site_info(store.store_id);
@@ -146,7 +149,7 @@ export default class Stores extends Component {
 
   // lấy d/s sản phẩm theo category_id
   _getItemByCateId(category_id) {
-    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id;
+    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
 
     this.setState({
       loading: true,
@@ -166,8 +169,6 @@ export default class Stores extends Component {
     }).then(data => {
       // delay append data
       setTimeout(() => {
-        // animate true
-        layoutAnimation();
 
         this.setState({
           items_data: data,
@@ -182,7 +183,7 @@ export default class Stores extends Component {
   }
 
   async _getItemByCateIdFromServer(category_id, delay) {
-    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id;
+    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
 
     try {
       var response = await APIHandler.site_category_product(store.store_id, category_id);
@@ -191,8 +192,6 @@ export default class Stores extends Component {
 
         // delay append data
         setTimeout(() => {
-          // animate true
-          layoutAnimation();
 
           this.setState({
             items_data: response.data,

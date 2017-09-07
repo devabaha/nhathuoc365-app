@@ -57,7 +57,7 @@ export default class SearchStore extends Component {
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 450 - (Math.abs(time() - this.start_time));
+    var delay = 300 - (Math.abs(time() - this.start_time));
     return delay;
   }
 

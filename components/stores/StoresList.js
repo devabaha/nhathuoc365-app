@@ -21,14 +21,13 @@ import store from '../../store/Store';
 import {reaction} from 'mobx';
 
 // components
-import ItemGrid from './ItemGrid';
-import ItemList from './ItemList';
+import ItemGrid from '../home/ItemGrid';
+import ItemList from '../home/ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
-import TabTutorial from '../tutorial/TabTutorial';
 
 @observer
-export default class Home extends Component {
+export default class StoresList extends Component {
   constructor() {
     super();
     this.state = {
@@ -37,8 +36,7 @@ export default class Home extends Component {
       loading: false,
       user_notice: null,
       finish: false,
-      scrollTop: 0,
-      show_tutorial_tab: false
+      scrollTop: 0
     };
 
     this._goSearchStore = this._goSearchStore.bind(this);
@@ -56,65 +54,9 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
+    this.start_time = time();
 
-    this._login();
-
-  }
-
-  componentWillReceiveProps() {
-    store.getNoitify();
-
-    if (this.state.finish && store.is_stay_home) {
-      if (this.state.scrollTop == 0) {
-        this._scrollOverTopAndReload();
-      } else {
-        this._scrollToTop(0);
-      }
-    }
-
-    store.is_stay_home = true;
-  }
-
-  _scrollToTop(top = 0) {
-    if (this.refs_home) {
-      this.refs_home.scrollTo({x: 0, y: top, animated: true});
-      this.setState({
-        scrollTop: top
-      });
-    }
-  }
-
-  _scrollOverTopAndReload() {
-    this.setState({
-      refreshing: true
-    }, () => {
-      this._scrollToTop(-60);
-
-      this._getData(1000);
-    });
-  }
-
-  // login khi mở app
-  _login() {
-    this.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_login({
-          fb_access_token: ''
-        });
-
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setUserInfo(response.data);
-
-            this._getData();
-          })();
-        }
-      } catch (e) {
-        console.warn(e);
-      }
-    });
+    this._getData();
   }
 
   // lấy dữ liệu trang home
@@ -123,27 +65,17 @@ export default class Home extends Component {
       loading: true
     }, async () => {
       try {
-        var response = await APIHandler.user_home();
+        var response = await APIHandler.user_sites();
 
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
-
-            var {data} = response;
-
             this.setState({
               finish: true,
               loading: false,
               refreshing: false,
-              stores_data: data.sites.length > 0 ? data.sites : null,
-              user_notice: data.notices.length > 0 ? data.notices : null,
-              newses_data: data.newses.length > 0 ? data.newses : null,
-              view_all_sites: data.view_all_sites,
-              view_all_notices: data.view_all_notices,
-              view_all_newses: data.view_all_newses,
+              stores_data: response.data,
             });
-
-            this._scrollToTop(0);
-          }, delay || 0);
+          }, delay || this._delay());
         }
       } catch (e) {
         console.warn(e);
@@ -151,6 +83,11 @@ export default class Home extends Component {
 
       }
     });
+  }
+
+  _delay() {
+    var delay = 300 - (Math.abs(time() - this.start_time));
+    return delay;
   }
 
   // render button trên navbar
@@ -215,74 +152,17 @@ export default class Home extends Component {
     );
   }
 
-  _showTutorialTab() {
-    var key_tutorial_tab = 'KeyTutorialTab1' + store.user_info.id + time();
-
-    if (this._showTutorialTabFlag) {
-      return;
-    }
-
-    this._showTutorialTabFlag = true;
-
-    storage.load({
-      key: key_tutorial_tab,
-      autoSync: true,
-      syncInBackground: true,
-      syncParams: {
-        extraFetchOptions: {
-        },
-        someFlag: true,
-      },
-    }).then(data => {
-
-    }).catch(err => {
-
-      layoutAnimation();
-
-      // show tutorial
-      this.setState({
-        show_tutorial_tab: true
-      }, () => {
-        setTimeout(() => {
-          this.setState({
-            show_tutorial_tab: false
-          });
-        }, 5000);
-      });
-
-      //
-      storage.save({
-        key: key_tutorial_tab,
-        data: {finish: true},
-        expires: null
-      });
-    });
-  }
-
   render() {
 
-    var {
-      loading,
-      finish,
-      stores_data,
-      newses_data,
-      user_notice,
-      view_all_newses,
-      view_all_notices,
-      view_all_sites,
-      show_tutorial_tab
-    } = this.state;
+    var {loading, finish, stores_data, newses_data, user_notice} = this.state;
 
     return (
       <View style={styles.container}>
         <ScrollView
           onScroll={(event) => {
-            var scrollTop = event.nativeEvent.contentOffset.y;
-            this.setState({ scrollTop });
-
-            if (scrollTop > 100) {
-              this._showTutorialTab();
-            }
+            this.setState({
+              scrollTop: event.nativeEvent.contentOffset.y
+            });
           }}
           ref={ref => this.refs_home = ref}
           refreshControl={
@@ -300,14 +180,12 @@ export default class Home extends Component {
           }}>
             <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
 
-            {view_all_sites != null && (
+            {stores_data != null && stores_data.length > 3 && (
               <View style={styles.right_title_btn_box}>
                 <TouchableHighlight
                   style={styles.right_title_btn}
                   underlayColor="transparent"
-                  onPress={() => Actions.stores_list({
-
-                  })}>
+                  onPress={() => {}}>
                   <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
                 </TouchableHighlight>
               </View>
@@ -388,114 +266,6 @@ export default class Home extends Component {
             </View>
           )}
 
-
-          {newses_data != null && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-              <Text style={styles.add_store_title}>TIN KHUYẾN MÃI</Text>
-
-              {view_all_newses != null && (
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions.notifys({
-                        title: "KHUYẾN MÃI",
-                        news_type: "/1"
-                      });
-                    }}>
-                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
-                </View>
-              )}
-            </View>
-          )}
-
-          {loading && newses_data != null ? (
-            <View style={[styles.defaultBox, {
-              height: this.defaultNewBoxHeight || (isIOS ? 116 : 124),
-              marginBottom: 0,
-              borderTopWidth: 0
-            }]}>
-              <Indicator size="small" />
-            </View>
-          ) : newses_data ? (
-            <FlatList
-              data={newses_data}
-              renderItem={({item, index}) => {
-                if (index == 0) {
-                  this.defaultNewBoxHeight = 0;
-                }
-
-                this.defaultNewBoxHeight += (isIOS ? 116 : 124);
-
-                return(
-                  <NewItemComponent
-                    item={item} />
-                );
-              }}
-              keyExtractor={item => item.id}
-            />
-          ) : (
-            null
-          )}
-
-          {user_notice && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-              <Text style={styles.add_store_title}>THÔNG BÁO ĐƠN HÀNG</Text>
-
-              {view_all_notices != null && (
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions._main_notify({type: ActionConst.REFRESH});
-                    }}>
-                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
-                </View>
-              )}
-            </View>
-          )}
-
-          {loading && user_notice != null ? (
-            <View style={[styles.defaultBox, {
-              borderTopWidth: 0
-            }]}>
-              <Indicator size="small" />
-            </View>
-          ) : user_notice ? (
-            <FlatList
-              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-              data={user_notice}
-              style={[styles.profile_list_opt]}
-              renderItem={({item, index}) => {
-                return(
-                  <NotifyItemComponent
-                    item={item} />
-                );
-              }}
-              keyExtractor={item => item.id}
-            />
-          ) : (
-            null
-          )}
-
         </ScrollView>
 
         <Modal
@@ -526,20 +296,6 @@ export default class Home extends Component {
             icon={{name: 'list-ul', type: 'font-awesome'}}
             title='Xem danh sách cửa hàng' />
         </Modal>
-
-
-        {show_tutorial_tab && (
-          <TabTutorial
-            title="Tap vào đây để Về đầu trang nhanh hơn :)"
-            left={(Util.size.width / 4) / 2}
-            onPress={() => {
-              this.setState({
-                show_tutorial_tab: false
-              });
-            }}
-            />
-        )}
-
       </View>
     );
   }
@@ -558,7 +314,8 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    ...MARGIN_SCREEN
+    ...MARGIN_SCREEN,
+    marginBottom: 0
   },
   stores_box: {
     marginBottom: 8,

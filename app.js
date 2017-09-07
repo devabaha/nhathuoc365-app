@@ -40,6 +40,7 @@ import Account from './components/account/Account';
 import Register from './components/account/Register';
 import Login from './components/account/Login';
 import Stores from './components/stores/Stores';
+import StoresList from './components/stores/StoresList';
 import Search from './components/stores/Search';
 import Item from './components/item/Item';
 import Cart from './components/cart/Cart';
@@ -64,8 +65,7 @@ const custommerNav = {
   sceneStyle: {
     backgroundColor: "#f3f3f3"
   },
-  direction: "horizontal",
-
+  direction: "horizontal"
 }
 
 // StatusBar
@@ -280,6 +280,7 @@ export default class App extends Component {
             <Scene initial={0} key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
             <Scene initial={0} key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
             <Scene initial={0} key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
+            <Scene initial={0} key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
             <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene initial={0} key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
             <Scene initial={0} key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />

@@ -49,7 +49,6 @@ export default class Cart extends Component {
       this._getCart();
     } else {
       setTimeout(() => {
-        layoutAnimation();
 
         this.setState({
           loading: false
@@ -66,7 +65,6 @@ export default class Cart extends Component {
       if (response && response.status == STATUS_SUCCESS) {
 
         setTimeout(() => {
-          layoutAnimation();
 
           action(() => {
             store.setCartData(response.data);
@@ -187,7 +185,7 @@ export default class Cart extends Component {
   }
 
   _delay() {
-    var delay = 450 - (Math.abs(time() - this.start_time));
+    var delay = 300 - (Math.abs(time() - this.start_time));
     return delay;
   }
 
@@ -209,7 +207,6 @@ export default class Cart extends Component {
       if (response && response.status == STATUS_SUCCESS) {
 
         setTimeout(() => {
-          layoutAnimation();
 
           action(() => {
             store.setCartData(response.data);

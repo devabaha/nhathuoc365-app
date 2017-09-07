@@ -358,7 +358,7 @@ export default class CartFooter extends Component {
 
             {isset_cart && (
               <Text style={{
-                fontSize: 10,
+                fontSize: 12,
                 color: "#ffffff",
                 fontWeight: '500'
               }}>{cart_data.total}</Text>

@@ -25,6 +25,10 @@ export default class Items extends Component {
 
   // add item vào giỏ hàng
   _addCart(item) {
+    if (this.props.buyPress) {
+      this.props.buyPress(item);
+    }
+
     this.setState({
       buying: true
     }, async () => {

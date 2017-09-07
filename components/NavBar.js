@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     height: 37,
+    minWidth: 44,
     position: 'absolute',
     ...Platform.select({
       ios: {
@@ -111,6 +112,7 @@ const styles = StyleSheet.create({
   },
   leftButton: {
     height: 37,
+    minWidth: 44,
     position: 'absolute',
     ...Platform.select({
       ios: {
