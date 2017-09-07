@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
   },
   address_add_content: {
     width: '100%',
-    height: 40,
+    height: 52,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   },
   address_add_icon_box: {
     width: 60,
-    height: 40,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',

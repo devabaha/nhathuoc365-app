@@ -36,9 +36,14 @@ export default class CartFooter extends Component {
   }
 
   componentDidMount() {
-    var {cart_data, cart_products, site_id} = store;
+    var {cart_data, cart_products, store_id} = store;
 
-    if (cart_data == null || cart_products == null) {
+    var is_change_store = store.cart_store_id != store_id;
+    if (is_change_store) {
+      store.cart_store_id = store_id;
+    }
+
+    if (cart_data == null || cart_products == null || is_change_store) {
       this._getCart();
     } else {
       this.setState({

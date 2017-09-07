@@ -60,7 +60,7 @@ export default class Home extends Component {
   }
 
   componentWillReceiveProps() {
-    // this._getData();
+    store.getNoitify();
 
     if (this.state.finish && store.is_stay_home) {
       if (this.state.scrollTop == 0) {
@@ -76,6 +76,9 @@ export default class Home extends Component {
   _scrollToTop(top = 0) {
     if (this.refs_home) {
       this.refs_home.scrollTo({x: 0, y: top, animated: true});
+      this.setState({
+        scrollTop: top
+      });
     }
   }
 
@@ -138,6 +141,8 @@ export default class Home extends Component {
         }
       } catch (e) {
         console.warn(e);
+      } finally {
+
       }
     });
   }

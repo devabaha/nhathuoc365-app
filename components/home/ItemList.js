@@ -33,7 +33,14 @@ export default class ItemList extends Component {
     action(() => {
       store.setStoreData(item);
 
-      Actions.store_orders();
+      Actions.store_orders({
+        goStores: () => {
+          Actions.stores({
+            title: item.name,
+            type: ActionConst.REPLACE
+          });
+        }
+      });
     })();
   }
 

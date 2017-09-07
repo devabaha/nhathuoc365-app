@@ -88,6 +88,9 @@ const reducerCreate = params => {
     if (action.key && action.key != '_orders') {
       Store.is_stay_orders = false;
     }
+    if (action.key && action.key != '_account') {
+      Store.is_stay_account = false;
+    }
     return defaultReducer(state, action);
   }
 };
@@ -189,36 +192,6 @@ export default class App extends Component {
 
         }
      }
-  }
-
-  componentDidMount() {
-
-    this.getNotifyFlag = true;
-
-    setInterval(() => {
-      if (this.getNotifyFlag) {
-        this._getNoitify();
-      }
-    }, 15000);
-
-  }
-
-  async _getNoitify() {
-    this.getNotifyFlag = false;
-
-    try {
-      var response = await APIHandler.user_notify();
-
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          Store.setNotify(response.data);
-        })();
-      }
-    } catch (e) {
-      console.warn(e);
-    } finally {
-      this.getNotifyFlag = true;
-    }
   }
 
   render() {

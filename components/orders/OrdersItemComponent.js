@@ -122,10 +122,12 @@ export default class OrdersItemComponent extends Component {
             flexDirection: 'row'
           }}>
             <View style={styles.orders_item_content}>
-              <View style={styles.orders_item_time_box}>
-                <Icon style={styles.orders_item_icon} name="clock-o" size={12} color="#999999" />
-                <Text style={styles.orders_item_time_title}>{item.orders_time}</Text>
-              </View>
+              {item.orders_time != null && item.orders_time != '' && (
+                <View style={styles.orders_item_time_box}>
+                  <Icon style={styles.orders_item_icon} name="clock-o" size={12} color="#999999" />
+                  <Text style={styles.orders_item_time_title}>{item.orders_time}</Text>
+                </View>
+              )}
 
               <View style={styles.orders_item_row}>
                 {Object.keys(item.products).length > 0 && (

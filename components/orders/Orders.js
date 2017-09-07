@@ -71,6 +71,9 @@ export default class Orders extends Component {
   _scrollToTop(top = 0) {
     if (this.refs_orders) {
       this.refs_orders.scrollTo({x: 0, y: top, animated: true});
+      this.setState({
+        scrollTop: top
+      });
     }
   }
 
@@ -105,14 +108,18 @@ export default class Orders extends Component {
       } else {
         layoutAnimation();
 
-        this.setState({
-          loading: false
-        })
+        setTimeout(() => {
+          this.setState({
+            loading: false,
+            data: null,
+            refreshing: false
+          });
+        }, delay || 0);
       }
     } catch (e) {
       console.warn(e);
     } finally {
-
+      store.getNoitify();
     }
   }
 

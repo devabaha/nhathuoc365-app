@@ -167,6 +167,9 @@ export default class StoreOrders extends Component {
 
             <TouchableHighlight
               onPress={() => {
+                if (this.props.goStores) {
+                  return this.props.goStores();
+                }
                 Actions.pop();
               }}
               underlayColor="transparent">

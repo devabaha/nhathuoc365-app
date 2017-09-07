@@ -55,7 +55,7 @@ export default class NotifyItemComponent extends Component {
 
     const interpolateColor = this.animatedValue.interpolate({
       inputRange: [0, 150],
-      outputRange: [hexToRgbA(DEFAULT_COLOR, 1), 'rgb(255, 255, 255)']
+      outputRange: [hexToRgbA(DEFAULT_COLOR, 0.6), 'rgb(255, 255, 255)']
     });
 
     const animatedStyle = {

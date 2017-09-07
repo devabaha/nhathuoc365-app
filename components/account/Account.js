@@ -134,9 +134,9 @@ export default class Account extends Component {
       refreshing: false,
       logout_loading: false,
       sticker_flag: false,
-      avatar_loading: false
+      avatar_loading: false,
+      scrollTop: 0
     }
-
   }
 
   _onRefresh() {
@@ -215,6 +215,72 @@ export default class Account extends Component {
 
   }
 
+  componentDidMount() {
+    this.setState({
+      finish: true
+    });
+    store.is_stay_account = true;
+  }
+
+  componentWillReceiveProps() {
+    store.getNoitify();
+
+    if (this.state.finish && store.is_stay_account) {
+      if (this.state.scrollTop == 0) {
+        this._scrollOverTopAndReload();
+      } else {
+        this._scrollToTop(0);
+      }
+    }
+
+    store.is_stay_account = true;
+  }
+
+  _scrollToTop(top = 0) {
+    if (this.refs_account) {
+      this.refs_account.scrollTo({x: 0, y: top, animated: true});
+      this.setState({
+        scrollTop: top
+      });
+    }
+  }
+
+  _scrollOverTopAndReload() {
+    this.setState({
+      refreshing: true
+    }, () => {
+      this._scrollToTop(-60);
+
+      this._login(1000);
+    });
+  }
+
+  _login(delay) {
+    this.setState({
+      loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.user_login({
+          fb_access_token: ''
+        });
+
+        if (response && response.status == STATUS_SUCCESS) {
+          setTimeout(() => {
+            action(() => {
+              store.setUserInfo(response.data);
+
+              this.setState({
+                refreshing: false
+              });
+            })();
+          }, delay || 0);
+        }
+      } catch (e) {
+        console.warn(e);
+      }
+    });
+  }
+
   render() {
 
     var is_login = store.user_info != null && store.user_info.verify_flag == STATUS_VERIFYED;
@@ -237,6 +303,12 @@ export default class Account extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
+          onScroll={(event) => {
+            this.setState({
+              scrollTop: event.nativeEvent.contentOffset.y
+            });
+          }}
+          ref={ref => this.refs_account = ref}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}

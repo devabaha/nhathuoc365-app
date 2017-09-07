@@ -14,8 +14,37 @@ class Store {
       this.setCartItemIndex(0);
     });
 
+    // Keyboard handler
     Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
+
+
+    // Notify
+    this.getNotifyFlag = true;
+
+    setInterval(() => {
+      if (this.getNotifyFlag) {
+        this.getNoitify();
+      }
+    }, 15000);
+  }
+
+  async getNoitify() {
+    this.getNotifyFlag = false;
+
+    try {
+      var response = await APIHandler.user_notify();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          this.setNotify(response.data);
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this.getNotifyFlag = true;
+    }
   }
 
   storeUnMount = {};
