@@ -318,7 +318,7 @@ export default class Account extends Component {
           >
 
           <View style={styles.profile_cover_box}>
-            <Image style={styles.profile_cover} source={{uri: "https://dantri4.vcmedia.vn/k:c05a76d21c/2016/03/23/1-1458723853381/ve-dep-huyen-dieu-cua-dat-troi-duoi-anh-hoang-hon.jpg"}}>
+            <Image style={styles.profile_cover} source={require('../../images/profile_bgr.jpg')}>
 
               <TouchableHighlight
                 style={styles.profile_avatar_box}

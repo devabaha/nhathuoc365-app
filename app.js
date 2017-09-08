@@ -112,14 +112,14 @@ export default class App extends Component {
   }
 
   _onReceived(notify) {
-    console.log("Notification received: ", notify);
+    // console.log("Notification received: ", notify);
   }
 
   _onOpened(openResult) {
-    console.log('Message: ', openResult.notify.payload.body);
-    console.log('Data: ', openResult.notify.payload.additionalData);
-    console.log('isActive: ', openResult.notify.isAppInFocus);
-    console.log('openResult: ', openResult);
+    // console.log('Message: ', openResult.notify.payload.body);
+    // console.log('Data: ', openResult.notify.payload.additionalData);
+    // console.log('isActive: ', openResult.notify.isAppInFocus);
+    // console.log('openResult: ', openResult);
 
     var data = openResult.notify.payload.additionalData;
     if (data) {
@@ -183,11 +183,11 @@ export default class App extends Component {
   }
 
   _onRegistered(notifData) {
-    console.log("Device had been registered for push notifys!", notifData);
+    // console.log("Device had been registered for push notifys!", notifData);
   }
 
   async _onIds(device) {
-	   console.log('Device info: ', device);
+	  //  console.log('Device info: ', device);
      if (_.isObject(device)) {
        var push_token = device.pushToken;
        var player_id = device.userId;
