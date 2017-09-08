@@ -217,10 +217,10 @@ const styles = StyleSheet.create({
   },
   item_add_cart_btn: {
     position: 'absolute',
-    top: 4,
+    top: 0,
     right: 0,
     width: 60,
-    height: 40,
+    height: 60,
     zIndex: 2
   },
   item_add_cart_box: {

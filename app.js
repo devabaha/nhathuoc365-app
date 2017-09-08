@@ -126,7 +126,7 @@ export default class App extends Component {
       // clear timer
       Store.runStoreUnMount();
 
-      var {page, id} = data;
+      var {page, page_id} = data;
 
       // go home screen
       Actions.myTabBar({
@@ -139,30 +139,16 @@ export default class App extends Component {
       })();
 
       if (page) {
-        setTimeout(async () => {
-
+        setTimeout(() => {
 
           switch (page) {
             case 'store':
-              try {
-                var response = await APIHandler.site_info(id);
-                if (response && response.status == STATUS_SUCCESS) {
-                  action(() => {
-                    Store.setStoreData(response.data);
-
-                    Actions.stores({
-                      title: response.data.name
-                    });
-                  })();
-                }
-              } catch (e) {
-                console.warn(e);
-              } finally {
-
+              if (page_id) {
+                this._pushGoStore(page_id);
               }
               break;
-            case 'item':
-
+            case '_main_notify':
+              this._goMainNotify();
               break;
             case 'payment':
 
@@ -172,11 +158,28 @@ export default class App extends Component {
               break;
           }
 
-
         }, 1000);
       }
     }
+  }
 
+  async _pushGoStore(page_id) {
+    try {
+      var response = await APIHandler.site_info(page_id);
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          Store.setStoreData(response.data);
+
+          Actions.stores({
+            title: response.data.name
+          });
+        })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
   }
 
   _onRegistered(notifData) {
@@ -218,6 +221,10 @@ export default class App extends Component {
     return true;
   }
 
+  _goMainNotify() {
+    Actions._main_notify({type: ActionConst.REFRESH});
+  }
+
   render() {
     return(
       <Router
@@ -257,9 +264,7 @@ export default class App extends Component {
                 iconName="notifications"
                 size={24}
                 notify="new_totals"
-                onPress={()=> {
-                  Actions._main_notify({type: ActionConst.REFRESH});
-                }}
+                onPress={this._goMainNotify}
                >
                   <Scene initial={0} key="_main_notify" title="THÔNG BÁO" component={MainNotify} {...custommerNav} />
               </Scene>
