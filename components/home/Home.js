@@ -280,7 +280,7 @@ export default class Home extends Component {
             var scrollTop = event.nativeEvent.contentOffset.y;
             this.setState({ scrollTop });
 
-            if (scrollTop > 100) {
+            if (scrollTop > 200) {
               this._showTutorialTab();
             }
           }}

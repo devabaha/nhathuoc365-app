@@ -591,7 +591,7 @@ class NavBar extends React.Component {
                     color: "#999999",
                     paddingHorizontal: 4,
                     paddingVertical: 0
-                  }}>{this.props.placeholder || "Tìm kiếm"}</Text>
+                  }}>{sub_string(this.props.placeholder, 20) || "Tìm kiếm"}</Text>
 
                 </TouchableOpacity>
             ) : (
@@ -627,7 +627,7 @@ class NavBar extends React.Component {
                     onRight: undefined,
                     hideBackImage: false
                   });
-                  
+
                   layoutAnimation();
 
                   this.setState({

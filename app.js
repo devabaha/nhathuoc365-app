@@ -26,6 +26,12 @@ import {
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 
+import {
+  Analytics,
+  Hits as GAHits,
+  Experiment as GAExperiment
+} from 'react-native-google-analytics';
+
 // store
 import Store from './store/Store';
 
@@ -76,6 +82,8 @@ if (isIOS) {
 const reducerCreate = params => {
   const defaultReducer = Reducer(params);
   return (state, action) => {
+    GoogleAnalytic(action.key);
+
     if (action.type == 'back') {
       Store.runStoreUnMount();
     }
