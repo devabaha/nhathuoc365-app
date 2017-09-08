@@ -290,7 +290,9 @@ export default class CartFooter extends Component {
           goConfirm: true
         });
       } else {
-        Actions.address();
+        Actions.create_address({
+          redirect: 'confirm'
+        });
       }
 
     } else {

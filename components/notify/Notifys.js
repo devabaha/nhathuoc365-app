@@ -14,6 +14,7 @@ import {
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
 
 // components
 import NewItemComponent from './NewItemComponent';
@@ -33,6 +34,8 @@ export default class Notifys extends Component {
 
   componentDidMount() {
     this._getData();
+
+    store.getNoitify();
   }
 
   async _getData(delay) {

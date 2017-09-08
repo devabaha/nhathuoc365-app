@@ -116,11 +116,11 @@ class Store {
   @observable notify_chat = {};
 
   @action setNotify(data) {
-    this.notify = data;
+    this.notify = data || {};
   }
 
   @action setNotifyChat(data) {
-    this.notify_chat = data;
+    this.notify_chat = data || {};
   }
 
 

@@ -137,9 +137,9 @@ export default class Home extends Component {
               stores_data: data.sites.length > 0 ? data.sites : null,
               user_notice: data.notices.length > 0 ? data.notices : null,
               newses_data: data.newses.length > 0 ? data.newses : null,
-              view_all_sites: data.view_all_sites,
-              view_all_notices: data.view_all_notices,
-              view_all_newses: data.view_all_newses,
+              view_all_sites: data.view_all_sites == 1,
+              view_all_notices: data.view_all_notices == 1,
+              view_all_newses: data.view_all_newses == 1,
             });
 
             this._scrollToTop(0);
@@ -216,7 +216,7 @@ export default class Home extends Component {
   }
 
   _showTutorialTab() {
-    var key_tutorial_tab = 'KeyTutorialTab1' + store.user_info.id + time();
+    var key_tutorial_tab = 'KeyTutorialTabShow' + store.user_info.id;
 
     if (this._showTutorialTabFlag) {
       return;
@@ -300,7 +300,7 @@ export default class Home extends Component {
           }}>
             <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
 
-            {view_all_sites != null && (
+            {view_all_sites && (
               <View style={styles.right_title_btn_box}>
                 <TouchableHighlight
                   style={styles.right_title_btn}
@@ -400,7 +400,7 @@ export default class Home extends Component {
             }}>
               <Text style={styles.add_store_title}>TIN KHUYẾN MÃI</Text>
 
-              {view_all_newses != null && (
+              {view_all_newses && (
                 <View style={styles.right_title_btn_box}>
                   <TouchableHighlight
                     style={styles.right_title_btn}
@@ -458,7 +458,7 @@ export default class Home extends Component {
             }}>
               <Text style={styles.add_store_title}>THÔNG BÁO ĐƠN HÀNG</Text>
 
-              {view_all_notices != null && (
+              {view_all_notices && (
                 <View style={styles.right_title_btn_box}>
                   <TouchableHighlight
                     style={styles.right_title_btn}

@@ -169,6 +169,7 @@ export default class Stores extends Component {
     }).then(data => {
       // delay append data
       setTimeout(() => {
+        layoutAnimation();
 
         this.setState({
           items_data: data,
@@ -192,6 +193,7 @@ export default class Stores extends Component {
 
         // delay append data
         setTimeout(() => {
+          layoutAnimation();
 
           this.setState({
             items_data: response.data,

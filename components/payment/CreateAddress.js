@@ -160,7 +160,13 @@ export default class CreateAddress extends Component {
             this.props.addressReload(450);
           }
 
-          Actions.pop();
+          if (this.props.redirect == 'confirm') {
+            Actions.confirm({
+              type: ActionConst.REPLACE
+            });
+          } else {
+            Actions.pop();
+          }
         }
 
       } catch (e) {
@@ -235,6 +241,7 @@ export default class CreateAddress extends Component {
 
   render() {
     var { edit_mode } = this.state;
+    var is_go_confirm = this.props.redirect == 'confirm';
 
     return (
       <View style={styles.container}>
@@ -316,7 +323,11 @@ export default class CreateAddress extends Component {
               />
           </View>
 
-          <View style={[styles.input_box, {marginTop: 12}]}>
+          <View style={[styles.input_box, {
+            marginTop: 12,
+            borderTopWidth: Util.pixel,
+            borderColor: "#dddddd"
+          }]}>
             <Text style={styles.input_label}>Đặt làm địa chỉ mặc định</Text>
 
             <View style={styles.input_text_box}>
@@ -346,7 +357,10 @@ export default class CreateAddress extends Component {
           underlayColor="transparent"
           onPress={this._onSave.bind(this)}
           style={[styles.address_continue, {bottom: store.keyboardTop}]}>
-          <View style={styles.address_continue_content}>
+          <View style={[
+            styles.address_continue_content,
+            {flexDirection: is_go_confirm ? 'row-reverse' : 'row'}
+          ]}>
             <View style={{
               minWidth: 20,
               height: '100%',
@@ -356,10 +370,13 @@ export default class CreateAddress extends Component {
               {this.state.finish_loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : (
-                <Icon name={this.state.edit_mode ? "save" : "check"} size={20} color="#ffffff" />
+                <Icon name={this.state.edit_mode ? "save" : is_go_confirm ? "chevron-right" : "check"} size={20} color="#ffffff" />
               )}
             </View>
-            <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "HOÀN THÀNH"}</Text>
+            <Text style={[styles.address_continue_title, {
+              marginLeft: is_go_confirm ? 0 : 8,
+              marginRight: is_go_confirm ? 8 : 0
+            }]}>{this.state.edit_mode ? "LƯU LẠI" : is_go_confirm ? "TIẾP TỤC" : "HOÀN THÀNH"}</Text>
           </View>
         </TouchableHighlight>
 
@@ -384,7 +401,7 @@ const styles = StyleSheet.create({
   },
   input_box: {
     width: '100%',
-    height: 44,
+    height: 52,
     backgroundColor: "#ffffff",
     borderBottomWidth: Util.pixel,
     borderBottomColor: "#dddddd",
@@ -403,7 +420,7 @@ const styles = StyleSheet.create({
   },
   input_text: {
     width: '96%',
-    height: 38,
+    height: 44,
     paddingLeft: 8,
     color: "#000000",
     fontSize: 14,
@@ -451,7 +468,6 @@ const styles = StyleSheet.create({
   },
   address_continue_title: {
     color: '#ffffff',
-    fontSize: 18,
-    marginLeft: 8
+    fontSize: 18
   }
 });

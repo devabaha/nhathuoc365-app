@@ -102,6 +102,7 @@ export default class Item extends Component {
       },
     }).then(data => {
       setTimeout(() => {
+        layoutAnimation();
 
         this.setState({
           item_data: data,
@@ -125,7 +126,8 @@ export default class Item extends Component {
 
         // delay append data
         setTimeout(() => {
-
+          layoutAnimation();
+          
           this.setState({
             item_data: response.data,
             loading: false,

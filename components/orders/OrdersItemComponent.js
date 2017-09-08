@@ -45,7 +45,9 @@ export default class OrdersItemComponent extends Component {
 
   _paymentHandler(item) {
     if (store.cart_data && store.cart_data.address_id == 0) {
-      Actions.address();
+      Actions.create_address({
+        redirect: 'confirm'
+      });
     } else {
       this._goOrdersItem(item);
     }
