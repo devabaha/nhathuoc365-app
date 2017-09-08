@@ -102,8 +102,8 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        manifestPlaceholders = [onesignal_app_id: "856aa788-5305-4969-b537-3d5e47759e3f",
-                                onesignal_google_project_number: "1030461722342"]
+        manifestPlaceholders = [onesignal_app_id: "fa87073a-1c07-4cfe-a03b-8be528c4c95c",
+                                onesignal_google_project_number: "790466177193"]
     }
     signingConfigs {
         release {

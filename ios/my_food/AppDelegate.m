@@ -23,7 +23,7 @@
   jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index.ios" fallbackResource:nil];
   
   self.oneSignal = [[RCTOneSignal alloc] initWithLaunchOptions:launchOptions
-                                                         appId:@"bb224278-bbf1-4b38-ada6-250c5eb7a83f"];
+                                                         appId:@"fa87073a-1c07-4cfe-a03b-8be528c4c95c"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"my_food"
