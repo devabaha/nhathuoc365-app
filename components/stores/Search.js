@@ -52,6 +52,12 @@ export default class Search extends Component {
 
     this._getHistory();
 
+    const onBack = () => {
+      Keyboard.dismiss();
+
+      Actions.pop();
+    }
+
     Actions.refresh({
       showSearchBar: true,
       searchValue: '',
@@ -90,12 +96,10 @@ export default class Search extends Component {
           keyboard_state: "always"
         });
       },
-      onBack: () => {
-        Keyboard.dismiss();
-
-        Actions.pop();
-      }
+      onBack
     });
+
+    store.pushBack = onBack;
   }
 
   _getHistory() {

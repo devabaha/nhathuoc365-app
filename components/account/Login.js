@@ -65,6 +65,8 @@ export default class Login extends Component {
         this.refs_name.focus();
       }, 450);
     }
+
+    store.pushBack = this._unMount.bind(this);
   }
 
   _unMount() {

@@ -202,11 +202,27 @@ export default class App extends Component {
      }
   }
 
+  _backAndroidHandler() {
+    if (typeof Store.replaceBack == 'function') {
+      Store.replaceBack();
+      Store.replaceBack = null;
+    } else {
+      if (typeof Store.pushBack == 'function') {
+        Store.pushBack();
+        Store.pushBack = null;
+      }
+
+      Actions.pop();
+    }
+
+    return true;
+  }
+
   render() {
     return(
       <Router
         onExitApp={() => true}
-        backAndroidHandler={() => true}
+        backAndroidHandler={this._backAndroidHandler}
         createReducer={reducerCreate}
         store={Store}>
 

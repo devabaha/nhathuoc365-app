@@ -66,6 +66,8 @@ export default class Item extends Component {
       }
     });
 
+    store.pushBack = this._unMount.bind(this);
+
     this.start_time = time();
 
     this._getData();
@@ -127,7 +129,7 @@ export default class Item extends Component {
         // delay append data
         setTimeout(() => {
           layoutAnimation();
-          
+
           this.setState({
             item_data: response.data,
             loading: false,

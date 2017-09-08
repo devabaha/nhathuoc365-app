@@ -53,6 +53,8 @@ export default class StoreOrders extends Component {
       }
     });
 
+    store.pushBack = this._unMount.bind(this);
+
     this.start_time = time();
 
     // get data on this screen

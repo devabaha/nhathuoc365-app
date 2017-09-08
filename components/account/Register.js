@@ -57,6 +57,8 @@ export default class Register extends Component {
         Actions.pop();
       }
     });
+
+    store.pushBack = this._unMount.bind(this);
   }
 
   _unMount() {
@@ -135,23 +137,27 @@ export default class Register extends Component {
             if (this.refs_modal_verify) {
               this.refs_modal_verify.open();
 
-              Actions.refresh({
-                onBack: () => {
-                  Alert.alert(
-                    'Thông báo',
-                    'Quá trình đăng ký chưa hoàn tất, bạn có muốn huỷ bỏ?',
-                    [
-                      {text: 'Không', onPress: () => {
+              const onBack = () => {
+                Alert.alert(
+                  'Thông báo',
+                  'Quá trình đăng ký chưa hoàn tất, bạn có muốn huỷ bỏ?',
+                  [
+                    {text: 'Không', onPress: () => {
 
-                      }},
-                      {text: 'Có', onPress: () => {
-                        Actions.pop();
-                      }},
-                    ],
-                    { cancelable: false }
-                  );
-                }
+                    }},
+                    {text: 'Có', onPress: () => {
+                      Actions.pop();
+                    }},
+                  ],
+                  { cancelable: false }
+                );
+              }
+
+              Actions.refresh({
+                onBack
               });
+
+              store.pushBack = onBack;
             }
 
           });

@@ -62,6 +62,8 @@ export default class Home extends Component {
   }
 
   componentWillReceiveProps() {
+    this._closePopup();
+    
     store.getNoitify();
 
     if (this.state.finish && store.is_stay_home) {
@@ -167,31 +169,36 @@ export default class Home extends Component {
 
   _showPopupAddStore() {
     if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.open()
+        this.refs_modal_add_store.open();
+
+        store.pushBack = this._closePopup.bind(this);
     }
   }
 
   // tới màn hình tìm cửa hàng theo mã CH
   _goSearchStore() {
-    if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.close();
-    }
+    this._closePopup();
+
     Actions.search_store();
   }
 
   // tới màn hình tìm cửa hàng theo danh sách
   _goListStore() {
-    if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.close();
-    }
+    this._closePopup();
+
     Actions.list_store();
   }
 
   _goScanQRCode() {
+    this._closePopup();
+
+    Actions.scan_qr_code();
+  }
+
+  _closePopup() {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
     }
-    Actions.scan_qr_code();
   }
 
   // pull to reload danh sách cửa hàng

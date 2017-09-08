@@ -198,14 +198,18 @@ export default class Confirm extends Component {
   }
 
   _goAddress() {
+    const onBack = () => {
+      Actions.confirm({
+        type: ActionConst.REPLACE
+      });
+    }
+
     Actions.address({
       type: ActionConst.REPLACE,
-      onBack: () => {
-        Actions.confirm({
-          type: ActionConst.REPLACE
-        });
-      }
+      onBack
     });
+
+    store.replaceBack = onBack;
   }
 
   // show popup confirm remove item in cart
@@ -319,6 +323,8 @@ export default class Confirm extends Component {
 
       // add stack unmount
       store.setStoreUnMount('confirm', onBack);
+
+      store.pushBack = onBack;
     }, 1000);
   }
 

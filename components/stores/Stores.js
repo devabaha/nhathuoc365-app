@@ -65,6 +65,8 @@ export default class Stores extends Component {
       }
     });
 
+    store.pushBack = this._unMount.bind(this);
+
     this.start_time = time();
 
     // get categories navigator
@@ -367,11 +369,7 @@ export default class Stores extends Component {
           ref_popup={ref => this.refs_modal_delete_cart_item = ref}
           title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
           height={110}
-          noConfirm={() => {
-            if (this.refs_modal_delete_cart_item) {
-              this.refs_modal_delete_cart_item.close();
-            }
-          }}
+          noConfirm={this._closePopup.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
           otherClose={false}
           />
@@ -387,14 +385,18 @@ export default class Stores extends Component {
     }
   }
 
+  _closePopup() {
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.close();
+    }
+  }
+
   async _removeCartItem() {
     if (!this.cartItemConfirmRemove) {
       return;
     }
 
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.close();
-    }
+    this._closePopup();
 
     var item = this.cartItemConfirmRemove;
 
