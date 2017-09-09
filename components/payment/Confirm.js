@@ -239,7 +239,7 @@ export default class Confirm extends Component {
   }
 
   _delay() {
-    var delay = 300 - (Math.abs(time() - this.start_time));
+    var delay = 400 - (Math.abs(time() - this.start_time));
     return delay;
   }
 

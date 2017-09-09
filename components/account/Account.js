@@ -239,9 +239,13 @@ export default class Account extends Component {
   _scrollToTop(top = 0) {
     if (this.refs_account) {
       this.refs_account.scrollTo({x: 0, y: top, animated: true});
-      this.setState({
-        scrollTop: top
-      });
+
+      clearTimeout(this._scrollTimer);
+      this._scrollTimer = setTimeout(() => {
+        this.setState({
+          scrollTop: top
+        });
+      }, 500);
     }
   }
 

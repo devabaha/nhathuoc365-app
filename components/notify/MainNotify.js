@@ -105,9 +105,13 @@ export default class MainNotify extends Component {
   _scrollToTop(top = 0) {
     if (this.refs_main_notify) {
       this.refs_main_notify.scrollTo({x: 0, y: top, animated: true});
-      this.setState({
-        scrollTop: top
-      });
+      
+      clearTimeout(this._scrollTimer);
+      this._scrollTimer = setTimeout(() => {
+        this.setState({
+          scrollTop: top
+        });
+      }, 500);
     }
   }
 

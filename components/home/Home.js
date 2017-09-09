@@ -63,7 +63,7 @@ export default class Home extends Component {
 
   componentWillReceiveProps() {
     this._closePopup();
-    
+
     store.getNoitify();
 
     if (this.state.finish && store.is_stay_home) {
@@ -80,9 +80,13 @@ export default class Home extends Component {
   _scrollToTop(top = 0) {
     if (this.refs_home) {
       this.refs_home.scrollTo({x: 0, y: top, animated: true});
-      this.setState({
-        scrollTop: top
-      });
+
+      clearTimeout(this._scrollTimer);
+      this._scrollTimer = setTimeout(() => {
+        this.setState({
+          scrollTop: top
+        });
+      }, 500);
     }
   }
 

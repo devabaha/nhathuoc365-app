@@ -91,7 +91,7 @@ export default class Stores extends Component {
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 300 - (Math.abs(time() - this.start_time));
+    var delay = 400 - (Math.abs(time() - this.start_time));
     return delay;
   }
 

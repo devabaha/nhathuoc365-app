@@ -62,7 +62,7 @@ export default class Orders extends Component {
       }
     }
     if (!store.is_stay_orders) {
-      this._getData();
+      this._getData(0, true);
     }
 
     store.is_stay_orders = true;
@@ -71,9 +71,13 @@ export default class Orders extends Component {
   _scrollToTop(top = 0) {
     if (this.refs_orders) {
       this.refs_orders.scrollTo({x: 0, y: top, animated: true});
-      this.setState({
-        scrollTop: top
-      });
+
+      clearTimeout(this._scrollTimer);
+      this._scrollTimer = setTimeout(() => {
+        this.setState({
+          scrollTop: top
+        });
+      }, 500);
     }
   }
 
@@ -87,7 +91,7 @@ export default class Orders extends Component {
     });
   }
 
-  async _getData(delay) {
+  async _getData(delay, noScroll = false) {
     try {
       var response = await APIHandler.user_cart_list();
 
@@ -102,7 +106,9 @@ export default class Orders extends Component {
             finish: true
           });
 
-          this._scrollToTop(0);
+          if (!noScroll) {
+            this._scrollToTop(0);
+          }
         }, delay || 0);
       } else {
 

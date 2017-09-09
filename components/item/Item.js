@@ -42,7 +42,7 @@ export default class Item extends Component {
      loading: true,
      buying: false,
      like_loading: true,
-     like_flag: false
+     like_flag: 0
     }
 
     this._getData = this._getData.bind(this);
@@ -85,7 +85,7 @@ export default class Item extends Component {
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 300 - (Math.abs(time() - this.start_time));
+    var delay = 400 - (Math.abs(time() - this.start_time));
     return delay;
   }
 
@@ -226,12 +226,25 @@ export default class Item extends Component {
       like_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.site_like(store.store_id, item.id, item.like_flag == true);
+        var response = await APIHandler.site_like(store.store_id, item.id, this.state.like_flag == 1 ? 0 : 1);
 
         if (response && response.status == STATUS_SUCCESS) {
+          var like_flag = response.data.like_flag;
+
           this.setState({
-            like_flag: response.data.like_flag,
+            like_flag,
             like_loading: false
+          }, () => {
+            this.state.item_data.like_flag = like_flag;
+
+            // cache in five minutes
+            var {item} = this.state;
+            var item_key = ITEM_KEY + item.id + store.user_info.id;
+            storage.save({
+              key: item_key,
+              data: this.state.item_data,
+              expires: ITEM_CACHE
+            });
           });
         }
       } catch (e) {
@@ -304,8 +317,7 @@ export default class Item extends Component {
                 onPress={this._likeHandler.bind(this, item)}
                 underlayColor="transparent">
                 <View style={[styles.item_actions_btn, styles.item_actions_btn_chat, {
-                  borderColor: is_like ? "#e31b23" : DEFAULT_COLOR,
-                  backgroundColor: is_like ? "#e31b23" : "#ffffff"
+                  borderColor: is_like ? "#e31b23" : DEFAULT_COLOR
                 }]}>
                   <View style={{
                     height: '100%',
@@ -316,11 +328,11 @@ export default class Item extends Component {
                     {like_loading ? (
                       <Indicator size="small" />
                     ) : (
-                      <Icon name="heart" size={20} color={is_like ? "#ffffff" : DEFAULT_COLOR} />
+                      <Icon name="heart" size={20} color={is_like ? "#e31b23" : DEFAULT_COLOR} />
                     )}
                   </View>
                   <Text style={[styles.item_actions_title, styles.item_actions_title_chat, {
-                    color: is_like ? "#ffffff" : DEFAULT_COLOR
+                    color: is_like ? "#e31b23" : DEFAULT_COLOR
                   }]}>{is_like ? "Đã thích" : "Yêu thích"}</Text>
                 </View>
               </TouchableHighlight>
