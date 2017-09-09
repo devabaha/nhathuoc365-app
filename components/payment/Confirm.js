@@ -40,7 +40,8 @@ export default class Confirm extends Component {
      coppy_sticker_flag: false,
      address_height: 50,
      continue_loading: false,
-     data: null
+     data: null,
+     noteOffset: 0
     }
   }
 
@@ -95,6 +96,7 @@ export default class Confirm extends Component {
         <RightButtonChat
           store_id={cart_data.site_id || undefined}
           title={cart_data.shop_name || undefined}
+          tel={this.props.tel}
          />
       </View>
     );
@@ -351,12 +353,27 @@ export default class Confirm extends Component {
     Actions.pop();
   }
 
-  _onLayout() {
+  _onLayout(event) {
+    if (this.state.noteOffset == 0) {
+      this.setState({
+        noteOffset: event.nativeEvent.layout.y - 8
+      });
+    }
+
     if (this.animatedValue) {
       Animated.timing(this.animatedValue, {
         toValue: 150,
         duration: 3000
       }).start();
+    }
+  }
+
+  _scrollToTop(top = 0) {
+    if (this.refs_confirm_page) {
+      this.refs_confirm_page.scrollTo({x: 0, y: top, animated: true});
+      this.setState({
+        scrollTop: top
+      });
     }
   }
 
@@ -456,6 +473,10 @@ export default class Confirm extends Component {
         )}
 
         <ScrollView
+          onScroll={(event) => {
+            var scrollTop = event.nativeEvent.contentOffset.y;
+            this.setState({ scrollTop });
+          }}
           //keyboardShouldPersistTaps="always"
           ref={ref => this.refs_confirm_page = ref}
           style={[styles.content, {
@@ -587,6 +608,7 @@ export default class Confirm extends Component {
                       store.setUserCartNote(value);
                     })();
                   }}
+                  onFocus={this._scrollToTop.bind(this, this.state.noteOffset)}
                   value={store.user_cart_note}
                   />
               </View>

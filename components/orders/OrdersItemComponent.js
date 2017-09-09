@@ -74,14 +74,16 @@ export default class OrdersItemComponent extends Component {
   _goOrdersItem(item) {
     Actions.orders_item({
       data: item,
-      title: `Đơn hàng #${item.cart_code}`
+      title: `Đơn hàng #${item.cart_code}`,
+      tel: item.tel
     });
   }
 
   _goStoreOrders(item) {
     Actions.store_orders({
       store_id: item.site_id,
-      title: item.shop_name
+      title: item.shop_name,
+      tel: item.tel
     });
   }
 

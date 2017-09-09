@@ -116,6 +116,7 @@ export default class StoreOrders extends Component {
         <RightButtonChat
           title={this.state.title || undefined}
           store_id={this.state.store_id || undefined}
+          tel={this.props.tel}
          />
       </View>
     );
