@@ -39,10 +39,10 @@ export default class NewItemComponent extends Component {
               <Text style={styles.notify_item_title}>{sub_string(item.title, 60)}</Text>
               <View style={styles.notify_item_time_box}>
                 <Text style={styles.notify_item_time}>
-                  <Icon name="clock-o" size={11} color="#666666" />
-                  {' ' + item.created + '    '}
-                  <Icon name="map-marker" size={12} color="#666666" />
-                  {' ' + item.shop_name}
+                  <Icon name="map-marker" size={10} color="#666666" />
+                  {' ' + item.shop_name + '    '}
+                  <Icon name="clock-o" size={10} color="#666666" />
+                  {' ' + item.created}
                 </Text>
               </View>
               <Text style={styles.notify_item_desc}>{sub_string(item.short_content, 60)}</Text>
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   notify_item_time: {
-    fontSize: 12,
+    fontSize: 10,
     color: "#666666"
   }
 });

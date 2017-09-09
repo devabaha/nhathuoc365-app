@@ -82,6 +82,8 @@ export default class NotifyItemComponent extends Component {
             <View style={styles.store_result_item_content_box}>
               <Text style={styles.store_result_item_title}>{item.title}</Text>
               <Text style={styles.store_result_item_create}>
+                <Icon name="map-marker" size={10} color="#666666" />
+                {' ' + item.shop_name + '    '}
                 <Icon name="clock-o" size={10} color="#666666" />
                 {' ' + item.created}
               </Text>
@@ -103,10 +105,11 @@ const styles = StyleSheet.create({
   },
   store_result_item: {
     backgroundColor: "#ffffff",
-    paddingVertical: 4,
+    paddingTop: 4,
+    paddingBottom: 10,
     paddingHorizontal: 15,
     flexDirection: 'row',
-    minHeight: 104
+    minHeight: 104,
   },
   store_result_item_active: {
     backgroundColor: "#f1f1f1"
