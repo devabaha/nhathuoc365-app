@@ -21,6 +21,9 @@ import { FormInput } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import {reaction} from 'mobx';
 
+// components
+import RightButtonCall from '../RightButtonCall';
+
 const _CHAT_KEY = 'ChatKey';
 
 @observer
@@ -31,6 +34,7 @@ export default class Chat extends Component {
     this.state = {
       content: '',
       store_id: props.store_id || store.store_id,
+      tel: props.tel || null,
       data: [],
       loading: true
     }
@@ -53,6 +57,20 @@ export default class Chat extends Component {
     store.updateNotifyFlag = true;
   }
 
+  _renderRightButton() {
+    if (this.state.tel == null) {
+      return null;
+    }
+
+    return(
+      <View style={styles.right_btn_box}>
+        <RightButtonCall
+          tel={this.state.tel}
+        />
+      </View>
+    );
+  }
+
   componentDidMount() {
     store.updateNotifyFlag = false;
 
@@ -60,6 +78,7 @@ export default class Chat extends Component {
 
     Actions.refresh({
       title: this.props.title || store.store_data.name,
+      renderRightButton: this._renderRightButton.bind(this),
       onBack: () => {
         this._unMount();
 
@@ -429,5 +448,9 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
     alignItems: "center"
+  },
+
+  right_btn_box: {
+    flexDirection: 'row'
   }
 });

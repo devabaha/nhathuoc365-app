@@ -50,7 +50,9 @@ export default class ItemList extends Component {
       store.setStoreData(item);
     })();
 
-    Actions.chat();
+    Actions.chat({
+      tel: item.tel
+    });
   }
 
   render() {
@@ -58,7 +60,7 @@ export default class ItemList extends Component {
     var {item} = this.props;
 
     var count_chat = parseInt(store.notify_chat[item.id]);
-    
+
     var is_chat_active = count_chat > 0;
     var is_orders_active = item.count_cart > 0;
 

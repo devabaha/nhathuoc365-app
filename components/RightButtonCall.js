@@ -12,9 +12,10 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../store/Store';
+import Communications from 'react-native-communications';
 
 @observer
-export default class RightButtonChat extends Component {
+export default class RightButtonCall extends Component {
   render() {
     var store_id = this.props.store_id || store.store_id;
     var count_chat = parseInt(store.notify_chat[store_id]);
@@ -23,14 +24,12 @@ export default class RightButtonChat extends Component {
       <TouchableHighlight
         underlayColor="transparent"
         onPress={() => {
-          Actions.chat({
-            store_id: this.props.store_id || undefined,
-            title: this.props.title || undefined,
-            tel: this.props.tel || undefined
-          });
+          if (this.props.tel) {
+            Communications.phonecall(this.props.tel, true);
+          }
         }}>
         <View style={styles.right_btn_add_store}>
-          <Icon name="commenting" size={20} color="#ffffff" />
+          <Icon name="phone" size={20} color="#ffffff" />
           {count_chat > 0 && (
             <View style={styles.stores_info_action_notify}>
               <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text>

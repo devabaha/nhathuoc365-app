@@ -105,10 +105,10 @@ const reducerCreate = params => {
 
 export default class App extends Component {
   componentWillMount() {
-    OneSignal.addEventListener('received', this._onReceived);
-    OneSignal.addEventListener('opened', this._onOpened);
-    OneSignal.addEventListener('registered', this._onRegistered);
-    OneSignal.addEventListener('ids', this._onIds);
+    OneSignal.addEventListener('received', this._onReceived.bind(this));
+    OneSignal.addEventListener('opened', this._onOpened.bind(this));
+    OneSignal.addEventListener('registered', this._onRegistered.bind(this));
+    OneSignal.addEventListener('ids', this._onIds.bind(this));
   }
 
   _onReceived(notify) {
@@ -121,46 +121,46 @@ export default class App extends Component {
     // console.log('isActive: ', openResult.notify.isAppInFocus);
     // console.log('openResult: ', openResult);
 
-    var data = openResult.notify.payload.additionalData;
-    if (data) {
-      // clear timer
-      Store.runStoreUnMount();
-
-      var {page, page_id} = data;
-
-      // go home screen
-      Actions.myTabBar({
-        type: ActionConst.RESET
-      });
-
-      // reload home screen
-      action(() => {
-        Store.setRefreshHomeChange(Store.refresh_home_change + 1);
-      })();
-
-      if (page) {
-        setTimeout(() => {
-
-          switch (page) {
-            case 'store':
-              if (page_id) {
-                this._pushGoStore(page_id);
-              }
-              break;
-            case '_main_notify':
-              this._goMainNotify();
-              break;
-            case 'payment':
-
-              break;
-            case 'orders':
-
-              break;
-          }
-
-        }, 1000);
-      }
-    }
+    // var data = openResult.notify.payload.additionalData;
+    // if (data) {
+    //   var {page, page_id} = data;
+    //
+    //   if (page) {
+    //     // clear timer
+    //     Store.runStoreUnMount();
+    //
+    //     // go home screen
+    //     Actions.myTabBar({
+    //       type: ActionConst.RESET
+    //     });
+    //
+    //     // reload home screen
+    //     action(() => {
+    //       Store.setRefreshHomeChange(Store.refresh_home_change + 1);
+    //     })();
+    //
+    //     setTimeout(() => {
+    //
+    //       switch (page) {
+    //         case 'store':
+    //           if (page_id) {
+    //             this._pushGoStore(page_id);
+    //           }
+    //           break;
+    //         case '_main_notify':
+    //           this._goMainNotify();
+    //           break;
+    //         case 'payment':
+    //
+    //           break;
+    //         case 'orders':
+    //
+    //           break;
+    //       }
+    //
+    //     }, 1000);
+    //   }
+    // }
   }
 
   async _pushGoStore(page_id) {

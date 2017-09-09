@@ -225,7 +225,9 @@ export default class Stores extends Component {
     return(
       <View style={styles.right_btn_box}>
         <RightButtonOrders />
-        <RightButtonChat />
+        <RightButtonChat
+          tel={store.store_data.tel}
+         />
       </View>
     );
   }
