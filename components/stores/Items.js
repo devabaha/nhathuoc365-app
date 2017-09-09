@@ -119,7 +119,8 @@ export default class Items extends Component {
             onPress={this._addCart.bind(this, item)}>
             <View style={{
               width: '100%',
-              height: '100%'
+              height: '100%',
+              marginTop: -8
             }}>
               {this.state.buying ? (
                 <Indicator size="small" />
