@@ -360,9 +360,9 @@ export default class CartFooter extends Component {
 
             {isset_cart && (
               <Text style={{
-                fontSize: 12,
+                fontSize: 14,
                 color: "#ffffff",
-                fontWeight: '500'
+                fontWeight: '600'
               }}>{cart_data.total}</Text>
             )}
           </View>

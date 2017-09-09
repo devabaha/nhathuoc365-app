@@ -17,9 +17,6 @@ import Communications from 'react-native-communications';
 @observer
 export default class RightButtonCall extends Component {
   render() {
-    var store_id = this.props.store_id || store.store_id;
-    var count_chat = parseInt(store.notify_chat[store_id]);
-
     return (
       <TouchableHighlight
         underlayColor="transparent"
@@ -30,11 +27,6 @@ export default class RightButtonCall extends Component {
         }}>
         <View style={styles.right_btn_add_store}>
           <Icon name="phone" size={20} color="#ffffff" />
-          {count_chat > 0 && (
-            <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text>
-            </View>
-          )}
         </View>
       </TouchableHighlight>
     );

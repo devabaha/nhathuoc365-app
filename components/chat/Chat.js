@@ -88,6 +88,9 @@ export default class Chat extends Component {
 
     store.pushBack = this._unMount.bind(this);
 
+    // chat handler
+    this._getData();
+
     var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
 
     storage.load({
