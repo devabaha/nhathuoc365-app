@@ -161,6 +161,7 @@ class Store {
   @observable cart_item_index = 0;
   @observable payment_nav_show = true;
   @observable user_cart_note = '';
+  noteHighlight = true;
 
   @action setUserCartNote(data) {
     this.user_cart_note = data;
@@ -178,6 +179,7 @@ class Store {
     this.cart_item_index = 0;
     this.payment_nav_show = true;
     this.user_cart_note = '';
+    this.noteHighlight = true;
   }
 
   // set cart data on display

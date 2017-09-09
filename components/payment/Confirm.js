@@ -12,7 +12,8 @@ import {
   TextInput,
   Clipboard,
   Keyboard,
-  Alert
+  Alert,
+  Animated
 } from 'react-native';
 
 // library
@@ -40,6 +41,13 @@ export default class Confirm extends Component {
      address_height: 50,
      continue_loading: false,
      data: null
+    }
+  }
+
+  componentWillMount() {
+    if (store.noteHighlight) {
+      this.animatedValue = new Animated.Value(0);
+      store.noteHighlight = false;
     }
   }
 
@@ -343,6 +351,15 @@ export default class Confirm extends Component {
     Actions.pop();
   }
 
+  _onLayout() {
+    if (this.animatedValue) {
+      Animated.timing(this.animatedValue, {
+        toValue: 150,
+        duration: 3000
+      }).start();
+    }
+  }
+
   render() {
     var {single} = this.state;
 
@@ -381,6 +398,27 @@ export default class Confirm extends Component {
           <Indicator />
         </View>
       );
+    }
+
+    // animation
+    var interpolateColor, interpolateColor2, animatedStyle, animatedStyle2;
+
+    if (this.animatedValue) {
+      interpolateColor = this.animatedValue.interpolate({
+        inputRange: [0, 150],
+        outputRange: [hexToRgbA(DEFAULT_COLOR, 0.8), hexToRgbA("#ffffff", 1)]
+      });
+      interpolateColor2 = this.animatedValue.interpolate({
+        inputRange: [0, 150],
+        outputRange: [hexToRgbA("#ffffff", 1), hexToRgbA("#000000", 1)]
+      });
+
+      animatedStyle = {
+        backgroundColor: interpolateColor
+      }
+      animatedStyle2 = {
+        // color: interpolateColor2
+      }
     }
 
     return (
@@ -522,10 +560,12 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
+          <Animated.View
+            onLayout={this._onLayout.bind(this)}
+            style={[styles.rows, styles.borderBottom, styles.mt8, animatedStyle]}>
             <View style={styles.box_icon_label}>
               <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
-              <Text style={styles.input_label}>Ghi chú</Text>
+              <Animated.Text style={[styles.input_label, animatedStyle2]}>Ghi chú</Animated.Text>
             </View>
             {single ? (
               <View>
@@ -553,7 +593,7 @@ export default class Confirm extends Component {
             ) : (
               <Text style={styles.input_note_value}>{cart_data.user_note || "Không có ghi chú"}</Text>
             )}
-          </View>
+          </Animated.View>
 
           <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
             <View style={styles.address_name_box}>

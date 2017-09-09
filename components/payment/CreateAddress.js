@@ -74,6 +74,12 @@ export default class CreateAddress extends Component {
     Keyboard.dismiss();
   }
 
+  _reloadParent() {
+    if (this.props.addressReload) {
+      this.props.addressReload(450);
+    }
+  }
+
   _onSave() {
     var {name, tel, address, default_flag} = this.state;
 
@@ -158,9 +164,7 @@ export default class CreateAddress extends Component {
             })();
           }
 
-          if (this.props.addressReload) {
-            this.props.addressReload(450);
-          }
+          this._reloadParent();
 
           if (this.props.redirect == 'confirm') {
             Actions.confirm({
@@ -222,7 +226,7 @@ export default class CreateAddress extends Component {
         action(() => {
           store.setCartData(response.data);
           // auto reload address list
-          store.setAddressKeyChange(store.address_key_change + 1);
+          this._reloadParent();
         })();
 
         Actions.pop();
@@ -345,14 +349,18 @@ export default class CreateAddress extends Component {
             </View>
           </View>
 
-          {/*edit_mode && (
+          {edit_mode && (
             <TouchableHighlight
               underlayColor="transparent"
               onPress={this._confirmDeleteAddress.bind(this)}
-              style={[styles.input_box, {marginTop: 12}]}>
+              style={[styles.input_box, {
+                marginTop: 12,
+                borderTopWidth: Util.pixel,
+                borderColor: "#dddddd"
+              }]}>
               <Text style={[styles.input_label, {color: "red"}]}>Xoá địa chỉ này</Text>
             </TouchableHighlight>
-          )*/}
+          )}
         </ScrollView>
 
         <TouchableHighlight

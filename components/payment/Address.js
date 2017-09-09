@@ -37,7 +37,23 @@ export default class Address extends Component {
   }
 
   componentDidMount() {
+    Actions.refresh({
+      renderRightButton: this._renderRightButton.bind(this)
+    });
+
     this._getData();
+  }
+
+  // render button trên navbar
+  _renderRightButton() {
+    return(
+      <TouchableHighlight
+        style={styles.right_btn_add_store}
+        underlayColor="transparent"
+        onPress={this._createNew.bind(this)}>
+        <Icon name="plus" size={20} color="#ffffff" />
+      </TouchableHighlight>
+    );
   }
 
   // get list address

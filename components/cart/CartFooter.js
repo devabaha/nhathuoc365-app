@@ -179,7 +179,7 @@ export default class CartFooter extends Component {
           <Image style={styles.store_cart_item_image} source={{uri: item.image}} />
         </View>
         <View style={styles.store_cart_item_title_box}>
-          <Text style={styles.store_cart_item_title}>{item.name}</Text>
+          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 18)}</Text>
           <Text style={styles.store_cart_item_price}>{item.price_view}</Text>
         </View>
 
@@ -455,8 +455,9 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   store_cart_item_price: {
-    fontSize: 10,
-    color: '#fa7f50'
+    fontSize: 12,
+    color: '#fa7f50',
+    fontWeight: '500'
   },
   store_cart_calculator: {
     position: 'absolute',
