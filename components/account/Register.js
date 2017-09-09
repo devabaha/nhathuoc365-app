@@ -173,7 +173,7 @@ export default class Register extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_register');
       } finally {
 
       }
@@ -380,8 +380,7 @@ export default class Register extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
-
+        console.warn(e + ' user_verify_otp');
       } finally {
         this.setState({
           verify_loadding: false

@@ -53,7 +53,7 @@ export default class Notifys extends Component {
         }, delay || 0);
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_news_list');
     } finally {
 
     }

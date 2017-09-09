@@ -49,7 +49,7 @@ export default class NotifyItem extends Component {
           }, delay || 0);
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_news');
       } finally {
 
       }

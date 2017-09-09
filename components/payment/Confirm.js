@@ -79,7 +79,7 @@ export default class Confirm extends Component {
         });
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_by_id');
     } finally {
 
     }
@@ -118,7 +118,7 @@ export default class Confirm extends Component {
           }
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_node');
       } finally {
         this.setState({
           continue_loading: false
@@ -168,7 +168,7 @@ export default class Confirm extends Component {
           }
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_orders');
       } finally {
 
       }
@@ -279,7 +279,7 @@ export default class Confirm extends Component {
         }, this._delay());
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_remove');
     } finally {
       this.cartItemConfirmRemove = undefined;
     }
@@ -819,7 +819,11 @@ class ItemCartComponent extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        if (item.selected == 1) {
+          console.warn(e + ' site_cart_unselect');
+        } else {
+          console.warn(e + ' site_cart_select');
+        }
       } finally {
         this.setState({
           check_loading: false
@@ -853,7 +857,7 @@ class ItemCartComponent extends Component {
 
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_down');
       } finally {
         this.setState({
           decrement_loading: false
@@ -877,7 +881,7 @@ class ItemCartComponent extends Component {
 
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_up');
       } finally {
         this.setState({
           increment_loading: false

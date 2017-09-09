@@ -73,7 +73,7 @@ export default class CartFooter extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart');
     } finally {
       this.setState({
         loading: false
@@ -109,7 +109,7 @@ export default class CartFooter extends Component {
 
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_down');
       } finally {
 
       }
@@ -133,7 +133,7 @@ export default class CartFooter extends Component {
 
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_up');
       } finally {
 
       }
@@ -179,7 +179,7 @@ export default class CartFooter extends Component {
           <Image style={styles.store_cart_item_image} source={{uri: item.image}} />
         </View>
         <View style={styles.store_cart_item_title_box}>
-          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 18)}</Text>
+          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 16)}</Text>
           <Text style={styles.store_cart_item_price}>{item.price_view}</Text>
         </View>
 

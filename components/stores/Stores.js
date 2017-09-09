@@ -143,7 +143,7 @@ export default class Stores extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_info');
     } finally {
 
     }
@@ -217,14 +217,16 @@ export default class Stores extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_category_product');
     }
   }
 
   _renderRightButton() {
     return(
       <View style={styles.right_btn_box}>
-        <RightButtonOrders />
+        <RightButtonOrders
+          tel={store.store_data.tel}
+         />
         <RightButtonChat
           tel={store.store_data.tel}
          />
@@ -419,7 +421,7 @@ export default class Stores extends Component {
         }, 450);
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_remove');
     } finally {
       this.cartItemConfirmRemove = undefined;
     }

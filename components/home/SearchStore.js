@@ -115,7 +115,7 @@ export default class SearchStore extends Component {
         });
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_add_store');
     } finally {
       this._add_store_handler = false;
     }
@@ -151,7 +151,7 @@ export default class SearchStore extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_search_store');
       } finally {
       }
     });

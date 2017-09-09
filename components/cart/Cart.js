@@ -85,7 +85,7 @@ export default class Cart extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart');
     } finally {
 
     }
@@ -153,7 +153,7 @@ export default class Cart extends Component {
 
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_down');
     } finally {
 
     }
@@ -171,7 +171,7 @@ export default class Cart extends Component {
 
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_up');
     } finally {
 
     }
@@ -218,7 +218,7 @@ export default class Cart extends Component {
         }, this._delay());
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_remove');
     } finally {
       this.cartItemConfirmRemove = undefined;
     }

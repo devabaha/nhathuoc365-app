@@ -92,7 +92,7 @@ export default class StoreOrders extends Component {
         });
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_list');
     } finally {
 
     }

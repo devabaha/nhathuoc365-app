@@ -78,7 +78,7 @@ export default class StoresList extends Component {
           }, delay || this._delay());
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_sites');
       } finally {
 
       }

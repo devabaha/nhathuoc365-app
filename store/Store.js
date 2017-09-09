@@ -24,7 +24,9 @@ class Store {
     this.getNotifyChatFlag = true;
     this.updateNotifyFlag = true;
 
-    setInterval(() => {
+    // Get notice repeat
+    clearInterval(this._timeGetNotify);
+    this._timeGetNotify = setInterval(() => {
       if (this.getNotifyFlag) {
         this.getNoitify();
       }
@@ -43,7 +45,7 @@ class Store {
         })();
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_notify');
     } finally {
       this.getNotifyFlag = true;
 
@@ -66,7 +68,7 @@ class Store {
         })();
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_notify_chat');
     } finally {
       this.getNotifyChatFlag = true;
     }

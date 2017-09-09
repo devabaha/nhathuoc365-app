@@ -118,7 +118,7 @@ export default class Home extends Component {
           })();
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_login');
       }
     });
   }
@@ -152,7 +152,7 @@ export default class Home extends Component {
           }, delay || 0);
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_home');
       } finally {
 
       }

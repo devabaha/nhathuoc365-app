@@ -176,7 +176,7 @@ export default class CreateAddress extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_add_address');
       } finally {
 
       }
@@ -200,7 +200,7 @@ export default class CreateAddress extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart');
     } finally {
 
     }
@@ -232,7 +232,7 @@ export default class CreateAddress extends Component {
         Actions.pop();
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_delete_address');
     } finally {
 
     }

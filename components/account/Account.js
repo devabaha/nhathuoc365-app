@@ -206,7 +206,7 @@ export default class Account extends Component {
                 });
               }
           }).catch((error) => {
-              console.warn(error);
+              console.warn(error + ' url_user_add_avatar');
           });
         });
 
@@ -280,7 +280,7 @@ export default class Account extends Component {
           }, delay || 0);
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_login');
       }
     });
   }
@@ -457,7 +457,7 @@ export default class Account extends Component {
                 })();
               }
             } catch (e) {
-              console.warn(e);
+              console.warn(e + ' user_logout');
             } finally {
               this.setState({
                 logout_loading: false

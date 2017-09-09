@@ -178,7 +178,7 @@ export default class Login extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' user_login_password');
       } finally {
 
       }

@@ -22,7 +22,8 @@ export default class RightButtonOrders extends Component {
         onPress={() => {
           Actions.store_orders({
             store_id: this.props.store_id || undefined,
-            title: this.props.title || undefined
+            title: this.props.title || undefined,
+            tel: this.props.tel || undefined
           });
         }}>
         <View style={styles.right_btn_add_store}>

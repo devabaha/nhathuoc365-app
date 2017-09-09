@@ -80,7 +80,7 @@ export default class Address extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_address');
     } finally {
 
     }
@@ -115,7 +115,7 @@ export default class Address extends Component {
           this._goConfirm();
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_address');
       } finally {
 
       }

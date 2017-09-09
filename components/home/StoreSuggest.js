@@ -34,7 +34,7 @@ export default class StoreSuggest extends Component {
         });
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_list_site');
     } finally {
 
     }

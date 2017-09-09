@@ -164,7 +164,7 @@ export default class Search extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' search_product');
       }
     });
   }
@@ -379,7 +379,7 @@ export default class Search extends Component {
 
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_remove');
     } finally {
       this.cartItemConfirmRemove = undefined;
     }

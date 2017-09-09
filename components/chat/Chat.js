@@ -185,7 +185,7 @@ export default class Chat extends Component {
           }
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_load_chat');
       } finally {
         this.setState({
           finish: true
@@ -224,7 +224,7 @@ export default class Chat extends Component {
         });
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_send_chat');
     } finally {
 
     }

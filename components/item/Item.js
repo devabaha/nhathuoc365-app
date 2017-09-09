@@ -152,7 +152,7 @@ export default class Item extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_product');
     } finally {
 
     }
@@ -214,7 +214,7 @@ export default class Item extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_adding');
       } finally {
 
       }
@@ -248,7 +248,7 @@ export default class Item extends Component {
           });
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_like');
       } finally {
 
       }
@@ -534,7 +534,7 @@ export default class Item extends Component {
         }, 450);
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_remove');
     } finally {
       this.cartItemConfirmRemove = undefined;
     }
@@ -570,13 +570,11 @@ export default class Item extends Component {
 const html_styles = StyleSheet.create({
   div: {
     color: "#404040",
-    fontSize: 14,
-    lineHeight: 24
+    fontSize: 14
   },
   p: {
     color: "#404040",
-    fontSize: 14,
-    lineHeight: 24
+    fontSize: 14
   },
   a: {
     fontWeight: '300',
