@@ -40,7 +40,9 @@ export default class Item extends Component {
      item: props.item,
      item_data: null,
      loading: true,
-     buying: false
+     buying: false,
+     like_loading: true,
+     like_flag: false
     }
 
     this._getData = this._getData.bind(this);
@@ -108,8 +110,10 @@ export default class Item extends Component {
 
         this.setState({
           item_data: data,
+          like_flag: data.like_flag,
           loading: false,
-          refreshing: false
+          refreshing: false,
+          like_loading: false
         });
       }, delay || this._delay());
     }).catch(err => {
@@ -132,8 +136,10 @@ export default class Item extends Component {
 
           this.setState({
             item_data: response.data,
+            like_flag: response.data.like_flag,
             loading: false,
-            refreshing: false
+            refreshing: false,
+            like_loading: false
           }, () => {
             // cache in five minutes
             storage.save({
@@ -215,9 +221,32 @@ export default class Item extends Component {
     });
   }
 
+  _likeHandler(item) {
+    this.setState({
+      like_loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.site_like(store.store_id, item.id, item.like_flag == true);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({
+            like_flag: response.data.like_flag,
+            like_loading: false
+          });
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+
+      }
+    });
+  }
+
   render() {
-    var {item, item_data, buying} = this.state;
+    var {item, item_data, buying, like_loading, like_flag} = this.state;
     var {cart_data, cart_products} = store;
+
+    var is_like = like_flag == 1;
 
     return (
       <View style={styles.container}>
@@ -272,11 +301,27 @@ export default class Item extends Component {
 
             <View style={styles.item_actions_box}>
               <TouchableHighlight
-                onPress={() => 1}
+                onPress={this._likeHandler.bind(this, item)}
                 underlayColor="transparent">
-                <View style={[styles.item_actions_btn, styles.item_actions_btn_chat]}>
-                  <Icon name="heart" size={20} color={DEFAULT_COLOR} />
-                  <Text style={[styles.item_actions_title, styles.item_actions_title_chat]}>Yêu thích</Text>
+                <View style={[styles.item_actions_btn, styles.item_actions_btn_chat, {
+                  borderColor: is_like ? "#e31b23" : DEFAULT_COLOR,
+                  backgroundColor: is_like ? "#e31b23" : "#ffffff"
+                }]}>
+                  <View style={{
+                    height: '100%',
+                    minWidth: 20,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}>
+                    {like_loading ? (
+                      <Indicator size="small" />
+                    ) : (
+                      <Icon name="heart" size={20} color={is_like ? "#ffffff" : DEFAULT_COLOR} />
+                    )}
+                  </View>
+                  <Text style={[styles.item_actions_title, styles.item_actions_title_chat, {
+                    color: is_like ? "#ffffff" : DEFAULT_COLOR
+                  }]}>{is_like ? "Đã thích" : "Yêu thích"}</Text>
                 </View>
               </TouchableHighlight>
 

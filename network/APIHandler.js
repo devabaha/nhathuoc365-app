@@ -324,6 +324,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * line & unlike for products
+  */
+  async site_like(store_id, product_id, flag) {
+    var api = url_for(API.SITE_LIKE + '/' + store_id + '/' + product_id + '/' + flag);
+    return await this.getAPI(api);
+  }
+
 
 
 

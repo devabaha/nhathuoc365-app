@@ -8,6 +8,7 @@
 
 // Sites
 exports.USER_LOGIN = MY_FOOD_API + 'apiUser/login';
+exports.SITE_LIKE = MY_FOOD_API + 'apiSite/like';
 
 // Home
 exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
