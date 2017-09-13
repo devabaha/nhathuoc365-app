@@ -86,7 +86,7 @@ export default class MainNotify extends Component {
   }
 
   componentWillReceiveProps() {
-    // this._getData();
+    store.parentTab = '_main_notify';
 
     if (this.state.finish && store.is_stay_main_notify) {
       if (this.state.scrollTop == 0) {

@@ -332,6 +332,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Xoá site
+  */
+  async user_remove_site(store_id) {
+    var api = url_for(API.USER_REMOVE_SITE + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
 
 
 

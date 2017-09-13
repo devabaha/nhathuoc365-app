@@ -21,6 +21,7 @@ exports.SITE_INFO = MY_FOOD_API + 'apiSite/info';
 exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
 exports.SEARCH_PRODUCT = MY_FOOD_API + 'apiSite/search_product';
 exports.USER_SITES = MY_FOOD_API + 'apiUser/sites';
+exports.USER_REMOVE_SITE = MY_FOOD_API + 'apiUser/remove_site';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';

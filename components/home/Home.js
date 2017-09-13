@@ -29,8 +29,9 @@ import TabTutorial from '../tutorial/TabTutorial';
 
 @observer
 export default class Home extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+
     this.state = {
       stores_data: null,
       refreshing: false,
@@ -62,6 +63,8 @@ export default class Home extends Component {
   }
 
   componentWillReceiveProps() {
+    store.parentTab = '_home';
+    
     this._closePopup();
 
     store.getNoitify();

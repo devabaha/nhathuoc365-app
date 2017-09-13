@@ -83,10 +83,7 @@ export default class Stores extends Component {
   }
 
   _unMount() {
-    // reload home screen
-    action(() => {
-      store.setRefreshHomeChange(store.refresh_home_change + 1);
-    })();
+    
   }
 
   // thời gian trễ khi chuyển màn hình

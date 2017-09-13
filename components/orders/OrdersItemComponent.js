@@ -44,6 +44,19 @@ export default class OrdersItemComponent extends Component {
   }
 
   _paymentHandler(item) {
+    action(() => {
+      store.setStoreData({
+        id: item.site_id,
+        name: item.shop_name
+      });
+    })();
+
+    Actions.stores({
+      title: item.shop_name
+    });
+
+    return;
+
     if (store.cart_data && store.cart_data.address_id == 0) {
       Actions.create_address({
         redirect: 'confirm'

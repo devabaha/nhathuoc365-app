@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableHighlight,
   Image,
+  Alert
 } from 'react-native';
 
 // library
@@ -39,7 +40,8 @@ export default class ItemList extends Component {
             title: item.name,
             type: ActionConst.REPLACE
           });
-        }
+        },
+        tel: item.tel
       });
     })();
   }
@@ -55,6 +57,50 @@ export default class ItemList extends Component {
     });
   }
 
+  _showOptions(item) {
+    // Works on both iOS and Android
+    Alert.alert(
+      item.name,
+      null,
+      [
+        {text: 'Xoá cửa hàng', onPress: this._removeStore.bind(this, item), style: 'destructive'},
+
+        {text: 'Huỷ', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+      ],
+      { cancelable: false }
+    );
+  }
+
+  _removeStore(item) {
+    Alert.alert(
+      'Xoá cửa hàng',
+      'Bạn sẽ không nhận được thông báo khuyến mãi từ cửa hàng này nữa.',
+      [
+        {text: 'Xoá cửa hàng', onPress: async () => {
+
+          try {
+            var response = await APIHandler.user_remove_site(item.site_code);
+
+            if (response && response.status == STATUS_SUCCESS) {
+              action(() => {
+                store.setRefreshHomeChange(store.refresh_home_change + 1);
+              })();
+            }
+
+          } catch (e) {
+            console.warn(e + ' user_remove_site');
+          } finally {
+
+          }
+
+        }, style: 'destructive'},
+
+        {text: 'Huỷ', onPress: () => false, style: 'cancel'},
+      ],
+      { cancelable: false }
+    );
+  }
+
   render() {
 
     var {item} = this.props;
@@ -67,6 +113,7 @@ export default class ItemList extends Component {
     return (
       <TouchableHighlight
         underlayColor="transparent"
+        onLongPress={this._showOptions.bind(this, item)}
         onPress={this._goStores.bind(this, item)}>
 
         <View style={[styles.store_result_item, styles.store_result_item_active]}>

@@ -52,7 +52,7 @@ export default class Orders extends Component {
   }
 
   componentWillReceiveProps() {
-    // this._getData();
+    store.parentTab = '_orders';
 
     if (this.state.finish && store.is_stay_orders) {
       if (this.state.scrollTop == 0) {

@@ -1,4 +1,4 @@
-package com.my_food;
+package vn.com.myfood;
 
 import android.app.Application;
 
@@ -7,6 +7,7 @@ import com.imagepicker.ImagePickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
+import vn.com.myfood.BuildConfig;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;

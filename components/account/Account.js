@@ -223,6 +223,8 @@ export default class Account extends Component {
   }
 
   componentWillReceiveProps() {
+    store.parentTab = '_account';
+    
     store.getNoitify();
 
     if (this.state.finish && store.is_stay_account) {

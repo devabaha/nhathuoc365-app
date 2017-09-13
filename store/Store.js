@@ -182,10 +182,22 @@ class Store {
     this.payment_nav_show = true;
     this.user_cart_note = '';
     this.noteHighlight = true;
+
+    // reload home screen
+    action(() => {
+      this.setRefreshHomeChange(this.refresh_home_change + 1);
+    })();
   }
 
   // set cart data on display
   @action setCartData(data) {
+    if (this.cart_data == null) {
+      // reload home screen
+      action(() => {
+        this.setRefreshHomeChange(this.refresh_home_change + 1);
+      })();
+    }
+
     this.cart_data = data;
 
     // object to array and reverse stack

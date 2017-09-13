@@ -301,6 +301,11 @@ export default class Register extends Component {
           ref={ref => this.refs_modal_verify = ref}>
 
           <Text style={styles.verify_title}>NHẬP MÃ XÁC THỰC</Text>
+          <Text style={styles.verify_desc}>Mã xác thực đang được gửi tới số điện thoại
+            <Text style={{
+              fontWeight: '500'
+            }}>{'\n' + this.state.tel}</Text>
+          </Text>
 
           <TextInput
             ref={ref => {
@@ -310,7 +315,7 @@ export default class Register extends Component {
               }
             }}
             style={styles.input_text_verify}
-            keyboardType="default"
+            keyboardType="numeric"
             maxLength={100}
             placeholder="Điền mã xác thực"
             placeholderTextColor="#999999"
@@ -348,7 +353,7 @@ export default class Register extends Component {
   }
 
   _onVerify() {
-    if (this.successfully || this.state.verify_loadding) {
+    if (this.successfully2 || this.state.verify_loadding) {
       return;
     }
 
@@ -362,7 +367,7 @@ export default class Register extends Component {
         });
 
         if (response && response.status == STATUS_SUCCESS) {
-          this.successfully = true;
+          this.successfully2 = true;
 
           action(() => {
             this._unMount();
@@ -394,7 +399,7 @@ export default class Register extends Component {
 const styles = StyleSheet.create({
   modal: {
     width: '90%',
-    height: 169,
+    height: 210,
     borderRadius: 2,
     marginTop: -NAV_HEIGHT,
     alignItems: 'center'
@@ -402,6 +407,12 @@ const styles = StyleSheet.create({
   verify_title: {
     fontSize: 14,
     marginTop: 16
+  },
+  verify_desc: {
+    marginTop: 8,
+    fontSize: 12,
+    paddingHorizontal: 16,
+    color: "#666666"
   },
   input_text_verify: {
     borderWidth: Util.pixel,
