@@ -220,11 +220,13 @@ export default class Account extends Component {
       finish: true
     });
     store.is_stay_account = true;
+
+    store.parentTab = '_account';
   }
 
   componentWillReceiveProps() {
     store.parentTab = '_account';
-    
+
     store.getNoitify();
 
     if (this.state.finish && store.is_stay_account) {
@@ -274,6 +276,8 @@ export default class Account extends Component {
           setTimeout(() => {
             action(() => {
               store.setUserInfo(response.data);
+
+              store.setOrdersKeyChange(store.orders_key_change + 1);
 
               this.setState({
                 refreshing: false
@@ -436,13 +440,13 @@ export default class Account extends Component {
 
   _onLogout() {
     Alert.alert(
-      'Thông báo',
-      'Bạn chắc chắn muốn đăng xuất?',
+      'Lưu ý khi đăng xuất',
+      'Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.',
       [
-        {text: 'Không', onPress: () => {
+        {text: 'Huỷ', onPress: () => {
 
         }},
-        {text: 'Có', onPress: () => {
+        {text: 'Đăng xuất', onPress: () => {
           this.setState({
             logout_loading: true
           }, async () => {
@@ -456,6 +460,8 @@ export default class Account extends Component {
                   store.resetCartData();
 
                   store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+                  store.setOrdersKeyChange(store.orders_key_change + 1);
                 })();
               }
             } catch (e) {
@@ -466,7 +472,7 @@ export default class Account extends Component {
               });
             }
           });
-        }}
+        }, style: "destructive"}
       ],
       { cancelable: false }
     );

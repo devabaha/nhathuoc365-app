@@ -60,11 +60,12 @@ export default class Home extends Component {
 
     this._login();
 
+    store.parentTab = '_home';
   }
 
   componentWillReceiveProps() {
     store.parentTab = '_home';
-    
+
     this._closePopup();
 
     store.getNoitify();

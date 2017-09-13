@@ -83,6 +83,8 @@ export default class MainNotify extends Component {
     this._getData();
 
     store.is_stay_main_notify = true;
+
+    store.parentTab = '_main_notify';
   }
 
   componentWillReceiveProps() {

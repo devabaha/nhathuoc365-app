@@ -83,7 +83,7 @@ export default class Stores extends Component {
   }
 
   _unMount() {
-    
+
   }
 
   // thời gian trễ khi chuyển màn hình

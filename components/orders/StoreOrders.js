@@ -151,8 +151,10 @@ export default class StoreOrders extends Component {
             renderItem={({item, index}) => {
               return(
                 <OrdersItemComponent
+                  hideContinue={this.props.hideContinue}
                   item={item}
                   from="store_orders"
+                  goStore={this.props.goStore}
                   />
               );
             }}

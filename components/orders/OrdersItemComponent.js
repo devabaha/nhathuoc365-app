@@ -47,13 +47,18 @@ export default class OrdersItemComponent extends Component {
     action(() => {
       store.setStoreData({
         id: item.site_id,
-        name: item.shop_name
+        name: item.shop_name,
+        tel: item.tel
       });
     })();
 
-    Actions.stores({
-      title: item.shop_name
-    });
+    if (store.parentTab == '_home' && !this.props.goStore) {
+      Actions.pop();
+    } else {
+      Actions.stores({
+        title: item.shop_name
+      });
+    }
 
     return;
 
@@ -164,7 +169,7 @@ export default class OrdersItemComponent extends Component {
               </View>
             </View>
 
-            {is_paymenting && (
+            {is_paymenting && !this.props.hideContinue && (
               <View style={{
                 flex: 1,
                 alignItems: 'center'

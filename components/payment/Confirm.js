@@ -46,7 +46,7 @@ export default class Confirm extends Component {
   }
 
   componentWillMount() {
-    if (store.noteHighlight) {
+    if (this.state.single && store.noteHighlight) {
       this.animatedValue = new Animated.Value(0);
       store.noteHighlight = false;
     }
@@ -328,6 +328,7 @@ export default class Confirm extends Component {
       Actions.orders_item({
         title: `Đơn hàng #${store.cart_data.cart_code}`,
         data: store.cart_data,
+        tel: store.store_data.tel,
         onBack
       });
 

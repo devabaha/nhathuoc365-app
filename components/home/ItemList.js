@@ -41,7 +41,8 @@ export default class ItemList extends Component {
             type: ActionConst.REPLACE
           });
         },
-        tel: item.tel
+        tel: item.tel,
+        goStore: true
       });
     })();
   }

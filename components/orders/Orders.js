@@ -49,6 +49,7 @@ export default class Orders extends Component {
     this._getData();
 
     store.is_stay_orders = true;
+    store.parentTab = '_orders';
   }
 
   componentWillReceiveProps() {
