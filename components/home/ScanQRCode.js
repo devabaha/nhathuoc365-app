@@ -30,8 +30,10 @@ export default class ScanQRCode extends Component {
           }}
           topContent={(
             <View style={styles.topContent}>
-              <Icon style={{marginTop: 2}} name="qrcode" size={24} color="#404040" />
-              <Text style={styles.centerText}>Hướng máy ảnh của bạn về phía mã QR Code để thêm Cửa hàng</Text>
+              <Text style={styles.centerText}>
+                <Icon name="info-circle" size={16} color="#404040" />
+                {" Hướng máy ảnh của bạn về phía mã QR Code để thêm Cửa hàng"}
+              </Text>
             </View>
           )}
         />
@@ -48,15 +50,15 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   topContent: {
-    paddingHorizontal: 25,
+    width: Util.size.width,
     paddingVertical: 16,
-    flexDirection: 'row',
     backgroundColor: "#cccccc"
   },
   centerText: {
     lineHeight: 20,
     fontSize: 16,
     color: "#404040",
-    marginLeft: 8
+    marginLeft: 8,
+    paddingHorizontal: 15
   }
 });
