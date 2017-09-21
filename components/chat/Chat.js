@@ -40,6 +40,7 @@ export default class Chat extends Component {
     }
 
     this.last_item_id = '';
+    this.chat_processing = false;
 
     this._getData = this._getData.bind(this);
     this._scrollToEnd = this._scrollToEnd.bind(this);
@@ -88,9 +89,6 @@ export default class Chat extends Component {
 
     store.pushBack = this._unMount.bind(this);
 
-    // chat handler
-    this._getData();
-
     var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
 
     storage.load({
@@ -122,10 +120,16 @@ export default class Chat extends Component {
       }, () => {
         this._scrollToEnd();
 
+        if (!this.chat_processing) {
+          this._getData();
+        }
+
         this._autoUpdate();
       });
     }).catch(err => {
-      this._getData();
+      if (!this.chat_processing) {
+        this._getData();
+      }
 
       this._autoUpdate();
     });
@@ -145,13 +149,15 @@ export default class Chat extends Component {
     clearInterval(this._updateTimer);
 
     this._updateTimer = setInterval(() => {
-      if (this.state.finish) {
+      if (this.state.finish && !this.chat_processing) {
         this._getData();
       }
     }, 3000);
   }
 
   _getData() {
+    this.chat_processing = true;
+
     this.setState({
       finish: false
     }, async () => {
@@ -190,6 +196,8 @@ export default class Chat extends Component {
         this.setState({
           finish: true
         });
+
+        this.chat_processing = false;
       }
     });
   }
@@ -217,7 +225,9 @@ export default class Chat extends Component {
       });
 
       if (response && response.status == STATUS_SUCCESS) {
-        this._getData();
+        if (!this.chat_processing) {
+          this._getData();
+        }
 
         this.setState({
           content: ''
@@ -266,10 +276,8 @@ export default class Chat extends Component {
                 }
 
                 // marginTop for last item
-                let last_item = this.state.data.length - 1 == index;
-                if (last_item) {
-                  this.last_item_id = item.id;
-                }
+                let last_item = data.length - 1 == index;
+                this.last_item_id = item.id;
 
                 if (item.admin_id == 0) {
                   return (

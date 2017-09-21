@@ -121,7 +121,7 @@ export default class Account extends Component {
           key: 6,
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Sản phẩm của MyFood - Phiên bản: 1.0.0",
+          desc: "Sản phẩm của MyFood - Phiên bản: " + DeviceInfo.getVersion(),
           onPress: () => 1,
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"

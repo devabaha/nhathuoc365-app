@@ -64,9 +64,8 @@ export default class ItemList extends Component {
       item.name,
       null,
       [
-        {text: 'Xoá cửa hàng', onPress: this._removeStore.bind(this, item), style: 'destructive'},
-
         {text: 'Huỷ', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+        {text: 'Xoá cửa hàng', onPress: this._removeStore.bind(this, item), style: 'destructive'}
       ],
       { cancelable: false }
     );
@@ -77,22 +76,25 @@ export default class ItemList extends Component {
       'Xoá cửa hàng',
       'Bạn sẽ không nhận được thông báo khuyến mãi từ cửa hàng này nữa.',
       [
-        {text: 'Xoá cửa hàng', onPress: async () => {
+        {text: 'Xoá cửa hàng', onPress: () => {
 
-          try {
-            var response = await APIHandler.user_remove_site(item.site_code);
+          this.props.that.setState({
+            loading: true
+          }, async () => {
+            try {
+              var response = await APIHandler.user_remove_site(item.site_code);
 
-            if (response && response.status == STATUS_SUCCESS) {
-              action(() => {
-                store.setRefreshHomeChange(store.refresh_home_change + 1);
-              })();
+              if (response && response.status == STATUS_SUCCESS) {
+                action(() => {
+                  store.setRefreshHomeChange(store.refresh_home_change + 1);
+                })();
+              }
+            } catch (e) {
+              console.warn(e + ' user_remove_site');
+            } finally {
+
             }
-
-          } catch (e) {
-            console.warn(e + ' user_remove_site');
-          } finally {
-
-          }
+          });
 
         }, style: 'destructive'},
 

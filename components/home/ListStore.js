@@ -32,7 +32,6 @@ export default class SearchStore extends Component {
       refreshing: false,
       searchValue: null,
       coppy_sticker_flag: false,
-      list_added: {},
       loading: true
     }
   }
@@ -102,37 +101,6 @@ export default class SearchStore extends Component {
     });
   }
 
-  // thực hiện add cửa hàng vào account của user
-  async _add_store(item) {
-    if (this._add_store_handler) {
-      return;
-    }
-    this._add_store_handler = true;
-
-    try {
-      var response = await APIHandler.user_add_store(item.site_code);
-
-      if (response && response.status == STATUS_SUCCESS) {
-        Keyboard.dismiss();
-
-        this.state.list_added[item.id] = true;
-
-        this.setState({
-          list_added: this.state.list_added
-        });
-
-        // reload home screen
-        action(() => {
-          store.setRefreshHomeChange(store.refresh_home_change + 1);
-        })();
-      }
-    } catch (e) {
-      console.warn(e + ' user_add_store');
-    } finally {
-      this._add_store_handler = false;
-    }
-  }
-
   // tìm cửa hàng theo mã CH
   async _search_store() {
 
@@ -162,14 +130,6 @@ export default class SearchStore extends Component {
       console.warn(e + ' user_search_store');
     } finally {
     }
-  }
-
-  _onRefresh() {
-    this.setState({refreshing: true});
-
-    setTimeout(() => {
-      this.setState({refreshing: false});
-    }, 1000);
   }
 
   // click chọn địa điểm gợi ý
@@ -220,56 +180,14 @@ export default class SearchStore extends Component {
               ItemSeparatorComponent={() => <View style={styles.separator}></View>}
               renderItem={({item, index}) => {
 
-                // check add status
-                let add_success = this.state.list_added[item.id] == true;
-                if (!add_success) {
-                  add_success = item.added == 1;
-                }
-
                 return(
-                  <TouchableHighlight
-                    underlayColor="transparent"
-                    onPress={() => {
-                      // Actions.stores({});
-                    }}>
-
-                    <View style={[styles.store_result_item, index < 3 ? styles.store_result_item_active : null]}>
-                      <View style={styles.store_result_item_image_box}>
-                        <Image style={styles.store_result_item_image} source={{uri: item.logo_url}} />
-                      </View>
-
-                      <View style={styles.store_result_item_content}>
-                        <View style={styles.store_result_item_content_box}>
-                          <Text style={styles.store_result_item_title}>{item.name}</Text>
-                          <Text style={styles.store_result_item_desc}>{item.address}</Text>
-
-                          <View style={styles.store_result_item_add_box}>
-                            <TouchableHighlight
-                              underlayColor="transparent"
-                              onPress={add_success ? null : this._add_store.bind(this, item)}>
-                              <View style={[styles.add_btn_icon_box, add_success && styles.add_btn_icon_box_active]}>
-                                {add_success ? (
-                                  <Icon name="check" size={14} color="#ffffff" />
-                                ) : (
-                                  <Text style={[styles.add_btn_icon]}>+</Text>
-                                )}
-                                <Text style={[styles.add_btn_label, add_success && styles.add_btn_label_active]}>{add_success ? "Đã thêm cửa hàng" : "Thêm cửa hàng"}</Text>
-                              </View>
-                            </TouchableHighlight>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
-                  </TouchableHighlight>
+                  <StoreItem
+                    item={item}
+                    index={index}
+                    />
                 );
               }}
               keyExtractor={item => item.id}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this._onRefresh.bind(this)}
-                />
-              }
             />
           ) : (
             <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
@@ -282,6 +200,106 @@ export default class SearchStore extends Component {
           message="Thêm Cửa Hàng thành công."
          />
       </View>
+    );
+  }
+}
+
+/* @flow */
+class StoreItem extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      add_success: false
+    }
+  }
+
+  // thực hiện add cửa hàng vào account của user
+  _add_store(item) {
+    if (this._add_store_handler) {
+      return;
+    }
+    this._add_store_handler = true;
+
+    this.setState({
+      add_loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.user_add_store(item.site_code);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          Keyboard.dismiss();
+
+          this.setState({
+            add_success: true
+          });
+
+          // reload home screen
+          action(() => {
+            store.setRefreshHomeChange(store.refresh_home_change + 1);
+          })();
+        }
+      } catch (e) {
+        console.warn(e + ' user_add_store');
+      } finally {
+        this._add_store_handler = false;
+
+        this.setState({
+          add_loading: false
+        });
+      }
+    });
+  }
+
+  render() {
+    var {item, index} = this.props;
+    var {add_success, add_loading} = this.state;
+    if (!add_success) {
+      add_success = item.added == 1;
+    }
+
+    return (
+      <TouchableHighlight
+        underlayColor="transparent"
+        onPress={() => {
+          // Actions.stores({});
+        }}>
+
+        <View style={[styles.store_result_item, index < 3 ? styles.store_result_item_active : null]}>
+          <View style={styles.store_result_item_image_box}>
+            <Image style={styles.store_result_item_image} source={{uri: item.logo_url}} />
+          </View>
+
+          <View style={styles.store_result_item_content}>
+            <View style={styles.store_result_item_content_box}>
+              <Text style={styles.store_result_item_title}>{item.name}</Text>
+              <Text style={styles.store_result_item_desc}>{item.address}</Text>
+
+              <View style={styles.store_result_item_add_box}>
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={add_success ? null : this._add_store.bind(this, item)}>
+                  <View style={[styles.add_btn_icon_box, add_success && styles.add_btn_icon_box_active]}>
+                    {add_loading ? (
+                      <View style={{
+                        width: 14,
+                        marginRight: 4
+                      }}>
+                        <Indicator size="small" color={DEFAULT_COLOR} />
+                      </View>
+                    ) : add_success ? (
+                      <Icon name="check" size={14} color="#ffffff" />
+                    ) : (
+                      <Text style={[styles.add_btn_icon]}>+</Text>
+                    )}
+                    <Text style={[styles.add_btn_label, add_success && styles.add_btn_label_active]}>{add_loading ? "Đang thêm..." : add_success ? "Đã thêm cửa hàng" : "Thêm cửa hàng"}</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            </View>
+          </View>
+        </View>
+      </TouchableHighlight>
     );
   }
 }

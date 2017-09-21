@@ -82,7 +82,10 @@ export default class Items extends Component {
       <TouchableHighlight
         onPress={onPress}
         underlayColor="transparent">
-        <View style={[styles.item_box, {borderRightWidth: index%2 == 0 ? Util.pixel : 0}]}>
+        <View style={[styles.item_box, {
+          marginRight: index % 2 == 0 ? 8 : 0,
+          marginLeft: index % 2 == 0 ? 8 : 0
+        }]}>
 
           <View style={styles.item_image_box}>
             <Image style={styles.item_image} source={{uri: item.image}} />
@@ -104,7 +107,7 @@ export default class Items extends Component {
             <Text style={styles.item_info_name}>{item.name}</Text>
             <View style={styles.price_box}>
               {item.discount_percent > 0 && (
-                <Text style={styles.item_safe_off_price}>{item.discount}</Text>
+                <Text style={styles.item_safe_off_price}>{item.discount_view}</Text>
               )}
 
               <Text style={[styles.item_info_price, {
@@ -119,22 +122,26 @@ export default class Items extends Component {
             onPress={this._addCart.bind(this, item)}>
             <View style={{
               width: '100%',
-              height: '100%',
-              marginTop: -8
+              height: '100%'
             }}>
-              {this.state.buying ? (
-                <Indicator size="small" />
-              ) : (
-                <View style={styles.item_add_cart_box}>
-                  <Icon name="cart-plus" size={24} color={DEFAULT_COLOR} />
-                  <Text style={styles.item_add_cart_title}>Chọn mua</Text>
-                  {quantity > 0 && (
-                    <View style={styles.quantity_box}>
-                      <Text style={styles.quantity_value}>{quantity}</Text>
-                    </View>
-                  )}
-                </View>
-              )}
+              <View style={styles.item_add_cart_box}>
+                {this.state.buying ? (
+                  <View style={{
+                    width: 24,
+                    height: 24
+                  }}>
+                    <Indicator size="small" />
+                  </View>
+                ) : (
+                  <Icon name="cart-plus" size={24} color="#ffffff" />
+                )}
+                <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+                {quantity > 0 && (
+                  <View style={styles.quantity_box}>
+                    <Text style={styles.quantity_value}>{quantity}</Text>
+                  </View>
+                )}
+              </View>
             </View>
           </TouchableHighlight>
 
@@ -160,12 +167,13 @@ Items.PropTypes = {
 
 const styles = StyleSheet.create({
   item_box: {
-    width: ~~(Util.size.width / 2),
-    height: ~~(Util.size.width / 2),
-    borderRightWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd",
-    backgroundColor: "#ffffff"
+    width: ~~(Util.size.width / 2) - 12,
+    height: ~~(Util.size.width / 2) * 1.333,
+    // borderWidth: Util.pixel,
+    // borderWidth: Util.pixel,
+    // borderColor: "#dddddd",
+    backgroundColor: "#ffffff",
+    marginBottom: 8
   },
   directionRow: {
     flexDirection: 'row',
@@ -173,12 +181,12 @@ const styles = StyleSheet.create({
   },
   item_image_box: {
     width: '100%',
-    height: '80%'
+    height: ~~(Util.size.width / 2) * 1.333 * 0.666
   },
   item_image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'contain'
+    resizeMode: 'cover'
   },
   item_info_box: {
     width: '100%',
@@ -220,18 +228,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
-    width: 60,
+    width: 50,
     height: 60,
     zIndex: 2
   },
   item_add_cart_box: {
-    width: '100%',
-    height: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: hexToRgbA(DEFAULT_COLOR, 0.8),
+    paddingVertical: 2
   },
   item_add_cart_title: {
-    color: "#404040",
+    color: "#ffffff",
     fontSize: 8
   },
 

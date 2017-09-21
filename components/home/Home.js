@@ -226,7 +226,7 @@ export default class Home extends Component {
 
     // store list
     return(
-      <ItemList item={item} />
+      <ItemList item={item} that={this} />
     );
   }
 

@@ -221,6 +221,7 @@ class APIHandler {
   */
   async site_load_chat(store_id, chat_id) {
     var api = url_for(API.SITE_LOAD_CHAT + '/' + store_id + '/' + chat_id);
+    // alert(api);
     return await this.getAPI(api);
   }
 
