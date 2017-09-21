@@ -24,7 +24,7 @@ import {reaction} from 'mobx';
 // components
 import RightButtonCall from '../RightButtonCall';
 
-const _CHAT_KEY = 'ChatKey';
+const _CHAT_KEY = 'ChatKeysStorage';
 
 @observer
 export default class Chat extends Component {
@@ -40,6 +40,7 @@ export default class Chat extends Component {
     }
 
     this.last_item_id = '';
+    this.delayScroll = 500;
     this.chat_processing = false;
 
     this._getData = this._getData.bind(this);
@@ -120,15 +121,17 @@ export default class Chat extends Component {
       }, () => {
         this._scrollToEnd();
 
+        this.last_item_id = data[data.length-1] ? data[data.length-1].id : '';
+
         if (!this.chat_processing) {
-          this._getData();
+          this._getData(450);
         }
 
         this._autoUpdate();
       });
     }).catch(err => {
       if (!this.chat_processing) {
-        this._getData();
+        this._getData(450);
       }
 
       this._autoUpdate();
@@ -155,7 +158,7 @@ export default class Chat extends Component {
     }, 3000);
   }
 
-  _getData() {
+  _getData(delay) {
     this.chat_processing = true;
 
     this.setState({
@@ -168,21 +171,24 @@ export default class Chat extends Component {
           if (response.data) {
             var data = response.data.reverse();
 
-            this.setState({
-              data: this.state.data != null ? [...this.state.data, ...data] : data,
-              loading: false
-            }, () => {
-              this._scrollToEnd();
+            setTimeout(() => {
+              this.setState({
+                data: this.state.data != null ? [...this.state.data, ...data] : data,
+                loading: false
+              }, () => {
+                this._scrollToEnd();
 
-              var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
+                var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
 
-              storage.save({
-              	key: chat_key,
-              	data: this.state.data,
-              	expires: CHAT_CACHE
+                storage.save({
+                	key: chat_key,
+                	data: this.state.data,
+                	expires: CHAT_CACHE
+                });
+
               });
+            }, delay || 0);
 
-            });
           } else {
             this.setState({
               loading: false,
@@ -211,13 +217,16 @@ export default class Chat extends Component {
           animated: true
         });
       }
-    }, 300);
+    }, this.delayScroll);
+
+    this.delayScroll = 300;
   }
 
   async _onSubmit() {
-    if (!this.state.content) {
+    if (!this.state.content || this.submiting) {
       return;
     }
+    this.submiting = true;
 
     try {
       var response = await APIHandler.site_send_chat(this.state.store_id, {
@@ -236,7 +245,7 @@ export default class Chat extends Component {
     } catch (e) {
       console.warn(e + ' site_send_chat');
     } finally {
-
+      this.submiting = false;
     }
   }
 
@@ -277,7 +286,9 @@ export default class Chat extends Component {
 
                 // marginTop for last item
                 let last_item = data.length - 1 == index;
-                this.last_item_id = item.id;
+                if (last_item) {
+                    this.last_item_id = item.id;
+                }
 
                 if (item.admin_id == 0) {
                   return (

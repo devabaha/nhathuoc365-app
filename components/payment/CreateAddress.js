@@ -305,8 +305,19 @@ export default class CreateAddress extends Component {
           </View>
 
           <View style={styles.input_address_box}>
-            <Text style={styles.input_label}>Địa chỉ</Text>
-            <Text style={styles.input_label_help}>(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)</Text>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_address) {
+                  this.refs_address.focus();
+                }
+              }}
+            >
+              <View>
+                <Text style={styles.input_label}>Địa chỉ</Text>
+                <Text style={styles.input_label_help}>(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)</Text>
+              </View>
+            </TouchableHighlight>
 
             <TextInput
               ref={ref => this.refs_address = ref}

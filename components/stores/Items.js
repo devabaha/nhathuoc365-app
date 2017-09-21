@@ -133,7 +133,7 @@ export default class Items extends Component {
                     <Indicator size="small" />
                   </View>
                 ) : (
-                  <Icon name="cart-plus" size={24} color="#ffffff" />
+                  <Icon name="cart-plus" size={22} color={DEFAULT_COLOR} />
                 )}
                 <Text style={styles.item_add_cart_title}>Chọn mua</Text>
                 {quantity > 0 && (
@@ -235,11 +235,11 @@ const styles = StyleSheet.create({
   item_add_cart_box: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: hexToRgbA(DEFAULT_COLOR, 0.8),
+    backgroundColor: hexToRgbA("#ffffff", 0.8),
     paddingVertical: 2
   },
   item_add_cart_title: {
-    color: "#ffffff",
+    color: DEFAULT_COLOR,
     fontSize: 8
   },
 

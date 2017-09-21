@@ -72,7 +72,7 @@ export default class OrdersItemComponent extends Component {
   }
 
   _goOrdersItemHandler(item) {
-    var is_paymenting = item.status == STATUS_PAYMENTING;
+    var is_paymenting = item.status == CART_STATUS_ORDERING;
     if (is_paymenting) {
       action(() => {
         store.setStoreId(item.site_id);
@@ -108,7 +108,8 @@ export default class OrdersItemComponent extends Component {
   render() {
     var {item, onPress, storeOnPress, from} = this.props;
     var single = from != "store_orders";
-    var is_paymenting = item.status == STATUS_PAYMENTING;
+    var is_paymenting = item.status == CART_STATUS_ORDERING;
+    var is_ready = item.status == CART_STATUS_READY;
 
     return (
       <TouchableHighlight
@@ -192,6 +193,36 @@ export default class OrdersItemComponent extends Component {
                   }}>
                     {'Tiếp tục '}
                     <Icon name="angle-right" size={14} color="#ffffff" />
+                  </Text>
+                </TouchableHighlight>
+              </View>
+            )}
+
+            {is_ready && (
+              <View style={{
+                flex: 1,
+                alignItems: 'center'
+              }}>
+                <TouchableHighlight
+                  underlayColor={hexToRgbA("#dd4b39", 0.9)}
+                  onPress={() => {
+                    if (this.props.confirmCancelCart) {
+                      this.props.confirmCancelCart(item);
+                    }
+                  }}
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 8,
+                    borderRadius: 3,
+                    backgroundColor: "#dd4b39",
+                    marginTop: 20
+                  }}>
+                  <Text style={{
+                    color: "#ffffff",
+                    fontSize: 14
+                  }}>
+                    <Icon name="times" size={14} color="#ffffff" />
+                    {' Huỷ đơn'}
                   </Text>
                 </TouchableHighlight>
               </View>

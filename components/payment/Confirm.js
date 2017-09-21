@@ -33,7 +33,7 @@ export default class Confirm extends Component {
   constructor(props) {
     super(props);
 
-    var is_paymenting = props.data && props.data.status == STATUS_PAYMENTING;
+    var is_paymenting = props.data && props.data.status == CART_STATUS_ORDERING;
 
     this.state = {
      single: this.props.from != 'orders_item' || is_paymenting,
@@ -61,7 +61,22 @@ export default class Confirm extends Component {
           renderRightButton: this._renderRightButton.bind(this)
         });
       }
+    } else {
+      // callback when unmount this sreen
+      store.setStoreUnMount('confirm_head', this._unMount.bind(this));
+
+      Actions.refresh({
+        onBack: () => {
+          this._unMount();
+
+          Actions.pop();
+        }
+      });
     }
+  }
+
+  _unMount() {
+    Keyboard.dismiss();
   }
 
   async _getOrdersItem() {
@@ -194,6 +209,25 @@ export default class Confirm extends Component {
         { cancelable: false }
       );
     }
+
+    // required cart note
+
+    // if (!store.user_cart_note) {
+    //   return Alert.alert(
+    //     'Thông báo',
+    //     'Vui lòng nhập phần ghi chú',
+    //     [
+    //       {text: 'Đồng ý', onPress: () => {
+    //         if (this.refs_cart_note) {
+    //           this.refs_cart_note.focus();
+    //         }
+    //       }},
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
+
+    // end required cart note
 
     if (store.user_cart_note) {
       // update cart note
@@ -364,7 +398,7 @@ export default class Confirm extends Component {
     if (this.animatedValue) {
       Animated.timing(this.animatedValue, {
         toValue: 150,
-        duration: 3000
+        duration: 2000
       }).start();
     }
   }
@@ -585,15 +619,34 @@ export default class Confirm extends Component {
           <Animated.View
             onLayout={this._onLayout.bind(this)}
             style={[styles.rows, styles.borderBottom, styles.mt8, animatedStyle]}>
-            <View style={styles.box_icon_label}>
-              <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
-              <Animated.Text style={[styles.input_label, animatedStyle2]}>Ghi chú</Animated.Text>
-            </View>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_cart_note) {
+                  this.refs_cart_note.focus();
+                }
+              }}
+            >
+              <View style={styles.box_icon_label}>
+                <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
+                <Animated.Text style={[styles.input_label, animatedStyle2]}>Ghi chú</Animated.Text>
+              </View>
+            </TouchableHighlight>
             {single ? (
               <View>
-                <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
+                <TouchableHighlight
+                  underlayColor="#ffffff"
+                  onPress={() => {
+                    if (this.refs_cart_note) {
+                      this.refs_cart_note.focus();
+                    }
+                  }}
+                >
+                  <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
+                </TouchableHighlight>
 
                 <TextInput
+                  ref={ref => this.refs_cart_note = ref}
                   style={[styles.input_address_text, {height: this.state.address_height > 50 ? this.state.address_height : 50}]}
                   keyboardType="default"
                   maxLength={250}
@@ -610,7 +663,7 @@ export default class Confirm extends Component {
                     })();
                   }}
                   onFocus={this._scrollToTop.bind(this, this.state.noteOffset)}
-                  value={store.user_cart_note}
+                  value={store.user_cart_note || (store.cart_data ? store.cart_data.user_note : '')}
                   />
               </View>
             ) : (

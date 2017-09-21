@@ -174,7 +174,8 @@ export default class SearchStore extends Component {
               keyExtractor={item => item.id}
             />
           ) : (
-            <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
+            null
+            // <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
           )}
 
         </ScrollView>

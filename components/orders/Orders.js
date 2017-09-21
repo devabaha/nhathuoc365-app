@@ -128,6 +128,12 @@ export default class Orders extends Component {
     }
   }
 
+  _closePopupConfirm() {
+    if (this.refs_cancel_cart) {
+      this.refs_cancel_cart.close();
+    }
+  }
+
   _onRefresh() {
     this.setState({
       refreshing: true
@@ -177,6 +183,7 @@ export default class Orders extends Component {
               renderItem={({item, index}) => {
                 return(
                   <OrdersItemComponent
+                    confirmCancelCart={this.confirmCancelCart.bind(this)}
                     item={item}
                     />
                 );
@@ -200,8 +207,45 @@ export default class Orders extends Component {
             </TouchableHighlight>
           </View>
         )}
+
+        <PopupConfirm
+          ref_popup={ref => this.refs_cancel_cart = ref}
+          title="Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
+          height={110}
+          noConfirm={this._closePopupConfirm.bind(this)}
+          yesConfirm={this._cancelCart.bind(this)}
+          otherClose={false}
+          />
       </View>
     );
+  }
+
+  async _cancelCart() {
+    if (this.item_cancel) {
+
+      try {
+        var response = await APIHandler.site_cart_cancel(store.store_id, this.item_cancel.id);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          this._getData(450, true);
+        }
+      } catch (e) {
+        console.warn(e);
+      } finally {
+
+      }
+
+    }
+
+    this._closePopupConfirm();
+  }
+
+  confirmCancelCart(item) {
+    this.item_cancel = item;
+
+    if (this.refs_cancel_cart) {
+      this.refs_cancel_cart.open();
+    }
   }
 }
 

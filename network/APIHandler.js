@@ -221,7 +221,6 @@ class APIHandler {
   */
   async site_load_chat(store_id, chat_id) {
     var api = url_for(API.SITE_LOAD_CHAT + '/' + store_id + '/' + chat_id);
-    // alert(api);
     return await this.getAPI(api);
   }
 
@@ -338,6 +337,11 @@ class APIHandler {
   */
   async user_remove_site(store_id) {
     var api = url_for(API.USER_REMOVE_SITE + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
+  async site_cart_cancel(store_id, cart_id) {
+    var api = url_for(API.SITE_CART_CANCEL + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
   }
 

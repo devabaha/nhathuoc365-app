@@ -386,11 +386,11 @@ export default class Home extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
                     <Icon name="search-plus" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
+                    <Text style={styles.add_store_action_label}>Nhập mã cửa hàng</Text>
                   </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight
+                {/*<TouchableHighlight
                   onPress={this._goListStore}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
@@ -398,7 +398,7 @@ export default class Home extends Component {
                     <Icon name="list-ul" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Danh sách</Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableHighlight>*/}
               </View>
             </View>
           )}
@@ -534,12 +534,12 @@ export default class Home extends Component {
             icon={{name: 'search-plus', type: 'font-awesome'}}
             title='Nhập mã cửa hàng' />
 
-          <Button
+          {/*<Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#ffc109"
             onPress={this._goListStore}
             icon={{name: 'list-ul', type: 'font-awesome'}}
-            title='Xem danh sách cửa hàng' />
+            title='Xem danh sách cửa hàng' />*/}
         </Modal>
 
 
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    width: ~~((Util.size.width - 16) / 3),
+    width: ~~((Util.size.width - 16) / 2),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
@@ -624,8 +624,8 @@ const styles = StyleSheet.create({
 
   modal_add_store: {
     width: '90%',
-    height: 228,
-    // height: 180,
+    // height: 228,
+    height: 180,
     borderRadius: 3
   },
   modal_add_store_title: {
