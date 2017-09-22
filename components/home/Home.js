@@ -9,7 +9,8 @@ import {
   RefreshControl,
   TouchableHighlight,
   FlatList,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 // library
@@ -123,6 +124,15 @@ export default class Home extends Component {
         }
       } catch (e) {
         console.warn(e + ' user_login');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._login.bind(this)},
+          ],
+          { cancelable: false }
+        );
       }
     });
   }
@@ -157,6 +167,15 @@ export default class Home extends Component {
         }
       } catch (e) {
         console.warn(e + ' user_home');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._getData.bind(this)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }
