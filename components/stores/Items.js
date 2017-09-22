@@ -167,8 +167,8 @@ Items.PropTypes = {
 
 const styles = StyleSheet.create({
   item_box: {
-    width: ~~(Util.size.width / 2) - 12,
-    height: ~~(Util.size.width / 2) * 1.333,
+    width: ~~(Util.size.width / 2 - 12),
+    height: ~~(Util.size.width / 2 * 1.25),
     // borderWidth: Util.pixel,
     // borderWidth: Util.pixel,
     // borderColor: "#dddddd",
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   },
   item_image_box: {
     width: '100%',
-    height: ~~(Util.size.width / 2) * 1.333 * 0.666
+    height: ~~(Util.size.width / 2 * 1.333 * 0.666)
   },
   item_image: {
     width: '100%',

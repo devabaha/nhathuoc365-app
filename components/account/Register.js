@@ -381,7 +381,9 @@ export default class Register extends Component {
             Actions.pop();
           })();
         } else {
-
+          if (response) {
+            Toast.show(response.message, Toast.SHORT);
+          }
         }
 
       } catch (e) {
@@ -390,7 +392,6 @@ export default class Register extends Component {
         this.setState({
           verify_loadding: false
         });
-
       }
     });
   }
