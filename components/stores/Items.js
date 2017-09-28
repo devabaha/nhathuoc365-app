@@ -19,7 +19,8 @@ export default class Items extends Component {
     super(props);
 
     this.state = {
-      buying: false
+      buying: false,
+      loadmore: false
     }
   }
 
@@ -76,16 +77,41 @@ export default class Items extends Component {
   render() {
     let {item, index, onPress} = this.props;
 
+    // button load more
     if (item.type == 'loadmore') {
       return (
         <TouchableHighlight
-          onPress={onPress}
+          onPress={() => {
+            if (onPress) {
+              onPress();
+            }
+
+            this.setState({
+              loadmore: true
+            });
+          }}
           underlayColor="transparent">
           <View style={[styles.item_box, {
             marginRight: index % 2 == 0 ? 8 : 0,
-            marginLeft: index % 2 == 0 ? 8 : 0
+            marginLeft: index % 2 == 0 ? 8 : 0,
+            justifyContent: 'center',
+            alignItems: 'center'
           }]}>
-            <Text>Load more...</Text>
+            {this.state.loadmore ? (
+              <Indicator size="small" />
+            ) : (
+              <View style={{
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <Icon name="th" size={24} color="#404040" />
+                <Text style={{
+                  marginTop: 8,
+                  color: "#404040",
+                  fontSize: 14
+                }}>XEM THÊM</Text>
+              </View>
+            )}
           </View>
         </TouchableHighlight>
       );

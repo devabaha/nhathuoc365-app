@@ -337,6 +337,7 @@ class CategoryScreen extends Component {
       refreshing: false,
       header_title,
       items_data: null,
+      items_data_bak: null,
       page: 0
     }
   }
@@ -408,7 +409,7 @@ class CategoryScreen extends Component {
           layoutAnimation();
 
           this.setState({
-            items_data: data.length >= 11 ? [...data, {id: -1, type: 'loadmore'}] : data,
+            items_data: data.length > STORES_LOAD_MORE ? [...data, {id: -1, type: 'loadmore'}] : data,
             items_data_bak: data,
             loading: false,
             refreshing: false,
@@ -445,9 +446,8 @@ class CategoryScreen extends Component {
             layoutAnimation();
 
             var items_data = loadmore ? [...this.state.items_data_bak, ...response.data] : response.data;
-
             this.setState({
-              items_data: response.data.length >= 10 ? [...items_data, {id: -1, type: 'loadmore'}] : items_data,
+              items_data: response.data.length >= STORES_LOAD_MORE ? [...items_data, {id: -1, type: 'loadmore'}] : items_data,
               items_data_bak: items_data,
               loading: false,
               refreshing: false,
@@ -471,7 +471,8 @@ class CategoryScreen extends Component {
         } else {
           this.setState({
             loading: false,
-            refreshing: false
+            refreshing: false,
+            items_data: this.state.items_data_bak
           });
         }
       }
