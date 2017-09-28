@@ -140,6 +140,11 @@ class Store {
   @observable user_info = null;
   @observable store_id = null;
   @observable store_data = null;
+  @observable stores_finish = false;
+
+  @action setStoresFinish(flag) {
+    this.stores_finish = flag;
+  }
 
   @action setUserInfo(data) {
     this.user_info = data;

@@ -76,6 +76,21 @@ export default class Items extends Component {
   render() {
     let {item, index, onPress} = this.props;
 
+    if (item.type == 'loadmore') {
+      return (
+        <TouchableHighlight
+          onPress={onPress}
+          underlayColor="transparent">
+          <View style={[styles.item_box, {
+            marginRight: index % 2 == 0 ? 8 : 0,
+            marginLeft: index % 2 == 0 ? 8 : 0
+          }]}>
+            <Text>Load more...</Text>
+          </View>
+        </TouchableHighlight>
+      );
+    }
+
     var quantity = 0;
 
     return (
@@ -168,7 +183,7 @@ Items.PropTypes = {
 const styles = StyleSheet.create({
   item_box: {
     width: ~~(Util.size.width / 2 - 12),
-    height: ~~(Util.size.width / 2 * 1.25),
+    height: ~~(Util.size.width / 2 * 1.333),
     // borderWidth: Util.pixel,
     // borderWidth: Util.pixel,
     // borderColor: "#dddddd",

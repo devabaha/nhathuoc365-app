@@ -35,14 +35,14 @@ export default class Stores extends Component {
     super(props);
 
     this.state = {
-      refreshing: false,
       loading: true,
       category_nav_index: 0,
-      category_nav_id: 0,
-      items_data: null,
-      categories_data: null,
-      header_title: "— Tất cả sản phẩm —"
+      categories_data: null
     }
+
+    action(() => {
+      store.setStoresFinish(false);
+    })();
   }
 
   componentDidMount() {
@@ -71,9 +71,6 @@ export default class Stores extends Component {
 
     // get categories navigator
     this._getCategoriesNav();
-
-    // get list products by category_id
-    this._getItemByCateId(this.state.category_nav_id);
 
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
@@ -146,78 +143,6 @@ export default class Stores extends Component {
     }
   }
 
-  // lấy d/s sản phẩm theo category_id
-  _getItemByCateId(category_id) {
-    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
-
-    this.setState({
-      loading: true,
-      items_data: null
-    });
-
-    // load
-    storage.load({
-    	key: store_category_key,
-    	autoSync: true,
-    	syncInBackground: true,
-    	syncParams: {
-    	  extraFetchOptions: {
-    	  },
-    	  someFlag: true,
-    	},
-    }).then(data => {
-      // delay append data
-      setTimeout(() => {
-        layoutAnimation();
-
-        this.setState({
-          items_data: data,
-          loading: false,
-          finish: true,
-          refreshing: false
-        });
-      }, this._delay());
-    }).catch(err => {
-      this._getItemByCateIdFromServer(category_id);
-    });
-  }
-
-  async _getItemByCateIdFromServer(category_id, delay) {
-    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
-
-    try {
-      var response = await APIHandler.site_category_product(store.store_id, category_id);
-
-      if (response && response.status == STATUS_SUCCESS) {
-
-        // delay append data
-        setTimeout(() => {
-          layoutAnimation();
-
-          this.setState({
-            items_data: response.data,
-            loading: false,
-            finish: true,
-            refreshing: false
-          });
-
-          // cache in five minutes
-          if (response.data) {
-            storage.save({
-              key: store_category_key,
-              data: response.data,
-              expires: STORE_CATEGORY_CACHE
-            });
-          }
-        }, delay || this._delay());
-
-      }
-
-    } catch (e) {
-      console.warn(e + ' site_category_product');
-    }
-  }
-
   _renderRightButton() {
     return(
       <View style={styles.right_btn_box}>
@@ -231,94 +156,27 @@ export default class Stores extends Component {
     );
   }
 
-  _onRefresh() {
-    this.setState({refreshing: true});
-    this._getItemByCateIdFromServer(this.state.category_nav_id, 1000);
-  }
-
   _changeCategory(item, index) {
     if (this.refs_category_nav) {
-
-      this._getItemByCateId(item.id);
 
       var categories_count = this.state.categories_data.length;
       var end_of_list = (categories_count - index - 1) >= 3;
 
+      // nav
       if (index > 0 && end_of_list) {
-          this.refs_category_nav.scrollToIndex({index: index - 1, animated: true});
+        this.refs_category_nav.scrollToIndex({index: index - 1, animated: true});
       } else if (!end_of_list) {
         this.refs_category_nav.scrollToEnd();
       }
 
-      if (item.id == 0) {
-        var header_title = "— Tất cả sản phẩm —";
-      } else {
-        var header_title = `— Sản phẩm ${item.name} —`;
+      // content
+      if (this.refs_category_screen) {
+        this.refs_category_screen.scrollToIndex({index: index, animated: true});
       }
 
       this.setState({
-        category_nav_index: index,
-        category_nav_id: item.id,
-        header_title
+        category_nav_index: index
       });
-    }
-  }
-
-  // tới màn hình chi tiết item
-  _goItem(item) {
-
-    Actions.item({
-      title: item.name,
-      item
-    });
-  }
-
-  // render danh sách sản phẩm
-  _renderItemsContent() {
-    var {cart_data, cart_products} = store;
-
-    // show loading
-    if (this.state.loading) {
-      return <Indicator />
-    }
-
-    var {items_data, header_title} = this.state;
-
-    // show products
-    if (items_data) {
-
-      return(
-        <FlatList
-          onEndReached={(num) => {
-
-          }}
-          onEndReachedThreshold={0}
-          style={[styles.items_box]}
-          ListHeaderComponent={() => <ListHeader title={header_title} />}
-          data={items_data}
-          extraData={this.state}
-          renderItem={({item, index}) => (
-            <Items
-              item={item}
-              index={index}
-              onPress={this._goItem.bind(this, item)}
-              />
-          )}
-          keyExtractor={item => item.id}
-          numColumns={2}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
-        />
-      );
-    } else {
-      // no data
-      return(
-        <CenterText title="Chưa có sản phẩm nào" />
-      );
     }
   }
 
@@ -333,7 +191,7 @@ export default class Stores extends Component {
               showsVerticalScrollIndicator={false}
               ref={ref => this.refs_category_nav = ref}
               data={this.state.categories_data}
-              extraData={this.state}
+              extraData={this.state.category_nav_index}
               keyExtractor={item => item.id}
               horizontal={true}
               style={styles.categories_nav}
@@ -357,9 +215,35 @@ export default class Stores extends Component {
           )}
         </View>
 
-        {this._renderItemsContent.call(this)}
+        {//this._renderItemsContent.call(this)
+        }
 
-        {this.state.finish == true && (
+        {this.state.categories_data != null ? (
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            ref={ref => this.refs_category_screen = ref}
+            data={this.state.categories_data}
+            extraData={this.state.category_nav_index}
+            keyExtractor={item => item.id}
+            horizontal={true}
+            pagingEnabled
+            onMomentumScrollEnd={this._onScrollEnd.bind(this)}
+            style={{
+              backgroundColor: BGR_SCREEN_COLOR,
+              width: Util.size.width
+            }}
+            getItemLayout={(data, index) => {
+              return {length: Util.size.width, offset: Util.size.width * index, index};
+            }}
+            renderItem={({item, index}) => <CategoryScreen item={item} index={index} cate_index={this.state.category_nav_index} that={this} />}
+          />
+        ) : (
+          <Indicator size="small" />
+        )}
+
+
+        {store.stores_finish == true && (
           <CartFooter
             perfix="stores"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
@@ -376,6 +260,16 @@ export default class Stores extends Component {
           />
       </View>
     );
+  }
+
+  _onScrollEnd(e) {
+    let contentOffset = e.nativeEvent.contentOffset;
+    let viewSize = e.nativeEvent.layoutMeasurement;
+
+    // Divide the horizontal offset by the width of the view to see which page is visible
+    let pageNum = Math.floor(contentOffset.x / viewSize.width);
+
+    this._changeCategory(null, pageNum);
   }
 
   _confirmRemoveCartItem(item) {
@@ -425,7 +319,232 @@ export default class Stores extends Component {
   }
 }
 
+
+class CategoryScreen extends Component {
+  constructor(props) {
+    super(props);
+
+    var {item, index} = props;
+
+    if (item.id == 0) {
+      var header_title = `— Tất cả —`;
+    } else {
+      var header_title = `— Sản phẩm ${item.name} —`;
+    }
+
+    this.state = {
+      loading: false,
+      refreshing: false,
+      header_title,
+      items_data: null,
+      page: 0
+    }
+  }
+
+  // thời gian trễ khi chuyển màn hình
+  _delay() {
+    var delay = 400 - (Math.abs(time() - this.start_time));
+    return delay;
+  }
+
+  componentDidMount() {
+    var {item, index, cate_index} = this.props;
+
+    if (index == cate_index) {
+      this.start_time = time();
+      // get list products by category_id
+      this._getItemByCateId(item.id);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    var {item, index, cate_index} = nextProps;
+
+    if (index == cate_index) {
+      this.start_time = time();
+      // get list products by category_id
+      this._getItemByCateId(item.id);
+    }
+  }
+
+  // tới màn hình chi tiết item
+  _goItem(item) {
+
+    Actions.item({
+      title: item.name,
+      item
+    });
+  }
+
+  _onRefresh() {
+    this.setState({
+      refreshing: true,
+      page: 0
+    }, () => {
+      this._getItemByCateIdFromServer(this.props.item.id, 1000);
+    });
+  }
+
+  // lấy d/s sản phẩm theo category_id
+  _getItemByCateId(category_id) {
+    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
+
+    this.setState({
+      loading: this.state.items_data ? false : true
+    }, () => {
+      // load
+      storage.load({
+      	key: store_category_key,
+      	autoSync: true,
+      	syncInBackground: true,
+      	syncParams: {
+      	  extraFetchOptions: {
+      	  },
+      	  someFlag: true,
+      	},
+      }).then(data => {
+        // delay append data
+        setTimeout(() => {
+          layoutAnimation();
+
+          this.setState({
+            items_data: data.end ? data.data : [...data.data, {id: 99999, type: 'loadmore'}],
+            items_data_bak: data.data,
+            page: data.page,
+            loading: false,
+            refreshing: false
+          });
+
+          action(() => {
+            store.setStoresFinish(true);
+          })();
+
+        }, this._delay());
+      }).catch(err => {
+        this._getItemByCateIdFromServer(category_id);
+      });
+    });
+  }
+
+  async _getItemByCateIdFromServer(category_id, delay, loadmore) {
+    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
+
+    try {
+      var response = await APIHandler.site_category_product(store.store_id, category_id, this.state.page);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        if (response.data) {
+          if (loadmore) {
+              this.state.page += 1;
+          } else {
+            this.state.page = 1;
+          }
+
+          // delay append data
+          setTimeout(() => {
+            layoutAnimation();
+
+            var items_data = loadmore ? [...this.state.items_data_bak, ...response.data] : response.data;
+
+            this.setState({
+              items_data: response.data.length >= 10 ? [...items_data, {id: 99999, type: 'loadmore'}] : items_data,
+              items_data_bak: items_data,
+              loading: false,
+              refreshing: false,
+              page: this.state.page
+            });
+
+            action(() => {
+              store.setStoresFinish(true);
+            })();
+
+            // cache in five minutes
+            if (response.data) {
+              storage.save({
+                key: store_category_key,
+                data: {
+                  data: items_data,
+                  page: this.state.page,
+                  end: response.data.length < 10 ? true : false
+                },
+                expires: STORE_CATEGORY_CACHE
+              });
+            }
+          }, delay || this._delay());
+
+        } else {
+          this.setState({
+            loading: false,
+            refreshing: false
+          });
+        }
+      }
+
+    } catch (e) {
+      console.warn(e + ' site_category_product');
+    }
+  }
+
+  _loadMore() {
+    this._getItemByCateIdFromServer(this.props.item.id, 0, true);
+  }
+
+  render() {
+    // show loading
+    if (this.state.loading) {
+      return(
+        <View style={styles.containerScreen}>
+          <Indicator />
+        </View>
+      );
+    }
+
+    var {items_data, header_title} = this.state;
+
+    // show products
+    if (items_data) {
+      return(
+        <View style={styles.containerScreen}>
+          <FlatList
+            style={[styles.items_box]}
+            ListHeaderComponent={() => <ListHeader title={header_title} />}
+            data={items_data}
+            extraData={items_data}
+            renderItem={({item, index}) => (
+              <Items
+                item={item}
+                index={index}
+                onPress={item.type != 'loadmore' ? this._goItem.bind(this, item) : this._loadMore.bind(this)}
+                />
+            )}
+            keyExtractor={item => item.id}
+            numColumns={2}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+          />
+        </View>
+      );
+    } else {
+      // no data
+      return(
+        <View style={styles.containerScreen}>
+          <CenterText title="Chưa có sản phẩm nào" />
+        </View>
+      );
+    }
+  }
+}
+
 const styles = StyleSheet.create({
+  containerScreen: {
+    width: Util.size.width,
+    flex: 1
+  },
+
   container: {
     flex: 1,
     ...MARGIN_SCREEN,
@@ -436,7 +555,7 @@ const styles = StyleSheet.create({
   },
 
   items_box: {
-
+    width: Util.size.width
   },
 
   categories_nav: {

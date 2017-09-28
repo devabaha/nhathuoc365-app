@@ -65,8 +65,8 @@ class APIHandler {
   /**
   * Lấy d/s sản phẩm theo categofy id
   */
-  async site_category_product(store_id, category_id) {
-    var api = url_for(API.SITE_CATEGORY_PRODUCT + '/' + store_id + '/' + category_id);
+  async site_category_product(store_id, category_id, page_num) {
+    var api = url_for(API.SITE_CATEGORY_PRODUCT + '/' + store_id + '/' + category_id + '/' + page_num);
     return await this.getAPI(api);
   }
 
