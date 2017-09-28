@@ -360,7 +360,7 @@ class CategoryScreen extends Component {
   componentWillReceiveProps(nextProps) {
     var {item, index, cate_index} = nextProps;
 
-    if (index == cate_index) {
+    if (index == cate_index && this.state.items_data == null) {
       this.start_time = time();
       // get list products by category_id
       this._getItemByCateId(item.id);
@@ -408,11 +408,11 @@ class CategoryScreen extends Component {
           layoutAnimation();
 
           this.setState({
-            items_data: data.end ? data.data : [...data.data, {id: 99999, type: 'loadmore'}],
-            items_data_bak: data.data,
-            page: data.page,
+            items_data: data.length >= 11 ? [...data, {id: -1, type: 'loadmore'}] : data,
+            items_data_bak: data,
             loading: false,
-            refreshing: false
+            refreshing: false,
+            page: 1
           });
 
           action(() => {
@@ -447,7 +447,7 @@ class CategoryScreen extends Component {
             var items_data = loadmore ? [...this.state.items_data_bak, ...response.data] : response.data;
 
             this.setState({
-              items_data: response.data.length >= 10 ? [...items_data, {id: 99999, type: 'loadmore'}] : items_data,
+              items_data: response.data.length >= 10 ? [...items_data, {id: -1, type: 'loadmore'}] : items_data,
               items_data_bak: items_data,
               loading: false,
               refreshing: false,
@@ -459,14 +459,10 @@ class CategoryScreen extends Component {
             })();
 
             // cache in five minutes
-            if (response.data) {
+            if (response.data && !loadmore) {
               storage.save({
                 key: store_category_key,
-                data: {
-                  data: items_data,
-                  page: this.state.page,
-                  end: response.data.length < 10 ? true : false
-                },
+                data: items_data,
                 expires: STORE_CATEGORY_CACHE
               });
             }

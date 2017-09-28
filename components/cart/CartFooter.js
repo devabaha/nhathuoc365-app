@@ -218,6 +218,16 @@ export default class CartFooter extends Component {
     );
   }
 
+  _onScrollEnd(e) {
+    let contentOffset = e.nativeEvent.contentOffset;
+    let viewSize = e.nativeEvent.layoutMeasurement;
+
+    // Divide the horizontal offset by the width of the view to see which page is visible
+    let pageNum = Math.floor(contentOffset.x / viewSize.width);
+    store.setCartItemIndex(pageNum);
+    this._goTopIndex(pageNum);
+  }
+
   _renderContent() {
     if (this.state.loading) {
       return(
@@ -232,44 +242,40 @@ export default class CartFooter extends Component {
 
     if (isset_cart) {
       return(
-        <TouchableHighlight
-          underlayColor="transparent"
-          onPress={null}>
-          <View style={styles.store_cart_container}>
-            <View style={styles.store_cart_content}>
-              <FlatList
-                showsHorizontalScrollIndicator={false}
-                showsVerticalScrollIndicator={false}
-                ref={ref => this.refs_store_cart = ref}
-                data={cart_products}
-                pagingEnabled
-                scrollEnabled={false}
-                extraData={cart_products}
-                initialScrollIndex={store.cart_item_index}
-                getItemLayout={(data, index) => {
-                  return {length: Util.size.width - 172, offset: (Util.size.width - 172) * index, index};
-                }}
-                renderItem={this.renderItems.bind(this)}
-                keyExtractor={item => item.id}
-                horizontal={true}
-              />
-            </View>
-
-            <TouchableHighlight
-              style={[styles.store_cart_btn, styles.store_cart_btn_left]}
-              underlayColor="#f1efef"
-              onPress={this._store_cart_prev.bind(this)}>
-              <Icon name="angle-left" size={36} color="#333333" />
-            </TouchableHighlight>
-
-            <TouchableHighlight
-              style={[styles.store_cart_btn, styles.store_cart_btn_right]}
-              underlayColor="#f1efef"
-              onPress={this._store_cart_next.bind(this)}>
-              <Icon name="angle-right" size={36} color="#333333" />
-            </TouchableHighlight>
+        <View style={styles.store_cart_container}>
+          <View style={styles.store_cart_content}>
+            <FlatList
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              ref={ref => this.refs_store_cart = ref}
+              data={cart_products}
+              pagingEnabled
+              onMomentumScrollEnd={this._onScrollEnd.bind(this)}
+              extraData={cart_products}
+              initialScrollIndex={store.cart_item_index}
+              getItemLayout={(data, index) => {
+                return {length: Util.size.width - 172, offset: (Util.size.width - 172) * index, index};
+              }}
+              renderItem={this.renderItems.bind(this)}
+              keyExtractor={item => item.id}
+              horizontal={true}
+            />
           </View>
-        </TouchableHighlight>
+
+          <TouchableHighlight
+            style={[styles.store_cart_btn, styles.store_cart_btn_left]}
+            underlayColor="#f1efef"
+            onPress={this._store_cart_prev.bind(this)}>
+            <Icon name="angle-left" size={36} color="#333333" />
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={[styles.store_cart_btn, styles.store_cart_btn_right]}
+            underlayColor="#f1efef"
+            onPress={this._store_cart_next.bind(this)}>
+            <Icon name="angle-right" size={36} color="#333333" />
+          </TouchableHighlight>
+        </View>
       );
     } else {
       return(
