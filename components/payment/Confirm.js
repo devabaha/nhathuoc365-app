@@ -477,6 +477,8 @@ export default class Confirm extends Component {
       }
     }
 
+    var is_login = store.user_info != null && store.user_info.verify_flag == STATUS_VERIFYED;
+
     return (
       <View style={styles.container}>
         {single && (
@@ -805,7 +807,7 @@ export default class Confirm extends Component {
 
         </TouchableHighlight>}
 
-        {this.state.suggest_register ? (
+        {this.state.suggest_register && !is_login ? (
           <PopupConfirm
             ref_popup={ref => this.popup_message = ref}
             title={"Bạn đã đặt hàng thành công.\n\nĐăng ký thành viên để hưởng nhiều ưu đãi, khuyến mãi hơn nữa!"}

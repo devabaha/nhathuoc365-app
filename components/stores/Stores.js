@@ -156,7 +156,7 @@ export default class Stores extends Component {
     );
   }
 
-  _changeCategory(item, index) {
+  _changeCategory(item, index, nav_only) {
     if (this.refs_category_nav) {
 
       var categories_count = this.state.categories_data.length;
@@ -170,7 +170,7 @@ export default class Stores extends Component {
       }
 
       // content
-      if (this.refs_category_screen) {
+      if (this.refs_category_screen && !nav_only) {
         this.refs_category_screen.scrollToIndex({index: index, animated: true});
       }
 
@@ -269,7 +269,7 @@ export default class Stores extends Component {
     // Divide the horizontal offset by the width of the view to see which page is visible
     let pageNum = Math.floor(contentOffset.x / viewSize.width);
 
-    this._changeCategory(null, pageNum);
+    this._changeCategory(null, pageNum, true);
   }
 
   _confirmRemoveCartItem(item) {

@@ -224,8 +224,9 @@ export default class CartFooter extends Component {
 
     // Divide the horizontal offset by the width of the view to see which page is visible
     let pageNum = Math.floor(contentOffset.x / viewSize.width);
-    store.setCartItemIndex(pageNum);
-    this._goTopIndex(pageNum);
+    if (pageNum != store.cart_item_index) {
+      store.setCartItemIndex(pageNum);
+    }
   }
 
   _renderContent() {
