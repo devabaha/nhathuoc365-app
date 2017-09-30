@@ -239,7 +239,7 @@ export default class Stores extends Component {
             renderItem={({item, index}) => <CategoryScreen item={item} index={index} cate_index={this.state.category_nav_index} that={this} />}
           />
         ) : (
-          <Indicator size="small" />
+          <Indicator />
         )}
 
 
@@ -352,7 +352,7 @@ class CategoryScreen extends Component {
     var {item, index, cate_index} = this.props;
 
     if (index == cate_index) {
-      this.start_time = time();
+      this.start_time = 0;
       // get list products by category_id
       this._getItemByCateId(item.id);
     }
@@ -529,7 +529,7 @@ class CategoryScreen extends Component {
       // no data
       return(
         <View style={styles.containerScreen}>
-          <CenterText title="Chưa có sản phẩm nào" />
+          <Indicator />
         </View>
       );
     }

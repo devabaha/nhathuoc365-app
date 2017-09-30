@@ -403,7 +403,7 @@ export default class Home extends Component {
                   onPress={this._goSearchStore}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
+                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
                     <Icon name="search-plus" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Nhập mã cửa hàng</Text>
                   </View>
@@ -626,7 +626,8 @@ const styles = StyleSheet.create({
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    width: ~~((Util.size.width - 16) / 2),
+    // width: ~~((Util.size.width - 16) / 2),
+    width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
