@@ -180,7 +180,11 @@ export default class CartFooter extends Component {
         </View>
         <View style={styles.store_cart_item_title_box}>
           <Text style={styles.store_cart_item_title}>{sub_string(item.name, 16)}</Text>
-          <Text style={styles.store_cart_item_price}>{item.price_view}</Text>
+          <Text style={[styles.store_cart_item_price, {
+            position: 'absolute',
+            right: 0,
+            top: 18
+          }]}>{item.price_view}</Text>
         </View>
 
         <View style={styles.store_cart_calculator}>

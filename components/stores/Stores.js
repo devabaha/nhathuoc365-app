@@ -138,6 +138,17 @@ export default class Stores extends Component {
 
     } catch (e) {
       console.warn(e + ' site_info');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: () => {
+            this._getCategoriesNavFromServer();
+          }},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -167,6 +178,8 @@ export default class Stores extends Component {
         this.refs_category_nav.scrollToIndex({index: index - 1, animated: true});
       } else if (!end_of_list) {
         this.refs_category_nav.scrollToEnd();
+      } else if (index == 0) {
+        this.refs_category_nav.scrollToIndex({index, animated: true});
       }
 
       // content
@@ -311,10 +324,23 @@ export default class Stores extends Component {
           })();
         }, 450);
       }
+
+      this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.warn(e + ' site_cart_remove');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: () => {
+            this._removeCartItem();
+          }},
+        ],
+        { cancelable: false }
+      );
     } finally {
-      this.cartItemConfirmRemove = undefined;
+
     }
   }
 }
@@ -479,6 +505,17 @@ class CategoryScreen extends Component {
 
     } catch (e) {
       console.warn(e + ' site_category_product');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: () => {
+            this._getItemByCateIdFromServer(category_id, delay, loadmore);
+          }},
+        ],
+        { cancelable: false }
+      );
     }
   }
 
