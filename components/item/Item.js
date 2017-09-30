@@ -19,6 +19,7 @@ import Modal from 'react-native-modalbox';
 import Swiper from 'react-native-swiper';
 import HTMLView from 'react-native-htmlview';
 import store from '../../store/Store';
+import ImageViewer from 'react-native-image-zoom-viewer';
 
 // components
 import Items from '../stores/Items';
@@ -39,6 +40,7 @@ export default class Item extends Component {
      refreshing: false,
      item: props.item,
      item_data: null,
+     images: null,
      loading: true,
      buying: false,
      like_loading: true,
@@ -108,8 +110,19 @@ export default class Item extends Component {
       setTimeout(() => {
         layoutAnimation();
 
+        var images = [];
+
+        if (data && data.img) {
+          data.img.map(item => {
+            images.push({
+              url: item.image
+            });
+          });
+        }
+
         this.setState({
           item_data: data,
+          images: images,
           like_flag: data.like_flag,
           loading: false,
           refreshing: false,
@@ -134,8 +147,19 @@ export default class Item extends Component {
         setTimeout(() => {
           layoutAnimation();
 
+          var images = [];
+
+          if (response.data && response.data.img) {
+            response.data.img.map(item => {
+              images.push({
+                url: item.image
+              });
+            });
+          }
+
           this.setState({
             item_data: response.data,
+            images: images,
             like_flag: response.data.like_flag,
             loading: false,
             refreshing: false,
@@ -292,7 +316,15 @@ export default class Item extends Component {
               {
                 item_data.img.map((item, index) => {
                   return(
-                    <Image style={styles.swiper_image} source={{uri: item.image}} key={index} />
+                    <TouchableHighlight
+                      onPress={() => {
+                        Actions.item_image_viewer({
+                          images: this.state.images
+                        });
+                      }}
+                      key={index}>
+                      <Image style={styles.swiper_image} source={{uri: item.image}} key={index} />
+                    </TouchableHighlight>
                   );
                 })
               }

@@ -49,6 +49,7 @@ import Stores from './components/stores/Stores';
 import StoresList from './components/stores/StoresList';
 import Search from './components/stores/Search';
 import Item from './components/item/Item';
+import ItemImageViewer from './components/item/ItemImageViewer';
 import Cart from './components/cart/Cart';
 import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
@@ -70,8 +71,7 @@ const custommerNav = {
   navBar,
   sceneStyle: {
     backgroundColor: "#f3f3f3"
-  },
-  direction: "horizontal"
+  }
 }
 
 // StatusBar
@@ -104,7 +104,7 @@ const reducerCreate = params => {
 };
 
 export default class App extends Component {
-  
+
   componentDidMount() {
     OneSignal.addEventListener('received', this._onReceived.bind(this));
     OneSignal.addEventListener('opened', this._onOpened.bind(this));
@@ -313,6 +313,7 @@ export default class App extends Component {
             <Scene initial={0} key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
             <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene initial={0} key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
+            <Scene initial={0} key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
             <Scene initial={0} key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
             <Scene initial={0} key="notifys" title="KHUYẾN MÃI" component={Notifys} {...custommerNav} />
             <Scene initial={0} key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
