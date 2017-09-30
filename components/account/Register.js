@@ -40,9 +40,9 @@ export default class Register extends Component {
       }
     } else {
       this.state = {
-        name: '',
-        tel: '',
-        password: '',
+        name: props.name_props || '',
+        tel: props.tel_props || '',
+        password: props.password_props || '',
         finish_loading: false,
         verify_loadding: false
       }
@@ -59,6 +59,13 @@ export default class Register extends Component {
     });
 
     store.pushBack = this._unMount.bind(this);
+
+    // from confirm screen
+    if (this.props.registerNow) {
+      setTimeout(() => {
+        this._onSave();
+      }, 500);
+    }
   }
 
   _unMount() {
@@ -139,8 +146,8 @@ export default class Register extends Component {
 
               const onBack = () => {
                 Alert.alert(
-                  'Thông báo',
-                  'Quá trình đăng ký chưa hoàn tất, bạn có muốn huỷ bỏ?',
+                  'Huỷ đăng ký',
+                  'Quá trình đăng ký chưa hoàn tất, bạn đã chắc chắn chưa?',
                   [
                     {text: 'Không', onPress: () => {
 
@@ -166,10 +173,10 @@ export default class Register extends Component {
           this.setState({
             finish_loading: false
           });
+        }
 
-          if (response) {
-            Toast.show(response.message, Toast.SHORT);
-          }
+        if (response) {
+          Toast.show(response.message, Toast.SHORT);
         }
 
       } catch (e) {
@@ -378,12 +385,18 @@ export default class Register extends Component {
 
             store.setRefreshHomeChange(store.refresh_home_change + 1);
 
-            Actions.pop();
+            if (this.props.registerNow) {
+              Actions.pop({
+                popNum: 2
+              });
+            } else {
+              Actions.pop();
+            }
           })();
-        } else {
-          if (response) {
-            Toast.show(response.message, Toast.SHORT);
-          }
+        }
+
+        if (response) {
+          Toast.show(response.message, Toast.SHORT);
         }
 
       } catch (e) {

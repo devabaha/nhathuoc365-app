@@ -34,7 +34,9 @@ export default class PopupConfirm extends Component {
             style={[styles.modal_confirm_btn, styles.modal_confirm_btn_left]}
             underlayColor="transparent"
             onPress={this.props.noConfirm}>
-            <Text style={styles.modal_confirm_label}>{this.props.noTitle || 'Không'}</Text>
+            <Text style={[styles.modal_confirm_label, {
+              color: this.props.noBlur ? "#999999" : DEFAULT_COLOR
+            }]}>{this.props.noTitle || 'Không'}</Text>
           </TouchableHighlight>
 
           <TouchableHighlight

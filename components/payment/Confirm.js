@@ -41,7 +41,11 @@ export default class Confirm extends Component {
      address_height: 50,
      continue_loading: false,
      data: null,
-     noteOffset: 0
+     noteOffset: 0,
+     suggest_register: false,
+     name_register: '',
+     tel_register: '',
+     pass_register: ''
     }
   }
 
@@ -154,29 +158,29 @@ export default class Confirm extends Component {
           if (this.popup_message) {
             this.popup_message.open();
 
-            // update cart data
-            action(() => {
-              // update cart
-              store.setCartData(response.data);
-              // reload home screen
-              store.setRefreshHomeChange(store.refresh_home_change + 1);
-
-              Events.trigger(RELOAD_STORE_ORDERS);
-
-              this.setState({
-                continue_loading: false
-              });
-            })();
+            // first orders
+            this.setState({
+              continue_loading: false,
+              suggest_register: response.data.total_orders == 1,
+              name_register: response.data.address.name,
+              tel_register: response.data.address.tel
+            });
 
             // hide back button
             Actions.refresh({
               hideBackImage: true
             });
 
+            Events.trigger(RELOAD_STORE_ORDERS);
+
+            // update cart data
             action(() => {
+              // update cart
+              store.setCartData(response.data);
+              // reload home screen
+              store.setRefreshHomeChange(store.refresh_home_change + 1);
               // hide payment nav
               store.setPaymentNavShow(false);
-
               // reload orders list screen
               store.setOrdersKeyChange(store.orders_key_change + 1);
             })();
@@ -801,27 +805,125 @@ export default class Confirm extends Component {
 
         </TouchableHighlight>}
 
-        <PopupConfirm
-          ref_popup={ref => this.popup_message = ref}
-          title="Đơn hàng của bạn sẽ được chúng tôi giao đúng hẹn. Xin cảm ơn"
-          noTitle="Xem đơn hàng"
-          noConfirm={this._viewOrders.bind(this)}
-          yesTitle="Tiếp tục mua hàng"
-          yesConfirm={this._continueShopping.bind(this)}
-          height={150}
-          otherClose={false}
-          content={(title) => {
-            return(
-              <View style={styles.success_box}>
-                <View style={styles.success_icon_box}>
-                  <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
-                  <Text style={styles.success_icon_label}>THÀNH CÔNG</Text>
+        {this.state.suggest_register ? (
+          <PopupConfirm
+            ref_popup={ref => this.popup_message = ref}
+            title={"Bạn đã đặt hàng thành công.\n\nĐăng ký thành viên để hưởng nhiều ưu đãi, khuyến mãi hơn nữa!"}
+            noTitle="Xem đơn hàng"
+            noBlur
+            noConfirm={this._viewOrders.bind(this)}
+            yesTitle="Đăng ký ngay!"
+            yesConfirm={this._onRegister.bind(this)}
+            height={340}
+            otherClose={false}
+            content={(title) => {
+              return(
+                <View style={styles.success_box}>
+                  <View style={styles.success_icon_box}>
+                    <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
+                    <Text style={styles.success_icon_label}>THÀNH CÔNGG</Text>
+                  </View>
+                  <Text style={styles.success_title}>{title}</Text>
+
+                  <TextInput
+                    ref={ref => this.refs_name_register = ref}
+                    style={{
+                      borderWidth: Util.pixel,
+                      borderColor: "#dddddd",
+                      padding: 8,
+                      borderRadius: 3,
+                      marginTop: 12
+                    }}
+                    keyboardType="default"
+                    maxLength={100}
+                    placeholder="Nhập tên của bạn"
+                    placeholderTextColor="#999999"
+                    underlineColorAndroid="#ffffff"
+                    onChangeText={(value) => {
+                      this.setState({
+                        name_register: value
+                      });
+                    }}
+                    value={this.state.name_register || (store.cart_data ? store.cart_data.address.name : '')}
+                    />
+
+                  <TextInput
+                    ref={ref => this.refs_tel_register = ref}
+                    style={{
+                      borderWidth: Util.pixel,
+                      borderColor: "#dddddd",
+                      padding: 8,
+                      borderRadius: 3,
+                      marginTop: 8
+                    }}
+                    keyboardType="default"
+                    maxLength={250}
+                    placeholder="Nhập số điện thoại"
+                    placeholderTextColor="#999999"
+                    underlineColorAndroid="#ffffff"
+                    onChangeText={(value) => {
+                      this.setState({
+                        tel_register: value
+                      });
+                    }}
+                    value={this.state.tel_register || (store.cart_data ? store.cart_data.address.tel : '')}
+                    />
+
+                  <TextInput
+                    ref={ref => this.refs_pass_register = ref}
+                    onLayout={() => {
+                      if (this.refs_pass_register) {
+                        setTimeout(() => {
+                          this.refs_pass_register.focus();
+                        }, 450);
+                      }
+                    }}
+                    style={{
+                      borderWidth: Util.pixel,
+                      borderColor: "#dddddd",
+                      padding: 8,
+                      borderRadius: 3,
+                      marginTop: 8
+                    }}
+                    keyboardType="default"
+                    maxLength={50}
+                    placeholder="Nhập mật khẩu"
+                    placeholderTextColor="#999999"
+                    underlineColorAndroid="#ffffff"
+                    onChangeText={(value) => {
+                      this.setState({
+                        pass_register: value
+                      });
+                    }}
+                    value={this.state.pass_register}
+                    />
                 </View>
-                <Text style={styles.success_title}>{title}</Text>
-              </View>
-            );
-          }}
-          />
+              );
+            }}
+            />
+        ) : (
+          <PopupConfirm
+            ref_popup={ref => this.popup_message = ref}
+            title="Đơn hàng của bạn sẽ được chúng tôi giao đúng hẹn. Xin cảm ơn"
+            noTitle="Xem đơn hàng"
+            noConfirm={this._viewOrders.bind(this)}
+            yesTitle="Tiếp tục mua hàng"
+            yesConfirm={this._continueShopping.bind(this)}
+            height={150}
+            otherClose={false}
+            content={(title) => {
+              return(
+                <View style={styles.success_box}>
+                  <View style={styles.success_icon_box}>
+                    <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
+                    <Text style={styles.success_icon_label}>THÀNH CÔNG</Text>
+                  </View>
+                  <Text style={styles.success_title}>{title}</Text>
+                </View>
+              );
+            }}
+            />
+        )}
 
         <Sticker
           active={this.state.coppy_sticker_flag}
@@ -838,6 +940,63 @@ export default class Confirm extends Component {
          />
       </View>
     );
+  }
+
+  _onRegister() {
+    var name = this.state.name_register;
+    var tel = this.state.tel_register;
+    var pass = this.state.pass_register;
+
+    name = name.trim();
+    tel = tel.trim();
+    password = pass.trim();
+
+    if (!name) {
+      return Alert.alert(
+        'Thông báo',
+        'Hãy điền tên của bạn',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            this.refs_name_register.focus();
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
+    if (!tel) {
+      return Alert.alert(
+        'Thông báo',
+        'Hãy điền Số điện thoại',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            this.refs_tel_register.focus();
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
+    if (!password) {
+      return Alert.alert(
+        'Thông báo',
+        'Hãy điền Mật khẩu',
+        [
+          {text: 'Đồng ý', onPress: () => {
+            this.refs_pass_register.focus();
+          }},
+        ],
+        { cancelable: false }
+      );
+    }
+
+    // go register screen
+    Actions.register({
+      name_props: name,
+      tel_props: tel,
+      password_props: password,
+      registerNow: true
+    });
   }
 
 }
@@ -952,7 +1111,7 @@ class ItemCartComponent extends Component {
 
     return (
       <View style={[styles.cart_item_box, {
-        height: 94
+        height: 120
       }]}>
         <View style={styles.cart_item_check_box}>
           {check_loading ? (
@@ -1168,6 +1327,7 @@ const styles = StyleSheet.create({
     color: "#000000",
     fontSize: 14,
     fontWeight: '600',
+    marginRight: 30
   },
   cart_item_actions: {
     flexDirection: 'row',
@@ -1295,7 +1455,6 @@ const styles = StyleSheet.create({
     padding: 15
   },
   success_title: {
-    textAlign: 'center',
     lineHeight: 20,
     color: "#000000"
   },
