@@ -376,18 +376,18 @@ class CategoryScreen extends Component {
 
   componentDidMount() {
     var {item, index, cate_index} = this.props;
+    this.start_time = 0;
 
-    if (index == cate_index) {
-      this.start_time = 0;
+    setTimeout(() => {
       // get list products by category_id
       this._getItemByCateId(item.id);
-    }
+    }, index * 1000);
   }
 
   componentWillReceiveProps(nextProps) {
     var {item, index, cate_index} = nextProps;
 
-    if (index == cate_index && this.state.items_data == null) {
+    if (index == cate_index && this.state.items_data == null && this.props != nextProps) {
       this.start_time = time();
       // get list products by category_id
       this._getItemByCateId(item.id);
@@ -566,7 +566,7 @@ class CategoryScreen extends Component {
       // no data
       return(
         <View style={styles.containerScreen}>
-          <Indicator />
+          <CenterText title="Chưa có mặt hàng nào :(" />
         </View>
       );
     }

@@ -349,7 +349,8 @@ export default class Item extends Component {
                 onPress={this._likeHandler.bind(this, item)}
                 underlayColor="transparent">
                 <View style={[styles.item_actions_btn, styles.item_actions_btn_chat, {
-                  borderColor: is_like ? "#e31b23" : DEFAULT_COLOR
+                  borderColor: is_like ? "#e31b23" : DEFAULT_COLOR,
+                  width: 126
                 }]}>
                   <View style={{
                     height: '100%',
