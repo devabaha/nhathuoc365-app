@@ -16,6 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
+import {reaction} from 'mobx';
 
 // components
 import SelectionList from '../SelectionList';
@@ -34,6 +35,10 @@ export default class MainNotify extends Component {
       finish: false,
       scrollTop: 0
     }
+
+    reaction(() => store.notify, () => {
+      this._setOptionList();
+    });
   }
 
   _setOptionList() {

@@ -309,7 +309,7 @@ export default class App extends Component {
             <Scene initial={0} key="register" title="ĐĂNG KÝ" component={Register} {...custommerNav} />
             <Scene initial={0} key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
             <Scene initial={0} key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
-            <Scene initial={0} key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
+            <Scene initial={0} key="stores" panHandlers={null} title="CỬA HÀNG" component={Stores} {...custommerNav} />
             <Scene initial={0} key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
             <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene initial={0} key="item" title="CHI TIẾT" component={Item} {...custommerNav} />

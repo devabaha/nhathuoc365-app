@@ -23,6 +23,7 @@ import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
 import RightButtonChat from '../RightButtonChat';
+import RightButtonCall from '../RightButtonCall';
 
 @observer
 export default class StoreOrders extends Component {
@@ -113,6 +114,10 @@ export default class StoreOrders extends Component {
   _renderRightButton() {
     return(
       <View style={styles.right_btn_box}>
+        <RightButtonCall
+          tel={this.props.tel}
+        />
+        
         <RightButtonChat
           title={this.state.title || undefined}
           store_id={this.state.store_id || undefined}

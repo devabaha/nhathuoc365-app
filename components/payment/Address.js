@@ -175,12 +175,12 @@ export default class Address extends Component {
               }}
               underlayColor="transparent">
               <View style={styles.payments_nav_items}>
-                <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
+                <View style={[styles.payments_nav_icon_box]}>
                   <Icon style={[styles.payments_nav_icon]} name="check" size={20} color="#999" />
                 </View>
                 <Text style={[styles.payments_nav_items_title]}>2. Xác nhận</Text>
 
-                {/*<View style={styles.payments_nav_items_active} />*/}
+                <View style={styles.payments_nav_items_right_active} />
               </View>
             </TouchableHighlight>
           </View>
@@ -541,7 +541,9 @@ const styles = StyleSheet.create({
   payments_nav: {
     backgroundColor: '#ffffff',
     height: 60,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
   },
   payments_nav_items: {
     justifyContent: 'center',
@@ -560,10 +562,18 @@ const styles = StyleSheet.create({
   },
   payments_nav_items_active: {
     position: 'absolute',
-    left: 0,
+    width: Util.size.width / 4 - 14,
+    top: 20,
     right: 0,
-    bottom: 0,
-    height: 3,
+    height: Util.pixel,
+    backgroundColor: DEFAULT_COLOR
+  },
+  payments_nav_items_right_active: {
+    position: 'absolute',
+    width: Util.size.width / 4 - 14,
+    top: 20,
+    left: 0,
+    height: Util.pixel,
     backgroundColor: DEFAULT_COLOR
   },
   borderBottom: {

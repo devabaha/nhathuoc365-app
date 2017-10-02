@@ -179,7 +179,7 @@ export default class CartFooter extends Component {
           <Image style={styles.store_cart_item_image} source={{uri: item.image}} />
         </View>
         <View style={styles.store_cart_item_title_box}>
-          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 16)}</Text>
+          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 26)}</Text>
           <Text style={[styles.store_cart_item_price, {
             position: 'absolute',
             right: 0,

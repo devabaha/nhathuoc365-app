@@ -26,6 +26,7 @@ import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 import RightButtonChat from '../RightButtonChat';
+import RightButtonCall from '../RightButtonCall';
 import { CheckBox } from '../../lib/react-native-elements';
 
 @observer
@@ -91,6 +92,8 @@ export default class Confirm extends Component {
         this.setState({
           data: response.data
         }, () => {
+          this.cart_tel = response.data.tel;
+          
           Actions.refresh({
             title: '#' + response.data.cart_code,
             renderRightButton: this._renderRightButton.bind(this)
@@ -112,10 +115,14 @@ export default class Confirm extends Component {
 
     return(
       <View style={styles.right_btn_box}>
+        <RightButtonCall
+          tel={this.props.tel}
+        />
+
         <RightButtonChat
           store_id={cart_data.site_id || undefined}
           title={cart_data.shop_name || undefined}
-          tel={this.props.tel}
+          tel={this.props.tel || this.cart_tel}
          />
       </View>
     );
@@ -507,7 +514,7 @@ export default class Confirm extends Component {
                 </View>
                 <Text style={[styles.payments_nav_items_title, styles.payments_nav_items_title_active]}>2. Xác nhận</Text>
 
-                <View style={styles.payments_nav_items_active} />
+                <View style={styles.payments_nav_items_right_active} />
               </View>
             </TouchableHighlight>
           </View>
@@ -873,13 +880,6 @@ export default class Confirm extends Component {
 
                   <TextInput
                     ref={ref => this.refs_pass_register = ref}
-                    onLayout={() => {
-                      if (this.refs_pass_register) {
-                        setTimeout(() => {
-                          this.refs_pass_register.focus();
-                        }, 450);
-                      }
-                    }}
                     style={{
                       borderWidth: Util.pixel,
                       borderColor: "#dddddd",
@@ -1505,7 +1505,9 @@ const styles = StyleSheet.create({
   payments_nav: {
     backgroundColor: '#ffffff',
     height: 60,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
   },
   payments_nav_items: {
     justifyContent: 'center',
@@ -1524,10 +1526,18 @@ const styles = StyleSheet.create({
   },
   payments_nav_items_active: {
     position: 'absolute',
-    left: 0,
+    width: Util.size.width / 4 - 14,
+    top: 20,
     right: 0,
-    bottom: 0,
-    height: 3,
+    height: Util.pixel,
+    backgroundColor: DEFAULT_COLOR
+  },
+  payments_nav_items_right_active: {
+    position: 'absolute',
+    width: Util.size.width / 4 - 14,
+    top: 20,
+    left: 0,
+    height: Util.pixel,
     backgroundColor: DEFAULT_COLOR
   },
   borderBottom: {

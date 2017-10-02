@@ -28,6 +28,8 @@ import RightButtonOrders from '../RightButtonOrders';
 
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const STORE_KEY = 'KeyStore';
+const CATE_AUTO_LOAD = 'CateAutoLoad';
+const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
 @observer
 export default class Stores extends Component {
@@ -80,7 +82,8 @@ export default class Stores extends Component {
   }
 
   _unMount() {
-
+    Events.trigger(CATE_AUTO_LOAD);
+    Events.removeAll(CATE_AUTO_LOAD);
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -378,10 +381,21 @@ class CategoryScreen extends Component {
     var {item, index, cate_index} = this.props;
     this.start_time = 0;
 
-    setTimeout(() => {
-      // get list products by category_id
+    var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
+
+    if (index == 0) {
       this._getItemByCateId(item.id);
-    }, index * 1000);
+    } else {
+      Events.on(keyAutoLoad, keyAutoLoad, () => {
+        if (this.state.items_data == null) {
+            this._getItemByCateId(item.id);
+        }
+      });
+    }
+
+    Events.on(CATE_AUTO_LOAD, CATE_AUTO_LOAD + index, () => {
+      Events.removeAll(keyAutoLoad);
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -432,7 +446,9 @@ class CategoryScreen extends Component {
       }).then(data => {
         // delay append data
         setTimeout(() => {
-          layoutAnimation();
+          if (this.props.index == 0) {
+            layoutAnimation();
+          }
 
           this.setState({
             items_data: data.length > STORES_LOAD_MORE ? [...data, {id: -1, type: 'loadmore'}] : data,
@@ -445,6 +461,9 @@ class CategoryScreen extends Component {
           action(() => {
             store.setStoresFinish(true);
           })();
+
+          // load next category
+          this._loadNextCate();
 
         }, this._delay());
       }).catch(err => {
@@ -469,7 +488,9 @@ class CategoryScreen extends Component {
 
           // delay append data
           setTimeout(() => {
-            layoutAnimation();
+            if (this.props.index == 0) {
+              layoutAnimation();
+            }
 
             var items_data = loadmore ? [...this.state.items_data_bak, ...response.data] : response.data;
             this.setState({
@@ -483,6 +504,9 @@ class CategoryScreen extends Component {
             action(() => {
               store.setStoresFinish(true);
             })();
+
+            // load next category
+            this._loadNextCate();
 
             // cache in five minutes
             if (response.data && !loadmore) {
@@ -500,6 +524,9 @@ class CategoryScreen extends Component {
             refreshing: false,
             items_data: this.state.items_data_bak
           });
+
+          // load next category
+          this._loadNextCate();
         }
       }
 
@@ -519,6 +546,13 @@ class CategoryScreen extends Component {
     }
   }
 
+  _loadNextCate() {
+    // auto load next category
+    var keyAutoLoad = AUTO_LOAD_NEXT_CATE + (this.props.index + 1);
+    Events.trigger(keyAutoLoad);
+    Events.removeAll(keyAutoLoad);
+  }
+
   _loadMore() {
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
   }
@@ -535,10 +569,17 @@ class CategoryScreen extends Component {
 
     var {items_data, header_title} = this.state;
 
-    // show products
-    if (items_data) {
+    if (items_data == null) {
       return(
         <View style={styles.containerScreen}>
+          <CenterText title="Chưa có mặt hàng nào :(" />
+        </View>
+      );
+    }
+
+    return(
+      <View style={styles.containerScreen}>
+        {items_data && (
           <FlatList
             style={[styles.items_box]}
             ListHeaderComponent={() => <ListHeader title={header_title} />}
@@ -560,16 +601,11 @@ class CategoryScreen extends Component {
               />
             }
           />
-        </View>
-      );
-    } else {
-      // no data
-      return(
-        <View style={styles.containerScreen}>
-          <CenterText title="Chưa có mặt hàng nào :(" />
-        </View>
-      );
-    }
+        )}
+
+      </View>
+    );
+
   }
 }
 
