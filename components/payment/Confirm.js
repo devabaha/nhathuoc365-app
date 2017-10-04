@@ -57,10 +57,24 @@ export default class Confirm extends Component {
     }
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.notice_data != nextProps.notice_data) {
+      this.setState({
+        notice_data: nextProps.notice_data
+      }, () => {
+        this._initial(nextProps);
+      });
+    }
+  }
+
   componentDidMount() {
+    this._initial(this.props);
+  }
+
+  _initial(props) {
     if (!this.state.single) {
-      if (this.props.notice_data) {
-        this._getOrdersItem();
+      if (props.notice_data) {
+        this._getOrdersItem(props.notice_data.site_id, props.notice_data.page_id);
       } else {
         Actions.refresh({
           renderRightButton: this._renderRightButton.bind(this)
@@ -84,16 +98,16 @@ export default class Confirm extends Component {
     Keyboard.dismiss();
   }
 
-  async _getOrdersItem() {
+  async _getOrdersItem(site_id, page_id) {
     try {
-      var response = await APIHandler.site_cart_by_id(this.props.notice_data.site_id, this.props.notice_data.page_id);
+      var response = await APIHandler.site_cart_by_id(site_id, page_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({
           data: response.data
         }, () => {
           this.cart_tel = response.data.tel;
-          
+
           Actions.refresh({
             title: '#' + response.data.cart_code,
             renderRightButton: this._renderRightButton.bind(this)
@@ -371,7 +385,7 @@ export default class Confirm extends Component {
 
       // onback
       Actions.orders_item({
-        title: `Đơn hàng #${store.cart_data.cart_code}`,
+        title: `#${store.cart_data.cart_code}`,
         data: store.cart_data,
         tel: store.store_data.tel,
         onBack

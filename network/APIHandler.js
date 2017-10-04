@@ -365,7 +365,7 @@ class APIHandler {
   async getAPI(api) {
     this._networkIndicator();
 
-    console.log(api);
+    // console.log(api);
     var response = await axios(api);
     return await this.processError(response);
   }
@@ -376,7 +376,7 @@ class APIHandler {
   async postAPI(api, data){
     this._networkIndicator();
 
-    console.log(api);
+    // console.log(api);
     var response = await axios.post(api, encodeQueryData(data));
     return await this.processError(response);
   }
@@ -390,7 +390,7 @@ class APIHandler {
     if (response.status != HTTP_SUCCESS) {
         throw 'Error: ' + response.statusText;
     }
-    console.log('--- response: ', JSON.stringify(response.data));
+    // console.log('--- response: ', JSON.stringify(response.data));
     return response.data;
   }
 };

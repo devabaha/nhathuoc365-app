@@ -41,15 +41,26 @@ export default class Stores extends Component {
       category_nav_index: 0,
       categories_data: null
     }
-
-    action(() => {
-      store.setStoresFinish(false);
-    })();
   }
 
   componentDidMount() {
+    this._initial(this.props);
+  }
 
-    var title = `Tìm kiếm tại ${this.props.title}`;
+  componentWillReceiveProps(nextProps) {
+    if (this.props.title != nextProps.title) {
+      this.setState({
+        loading: true,
+        category_nav_index: 0,
+        categories_data: null
+      }, () => {
+        this._initial(nextProps);
+      });
+    }
+  }
+
+  _initial(props) {
+    var title = `Tìm kiếm tại ${props.title}`;
 
     Actions.refresh({
       showSearchBar: true,
@@ -84,6 +95,10 @@ export default class Stores extends Component {
   _unMount() {
     Events.trigger(CATE_AUTO_LOAD);
     Events.removeAll(CATE_AUTO_LOAD);
+
+    action(() => {
+      store.setStoresFinish(false);
+    })();
   }
 
   // thời gian trễ khi chuyển màn hình

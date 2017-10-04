@@ -31,6 +31,18 @@ export default class NotifyItem extends Component {
     this._getData();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (this.props.data.id != nextProps.data.id) {
+      this.setState({
+        loading: true,
+        item: nextProps.data,
+        item_data: null
+      }, () => {
+        this._getData();
+      });
+    }
+  }
+
   _getData(delay) {
     this.setState({
       loading: true
