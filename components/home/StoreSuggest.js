@@ -5,7 +5,8 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableHighlight
+  TouchableHighlight,
+  Alert
 } from 'react-native';
 
 // library
@@ -35,6 +36,15 @@ export default class StoreSuggest extends Component {
       }
     } catch (e) {
       console.warn(e + ' user_list_site');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getData.bind(this)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }

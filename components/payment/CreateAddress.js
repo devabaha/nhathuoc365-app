@@ -37,7 +37,7 @@ export default class CreateAddress extends Component {
         address: edit_data.address || '',
         default_flag: edit_data.default_flag == 1 ? true : false,
         finish_loading: false,
-        is_user_address: props.from == "account"
+        is_user_address: props.from_page == "account"
       }
     } else {
       this.state = {
@@ -47,7 +47,7 @@ export default class CreateAddress extends Component {
         address: '',
         default_flag: false,
         finish_loading: false,
-        is_user_address: props.from == "account"
+        is_user_address: props.from_page == "account"
       }
     }
   }
@@ -177,6 +177,15 @@ export default class CreateAddress extends Component {
 
       } catch (e) {
         console.warn(e + ' site_add_address');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._onSave.bind(this)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }
@@ -201,6 +210,15 @@ export default class CreateAddress extends Component {
 
     } catch (e) {
       console.warn(e + ' site_cart');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getCart.bind(this)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -233,6 +251,15 @@ export default class CreateAddress extends Component {
       }
     } catch (e) {
       console.warn(e + ' user_delete_address');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._removeAddressItem.bind(this)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }

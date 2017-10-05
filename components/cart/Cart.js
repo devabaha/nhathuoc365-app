@@ -86,6 +86,15 @@ export default class Cart extends Component {
 
     } catch (e) {
       console.warn(e + ' site_cart');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getCart.bind(this, delay)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -154,6 +163,15 @@ export default class Cart extends Component {
       }
     } catch (e) {
       console.warn(e + ' site_cart_down');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._item_qnt_decrement.bind(this, item)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -172,6 +190,15 @@ export default class Cart extends Component {
       }
     } catch (e) {
       console.warn(e + ' site_cart_up');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._item_qnt_increment.bind(this, item)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -217,10 +244,21 @@ export default class Cart extends Component {
           })();
         }, this._delay());
       }
+
+      this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.warn(e + ' site_cart_remove');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._removeCartItem.bind(this)},
+        ],
+        { cancelable: false }
+      );
     } finally {
-      this.cartItemConfirmRemove = undefined;
+
     }
   }
 
@@ -241,6 +279,15 @@ export default class Cart extends Component {
 
     } catch (e) {
       console.warn(e);
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._checkBoxHandler.bind(this, item)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }

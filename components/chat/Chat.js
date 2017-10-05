@@ -10,7 +10,8 @@ import {
   TouchableHighlight,
   RefreshControl,
   Keyboard,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 // library
@@ -196,14 +197,23 @@ export default class Chat extends Component {
             });
           }
         }
+
+        this.chat_processing = false;
       } catch (e) {
         console.warn(e + ' site_load_chat');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
+          ],
+          { cancelable: false }
+        );
       } finally {
         this.setState({
           finish: true
         });
-
-        this.chat_processing = false;
       }
     });
   }
@@ -242,10 +252,21 @@ export default class Chat extends Component {
           content: ''
         });
       }
+
+      this.submiting = false;
     } catch (e) {
       console.warn(e + ' site_send_chat');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._onSubmit.bind(this)},
+        ],
+        { cancelable: false }
+      );
     } finally {
-      this.submiting = false;
+
     }
   }
 

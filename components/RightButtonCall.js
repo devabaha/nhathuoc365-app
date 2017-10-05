@@ -21,7 +21,7 @@ export default class RightButtonCall extends Component {
       <TouchableHighlight
         underlayColor="transparent"
         onPress={() => {
-          if (this.props.tel) {
+          if (this.props.tel && this.props.tel != '') {
             Communications.phonecall(this.props.tel, true);
           }
         }}>

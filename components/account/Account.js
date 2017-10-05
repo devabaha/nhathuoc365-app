@@ -79,7 +79,7 @@ export default class Account extends Component {
           label: "Địa chỉ của bạn",
           desc: "Quản lý địa chỉ nhận hàng",
           onPress: () => Actions.address({
-            from: "account"
+            from_page: "account"
           }),
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#fcb309"
@@ -179,40 +179,51 @@ export default class Account extends Component {
         console.warn(response.error);
       }
       else {
-        this.setState({
-          avatar_loading: true
-        }, () => {
-          const avatar = {
-            name: 'avatar',
-            filename: response.fileName,
-            data: response.data
-          }
-
-          // call api post my form data
-          RNFetchBlob.fetch('POST', APIHandler.url_user_add_avatar(), {
-              'Content-Type' : 'multipart/form-data',
-          }, [avatar]).then((resp) => {
-
-              var {data} = resp;
-              var response = JSON.parse(data);
-              if (response && response.status == STATUS_SUCCESS) {
-                this._showSticker();
-
-                action(() => {
-                  store.setUserInfo(response.data);
-                })();
-                this.setState({
-                  avatar_loading: false
-                });
-              }
-          }).catch((error) => {
-              console.warn(error + ' url_user_add_avatar');
-          });
-        });
-
+        this._uploadAvatar(response);
       }
     });
+  }
 
+  _uploadAvatar(response) {
+    this.setState({
+      avatar_loading: true
+    }, () => {
+      const avatar = {
+        name: 'avatar',
+        filename: response.fileName,
+        data: response.data
+      }
+
+      // call api post my form data
+      RNFetchBlob.fetch('POST', APIHandler.url_user_add_avatar(), {
+          'Content-Type' : 'multipart/form-data',
+      }, [avatar]).then((resp) => {
+
+          var {data} = resp;
+          var response = JSON.parse(data);
+          if (response && response.status == STATUS_SUCCESS) {
+            this._showSticker();
+
+            action(() => {
+              store.setUserInfo(response.data);
+            })();
+            this.setState({
+              avatar_loading: false
+            });
+          }
+      }).catch((error) => {
+          console.warn(error + ' url_user_add_avatar');
+
+          return Alert.alert(
+            'Thông báo',
+            'Kết nối mạng bị lỗi',
+            [
+              {text: 'Thử lại', onPress: this._uploadAvatar.bind(this, response)},
+            ],
+            { cancelable: false }
+          );
+      });
+    });
   }
 
   componentDidMount() {
@@ -287,6 +298,15 @@ export default class Account extends Component {
         }
       } catch (e) {
         console.warn(e + ' user_login');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._login.bind(this, delay)},
+          ],
+          { cancelable: false }
+        );
       }
     });
   }
@@ -449,33 +469,46 @@ export default class Account extends Component {
         {text: 'Đăng xuất', onPress: () => {
           this.setState({
             logout_loading: true
-          }, async () => {
-            try {
-              var response = await APIHandler.user_logout();
-
-              if (response && response.status == STATUS_SUCCESS) {
-                action(() => {
-                  store.setUserInfo(response.data);
-
-                  store.resetCartData();
-
-                  store.setRefreshHomeChange(store.refresh_home_change + 1);
-
-                  store.setOrdersKeyChange(store.orders_key_change + 1);
-                })();
-              }
-            } catch (e) {
-              console.warn(e + ' user_logout');
-            } finally {
-              this.setState({
-                logout_loading: false
-              });
-            }
+          }, () => {
+            this._logout();
           });
         }, style: "destructive"}
       ],
       { cancelable: false }
     );
+  }
+
+  async _logout() {
+    try {
+      var response = await APIHandler.user_logout();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setUserInfo(response.data);
+
+          store.resetCartData();
+
+          store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+          store.setOrdersKeyChange(store.orders_key_change + 1);
+        })();
+      }
+    } catch (e) {
+      console.warn(e + ' user_logout');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._logout.bind(this)},
+        ],
+        { cancelable: false }
+      );
+    } finally {
+      this.setState({
+        logout_loading: false
+      });
+    }
   }
 }
 

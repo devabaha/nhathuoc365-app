@@ -9,7 +9,8 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 //library
@@ -123,6 +124,15 @@ export default class Orders extends Component {
       }
     } catch (e) {
       console.warn(e + ' user_cart_list');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getData.bind(this, delay, noScroll)},
+        ],
+        { cancelable: false }
+      );
     } finally {
       store.getNoitify();
     }
@@ -224,13 +234,22 @@ export default class Orders extends Component {
     if (this.item_cancel) {
 
       try {
-        var response = await APIHandler.site_cart_cancel(store.store_id, this.item_cancel.id);
+        var response = await APIHandler.site_cart_cancel(this.item_cancel.site_id, this.item_cancel.id);
 
         if (response && response.status == STATUS_SUCCESS) {
           this._getData(450, true);
         }
       } catch (e) {
         console.warn(e);
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._cancelCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }

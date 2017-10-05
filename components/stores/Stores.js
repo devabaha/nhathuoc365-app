@@ -41,6 +41,10 @@ export default class Stores extends Component {
       category_nav_index: 0,
       categories_data: null
     }
+
+    action(() => {
+      store.setStoresFinish(false);
+    })();
   }
 
   componentDidMount() {
@@ -49,6 +53,10 @@ export default class Stores extends Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props.title != nextProps.title) {
+      action(() => {
+        store.setStoresFinish(false);
+      })();
+
       this.setState({
         loading: true,
         category_nav_index: 0,
@@ -83,7 +91,7 @@ export default class Stores extends Component {
     this.start_time = time();
 
     // get categories navigator
-    this._getCategoriesNav();
+    this._getCategoriesNavFromServer();
 
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
@@ -95,10 +103,6 @@ export default class Stores extends Component {
   _unMount() {
     Events.trigger(CATE_AUTO_LOAD);
     Events.removeAll(CATE_AUTO_LOAD);
-
-    action(() => {
-      store.setStoresFinish(false);
-    })();
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -107,34 +111,7 @@ export default class Stores extends Component {
     return delay;
   }
 
-  // lấy thông tin cửa hàng
-  _getCategoriesNav() {
-    var store_key = STORE_KEY + store.store_id + store.user_info.id;
-
-    // load
-    storage.load({
-      key: store_key,
-      autoSync: true,
-      syncInBackground: true,
-      syncParams: {
-        extraFetchOptions: {
-        },
-        someFlag: true,
-      },
-    }).then(data => {
-      setTimeout(() => {
-        this.setState({
-          categories_data: data,
-        });
-      }, this._delay());
-    }).catch(err => {
-      this._getCategoriesNavFromServer();
-    });
-  }
-
   async _getCategoriesNavFromServer() {
-    var store_key = STORE_KEY + store.store_id + store.user_info.id;
-
     try {
       var response = await APIHandler.site_info(store.store_id);
 
@@ -143,13 +120,6 @@ export default class Stores extends Component {
         setTimeout(() => {
           this.setState({
             categories_data: [{id: 0, name: "Tất cả"}, ...response.data.categories],
-          }, () => {
-            // cache in five minutes
-            storage.save({
-              key: store_key,
-              data: this.state.categories_data,
-              expires: STORE_CACHE
-            });
           });
         }, this._delay());
       }

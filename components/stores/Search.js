@@ -10,7 +10,8 @@ import {
   FlatList,
   RefreshControl,
   ScrollView,
-  Keyboard
+  Keyboard,
+  Alert
 } from 'react-native';
 
 //library
@@ -165,6 +166,15 @@ export default class Search extends Component {
 
       } catch (e) {
         console.warn(e + ' search_product');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._onSearch.bind(this, keyword)},
+          ],
+          { cancelable: false }
+        );
       }
     });
   }
@@ -376,12 +386,22 @@ export default class Search extends Component {
             Events.trigger(NEXT_PREV_CART, {index});
           }
         })();
-
       }
+
+      this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.warn(e + ' site_cart_remove');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._removeCartItem.bind(this)},
+        ],
+        { cancelable: false }
+      );
     } finally {
-      this.cartItemConfirmRemove = undefined;
+
     }
   }
 }

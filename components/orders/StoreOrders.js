@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  Alert
 } from 'react-native';
 
 //library
@@ -94,6 +95,15 @@ export default class StoreOrders extends Component {
       }
     } catch (e) {
       console.warn(e + ' site_cart_list');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -117,7 +127,7 @@ export default class StoreOrders extends Component {
         <RightButtonCall
           tel={this.props.tel}
         />
-        
+
         <RightButtonChat
           title={this.state.title || undefined}
           store_id={this.state.store_id || undefined}
@@ -159,7 +169,7 @@ export default class StoreOrders extends Component {
                   confirmCancelCart={this.confirmCancelCart.bind(this)}
                   hideContinue={this.props.hideContinue}
                   item={item}
-                  from="store_orders"
+                  from_page="store_orders"
                   goStore={this.props.goStore}
                   />
               );
@@ -227,6 +237,15 @@ export default class StoreOrders extends Component {
         }
       } catch (e) {
         console.warn(e);
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._cancelCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }

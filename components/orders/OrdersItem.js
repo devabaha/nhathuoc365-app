@@ -22,7 +22,7 @@ export default class OrdersItem extends Component {
           {...this.props.passProps}
           data={this.props.data}
           tel={this.props.tel}
-          from="orders_item" />
+          from_page="orders_item" />
       </View>
     );
   }

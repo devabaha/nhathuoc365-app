@@ -30,7 +30,7 @@ export default class Address extends Component {
       item_selected: null,
       loading: true,
       continue_loading: false,
-      single: !props.from
+      single: !props.from_page
     }
 
     this._getData = this._getData.bind(this);
@@ -81,6 +81,15 @@ export default class Address extends Component {
 
     } catch (e) {
       console.warn(e + ' user_address');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -98,6 +107,10 @@ export default class Address extends Component {
       );
     }
 
+    this._addSiteCart();
+  }
+
+  _addSiteCart() {
     this.setState({
       continue_loading: true
     }, async () => {
@@ -116,6 +129,15 @@ export default class Address extends Component {
         }
       } catch (e) {
         console.warn(e + ' site_cart_address');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._addSiteCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }
@@ -139,7 +161,7 @@ export default class Address extends Component {
   _createNew() {
     Actions.create_address({
       addressReload: this._getData,
-      from: this.props.from
+      from_page: this.props.from_page
     });
   }
 
@@ -281,7 +303,7 @@ export default class Address extends Component {
                                 edit_data: item,
                                 title: "SỬA ĐỊA CHỈ",
                                 addressReload: this._getData,
-                                from: this.props.from
+                                from_page: this.props.from_page
                               });
                             }}>
                             <View style={styles.address_edit_box}>

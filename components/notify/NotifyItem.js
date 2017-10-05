@@ -7,7 +7,8 @@ import {
   Image,
   TouchableHighlight,
   StyleSheet,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 // library
@@ -62,6 +63,15 @@ export default class NotifyItem extends Component {
         }
       } catch (e) {
         console.warn(e + ' user_news');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }

@@ -74,6 +74,15 @@ export default class CartFooter extends Component {
 
     } catch (e) {
       console.warn(e + ' site_cart');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getCart.bind(this)},
+        ],
+        { cancelable: false }
+      );
     } finally {
       this.setState({
         loading: false
@@ -110,6 +119,15 @@ export default class CartFooter extends Component {
         }
       } catch (e) {
         console.warn(e + ' site_cart_down');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._item_qnt_decrement.bind(this, item)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }
@@ -134,6 +152,15 @@ export default class CartFooter extends Component {
         }
       } catch (e) {
         console.warn(e + ' site_cart_up');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._item_qnt_increment.bind(this, item)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }

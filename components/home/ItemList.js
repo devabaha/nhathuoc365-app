@@ -78,23 +78,7 @@ export default class ItemList extends Component {
       [
         {text: 'Xoá cửa hàng', onPress: () => {
 
-          this.props.that.setState({
-            loading: true
-          }, async () => {
-            try {
-              var response = await APIHandler.user_remove_site(item.site_code);
-
-              if (response && response.status == STATUS_SUCCESS) {
-                action(() => {
-                  store.setRefreshHomeChange(store.refresh_home_change + 1);
-                })();
-              }
-            } catch (e) {
-              console.warn(e + ' user_remove_site');
-            } finally {
-
-            }
-          });
+          this._removeStoreTrue(item);
 
         }, style: 'destructive'},
 
@@ -102,6 +86,35 @@ export default class ItemList extends Component {
       ],
       { cancelable: false }
     );
+  }
+
+  _removeStoreTrue(item) {
+    this.props.that.setState({
+      loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.user_remove_site(item.site_code);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setRefreshHomeChange(store.refresh_home_change + 1);
+          })();
+        }
+      } catch (e) {
+        console.warn(e + ' user_remove_site');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._removeStoreTrue.bind(this, item)},
+          ],
+          { cancelable: false }
+        );
+      } finally {
+
+      }
+    });
   }
 
   render() {

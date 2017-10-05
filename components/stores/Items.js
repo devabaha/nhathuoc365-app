@@ -7,6 +7,7 @@ import {
   Image,
   TouchableHighlight,
   StyleSheet,
+  Alert
 } from 'react-native';
 
 // library
@@ -68,6 +69,15 @@ export default class Items extends Component {
 
       } catch (e) {
         console.warn(e + ' site_cart_adding');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._addCart.bind(this, item)},
+          ],
+          { cancelable: false }
+        );
       } finally {
 
       }
