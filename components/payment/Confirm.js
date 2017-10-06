@@ -170,7 +170,7 @@ export default class Confirm extends Component {
     return(
       <View style={styles.right_btn_box}>
         <RightButtonCall
-          tel={this.props.tel}
+          tel={this.props.tel || this.cart_tel}
         />
 
         <RightButtonChat
