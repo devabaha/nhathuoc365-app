@@ -100,7 +100,7 @@ export default class Confirm extends Component {
 
   async _siteInfo(site_id) {
     try {
-      var response = await APIHandler.site_info(site_id);
+      var response = await APIHandler.site_detail(site_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {

@@ -62,6 +62,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async site_detail(site_id) {
+    var api = url_for(API.SITE_DETAIL + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
   /**
   * Lấy d/s sản phẩm theo categofy id
   */
