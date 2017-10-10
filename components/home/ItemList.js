@@ -76,45 +76,42 @@ export default class ItemList extends Component {
       'Xoá cửa hàng',
       'Bạn sẽ không nhận được thông báo khuyến mãi từ cửa hàng này nữa.',
       [
+        {text: 'Huỷ', onPress: () => false, style: 'cancel'},
         {text: 'Xoá cửa hàng', onPress: () => {
 
           this._removeStoreTrue(item);
 
-        }, style: 'destructive'},
-
-        {text: 'Huỷ', onPress: () => false, style: 'cancel'},
+        }, style: 'destructive'}
       ],
       { cancelable: false }
     );
   }
 
-  _removeStoreTrue(item) {
-    this.props.that.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_remove_site(item.site_code);
+  async _removeStoreTrue(item) {
+    try {
+      var response = await APIHandler.user_remove_site(item.site_code);
 
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setRefreshHomeChange(store.refresh_home_change + 1);
-          })();
-        }
-      } catch (e) {
-        console.warn(e + ' user_remove_site');
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setRefreshHomeChange(store.refresh_home_change + 1);
+        })();
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._removeStoreTrue.bind(this, item)},
-          ],
-          { cancelable: false }
-        );
-      } finally {
-
+        Events.trigger(KEY_EVENTS_STORE);
       }
-    });
+    } catch (e) {
+      console.warn(e + ' user_remove_site');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._removeStoreTrue.bind(this, item)},
+        ],
+        { cancelable: false }
+      );
+    } finally {
+
+    }
   }
 
   render() {

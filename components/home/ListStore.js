@@ -24,7 +24,7 @@ import Sticker from '../Sticker';
 import StoreSuggest from './StoreSuggest';
 
 @observer
-export default class SearchStore extends Component {
+export default class ListStore extends Component {
   constructor(props) {
     super(props);
 

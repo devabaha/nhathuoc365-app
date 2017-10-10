@@ -502,16 +502,16 @@ class NavBar extends React.Component {
         marginTop: isIOS ? 1 : 1,
         marginRight: 2
       },
-      hideBackImage: this.props.inputAnimate ? true : false
+      // hideBackImage: this.props.inputAnimate ? true : false
     });
 
-    if (this.props.inputAnimate) {
-      layoutAnimation();
-
-      this.setState({
-        search_width: Util.size.width * 0.85
-      });
-    }
+    // if (this.props.inputAnimate) {
+    //   layoutAnimation();
+    //
+    //   this.setState({
+    //     search_width: Util.size.width * 0.85
+    //   });
+    // }
   }
 
   renderTitle(childState, index:number) {
@@ -622,22 +622,26 @@ class NavBar extends React.Component {
                   }
                 }}
                 onBlur={() => {
+                  var hideBackBtn = this.props.hideBackBtn === true;
+
                   Actions.refresh({
                     rightTitle: undefined,
                     onRight: undefined,
-                    hideBackImage: false
+                    // hideBackImage: hideBackBtn ? true : false
                   });
 
-                  layoutAnimation();
-
-                  this.setState({
-                    search_width: Util.size.width * 0.75
-                  });
+                  // if (!hideBackBtn) {
+                  //   layoutAnimation();
+                  //
+                  //   this.setState({
+                  //     search_width: Util.size.width * 0.75
+                  //   });
+                  // }
                 }}
                />
             )}
 
-            {this.props.searchValue != '' && this.props.searchValue != null && (
+            {this.props.searchValue != '' && this.props.searchValue != null ? (
               <TouchableOpacity
                 underlayColor="transparent"
                 onPress={() => {
@@ -657,7 +661,9 @@ class NavBar extends React.Component {
                   }}
                   name="times-circle" size={14} color="#999999" />
               </TouchableOpacity>
-            )}
+            ) : this.props.renderIconInput ? (
+              this.props.renderIconInput()
+            ) : null}
           </Animated.View>
         </Animated.View>
       );

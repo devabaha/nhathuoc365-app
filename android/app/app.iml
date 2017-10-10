@@ -122,7 +122,7 @@
     <orderEntry type="library" exported="" name="soloader-0.1.0" level="project" />
     <orderEntry type="library" exported="" name="javax.inject-1" level="project" />
     <orderEntry type="library" exported="" name="play-services-gcm-11.0.4" level="project" />
-    <orderEntry type="library" exported="" name="OneSignal-3.6.2" level="project" />
+    <orderEntry type="library" exported="" name="OneSignal-3.6.3" level="project" />
     <orderEntry type="library" exported="" name="react-native-0.47.1" level="project" />
     <orderEntry type="library" exported="" name="okhttp-3.6.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-25.2.0" level="project" />

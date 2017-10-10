@@ -62,6 +62,13 @@ export default class Home extends Component {
     this._login();
 
     store.parentTab = '_home';
+
+    // go address store screen
+    if (this.props.goAddStore) {
+      Actions.search_store({
+        fromIntro: true
+      });
+    }
   }
 
   componentWillReceiveProps() {
@@ -149,6 +156,11 @@ export default class Home extends Component {
           setTimeout(() => {
 
             var {data} = response;
+
+            // Animation is true when first loaded
+            if (this.state.stores_data == null) {
+              layoutAnimation();
+            }
 
             this.setState({
               finish: true,
@@ -348,7 +360,7 @@ export default class Home extends Component {
             )}
           </View>
 
-          {loading ? (
+          {loading && stores_data == null ? (
             <View style={[styles.defaultBox, {
               height: this.defaultBoxHeight || 104
             }]}>
@@ -452,15 +464,7 @@ export default class Home extends Component {
             </View>
           )}
 
-          {loading && newses_data != null ? (
-            <View style={[styles.defaultBox, {
-              height: this.defaultNewBoxHeight || (isIOS ? 116 : 124),
-              marginBottom: 0,
-              borderTopWidth: 0
-            }]}>
-              <Indicator size="small" />
-            </View>
-          ) : newses_data ? (
+          {newses_data && (
             <FlatList
               data={newses_data}
               renderItem={({item, index}) => {
@@ -477,8 +481,6 @@ export default class Home extends Component {
               }}
               keyExtractor={item => item.id}
             />
-          ) : (
-            null
           )}
 
           {user_notice && (

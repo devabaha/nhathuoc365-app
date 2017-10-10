@@ -43,21 +43,32 @@ export default class StoresList extends Component {
     this._goSearchStore = this._goSearchStore.bind(this);
     this._goListStore = this._goListStore.bind(this);
     this._getData = this._getData.bind(this);
-
-    // auto refresh home
-    reaction(() => store.refresh_home_change, () => this._getData(450));
-  }
-
-  componentWillMount() {
-    Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this)
-    });
   }
 
   componentDidMount() {
+    Actions.refresh({
+      renderRightButton: this._renderRightButton.bind(this),
+      onBack: () => {
+        this._unMount();
+
+        Actions.pop();
+      }
+    });
+
+    store.pushBack = this._unMount.bind(this);
+
+    store.setStoreUnMount('storesList', this._unMount.bind(this));
+
     this.start_time = time();
 
     this._getData();
+
+    // auto refresh home
+    Events.on(KEY_EVENTS_STORE, KEY_EVENTS_STORE + 'ID', this._getData.bind(this));
+  }
+
+  _unMount() {
+    Events.removeAll(KEY_EVENTS_STORE);
   }
 
   // lấy dữ liệu trang home
@@ -189,17 +200,6 @@ export default class StoresList extends Component {
             flexDirection: 'row'
           }}>
             <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
-
-            {stores_data != null && stores_data.length > 3 && (
-              <View style={styles.right_title_btn_box}>
-                <TouchableHighlight
-                  style={styles.right_title_btn}
-                  underlayColor="transparent"
-                  onPress={() => {}}>
-                  <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                </TouchableHighlight>
-              </View>
-            )}
           </View>
 
           {loading ? (
@@ -257,13 +257,13 @@ export default class StoresList extends Component {
                   onPress={this._goSearchStore}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
+                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
                     <Icon name="search-plus" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Nhập mã CH</Text>
+                    <Text style={styles.add_store_action_label}>Nhập mã cửa hàng</Text>
                   </View>
                 </TouchableHighlight>
 
-                <TouchableHighlight
+                {/*<TouchableHighlight
                   onPress={this._goListStore}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
@@ -271,7 +271,7 @@ export default class StoresList extends Component {
                     <Icon name="list-ul" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Danh sách</Text>
                   </View>
-                </TouchableHighlight>
+                </TouchableHighlight>*/}
               </View>
             </View>
           )}
@@ -359,7 +359,8 @@ const styles = StyleSheet.create({
   },
   add_store_action_btn_box: {
     alignItems: 'center',
-    width: ~~((Util.size.width - 16) / 3),
+    // width: ~~((Util.size.width - 16) / 2),
+    width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },

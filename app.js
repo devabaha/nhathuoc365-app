@@ -37,6 +37,7 @@ import Store from './store/Store';
 
 // import components
 // screen
+import Intro from './components/intro/Intro';
 import Home from './components/home/Home';
 import Notifys from './components/notify/Notifys';
 import MainNotify from './components/notify/MainNotify';
@@ -74,11 +75,6 @@ const custommerNav = {
   }
 }
 
-// StatusBar
-if (isIOS) {
-  StatusBar.setBarStyle('light-content');
-}
-
 const reducerCreate = params => {
   const defaultReducer = Reducer(params);
   return (state, action) => {
@@ -104,6 +100,51 @@ const reducerCreate = params => {
 };
 
 export default class App extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      loading: true,
+      showIntro: false
+    }
+  }
+
+  componentWillMount() {
+    // load
+    storage.load({
+      key: STORAGE_INTRO_KEY,
+      autoSync: true,
+      syncInBackground: true,
+      syncParams: {
+        extraFetchOptions: {
+        },
+        someFlag: true,
+      },
+    }).then(data => {
+      this._endLoad(false);
+
+      // StatusBar
+      if (isIOS) {
+        StatusBar.setBarStyle('light-content');
+      }
+    }).catch(err => {
+      this._endLoad(true);
+
+      // StatusBar
+      if (isIOS) {
+        StatusBar.setBarStyle('dark-content');
+      }
+    });
+  }
+
+  _endLoad(showIntro) {
+    layoutAnimation();
+
+    this.setState({
+      loading: false,
+      showIntro
+    });
+  }
 
   componentDidMount() {
     OneSignal.addEventListener('received', this._onReceived.bind(this));
@@ -227,6 +268,14 @@ export default class App extends Component {
   }
 
   render() {
+    if (this.state.loading) {
+      return(
+        <View style={styles.container}>
+          <Indicator size="small" />
+        </View>
+      );
+    }
+
     return(
       <Router
         onExitApp={() => true}
@@ -267,7 +316,7 @@ export default class App extends Component {
                 notify="new_totals"
                 onPress={this._goMainNotify}
                >
-                  <Scene initial={0} key="_main_notify" title="THÔNG BÁO" component={MainNotify} {...custommerNav} />
+                  <Scene key="_main_notify" title="THÔNG BÁO" component={MainNotify} {...custommerNav} />
               </Scene>
 
               {/**
@@ -303,26 +352,27 @@ export default class App extends Component {
               </Scene>
             </Scene>
 
-            <Scene initial={0} key="address" title="ĐỊA CHỈ" component={Address} {...custommerNav} />
-            <Scene initial={0} key="confirm" title="XÁC NHẬN" component={Confirm} {...custommerNav} />
-            <Scene initial={0} key="create_address" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
-            <Scene initial={0} key="register" title="ĐĂNG KÝ" component={Register} {...custommerNav} />
-            <Scene initial={0} key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
-            <Scene initial={0} key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
-            <Scene initial={0} key="stores" panHandlers={null} title="CỬA HÀNG" component={Stores} {...custommerNav} />
-            <Scene initial={0} key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
-            <Scene initial={0} key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
-            <Scene initial={0} key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
-            <Scene initial={0} key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
-            <Scene initial={0} key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
-            <Scene initial={0} key="notifys" title="KHUYẾN MÃI" component={Notifys} {...custommerNav} />
-            <Scene initial={0} key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
-            <Scene initial={0} key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
-            <Scene initial={0} key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
-            <Scene initial={0} key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
-            <Scene initial={0} key="store_orders" title="" component={StoreOrders} {...custommerNav} />
-            <Scene initial={0} key="chat" title="" component={Chat} {...custommerNav} />
-            <Scene initial={0} key="webview" title="" component={WebView} {...custommerNav} />
+            <Scene key="address" title="ĐỊA CHỈ" component={Address} {...custommerNav} />
+            <Scene key="confirm" title="XÁC NHẬN" component={Confirm} {...custommerNav} />
+            <Scene key="create_address" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
+            <Scene key="register" title="ĐĂNG KÝ" component={Register} {...custommerNav} />
+            <Scene key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
+            <Scene key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
+            <Scene key="stores" panHandlers={null} title="CỬA HÀNG" component={Stores} {...custommerNav} />
+            <Scene key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
+            <Scene key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
+            <Scene key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
+            <Scene key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
+            <Scene key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
+            <Scene key="notifys" title="KHUYẾN MÃI" component={Notifys} {...custommerNav} />
+            <Scene key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
+            <Scene key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
+            <Scene key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
+            <Scene key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
+            <Scene key="store_orders" title="" component={StoreOrders} {...custommerNav} />
+            <Scene key="chat" title="" component={Chat} {...custommerNav} />
+            <Scene key="webview" title="" component={WebView} {...custommerNav} />
+            <Scene initial={this.state.showIntro} key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
 
           </Scene>
 
@@ -333,6 +383,10 @@ export default class App extends Component {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#ffffff"
+  },
   tabBarStyle: {
     borderTopWidth : Util.pixel,
     borderColor    : '#cccccc',

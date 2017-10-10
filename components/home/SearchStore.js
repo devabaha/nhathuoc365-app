@@ -32,14 +32,16 @@ export default class SearchStore extends Component {
       search_data: null,
       refreshing: false,
       searchValue: null,
-      coppy_sticker_flag: false
+      coppy_sticker_flag: false,
+      fromIntro: props.fromIntro
     }
   }
 
   componentDidMount() {
     var site_code = this.props.site_code;
+    var fromIntro = this.state.fromIntro;
 
-    Actions.refresh({
+    var options = {
       showSearchBar: true,
       searchValue: site_code || '',
       placeholder: "Nhập mã cửa hàng",
@@ -48,8 +50,48 @@ export default class SearchStore extends Component {
       onSearchCancel: this._onSearchCancel.bind(this),
       inputAnimate: true,
       autoFocus: true,
-      cancelIsPop: true
-    });
+      cancelIsPop: true,
+      renderIconInput: () => {
+        return(
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={() => {
+              Actions.scan_qr_code({
+                onBackHandler: (site_code) => {
+                  this.setState({
+                    searchValue: site_code
+                  }, () => {
+                    Actions.refresh({
+                      searchValue: STORE_DEMO_CODE
+                    });
+
+                    this.search_handler = setTimeout(() => {
+                      this._search_store();
+                    }, 300);
+                  });
+                }
+              });
+            }}>
+            <Icon
+              style={{
+                marginLeft: 4
+              }}
+              name="qrcode" size={24} color="#999999" />
+          </TouchableHighlight>
+        );
+      }
+    }
+
+    if (fromIntro) {
+      options.hideBackImage = true;
+      options.panHandlers = null;
+      options.onBack = () => false;
+      options.cancelIsPop = false;
+
+      store.replaceBack = () => false;
+    }
+
+    Actions.refresh(options);
 
     // search when has site_code
     if (site_code) {
@@ -194,6 +236,44 @@ export default class SearchStore extends Component {
           active={this.state.coppy_sticker_flag}
           message="Thêm Cửa Hàng thành công."
          />
+
+         {this.state.fromIntro && (
+           <View style={{
+             position: 'absolute',
+             bottom: store.keyboardTop,
+             left: 0,
+             width: Util.size.width,
+             height: 60,
+             alignItems: 'center',
+             justifyContent: 'center'
+           }}>
+            <TouchableHighlight
+              style={{
+                borderWidth: Util.pixel,
+                borderColor: DEFAULT_COLOR,
+                padding: 8,
+                borderRadius: 3
+              }}
+              underlayColor="transparent"
+              onPress={() => {
+                this.setState({
+                  searchValue: STORE_DEMO_CODE
+                }, () => {
+                  Actions.refresh({
+                    searchValue: STORE_DEMO_CODE
+                  });
+
+                  this.search_handler = setTimeout(() => {
+                    this._search_store();
+                  }, 300);
+                });
+              }}>
+              <Text style={{
+                color: DEFAULT_COLOR
+              }}>Thêm cửa hàng Trải nghiệm</Text>
+            </TouchableHighlight>
+           </View>
+         )}
       </View>
     );
   }
@@ -228,15 +308,8 @@ class StoreItem extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           Keyboard.dismiss();
 
-          action(() => {
-            store.setRefreshHomeChange(store.refresh_home_change + 1);
-          })();
-
-          that.setState({
-            coppy_sticker_flag: true
-          });
-
           this.setState({
+            coppy_sticker_flag: true,
             add_success: true
           }, () => {
             // reload home screen
@@ -244,7 +317,8 @@ class StoreItem extends Component {
               store.setRefreshHomeChange(store.refresh_home_change + 1);
             })();
 
-            setTimeout(() => {
+            clearTimeout(this.timerGoBack);
+            this.timerGoBack = setTimeout(() => {
               that.setState({
                 coppy_sticker_flag: false
               }, () => {
@@ -252,6 +326,17 @@ class StoreItem extends Component {
               });
             }, 2000);
           });
+
+          // intro finish
+          storage.save({
+            key: STORAGE_INTRO_KEY,
+            data: {
+              finish: true
+            },
+            expires: null
+          });
+
+          Events.trigger(KEY_EVENTS_STORE);
         }
       } catch (e) {
         console.warn(e + ' user_add_store');
