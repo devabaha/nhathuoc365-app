@@ -23,7 +23,7 @@ export default class Intro extends Component {
   constructor(props) {
     super();
   }
-  
+
   _renderImage() {
     return images.map((image, index) => {
       if (index == (images.length - 1)) {
@@ -64,9 +64,8 @@ export default class Intro extends Component {
   }
 
   _onFinish() {
-    Actions.myTabBar({
-      type: ActionConst.RESET,
-      goAddStore: true
+    Actions.add_store({
+      type: ActionConst.RESET
     });
   }
 

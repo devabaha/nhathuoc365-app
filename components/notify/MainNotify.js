@@ -213,7 +213,7 @@ export default class MainNotify extends Component {
           </View>
 
           <View style={styles.notice_box}>
-            {loading ? (
+            {loading && user_notice == null ? (
               <View style={[styles.defaultBox]}>
                 <Indicator size="small" />
               </View>

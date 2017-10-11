@@ -52,23 +52,17 @@ export default class Home extends Component {
   }
 
   componentWillMount() {
-    Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this)
-    });
+    
   }
 
   componentDidMount() {
+    Actions.refresh({
+      renderRightButton: this._renderRightButton.bind(this)
+    });
 
     this._login();
 
     store.parentTab = '_home';
-
-    // go address store screen
-    if (this.props.goAddStore) {
-      Actions.search_store({
-        fromIntro: true
-      });
-    }
   }
 
   componentWillReceiveProps() {

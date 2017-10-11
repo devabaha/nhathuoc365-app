@@ -299,12 +299,12 @@ export default class StoresList extends Component {
             icon={{name: 'search-plus', type: 'font-awesome'}}
             title='Nhập mã cửa hàng' />
 
-          <Button
+          {/*<Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#ffc109"
             onPress={this._goListStore}
             icon={{name: 'list-ul', type: 'font-awesome'}}
-            title='Xem danh sách cửa hàng' />
+            title='Xem danh sách cửa hàng' />*/}
         </Modal>
       </View>
     );
@@ -377,8 +377,8 @@ const styles = StyleSheet.create({
 
   modal_add_store: {
     width: '90%',
-    height: 228,
-    // height: 180,
+    // height: 228,
+    height: 180,
     borderRadius: 3
   },
   modal_add_store_title: {

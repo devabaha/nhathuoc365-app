@@ -278,9 +278,12 @@ export default class CreateAddress extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView style={{
-          marginBottom: store.keyboardTop + 60
-        }}>
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          style={{
+            marginBottom: store.keyboardTop + 60
+          }}>
+
           <View style={styles.input_box}>
             <Text style={styles.input_label}>Tên</Text>
 

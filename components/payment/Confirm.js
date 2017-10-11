@@ -44,8 +44,8 @@ export default class Confirm extends Component {
      data: null,
      noteOffset: 0,
      suggest_register: false,
-     name_register: '',
-     tel_register: '',
+     name_register: store.cart_data ? store.cart_data.address.name : '',
+     tel_register: store.cart_data ? store.cart_data.address.tel : '',
      pass_register: ''
     }
   }
@@ -225,6 +225,10 @@ export default class Confirm extends Component {
         var response = await APIHandler.site_cart_orders(store.store_id);
 
         if (response && response.status == STATUS_SUCCESS) {
+          store.replaceBack = () => {
+            this._continueShopping();
+          }
+
           if (this.popup_message) {
             this.popup_message.open();
 
@@ -238,7 +242,9 @@ export default class Confirm extends Component {
 
             // hide back button
             Actions.refresh({
-              hideBackImage: true
+              hideBackImage: true,
+              onBack: () => false,
+              panHandlers: null
             });
 
             Events.trigger(RELOAD_STORE_ORDERS);
@@ -913,7 +919,7 @@ export default class Confirm extends Component {
                 <View style={styles.success_box}>
                   <View style={styles.success_icon_box}>
                     <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
-                    <Text style={styles.success_icon_label}>THÀNH CÔNGG</Text>
+                    <Text style={styles.success_icon_label}>THÀNH CÔNG</Text>
                   </View>
                   <Text style={styles.success_title}>{title}</Text>
 
@@ -936,7 +942,7 @@ export default class Confirm extends Component {
                         name_register: value
                       });
                     }}
-                    value={this.state.name_register || (store.cart_data ? store.cart_data.address.name : '')}
+                    value={this.state.name_register}
                     />
 
                   <TextInput
@@ -958,7 +964,7 @@ export default class Confirm extends Component {
                         tel_register: value
                       });
                     }}
-                    value={this.state.tel_register || (store.cart_data ? store.cart_data.address.tel : '')}
+                    value={this.state.tel_register}
                     />
 
                   <TextInput
@@ -1074,6 +1080,8 @@ export default class Confirm extends Component {
         { cancelable: false }
       );
     }
+
+    Keyboard.dismiss();
 
     // go register screen
     Actions.register({

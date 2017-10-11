@@ -116,8 +116,8 @@ export default class OrdersItemComponent extends Component {
   }
 
   render() {
-    var {item, onPress, storeOnPress, from} = this.props;
-    var single = from != "store_orders";
+    var {item, onPress, storeOnPress, from_page} = this.props;
+    var single = from_page != "store_orders";
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     var is_ready = item.status == CART_STATUS_READY;
 

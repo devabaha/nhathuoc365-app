@@ -11,6 +11,9 @@ import {
   PanResponder
 } from 'react-native';
 
+// disable font scaling
+Text.defaultProps.allowFontScaling=false;
+
 // constant, helper
 import './lib/Constant';
 import './lib/Helper';
@@ -38,6 +41,7 @@ import Store from './store/Store';
 // import components
 // screen
 import Intro from './components/intro/Intro';
+import AddStore from './components/home/AddStore';
 import Home from './components/home/Home';
 import Notifys from './components/notify/Notifys';
 import MainNotify from './components/notify/MainNotify';
@@ -369,6 +373,7 @@ export default class App extends Component {
             <Scene key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
             <Scene key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
             <Scene key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
+            <Scene key="add_store" title="THÊM CỬA HÀNG" component={AddStore} {...custommerNav} />
             <Scene key="store_orders" title="" component={StoreOrders} {...custommerNav} />
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />

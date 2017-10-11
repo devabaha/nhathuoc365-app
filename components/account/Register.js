@@ -227,7 +227,7 @@ export default class Register extends Component {
                 }}
                 value={this.state.name}
                 onLayout={() => {
-                  if (this.refs_name) {
+                  if (this.refs_name && !this.props.registerNow) {
                     setTimeout(() => this.refs_name.focus(), 300);
                   }
                 }}
@@ -331,7 +331,14 @@ export default class Register extends Component {
             ref={ref => {
               if (ref) {
                 this.refs_verify = ref;
-                this.refs_verify.focus();
+              }
+            }}
+            onLayout={() => {
+              if (this.refs_verify) {
+                clearTimeout(this._verify_focus_timer);
+                this._verify_focus_timer = setTimeout(() => {
+                  this.refs_verify.focus();
+                }, 3000);
               }
             }}
             style={styles.input_text_verify}
