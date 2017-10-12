@@ -168,7 +168,7 @@ export default class Register extends Component {
                 onBack
               });
 
-              store.pushBack = onBack;
+              store.replaceBack = onBack;
             }
 
           });
@@ -219,7 +219,7 @@ export default class Register extends Component {
                 maxLength={30}
                 placeholder="Điền họ và tên"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     name: value
@@ -252,7 +252,7 @@ export default class Register extends Component {
                 maxLength={30}
                 placeholder="Điền số điện thoại"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     tel: value.replaceAll(' ', '')
@@ -274,7 +274,7 @@ export default class Register extends Component {
                 maxLength={100}
                 placeholder="Điền mật khẩu"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     password: value
@@ -346,7 +346,7 @@ export default class Register extends Component {
             maxLength={100}
             placeholder="Điền mã xác thực"
             placeholderTextColor="#999999"
-            underlineColorAndroid="#ffffff"
+            underlineColorAndroid="transparent"
             onChangeText={(value) => {
               this.setState({
                 otp: value
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 210,
     borderRadius: 2,
-    marginTop: -NAV_HEIGHT,
+    marginTop: -(NAV_HEIGHT/2),
     alignItems: 'center'
   },
   verify_title: {

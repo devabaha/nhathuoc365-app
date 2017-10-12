@@ -50,9 +50,7 @@ export default class AddStore extends Component {
       searchValue: text
     }, () => {
       this.search_handler = setTimeout(() => {
-
         this._search_store();
-
       }, 300);
     });
   }
@@ -132,6 +130,7 @@ export default class AddStore extends Component {
 
           <View>
             <TextInput
+              underlineColorAndroid="transparent"
               ref={ref => this.searchInput = ref}
               onLayout={() => {
                 if (this.searchInput) {
@@ -140,7 +139,7 @@ export default class AddStore extends Component {
               }}
               style={{
                 height: 42,
-                borderColor: DEFAULT_COLOR,
+                borderColor: "#dddddd",
                 borderWidth: 1,
                 margin: 15,
                 paddingHorizontal: 8,
@@ -221,8 +220,8 @@ export default class AddStore extends Component {
            }}>
             <TouchableHighlight
               style={{
-                borderWidth: Util.pixel,
-                borderColor: DEFAULT_COLOR,
+                // borderWidth: Util.pixel,
+                // borderColor: DEFAULT_COLOR,
                 padding: 8,
                 borderRadius: 3
               }}
@@ -387,7 +386,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     ...MARGIN_SCREEN,
-    marginBottom: 0
+    marginBottom: 0,
+    backgroundColor: "#ffffff"
   },
 
   separator: {

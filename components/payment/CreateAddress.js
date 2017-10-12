@@ -295,7 +295,7 @@ export default class CreateAddress extends Component {
                 maxLength={30}
                 placeholder="Tên người nhận hàng"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     name: value
@@ -323,7 +323,7 @@ export default class CreateAddress extends Component {
                 maxLength={30}
                 placeholder="Điền số điện thoại"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     tel: value.replaceAll(' ', '')
@@ -357,7 +357,7 @@ export default class CreateAddress extends Component {
               placeholder="Nhập địa chỉ cụ thể"
               placeholderTextColor="#999999"
               multiline={true}
-              underlineColorAndroid="#ffffff"
+              underlineColorAndroid="transparent"
               onContentSizeChange={(e) => {
                 this.setState({address_height: e.nativeEvent.contentSize.height});
               }}

@@ -217,7 +217,7 @@ export default class Login extends Component {
                 maxLength={30}
                 placeholder="Điền họ và tên"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     name: value
@@ -244,7 +244,7 @@ export default class Login extends Component {
                 maxLength={30}
                 placeholder="Điền số điện thoại"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     tel: value.replaceAll(' ', '')
@@ -266,7 +266,7 @@ export default class Login extends Component {
                 maxLength={100}
                 placeholder="Điền mật khẩu"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="#ffffff"
+                underlineColorAndroid="transparent"
                 onChangeText={(value) => {
                   this.setState({
                     password: value

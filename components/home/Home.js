@@ -52,7 +52,7 @@ export default class Home extends Component {
   }
 
   componentWillMount() {
-    
+
   }
 
   componentDidMount() {
@@ -60,7 +60,7 @@ export default class Home extends Component {
       renderRightButton: this._renderRightButton.bind(this)
     });
 
-    this._login();
+    this._getData();
 
     store.parentTab = '_home';
   }
@@ -103,38 +103,6 @@ export default class Home extends Component {
       this._scrollToTop(-60);
 
       this._getData(1000);
-    });
-  }
-
-  // login khi mở app
-  _login() {
-    this.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_login({
-          fb_access_token: ''
-        });
-
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setUserInfo(response.data);
-
-            this._getData();
-          })();
-        }
-      } catch (e) {
-        console.warn(e + ' user_login');
-
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._login.bind(this)},
-          ],
-          { cancelable: false }
-        );
-      }
     });
   }
 
@@ -251,7 +219,7 @@ export default class Home extends Component {
 
     // store list
     return(
-      <ItemList item={item} that={this} />
+      <ItemList item={item} index={index} that={this} />
     );
   }
 

@@ -81,6 +81,10 @@ export default class StoresList extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
+            if (this.state.stores_data == null) {
+              layoutAnimation();
+            }
+
             this.setState({
               finish: true,
               loading: false,
@@ -202,7 +206,7 @@ export default class StoresList extends Component {
             <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
           </View>
 
-          {loading ? (
+          {loading && this.state.stores_data == null ? (
             <View style={[styles.defaultBox, {
               height: this.defaultBoxHeight || 104
             }]}>

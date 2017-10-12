@@ -387,7 +387,7 @@ export default class Chat extends Component {
           onChangeText={(content) => this.setState({content})}
           placeholder="Nhập tin nhắn"
           placeholderTextColor="#999999"
-          underlineColorAndroid="#ffffff"
+          underlineColorAndroid="transparent"
           onSubmitEditing={this._onSubmit.bind(this)}
           />
 

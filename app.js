@@ -109,6 +109,7 @@ export default class App extends Component {
 
     this.state = {
       loading: true,
+      finish: false,
       showIntro: false
     }
   }
@@ -155,6 +156,38 @@ export default class App extends Component {
     OneSignal.addEventListener('opened', this._onOpened.bind(this));
     OneSignal.addEventListener('registered', this._onRegistered.bind(this));
     OneSignal.addEventListener('ids', this._onIds.bind(this));
+
+    this._login();
+  }
+
+  // login khi mở app
+  async _login() {
+    try {
+      var response = await APIHandler.user_login({
+        fb_access_token: ''
+      });
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          Store.setUserInfo(response.data);
+        })();
+
+        this.setState({
+          finish: true
+        });
+      }
+    } catch (e) {
+      console.warn(e + ' user_login');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._login.bind(this)},
+        ],
+        { cancelable: false }
+      );
+    }
   }
 
   _onReceived(notify) {
@@ -272,7 +305,7 @@ export default class App extends Component {
   }
 
   render() {
-    if (this.state.loading) {
+    if (this.state.loading || this.state.finish == false) {
       return(
         <View style={styles.container}>
           <Indicator size="small" />
@@ -282,8 +315,7 @@ export default class App extends Component {
 
     return(
       <Router
-        onExitApp={() => true}
-        backAndroidHandler={this._backAndroidHandler}
+        //backAndroidHandler={this._backAndroidHandler}
         createReducer={reducerCreate}
         store={Store}>
 
@@ -305,7 +337,7 @@ export default class App extends Component {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_home" title="MYFOOD" component={Home} {...custommerNav} />
+                  <Scene key="_home" title="MY FOOD" component={Home} {...custommerNav} />
               </Scene>
 
               {/**

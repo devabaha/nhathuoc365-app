@@ -755,7 +755,7 @@ export default class Confirm extends Component {
                   placeholder="Nhập ghi chú của bạn tại đây"
                   placeholderTextColor="#999999"
                   multiline={true}
-                  underlineColorAndroid="#ffffff"
+                  underlineColorAndroid="transparent"
                   onContentSizeChange={(e) => {
                     this.setState({address_height: e.nativeEvent.contentSize.height});
                   }}
@@ -914,6 +914,9 @@ export default class Confirm extends Component {
             yesConfirm={this._onRegister.bind(this)}
             height={340}
             otherClose={false}
+            style={{
+              marginTop: -(NAV_HEIGHT/2)
+            }}
             content={(title) => {
               return(
                 <View style={styles.success_box}>
@@ -936,7 +939,7 @@ export default class Confirm extends Component {
                     maxLength={100}
                     placeholder="Nhập tên của bạn"
                     placeholderTextColor="#999999"
-                    underlineColorAndroid="#ffffff"
+                    underlineColorAndroid="transparent"
                     onChangeText={(value) => {
                       this.setState({
                         name_register: value
@@ -958,7 +961,7 @@ export default class Confirm extends Component {
                     maxLength={250}
                     placeholder="Nhập số điện thoại"
                     placeholderTextColor="#999999"
-                    underlineColorAndroid="#ffffff"
+                    underlineColorAndroid="transparent"
                     onChangeText={(value) => {
                       this.setState({
                         tel_register: value
@@ -980,7 +983,7 @@ export default class Confirm extends Component {
                     maxLength={50}
                     placeholder="Nhập mật khẩu"
                     placeholderTextColor="#999999"
-                    underlineColorAndroid="#ffffff"
+                    underlineColorAndroid="transparent"
                     onChangeText={(value) => {
                       this.setState({
                         pass_register: value

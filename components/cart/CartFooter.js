@@ -206,7 +206,7 @@ export default class CartFooter extends Component {
           <Image style={styles.store_cart_item_image} source={{uri: item.image}} />
         </View>
         <View style={styles.store_cart_item_title_box}>
-          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 26)}</Text>
+          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 32)}</Text>
           <Text style={[styles.store_cart_item_price, {
             position: 'absolute',
             right: 0,
@@ -286,7 +286,7 @@ export default class CartFooter extends Component {
               extraData={cart_products}
               initialScrollIndex={store.cart_item_index}
               getItemLayout={(data, index) => {
-                return {length: Util.size.width - 172, offset: (Util.size.width - 172) * index, index};
+                return {length: Util.size.width - 140, offset: (Util.size.width - 140) * index, index};
               }}
               renderItem={this.renderItems.bind(this)}
               keyExtractor={item => item.id}
@@ -298,14 +298,14 @@ export default class CartFooter extends Component {
             style={[styles.store_cart_btn, styles.store_cart_btn_left]}
             underlayColor="#f1efef"
             onPress={this._store_cart_prev.bind(this)}>
-            <Icon name="angle-left" size={36} color="#333333" />
+            <Icon name="angle-left" size={36} color="rgba(0,0,0,.3)" />
           </TouchableHighlight>
 
           <TouchableHighlight
             style={[styles.store_cart_btn, styles.store_cart_btn_right]}
             underlayColor="#f1efef"
             onPress={this._store_cart_next.bind(this)}>
-            <Icon name="angle-right" size={36} color="#333333" />
+            <Icon name="angle-right" size={36} color="rgba(0,0,0,.3)" />
           </TouchableHighlight>
         </View>
       );
@@ -431,8 +431,8 @@ const styles = StyleSheet.create({
   },
   store_cart_btn: {
     height: '100%',
-    width: 36,
-    backgroundColor: '#ffffff',
+    width: 24,
+    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -464,11 +464,11 @@ const styles = StyleSheet.create({
     paddingLeft: 4
   },
   store_cart_content: {
-    width: Util.size.width - 172,
+    width: Util.size.width - 140,
     height: '100%'
   },
   store_cart_item: {
-    width: Util.size.width - 172,
+    width: Util.size.width - 140,
     height: '100%',
     flexDirection: 'row'
   },

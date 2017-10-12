@@ -129,7 +129,9 @@ export default class ItemList extends Component {
         onLongPress={this._showOptions.bind(this, item)}
         onPress={this._goStores.bind(this, item)}>
 
-        <View style={[styles.store_result_item, styles.store_result_item_active]}>
+        <View style={[styles.store_result_item, styles.store_result_item_active, {
+          borderTopWidth: this.props.index > 0 ? Util.pixel : 0
+        }]}>
           <View style={styles.store_result_item_image_box}>
             <Image style={styles.store_result_item_image} source={{uri: item.logo_url}} />
           </View>
@@ -191,7 +193,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     minHeight: 104,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: "#dddddd",
+    marginBottom: 8
   },
   store_result_item_active: {
     // backgroundColor: "#ebebeb"
