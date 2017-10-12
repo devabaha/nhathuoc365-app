@@ -61,8 +61,6 @@ export default class CreateAddress extends Component {
       }
     });
 
-    store.pushBack = this._unMount.bind(this);
-
     if (!this.state.edit_mode && this.refs_name) {
       setTimeout(() => {
         this.refs_name.focus();

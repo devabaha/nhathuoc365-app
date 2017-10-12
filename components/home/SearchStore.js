@@ -87,8 +87,6 @@ export default class SearchStore extends Component {
       options.panHandlers = null;
       options.onBack = () => false;
       options.cancelIsPop = false;
-
-      store.replaceBack = () => false;
     }
 
     Actions.refresh(options);

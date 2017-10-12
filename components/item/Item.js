@@ -92,8 +92,6 @@ export default class Item extends Component {
       }
     });
 
-    store.pushBack = this._unMount.bind(this);
-
     this.start_time = time();
 
     this._getData();

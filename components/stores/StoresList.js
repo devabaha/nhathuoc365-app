@@ -55,8 +55,6 @@ export default class StoresList extends Component {
       }
     });
 
-    store.pushBack = this._unMount.bind(this);
-
     store.setStoreUnMount('storesList', this._unMount.bind(this));
 
     this.start_time = time();

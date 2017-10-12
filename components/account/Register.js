@@ -58,8 +58,6 @@ export default class Register extends Component {
       }
     });
 
-    store.pushBack = this._unMount.bind(this);
-
     // from confirm screen
     if (this.props.registerNow) {
       setTimeout(() => {
@@ -167,8 +165,6 @@ export default class Register extends Component {
               Actions.refresh({
                 onBack
               });
-
-              store.replaceBack = onBack;
             }
 
           });

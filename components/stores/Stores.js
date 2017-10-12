@@ -86,8 +86,6 @@ export default class Stores extends Component {
       }
     });
 
-    store.pushBack = this._unMount.bind(this);
-
     this.start_time = time();
 
     // get categories navigator

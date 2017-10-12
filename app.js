@@ -8,7 +8,8 @@ import {
   StyleSheet,
   Platform,
   StatusBar,
-  PanResponder
+  PanResponder,
+  BackHandler
 } from 'react-native';
 
 // disable font scaling
@@ -79,6 +80,10 @@ const custommerNav = {
   }
 }
 
+var currentSceneName = null;
+var currentSceneOnBack = null;
+var backButtonPressedOnceToExit = false;
+
 const reducerCreate = params => {
   const defaultReducer = Reducer(params);
   return (state, action) => {
@@ -99,9 +104,32 @@ const reducerCreate = params => {
     if (action.key && action.key != '_account') {
       Store.is_stay_account = false;
     }
-    return defaultReducer(state, action);
+    var nextState = defaultReducer(state, action);
+    currentSceneName = getCurrentName(nextState);
+    currentSceneOnBack = getCurrentOnBack(nextState);
+    return nextState;
   }
 };
+
+function getCurrentName(obj) {
+  const { index, children, name } = obj;
+  if (index !== undefined) {
+    if (children) {
+      return getCurrentName(children[index]);
+    }
+  }
+  return name;
+}
+
+function getCurrentOnBack(obj) {
+  const { index, children, onBack } = obj;
+  if (index !== undefined) {
+    if (children) {
+      return getCurrentOnBack(children[index]);
+    }
+  }
+  return onBack;
+}
 
 export default class App extends Component {
   constructor() {
@@ -285,19 +313,31 @@ export default class App extends Component {
   }
 
   _backAndroidHandler() {
-    if (typeof Store.replaceBack == 'function') {
-      Store.replaceBack();
-      Store.replaceBack = null;
+    if (backButtonPressedOnceToExit) {
+      BackHandler.exitApp();
     } else {
-      if (typeof Store.pushBack == 'function') {
-        Store.pushBack();
-        Store.pushBack = null;
+      if ([
+        '_home',
+        '_main_notify',
+        '_orders',
+        '_account'
+      ].indexOf(currentSceneName) === -1) {
+        if (typeof currentSceneOnBack == 'function') {
+          currentSceneOnBack();
+        } else {
+          Actions.pop();
+        }
+        return true;
+      } else {
+          backButtonPressedOnceToExit = true;
+          Toast.show('Chạm lại để thoát ứng dụng', Toast.LONG);
+
+          setTimeout(function() {
+              backButtonPressedOnceToExit = false;
+          }, 2000);
+          return true;
       }
-
-      Actions.pop();
     }
-
-    return true;
   }
 
   _goMainNotify() {
@@ -315,7 +355,7 @@ export default class App extends Component {
 
     return(
       <Router
-        //backAndroidHandler={this._backAndroidHandler}
+        backAndroidHandler={this._backAndroidHandler.bind(this)}
         createReducer={reducerCreate}
         store={Store}>
 

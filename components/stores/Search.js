@@ -99,8 +99,6 @@ export default class Search extends Component {
       },
       onBack
     });
-
-    store.pushBack = onBack;
   }
 
   _getHistory() {

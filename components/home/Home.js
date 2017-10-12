@@ -171,8 +171,6 @@ export default class Home extends Component {
   _showPopupAddStore() {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.open();
-
-        store.pushBack = this._closePopup.bind(this);
     }
   }
 

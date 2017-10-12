@@ -225,9 +225,6 @@ export default class Confirm extends Component {
         var response = await APIHandler.site_cart_orders(store.store_id);
 
         if (response && response.status == STATUS_SUCCESS) {
-          store.replaceBack = () => {
-            this._continueShopping();
-          }
 
           if (this.popup_message) {
             this.popup_message.open();
@@ -341,8 +338,6 @@ export default class Confirm extends Component {
       type: ActionConst.REPLACE,
       onBack
     });
-
-    store.replaceBack = onBack;
   }
 
   // show popup confirm remove item in cart
@@ -468,8 +463,6 @@ export default class Confirm extends Component {
 
       // add stack unmount
       store.setStoreUnMount('confirm', onBack);
-
-      store.pushBack = onBack;
     }, 1000);
   }
 
