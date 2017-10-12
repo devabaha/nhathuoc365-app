@@ -26,7 +26,40 @@ export default class Intro extends Component {
     super();
 
     this.state = {
-      pageNum: 0
+      pageNum: 0,
+      finish: false,
+      stores_data: null
+    }
+  }
+
+  componentDidMount() {
+    this._getData();
+  }
+
+  async _getData() {
+    try {
+      var response = await APIHandler.user_sites();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          stores_data: response.data
+        });
+      }
+    } catch (e) {
+      console.warn(e + ' user_sites');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getData.bind(this)},
+        ],
+        { cancelable: false }
+      );
+    } finally {
+      this.setState({
+        finish: true
+      });
     }
   }
 
@@ -68,9 +101,15 @@ export default class Intro extends Component {
   }
 
   _onFinish() {
-    Actions.add_store({
-      type: ActionConst.RESET
-    });
+    if (this.state.stores_data) {
+      Actions.myTabBar({
+        type: ActionConst.RESET
+      });
+    } else {
+      Actions.add_store({
+        type: ActionConst.RESET
+      });
+    }
   }
 
   _onScrollEnd(e) {
@@ -87,7 +126,15 @@ export default class Intro extends Component {
   }
 
   render() {
-    var {pageNum} = this.state;
+    var {pageNum, finish} = this.state;
+
+    if (finish == false) {
+      return(
+        <View style={styles.container}>
+          <Indicator size="small" />
+        </View>
+      );
+    }
 
     return (
       <View style={styles.container}>
