@@ -128,6 +128,14 @@ export default class AddStore extends Component {
           }}
           keyboardShouldPersistTaps="always">
 
+          <Text style={{
+            fontWeight: '500',
+            color: "#404040",
+            fontSize: 16,
+            marginLeft: 15,
+            marginTop: 15,
+            marginBottom: 8
+          }}>Nhập mã cửa hàng yêu thích của bạn</Text>
           <View>
             <TextInput
               underlineColorAndroid="transparent"
@@ -141,7 +149,7 @@ export default class AddStore extends Component {
                 height: 42,
                 borderColor: "#dddddd",
                 borderWidth: 1,
-                margin: 15,
+                marginHorizontal: 15,
                 paddingHorizontal: 8,
                 borderRadius: 2,
                 color: "#404040",
@@ -168,7 +176,7 @@ export default class AddStore extends Component {
               style={{
                 position: 'absolute',
                 right: 20,
-                top: 17
+                top: 2
               }}>
               <Icon name="qrcode" size={40} color="#404040" />
             </TouchableHighlight>
@@ -214,15 +222,21 @@ export default class AddStore extends Component {
              bottom: store.keyboardTop,
              left: 0,
              width: Util.size.width,
-             height: 60,
+             height: 80,
              alignItems: 'center',
              justifyContent: 'center'
            }}>
+
+            <Text style={{
+              color: "#666666",
+              fontSize: 12,
+              marginBottom: 8
+            }}>Chưa có mã cửa hàng, mời bạn dùng thử cửa hàng trải nghiệm!</Text>
             <TouchableHighlight
               style={{
-                // borderWidth: Util.pixel,
-                // borderColor: DEFAULT_COLOR,
-                padding: 8,
+                borderWidth: Util.pixel,
+                borderColor: DEFAULT_COLOR,
+                padding: 4,
                 borderRadius: 3
               }}
               underlayColor="transparent"
@@ -237,7 +251,7 @@ export default class AddStore extends Component {
               }}>
               <Text style={{
                 color: DEFAULT_COLOR
-              }}>Thêm cửa hàng Trải nghiệm</Text>
+              }}>Thêm cửa hàng trải nghiệm!</Text>
             </TouchableHighlight>
            </View>
          )}
