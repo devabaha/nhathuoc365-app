@@ -9,7 +9,8 @@ import {
   Platform,
   StatusBar,
   PanResponder,
-  BackHandler
+  BackHandler,
+  Alert
 } from 'react-native';
 
 // disable font scaling
@@ -194,7 +195,7 @@ export default class App extends Component {
       var response = await APIHandler.user_login({
         fb_access_token: ''
       });
-
+      
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           Store.setUserInfo(response.data);
@@ -419,6 +420,7 @@ export default class App extends Component {
                 icon={TabIcon}
                 iconTitle="Tài khoản"
                 iconName="account-circle"
+                notify="updating_version"
                 size={24}
                 onPress={()=> {
                   Actions._account({type: ActionConst.REFRESH});

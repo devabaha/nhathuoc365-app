@@ -435,10 +435,10 @@ const styles = StyleSheet.create({
     borderRadius: 15
   },
   chat_avatar: {
-    width: '100%',
-    height: '100%',
+    width: 30,
+    height: 30,
     borderRadius: 15,
-    backgroundColor: "#ffffff"
+    backgroundColor: "transparent"
   },
   chat_content: {
     borderRadius: 5,

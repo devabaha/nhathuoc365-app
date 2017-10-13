@@ -105,6 +105,15 @@ export default class Intro extends Component {
       Actions.myTabBar({
         type: ActionConst.RESET
       });
+
+      // intro finish
+      storage.save({
+        key: STORAGE_INTRO_KEY,
+        data: {
+          finish: true
+        },
+        expires: null
+      });
     } else {
       Actions.add_store({
         type: ActionConst.RESET

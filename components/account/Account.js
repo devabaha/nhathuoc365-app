@@ -121,7 +121,7 @@ export default class Account extends Component {
           key: 6,
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Sản phẩm của MyFood - Phiên bản: " + DeviceInfo.getVersion(),
+          desc: "Sản phẩm của MyFood - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
           onPress: () => 1,
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"
@@ -227,12 +227,56 @@ export default class Account extends Component {
   }
 
   componentDidMount() {
+    this.key_add_new = this.state.options.length;
+
     this.setState({
       finish: true
     });
+
     store.is_stay_account = true;
 
     store.parentTab = '_account';
+
+    // updating version
+    this._updateHandler(store.notify);
+
+    // callback when has new version
+    Events.on(CALLBACK_APP_UPDATING, CALLBACK_APP_UPDATING + 'ID', this._updateHandler.bind(this));
+  }
+
+  _updateHandler(notify) {
+    if (notify.updating_version > 0) {
+      if (!this.state.options[this.key_add_new]) {
+        this.state.options.push({
+          key: 7,
+          icon: "cloud-download",
+          label: "Cập nhật ứng dụng",
+          desc: "Cập nhật lên phiên bản ổn định " + notify.new_version + " ngay!",
+          onPress: () => {
+            if (notify.url_update) {
+              Communications.web(notify.url_update);
+            }
+          },
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#dd4b39"
+          }],
+          notify: "updating_version",
+          iconColor: "#ffffff"
+        });
+
+        this.setState({
+          options: this.state.options
+        });
+      }
+    } else {
+      if (this.state.options[this.key_add_new]) {
+        this.state.options.splice(this.key_add_new, 1);
+
+        this.setState({
+          options: this.state.options
+        });
+      }
+    }
   }
 
   componentWillReceiveProps() {
@@ -442,11 +486,13 @@ export default class Account extends Component {
             </Image>
           </View>
 
-          <SelectionList
-            containerStyle={{
-              marginTop: 8
-            }}
-            data={this.state.options} />
+          {this.state.options && (
+            <SelectionList
+              containerStyle={{
+                marginTop: 8
+              }}
+              data={this.state.options} />
+          )}
 
         </ScrollView>
 
@@ -515,7 +561,8 @@ export default class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f1f1f1"
+    backgroundColor: "#f1f1f1",
+    marginBottom: BAR_HEIGHT
   },
 
   boxIconStyle: {

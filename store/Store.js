@@ -113,12 +113,16 @@ class Store {
     new_notice: 0,
     new_site_news: 0,
     new_sys_news: 0,
-    new_totals: 0
+    new_totals: 0,
+    updating_version: 0,
+    new_version: '',
+    url_update: ''
   }
   @observable notify_chat = {};
 
   @action setNotify(data) {
     this.notify = data || {};
+    Events.trigger(CALLBACK_APP_UPDATING, data);
   }
 
   @action setNotifyChat(data) {
