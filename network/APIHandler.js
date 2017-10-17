@@ -92,6 +92,14 @@ class APIHandler {
   }
 
   /**
+  * Sao chép đơn hàng 
+  */
+  async site_cart_reorder(store_id, cart_id) {
+    var api = url_for(API.SITE_CART_REORDER + '/' + store_id + '/' + cart_id);
+    return await this.getAPI(api);
+  }
+
+  /**
   * Lấy thông tin giỏ hàng theo site id
   */
   async site_cart(store_id) {
