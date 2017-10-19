@@ -96,11 +96,17 @@ export default class Stores extends Component {
 
     // notify chat
     store.getNoitifyChat();
+
+    if (props.orderIsPop) {
+      store.orderIsPop = true;
+    }
   }
 
   _unMount() {
     Events.trigger(CATE_AUTO_LOAD);
     Events.removeAll(CATE_AUTO_LOAD);
+
+    store.orderIsPop = false;
   }
 
   // thời gian trễ khi chuyển màn hình

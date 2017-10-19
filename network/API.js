@@ -38,6 +38,8 @@ exports.SITE_CART_UNSELECT = MY_FOOD_API + 'apiSite/cartunselect';
 exports.SITE_CART_NODE = MY_FOOD_API + 'apiSite/cartnote';
 exports.SITE_CART_ORDERS = MY_FOOD_API + 'apiSite/cartorder';
 exports.SITE_CART_CANCEL = MY_FOOD_API + 'apiSite/cartcancel';
+exports.SITE_CART_REORDER = MY_FOOD_API + 'apiSite/cart_reorder';
+exports.SITE_CART_EDIT = MY_FOOD_API + 'apiSite/cart_edit';
 
 // Address
 exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';

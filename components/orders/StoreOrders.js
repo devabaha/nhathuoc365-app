@@ -165,6 +165,8 @@ export default class StoreOrders extends Component {
               return(
                 <OrdersItemComponent
                   confirmCancelCart={this.confirmCancelCart.bind(this)}
+                  confirmCoppyCart={this.confirmCoppyCart.bind(this)}
+                  confirmEditCart={this.confirmEditCart.bind(this)}
                   hideContinue={this.props.hideContinue}
                   item={item}
                   from_page="store_orders"
@@ -208,6 +210,24 @@ export default class StoreOrders extends Component {
           yesConfirm={this._cancelCart.bind(this)}
           otherClose={false}
           />
+
+        <PopupConfirm
+          ref_popup={ref => this.refs_coppy_cart = ref}
+          title={store.cart_data ? "Giỏ hàng hiện tại sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?" : "Bạn muốn sao chép đơn hàng này?"}
+          height={110}
+          noConfirm={this._closePopupCoppy.bind(this)}
+          yesConfirm={this._coppyCart.bind(this)}
+          otherClose={false}
+          />
+
+        <PopupConfirm
+          ref_popup={ref => this.refs_edit_cart = ref}
+          title={store.cart_data ? "Giỏ hàng hiện tại sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?" : "Bạn muốn sửa đơn hàng này?"}
+          height={110}
+          noConfirm={this._closePopupEdit.bind(this)}
+          yesConfirm={this._editCart.bind(this)}
+          otherClose={false}
+          />
       </View>
     );
   }
@@ -234,7 +254,7 @@ export default class StoreOrders extends Component {
           }, 450);
         }
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_cancel');
 
         return Alert.alert(
           'Thông báo',
@@ -258,6 +278,98 @@ export default class StoreOrders extends Component {
 
     if (this.refs_cancel_cart) {
       this.refs_cancel_cart.open();
+    }
+  }
+
+  async _coppyCart() {
+    if (this.item_coppy) {
+      try {
+        var response = await APIHandler.site_cart_reorder(this.item_coppy.site_id, this.item_coppy.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+
+          this._getData();
+
+          Toast.show(response.message);
+        }
+      } catch (e) {
+        console.warn(e + ' site_cart_reorder');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._coppyCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
+      } finally {
+
+      }
+    }
+
+    this._closePopupCoppy();
+  }
+
+  _closePopupCoppy() {
+    if (this.refs_coppy_cart) {
+      this.refs_coppy_cart.close();
+    }
+  }
+
+  confirmCoppyCart(item) {
+    this.item_coppy = item;
+
+    if (this.refs_coppy_cart) {
+      this.refs_coppy_cart.open();
+    }
+  }
+
+  async _editCart() {
+    if (this.item_edit) {
+      try {
+        var response = await APIHandler.site_cart_edit(this.item_edit.site_id, this.item_edit.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+          })();
+
+          this._getData();
+
+
+        }
+      } catch (e) {
+        console.warn(e + ' site_cart_edit');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._editCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
+      } finally {
+
+      }
+    }
+
+    this._closePopupEdit();
+  }
+
+  _closePopupEdit() {
+    if (this.refs_edit_cart) {
+      this.refs_edit_cart.close();
+    }
+  }
+
+  confirmEditCart(item) {
+    this.item_edit = item;
+
+    if (this.refs_edit_cart) {
+      this.refs_edit_cart.open();
     }
   }
 }

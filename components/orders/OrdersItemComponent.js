@@ -62,22 +62,13 @@ export default class OrdersItemComponent extends Component {
       });
     })();
 
-    if (store.parentTab == '_home' && !this.props.goStore) {
+    if ((store.parentTab == '_home' && !this.props.goStore) || store.orderIsPop) {
       Actions.pop();
     } else {
       Actions.stores({
-        title: item.shop_name
+        title: item.shop_name,
+        orderIsPop: store.parentTab == '_orders' ? true : false
       });
-    }
-
-    return;
-
-    if (store.cart_data && store.cart_data.address_id == 0) {
-      Actions.create_address({
-        redirect: 'confirm'
-      });
-    } else {
-      this._goOrdersItem(item);
     }
   }
 
@@ -120,6 +111,7 @@ export default class OrdersItemComponent extends Component {
     var single = from_page != "store_orders";
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     var is_ready = item.status == CART_STATUS_READY;
+    var is_reorder = item.status == CART_STATUS_COMPLETED;
 
     return (
       <TouchableHighlight
@@ -225,7 +217,7 @@ export default class OrdersItemComponent extends Component {
                     paddingHorizontal: 8,
                     borderRadius: 3,
                     backgroundColor: "#dd4b39",
-                    marginTop: 20
+                    marginTop: 16
                   }}>
                   <Text style={{
                     color: "#ffffff",
@@ -233,6 +225,59 @@ export default class OrdersItemComponent extends Component {
                   }}>
                     <Icon name="times" size={14} color="#ffffff" />
                     {' Huỷ đơn'}
+                  </Text>
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  underlayColor={hexToRgbA("#666666", 0.9)}
+                  onPress={() => {
+                    if (this.props.confirmEditCart) {
+                      this.props.confirmEditCart(item);
+                    }
+                  }}
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 8,
+                    borderRadius: 3,
+                    backgroundColor: "#666666",
+                    marginTop: 16
+                  }}>
+                  <Text style={{
+                    color: "#ffffff",
+                    fontSize: 14
+                  }}>
+                    <Icon name="pencil-square-o" size={14} color="#ffffff" />
+                    {' Sửa đơn'}
+                  </Text>
+                </TouchableHighlight>
+              </View>
+            )}
+
+            {is_reorder && (
+              <View style={{
+                flex: 1,
+                alignItems: 'center'
+              }}>
+                <TouchableHighlight
+                  underlayColor={hexToRgbA("#f0ad4e", 0.9)}
+                  onPress={() => {
+                    if (this.props.confirmCoppyCart) {
+                      this.props.confirmCoppyCart(item);
+                    }
+                  }}
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 8,
+                    borderRadius: 3,
+                    backgroundColor: "#f0ad4e",
+                    marginTop: 12
+                  }}>
+                  <Text style={{
+                    color: "#ffffff",
+                    fontSize: 14
+                  }}>
+                    <Icon name="files-o" size={14} color="#ffffff" />
+                    {' Sao chép'}
                   </Text>
                 </TouchableHighlight>
               </View>

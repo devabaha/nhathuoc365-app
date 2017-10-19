@@ -93,24 +93,34 @@ const reducerCreate = params => {
     if (action.type == 'back') {
       Store.runStoreUnMount();
     }
-    if (action.key && action.key != '_home') {
-      Store.is_stay_home = false;
-    }
-    if (action.key && action.key != '_main_notify') {
-      Store.is_stay_main_notify = false;
-    }
-    if (action.key && action.key != '_orders') {
-      Store.is_stay_orders = false;
-    }
-    if (action.key && action.key != '_account') {
-      Store.is_stay_account = false;
-    }
+
+    // get next state
     var nextState = defaultReducer(state, action);
+
+    // get current scene key
     currentSceneName = getCurrentName(nextState);
+    currentTabHandler(currentSceneName);
+
+    // get current scene onback function
     currentSceneOnBack = getCurrentOnBack(nextState);
     return nextState;
   }
 };
+
+function currentTabHandler(key) {
+  if (key != '_home') {
+    Store.is_stay_home = false;
+  }
+  if (key != '_main_notify') {
+    Store.is_stay_main_notify = false;
+  }
+  if (key != '_orders') {
+    Store.is_stay_orders = false;
+  }
+  if (key != '_account') {
+    Store.is_stay_account = false;
+  }
+}
 
 function getCurrentName(obj) {
   const { index, children, name } = obj;
@@ -195,7 +205,7 @@ export default class App extends Component {
       var response = await APIHandler.user_login({
         fb_access_token: ''
       });
-      
+
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           Store.setUserInfo(response.data);
