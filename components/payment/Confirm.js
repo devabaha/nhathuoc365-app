@@ -896,7 +896,7 @@ export default class Confirm extends Component {
                   onPress={this.confirmEditCart.bind(this, cart_data)}
                   underlayColor="transparent">
                   <View style={[styles.boxButtonAction, {
-                    backgroundColor: DEFAULT_COLOR,
+                    backgroundColor: "#fa7f50",
                     borderColor: "#999999"
                   }]}>
                     <Icon name="pencil-square-o" size={16} color="#ffffff" />
@@ -914,7 +914,7 @@ export default class Confirm extends Component {
                   underlayColor="transparent">
                   <View style={[styles.boxButtonAction, {
                     width: Util.size.width - 30,
-                    backgroundColor: DEFAULT_COLOR,
+                    backgroundColor: "#fa7f50",
                     borderColor: "#999999"
                   }]}>
                     <Icon name="refresh" size={16} color="#ffffff" />
@@ -931,10 +931,14 @@ export default class Confirm extends Component {
                   onPress={this.goBackStores.bind(this, cart_data)}
                   underlayColor="transparent">
                   <View style={[styles.boxButtonAction, {
-                    width: Util.size.width - 30
+                    width: Util.size.width - 30,
+                    backgroundColor: "#fa7f50",
+                    borderColor: "#999999"
                   }]}>
-                    <Icon name="plus" size={16} color="#333333" />
-                    <Text style={styles.buttonActionTitle}>Chọn thêm mặt hàng</Text>
+                    <Icon name="plus" size={16} color="#ffffff" />
+                    <Text style={[styles.buttonActionTitle, {
+                      color: "#ffffff"
+                    }]}>Chọn thêm mặt hàng</Text>
                   </View>
                 </TouchableHighlight>
               )}
