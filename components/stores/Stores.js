@@ -120,6 +120,9 @@ export default class Stores extends Component {
       var response = await APIHandler.site_info(store.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
+        Actions.refresh({
+          placeholder: response.data.name
+        });
 
         setTimeout(() => {
           this.setState({

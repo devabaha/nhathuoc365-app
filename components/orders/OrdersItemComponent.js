@@ -110,8 +110,10 @@ export default class OrdersItemComponent extends Component {
     var {item, onPress, storeOnPress, from_page} = this.props;
     var single = from_page != "store_orders";
     var is_paymenting = item.status == CART_STATUS_ORDERING;
-    var is_ready = item.status == CART_STATUS_READY;
-    var is_reorder = item.status == CART_STATUS_COMPLETED;
+    // var is_ready = item.status == CART_STATUS_READY;
+    // var is_reorder = item.status == CART_STATUS_COMPLETED;
+    var is_ready = false;
+    var is_reorder = false;
 
     return (
       <TouchableHighlight
@@ -172,7 +174,7 @@ export default class OrdersItemComponent extends Component {
               </View>
             </View>
 
-            {is_paymenting && !this.props.hideContinue && (
+            {is_paymenting && (
               <View style={{
                 flex: 1,
                 alignItems: 'center'

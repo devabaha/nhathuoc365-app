@@ -516,9 +516,9 @@ export default class Confirm extends Component {
 
     // from detail orders
     else {
-      var cart_data = this.props.data;
+      var cart_data = this.state.data;
       if (!cart_data) {
-        cart_data = this.state.data;
+        cart_data = this.props.data;
       }
 
       if (cart_data && Object.keys(cart_data.products).length > 0) {
@@ -567,6 +567,9 @@ export default class Confirm extends Component {
     }
 
     var is_login = store.user_info != null && store.user_info.verify_flag == STATUS_VERIFYED;
+    var is_ready = cart_data.status == CART_STATUS_READY;
+    var is_reorder = cart_data.status == CART_STATUS_COMPLETED;
+    var is_paymenting = cart_data.status == CART_STATUS_ORDERING;
 
     return (
       <View style={styles.container}>
@@ -869,32 +872,94 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-        </ScrollView>
+          {(is_ready || is_reorder || is_paymenting) && (
+            <View style={styles.boxButtonActions}>
+              {is_ready && (
+                <TouchableHighlight
+                  style={[styles.buttonAction, {
+                    marginRight: 6
+                  }]}
+                  onPress={this.confirmCancelCart.bind(this, cart_data)}
+                  underlayColor="transparent">
+                  <View style={styles.boxButtonAction}>
+                    <Icon name="comments-o" size={16} color="#333333" />
+                    <Text style={styles.buttonActionTitle}>Huỷ đơn</Text>
+                  </View>
+                </TouchableHighlight>
+              )}
 
-        {single && <TouchableHighlight
-          style={[styles.cart_payment_btn_box, {
-            bottom: store.keyboardTop
-          }]}
-          underlayColor="transparent"
-          onPress={this._onSave.bind(this)}>
+              {is_ready && (
+                <TouchableHighlight
+                  style={[styles.buttonAction, {
+                    marginLeft: 6
+                  }]}
+                  onPress={this.confirmEditCart.bind(this, cart_data)}
+                  underlayColor="transparent">
+                  <View style={styles.boxButtonAction}>
+                    <Icon name="pencil-square-o" size={16} color="#333333" />
+                    <Text style={styles.buttonActionTitle}>Sửa đơn</Text>
+                  </View>
+                </TouchableHighlight>
+              )}
 
-          <View style={styles.cart_payment_btn}>
-            <View style={{
-              minWidth: 20,
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
-              {this.state.continue_loading ? (
-                <Indicator size="small" color="#ffffff" />
-              ) : (
-                <Icon name="check" size={20} color="#ffffff" />
+              {is_reorder && (
+                <TouchableHighlight
+                  style={styles.buttonAction}
+                  onPress={this.confirmCoppyCart.bind(this, cart_data)}
+                  underlayColor="transparent">
+                  <View style={[styles.boxButtonAction, {
+                    width: Util.size.width - 30
+                  }]}>
+                    <Icon name="refresh" size={16} color="#333333" />
+                    <Text style={styles.buttonActionTitle}>Mua lại</Text>
+                  </View>
+                </TouchableHighlight>
+              )}
+
+              {is_paymenting && (
+                <TouchableHighlight
+                  style={styles.buttonAction}
+                  onPress={this.goBackStores.bind(this, cart_data)}
+                  underlayColor="transparent">
+                  <View style={[styles.boxButtonAction, {
+                    width: Util.size.width - 30
+                  }]}>
+                    <Icon name="plus" size={16} color="#333333" />
+                    <Text style={styles.buttonActionTitle}>Chọn thêm mặt hàng</Text>
+                  </View>
+                </TouchableHighlight>
               )}
             </View>
-            <Text style={styles.cart_payment_btn_title}>ĐẶT HÀNG</Text>
-          </View>
+          )}
 
-        </TouchableHighlight>}
+        </ScrollView>
+
+        {single && (
+          <TouchableHighlight
+            style={[styles.cart_payment_btn_box, {
+              bottom: store.keyboardTop
+            }]}
+            underlayColor="transparent"
+            onPress={this._onSave.bind(this)}>
+
+            <View style={styles.cart_payment_btn}>
+              <View style={{
+                minWidth: 20,
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                {this.state.continue_loading ? (
+                  <Indicator size="small" color="#ffffff" />
+                ) : (
+                  <Icon name="check" size={20} color="#ffffff" />
+                )}
+              </View>
+              <Text style={styles.cart_payment_btn_title}>ĐẶT HÀNG</Text>
+            </View>
+
+          </TouchableHighlight>
+        )}
 
         {this.state.suggest_register && !is_login ? (
           <PopupConfirm
@@ -1025,8 +1090,102 @@ export default class Confirm extends Component {
          yesConfirm={this._removeCartItem.bind(this)}
          otherClose={false}
          />
+
+       <PopupConfirm
+         ref_popup={ref => this.refs_cancel_cart = ref}
+         title="Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
+         height={110}
+         noConfirm={this._closePopupCancel.bind(this)}
+         yesConfirm={this._cancelCart.bind(this)}
+         otherClose={false}
+         />
+
+       <PopupConfirm
+         ref_popup={ref => this.refs_coppy_cart = ref}
+         title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
+         height={110}
+         noConfirm={this._closePopupCoppy.bind(this)}
+         yesConfirm={this._coppyCart.bind(this)}
+         otherClose={false}
+         />
+
+       <PopupConfirm
+         ref_popup={ref => this.refs_edit_cart = ref}
+         title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
+         height={110}
+         noConfirm={this._closePopupEdit.bind(this)}
+         yesConfirm={this._editCart.bind(this)}
+         otherClose={false}
+         />
       </View>
     );
+  }
+
+  goBackStores(item) {
+    action(() => {
+      store.setStoreData({
+        id: item.site_id,
+        name: item.shop_name,
+        tel: item.tel
+      });
+    })();
+
+    Actions.myTabBar({
+      type: ActionConst.RESET
+    });
+
+    setTimeout(() => {
+      Actions.stores({
+        title: item.shop_name
+      });
+    }, 1000);
+  }
+
+  async _cancelCart() {
+    if (this.item_cancel) {
+
+      try {
+        var response = await APIHandler.site_cart_cancel(this.item_cancel.site_id, this.item_cancel.id);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setOrdersKeyChange(store.orders_key_change + 1);
+            Events.trigger(RELOAD_STORE_ORDERS);
+          })();
+          this._getOrdersItem(this.item_cancel.site_id, this.item_cancel.id);
+        }
+      } catch (e) {
+        console.warn(e + ' site_cart_cancel');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._cancelCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
+      } finally {
+
+      }
+
+    }
+
+    this._closePopupCancel();
+  }
+
+  _closePopupCancel() {
+    if (this.refs_cancel_cart) {
+      this.refs_cancel_cart.close();
+    }
+  }
+
+  confirmCancelCart(item) {
+    this.item_cancel = item;
+
+    if (this.refs_cancel_cart) {
+      this.refs_cancel_cart.open();
+    }
   }
 
   _onRegister() {
@@ -1086,6 +1245,111 @@ export default class Confirm extends Component {
       password_props: password,
       registerNow: true
     });
+  }
+
+  async _coppyCart() {
+    if (this.item_coppy) {
+      try {
+        var response = await APIHandler.site_cart_reorder(this.item_coppy.site_id, this.item_coppy.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+            store.setOrdersKeyChange(store.orders_key_change + 1);
+            Events.trigger(RELOAD_STORE_ORDERS);
+          })();
+
+          Toast.show(response.message);
+
+          Actions.pop();
+
+          setTimeout(() => {
+            Actions.confirm({
+              goConfirm: true
+            });
+          }, 1000);
+        }
+      } catch (e) {
+        console.warn(e + ' site_cart_reorder');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._coppyCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
+      } finally {
+
+      }
+    }
+
+    this._closePopupCoppy();
+  }
+
+  async _editCart() {
+    if (this.item_edit) {
+      try {
+        var response = await APIHandler.site_cart_edit(this.item_edit.site_id, this.item_edit.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+            store.setOrdersKeyChange(store.orders_key_change + 1);
+            Events.trigger(RELOAD_STORE_ORDERS);
+          })();
+
+          this.setState({
+            single: true
+          });
+
+          this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
+
+        }
+      } catch (e) {
+        console.warn(e + ' site_cart_edit');
+
+        return Alert.alert(
+          'Thông báo',
+          'Kết nối mạng bị lỗi',
+          [
+            {text: 'Thử lại', onPress: this._editCart.bind(this)},
+          ],
+          { cancelable: false }
+        );
+      } finally {
+
+      }
+    }
+
+    this._closePopupEdit();
+  }
+
+  _closePopupEdit() {
+    if (this.refs_edit_cart) {
+      this.refs_edit_cart.close();
+    }
+  }
+
+  _closePopupCoppy() {
+    if (this.refs_coppy_cart) {
+      this.refs_coppy_cart.close();
+    }
+  }
+
+  confirmCoppyCart(item) {
+    this.item_coppy = item;
+
+    if (this.refs_coppy_cart) {
+      this.refs_coppy_cart.open();
+    }
+  }
+
+  confirmEditCart(item) {
+    this.item_edit = item;
+
+    if (this.refs_edit_cart) {
+      this.refs_edit_cart.open();
+    }
   }
 
 }
@@ -1687,5 +1951,29 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0
+  },
+
+  boxButtonActions: {
+    backgroundColor: "#ffffff",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16
+  },
+  boxButtonAction: {
+    flexDirection: 'row',
+    borderWidth: Util.pixel,
+    borderColor: "#666666",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    width: Util.size.width / 2 - 24,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  buttonActionTitle: {
+    color: "#333333",
+    marginLeft: 4,
+    fontSize: 14
   }
 });
