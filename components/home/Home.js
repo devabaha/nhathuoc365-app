@@ -66,6 +66,12 @@ export default class Home extends Component {
   }
 
   componentWillReceiveProps() {
+
+    if (store.goStoreNow) {
+      store.goStoreNow = undefined;
+      return Actions.stores();
+    }
+
     store.parentTab = '_home';
 
     this._closePopup();

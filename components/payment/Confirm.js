@@ -463,7 +463,7 @@ export default class Confirm extends Component {
 
       // add stack unmount
       store.setStoreUnMount('confirm', onBack);
-    }, 1000);
+    }, 500);
   }
 
   _continueShopping() {
@@ -895,9 +895,14 @@ export default class Confirm extends Component {
                   }]}
                   onPress={this.confirmEditCart.bind(this, cart_data)}
                   underlayColor="transparent">
-                  <View style={styles.boxButtonAction}>
-                    <Icon name="pencil-square-o" size={16} color="#333333" />
-                    <Text style={styles.buttonActionTitle}>Sửa đơn</Text>
+                  <View style={[styles.boxButtonAction, {
+                    backgroundColor: DEFAULT_COLOR,
+                    borderColor: "#999999"
+                  }]}>
+                    <Icon name="pencil-square-o" size={16} color="#ffffff" />
+                    <Text style={[styles.buttonActionTitle, {
+                      color: "#ffffff"
+                    }]}>Sửa đơn</Text>
                   </View>
                 </TouchableHighlight>
               )}
@@ -908,10 +913,14 @@ export default class Confirm extends Component {
                   onPress={this.confirmCoppyCart.bind(this, cart_data)}
                   underlayColor="transparent">
                   <View style={[styles.boxButtonAction, {
-                    width: Util.size.width - 30
+                    width: Util.size.width - 30,
+                    backgroundColor: DEFAULT_COLOR,
+                    borderColor: "#999999"
                   }]}>
-                    <Icon name="refresh" size={16} color="#333333" />
-                    <Text style={styles.buttonActionTitle}>Mua lại</Text>
+                    <Icon name="refresh" size={16} color="#ffffff" />
+                    <Text style={[styles.buttonActionTitle, {
+                      color: "#ffffff"
+                    }]}>Mua lại</Text>
                   </View>
                 </TouchableHighlight>
               )}
@@ -1130,15 +1139,11 @@ export default class Confirm extends Component {
       });
     })();
 
+    store.goStoreNow = true;
+
     Actions.myTabBar({
       type: ActionConst.RESET
     });
-
-    setTimeout(() => {
-      Actions.stores({
-        title: item.shop_name
-      });
-    }, 1000);
   }
 
   async _cancelCart() {
