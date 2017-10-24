@@ -234,51 +234,33 @@ export default class App extends Component {
   }
 
   _onOpened(openResult) {
-    // console.log('Message: ', openResult.notify.payload.body);
-    // console.log('Data: ', openResult.notify.payload.additionalData);
-    // console.log('isActive: ', openResult.notify.isAppInFocus);
+    // console.log('Message: ', openResult.notification.payload.body);
+    // console.log('Data: ', openResult.notification.payload.additionalData);
+    // console.log('isActive: ', openResult.notification.isAppInFocus);
     // console.log('openResult: ', openResult);
 
-    // var data = openResult.notify.payload.additionalData;
-    // if (data) {
-    //   var {page, page_id} = data;
-    //
-    //   if (page) {
-    //     // clear timer
-    //     Store.runStoreUnMount();
-    //
-    //     // go home screen
-    //     Actions.myTabBar({
-    //       type: ActionConst.RESET
-    //     });
-    //
-    //     // reload home screen
-    //     action(() => {
-    //       Store.setRefreshHomeChange(Store.refresh_home_change + 1);
-    //     })();
-    //
-    //     setTimeout(() => {
-    //
-    //       switch (page) {
-    //         case 'store':
-    //           if (page_id) {
-    //             this._pushGoStore(page_id);
-    //           }
-    //           break;
-    //         case '_main_notify':
-    //           this._goMainNotify();
-    //           break;
-    //         case 'payment':
-    //
-    //           break;
-    //         case 'orders':
-    //
-    //           break;
-    //       }
-    //
-    //     }, 1000);
-    //   }
-    // }
+    var data = openResult.notification.payload.additionalData;
+    if (data) {
+      var {page, page_id} = data;
+
+      if (page) {
+        switch (page) {
+          case 'stores':
+            if (page_id) {
+              this._pushGoStore(page_id);
+            }
+            break;
+          case 'news':
+            if (page_id) {
+              this._pushGoNews(page_id);
+            }
+            break;
+          case 'orders':
+
+            break;
+        }
+      }
+    }
   }
 
   async _pushGoStore(page_id) {
@@ -288,10 +270,49 @@ export default class App extends Component {
         action(() => {
           Store.setStoreData(response.data);
 
-          Actions.stores({
-            title: response.data.name
-          });
+          if (currentSceneName == 'stores') {
+            setTimeout(() => {
+              Actions.stores({
+                title: response.data.name,
+                type: ActionConst.REFRESH
+              });
+            }, 1000);
+          } else {
+            setTimeout(() => {
+              Actions.stores({
+                title: response.data.name
+              });
+            }, 1000);
+          }
         })();
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  async _pushGoNews(page_id) {
+    try {
+      var response = await APIHandler.user_news(page_id);
+      if (response && response.status == STATUS_SUCCESS) {
+        if (currentSceneName == 'notify_item') {
+          setTimeout(() => {
+            Actions.notify_item({
+              title: response.data.title,
+              data: response.data,
+              type: ActionConst.REFRESH
+            });
+          }, 1000);
+        } else {
+          setTimeout(() => {
+            Actions.notify_item({
+              title: response.data.title,
+              data: response.data
+            });
+          }, 1000);
+        }
       }
     } catch (e) {
       console.warn(e);

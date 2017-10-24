@@ -17,6 +17,7 @@ export default class NewItemComponent extends Component {
 
   _goDetail(item) {
     Actions.notify_item({
+      title: item.title,
       data: item
     });
   }

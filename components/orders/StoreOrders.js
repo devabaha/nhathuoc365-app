@@ -213,7 +213,7 @@ export default class StoreOrders extends Component {
 
         <PopupConfirm
           ref_popup={ref => this.refs_coppy_cart = ref}
-          title={store.cart_data ? "Giỏ hàng hiện tại sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?" : "Bạn muốn sao chép đơn hàng này?"}
+          title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
@@ -222,7 +222,7 @@ export default class StoreOrders extends Component {
 
         <PopupConfirm
           ref_popup={ref => this.refs_edit_cart = ref}
-          title={store.cart_data ? "Giỏ hàng hiện tại sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?" : "Bạn muốn sửa đơn hàng này?"}
+          title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
           height={110}
           noConfirm={this._closePopupEdit.bind(this)}
           yesConfirm={this._editCart.bind(this)}
