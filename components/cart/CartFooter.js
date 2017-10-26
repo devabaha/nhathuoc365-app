@@ -106,7 +106,7 @@ export default class CartFooter extends Component {
       decrement_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.site_cart_down(store.store_id, item.id);
+        var response = await APIHandler.site_cart_down(item.site_id, item.id);
 
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
@@ -139,7 +139,7 @@ export default class CartFooter extends Component {
       increment_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.site_cart_up(store.store_id, item.id);
+        var response = await APIHandler.site_cart_up(item.site_id, item.id);
 
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {

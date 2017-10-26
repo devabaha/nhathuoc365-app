@@ -304,7 +304,7 @@ export default class Stores extends Component {
     var item = this.cartItemConfirmRemove;
 
     try {
-      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+      var response = await APIHandler.site_cart_remove(item.site_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
