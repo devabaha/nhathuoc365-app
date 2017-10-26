@@ -287,7 +287,16 @@ export default class App extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_info');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._pushGoStore.bind(this, page_id)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -315,7 +324,16 @@ export default class App extends Component {
         }
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_news');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._pushGoNews.bind(this, page_id)},
+        ],
+        { cancelable: false }
+      );
     } finally {
 
     }
@@ -337,7 +355,16 @@ export default class App extends Component {
             player_id
           });
         } catch (e) {
-          console.warn(e);
+          console.warn(e + ' add_push_token');
+
+          return Alert.alert(
+            'Thông báo',
+            'Kết nối mạng bị lỗi',
+            [
+              {text: 'Thử lại', onPress: this._onIds.bind(this, device)},
+            ],
+            { cancelable: false }
+          );
         } finally {
 
         }
