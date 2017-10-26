@@ -374,7 +374,7 @@ export default class Confirm extends Component {
     var item = this.cartItemConfirmRemove;
 
     try {
-      var response = await APIHandler.site_cart_remove(item.site_id, item.id);
+      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
 
@@ -1382,9 +1382,9 @@ class ItemCartComponent extends Component {
     }, async () => {
       try {
         if (item.selected == 1) {
-          var response = await APIHandler.site_cart_unselect(item.site_id, item.id);
+          var response = await APIHandler.site_cart_unselect(store.store_id, item.id);
         } else {
-          var response = await APIHandler.site_cart_select(item.site_id, item.id);
+          var response = await APIHandler.site_cart_select(store.store_id, item.id);
         }
 
         if (response && response.status == STATUS_SUCCESS) {
@@ -1432,7 +1432,7 @@ class ItemCartComponent extends Component {
       decrement_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.site_cart_down(item.site_id, item.id);
+        var response = await APIHandler.site_cart_down(store.store_id, item.id);
 
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
@@ -1465,7 +1465,7 @@ class ItemCartComponent extends Component {
       increment_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.site_cart_up(item.site_id, item.id);
+        var response = await APIHandler.site_cart_up(store.store_id, item.id);
 
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
