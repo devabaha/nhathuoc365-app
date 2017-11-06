@@ -75,7 +75,7 @@ export default class NotifyItemComponent extends Component {
           ]}>
 
           <View style={styles.store_result_item_image_box}>
-            <Image style={styles.store_result_item_image} source={{uri: item.image_url}} />
+            <CachedImage mutable style={styles.store_result_item_image} source={{uri: item.image_url}} />
           </View>
 
           <View style={styles.store_result_item_content}>

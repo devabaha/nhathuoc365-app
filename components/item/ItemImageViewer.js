@@ -30,8 +30,8 @@ export default class ItemImageViewer extends Component {
           }}
           style={{
             position: 'absolute',
-            top: 40,
-            right: 0,
+            bottom: 88,
+            left: 0,
             width: 60,
             height: 50,
             justifyContent: 'center',

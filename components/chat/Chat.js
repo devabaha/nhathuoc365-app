@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -317,7 +318,7 @@ export default class Chat extends Component {
                       }]}>
                         <View style={styles.chat_box_avatar}>
                           {!just_user && (
-                            <Image style={styles.chat_avatar} source={{uri: item.user_logo}} />
+                            <CachedImage mutable style={styles.chat_avatar} source={{uri: item.user_logo}} />
                           )}
                         </View>
 
@@ -342,7 +343,7 @@ export default class Chat extends Component {
                       }]}>
                         <View style={styles.chat_box_avatar}>
                           {!just_user && (
-                            <Image style={styles.chat_avatar} source={{uri: item.site_logo}} />
+                            <CachedImage mutable style={styles.chat_avatar} source={{uri: item.site_logo}} />
                           )}
                         </View>
 

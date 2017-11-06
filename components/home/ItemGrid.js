@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -63,7 +64,7 @@ export default class ItemGrid extends Component {
         onPress={this._goStores.bind(this, item)}>
         <View style={styles.stores}>
 
-          <Image style={styles.stores_image} source={{uri: item.image_url}} />
+          <CachedImage mutable style={styles.stores_image} source={{uri: item.image_url}} />
 
           <View style={styles.stores_info}>
             <View style={styles.stores_info_text}>

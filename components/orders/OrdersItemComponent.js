@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -128,7 +129,7 @@ export default class OrdersItemComponent extends Component {
               underlayColor="transparent"
               onPress={this._goStoreOrders.bind(this, item)}>
               <View style={styles.cart_section_box}>
-                <Image style={styles.cart_section_image} source={{uri: item.shop_logo_url}} />
+                <CachedImage mutable style={styles.cart_section_image} source={{uri: item.shop_logo_url}} />
                 <Text style={styles.cart_section_title}>{item.shop_name}</Text>
               </View>
             </TouchableHighlight>

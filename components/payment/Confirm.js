@@ -825,7 +825,7 @@ export default class Confirm extends Component {
                     height: 80
                   }]}>
                     <View style={styles.cart_item_image_box}>
-                      <Image style={styles.cart_item_image} source={{uri: item.image}} />
+                      <CachedImage mutable style={styles.cart_item_image} source={{uri: item.image}} />
                     </View>
 
                     <View style={styles.cart_item_info}>
@@ -1517,7 +1517,7 @@ class ItemCartComponent extends Component {
         </View>
 
         <View style={styles.cart_item_image_box}>
-          <Image style={styles.cart_item_image} source={{uri: item.image}} />
+          <CachedImage mutable style={styles.cart_item_image} source={{uri: item.image}} />
         </View>
 
         <View style={styles.cart_item_info}>

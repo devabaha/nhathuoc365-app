@@ -364,13 +364,16 @@ export default class Item extends Component {
                 item_data.img.map((item, index) => {
                   return(
                     <TouchableHighlight
+                      underlayColor="transparent"
                       onPress={() => {
                         Actions.item_image_viewer({
                           images: this.state.images
                         });
                       }}
                       key={index}>
-                      <Image style={styles.swiper_image} source={{uri: item.image}} key={index} />
+                      <View>
+                        <CachedImage mutable style={styles.swiper_image} source={{uri: item.image}} key={index} />
+                      </View>
                     </TouchableHighlight>
                   );
                 })

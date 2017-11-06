@@ -1,6 +1,7 @@
 /* @flow */
 
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -139,7 +140,7 @@ export default class Items extends Component {
         }]}>
 
           <View style={styles.item_image_box}>
-            <Image style={styles.item_image} source={{uri: item.image}} />
+            <CachedImage mutable style={styles.item_image} source={{uri: item.image}} />
           </View>
 
           <View style={styles.item_info_box}>

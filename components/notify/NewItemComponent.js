@@ -32,7 +32,7 @@ export default class NewItemComponent extends Component {
 
         <View style={[styles.notify_item, item.read_flag == 0 ? styles.notify_item_active : null]}>
           <View style={styles.notify_item_image_box}>
-            <Image style={styles.notify_item_image} source={{uri: item.image_url}} />
+            <CachedImage mutable style={styles.notify_item_image} source={{uri: item.image_url}} />
           </View>
 
           <View style={styles.notify_item_content}>

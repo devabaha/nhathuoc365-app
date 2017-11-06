@@ -171,7 +171,7 @@ export default class Orders extends Component {
             ref={ref => this.refs_orders = ref}
             // renderSectionHeader={({section}) => (
             //   <View style={styles.cart_section_box}>
-            //     <Image style={styles.cart_section_image} source={{uri: section.image}} />
+            //     <CachedImage mutable style={styles.cart_section_image} source={{uri: section.image}} />
             //     <Text style={styles.cart_section_title}>{section.key}</Text>
             //   </View>
             // )}

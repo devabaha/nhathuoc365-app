@@ -85,7 +85,7 @@ export default class NotifyItem extends Component {
       <View style={styles.container}>
         <ScrollView style={styles.notify_container}>
           <View style={styles.notify_image_box}>
-            <Image style={styles.notify_image} source={{uri: item.image_url}} />
+            <CachedImage mutable style={styles.notify_image} source={{uri: item.image_url}} />
           </View>
 
           <View style={styles.notify_content}>

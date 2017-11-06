@@ -5,6 +5,7 @@ import {
   View,
   Text,
   Image,
+  ImageBackground,
   StyleSheet,
   TouchableHighlight,
   FlatList
@@ -66,7 +67,7 @@ export default class Intro extends Component {
   _renderImage({item, index}) {
     if (index == (images.length - 1)) {
       return(
-        <Image key={index} style={styles.image} source={item.image}>
+        <ImageBackground key={index} style={styles.image} source={item.image}>
           <TouchableHighlight
             style={styles.finish_btn_box}
             underlayColor="transparent"
@@ -75,11 +76,11 @@ export default class Intro extends Component {
               <Text style={styles.finish_text}>TRẢI NGHIỆM NGAY!</Text>
             </View>
           </TouchableHighlight>
-        </Image>
+        </ImageBackground>
       );
     } else {
       return(
-        <Image key={index} style={styles.image} source={item.image}>
+        <ImageBackground key={index} style={styles.image} source={item.image}>
           <TouchableHighlight
             underlayColor="transparent"
             onPress={this._onFinish.bind(this)}
@@ -95,7 +96,7 @@ export default class Intro extends Component {
               color: "#404040"
             }}>Bỏ qua</Text>
           </TouchableHighlight>
-        </Image>
+        </ImageBackground>
       );
     }
   }

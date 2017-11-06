@@ -295,7 +295,7 @@ class StoreItem extends Component {
 
         <View style={[styles.store_result_item, index < 3 ? styles.store_result_item_active : null]}>
           <View style={styles.store_result_item_image_box}>
-            <Image style={styles.store_result_item_image} source={{uri: item.logo_url}} />
+            <CachedImage mutable style={styles.store_result_item_image} source={{uri: item.logo_url}} />
           </View>
 
           <View style={styles.store_result_item_content}>

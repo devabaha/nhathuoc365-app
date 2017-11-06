@@ -5,6 +5,7 @@ import {
   View,
   Text,
   Image,
+  ImageBackground,
   Touch,
   TouchableHighlight,
   StyleSheet,
@@ -370,7 +371,9 @@ export default class Account extends Component {
       );
     } else {
       var avatar = (
-        <Image style={styles.profile_avatar} source={{uri: store.user_info.img}} />
+        <View>
+          <CachedImage mutable style={styles.profile_avatar} source={{uri: store.user_info.img}} />
+        </View>
       );
     }
 
@@ -392,7 +395,7 @@ export default class Account extends Component {
           >
 
           <View style={styles.profile_cover_box}>
-            <Image style={styles.profile_cover} source={require('../../images/profile_bgr.jpg')}>
+            <ImageBackground style={styles.profile_cover} source={require('../../images/profile_bgr.jpg')}>
 
               <TouchableHighlight
                 style={styles.profile_avatar_box}
@@ -483,7 +486,7 @@ export default class Account extends Component {
                 </View>
               )}
 
-            </Image>
+            </ImageBackground>
           </View>
 
           {this.state.options && (
@@ -579,8 +582,7 @@ const styles = StyleSheet.create({
   },
   profile_cover: {
     width: '100%',
-    height: '100%',
-    resizeMode: 'cover'
+    height: '100%'
   },
   profile_avatar_box: {
     position: 'absolute',
@@ -600,7 +602,7 @@ const styles = StyleSheet.create({
     width: 76,
     height: 76,
     borderRadius: 38,
-    resizeMode: 'cover'
+    // resizeMode: 'cover'
   },
 
   profile_button_box: {
