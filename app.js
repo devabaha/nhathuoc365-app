@@ -69,9 +69,18 @@ import ScanQRCode from './components/home/ScanQRCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 
+// Backend
+import Dashboard from './components/dashboard/Dashboard';
+import SaleStores from './components/sale/SaleStores';
+import Sale from './components/sale/Sale';
+import Order from './components/sale/Order';
+import UserInfo from './components/sale/UserInfo';
+import SaleChat from './components/sale/SaleChat';
+
 // others
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
+import CustomNavBar from './components/sale/CustomNavBar';
 
 // navigator bar
 const custommerNav = {
@@ -99,6 +108,11 @@ const reducerCreate = params => {
 
     // get current scene key
     currentSceneName = getCurrentName(nextState);
+    if (isIOS && ['sale_user_info', 'sale_chat', 'dashboard'].indexOf(currentSceneName) != -1) {
+      StatusBar.setBarStyle('dark-content');
+    } else {
+      StatusBar.setBarStyle('light-content');
+    }
     currentTabHandler(currentSceneName);
 
     // get current scene onback function
@@ -210,6 +224,8 @@ export default class App extends Component {
         action(() => {
           Store.setUserInfo(response.data);
         })();
+
+        alert(JSON.stringify(response.data))
 
         this.setState({
           finish: true
@@ -510,6 +526,14 @@ export default class App extends Component {
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
             <Scene initial={this.state.showIntro} key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
+
+            {/* Backend */}
+            <Scene key="dashboard" title="BẢNG ĐIỀU KHIỂN" component={Dashboard} {...custommerNav} />
+            <Scene key="sale_stores" title="CỬA HÀNG" component={SaleStores} {...custommerNav} />
+            <Scene key="sale" title="" component={Sale} {...custommerNav} />
+            <Scene key="order" title="" component={Order} navBar={CustomNavBar} />
+            <Scene key="sale_user_info" title="" component={UserInfo} navBar={CustomNavBar} />
+            <Scene key="sale_chat" title="" component={SaleChat} navBar={CustomNavBar} />
 
           </Scene>
 

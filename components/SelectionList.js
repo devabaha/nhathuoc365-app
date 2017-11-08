@@ -26,6 +26,10 @@ export default class SelectionList extends Component {
         data={data}
         style={[styles.profile_list_opt, containerStyle]}
         renderItem={({item, index}) => {
+          if (item.isHidden) {
+            return null;
+          }
+          
           var notifyCount = 0;
           if (item.notify) {
             notifyCount = parseInt(store.notify[item.notify]);

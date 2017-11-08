@@ -24,6 +24,7 @@ import Communications from 'react-native-communications';
 import RNFetchBlob from 'react-native-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
 import Sticker from '../Sticker';
+import {reaction} from 'mobx';
 
 // components
 import SelectionList from '../SelectionList';
@@ -34,6 +35,18 @@ export default class Account extends Component {
     super(props);
 
     this.state = {
+      refreshing: false,
+      logout_loading: false,
+      sticker_flag: false,
+      avatar_loading: false,
+      scrollTop: 0
+    }
+
+    reaction(() => store.user_info, this._initial);
+  }
+
+  _initial = (callback) => {
+    this.setState({
       options: [
         // {
         //   key: 1,
@@ -53,7 +66,7 @@ export default class Account extends Component {
         // },
 
         {
-          key: 2,
+          key: 1,
           icon: "commenting-o",
           label: "Gửi phản hồi tới quản trị ứng dụng",
           desc: "Đóng góp, ý kiến của bạn",
@@ -75,9 +88,25 @@ export default class Account extends Component {
         },
 
         {
+          key: 2,
+          isHidden: store.user_info.admin_flag == 0,
+          icon: "home",
+          label: "Cửa hàng của tôi",
+          desc: "Quản lý cửa hàng kinh doanh",
+          onPress: () => Actions.dashboard({
+
+          }),
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#1fa67a"
+          }],
+          iconColor: "#ffffff",
+          marginTop: true
+        },
+
+        {
           key: 3,
           icon: "map-marker",
-          label: "Địa chỉ của bạn",
+          label: "Địa chỉ của tôi",
           desc: "Quản lý địa chỉ nhận hàng",
           onPress: () => Actions.address({
             from_page: "account"
@@ -131,13 +160,12 @@ export default class Account extends Component {
           hideAngle: true,
           marginTop: true
         }
-      ],
-      refreshing: false,
-      logout_loading: false,
-      sticker_flag: false,
-      avatar_loading: false,
-      scrollTop: 0
-    }
+      ]
+    }, () => {
+      if (typeof callback == 'function') {
+        callback();
+      }
+    });
   }
 
   _onRefresh() {
@@ -228,21 +256,23 @@ export default class Account extends Component {
   }
 
   componentDidMount() {
-    this.key_add_new = this.state.options.length;
+    this._initial(() => {
+      this.key_add_new = this.state.options.length;
 
-    this.setState({
-      finish: true
+      this.setState({
+        finish: true
+      });
+
+      store.is_stay_account = true;
+
+      store.parentTab = '_account';
+
+      // updating version
+      this._updateHandler(store.notify);
+
+      // callback when has new version
+      Events.on(CALLBACK_APP_UPDATING, CALLBACK_APP_UPDATING + 'ID', this._updateHandler.bind(this));
     });
-
-    store.is_stay_account = true;
-
-    store.parentTab = '_account';
-
-    // updating version
-    this._updateHandler(store.notify);
-
-    // callback when has new version
-    Events.on(CALLBACK_APP_UPDATING, CALLBACK_APP_UPDATING + 'ID', this._updateHandler.bind(this));
   }
 
   _updateHandler(notify) {
