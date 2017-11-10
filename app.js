@@ -225,8 +225,6 @@ export default class App extends Component {
           Store.setUserInfo(response.data);
         })();
 
-        alert(JSON.stringify(response.data))
-
         this.setState({
           finish: true
         });

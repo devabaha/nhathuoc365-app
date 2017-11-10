@@ -67,7 +67,7 @@ export default class Intro extends Component {
   _renderImage({item, index}) {
     if (index == (images.length - 1)) {
       return(
-        <ImageBackground key={index} style={styles.image} source={item.image}>
+        <ImageBackground key={index} resizeMode="stretch" style={styles.image} source={item.image}>
           <TouchableHighlight
             style={styles.finish_btn_box}
             underlayColor="transparent"
@@ -80,22 +80,8 @@ export default class Intro extends Component {
       );
     } else {
       return(
-        <ImageBackground key={index} style={styles.image} source={item.image}>
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={this._onFinish.bind(this)}
-            style={{
-              position: 'absolute',
-              right: 0,
-              paddingTop: isIOS ? 24 : 4,
-              paddingHorizontal: 15
-            }}
-            >
-            <Text style={{
-              fontSize: 14,
-              color: "#404040"
-            }}>Bỏ qua</Text>
-          </TouchableHighlight>
+        <ImageBackground key={index} resizeMode="stretch" style={styles.image} source={item.image}>
+
         </ImageBackground>
       );
     }
@@ -165,6 +151,24 @@ export default class Intro extends Component {
             );
           })}
         </View>)}
+
+        {pageNum < (images.length - 1) && (
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={this._onFinish.bind(this)}
+            style={{
+              position: 'absolute',
+              right: 0,
+              paddingTop: isIOS ? 24 : 4,
+              paddingHorizontal: 15
+            }}
+            >
+            <Text style={{
+              fontSize: 14,
+              color: "#404040"
+            }}>Bỏ qua</Text>
+          </TouchableHighlight>
+        )}
       </View>
     );
   }
@@ -201,8 +205,7 @@ const styles = StyleSheet.create({
   image: {
     width: Util.size.width,
     height: Util.size.height - (isAndroid ? 24 : 0),
-    alignItems: 'center',
-    resizeMode: 'stretch'
+    alignItems: 'center'
   },
   finish_btn_box: {
     width: Util.size.width,

@@ -9,7 +9,8 @@ import {
   RefreshControl,
   ScrollView,
   Animated,
-  TextInput
+  TextInput,
+  Alert
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -18,107 +19,36 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 
 export default class Order extends Component {
-  static propTypes = {
-
-  }
-
   constructor(props) {
     super(props);
 
     this.state = {
       refreshing: false,
-      cart_data: {
-        "id": "581",
-        "cart_code": "CHTNMF2410581",
-        "site_id": "14",
-        "user_id": "41",
-        "products": {
-          "cart-270": {
-            "quantity": 1,
-            "id": "270",
-            "name": "Cà chua hữu cơ túi 300gr",
-            "selected": 1,
-            "discount_percent": "12",
-            "service_price": 0,
-            "discount": "17.000đ",
-            "price": "15000",
-            "price_view": "15.000đ",
-            "unit_name": "túi",
-            "cart_step": "1.0",
-            "quantity_view": "1 túi",
-            "image": "http://myfood.com.vn/photos/resized/320x/14-1507975722-cuahangtrainghiem.png"
-          },
-          "cart-272": {
-            "quantity": 1,
-            "id": "272",
-            "name": "Dưa chuột hữu cơ túi 300gr",
-            "selected": 1,
-            "discount_percent": "18",
-            "service_price": 0,
-            "discount": "12.000đ",
-            "price": "10000",
-            "price_view": "10.000đ",
-            "unit_name": "túi",
-            "cart_step": "1.0",
-            "quantity_view": "1 túi",
-            "image": "http://myfood.com.vn/photos/resized/320x/14-1507968961-cuahangtrainghiem.png"
-          },
-          "cart-273": {
-            "quantity": 1,
-            "id": "273",
-            "name": "Rau muống hữu cơ túi 300gr",
-            "selected": 1,
-            "discount_percent": "18",
-            "service_price": 0,
-            "discount": "12.000đ",
-            "price": "10000",
-            "price_view": "10.000đ",
-            "unit_name": "túi",
-            "cart_step": "1.0",
-            "quantity_view": "1 túi",
-            "image": "http://myfood.com.vn/photos/resized/320x/14-1507970644-cuahangtrainghiem.png"
-          }
-        },
-        "total_value": 35000,
-        "total_count_selected": 3,
-        "count_selected": 3,
-        "point": 35,
-        "fcoin": "0",
-        "award_date": "0",
-        "award_month": "0",
-        "status": "5",
-        "address_id": "148",
-        "user_note": null,
-        "site_note": null,
-        "payment": "Khi nhận hàng",
-        "delete_flag": "0",
-        "pushed": "0",
-        "orders_time": "2017-10-24 18:51:23",
-        "modified": "2017-10-24 18:51:23",
-        "created": "2017-10-24 18:43:16",
-        "count": 3,
-        "total": "35.000đ",
-        "total_selected": "35.000đ",
-        "status_view": "Đã đặt hàng",
-        "address": {
-          "id": "148",
-          "user_id": "41",
-          "name": "Ngọc Sơn",
-          "tel": "01653538222",
-          "address": "Số 1 Lương Yên, Hà Nội",
-          "city": "",
-          "district": "",
-          "default_flag": "0",
-          "delete_flag": "0",
-          "modified": "2017-10-13 17:27:33",
-          "created": "2017-10-13 17:27:33"
-        },
-        "shop_logo_url": "http://myfood.com.vn/photos/resized/120x120/14-1507956244-cuahangtrainghiem.png",
-        "shop_name": "Cửa hàng trải nghiệm",
-        "shop_id": "14",
-        "tel": "0905250209"
-      },
-      editMode: true
+      cart_data: null,
+      editMode: false
+    }
+  }
+
+  componentDidMount() {
+    this._getData();
+  }
+
+  _getData = async () => {
+
+    var {id, site_id} = this.props.item_data;
+
+    try {
+      var response = await ADMIN_APIHandler.site_cart_by_id(site_id, id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          cart_data: response.data
+        });
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
     }
   }
 
@@ -134,8 +64,169 @@ export default class Order extends Component {
     });
   }
 
-  _renderActionsButton(data) {
-    return data.map((item, index) => {
+  _cartEdit = async (item, status) => {
+    var {id, site_id} = item;
+    try {
+      var response = await ADMIN_APIHandler.cart_status_edit(site_id, id, {
+        status
+      });
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this._getData();
+        Toast.show('Cập nhật đơn hàng thành công!');
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  _confirmCancelOrder = () => {
+    Alert.alert(
+      'Xác nhận',
+      'Bạn muốn huỷ đơn hàng này?',
+      [
+        {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+        {text: 'Đồng ý', onPress: () => this._cartEdit(cart_data, CART_STATUS_CANCEL)},
+      ]
+    );
+  }
+
+  _renderActionsButton = (cart_data) => {
+    var status = parseInt(cart_data.status);
+    var data = [];
+
+    switch (status) {
+      case CART_STATUS_ORDERING:
+        data = [
+          {
+            title: 'huỷ đơn',
+            icon: 'times',
+            bgrIcon: '#dd4b39',
+            onPress: this._confirmCancelOrder
+          }
+        ];
+        break;
+      case CART_STATUS_READY:
+        data = [
+          {
+            title: 'duyệt đơn',
+            icon: 'check',
+            onPress: () => {
+              Alert.alert(
+                'Xác nhận',
+                'Bạn muốn duyệt đơn hàng này?',
+                [
+                  {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+                  {text: 'Đồng ý', onPress: () => this._cartEdit(cart_data, CART_STATUS_ACCEPTED)},
+                ]
+              );
+            }
+          },
+          {
+            title: 'huỷ đơn',
+            icon: 'times',
+            bgrIcon: '#dd4b39',
+            onPress: this._confirmCancelOrder
+          }
+        ];
+        break;
+      case CART_STATUS_ACCEPTED:
+        data = [
+          {
+            title: 'xử lý đơn',
+            icon: 'check',
+            onPress: () => {
+              Alert.alert(
+                'Xác nhận',
+                'Bắt đầu xử lý đơn hàng này?',
+                [
+                  {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+                  {text: 'Đồng ý', onPress: () => this._cartEdit(cart_data, CART_STATUS_PROCESSING)},
+                ]
+              );
+            }
+          },
+          {
+            title: 'huỷ đơn',
+            icon: 'times',
+            bgrIcon: '#dd4b39',
+            onPress: this._confirmCancelOrder
+          }
+        ];
+        break;
+      case CART_STATUS_PROCESSING:
+        data = [
+          {
+            title: 'Giao đơn hàng',
+            icon: 'check',
+            onPress: () => {
+              Alert.alert(
+                'Xác nhận',
+                'Bắt đầu giao đơn hàng này?',
+                [
+                  {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+                  {text: 'Đồng ý', onPress: () => this._cartEdit(cart_data, CART_STATUS_DELIVERY)},
+                ]
+              );
+            }
+          },
+          {
+            title: 'huỷ đơn',
+            icon: 'times',
+            bgrIcon: '#dd4b39',
+            onPress: this._confirmCancelOrder
+          }
+        ];
+        break;
+      case CART_STATUS_DELIVERY:
+        data = [
+          {
+            title: 'hoàn thành',
+            icon: 'check',
+            onPress: () => {
+              Alert.alert(
+                'Xác nhận',
+                'Hoàn thành đơn hàng này?',
+                [
+                  {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+                  {text: 'Đồng ý', onPress: () => this._cartEdit(cart_data, CART_STATUS_COMPLETED)},
+                ]
+              );
+            }
+          },
+          {
+            title: 'huỷ đơn',
+            icon: 'times',
+            bgrIcon: '#dd4b39',
+            onPress: this._confirmCancelOrder
+          }
+        ];
+        break;
+      case CART_STATUS_COMPLETED:
+        data = [
+
+        ];
+        break;
+    }
+
+    var data_push = [
+      {
+        title: 'khách hàng',
+        icon: 'user',
+        bgrIcon: '#b3b3b3',
+        onPress: () => {
+          Actions.sale_user_info({
+            title: 'THÔNG TIN',
+            isGrayStyle: true
+          });
+        }
+      }
+    ];
+
+    return [...data, ...data_push].map((item, index) => {
       return(
         <TouchableHighlight
           key={index}
@@ -210,8 +301,7 @@ export default class Order extends Component {
       <View style={styles.container}>
         <ScrollView
           onScroll={(event) => {
-            var scrollTop = event.nativeEvent.contentOffset.y;
-            this.setState({ scrollTop });
+
           }}
           //keyboardShouldPersistTaps="always"
           ref={ref => this.refs_confirm_page = ref}
@@ -219,41 +309,14 @@ export default class Order extends Component {
 
           <View style={styles.userInfoBox}>
             <View style={styles.userInfoAvataBox}>
-              <Image
-                source={{uri: 'https://scontent.fhan4-1.fna.fbcdn.net/v/t1.0-9/22815235_1302219029924435_8143315674876846694_n.jpg?oh=ee659e31b1cfc0659f5da7e6eadcf91d&oe=5AA4473E'}}
+              <CachedImage
+                source={{uri: cart_data.avatar}}
                 style={styles.userInfoAvata} />
-              <Text style={styles.userInfoName}>Cẩm Anh</Text>
+              <Text style={styles.userInfoName}>{cart_data.user.name}</Text>
             </View>
 
             <View style={styles.userInfoActions}>
-              {this._renderActionsButton.call(this, [
-                {
-                  title: 'duyệt đơn',
-                  icon: 'check',
-                  onPress: () => {
-
-                  }
-                },
-                {
-                  title: 'huỷ đơn',
-                  icon: 'times',
-                  bgrIcon: '#dd4b39',
-                  onPress: () => {
-
-                  }
-                },
-                {
-                  title: 'Khách hàng',
-                  icon: 'user',
-                  bgrIcon: '#b3b3b3',
-                  onPress: () => {
-                    Actions.sale_user_info({
-                      title: 'THÔNG TIN',
-                      isGrayStyle: true
-                    });
-                  }
-                }
-              ])}
+              {this._renderActionsButton(cart_data)}
             </View>
           </View>
 
@@ -311,27 +374,15 @@ export default class Order extends Component {
                 top: 0,
                 right: 0
               }]}>
-                {editMode ? (
-                  <TouchableHighlight
-                    style={{
-                      paddingVertical: 12,
-                      paddingHorizontal: 15
-                    }}
-                    underlayColor="transparent"
-                    onPress={() => 1}>
-                    <Text style={[styles.address_default_title, styles.title_active]}>NHẤN ĐỂ THAY ĐỔI</Text>
-                  </TouchableHighlight>
-                ) : (
-                  <TouchableHighlight
-                    style={{
-                      paddingVertical: 12,
-                      paddingHorizontal: 15
-                    }}
-                    underlayColor="transparent"
-                    onPress={() => 1}>
-                    <Text style={[styles.address_default_title, styles.title_active]}>SAO CHÉP</Text>
-                  </TouchableHighlight>
-                )}
+                <TouchableHighlight
+                  style={{
+                    paddingVertical: 12,
+                    paddingHorizontal: 15
+                  }}
+                  underlayColor="transparent"
+                  onPress={() => 1}>
+                  <Text style={[styles.address_default_title, styles.title_active]}>SAO CHÉP</Text>
+                </TouchableHighlight>
               </View>
             </View>
 
@@ -353,54 +404,11 @@ export default class Order extends Component {
 
           <View
             style={[styles.rows, styles.borderBottom, styles.mt8]}>
-            <TouchableHighlight
-              underlayColor="#ffffff"
-              onPress={() => {
-                if (this.refs_cart_note) {
-                  this.refs_cart_note.focus();
-                }
-              }}
-            >
-              <View style={styles.box_icon_label}>
-                <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
-                <Text style={[styles.input_label]}>Ghi chú</Text>
-              </View>
-            </TouchableHighlight>
-            {editMode ? (
-              <View>
-                <TouchableHighlight
-                  underlayColor="#ffffff"
-                  onPress={() => {
-                    if (this.refs_cart_note) {
-                      this.refs_cart_note.focus();
-                    }
-                  }}
-                >
-                  <Text style={styles.input_label_help}>(Thời gian giao hàng, ghi chú khác)</Text>
-                </TouchableHighlight>
-
-                <TextInput
-                  ref={ref => this.refs_cart_note = ref}
-                  style={[styles.input_address_text, {height: this.state.address_height > 50 ? this.state.address_height : 50}]}
-                  keyboardType="default"
-                  maxLength={250}
-                  placeholder="Nhập ghi chú của bạn tại đây"
-                  placeholderTextColor="#999999"
-                  multiline={true}
-                  underlineColorAndroid="transparent"
-                  onContentSizeChange={(e) => {
-                    this.setState({address_height: e.nativeEvent.contentSize.height});
-                  }}
-                  onChangeText={(value) => {
-
-                  }}
-                  onFocus={() => 1}
-                  value=""
-                  />
-              </View>
-            ) : (
-              <Text style={styles.input_note_value}>{cart_data.user_note || "Không có ghi chú"}</Text>
-            )}
+            <View style={styles.box_icon_label}>
+              <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
+              <Text style={[styles.input_label]}>Ghi chú</Text>
+            </View>
+            <Text style={styles.input_note_value}>{cart_data.user_note || "Không có ghi chú"}</Text>
           </View>
 
           {/*<View style={[styles.rows, styles.borderBottom, styles.mt8]}>
@@ -505,8 +513,83 @@ export default class Order extends Component {
               </View>
             </View>
           </View>
+
+          {is_ready && (
+            <View style={styles.boxButtonActions}>
+              {editMode ? (
+                <TouchableHighlight
+                  style={[styles.buttonAction, {
+                    marginLeft: 6
+                  }]}
+                  onPress={this._confirmSaveCart.bind(this, cart_data)}
+                  underlayColor="transparent">
+                  <View style={[styles.boxButtonAction, {
+                    backgroundColor: DEFAULT_COLOR,
+                    borderColor: "#999999"
+                  }]}>
+                    <Icon name="check" size={16} color="#ffffff" />
+                    <Text style={[styles.buttonActionTitle, {
+                      color: "#ffffff"
+                    }]}>Chỉnh sửa xong</Text>
+                  </View>
+                </TouchableHighlight>
+              ) : (
+                <TouchableHighlight
+                  style={[styles.buttonAction, {
+                    marginLeft: 6
+                  }]}
+                  onPress={this._confirmEditCart.bind(this, cart_data)}
+                  underlayColor="transparent">
+                  <View style={[styles.boxButtonAction, {
+                    backgroundColor: "#fa7f50",
+                    borderColor: "#999999"
+                  }]}>
+                    <Icon name="pencil-square-o" size={16} color="#ffffff" />
+                    <Text style={[styles.buttonActionTitle, {
+                      color: "#ffffff"
+                    }]}>Sửa đơn</Text>
+                  </View>
+                </TouchableHighlight>
+              )}
+            </View>
+          )}
+
         </ScrollView>
       </View>
+    );
+  }
+
+  _confirmEditCart() {
+    Alert.alert(
+      'Xác nhận',
+      'Bạn muốn chỉnh sửa đơn hàng này?',
+      [
+        {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+        {text: 'Đồng ý', onPress: () => {
+          this.setState({
+            editMode: true
+          });
+
+          layoutAnimation();
+        }},
+      ]
+    );
+  }
+
+  _confirmSaveCart() {
+    Alert.alert(
+      'Xác nhận',
+      'Bạn muốn lưu lại những chỉnh sửa?',
+      [
+        {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+        {text: 'Đồng ý', onPress: () => {
+          this.setState({
+            editMode: false
+          });
+
+          layoutAnimation();
+        }},
+      ]
     );
   }
 }

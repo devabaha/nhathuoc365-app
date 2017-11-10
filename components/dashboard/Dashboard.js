@@ -27,27 +27,29 @@ export default class Dashboard extends Component {
     super(props);
 
     this.state = {
-      stores: [
-        {
-          key: 0,
-          image_url: 'https://images.enca.com/enca/food.jpg',
-          name: 'EcoFoods Ngụy Như Kon Tum',
-          address: 'Số 30 Ngụy Như Kon Tum, Hà Nội'
-        },
-        {
-          key: 1,
-          image_url: 'http://sohanews.sohacdn.com/2016/tpsach-1471575328454.png',
-          name: 'Cửa hàng Bác Tôm',
-          address: 'Số 01 Hoa Lư, Hà Nội'
-        },
-        {
-          key: 2,
-          image_url: 'http://www.seriouseats.com/images/20110623-food-policy.jpg',
-          name: 'OGreen Bộ Công Thương',
-          address: 'Toà nhà Bộ Công Thương, Phạm Văn Đồng, Hà Nội'
-        }
-      ],
+      stores: null,
       refreshing: false
+    }
+  }
+
+  componentDidMount() {
+    this._getData();
+  }
+
+  _getData = async () => {
+    try {
+      var response = await ADMIN_APIHandler.user_home();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          stores: response.data
+        });
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
     }
   }
 
@@ -77,16 +79,21 @@ export default class Dashboard extends Component {
 
     return (
       <View style={styles.container}>
-        <FlatList
-          data={stores}
-          renderItem={({item, index}) => <ItemList itemListOnPress={this.itemListOnPress} item={item} index={index} />}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
+        {stores ? (
+          <FlatList
+            data={stores}
+            keyExtractor={item => item.id}
+            renderItem={({item, index}) => <ItemList itemListOnPress={this.itemListOnPress} item={item} index={index} />}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
             />
-          }
-          />
+        ) : (
+          <Indicator size="small" />
+        )}
 
         <Modal
           style={styles.popupDashboard}
@@ -155,7 +162,8 @@ class PopupDashboard extends Component {
                 title: 'Bán hàng',
                 onPress: () => {
                   Actions.sale({
-                    title: item_data.name
+                    title: item_data.name,
+                    item_data
                   });
                 }
               },
@@ -297,6 +305,9 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd',
     backgroundColor: "#ebebeb"
   },
+  storeInfoBox: {
+    flex: 1
+  },
   storeImg: {
     width: 44,
     height: 44,
@@ -305,7 +316,7 @@ const styles = StyleSheet.create({
   },
   storeName: {
     fontSize: 16,
-    marginTop: 8,
+    marginTop: 4,
     marginLeft: 8
   },
   storeAddress: {

@@ -41,14 +41,15 @@ export class OrdersItemComponent extends Component {
         underlayColor="transparent"
         onPress={() => {
           Actions.order({
-            title: '#' + item.cart_code
+            title: '#' + item.cart_code,
+            item_data: item
           });
         }}>
 
         <View style={styles.orders_item_box}>
           <View style={styles.orders_item_icon_box}>
-            <Icon style={styles.orders_item_icon} name="shopping-cart" size={16} color="#999999" />
-            <Text style={styles.orders_item_icon_title}>Đơn hàng #{item.cart_code}</Text>
+            <Icon style={styles.orders_item_icon} name="user" size={16} color="#999999" />
+            <Text style={styles.orders_item_icon_title}>{item.user.name}</Text>
 
             <View style={styles.orders_status_box}>
               <Text style={[styles.orders_status_box_title, {
@@ -60,6 +61,9 @@ export class OrdersItemComponent extends Component {
           <View style={styles.orders_item_content}>
             {item.orders_time != null && item.orders_time != '' && (
               <View style={styles.orders_item_time_box}>
+                <Icon style={styles.orders_item_icon} name="shopping-cart" size={12} color="#999999" />
+                <Text style={styles.orders_item_time_title}>#{item.cart_code + "  "}</Text>
+
                 <Icon style={styles.orders_item_icon} name="clock-o" size={12} color="#999999" />
                 <Text style={styles.orders_item_time_title}>{item.orders_time}</Text>
               </View>
@@ -132,7 +136,8 @@ const styles = StyleSheet.create({
 
   orders_item_content: {
     width: '70%',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    marginTop: 8
   },
   orders_item_row: {
     flexDirection: 'row',

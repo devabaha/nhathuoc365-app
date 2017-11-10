@@ -10,12 +10,16 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 
+// library
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {Actions, ActionConst} from 'react-native-router-flux';
+import store from '../../store/Store';
 
 import {
   OrdersItemComponent
 } from './OrdersItemComponent';
 
+@observer
 export default class Sale extends Component {
   static propTypes = {
 
@@ -26,22 +30,64 @@ export default class Sale extends Component {
 
     this.state = {
       category_nav_index: 0,
-      categories_data: [
-        {key: 0, name: 'Đang đặt hàng '},
-        {key: 1, name: 'Đang chờ duyệt'},
-        {key: 2, name: 'Đã phê duyệt'},
-        {key: 3, name: 'Đang xử lý'},
-        {key: 4, name: 'Đang giao hàng'},
-        {key: 5, name: 'Đã hoàn thành'},
-        {key: 6, name: 'Đã từ chối'},
-      ]
+      item_data: props.item_data
+    }
+  }
+
+  componentDidMount() {
+    this._getData();
+
+    this._getDataTimer = setInterval(() => {
+      if (!this._geting) {
+        this._getData();
+      }
+    }, 5000);
+
+    Actions.refresh({
+      onBack: () => {
+        clearInterval(this._getDataTimer);
+        Actions.pop();
+      }
+    })
+  }
+
+  _getData = async () => {
+    var {id} = this.state.item_data;
+    this._geting = true;
+
+    try {
+      var response = await ADMIN_APIHandler.all_cart(id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        var {sale_list} = response.data;
+        var categories_data = [];
+
+        Object.keys(sale_list).map(key => {
+          categories_data.push({
+            key,
+            name: sale_list[key]
+          })
+        });
+        
+        action(() => {
+          store.setSaleCarts({
+            categories_data: categories_data,
+            cart_list: response.data.cart_list
+          });
+        })();
+      }
+
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      this._geting = false;
     }
   }
 
   _changeCategory(item, index, nav_only) {
     if (this.refs_category_nav) {
 
-      var categories_count = this.state.categories_data.length;
+      var categories_count = store.sale_carts.categories_data.length;
       var end_of_list = (categories_count - index - 1) >= 3;
 
       // nav
@@ -75,7 +121,8 @@ export default class Sale extends Component {
   }
 
   render() {
-    var {stores, categories_data} = this.state;
+    var {stores} = this.state;
+    var {categories_data} = store.sale_carts;
 
     return (
       <View style={styles.container}>
@@ -129,165 +176,12 @@ export default class Sale extends Component {
   }
 }
 
+@observer
 class OrdersScreen extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      data: [
-        {
-          "id": "582",
-          "cart_code": "CHTNMF2410582",
-          "site_id": "14",
-          "user_id": "41",
-          "products": {
-            "cart-270": {
-              "quantity": 1,
-              "id": "270",
-              "name": "Cà chua hữu cơ túi 300gr",
-              "selected": 1,
-              "discount_percent": "12",
-              "service_price": 0,
-              "discount": "17.000đ",
-              "price": "15000",
-              "price_view": "15.000đ",
-              "unit_name": "túi",
-              "cart_step": "1.0",
-              "quantity_view": "1 túi",
-              "image": "http://myfood.com.vn/photos/resized/320x/14-1507975722-cuahangtrainghiem.png"
-            }
-          },
-          "total_value": 15000,
-          "total_count_selected": 1,
-          "count_selected": 1,
-          "point": 15,
-          "fcoin": "0",
-          "award_date": "0",
-          "award_month": "0",
-          "status": "5",
-          "address_id": "148",
-          "user_note": null,
-          "site_note": null,
-          "payment": "Khi nhận hàng",
-          "delete_flag": "0",
-          "pushed": "0",
-          "orders_time": "2017-10-24 18:54:10",
-          "modified": "2017-10-24 18:54:10",
-          "created": "2017-10-24 18:51:46",
-          "count": 1,
-          "total": "15.000đ",
-          "total_selected": "15.000đ",
-          "status_view": "Đã đặt hàng",
-          "address": {
-            "id": "148",
-            "user_id": "41",
-            "name": "Ngọc Sơn",
-            "tel": "01653538222",
-            "address": "Số 1 Lương Yên, Hà Nội",
-            "city": "",
-            "district": "",
-            "default_flag": "0",
-            "delete_flag": "0",
-            "modified": "2017-10-13 17:27:33",
-            "created": "2017-10-13 17:27:33"
-          },
-          "shop_logo_url": "http://myfood.com.vn/photos/resized/120x120/14-1507956244-cuahangtrainghiem.png",
-          "shop_name": "Cửa hàng trải nghiệm",
-          "shop_id": "14",
-          "tel": "0905250209"
-        },
-        {
-          "id": "581",
-          "cart_code": "CHTNMF2410581",
-          "site_id": "14",
-          "user_id": "41",
-          "products": {
-            "cart-270": {
-              "quantity": 1,
-              "id": "270",
-              "name": "Cà chua hữu cơ túi 300gr",
-              "selected": 1,
-              "discount_percent": "12",
-              "service_price": 0,
-              "discount": "17.000đ",
-              "price": "15000",
-              "price_view": "15.000đ",
-              "unit_name": "túi",
-              "cart_step": "1.0",
-              "quantity_view": "1 túi",
-              "image": "http://myfood.com.vn/photos/resized/320x/14-1507975722-cuahangtrainghiem.png"
-            },
-            "cart-272": {
-              "quantity": 1,
-              "id": "272",
-              "name": "Dưa chuột hữu cơ túi 300gr",
-              "selected": 1,
-              "discount_percent": "18",
-              "service_price": 0,
-              "discount": "12.000đ",
-              "price": "10000",
-              "price_view": "10.000đ",
-              "unit_name": "túi",
-              "cart_step": "1.0",
-              "quantity_view": "1 túi",
-              "image": "http://myfood.com.vn/photos/resized/320x/14-1507968961-cuahangtrainghiem.png"
-            },
-            "cart-273": {
-              "quantity": 1,
-              "id": "273",
-              "name": "Rau muống hữu cơ túi 300gr",
-              "selected": 1,
-              "discount_percent": "18",
-              "service_price": 0,
-              "discount": "12.000đ",
-              "price": "10000",
-              "price_view": "10.000đ",
-              "unit_name": "túi",
-              "cart_step": "1.0",
-              "quantity_view": "1 túi",
-              "image": "http://myfood.com.vn/photos/resized/320x/14-1507970644-cuahangtrainghiem.png"
-            }
-          },
-          "total_value": 35000,
-          "total_count_selected": 3,
-          "count_selected": 3,
-          "point": 35,
-          "fcoin": "0",
-          "award_date": "0",
-          "award_month": "0",
-          "status": "5",
-          "address_id": "148",
-          "user_note": null,
-          "site_note": null,
-          "payment": "Khi nhận hàng",
-          "delete_flag": "0",
-          "pushed": "0",
-          "orders_time": "2017-10-24 18:51:23",
-          "modified": "2017-10-24 18:51:23",
-          "created": "2017-10-24 18:43:16",
-          "count": 3,
-          "total": "35.000đ",
-          "total_selected": "35.000đ",
-          "status_view": "Đã đặt hàng",
-          "address": {
-            "id": "148",
-            "user_id": "41",
-            "name": "Ngọc Sơn",
-            "tel": "01653538222",
-            "address": "Số 1 Lương Yên, Hà Nội",
-            "city": "",
-            "district": "",
-            "default_flag": "0",
-            "delete_flag": "0",
-            "modified": "2017-10-13 17:27:33",
-            "created": "2017-10-13 17:27:33"
-          },
-          "shop_logo_url": "http://myfood.com.vn/photos/resized/120x120/14-1507956244-cuahangtrainghiem.png",
-          "shop_name": "Cửa hàng trải nghiệm",
-          "shop_id": "14",
-          "tel": "0905250209"
-        }
-      ],
       refreshing: false
     }
   }
@@ -305,7 +199,8 @@ class OrdersScreen extends Component {
   }
 
   render() {
-    var {data} = this.state;
+    var {item} = this.props;
+    var data = store.sale_carts.cart_list[item.key];
 
     return(
       <View style={styles.containerScreen}>
@@ -313,7 +208,7 @@ class OrdersScreen extends Component {
           <FlatList
             style={styles.items_box}
             data={data}
-            extraData={this.state}
+            extraData={store.sale_carts.cart_list}
             renderItem={({item, index}) => {
               return(
                 <OrdersItemComponent
