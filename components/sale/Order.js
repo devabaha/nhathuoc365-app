@@ -17,6 +17,7 @@ import PropTypes from 'prop-types';
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import Modal from 'react-native-modalbox';
 
 export default class Order extends Component {
   constructor(props) {
@@ -434,6 +435,28 @@ export default class Order extends Component {
                 <Text style={styles.input_label}>{editMode ? "Mặt hàng đã chọn" : "Mặt hàng đã mua"}</Text>
               </View>
             </View>
+            {editMode && (
+              <View style={[styles.address_default_box, {
+                position: 'absolute',
+                top: 0,
+                right: 0
+              }]}>
+                <TouchableHighlight
+                  style={{
+                    paddingVertical: 12,
+                    paddingHorizontal: 15
+                  }}
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Actions.list_product({
+                      title: 'THÊM MẶT HÀNG',
+                      cart_data
+                    });
+                  }}>
+                  <Text style={[styles.address_default_title, styles.title_active]}>THÊM MẶT HÀNG</Text>
+                </TouchableHighlight>
+              </View>
+            )}
           </View>
 
           {editMode ? (
@@ -722,7 +745,7 @@ class ItemCartComponent extends Component {
         </View>*/}
 
         <View style={styles.cart_item_image_box}>
-          <Image style={styles.cart_item_image} source={{uri: item.image}} />
+          <CachedImage mutable style={styles.cart_item_image} source={{uri: item.image}} />
         </View>
 
         <View style={styles.cart_item_info}>

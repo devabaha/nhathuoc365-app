@@ -36,6 +36,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async site_list_product(site_id, cart_id, cat_id) {
+    var api = url_for(API.SITE_LIST_PRODUCT + '/' + site_id + '/' + cart_id + '/' + cat_id);
+    return await this.getAPI(api);
+  }
+
   async user_sites() {
     var api = url_for(API.USER_SITES);
     setTimeout(() => {

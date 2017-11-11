@@ -146,7 +146,7 @@ class PopupDashboard extends Component {
       <View style={styles.dashboardContainer}>
         <View style={styles.content}>
           <View style={styles.storeBox}>
-            <Image style={styles.storeImg} source={{uri: item_data.image_url}} />
+            <CachedImage mutable style={styles.storeImg} source={{uri: item_data.image_url}} />
             <View style={styles.storeInfoBox}>
               <Text style={styles.storeName}>{item_data.name}</Text>
               <Text style={styles.storeAddress}>{item_data.address}</Text>

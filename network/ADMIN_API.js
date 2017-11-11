@@ -17,6 +17,7 @@ exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'adSite/category_product';
 exports.SEARCH_PRODUCT = MY_FOOD_API + 'adSite/search_product';
 exports.USER_SITES = MY_FOOD_API + 'adUser/sites';
 exports.USER_REMOVE_SITE = MY_FOOD_API + 'adUser/remove_site';
+exports.SITE_LIST_PRODUCT = MY_FOOD_API + 'adSite/list_product';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'adSite/product';

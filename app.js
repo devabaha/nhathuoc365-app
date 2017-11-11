@@ -68,6 +68,7 @@ import ListStore from './components/home/ListStore';
 import ScanQRCode from './components/home/ScanQRCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
+import ListProduct from './components/sale/ListProduct';
 
 // Backend
 import Dashboard from './components/dashboard/Dashboard';
@@ -81,6 +82,7 @@ import SaleChat from './components/sale/SaleChat';
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
 import CustomNavBar from './components/sale/CustomNavBar';
+import CustomNavBar2 from './components/sale/CustomNavBar2';
 
 // navigator bar
 const custommerNav = {
@@ -532,6 +534,7 @@ export default class App extends Component {
             <Scene key="order" title="" component={Order} navBar={CustomNavBar} />
             <Scene key="sale_user_info" title="" component={UserInfo} navBar={CustomNavBar} />
             <Scene key="sale_chat" title="" component={SaleChat} navBar={CustomNavBar} />
+            <Scene key="list_product" title="" component={ListProduct} navBar={CustomNavBar2} />
 
           </Scene>
 
