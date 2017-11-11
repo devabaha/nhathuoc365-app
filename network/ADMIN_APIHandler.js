@@ -19,6 +19,11 @@ class APIHandler {
 
   async cart_status_edit(site_id, cart_id, data) {
     var api = url_for(API.SITE_CART_STATUS_EDIT + '/' + site_id + '/' + cart_id);
+    return await this.postAPI(api, data);
+  }
+
+  async site_update_cart(site_id, cart_id, data) {
+    var api = url_for(API.SITE_UPDATE_CART + '/' + site_id + '/' + cart_id);
     console.log(api);
     return await this.postAPI(api, data);
   }
@@ -134,25 +139,25 @@ class APIHandler {
   /**
   * Giảm số lượng sản phẩm trong giỏ hàng
   */
-  async site_cart_down(store_id, product_id) {
+  async site_cart_down(store_id, product_id, data) {
     var api = url_for(API.SITE_CART_DOWN + '/' + store_id + '/' + product_id);
-    return await this.getAPI(api);
+    return await this.postAPI(api, data);
   }
 
   /**
   * Tăng số lượng sản phẩm trong giỏ hàng
   */
-  async site_cart_up(store_id, product_id) {
+  async site_cart_up(store_id, product_id, data) {
     var api = url_for(API.SITE_CART_UP + '/' + store_id + '/' + product_id);
-    return await this.getAPI(api);
+    return await this.postAPI(api, data);
   }
 
   /**
   * Xoá sản phẩm trong giỏ hàng
   */
-  async site_cart_remove(store_id, product_id) {
+  async site_cart_remove(store_id, product_id, data) {
     var api = url_for(API.SITE_CART_REMOVE + '/' + store_id + '/' + product_id);
-    return await this.getAPI(api);
+    return await this.postAPI(api, data);
   }
 
   /**

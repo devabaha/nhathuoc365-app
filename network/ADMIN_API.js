@@ -36,6 +36,7 @@ exports.SITE_CART_REORDER = MY_FOOD_API + 'adSite/cart_reorder';
 exports.SITE_CART_EDIT = MY_FOOD_API + 'adSite/cart_edit';
 exports.SITE_ALL_CART = MY_FOOD_API + 'adSite/all_cart';
 exports.SITE_CART_STATUS_EDIT = MY_FOOD_API + 'adSite/cart_status_edit';
+exports.SITE_UPDATE_CART = MY_FOOD_API + 'adSite/update_cart';
 
 // Address
 exports.USER_ADDRESS = MY_FOOD_API + 'adUser/address';

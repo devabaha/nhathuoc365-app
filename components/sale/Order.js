@@ -446,6 +446,9 @@ export default class Order extends Component {
                   <ItemCartComponent
                     parentCtx={this}
                     item={item}
+                    cart_id={cart_data.id}
+                    site_id={cart_data.site_id}
+                    reloadData={this._getData}
                   />
                 );
               }}
@@ -547,7 +550,7 @@ export default class Order extends Component {
                     <Icon name="pencil-square-o" size={16} color="#ffffff" />
                     <Text style={[styles.buttonActionTitle, {
                       color: "#ffffff"
-                    }]}>Sửa đơn</Text>
+                    }]}>Sửa đơn hàng</Text>
                   </View>
                 </TouchableHighlight>
               )}
@@ -577,20 +580,11 @@ export default class Order extends Component {
   }
 
   _confirmSaveCart() {
-    Alert.alert(
-      'Xác nhận',
-      'Bạn muốn lưu lại những chỉnh sửa?',
-      [
-        {text: 'Không', onPress: () => console.log('Cancel Pressed')},
-        {text: 'Đồng ý', onPress: () => {
-          this.setState({
-            editMode: false
-          });
+    this.setState({
+      editMode: false
+    });
 
-          layoutAnimation();
-        }},
-      ]
-    );
+    layoutAnimation();
   }
 }
 
@@ -601,7 +595,105 @@ class ItemCartComponent extends Component {
     this.state = {
       check_loading: false,
       increment_loading: false,
-      decrement_loading: false
+      decrement_loading: false,
+      quantity: props.item.quantity,
+      site_id: props.site_id,
+      cart_id: props.cart_id
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      quantity: nextProps.item.quantity
+    });
+  }
+
+  _incrementQnt(item) {
+    var {quantity} = this.state;
+    quantity = parseInt(quantity) + 1;
+
+    this.setState({
+      increment_loading: true
+    }, async () => {
+      try {
+        var {site_id, cart_id} = this.state;
+        var response = await ADMIN_APIHandler.site_cart_up(site_id, cart_id, {
+          product_id: item.id
+        });
+
+        if (response && response.status == STATUS_SUCCESS) {
+          if (this.props.reloadData) {
+            this.props.reloadData();
+          }
+        }
+
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        this.setState({
+          increment_loading: false
+        });
+      }
+    });
+  }
+
+  _decrementQnt(item) {
+    var {quantity} = this.state;
+    quantity = parseInt(quantity) - 1;
+
+    if (quantity > 0) {
+      this.setState({
+        decrement_loading: true
+      }, async () => {
+        try {
+          var {site_id, cart_id} = this.state;
+          var response = await ADMIN_APIHandler.site_cart_down(site_id, cart_id, {
+            product_id: item.id
+          });
+
+          if (response && response.status == STATUS_SUCCESS) {
+            if (this.props.reloadData) {
+              this.props.reloadData();
+            }
+          }
+
+        } catch (e) {
+          console.warn(e);
+        } finally {
+          this.setState({
+            decrement_loading: false
+          });
+        }
+      });
+    } else {
+      Alert.alert(
+        'Xác nhận',
+        `Xoá ${item.name} khỏi đơn hàng này?`,
+        [
+          {text: 'Không', onPress: () => console.log('Cancel Pressed')},
+          {text: 'Đồng ý', onPress: async () => {
+            try {
+              var {site_id, cart_id} = this.state;
+              var response = await ADMIN_APIHandler.site_cart_remove(site_id, cart_id, {
+                product_id: item.id
+              });
+
+              if (response && response.status == STATUS_SUCCESS) {
+                if (this.props.reloadData) {
+                  this.props.reloadData();
+                }
+              }
+
+            } catch (e) {
+              console.warn(e);
+            } finally {
+              this.setState({
+                decrement_loading: false
+              });
+            }
+          }},
+        ]
+      );
     }
   }
 
@@ -640,7 +732,7 @@ class ItemCartComponent extends Component {
               <TouchableHighlight
                 style={styles.cart_item_actions_btn}
                 underlayColor="transparent"
-                onPress={() => 1}>
+                onPress={this._decrementQnt.bind(this, item)}>
                 <View>
                   {decrement_loading ? (
                     <Indicator size="small" />
@@ -650,12 +742,15 @@ class ItemCartComponent extends Component {
                 </View>
               </TouchableHighlight>
 
-              <Text style={styles.cart_item_actions_quantity}>{item.quantity_view}</Text>
+              <TextInput
+                value={this.state.quantity.toString()}
+
+                style={styles.cart_item_actions_quantity} />
 
               <TouchableHighlight
                 style={styles.cart_item_actions_btn}
                 underlayColor="transparent"
-                onPress={() => 1}>
+                onPress={this._incrementQnt.bind(this, item)}>
                 <View>
                   {increment_loading ? (
                     <Indicator size="small" />

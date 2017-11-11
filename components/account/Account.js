@@ -46,6 +46,8 @@ export default class Account extends Component {
   }
 
   _initial = (callback) => {
+    const isAdmin = store.user_info.admin_flag == 1;
+
     this.setState({
       options: [
         // {
@@ -89,7 +91,7 @@ export default class Account extends Component {
 
         {
           key: 2,
-          isHidden: store.user_info.admin_flag == 0,
+          isHidden: !isAdmin,
           icon: "home",
           label: "Cửa hàng của tôi",
           desc: "Quản lý cửa hàng kinh doanh",
@@ -115,7 +117,7 @@ export default class Account extends Component {
             backgroundColor: "#fcb309"
           }],
           iconColor: "#ffffff",
-          marginTop: true
+          marginTop: !isAdmin
         },
 
         {
