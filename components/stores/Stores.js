@@ -8,7 +8,8 @@ import {
   StyleSheet,
   TouchableHighlight,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  Alert
 } from 'react-native';
 
 //library
