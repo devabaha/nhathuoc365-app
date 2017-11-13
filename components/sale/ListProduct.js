@@ -10,7 +10,8 @@ import {
   ScrollView,
   Animated,
   TextInput,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -18,6 +19,8 @@ import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
+
+var CART = {}
 
 export default class ListProduct extends Component {
   constructor(props) {
@@ -33,9 +36,67 @@ export default class ListProduct extends Component {
 
   componentDidMount() {
     this._getData();
+
+    Actions.refresh({
+      onNavSave: this._onSaveHandler,
+      onNavFilter: this.ref_popup_categories.open,
+      onBack: () => {
+        if (Object.keys(CART).length > 0) {
+          Alert.alert(
+            'Xác nhận',
+            'Lưu lại những mặt hàng vừa thêm?',
+            [
+              {text: 'Không', onPress: () => {
+                CART = {}
+                Actions.pop();
+              }},
+              {text: 'Đồng ý', onPress: () => {
+                this._onSaveHandler();
+              }},
+            ]
+          );
+        } else {
+          Actions.pop();
+        }
+      }
+    });
   }
 
-  _getData = async () => {
+  _onSaveHandler = () => {
+    Object.keys(CART).map(key => {
+      let quantity = CART[key];
+
+      this._onSave(key, quantity);
+    });
+  }
+
+  _onSave = async (product_id, quantity) => {
+    var {id, site_id} = this.state.cart_data;
+    try {
+      var response = await ADMIN_APIHandler.site_update_cart(site_id, id, {
+        product_id,
+        quantity
+      });
+
+      if (response.status == 1) {
+        delete CART[product_id];
+
+        if (Object.keys(CART).length == 0) {
+          Actions.pop();
+          if (this.props.reloadData) {
+            this.props.reloadData(400);
+          }
+        }
+      }
+
+    } catch (e) {
+      console.warn(e + ' site_update_cart');
+    } finally {
+
+    }
+  }
+
+  _getData = async (delay = 0) => {
     var {id, site_id} = this.state.cart_data;
     var {cat_id} = this.state;
 
@@ -43,9 +104,12 @@ export default class ListProduct extends Component {
       var response = await ADMIN_APIHandler.site_list_product(site_id, id, cat_id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          data: response.data
-        });
+        setTimeout(() => {
+          this.setState({
+            data: response.data
+          });
+          layoutAnimation();
+        }, delay);
       }
 
     } catch (e) {
@@ -53,6 +117,14 @@ export default class ListProduct extends Component {
     } finally {
 
     }
+  }
+
+  _onChangeCate(item) {
+    this.ref_popup_categories.close();
+    this.setState({
+      cat_id: item.id,
+      data: null
+    }, this._getData.bind(this, 450));
   }
 
   render() {
@@ -80,6 +152,46 @@ export default class ListProduct extends Component {
         ) : (
           <Indicator size="small" />
         )}
+
+        <Modal
+          style={{
+            width: '80%',
+            height: '50%',
+            borderRadius: 5,
+            paddingVertical: 12,
+            paddingHorizontal: 15
+          }}
+          swipeToClose={false}
+          ref={ref => this.ref_popup_categories = ref}>
+          {data && (
+            <FlatList
+              data={[{id: 0, name: 'Tất cả'}, ...data.categories_data]}
+              renderItem={({item, index}) => {
+                let active = item.id == this.state.cat_id;
+                return(
+                  <TouchableHighlight
+                    style={{
+                      height: 48,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderWidth: Util.pixel,
+                      marginTop: 4,
+                      borderTopWidth: 1,
+                      borderColor: DEFAULT_COLOR,
+                      backgroundColor: active ? hexToRgbA(DEFAULT_COLOR, 0.9) : '#ffffff'
+                    }}
+                    onPress={this._onChangeCate.bind(this, item)}
+                    underlayColor="transparent">
+                    <Text style={{
+                      color: active ? '#ffffff' : DEFAULT_COLOR,
+                      fontSize: 16
+                    }}>{item.name}</Text>
+                  </TouchableHighlight>
+                );
+              }}
+              keyExtractor={item => item.id} />
+          )}
+        </Modal>
       </View>
     );
   }
@@ -89,104 +201,67 @@ class ItemCartComponent extends Component {
   constructor(props) {
     super(props);
 
+    var {item} = props;
+
     this.state = {
       check_loading: false,
       increment_loading: false,
       decrement_loading: false,
-      quantity: props.item.quantity,
       site_id: props.site_id,
       cart_id: props.cart_id,
-      quantity: 0
+      quantity: CART[item.id] ? CART[item.id] : 0
     }
   }
 
   _incrementQnt(item) {
     var {quantity} = this.state;
-    quantity = parseInt(quantity) + 1;
+    quantity = parseFloat(quantity) + 1;
 
     this.setState({
       increment_loading: true
-    }, async () => {
-      try {
-        var {site_id, cart_id} = this.state;
-        var response = await ADMIN_APIHandler.site_cart_up(site_id, cart_id, {
-          product_id: item.id
-        });
+    }, () => {
+      this.setState({
+        quantity,
+        increment_loading: false
+      });
 
-        if (response && response.status == STATUS_SUCCESS) {
-          if (this.props.reloadData) {
-            this.props.reloadData();
-          }
-        }
-
-      } catch (e) {
-        console.warn(e);
-      } finally {
-        this.setState({
-          increment_loading: false
-        });
-      }
+      CART[item.id] = quantity;
     });
   }
 
   _decrementQnt(item) {
     var {quantity} = this.state;
-    quantity = parseInt(quantity) - 1;
+    quantity = parseFloat(quantity) - 1;
 
-    if (quantity > 0) {
-      this.setState({
-        decrement_loading: true
-      }, async () => {
-        try {
-          var {site_id, cart_id} = this.state;
-          var response = await ADMIN_APIHandler.site_cart_down(site_id, cart_id, {
-            product_id: item.id
-          });
+    this.setState({
+      decrement_loading: true
+    }, () => {
+      if (quantity > 0) {
+        this.setState({
+          quantity,
+          decrement_loading: false
+        });
 
-          if (response && response.status == STATUS_SUCCESS) {
-            if (this.props.reloadData) {
-              this.props.reloadData();
-            }
-          }
+        CART[item.id] = quantity;
+      } else {
+        this.setState({
+          quantity: 0,
+          decrement_loading: false
+        });
 
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          this.setState({
-            decrement_loading: false
-          });
-        }
-      });
-    } else {
-      Alert.alert(
-        'Xác nhận',
-        `Xoá ${item.name} khỏi đơn hàng này?`,
-        [
-          {text: 'Không', onPress: () => console.log('Cancel Pressed')},
-          {text: 'Đồng ý', onPress: async () => {
-            try {
-              var {site_id, cart_id} = this.state;
-              var response = await ADMIN_APIHandler.site_cart_remove(site_id, cart_id, {
-                product_id: item.id
-              });
+        delete CART[item.id];
+      }
+    });
+  }
 
-              if (response && response.status == STATUS_SUCCESS) {
-                if (this.props.reloadData) {
-                  this.props.reloadData();
-                }
-              }
+  _onChangeText = (value) => {
+    var {item} = this.props;
 
-            } catch (e) {
-              console.warn(e);
-            } finally {
-              this.setState({
-                decrement_loading: false
-              });
-            }
-          }},
-        ]
-      );
-    }
+    this.setState({
+      quantity: value
+    }, () => {
+      CART[item.id]  = value;
+    });
   }
 
   render() {
@@ -222,6 +297,8 @@ class ItemCartComponent extends Component {
               </TouchableHighlight>
 
               <TextInput
+                keyboardType="numeric"
+                onChangeText={this._onChangeText}
                 value={`${this.state.quantity}`}
                 style={styles.cart_item_actions_quantity} />
 

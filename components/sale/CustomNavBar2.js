@@ -1,5 +1,6 @@
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Communications from 'react-native-communications';
@@ -38,13 +39,22 @@ const styles = StyleSheet.create({
 })
 
 export default class NavBar extends Component {
+  static defaultProps = {
+    onBack: Actions.pop
+  }
+
+  static propTypes = {
+    onBack: PropTypes.func,
+    onNavFilter: PropTypes.func,
+    onNavSave: PropTypes.func
+  }
 
   _renderLeft() {
-    var {isGrayStyle, hiddenChatIcon} = this.props;
+    var {isGrayStyle, hiddenChatIcon, onBack} = this.props;
 
     return (
       <TouchableOpacity
-        onPress={Actions.pop}
+        onPress={onBack}
         style={[styles.navBarItem]}>
         <View style={[styles.buttonBox, isGrayStyle ? {
           flexDirection: 'row',

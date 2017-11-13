@@ -31,10 +31,10 @@ export default class Order extends Component {
   }
 
   componentDidMount() {
-    this._getData();
+    this._getData(450);
   }
 
-  _getData = async () => {
+  _getData = async (delay = 0) => {
 
     var {id, site_id} = this.props.item_data;
 
@@ -42,9 +42,14 @@ export default class Order extends Component {
       var response = await ADMIN_APIHandler.site_cart_by_id(site_id, id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          cart_data: response.data
-        });
+        setTimeout(() => {
+          this.setState({
+            cart_data: response.data,
+            refreshing: false
+          });
+
+          layoutAnimation();
+        }, delay);
       }
     } catch (e) {
       console.warn(e);
@@ -53,16 +58,16 @@ export default class Order extends Component {
     }
   }
 
+  _reloadData = (cart_data) => {
+    this.setState({
+      cart_data
+    });
+  }
+
   _onRefresh() {
     this.setState({
       refreshing: true
-    }, () => {
-      setTimeout(() => {
-        this.setState({
-          refreshing: false
-        });
-      }, 1000);
-    });
+    }, () => this._getData(1000));
   }
 
   _cartEdit = async (item, status) => {
@@ -304,6 +309,12 @@ export default class Order extends Component {
           onScroll={(event) => {
 
           }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
           //keyboardShouldPersistTaps="always"
           ref={ref => this.refs_confirm_page = ref}
           style={styles.content}>
@@ -450,7 +461,8 @@ export default class Order extends Component {
                   onPress={() => {
                     Actions.list_product({
                       title: 'THÊM MẶT HÀNG',
-                      cart_data
+                      cart_data,
+                      reloadData: this._getData
                     });
                   }}>
                   <Text style={[styles.address_default_title, styles.title_active]}>THÊM MẶT HÀNG</Text>
@@ -471,7 +483,7 @@ export default class Order extends Component {
                     item={item}
                     cart_id={cart_data.id}
                     site_id={cart_data.site_id}
-                    reloadData={this._getData}
+                    reloadData={this._reloadData}
                   />
                 );
               }}
@@ -633,7 +645,7 @@ class ItemCartComponent extends Component {
 
   _incrementQnt(item) {
     var {quantity} = this.state;
-    quantity = parseInt(quantity) + 1;
+    quantity = parseFloat(quantity) + 1;
 
     this.setState({
       increment_loading: true
@@ -646,7 +658,7 @@ class ItemCartComponent extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           if (this.props.reloadData) {
-            this.props.reloadData();
+            this.props.reloadData(response.data);
           }
         }
 
@@ -662,7 +674,7 @@ class ItemCartComponent extends Component {
 
   _decrementQnt(item) {
     var {quantity} = this.state;
-    quantity = parseInt(quantity) - 1;
+    quantity = parseFloat(quantity) - 1;
 
     if (quantity > 0) {
       this.setState({
@@ -676,7 +688,7 @@ class ItemCartComponent extends Component {
 
           if (response && response.status == STATUS_SUCCESS) {
             if (this.props.reloadData) {
-              this.props.reloadData();
+              this.props.reloadData(response.data);
             }
           }
 
@@ -703,16 +715,14 @@ class ItemCartComponent extends Component {
 
               if (response && response.status == STATUS_SUCCESS) {
                 if (this.props.reloadData) {
-                  this.props.reloadData();
+                  this.props.reloadData(response.data);
+                  layoutAnimation();
                 }
               }
 
             } catch (e) {
               console.warn(e);
             } finally {
-              this.setState({
-                decrement_loading: false
-              });
             }
           }},
         ]
