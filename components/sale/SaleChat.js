@@ -12,7 +12,9 @@ import PropTypes from 'prop-types';
 
 // librarys
 import { GiftedChat } from 'react-native-gifted-chat';
+import store from '../../store/Store';
 
+@observer
 export default class SaleChat extends Component {
   static propTypes = {
 
@@ -23,61 +25,72 @@ export default class SaleChat extends Component {
 
     this.state = {
       refreshing: false,
-      messages: [
-        {
-          _id: 3,
-          text: 'This is a system message',
-          createdAt: new Date(Date.UTC(2016, 5, 11, 17, 20, 0)),
-          system: true,
-          // Any additional custom parameters are passed through
-        },
-        {
-          _id: 2,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://scontent.fhan4-1.fna.fbcdn.net/v/t1.0-9/22815235_1302219029924435_8143315674876846694_n.jpg?oh=ee659e31b1cfc0659f5da7e6eadcf91d&oe=5AA4473E',
-          },
-        },
-        {
-          _id: 1,
-          text: 'Hello developer 2',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://scontent.fhan4-1.fna.fbcdn.net/v/t1.0-9/22815235_1302219029924435_8143315674876846694_n.jpg?oh=ee659e31b1cfc0659f5da7e6eadcf91d&oe=5AA4473E',
-          },
-        }
-      ],
+      messages: null,
     }
   }
 
-  static onEnter = () => {
-
+  componentDidMount() {
+    this._getData();
   }
 
-  onSend(messages = []) {
-    this.setState((previousState) => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }));
+  _getData = async (delay = 0) => {
+    var {site_id, user_id} = store.cart_admin_data;
+
+    try {
+      var response = await ADMIN_APIHandler.site_load_chat(site_id, user_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          messages: response.data.data,
+          user_id: response.data.user_id
+        });
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
+  }
+
+  async _onSend(messages = []) {
+    const {site_id, user_id} = store.cart_admin_data;
+
+    const content = messages[0].text;
+
+    try {
+      var response = await ADMIN_APIHandler.site_send_chat(site_id, user_id, {
+        content
+      });
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState((previousState) => ({
+          messages: GiftedChat.append(previousState.messages, messages),
+        }));
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
   }
 
   render() {
-    var {stores} = this.state;
+    var { messages, user_id } = this.state;
 
     return (
       <View style={styles.container}>
-        <GiftedChat
-          messages={this.state.messages}
-          placeholder="Nhập nội dung chat..."
-          onSend={(messages) => this.onSend(messages)}
-          user={{
-            _id: 1,
-          }}
-        />
+        {messages ? (
+          <GiftedChat
+            messages={messages}
+            placeholder="Nhập nội dung chat..."
+            onSend={(msg) => this._onSend(msg)}
+            user={{
+              _id: user_id,
+            }}
+          />
+        ) : (
+          <Indicator size="small" />
+        )}
       </View>
     );
   }

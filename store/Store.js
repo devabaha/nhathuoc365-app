@@ -176,6 +176,11 @@ class Store {
 
   // backend
   @observable sale_carts = {};
+  @observable cart_admin_data = null;
+
+  @action setCartAdminData(data) {
+    this.cart_admin_data = data;
+  }
 
   @action setSaleCarts(data) {
     this.sale_carts = data;

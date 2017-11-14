@@ -21,7 +21,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import DatePicker from 'react-native-datepicker';
+import store from '../../store/Store';
 
+@observer
 export default class UserInfo extends Component {
   constructor(props) {
     super(props);
@@ -64,10 +66,10 @@ export default class UserInfo extends Component {
   }
 
   componentDidMount() {
-    this._getData();
+    this._getData(0);
   }
 
-  _getData = async () => {
+  _getData = async (delay = 0) => {
     var {cart_data} = this.props;
     var {site_id} = cart_data;
     var user_id = cart_data.user.id;
@@ -77,10 +79,14 @@ export default class UserInfo extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         var { name, tel, birthday, user_note, email, address, district } = response.data;
-        this.setState({
-          name, tel, birthday, user_note, email, address, district,
-          finish: true
-        });
+        setTimeout(() => {
+          this.setState({
+            name, tel, birthday, user_note, email, address, district,
+            finish: true
+          });
+
+          layoutAnimation();
+        }, delay);
       }
     } catch (e) {
       console.warn(e);
@@ -113,7 +119,9 @@ export default class UserInfo extends Component {
         district
       });
 
-      alert(JSON.stringify(response));
+      if (response && response.status == STATUS_SUCCESS) {
+        Toast.show('Lưu thành công!');
+      }
 
     } catch (e) {
       console.warn(e);
@@ -406,7 +414,9 @@ export default class UserInfo extends Component {
         <TouchableHighlight
           underlayColor="transparent"
           onPress={this._onSave.bind(this)}
-          style={[styles.address_continue]}>
+          style={[styles.address_continue, {
+            bottom: store.keyboardTop
+          }]}>
           <View style={[
             styles.address_continue_content,
             {flexDirection: is_go_confirm ? 'row-reverse' : 'row'}

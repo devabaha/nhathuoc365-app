@@ -57,6 +57,7 @@ exports.USER_CART_LIST = MY_FOOD_API + 'adUser/cart_list';
 // Chat
 exports.SITE_SEND_CHAT = MY_FOOD_API + 'adSite/send_chat';
 exports.SITE_LOAD_CHAT = MY_FOOD_API + 'adSite/load_chat';
+exports.SITE_CHAT = MY_FOOD_API + 'adSite/chat';
 exports.SITE_NOTIFY_CHAT = MY_FOOD_API + 'adSite/notify_chat';
 exports.USER_NOTIFY_CHAT = MY_FOOD_API + 'adUser/notify_chat';
 

@@ -35,8 +35,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   }
-})
+});
 
+import store from '../../store/Store';
+
+@observer
 export default class NavBar extends Component {
 
   _renderLeft() {
@@ -84,8 +87,7 @@ export default class NavBar extends Component {
         {!hiddenChatIcon && (
           <TouchableOpacity
             onPress={() => Actions.sale_chat({
-              title: 'Đỗ Cẩm Anh',
-              isGrayStyle: true,
+              title: store.cart_admin_data.user.name,
               hiddenChatIcon: true
             })}
             style={{ paddingRight: 10}}>

@@ -18,7 +18,9 @@ import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
+import store from '../../store/Store';
 
+@observer
 export default class Order extends Component {
   constructor(props) {
     super(props);
@@ -31,7 +33,7 @@ export default class Order extends Component {
   }
 
   componentDidMount() {
-    this._getData(450);
+    this._getData(0);
   }
 
   _getData = async (delay = 0) => {
@@ -42,6 +44,10 @@ export default class Order extends Component {
       var response = await ADMIN_APIHandler.site_cart_by_id(site_id, id);
 
       if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartAdminData(response.data);
+        })();
+
         setTimeout(() => {
           this.setState({
             cart_data: response.data,
@@ -225,8 +231,7 @@ export default class Order extends Component {
         bgrIcon: '#b3b3b3',
         onPress: () => {
           Actions.sale_user_info({
-            title: 'THÔNG TIN',
-            isGrayStyle: true,
+            title: 'KHÁCH HÀNG',
             cart_data
           });
         }
