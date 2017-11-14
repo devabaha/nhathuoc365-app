@@ -39,6 +39,10 @@ exports.SITE_ALL_CART = MY_FOOD_API + 'adSite/all_cart';
 exports.SITE_CART_STATUS_EDIT = MY_FOOD_API + 'adSite/cart_status_edit';
 exports.SITE_UPDATE_CART = MY_FOOD_API + 'adSite/update_cart';
 
+// Site user
+exports.SITE_UPDATE_SITE_USER = MY_FOOD_API + 'adSite/update_site_user';
+exports.SITE_USER_INFO = MY_FOOD_API + 'adSite/site_user_info';
+
 // Address
 exports.USER_ADDRESS = MY_FOOD_API + 'adUser/address';
 exports.USER_ADD_ADDRESS = MY_FOOD_API + 'adUser/add_address';

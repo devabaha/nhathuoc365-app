@@ -24,12 +24,34 @@ export default class UserInfo extends Component {
     super(props);
 
     this.state = {
-
+      finish: false
     }
   }
 
   componentDidMount() {
+    this._getData();
+  }
 
+  _getData = async () => {
+    var {cart_data} = this.props;
+    var {site_id} = cart_data;
+    var user_id = cart_data.user.id;
+
+    try {
+      var response = await ADMIN_APIHandler.site_user_info(site_id, user_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        var { name, tel, birthday, user_note, email, address } = response.data;
+        this.setState({
+          name, tel, birthday, user_note, email, address,
+          finish: true
+        });
+      }
+    } catch (e) {
+      console.warn(e);
+    } finally {
+
+    }
   }
 
   _onSave() {
@@ -37,8 +59,16 @@ export default class UserInfo extends Component {
   }
 
   render() {
-    var { edit_mode } = this.state;
+    var { edit_mode, name, tel, birthday, user_note, email, address, finish } = this.state;
     var is_go_confirm = this.props.redirect == 'confirm';
+
+    if (finish == false) {
+      return(
+        <View style={styles.container}>
+          <Indicator size="small" />
+        </View>
+      );
+    }
 
     return (
       <View style={styles.container}>

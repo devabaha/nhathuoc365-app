@@ -24,8 +24,17 @@ class APIHandler {
 
   async site_update_cart(site_id, cart_id, data) {
     var api = url_for(API.SITE_UPDATE_CART + '/' + site_id + '/' + cart_id);
-    console.log(api);
     return await this.postAPI(api, data);
+  }
+
+  async site_update_site_user(site_id, user_id, data) {
+    var api = url_for(API.SITE_UPDATE_SITE_USER + '/' + site_id + '/' + user_id);
+    return await this.postAPI(api, data);
+  }
+
+  async site_user_info(site_id, user_id) {
+    var api = url_for(API.SITE_USER_INFO + '/' + site_id + '/' + user_id);
+    return await this.getAPI(api);
   }
 
   /**

@@ -48,7 +48,7 @@ export default class Sale extends Component {
         clearInterval(this._getDataTimer);
         Actions.pop();
       }
-    })
+    });
   }
 
   _getData = async () => {
@@ -68,7 +68,7 @@ export default class Sale extends Component {
             name: sale_list[key]
           })
         });
-        
+
         action(() => {
           store.setSaleCarts({
             categories_data: categories_data,

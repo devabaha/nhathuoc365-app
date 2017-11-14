@@ -445,7 +445,7 @@ export default class App extends Component {
               <Scene
                 key="myTab1"
                 icon={TabIcon}
-                iconTitle="MyFood"
+                iconTitle="My Food"
                 iconName="store"
                 size={24}
                 onPress={()=> {
@@ -528,13 +528,13 @@ export default class App extends Component {
             <Scene initial={this.state.showIntro} key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
 
             {/* Backend */}
-            <Scene key="dashboard" title="BẢNG ĐIỀU KHIỂN" component={Dashboard} {...custommerNav} />
-            <Scene key="sale_stores" title="CỬA HÀNG" component={SaleStores} {...custommerNav} />
-            <Scene key="sale" title="" component={Sale} {...custommerNav} />
-            <Scene key="order" title="" component={Order} navBar={CustomNavBar} />
-            <Scene key="sale_user_info" title="" component={UserInfo} navBar={CustomNavBar} />
-            <Scene key="sale_chat" title="" component={SaleChat} navBar={CustomNavBar} />
-            <Scene key="list_product" title="" component={ListProduct} navBar={CustomNavBar2} />
+            <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="BẢNG ĐIỀU KHIỂN" component={Dashboard} {...custommerNav} />
+            <Scene key="sale_stores" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="CỬA HÀNG" component={SaleStores} {...custommerNav} />
+            <Scene key="sale" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Sale} {...custommerNav} />
+            <Scene key="order" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Order} navBar={CustomNavBar} />
+            <Scene key="sale_user_info" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={UserInfo} navBar={CustomNavBar} />
+            <Scene key="sale_chat" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={SaleChat} navBar={CustomNavBar} />
+            <Scene key="list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={ListProduct} navBar={CustomNavBar2} />
 
           </Scene>
 

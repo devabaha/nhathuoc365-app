@@ -95,7 +95,7 @@ export default class Order extends Component {
       'Bạn muốn huỷ đơn hàng này?',
       [
         {text: 'Không', onPress: () => console.log('Cancel Pressed')},
-        {text: 'Đồng ý', onPress: () => this._cartEdit(cart_data, CART_STATUS_CANCEL)},
+        {text: 'Đồng ý', onPress: () => this._cartEdit(this.state.cart_data, CART_STATUS_CANCEL)},
       ]
     );
   }
@@ -226,7 +226,8 @@ export default class Order extends Component {
         onPress: () => {
           Actions.sale_user_info({
             title: 'THÔNG TIN',
-            isGrayStyle: true
+            isGrayStyle: true,
+            cart_data
           });
         }
       }
