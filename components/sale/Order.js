@@ -241,7 +241,7 @@ export default class Order extends Component {
           underlayColor="transparent">
           <View style={styles.userInfoActionBox}>
             <View style={[styles.userInfoActionIconBox, {
-              backgroundColor: item.bgrIcon ? item.bgrIcon : DEFAULT_COLOR
+              backgroundColor: item.bgrIcon ? item.bgrIcon : DEFAULT_ADMIN_COLOR
             }]}>
               {item.icon && <Icon name={item.icon} size={18} color="#ffffff" />}
             </View>
@@ -284,7 +284,7 @@ export default class Order extends Component {
     if (this.animatedValue) {
       interpolateColor = this.animatedValue.interpolate({
         inputRange: [0, 150],
-        outputRange: [hexToRgbA(DEFAULT_COLOR, 0.8), hexToRgbA("#ffffff", 1)]
+        outputRange: [hexToRgbA(DEFAULT_ADMIN_COLOR, 0.8), hexToRgbA("#ffffff", 1)]
       });
       interpolateColor2 = this.animatedValue.interpolate({
         inputRange: [0, 150],
@@ -563,7 +563,7 @@ export default class Order extends Component {
                   onPress={this._confirmSaveCart.bind(this, cart_data)}
                   underlayColor="transparent">
                   <View style={[styles.boxButtonAction, {
-                    backgroundColor: DEFAULT_COLOR,
+                    backgroundColor: DEFAULT_ADMIN_COLOR,
                     borderColor: "#999999"
                   }]}>
                     <Icon name="check" size={16} color="#ffffff" />
@@ -748,7 +748,7 @@ class ItemCartComponent extends Component {
             <CheckBox
               containerStyle={styles.cart_item_check}
               checked={item.selected == 1 ? true : false}
-              checkedColor={DEFAULT_COLOR}
+              checkedColor={DEFAULT_ADMIN_COLOR}
               hiddenTextElement
               onPress={() => 1}
               />
@@ -850,7 +850,7 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
   address_content: {
     marginTop: 12,
@@ -1012,7 +1012,7 @@ const styles = StyleSheet.create({
   },
   cart_item_price_price: {
     fontSize: 14,
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
 
   cart_payment_btn_box: {
@@ -1026,7 +1026,7 @@ const styles = StyleSheet.create({
   cart_payment_btn: {
     width: '100%',
     height: '100%',
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: DEFAULT_ADMIN_COLOR,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
@@ -1083,7 +1083,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   success_icon_label: {
-    color: DEFAULT_COLOR,
+    color: DEFAULT_ADMIN_COLOR,
     fontSize: 18,
     fontWeight: '600',
     marginLeft: 8
@@ -1138,7 +1138,7 @@ const styles = StyleSheet.create({
     color: '#666666'
   },
   payments_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
   payments_nav_items_active: {
     position: 'absolute',
@@ -1146,7 +1146,7 @@ const styles = StyleSheet.create({
     top: 20,
     right: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_ADMIN_COLOR
   },
   payments_nav_items_right_active: {
     position: 'absolute',
@@ -1154,7 +1154,7 @@ const styles = StyleSheet.create({
     top: 20,
     left: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_ADMIN_COLOR
   },
   borderBottom: {
     borderBottomWidth: Util.pixel,
@@ -1176,10 +1176,10 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   payments_nav_icon_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
   payments_nav_icon_box_active: {
-    borderColor: DEFAULT_COLOR
+    borderColor: DEFAULT_ADMIN_COLOR
   },
 
   uncheckOverlay: {
@@ -1247,7 +1247,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: DEFAULT_ADMIN_COLOR,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',

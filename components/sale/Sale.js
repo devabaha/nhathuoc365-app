@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
     color: '#666666'
   },
   categories_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
   categories_nav_items_active: {
     position: 'absolute',
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 3,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_ADMIN_COLOR
   },
 
   empty_box: {

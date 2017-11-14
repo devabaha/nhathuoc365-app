@@ -177,13 +177,13 @@ export default class ListProduct extends Component {
                       borderWidth: Util.pixel,
                       marginTop: 4,
                       borderTopWidth: 1,
-                      borderColor: DEFAULT_COLOR,
-                      backgroundColor: active ? hexToRgbA(DEFAULT_COLOR, 0.9) : '#ffffff'
+                      borderColor: DEFAULT_ADMIN_COLOR,
+                      backgroundColor: active ? hexToRgbA(DEFAULT_ADMIN_COLOR, 0.9) : '#ffffff'
                     }}
                     onPress={this._onChangeCate.bind(this, item)}
                     underlayColor="transparent">
                     <Text style={{
-                      color: active ? '#ffffff' : DEFAULT_COLOR,
+                      color: active ? '#ffffff' : DEFAULT_ADMIN_COLOR,
                       fontSize: 16
                     }}>{item.name}</Text>
                   </TouchableHighlight>
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
   address_content: {
     marginTop: 12,
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
   },
   cart_item_price_price: {
     fontSize: 14,
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
 
   cart_payment_btn_box: {
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
   cart_payment_btn: {
     width: '100%',
     height: '100%',
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: DEFAULT_ADMIN_COLOR,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'
@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   success_icon_label: {
-    color: DEFAULT_COLOR,
+    color: DEFAULT_ADMIN_COLOR,
     fontSize: 18,
     fontWeight: '600',
     marginLeft: 8
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
     color: '#666666'
   },
   payments_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
   payments_nav_items_active: {
     position: 'absolute',
@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
     top: 20,
     right: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_ADMIN_COLOR
   },
   payments_nav_items_right_active: {
     position: 'absolute',
@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
     top: 20,
     left: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_ADMIN_COLOR
   },
   borderBottom: {
     borderBottomWidth: Util.pixel,
@@ -701,10 +701,10 @@ const styles = StyleSheet.create({
     marginBottom: 4
   },
   payments_nav_icon_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_ADMIN_COLOR
   },
   payments_nav_icon_box_active: {
-    borderColor: DEFAULT_COLOR
+    borderColor: DEFAULT_ADMIN_COLOR
   },
 
   uncheckOverlay: {
@@ -772,7 +772,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: DEFAULT_ADMIN_COLOR,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',

@@ -123,7 +123,7 @@ export default class NavBar extends Component {
 
     return (
         <View style={[styles.container, {
-          backgroundColor: !isGrayStyle ? DEFAULT_COLOR : "#EFEFF2"
+          backgroundColor: !isGrayStyle ? DEFAULT_ADMIN_COLOR : "#EFEFF2"
         }]}>
           { this._renderLeft() }
           { this._renderMiddle() }

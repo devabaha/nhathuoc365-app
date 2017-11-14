@@ -53,7 +53,7 @@ export class OrdersItemComponent extends Component {
 
             <View style={styles.orders_status_box}>
               <Text style={[styles.orders_status_box_title, {
-                color: is_paymenting ? "#fa7f50" : DEFAULT_COLOR
+                color: is_paymenting ? "#fa7f50" : DEFAULT_ADMIN_COLOR
               }]}>{item.status_view}</Text>
             </View>
           </View>
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   orders_status_box_title: {
     fontSize: 12,
-    color: DEFAULT_COLOR,
+    color: DEFAULT_ADMIN_COLOR,
   },
   orders_item_content_text: {
     marginTop: 8,
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     paddingTop: 8
   },
   orders_item_price_value: {
-    color: DEFAULT_COLOR,
+    color: DEFAULT_ADMIN_COLOR,
     fontSize: 14,
     fontWeight: '500'
   },

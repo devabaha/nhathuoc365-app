@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   address_continue_content: {
     width: '100%',
     height: '100%',
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: DEFAULT_ADMIN_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row'
