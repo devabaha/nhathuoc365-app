@@ -1386,7 +1386,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.com.myfood;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.com.myfooddev;
 				PRODUCT_NAME = my_food;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1420,7 +1420,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.com.myfood;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.com.myfooddev;
 				PRODUCT_NAME = my_food;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";

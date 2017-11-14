@@ -68,10 +68,21 @@ import ListStore from './components/home/ListStore';
 import ScanQRCode from './components/home/ScanQRCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
+import ListProduct from './components/sale/ListProduct';
+
+// Backend
+import Dashboard from './components/dashboard/Dashboard';
+import SaleStores from './components/sale/SaleStores';
+import Sale from './components/sale/Sale';
+import Order from './components/sale/Order';
+import UserInfo from './components/sale/UserInfo';
+import SaleChat from './components/sale/SaleChat';
 
 // others
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
+import CustomNavBar from './components/sale/CustomNavBar';
+import CustomNavBar2 from './components/sale/CustomNavBar2';
 
 // navigator bar
 const custommerNav = {
@@ -99,6 +110,11 @@ const reducerCreate = params => {
 
     // get current scene key
     currentSceneName = getCurrentName(nextState);
+    if (isIOS && ['sale_user_info', 'sale_chat', 'dashboard'].indexOf(currentSceneName) != -1) {
+      StatusBar.setBarStyle('dark-content');
+    } else {
+      StatusBar.setBarStyle('light-content');
+    }
     currentTabHandler(currentSceneName);
 
     // get current scene onback function
@@ -429,7 +445,7 @@ export default class App extends Component {
               <Scene
                 key="myTab1"
                 icon={TabIcon}
-                iconTitle="MyFood"
+                iconTitle="My Food"
                 iconName="store"
                 size={24}
                 onPress={()=> {
@@ -510,6 +526,15 @@ export default class App extends Component {
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
             <Scene initial={this.state.showIntro} key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
+
+            {/* Backend */}
+            <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="BẢNG ĐIỀU KHIỂN" component={Dashboard} {...custommerNav} />
+            <Scene key="sale_stores" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="CỬA HÀNG" component={SaleStores} {...custommerNav} />
+            <Scene key="sale" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Sale} {...custommerNav} />
+            <Scene key="order" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Order} navBar={CustomNavBar} />
+            <Scene key="sale_user_info" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={UserInfo} navBar={CustomNavBar} />
+            <Scene key="sale_chat" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={SaleChat} navBar={CustomNavBar} />
+            <Scene key="list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={ListProduct} navBar={CustomNavBar2} />
 
           </Scene>
 

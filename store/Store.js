@@ -174,6 +174,18 @@ class Store {
   @observable user_cart_note = '';
   noteHighlight = true;
 
+  // backend
+  @observable sale_carts = {};
+  @observable cart_admin_data = null;
+
+  @action setCartAdminData(data) {
+    this.cart_admin_data = data;
+  }
+
+  @action setSaleCarts(data) {
+    this.sale_carts = data;
+  }
+
   @action setUserCartNote(data) {
     this.user_cart_note = data;
   }
