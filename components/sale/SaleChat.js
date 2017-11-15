@@ -12,6 +12,7 @@ import PropTypes from 'prop-types';
 
 // librarys
 import { GiftedChat } from 'react-native-gifted-chat';
+import {Actions, ActionConst} from 'react-native-router-flux';
 import store from '../../store/Store';
 
 @observer
@@ -24,31 +25,71 @@ export default class SaleChat extends Component {
     super(props);
 
     this.state = {
-      refreshing: false,
       messages: null,
     }
+
+    this._lastID = 0;
   }
 
   componentDidMount() {
     this._getData();
+
+    this._intervalLoads();
+
+    Actions.refresh({
+      onBack: () => {
+        clearInterval(this._timerInterval);
+        Actions.pop();
+      }
+    });
+  }
+
+  _intervalLoads() {
+    this._timerInterval = setInterval(() => {
+      if (this._loaded) {
+        this._getData();
+      }
+    }, 3000);
   }
 
   _getData = async (delay = 0) => {
+    this._loaded = false;
     var {site_id, user_id} = store.cart_admin_data;
 
     try {
-      var response = await ADMIN_APIHandler.site_load_chat(site_id, user_id);
+      var response = await ADMIN_APIHandler.site_load_chat(site_id, user_id, this._lastID);
 
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          messages: response.data.data,
-          user_id: response.data.user_id
-        });
+        if (this.state.messages) {
+          this._appendMessages(response.data.data, this._calculatorLastID);
+        } else {
+          this.setState({
+            messages: response.data.data || [],
+            user_id: response.data.user_id
+          }, this._calculatorLastID);
+        }
       }
     } catch (e) {
       console.warn(e);
     } finally {
+      this._loaded = true;
+    }
+  }
 
+  _appendMessages(messages, callback) {
+    if (messages) {
+      this.setState((previousState) => ({
+        messages: GiftedChat.append(previousState.messages, messages),
+      }), callback);
+    }
+  }
+
+  _calculatorLastID = () => {
+    var {messages} = this.state;
+
+    if (messages && messages.length) {
+      var lastObject = messages[0];
+      this._lastID = lastObject._id;
     }
   }
 
@@ -63,9 +104,11 @@ export default class SaleChat extends Component {
       });
 
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState((previousState) => ({
-          messages: GiftedChat.append(previousState.messages, messages),
-        }));
+        clearInterval(this._timerInterval);
+
+        this._getData();
+
+        this._intervalLoads();
       }
     } catch (e) {
       console.warn(e);

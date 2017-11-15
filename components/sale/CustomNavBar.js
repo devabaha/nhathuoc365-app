@@ -1,5 +1,6 @@
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Communications from 'react-native-communications';
@@ -41,13 +42,16 @@ import store from '../../store/Store';
 
 @observer
 export default class NavBar extends Component {
+  static defaultProps = {
+    onBack: Actions.pop
+  }
 
   _renderLeft() {
-    var {isGrayStyle, hiddenChatIcon} = this.props;
+    var {isGrayStyle, hiddenChatIcon, onBack} = this.props;
 
     return (
       <TouchableOpacity
-        onPress={Actions.pop}
+        onPress={onBack}
         style={[styles.navBarItem]}>
         <View style={[styles.buttonBox, isGrayStyle ? {
           flexDirection: 'row',
@@ -102,8 +106,8 @@ export default class NavBar extends Component {
 
         <TouchableOpacity
           onPress={() => {
-            if (phoneNumber) {
-              Communications.phonecall(phoneNumber, true);
+            if (store.cart_admin_data && store.cart_admin_data.user && store.cart_admin_data.user.tel) {
+              Communications.phonecall(store.cart_admin_data.user.tel, true);
             }
           }}
           style={{ paddingRight: 10}}>
