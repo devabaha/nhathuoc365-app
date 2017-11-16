@@ -218,11 +218,11 @@ class OrdersScreen extends Component {
 
   render() {
     var {item} = this.props;
-    var data = store.sale_carts.cart_list[item.key];
+    var data = Object.keys(store.sale_carts.cart_list).length ? store.sale_carts.cart_list[item.key] : null;
 
     return(
       <View style={styles.containerScreen}>
-        {data != null ? (
+        {data ? (
           <FlatList
             style={styles.items_box}
             data={data}

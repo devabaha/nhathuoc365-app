@@ -41,6 +41,10 @@ export default class ListProduct extends Component {
       onNavSave: this._onSaveHandler,
       onNavFilter: this.ref_popup_categories.open,
       onBack: () => {
+        if (this._clicked) {
+          return;
+        }
+        
         if (Object.keys(CART).length > 0) {
           Alert.alert(
             'Xác nhận',
@@ -63,6 +67,18 @@ export default class ListProduct extends Component {
   }
 
   _onSaveHandler = () => {
+    if (this._clicked) {
+      return;
+    }
+
+    if (Object.keys(CART).length == 0) {
+      return Toast.show('Chưa có mặt hàng nào được chọn!');
+    }
+
+    this._clicked = true;
+
+    Toast.show('Đang xử lý...');
+
     Object.keys(CART).map(key => {
       let quantity = CART[key];
 
@@ -94,6 +110,8 @@ export default class ListProduct extends Component {
 
     } catch (e) {
       console.warn(e + ' site_update_cart');
+
+      this._clicked = false;
     } finally {
 
     }

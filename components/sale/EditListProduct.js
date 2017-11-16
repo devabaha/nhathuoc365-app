@@ -42,6 +42,10 @@ export default class EditListProduct extends Component {
     Actions.refresh({
       onNavSave: this._onSaveHandler,
       onBack: () => {
+        if (this._clicked) {
+          return;
+        }
+
         if (Object.keys(CART).length > 0 && this._isChange) {
           Alert.alert(
             'Xác nhận',
@@ -64,6 +68,9 @@ export default class EditListProduct extends Component {
   }
 
   _onSaveHandler = () => {
+    if (this._clicked) {
+      return;
+    }
     if (!this._isChange) {
       return Actions.pop();
     }
@@ -73,9 +80,12 @@ export default class EditListProduct extends Component {
       'Bạn muốn lưu lại những thay đổi?',
       [
         {text: 'Huỷ', onPress: () => {
-
+          this._clicked = false;
         }},
         {text: 'Đồng ý', onPress: () => {
+          Toast.show('Đang xử lý...');
+          this._clicked = true;
+
           Object.keys(CART).map(key => {
             let quantity = CART[key];
 
@@ -110,6 +120,8 @@ export default class EditListProduct extends Component {
 
     } catch (e) {
       console.warn(e + ' site_update_cart');
+
+      this._clicked = false;
     } finally {
 
     }
