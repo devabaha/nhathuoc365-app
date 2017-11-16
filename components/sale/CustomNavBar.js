@@ -85,6 +85,11 @@ export default class NavBar extends Component {
 
   _renderRight() {
     var {isGrayStyle, hiddenChatIcon, phoneNumber} = this.props;
+    var notify = 0;
+
+    if (store.cart_admin_data) {
+      notify = store.notify_admin_chat[store.cart_admin_data.user.id] || 0;
+    }
 
     return (
       <View style={[styles.navBarItem, { flexDirection: 'row', justifyContent: 'flex-end' }]}>
@@ -100,6 +105,25 @@ export default class NavBar extends Component {
               <Text style={[styles.buttonTitle, {
                 color: !isGrayStyle ? "#ffffff" : 'rgb(0, 122, 255)'
               }]}>Chat</Text>
+
+              {notify > 0 && (
+                <View style={{
+                  position: 'absolute',
+                  width: 18,
+                  height: 18,
+                  borderRadius: 15,
+                  backgroundColor: 'red',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  top: 0,
+                  right: 0
+                }}>
+                  <Text style={{
+                    color: '#ffffff',
+                    fontSize: 12
+                  }}>{notify}</Text>
+                </View>
+              )}
             </View>
           </TouchableOpacity>
         )}

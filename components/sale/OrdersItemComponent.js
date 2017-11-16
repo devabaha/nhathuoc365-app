@@ -14,7 +14,10 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
+import * as Animatable from 'react-native-animatable';
 
+@observer
 export class OrdersItemComponent extends Component {
   static propTypes = {
     item: PropTypes.object.isRequired
@@ -35,6 +38,8 @@ export class OrdersItemComponent extends Component {
     // var is_reorder = item.status == CART_STATUS_COMPLETED;
     var is_ready = false;
     var is_reorder = false;
+
+    var notify = store.notify_admin_chat[item.user_id] || 0;
 
     return (
       <TouchableHighlight
@@ -105,6 +110,32 @@ export class OrdersItemComponent extends Component {
               </View>
             </View>
           </View>
+
+          {notify > 0 && (
+            <Animatable.View
+              animation="slideInDown"
+              iterationCount="infinite"
+              direction="alternate"
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                width: '30%',
+                minHeight: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'transparent'
+              }}>
+
+              <Icon name="comment-o" size={30} color="red" />
+              <Text style={{
+                position: 'absolute',
+                fontSize: 14,
+                color: "red",
+                fontWeight: '500'
+              }}>{notify}</Text>
+            </Animatable.View>
+          )}
         </View>
       </TouchableHighlight>
     );

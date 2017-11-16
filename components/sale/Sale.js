@@ -59,21 +59,15 @@ export default class Sale extends Component {
       var response = await ADMIN_APIHandler.all_cart(id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        var {sale_list} = response.data;
-        var categories_data = [];
-
-        Object.keys(sale_list).map(key => {
-          categories_data.push({
-            key,
-            name: sale_list[key]
-          })
-        });
-
         action(() => {
           store.setSaleCarts({
-            categories_data: categories_data,
+            categories_data: response.data.sale_list,
             cart_list: response.data.cart_list
           });
+
+          if (Object.keys(response.data.chat_notify).length) {
+            store.setNotifyAdminChat(response.data.chat_notify);
+          }
         })();
       }
 
@@ -137,11 +131,35 @@ export default class Sale extends Component {
             horizontal={true}
             renderItem={({item, index}) => {
               let active = this.state.category_nav_index == index;
+              var ICON;
+
+              switch (item.key) {
+                case CART_STATUS_READY:
+                  ICON = <Icon name="clock-o" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
+                  break;
+                case CART_STATUS_ACCEPTED:
+                  ICON = <Icon name="check" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
+                  break;
+                case CART_STATUS_PROCESSING:
+                  ICON = <Icon name="tasks" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
+                  break;
+                case CART_STATUS_DELIVERY:
+                  ICON = <Icon name="motorcycle" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
+                  break;
+                case CART_STATUS_COMPLETED:
+                  ICON = <Icon name="check-square-o" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
+                  break;
+                case CART_STATUS_CANCEL:
+                  ICON = <Icon name="ban" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
+                  break;
+              }
+
               return(
                 <TouchableHighlight
                   onPress={() => this._changeCategory(item, index)}
                   underlayColor="transparent">
                   <View style={styles.categories_nav_items}>
+                    {ICON}
                     <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
 
                     {active && <View style={styles.categories_nav_items_active} />}
@@ -249,19 +267,21 @@ const styles = StyleSheet.create({
 
   categories_nav: {
     backgroundColor: '#ffffff',
-    height: 40,
+    height: 54,
     borderBottomWidth: Util.pixel,
     borderBottomColor: "#dddddd"
   },
   categories_nav_items: {
     justifyContent: 'center',
-    height: '100%'
+    height: '100%',
+    alignItems: 'center'
   },
   categories_nav_items_title: {
     paddingHorizontal: 10,
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#666666'
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#666666',
+    marginTop: 4
   },
   categories_nav_items_title_active: {
     color: DEFAULT_ADMIN_COLOR

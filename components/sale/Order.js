@@ -10,7 +10,8 @@ import {
   ScrollView,
   Animated,
   TextInput,
-  Alert
+  Alert,
+  Clipboard
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -20,6 +21,9 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import store from '../../store/Store';
 
+// components
+import Sticker from '../Sticker';
+
 @observer
 export default class Order extends Component {
   constructor(props) {
@@ -28,7 +32,8 @@ export default class Order extends Component {
     this.state = {
       refreshing: false,
       cart_data: null,
-      editMode: false
+      editMode: false,
+      coppy_sticker_flag: false
     }
   }
 
@@ -257,6 +262,26 @@ export default class Order extends Component {
     });
   }
 
+  _coppyAddress(address) {
+    var address_string = `Địa chỉ giao hàng: ${address.name}, ${address.tel}, ${address.address}`;
+
+    Clipboard.setString(address_string);
+
+    this._showSticker();
+  }
+
+  _showSticker() {
+    this.setState({
+      coppy_sticker_flag: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          coppy_sticker_flag: false
+        });
+      }, 2000);
+    });
+  }
+
   render() {
     var {editMode, cart_data} = this.state;
 
@@ -398,7 +423,7 @@ export default class Order extends Component {
                     paddingHorizontal: 15
                   }}
                   underlayColor="transparent"
-                  onPress={() => 1}>
+                  onPress={this._coppyAddress.bind(this, address_data)}>
                   <Text style={[styles.address_default_title, styles.title_active]}>SAO CHÉP</Text>
                 </TouchableHighlight>
               </View>
@@ -599,6 +624,11 @@ export default class Order extends Component {
           )}
 
         </ScrollView>
+
+        <Sticker
+          active={this.state.coppy_sticker_flag}
+          message="Sao chép thành công."
+         />
       </View>
     );
   }

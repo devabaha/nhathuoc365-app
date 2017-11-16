@@ -119,6 +119,11 @@ class Store {
     url_update: ''
   }
   @observable notify_chat = {};
+  @observable notify_admin_chat = {};
+
+  @action setNotifyAdminChat(data) {
+    this.notify_admin_chat = data;
+  }
 
   @action setNotify(data) {
     this.notify = data || {};
