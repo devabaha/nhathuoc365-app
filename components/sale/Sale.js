@@ -134,6 +134,9 @@ export default class Sale extends Component {
               var ICON;
 
               switch (item.key) {
+                case CART_STATUS_ORDERING:
+                  ICON = <Icon name="cart-plus" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
+                  break;
                 case CART_STATUS_READY:
                   ICON = <Icon name="clock-o" color={active ? DEFAULT_ADMIN_COLOR : "#666666"} size={20} />;
                   break;

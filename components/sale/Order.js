@@ -296,11 +296,11 @@ export default class Order extends Component {
 
       // set new data
       var cart_products_confirm = cart_products_confirm.reverse();
-      var address_data = cart_data.address;
+      var address_data = cart_data.address || {};
     }
 
     // show loading
-    if (cart_data == null || cart_products_confirm == null || address_data == null) {
+    if (cart_data == null || cart_products_confirm == null) {
       return (
         <View style={styles.container}>
           <Indicator />

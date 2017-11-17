@@ -229,9 +229,7 @@ export default class App extends Component {
           Store.setUserInfo(response.data);
         })();
 
-        this.setState({
-          finish: true
-        });
+        this._getData();
       }
     } catch (e) {
       console.warn(e + ' user_login');
@@ -244,6 +242,33 @@ export default class App extends Component {
         ],
         { cancelable: false }
       );
+    }
+  }
+
+  async _getData() {
+    try {
+      var response = await APIHandler.user_sites();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          stores_data: response.data
+        });
+      }
+    } catch (e) {
+      console.warn(e + ' user_sites');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getData.bind(this)},
+        ],
+        { cancelable: false }
+      );
+    } finally {
+      this.setState({
+        finish: true
+      });
     }
   }
 
@@ -430,6 +455,8 @@ export default class App extends Component {
       );
     }
 
+    var goAddStore = !this.state.stores_data && this.state.showIntro;
+
     return(
       <Router
         backAndroidHandler={this._backAndroidHandler.bind(this)}
@@ -523,11 +550,11 @@ export default class App extends Component {
             <Scene key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
             <Scene key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
             <Scene key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
-            <Scene key="add_store" title="THÊM CỬA HÀNG" component={AddStore} {...custommerNav} />
+            <Scene initial={goAddStore} key="add_store" title="THÊM CỬA HÀNG" component={AddStore} {...custommerNav} />
             <Scene key="store_orders" title="" component={StoreOrders} {...custommerNav} />
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
-            <Scene initial={this.state.showIntro} key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
+            <Scene key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
 
             {/* Backend */}
             <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="DANH SÁCH CỬA HÀNG" component={Dashboard} {...custommerNav} />
