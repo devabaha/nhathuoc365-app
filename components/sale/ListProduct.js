@@ -44,7 +44,7 @@ export default class ListProduct extends Component {
         if (this._clicked) {
           return;
         }
-        
+
         if (Object.keys(CART).length > 0) {
           Alert.alert(
             'Xác nhận',
@@ -186,6 +186,8 @@ export default class ListProduct extends Component {
           ref={ref => this.ref_popup_categories = ref}>
           {data && (
             <FlatList
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
               data={[{id: 0, name: 'Tất cả'}, ...data.categories_data]}
               renderItem={({item, index}) => {
                 let active = item.id == this.state.cat_id;
@@ -197,7 +199,6 @@ export default class ListProduct extends Component {
                       alignItems: 'center',
                       borderWidth: Util.pixel,
                       marginTop: 4,
-                      borderTopWidth: 1,
                       borderColor: DEFAULT_ADMIN_COLOR,
                       backgroundColor: active ? hexToRgbA(DEFAULT_ADMIN_COLOR, 0.9) : '#ffffff'
                     }}

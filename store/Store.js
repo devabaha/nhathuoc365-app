@@ -269,6 +269,22 @@ class Store {
     this.orders_key_change = data;
   }
 
+  /*********** cart fly begin **********/
+  @observable cart_fly_image = null;
+  @observable cart_fly_show = false;
+  @observable cart_fly_position = null;
+
+  @action setCartFlyImage(data) {
+    this.cart_fly_image = data;
+  }
+
+  @action setCartFlyShow(data) {
+    this.cart_fly_show = data;
+  }
+
+  @action setCartFlyPosition(data) {
+    this.cart_fly_position = data;
+  }
 
 }
 

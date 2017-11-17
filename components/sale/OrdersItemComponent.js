@@ -54,7 +54,7 @@ export class OrdersItemComponent extends Component {
         <View style={styles.orders_item_box}>
           <View style={styles.orders_item_icon_box}>
             <Icon style={styles.orders_item_icon} name="user" size={16} color="#999999" />
-            <Text style={styles.orders_item_icon_title}>{item.user.name}</Text>
+            <Text style={styles.orders_item_icon_title}>{item.user.name || ('#' + item.cart_code)}</Text>
 
             <View style={styles.orders_status_box}>
               <Text style={[styles.orders_status_box_title, {

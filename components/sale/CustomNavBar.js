@@ -96,7 +96,7 @@ export default class NavBar extends Component {
         {!hiddenChatIcon && (
           <TouchableOpacity
             onPress={() => Actions.sale_chat({
-              title: store.cart_admin_data.user.name,
+              title: store.cart_admin_data.user.name || ('#' + store.cart_admin_data.cart_code),
               hiddenChatIcon: true
             })}
             style={{ paddingRight: 10}}>
