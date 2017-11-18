@@ -47,13 +47,12 @@ export default class MainNotify extends Component {
       navigators: [
         {
           key: 0,
-          label: "Tin khuyến mãi",
-          desc: "Khuyến mãi mới nhất từ các cửa hàng",
+          label: "Tin tức",
+          desc: "Tin tức mới nhất từ các cửa hàng",
           icon: "bookmark",
           notify: "new_site_news",
           onPress: () => {
             Actions.notifys({
-              title: "KHUYẾN MÃI",
               news_type: "/1"
             });
           },

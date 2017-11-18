@@ -590,11 +590,6 @@ export default class Item extends Component {
   }
 
   _itemRefresh(item) {
-    Actions.refresh({
-      title: item.name,
-      placeholder: item.name
-    });
-
     if (this.refs_body_item) {
       this.refs_body_item.scrollTo({x: 0, y: 0, animated: false});
     }
@@ -602,7 +597,13 @@ export default class Item extends Component {
     this.setState({
       item,
       item_data: null
-    }, this._getData.bind(this, 500));
+    }, () => {
+      this._getData(500);
+
+      Actions.refresh({
+        placeholder: item.name
+      });
+    });
   }
 
   _confirmRemoveCartItem(item) {

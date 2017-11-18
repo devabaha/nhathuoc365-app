@@ -539,16 +539,16 @@ export default class App extends Component {
             <Scene key="register" title="ĐĂNG KÝ" component={Register} {...custommerNav} />
             <Scene key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
             <Scene key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
-            <Scene key="stores" panHandlers={null} title="CỬA HÀNG" component={Stores} {...custommerNav} />
+            <Scene key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
             <Scene key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
             <Scene key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
             <Scene key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
             <Scene key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
-            <Scene key="notifys" title="KHUYẾN MÃI" component={Notifys} {...custommerNav} />
+            <Scene key="notifys" title="TIN TỨC" component={Notifys} {...custommerNav} />
             <Scene key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
             <Scene key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
-            <Scene key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
+            <Scene key="scan_qr_code" title="QUÉT MÃ" component={ScanQRCode} {...custommerNav} />
             <Scene key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
             <Scene initial={goAddStore} key="add_store" title="THÊM CỬA HÀNG" component={AddStore} {...custommerNav} />
             <Scene key="store_orders" title="" component={StoreOrders} {...custommerNav} />

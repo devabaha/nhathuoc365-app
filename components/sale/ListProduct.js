@@ -237,7 +237,7 @@ class ItemCartComponent extends Component {
 
   _incrementQnt(item) {
     var {quantity} = this.state;
-    quantity = parseFloat(quantity) + 1;
+    quantity = (parseFloat(quantity) + 1).toFixed(1);
 
     this.setState({
       increment_loading: true
@@ -253,7 +253,7 @@ class ItemCartComponent extends Component {
 
   _decrementQnt(item) {
     var {quantity} = this.state;
-    quantity = parseFloat(quantity) - 1;
+    quantity = (parseFloat(quantity) - 1).toFixed(1);
 
     this.setState({
       decrement_loading: true

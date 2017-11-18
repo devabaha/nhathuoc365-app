@@ -32,9 +32,9 @@ export default class Items extends Component {
       this.props.buyPress(item);
     }
 
-    if (isIOS) {
-      this._getMeasure(item);
-    }
+    // if (isIOS) {
+    //   this._getMeasure(item);
+    // }
 
     this.setState({
       buying: true
@@ -45,9 +45,9 @@ export default class Items extends Component {
         if (response && response.status == STATUS_SUCCESS) {
 
           action(() => {
-            if (isIOS) {
-              store.setCartFlyShow(true);
-            }
+            // if (isIOS) {
+            //   store.setCartFlyShow(true);
+            // }
 
             store.setCartData(response.data);
 
@@ -64,17 +64,17 @@ export default class Items extends Component {
               });
             }
 
-            if (isIOS) {
-              setTimeout(() => {
-                store.setCartFlyPosition({
-                  px: 24,
-                  py: Util.size.height - NAV_HEIGHT - 64,
-                  width: 60,
-                  height: 60
-                });
-                layoutAnimation();
-              }, 500);
-            }
+            // if (isIOS) {
+            //   setTimeout(() => {
+            //     store.setCartFlyPosition({
+            //       px: 24,
+            //       py: Util.size.height - NAV_HEIGHT - 64,
+            //       width: 60,
+            //       height: 60
+            //     });
+            //     layoutAnimation();
+            //   }, 500);
+            // }
 
             if (index !== null && index < length) {
               store.setCartItemIndex(index);
