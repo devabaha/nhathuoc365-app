@@ -62,7 +62,7 @@ export default class SearchStore extends Component {
                     searchValue: site_code
                   }, () => {
                     Actions.refresh({
-                      searchValue: STORE_DEMO_CODE
+                      searchValue: site_code
                     });
 
                     this.search_handler = setTimeout(() => {

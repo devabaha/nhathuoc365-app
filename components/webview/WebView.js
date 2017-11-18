@@ -1,6 +1,5 @@
-'use strict';
-
 import React, { Component } from 'react';
+import Proptypes from 'prop-types';
 import {
   View,
   Text,
@@ -11,6 +10,10 @@ import {
 import Loading from '../Loading';
 
 export default class WebViewClass extends Component {
+  static propTypes = {
+      url: Proptypes.string.isRequired
+  }
+
   constructor(props) {
     super(props);
 

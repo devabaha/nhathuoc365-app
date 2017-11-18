@@ -69,7 +69,7 @@ export default class Stores extends Component {
   }
 
   _initial(props) {
-    var title = `Tìm kiếm tại ${props.title}`;
+    var title = props.title;
 
     Actions.refresh({
       showSearchBar: true,
@@ -267,6 +267,31 @@ export default class Stores extends Component {
           yesConfirm={this._removeCartItem.bind(this)}
           otherClose={false}
           />
+
+        {store.cart_fly_show && (
+          <View
+            style={{
+              position: 'absolute',
+              top: store.cart_fly_position.py,
+              left: store.cart_fly_position.px,
+              width: store.cart_fly_position.width,
+              height: store.cart_fly_position.height,
+              zIndex: 999,
+              borderWidth: 1,
+              borderColor: DEFAULT_COLOR,
+              overflow: 'hidden'
+            }}>
+            {store.cart_fly_image && (
+              <CachedImage
+                style={{
+                  width: store.cart_fly_position.width,
+                  height: store.cart_fly_position.height
+                }}
+                source={store.cart_fly_image} />
+            )}
+          </View>
+        )}
+
       </View>
     );
   }

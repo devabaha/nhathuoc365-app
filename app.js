@@ -69,10 +69,12 @@ import ScanQRCode from './components/home/ScanQRCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import ListProduct from './components/sale/ListProduct';
+import EditListProduct from './components/sale/EditListProduct';
 
 // Backend
 import Dashboard from './components/dashboard/Dashboard';
 import SaleStores from './components/sale/SaleStores';
+import SaleMenu from './components/sale/SaleMenu';
 import Sale from './components/sale/Sale';
 import Order from './components/sale/Order';
 import UserInfo from './components/sale/UserInfo';
@@ -227,9 +229,7 @@ export default class App extends Component {
           Store.setUserInfo(response.data);
         })();
 
-        this.setState({
-          finish: true
-        });
+        this._getData();
       }
     } catch (e) {
       console.warn(e + ' user_login');
@@ -242,6 +242,33 @@ export default class App extends Component {
         ],
         { cancelable: false }
       );
+    }
+  }
+
+  async _getData() {
+    try {
+      var response = await APIHandler.user_sites();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          stores_data: response.data
+        });
+      }
+    } catch (e) {
+      console.warn(e + ' user_sites');
+
+      return Alert.alert(
+        'Thông báo',
+        'Kết nối mạng bị lỗi',
+        [
+          {text: 'Thử lại', onPress: this._getData.bind(this)},
+        ],
+        { cancelable: false }
+      );
+    } finally {
+      this.setState({
+        finish: true
+      });
     }
   }
 
@@ -428,6 +455,8 @@ export default class App extends Component {
       );
     }
 
+    var goAddStore = !this.state.stores_data && this.state.showIntro;
+
     return(
       <Router
         backAndroidHandler={this._backAndroidHandler.bind(this)}
@@ -510,31 +539,33 @@ export default class App extends Component {
             <Scene key="register" title="ĐĂNG KÝ" component={Register} {...custommerNav} />
             <Scene key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
             <Scene key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
-            <Scene key="stores" panHandlers={null} title="CỬA HÀNG" component={Stores} {...custommerNav} />
+            <Scene key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
             <Scene key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
             <Scene key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
             <Scene key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
             <Scene key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
             <Scene key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
-            <Scene key="notifys" title="KHUYẾN MÃI" component={Notifys} {...custommerNav} />
+            <Scene key="notifys" title="TIN TỨC" component={Notifys} {...custommerNav} />
             <Scene key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
             <Scene key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
-            <Scene key="scan_qr_code" title="QUÉT MÃ CH" component={ScanQRCode} {...custommerNav} />
+            <Scene key="scan_qr_code" title="QUÉT MÃ" component={ScanQRCode} {...custommerNav} />
             <Scene key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
-            <Scene key="add_store" title="THÊM CỬA HÀNG" component={AddStore} {...custommerNav} />
+            <Scene initial={goAddStore} key="add_store" title="THÊM CỬA HÀNG" component={AddStore} {...custommerNav} />
             <Scene key="store_orders" title="" component={StoreOrders} {...custommerNav} />
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
-            <Scene initial={this.state.showIntro} key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
+            <Scene key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
 
             {/* Backend */}
-            <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="BẢNG ĐIỀU KHIỂN" component={Dashboard} {...custommerNav} />
+            <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="DANH SÁCH CỬA HÀNG" component={Dashboard} {...custommerNav} />
+            <Scene key="sale_menu" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="BẢNG ĐIỀU KHIỂN" component={SaleMenu} {...custommerNav} />
             <Scene key="sale_stores" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="CỬA HÀNG" component={SaleStores} {...custommerNav} />
             <Scene key="sale" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Sale} {...custommerNav} />
             <Scene key="order" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Order} navBar={CustomNavBar} />
             <Scene key="sale_user_info" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={UserInfo} navBar={CustomNavBar} />
             <Scene key="sale_chat" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={SaleChat} navBar={CustomNavBar} />
             <Scene key="list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={ListProduct} navBar={CustomNavBar2} />
+            <Scene key="edit_list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={EditListProduct} navBar={CustomNavBar2} />
 
           </Scene>
 

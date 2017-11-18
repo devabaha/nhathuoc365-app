@@ -10,7 +10,8 @@ import {
   ScrollView,
   Animated,
   TextInput,
-  Alert
+  Alert,
+  Clipboard
 } from 'react-native';
 import PropTypes from 'prop-types';
 
@@ -20,6 +21,9 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import store from '../../store/Store';
 
+// components
+import Sticker from '../Sticker';
+
 @observer
 export default class Order extends Component {
   constructor(props) {
@@ -28,7 +32,8 @@ export default class Order extends Component {
     this.state = {
       refreshing: false,
       cart_data: null,
-      editMode: false
+      editMode: false,
+      coppy_sticker_flag: false
     }
   }
 
@@ -257,6 +262,26 @@ export default class Order extends Component {
     });
   }
 
+  _coppyAddress(address) {
+    var address_string = `Địa chỉ giao hàng: ${address.name}, ${address.tel}, ${address.address}`;
+
+    Clipboard.setString(address_string);
+
+    this._showSticker();
+  }
+
+  _showSticker() {
+    this.setState({
+      coppy_sticker_flag: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          coppy_sticker_flag: false
+        });
+      }, 2000);
+    });
+  }
+
   render() {
     var {editMode, cart_data} = this.state;
 
@@ -271,11 +296,11 @@ export default class Order extends Component {
 
       // set new data
       var cart_products_confirm = cart_products_confirm.reverse();
-      var address_data = cart_data.address;
+      var address_data = cart_data.address || {};
     }
 
     // show loading
-    if (cart_data == null || cart_products_confirm == null || address_data == null) {
+    if (cart_data == null || cart_products_confirm == null) {
       return (
         <View style={styles.container}>
           <Indicator />
@@ -398,7 +423,7 @@ export default class Order extends Component {
                     paddingHorizontal: 15
                   }}
                   underlayColor="transparent"
-                  onPress={() => 1}>
+                  onPress={this._coppyAddress.bind(this, address_data)}>
                   <Text style={[styles.address_default_title, styles.title_active]}>SAO CHÉP</Text>
                 </TouchableHighlight>
               </View>
@@ -420,14 +445,16 @@ export default class Order extends Component {
             </View>
           </View>
 
-          <View
-            style={[styles.rows, styles.borderBottom, styles.mt8]}>
-            <View style={styles.box_icon_label}>
-              <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
-              <Text style={[styles.input_label]}>Ghi chú</Text>
+          {cart_data.user_note && (
+            <View
+              style={[styles.rows, styles.borderBottom, styles.mt8]}>
+              <View style={styles.box_icon_label}>
+                <Icon style={styles.icon_label} name="pencil-square-o" size={15} color="#999999" />
+                <Text style={[styles.input_label]}>Ghi chú</Text>
+              </View>
+              <Text style={styles.input_note_value}>{cart_data.user_note || "Không có ghi chú"}</Text>
             </View>
-            <Text style={styles.input_note_value}>{cart_data.user_note || "Không có ghi chú"}</Text>
-          </View>
+          )}
 
           {/*<View style={[styles.rows, styles.borderBottom, styles.mt8]}>
             <View style={styles.address_name_box}>
@@ -560,50 +587,62 @@ export default class Order extends Component {
 
           {is_ready && (
             <View style={styles.boxButtonActions}>
-              {editMode ? (
-                <TouchableHighlight
-                  style={[styles.buttonAction, {
-                    marginLeft: 6
-                  }]}
-                  onPress={this._confirmSaveCart.bind(this, cart_data)}
-                  underlayColor="transparent">
-                  <View style={[styles.boxButtonAction, {
-                    backgroundColor: DEFAULT_ADMIN_COLOR,
-                    borderColor: "#999999"
-                  }]}>
-                    <Icon name="check" size={16} color="#ffffff" />
-                    <Text style={[styles.buttonActionTitle, {
-                      color: "#ffffff"
-                    }]}>Chỉnh sửa xong</Text>
-                  </View>
-                </TouchableHighlight>
-              ) : (
-                <TouchableHighlight
-                  style={[styles.buttonAction, {
-                    marginLeft: 6
-                  }]}
-                  onPress={this._confirmEditCart.bind(this, cart_data)}
-                  underlayColor="transparent">
-                  <View style={[styles.boxButtonAction, {
-                    backgroundColor: "#fa7f50",
-                    borderColor: "#999999"
-                  }]}>
-                    <Icon name="pencil-square-o" size={16} color="#ffffff" />
-                    <Text style={[styles.buttonActionTitle, {
-                      color: "#ffffff"
-                    }]}>Sửa đơn hàng</Text>
-                  </View>
-                </TouchableHighlight>
-              )}
+              <TouchableHighlight
+                style={[styles.buttonAction, {
+                  marginLeft: 6
+                }]}
+                onPress={this._confirmSaveCart.bind(this, cart_data)}
+                underlayColor="transparent">
+                <View style={[styles.boxButtonAction, {
+                  backgroundColor: DEFAULT_ADMIN_COLOR,
+                  borderColor: "#999999"
+                }]}>
+                  <Icon name="plus" size={16} color="#ffffff" />
+                  <Text style={[styles.buttonActionTitle, {
+                    color: "#ffffff"
+                  }]}>THÊM MẶT HÀNG</Text>
+                </View>
+              </TouchableHighlight>
+
+              <TouchableHighlight
+                style={[styles.buttonAction, {
+                  marginLeft: 6
+                }]}
+                onPress={this._confirmEditCart.bind(this, cart_data)}
+                underlayColor="transparent">
+                <View style={[styles.boxButtonAction, {
+                  backgroundColor: "#fa7f50",
+                  borderColor: "#999999"
+                }]}>
+                  <Icon name="pencil-square-o" size={16} color="#ffffff" />
+                  <Text style={[styles.buttonActionTitle, {
+                    color: "#ffffff"
+                  }]}>SỬA ĐƠN HÀNG</Text>
+                </View>
+              </TouchableHighlight>
             </View>
           )}
 
         </ScrollView>
+
+        <Sticker
+          active={this.state.coppy_sticker_flag}
+          message="Sao chép thành công."
+         />
       </View>
     );
   }
 
-  _confirmEditCart() {
+  _confirmEditCart(cart_data) {
+
+    Actions.edit_list_product({
+      cart_data,
+      title: 'CHỈNH SỬA',
+      reloadData: this._getData,
+      navFilterHidden: true
+    });
+
+    return;
     Alert.alert(
       'Xác nhận',
       'Bạn muốn chỉnh sửa đơn hàng này?',
@@ -620,7 +659,15 @@ export default class Order extends Component {
     );
   }
 
-  _confirmSaveCart() {
+  _confirmSaveCart(cart_data) {
+
+    Actions.list_product({
+      title: 'THÊM MẶT HÀNG',
+      cart_data,
+      reloadData: this._getData
+    });
+
+    return;
     this.setState({
       editMode: false
     });

@@ -382,6 +382,8 @@ export default class UserInfo extends Component {
           swipeToClose={false}>
 
           <FlatList
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             data={district_datas}
             renderItem={({item, index}) => {
               var active = item.name == district;

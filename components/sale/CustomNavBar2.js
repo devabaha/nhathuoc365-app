@@ -40,13 +40,15 @@ const styles = StyleSheet.create({
 
 export default class NavBar extends Component {
   static defaultProps = {
-    onBack: Actions.pop
+    onBack: Actions.pop,
+    navFilterHidden: false
   }
 
   static propTypes = {
     onBack: PropTypes.func,
     onNavFilter: PropTypes.func,
-    onNavSave: PropTypes.func
+    onNavSave: PropTypes.func,
+    navFilterHidden: PropTypes.bool
   }
 
   _renderLeft() {
@@ -87,11 +89,11 @@ export default class NavBar extends Component {
   }
 
   _renderRight() {
-    var {isGrayStyle, hiddenChatIcon, phoneNumber} = this.props;
+    var {isGrayStyle, hiddenChatIcon, phoneNumber, navFilterHidden} = this.props;
 
     return (
       <View style={[styles.navBarItem, { flexDirection: 'row', justifyContent: 'flex-end' }]}>
-        {!hiddenChatIcon && (
+        {!navFilterHidden && (
           <TouchableOpacity
             onPress={this.props.onNavFilter}
             style={{ paddingRight: 10}}>

@@ -227,7 +227,7 @@ export default class Login extends Component {
           </View>*/}
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Tên đăng nhập</Text>
+            <Text style={styles.input_label}>Số điện thoại</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -240,7 +240,7 @@ export default class Login extends Component {
                 style={styles.input_text}
                 keyboardType="phone-pad"
                 maxLength={30}
-                placeholder="Điền tên đăng nhập"
+                placeholder="Điền số điện thoại"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
                 onChangeText={(value) => {

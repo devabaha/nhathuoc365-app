@@ -22,7 +22,7 @@ import Modal from 'react-native-modalbox';
 
 var CART = {}
 
-export default class ListProduct extends Component {
+export default class EditListProduct extends Component {
   constructor(props) {
     super(props);
 
@@ -32,6 +32,8 @@ export default class ListProduct extends Component {
       data: null,
       cat_id: 0
     }
+
+    this._isChange = false;
   }
 
   componentDidMount() {
@@ -39,16 +41,15 @@ export default class ListProduct extends Component {
 
     Actions.refresh({
       onNavSave: this._onSaveHandler,
-      onNavFilter: this.ref_popup_categories.open,
       onBack: () => {
         if (this._clicked) {
           return;
         }
 
-        if (Object.keys(CART).length > 0) {
+        if (Object.keys(CART).length > 0 && this._isChange) {
           Alert.alert(
             'Xác nhận',
-            'Lưu lại những mặt hàng vừa thêm?',
+            'Lưu lại những thay đổi?',
             [
               {text: 'Không', onPress: () => {
                 CART = {}
@@ -70,20 +71,29 @@ export default class ListProduct extends Component {
     if (this._clicked) {
       return;
     }
-
-    if (Object.keys(CART).length == 0) {
-      return Toast.show('Chưa có mặt hàng nào được chọn!');
+    if (!this._isChange) {
+      return Actions.pop();
     }
 
-    this._clicked = true;
+    Alert.alert(
+      'Xác nhận',
+      'Bạn muốn lưu lại những thay đổi?',
+      [
+        {text: 'Huỷ', onPress: () => {
+          this._clicked = false;
+        }},
+        {text: 'Đồng ý', onPress: () => {
+          Toast.show('Đang xử lý...');
+          this._clicked = true;
 
-    Toast.show('Đang xử lý...');
+          Object.keys(CART).map(key => {
+            let quantity = CART[key];
 
-    Object.keys(CART).map(key => {
-      let quantity = CART[key];
-
-      this._onSave(key, quantity);
-    });
+            this._onSave(key, quantity);
+          });
+        }},
+      ]
+    );
   }
 
   _onSave = async (product_id, quantity) => {
@@ -100,7 +110,7 @@ export default class ListProduct extends Component {
         if (Object.keys(CART).length == 0) {
           Actions.pop();
 
-          Toast.show('Thêm thành công!');
+          Toast.show('Lưu lại thành công!');
 
           if (this.props.reloadData) {
             this.props.reloadData(400);
@@ -140,80 +150,37 @@ export default class ListProduct extends Component {
     }
   }
 
-  _onChangeCate(item) {
-    this.ref_popup_categories.close();
-    this.setState({
-      cat_id: item.id,
-      data: null
-    }, this._getData.bind(this, 450));
-  }
-
   render() {
-    var {data} = this.state;
-    if (data) {
-      var categories = data.categories;
+    var {cart_data} = this.props;
+
+    if (cart_data && Object.keys(cart_data.products).length > 0) {
+      var cart_products_confirm = [];
+      Object.keys(cart_data.products).map(key => {
+        let product = cart_data.products[key];
+        if (product.selected == 1) {
+          cart_products_confirm.push(product);
+        }
+      });
+
+      // set new data
+      var cart_products_confirm = cart_products_confirm.reverse();
+      var address_data = cart_data.address;
     }
 
     return(
       <View style={styles.container}>
-        {data != null ? (
-          <FlatList
-            data={data.products}
-            keyExtractor={item => item.id}
-            renderItem={({item, index}) => {
-              var categorie = categories[item.cat_id];
-              return(
-                <ItemCartComponent
-                  categorie={categorie}
-                  item={item}
-                  index={index} />
-              );
-            }}
-            />
-        ) : (
-          <Indicator size="small" />
-        )}
-
-        <Modal
-          style={{
-            width: '80%',
-            height: '50%',
-            borderRadius: 5,
-            paddingVertical: 12,
-            paddingHorizontal: 15
+        <FlatList
+          data={cart_products_confirm}
+          keyExtractor={item => item.id}
+          renderItem={({item, index}) => {
+            return(
+              <ItemCartComponent
+                isChange={() => this._isChange = true}
+                item={item}
+                index={index} />
+            );
           }}
-          swipeToClose={false}
-          ref={ref => this.ref_popup_categories = ref}>
-          {data && (
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              data={[{id: 0, name: 'Tất cả'}, ...data.categories_data]}
-              renderItem={({item, index}) => {
-                let active = item.id == this.state.cat_id;
-                return(
-                  <TouchableHighlight
-                    style={{
-                      height: 48,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      borderWidth: Util.pixel,
-                      marginTop: 4,
-                      borderColor: DEFAULT_ADMIN_COLOR,
-                      backgroundColor: active ? hexToRgbA(DEFAULT_ADMIN_COLOR, 0.9) : '#ffffff'
-                    }}
-                    onPress={this._onChangeCate.bind(this, item)}
-                    underlayColor="transparent">
-                    <Text style={{
-                      color: active ? '#ffffff' : DEFAULT_ADMIN_COLOR,
-                      fontSize: 16
-                    }}>{item.name}</Text>
-                  </TouchableHighlight>
-                );
-              }}
-              keyExtractor={item => item.id} />
-          )}
-        </Modal>
+          />
       </View>
     );
   }
@@ -231,8 +198,10 @@ class ItemCartComponent extends Component {
       decrement_loading: false,
       site_id: props.site_id,
       cart_id: props.cart_id,
-      quantity: CART[item.id] ? CART[item.id] : 0
+      quantity: item.quantity
     }
+
+    CART[item.id] = item.quantity;
   }
 
   _incrementQnt(item) {
@@ -248,6 +217,10 @@ class ItemCartComponent extends Component {
       });
 
       CART[item.id] = quantity;
+
+      if (this.props.isChange) {
+        this.props.isChange();
+      }
     });
   }
 
@@ -271,7 +244,11 @@ class ItemCartComponent extends Component {
           decrement_loading: false
         });
 
-        delete CART[item.id];
+        CART[item.id] = 0;
+      }
+
+      if (this.props.isChange) {
+        this.props.isChange();
       }
     });
   }
@@ -283,11 +260,15 @@ class ItemCartComponent extends Component {
       quantity: value
     }, () => {
       CART[item.id]  = value;
+
+      if (this.props.isChange) {
+        this.props.isChange();
+      }
     });
   }
 
   render() {
-    var {item, categorie} = this.props;
+    var {item} = this.props;
 
     var {check_loading, increment_loading, decrement_loading} = this.state;
     var is_processing = check_loading || increment_loading || decrement_loading;
@@ -303,7 +284,6 @@ class ItemCartComponent extends Component {
         <View style={styles.cart_item_info}>
           <View style={[styles.cart_item_info_content]}>
             <Text style={styles.cart_item_info_name}>{item.name}</Text>
-            <Text style={styles.cart_item_cate_name}>{categorie.name}</Text>
             <View style={styles.cart_item_actions}>
               <TouchableHighlight
                 style={styles.cart_item_actions_btn}

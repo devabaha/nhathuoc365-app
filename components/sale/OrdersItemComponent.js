@@ -14,7 +14,10 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
+import * as Animatable from 'react-native-animatable';
 
+@observer
 export class OrdersItemComponent extends Component {
   static propTypes = {
     item: PropTypes.object.isRequired
@@ -36,6 +39,8 @@ export class OrdersItemComponent extends Component {
     var is_ready = false;
     var is_reorder = false;
 
+    var notify = store.notify_admin_chat[item.user_id] || 0;
+
     return (
       <TouchableHighlight
         underlayColor="transparent"
@@ -49,7 +54,7 @@ export class OrdersItemComponent extends Component {
         <View style={styles.orders_item_box}>
           <View style={styles.orders_item_icon_box}>
             <Icon style={styles.orders_item_icon} name="user" size={16} color="#999999" />
-            <Text style={styles.orders_item_icon_title}>{item.user.name}</Text>
+            <Text style={styles.orders_item_icon_title}>{item.user.name || ('#' + item.cart_code)}</Text>
 
             <View style={styles.orders_status_box}>
               <Text style={[styles.orders_status_box_title, {
@@ -105,6 +110,32 @@ export class OrdersItemComponent extends Component {
               </View>
             </View>
           </View>
+
+          {notify > 0 && (
+            <Animatable.View
+              animation="slideInDown"
+              iterationCount="infinite"
+              direction="alternate"
+              style={{
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                width: '30%',
+                minHeight: 20,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'transparent'
+              }}>
+
+              <Icon name="comment-o" size={30} color="red" />
+              <Text style={{
+                position: 'absolute',
+                fontSize: 14,
+                color: "red",
+                fontWeight: '500'
+              }}>{notify}</Text>
+            </Animatable.View>
+          )}
         </View>
       </TouchableHighlight>
     );

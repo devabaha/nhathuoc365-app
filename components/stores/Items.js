@@ -32,6 +32,10 @@ export default class Items extends Component {
       this.props.buyPress(item);
     }
 
+    // if (isIOS) {
+    //   this._getMeasure(item);
+    // }
+
     this.setState({
       buying: true
     }, async () => {
@@ -41,6 +45,10 @@ export default class Items extends Component {
         if (response && response.status == STATUS_SUCCESS) {
 
           action(() => {
+            // if (isIOS) {
+            //   store.setCartFlyShow(true);
+            // }
+
             store.setCartData(response.data);
 
             var index = null, length = 0;
@@ -56,9 +64,27 @@ export default class Items extends Component {
               });
             }
 
+            // if (isIOS) {
+            //   setTimeout(() => {
+            //     store.setCartFlyPosition({
+            //       px: 24,
+            //       py: Util.size.height - NAV_HEIGHT - 64,
+            //       width: 60,
+            //       height: 60
+            //     });
+            //     layoutAnimation();
+            //   }, 500);
+            // }
+
             if (index !== null && index < length) {
               store.setCartItemIndex(index);
+
               Events.trigger(NEXT_PREV_CART, {index});
+
+              setTimeout(() => {
+                store.setCartFlyShow(false);
+                store.setCartFlyImage(null);
+              }, 750);
 
               this.setState({
                 buying: false
@@ -85,6 +111,20 @@ export default class Items extends Component {
     });
   }
 
+  _getMeasure(item) {
+    action(() => {
+      store.setCartFlyImage({uri: item.image});
+    })();
+
+    if (this.ref_item) {
+      this.ref_item.measure((a, b, width, height, px, py) => {
+        action(() => {
+          store.setCartFlyPosition({ px, py: py - (isIOS ? NAV_HEIGHT : 0), width: ITEM_WIDTH, height: ITEM_IMG_HEIGHT });
+        })();
+      });
+    }
+  }
+
   render() {
     let {item, index, onPress} = this.props;
 
@@ -102,12 +142,13 @@ export default class Items extends Component {
             });
           }}
           underlayColor="transparent">
-          <View style={[styles.item_box, {
-            marginRight: index % 2 == 0 ? 8 : 0,
-            marginLeft: index % 2 == 0 ? 8 : 0,
-            justifyContent: 'center',
-            alignItems: 'center'
-          }]}>
+          <View
+            style={[styles.item_box, {
+              marginRight: index % 2 == 0 ? 8 : 0,
+              marginLeft: index % 2 == 0 ? 8 : 0,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }]}>
             {this.state.loadmore ? (
               <Indicator size="small" />
             ) : (
@@ -134,12 +175,15 @@ export default class Items extends Component {
       <TouchableHighlight
         onPress={onPress}
         underlayColor="transparent">
-        <View style={[styles.item_box, {
-          marginRight: index % 2 == 0 ? 8 : 0,
-          marginLeft: index % 2 == 0 ? 8 : 0
-        }]}>
+        <View
+          style={[styles.item_box, {
+            marginRight: index % 2 == 0 ? 8 : 0,
+            marginLeft: index % 2 == 0 ? 8 : 0
+          }]}>
 
-          <View style={styles.item_image_box}>
+          <View
+            ref={ref => this.ref_item = ref}
+            style={styles.item_image_box}>
             <CachedImage mutable style={styles.item_image} source={{uri: item.image}} />
           </View>
 
@@ -217,10 +261,14 @@ Items.PropTypes = {
   onPress: PropTypes.func.isRequired
 }
 
+const ITEM_WIDTH = ~~(Util.size.width / 2 - 12);
+const ITEM_HEIGHT = ~~(Util.size.width / 2 * 1.333);
+const ITEM_IMG_HEIGHT = ~~(Util.size.width / 2 * 1.333 * 0.666);
+
 const styles = StyleSheet.create({
   item_box: {
-    width: ~~(Util.size.width / 2 - 12),
-    height: ~~(Util.size.width / 2 * 1.333),
+    width: ITEM_WIDTH,
+    height: ITEM_HEIGHT,
     // borderWidth: Util.pixel,
     // borderWidth: Util.pixel,
     // borderColor: "#dddddd",

@@ -1,5 +1,6 @@
 import { Image, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, {Component} from 'react';
+import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Communications from 'react-native-communications';
@@ -41,13 +42,16 @@ import store from '../../store/Store';
 
 @observer
 export default class NavBar extends Component {
+  static defaultProps = {
+    onBack: Actions.pop
+  }
 
   _renderLeft() {
-    var {isGrayStyle, hiddenChatIcon} = this.props;
+    var {isGrayStyle, hiddenChatIcon, onBack} = this.props;
 
     return (
       <TouchableOpacity
-        onPress={Actions.pop}
+        onPress={onBack}
         style={[styles.navBarItem]}>
         <View style={[styles.buttonBox, isGrayStyle ? {
           flexDirection: 'row',
@@ -81,13 +85,18 @@ export default class NavBar extends Component {
 
   _renderRight() {
     var {isGrayStyle, hiddenChatIcon, phoneNumber} = this.props;
+    var notify = 0;
+
+    if (store.cart_admin_data) {
+      notify = store.notify_admin_chat[store.cart_admin_data.user.id] || 0;
+    }
 
     return (
       <View style={[styles.navBarItem, { flexDirection: 'row', justifyContent: 'flex-end' }]}>
         {!hiddenChatIcon && (
           <TouchableOpacity
             onPress={() => Actions.sale_chat({
-              title: store.cart_admin_data.user.name,
+              title: store.cart_admin_data.user.name || ('#' + store.cart_admin_data.cart_code),
               hiddenChatIcon: true
             })}
             style={{ paddingRight: 10}}>
@@ -96,14 +105,33 @@ export default class NavBar extends Component {
               <Text style={[styles.buttonTitle, {
                 color: !isGrayStyle ? "#ffffff" : 'rgb(0, 122, 255)'
               }]}>Chat</Text>
+
+              {notify > 0 && (
+                <View style={{
+                  position: 'absolute',
+                  width: 18,
+                  height: 18,
+                  borderRadius: 15,
+                  backgroundColor: 'red',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  top: 0,
+                  right: 0
+                }}>
+                  <Text style={{
+                    color: '#ffffff',
+                    fontSize: 12
+                  }}>{notify}</Text>
+                </View>
+              )}
             </View>
           </TouchableOpacity>
         )}
 
         <TouchableOpacity
           onPress={() => {
-            if (phoneNumber) {
-              Communications.phonecall(phoneNumber, true);
+            if (store.cart_admin_data && store.cart_admin_data.user && store.cart_admin_data.user.tel) {
+              Communications.phonecall(store.cart_admin_data.user.tel, true);
             }
           }}
           style={{ paddingRight: 10}}>

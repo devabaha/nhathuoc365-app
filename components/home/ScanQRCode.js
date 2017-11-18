@@ -19,20 +19,31 @@ export default class ScanQRCode extends Component {
       <View style={styles.container}>
         <QRCodeScanner
           onRead={(e) => {
-            if (e.data) {
-              if (this.props.onBackHandler) {
-                  Actions.pop();
-              }
-              setTimeout(() => {
+            var text_result = e.data;
+            if (text_result) {
+
+              if (isURL(text_result)) {
+                return Actions.webview({
+                  title: text_result,
+                  url: text_result,
+                  type: ActionConst.REPLACE
+                });
+              } else {
                 if (this.props.onBackHandler) {
-                  this.props.onBackHandler(e.data);
-                } else {
-                  Actions.search_store({
-                    site_code: e.data,
-                    type: ActionConst.REPLACE
-                  });
+                    Actions.pop();
                 }
-              }, 450);
+                setTimeout(() => {
+                  if (this.props.onBackHandler) {
+                    this.props.onBackHandler(e.data);
+                  } else {
+                    Actions.search_store({
+                      site_code: e.data,
+                      type: ActionConst.REPLACE
+                    });
+                  }
+                }, 450);
+              }
+
             }
           }}
           topContent={(
