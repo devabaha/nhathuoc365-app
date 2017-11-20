@@ -98,11 +98,10 @@ var currentSceneName = null;
 var currentSceneOnBack = null;
 var backButtonPressedOnceToExit = false;
 
+var _oldName = '';
 const reducerCreate = params => {
   const defaultReducer = Reducer(params);
   return (state, action) => {
-    GoogleAnalytic(action.key);
-
     if (action.type == 'back') {
       Store.runStoreUnMount();
     }
@@ -118,6 +117,12 @@ const reducerCreate = params => {
       StatusBar.setBarStyle('light-content');
     }
     currentTabHandler(currentSceneName);
+
+    if (currentSceneName && _oldName != currentSceneName) {
+      _oldName = currentSceneName;
+
+      GoogleAnalytic(currentSceneName);
+    }
 
     // get current scene onback function
     currentSceneOnBack = getCurrentOnBack(nextState);
@@ -228,8 +233,6 @@ export default class App extends Component {
         action(() => {
           Store.setUserInfo(response.data);
         })();
-
-        this._getData();
       }
     } catch (e) {
       console.warn(e + ' user_login');
@@ -242,6 +245,10 @@ export default class App extends Component {
         ],
         { cancelable: false }
       );
+    } finally {
+      this.setState({
+        finish: true
+      });
     }
   }
 
@@ -265,10 +272,6 @@ export default class App extends Component {
         ],
         { cancelable: false }
       );
-    } finally {
-      this.setState({
-        finish: true
-      });
     }
   }
 
@@ -455,7 +458,7 @@ export default class App extends Component {
       );
     }
 
-    var goAddStore = !this.state.stores_data && this.state.showIntro;
+    var { showIntro } = this.state;
 
     return(
       <Router
@@ -481,7 +484,7 @@ export default class App extends Component {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_home" title="MY FOOD" component={Home} {...custommerNav} />
+                  <Scene key="_home" title="My Food" component={Home} {...custommerNav} />
               </Scene>
 
               {/**
@@ -496,7 +499,7 @@ export default class App extends Component {
                 notify="new_totals"
                 onPress={this._goMainNotify}
                >
-                  <Scene key="_main_notify" title="THÔNG BÁO" component={MainNotify} {...custommerNav} />
+                  <Scene key="_main_notify" title="Thông báo" component={MainNotify} {...custommerNav} />
               </Scene>
 
               {/**
@@ -512,7 +515,7 @@ export default class App extends Component {
                   Actions._orders({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_orders" title="ĐƠN HÀNG" component={Orders} {...custommerNav} />
+                  <Scene key="_orders" title="Đơn hàng" component={Orders} {...custommerNav} />
               </Scene>
 
               {/**
@@ -529,37 +532,37 @@ export default class App extends Component {
                   Actions._account({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene hideNavBar key="_account" title="TÀI KHOẢN" component={Account} {...custommerNav} />
+                  <Scene hideNavBar key="_account" title="Tài khoản" component={Account} {...custommerNav} />
               </Scene>
             </Scene>
 
-            <Scene key="address" title="ĐỊA CHỈ" component={Address} {...custommerNav} />
-            <Scene key="confirm" title="XÁC NHẬN" component={Confirm} {...custommerNav} />
-            <Scene key="create_address" title="THÊM ĐỊA CHỈ" component={CreateAddress} {...custommerNav} />
-            <Scene key="register" title="ĐĂNG KÝ" component={Register} {...custommerNav} />
-            <Scene key="login" title="ĐĂNG NHẬP" component={Login} {...custommerNav} />
-            <Scene key="cart" title="GIỎ HÀNG" component={Cart} {...custommerNav} />
-            <Scene key="stores" title="CỬA HÀNG" component={Stores} {...custommerNav} />
-            <Scene key="stores_list" title="CỬA HÀNG" component={StoresList} {...custommerNav} />
-            <Scene key="search" title="TÌM KIẾM" component={Search} {...custommerNav} />
-            <Scene key="item" title="CHI TIẾT" component={Item} {...custommerNav} />
+            <Scene key="address" title="Địa chỉ" component={Address} {...custommerNav} />
+            <Scene key="confirm" title="Xác nhận" component={Confirm} {...custommerNav} />
+            <Scene key="create_address" title="Thêm địa chỉ" component={CreateAddress} {...custommerNav} />
+            <Scene key="register" title="Đăng ký" component={Register} {...custommerNav} />
+            <Scene key="login" title="Đăng nhập" component={Login} {...custommerNav} />
+            <Scene key="cart" title="Giỏ hàng" component={Cart} {...custommerNav} />
+            <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
+            <Scene key="stores_list" title="Cửa hàng" component={StoresList} {...custommerNav} />
+            <Scene key="search" title="Tìm kiếm" component={Search} {...custommerNav} />
+            <Scene key="item" title="Chi tiết sản phẩm" component={Item} {...custommerNav} />
             <Scene key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
-            <Scene key="orders_item" title="CHI TIẾT" component={OrdersItem} {...custommerNav} />
-            <Scene key="notifys" title="TIN TỨC" component={Notifys} {...custommerNav} />
-            <Scene key="notify_item" title="CHI TIẾT" component={NotifyItem} {...custommerNav} />
-            <Scene key="search_store" title="TÌM CỬA HÀNG" component={SearchStore} {...custommerNav} />
-            <Scene key="scan_qr_code" title="QUÉT MÃ" component={ScanQRCode} {...custommerNav} />
-            <Scene key="list_store" title="CỬA HÀNG" component={ListStore} {...custommerNav} />
-            <Scene initial={goAddStore} key="add_store" title="THÊM CỬA HÀNG" component={AddStore} {...custommerNav} />
+            <Scene key="orders_item" title="Chi tiết đơn hàng" component={OrdersItem} {...custommerNav} />
+            <Scene key="notifys" title="Tin tức" component={Notifys} {...custommerNav} />
+            <Scene key="notify_item" title="Chi tiết" component={NotifyItem} {...custommerNav} />
+            <Scene key="search_store" title="Tìm cửa hàng" component={SearchStore} {...custommerNav} />
+            <Scene key="scan_qr_code" title="Quét mã" component={ScanQRCode} {...custommerNav} />
+            <Scene key="list_store" title="Cửa hàng" component={ListStore} {...custommerNav} />
+            <Scene key="add_store" title="Thêm cửa hàng" component={AddStore} {...custommerNav} />
             <Scene key="store_orders" title="" component={StoreOrders} {...custommerNav} />
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
-            <Scene key="intro" hideNavBar title="" component={Intro} {...custommerNav} />
+            <Scene key="intro" initial={showIntro} hideNavBar title="" component={Intro} {...custommerNav} />
 
             {/* Backend */}
-            <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="DANH SÁCH CỬA HÀNG" component={Dashboard} {...custommerNav} />
-            <Scene key="sale_menu" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="BẢNG ĐIỀU KHIỂN" component={SaleMenu} {...custommerNav} />
-            <Scene key="sale_stores" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="CỬA HÀNG" component={SaleStores} {...custommerNav} />
+            <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />
+            <Scene key="sale_menu" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Bảng điều khiển" component={SaleMenu} {...custommerNav} />
+            <Scene key="sale_stores" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Cửa hàng" component={SaleStores} {...custommerNav} />
             <Scene key="sale" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Sale} {...custommerNav} />
             <Scene key="order" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Order} navBar={CustomNavBar} />
             <Scene key="sale_user_info" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={UserInfo} navBar={CustomNavBar} />

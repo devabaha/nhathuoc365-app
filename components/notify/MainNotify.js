@@ -69,7 +69,7 @@ export default class MainNotify extends Component {
           notify: "new_sys_news",
           onPress: () => {
             Actions.notifys({
-              title: "TỪ MY FOOD",
+              title: "Từ My Food",
               news_type: "/2"
             });
           },

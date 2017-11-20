@@ -171,11 +171,9 @@ export default class Account extends Component {
   }
 
   _onRefresh() {
-    this.setState({refreshing: true});
-
-    setTimeout(() => {
-      this.setState({refreshing: false});
-    }, 1000);
+    this.setState({refreshing: true}, () => {
+      this._login(1000);
+    });
   }
 
   _showSticker() {

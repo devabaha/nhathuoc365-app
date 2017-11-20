@@ -35,6 +35,8 @@ export default class Intro extends Component {
 
   componentDidMount() {
     this._getData();
+
+    GoogleAnalytic('intro');
   }
 
   async _getData() {

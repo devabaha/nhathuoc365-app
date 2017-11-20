@@ -301,7 +301,7 @@ export default class Address extends Component {
                             onPress={() => {
                               Actions.create_address({
                                 edit_data: item,
-                                title: "SỬA ĐỊA CHỈ",
+                                title: "Sửa địa chỉ",
                                 addressReload: this._getData,
                                 from_page: this.props.from_page
                               });

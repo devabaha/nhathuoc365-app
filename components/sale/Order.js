@@ -236,7 +236,7 @@ export default class Order extends Component {
         bgrIcon: '#b3b3b3',
         onPress: () => {
           Actions.sale_user_info({
-            title: 'KHÁCH HÀNG',
+            title: 'Khách hàng',
             cart_data
           });
         }
@@ -493,7 +493,7 @@ export default class Order extends Component {
                   underlayColor="transparent"
                   onPress={() => {
                     Actions.list_product({
-                      title: 'THÊM MẶT HÀNG',
+                      title: 'Thêm mặt hàng',
                       cart_data,
                       reloadData: this._getData
                     });
@@ -637,7 +637,7 @@ export default class Order extends Component {
 
     Actions.edit_list_product({
       cart_data,
-      title: 'CHỈNH SỬA',
+      title: 'Chỉnh sửa',
       reloadData: this._getData,
       navFilterHidden: true
     });
@@ -662,7 +662,7 @@ export default class Order extends Component {
   _confirmSaveCart(cart_data) {
 
     Actions.list_product({
-      title: 'THÊM MẶT HÀNG',
+      title: 'Thêm mặt hàng',
       cart_data,
       reloadData: this._getData
     });
