@@ -18,7 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import Swiper from 'react-native-swiper';
-import HTMLView from 'react-native-htmlview';
+import AutoHeightWebView from 'react-native-autoheight-webview';
 import store from '../../store/Store';
 import ImageViewer from 'react-native-image-zoom-viewer';
 
@@ -503,11 +503,39 @@ export default class Item extends Component {
 
           <View style={styles.item_content_text}>
             {item_data != null ? (
-              <HTMLView
-                renderNode={this.renderNode.bind(this)}
-                value={item_data.content}
-                stylesheet={html_styles}
-              />
+              <AutoHeightWebView
+                onError={() => console.log('on error')}
+                onLoad={() => console.log('on load')}
+                onLoadStart={() => console.log('on load start')}
+                onLoadEnd={() => console.log('on load end')}
+                onShouldStartLoadWithRequest={result => {
+                  console.log(result)
+                  return true;
+                }}
+                style={{
+                  paddingHorizontal: 6
+                }}
+                onHeightUpdated={height => this.setState({ height })}
+                source={{ html: item_data.content }}
+                customScript={`
+
+                  `}
+                customStyle={`
+                  * {
+                    font-family: 'arial';
+                  }
+                  a {
+                    pointer-events:none;
+                    text-decoration: none !important;
+                    color: #404040 !important;
+                  }
+                  p {
+                    font-size: 15px;
+                    line-height: 24px
+                  }
+                  img {
+                    max-width: 100% !important;
+                  }`} />
             ) : (
               <Indicator size="small" />
             )}
@@ -656,32 +684,6 @@ export default class Item extends Component {
       );
     } finally {
 
-    }
-  }
-
-  renderNode(node, index, siblings, parent, defaultRenderer) {
-    if (node.name == 'img') {
-      const element = node.attribs;
-
-      return (
-        <View
-          style={{
-            width: Util.size.width - 30,
-            height: 200,
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginVertical: 12
-          }}>
-          <Image
-            style={{
-              width: Util.size.width * 0.8,
-              height: 200,
-              resizeMode: 'contain'
-            }}
-            source={{uri: element.src}}
-            />
-        </View>
-      );
     }
   }
 }
@@ -858,7 +860,6 @@ const styles = StyleSheet.create({
 
   item_content_text: {
     width: '100%',
-    paddingHorizontal: 15,
     paddingTop: 16
   },
   item_content_desc: {

@@ -3,6 +3,7 @@ package vn.com.myfood;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.dscj.autoheightwebview.AutoHeightWebViewPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AutoHeightWebViewPackage(),
             new ImagePickerPackage(),
             new RNFetchBlobPackage(),
             new ReactNativeOneSignalPackage(),
