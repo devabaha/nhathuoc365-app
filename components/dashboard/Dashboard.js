@@ -70,7 +70,7 @@ export default class Dashboard extends Component {
   itemListOnPress = (item) => {
     Actions.sale_menu({
       item_data: item,
-      title: item.name.toUpperCase()
+      title: item.name
     });
   }
 
