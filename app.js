@@ -458,7 +458,8 @@ export default class App extends Component {
       );
     }
 
-    var { showIntro } = this.state;
+    // var { showIntro } = this.state;
+    var showIntro = false;
 
     return(
       <Router

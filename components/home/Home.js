@@ -28,6 +28,8 @@ import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
 import TabTutorial from '../tutorial/TabTutorial';
 
+import HomeNavBar from './HomeNavBar';
+
 @observer
 export default class Home extends Component {
   constructor(props) {
@@ -57,7 +59,8 @@ export default class Home extends Component {
 
   componentDidMount() {
     Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this)
+      renderRightButton: this._renderRightButton.bind(this),
+      navBar: HomeNavBar
     });
 
     this._getData();
@@ -169,7 +172,18 @@ export default class Home extends Component {
         style={styles.right_btn_add_store}
         underlayColor="transparent"
         onPress={this._showPopupAddStore.bind(this)}>
-        <Icon name="plus" size={20} color="#ffffff" />
+        <View style={{
+          height: 34,
+          alignItems: 'center',
+          marginTop: -8
+        }}>
+          <Icon name="phone" size={22} color="#ffffff" />
+          <Text style={{
+            fontSize: 10,
+            color: '#ffffff',
+            marginTop: 2
+          }}>Gọi hỗ trợ</Text>
+        </View>
       </TouchableHighlight>
     );
   }
@@ -383,7 +397,7 @@ export default class Home extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
                     <Icon name="search-plus" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Nhập mã cửa hàng</Text>
+                    <Text style={styles.add_store_action_label}>Tìm cửa hàng</Text>
                   </View>
                 </TouchableHighlight>
 
@@ -410,7 +424,7 @@ export default class Home extends Component {
               marginTop: 4,
               flexDirection: 'row'
             }}>
-              <Text style={styles.add_store_title}>TIN KHUYẾN MÃI</Text>
+              <Text style={styles.add_store_title}>TIN TỨC</Text>
 
               {view_all_newses && (
                 <View style={styles.right_title_btn_box}>
@@ -519,7 +533,7 @@ export default class Home extends Component {
             backgroundColor={DEFAULT_COLOR}
             onPress={this._goSearchStore}
             icon={{name: 'search-plus', type: 'font-awesome'}}
-            title='Nhập mã cửa hàng' />
+            title='Tìm cửa hàng' />
 
           {/*<Button
             buttonStyle={styles.modal_add_store_btn}

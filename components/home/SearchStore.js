@@ -44,7 +44,7 @@ export default class SearchStore extends Component {
     var options = {
       showSearchBar: true,
       searchValue: site_code || '',
-      placeholder: "Nhập mã cửa hàng",
+      placeholder: "Tên, địa chỉ, mã cửa hàng",
       onChangeText: this._onChangeSearch.bind(this),
       onSubmitEditing: this._search_store.bind(this),
       onSearchCancel: this._onSearchCancel.bind(this),
