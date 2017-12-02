@@ -143,7 +143,7 @@ export default class SearchStore extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           this.setState({
-            search_data: [response.data],
+            search_data: response.data,
             loading: false
           });
         } else {

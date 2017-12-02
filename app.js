@@ -45,6 +45,7 @@ import Store from './store/Store';
 import Intro from './components/intro/Intro';
 import AddStore from './components/home/AddStore';
 import Home from './components/home/Home';
+import HomeNavBar from './components/home/HomeNavBar';
 import Notifys from './components/notify/Notifys';
 import MainNotify from './components/notify/MainNotify';
 import Orders from './components/orders/Orders';
@@ -485,7 +486,7 @@ export default class App extends Component {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_home" title="My Food" component={Home} {...custommerNav} />
+                  <Scene key="_home" title="My Food" component={Home} {...custommerNav} navBar={HomeNavBar} />
               </Scene>
 
               {/**

@@ -62,7 +62,7 @@ export default class Search extends Component {
     Actions.refresh({
       showSearchBar: true,
       searchValue: '',
-      placeholder: this.props.title,
+      placeholder: 'Nhập tên mặt hàng',
       autoFocus: true,
       inputAnimate: true,
       onSubmitEditing: () => {

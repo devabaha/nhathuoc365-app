@@ -28,8 +28,6 @@ import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
 import TabTutorial from '../tutorial/TabTutorial';
 
-import HomeNavBar from './HomeNavBar';
-
 @observer
 export default class Home extends Component {
   constructor(props) {
@@ -58,10 +56,9 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this),
-      navBar: HomeNavBar
-    });
+    // Actions.refresh({
+    //   renderRightButton: this._renderRightButton.bind(this)
+    // });
 
     this._getData();
 

@@ -76,7 +76,7 @@ export default class Item extends Component {
     Actions.refresh({
       showSearchBar: true,
       smallSearch: true,
-      placeholder: props.title,
+      placeholder: 'Nhập tên mặt hàng',
       searchOnpress: () => {
         return Actions.search({
           title: `Tìm kiếm tại ${store.store_data.name}`,
@@ -627,10 +627,6 @@ export default class Item extends Component {
       item_data: null
     }, () => {
       this._getData(500);
-
-      Actions.refresh({
-        placeholder: item.name
-      });
     });
   }
 

@@ -620,6 +620,7 @@
 				00E356EF1AD99517003FC87E /* my_foodTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				792DE8E948F64073AE2D11E0 /* Resources */,
+				8AC77BC41FD1674F00A3429D /* Recovered References */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -690,6 +691,20 @@
 				8A65CA561F3ACB24009A4B2A /* libRNVectorIcons.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		8AC77BC41FD1674F00A3429D /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				023EE467826B4F929A69CAD8 /* libRNDeviceInfo.a */,
+				4B01F1303330448AAC9D52C7 /* libRNVectorIcons.a */,
+				12AFD630FC724DD5AAD8B98D /* libRCTCamera.a */,
+				547874F2605642798B688F12 /* libRCTOneSignal.a */,
+				61B8C75F23A7465294FC3801 /* libLRDRCTSimpleToast.a */,
+				270EBB04EA2E44CBA8283DCA /* libRNFetchBlob.a */,
+				226104DF636C4029A36287A3 /* libRNImagePicker.a */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

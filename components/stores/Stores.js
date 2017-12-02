@@ -74,7 +74,7 @@ export default class Stores extends Component {
     Actions.refresh({
       showSearchBar: true,
       smallSearch: true,
-      placeholder: title,
+      placeholder: 'Nhập tên mặt hàng',
       searchOnpress: () => {
         return Actions.search({
           title
@@ -121,10 +121,6 @@ export default class Stores extends Component {
       var response = await APIHandler.site_info(store.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
-        Actions.refresh({
-          placeholder: response.data.name
-        });
-
         setTimeout(() => {
           this.setState({
             categories_data: [{id: 0, name: "Tất cả"}, ...response.data.categories],
