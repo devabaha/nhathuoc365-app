@@ -395,6 +395,101 @@ export default class Account extends Component {
 
     return (
       <View style={styles.container}>
+        <View style={styles.profile_cover_box}>
+          <ImageBackground style={styles.profile_cover} source={require('../../images/profile_bgr.jpg')}>
+
+            <TouchableHighlight
+              style={styles.profile_avatar_box}
+              underlayColor="#cccccc"
+              onPress={this._onTapAvatar.bind(this)}>
+              {avatar}
+            </TouchableHighlight>
+
+            {is_login ? (
+              <View style={{
+                position: 'absolute',
+                left: 120,
+                bottom: 48,
+                backgroundColor: "transparent"
+              }}>
+
+              <Text style={{
+                color: "#ffffff",
+                fontSize: 16,
+
+              }}>{user_info.name}</Text>
+
+              <Text style={{
+                color: "#ffffff",
+                fontSize: 12,
+                marginTop: 4
+              }}>{user_info.tel}</Text>
+
+              </View>
+            ) : (
+              <View style={styles.profile_button_box}>
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Actions.register({});
+                  }}>
+
+                  <View style={[styles.profile_button_login_box, {
+                    marginRight: 8,
+                    backgroundColor: "#666666"
+                  }]}>
+                    <Icon name="user-plus" size={14} color="#ffffff" />
+                    <Text style={styles.profile_button_title}>Đăng ký</Text>
+                  </View>
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Actions.login();
+                  }}>
+
+                  <View style={[styles.profile_button_login_box, {
+                    backgroundColor: DEFAULT_COLOR
+                  }]}>
+                    <Icon name="sign-in" size={14} color="#ffffff" />
+                    <Text style={styles.profile_button_title}>Đăng nhập</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            )}
+
+            {is_login && (
+              <View style={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0
+              }}>
+                {logout_loading ? (
+                  <Indicator size="small" />
+                ) : (
+                  <TouchableHighlight
+                    style={{
+                      paddingVertical: 8,
+                      paddingHorizontal: 15
+                    }}
+                    underlayColor="transparent"
+                    onPress={this._onLogout.bind(this)}>
+                    <Text style={{
+                      color: "#cccccc",
+                      fontSize: 10
+                    }}>
+                      <Icon name="sign-out" size={10} color="#cccccc" />
+                      {" Đăng xuất"}
+                    </Text>
+                  </TouchableHighlight>
+                )}
+              </View>
+            )}
+
+          </ImageBackground>
+        </View>
+
         <ScrollView
           onScroll={(event) => {
             this.setState({
@@ -407,103 +502,7 @@ export default class Account extends Component {
               refreshing={this.state.refreshing}
               onRefresh={this._onRefresh.bind(this)}
             />
-          }
-          >
-
-          <View style={styles.profile_cover_box}>
-            <ImageBackground style={styles.profile_cover} source={require('../../images/profile_bgr.jpg')}>
-
-              <TouchableHighlight
-                style={styles.profile_avatar_box}
-                underlayColor="#cccccc"
-                onPress={this._onTapAvatar.bind(this)}>
-                {avatar}
-              </TouchableHighlight>
-
-              {is_login ? (
-                <View style={{
-                  position: 'absolute',
-                  left: 120,
-                  bottom: 48,
-                  backgroundColor: "transparent"
-                }}>
-
-                <Text style={{
-                  color: "#ffffff",
-                  fontSize: 16,
-
-                }}>{user_info.name}</Text>
-
-                <Text style={{
-                  color: "#ffffff",
-                  fontSize: 12,
-                  marginTop: 4
-                }}>{user_info.tel}</Text>
-
-                </View>
-              ) : (
-                <View style={styles.profile_button_box}>
-                  <TouchableHighlight
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions.register({});
-                    }}>
-
-                    <View style={[styles.profile_button_login_box, {
-                      marginRight: 8,
-                      backgroundColor: "#666666"
-                    }]}>
-                      <Icon name="user-plus" size={14} color="#ffffff" />
-                      <Text style={styles.profile_button_title}>Đăng ký</Text>
-                    </View>
-                  </TouchableHighlight>
-
-                  <TouchableHighlight
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions.login();
-                    }}>
-
-                    <View style={[styles.profile_button_login_box, {
-                      backgroundColor: DEFAULT_COLOR
-                    }]}>
-                      <Icon name="sign-in" size={14} color="#ffffff" />
-                      <Text style={styles.profile_button_title}>Đăng nhập</Text>
-                    </View>
-                  </TouchableHighlight>
-                </View>
-              )}
-
-              {is_login && (
-                <View style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0
-                }}>
-                  {logout_loading ? (
-                    <Indicator size="small" />
-                  ) : (
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 8,
-                        paddingHorizontal: 15
-                      }}
-                      underlayColor="transparent"
-                      onPress={this._onLogout.bind(this)}>
-                      <Text style={{
-                        color: "#cccccc",
-                        fontSize: 10
-                      }}>
-                        <Icon name="sign-out" size={10} color="#cccccc" />
-                        {" Đăng xuất"}
-                      </Text>
-                    </TouchableHighlight>
-                  )}
-                </View>
-              )}
-
-            </ImageBackground>
-          </View>
+          }>
 
           {this.state.options && (
             <SelectionList
