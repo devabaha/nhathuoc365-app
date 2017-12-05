@@ -182,14 +182,7 @@ export default class Login extends Component {
       } catch (e) {
         console.warn(e + ' user_login_password');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._login.bind(this, name, tel, password)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_login_password', this._login.bind(this, name, tel, password));
       } finally {
 
       }

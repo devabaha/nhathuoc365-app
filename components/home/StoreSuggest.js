@@ -12,6 +12,7 @@ import {
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
+import store from '../../store/Store';
 
 export default class StoreSuggest extends Component {
   constructor(props) {
@@ -38,14 +39,7 @@ export default class StoreSuggest extends Component {
     } catch (e) {
       console.warn(e + ' user_list_site');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getData.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_list_site', this._getData.bind(this));
     } finally {
 
     }

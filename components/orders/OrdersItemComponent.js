@@ -41,14 +41,7 @@ export default class OrdersItemComponent extends Component {
     } catch (e) {
       console.warn(e + ' site_cart');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getCart.bind(this, callback)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart', this._getCart.bind(this, callback));
     } finally {
 
     }

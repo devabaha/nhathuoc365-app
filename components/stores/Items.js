@@ -97,14 +97,7 @@ export default class Items extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_adding');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._addCart.bind(this, item)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
       } finally {
 
       }

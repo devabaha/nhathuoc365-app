@@ -15,6 +15,7 @@ exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
 
 // Store
 exports.USER_SEARCH_SITE = MY_FOOD_API + 'apiUser/search_site';
+exports.USER_SEARCH_SITES = MY_FOOD_API + 'apiUser/search_sites';
 exports.USER_ADD_SITE = MY_FOOD_API + 'apiUser/add_site';
 exports.USER_LIST_SITE = MY_FOOD_API + 'apiUser/list_site';
 exports.SITE_INFO = MY_FOOD_API + 'apiSite/info';

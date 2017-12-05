@@ -82,14 +82,7 @@ export default class Address extends Component {
     } catch (e) {
       console.warn(e + ' user_address');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_address', this._getData.bind(this, delay));
     } finally {
 
     }
@@ -130,14 +123,7 @@ export default class Address extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_address');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._addSiteCart.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_address', this._addSiteCart.bind(this));
       } finally {
 
       }

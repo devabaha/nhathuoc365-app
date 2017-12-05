@@ -15,6 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import AutoHeightWebView from 'react-native-autoheight-webview';
+import store from '../../store/Store';
 
 @observer
 export default class NotifyItem extends Component {
@@ -64,14 +65,7 @@ export default class NotifyItem extends Component {
       } catch (e) {
         console.warn(e + ' user_news');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_news', this._getData.bind(this, delay));
       } finally {
 
       }

@@ -243,14 +243,7 @@ export default class Account extends Component {
       }).catch((error) => {
           console.warn(error + ' url_user_add_avatar');
 
-          return Alert.alert(
-            'Thông báo',
-            'Kết nối mạng bị lỗi',
-            [
-              {text: 'Thử lại', onPress: this._uploadAvatar.bind(this, response)},
-            ],
-            { cancelable: false }
-          );
+          store.addApiQueue('url_user_add_avatar', this._uploadAvatar.bind(this, response));
       });
     });
   }
@@ -374,14 +367,7 @@ export default class Account extends Component {
       } catch (e) {
         console.warn(e + ' user_login');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._login.bind(this, delay)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_login', this._login.bind(this, delay));
       }
     });
   }
@@ -575,14 +561,7 @@ export default class Account extends Component {
     } catch (e) {
       console.warn(e + ' user_logout');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._logout.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_logout', this._logout.bind(this));
     } finally {
       this.setState({
         logout_loading: false

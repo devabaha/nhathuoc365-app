@@ -94,14 +94,7 @@ export default class StoresList extends Component {
       } catch (e) {
         console.warn(e + ' user_sites');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_sites', this._getData.bind(this, delay));
       } finally {
 
       }

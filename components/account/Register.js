@@ -182,14 +182,7 @@ export default class Register extends Component {
       } catch (e) {
         console.warn(e + ' user_register');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._register.bind(this, name, tel, password)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_register', this._register.bind(this, name, tel, password));
       } finally {
 
       }
@@ -422,14 +415,7 @@ export default class Register extends Component {
       } catch (e) {
         console.warn(e + ' user_verify_otp');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._verify.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_verify_otp', this._verify.bind(this));
       } finally {
         this.setState({
           verify_loadding: false

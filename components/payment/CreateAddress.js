@@ -176,14 +176,7 @@ export default class CreateAddress extends Component {
       } catch (e) {
         console.warn(e + ' site_add_address');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._onSave.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_add_address', this._onSave.bind(this));
       } finally {
 
       }
@@ -209,14 +202,7 @@ export default class CreateAddress extends Component {
     } catch (e) {
       console.warn(e + ' site_cart');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getCart.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart', this._getCart.bind(this));
     } finally {
 
     }
@@ -250,14 +236,7 @@ export default class CreateAddress extends Component {
     } catch (e) {
       console.warn(e + ' user_delete_address');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._removeAddressItem.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_delete_address', this._removeAddressItem.bind(this));
     } finally {
 
     }

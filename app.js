@@ -29,13 +29,8 @@ import {
   Actions,
   ActionConst
 } from 'react-native-router-flux';
-import OneSignal from 'react-native-onesignal';
 
-import {
-  Analytics,
-  Hits as GAHits,
-  Experiment as GAExperiment
-} from 'react-native-google-analytics';
+import OneSignal from 'react-native-onesignal';
 
 // store
 import Store from './store/Store';
@@ -71,6 +66,7 @@ import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import ListProduct from './components/sale/ListProduct';
 import EditListProduct from './components/sale/EditListProduct';
+import Error from './components/Error';
 
 // Backend
 import Dashboard from './components/dashboard/Dashboard';
@@ -112,11 +108,6 @@ const reducerCreate = params => {
 
     // get current scene key
     currentSceneName = getCurrentName(nextState);
-    if (isIOS && ['sale_user_info', 'sale_chat', 'dashboard'].indexOf(currentSceneName) != -1) {
-      StatusBar.setBarStyle('dark-content');
-    } else {
-      StatusBar.setBarStyle('light-content');
-    }
     currentTabHandler(currentSceneName);
 
     if (currentSceneName && _oldName != currentSceneName) {
@@ -166,6 +157,7 @@ function getCurrentOnBack(obj) {
   return onBack;
 }
 
+@observer
 export default class App extends Component {
   constructor() {
     super();
@@ -179,30 +171,32 @@ export default class App extends Component {
 
   componentWillMount() {
     // load
-    storage.load({
-      key: STORAGE_INTRO_KEY,
-      autoSync: true,
-      syncInBackground: true,
-      syncParams: {
-        extraFetchOptions: {
-        },
-        someFlag: true,
-      },
-    }).then(data => {
-      this._endLoad(false);
+    // storage.load({
+    //   key: STORAGE_INTRO_KEY,
+    //   autoSync: true,
+    //   syncInBackground: true,
+    //   syncParams: {
+    //     extraFetchOptions: {
+    //     },
+    //     someFlag: true,
+    //   },
+    // }).then(data => {
+    //   this._endLoad(false);
+    //
+    //   // StatusBar
+    //   if (isIOS) {
+    //     StatusBar.setBarStyle('light-content');
+    //   }
+    // }).catch(err => {
+    //   this._endLoad(true);
+    //
+    //   // StatusBar
+    //   if (isIOS) {
+    //     StatusBar.setBarStyle('dark-content');
+    //   }
+    // });
 
-      // StatusBar
-      if (isIOS) {
-        StatusBar.setBarStyle('light-content');
-      }
-    }).catch(err => {
-      this._endLoad(true);
-
-      // StatusBar
-      if (isIOS) {
-        StatusBar.setBarStyle('dark-content');
-      }
-    });
+    StatusBar.setBarStyle('dark-content');
   }
 
   _endLoad(showIntro) {
@@ -223,6 +217,10 @@ export default class App extends Component {
     this._login();
   }
 
+  componentWillReceiveProps(nextProps) {
+
+  }
+
   // login khi mở app
   async _login() {
     try {
@@ -234,22 +232,16 @@ export default class App extends Component {
         action(() => {
           Store.setUserInfo(response.data);
         })();
+        this.setState({
+          finish: true
+        });
+
+        StatusBar.setBarStyle('light-content');
       }
     } catch (e) {
       console.warn(e + ' user_login');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._login.bind(this)},
-        ],
-        { cancelable: false }
-      );
-    } finally {
-      this.setState({
-        finish: true
-      });
+      Store.addApiQueue('user_login', this._login.bind(this));
     }
   }
 
@@ -265,14 +257,7 @@ export default class App extends Component {
     } catch (e) {
       console.warn(e + ' user_sites');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getData.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_sites', this._getData.bind(this));
     }
   }
 
@@ -336,14 +321,7 @@ export default class App extends Component {
     } catch (e) {
       console.warn(e + ' site_info');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._pushGoStore.bind(this, page_id)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
     } finally {
 
     }
@@ -373,14 +351,7 @@ export default class App extends Component {
     } catch (e) {
       console.warn(e + ' user_news');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._pushGoNews.bind(this, page_id)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     } finally {
 
     }
@@ -404,14 +375,7 @@ export default class App extends Component {
         } catch (e) {
           console.warn(e + ' add_push_token');
 
-          return Alert.alert(
-            'Thông báo',
-            'Kết nối mạng bị lỗi',
-            [
-              {text: 'Thử lại', onPress: this._onIds.bind(this, device)},
-            ],
-            { cancelable: false }
-          );
+          store.addApiQueue('add_push_token', this._onIds.bind(this, device));
         } finally {
 
         }
@@ -451,9 +415,15 @@ export default class App extends Component {
   }
 
   render() {
-    if (this.state.loading || this.state.finish == false) {
+    if (!this.state.finish) {
       return(
         <View style={styles.container}>
+          {!Store.isConnected && (
+            <View style={styles.content}>
+              <Text style={styles.message}>Kiểm tra kết nối internet!</Text>
+            </View>
+          )}
+
           <Indicator size="small" />
         </View>
       );
@@ -573,7 +543,7 @@ export default class App extends Component {
             <Scene key="edit_list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={EditListProduct} navBar={CustomNavBar2} />
 
           </Scene>
-
+          <Scene key="error" component={Error}/>
         </Scene>
       </Router>
     );
@@ -590,5 +560,17 @@ const styles = StyleSheet.create({
     borderColor    : '#cccccc',
     backgroundColor: 'white',
     opacity        : 1
+  },
+  content: {
+    width: Util.size.width,
+    height: 28,
+    backgroundColor: '#FFD2D2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: isIOS ? 20 : 0
+  },
+  message: {
+    color: '#D8000C',
+    fontSize: 14
   }
 });

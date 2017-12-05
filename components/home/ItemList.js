@@ -102,14 +102,7 @@ export default class ItemList extends Component {
     } catch (e) {
       console.warn(e + ' user_remove_site');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._removeStoreTrue.bind(this, item)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_remove_site', this._removeStoreTrue.bind(this, item));
     } finally {
 
     }

@@ -118,16 +118,7 @@ export default class Confirm extends Component {
     } catch (e) {
       console.warn(e + ' site_info');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: () => {
-            this._siteInfo(site_id);
-          }},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_info', this._siteInfo.bind(this, site_id));
     } finally {
 
     }
@@ -148,14 +139,7 @@ export default class Confirm extends Component {
     } catch (e) {
       console.warn(e + ' site_cart_by_id');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getOrdersItem.bind(this, site_id, page_id)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_by_id', this._getOrdersItem.bind(this, site_id, page_id));
     } finally {
 
     }
@@ -200,14 +184,7 @@ export default class Confirm extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_node');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._updateCartNote.bind(this, callback)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_node', this._updateCartNote.bind(this, callback));
       } finally {
         this.setState({
           continue_loading: false
@@ -262,14 +239,7 @@ export default class Confirm extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_orders');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._siteCartOrders.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_orders', this._siteCartOrders.bind(this));
       } finally {
 
       }
@@ -401,14 +371,7 @@ export default class Confirm extends Component {
     } catch (e) {
       console.warn(e + ' site_cart_remove');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._removeCartItem.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
 
     }
@@ -1166,14 +1129,7 @@ export default class Confirm extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_cancel');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._cancelCart.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
       } finally {
 
       }
@@ -1280,14 +1236,7 @@ export default class Confirm extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_reorder');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._coppyCart.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       } finally {
 
       }
@@ -1317,14 +1266,7 @@ export default class Confirm extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_edit');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._editCart.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_edit', this._editCart.bind(this));
       } finally {
 
       }
@@ -1400,14 +1342,7 @@ class ItemCartComponent extends Component {
           console.warn(e + ' site_cart_select');
         }
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._checkBoxHandler.bind(this, item)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_select', this._checkBoxHandler.bind(this, item));
       } finally {
         this.setState({
           check_loading: false
@@ -1443,14 +1378,7 @@ class ItemCartComponent extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_down');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._item_qnt_decrement.bind(this, item)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_down', this._item_qnt_decrement.bind(this, item));
       } finally {
         this.setState({
           decrement_loading: false
@@ -1476,14 +1404,7 @@ class ItemCartComponent extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_up');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._item_qnt_increment.bind(this, item)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_up', this._item_qnt_increment.bind(this, item));
       } finally {
         this.setState({
           increment_loading: false

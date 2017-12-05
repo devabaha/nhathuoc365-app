@@ -14,6 +14,22 @@ class Store {
       this.setCartItemIndex(0);
     });
 
+    reaction(() => this.isConnected, () => {
+      if (this.isConnected) {
+        var queue = Object.keys(this.apiQueue);
+        if (queue.length > 0) {
+          queue.map(key => {
+            let queueFunc = this.apiQueue[key];
+            if (typeof queueFunc == 'function') {
+              queueFunc();
+            }
+          });
+        }
+
+        this.apiQueue = {};
+      }
+    });
+
     // Keyboard handler
     Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
@@ -69,6 +85,10 @@ class Store {
       }
     } catch (e) {
       console.warn(e + ' user_notify_chat');
+
+      action(() => {
+        this.setConnect(false);
+      })();
     } finally {
       this.getNotifyChatFlag = true;
     }
@@ -284,6 +304,22 @@ class Store {
 
   @action setCartFlyPosition(data) {
     this.cart_fly_position = data;
+  }
+
+
+
+
+  @observable isConnected = true;
+  apiQueue = {};
+
+  @action setConnect(flag) {
+    this.isConnected = flag;
+  }
+
+  addApiQueue(key, func) {
+    if (typeof func == 'function' && key) {
+      this.apiQueue[key] = func;
+    }
   }
 
 }

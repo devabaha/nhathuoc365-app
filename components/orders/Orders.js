@@ -125,14 +125,7 @@ export default class Orders extends Component {
     } catch (e) {
       console.warn(e + ' user_cart_list');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getData.bind(this, delay, noScroll)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_cart_list', this._getData.bind(this, delay, noScroll));
     } finally {
       store.getNoitify();
     }
@@ -266,14 +259,7 @@ export default class Orders extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_reorder');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._coppyCart.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       } finally {
 
       }
@@ -298,14 +284,7 @@ export default class Orders extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_edit');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._editCart.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_edit', this._editCart.bind(this));
       } finally {
 
       }
@@ -338,14 +317,7 @@ export default class Orders extends Component {
       } catch (e) {
         console.warn(e + ' site_cart_cancel');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._cancelCart.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
       } finally {
 
       }

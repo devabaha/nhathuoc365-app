@@ -87,14 +87,7 @@ export default class Cart extends Component {
     } catch (e) {
       console.warn(e + ' site_cart');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getCart.bind(this, delay)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart', this._getCart.bind(this, delay));
     } finally {
 
     }
@@ -164,14 +157,7 @@ export default class Cart extends Component {
     } catch (e) {
       console.warn(e + ' site_cart_down');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._item_qnt_decrement.bind(this, item)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_down', this._item_qnt_decrement.bind(this, item));
     } finally {
 
     }
@@ -191,14 +177,7 @@ export default class Cart extends Component {
     } catch (e) {
       console.warn(e + ' site_cart_up');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._item_qnt_increment.bind(this, item)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_up', this._item_qnt_increment.bind(this, item));
     } finally {
 
     }
@@ -249,14 +228,7 @@ export default class Cart extends Component {
     } catch (e) {
       console.warn(e + ' site_cart_remove');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._removeCartItem.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
 
     }
@@ -278,16 +250,9 @@ export default class Cart extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_select');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._checkBoxHandler.bind(this, item)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_select', this._checkBoxHandler.bind(this, item));
     } finally {
 
     }

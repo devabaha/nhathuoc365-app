@@ -4,6 +4,7 @@ import {StatusBar} from 'react-native';
 
 import API from './API';
 import axios from 'axios';
+import store from '../store/Store';
 
 var HTTP_SUCCESS = 200;
 
@@ -35,6 +36,11 @@ class APIHandler {
   */
   async user_search_store(store_code) {
     var api = url_for(API.USER_SEARCH_SITE + '/' + store_code);
+    return await this.getAPI(api)
+  }
+
+  async user_search_stores(store_code) {
+    var api = url_for(API.USER_SEARCH_SITES + '/' + store_code);
     return await this.getAPI(api)
   }
 
@@ -407,6 +413,10 @@ class APIHandler {
 
     if (response.status != HTTP_SUCCESS) {
         throw 'Error: ' + response.statusText;
+    } else {
+      action(() => {
+        store.setConnect(true);
+      })();
     }
     // console.log('--- response: ', JSON.stringify(response.data));
     return response.data;

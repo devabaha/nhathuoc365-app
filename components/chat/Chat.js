@@ -201,14 +201,7 @@ export default class Chat extends Component {
       } catch (e) {
         console.warn(e + ' site_load_chat');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._getData.bind(this, delay)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('site_load_chat', this._getData.bind(this, delay));
       } finally {
         this.setState({
           finish: true
@@ -256,14 +249,7 @@ export default class Chat extends Component {
     } catch (e) {
       console.warn(e + ' site_send_chat');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._onSubmit.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_send_chat', this._onSubmit.bind(this));
     } finally {
 
     }

@@ -79,14 +79,7 @@ export default class ListStore extends Component {
       } catch (e) {
         console.warn(e + ' user_list_site');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._getData.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_list_site', this._getData.bind(this));
       } finally {
       }
     });
@@ -139,14 +132,7 @@ export default class ListStore extends Component {
     } catch (e) {
       console.warn(e + ' user_search_store');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._search_store.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_search_store', this._search_store.bind(this));
     } finally {
     }
   }
@@ -261,14 +247,7 @@ class StoreItem extends Component {
       } catch (e) {
         console.warn(e + ' user_add_store');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._add_store.bind(this, item)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_add_store', this._add_store.bind(this, item));
       } finally {
         this._add_store_handler = false;
 

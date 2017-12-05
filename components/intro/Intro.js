@@ -51,14 +51,7 @@ export default class Intro extends Component {
     } catch (e) {
       console.warn(e + ' user_sites');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._getData.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('user_sites', this._getData.bind(this));
     } finally {
       this.setState({
         finish: true

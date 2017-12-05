@@ -165,14 +165,7 @@ export default class Search extends Component {
       } catch (e) {
         console.warn(e + ' search_product');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._onSearch.bind(this, keyword)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('search_product', this._onSearch.bind(this, keyword));
       }
     });
   }
@@ -414,14 +407,7 @@ export default class Search extends Component {
     } catch (e) {
       console.warn(e + ' site_cart_remove');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: this._removeCartItem.bind(this)},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
 
     }

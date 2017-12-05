@@ -63,6 +63,11 @@ export default class Home extends Component {
     this._getData();
 
     store.parentTab = '_home';
+
+    if (!store.launched) {
+      store.launched = true;
+      Actions.error();
+    }
   }
 
   componentWillReceiveProps() {
@@ -148,14 +153,7 @@ export default class Home extends Component {
       } catch (e) {
         console.warn(e + ' user_home');
 
-        return Alert.alert(
-          'Thông báo',
-          'Kết nối mạng bị lỗi',
-          [
-            {text: 'Thử lại', onPress: this._getData.bind(this)},
-          ],
-          { cancelable: false }
-        );
+        store.addApiQueue('user_home', this._getData.bind(this));
       } finally {
 
       }

@@ -131,16 +131,7 @@ export default class Stores extends Component {
     } catch (e) {
       console.warn(e + ' site_info');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: () => {
-            this._getCategoriesNavFromServer();
-          }},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_info', this._getCategoriesNavFromServer.bind(this));
     } finally {
 
     }
@@ -346,16 +337,7 @@ export default class Stores extends Component {
     } catch (e) {
       console.warn(e + ' site_cart_remove');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: () => {
-            this._removeCartItem();
-          }},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
 
     }
@@ -547,16 +529,7 @@ class CategoryScreen extends Component {
     } catch (e) {
       console.warn(e + ' site_category_product');
 
-      return Alert.alert(
-        'Thông báo',
-        'Kết nối mạng bị lỗi',
-        [
-          {text: 'Thử lại', onPress: () => {
-            this._getItemByCateIdFromServer(category_id, delay, loadmore);
-          }},
-        ],
-        { cancelable: false }
-      );
+      store.addApiQueue('site_category_product', this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore));
     }
   }
 
