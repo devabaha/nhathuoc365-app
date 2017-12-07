@@ -227,7 +227,15 @@ export default class ForgetActive extends Component {
           </View>
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Mã xác thực</Text>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_tel) {
+                  this.refs_tel.focus();
+                }
+              }}>
+              <Text style={styles.input_label}>Mã xác thực</Text>
+            </TouchableHighlight>
 
             <View style={styles.input_text_box}>
               <TextInput

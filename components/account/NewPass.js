@@ -171,7 +171,15 @@ export default class NewPass extends Component {
           </View>
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Mật khẩu mới</Text>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_password) {
+                  this.refs_password.focus();
+                }
+              }}>
+              <Text style={styles.input_label}>Mật khẩu mới</Text>
+            </TouchableHighlight>
 
             <View style={styles.input_text_box}>
               <TextInput

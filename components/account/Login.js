@@ -257,7 +257,15 @@ export default class Login extends Component {
           </View>
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Số điện thoại</Text>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_tel) {
+                  this.refs_tel.focus();
+                }
+              }}>
+              <Text style={styles.input_label}>Số điện thoại</Text>
+            </TouchableHighlight>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -284,7 +292,15 @@ export default class Login extends Component {
           </View>
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Mật khẩu</Text>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_password) {
+                  this.refs_password.focus();
+                }
+              }}>
+              <Text style={styles.input_label}>Mật khẩu</Text>
+            </TouchableHighlight>
 
             <View style={styles.input_text_box}>
               <TextInput
