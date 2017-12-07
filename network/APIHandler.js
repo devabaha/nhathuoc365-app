@@ -18,6 +18,21 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async user_forget_password(data) {
+    var api = url_for(API.USER_FORGET_PASSWORD);
+    return await this.postAPI(api, data);
+  }
+
+  async user_forget_password_verify(data) {
+    var api = url_for(API.USER_FORGET_PASSWORD_VERIFY);
+    return await this.postAPI(api, data);
+  }
+
+  async user_forget_new_password(data) {
+    var api = url_for(API.USER_FORGET_NEW_PASSWORD);
+    return await this.postAPI(api, data);
+  }
+
   /**
   * Lấy dữ liệu trang home
   */

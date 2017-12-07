@@ -78,3 +78,6 @@ exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
 exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
 exports.USER_LOGOUT = MY_FOOD_API + 'apiUser/logout';
 exports.USER_ADD_AVATAR = MY_FOOD_API + 'apiUser/add_avatar';
+exports.USER_FORGET_PASSWORD = MY_FOOD_API + 'apiUser/forget_password';
+exports.USER_FORGET_PASSWORD_VERIFY = MY_FOOD_API + 'apiUser/forget_password_verify';
+exports.USER_FORGET_NEW_PASSWORD = MY_FOOD_API + 'apiUser/forget_new_password';

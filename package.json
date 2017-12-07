@@ -29,6 +29,7 @@
 		"react-native-image-zoom-viewer": "^2.0.10",
 		"react-native-img-cache": "^1.5.0",
 		"react-native-md5": "^1.0.0",
+		"react-native-message-bar": "^2.0.7",
 		"react-native-modalbox": "^1.4.2",
 		"react-native-offline": "^3.4.1",
 		"react-native-onesignal": "^3.0.5",

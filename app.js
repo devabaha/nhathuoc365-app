@@ -48,6 +48,9 @@ import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
 import Login from './components/account/Login';
+import ForgetVerify from './components/account/ForgetVerify';
+import ForgetActive from './components/account/ForgetActive';
+import NewPass from './components/account/NewPass';
 import Stores from './components/stores/Stores';
 import StoresList from './components/stores/StoresList';
 import Search from './components/stores/Search';
@@ -513,6 +516,9 @@ export default class App extends Component {
             <Scene key="create_address" title="Thêm địa chỉ" component={CreateAddress} {...custommerNav} />
             <Scene key="register" title="Đăng ký" component={Register} {...custommerNav} />
             <Scene key="login" title="Đăng nhập" component={Login} {...custommerNav} />
+            <Scene key="forget_verify" title="Lấy lại mật khẩu" component={ForgetVerify} {...custommerNav} />
+            <Scene key="forget_active" title="Kích hoạt tài khoản" component={ForgetActive} {...custommerNav} />
+            <Scene key="new_pass" title="Tạo mật khẩu mới" component={NewPass} {...custommerNav} />
             <Scene key="cart" title="Giỏ hàng" component={Cart} {...custommerNav} />
             <Scene key="stores" title="Cửa hàng" component={Stores} {...custommerNav} />
             <Scene key="stores_list" title="Cửa hàng" component={StoresList} {...custommerNav} />

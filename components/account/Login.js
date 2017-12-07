@@ -10,7 +10,8 @@ import {
   Switch,
   Keyboard,
   ScrollView,
-  Alert
+  Alert,
+  AsyncStorage
 } from 'react-native';
 
 // library
@@ -64,6 +65,21 @@ export default class Login extends Component {
       setTimeout(() => {
         this.refs_name.focus();
       }, 450);
+    }
+
+    this._getStoreUsername();
+  }
+
+  async _getStoreUsername() {
+    try {
+      const value = await AsyncStorage.getItem('@username:key');
+      if (value !== null){
+        this.setState({
+          tel: value
+        });
+      }
+    } catch (error) {
+      console.warn(error);
     }
   }
 
@@ -169,6 +185,13 @@ export default class Login extends Component {
             })();
           });
 
+
+          try {
+            await AsyncStorage.setItem('@username:key', tel);
+          } catch (error) {
+            console.warn(error);
+          }
+
         } else {
           this.setState({
             finish_loading: false
@@ -190,13 +213,15 @@ export default class Login extends Component {
   }
 
   render() {
-    var { edit_mode, verify_loadding } = this.state;
+    var { edit_mode, verify_loadding, tel, password } = this.state;
 
     return (
       <View style={styles.container}>
-        <ScrollView style={{
-          marginBottom: store.keyboardTop + 60
-        }}>
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          style={{
+            marginBottom: store.keyboardTop + 60
+          }}>
           {/*<View style={styles.input_box}>
             <Text style={styles.input_label}>Tên</Text>
 
@@ -218,6 +243,18 @@ export default class Login extends Component {
                 />
             </View>
           </View>*/}
+
+          <View style={{
+            height: 60,
+            width: Util.size.width,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Text style={{
+              fontSize: 12,
+              color: '#666666'
+            }}>Bạn có thể đăng nhập bằng số điện thoại</Text>
+          </View>
 
           <View style={styles.input_box}>
             <Text style={styles.input_label}>Số điện thoại</Text>
@@ -271,6 +308,26 @@ export default class Login extends Component {
             </View>
           </View>
 
+          <View
+            style={{
+              alignItems: 'center'
+            }}>
+            <TouchableHighlight
+              onPress={() => {
+                Actions.forget_verify({
+                  tel
+                });
+              }}
+              underlayColor="transparent"
+              style={{
+                marginTop: 24
+              }}>
+              <Text style={{
+                color: DEFAULT_COLOR
+              }}>Lấy lại mật khẩu</Text>
+            </TouchableHighlight>
+          </View>
+
         </ScrollView>
 
         <TouchableHighlight
@@ -304,41 +361,6 @@ export default class Login extends Component {
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    width: '90%',
-    height: 169,
-    borderRadius: 2,
-    marginTop: -NAV_HEIGHT,
-    alignItems: 'center'
-  },
-  verify_title: {
-    fontSize: 14,
-    marginTop: 16
-  },
-  input_text_verify: {
-    borderWidth: Util.pixel,
-    borderColor: "#cccccc",
-    marginTop: 20,
-    height: 40,
-    width: '69%',
-    paddingHorizontal: 15,
-    textAlign: 'center',
-    fontSize: 18,
-    color: "#404040"
-  },
-  verify_btn: {
-    backgroundColor: DEFAULT_COLOR,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 2,
-    marginTop: 20,
-    flexDirection: 'row'
-  },
-  verify_btn_title: {
-    color: "#ffffff",
-    marginLeft: 4
-  },
-
   container: {
     flex: 1,
     ...MARGIN_SCREEN,
