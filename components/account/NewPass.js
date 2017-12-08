@@ -10,7 +10,8 @@ import {
   Switch,
   Keyboard,
   ScrollView,
-  Alert
+  Alert,
+  AsyncStorage
 } from 'react-native';
 
 // library
@@ -81,9 +82,13 @@ export default class NewPass extends Component {
     });
   }
 
-  async _onSave() {
-    var {name, tel, password} = this.state;
+  _onSave() {
+    var {name, tel, password, finish_loading} = this.state;
     password = password.trim();
+
+    if (finish_loading) {
+      return;
+    }
 
     if (!password) {
       return Alert.alert(
@@ -98,51 +103,114 @@ export default class NewPass extends Component {
       );
     }
 
-    try {
-      var response = await APIHandler.user_forget_new_password({
-        username: tel,
-        password
-      });
-
-      if (response && response.status == STATUS_SUCCESS) {
-        MessageBarManager.showAlert({
-          message: response.message,
-          alertType: 'success'
+    this.setState({
+      finish_loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.user_forget_new_password({
+          username: tel,
+          password
         });
 
-        Actions.refresh({
-          onBack: () => false,
-          hideBackImage: true
-        });
-
-        setTimeout(() => {
-          Actions.pop({
-            popNum: 3,
-            refresh: {
-              username: tel,
-              password
-            }
+        if (response && response.status == STATUS_SUCCESS) {
+          MessageBarManager.showAlert({
+            message: response.message + `. Đang đăng nhập...`,
+            alertType: 'success'
           });
-        }, 3000);
-      } else if (response && response.message) {
-        MessageBarManager.showAlert({
-          message: response.message,
-          alertType: 'warning',
-          duration: 5000
+
+          Actions.refresh({
+            onBack: () => false,
+            hideBackImage: true
+          });
+
+          setTimeout(() => {
+            this._login();
+          }, 3000);
+        } else if (response && response.message) {
+          MessageBarManager.showAlert({
+            message: response.message,
+            alertType: 'warning',
+            duration: 5000
+          });
+        }
+
+      } catch (e) {
+        console.warn(e + ' user_forget_new_password');
+
+        store.addApiQueue('user_forget_new_password', this._onSave.bind(this));
+      } finally {
+        this.setState({
+          finish_loading: false
         });
       }
+    });
+  }
 
-    } catch (e) {
-      console.warn(e + ' user_forget_new_password');
+  _login() {
+    var {name, tel, password, finish_loading} = this.state;
+    password = password.trim();
 
-      store.addApiQueue('user_forget_new_password', this._onSave.bind(this));
-    } finally {
+    this.setState({
+      finish_loading: true
+    }, async () => {
+      try {
+        var response = await APIHandler.user_login_password({
+          username: tel,
+          password
+        });
 
-    }
+        if (response && response.status == STATUS_SUCCESS) {
+          try {
+            await AsyncStorage.setItem('@username:key', tel);
+          } catch (error) {
+            console.warn(error);
+          }
+
+          action(() => {
+            store.setUserInfo(response.data);
+
+            store.resetCartData();
+
+            store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+            Actions.pop({
+              popNum: 4,
+              refresh: {
+                username: tel,
+                password
+              }
+            });
+          })();
+        } else if (response && response.message) {
+          MessageBarManager.showAlert({
+            message: response.message,
+            alertType: 'warning',
+            duration: 5000
+          });
+
+          setTimeout(() => {
+            this.setState({
+              finish_loading: false
+            });
+          }, 5000);
+        }
+
+      } catch (e) {
+        console.warn(e + ' user_login_password');
+
+        this.setState({
+          finish_loading: false
+        });
+
+        store.addApiQueue('user_login_password', this._login.bind(this, name, tel, password));
+      } finally {
+
+      }
+    });
   }
 
   render() {
-    var { edit_mode, verify_loadding, tel } = this.state;
+    var { edit_mode, verify_loadding, tel, finish_loading } = this.state;
 
     return (
       <View style={styles.container}>
@@ -210,7 +278,9 @@ export default class NewPass extends Component {
           underlayColor="transparent"
           onPress={this._onSave.bind(this)}
           style={[styles.address_continue, {bottom: store.keyboardTop}]}>
-          <View style={styles.address_continue_content}>
+          <View style={[styles.address_continue_content, {
+            backgroundColor: finish_loading ? hexToRgbA(DEFAULT_COLOR, 0.6) : DEFAULT_COLOR
+          }]}>
             <Text style={styles.address_continue_title}>HOÀN TẤT</Text>
           </View>
         </TouchableHighlight>

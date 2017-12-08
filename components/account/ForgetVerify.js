@@ -110,14 +110,20 @@ export default class ForgetVerify extends Component {
 
         store.addApiQueue('user_forget_password', this._onSave.bind(this));
       } finally {
-
+        this.setState({
+          finish_loading: false
+        });
       }
     });
   }
 
   _onContinue() {
-    var {tel} = this.state;
+    var {tel, finish_loading} = this.state;
     tel = tel.trim();
+
+    if (finish_loading) {
+      return;
+    }
 
     if (!tel) {
       return Alert.alert(
@@ -144,7 +150,7 @@ export default class ForgetVerify extends Component {
   }
 
   render() {
-    var { edit_mode, verify_loadding } = this.state;
+    var { edit_mode, verify_loadding, finish_loading } = this.state;
 
     return (
       <View style={styles.container}>
@@ -207,7 +213,9 @@ export default class ForgetVerify extends Component {
           underlayColor="transparent"
           onPress={this._onContinue.bind(this)}
           style={[styles.address_continue, {bottom: store.keyboardTop}]}>
-          <View style={styles.address_continue_content}>
+          <View style={[styles.address_continue_content, {
+            backgroundColor: finish_loading ? hexToRgbA(DEFAULT_COLOR, 0.6) : DEFAULT_COLOR
+          }]}>
             <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
           </View>
         </TouchableHighlight>
