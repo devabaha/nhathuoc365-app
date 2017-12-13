@@ -10,7 +10,8 @@ import {
   StatusBar,
   PanResponder,
   BackHandler,
-  Alert
+  Alert,
+  Linking
 } from 'react-native';
 
 // disable font scaling
@@ -29,7 +30,7 @@ import {
   Actions,
   ActionConst
 } from 'react-native-router-flux';
-
+import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 
 // store
@@ -217,15 +218,42 @@ export default class App extends Component {
     OneSignal.addEventListener('registered', this._onRegistered.bind(this));
     OneSignal.addEventListener('ids', this._onIds.bind(this));
 
-    this._login();
+    // deep link register
+    DeepLinking.addScheme('myfoodapp://');
+    Linking.addEventListener('url', this.handleURL);
+
+    var url = Linking.getInitialURL().then((url) => {
+      if (url) {
+        // do login
+        this._login(() => this.handleURL({url}));
+      } else {
+        // do login
+        this._login();
+      }
+    }).catch(err => {
+      // do login
+      this._login();
+
+      console.error('An error occurred', err);
+    });
   }
 
-  componentWillReceiveProps(nextProps) {
+  handleURL({url}) {
+    if (url) {
+      const route = url.replace(/.*?:\/\//g, '');
+      const code = route.match(/\/([^\/]+)\/?$/)[1];
+      const routeName = route.split('/')[0];
 
+      if (routeName === 'code') {
+        Actions.search_store({
+          site_code: code
+        });
+      };
+    }
   }
 
   // login khi mở app
-  async _login() {
+  async _login(callback) {
     try {
       var response = await APIHandler.user_login({
         fb_access_token: ''
@@ -234,10 +262,16 @@ export default class App extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           Store.setUserInfo(response.data);
+          this.setState({
+            finish: true
+          }, () => {
+            setTimeout(() => {
+              if (typeof callback == 'function') {
+                callback();
+              }
+            }, 1000);
+          });
         })();
-        this.setState({
-          finish: true
-        });
 
         StatusBar.setBarStyle('light-content');
       }
