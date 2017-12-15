@@ -314,6 +314,11 @@ class StoreItem extends Component {
                 coppy_sticker_flag: false
               }, () => {
                 Actions.pop();
+                setTimeout(() => {
+                  if (that.props.onSuccess) {
+                    that.props.onSuccess();
+                  }
+                }, 500);
               });
             }, 2000);
           });

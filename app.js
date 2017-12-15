@@ -238,17 +238,28 @@ export default class App extends Component {
     });
   }
 
-  handleURL({url}) {
+  handleURL = ({url}) => {
     if (url) {
       const route = url.replace(/.*?:\/\//g, '');
-      const code = route.match(/\/([^\/]+)\/?$/)[1];
       const routeName = route.split('/')[0];
+      const id = route.split('/')[1];
 
-      if (routeName === 'code') {
-        Actions.search_store({
-          site_code: code
-        });
-      };
+      switch (routeName) {
+        case 'code':
+          Actions.search_store({
+            site_code: id
+          });
+          break;
+        case 'stores':
+          this._pushGoStore(id);
+          break;
+        case 'item':
+          const item_id = route.split('/')[2];
+          this._pushGoItem(id, item_id);
+          break;
+        default:
+
+      }
     }
   }
 
@@ -269,7 +280,7 @@ export default class App extends Component {
               if (typeof callback == 'function') {
                 callback();
               }
-            }, 1000);
+            }, 660);
           });
         })();
 
@@ -294,7 +305,7 @@ export default class App extends Component {
     } catch (e) {
       console.warn(e + ' user_sites');
 
-      store.addApiQueue('user_sites', this._getData.bind(this));
+      Store.addApiQueue('user_sites', this._getData.bind(this));
     }
   }
 
@@ -339,28 +350,36 @@ export default class App extends Component {
         action(() => {
           Store.setStoreData(response.data);
 
-          if (currentSceneName == 'stores') {
-            setTimeout(() => {
-              Actions.stores({
-                title: response.data.name,
-                type: ActionConst.REFRESH
-              });
-            }, 1000);
-          } else {
-            setTimeout(() => {
-              Actions.stores({
-                title: response.data.name
-              });
-            }, 1000);
-          }
+          this._goStore(response);
         })();
+      } else if (response && response.data) {
+        Actions.search_store({
+          site_code: response.data.site_code
+        });
       }
     } catch (e) {
       console.warn(e + ' site_info');
 
-      store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
+      Store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
     } finally {
 
+    }
+  }
+
+  _goStore(response) {
+    if (currentSceneName == 'stores') {
+      setTimeout(() => {
+        Actions.stores({
+          title: response.data.name,
+          type: ActionConst.REFRESH
+        });
+      }, 660);
+    } else {
+      setTimeout(() => {
+        Actions.stores({
+          title: response.data.name
+        });
+      }, 660);
     }
   }
 
@@ -375,20 +394,78 @@ export default class App extends Component {
               data: response.data,
               type: ActionConst.REFRESH
             });
-          }, 1000);
+          }, 660);
         } else {
           setTimeout(() => {
             Actions.notify_item({
               title: response.data.title,
               data: response.data
             });
-          }, 1000);
+          }, 660);
         }
       }
     } catch (e) {
       console.warn(e + ' user_news');
 
-      store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
+      Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
+    } finally {
+
+    }
+  }
+
+  async _pushGoItem(page_id, item_id) {
+    try {
+      var response = await APIHandler.site_info(page_id);
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          Store.setStoreData(response.data);
+          this._goStore(response);
+          this._goItem(page_id, item_id);
+        })();
+      } else if (response && response.data) {
+        Actions.search_store({
+          site_code: response.data.site_code,
+          onSuccess: () => {
+            Store.setStoreData(response.data);
+            this._goStore(response);
+            this._goItem(page_id, item_id);
+          }
+        });
+      }
+    } catch (e) {
+      console.warn(e + ' site_info');
+    } finally {
+
+    }
+  }
+
+  async _goItem(page_id, item_id) {
+    try {
+      var response = await APIHandler.site_product(page_id, item_id);
+      if (response && response.status == STATUS_SUCCESS) {
+        var item = response.data;
+
+        if (currentSceneName == 'item') {
+          setTimeout(() => {
+            Actions.item({
+              title: item.name,
+              item,
+              type: ActionConst.REFRESH
+            });
+          }, 1200);
+        } else {
+          setTimeout(() => {
+            Actions.item({
+              title: item.name,
+              item
+            });
+          }, 1200);
+        }
+      }
+    } catch (e) {
+      console.warn(e + ' user_news');
+
+      Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     } finally {
 
     }
@@ -412,7 +489,7 @@ export default class App extends Component {
         } catch (e) {
           console.warn(e + ' add_push_token');
 
-          store.addApiQueue('add_push_token', this._onIds.bind(this, device));
+          Store.addApiQueue('add_push_token', this._onIds.bind(this, device));
         } finally {
 
         }

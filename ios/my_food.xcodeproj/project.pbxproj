@@ -1381,6 +1381,7 @@
 				CODE_SIGN_ENTITLEMENTS = my_food/my_food.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Le Huy Thuc (QXL53N423H)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = HE24EA8C23;
@@ -1416,6 +1417,7 @@
 				CODE_SIGN_ENTITLEMENTS = my_food/my_food.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer: Le Huy Thuc (QXL53N423H)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = HE24EA8C23;
 				HEADER_SEARCH_PATHS = (

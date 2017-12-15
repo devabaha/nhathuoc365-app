@@ -157,6 +157,7 @@ export default class Item extends Component {
   async _getDataFromServer(delay) {
     var {item} = this.state;
     var item_key = ITEM_KEY + item.id + store.user_info.id;
+    // alert(store.store_id +' - '+ item.id);
 
     try {
       var response = await APIHandler.site_product(store.store_id, item.id);
