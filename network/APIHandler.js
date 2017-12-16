@@ -67,6 +67,11 @@ class APIHandler {
     return await this.getAPI(api)
   }
 
+  async user_list_suggest_site() {
+    var api = url_for(API.USER_LIST_SUGGEST_SITE);
+    return await this.getAPI(api)
+  }
+
   /**
   * Thêm cửa hàng bằng mã cửa hàng
   */

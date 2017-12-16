@@ -48,6 +48,11 @@ export default class SearchStore extends Component {
       onChangeText: this._onChangeSearch.bind(this),
       onSubmitEditing: this._search_store.bind(this),
       onSearchCancel: this._onSearchCancel.bind(this),
+      onCleanSearch: () => {
+        this.setState({
+          search_data: null
+        });
+      },
       inputAnimate: true,
       autoFocus: true,
       cancelIsPop: true,
@@ -217,8 +222,7 @@ export default class SearchStore extends Component {
               keyExtractor={item => item.id}
             />
           ) : (
-            null
-            // <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
+            <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
           )}
 
         </ScrollView>

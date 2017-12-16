@@ -19,7 +19,8 @@ export default class StoreSuggest extends Component {
     super(props);
 
     this.state = {
-      suggest_data: null
+      suggest_data: null,
+      isHide: true
     }
   }
 
@@ -29,24 +30,29 @@ export default class StoreSuggest extends Component {
 
   async _getData() {
     try {
-      var response = await APIHandler.user_list_site();
-
+      var response = await APIHandler.user_list_suggest_site();
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({
-          suggest_data: response.data
+          suggest_data: response.data,
+          isHide: false
         });
+        layoutAnimation();
       }
     } catch (e) {
-      console.warn(e + ' user_list_site');
+      console.warn(e + ' user_list_suggest_site');
 
-      store.addApiQueue('user_list_site', this._getData.bind(this));
+      store.addApiQueue('user_list_suggest_site', this._getData.bind(this));
     } finally {
 
     }
   }
 
   render() {
-    var {suggest_data} = this.state;
+    var {suggest_data, isHide} = this.state;
+
+    if (isHide) {
+      return null;
+    }
 
     return (
       <View style={styles.suggest_box}>
