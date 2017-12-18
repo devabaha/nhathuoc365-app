@@ -70,7 +70,9 @@ export default class SaleChat extends Component {
         }
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_load_chat');
+
+      store.addApiQueue('site_load_chat', this._getData);
     } finally {
       this._loaded = true;
     }
@@ -111,7 +113,9 @@ export default class SaleChat extends Component {
         this._intervalLoads();
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_send_chat');
+
+      store.addApiQueue('site_send_chat', this._onSend.bind(this, messages));
     } finally {
 
     }

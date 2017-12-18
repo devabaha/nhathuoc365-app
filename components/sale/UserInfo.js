@@ -89,7 +89,9 @@ export default class UserInfo extends Component {
         }, delay);
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_user_info');
+
+      store.addApiQueue('site_user_info', this._getData);
     } finally {
 
     }
@@ -124,7 +126,9 @@ export default class UserInfo extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_update_site_user');
+
+      store.addApiQueue('site_update_site_user', this._onSave.bind(this));
     } finally {
 
     }

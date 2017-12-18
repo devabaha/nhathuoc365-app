@@ -44,7 +44,9 @@ export default class SaleMenu extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' user_home');
+
+      store.addApiQueue('user_home', this._getData);
     } finally {
 
     }

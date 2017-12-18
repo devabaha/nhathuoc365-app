@@ -303,6 +303,11 @@ class StoreItem extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           Keyboard.dismiss();
 
+          Actions.refresh({
+            hideBackImage: true,
+            onPress: () => 1
+          });
+
           this.setState({
             coppy_sticker_flag: true,
             add_success: true

@@ -63,7 +63,9 @@ export default class Order extends Component {
         }, delay);
       }
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_cart_by_id');
+
+      store.addApiQueue('site_cart_by_id', this._getData);
     } finally {
 
     }
@@ -94,7 +96,9 @@ export default class Order extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' cart_status_edit');
+
+      store.addApiQueue('cart_status_edit', this._cartEdit.bind(this, item, status));
     } finally {
 
     }
@@ -716,7 +720,9 @@ class ItemCartComponent extends Component {
         }
 
       } catch (e) {
-        console.warn(e);
+        console.warn(e + ' site_cart_up');
+
+        store.addApiQueue('site_cart_up', this._incrementQnt.bind(this, item));
       } finally {
         this.setState({
           increment_loading: false
@@ -732,54 +738,62 @@ class ItemCartComponent extends Component {
     if (quantity > 0) {
       this.setState({
         decrement_loading: true
-      }, async () => {
-        try {
-          var {site_id, cart_id} = this.state;
-          var response = await ADMIN_APIHandler.site_cart_down(site_id, cart_id, {
-            product_id: item.id
-          });
-
-          if (response && response.status == STATUS_SUCCESS) {
-            if (this.props.reloadData) {
-              this.props.reloadData(response.data);
-            }
-          }
-
-        } catch (e) {
-          console.warn(e);
-        } finally {
-          this.setState({
-            decrement_loading: false
-          });
-        }
-      });
+      }, this._cartItemDown.bind(this));
     } else {
       Alert.alert(
         'Xác nhận',
         `Xoá ${item.name} khỏi đơn hàng này?`,
         [
           {text: 'Không', onPress: () => console.log('Cancel Pressed')},
-          {text: 'Đồng ý', onPress: async () => {
-            try {
-              var {site_id, cart_id} = this.state;
-              var response = await ADMIN_APIHandler.site_cart_remove(site_id, cart_id, {
-                product_id: item.id
-              });
-
-              if (response && response.status == STATUS_SUCCESS) {
-                if (this.props.reloadData) {
-                  this.props.reloadData(response.data);
-                  layoutAnimation();
-                }
-              }
-
-            } catch (e) {
-              console.warn(e);
-            } finally {
-            }
-          }},
+          {text: 'Đồng ý', onPress: this._deleteItem.bind(this)},
         ]
       );
+    }
+  }
+
+  async _cartItemDown() {
+    try {
+      var {site_id, cart_id} = this.state;
+      var response = await ADMIN_APIHandler.site_cart_down(site_id, cart_id, {
+        product_id: item.id
+      });
+
+      if (response && response.status == STATUS_SUCCESS) {
+        if (this.props.reloadData) {
+          this.props.reloadData(response.data);
+        }
+      }
+
+    } catch (e) {
+      console.warn(e + ' site_cart_down');
+
+      store.addApiQueue('site_cart_down', this._cartItemDown.bind(this));
+    } finally {
+      this.setState({
+        decrement_loading: false
+      });
+    }
+  }
+
+  async _deleteItem() {
+    try {
+      var {site_id, cart_id} = this.state;
+      var response = await ADMIN_APIHandler.site_cart_remove(site_id, cart_id, {
+        product_id: item.id
+      });
+
+      if (response && response.status == STATUS_SUCCESS) {
+        if (this.props.reloadData) {
+          this.props.reloadData(response.data);
+          layoutAnimation();
+        }
+      }
+
+    } catch (e) {
+      console.warn(e + ' site_cart_remove');
+
+      store.addApiQueue('site_cart_remove', this._deleteItem.bind(this));
+    } finally {
     }
   }
 

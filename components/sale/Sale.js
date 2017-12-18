@@ -72,7 +72,9 @@ export default class Sale extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' all_cart');
+
+      store.addApiQueue('all_cart', this._getData);
     } finally {
       this._geting = false;
     }

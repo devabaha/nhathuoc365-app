@@ -24,6 +24,7 @@ import {reaction} from 'mobx';
 // components
 import ItemGrid from './ItemGrid';
 import ItemList from './ItemList';
+import { ItemList as AdItemList } from '../dashboard/ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
 import TabTutorial from '../tutorial/TabTutorial';
@@ -40,7 +41,8 @@ export default class Home extends Component {
       user_notice: null,
       finish: false,
       scrollTop: 0,
-      show_tutorial_tab: false
+      show_tutorial_tab: false,
+      admin_stores_data: null
     };
 
     this._goSearchStore = this._goSearchStore.bind(this);
@@ -155,9 +157,33 @@ export default class Home extends Component {
 
         store.addApiQueue('user_home', this._getData.bind(this));
       } finally {
-
+        const isAdmin = store.user_info.admin_flag == 1;
+        if (isAdmin) {
+          this._getAdData();
+        }
       }
     });
+  }
+
+  _getAdData = async () => {
+    try {
+      var response = await ADMIN_APIHandler.user_home();
+
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          admin_stores_data: response.data
+        });
+
+        layoutAnimation();
+      }
+
+    } catch (e) {
+      console.warn(e + ' admin:user_home');
+
+      store.addApiQueue('admin:user_home', this._getAdData.bind(this));
+    } finally {
+
+    }
   }
 
   // render button trên navbar
@@ -223,7 +249,7 @@ export default class Home extends Component {
   }
 
   // render rows cửa hàng trong list
-  renderRow({item, index}) {
+  renderRow({item, index}, isAdmin) {
     if (index == 0) {
       this.defaultBoxHeight = 0;
     }
@@ -232,8 +258,28 @@ export default class Home extends Component {
 
     // store list
     return(
-      <ItemList item={item} index={index} that={this} />
+      <ItemList item={item} index={index} that={this} isAdmin={isAdmin} />
     );
+  }
+
+  renderAdRow({item, index}, isAdmin) {
+    if (index == 0) {
+      this.defaultBoxHeight = 0;
+    }
+
+    this.defaultBoxHeight += 104;
+
+    // store list
+    return(
+      <AdItemList item={item} index={index} itemListOnPress={this._goAdStore.bind(this, item)} />
+    );
+  }
+
+  _goAdStore(item) {
+    Actions.sale_menu({
+      item_data: item,
+      title: item.name
+    });
   }
 
   _showTutorialTab() {
@@ -291,7 +337,8 @@ export default class Home extends Component {
       view_all_newses,
       view_all_notices,
       view_all_sites,
-      show_tutorial_tab
+      show_tutorial_tab,
+      admin_stores_data
     } = this.state;
 
     return (
@@ -313,12 +360,7 @@ export default class Home extends Component {
             />
           }>
 
-          <View style={{
-            backgroundColor: "#f1f1f1",
-            paddingHorizontal: 15,
-            paddingVertical: 8,
-            flexDirection: 'row'
-          }}>
+          <View style={styles.myFavoriteBox}>
             <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
 
             {view_all_sites && (
@@ -348,8 +390,8 @@ export default class Home extends Component {
 
               }}
               onEndReachedThreshold={0}
-              data={this.state.stores_data}
-              renderItem={this.renderRow.bind(this)}
+              data={stores_data}
+              renderItem={({item, index}) => this.renderRow({item, index}, false)}
               keyExtractor={item => item.id}
             />
           ) : (
@@ -363,6 +405,25 @@ export default class Home extends Component {
                   title={"Chưa có cửa hàng\nThêm cửa hàng bạn yêu thích ngay!"} />
               </View>
             </TouchableHighlight>
+          )}
+
+          {admin_stores_data && (
+            <View>
+              <View style={styles.myStoresBox}>
+                <Text style={styles.add_store_title}>CỬA HÀNG CỦA TÔI</Text>
+              </View>
+
+              <FlatList
+                style={styles.stores_box}
+                onEndReached={(num) => {
+
+                }}
+                onEndReachedThreshold={0}
+                data={admin_stores_data}
+                renderItem={({item, index}) => this.renderAdRow({item, index}, true)}
+                keyExtractor={item => item.id}
+              />
+            </View>
           )}
 
           {finish && (
@@ -408,7 +469,6 @@ export default class Home extends Component {
               </View>
             </View>
           )}
-
 
           {newses_data != null && (
             <View style={{
@@ -650,5 +710,17 @@ const styles = StyleSheet.create({
   right_title_btn_box: {
     flex: 1,
     alignItems: 'flex-end'
+  },
+  myStoresBox: {
+    backgroundColor: "#f1f1f1",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    flexDirection: 'row'
+  },
+  myFavoriteBox: {
+    backgroundColor: "#f1f1f1",
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    flexDirection: 'row'
   }
 });

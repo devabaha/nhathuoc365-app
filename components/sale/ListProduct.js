@@ -111,6 +111,8 @@ export default class ListProduct extends Component {
     } catch (e) {
       console.warn(e + ' site_update_cart');
 
+      store.addApiQueue('site_update_cart', this._onSave.bind(this, product_id, quantity));
+
       this._clicked = false;
     } finally {
 
@@ -134,7 +136,9 @@ export default class ListProduct extends Component {
       }
 
     } catch (e) {
-      console.warn(e);
+      console.warn(e + ' site_list_product');
+
+      store.addApiQueue('site_list_product', this._getData);
     } finally {
 
     }
