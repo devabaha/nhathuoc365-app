@@ -12,18 +12,20 @@ import {
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-Animatable.initializeRegistryWithDefinitions({
-  slideInDown: {
-    from: {
-      bottom: 0
-    },
-    to: {
-      bottom: 2
-    },
-  }
-});
-
 export default class TabTutorial extends Component {
+  componentWillMount() {
+    Animatable.initializeRegistryWithDefinitions({
+      slideInDown: {
+        from: {
+          bottom: 0
+        },
+        to: {
+          bottom: 2
+        },
+      }
+    });
+  }
+
   render() {
 
     var {title, left, onPress} = this.props;
