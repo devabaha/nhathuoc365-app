@@ -321,7 +321,7 @@ export default class App extends Component {
 
     var data = openResult.notification.payload.additionalData;
     if (data) {
-      var {page, page_id} = data;
+      var {page, site_id, page_id} = data;
 
       if (page) {
         switch (page) {
@@ -336,7 +336,17 @@ export default class App extends Component {
             }
             break;
           case 'orders':
-
+            if (site_id && page_id) {
+              Actions.orders_item({
+                title: '#...',
+                passProps: {
+                  notice_data: {
+                    site_id,
+                    page_id
+                  }
+                }
+              });
+            }
             break;
         }
       }
