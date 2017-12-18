@@ -303,6 +303,15 @@ class StoreItem extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           Keyboard.dismiss();
 
+          // pass add store tutorial
+          var key_tutorial = 'KeyTutorialAddStore' + store.user_info.id;
+          storage.save({
+            key: key_tutorial,
+            data: {finish: true},
+            expires: null
+          });
+
+          // disable, hide back button
           Actions.refresh({
             hideBackImage: true,
             onPress: () => 1

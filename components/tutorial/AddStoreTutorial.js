@@ -15,36 +15,23 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 Animatable.initializeRegistryWithDefinitions({
   slideInDown: {
     from: {
-      bottom: 0
+      top: 0
     },
     to: {
-      bottom: 2
+      top: 2
     },
   }
 });
 
-export default class TabTutorial extends Component {
+export default class AddStoreTutorial extends Component {
   render() {
 
-    var {title, left, onPress} = this.props;
+    var {title, right, onPress} = this.props;
 
     return (
       <View style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
-        </View>
-
-        <View style={styles.btnBox}>
-          <TouchableHighlight
-            style={styles.btn}
-            underlayColor={hexToRgbA(DEFAULT_COLOR, 0.6)}
-            onPress={() => {
-              if (onPress) {
-                onPress();
-              }
-            }}>
-            <Text style={styles.btnTitle}>ĐÃ HIỂU</Text>
-          </TouchableHighlight>
         </View>
 
         <Animatable.View
@@ -53,9 +40,9 @@ export default class TabTutorial extends Component {
           direction="alternate"
           duration={300}
           style={[styles.aniTab, {
-            left: left || Util.size.width / 4 / 2
+            right: right || Util.size.width / 4 / 2
           }]}>
-          <Icon name="caret-down" size={30} color={DEFAULT_COLOR} />
+          <Icon name="caret-up" size={30} color={DEFAULT_COLOR} />
         </Animatable.View>
       </View>
     );
@@ -65,16 +52,15 @@ export default class TabTutorial extends Component {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
+    top: 243,
     left: 0,
-    bottom: 0,
-    right: 0,
-    backgroundColor: hexToRgbA("#000000", 0.8),
+    width: Util.size.width,
+    height: 100
   },
   content: {
     position: 'absolute',
-    bottom: 30,
-    left: 15,
+    bottom: 20,
+    right: 15,
     maxWidth: Util.size.width * 0.66,
     padding: 8,
     backgroundColor: DEFAULT_COLOR,
@@ -100,6 +86,7 @@ const styles = StyleSheet.create({
   },
   aniTab: {
     position: 'absolute',
-    bottom: 0
+    top: 0,
+    backgroundColor: 'transparent'
   }
 });

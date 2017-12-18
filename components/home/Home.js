@@ -27,7 +27,11 @@ import ItemList from './ItemList';
 import { ItemList as AdItemList } from '../dashboard/ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
-import TabTutorial from '../tutorial/TabTutorial';
+import {
+  TabTutorial,
+  AddStoreTutorial,
+  GoStoreTutorial
+} from '../tutorial';
 
 @observer
 export default class Home extends Component {
@@ -42,6 +46,8 @@ export default class Home extends Component {
       finish: false,
       scrollTop: 0,
       show_tutorial_tab: false,
+      show_add_store: false,
+      show_go_store: false,
       admin_stores_data: null
     };
 
@@ -141,6 +147,7 @@ export default class Home extends Component {
               finish: true,
               loading: false,
               refreshing: false,
+              show_add_store: false,
               stores_data: data.sites.length > 0 ? data.sites : null,
               user_notice: data.notices.length > 0 ? data.notices : null,
               newses_data: data.newses.length > 0 ? data.newses : null,
@@ -148,6 +155,15 @@ export default class Home extends Component {
               view_all_notices: data.view_all_notices == 1,
               view_all_newses: data.view_all_newses == 1,
             });
+
+            if (data.sites.length <= 0) {
+              this._showAddStore();
+              this.setState({
+                show_go_store: false
+              });
+            } else {
+              this._showGoStore();
+            }
 
             this._scrollToTop(0);
           }, delay || 0);
@@ -258,7 +274,7 @@ export default class Home extends Component {
 
     // store list
     return(
-      <ItemList item={item} index={index} that={this} isAdmin={isAdmin} />
+      <ItemList item={item} index={index} that={this} />
     );
   }
 
@@ -283,7 +299,7 @@ export default class Home extends Component {
   }
 
   _showTutorialTab() {
-    var key_tutorial_tab = 'KeyTutorialTabShow' + store.user_info.id;
+    var key_tutorial = 'KeyTutorialTabShow' + store.user_info.id;
 
     if (this._showTutorialTabFlag) {
       return;
@@ -291,19 +307,9 @@ export default class Home extends Component {
 
     this._showTutorialTabFlag = true;
 
-    storage.load({
-      key: key_tutorial_tab,
-      autoSync: true,
-      syncInBackground: true,
-      syncParams: {
-        extraFetchOptions: {
-        },
-        someFlag: true,
-      },
-    }).then(data => {
+    this._cachedStore(key_tutorial, () => {
 
-    }).catch(err => {
-
+    }, () => {
       layoutAnimation();
 
       // show tutorial
@@ -319,10 +325,62 @@ export default class Home extends Component {
 
       //
       storage.save({
-        key: key_tutorial_tab,
+        key: key_tutorial,
         data: {finish: true},
         expires: null
       });
+    });
+  }
+
+  _showAddStore() {
+    var key_tutorial = 'KeyTutorialAddStore' + store.user_info.id;
+
+    this._cachedStore(key_tutorial, () => {
+
+    }, () => {
+      layoutAnimation();
+
+      // show tutorial
+      this.setState({
+        show_add_store: true
+      });
+    });
+  }
+
+  _showGoStore() {
+    var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
+    this._cachedStore(key_tutorial, () => {
+
+    }, () => {
+      layoutAnimation();
+
+      // show tutorial
+      this.setState({
+        show_go_store: true
+      }, () => {
+        setTimeout(() => {
+          this.setState({
+            show_go_store: false
+          });
+        }, 15000);
+      });
+    });
+  }
+
+  _cachedStore(key, thenFunc = () => 1, catchFunc = () => 1) {
+    storage.load({
+      key,
+      autoSync: true,
+      syncInBackground: true,
+      syncParams: {
+        extraFetchOptions: {
+        },
+        someFlag: true,
+      },
+    }).then(data => {
+      thenFunc(data);
+    }).catch(err => {
+      catchFunc(err);
     });
   }
 
@@ -337,7 +395,11 @@ export default class Home extends Component {
       view_all_newses,
       view_all_notices,
       view_all_sites,
+
       show_tutorial_tab,
+      show_add_store,
+      show_go_store,
+
       admin_stores_data
     } = this.state;
 
@@ -598,7 +660,6 @@ export default class Home extends Component {
             title='Xem danh sách cửa hàng' />*/}
         </Modal>
 
-
         {show_tutorial_tab && (
           <TabTutorial
             title="Tap vào đây để Về đầu trang nhanh hơn :)"
@@ -611,6 +672,29 @@ export default class Home extends Component {
             />
         )}
 
+        {show_add_store && (
+          <AddStoreTutorial
+            title="Tap vào đây để thêm cửa hàng yêu thích"
+            right={(Util.size.width / 2.2) / 2}
+            onPress={() => {
+              this.setState({
+                show_add_store: false
+              });
+            }}
+            />
+        )}
+
+        {show_go_store && (
+          <GoStoreTutorial
+            title="Tap vào đây để vào cửa hàng yêu thích"
+            left={(Util.size.width / 4) / 2}
+            onPress={() => {
+              this.setState({
+                show_go_store: false
+              });
+            }}
+            />
+        )}
       </View>
     );
   }

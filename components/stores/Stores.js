@@ -50,6 +50,14 @@ export default class Stores extends Component {
 
   componentDidMount() {
     this._initial(this.props);
+
+    // pass add store tutorial
+    var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
+    storage.save({
+      key: key_tutorial,
+      data: {finish: true},
+      expires: null
+    });
   }
 
   componentWillReceiveProps(nextProps) {

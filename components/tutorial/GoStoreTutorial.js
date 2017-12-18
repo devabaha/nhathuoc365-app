@@ -15,15 +15,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 Animatable.initializeRegistryWithDefinitions({
   slideInDown: {
     from: {
-      bottom: 0
+      top: 0
     },
     to: {
-      bottom: 2
+      top: 2
     },
   }
 });
 
-export default class TabTutorial extends Component {
+export default class GoStoreTutorial extends Component {
   render() {
 
     var {title, left, onPress} = this.props;
@@ -34,19 +34,6 @@ export default class TabTutorial extends Component {
           <Text style={styles.title}>{title}</Text>
         </View>
 
-        <View style={styles.btnBox}>
-          <TouchableHighlight
-            style={styles.btn}
-            underlayColor={hexToRgbA(DEFAULT_COLOR, 0.6)}
-            onPress={() => {
-              if (onPress) {
-                onPress();
-              }
-            }}>
-            <Text style={styles.btnTitle}>ĐÃ HIỂU</Text>
-          </TouchableHighlight>
-        </View>
-
         <Animatable.View
           animation="slideInDown"
           iterationCount="infinite"
@@ -55,7 +42,7 @@ export default class TabTutorial extends Component {
           style={[styles.aniTab, {
             left: left || Util.size.width / 4 / 2
           }]}>
-          <Icon name="caret-down" size={30} color={DEFAULT_COLOR} />
+          <Icon name="caret-up" size={30} color={DEFAULT_COLOR} />
         </Animatable.View>
       </View>
     );
@@ -65,15 +52,14 @@ export default class TabTutorial extends Component {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
+    top: 114,
     left: 0,
-    bottom: 0,
-    right: 0,
-    backgroundColor: hexToRgbA("#000000", 0.8),
+    width: Util.size.width,
+    height: 100
   },
   content: {
     position: 'absolute',
-    bottom: 30,
+    bottom: 20,
     left: 15,
     maxWidth: Util.size.width * 0.66,
     padding: 8,
@@ -86,10 +72,10 @@ const styles = StyleSheet.create({
   btnBox: {
     position: 'absolute',
     right: 15,
-    bottom: 36,
+    bottom: 30,
   },
   btn: {
-    backgroundColor: hexToRgbA(DEFAULT_COLOR, 0.8),
+    backgroundColor: DEFAULT_COLOR,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 3
@@ -100,6 +86,7 @@ const styles = StyleSheet.create({
   },
   aniTab: {
     position: 'absolute',
-    bottom: 0
+    top: 0,
+    backgroundColor: 'transparent'
   }
 });

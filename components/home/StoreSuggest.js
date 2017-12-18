@@ -20,7 +20,7 @@ export default class StoreSuggest extends Component {
 
     this.state = {
       suggest_data: null,
-      isHide: true
+      isHide: false
     }
   }
 
@@ -33,11 +33,15 @@ export default class StoreSuggest extends Component {
       var response = await APIHandler.user_list_suggest_site();
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({
-          suggest_data: response.data,
-          isHide: false
+          suggest_data: response.data
         });
-        layoutAnimation();
+      } else {
+        this.setState({
+          isHide: true
+        });
       }
+
+      layoutAnimation();
     } catch (e) {
       console.warn(e + ' user_list_suggest_site');
 

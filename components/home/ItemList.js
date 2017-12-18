@@ -25,6 +25,13 @@ export default class ItemList extends Component {
       store.setStoreData(item);
     })();
 
+    // hide tutorial go store
+    if (this.props.that) {
+      this.props.that.setState({
+        show_go_store: false
+      });
+    }
+
     Actions.stores({
       title: item.name
     });
