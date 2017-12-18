@@ -12,6 +12,10 @@ class Store {
     // reset cart index every store_id changed
     reaction(() => this.store_id, () => {
       this.setCartItemIndex(0);
+
+      if (!this.store_data) {
+        this._getStoreInfo();
+      }
     });
 
     reaction(() => this.isConnected, () => {
@@ -47,6 +51,23 @@ class Store {
         this.getNoitify();
       }
     }, DELAY_UPDATE_NOTICE);
+  }
+
+  async _getStoreInfo() {
+    try {
+      var response = await APIHandler.site_info(this.store_id);
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          this.setStoreData(response.data);
+        })();
+      }
+    } catch (e) {
+      console.warn(e + ' site_info');
+
+      this.addApiQueue('site_info', this._getStoreInfo);
+    } finally {
+
+    }
   }
 
   async getNoitify() {

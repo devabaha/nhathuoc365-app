@@ -8,13 +8,19 @@ import {
   TouchableHighlight,
   StyleSheet,
   ScrollView,
-  Alert
+  RefreshControl,
+  Alert,
+  FlatList
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import AutoHeightWebView from 'react-native-autoheight-webview';
+import ListHeader from '../stores/ListHeader';
+import Items from '../stores/Items';
+import CartFooter from '../cart/CartFooter';
+import PopupConfirm from '../PopupConfirm';
 import store from '../../store/Store';
 
 @observer
@@ -25,12 +31,17 @@ export default class NotifyItem extends Component {
     this.state = {
       loading: true,
       item: props.data,
-      item_data: null
+      item_data: null,
+      refreshing: false
     }
   }
 
   componentDidMount() {
     this._getData();
+  }
+
+  _onRefresh() {
+    this.setState({refreshing: true}, this._getData.bind(this, 1000));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -53,12 +64,16 @@ export default class NotifyItem extends Component {
         var response = await APIHandler.user_news(this.state.item.id);
 
         if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setStoreId(response.data.site_id);
+          })();
           setTimeout(() => {
 
             this.setState({
               item_data: response.data,
               refreshing: false,
-              loading: false
+              loading: false,
+              refreshing: false
             });
           }, delay || 0);
         }
@@ -77,69 +92,176 @@ export default class NotifyItem extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.notify_container}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+          style={styles.notify_container}>
+
           <View style={styles.notify_image_box}>
             <CachedImage mutable style={styles.notify_image} source={{uri: item.image_url}} />
           </View>
 
-          <View style={styles.notify_content}>
-            <Text style={styles.notify_heading}>{item.title}</Text>
+          <View style={{
+            backgroundColor: '#ffffff',
+            paddingBottom: 16
+          }}>
+            <View style={styles.notify_content}>
+              <Text style={styles.notify_heading}>{item.title}</Text>
 
-            <View style={styles.notify_time_box}>
-              <Text style={styles.notify_time}>
-                <Icon name="clock-o" size={11} color="#666666" />
-                {' ' + item.created + '    '}
-                <Icon name="map-marker" size={12} color="#666666" />
-                {' ' + item.shop_name}
-              </Text>
+              <View style={styles.notify_time_box}>
+                <Text style={styles.notify_time}>
+                  <Icon name="clock-o" size={11} color="#666666" />
+                  {' ' + item.created + '    '}
+                  <Icon name="map-marker" size={12} color="#666666" />
+                  {' ' + item.shop_name}
+                </Text>
+              </View>
+
+              <View style={styles.notify_sort_content_box}>
+                <Text style={styles.notify_sort_content}>{item.short_content}</Text>
+              </View>
             </View>
 
-            <View style={styles.notify_sort_content_box}>
-              <Text style={styles.notify_sort_content}>{item.short_content}</Text>
-            </View>
+            {item_data != null ? (
+              <AutoHeightWebView
+                onError={() => console.log('on error')}
+                onLoad={() => console.log('on load')}
+                onLoadStart={() => console.log('on load start')}
+                onLoadEnd={() => console.log('on load end')}
+                onShouldStartLoadWithRequest={result => {
+                  console.log(result)
+                  return true;
+                }}
+                style={{
+                  paddingHorizontal: 6
+                }}
+                onHeightUpdated={height => this.setState({ height })}
+                source={{ html: item_data.content }}
+                customScript={`
+
+                  `}
+                customStyle={`
+                  * {
+                    font-family: 'arial';
+                  }
+                  a {
+                    pointer-events:none;
+                    text-decoration: none !important;
+                    color: #404040 !important;
+                  }
+                  p {
+                    font-size: 15px;
+                    line-height: 24px
+                  }
+                  img {
+                    max-width: 100% !important;
+                  }`} />
+            ) : (
+              <Indicator size="small" />
+            )}
           </View>
 
-          {item_data != null ? (
-            <AutoHeightWebView
-              onError={() => console.log('on error')}
-              onLoad={() => console.log('on load')}
-              onLoadStart={() => console.log('on load start')}
-              onLoadEnd={() => console.log('on load end')}
-              onShouldStartLoadWithRequest={result => {
-                console.log(result)
-                return true;
-              }}
-              style={{
-                paddingHorizontal: 6
-              }}
-              onHeightUpdated={height => this.setState({ height })}
-              source={{ html: item_data.content }}
-              customScript={`
+          {item_data != null && item_data.related && <FlatList
+            onEndReached={(num) => {
 
-                `}
-              customStyle={`
-                * {
-                  font-family: 'arial';
-                }
-                a {
-                  pointer-events:none;
-                  text-decoration: none !important;
-                  color: #404040 !important;
-                }
-                p {
-                  font-size: 15px;
-                  line-height: 24px
-                }
-                img {
-                  max-width: 100% !important;
-                }`} />
-          ) : (
-            <Indicator size="small" />
-          )}
+            }}
+            onEndReachedThreshold={0}
+            style={[styles.items_box]}
+            ListHeaderComponent={() => <ListHeader title="— SẢN PHẨM LIÊN QUAN —" />}
+            data={item_data.related}
+            renderItem={({item, index}) => (
+              <Items
+                item={item}
+                index={index}
+                onPress={this._goItem.bind(this, item)}
+                />
+            )}
+            keyExtractor={item => item.id}
+            numColumns={2}
+          />}
 
         </ScrollView>
+
+        {item_data != null && item_data.related && (
+          <CartFooter
+            perfix="item"
+            confirmRemove={this._confirmRemoveCartItem.bind(this)}
+           />
+        )}
+
+        <PopupConfirm
+          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
+          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          height={110}
+          otherClose={false}
+          noConfirm={() => {
+            if (this.refs_modal_delete_cart_item) {
+              this.refs_modal_delete_cart_item.close();
+            }
+          }}
+          yesConfirm={this._removeCartItem.bind(this)}
+          />
       </View>
     );
+  }
+
+  // tới màn hình chi tiết item
+  _goItem(item) {
+
+    Actions.item({
+      title: item.name,
+      item
+    });
+  }
+
+  _confirmRemoveCartItem(item) {
+    this.cartItemConfirmRemove = item;
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.open();
+    }
+  }
+
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.close();
+    }
+
+    var item = this.cartItemConfirmRemove;
+
+    try {
+      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            // prev item in list
+            if (isAndroid && store.cart_item_index > 0) {
+              var index = store.cart_item_index - 1;
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
+            }
+          })();
+        }, 450);
+      }
+
+      this.cartItemConfirmRemove = undefined;
+    } catch (e) {
+      console.warn(e + ' site_cart_remove');
+
+      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
+    } finally {
+
+    }
   }
 }
 
@@ -160,11 +282,11 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#f1f1f1"
   },
   notify_container: {
-    paddingBottom: 8,
-    marginBottom: 8
+    // paddingBottom: 8,
+    // marginBottom: 8
   },
   notify_content: {
     paddingHorizontal: 15
@@ -210,5 +332,11 @@ const styles = StyleSheet.create({
   notify_image: {
     flex: 1,
     resizeMode: 'cover'
+  },
+
+  items_box: {
+    // marginBottom: 69,
+    marginTop: 20,
+    backgroundColor: "#f1f1f1"
   }
 });
