@@ -12,18 +12,20 @@ import {
 import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-Animatable.initializeRegistryWithDefinitions({
-  slideInDown: {
-    from: {
-      top: 0
-    },
-    to: {
-      top: 2
-    },
-  }
-});
-
 export default class AddStoreTutorial extends Component {
+  componentWillMount() {
+    Animatable.initializeRegistryWithDefinitions({
+      slideInDown: {
+        from: {
+          top: 0
+        },
+        to: {
+          top: 2
+        },
+      }
+    });
+  }
+
   render() {
 
     var {title, right, onPress} = this.props;
