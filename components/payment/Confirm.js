@@ -908,6 +908,31 @@ export default class Confirm extends Component {
             </View>
           )}
 
+          <View style={[styles.boxButtonActions, {
+            paddingTop: 0
+          }]}>
+            <TouchableHighlight
+              style={styles.buttonAction}
+              onPress={() => {
+                Actions.rating({
+                  cart_data
+                });
+              }}
+              underlayColor="transparent">
+              <View style={[styles.boxButtonAction, {
+                width: Util.size.width - 160,
+                backgroundColor: DEFAULT_COLOR,
+                borderColor: "#999999"
+              }]}>
+                <Icon style={styles.starReviews} name="star" size={12} color="#ffffff" />
+
+                <Text style={[styles.buttonActionTitle, {
+                  color: "#ffffff"
+                }]}>Phản ánh & Đánh giá</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+
         </ScrollView>
 
         {single && (
@@ -1905,5 +1930,8 @@ const styles = StyleSheet.create({
     color: "#333333",
     marginLeft: 4,
     fontSize: 14
+  },
+  starReviews: {
+    marginLeft: 2
   }
 });

@@ -70,6 +70,7 @@ import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import ListProduct from './components/sale/ListProduct';
 import EditListProduct from './components/sale/EditListProduct';
+import Rating from './components/rating/Rating';
 import Error from './components/Error';
 
 // Backend
@@ -250,7 +251,7 @@ export default class App extends Component {
             site_code: id
           });
           break;
-        case 'stores':
+        case 'store':
           this._pushGoStore(id);
           break;
         case 'item':
@@ -325,17 +326,17 @@ export default class App extends Component {
 
       if (page) {
         switch (page) {
-          case 'stores':
+          case 'store':
             if (page_id) {
               this._pushGoStore(page_id);
             }
             break;
-          case 'news':
+          case 'new':
             if (page_id) {
               this._pushGoNews(page_id);
             }
             break;
-          case 'orders':
+          case 'order':
             if (site_id && page_id) {
               Actions.orders_item({
                 title: '#...',
@@ -646,6 +647,7 @@ export default class App extends Component {
             <Scene key="search" title="Tìm kiếm" component={Search} {...custommerNav} />
             <Scene key="item" title="Chi tiết sản phẩm" component={Item} {...custommerNav} />
             <Scene key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
+            <Scene key="rating" direction="vertical" hideNavBar title="" component={Rating} {...custommerNav} />
             <Scene key="orders_item" title="Chi tiết đơn hàng" component={OrdersItem} {...custommerNav} />
             <Scene key="notifys" title="Tin tức" component={Notifys} {...custommerNav} />
             <Scene key="notify_item" title="Chi tiết" component={NotifyItem} {...custommerNav} />
