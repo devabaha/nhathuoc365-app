@@ -93,6 +93,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async cart_site_update(site_id, cart_id, data) {
+    var api = url_for(API.CART_SITE_UPDATE + '/' + site_id + '/' + cart_id);
+    return await this.postAPI(api, data);
+  }
+
   /**
   * Lấy d/s sản phẩm theo categofy id
   */

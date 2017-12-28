@@ -42,6 +42,7 @@ exports.SITE_CART_ORDERS = MY_FOOD_API + 'apiSite/cartorder';
 exports.SITE_CART_CANCEL = MY_FOOD_API + 'apiSite/cartcancel';
 exports.SITE_CART_REORDER = MY_FOOD_API + 'apiSite/cart_reorder';
 exports.SITE_CART_EDIT = MY_FOOD_API + 'apiSite/cart_edit';
+exports.CART_SITE_UPDATE = MY_FOOD_API + 'apiSite/site_cart_update';
 
 // Address
 exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';

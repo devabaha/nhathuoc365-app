@@ -647,7 +647,7 @@ export default class App extends Component {
             <Scene key="search" title="Tìm kiếm" component={Search} {...custommerNav} />
             <Scene key="item" title="Chi tiết sản phẩm" component={Item} {...custommerNav} />
             <Scene key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
-            <Scene key="rating" direction="vertical" hideNavBar title="" component={Rating} {...custommerNav} />
+            <Scene key="rating" panHandlers={null} direction="vertical" hideNavBar title="" component={Rating} {...custommerNav} />
             <Scene key="orders_item" title="Chi tiết đơn hàng" component={OrdersItem} {...custommerNav} />
             <Scene key="notifys" title="Tin tức" component={Notifys} {...custommerNav} />
             <Scene key="notify_item" title="Chi tiết" component={NotifyItem} {...custommerNav} />
