@@ -111,9 +111,12 @@ export default class SaleMenu extends Component {
               iconColor: '#542405',
               title: 'Sản phẩm',
               onPress: () => {
-
+                Actions.products({
+                  title: item_data.name,
+                  item_data
+                });
               },
-              disabled: true
+              disabled: false
             },
             {
               key: Math.random(),

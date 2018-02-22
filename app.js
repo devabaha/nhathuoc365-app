@@ -81,6 +81,8 @@ import Sale from './components/sale/Sale';
 import Order from './components/sale/Order';
 import UserInfo from './components/sale/UserInfo';
 import SaleChat from './components/sale/SaleChat';
+import Products from './components/sale/Products/Products';
+import CreateProduct from './components/sale/Products/CreateProduct';
 
 // others
 import TabIcon from './components/TabIcon';
@@ -670,6 +672,8 @@ export default class App extends Component {
             <Scene key="sale_chat" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={SaleChat} navBar={CustomNavBar} />
             <Scene key="list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={ListProduct} navBar={CustomNavBar2} />
             <Scene key="edit_list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={EditListProduct} navBar={CustomNavBar2} />
+            <Scene key="products" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Products} {...custommerNav} />
+            <Scene key="create_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={CreateProduct} {...custommerNav} />
 
           </Scene>
           <Scene key="error" component={Error}/>

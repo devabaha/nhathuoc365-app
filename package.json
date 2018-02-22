@@ -29,6 +29,7 @@
 		"react-native-image-picker": "^0.26.7",
 		"react-native-image-zoom-viewer": "^2.0.18",
 		"react-native-img-cache": "^1.5.3",
+		"react-native-keyboard-spacer": "^0.4.1",
 		"react-native-md5": "^1.0.0",
 		"react-native-message-bar": "^2.0.9",
 		"react-native-modalbox": "^1.4.2",
@@ -39,7 +40,9 @@
 		"react-native-simple-toast": "0.0.7",
 		"react-native-storage": "^0.2.2",
 		"react-native-swiper": "^1.5.13",
-		"react-native-vector-icons": "^4.5.0"
+		"react-native-vector-icons": "^4.5.0",
+		"react-native-webview-bridge": "^0.33.0",
+		"react-native-zss-rich-text-editor": "^1.1.0"
 	},
 	"devDependencies": {
 		"babel-jest": "20.0.3",

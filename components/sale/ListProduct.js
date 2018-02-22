@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
+import store from '../../store/Store';
 
 var CART = {}
 
@@ -138,7 +139,7 @@ export default class ListProduct extends Component {
     } catch (e) {
       console.warn(e + ' site_list_product');
 
-      store.addApiQueue('site_list_product', this._getData);
+      store.addApiQueue('site_list_product', this._getData.bind(this, delay));
     } finally {
 
     }

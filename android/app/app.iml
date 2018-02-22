@@ -76,23 +76,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/shaders" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/build/.DS_Store" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-safeguard" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/pre-dexed" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
-      <excludeFolder url="file://$MODULE_DIR$/build/reports" />
-      <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
@@ -124,10 +114,10 @@
     <orderEntry type="library" exported="" name="com.google.android.gms:play-services-tasks-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="com.facebook.fbui.textlayoutbuilder:staticlayout-proxy:1.0@jar" level="project" />
     <orderEntry type="library" exported="" name="com.android.support:support-compat-25.2.0" level="project" />
-    <orderEntry type="library" exported="" name="com.onesignal:OneSignal-3.7.1" level="project" />
     <orderEntry type="library" exported="" name="com.android.support:support-annotations:25.2.0@jar" level="project" />
     <orderEntry type="library" exported="" name="com.google.android.gms:play-services-analytics-impl-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="com.facebook.fbui.textlayoutbuilder:textlayoutbuilder-1.0.0" level="project" />
+    <orderEntry type="library" exported="" name="com.onesignal:OneSignal-3.8.1" level="project" />
     <orderEntry type="library" exported="" name="org.webkit:android-jsc-r174650" level="project" />
     <orderEntry type="library" exported="" name="com.google.android.gms:play-services-location-11.0.4" level="project" />
     <orderEntry type="library" exported="" name="com.google.android.gms:play-services-base-11.0.4" level="project" />
@@ -135,6 +125,7 @@
     <orderEntry type="module" module-name="react-native-camera" exported="" />
     <orderEntry type="module" module-name="react-native-device-info" exported="" />
     <orderEntry type="module" module-name="react-native-onesignal" exported="" />
+    <orderEntry type="module" module-name="react-native-webview-bridge" exported="" />
     <orderEntry type="module" module-name="react-native-vector-icons" exported="" />
     <orderEntry type="module" module-name="react-native-image-picker" exported="" />
     <orderEntry type="module" module-name="react-native-fetch-blob" exported="" />

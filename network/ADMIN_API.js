@@ -21,6 +21,7 @@ exports.SITE_LIST_PRODUCT = MY_FOOD_API + 'adSite/list_product';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'adSite/product';
+exports.SITE_PRODUCTS = MY_FOOD_API + 'adSite/list_ad_products';
 
 // Cart
 exports.SITE_CART_ADDING = MY_FOOD_API + 'adSite/cartadding';
