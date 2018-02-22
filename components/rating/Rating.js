@@ -105,155 +105,155 @@ export default class  Rating extends Component {
       HEADER_HEIGHT
     } = this.state;
 
+    const WrapperView = isIOS ? ScrollView : View;
+
     return (
-      <View style={styles.container}>
-        <View style={[styles.header, {
-          height: HEADER_HEIGHT
-        }]}>
-          <Text style={[styles.headingText, {
-            marginTop: HEADER_HEIGHT * 0.107
-          }]}>Cảm ơn bạn!</Text>
-
-          <View style={[styles.storeAvatarBox, {
-            marginTop: HEADER_HEIGHT * 0.107,
-            width: HEADER_HEIGHT * 0.3,
-            height: HEADER_HEIGHT * 0.3,
-            borderRadius: HEADER_HEIGHT * 0.3 / 2
+      <ScrollView>
+        <View style={styles.container}>
+          <View style={[styles.header, {
+            height: HEADER_HEIGHT
           }]}>
-            <CachedImage
-              style={[styles.storeAvatar, {
-                width: HEADER_HEIGHT * 0.285,
-                height: HEADER_HEIGHT * 0.285,
-                borderRadius: HEADER_HEIGHT * 0.285 / 2
-              }]}
-              source={{uri: cart_data.shop_logo_url}} />
-          </View>
+            <Text style={[styles.headingText, {
+              marginTop: HEADER_HEIGHT * 0.107
+            }]}>Cảm ơn bạn!</Text>
 
-          <Text style={[styles.descText, {
-            marginTop: HEADER_HEIGHT * 0.057
-          }]}>Vui lòng đánh giá dịch vụ của chúng tôi</Text>
-
-          <View style={[styles.starBox, {
-            marginTop: HEADER_HEIGHT * 0.0928
-          }]}>
-            {this._renderStar.call(this)}
-          </View>
-
-          <TouchableHighlight
-            style={{
-              padding: 16,
-              position: 'absolute',
-              top: isIOS ? 14 : 0,
-              left: 0
-            }}
-            onPress={Actions.pop}
-            underlayColor="transparent">
-            <Text style={{
-              fontSize: 14,
-              color: '#ffffff'
-            }}>Đóng</Text>
-          </TouchableHighlight>
-        </View>
-
-        <ScrollView>
-        <View style={styles.content}>
-          <Text style={styles.questText}>{rating_msg}</Text>
-
-          {current <= 3 && rating_data && had_action && (
-            <View style={styles.ratingMoreBox}>
-            {rating_data.map((rating, index) => {
-              var active = this._isRatingSelected(rating);
-
-              return(
-                <TouchableHighlight
-                  key={index}
-                  onPress={this._ratingHandle.bind(this, rating)}
-                  underlayColor="transparent">
-                  <View style={{
-                    alignItems: 'center'
-                  }}>
-                    <View style={[styles.ratingMore, {
-                      borderColor: active ? DEFAULT_COLOR : "#999999",
-                      width: HEADER_HEIGHT * 0.193,
-                      height: HEADER_HEIGHT * 0.193,
-                      borderRadius: HEADER_HEIGHT * 0.193 / 2,
-                    }]}>
-                      <Icon style={styles.ratingIcon} name="truck" size={24} color={active ? DEFAULT_COLOR : "#999999"} />
-                    </View>
-                    {!isFocus && (
-                      <Text style={[styles.ratingShip, {
-                        color: active ? DEFAULT_COLOR : "#999999"
-                      }]}>{rating.name}</Text>
-                    )}
-                  </View>
-                </TouchableHighlight>
-              );
-            })}
+            <View style={[styles.storeAvatarBox, {
+              marginTop: HEADER_HEIGHT * 0.107,
+              width: HEADER_HEIGHT * 0.3,
+              height: HEADER_HEIGHT * 0.3,
+              borderRadius: HEADER_HEIGHT * 0.3 / 2
+            }]}>
+              <CachedImage
+                style={[styles.storeAvatar, {
+                  width: HEADER_HEIGHT * 0.285,
+                  height: HEADER_HEIGHT * 0.285,
+                  borderRadius: HEADER_HEIGHT * 0.285 / 2,
+                  backgroundColor: 'transparent'
+                }]}
+                source={{uri: cart_data.shop_logo_url}} />
             </View>
-          )}
 
-          <TextInput
-            ref={ref => this.refs_cart_note = ref}
-            style={styles.ratingNote}
-            keyboardType="default"
-            maxLength={1000}
-            placeholder="Nhập ghi chú của bạn tại đây"
-            placeholderTextColor="#999999"
-            multiline={true}
-            underlineColorAndroid="transparent"
-            onChangeText={(value) => {
-              this.setState({
-                comment: value
-              });
-            }}
-            onFocus={() => {
-              this.setState({
-                HEADER_HEIGHT: 200,
-                isFocus: true
-              });
-              // layoutAnimation();
-            }}
-            onBlur={() => {
-              this.setState({
-                HEADER_HEIGHT: 280,
-                isFocus: false
-              });
-              layoutAnimation();
-            }}
-            value={comment}
-            />
-        </View>
-        </ScrollView>
+            <Text style={[styles.descText, {
+              marginTop: HEADER_HEIGHT * 0.057
+            }]}>Vui lòng đánh giá dịch vụ của chúng tôi</Text>
 
-        <View style={{
-          width: Util.size.width,
-          height: 60,
-          alignItems: 'center',
-          justifyContent: 'center',
-          position: 'absolute',
-          bottom: store.keyboardTop + 8,
-          left: 0
-        }}>
-          <TouchableHighlight
-            onPress={this._onSave}
-            underlayColor="transparent">
-            <View style={{
-              width: Util.size.width - 30,
-              height: 42,
-              backgroundColor: DEFAULT_COLOR,
-              borderRadius: 3,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
+            <View style={[styles.starBox, {
+              marginTop: HEADER_HEIGHT * 0.0928
+            }]}>
+              {this._renderStar.call(this)}
+            </View>
+
+            <TouchableHighlight
+              style={{
+                padding: 16,
+                position: 'absolute',
+                top: isIOS ? 14 : 0,
+                left: 0
+              }}
+              onPress={Actions.pop}
+              underlayColor="transparent">
               <Text style={{
-                color: '#ffffff',
                 fontSize: 14,
-                fontWeight: '600'
-              }}>Gửi</Text>
-            </View>
-          </TouchableHighlight>
+                color: '#ffffff'
+              }}>Đóng</Text>
+            </TouchableHighlight>
+          </View>
+
+          <View style={styles.content}>
+            <Text style={styles.questText}>{rating_msg}</Text>
+
+            {current <= 3 && rating_data && had_action && (
+              <View style={styles.ratingMoreBox}>
+              {rating_data.map((rating, index) => {
+                var active = this._isRatingSelected(rating);
+
+                return(
+                  <TouchableHighlight
+                    key={index}
+                    onPress={this._ratingHandle.bind(this, rating)}
+                    underlayColor="transparent">
+                    <View style={{
+                      alignItems: 'center'
+                    }}>
+                      <View style={[styles.ratingMore, {
+                        borderColor: active ? DEFAULT_COLOR : "#999999",
+                        width: HEADER_HEIGHT * 0.193,
+                        height: HEADER_HEIGHT * 0.193,
+                        borderRadius: HEADER_HEIGHT * 0.193 / 2,
+                      }]}>
+                        <Icon style={styles.ratingIcon} name="truck" size={24} color={active ? DEFAULT_COLOR : "#999999"} />
+                      </View>
+                      {!isFocus && (
+                        <Text style={[styles.ratingShip, {
+                          color: active ? DEFAULT_COLOR : "#999999"
+                        }]}>{rating.name}</Text>
+                      )}
+                    </View>
+                  </TouchableHighlight>
+                );
+              })}
+              </View>
+            )}
+
+            <TextInput
+              ref={ref => this.refs_cart_note = ref}
+              style={styles.ratingNote}
+              keyboardType="default"
+              maxLength={1000}
+              placeholder="Nhập ghi chú của bạn tại đây"
+              placeholderTextColor="#999999"
+              multiline={true}
+              underlineColorAndroid="transparent"
+              onChangeText={(value) => {
+                this.setState({
+                  comment: value
+                });
+              }}
+              onFocus={() => {
+                this.setState({
+                  HEADER_HEIGHT: 200,
+                  isFocus: true
+                });
+                // layoutAnimation();
+              }}
+              onBlur={() => {
+                this.setState({
+                  HEADER_HEIGHT: 280,
+                  isFocus: false
+                });
+                layoutAnimation();
+              }}
+              value={comment}
+              />
+          </View>
+
+          <View style={{
+            width: Util.size.width,
+            height: 60,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <TouchableHighlight
+              onPress={this._onSave}
+              underlayColor="transparent">
+              <View style={{
+                width: Util.size.width - 30,
+                height: 42,
+                backgroundColor: DEFAULT_COLOR,
+                borderRadius: 3,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                <Text style={{
+                  color: '#ffffff',
+                  fontSize: 14,
+                  fontWeight: '600'
+                }}>Gửi</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 

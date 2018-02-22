@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -46,7 +47,7 @@
 		78B5DB1369EA490FADCB8BED /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 226104DF636C4029A36287A3 /* libRNImagePicker.a */; };
 		7F53DAA402374483AF729DCA /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D299D60C476C4EF8BCEAE702 /* Foundation.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
-		8AEA72A51FE8B76B00CFF160 /* dreamy-christmas-bells.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8AEA72801FE8B76A00CFF160 /* dreamy-christmas-bells.mp3 */; };
+		8A76EB741FFF73E70062DB94 /* push_1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8A76EB731FFF73E70062DB94 /* push_1.mp3 */; };
 		975166687EAB4498AD4288FD /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E75883D3CA404B0A8A8DBCEE /* EvilIcons.ttf */; };
 		B737FE1043C24D4C8E480D4E /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2ED76982ECC64270BB894F6E /* Entypo.ttf */; };
 		D3C817E615D94C60ABD2A4B1 /* libRCTCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 12AFD630FC724DD5AAD8B98D /* libRCTCamera.a */; };
@@ -367,7 +368,7 @@
 		7F0329BFD16D4ADB80EDD4AD /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		8A2B79681F56CE1100B60BA7 /* my_food.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = my_food.entitlements; path = my_food/my_food.entitlements; sourceTree = "<group>"; };
-		8AEA72801FE8B76A00CFF160 /* dreamy-christmas-bells.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "dreamy-christmas-bells.mp3"; sourceTree = "<group>"; };
+		8A76EB731FFF73E70062DB94 /* push_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = push_1.mp3; sourceTree = "<group>"; };
 		A6022AEB82A24730ADE7173A /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		BEB0C269C3884559824929B1 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		D299D60C476C4EF8BCEAE702 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
@@ -616,7 +617,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				8AEA72801FE8B76A00CFF160 /* dreamy-christmas-bells.mp3 */,
+				8A76EB731FFF73E70062DB94 /* push_1.mp3 */,
 				13B07FAE1A68108700A75B9A /* my_food */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* my_foodTests */,
@@ -1187,11 +1188,11 @@
 				B737FE1043C24D4C8E480D4E /* Entypo.ttf in Resources */,
 				975166687EAB4498AD4288FD /* EvilIcons.ttf in Resources */,
 				22D4187459484CCBB4853294 /* FontAwesome.ttf in Resources */,
-				8AEA72A51FE8B76B00CFF160 /* dreamy-christmas-bells.mp3 in Resources */,
 				7F53DAA402374483AF729DCA /* Foundation.ttf in Resources */,
 				37F52057DB31479C96C0817E /* Ionicons.ttf in Resources */,
 				0D4765B1737F4182BD275C31 /* MaterialCommunityIcons.ttf in Resources */,
 				1875BAC70C754488AC34C93E /* MaterialIcons.ttf in Resources */,
+				8A76EB741FFF73E70062DB94 /* push_1.mp3 in Resources */,
 				FD335E5894DB4D8888BDE419 /* Octicons.ttf in Resources */,
 				570D593F68024B5FBCCDD28D /* SimpleLineIcons.ttf in Resources */,
 				0B653B1ED2A34F49B05A85CF /* Zocial.ttf in Resources */,
