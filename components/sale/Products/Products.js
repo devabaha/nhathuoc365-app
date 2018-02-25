@@ -60,6 +60,7 @@ export default class Products extends Component {
     Actions.create_product({
       title: item.name,
       data: item,
+      item_data: this.state.item_data,
       editMode: true
     });
   }
@@ -115,7 +116,8 @@ export default class Products extends Component {
             underlayColor="transparent"
             onPress={() => {
               Actions.create_product({
-                title: "Đăng sản phẩm"
+                title: "Đăng sản phẩm",
+                item_data: this.state.item_data
               });
             }}
             style={{

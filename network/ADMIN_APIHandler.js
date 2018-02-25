@@ -360,6 +360,10 @@ class APIHandler {
     return url_for(API.USER_ADD_AVATAR);
   }
 
+  url_create_product(store_id) {
+    return url_for(API.SITE_CREATE_PRODUCT + '/' + store_id);
+  }
+
   /**
   * Lấy thông báo trong ứng dụng
   */

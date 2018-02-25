@@ -16,6 +16,8 @@ import {RichTextEditor, RichTextToolbar} from 'react-native-zss-rich-text-editor
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import Modal from 'react-native-modalbox';
+import RNFetchBlob from 'react-native-fetch-blob';
+import ImagePicker from 'react-native-image-picker';
 
 export default class CreateProduct extends Component {
   constructor(props) {
@@ -27,7 +29,13 @@ export default class CreateProduct extends Component {
       name: "",
       sorting: 1,
       cart_step: 1,
-      unit_name: 'kg'
+      unit_name: 'kg',
+      images: {
+        "1": {},
+        "2": {},
+        "3": {}
+      },
+      item_data: props.item_data || null
     }
   }
 
@@ -52,21 +60,56 @@ export default class CreateProduct extends Component {
   }
 
   _onSave = () => {
-    var datas = {};
+    var datas = [];
 
-    datas.name = this.state.name || '';
-    datas.product_code = this.state.product_code || '';
-    datas.sorting = this.state.sorting || '';
-    datas.cart_step = this.state.cart_step || '';
-    datas.unit_name = this.state.unit_name || '';
-    datas.discount = this.state.discount || '';
-    datas.discount_percent = this.state.discount_percent || '';
-    datas.price = this.state.price || '';
-    datas.cat_id = this.state.cat_id || '';
-    datas.made_in = this.state.made_in || '';
-    datas.brand = this.state.brand || '';
+    datas.push({
+      name: 'name',
+      data: this.state.name || ''
+    });
+    datas.push({
+      name: 'product_code',
+      data: this.state.product_code || ''
+    });
+    datas.push({
+      name: 'sorting',
+      data: this.state.sorting || ''
+    });
+    datas.push({
+      name: 'cart_step',
+      data: this.state.cart_step || ''
+    });
+    datas.push({
+      name: 'unit_name',
+      data: this.state.unit_name || ''
+    });
+    datas.push({
+      name: 'discount',
+      data: this.state.discount || ''
+    });
+    datas.push({
+      name: 'discount_percent',
+      data: this.state.discount_percent || ''
+    });
+    datas.push({
+      name: 'price',
+      data: this.state.price || ''
+    });
+    datas.push({
+      name: 'cat_id',
+      data: this.state.cat_id || ''
+    });
+    datas.push({
+      name: 'made_in',
+      data: this.state.made_in || ''
+    });
+    datas.push({
+      name: 'brand',
+      data: this.state.brand || ''
+    });
 
-    alert(JSON.stringify(datas));
+    // alert(JSON.stringify(datas));
+
+    this._uploadImages(datas);
   }
 
   render() {
@@ -254,6 +297,66 @@ export default class CreateProduct extends Component {
               />
           </View>
 
+          <View style={styles.formGroup}>
+            <Text style={styles.formLabel}>Ảnh sản phẩm 1</Text>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={this._onTapChooseImage.bind(this, 1)}>
+              <View style={[styles.formInputSelection]}>
+                <Text style={styles.inputSelectionValue}>{this.state.images[1].fileName || "Chọn ảnh..."}</Text>
+                <View style={styles.formSelectionIcon}>
+                  <Icon name="image" size={16} color="#666" />
+                </View>
+              </View>
+            </TouchableHighlight>
+          </View>
+          {this.state.images[1].uri && (
+            <CachedImage
+              style={styles.imagePreview}
+              source={{uri: this.state.images[1].uri}}
+              />
+          )}
+
+          <View style={styles.formGroup}>
+            <Text style={styles.formLabel}>Ảnh sản phẩm 2</Text>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={this._onTapChooseImage.bind(this, 2)}>
+              <View style={[styles.formInputSelection]}>
+                <Text style={styles.inputSelectionValue}>{this.state.images[2].fileName || "Chọn ảnh..."}</Text>
+                <View style={styles.formSelectionIcon}>
+                  <Icon name="image" size={16} color="#666" />
+                </View>
+              </View>
+            </TouchableHighlight>
+          </View>
+          {this.state.images[2].uri && (
+            <CachedImage
+              style={styles.imagePreview}
+              source={{uri: this.state.images[2].uri}}
+              />
+          )}
+
+          <View style={styles.formGroup}>
+            <Text style={styles.formLabel}>Ảnh sản phẩm 3</Text>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={this._onTapChooseImage.bind(this, 3)}>
+              <View style={[styles.formInputSelection]}>
+                <Text style={styles.inputSelectionValue}>{this.state.images[3].fileName || "Chọn ảnh..."}</Text>
+                <View style={styles.formSelectionIcon}>
+                  <Icon name="image" size={16} color="#666" />
+                </View>
+              </View>
+            </TouchableHighlight>
+          </View>
+          {this.state.images[3].uri && (
+            <CachedImage
+              style={styles.imagePreview}
+              source={{uri: this.state.images[3].uri}}
+              />
+          )}
+
           <View style={styles.boxButtonActions}>
             <TouchableHighlight
               style={[styles.buttonAction, {
@@ -306,6 +409,73 @@ export default class CreateProduct extends Component {
           />
       </View>
     );
+  }
+
+  _onTapChooseImage(index) {
+    const options = {
+      title: 'Chọn ảnh sản phẩm',
+      cancelButtonTitle: 'Huỷ bỏ',
+      takePhotoButtonTitle: 'Chụp ảnh',
+      chooseFromLibraryButtonTitle: 'Chọn ảnh từ thư viện',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      }
+    }
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+
+      }
+      else if (response.error) {
+        console.warn(response.error);
+      }
+      else {
+        this.state.images[index] = response;
+
+        this.setState({
+          images: this.state.images
+        });
+      }
+    });
+  }
+
+  _uploadImages(datas) {
+    this.setState({
+      avatar_loading: true
+    }, () => {
+      var images = datas;
+
+      Object.keys(this.state.images).map(key => {
+        var image = this.state.images[key];
+        if (image.fileName) {
+          images.push({
+            name: 'product_image',
+            filename: this.state.images[key].fileName,
+            data: this.state.images[key].data
+          });
+        }
+      });
+
+      // return alert(JSON.stringify(images))
+
+      // call api post my form data
+      RNFetchBlob.fetch('POST', ADMIN_APIHandler.url_create_product(this.state.item_data.id), {
+          'Content-Type' : 'multipart/form-data',
+      }, images).then((resp) => {
+
+          var {data} = resp;
+          // var response = JSON.parse(data);
+          return alert(data)
+          if (response && response.status == STATUS_SUCCESS) {
+
+          }
+      }).catch((error) => {
+          console.warn(error + ' url_user_add_avatar');
+
+          // store.addApiQueue('url_user_add_avatar', this._uploadAvatar.bind(this, response));
+      });
+    });
   }
 }
 
@@ -483,5 +653,12 @@ const styles = StyleSheet.create({
   selectionRowsValue: {
     fontSize: 16,
     color: '#000000'
+  },
+
+  imagePreview: {
+    width: 60,
+    height: 60,
+    resizeMode: 'cover',
+    marginTop: 4
   }
 });
