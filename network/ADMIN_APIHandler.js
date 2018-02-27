@@ -360,8 +360,13 @@ class APIHandler {
     return url_for(API.USER_ADD_AVATAR);
   }
 
-  url_create_product(store_id) {
-    return url_for(API.SITE_CREATE_PRODUCT + '/' + store_id);
+  async create_product(store_id, data) {
+    var api = url_for(API.SITE_CREATE_PRODUCT + '/' + store_id);
+    return await this.postAPI(api, data);
+  }
+
+  url_site_upload_file(store_id) {
+    return url_for(API.SITE_UPLOAD_FILE + '/' + store_id);
   }
 
   /**
@@ -370,6 +375,16 @@ class APIHandler {
   async user_notify() {
     var api = url_for(API.USER_NOTIFY);
     return await this.getAPI(api);
+  }
+
+  async site_create_page_info(store_id) {
+    var api = url_for(API.SITE_CREATE_PAGE_INFO + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
+  async site_gen_product_code(store_id, data) {
+    var api = url_for(API.SITE_GEN_PRODUCT_CODE + '/' + store_id);
+    return await this.postAPI(api, data);
   }
 
   /**

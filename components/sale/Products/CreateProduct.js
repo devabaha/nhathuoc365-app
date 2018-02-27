@@ -11,114 +11,280 @@ import {
 } from 'react-native';
 
 // librarys
+import {Actions, ActionConst} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {RichTextEditor, RichTextToolbar} from 'react-native-zss-rich-text-editor';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
-import {AutoGrowingTextInput} from 'react-native-autogrow-textinput';
 import Modal from 'react-native-modalbox';
 import RNFetchBlob from 'react-native-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
+import _ from 'lodash';
 
 export default class CreateProduct extends Component {
   constructor(props) {
     super(props);
-    this.getHTML = this.getHTML.bind(this);
-    this.setFocusHandlers = this.setFocusHandlers.bind(this);
 
     this.state = {
       name: "",
-      sorting: 1,
-      cart_step: 1,
-      unit_name: 'kg',
+      sorting: "",
+      cart_step: "",
+      unit_name: "",
       images: {
         "1": {},
         "2": {},
         "3": {}
       },
-      item_data: props.item_data || null
+      item_data: props.item_data || null,
+      ready: false,
+      contentHeight: 96,
+      advance: false
     }
   }
 
-  onEditorInitialized() {
-    this.setFocusHandlers();
-    this.getHTML();
-  }
+  componentDidMount() {
+    this._getInfo();
 
-  async getHTML() {
-    const titleHtml = await this.richtext.getTitleHtml();
-    const contentHtml = await this.richtext.getContentHtml();
-    //alert(titleHtml + ' ' + contentHtml)
-  }
-
-  setFocusHandlers() {
-    this.richtext.setTitleFocusHandler(() => {
-      //alert('title focus');
-    });
-    this.richtext.setContentFocusHandler(() => {
-      //alert('content focus');
+    Actions.refresh({
+      onBack: () => {
+        this.parentReload();
+        Actions.pop();
+      },
+      rightTitle: "Nâng cao",
+      onRight: this._changeAddMode.bind(this),
+      rightButtonTextStyle: {
+        color: "#ffffff"
+      }
     });
   }
 
-  _onSave = () => {
-    var datas = [];
+  _changeAddMode() {
+    if (this.state.advance) {
+      this.setState({
+        advance: false
+      }, () => {
+        Actions.refresh({
+          rightTitle: "Nâng cao"
+        });
+      });
+    } else {
+      this.setState({
+        advance: true
+      }, () => {
+        Actions.refresh({
+          rightTitle: "Cơ bản"
+        });
+      });
+    }
 
-    datas.push({
-      name: 'name',
-      data: this.state.name || ''
-    });
-    datas.push({
-      name: 'product_code',
-      data: this.state.product_code || ''
-    });
-    datas.push({
-      name: 'sorting',
-      data: this.state.sorting || ''
-    });
-    datas.push({
-      name: 'cart_step',
-      data: this.state.cart_step || ''
-    });
-    datas.push({
-      name: 'unit_name',
-      data: this.state.unit_name || ''
-    });
-    datas.push({
-      name: 'discount',
-      data: this.state.discount || ''
-    });
-    datas.push({
-      name: 'discount_percent',
-      data: this.state.discount_percent || ''
-    });
-    datas.push({
-      name: 'price',
-      data: this.state.price || ''
-    });
-    datas.push({
-      name: 'cat_id',
-      data: this.state.cat_id || ''
-    });
-    datas.push({
-      name: 'made_in',
-      data: this.state.made_in || ''
-    });
-    datas.push({
-      name: 'brand',
-      data: this.state.brand || ''
+    layoutAnimation();
+  }
+
+  parentReload = () => {
+    if (this.props.parentReload) {
+      this.props.parentReload();
+    }
+  }
+
+  async _getInfo() {
+    try {
+      var response = await ADMIN_APIHandler.site_create_page_info(this.state.item_data.id);
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          sort: response.data.sort,
+          cart_steps: response.data.cart_steps,
+          unit_names: response.data.unit_names,
+          categories: response.data.categories,
+
+          sorting: response.data.sort[0],
+          cart_step: response.data.cart_steps[0],
+          unit_name: response.data.unit_names[0],
+          category: response.data.categories[0].name,
+          cat_id: response.data.categories[0].id,
+
+          ready: true
+        });
+      }
+    } catch (e) {
+      console.warn(e + ' site_create_page_info');
+    } finally {
+
+    }
+  }
+
+  // on saving
+  async _onSave() {
+
+    if (this._clicked) {
+      return;
+    }
+    this._clicked = true;
+
+    var datas = {};
+
+    datas.name = this.state.name || '';
+    datas.product_code = this.state.product_code || '';
+    datas.sorting = this.state.sorting || '';
+    datas.cart_step = this.state.cart_step || '';
+    datas.unit_name = this.state.unit_name || '';
+    datas.discount = this.state.discount || '';
+    datas.discount_percent = this.state.discount_percent || '';
+    datas.price = this.state.price || '';
+    datas.cat_id = this.state.cat_id || '';
+    datas.made_in = this.state.made_in || '';
+    datas.brand = this.state.brand || '';
+    datas.product_image = [];
+    datas.content = this.state.content || '';
+
+    Object.keys(this.state.images).map(index => {
+      var image = this.state.images[index];
+      if (image.upload_file_name) {
+        datas.product_image.push(image.upload_file_name);
+      }
     });
 
-    // alert(JSON.stringify(datas));
+    try {
+      var response = await ADMIN_APIHandler.create_product(this.state.item_data.id, datas);
+      if (response && response.status == STATUS_SUCCESS) {
+        Toast.show(response.message);
 
-    this._uploadImages(datas);
+        this.parentReload();
+
+        Actions.refresh({
+          hideBackImage: true
+        });
+
+        setTimeout(() => {
+          Actions.pop();
+        }, 2000);
+      } else if (response) {
+        Toast.show(response.message);
+        this._clicked = false;
+      }
+    } catch (e) {
+      console.warn(e + ' create_product');
+      this._clicked = false;
+    } finally {
+
+    }
+  }
+
+  // gen random code
+  _genProductCode = () => {
+    this.setState({
+      gening: true
+    }, async () => {
+      try {
+        var response = await ADMIN_APIHandler.site_gen_product_code(this.state.item_data.id, {
+          product_id: 0
+        });
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({
+            product_code: response.data.code
+          });
+        }
+      } catch (e) {
+        console.warn(e + ' site_gen_product_code');
+      } finally {
+        this.setState({
+          gening: false
+        });
+      }
+    });
+  }
+
+  // get height for selections
+  _getSelectionsHeight(length) {
+    var height = length * 42;
+    return height < 400 ? height : 400;
+  }
+
+  _onTapChooseImage(index) {
+    const options = {
+      title: 'Chọn ảnh sản phẩm',
+      cancelButtonTitle: 'Huỷ bỏ',
+      takePhotoButtonTitle: 'Chụp ảnh',
+      chooseFromLibraryButtonTitle: 'Chọn ảnh từ thư viện',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      }
+    }
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+
+      }
+      else if (response.error) {
+        console.warn(response.error);
+      }
+      else {
+        this.state.images[index] = response;
+
+        this.setState({
+          images: this.state.images
+        }, () => {
+          this._uploadImages(index);
+        });
+      }
+    });
+  }
+
+  // scroll wrapper to top
+  _scrollToEnd() {
+    if (this.ref_scroll_view) {
+      this.ref_scroll_view.scrollToEnd();
+    }
+  }
+
+  _uploadImages(index) {
+    var images = {
+      name: 'image',
+      filename: this.state.images[index].fileName,
+      data: this.state.images[index].data
+    };
+
+    // call api post my form data
+    RNFetchBlob.fetch('POST', ADMIN_APIHandler.url_site_upload_file(this.state.item_data.id), {
+        'Content-Type' : 'multipart/form-data',
+    }, [images]).then((resp) => {
+
+        var {data} = resp;
+        var response = JSON.parse(data);
+        if (response && response.status == STATUS_SUCCESS) {
+          this.state.images[index].upload_file_name = response.data.file_name;
+          this.setState({
+            images: this.state.images
+          });
+          this._scrollToEnd();
+        }
+    }).catch((error) => {
+        console.warn(error + ' url_site_upload_file');
+
+        store.addApiQueue('url_site_upload_file', this._uploadImages.bind(this, index));
+    });
   }
 
   render() {
+    if (!this.state.ready) {
+      return (
+        <View style={{
+          width: Util.size.width,
+          height: Util.size.height
+        }}>
+          <Indicator size="small" />
+        </View>
+      );
+    }
+
+    var {advance} = this.state;
+
     return (
       <View style={{
         width: Util.size.width,
         height: Util.size.height
       }}>
-        <ScrollView style={styles.container}>
+        <ScrollView
+          ref={ref => this.ref_scroll_view = ref}
+          style={styles.container}>
           <View style={styles.formGroup}>
             <Text style={styles.formLabel}>Tên sản phẩm (Ví dụ: Rau hữu cơ PGS 300gr)</Text>
             <TextInput
@@ -139,7 +305,7 @@ export default class CreateProduct extends Component {
               />
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => 1}>
+              onPress={this._genProductCode}>
               <View style={{
                 backgroundColor: HEADER_ADMIN_BGR,
                 paddingVertical: 4,
@@ -151,28 +317,30 @@ export default class CreateProduct extends Component {
                 <Text style={{
                   fontSize: 12,
                   color: "#ffffff"
-                }}>Tạo mã tự động</Text>
+                }}>{this.state.gening ? "Đang tạo..." : "Tạo mã tự động"}</Text>
               </View>
             </TouchableHighlight>
           </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Thứ tự sắp xếp</Text>
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() => {
-                if (this.ref_prod_sort) {
-                  this.ref_prod_sort.open();
-                }
-              }}>
-              <View style={[styles.formInputSelection]}>
-                <Text style={styles.inputSelectionValue}>{this.state.sorting}</Text>
-                <View style={styles.formSelectionIcon}>
-                  <Icon name="sort" size={16} color="#666" />
+          {advance && (
+            <View style={styles.formGroup}>
+              <Text style={[styles.formLabel, styles.formLabelAdvance]}>Thứ tự sắp xếp</Text>
+              <TouchableHighlight
+                underlayColor="transparent"
+                onPress={() => {
+                  if (this.ref_prod_sort) {
+                    this.ref_prod_sort.open();
+                  }
+                }}>
+                <View style={[styles.formInputSelection]}>
+                  <Text style={styles.inputSelectionValue}>{this.state.sorting}</Text>
+                  <View style={styles.formSelectionIcon}>
+                    <Icon name="sort" size={16} color="#666" />
+                  </View>
                 </View>
-              </View>
-            </TouchableHighlight>
-          </View>
+              </TouchableHighlight>
+            </View>
+          )}
 
           <View style={styles.formGroup}>
             <Text style={styles.formLabel}>Đơn vị bán của sản phẩm ( 1 Kg, 1 Chai, 1 Gói, 10 Quả, 1 bộ, ... )</Text>
@@ -228,37 +396,41 @@ export default class CreateProduct extends Component {
               />
           </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Khuyến mại / Giảm giá ( % )</Text>
-            <TextInput
-              style={styles.formInput}
-              placeholder="Mã sản phẩm"
-              onChangeText={discount_percent => this.setState({discount_percent})}
-              value={this.state.discount_percent}
-              />
-          </View>
+          {advance && (
+            <View style={styles.formGroup}>
+              <Text style={[styles.formLabel, styles.formLabelAdvance]}>Khuyến mại / Giảm giá ( % )</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Mã sản phẩm"
+                onChangeText={discount_percent => this.setState({discount_percent})}
+                value={this.state.discount_percent}
+                />
+            </View>
+          )}
 
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Giá khuyến mại ( VNĐ )</Text>
-            <TextInput
-              style={styles.formInput}
-              placeholder="Giá khuyến mại"
-              onChangeText={price => this.setState({price})}
-              value={this.state.price}
-              />
-          </View>
+          {advance && (
+            <View style={styles.formGroup}>
+              <Text style={[styles.formLabel, styles.formLabelAdvance]}>Giá khuyến mại ( VNĐ )</Text>
+              <TextInput
+                style={styles.formInput}
+                placeholder="Giá khuyến mại"
+                onChangeText={price => this.setState({price})}
+                value={this.state.price}
+                />
+            </View>
+          )}
 
           <View style={styles.formGroup}>
             <Text style={styles.formLabel}>Danh mục sản phẩm</Text>
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() => {
-                if (this.ref_cat_id) {
-                  this.ref_cat_id.open();
+                if (this.ref_category) {
+                  this.ref_category.open();
                 }
               }}>
               <View style={[styles.formInputSelection]}>
-                <Text style={styles.inputSelectionValue}>{this.state.cat_id}</Text>
+                <Text style={styles.inputSelectionValue}>{this.state.category}</Text>
                 <View style={styles.formSelectionIcon}>
                   <Icon name="sort" size={16} color="#666" />
                 </View>
@@ -288,12 +460,17 @@ export default class CreateProduct extends Component {
 
           <View style={styles.formGroup}>
             <Text style={styles.formLabel}>Nội dung chi tiết</Text>
-            <AutoGrowingTextInput
-              style={[styles.formInput, styles.formInputMulti]}
-              placeholder={'Nhập nội dung'}
-              onChangeText={name => this.setState({name})}
-              value={this.state.name}
-              numberOfLines={4}
+            <TextInput
+              multiline
+              style={[styles.formInput, {
+                height: this.state.contentHeight
+              }]}
+              placeholder="Nhập nội dung"
+              onChangeText={content => this.setState({content})}
+              value={this.state.content}
+              onContentSizeChange={(e) => {
+                this.setState({contentHeight: e.nativeEvent.contentSize.height < 96 ? 96 : e.nativeEvent.contentSize.height});
+              }}
               />
           </View>
 
@@ -362,7 +539,7 @@ export default class CreateProduct extends Component {
               style={[styles.buttonAction, {
                 marginLeft: 6
               }]}
-              onPress={this._onSave}
+              onPress={this._onSave.bind(this)}
               underlayColor="transparent">
               <View style={[styles.boxButtonAction, {
                 backgroundColor: DEFAULT_ADMIN_COLOR,
@@ -379,104 +556,52 @@ export default class CreateProduct extends Component {
           {isIOS && <KeyboardSpacer />}
         </ScrollView>
 
-        <Selections
-          refs={ref => this.ref_prod_sort = ref}
-          start={1}
-          end={20}
-          selected={this.state.sorting}
-          onSelect={sorting => this.setState({sorting})}
-         />
+        {this.state.sort && (
+          <Selections
+            refs={ref => this.ref_prod_sort = ref}
+            datas={this.state.sort}
+            selected={this.state.sorting}
+            onSelect={sorting => this.setState({sorting})}
+            height={this._getSelectionsHeight(this.state.sort.length)}
+           />
+        )}
 
-         <Selections
-           refs={ref => this.ref_cart_step = ref}
-           datas={['1', '0.1', '10', '100']}
-           selected={this.state.cart_step}
-           onSelect={cart_step => this.setState({cart_step})}
-          />
+         {this.state.cart_steps && (
+           <Selections
+             refs={ref => this.ref_cart_step = ref}
+             datas={this.state.cart_steps}
+             selected={this.state.cart_step}
+             onSelect={cart_step => this.setState({cart_step})}
+             height={this._getSelectionsHeight(this.state.cart_steps.length)}
+            />
+          )}
 
-        <Selections
-          refs={ref => this.ref_unit_name = ref}
-          datas={['kg', 'gr', 'cái', 'gói', 'túi', 'thùng', 'bộ']}
-          selected={this.state.unit_name}
-          onSelect={unit_name => this.setState({unit_name})}
-         />
+        {this.state.unit_names && (
+          <Selections
+            refs={ref => this.ref_unit_name = ref}
+            datas={this.state.unit_names}
+            selected={this.state.unit_name}
+            onSelect={unit_name => this.setState({unit_name})}
+            height={this._getSelectionsHeight(this.state.unit_names.length)}
+           />
+        )}
 
-         <Selections
-           refs={ref => this.ref_cat_id = ref}
-           datas={['Rau hữu cơ', 'Thịt sinh học', 'Trái cây', 'Hải sản']}
-           selected={this.state.cat_id}
-           onSelect={cat_id => this.setState({cat_id})}
-          />
+        {this.state.categories && (
+          <Selections
+            refs={ref => this.ref_category = ref}
+            datas={this.state.categories}
+            selected={this.state.category}
+            onSelect={category => this.setState({
+              cat_id: category.id,
+              category: category.name
+            })}
+            height={this._getSelectionsHeight(this.state.categories.length)}
+           />
+        )}
       </View>
     );
   }
 
-  _onTapChooseImage(index) {
-    const options = {
-      title: 'Chọn ảnh sản phẩm',
-      cancelButtonTitle: 'Huỷ bỏ',
-      takePhotoButtonTitle: 'Chụp ảnh',
-      chooseFromLibraryButtonTitle: 'Chọn ảnh từ thư viện',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images'
-      }
-    }
-
-    ImagePicker.showImagePicker(options, (response) => {
-      if (response.didCancel) {
-
-      }
-      else if (response.error) {
-        console.warn(response.error);
-      }
-      else {
-        this.state.images[index] = response;
-
-        this.setState({
-          images: this.state.images
-        });
-      }
-    });
-  }
-
-  _uploadImages(datas) {
-    this.setState({
-      avatar_loading: true
-    }, () => {
-      var images = datas;
-
-      Object.keys(this.state.images).map(key => {
-        var image = this.state.images[key];
-        if (image.fileName) {
-          images.push({
-            name: 'product_image',
-            filename: this.state.images[key].fileName,
-            data: this.state.images[key].data
-          });
-        }
-      });
-
-      // return alert(JSON.stringify(images))
-
-      // call api post my form data
-      RNFetchBlob.fetch('POST', ADMIN_APIHandler.url_create_product(this.state.item_data.id), {
-          'Content-Type' : 'multipart/form-data',
-      }, images).then((resp) => {
-
-          var {data} = resp;
-          // var response = JSON.parse(data);
-          return alert(data)
-          if (response && response.status == STATUS_SUCCESS) {
-
-          }
-      }).catch((error) => {
-          console.warn(error + ' url_user_add_avatar');
-
-          // store.addApiQueue('url_user_add_avatar', this._uploadAvatar.bind(this, response));
-      });
-    });
-  }
 }
 
 class Selections extends Component {
@@ -499,16 +624,17 @@ class Selections extends Component {
 
   renderRows() {
     var views = [];
+    var {datas} = this.props;
 
-    if (this.props.datas) {
-      this.props.datas.forEach((value, i) => {
+    if (datas) {
+      datas.forEach((value, i) => {
         views.push(
           <TouchableHighlight
             key={i}
             underlayColor="transparent"
             onPress={this._rowsOnpress.bind(this, value)}>
-            <View style={[styles.selectionRows, this.props.selected == value ? styles.selectionRowsSelected : null]}>
-              <Text style={styles.selectionRowsValue}>{value}</Text>
+            <View style={[styles.selectionRows, this.props.selected == (_.isObject(value) ? value.name : value) ? styles.selectionRowsSelected : null]}>
+              <Text style={styles.selectionRowsValue}>{_.isObject(value) ? value.name : value}</Text>
             </View>
           </TouchableHighlight>
         );
@@ -531,10 +657,6 @@ class Selections extends Component {
     return views;
   }
 
-  componentDidMount() {
-
-  }
-
   render() {
     return (
       <Modal
@@ -546,7 +668,7 @@ class Selections extends Component {
         }}
         style={{
           width: '90%',
-          height: 400,
+          height: this.props.height || 400,
           borderRadius: 5,
           overflow: 'hidden'
         }}
@@ -660,5 +782,8 @@ const styles = StyleSheet.create({
     height: 60,
     resizeMode: 'cover',
     marginTop: 4
+  },
+  formLabelAdvance: {
+    color: "brown"
   }
 });

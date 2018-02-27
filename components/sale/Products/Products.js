@@ -65,6 +65,14 @@ export default class Products extends Component {
     });
   }
 
+  _createNew() {
+    Actions.create_product({
+      title: "Đăng sản phẩm",
+      item_data: this.state.item_data,
+      parentReload: this._getData
+    });
+  }
+
   render() {
     var { datas, finish } = this.state;
 
@@ -114,12 +122,7 @@ export default class Products extends Component {
         {finish && (
           <TouchableHighlight
             underlayColor="transparent"
-            onPress={() => {
-              Actions.create_product({
-                title: "Đăng sản phẩm",
-                item_data: this.state.item_data
-              });
-            }}
+            onPress={this._createNew.bind(this)}
             style={{
               position: 'absolute',
               bottom: 40,
