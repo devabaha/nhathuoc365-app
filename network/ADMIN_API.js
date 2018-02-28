@@ -22,10 +22,12 @@ exports.SITE_CREATE_PRODUCT = MY_FOOD_API + 'adSite/create_product';
 exports.SITE_UPLOAD_FILE = MY_FOOD_API + 'adSite/upload_site_file';
 exports.SITE_GEN_PRODUCT_CODE = MY_FOOD_API + 'adSite/gen_product_code';
 exports.SITE_CREATE_PAGE_INFO = MY_FOOD_API + 'adSite/create_page_info';
+exports.SITE_PRODUCT_CHANGE_FLAG = MY_FOOD_API + 'adSite/product_change_flag';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'adSite/product';
 exports.SITE_PRODUCTS = MY_FOOD_API + 'adSite/list_ad_products';
+exports.SITE_PRODUCT_ORDERING = MY_FOOD_API + 'adSite/product_ordering';
 
 // Cart
 exports.SITE_CART_ADDING = MY_FOOD_API + 'adSite/cartadding';

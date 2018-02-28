@@ -15,6 +15,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import store from '../../../store/Store';
+import Selections from '../../Selections';
+import _ from 'lodash';
 
 export default class Products extends Component {
 
@@ -23,7 +25,9 @@ export default class Products extends Component {
 
     this.state = {
       datas: null,
-      item_data: props.item_data || {}
+      item_data: props.item_data || {},
+      sort: null,
+      sorting: null
     }
   }
 
@@ -32,16 +36,22 @@ export default class Products extends Component {
   }
 
   // get products
-  _getData = async (delay = 0) => {
+  _getData = async (delay = 0, callback = null) => {
     try {
       var response = await ADMIN_APIHandler.site_products(this.state.item_data.id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
           this.setState({
-            datas: response.data || null,
-            finish: true
+            datas: response.data.products || null,
+            finish: true,
+            sort: response.data.sort,
+            sorting: response.data.sort[0]
           });
+
+          if (typeof callback == 'function') {
+            callback();
+          }
 
           layoutAnimation();
         }, delay);
@@ -73,6 +83,20 @@ export default class Products extends Component {
     });
   }
 
+  posOnPress(item) {
+    this.setState({
+      sorting: item.ordering,
+      currentItem: item
+    }, () => {
+      if (this.ref_prod_sort) {
+        this.ref_prod_sort.open();
+      }
+      if (this.ref_selection) {
+        this.ref_selection.positionHandle();
+      }
+    });
+  }
+
   render() {
     var { datas, finish } = this.state;
 
@@ -83,33 +107,13 @@ export default class Products extends Component {
             data={datas}
             keyExtractor={item => item.id}
             renderItem={({item, index}) => {
-              if (index == 0) {
-                // alert(JSON.stringify(item))
-              }
               return(
-                <TouchableHighlight
-                  underlayColor="transparent"
+                <ProductItem
+                  parentReload={this._getData}
                   onPress={this._itemOnpress.bind(this, item)}
-                  >
-                  <View style={styles.productBox}>
-                    <CachedImage
-                      source={{uri: item.image}}
-                      style={styles.productImage}
-                    />
-                    <View style={styles.productInfo}>
-                      <Text style={styles.productName}>{item.name}</Text>
-                      <Text style={styles.productBrand}>{item.brand}</Text>
-                      <Text style={styles.productBrand}>{item.price_view}</Text>
-                    </View>
-
-                    <View style={styles.productActions}>
-                      <Icon name={item.delete_flag == 1 ? "eye-slash" : "eye"} size={16} color="#666" />
-                      <Text style={[styles.productFlag, {marginRight: 16}]}>{item.delete_flag == 1 ? "Đang ẩn" : "Đang hiện"}</Text>
-                      <Icon name="sort" size={16} color="#666" />
-                      <Text style={[styles.productFlag, {marginRight: 16}]}>{item.ordering}</Text>
-                    </View>
-                  </View>
-                </TouchableHighlight>
+                  posOnPress={item => this.posOnPress(item)}
+                  item={item}
+                  index={index} />
               );
             }}
             />
@@ -140,7 +144,134 @@ export default class Products extends Component {
             </View>
           </TouchableHighlight>
         )}
+
+        {_.isArray(this.state.sort) && (
+          <Selections
+            ref={ref => this.ref_selection = ref}
+            refs={ref => this.ref_prod_sort = ref}
+            datas={this.state.sort}
+            selected={this.state.sorting}
+            onSelect={this._onSorting.bind(this)}
+            height={this._getSelectionsHeight(this.state.sort.length)}
+           />
+        )}
       </View>
+    );
+  }
+
+  async _onSorting(sorting) {
+    try {
+      var response = await ADMIN_APIHandler.product_ordering(this.state.currentItem.site_id, this.state.currentItem.id, {
+        value: sorting
+      });
+      if (response && response.status) {
+        this._getData();
+      }
+    } catch (e) {
+      console.warn(e + ' product_ordering');
+
+      store.addApiQueue('product_ordering', this._onSorting.bind(this, sorting));
+    } finally {
+
+    }
+  }
+
+  // get height for selections
+  _getSelectionsHeight(length) {
+    var height = length * 48;
+    return height < 400 ? height : 400;
+  }
+}
+
+class ProductItem extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loading: false
+    }
+  }
+
+  _changeFlag(item) {
+    this.setState({
+      loading: true
+    }, async () => {
+      try {
+        var response = await ADMIN_APIHandler.product_change_flag(item.site_id, item.id);
+        if (response && response.status == STATUS_SUCCESS) {
+          if (this.props.parentReload) {
+            this.props.parentReload(0, () => {
+              this.setState({
+                loading: false
+              });
+            });
+          }
+        }
+      } catch (e) {
+        console.warn(e + ' product_change_flag');
+
+        store.addApiQueue('product_change_flag', this._changeFlag.bind(this, item));
+      } finally {
+
+      }
+    });
+  }
+
+  render() {
+    var {item} = this.props;
+    var {loading} = this.state;
+
+    return (
+      <TouchableHighlight
+        underlayColor="transparent"
+        onPress={() => {
+          if (this.props.onPress) {
+            this.props.onPress();
+          }
+        }}
+        >
+        <View style={[styles.productBox, {
+          backgroundColor: item.delete_flag == 1 ? "#f1f1f1" : "#ffffff"
+        }]}>
+          <CachedImage
+            source={{uri: item.image}}
+            style={styles.productImage}
+          />
+          <View style={styles.productInfo}>
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.productBrand}>{item.brand}</Text>
+            <Text style={styles.productBrand}>{item.price_view}</Text>
+          </View>
+
+          <View style={styles.productActions}>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={this._changeFlag.bind(this, item)}>
+              <View style={styles.productBtnBox}>
+                {loading ? (
+                  <Indicator size="small" />
+                ) : (
+                  <Icon name={item.delete_flag == 1 ? "eye-slash" : "eye"} size={16} color="#666" />
+                )}
+                <Text style={[styles.productFlag, {marginRight: 16}]}>{item.delete_flag == 1 ? "Đang ẩn" : "Đang hiện"}</Text>
+              </View>
+            </TouchableHighlight>
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() => {
+                if (this.props.posOnPress) {
+                  this.props.posOnPress(item);
+                }
+              }}>
+              <View style={styles.productBtnBox}>
+                <Icon name="sort" size={16} color="#666" />
+                <Text style={[styles.productFlag, {marginRight: 16}]}>{item.ordering}</Text>
+              </View>
+            </TouchableHighlight>
+          </View>
+        </View>
+      </TouchableHighlight>
     );
   }
 }
@@ -193,5 +324,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     fontSize: 12,
     color: "#666"
+  },
+  productBtnBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 4
   }
 });

@@ -7,7 +7,8 @@ import {
   StyleSheet,
   TouchableHighlight,
   TextInput,
-  ScrollView
+  ScrollView,
+  Alert
 } from 'react-native';
 
 // librarys
@@ -18,6 +19,7 @@ import Modal from 'react-native-modalbox';
 import RNFetchBlob from 'react-native-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
 import _ from 'lodash';
+import Selections from '../../Selections';
 
 export default class CreateProduct extends Component {
   constructor(props) {
@@ -45,8 +47,23 @@ export default class CreateProduct extends Component {
 
     Actions.refresh({
       onBack: () => {
-        this.parentReload();
-        Actions.pop();
+        if (this.isChanged) {
+          return Alert.alert(
+            'Chú ý',
+            'Dữ liệu sẽ không được lưu nếu bạn thoát khỏi màn hình này. Rời khỏi đây?',
+            [
+              {text: 'Ở lại', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Rời khỏi', onPress: () => {
+                this.parentReload();
+                Actions.pop();
+              }},
+            ],
+            { cancelable: false }
+          )
+        } else {
+          this.parentReload();
+          Actions.pop();
+        }
       },
       rightTitle: "Nâng cao",
       onRight: this._changeAddMode.bind(this),
@@ -177,7 +194,7 @@ export default class CreateProduct extends Component {
           product_id: 0
         });
         if (response && response.status == STATUS_SUCCESS) {
-          this.setState({
+          this.setNewState({
             product_code: response.data.code
           });
         }
@@ -193,7 +210,7 @@ export default class CreateProduct extends Component {
 
   // get height for selections
   _getSelectionsHeight(length) {
-    var height = length * 42;
+    var height = length * 48;
     return height < 400 ? height : 400;
   }
 
@@ -219,7 +236,7 @@ export default class CreateProduct extends Component {
       else {
         this.state.images[index] = response;
 
-        this.setState({
+        this.setNewState({
           images: this.state.images
         }, () => {
           this._uploadImages(index);
@@ -263,6 +280,11 @@ export default class CreateProduct extends Component {
     });
   }
 
+  setNewState(state, callback) {
+    this.setState(state, callback);
+    this.isChanged = true;
+  }
+
   render() {
     if (!this.state.ready) {
       return (
@@ -290,7 +312,7 @@ export default class CreateProduct extends Component {
             <TextInput
               style={styles.formInput}
               placeholder="Tên sản phẩm"
-              onChangeText={name => this.setState({name})}
+              onChangeText={name => this.setNewState({name})}
               value={this.state.name}
               />
           </View>
@@ -300,7 +322,7 @@ export default class CreateProduct extends Component {
             <TextInput
               style={styles.formInput}
               placeholder="Mã sản phẩm"
-              onChangeText={product_code => this.setState({product_code})}
+              onChangeText={product_code => this.setNewState({product_code})}
               value={this.state.product_code}
               />
             <TouchableHighlight
@@ -308,7 +330,7 @@ export default class CreateProduct extends Component {
               onPress={this._genProductCode}>
               <View style={{
                 backgroundColor: HEADER_ADMIN_BGR,
-                paddingVertical: 4,
+                paddingVertical: 6,
                 marginTop: 8,
                 width: 110,
                 alignItems: 'center',
@@ -370,6 +392,9 @@ export default class CreateProduct extends Component {
                   if (this.ref_unit_name) {
                     this.ref_unit_name.open();
                   }
+                  if (this.ref_selection_unit_name) {
+                    this.ref_selection_unit_name.positionHandle();
+                  }
                 }}
                 style={{
                   marginLeft: 8
@@ -391,7 +416,7 @@ export default class CreateProduct extends Component {
             <TextInput
               style={styles.formInput}
               placeholder="Giá niêm yết"
-              onChangeText={discount => this.setState({discount})}
+              onChangeText={discount => this.setNewState({discount})}
               value={this.state.discount}
               />
           </View>
@@ -401,8 +426,8 @@ export default class CreateProduct extends Component {
               <Text style={[styles.formLabel, styles.formLabelAdvance]}>Khuyến mại / Giảm giá ( % )</Text>
               <TextInput
                 style={styles.formInput}
-                placeholder="Mã sản phẩm"
-                onChangeText={discount_percent => this.setState({discount_percent})}
+                placeholder="VD: 10%"
+                onChangeText={discount_percent => this.setNewState({discount_percent})}
                 value={this.state.discount_percent}
                 />
             </View>
@@ -414,7 +439,7 @@ export default class CreateProduct extends Component {
               <TextInput
                 style={styles.formInput}
                 placeholder="Giá khuyến mại"
-                onChangeText={price => this.setState({price})}
+                onChangeText={price => this.setNewState({price})}
                 value={this.state.price}
                 />
             </View>
@@ -443,7 +468,7 @@ export default class CreateProduct extends Component {
             <TextInput
               style={styles.formInput}
               placeholder="Xuất xứ"
-              onChangeText={made_in => this.setState({made_in})}
+              onChangeText={made_in => this.setNewState({made_in})}
               value={this.state.made_in}
               />
           </View>
@@ -453,7 +478,7 @@ export default class CreateProduct extends Component {
             <TextInput
               style={styles.formInput}
               placeholder="Nhãn hiệu"
-              onChangeText={brand => this.setState({brand})}
+              onChangeText={brand => this.setNewState({brand})}
               value={this.state.brand}
               />
           </View>
@@ -466,7 +491,7 @@ export default class CreateProduct extends Component {
                 height: this.state.contentHeight
               }]}
               placeholder="Nhập nội dung"
-              onChangeText={content => this.setState({content})}
+              onChangeText={content => this.setNewState({content})}
               value={this.state.content}
               onContentSizeChange={(e) => {
                 this.setState({contentHeight: e.nativeEvent.contentSize.height < 96 ? 96 : e.nativeEvent.contentSize.height});
@@ -561,7 +586,7 @@ export default class CreateProduct extends Component {
             refs={ref => this.ref_prod_sort = ref}
             datas={this.state.sort}
             selected={this.state.sorting}
-            onSelect={sorting => this.setState({sorting})}
+            onSelect={sorting => this.setNewState({sorting})}
             height={this._getSelectionsHeight(this.state.sort.length)}
            />
         )}
@@ -571,17 +596,18 @@ export default class CreateProduct extends Component {
              refs={ref => this.ref_cart_step = ref}
              datas={this.state.cart_steps}
              selected={this.state.cart_step}
-             onSelect={cart_step => this.setState({cart_step})}
+             onSelect={cart_step => this.setNewState({cart_step})}
              height={this._getSelectionsHeight(this.state.cart_steps.length)}
             />
           )}
 
         {this.state.unit_names && (
           <Selections
+            ref={ref => this.ref_selection_unit_name = ref}
             refs={ref => this.ref_unit_name = ref}
             datas={this.state.unit_names}
             selected={this.state.unit_name}
-            onSelect={unit_name => this.setState({unit_name})}
+            onSelect={unit_name => this.setNewState({unit_name})}
             height={this._getSelectionsHeight(this.state.unit_names.length)}
            />
         )}
@@ -591,7 +617,7 @@ export default class CreateProduct extends Component {
             refs={ref => this.ref_category = ref}
             datas={this.state.categories}
             selected={this.state.category}
-            onSelect={category => this.setState({
+            onSelect={category => this.setNewState({
               cat_id: category.id,
               category: category.name
             })}
@@ -602,83 +628,6 @@ export default class CreateProduct extends Component {
     );
   }
 
-}
-
-class Selections extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-
-    }
-  }
-
-  _rowsOnpress(value) {
-    if (this.props.onSelect) {
-      this.props.onSelect(value);
-    }
-    if (this.ref_prod_sort) {
-      this.ref_prod_sort.close();
-    }
-  }
-
-  renderRows() {
-    var views = [];
-    var {datas} = this.props;
-
-    if (datas) {
-      datas.forEach((value, i) => {
-        views.push(
-          <TouchableHighlight
-            key={i}
-            underlayColor="transparent"
-            onPress={this._rowsOnpress.bind(this, value)}>
-            <View style={[styles.selectionRows, this.props.selected == (_.isObject(value) ? value.name : value) ? styles.selectionRowsSelected : null]}>
-              <Text style={styles.selectionRowsValue}>{_.isObject(value) ? value.name : value}</Text>
-            </View>
-          </TouchableHighlight>
-        );
-      });
-    } else {
-      for(let i = this.props.start; i <= this.props.end; i++) {
-        views.push(
-          <TouchableHighlight
-            key={i}
-            underlayColor="transparent"
-            onPress={this._rowsOnpress.bind(this, i)}>
-            <View style={[styles.selectionRows, this.props.selected == i ? styles.selectionRowsSelected : null]}>
-              <Text style={styles.selectionRowsValue}>{i}</Text>
-            </View>
-          </TouchableHighlight>
-        );
-      }
-    }
-
-    return views;
-  }
-
-  render() {
-    return (
-      <Modal
-        ref={ref => {
-          if (this.props.refs) {
-            this.props.refs(ref);
-          }
-          this.ref_prod_sort = ref;
-        }}
-        style={{
-          width: '90%',
-          height: this.props.height || 400,
-          borderRadius: 5,
-          overflow: 'hidden'
-        }}
-        >
-        <ScrollView>
-          {this.renderRows.call(this)}
-        </ScrollView>
-      </Modal>
-    );
-  }
 }
 
 
@@ -702,7 +651,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#dddddd',
     marginTop: 4,
-    height: 36,
+    height: 42,
     paddingHorizontal: 4,
     fontSize: 14,
     color: '#333333'
@@ -712,7 +661,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#dddddd',
     marginTop: 4,
-    height: 36,
+    height: 42,
     paddingHorizontal: 4,
   },
   inputSelectionValue: {

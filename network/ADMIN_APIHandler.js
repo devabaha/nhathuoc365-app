@@ -387,6 +387,16 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async product_change_flag(store_id, product_id, data = null) {
+    var api = url_for(API.SITE_PRODUCT_CHANGE_FLAG + '/' + store_id + '/' + product_id);
+    return await this.putAPI(api, data);
+  }
+
+  async product_ordering(store_id, product_id, data = null) {
+    var api = url_for(API.SITE_PRODUCT_ORDERING + '/' + store_id + '/' + product_id);
+    return await this.postAPI(api, data);
+  }
+
   /**
   * Lấy số lượng chat chưa đọc
   */
@@ -454,6 +464,17 @@ class APIHandler {
 
     // console.log(api);
     var response = await axios.post(api, encodeQueryData(data));
+    return await this.processError(response);
+  }
+
+  /**
+  * Gửi yêu cầu phương thức PUT
+  */
+  async putAPI(api, data){
+    this._networkIndicator();
+
+    // console.log(api);
+    var response = await axios.put(api, encodeQueryData(data));
     return await this.processError(response);
   }
 
