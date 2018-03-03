@@ -67,8 +67,8 @@ export default class Products extends Component {
   }
 
   _itemOnpress(item) {
-    Actions.create_product({
-      title: item.name,
+    Actions.edit_product({
+      title: "Sửa sản phẩm",
       data: item,
       item_data: this.state.item_data,
       editMode: true

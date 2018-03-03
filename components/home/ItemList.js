@@ -174,7 +174,7 @@ export default class ItemList extends Component {
   }
 }
 
-ItemList.PropTypes = {
+ItemList.propTypes = {
   item: PropTypes.object.isRequired
 }
 

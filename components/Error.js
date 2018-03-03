@@ -7,7 +7,7 @@ import store from '../store/Store';
 @observer
 export default class Error extends Component {
   componentDidMount() {
-    NetInfo.isConnected.addEventListener('change', this.handleConnectionChange);
+    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange);
 
     NetInfo.isConnected
     .fetch()

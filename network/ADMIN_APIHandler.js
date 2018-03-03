@@ -382,6 +382,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async edit_create_page_info(store_id, product_id) {
+    var api = url_for(API.SITE_EDIT_PAGE_INFO + '/' + store_id + '/' + product_id);
+    return await this.getAPI(api);
+  }
+
   async site_gen_product_code(store_id, data) {
     var api = url_for(API.SITE_GEN_PRODUCT_CODE + '/' + store_id);
     return await this.postAPI(api, data);

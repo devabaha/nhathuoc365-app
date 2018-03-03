@@ -339,6 +339,9 @@ export default class Item extends Component {
               paginationStyle={{marginTop: 100}}
               width={Util.size.width}
               height={Util.size.width * 0.6}
+              containerStyle={{
+                flex: 0
+              }}
               >
               {
                 item_data.img.map((item, index) => {

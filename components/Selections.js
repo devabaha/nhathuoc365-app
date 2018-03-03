@@ -79,7 +79,7 @@ export default class Selections extends Component {
             key={i}
             underlayColor="transparent"
             onPress={this._rowsOnpress.bind(this, value)}>
-            <View style={[styles.selectionRows, this.props.selected == (_.isObject(value) ? value.name : value) ? styles.selectionRowsSelected : null]}>
+            <View style={[styles.selectionRows, this.props.selected == (_.isObject(value) ? value.id : value) ? styles.selectionRowsSelected : null]}>
               <Text style={styles.selectionRowsValue}>{_.isObject(value) ? value.name : value}</Text>
             </View>
           </TouchableHighlight>

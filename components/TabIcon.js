@@ -38,7 +38,7 @@ export default class TabIcon extends Component {
   }
 }
 
-TabIcon.PropTypes = {
+TabIcon.propTypes = {
   selected: PropTypes.bool,
   title: PropTypes.string,
   iconActive: PropTypes.string
