@@ -17,6 +17,11 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async site_product_delete_image(store_id, product_id, data) {
+    var api = url_for(API.SITE_PRODUCT_DELETE_IMAGE + '/' + site_id + '/' + cart_id);
+    return await this.postAPI(api, data);
+  }
+
   async cart_status_edit(site_id, cart_id, data) {
     var api = url_for(API.SITE_CART_STATUS_EDIT + '/' + site_id + '/' + cart_id);
     return await this.postAPI(api, data);
@@ -362,6 +367,11 @@ class APIHandler {
 
   async create_product(store_id, data) {
     var api = url_for(API.SITE_CREATE_PRODUCT + '/' + store_id);
+    return await this.postAPI(api, data);
+  }
+
+  async edit_product(store_id, product_id, data) {
+    var api = url_for(API.SITE_EDIT_PRODUCT + '/' + store_id + '/' + product_id);
     return await this.postAPI(api, data);
   }
 

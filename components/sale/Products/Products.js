@@ -71,7 +71,8 @@ export default class Products extends Component {
       title: "Sửa sản phẩm",
       data: item,
       item_data: this.state.item_data,
-      editMode: true
+      editMode: true,
+      parentReload: this._getData
     });
   }
 

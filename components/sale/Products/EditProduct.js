@@ -30,17 +30,22 @@ export default class EditProduct extends Component {
       sorting: "",
       cart_step: "",
       unit_name: "",
-      images: {
-        "1": {},
-        "2": {},
-        "3": {}
-      },
+      images: {},
+      img: {},
+      img_delete_ids: [],
       item_data: props.item_data || null,
       data: props.data || null,
       ready: false,
       contentHeight: 96,
       advance: false
     }
+  }
+
+  _addImgDel = (id) => {
+      this.state.img_delete_ids.push(id);
+      this.setState({
+        img_delete_ids: this.state.img_delete_ids
+      });
   }
 
   componentDidMount() {
@@ -102,6 +107,17 @@ export default class EditProduct extends Component {
     }
   }
 
+  _deleteCurrentImg = (index, img_delete_id) => {
+    if (img_delete_id) {
+      this._addImgDel(img_delete_id);
+    }
+    
+    delete this.state.img[index];
+    this.setState({
+      img: this.state.img
+    });
+  }
+
   async _getInfo() {
     try {
       var response = await ADMIN_APIHandler.edit_create_page_info(this.state.data.site_id, this.state.data.id);
@@ -125,7 +141,7 @@ export default class EditProduct extends Component {
 
           name: response.data.product.name,
           product_code: response.data.product.product_code,
-          sorting: response.data.product.sorting,
+          sorting: response.data.product.ordering,
           cart_step: response.data.product.cart_step,
           unit_name: response.data.product.unit_name,
           discount: response.data.product.discount,
@@ -135,6 +151,7 @@ export default class EditProduct extends Component {
           made_in: response.data.product.made_in,
           brand: response.data.product.brand,
           content: response.data.product.content,
+          img: Object.assign({}, response.data.product.img),
           category,
 
           ready: true
@@ -169,17 +186,18 @@ export default class EditProduct extends Component {
     datas.made_in = this.state.made_in || '';
     datas.brand = this.state.brand || '';
     datas.product_image = [];
+    datas.img_delete_ids = this.state.img_delete_ids;
     datas.content = this.state.content || '';
 
-    Object.keys(this.state.images).map(index => {
-      var image = this.state.images[index];
+    Object.keys(this.state.img).map(index => {
+      var image = this.state.img[index];
       if (image.upload_file_name) {
         datas.product_image.push(image.upload_file_name);
       }
     });
 
     try {
-      var response = await ADMIN_APIHandler.create_product(this.state.item_data.id, datas);
+      var response = await ADMIN_APIHandler.edit_product(this.state.data.site_id, this.state.data.id, datas);
       if (response && response.status == STATUS_SUCCESS) {
         Toast.show(response.message);
 
@@ -234,7 +252,7 @@ export default class EditProduct extends Component {
     return height < 400 ? height : 400;
   }
 
-  _onTapChooseImage(index) {
+  _onTapChooseImage(index, imgDelId) {
     const options = {
       title: 'Chọn ảnh sản phẩm',
       cancelButtonTitle: 'Huỷ bỏ',
@@ -254,13 +272,18 @@ export default class EditProduct extends Component {
         console.warn(response.error);
       }
       else {
-        this.state.images[index] = response;
+        this.state.img[index] = {
+          id: null,
+          image: response.data,
+          fileName: response.fileName
+        };
 
-        this.setNewState({
-          images: this.state.images
-        }, () => {
-          this._uploadImages(index);
-        });
+        // if replace this image
+        if (imgDelId) {
+          this._addImgDel(imgDelId);
+        }
+
+        this._uploadImages(index);
       }
     });
   }
@@ -275,8 +298,8 @@ export default class EditProduct extends Component {
   _uploadImages(index) {
     var images = {
       name: 'image',
-      filename: this.state.images[index].fileName,
-      data: this.state.images[index].data
+      filename: this.state.img[index].fileName,
+      data: this.state.img[index].image
     };
 
     // call api post my form data
@@ -287,9 +310,10 @@ export default class EditProduct extends Component {
         var {data} = resp;
         var response = JSON.parse(data);
         if (response && response.status == STATUS_SUCCESS) {
-          this.state.images[index].upload_file_name = response.data.file_name;
+          this.state.img[index].upload_file_name = response.data.file_name;
+          this.state.img[index].image = response.data.img_url;
           this.setState({
-            images: this.state.images
+            img: this.state.img
           });
           this._scrollToEnd();
         }
@@ -510,65 +534,7 @@ export default class EditProduct extends Component {
               />
           </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Ảnh sản phẩm 1</Text>
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={this._onTapChooseImage.bind(this, 1)}>
-              <View style={[styles.formInputSelection]}>
-                <Text style={styles.inputSelectionValue}>{this.state.images[1].fileName || "Chọn ảnh..."}</Text>
-                <View style={styles.formSelectionIcon}>
-                  <Icon name="image" size={16} color="#666" />
-                </View>
-              </View>
-            </TouchableHighlight>
-          </View>
-          {this.state.images[1].uri && (
-            <CachedImage
-              style={styles.imagePreview}
-              source={{uri: this.state.images[1].uri}}
-              />
-          )}
-
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Ảnh sản phẩm 2</Text>
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={this._onTapChooseImage.bind(this, 2)}>
-              <View style={[styles.formInputSelection]}>
-                <Text style={styles.inputSelectionValue}>{this.state.images[2].fileName || "Chọn ảnh..."}</Text>
-                <View style={styles.formSelectionIcon}>
-                  <Icon name="image" size={16} color="#666" />
-                </View>
-              </View>
-            </TouchableHighlight>
-          </View>
-          {this.state.images[2].uri && (
-            <CachedImage
-              style={styles.imagePreview}
-              source={{uri: this.state.images[2].uri}}
-              />
-          )}
-
-          <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Ảnh sản phẩm 3</Text>
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={this._onTapChooseImage.bind(this, 3)}>
-              <View style={[styles.formInputSelection]}>
-                <Text style={styles.inputSelectionValue}>{this.state.images[3].fileName || "Chọn ảnh..."}</Text>
-                <View style={styles.formSelectionIcon}>
-                  <Icon name="image" size={16} color="#666" />
-                </View>
-              </View>
-            </TouchableHighlight>
-          </View>
-          {this.state.images[3].uri && (
-            <CachedImage
-              style={styles.imagePreview}
-              source={{uri: this.state.images[3].uri}}
-              />
-          )}
+          {this.renderImageSelection.call(this, Object.keys(this.state.img).length + 1)}
 
           <View style={styles.boxButtonActions}>
             <TouchableHighlight
@@ -581,10 +547,10 @@ export default class EditProduct extends Component {
                 backgroundColor: DEFAULT_ADMIN_COLOR,
                 borderColor: "#999999"
               }]}>
-                <Icon name="plus" size={16} color="#ffffff" />
+                <Icon name="save" size={16} color="#ffffff" />
                 <Text style={[styles.buttonActionTitle, {
                   color: "#ffffff"
-                }]}>THÊM MẶT HÀNG</Text>
+                }]}>LƯU THAY ĐỔI</Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -639,6 +605,72 @@ export default class EditProduct extends Component {
     );
   }
 
+  // render images selections
+  renderImageSelection(num = 3) {
+    var returns = [];
+    for(let i = 0; i < num; i++) {
+      let number = i + 1;
+      let imageData = this.state.img[i] || null;
+
+      if (imageData) {
+        returns.push(
+          <View key={i}>
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Ảnh sản phẩm {number}</Text>
+              <TouchableHighlight
+                underlayColor="transparent"
+                onPress={this._onTapChooseImage.bind(this, i, imageData.id)}>
+                <View style={[styles.formInputSelection]}>
+                  <Text style={styles.inputSelectionValue}>{imageData.fileName || imageData.image}</Text>
+                  <View style={styles.formSelectionIcon}>
+                    <Icon name="image" size={16} color="#666" />
+                  </View>
+                </View>
+              </TouchableHighlight>
+            </View>
+
+            <View style={{
+              flexDirection: 'row'
+            }}>
+              <CachedImage
+                style={styles.imagePreview}
+                source={{uri: imageData.image}}
+                />
+
+              <TouchableHighlight
+                style={{
+                  padding: 16
+                }}
+                underlayColor="transparent"
+                onPress={this._deleteCurrentImg.bind(this, i, imageData.id)}>
+                <Icon name="trash" size={20} color="red" />
+              </TouchableHighlight>
+            </View>
+          </View>
+        );
+      } else {
+        returns.push(
+          <View key={i}>
+            <View style={styles.formGroup}>
+              <Text style={styles.formLabel}>Ảnh sản phẩm {number}</Text>
+              <TouchableHighlight
+                underlayColor="transparent"
+                onPress={this._onTapChooseImage.bind(this, i)}>
+                <View style={[styles.formInputSelection]}>
+                  <Text style={styles.inputSelectionValue}>Chọn ảnh...</Text>
+                  <View style={styles.formSelectionIcon}>
+                    <Icon name="image" size={16} color="#666" />
+                  </View>
+                </View>
+              </TouchableHighlight>
+            </View>
+          </View>
+        );
+      }
+    }
+
+    return returns;
+  }
 }
 
 
