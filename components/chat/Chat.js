@@ -388,7 +388,7 @@ export default class Chat extends Component {
   }
 }
 
-Chat.PropTypes = {
+Chat.propTypes = {
   store_id: PropTypes.string.isRequired
 }
 

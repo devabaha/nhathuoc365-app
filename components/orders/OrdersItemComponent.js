@@ -304,7 +304,7 @@ export default class OrdersItemComponent extends Component {
   }
 }
 
-OrdersItemComponent.PropTypes = {
+OrdersItemComponent.propTypes = {
   item: PropTypes.object.isRequired,
   onPress: PropTypes.func.isRequired,
   storeOnPress: PropTypes.func

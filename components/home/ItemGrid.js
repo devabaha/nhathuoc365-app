@@ -112,7 +112,7 @@ export default class ItemGrid extends Component {
   }
 }
 
-ItemGrid.PropTypes = {
+ItemGrid.propTypes = {
   item: PropTypes.object.isRequired
 }
 

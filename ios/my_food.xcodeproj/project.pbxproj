@@ -47,6 +47,7 @@
 		78B5DB1369EA490FADCB8BED /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 226104DF636C4029A36287A3 /* libRNImagePicker.a */; };
 		7F53DAA402374483AF729DCA /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D299D60C476C4EF8BCEAE702 /* Foundation.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
+		8A05E60A204ECDF900608F57 /* push2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 8A05E5DE204ECDF800608F57 /* push2.wav */; };
 		8A76EB741FFF73E70062DB94 /* push_1.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 8A76EB731FFF73E70062DB94 /* push_1.mp3 */; };
 		975166687EAB4498AD4288FD /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E75883D3CA404B0A8A8DBCEE /* EvilIcons.ttf */; };
 		B737FE1043C24D4C8E480D4E /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2ED76982ECC64270BB894F6E /* Entypo.ttf */; };
@@ -417,6 +418,7 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		7F0329BFD16D4ADB80EDD4AD /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
+		8A05E5DE204ECDF800608F57 /* push2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = push2.wav; sourceTree = "<group>"; };
 		8A2B79681F56CE1100B60BA7 /* my_food.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = my_food.entitlements; path = my_food/my_food.entitlements; sourceTree = "<group>"; };
 		8A76EB731FFF73E70062DB94 /* push_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = push_1.mp3; sourceTree = "<group>"; };
 		A488BA0DACD54F1F9A9D41AD /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
@@ -675,6 +677,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				8A05E5DE204ECDF800608F57 /* push2.wav */,
 				8A76EB731FFF73E70062DB94 /* push_1.mp3 */,
 				13B07FAE1A68108700A75B9A /* my_food */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -1301,6 +1304,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				8A05E60A204ECDF900608F57 /* push2.wav in Resources */,
 				B737FE1043C24D4C8E480D4E /* Entypo.ttf in Resources */,
 				975166687EAB4498AD4288FD /* EvilIcons.ttf in Resources */,
 				22D4187459484CCBB4853294 /* FontAwesome.ttf in Resources */,

@@ -248,7 +248,7 @@ export default class Items extends Component {
   }
 }
 
-Items.PropTypes = {
+Items.propTypes = {
   item: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   onPress: PropTypes.func.isRequired

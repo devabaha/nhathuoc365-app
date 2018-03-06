@@ -93,7 +93,7 @@ export default class StoreSuggest extends Component {
   }
 }
 
-StoreSuggest.PropTypes = {
+StoreSuggest.propTypes = {
   onPress: PropTypes.func.isRequired
 }
 
