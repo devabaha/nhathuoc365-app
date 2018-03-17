@@ -8,7 +8,8 @@ import {
   TouchableHighlight,
   TextInput,
   ScrollView,
-  Alert
+  Alert,
+  Keyboard
 } from 'react-native';
 
 // librarys
@@ -92,7 +93,9 @@ export default class CreateProduct extends Component {
       });
     }
 
-    layoutAnimation();
+    if (isIOS) {
+      layoutAnimation();
+    }
   }
 
   parentReload = () => {
@@ -305,6 +308,7 @@ export default class CreateProduct extends Component {
         height: Util.size.height
       }}>
         <ScrollView
+          keyboardShouldPersistTaps="always"
           ref={ref => this.ref_scroll_view = ref}
           style={styles.container}>
           <View style={styles.formGroup}>
@@ -314,6 +318,7 @@ export default class CreateProduct extends Component {
               placeholder="Tên sản phẩm"
               onChangeText={name => this.setNewState({name})}
               value={this.state.name}
+              underlineColorAndroid="transparent"
               />
           </View>
 
@@ -324,6 +329,7 @@ export default class CreateProduct extends Component {
               placeholder="Mã sản phẩm"
               onChangeText={product_code => this.setNewState({product_code})}
               value={this.state.product_code}
+              underlineColorAndroid="transparent"
               />
             <TouchableHighlight
               underlayColor="transparent"
@@ -352,6 +358,7 @@ export default class CreateProduct extends Component {
                 onPress={() => {
                   if (this.ref_prod_sort) {
                     this.ref_prod_sort.open();
+                    Keyboard.dismiss();
                   }
                 }}>
                 <View style={[styles.formInputSelection]}>
@@ -374,6 +381,7 @@ export default class CreateProduct extends Component {
                 onPress={() => {
                   if (this.ref_cart_step) {
                     this.ref_cart_step.open();
+                    Keyboard.dismiss();
                   }
                 }}>
                 <View style={[styles.formInputSelection, {
@@ -391,6 +399,7 @@ export default class CreateProduct extends Component {
                 onPress={() => {
                   if (this.ref_unit_name) {
                     this.ref_unit_name.open();
+                    Keyboard.dismiss();
                   }
                   if (this.ref_selection_unit_name) {
                     this.ref_selection_unit_name.positionHandle();
@@ -418,6 +427,8 @@ export default class CreateProduct extends Component {
               placeholder="Giá niêm yết"
               onChangeText={discount => this.setNewState({discount})}
               value={this.state.discount}
+              underlineColorAndroid="transparent"
+              keyboardType="numeric"
               />
           </View>
 
@@ -429,6 +440,7 @@ export default class CreateProduct extends Component {
                 placeholder="VD: 10%"
                 onChangeText={discount_percent => this.setNewState({discount_percent})}
                 value={this.state.discount_percent}
+                underlineColorAndroid="transparent"
                 />
             </View>
           )}
@@ -441,6 +453,8 @@ export default class CreateProduct extends Component {
                 placeholder="Giá khuyến mại"
                 onChangeText={price => this.setNewState({price})}
                 value={this.state.price}
+                underlineColorAndroid="transparent"
+                keyboardType="numeric"
                 />
             </View>
           )}
@@ -452,6 +466,7 @@ export default class CreateProduct extends Component {
               onPress={() => {
                 if (this.ref_category) {
                   this.ref_category.open();
+                  Keyboard.dismiss();
                 }
               }}>
               <View style={[styles.formInputSelection]}>
@@ -470,6 +485,7 @@ export default class CreateProduct extends Component {
               placeholder="Xuất xứ"
               onChangeText={made_in => this.setNewState({made_in})}
               value={this.state.made_in}
+              underlineColorAndroid="transparent"
               />
           </View>
 
@@ -480,6 +496,7 @@ export default class CreateProduct extends Component {
               placeholder="Nhãn hiệu"
               onChangeText={brand => this.setNewState({brand})}
               value={this.state.brand}
+              underlineColorAndroid="transparent"
               />
           </View>
 
@@ -496,6 +513,7 @@ export default class CreateProduct extends Component {
               onContentSizeChange={(e) => {
                 this.setState({contentHeight: e.nativeEvent.contentSize.height < 96 ? 96 : e.nativeEvent.contentSize.height});
               }}
+              underlineColorAndroid="transparent"
               />
           </View>
 
@@ -559,7 +577,9 @@ export default class CreateProduct extends Component {
               />
           )}
 
-          <View style={styles.boxButtonActions}>
+          <View style={[styles.boxButtonActions, {
+            marginBottom: 26
+          }]}>
             <TouchableHighlight
               style={[styles.buttonAction, {
                 marginLeft: 6
@@ -578,7 +598,7 @@ export default class CreateProduct extends Component {
             </TouchableHighlight>
           </View>
 
-          {isIOS && <KeyboardSpacer />}
+          <KeyboardSpacer />
         </ScrollView>
 
         {this.state.sort && (

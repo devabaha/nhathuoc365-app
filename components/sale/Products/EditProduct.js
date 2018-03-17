@@ -98,7 +98,9 @@ export default class EditProduct extends Component {
       });
     }
 
-    layoutAnimation();
+    if (isIOS) {
+      layoutAnimation();
+    }
   }
 
   parentReload = () => {
@@ -111,7 +113,7 @@ export default class EditProduct extends Component {
     if (img_delete_id) {
       this._addImgDel(img_delete_id);
     }
-    
+
     delete this.state.img[index];
     this.setState({
       img: this.state.img
@@ -358,6 +360,7 @@ export default class EditProduct extends Component {
               placeholder="Tên sản phẩm"
               onChangeText={name => this.setNewState({name})}
               value={this.state.name}
+              underlineColorAndroid="transparent"
               />
           </View>
 
@@ -453,6 +456,8 @@ export default class EditProduct extends Component {
               placeholder="Giá niêm yết"
               onChangeText={discount => this.setNewState({discount})}
               value={this.state.discount}
+              underlineColorAndroid="transparent"
+              keyboardType="numeric"
               />
           </View>
 
@@ -464,6 +469,7 @@ export default class EditProduct extends Component {
                 placeholder="VD: 10%"
                 onChangeText={discount_percent => this.setNewState({discount_percent})}
                 value={this.state.discount_percent}
+                underlineColorAndroid="transparent"
                 />
             </View>
           )}
@@ -476,6 +482,8 @@ export default class EditProduct extends Component {
                 placeholder="Giá khuyến mại"
                 onChangeText={price => this.setNewState({price})}
                 value={this.state.price}
+                underlineColorAndroid="transparent"
+                keyboardType="numeric"
                 />
             </View>
           )}
@@ -505,6 +513,7 @@ export default class EditProduct extends Component {
               placeholder="Xuất xứ"
               onChangeText={made_in => this.setNewState({made_in})}
               value={this.state.made_in}
+              underlineColorAndroid="transparent"
               />
           </View>
 
@@ -515,6 +524,7 @@ export default class EditProduct extends Component {
               placeholder="Nhãn hiệu"
               onChangeText={brand => this.setNewState({brand})}
               value={this.state.brand}
+              underlineColorAndroid="transparent"
               />
           </View>
 
@@ -531,12 +541,15 @@ export default class EditProduct extends Component {
               onContentSizeChange={(e) => {
                 this.setState({contentHeight: e.nativeEvent.contentSize.height < 96 ? 96 : e.nativeEvent.contentSize.height});
               }}
+              underlineColorAndroid="transparent"
               />
           </View>
 
           {this.renderImageSelection.call(this, Object.keys(this.state.img).length + 1)}
 
-          <View style={styles.boxButtonActions}>
+          <View style={styles.boxButtonActions, {
+            marginBottom: 26
+          }}>
             <TouchableHighlight
               style={[styles.buttonAction, {
                 marginLeft: 6
@@ -555,7 +568,7 @@ export default class EditProduct extends Component {
             </TouchableHighlight>
           </View>
 
-          {isIOS && <KeyboardSpacer />}
+          <KeyboardSpacer />
         </ScrollView>
 
         {this.state.sort && (
