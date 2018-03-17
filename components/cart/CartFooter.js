@@ -332,58 +332,86 @@ export default class CartFooter extends Component {
     var {cart_data, cart_products} = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
-    return (
-      <View style={styles.store_cart_box}>
-        {this._renderContent.call(this)}
+    if (!isset_cart) {
+      return null;
+    }
 
-        <TouchableHighlight
-          onPress={this._goPayment.bind(this)}
-          style={styles.checkout_btn}
-          underlayColor="transparent"
-          >
+    return (
+      <View style={[styles.store_cart_box, {
+        height: (cart_data.promotions && cart_data.promotions.title) ? 87 : 69
+      }]}>
+        {(cart_data.promotions && cart_data.promotions.title) && (
           <View style={{
-            width: '100%',
-            height: '100%',
-            justifyContent: 'center',
+            width: Util.size.width,
+            height: 18,
+            backgroundColor: 'brown',
             alignItems: 'center',
-            backgroundColor: DEFAULT_COLOR
+            justifyContent: 'center'
           }}>
-            <View style={styles.checkout_box}>
-              <Icon name="shopping-cart" size={22} color="#ffffff" />
-              <Text style={styles.checkout_title}>{isset_cart ? "ĐẶT HÀNG" : "GIỎ HÀNG"}</Text>
+            <Text style={{
+              fontSize: 10,
+              color: '#ffffff'
+            }}>{cart_data.promotions.title} giảm {cart_data.promotions.discount_text}</Text>
+          </View>
+        )}
+
+        <View style={{
+          flexDirection: 'row',
+          height: 69,
+          borderTopWidth: Util.pixel,
+          borderTopColor: '#dddddd'
+        }}>
+          {this._renderContent.call(this)}
+
+          <TouchableHighlight
+            onPress={this._goPayment.bind(this)}
+            style={styles.checkout_btn}
+            underlayColor="transparent"
+            >
+            <View style={{
+              width: '100%',
+              height: '100%',
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: DEFAULT_COLOR
+            }}>
+              <View style={styles.checkout_box}>
+                <Icon name="shopping-cart" size={22} color="#ffffff" />
+                <Text style={styles.checkout_title}>{isset_cart ? "ĐẶT HÀNG" : "GIỎ HÀNG"}</Text>
+
+                {isset_cart && (
+                  <View style={{
+                    position: 'absolute',
+                    left: 18,
+                    top: 0,
+                    backgroundColor: "red",
+                    minWidth: 16,
+                    height: 16,
+                    borderRadius: 8,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    overflow: 'hidden',
+                    paddingHorizontal: 2
+                  }}>
+                    <Text style={{
+                      fontSize: 10,
+                      color: '#ffffff',
+                      fontWeight: '600'
+                    }}>{cart_data.count}</Text>
+                  </View>
+                )}
+              </View>
 
               {isset_cart && (
-                <View style={{
-                  position: 'absolute',
-                  left: 18,
-                  top: 0,
-                  backgroundColor: "red",
-                  minWidth: 16,
-                  height: 16,
-                  borderRadius: 8,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden',
-                  paddingHorizontal: 2
-                }}>
-                  <Text style={{
-                    fontSize: 10,
-                    color: '#ffffff',
-                    fontWeight: '600'
-                  }}>{cart_data.count}</Text>
-                </View>
+                <Text style={{
+                  fontSize: 14,
+                  color: "#ffffff",
+                  fontWeight: '600'
+                }}>{cart_data.total}</Text>
               )}
             </View>
-
-            {isset_cart && (
-              <Text style={{
-                fontSize: 14,
-                color: "#ffffff",
-                fontWeight: '600'
-              }}>{cart_data.total}</Text>
-            )}
-          </View>
-        </TouchableHighlight>
+          </TouchableHighlight>
+        </View>
       </View>
     );
   }
@@ -396,10 +424,7 @@ const styles = StyleSheet.create({
     // right: 0,
     // bottom: 0,
     height: 69,
-    backgroundColor: '#ffffff',
-    borderTopWidth: Util.pixel,
-    borderTopColor: '#dddddd',
-    flexDirection: 'row'
+    backgroundColor: '#ffffff'
   },
   store_cart_container: {
     width: Util.size.width - 100,

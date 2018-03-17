@@ -20,6 +20,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
+import _ from 'lodash';
 
 // components
 import ListHeader from '../stores/ListHeader';
@@ -821,15 +822,59 @@ export default class Confirm extends Component {
           )}
 
           <View style={[styles.rows, styles.borderBottom, {
-            borderTopWidth: 0
+            borderTopWidth: 0,
+            backgroundColor: '#fafafa'
           }]}>
-            <View style={styles.address_name_box}>
-              <Text style={styles.text_total_items}>{cart_data.count_selected} sản phẩm</Text>
+            <View style={[styles.address_name_box]}>
+              <Text style={[styles.text_total_items, styles.feeLabel]}>Giá tạm tính</Text>
               <View style={styles.address_default_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={[styles.address_default_title, styles.title_active]}>Thành tiền: {cart_data.total_selected}</Text>
+                  <Text style={[styles.address_default_title, styles.title_active, styles.feeValue, {color: "#333333"}]}>{cart_data.total_before}</Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+
+            {Object.keys(cart_data.promotions).length > 0 && cart_data.promotions != null && (
+              <View style={[styles.address_name_box, styles.feeBox]}>
+                <Text style={[styles.text_total_items, styles.feeLabel, {color: "brown"}]}>{cart_data.promotions.title}</Text>
+                <View style={styles.address_default_box}>
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={() => 1}>
+                    <Text style={[styles.address_default_title, styles.title_active, styles.feeValue, {color: "brown"}]}>Giảm {cart_data.promotions.discount_text}</Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+            )}
+
+            {Object.keys(cart_data.item_fee).map(index => {
+              return(
+                <View key={index} style={[styles.address_name_box, styles.feeBox]}>
+                  <Text style={[styles.text_total_items, styles.feeLabel, {color: DEFAULT_COLOR}]}>{index}</Text>
+                  <View style={styles.address_default_box}>
+                    <TouchableHighlight
+                      underlayColor="transparent"
+                      onPress={() => 1}>
+                      <Text style={[styles.address_default_title, styles.title_active, styles.feeValue]}>{cart_data.item_fee[index]}</Text>
+                    </TouchableHighlight>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+
+          <View style={[styles.rows, styles.borderBottom, {
+            borderTopWidth: 0
+          }]}>
+            <View style={styles.address_name_box}>
+              <Text style={[styles.text_total_items, styles.feeLabel, styles.both]}>Thành tiền <Text style={{fontWeight: '400', fontSize: 14}}>({cart_data.count_selected} sản phẩm)</Text></Text>
+              <View style={styles.address_default_box}>
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => 1}>
+                  <Text style={[styles.address_default_title, styles.title_active, styles.feeValue, styles.both]}>{cart_data.total_selected}</Text>
                 </TouchableHighlight>
               </View>
             </View>
@@ -908,30 +953,32 @@ export default class Confirm extends Component {
             </View>
           )}
 
-          <View style={[styles.boxButtonActions, {
-            paddingTop: 0
-          }]}>
-            <TouchableHighlight
-              style={styles.buttonAction}
-              onPress={() => {
-                Actions.rating({
-                  cart_data
-                });
-              }}
-              underlayColor="transparent">
-              <View style={[styles.boxButtonAction, {
-                width: Util.size.width - 160,
-                backgroundColor: DEFAULT_COLOR,
-                borderColor: "#999999"
-              }]}>
-                <Icon style={styles.starReviews} name="star" size={12} color="#ffffff" />
+          {cart_data.status > 1 && (
+            <View style={[styles.boxButtonActions, {
+              paddingTop: 0
+            }]}>
+              <TouchableHighlight
+                style={styles.buttonAction}
+                onPress={() => {
+                  Actions.rating({
+                    cart_data
+                  });
+                }}
+                underlayColor="transparent">
+                <View style={[styles.boxButtonAction, {
+                  width: Util.size.width - 160,
+                  backgroundColor: DEFAULT_COLOR,
+                  borderColor: "#999999"
+                }]}>
+                  <Icon style={styles.starReviews} name="star" size={12} color="#ffffff" />
 
-                <Text style={[styles.buttonActionTitle, {
-                  color: "#ffffff"
-                }]}>Phản ánh & Đánh giá</Text>
-              </View>
-            </TouchableHighlight>
-          </View>
+                  <Text style={[styles.buttonActionTitle, {
+                    color: "#ffffff"
+                  }]}>Phản ánh & Đánh giá</Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          )}
 
         </ScrollView>
 
@@ -1758,8 +1805,8 @@ const styles = StyleSheet.create({
     marginTop: 8
   },
   text_total_items: {
-    fontSize: 12,
-    color: "#666666"
+    fontSize: 14,
+    color: "#000000"
   },
 
   input_address_text: {
@@ -1933,5 +1980,17 @@ const styles = StyleSheet.create({
   },
   starReviews: {
     marginLeft: 2
+  },
+  feeBox: {
+    marginTop: 12
+  },
+  feeLabel: {
+    fontSize: 16
+  },
+  feeValue: {
+    fontSize: 16
+  },
+  both: {
+    fontWeight: '600'
   }
 });

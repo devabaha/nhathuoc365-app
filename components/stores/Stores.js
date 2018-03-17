@@ -9,7 +9,8 @@ import {
   TouchableHighlight,
   FlatList,
   RefreshControl,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 
 //library
@@ -18,6 +19,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
+import Swiper from 'react-native-swiper';
 
 // components
 import Items from './Items';
@@ -131,7 +133,8 @@ export default class Stores extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
           this.setState({
-            categories_data: [{id: 0, name: "Tất cả"}, ...response.data.categories],
+            categories_data: [{id: 0, name: "Cửa hàng"}, ...response.data.categories],
+            promotions: response.data.promotions
           });
         }, this._delay());
       }
@@ -357,10 +360,10 @@ class CategoryScreen extends Component {
   constructor(props) {
     super(props);
 
-    var {item, index} = props;
+    var {item, index, that} = props;
 
     if (item.id == 0) {
-      var header_title = `— Tất cả —`;
+      var header_title = `— Cửa hàng —`;
     } else {
       var header_title = `— Sản phẩm ${item.name} —`;
     }
@@ -371,7 +374,9 @@ class CategoryScreen extends Component {
       header_title,
       items_data: null,
       items_data_bak: null,
-      page: 0
+      page: 0,
+      promotions: that.state.promotions,
+      isAll: item.id == 0
     }
   }
 
@@ -574,28 +579,64 @@ class CategoryScreen extends Component {
 
     return(
       <View style={styles.containerScreen}>
+
         {items_data && (
-          <FlatList
-            style={[styles.items_box]}
-            ListHeaderComponent={() => <ListHeader title={header_title} />}
-            data={items_data}
-            extraData={items_data}
-            renderItem={({item, index}) => (
-              <Items
-                item={item}
-                index={index}
-                onPress={item.type != 'loadmore' ? this._goItem.bind(this, item) : this._loadMore.bind(this)}
-                />
-            )}
-            keyExtractor={item => item.id}
-            numColumns={2}
+
+          <ScrollView
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
                 onRefresh={this._onRefresh.bind(this)}
               />
-            }
-          />
+            }>
+
+            {(this.state.isAll && this.state.promotions && this.state.promotions.length > 0) && (
+              <Swiper
+                style={{
+                  marginVertical: 8
+                }}
+                width={Util.size.width}
+                height={(Util.size.width  * 0.96) * (50/320) + 16}
+                autoplayTimeout={3}
+                showsPagination={false}
+                horizontal
+                autoplay>
+                {this.state.promotions.map((banner, i) => {
+                  return(
+                    <View
+                      key={i}
+                      style={{
+                        width: Util.size.width,
+                        alignItems: 'center'
+                      }}>
+                      <CachedImage
+                        source={{uri: banner.banner}}
+                        style={{
+                          width: Util.size.width * 0.96,
+                          height: (Util.size.width  * 0.96) * (50/320)
+                        }} />
+                    </View>
+                  );
+                })}
+              </Swiper>
+            )}
+
+            <ListHeader title={header_title} />
+
+            <View style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap'
+            }}>
+              {items_data.map((item, index) => (
+                <Items
+                  key={index}
+                  item={item}
+                  index={index}
+                  onPress={item.type != 'loadmore' ? this._goItem.bind(this, item) : this._loadMore.bind(this)}
+                  />
+              ))}
+            </View>
+          </ScrollView>
         )}
 
       </View>
