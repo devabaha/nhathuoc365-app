@@ -404,7 +404,7 @@ class APIHandler {
 
   _networkIndicator(flag = true) {
     if (isIOS) {
-      StatusBar.setNetworkActivityIndicatorVisible(flag);
+      // StatusBar.setNetworkActivityIndicatorVisible(flag);
     }
   }
 

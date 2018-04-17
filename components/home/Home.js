@@ -176,6 +176,10 @@ export default class Home extends Component {
         const isAdmin = store.user_info.admin_flag == 1;
         if (isAdmin) {
           this._getAdData();
+        } else {
+          this.setState({
+            admin_stores_data: null
+          });
         }
       }
     });
@@ -190,7 +194,7 @@ export default class Home extends Component {
           admin_stores_data: response.data
         });
 
-        layoutAnimation();
+        // layoutAnimation();
       }
 
     } catch (e) {

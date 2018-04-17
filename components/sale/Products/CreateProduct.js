@@ -441,6 +441,7 @@ export default class CreateProduct extends Component {
                 onChangeText={discount_percent => this.setNewState({discount_percent})}
                 value={this.state.discount_percent}
                 underlineColorAndroid="transparent"
+                keyboardType="numeric"
                 />
             </View>
           )}
@@ -656,7 +657,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#fafafa",
     paddingHorizontal: 15
   },
   formGroup: {
@@ -674,7 +675,9 @@ const styles = StyleSheet.create({
     height: 42,
     paddingHorizontal: 4,
     fontSize: 14,
-    color: '#333333'
+    color: '#333333',
+    backgroundColor: '#ffffff',
+    borderRadius: 3
   },
   formInputSelection: {
     justifyContent: 'center',
@@ -683,6 +686,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
     height: 42,
     paddingHorizontal: 4,
+    backgroundColor: '#ffffff',
+    borderRadius: 3
   },
   inputSelectionValue: {
     fontSize: 14,
@@ -708,7 +713,6 @@ const styles = StyleSheet.create({
   },
 
   boxButtonActions: {
-    backgroundColor: "#ffffff",
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

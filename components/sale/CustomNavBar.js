@@ -132,6 +132,8 @@ export default class NavBar extends Component {
           onPress={() => {
             if (store.cart_admin_data && store.cart_admin_data.user && store.cart_admin_data.user.tel) {
               Communications.phonecall(store.cart_admin_data.user.tel, true);
+            } else {
+              Toast.show("Khách chưa đăng ký tài khoản!");
             }
           }}
           style={{ paddingRight: 10}}>

@@ -135,6 +135,11 @@ export default class EditProduct extends Component {
           });
         }
 
+        var isChangeProductCode = false;
+        if (!response.data.product.product_code) {
+          isChangeProductCode = true;
+        }
+
         this.setState({
           sort: response.data.sort,
           cart_steps: response.data.cart_steps,
@@ -156,7 +161,8 @@ export default class EditProduct extends Component {
           img: Object.assign({}, response.data.product.img),
           category,
 
-          ready: true
+          ready: true,
+          isChangeProductCode
         });
       }
     } catch (e) {
@@ -365,21 +371,54 @@ export default class EditProduct extends Component {
           </View>
 
           <View style={styles.formGroup}>
-            <Text style={styles.formLabel}>Mã sản phẩm (Ví dụ: 10A2X1B32)</Text>
-            <View style={[{
-              borderWidth: 1,
-              borderColor: '#dddddd',
-              marginTop: 4,
-              height: 42,
-              paddingHorizontal: 4,
-              backgroundColor: '#ebebeb',
-              justifyContent: 'center'
-            }]}>
-              <Text style={{
-                fontSize: 14,
-                color: '#333333'
-              }}>{this.state.product_code}</Text>
-            </View>
+
+            {this.state.isChangeProductCode ? (
+              <View>
+                <TextInput
+                  style={styles.formInput}
+                  placeholder="Mã sản phẩm"
+                  onChangeText={product_code => this.setNewState({product_code})}
+                  value={this.state.product_code}
+                  underlineColorAndroid="transparent"
+                  />
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={this._genProductCode}>
+                  <View style={{
+                    backgroundColor: HEADER_ADMIN_BGR,
+                    paddingVertical: 6,
+                    marginTop: 8,
+                    width: 110,
+                    alignItems: 'center',
+                    borderRadius: 3
+                  }}>
+                    <Text style={{
+                      fontSize: 12,
+                      color: "#ffffff"
+                    }}>{this.state.gening ? "Đang tạo..." : "Tạo mã tự động"}</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            ) : (
+              <View>
+                <Text style={styles.formLabel}>Mã sản phẩm (Ví dụ: 10A2X1B32)</Text>
+                <View style={[{
+                  borderWidth: 1,
+                  borderColor: '#dddddd',
+                  marginTop: 4,
+                  height: 42,
+                  paddingHorizontal: 4,
+                  backgroundColor: '#ebebeb',
+                  justifyContent: 'center',
+                  borderRadius: 3
+                }]}>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#333333'
+                  }}>{this.state.product_code}</Text>
+                </View>
+              </View>
+            )}
           </View>
 
           {advance && (
@@ -470,6 +509,7 @@ export default class EditProduct extends Component {
                 onChangeText={discount_percent => this.setNewState({discount_percent})}
                 value={this.state.discount_percent}
                 underlineColorAndroid="transparent"
+                keyboardType="numeric"
                 />
             </View>
           )}
@@ -547,9 +587,9 @@ export default class EditProduct extends Component {
 
           {this.renderImageSelection.call(this, Object.keys(this.state.img).length + 1)}
 
-          <View style={styles.boxButtonActions, {
+          <View style={[styles.boxButtonActions, {
             marginBottom: 26
-          }}>
+          }]}>
             <TouchableHighlight
               style={[styles.buttonAction, {
                 marginLeft: 6
@@ -693,7 +733,8 @@ const styles = StyleSheet.create({
     ...MARGIN_SCREEN,
     marginBottom: 0,
     backgroundColor: "#ffffff",
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    backgroundColor: "#fafafa"
   },
   formGroup: {
     marginTop: 16
@@ -710,7 +751,9 @@ const styles = StyleSheet.create({
     height: 42,
     paddingHorizontal: 4,
     fontSize: 14,
-    color: '#333333'
+    color: '#333333',
+    backgroundColor: '#ffffff',
+    borderRadius: 3
   },
   formInputSelection: {
     justifyContent: 'center',
@@ -719,6 +762,8 @@ const styles = StyleSheet.create({
     marginTop: 4,
     height: 42,
     paddingHorizontal: 4,
+    backgroundColor: '#ffffff',
+    borderRadius: 3
   },
   inputSelectionValue: {
     fontSize: 14,
@@ -744,7 +789,6 @@ const styles = StyleSheet.create({
   },
 
   boxButtonActions: {
-    backgroundColor: "#ffffff",
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

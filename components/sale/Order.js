@@ -20,6 +20,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import store from '../../store/Store';
+import Communications from 'react-native-communications';
 
 // components
 import Sticker from '../Sticker';
@@ -435,7 +436,35 @@ export default class Order extends Component {
 
             <View style={styles.address_content}>
               <Text style={styles.address_name}>{address_data.name}</Text>
-              <Text style={styles.address_content_phone}>{address_data.tel}</Text>
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center'
+              }}>
+                <Text style={styles.address_content_phone}>{address_data.tel}</Text>
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Communications.phonecall(address_data.tel, true);
+                  }}>
+                  <View style={{
+                    height: 28,
+                    backgroundColor: DEFAULT_COLOR,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    borderRadius: 5,
+                    paddingHorizontal: 16,
+                    marginLeft: 20
+                  }}>
+                    <Icon name="phone" size={20} color="#ffffff" />
+                    <Text style={{
+                      color: '#ffffff',
+                      fontSize: 16,
+                      marginLeft: 4
+                    }}>Gọi</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
               {editMode ? (
                 <View>
                   <Text style={styles.address_content_address_detail}>{address_data.address}</Text>

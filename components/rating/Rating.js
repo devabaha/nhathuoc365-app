@@ -74,7 +74,7 @@ export default class  Rating extends Component {
       }
     });
 
-    layoutAnimation();
+    // layoutAnimation();
   }
 
   _renderStar() {
@@ -108,7 +108,9 @@ export default class  Rating extends Component {
     const WrapperView = isIOS ? ScrollView : View;
 
     return (
-      <ScrollView>
+      <ScrollView
+        keyboardShouldPersistTaps="always"
+      >
         <View style={styles.container}>
           <View style={[styles.header, {
             height: HEADER_HEIGHT

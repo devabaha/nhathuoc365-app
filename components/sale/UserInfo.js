@@ -160,6 +160,7 @@ export default class UserInfo extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
+          keyboardShouldPersistTaps="always"
           style={{
 
           }}>

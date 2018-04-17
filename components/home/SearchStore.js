@@ -33,7 +33,8 @@ export default class SearchStore extends Component {
       refreshing: false,
       searchValue: null,
       coppy_sticker_flag: false,
-      fromIntro: props.fromIntro
+      fromIntro: props.fromIntro,
+      suggest_data: null
     }
   }
 
@@ -108,6 +109,8 @@ export default class SearchStore extends Component {
         }, 300);
       });
     }
+
+    this._getData();
   }
 
   // onchange text value for typing
@@ -167,6 +170,29 @@ export default class SearchStore extends Component {
     });
   }
 
+  async _getData() {
+    try {
+      var response = await APIHandler.user_list_suggest_site();
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          suggest_data: response.data
+        });
+      } else {
+        this.setState({
+          isHide: true
+        });
+      }
+
+      // layoutAnimation();
+    } catch (e) {
+      console.warn(e + ' user_list_suggest_site');
+
+      store.addApiQueue('user_list_suggest_site', this._getData.bind(this));
+    } finally {
+
+    }
+  }
+
   // click chọn địa điểm gợi ý
   _onPressSuggest(store) {
     this.setState({
@@ -222,7 +248,34 @@ export default class SearchStore extends Component {
               keyExtractor={item => item.id}
             />
           ) : (
-            <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
+            <View style={styles.defaultBox}>
+              {this.state.suggest_data != null && (
+                <View>
+                  <Text style={styles.add_store_title}><Icon name="star" size={16} color="orange" /> CỬA HÀNG NỔI BẬT</Text>
+                  <FlatList
+                    keyboardShouldPersistTaps="always"
+                    style={styles.stores_result_box}
+                    data={this.state.suggest_data}
+                    onEndReached={(num) => {
+
+                    }}
+                    onEndReachedThreshold={0}
+                    ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+                    renderItem={({item, index}) => {
+
+                      return(
+                        <StoreItem
+                          item={item}
+                          index={index}
+                          that={this}
+                          />
+                      );
+                    }}
+                    keyExtractor={item => item.id}
+                  />
+                </View>
+              )}
+            </View>
           )}
 
         </ScrollView>
@@ -516,5 +569,16 @@ const styles = StyleSheet.create({
   },
   add_btn_label_active: {
     color: "#ffffff"
+  },
+  add_store_title: {
+    color: "#404040",
+    fontSize: 14,
+    fontWeight: '500',
+    lineHeight: 20,
+    marginVertical: 8,
+    marginLeft: 15
+  },
+  defaultBox: {
+
   }
 });
