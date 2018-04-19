@@ -10,7 +10,8 @@ import {
   Switch,
   Keyboard,
   ScrollView,
-  Alert
+  Alert,
+  AsyncStorage
 } from 'react-native';
 
 // library
@@ -18,12 +19,17 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Modal from 'react-native-modalbox';
+import Frisbee from 'frisbee';
+import Spinner from 'react-native-loading-spinner-overlay';
+import Form from 'react-native-form';
+import CountryPicker from 'react-native-country-picker-modal';
 
 // components
 import PopupConfirm from '../PopupConfirm';
+import Sticker from '../Sticker';
 
 @observer
-export default class Register extends Component {
+export default class Login extends Component {
   constructor(props) {
     super(props);
 
@@ -40,11 +46,12 @@ export default class Register extends Component {
       }
     } else {
       this.state = {
-        name: props.name_props || '',
-        tel: props.tel_props || '',
-        password: props.password_props || '',
+        name: '',
+        tel: '',
+        password: '',
         finish_loading: false,
-        verify_loadding: false
+        verify_loadding: false,
+        sticker_flag: false
       }
     }
   }
@@ -58,16 +65,42 @@ export default class Register extends Component {
       }
     });
 
-    // from confirm screen
-    if (this.props.registerNow) {
+    if (!this.state.edit_mode && this.refs_name) {
       setTimeout(() => {
-        this._onSave();
-      }, 500);
+        this.refs_name.focus();
+      }, 450);
+    }
+
+    this._getStoreUsername();
+  }
+
+  async _getStoreUsername() {
+    try {
+      const value = await AsyncStorage.getItem('@username:key');
+      if (value !== null){
+        this.setState({
+          tel: value
+        });
+      }
+    } catch (error) {
+      console.warn(error);
     }
   }
 
   _unMount() {
     Keyboard.dismiss();
+  }
+
+  _showSticker() {
+    this.setState({
+      sticker_flag: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          sticker_flag: false
+        });
+      }, 2000);
+    });
   }
 
   _onSave() {
@@ -77,18 +110,18 @@ export default class Register extends Component {
     tel = tel.trim();
     password = password.trim();
 
-    if (!name) {
-      return Alert.alert(
-        'Thông báo',
-        'Hãy điền tên của bạn',
-        [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs_name.focus();
-          }},
-        ],
-        { cancelable: false }
-      );
-    }
+    // if (!name) {
+    //   return Alert.alert(
+    //     'Thông báo',
+    //     'Hãy điền tên của bạn',
+    //     [
+    //       {text: 'Đồng ý', onPress: () => {
+    //         this.refs_name.focus();
+    //       }},
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
 
     if (!tel) {
       return Alert.alert(
@@ -120,68 +153,61 @@ export default class Register extends Component {
       return;
     }
 
-    this._register(name, tel, password);
+    this._login(name, tel, password);
   }
 
-  _register(name, tel, password) {
+  _login(name, tel, password) {
     this.setState({
       finish_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.user_register({
-          name,
+        var response = await APIHandler.user_login_sms({
           username: tel
         });
 
         if (response && response.status == STATUS_SUCCESS) {
           this.successfully = true;
 
+          this._showSticker();
+
           this._unMount();
 
           this.setState({
             finish_loading: false
           }, () => {
+            action(() => {
+              store.setUserInfo(response.data);
 
-            if (this.refs_modal_verify) {
-              this.refs_modal_verify.open();
+              store.resetCartData();
 
-              const onBack = () => {
-                Alert.alert(
-                  'Huỷ đăng ký',
-                  'Quá trình đăng ký chưa hoàn tất, bạn đã chắc chắn chưa?',
-                  [
-                    {text: 'Không', onPress: () => {
+              store.setRefreshHomeChange(store.refresh_home_change + 1);
 
-                    }},
-                    {text: 'Có', onPress: () => {
-                      Actions.pop();
-                    }},
-                  ],
-                  { cancelable: false }
-                );
-              }
-
-              Actions.refresh({
-                onBack
-              });
-            }
-
+              setTimeout(() => {
+                Actions.pop();
+              }, 2000);
+            })();
           });
+
+          try {
+            await AsyncStorage.setItem('@username:key', tel);
+          } catch (error) {
+            console.warn(error);
+          }
 
         } else {
           this.setState({
             finish_loading: false
           });
-        }
 
-        if (response) {
-          Toast.show(response.message, Toast.SHORT);
+          if (response) {
+            Toast.show(response.message, Toast.SHORT);
+          }
         }
 
       } catch (e) {
-        console.warn(e + ' user_register');
+        console.warn(e + ' user_login_password');
 
-        store.addApiQueue('user_register', this._register.bind(this, name, tel, password));
+        store.addApiQueue('user_login_password', this._login.bind(this, name, tel, password));
       } finally {
 
       }
@@ -189,14 +215,16 @@ export default class Register extends Component {
   }
 
   render() {
-    var { edit_mode, verify_loadding } = this.state;
+    var { edit_mode, verify_loadding, tel, password } = this.state;
 
     return (
       <View style={styles.container}>
-        <ScrollView style={{
-          marginBottom: store.keyboardTop + 60
-        }}>
-          <View style={styles.input_box}>
+        <ScrollView
+          keyboardShouldPersistTaps="always"
+          style={{
+            marginBottom: store.keyboardTop + 60
+          }}>
+          {/*<View style={styles.input_box}>
             <Text style={styles.input_label}>Tên</Text>
 
             <View style={styles.input_text_box}>
@@ -214,27 +242,41 @@ export default class Register extends Component {
                   });
                 }}
                 value={this.state.name}
-                onLayout={() => {
-                  if (this.refs_name && !this.props.registerNow) {
-                    setTimeout(() => this.refs_name.focus(), 300);
-                  }
-                }}
-                onSubmitEditing={() => {
-                  if (this.refs_tel) {
-                    this.refs_tel.focus();
-                  }
-                }}
-                returnKeyType="next"
                 />
             </View>
+          </View>*/}
+
+          <View style={{
+            height: 60,
+            width: Util.size.width,
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <Text style={{
+              fontSize: 12,
+              color: '#666666'
+            }}>Bạn có thể đăng nhập bằng số điện thoại</Text>
           </View>
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Số điện thoại</Text>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_tel) {
+                  this.refs_tel.focus();
+                }
+              }}>
+              <Text style={styles.input_label}>Số điện thoại</Text>
+            </TouchableHighlight>
 
             <View style={styles.input_text_box}>
               <TextInput
                 ref={ref => this.refs_tel = ref}
+                onLayout={() => {
+                  if (this.refs_tel) {
+                    setTimeout(() => this.refs_tel.focus(), 300);
+                  }
+                }}
                 style={styles.input_text}
                 keyboardType="phone-pad"
                 maxLength={30}
@@ -252,7 +294,15 @@ export default class Register extends Component {
           </View>
 
           {/*<View style={styles.input_box}>
-            <Text style={styles.input_label}>Mật khẩu</Text>
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                if (this.refs_password) {
+                  this.refs_password.focus();
+                }
+              }}>
+              <Text style={styles.input_label}>Mật khẩu</Text>
+            </TouchableHighlight>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -268,11 +318,32 @@ export default class Register extends Component {
                     password: value
                   });
                 }}
+                secureTextEntry
+                returnKeyType="go"
                 value={this.state.password}
                 onSubmitEditing={this._onSave.bind(this)}
-                returnKeyType="go"
                 />
             </View>
+          </View>*/}
+
+          {/*<View
+            style={{
+              alignItems: 'center'
+            }}>
+            <TouchableHighlight
+              onPress={() => {
+                Actions.forget_verify({
+                  tel
+                });
+              }}
+              underlayColor="transparent"
+              style={{
+                marginTop: 24
+              }}>
+              <Text style={{
+                color: DEFAULT_COLOR
+              }}>Lấy lại mật khẩu</Text>
+            </TouchableHighlight>
           </View>*/}
 
         </ScrollView>
@@ -291,181 +362,23 @@ export default class Register extends Component {
               {this.state.finish_loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : (
-                <Icon name={this.state.edit_mode ? "save" : "user-plus"} size={20} color="#ffffff" />
+                <Icon name={this.state.edit_mode ? "save" : "sign-in"} size={20} color="#ffffff" />
               )}
             </View>
-            <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "ĐĂNG KÝ"}</Text>
+            <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "ĐĂNG NHẬP"}</Text>
           </View>
         </TouchableHighlight>
 
-
-        <Modal
-
-          entry="top"
-          style={[styles.modal]}
-          swipeToClose={false}
-          backdropPressToClose={false}
-          backButtonClose={false}
-          ref={ref => this.refs_modal_verify = ref}>
-
-          <Text style={styles.verify_title}>NHẬP MÃ XÁC THỰC</Text>
-          <Text style={styles.verify_desc}>Mã xác thực đang được gửi tới số điện thoại
-            <Text style={{
-              fontWeight: '500'
-            }}>{'\n' + this.state.tel}</Text>
-          </Text>
-
-          <TextInput
-            ref={ref => {
-              if (ref) {
-                this.refs_verify = ref;
-              }
-            }}
-            onLayout={() => {
-              if (this.refs_verify) {
-                clearTimeout(this._verify_focus_timer);
-                this._verify_focus_timer = setTimeout(() => {
-                  this.refs_verify.focus();
-                }, 3000);
-              }
-            }}
-            style={styles.input_text_verify}
-            keyboardType="numeric"
-            maxLength={100}
-            placeholder="Điền mã xác thực"
-            placeholderTextColor="#999999"
-            underlineColorAndroid="transparent"
-            onChangeText={(value) => {
-              this.setState({
-                otp: value
-              });
-            }}
-            value={this.state.otp}
-            />
-
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={this._onVerify.bind(this)}>
-
-            <View style={styles.verify_btn}>
-              {verify_loadding ? (
-                <View style={{
-                  width: 16
-                }}>
-                  <Indicator size="small" />
-                </View>
-              ) : (
-                <Icon name="check" size={16} color="#ffffff" />
-              )}
-
-              <Text style={styles.verify_btn_title}>HOÀN THÀNH</Text>
-            </View>
-          </TouchableHighlight>
-
-        </Modal>
+        <Sticker
+          active={this.state.sticker_flag}
+          message="Đăng nhập thành công."
+         />
       </View>
     );
-  }
-
-  _onVerify() {
-    if (this.successfully2 || this.state.verify_loadding) {
-      return;
-    }
-
-    this._verify();
-  }
-
-  _verify() {
-    this.setState({
-      verify_loadding: true
-    }, async () => {
-
-      try {
-        var response = await APIHandler.user_verify_otp({
-          otp: this.state.otp
-        });
-
-        if (response && response.status == STATUS_SUCCESS) {
-          this.successfully2 = true;
-
-          action(() => {
-            this._unMount();
-
-            store.setUserInfo(response.data);
-
-            store.resetCartData();
-
-            store.setRefreshHomeChange(store.refresh_home_change + 1);
-
-            if (this.props.registerNow) {
-              Actions.pop({
-                popNum: 2
-              });
-            } else {
-              Actions.pop();
-            }
-          })();
-        }
-
-        if (response) {
-          Toast.show(response.message, Toast.SHORT);
-        }
-
-      } catch (e) {
-        console.warn(e + ' user_verify_otp');
-
-        store.addApiQueue('user_verify_otp', this._verify.bind(this));
-      } finally {
-        this.setState({
-          verify_loadding: false
-        });
-      }
-    });
   }
 }
 
 const styles = StyleSheet.create({
-  modal: {
-    width: '90%',
-    height: 210,
-    borderRadius: 2,
-    marginTop: -(NAV_HEIGHT/2),
-    alignItems: 'center'
-  },
-  verify_title: {
-    fontSize: 14,
-    marginTop: 16
-  },
-  verify_desc: {
-    marginTop: 8,
-    fontSize: 12,
-    paddingHorizontal: 16,
-    color: "#666666"
-  },
-  input_text_verify: {
-    borderWidth: Util.pixel,
-    borderColor: "#cccccc",
-    marginTop: 20,
-    height: 40,
-    width: '69%',
-    paddingHorizontal: 15,
-    textAlign: 'center',
-    fontSize: 18,
-    color: "#404040"
-  },
-  verify_btn: {
-    backgroundColor: DEFAULT_COLOR,
-    paddingVertical: 8,
-    paddingHorizontal: 8,
-    borderRadius: 2,
-    marginTop: 20,
-    flexDirection: 'row'
-  },
-  verify_btn_title: {
-    color: "#ffffff",
-    marginLeft: 4
-  },
-
   container: {
     flex: 1,
     ...MARGIN_SCREEN,

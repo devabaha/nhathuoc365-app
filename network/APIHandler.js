@@ -337,6 +337,16 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async user_login_sms(data) {
+    var api = url_for(API.USER_LOGIN_SMS);
+    return await this.postAPI(api, data);
+  }
+
+  async login_sms_verify(data) {
+    var api = url_for(API.LOGIN_SMS_VERIFY);
+    return await this.postAPI(api, data);
+  }
+
   /**
   * Đăng xuất
   */
