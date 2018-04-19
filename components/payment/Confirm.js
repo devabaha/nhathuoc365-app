@@ -1018,7 +1018,7 @@ export default class Confirm extends Component {
             noConfirm={this._viewOrders.bind(this)}
             yesTitle="Đăng ký ngay!"
             yesConfirm={this._onRegister.bind(this)}
-            height={340}
+            height={300}
             otherClose={false}
             style={{
               marginTop: -(NAV_HEIGHT/2)
@@ -1076,7 +1076,7 @@ export default class Confirm extends Component {
                     value={this.state.tel_register}
                     />
 
-                  <TextInput
+                  {/*<TextInput
                     ref={ref => this.refs_pass_register = ref}
                     style={{
                       borderWidth: Util.pixel,
@@ -1096,7 +1096,7 @@ export default class Confirm extends Component {
                       });
                     }}
                     value={this.state.pass_register}
-                    />
+                    />*/}
                 </View>
               );
             }}
@@ -1260,18 +1260,18 @@ export default class Confirm extends Component {
       );
     }
 
-    if (!password) {
-      return Alert.alert(
-        'Thông báo',
-        'Hãy điền Mật khẩu',
-        [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs_pass_register.focus();
-          }},
-        ],
-        { cancelable: false }
-      );
-    }
+    // if (!password) {
+    //   return Alert.alert(
+    //     'Thông báo',
+    //     'Hãy điền Mật khẩu',
+    //     [
+    //       {text: 'Đồng ý', onPress: () => {
+    //         this.refs_pass_register.focus();
+    //       }},
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
 
     Keyboard.dismiss();
 
