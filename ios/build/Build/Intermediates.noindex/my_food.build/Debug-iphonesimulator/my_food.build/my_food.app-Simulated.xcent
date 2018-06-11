@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>application-identifier</key>
-	<string>HE24EA8C23.vn.com.myfood</string>
+	<string>HE24EA8C23.vn.foodhub</string>
 	<key>aps-environment</key>
 	<string>development</string>
 </dict>
