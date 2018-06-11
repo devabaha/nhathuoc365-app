@@ -102,7 +102,7 @@
 		</data>
 		<key>Assets.car</key>
 		<data>
-		Uf7izul7fo6VtGF7aABfFlCND6Y=
+		D3HKkUL4o2om/wD6SZaS8y/5YzU=
 		</data>
 		<key>Entypo.ttf</key>
 		<data>
@@ -167,7 +167,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		BrRfMpRfRLjbd75bAKu0NkfJLx8=
+		sz7CDvL6yoOKCtIn59JNlqCR10w=
 		</data>
 		<key>Ionicons.ttf</key>
 		<data>
@@ -175,23 +175,27 @@
 		</data>
 		<key>LaunchImage-568h@2x.png</key>
 		<data>
-		anLeNtcUuYVma/OsF/k/5KZpk4g=
+		Aj/3b+LsNTrEvFlFxxkfXl0zTnk=
 		</data>
 		<key>LaunchImage-700-568h@2x.png</key>
 		<data>
-		anLeNtcUuYVma/OsF/k/5KZpk4g=
+		Aj/3b+LsNTrEvFlFxxkfXl0zTnk=
 		</data>
 		<key>LaunchImage-800-667h@2x.png</key>
 		<data>
-		TIijuhj+VS8ZVzJR6kvb4eor//4=
+		zOecCubaENLN0SVWliSVP6SAo8o=
+		</data>
+		<key>LaunchImage-800-Portrait-736h@3x.png</key>
+		<data>
+		IdcnVRq6yA5do/H9SjpBm3PbBRQ=
 		</data>
 		<key>LaunchImage.png</key>
 		<data>
-		MoN37XI0sdfHTedjyZMoCSkHM18=
+		AFMi03+xcEloiFCDyhHpTWKdWYk=
 		</data>
 		<key>LaunchImage@2x.png</key>
 		<data>
-		6mxQ27WQ9ttZsRIl3xp4uiTnu+w=
+		lOPh8vVblUSFwKGiDt4ejCAya/A=
 		</data>
 		<key>MaterialCommunityIcons.ttf</key>
 		<data>
@@ -516,11 +520,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			Uf7izul7fo6VtGF7aABfFlCND6Y=
+			D3HKkUL4o2om/wD6SZaS8y/5YzU=
 			</data>
 			<key>hash2</key>
 			<data>
-			qvHo/hjy9+EPilmrhpy/9JAZ48jviwTgiJgAddT7Fow=
+			C/VdkfXbH2AC0khNkaEDlUQdN0OExfVjJwHhAjkNUEQ=
 			</data>
 		</dict>
 		<key>Entypo.ttf</key>
@@ -694,55 +698,66 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			anLeNtcUuYVma/OsF/k/5KZpk4g=
+			Aj/3b+LsNTrEvFlFxxkfXl0zTnk=
 			</data>
 			<key>hash2</key>
 			<data>
-			vtjJGNLIx9tXMK1X967e1yagKTMmsMra3k7H4y1aEnw=
+			ck5sxTV+u1rWH6t1tEmdV7TlY7rifg5MA6WoMmQmxSA=
 			</data>
 		</dict>
 		<key>LaunchImage-700-568h@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			anLeNtcUuYVma/OsF/k/5KZpk4g=
+			Aj/3b+LsNTrEvFlFxxkfXl0zTnk=
 			</data>
 			<key>hash2</key>
 			<data>
-			vtjJGNLIx9tXMK1X967e1yagKTMmsMra3k7H4y1aEnw=
+			ck5sxTV+u1rWH6t1tEmdV7TlY7rifg5MA6WoMmQmxSA=
 			</data>
 		</dict>
 		<key>LaunchImage-800-667h@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			TIijuhj+VS8ZVzJR6kvb4eor//4=
+			zOecCubaENLN0SVWliSVP6SAo8o=
 			</data>
 			<key>hash2</key>
 			<data>
-			OC3NKcNSGqFwZ0R6Ly3FPz8VAcvu1HYINqZzbavz91c=
+			sGkVLf4PKck8tZE2ygMoy7TrOYn5BGONHchyLipbfJ0=
+			</data>
+		</dict>
+		<key>LaunchImage-800-Portrait-736h@3x.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			IdcnVRq6yA5do/H9SjpBm3PbBRQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			NjaUII3WAWFlTV2iRZHv+0IVNgM6q1H2eNVYL/xGymI=
 			</data>
 		</dict>
 		<key>LaunchImage.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			MoN37XI0sdfHTedjyZMoCSkHM18=
+			AFMi03+xcEloiFCDyhHpTWKdWYk=
 			</data>
 			<key>hash2</key>
 			<data>
-			YbJiNniuMFU28oj7KD85rx++yvxJOIDT5LfyzAdhT50=
+			XCrOj6oIYFyy6IjF5z/9S5vwFobQbHLREozgYez1B2c=
 			</data>
 		</dict>
 		<key>LaunchImage@2x.png</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			6mxQ27WQ9ttZsRIl3xp4uiTnu+w=
+			lOPh8vVblUSFwKGiDt4ejCAya/A=
 			</data>
 			<key>hash2</key>
 			<data>
-			x5szALUbqzXqozOV6gM5LdXxaniKOiqnIAiq5/K5yYQ=
+			wTbTbffEErVAs82SIZxCiryyS7GyyFynLcaUJg6NubA=
 			</data>
 		</dict>
 		<key>MaterialCommunityIcons.ttf</key>
