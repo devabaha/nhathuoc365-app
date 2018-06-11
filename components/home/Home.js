@@ -492,7 +492,7 @@ export default class Home extends Component {
             </View>
           )}
 
-          {finish && (
+          {false && (//finish - thay false vao finish de an o them cua hang
             <View>
               <View style={{
                 paddingHorizontal: 15,
