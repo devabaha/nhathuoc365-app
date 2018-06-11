@@ -427,7 +427,7 @@ export default class Home extends Component {
           }>
 
           <View style={styles.myFavoriteBox}>
-            <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
+            <Text style={styles.add_store_title}>ĐẶT HÀNG TỚI CỬA HÀNG</Text>
 
             {view_all_sites && (
               <View style={styles.right_title_btn_box}>
