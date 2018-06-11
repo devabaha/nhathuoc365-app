@@ -165,7 +165,7 @@ export default class LoginVerify extends Component {
 
   render() {
 
-    let headerText = `Đăng nhập MyFood`
+    let headerText = `Đăng nhập Food Hub`
     let buttonText = this.state.enterCode ? 'Xác minh' : 'Gửi mã xác thực';
     let textStyle = this.state.enterCode ? {
       height: 50,
@@ -231,7 +231,7 @@ export default class LoginVerify extends Component {
       return (
         <View>
           <Text style={styles.wrongNumberText}>
-            Nhập mã xác thực MyFood đã gửi tới số điện thoại của bạn!
+            Nhập mã xác thực Food Hub đã gửi tới số điện thoại của bạn!
           </Text>
           <Text style={[styles.wrongNumberText, {color: DEFAULT_COLOR, fontSize: 12}]} onPress={this._tryAgain}>
             Chưa nhận được mã, thử lại!

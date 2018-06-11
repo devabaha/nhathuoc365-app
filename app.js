@@ -223,7 +223,7 @@ export default class App extends Component {
     OneSignal.addEventListener('ids', this._onIds.bind(this));
 
     // deep link register
-    DeepLinking.addScheme('myfoodapp://');
+    DeepLinking.addScheme('foodhubapp://');
     Linking.addEventListener('url', this.handleURL);
 
     var url = Linking.getInitialURL().then((url) => {
@@ -577,14 +577,14 @@ export default class App extends Component {
               <Scene
                 key="myTab1"
                 icon={TabIcon}
-                iconTitle="My Food"
+                iconTitle="Food Hub"
                 iconName="store"
                 size={24}
                 onPress={()=> {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_home" title="My Food" component={Home} {...custommerNav} navBar={HomeNavBar} />
+                <Scene key="_home" title="Food Hub" component={Home} {...custommerNav} navBar={HomeNavBar} />
               </Scene>
 
               {/**

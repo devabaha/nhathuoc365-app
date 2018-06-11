@@ -123,9 +123,9 @@ export default class Account extends Component {
         {
           key: 4,
           icon: "facebook-square",
-          label: "Fanpage MyFood",
+          label: "Fanpage Food Hub",
           desc: "Facebook fanpage của ứng dụng",
-          onPress: () => Communications.web("http://fanpage.myfood.com.vn"),
+          onPress: () => Communications.web("http://fanpage.foodhub.vn"),
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#4267b2"
           }],
@@ -136,10 +136,10 @@ export default class Account extends Component {
         {
           key: 5,
           icon: "handshake-o",
-          label: "Về MyFood - Điều khoản sử dụng",
-          desc: "Điều khoản sử dụng MyFood",
+          label: "Về Food Hub - Điều khoản sử dụng",
+          desc: "Điều khoản sử dụng Food Hub",
           onPress: () => Actions.webview({
-            title: "Về MyFood",
+            title: "Về Food Hub",
             url: MY_FOOD_API + "info/privacy"
           }),
           boxIconStyle: [styles.boxIconStyle, {
@@ -153,7 +153,7 @@ export default class Account extends Component {
           key: 6,
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Sản phẩm của MyFood - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
+          desc: "Sản phẩm của Food Hub - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
           onPress: () => 1,
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"

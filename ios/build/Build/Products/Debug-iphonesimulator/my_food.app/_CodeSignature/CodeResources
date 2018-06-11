@@ -124,9 +124,50 @@
 		<data>
 		SyvObHkkk6SlcWtv7C2+/olJLD8=
 		</data>
+		<key>Frameworks/IDEBundleInjection.framework/IDEBundleInjection</key>
+		<data>
+		Tvuq/w6S5/l+mcuMpS91/YjZ2PU=
+		</data>
+		<key>Frameworks/IDEBundleInjection.framework/Info.plist</key>
+		<data>
+		6cPENvjjcXfDfBToJJ1118da8zc=
+		</data>
+		<key>Frameworks/IDEBundleInjection.framework/_CodeSignature/CodeResources</key>
+		<data>
+		0fLvEeGLEThn4UBToFYXic4rqjA=
+		</data>
+		<key>Frameworks/IDEBundleInjection.framework/version.plist</key>
+		<data>
+		W8UHQlJOUHUdjrnh0RUqh9qxkzY=
+		</data>
+		<key>Frameworks/XCTest.framework/Info.plist</key>
+		<data>
+		/6b73ybjbzwjPUHccodzeLJKGpQ=
+		</data>
+		<key>Frameworks/XCTest.framework/XCTest</key>
+		<data>
+		3NizfJMeU0sJP08q8Qi7wX/AyvI=
+		</data>
+		<key>Frameworks/XCTest.framework/_CodeSignature/CodeResources</key>
+		<data>
+		+mvvcw5UT9t0SkNxKWk0dLOay+4=
+		</data>
+		<key>Frameworks/XCTest.framework/en.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			TuBj57ZP6zBqcL9HttO2Rucaw9E=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Frameworks/XCTest.framework/version.plist</key>
+		<data>
+		qhk6hXDyQp/YYzEpKIxg0bW3tlk=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		W6mz02SbpYaz5BkhE7d26lJ7264=
+		BrRfMpRfRLjbd75bAKu0NkfJLx8=
 		</data>
 		<key>Ionicons.ttf</key>
 		<data>
@@ -167,6 +208,26 @@
 		<key>PkgInfo</key>
 		<data>
 		n57qDP4tZfLD1rCS43W0B4LQjzE=
+		</data>
+		<key>PlugIns/my_foodTests.xctest.dSYM/Contents/Info.plist</key>
+		<data>
+		EwMBab8gNIKI3p+Bmqn+C8J56AQ=
+		</data>
+		<key>PlugIns/my_foodTests.xctest.dSYM/Contents/Resources/DWARF/my_foodTests</key>
+		<data>
+		pNI2DFkXoxwZS1dmT4qVjVMqle0=
+		</data>
+		<key>PlugIns/my_foodTests.xctest/Info.plist</key>
+		<data>
+		SeP4D43TcnT1MjNv9iKXm5JXuqI=
+		</data>
+		<key>PlugIns/my_foodTests.xctest/_CodeSignature/CodeResources</key>
+		<data>
+		zVmbd7+lGfDRYQtx3zzaFBiSs14=
+		</data>
+		<key>PlugIns/my_foodTests.xctest/my_foodTests</key>
+		<data>
+		ie4Bls5V30gKaE2RvQhneVuRefc=
 		</data>
 		<key>SimpleLineIcons.ttf</key>
 		<data>
@@ -517,6 +578,107 @@
 			fh3QPdTOkLZYBSVUzXRZ3xZxZxc4mlUvpMbVal+JM+Y=
 			</data>
 		</dict>
+		<key>Frameworks/IDEBundleInjection.framework/IDEBundleInjection</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Tvuq/w6S5/l+mcuMpS91/YjZ2PU=
+			</data>
+			<key>hash2</key>
+			<data>
+			RFPwuGunUCg671vkap3nZ2ykF77o4s2j7zDAn2XbOco=
+			</data>
+		</dict>
+		<key>Frameworks/IDEBundleInjection.framework/Info.plist</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			6cPENvjjcXfDfBToJJ1118da8zc=
+			</data>
+			<key>hash2</key>
+			<data>
+			LLPF72z23yVBbXYfe0hb4bJQTJFSRVDBk5OyUDe3bos=
+			</data>
+		</dict>
+		<key>Frameworks/IDEBundleInjection.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			0fLvEeGLEThn4UBToFYXic4rqjA=
+			</data>
+			<key>hash2</key>
+			<data>
+			Jru3xyO+9Pka43kPgZquwkzmdyGftteE5+HGSD6YRdY=
+			</data>
+		</dict>
+		<key>Frameworks/IDEBundleInjection.framework/version.plist</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			W8UHQlJOUHUdjrnh0RUqh9qxkzY=
+			</data>
+			<key>hash2</key>
+			<data>
+			FPdP4nFPVQpcTGvPqKiPySck4vZwcjNstcWB9HweZYA=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/Info.plist</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			/6b73ybjbzwjPUHccodzeLJKGpQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			1uGNx3Hih75LqpmMmnSTa4Vvqk69BmdnsWtAABkb2Ow=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/XCTest</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			3NizfJMeU0sJP08q8Qi7wX/AyvI=
+			</data>
+			<key>hash2</key>
+			<data>
+			XSjXtfthzzaopwW6oSnMLrhafOkn9KkU9ZbZ/aIqCok=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			+mvvcw5UT9t0SkNxKWk0dLOay+4=
+			</data>
+			<key>hash2</key>
+			<data>
+			LOX9OCUqqITwfF5IEPUIrj9+m8hK39QCJl4WbXY272o=
+			</data>
+		</dict>
+		<key>Frameworks/XCTest.framework/en.lproj/InfoPlist.strings</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			TuBj57ZP6zBqcL9HttO2Rucaw9E=
+			</data>
+			<key>hash2</key>
+			<data>
+			89RGkjZaKuewYnjpzwhIswhqfrU8+pcEXqM/DHVrUmo=
+			</data>
+			<key>optional</key>
+			<true/>
+		</dict>
+		<key>Frameworks/XCTest.framework/version.plist</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			qhk6hXDyQp/YYzEpKIxg0bW3tlk=
+			</data>
+			<key>hash2</key>
+			<data>
+			L4ikvo5qrwsx21+syxZrwgRwrNbc3av4ZtEyZl/yF78=
+			</data>
+		</dict>
 		<key>Ionicons.ttf</key>
 		<dict>
 			<key>hash</key>
@@ -614,6 +776,61 @@
 			<key>hash2</key>
 			<data>
 			NC9CWcIUkNdDyFv9XLIgM5voHcU7RU+sU2mnqmpBMI4=
+			</data>
+		</dict>
+		<key>PlugIns/my_foodTests.xctest.dSYM/Contents/Info.plist</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			EwMBab8gNIKI3p+Bmqn+C8J56AQ=
+			</data>
+			<key>hash2</key>
+			<data>
+			x3OgezN6KguwNW9sNZRy6ucj1ZITUQvNVN515Mq8Prs=
+			</data>
+		</dict>
+		<key>PlugIns/my_foodTests.xctest.dSYM/Contents/Resources/DWARF/my_foodTests</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			pNI2DFkXoxwZS1dmT4qVjVMqle0=
+			</data>
+			<key>hash2</key>
+			<data>
+			Ve3CjaWkh4I0O0VmNyizgItRXys/s1QEHGEPm4GIv64=
+			</data>
+		</dict>
+		<key>PlugIns/my_foodTests.xctest/Info.plist</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			SeP4D43TcnT1MjNv9iKXm5JXuqI=
+			</data>
+			<key>hash2</key>
+			<data>
+			iTbnTfvMqtDmJyHxXp809kj01o7e+HZwmCUXPNsGxOo=
+			</data>
+		</dict>
+		<key>PlugIns/my_foodTests.xctest/_CodeSignature/CodeResources</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			zVmbd7+lGfDRYQtx3zzaFBiSs14=
+			</data>
+			<key>hash2</key>
+			<data>
+			H+6AxYSyuGClrtu+JtwTY0pf+dYfNeWeAGORMpCD/Oc=
+			</data>
+		</dict>
+		<key>PlugIns/my_foodTests.xctest/my_foodTests</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ie4Bls5V30gKaE2RvQhneVuRefc=
+			</data>
+			<key>hash2</key>
+			<data>
+			fwWqSlkpiRYsptNgKf/sOA0kt7s3ZtIzsrkLbucLBjU=
 			</data>
 		</dict>
 		<key>SimpleLineIcons.ttf</key>
