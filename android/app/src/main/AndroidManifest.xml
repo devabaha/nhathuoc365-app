@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="vn.com.myfood"
+    package="vn.foodhub"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -46,7 +46,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="myfoodapp" android:host="code" />
+                <data android:scheme="foodhubapp" android:host="code" />
             </intent-filter>
         </activity>
 

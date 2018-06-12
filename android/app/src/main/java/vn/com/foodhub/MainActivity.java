@@ -1,4 +1,4 @@
-package vn.com.myfood;
+package vn.foodhub;
 
 import com.facebook.react.ReactActivity;
 
