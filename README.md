@@ -5,3 +5,7 @@ yarn install
 rm ./node_modules/react-native/local-cli/core/__fixtures__/files/package.json
 
 react-native run-ios
+
+
+OneSignal ios : c437636c-1e52-489c-b3bd-e64616fe2735
+
