@@ -75,7 +75,7 @@ export default class Account extends Component {
           onPress: () => {
             var user = {}
             // edit...
-            var to = 'support@myfood.com.vn';
+            var to = 'info@foodhub.vn';
             var subject = '';
 
             var body = '';
