@@ -128,7 +128,9 @@ export default class Item extends Component {
       },
     }).then(data => {
       setTimeout(() => {
-        layoutAnimation();
+        if (isIOS) {
+          layoutAnimation();
+        }
 
         var images = [];
 

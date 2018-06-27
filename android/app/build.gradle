@@ -90,20 +90,20 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion '25.0.0'
+    compileSdkVersion 28
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "vn.foodhub"
         minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 19
-        versionName "1.1.7"
+        targetSdkVersion 28
+        versionCode 20
+        versionName "1.1"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        manifestPlaceholders = [onesignal_app_id: "fa87073a-1c07-4cfe-a03b-8be528c4c95c",
-                                onesignal_google_project_number: "790466177193"]
+        manifestPlaceholders = [onesignal_app_id: "c437636c-1e52-489c-b3bd-e64616fe2735",
+                                onesignal_google_project_number: "1006062787830"]
     }
     signingConfigs {
         release {
