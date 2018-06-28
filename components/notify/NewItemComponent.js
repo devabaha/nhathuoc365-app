@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
   },
   notify_item_image_box: {
     backgroundColor: "#ebebeb",
-    width: 60,
-    height: 60,
+    width: 80,
+    height: 80,
     marginTop: 8
   },
   notify_item_image: {

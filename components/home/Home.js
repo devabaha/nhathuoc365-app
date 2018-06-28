@@ -19,6 +19,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
+import Swiper from 'react-native-swiper';
 import {reaction} from 'mobx';
 
 // components
@@ -48,7 +49,8 @@ export default class Home extends Component {
       show_tutorial_tab: false,
       show_add_store: false,
       show_go_store: false,
-      admin_stores_data: null
+      admin_stores_data: null,
+      promotions: null
     };
 
     this._goSearchStore = this._goSearchStore.bind(this);
@@ -151,6 +153,7 @@ export default class Home extends Component {
               stores_data: data.sites.length > 0 ? data.sites : null,
               user_notice: data.notices.length > 0 ? data.notices : null,
               newses_data: data.newses.length > 0 ? data.newses : null,
+              promotions: data.promotions.length > 0 ? data.promotions : null,
               view_all_sites: data.view_all_sites == 1,
               view_all_notices: data.view_all_notices == 1,
               view_all_newses: data.view_all_newses == 1,
@@ -191,7 +194,8 @@ export default class Home extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({
-          admin_stores_data: response.data
+          admin_stores_data: response.data,
+          promotions: response.data.promotions
         });
 
         // layoutAnimation();
@@ -425,83 +429,38 @@ export default class Home extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }>
-
-          <View style={styles.myFavoriteBox}>
-            <Text style={styles.add_store_title}>ĐẶT HÀNG TỚI CỬA HÀNG</Text>
-
-            {view_all_sites && (
-              <View style={styles.right_title_btn_box}>
-                <TouchableHighlight
-                  style={styles.right_title_btn}
-                  underlayColor="transparent"
-                  onPress={() => Actions.stores_list({
-
-                  })}>
-                  <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                </TouchableHighlight>
-              </View>
+          {(this.state.promotions && this.state.promotions.length > 0) && (
+              <Swiper 
+                width={Util.size.width}
+                height={(Util.size.width) * (160/320)}
+                autoplayTimeout={3}
+                showsPagination={true}
+                horizontal
+                autoplay>
+                {this.state.promotions.map((banner, i) => {
+                  return(
+                    <View
+                      key={i}
+                      style={{
+                        width: Util.size.width,
+                        alignItems: 'center'
+                      }}>
+                      <CachedImage
+                        source={{uri: banner.banner}}
+                        style={{
+                          width: Util.size.width,
+                          height: (Util.size.width) * (160/320)
+                        }} />
+                    </View>
+                  );
+                })}
+              </Swiper>
             )}
-          </View>
 
-          {loading && stores_data == null ? (
-            <View style={[styles.defaultBox, {
-              height: this.defaultBoxHeight || 104
-            }]}>
-              <Indicator size="small" />
-            </View>
-          ) : stores_data != null ? (
-            <FlatList
-              style={styles.stores_box}
-              onEndReached={(num) => {
-
-              }}
-              onEndReachedThreshold={0}
-              data={stores_data}
-              renderItem={({item, index}) => this.renderRow({item, index}, false)}
-              keyExtractor={item => item.id}
-            />
-          ) : (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={this._showPopupAddStore.bind(this)}
-              >
-              <View style={styles.defaultBox}>
-                <CenterText
-                  marginTop={0}
-                  title={"Chưa có cửa hàng\nThêm cửa hàng bạn yêu thích ngay!"} />
-              </View>
-            </TouchableHighlight>
-          )}
-
-          {admin_stores_data && (
-            <View>
-              <View style={styles.myStoresBox}>
-                <Text style={styles.add_store_title}>CỬA HÀNG CỦA TÔI</Text>
-              </View>
-
-              <FlatList
-                style={styles.stores_box}
-                onEndReached={(num) => {
-
-                }}
-                onEndReachedThreshold={0}
-                data={admin_stores_data}
-                renderItem={({item, index}) => this.renderAdRow({item, index}, true)}
-                keyExtractor={item => item.id}
-              />
-            </View>
-          )}
-
-          {false && (//finish - thay false vao finish de an o them cua hang
-            <View>
-              <View style={{
-                paddingHorizontal: 15,
-                paddingVertical: 8,
-                borderBottomWidth: Util.pixel,
-                borderColor: "#dddddd"
-              }}>
-                <Text style={styles.add_store_title}>THÊM CỬA HÀNG YÊU THÍCH</Text>
-              </View>
+          {finish && (//finish - thay false vao finish de an o them cua hang
+            <View style={{
+                  // marginTop: -100
+                }}>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight
                   onPress={this._goScanQRCode.bind(this)}
@@ -517,21 +476,21 @@ export default class Home extends Component {
                   onPress={this._goSearchStore}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
-                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                    <Icon name="search-plus" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Tìm cửa hàng</Text>
+                  <View style={styles.add_store_action_btn_box}>
+                    <Icon name="comments" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Chat FoodHub</Text>
                   </View>
                 </TouchableHighlight>
 
-                {/*<TouchableHighlight
+                <TouchableHighlight
                   onPress={this._goListStore}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                    <Icon name="list-ul" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Danh sách</Text>
+                    <Icon name="shopping-cart" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Đặt hàng</Text>
                   </View>
-                </TouchableHighlight>*/}
+                </TouchableHighlight>
               </View>
             </View>
           )}
@@ -593,7 +552,7 @@ export default class Home extends Component {
               marginTop: 4,
               flexDirection: 'row'
             }}>
-              <Text style={styles.add_store_title}>THÔNG BÁO ĐƠN HÀNG</Text>
+              <Text style={styles.add_store_title}>ĐƠN HÀNG CỦA TÔI</Text>
 
               {view_all_notices && (
                 <View style={styles.right_title_btn_box}>
@@ -707,7 +666,7 @@ export default class Home extends Component {
 const styles = StyleSheet.create({
   defaultBox: {
     width: '100%',
-    height: 104,
+    height: 0,
     backgroundColor: "#ffffff",
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
@@ -752,7 +711,7 @@ const styles = StyleSheet.create({
   add_store_action_btn_box: {
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 2),
+    width: ~~(Util.size.width / 3),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
