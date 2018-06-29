@@ -41,6 +41,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async user_site_home() {
+    var api = url_for(API.USER_SITE_HOME);
+    return await this.getAPI(api);
+  }
+
   async user_sites() {
     var api = url_for(API.USER_SITES);
     return await this.getAPI(api);
@@ -77,6 +82,11 @@ class APIHandler {
   */
   async user_add_store(store_code) {
     var api = url_for(API.USER_ADD_SITE + '/' + store_code);
+    return await this.getAPI(api);
+  }
+
+  async user_add_ref(ref_code) {
+    var api = url_for(API.USER_ADD_REF + '/' + ref_code);
     return await this.getAPI(api);
   }
 

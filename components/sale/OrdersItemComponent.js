@@ -16,6 +16,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import * as Animatable from 'react-native-animatable';
+import Communications from 'react-native-communications';
+
 
 @observer
 export class OrdersItemComponent extends Component {
@@ -60,6 +62,29 @@ export class OrdersItemComponent extends Component {
               <Text style={[styles.orders_status_box_title, {
                 color: is_paymenting ? "#fa7f50" : DEFAULT_ADMIN_COLOR
               }]}>{item.status_view}</Text>
+              <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Communications.phonecall(item.address.tel, true);
+                  }}>
+                  <View style={{
+                    height: 28,
+                    backgroundColor: DEFAULT_COLOR,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    borderRadius: 5,
+                    paddingHorizontal: 16,
+                    marginLeft: 20
+                  }}>
+                    <Icon name="phone" size={20} color="#ffffff" />
+                    <Text style={{
+                      color: '#ffffff',
+                      fontSize: 16,
+                      marginLeft: 4
+                    }}>Gọi</Text>
+                  </View>
+                </TouchableHighlight>
             </View>
           </View>
 

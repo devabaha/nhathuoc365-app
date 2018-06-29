@@ -12,6 +12,7 @@ exports.SITE_LIKE = MY_FOOD_API + 'apiSite/like';
 
 // Home
 exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
+exports.USER_SITE_HOME = MY_FOOD_API + 'apiUser/site_home';
 
 // Store
 exports.USER_SEARCH_SITE = MY_FOOD_API + 'apiUser/search_site';
@@ -25,6 +26,7 @@ exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
 exports.SEARCH_PRODUCT = MY_FOOD_API + 'apiSite/search_product';
 exports.USER_SITES = MY_FOOD_API + 'apiUser/sites';
 exports.USER_REMOVE_SITE = MY_FOOD_API + 'apiUser/remove_site';
+exports.USER_ADD_REF = MY_FOOD_API + 'apiUser/add_ctv';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';

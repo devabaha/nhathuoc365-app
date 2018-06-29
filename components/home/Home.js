@@ -21,6 +21,7 @@ import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
 import {reaction} from 'mobx';
+import Communications from 'react-native-communications';
 
 // components
 import ItemGrid from './ItemGrid';
@@ -40,7 +41,7 @@ export default class Home extends Component {
     super(props);
 
     this.state = {
-      stores_data: null,
+      store_data: null,
       refreshing: false,
       loading: false,
       user_notice: null,
@@ -133,7 +134,7 @@ export default class Home extends Component {
       loading: true
     }, async () => {
       try {
-        var response = await APIHandler.user_home();
+        var response = await APIHandler.user_site_home();
 
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
@@ -141,7 +142,7 @@ export default class Home extends Component {
             var {data} = response;
 
             // Animation is true when first loaded
-            if (this.state.stores_data == null) {
+            if (this.state.store_data == null) {
               layoutAnimation();
             }
 
@@ -150,7 +151,7 @@ export default class Home extends Component {
               loading: false,
               refreshing: false,
               show_add_store: false,
-              stores_data: data.sites.length > 0 ? data.sites : null,
+              store_data: data.site,
               user_notice: data.notices.length > 0 ? data.notices : null,
               newses_data: data.newses.length > 0 ? data.newses : null,
               promotions: data.promotions.length > 0 ? data.promotions : null,
@@ -158,15 +159,6 @@ export default class Home extends Component {
               view_all_notices: data.view_all_notices == 1,
               view_all_newses: data.view_all_newses == 1,
             });
-
-            if (data.sites.length <= 0) {
-              this._showAddStore();
-              this.setState({
-                show_go_store: false
-              });
-            } else {
-              this._showGoStore();
-            }
 
             this._scrollToTop(0);
           }, delay || 0);
@@ -195,7 +187,7 @@ export default class Home extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({
           admin_stores_data: response.data,
-          promotions: response.data.promotions
+          // promotions: response.data.promotions
         });
 
         // layoutAnimation();
@@ -305,76 +297,64 @@ export default class Home extends Component {
       title: item.name
     });
   }
+  
+  // tới màn hình chat
+  _goChat(item) {
+    action(() => {
+      store.setStoreData(item);
+    })();
 
-  _showTutorialTab() {
-    var key_tutorial = 'KeyTutorialTabShow' + store.user_info.id;
+    Actions.chat({
+      tel: item.tel
+    });
+  }
 
-    if (this._showTutorialTabFlag) {
-      return;
+  async _pushGoNews(page_id) {
+    try {
+      var response = await APIHandler.user_news(page_id);
+      if (response && response.status == STATUS_SUCCESS) {
+        if (currentSceneName == 'notify_item') {
+          setTimeout(() => {
+            Actions.notify_item({
+              title: response.data.title,
+              data: response.data,
+              type: ActionConst.REFRESH
+            });
+          }, 660);
+        } else {
+          setTimeout(() => {
+            Actions.notify_item({
+              title: response.data.title,
+              data: response.data
+            });
+          }, 660);
+        }
+      }
+    } catch (e) {
+      console.warn(e + ' user_news');
+
+      Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
+    } finally {
+
+    }
+  }
+  // tới màn hình store
+  _goStores(item) {
+    action(() => {
+      store.setStoreData(item);
+    })();
+
+    // hide tutorial go store
+    if (this.props.that) {
+      this.props.that.setState({
+        show_go_store: false
+      });
     }
 
-    this._showTutorialTabFlag = true;
-
-    this._cachedStore(key_tutorial, () => {
-
-    }, () => {
-      layoutAnimation();
-
-      // show tutorial
-      this.setState({
-        show_tutorial_tab: true
-      }, () => {
-        setTimeout(() => {
-          this.setState({
-            show_tutorial_tab: false
-          });
-        }, 5000);
-      });
-
-      //
-      storage.save({
-        key: key_tutorial,
-        data: {finish: true},
-        expires: null
-      });
+    Actions.stores({
+      title: item.name
     });
   }
-
-  _showAddStore() {
-    var key_tutorial = 'KeyTutorialAddStore' + store.user_info.id;
-
-    this._cachedStore(key_tutorial, () => {
-
-    }, () => {
-      layoutAnimation();
-
-      // show tutorial
-      this.setState({
-        show_add_store: true
-      });
-    });
-  }
-
-  _showGoStore() {
-    var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
-    this._cachedStore(key_tutorial, () => {
-
-    }, () => {
-      layoutAnimation();
-
-      // show tutorial
-      this.setState({
-        show_go_store: true
-      }, () => {
-        setTimeout(() => {
-          this.setState({
-            show_go_store: false
-          });
-        }, 15000);
-      });
-    });
-  }
-
   _cachedStore(key, thenFunc = () => 1, catchFunc = () => 1) {
     storage.load({
       key,
@@ -392,35 +372,36 @@ export default class Home extends Component {
     });
   }
 
+  _goDetail(item) {
+    Actions.notify_item({
+      title: item.title,
+      data: item
+    });
+  }
   render() {
 
     var {
       loading,
       finish,
-      stores_data,
+      store_data,
       newses_data,
       user_notice,
       view_all_newses,
       view_all_notices,
       view_all_sites,
-
+      promotions,
       show_tutorial_tab,
       show_add_store,
       show_go_store,
 
       admin_stores_data
     } = this.state;
-
     return (
       <View style={styles.container}>
         <ScrollView
           onScroll={(event) => {
             var scrollTop = event.nativeEvent.contentOffset.y;
             this.setState({ scrollTop });
-
-            if (scrollTop > 200) {
-              this._showTutorialTab();
-            }
           }}
           ref={ref => this.refs_home = ref}
           refreshControl={
@@ -430,7 +411,7 @@ export default class Home extends Component {
             />
           }>
           {(this.state.promotions && this.state.promotions.length > 0) && (
-              <Swiper 
+              <Swiper
                 width={Util.size.width}
                 height={(Util.size.width) * (160/320)}
                 autoplayTimeout={3}
@@ -445,12 +426,16 @@ export default class Home extends Component {
                         width: Util.size.width,
                         alignItems: 'center'
                       }}>
+                      <TouchableHighlight
+                        onPress={this._goDetail.bind(this, banner.news)}
+                        underlayColor="transparent">
                       <CachedImage
                         source={{uri: banner.banner}}
                         style={{
                           width: Util.size.width,
                           height: (Util.size.width) * (160/320)
                         }} />
+                        </TouchableHighlight>
                     </View>
                   );
                 })}
@@ -463,17 +448,17 @@ export default class Home extends Component {
                 }}>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight
-                  onPress={this._goScanQRCode.bind(this)}
+                  onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
-                    <Icon name="qrcode" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Quét QR code</Text>
+                    <Icon name="phone" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Gọi FoodHub</Text>
                   </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight
-                  onPress={this._goSearchStore}
+                  onPress={this._goChat.bind(this, this.state.store_data)}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
@@ -483,7 +468,7 @@ export default class Home extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight
-                  onPress={this._goListStore}
+                  onPress={this._goStores.bind(this, this.state.store_data)}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
@@ -543,7 +528,7 @@ export default class Home extends Component {
             />
           )}
 
-          {user_notice && (
+          {loading && user_notice && (
             <View style={{
               paddingHorizontal: 15,
               paddingVertical: 8,
@@ -554,13 +539,13 @@ export default class Home extends Component {
             }}>
               <Text style={styles.add_store_title}>ĐƠN HÀNG CỦA TÔI</Text>
 
-              {view_all_notices && (
+              {(
                 <View style={styles.right_title_btn_box}>
                   <TouchableHighlight
                     style={styles.right_title_btn}
                     underlayColor="transparent"
                     onPress={() => {
-                      Actions._main_notify({type: ActionConst.REFRESH});
+                      Actions._orders({type: ActionConst.REFRESH})
                     }}>
                     <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
                   </TouchableHighlight>
@@ -593,71 +578,6 @@ export default class Home extends Component {
           )}
 
         </ScrollView>
-
-        <Modal
-          entry="top"
-          style={[styles.modal, styles.modal_add_store]}
-          ref={ref => this.refs_modal_add_store = ref}>
-
-          <Text style={styles.modal_add_store_title}>Thêm cửa hàng bạn yêu thích</Text>
-
-          <Button
-            onPress={this._goScanQRCode.bind(this)}
-            buttonStyle={styles.modal_add_store_btn}
-            backgroundColor="#009588"
-            icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Quét QR code' />
-
-          <Button
-            buttonStyle={styles.modal_add_store_btn}
-            backgroundColor={DEFAULT_COLOR}
-            onPress={this._goSearchStore}
-            icon={{name: 'search-plus', type: 'font-awesome'}}
-            title='Tìm cửa hàng' />
-
-          {/*<Button
-            buttonStyle={styles.modal_add_store_btn}
-            backgroundColor="#ffc109"
-            onPress={this._goListStore}
-            icon={{name: 'list-ul', type: 'font-awesome'}}
-            title='Xem danh sách cửa hàng' />*/}
-        </Modal>
-
-        {show_tutorial_tab && (
-          <TabTutorial
-            title="Tap vào đây để Về đầu trang nhanh hơn :)"
-            left={(Util.size.width / 4) / 2}
-            onPress={() => {
-              this.setState({
-                show_tutorial_tab: false
-              });
-            }}
-            />
-        )}
-
-        {show_add_store && (
-          <AddStoreTutorial
-            title="Tap vào đây để thêm cửa hàng yêu thích"
-            right={(Util.size.width / 2.2) / 2}
-            onPress={() => {
-              this.setState({
-                show_add_store: false
-              });
-            }}
-            />
-        )}
-
-        {show_go_store && (
-          <GoStoreTutorial
-            title="Tap vào đây để vào cửa hàng yêu thích"
-            left={(Util.size.width / 4) / 2}
-            onPress={() => {
-              this.setState({
-                show_go_store: false
-              });
-            }}
-            />
-        )}
       </View>
     );
   }
@@ -676,7 +596,8 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    ...MARGIN_SCREEN
+    marginBottom: BAR_HEIGHT,
+    backgroundColor: BGR_SCREEN_COLOR
   },
   stores_box: {
     marginBottom: 8,

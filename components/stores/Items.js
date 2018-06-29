@@ -222,7 +222,7 @@ export default class Items extends Component {
                     <Indicator size="small" />
                   </View>
                 ) : (
-                  <Icon name="cart-plus" size={22} color={DEFAULT_COLOR} />
+                  <Icon name="cart-plus" size={22} color={DEFAULT_COLOR_RED} />
                 )}
                 <Text style={styles.item_add_cart_title}>Chọn mua</Text>
                 {quantity > 0 && (
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2
   },
   item_add_cart_title: {
-    color: DEFAULT_COLOR,
+    color: DEFAULT_COLOR_RED,
     fontSize: 8
   },
 

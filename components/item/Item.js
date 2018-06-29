@@ -168,7 +168,9 @@ export default class Item extends Component {
 
         // delay append data
         setTimeout(() => {
-          layoutAnimation();
+          if (isIOS) {
+            layoutAnimation();
+          }
 
           var images = [];
 
@@ -418,7 +420,7 @@ export default class Item extends Component {
                     {buying ? (
                       <Indicator size="small" color="#ffffff" />
                     ) : (
-                      <Icon name="cart-plus" size={24} color="#ffffff" />
+                      <Icon name="cart-plus" size={24} color={DEFAULT_COLOR_RED} />
                     )}
                   </View>
                   <Text style={[styles.item_actions_title, styles.item_actions_title_add_cart]}>Chọn mua</Text>
@@ -763,11 +765,11 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   },
   item_actions_title: {
-    color: DEFAULT_COLOR,
+    color: DEFAULT_COLOR_RED,
     marginLeft: 8
   },
   item_actions_title_add_cart: {
-    color: "#ffffff"
+    color: DEFAULT_COLOR_RED
   },
 
   item_safe_off: {

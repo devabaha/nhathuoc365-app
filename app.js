@@ -40,6 +40,7 @@ import Store from './store/Store';
 // screen
 import Intro from './components/intro/Intro';
 import AddStore from './components/home/AddStore';
+import AddRef from './components/home/AddRef';
 import Home from './components/home/Home';
 import HomeNavBar from './components/home/HomeNavBar';
 import Notifys from './components/notify/Notifys';
@@ -273,22 +274,31 @@ export default class App extends Component {
       var response = await APIHandler.user_login({
         fb_access_token: ''
       });
-
       if (response && response.status == STATUS_SUCCESS) {
+        Store.setUserInfo(response.data);
         action(() => {
-          Store.setUserInfo(response.data);
           this.setState({
             finish: true
           }, () => {
-            setTimeout(() => {
-              if (typeof callback == 'function') {
-                callback();
-              }
-            }, 660);
+            Actions.myTabBar({
+              type: ActionConst.RESET
+            });
           });
         })();
 
         StatusBar.setBarStyle('light-content');
+      }
+      if (response && response.status == STATUS_UNDEFINE_USER) {
+        Store.setUserInfo(response.data);
+        action(() => {
+          this.setState({
+            finish: true
+          }, () => {
+            Actions._add_ref({
+              type: ActionConst.RESET
+            });
+          });
+        })();
       }
     } catch (e) {
       console.warn(e + ' user_login');
@@ -584,7 +594,7 @@ export default class App extends Component {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                <Scene key="_home" title="Food Hub" component={Home} {...custommerNav} navBar={HomeNavBar} />
+                <Scene key="_home" title="Food Hub" component={Home} hideNavBar {...custommerNav} />
               </Scene>
 
               {/**
@@ -662,6 +672,7 @@ export default class App extends Component {
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
             <Scene key="intro" initial={showIntro} hideNavBar title="" component={Intro} {...custommerNav} />
+            <Scene key="_add_ref" hideNavBar title="" component={AddRef} {...custommerNav} />
 
             {/* Backend */}
             <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />
