@@ -218,6 +218,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
+    OneSignal.inFocusDisplaying(0);
     OneSignal.addEventListener('received', this._onReceived.bind(this));
     OneSignal.addEventListener('opened', this._onOpened.bind(this));
     // OneSignal.addEventListener('registered', this._onRegistered.bind(this));

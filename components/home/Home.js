@@ -29,6 +29,7 @@ import ItemList from './ItemList';
 import { ItemList as AdItemList } from '../dashboard/ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
+import Items from '../stores/Items';
 import {
   TabTutorial,
   AddStoreTutorial,
@@ -51,7 +52,8 @@ export default class Home extends Component {
       show_add_store: false,
       show_go_store: false,
       admin_stores_data: null,
-      promotions: null
+      promotions: null,
+      products: null
     };
 
     this._goSearchStore = this._goSearchStore.bind(this);
@@ -155,10 +157,12 @@ export default class Home extends Component {
               user_notice: data.notices.length > 0 ? data.notices : null,
               newses_data: data.newses.length > 0 ? data.newses : null,
               promotions: data.promotions.length > 0 ? data.promotions : null,
+              products: data.products.length > 0 ? data.products : null,
               view_all_sites: data.view_all_sites == 1,
               view_all_notices: data.view_all_notices == 1,
               view_all_newses: data.view_all_newses == 1,
             });
+            store.setStoreData(data.site);
 
             this._scrollToTop(0);
           }, delay || 0);
@@ -378,8 +382,15 @@ export default class Home extends Component {
       data: item
     });
   }
-  render() {
 
+  _goItem(item) {
+    Actions.item({
+      title: item.name,
+      item
+    });
+  }
+
+  render() {
     var {
       loading,
       finish,
@@ -390,12 +401,16 @@ export default class Home extends Component {
       view_all_notices,
       view_all_sites,
       promotions,
+      products,
       show_tutorial_tab,
       show_add_store,
       show_go_store,
 
       admin_stores_data
     } = this.state;
+    
+    var count_chat = parseInt(store.notify_chat[store.store_id]);
+
     return (
       <View style={styles.container}>
         <ScrollView
@@ -442,10 +457,7 @@ export default class Home extends Component {
               </Swiper>
             )}
 
-          {finish && (//finish - thay false vao finish de an o them cua hang
-            <View style={{
-                  // marginTop: -100
-                }}>
+          {(<View>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight
                   onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
@@ -464,6 +476,8 @@ export default class Home extends Component {
                   <View style={styles.add_store_action_btn_box}>
                     <Icon name="comments" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Chat FoodHub</Text>
+                    {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
+              <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
                   </View>
                 </TouchableHighlight>
 
@@ -474,9 +488,51 @@ export default class Home extends Component {
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
                     <Icon name="shopping-cart" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Đặt hàng</Text>
+                    {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
+                <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
                   </View>
                 </TouchableHighlight>
               </View>
+            </View>
+          )}
+          {products && (
+            <View style={{
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 4,
+              flexDirection: 'row'
+            }}>
+              <Text style={styles.add_store_title}>SẢN PHẨM MỚI</Text>
+
+              {(
+                <View style={styles.right_title_btn_box}>
+                  <TouchableHighlight
+                    style={styles.right_title_btn}
+                    underlayColor="transparent"
+                    onPress={this._goStores.bind(this, this.state.store_data)}
+                    >
+                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                  </TouchableHighlight>
+                </View>
+              )}
+            </View>
+          )}
+
+          {products && (
+            <View style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap'
+            }}>
+              {products.map((item, index) => (
+                <Items
+                  key={index}
+                  item={item}
+                  index={index}
+                  onPress={this._goItem.bind(this, item)}
+                  />
+              ))}
             </View>
           )}
 
@@ -528,7 +584,7 @@ export default class Home extends Component {
             />
           )}
 
-          {loading && user_notice && (
+          {user_notice && (
             <View style={{
               paddingHorizontal: 15,
               paddingVertical: 8,
@@ -554,13 +610,7 @@ export default class Home extends Component {
             </View>
           )}
 
-          {loading && user_notice != null ? (
-            <View style={[styles.defaultBox, {
-              borderTopWidth: 0
-            }]}>
-              <Indicator size="small" />
-            </View>
-          ) : user_notice ? (
+          {user_notice && (
             <FlatList
               ItemSeparatorComponent={() => <View style={styles.separator}></View>}
               data={user_notice}
@@ -573,10 +623,10 @@ export default class Home extends Component {
               }}
               keyExtractor={item => item.id}
             />
-          ) : (
-            null
           )}
-
+          <View style={styles.right_title_btn_box}>
+            <Text> </Text>
+          </View>
         </ScrollView>
       </View>
     );
@@ -690,5 +740,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     flexDirection: 'row'
+  },
+  
+  stores_info_action_notify: {
+    position: 'absolute',
+    minWidth: 16,
+    paddingHorizontal: 2,
+    height: 16,
+    backgroundColor: 'red',
+    bottom: 22,
+    right: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
+  },
+  stores_info_action_notify_chat: {
+    
+  },
+  stores_info_action_notify_value: {
+    fontSize: 10,
+    color: '#ffffff',
+    fontWeight: '600'
   }
 });

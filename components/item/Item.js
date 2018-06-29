@@ -212,10 +212,6 @@ export default class Item extends Component {
   _renderRightButton() {
     return(
       <View style={styles.right_btn_box}>
-        <RightButtonOrders />
-        <RightButtonChat
-          tel={store.store_data.tel}
-         />
       </View>
     );
   }
