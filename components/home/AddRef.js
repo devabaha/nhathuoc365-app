@@ -39,18 +39,20 @@ export default class AddRef extends Component {
 
   // thực hiện add cửa hàng vào account của user
   
-  async _add_ref(text) {
-    var response = await APIHandler.user_add_ref(this.state.searchValue);
-    if (response) {
-      if(response.status == STATUS_SUCCESS){
-        Actions.myTabBar({
-          type: ActionConst.RESET
-        });
+  async _add_ref() {
+    if(this.state.searchValue != undefined){
+      var response = await APIHandler.user_add_ref(this.state.searchValue);
+      if (response) {
+        if(response.status == STATUS_SUCCESS){
+          Actions.myTabBar({
+            type: ActionConst.RESET
+          });
+        }else{
+          alert(response.message);
+        }
       }else{
-        alert(response.message);
+        alert("Có lỗi xảy ra, vui lòng thử lại");
       }
-    }else{
-      alert("Có lỗi xảy ra, vui lòng thử lại");
     }
   }
   _onChangeSearch(text) {
@@ -90,11 +92,11 @@ export default class AddRef extends Component {
             <TextInput
               underlineColorAndroid="transparent"
               ref={ref => this.searchInput = ref}
-              onLayout={() => {
-                if (this.searchInput) {
-                  this.searchInput.focus();
-                }
-              }}
+              // onLayout={() => {
+              //   if (this.searchInput) {
+              //     this.searchInput.focus();
+              //   }
+              // }}
               style={{
                 height: 42,
                 width: 250,
