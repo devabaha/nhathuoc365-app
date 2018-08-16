@@ -88,7 +88,7 @@ export default class AddRef extends Component {
               textShadowColor: 'rgba(0, 0, 0, 0.9)',
               textShadowOffset: {width: -1, height: 1},
               textShadowRadius: 10
-            }}>Nhập mã giới thiệu nhận giảm giá 20% đơn hàng đầu tiên</Text>
+            }}>Nhập mã giới thiệu nhận giảm giá 30% đơn hàng đầu tiên</Text>
             <TextInput
               underlineColorAndroid="transparent"
               ref={ref => this.searchInput = ref}
