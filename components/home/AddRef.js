@@ -132,6 +132,17 @@ export default class AddRef extends Component {
                     }]}>Xác nhận</Text>
                   </View>
                 </TouchableHighlight>
+                <TouchableHighlight
+                    style={[styles.buttonAction, {
+                      marginBottom: 20,
+                      marginTop: 10
+                    }]}
+                    onPress={this._onFinish.bind(this)}
+                    underlayColor="transparent">
+                    <Text style={[styles.buttonActionTitle, {
+                        color: "#ffffff"
+                      }]}>Bỏ qua</Text>
+                  </TouchableHighlight>
             </View>
           </View>
 
