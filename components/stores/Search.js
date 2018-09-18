@@ -401,6 +401,7 @@ export default class Search extends Component {
             Events.trigger(NEXT_PREV_CART, {index});
           }
         })();
+        Toast.show(response.message);
       }
 
       this.cartItemConfirmRemove = undefined;

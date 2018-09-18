@@ -487,7 +487,7 @@ export default class Home extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
                     <Icon name="shopping-cart" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Đặt hàng</Text>
+                    <Text style={styles.add_store_action_label}>Vào Cửa hàng</Text>
                     {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
                 <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
                   </View>
@@ -504,7 +504,7 @@ export default class Home extends Component {
               marginTop: 4,
               flexDirection: 'row'
             }}>
-              <Text style={styles.add_store_title}>SẢN PHẨM MỚI</Text>
+              <Text style={styles.add_store_title}>NỔI BẬT</Text>
 
               {(
                 <View style={styles.right_title_btn_box}>
@@ -513,7 +513,7 @@ export default class Home extends Component {
                     underlayColor="transparent"
                     onPress={this._goStores.bind(this, this.state.store_data)}
                     >
-                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                    <Text style={[styles.add_store_title, {color: "#fa7f50"}]}>XEM TẤT CẢ</Text>
                   </TouchableHighlight>
                 </View>
               )}
@@ -535,6 +535,23 @@ export default class Home extends Component {
               ))}
             </View>
           )}
+          <View style={styles.boxButtonActions}>
+              <TouchableHighlight
+                  style={styles.buttonAction}
+                  onPress={this._goStores.bind(this, this.state.store_data)}
+                  underlayColor="transparent">
+                  <View style={[styles.boxButtonAction, {
+                    width: Util.size.width - 30,
+                    backgroundColor: "#fa7f50",
+                    borderColor: "#999999"
+                  }]}>
+                    <Icon name="plus" size={16} color="#ffffff" />
+                    <Text style={[styles.buttonActionTitle, {
+                      color: "#ffffff"
+                    }]}>Vào cửa hàng</Text>
+                  </View>
+              </TouchableHighlight>
+              </View>
 
           {newses_data != null && (
             <View style={{
@@ -554,7 +571,7 @@ export default class Home extends Component {
                     underlayColor="transparent"
                     onPress={() => {
                       Actions.notifys({
-                        title: "KHUYẾN MÃI",
+                        title: "TIN KHUYẾN MÃI",
                         news_type: "/1"
                       });
                     }}>
@@ -762,5 +779,29 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600'
-  }
+  },
+  
+  boxButtonActions: {
+    // backgroundColor: "#ffffff",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 7
+  },
+  boxButtonAction: {
+    flexDirection: 'row',
+    borderWidth: Util.pixel,
+    borderColor: "#666666",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    width: Util.size.width / 2 - 24,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  buttonActionTitle: {
+    color: "#333333",
+    marginLeft: 4,
+    fontSize: 14
+  },
 });

@@ -275,6 +275,7 @@ export default class Orders extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
+            Toast.show(response.message);
           })();
 
           this._getData();
@@ -313,6 +314,7 @@ export default class Orders extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           this._getData(450, true);
+          Toast.show(response.message);
         }
       } catch (e) {
         console.warn(e + ' site_cart_cancel');

@@ -107,6 +107,7 @@ export default class CartFooter extends Component {
             this.setState({
               decrement_loading: false
             });
+            Toast.show(response.message);
           })();
 
         }
@@ -133,6 +134,7 @@ export default class CartFooter extends Component {
             this.setState({
               increment_loading: false
             });
+            Toast.show(response.message);
           })();
 
         }

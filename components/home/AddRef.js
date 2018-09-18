@@ -48,10 +48,10 @@ export default class AddRef extends Component {
             type: ActionConst.RESET
           });
         }else{
-          alert(response.message);
+          Toast.show(response.message);
         }
       }else{
-        alert("Có lỗi xảy ra, vui lòng thử lại");
+        Toast.show("Có lỗi xảy ra, vui lòng thử lại");
       }
     }
   }
@@ -66,7 +66,7 @@ export default class AddRef extends Component {
 
     return (
       <View style={styles.container}>
-        <ImageBackground resizeMode="stretch" style={styles.image} source={require('../../images/bg_fh.jpg')}>
+        <ImageBackground resizeMode="stretch" style={styles.image} source={require('../../images/foodhub_loadding_screen.png')}>
         <ScrollView
           style={{
             marginBottom: store.keyboardTop
@@ -88,7 +88,11 @@ export default class AddRef extends Component {
               textShadowColor: 'rgba(0, 0, 0, 0.9)',
               textShadowOffset: {width: -1, height: 1},
               textShadowRadius: 10
-            }}>Nhập mã giới thiệu nhận giảm giá 30% đơn hàng đầu tiên</Text>
+            }}>
+              {store.user_info.km_text ? (store.user_info.km_text) : (
+                "Nhập số điện thoại Người giới thiệu để được giảm giá tới 30%"
+                )}
+            </Text>
             <TextInput
               underlineColorAndroid="transparent"
               ref={ref => this.searchInput = ref}
@@ -111,7 +115,7 @@ export default class AddRef extends Component {
                 justifyContent: 'center',
                 backgroundColor: "#ffffff"
               }}
-              placeholder="Nhập mã giới thiệu"
+              placeholder="Nhập số điện thoại"
               onChangeText={this._onChangeSearch.bind(this)}
               onSubmitEditing={this._add_ref.bind(this)}
               value={this.state.searchValue}
@@ -165,7 +169,7 @@ export default class AddRef extends Component {
             textShadowColor: 'rgba(0, 0, 0, 0.9)',
             textShadowOffset: {width: -1, height: 1},
             textShadowRadius: 10
-          }}>Chưa có mã giới thiệu, mời quý khách vào Food Hub nhận khuyến mãi 10% đơn hàng đầu tiên</Text>
+          }}>Chưa có mã giới thiệu, vào FoodHub với nhiều khuyến mại đang chờ bạn</Text>
           
           <TouchableHighlight
             style={[styles.buttonAction, {
@@ -180,7 +184,7 @@ export default class AddRef extends Component {
               <Icon name="angle-right" size={16} color="#ffffff" />
               <Text style={[styles.buttonActionTitle, {
                 color: "#ffffff"
-              }]}>Vào Food Hub</Text>
+              }]}>Vào FoodHub.vn</Text>
             </View>
           </TouchableHighlight>
         </View>

@@ -136,6 +136,7 @@ export default class Confirm extends Component {
         }, () => {
           this._siteInfo(site_id);
         });
+        Toast.show(response.message);
       }
     } catch (e) {
       console.warn(e + ' site_cart_by_id');
@@ -181,6 +182,7 @@ export default class Confirm extends Component {
           if (typeof callback == 'function') {
             callback();
           }
+          Toast.show(response.message);
         }
       } catch (e) {
         console.warn(e + ' site_cart_node');
@@ -236,6 +238,7 @@ export default class Confirm extends Component {
               store.setOrdersKeyChange(store.orders_key_change + 1);
             })();
           }
+          Toast.show(response.message);
         }
       } catch (e) {
         console.warn(e + ' site_cart_orders');
@@ -366,6 +369,7 @@ export default class Confirm extends Component {
             }
           })();
         }, this._delay());
+        Toast.show(response.message);
       }
 
       this.cartItemConfirmRemove = undefined;
@@ -1197,6 +1201,7 @@ export default class Confirm extends Component {
             Events.trigger(RELOAD_STORE_ORDERS);
           })();
           this._getOrdersItem(this.item_cancel.site_id, this.item_cancel.id);
+          Toast.show(response.message);
         }
       } catch (e) {
         console.warn(e + ' site_cart_cancel');
@@ -1333,7 +1338,7 @@ export default class Confirm extends Component {
           });
 
           this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
-
+          Toast.show(response.message);
         }
       } catch (e) {
         console.warn(e + ' site_cart_edit');
@@ -1405,6 +1410,7 @@ class ItemCartComponent extends Component {
           action(() => {
             store.setCartData(response.data);
           })();
+          Toast.show(response.message);
         }
 
       } catch (e) {
@@ -1445,7 +1451,7 @@ class ItemCartComponent extends Component {
           action(() => {
             store.setCartData(response.data);
           })();
-
+          Toast.show(response.message);
         }
       } catch (e) {
         console.warn(e + ' site_cart_down');
@@ -1470,6 +1476,7 @@ class ItemCartComponent extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
+            Toast.show(response.message);
           })();
 
         }

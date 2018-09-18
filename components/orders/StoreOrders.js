@@ -86,6 +86,7 @@ export default class StoreOrders extends Component {
             loading: false
           });
         }, delay || this._delay());
+        Toast.show(response.message);
       } else {
         this.setState({
           loading: false
@@ -245,6 +246,7 @@ export default class StoreOrders extends Component {
               store.setOrdersKeyChange(store.orders_key_change + 1);
             })();
           }, 450);
+          Toast.show(response.message);
         }
       } catch (e) {
         console.warn(e + ' site_cart_cancel');
@@ -313,6 +315,7 @@ export default class StoreOrders extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
+            Toast.show(response.message);
           })();
 
           this._getData();

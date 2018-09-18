@@ -250,6 +250,7 @@ export default class NotifyItem extends Component {
               store.setCartItemIndex(index);
               Events.trigger(NEXT_PREV_CART, {index});
             }
+            Toast.show(response.message);
           })();
         }, 450);
       }

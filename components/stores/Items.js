@@ -81,15 +81,15 @@ export default class Items extends Component {
 
               Events.trigger(NEXT_PREV_CART, {index});
 
-              setTimeout(() => {
-                store.setCartFlyShow(false);
-                store.setCartFlyImage(null);
-              }, 750);
-
-              this.setState({
-                buying: false
-              });
+              // setTimeout(() => {
+              //   store.setCartFlyShow(false);
+              //   store.setCartFlyImage(null);
+              // }, 750);
             }
+            this.setState({
+              buying: false
+            });
+            Toast.show(response.message);
           })();
 
         }

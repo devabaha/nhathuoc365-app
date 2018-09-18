@@ -110,7 +110,12 @@ export default class Item extends Component {
     var delay = 400 - (Math.abs(time() - this.start_time));
     return delay;
   }
-
+// tới màn hình store
+  _goStores(item) {
+    Actions.stores({
+      title: "Cửa hàng"
+    });
+  }
   // Lấy chi tiết sản phẩm
   _getData(delay) {
     var {item} = this.state;
@@ -255,13 +260,12 @@ export default class Item extends Component {
             if (index !== null && index < length) {
               store.setCartItemIndex(index);
               Events.trigger(NEXT_PREV_CART, {index});
-
-              this.setState({
-                buying: false
-              });
             }
           })();
-
+          this.setState({
+            buying: false
+          });
+          Toast.show(response.message);
         }
 
       } catch (e) {
@@ -554,9 +558,26 @@ export default class Item extends Component {
               </View>
             </View>
           )}
+          <View style={styles.boxButtonActions}>
+              <TouchableHighlight
+                  style={styles.buttonAction}
+                  onPress={this._goStores.bind(this, this.state.store_data)}
+                  underlayColor="transparent">
+                  <View style={[styles.boxButtonAction, {
+                    width: Util.size.width - 30,
+                    backgroundColor: "#fa7f50",
+                    borderColor: "#999999"
+                  }]}>
+                    <Icon name="plus" size={16} color="#ffffff" />
+                    <Text style={[styles.buttonActionTitle, {
+                      color: "#ffffff"
+                    }]}>Vào cửa hàng</Text>
+                  </View>
+              </TouchableHighlight>
+          </View>
 
         </ScrollView>
-
+      
         {this.state.loading == false && (
           <CartFooter
             perfix="item"
@@ -649,6 +670,7 @@ export default class Item extends Component {
               store.setCartItemIndex(index);
               Events.trigger(NEXT_PREV_CART, {index});
             }
+            Toast.show(response.message);
           })();
         }, 450);
       }
@@ -849,5 +871,29 @@ const styles = StyleSheet.create({
     // marginBottom: 69,
     marginTop: 20,
     backgroundColor: "#f1f1f1"
-  }
+  },
+  
+  boxButtonActions: {
+    // backgroundColor: "#ffffff",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 7
+  },
+  boxButtonAction: {
+    flexDirection: 'row',
+    borderWidth: Util.pixel,
+    borderColor: "#666666",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    width: Util.size.width / 2 - 24,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  buttonActionTitle: {
+    color: "#333333",
+    marginLeft: 4,
+    fontSize: 14
+  },
 });

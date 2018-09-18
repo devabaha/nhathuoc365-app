@@ -116,6 +116,7 @@ export default class Address extends Component {
             this.setState({
               continue_loading: false
             });
+            Toast.show(response.message);
           })();
 
           this._goConfirm();

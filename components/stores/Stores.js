@@ -342,6 +342,7 @@ export default class Stores extends Component {
             }
           })();
         }, 450);
+        Toast.show(response.message);
       }
 
       this.cartItemConfirmRemove = undefined;

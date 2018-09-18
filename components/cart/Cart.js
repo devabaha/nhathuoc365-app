@@ -151,6 +151,7 @@ export default class Cart extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           store.setCartData(response.data);
+          Toast.show(response.message);
         })();
 
       }
@@ -171,8 +172,9 @@ export default class Cart extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           store.setCartData(response.data);
+          Toast.show(response.message);
         })();
-
+      
       }
     } catch (e) {
       console.warn(e + ' site_cart_up');
@@ -220,6 +222,7 @@ export default class Cart extends Component {
             if (isAndroid && store.cart_item_index > 0) {
               store.setCartItemIndex(store.cart_item_index - 1);
             }
+            Toast.show(response.message);
           })();
         }, this._delay());
       }
@@ -246,6 +249,7 @@ export default class Cart extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           store.setCartData(response.data);
+          Toast.show(response.message);
         })();
       }
 
