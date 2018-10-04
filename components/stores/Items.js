@@ -222,9 +222,20 @@ export default class Items extends Component {
                     <Indicator size="small" />
                   </View>
                 ) : (
+                  item.book_flag == 1 ? (
+                        <Icon name="cart-arrow-down" size={22} color={DEFAULT_COLOR} />
+                      ) : (
                   <Icon name="cart-plus" size={22} color={DEFAULT_COLOR_RED} />
+                      )
                 )}
+                {
+                  item.book_flag == 1 ? (
+                      <Text style={styles.item_add_book_title}>Đặt trước</Text>
+                      ) : (
                 <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+                      )
+                  }
+                
                 {quantity > 0 && (
                   <View style={styles.quantity_box}>
                     <Text style={styles.quantity_value}>{quantity}</Text>
@@ -333,6 +344,11 @@ const styles = StyleSheet.create({
   },
   item_add_cart_title: {
     color: DEFAULT_COLOR_RED,
+    fontSize: 8
+  },
+
+  item_add_book_title: {
+    color: DEFAULT_COLOR,
     fontSize: 8
   },
 

@@ -424,10 +424,21 @@ export default class Item extends Component {
                     {buying ? (
                       <Indicator size="small" color="#ffffff" />
                     ) : (
-                      <Icon name="cart-plus" size={24} color={DEFAULT_COLOR_RED} />
+                      item.book_flag == 1 ? (
+                        <Icon name="cart-arrow-down" size={24} color="#ffffff" />
+                      ) : (
+                        <Icon name="cart-plus" size={24} color={DEFAULT_COLOR_RED} />
+                      )
                     )}
                   </View>
-                  <Text style={[styles.item_actions_title, styles.item_actions_title_add_cart]}>Chọn mua</Text>
+                  {
+                    item.book_flag == 1 ? (
+                      <Text style={[styles.item_actions_title, styles.item_actions_title_book_cart]}>Đặt trước</Text>
+                      ) : (
+                        <Text style={[styles.item_actions_title, styles.item_actions_title_add_cart]}>Chọn mua</Text>
+                      )
+                  }
+                
                 </View>
               </TouchableHighlight>
             </View>
@@ -792,6 +803,9 @@ const styles = StyleSheet.create({
   },
   item_actions_title_add_cart: {
     color: DEFAULT_COLOR_RED
+  },
+  item_actions_title_book_cart: {
+    color: "#ffffff"
   },
 
   item_safe_off: {
