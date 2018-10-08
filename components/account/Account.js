@@ -66,10 +66,22 @@ export default class Account extends Component {
         //   onPress: () => 1,
         //   boxIconStyle: []
         // },
-
         {
           key: 1,
-          icon: "commenting-o",
+          icon: "map-marker",
+          label: "Địa chỉ của tôi",
+          desc: "Quản lý địa chỉ nhận hàng",
+          onPress: () => Actions.address({
+            from_page: "account"
+          }),
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#fcb309"
+          }],
+          iconColor: "#ffffff"
+        },
+        {
+          key: 2,
+          icon: "envelope",
           label: "Gửi phản hồi tới quản trị ứng dụng",
           desc: "Đóng góp, ý kiến của bạn",
           onPress: () => {
@@ -85,12 +97,12 @@ export default class Account extends Component {
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#ff6d64"
           }],
-          iconColor: "#ffffff"
-          // marginTop: true
+          iconColor: "#ffffff",
+          marginTop: true
         },
 
         {
-          key: 2,
+          key: 3,
           isHidden: !isAdmin,
           icon: "home",
           label: "Cửa hàng của tôi",
@@ -106,21 +118,6 @@ export default class Account extends Component {
         },
 
         {
-          key: 3,
-          icon: "map-marker",
-          label: "Địa chỉ của tôi",
-          desc: "Quản lý địa chỉ nhận hàng",
-          onPress: () => Actions.address({
-            from_page: "account"
-          }),
-          boxIconStyle: [styles.boxIconStyle, {
-            backgroundColor: "#fcb309"
-          }],
-          iconColor: "#ffffff",
-          marginTop: !isAdmin
-        },
-
-        {
           key: 4,
           icon: "facebook-square",
           label: "Fanpage Food Hub",
@@ -130,7 +127,7 @@ export default class Account extends Component {
             backgroundColor: "#4267b2"
           }],
           iconColor: "#ffffff",
-          marginTop: true
+          marginTop: !isAdmin
         },
 
         {
@@ -397,11 +394,10 @@ export default class Account extends Component {
       <View style={styles.container}>
         <View style={styles.profile_cover_box}>
           <ImageBackground style={styles.profile_cover} source={require('../../images/profile_bgr.jpg')}>
-
+{/* onPress={this._onTapAvatar.bind(this)} */}
             <TouchableHighlight
               style={styles.profile_avatar_box}
-              underlayColor="#cccccc"
-              onPress={this._onTapAvatar.bind(this)}>
+              underlayColor="#cccccc">
               {avatar}
             </TouchableHighlight>
 
@@ -503,7 +499,97 @@ export default class Account extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }>
+          {user_info.open_vnd && (
+            <TouchableHighlight
+              underlayColor="transparent">
 
+              <View style={[styles.profile_list_opt_btn, {
+                marginTop: 0,
+                borderTopWidth: 0,
+                borderColor: "#dddddd"
+              }]}>
+
+                <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
+                  backgroundColor: DEFAULT_COLOR
+                }]}>
+                  <Icon name="credit-card" size={16} color="#ffffff" />
+                </View>
+
+                <View>
+                  <Text style={styles.profile_list_label}>Số dư ví: <Text style={styles.profile_list_label_balance}>{user_info.vnd}</Text></Text>
+                  <Text style={styles.profile_list_small_label}>{user_info.text_vnd}</Text>
+                </View>
+
+                {/* <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                  <Icon name="angle-right" size={16} color="#999999" />
+                </View> */}
+                
+
+              </View>
+
+            </TouchableHighlight>
+          )}
+          {user_info.open_point && (
+            <TouchableHighlight
+              underlayColor="transparent">
+
+              <View style={[styles.profile_list_opt_btn, {
+                marginTop: 1,
+                borderTopWidth: 0,
+                borderColor: "#dddddd"
+              }]}>
+
+                <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
+                  backgroundColor: "#4267b2"
+                }]}>
+                  <Icon name="product-hunt" size={16} color="#ffffff" />
+                </View>
+
+                <View>
+                  <Text style={styles.profile_list_label}>Điểm thưởng: <Text style={styles.profile_list_label_point}>{user_info.point}</Text></Text>
+                  <Text style={styles.profile_list_small_label}>Số điểm sắp hết hạn: {user_info.point_expire}</Text>
+                </View>
+
+                {/* <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                  <Icon name="angle-right" size={16} color="#999999" />
+                </View> */}
+                
+
+              </View>
+
+            </TouchableHighlight>
+          )}
+          {user_info.open_point && (
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() => Communications.text(null, user_info.text_sms)}>
+
+              <View style={[styles.profile_list_opt_btn, {
+                marginTop: 1,
+                borderTopWidth: 0,
+                borderColor: "#dddddd"
+              }]}>
+
+                <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
+                  backgroundColor: "#51A9FF"
+                }]}>
+                  <Icon name="commenting-o" size={16} color="#ffffff" />
+                </View>
+
+                <View>
+                  <Text style={styles.profile_list_label}>Mã giới thiệu: <Text style={styles.profile_list_label_invite_id}>{user_info.invite_id}</Text></Text>
+                  <Text style={styles.profile_list_small_label}>{user_info.text_intive}</Text>
+                </View>
+
+                <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                  <Icon name="angle-right" size={16} color="#999999" />
+                </View>
+                
+
+              </View>
+
+            </TouchableHighlight>
+          )}
           {this.state.options && (
             <SelectionList
               containerStyle={{
@@ -632,5 +718,99 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#ffffff",
     marginLeft: 4
-  }
+  },
+  profile_list_opt: {
+    borderTopWidth: Util.pixel,
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
+  },
+  profile_list_opt_btn: {
+    width: Util.size.width,
+    height: 52,
+    backgroundColor: "#ffffff",
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 4
+  },
+  profile_list_icon_box: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30,
+    height: 30,
+    marginLeft: 4,
+    marginRight: 4
+  },
+  profile_list_icon_box_angle: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: '100%'
+  },
+  profile_list_label: {
+    fontSize: 16,
+    color: "#000000",
+    fontWeight: '400'
+  },
+  profile_list_label_balance: {
+    fontSize: 16,
+    color: DEFAULT_COLOR,
+    fontWeight: '600'
+  },
+
+  profile_list_label_point: {
+    fontSize: 16,
+    color: "#e31b23",
+    fontWeight: '600'
+  },
+  
+  profile_list_label_invite_id: {
+    fontSize: 16,
+    color: "#51A9FF",
+    fontWeight: '600'
+  },
+  profile_list_small_label: {
+    fontSize: 12,
+    color: "#666666",
+    marginTop: 2
+  },
+  separator: {
+    width: '100%',
+    height: Util.pixel,
+    backgroundColor: "#dddddd",
+  },
+
+  stores_info_action_notify: {
+    position: 'absolute',
+    minWidth: 16,
+    paddingHorizontal: 2,
+    height: 16,
+    backgroundColor: 'red',
+    top: 4,
+    left: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
+  },
+  stores_info_action_notify_value: {
+    fontSize: 10,
+    color: '#ffffff',
+    fontWeight: '600'
+  },
+  
+  profile_list_balance_box: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 130,
+    height: 30,
+    marginLeft: 4,
+    marginRight: 4
+  },
+  profile_list_balance_box_angle: {
+    position: 'absolute',
+    top: 0,
+    right: 20
+  },
 });

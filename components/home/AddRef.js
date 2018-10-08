@@ -82,7 +82,7 @@ export default class AddRef extends Component {
               fontWeight: '500',
               color: "#ffffff",
               fontSize: 16,
-              marginLeft: 15,
+              marginLeft: 0,
               marginTop: 15,
               marginBottom: 8,
               textShadowColor: 'rgba(0, 0, 0, 0.9)',
@@ -115,7 +115,7 @@ export default class AddRef extends Component {
                 justifyContent: 'center',
                 backgroundColor: "#ffffff"
               }}
-              placeholder="Nhập số điện thoại"
+              placeholder=""
               onChangeText={this._onChangeSearch.bind(this)}
               onSubmitEditing={this._add_ref.bind(this)}
               value={this.state.searchValue}
