@@ -11,7 +11,8 @@ import {
   PanResponder,
   BackHandler,
   Alert,
-  Linking
+  Linking,
+  SafeAreaView
 } from 'react-native';
 
 // disable font scaling
@@ -556,6 +557,7 @@ export default class App extends Component {
   render() {
     if (!this.state.finish) {
       return(
+      <SafeAreaView style={styles.safeArea}>
         <View style={styles.container}>
           {!Store.isConnected && (
             <View style={styles.content}>
@@ -565,6 +567,7 @@ export default class App extends Component {
 
           <Indicator size="small" />
         </View>
+      </SafeAreaView>
       );
     }
 
@@ -572,6 +575,7 @@ export default class App extends Component {
     var showIntro = false;
 
     return(
+      <SafeAreaView style={styles.safeArea}>
       <Router
         backAndroidHandler={this._backAndroidHandler.bind(this)}
         createReducer={reducerCreate}
@@ -693,6 +697,7 @@ export default class App extends Component {
           <Scene key="error" component={Error}/>
         </Scene>
       </Router>
+      </SafeAreaView>
     );
   }
 }
@@ -719,5 +724,9 @@ const styles = StyleSheet.create({
   message: {
     color: '#D8000C',
     fontSize: 14
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: DEFAULT_COLOR
   }
 });
