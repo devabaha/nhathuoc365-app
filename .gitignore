@@ -8,6 +8,13 @@
 #
 .DS_Store
 
+# vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
 # Xcode
 #
 build/
@@ -60,3 +67,5 @@ buck-out/
 
 # Bundle artifact
 *.jsbundle
+.vscode/.react/index.ios.bundle
+.vscode/.react/index.ios.map

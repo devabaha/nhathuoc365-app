@@ -126,17 +126,28 @@ export default class Stores extends Component {
     return delay;
   }
 
+  parseDataCategories(response) {
+    this.setState({
+      categories_data: [{id: 0, name: "Cửa hàng"}, ...response.data.categories],
+      promotions: response.data.promotions
+    });
+    setTimeout(() => {
+      this.state.categories_data.map((item, index) => {
+        if (!this.props.goCategories) return;
+        if (this.props.goCategories.id === item.id) {
+          this._changeCategory(item, index);
+        }
+      });
+    }, 1000);
+    
+  }
+
   async _getCategoriesNavFromServer() {
     try {
       var response = await APIHandler.site_info(store.store_id);
-
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          this.setState({
-            categories_data: [{id: 0, name: "Cửa hàng"}, ...response.data.categories],
-            promotions: response.data.promotions
-          });
-        }, this._delay());
+        setTimeout(() => this.parseDataCategories(response), this._delay());
       }
 
     } catch (e) {
@@ -197,6 +208,7 @@ export default class Stores extends Component {
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               ref={ref => this.refs_category_nav = ref}
+              onScrollToIndexFailed={()=>{}}
               data={this.state.categories_data}
               extraData={this.state.category_nav_index}
               keyExtractor={item => item.id}
@@ -230,6 +242,7 @@ export default class Stores extends Component {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ref={ref => this.refs_category_screen = ref}
+            onScrollToIndexFailed={()=>{}}
             data={this.state.categories_data}
             extraData={this.state.category_nav_index}
             keyExtractor={item => item.id}
