@@ -138,7 +138,7 @@ export default class Stores extends Component {
           this._changeCategory(item, index);
         }
       });
-    }, this._delay());
+    }, 1000);
     
   }
 
@@ -208,6 +208,7 @@ export default class Stores extends Component {
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               ref={ref => this.refs_category_nav = ref}
+              onScrollToIndexFailed={()=>{}}
               data={this.state.categories_data}
               extraData={this.state.category_nav_index}
               keyExtractor={item => item.id}
@@ -241,6 +242,7 @@ export default class Stores extends Component {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ref={ref => this.refs_category_screen = ref}
+            onScrollToIndexFailed={()=>{}}
             data={this.state.categories_data}
             extraData={this.state.category_nav_index}
             keyExtractor={item => item.id}
