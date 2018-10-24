@@ -53,7 +53,9 @@ export default class Home extends Component {
       show_go_store: false,
       admin_stores_data: null,
       promotions: null,
-      products: null
+      products: null,
+      like_products: null,
+      categorie_products: null
     };
 
     this._goSearchStore = this._goSearchStore.bind(this);
@@ -137,7 +139,7 @@ export default class Home extends Component {
     }, async () => {
       try {
         var response = await APIHandler.user_site_home();
-
+        console.log(response)
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
 
@@ -154,10 +156,12 @@ export default class Home extends Component {
               refreshing: false,
               show_add_store: false,
               store_data: data.site,
-              user_notice: data.notices.length > 0 ? data.notices : null,
-              newses_data: data.newses.length > 0 ? data.newses : null,
-              promotions: data.promotions.length > 0 ? data.promotions : null,
-              products: data.products.length > 0 ? data.products : null,
+              // user_notice: data.notices.length > 0 ? data.notices : null, // ẩn đơn hàng của tôi
+              newses_data: data.newses && data.newses.length ? data.newses : null,
+              promotions: data.promotions && data.promotions.length ? data.promotions : null,
+              products: data.products && data.products.length ? data.products : null,
+              like_products: data.like_products && data.like_products.length ? data.like_products : null,
+              categorie_products: data.categories && data.categories.length ? data.categories : null,
               view_all_sites: data.view_all_sites == 1,
               view_all_notices: data.view_all_notices == 1,
               view_all_newses: data.view_all_newses == 1,
@@ -343,7 +347,7 @@ export default class Home extends Component {
     }
   }
   // tới màn hình store
-  _goStores(item) {
+  _goStores(item, categories) {
     action(() => {
       store.setStoreData(item);
     })();
@@ -356,7 +360,8 @@ export default class Home extends Component {
     }
 
     Actions.stores({
-      title: item.name
+      title: item.name,
+      goCategories: categories
     });
   }
   _cachedStore(key, thenFunc = () => 1, catchFunc = () => 1) {
@@ -405,8 +410,9 @@ export default class Home extends Component {
       show_tutorial_tab,
       show_add_store,
       show_go_store,
-
-      admin_stores_data
+      admin_stores_data,
+      like_products,
+      categorie_products
     } = this.state;
     
     var count_chat = parseInt(store.notify_chat[store.store_id]);
@@ -495,6 +501,7 @@ export default class Home extends Component {
               </View>
             </View>
           )}
+
           {products && (
             <View style={{
               paddingHorizontal: 15,
@@ -536,23 +543,95 @@ export default class Home extends Component {
             </View>
           )}
           <View style={styles.boxButtonActions}>
-              <TouchableHighlight
-                  style={styles.buttonAction}
-                  onPress={this._goStores.bind(this, this.state.store_data)}
-                  underlayColor="transparent">
-                  <View style={[styles.boxButtonAction, {
-                    width: Util.size.width - 30,
-                    backgroundColor: "#fa7f50",
-                    borderColor: "#999999"
-                  }]}>
-                    <Icon name="plus" size={16} color="#ffffff" />
-                    <Text style={[styles.buttonActionTitle, {
-                      color: "#ffffff"
-                    }]}>Vào cửa hàng</Text>
-                  </View>
-              </TouchableHighlight>
-              </View>
+            <TouchableHighlight
+                style={styles.buttonAction}
+                onPress={this._goStores.bind(this, this.state.store_data)}
+                underlayColor="transparent">
+                <View style={[styles.boxButtonAction, {
+                  width: Util.size.width - 30,
+                  backgroundColor: "#fa7f50",
+                  borderColor: "#999999"
+                }]}>
+                  <Icon name="plus" size={16} color="#ffffff" />
+                  <Text style={[styles.buttonActionTitle, {
+                    color: "#ffffff"
+                  }]}>Vào cửa hàng</Text>
+                </View>
+            </TouchableHighlight>
+          </View>
 
+          {like_products && (<View style={styles.lineView}/>)}
+          {like_products && (
+            <View style={{
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 4,
+              flexDirection: 'row'
+            }}>
+              <Text style={styles.add_store_title}>YÊU THÍCH</Text>
+
+              {(
+                <View style={styles.right_title_btn_box}>
+                  <TouchableHighlight
+                    style={styles.right_title_btn}
+                    underlayColor="transparent"
+                    onPress={this._goStores.bind(this, this.state.store_data)}
+                    >
+                    <Text style={[styles.add_store_title, {color: "#fa7f50"}]}>XEM TẤT CẢ</Text>
+                  </TouchableHighlight>
+                </View>
+              )}
+            </View>
+          )}
+          {like_products && (
+            <View style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap'
+            }}>
+              {like_products.map((item, index) => (
+                <Items
+                  key={index}
+                  item={item}
+                  index={index}
+                  onPress={this._goItem.bind(this, item)}
+                  />
+              ))}
+            </View>
+          )}
+
+          {categorie_products && (<View style={styles.lineView}/>)}
+          {categorie_products && (
+            <View style={{
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 4,
+              alignItems: "center"
+            }}>
+              <Text style={styles.add_store_title}>DANH MỤC SẢN PHẨM</Text>
+            </View>
+          )}
+          {categorie_products && (
+            <View style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap'
+            }}>
+              {categorie_products.map((item, index) => (
+                <Items
+                  key={index}
+                  item={item}
+                  index={index}
+                  isCategories={true}
+                  onPress={this._goStores.bind(this, this.state.store_data, item)}
+                  />
+              ))}
+            </View>
+          )}
+
+          {newses_data && (<View style={styles.lineView}/>)}
           {newses_data != null && (
             <View style={{
               paddingHorizontal: 15,
@@ -581,7 +660,6 @@ export default class Home extends Component {
               )}
             </View>
           )}
-
           {newses_data && (
             <FlatList
               data={newses_data}
@@ -804,4 +882,9 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     fontSize: 14
   },
+  lineView: {
+    height: 1,
+    width: "100%",
+    backgroundColor: "rgb(225,225,225)"
+  }
 });

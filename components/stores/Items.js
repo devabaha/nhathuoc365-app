@@ -119,8 +119,31 @@ export default class Items extends Component {
   }
 
   render() {
-    let {item, index, onPress} = this.props;
+    let {item, index, onPress, isCategories} = this.props;
 
+    // render item danh mục sản phẩm màn home
+
+    if (isCategories) {
+      return (
+        <TouchableHighlight
+        onPress={onPress}
+        underlayColor="transparent">
+        <View
+          style={[styles.item_box, {
+            marginRight: index % 2 == 0 ? 8 : 0,
+            marginLeft: index % 2 == 0 ? 8 : 0,
+            height: ITEM_IMG_HEIGHT
+          }]}>
+
+          <View
+            ref={ref => this.ref_item = ref}
+            style={styles.item_image_box}>
+            <CachedImage mutable style={styles.item_image} source={{uri: item.image}} />
+          </View>
+        </View>
+      </TouchableHighlight>
+      );
+    }
     // button load more
     if (item.type == 'loadmore') {
       return (
