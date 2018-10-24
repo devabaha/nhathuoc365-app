@@ -43,7 +43,6 @@ export default class Notifys extends Component {
   async _getData(delay) {
     try {
       var response = await APIHandler.user_news_list(this.state.news_type);
-
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
 
@@ -80,7 +79,10 @@ export default class Notifys extends Component {
           (<View>
             <TouchableOpacity 
               style={styles.headerView}
-              onPress={() => Actions.notifys_time({ isNotifysTime: true })}
+              onPress={() => Actions.notifys_time({ 
+                isNotifysTime: true,
+                news_type: "/47"
+              })}
             >
               <Icon
                 name="calendar-check-o"
@@ -148,6 +150,9 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
     justifyContent: "space-between"
+  },
+  headerContentView: {
+    width: Util.size.width - 70
   },
   titleHeaderTexxt: {
     fontSize: 16,
