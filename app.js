@@ -278,21 +278,21 @@ export default class App extends Component {
         fb_access_token: ''
       });
       console.log(response)
-      // if (response && response.status == STATUS_SUCCESS) {
-      //   Store.setUserInfo(response.data);
-      //   action(() => {
-      //     this.setState({
-      //       finish: true
-      //     }, () => {
-      //       Actions.myTabBar({
-      //         type: ActionConst.RESET
-      //       });
-      //     });
-      //   })();
-
-      //   StatusBar.setBarStyle('light-content');
-      // }
       if (response && response.status == STATUS_SUCCESS) {
+        Store.setUserInfo(response.data);
+        action(() => {
+          this.setState({
+            finish: true
+          }, () => {
+            Actions.myTabBar({
+              type: ActionConst.RESET
+            });
+          });
+        })();
+
+        StatusBar.setBarStyle('light-content');
+      }
+      if (response && response.status == STATUS_UNDEFINE_USER) {
         Store.setUserInfo(response.data);
         action(() => {
           this.setState({

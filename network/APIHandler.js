@@ -414,6 +414,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * User chọn khu vực đặt hàng
+  */
+  async user_choose_location(site_id) {
+    var api = url_for(API.USER_CHOOSE_LOCATION + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
 
 
 

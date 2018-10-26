@@ -32,10 +32,13 @@ export default class AddRef extends Component {
   }
 
   _onFinish() {
-    Actions.choose_location();
-    // Actions.myTabBar({
-    //   type: ActionConst.RESET
-    // });
+    if (store.user_info  && store.user_info.site_id === 0) {
+      Actions.choose_location();
+    } else {
+      Actions.myTabBar({
+        type: ActionConst.RESET
+      });
+    }
   }
 
   // thực hiện add cửa hàng vào account của user
