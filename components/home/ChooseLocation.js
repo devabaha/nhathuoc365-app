@@ -32,7 +32,6 @@ export default class ChooseLocation extends Component {
 
   async onPressLocation(item) {
     var response = await APIHandler.user_choose_location(item.id);
-    console.log(response)
     if (response) {
       if(response.status == STATUS_SUCCESS){
         Actions.myTabBar({
@@ -49,28 +48,24 @@ export default class ChooseLocation extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <ImageBackground resizeMode="stretch" style={styles.image} source={require('../../images/foodhub_loadding_screen.png')}>
-          <View style={styles.store_result_item_image_box}>
-            <CachedImage mutable style={styles.store_result_item_image} source={require('../../images/icon-320.png')} />
+        <Text style={styles.titleText}>Chọn khu vực bạn cần đặt hàng tới</Text>
+        {store.user_info && store.user_info.sites && (
+          <View style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            marginTop: 30
+          }}>
+            {store.user_info.sites.map((item, index) => (
+              <Items
+                key={index}
+                item={item}
+                index={index}
+                isLocationItem={true}
+                onPress={() => this.onPressLocation(item)}
+                />
+            ))}
           </View>
-          <Text style={styles.titleText}>Chọn khu vực bạn cần đặt hàng tới</Text>
-          {store.user_info && store.user_info.sites && (
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap'
-            }}>
-              {store.user_info.sites.map((item, index) => (
-                <Items
-                  key={index}
-                  item={item}
-                  index={index}
-                  isLocationItem={true}
-                  onPress={() => this.onPressLocation(item)}
-                  />
-              ))}
-            </View>
-          )}
-        </ImageBackground>
+        )}
       </View>
     );
   }
@@ -80,12 +75,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 0,
-    backgroundColor: "#ffffff"
+    backgroundColor: "#ffffff",
+    alignItems: 'center'
   },
   image: {
     width: Util.size.width,
     height: Util.size.height - (isAndroid ? 24 : 0),
     alignItems: 'center'
+  },
+  store_result_item_image_box: {
+    marginTop: 30,
   },
   store_result_item_image: {
     width: 120,
@@ -93,14 +92,13 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 10
   },
   titleText: {
-    marginTop: 20,
-    fontSize: 16,
-    color: "white",
-    alignSelf: "center",
-    textShadowColor: 'rgba(0, 0, 0, 0.9)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 10
+    marginTop: 50,
+    fontSize: 18,
+    color: "rgb(0,0,0)",
+    fontWeight: "bold",
+    alignSelf: "center"
   }
 });

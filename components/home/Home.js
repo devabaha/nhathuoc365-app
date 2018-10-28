@@ -139,7 +139,6 @@ export default class Home extends Component {
     }, async () => {
       try {
         var response = await APIHandler.user_site_home();
-        console.log(response)
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
 

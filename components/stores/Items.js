@@ -450,7 +450,9 @@ const styles = StyleSheet.create({
   },
   nameLocation: {
     fontSize: 14,
-    color: "white",
-    alignSelf: "center"
+    color: "rgb(0,0,0)",
+    alignSelf: "center",
+    marginTop: 10,
+    fontWeight: "bold"
   }
 });
