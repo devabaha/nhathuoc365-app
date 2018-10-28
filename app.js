@@ -670,7 +670,8 @@ export default class App extends Component {
             <Scene key="rating" panHandlers={null} direction="vertical" hideNavBar title="" component={Rating} {...custommerNav} />
             <Scene key="orders_item" title="Chi tiết đơn hàng" component={OrdersItem} {...custommerNav} />
             <Scene key="notifys" title="Tin tức" component={Notifys} {...custommerNav} />
-            <Scene key="notifys_time" title="Lịch hàng" component={Notifys} {...custommerNav} />
+            <Scene key="notifys_time" title="Lịch hàng hóa" component={Notifys} {...custommerNav} />
+            <Scene key="notifys_farm" title="Trang tại foodhub" component={Notifys} {...custommerNav} />
             <Scene key="notify_item" title="Chi tiết" component={NotifyItem} {...custommerNav} />
             <Scene key="search_store" title="Tìm cửa hàng" component={SearchStore} {...custommerNav} />
             <Scene key="scan_qr_code" title="Quét mã" component={ScanQRCode} {...custommerNav} />
