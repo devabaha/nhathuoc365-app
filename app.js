@@ -74,6 +74,7 @@ import ListProduct from './components/sale/ListProduct';
 import EditListProduct from './components/sale/EditListProduct';
 import Rating from './components/rating/Rating';
 import Error from './components/Error';
+import ChooseLocation from './components/home/ChooseLocation';
 
 // Backend
 import Dashboard from './components/dashboard/Dashboard';
@@ -276,6 +277,7 @@ export default class App extends Component {
       var response = await APIHandler.user_login({
         fb_access_token: ''
       });
+      console.log(response)
       if (response && response.status == STATUS_SUCCESS) {
         Store.setUserInfo(response.data);
         action(() => {
@@ -668,7 +670,8 @@ export default class App extends Component {
             <Scene key="rating" panHandlers={null} direction="vertical" hideNavBar title="" component={Rating} {...custommerNav} />
             <Scene key="orders_item" title="Chi tiết đơn hàng" component={OrdersItem} {...custommerNav} />
             <Scene key="notifys" title="Tin tức" component={Notifys} {...custommerNav} />
-            <Scene key="notifys_time" title="Lịch hàng" component={Notifys} {...custommerNav} />
+            <Scene key="notifys_time" title="Lịch hàng hóa" component={Notifys} {...custommerNav} />
+            <Scene key="notifys_farm" title="Trang tại foodhub" component={Notifys} {...custommerNav} />
             <Scene key="notify_item" title="Chi tiết" component={NotifyItem} {...custommerNav} />
             <Scene key="search_store" title="Tìm cửa hàng" component={SearchStore} {...custommerNav} />
             <Scene key="scan_qr_code" title="Quét mã" component={ScanQRCode} {...custommerNav} />
@@ -679,6 +682,7 @@ export default class App extends Component {
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
             <Scene key="intro" initial={showIntro} hideNavBar title="" component={Intro} {...custommerNav} />
             <Scene key="_add_ref" hideNavBar title="" component={AddRef} {...custommerNav} />
+            <Scene key="choose_location" hideNavBar title="" component={ChooseLocation} {...custommerNav} />
 
             {/* Backend */}
             <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />

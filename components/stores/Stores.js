@@ -145,7 +145,6 @@ export default class Stores extends Component {
   async _getCategoriesNavFromServer() {
     try {
       var response = await APIHandler.site_info(store.store_id);
-      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => this.parseDataCategories(response), this._delay());
       }

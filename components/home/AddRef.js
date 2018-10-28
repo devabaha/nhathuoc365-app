@@ -32,9 +32,13 @@ export default class AddRef extends Component {
   }
 
   _onFinish() {
-    Actions.myTabBar({
-      type: ActionConst.RESET
-    });
+    if (store.user_info  && store.user_info.site_id === 0) {
+      Actions.choose_location();
+    } else {
+      Actions.myTabBar({
+        type: ActionConst.RESET
+      });
+    }
   }
 
   // thực hiện add cửa hàng vào account của user
@@ -44,9 +48,7 @@ export default class AddRef extends Component {
       var response = await APIHandler.user_add_ref(this.state.searchValue);
       if (response) {
         if(response.status == STATUS_SUCCESS){
-          Actions.myTabBar({
-            type: ActionConst.RESET
-          });
+          this._onFinish();
         }else{
           Toast.show(response.message);
         }
@@ -55,6 +57,7 @@ export default class AddRef extends Component {
       }
     }
   }
+  
   _onChangeSearch(text) {
     this.setState({
       searchValue: text

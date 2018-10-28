@@ -119,10 +119,33 @@ export default class Items extends Component {
   }
 
   render() {
-    let {item, index, onPress, isCategories} = this.props;
+    let {item, index, onPress, isCategories, isLocationItem} = this.props;
+
+    // render item chọn khu vực đặt hàng
+
+    if (isLocationItem) {
+      return (
+        <TouchableHighlight
+        onPress={onPress}
+        underlayColor="transparent">
+        <View
+          style={[styles.item_box, {
+            marginRight: index % 2 == 0 ? 8 : 0,
+            marginLeft: index % 2 == 0 ? 8 : 0,
+            backgroundColor: "transparent"
+          }]}>
+          <View
+            ref={ref => this.ref_item = ref}
+            style={styles.item_image_box}>
+            <CachedImage mutable style={styles.item_image} source={{uri: item.logo_url}} />
+          </View>
+          <Text style={styles.nameLocation}>{item.name}</Text>
+        </View>
+      </TouchableHighlight>
+      );
+    }
 
     // render item danh mục sản phẩm màn home
-
     if (isCategories) {
       return (
         <TouchableHighlight
@@ -134,7 +157,6 @@ export default class Items extends Component {
             marginLeft: index % 2 == 0 ? 8 : 0,
             height: ITEM_IMG_HEIGHT
           }]}>
-
           <View
             ref={ref => this.ref_item = ref}
             style={styles.item_image_box}>
@@ -144,6 +166,7 @@ export default class Items extends Component {
       </TouchableHighlight>
       );
     }
+
     // button load more
     if (item.type == 'loadmore') {
       return (
@@ -424,5 +447,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 2
+  },
+  nameLocation: {
+    fontSize: 14,
+    color: "rgb(0,0,0)",
+    alignSelf: "center",
+    marginTop: 10,
+    fontWeight: "bold"
   }
 });
