@@ -334,7 +334,6 @@ export default class Account extends Component {
       refreshing: true
     }, () => {
       this._scrollToTop(-60);
-
       this._login(1000);
     });
   }
@@ -531,8 +530,8 @@ export default class Account extends Component {
           )}
           {user_info.open_point && (
             <TouchableHighlight
-              underlayColor="transparent">
-
+              underlayColor="transparent"
+              onPress={() => Actions.coin_wallet()}>
               <View style={[styles.profile_list_opt_btn, {
                 marginTop: 1,
                 borderTopWidth: 0,

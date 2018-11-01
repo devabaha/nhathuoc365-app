@@ -75,6 +75,7 @@ import EditListProduct from './components/sale/EditListProduct';
 import Rating from './components/rating/Rating';
 import Error from './components/Error';
 import ChooseLocation from './components/home/ChooseLocation';
+import CoinWallet from './components/account/CoinWallet';
 
 // Backend
 import Dashboard from './components/dashboard/Dashboard';
@@ -654,6 +655,7 @@ export default class App extends Component {
             </Scene>
 
             <Scene key="address" title="Địa chỉ" component={Address} {...custommerNav} />
+            <Scene key="coin_wallet" title="Tài khoản xu" component={CoinWallet} {...custommerNav} />
             <Scene key="confirm" title="Xác nhận" component={Confirm} {...custommerNav} />
             <Scene key="create_address" title="Thêm địa chỉ" component={CreateAddress} {...custommerNav} />
             <Scene key="register" title="Đăng ký" component={Register} {...custommerNav} />

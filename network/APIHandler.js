@@ -422,6 +422,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+  * Ví xu
+  */
+ async user_coins_wallet() {
+  var api = url_for(API.USER_COINS_WALLET);
+  return await this.getAPI(api);
+}
+
 
 
 
