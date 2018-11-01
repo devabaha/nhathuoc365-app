@@ -546,13 +546,13 @@ export default class Account extends Component {
                 </View>
 
                 <View>
-                  <Text style={styles.profile_list_label}>Điểm thưởng: <Text style={styles.profile_list_label_point}>{user_info.point}</Text></Text>
-                  <Text style={styles.profile_list_small_label}>Số điểm sắp hết hạn: {user_info.point_expire}</Text>
+                  <Text style={styles.profile_list_label}>Ví Xu: <Text style={styles.profile_list_label_point}>{user_info.point}</Text></Text>
+                  <Text style={styles.profile_list_small_label}>Số Xu sắp hết hạn: {user_info.point_expire}</Text>
                 </View>
 
-                {/* <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
                   <Icon name="angle-right" size={16} color="#999999" />
-                </View> */}
+                </View>
                 
 
               </View>

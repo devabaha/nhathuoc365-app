@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     marginTop: 2
   },
   item_info_price: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     color: DEFAULT_COLOR,
     marginLeft: 4,
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   },
   item_safe_off_price: {
     color: "#404040",
-    fontSize: 12,
+    fontSize: 11,
     textDecorationLine: 'line-through'
   },
 

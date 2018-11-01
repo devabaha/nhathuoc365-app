@@ -42,7 +42,7 @@ export default class Notifys extends Component {
           key: 0,
           label: "Lịch hàng hóa",
           desc: "Thông tin hàng hóa hàng tuần tại Foodhub",
-          icon: "bookmark",
+          icon: "calendar",
           notify: "new_site_news",
           onPress: () => {
             Actions.notifys_time({ 
@@ -57,8 +57,8 @@ export default class Notifys extends Component {
         },
         {
           key: 1,
-          label: "Trang trại foodhub",
-          desc: "Các trang trại trong hệ thống foodhub",
+          label: "Trang trại FoodHub",
+          desc: "Các trang trại trong hệ thống FoodHub",
           icon: "lemon-o",
           notify: "new_sys_news",
           onPress: () => {
