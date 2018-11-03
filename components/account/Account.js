@@ -601,9 +601,9 @@ export default class Account extends Component {
               }]}>
 
                 <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
-                  backgroundColor: "#51A9FF"
+                  backgroundColor: "#688efb"
                 }]}>
-                  <Icon name="commenting-o" size={16} color="#ffffff" />
+                  <Icon name="globe" size={16} color="#ffffff" />
                 </View>
 
                 <View>

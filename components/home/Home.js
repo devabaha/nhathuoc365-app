@@ -42,6 +42,7 @@ export default class Home extends Component {
     super(props);
 
     this.state = {
+      stores_data: null,
       store_data: null,
       refreshing: false,
       loading: false,
@@ -51,7 +52,6 @@ export default class Home extends Component {
       show_tutorial_tab: false,
       show_add_store: false,
       show_go_store: false,
-      admin_stores_data: null,
       promotions: null,
       products: null,
       like_products: null,
@@ -154,6 +154,7 @@ export default class Home extends Component {
               loading: false,
               refreshing: false,
               show_add_store: false,
+              stores_data: data.sites && data.sites.length > 0 ? data.sites : null,
               store_data: data.site,
               // user_notice: data.notices.length > 0 ? data.notices : null, // ẩn đơn hàng của tôi
               newses_data: data.newses && data.newses.length ? data.newses : null,
@@ -167,46 +168,15 @@ export default class Home extends Component {
             });
             store.setStoreData(data.site);
 
-            this._scrollToTop(0);
+            //this._scrollToTop(0);
           }, delay || 0);
         }
       } catch (e) {
         console.warn(e + ' user_home');
 
         store.addApiQueue('user_home', this._getData.bind(this));
-      } finally {
-        const isAdmin = store.user_info.admin_flag == 1;
-        if (isAdmin) {
-          this._getAdData();
-        } else {
-          this.setState({
-            admin_stores_data: null
-          });
-        }
       }
     });
-  }
-
-  _getAdData = async () => {
-    try {
-      var response = await ADMIN_APIHandler.user_home();
-
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          admin_stores_data: response.data,
-          // promotions: response.data.promotions
-        });
-
-        // layoutAnimation();
-      }
-
-    } catch (e) {
-      console.warn(e + ' admin:user_home');
-
-      store.addApiQueue('admin:user_home', this._getAdData.bind(this));
-    } finally {
-
-    }
   }
 
   // render button trên navbar
@@ -399,6 +369,7 @@ export default class Home extends Component {
       loading,
       finish,
       store_data,
+      stores_data,
       newses_data,
       user_notice,
       view_all_newses,
@@ -409,7 +380,6 @@ export default class Home extends Component {
       show_tutorial_tab,
       show_add_store,
       show_go_store,
-      admin_stores_data,
       like_products,
       categorie_products
     } = this.state;
@@ -627,6 +597,24 @@ export default class Home extends Component {
                   onPress={this._goStores.bind(this, this.state.store_data, item)}
                   />
               ))}
+            </View>
+          )}
+          
+          {stores_data && (
+            <View>
+              <View style={styles.myFavoriteBox}>
+                <Text style={styles.add_store_title}>CỬA HÀNG LIÊN KẾT</Text>
+              </View>
+              <FlatList
+                style={styles.stores_box}
+                onEndReached={(num) => {
+
+                }}
+                onEndReachedThreshold={0}
+                data={stores_data}
+                renderItem={({item, index}) => this.renderRow({item, index}, false)}
+                keyExtractor={item => item.id}
+              />
             </View>
           )}
 
