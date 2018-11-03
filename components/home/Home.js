@@ -149,6 +149,11 @@ export default class Home extends Component {
               layoutAnimation();
             }
 
+            if (data.vote_cart) {
+              Actions.rating({
+                cart_data: data.vote_cart
+              });
+            }
             this.setState({
               finish: true,
               loading: false,

@@ -278,7 +278,6 @@ export default class App extends Component {
       var response = await APIHandler.user_login({
         fb_access_token: ''
       });
-      console.log(response)
       if (response && response.status == STATUS_SUCCESS) {
         Store.setUserInfo(response.data);
         action(() => {
