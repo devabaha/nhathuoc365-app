@@ -589,6 +589,37 @@ export default class Account extends Component {
 
             </TouchableHighlight>
           )}
+          {user_info.choose_location && (
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() => Actions.choose_location()}>
+
+              <View style={[styles.profile_list_opt_btn, {
+                marginTop: 1,
+                borderTopWidth: 0,
+                borderColor: "#dddddd"
+              }]}>
+
+                <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
+                  backgroundColor: "#51A9FF"
+                }]}>
+                  <Icon name="commenting-o" size={16} color="#ffffff" />
+                </View>
+
+                <View>
+                  <Text style={styles.profile_list_label}>Chọn cửa hàng phục vụ</Text>
+                  <Text style={styles.profile_list_small_label}>Theo khu vực nhận đơn hàng</Text>
+                </View>
+
+                <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                  <Icon name="angle-right" size={16} color="#999999" />
+                </View>
+                
+
+              </View>
+
+            </TouchableHighlight>
+          )}
           {this.state.options && (
             <SelectionList
               containerStyle={{
