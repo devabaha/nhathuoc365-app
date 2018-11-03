@@ -85,6 +85,7 @@ export default class OrdersItemComponent extends Component {
   }
 
   _goOrdersItem(item) {
+    if (this.props.disableGoDetail) return;
     Actions.orders_item({
       data: item,
       title: `#${item.cart_code}`,

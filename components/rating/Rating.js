@@ -15,6 +15,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
+import OrdersItemComponent from '../orders/OrdersItemComponent';
 
 var DEFAULT_RATING_MSG = 'Đánh giá, góp ý của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn!';
 
@@ -112,33 +113,21 @@ export default class  Rating extends Component {
         keyboardShouldPersistTaps="always"
       >
         <View style={styles.container}>
-          <View style={[styles.header, {
-            height: HEADER_HEIGHT
-          }]}>
+          <View style={[styles.header
+          ]}>
             <Text style={[styles.headingText, {
               marginTop: HEADER_HEIGHT * 0.107
             }]}>Cảm ơn bạn!</Text>
-
-            <View style={[styles.storeAvatarBox, {
-              marginTop: HEADER_HEIGHT * 0.107,
-              width: HEADER_HEIGHT * 0.3,
-              height: HEADER_HEIGHT * 0.3,
-              borderRadius: HEADER_HEIGHT * 0.3 / 2
-            }]}>
-              <CachedImage
-                style={[styles.storeAvatar, {
-                  width: HEADER_HEIGHT * 0.285,
-                  height: HEADER_HEIGHT * 0.285,
-                  borderRadius: HEADER_HEIGHT * 0.285 / 2,
-                  backgroundColor: 'transparent'
-                }]}
-                source={{uri: cart_data.shop_logo_url}} />
+            <View style={styles.cartView}>
+              <OrdersItemComponent
+                disableGoDetail={true}
+                item={cart_data}
+              />
             </View>
 
             <Text style={[styles.descText, {
               marginTop: HEADER_HEIGHT * 0.057
-            }]}>Vui lòng đánh giá dịch vụ của chúng tôi</Text>
-
+            }]}>Vui lòng đánh giá chất lượng phục vụ cho đơn hàng</Text>
             <View style={[styles.starBox, {
               marginTop: HEADER_HEIGHT * 0.0928
             }]}>
@@ -342,11 +331,16 @@ const styles = StyleSheet.create({
   },
   descText: {
     color: '#ebebeb',
+    marginLeft: 10,
+    marginRight: 10,
     fontSize: 14,
+    textAlign: 'center',
+    fontWeight: 'bold',
     backgroundColor: "transparent"
   },
   starBox: {
     width: '100%',
+    marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'center'
   },
@@ -396,5 +390,12 @@ const styles = StyleSheet.create({
   ratingShip: {
     color: '#999999',
     fontSize: 10
+  },
+  cartView: {
+    marginTop: 30,
+    marginLeft: 0,
+    marginRight: 0,
+    width: "100%",
+    backgroundColor: "#fff"
   }
 });
