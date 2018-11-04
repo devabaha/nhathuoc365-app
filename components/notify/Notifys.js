@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import SelectionList from '../SelectionList';
+import {reaction} from 'mobx';
 
 // components
 import NewItemComponent from './NewItemComponent';
@@ -34,6 +35,8 @@ export default class Notifys extends Component {
       news_type: props.news_type || '',
       navigators: this._setOptionList()
     }
+
+    reaction(() => store.refresh_news, () => this._getData());
   }
 
   _setOptionList() {

@@ -210,6 +210,13 @@ class Store {
   }
 
 
+  /*********** home begin **********/
+  @observable refresh_news = 0;
+
+  @action setRefreshNews(data) {
+    this.refresh_news = data;
+  }
+
   /*********** cart begin **********/
 
   @observable cart_data = null;

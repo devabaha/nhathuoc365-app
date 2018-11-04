@@ -34,6 +34,10 @@ export default class ChooseLocation extends Component {
     var response = await APIHandler.user_choose_location(item.id);
     if (response) {
       if(response.status == STATUS_SUCCESS){
+        action(() => {
+          store.setRefreshHomeChange(store.refresh_home_change + 1);
+          store.setRefreshNews(store.refresh_news + 1);
+        })();
         Actions.myTabBar({
           type: ActionConst.RESET
         });

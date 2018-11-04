@@ -149,7 +149,7 @@ export default class Home extends Component {
               layoutAnimation();
             }
 
-            if (data.vote_cart) {
+            if (data.vote_cart && data.vote_cart.site_id) {
               Actions.rating({
                 cart_data: data.vote_cart
               });
