@@ -33,7 +33,10 @@ export default class AddRef extends Component {
 
   _onFinish() {
     if (store.user_info  && store.user_info.site_id === 0) {
-      Actions.choose_location();
+      Actions.choose_location({
+        type: ActionConst.RESET,
+        title: "CHỌN CỬA HÀNG"
+      });
     } else {
       Actions.myTabBar({
         type: ActionConst.RESET

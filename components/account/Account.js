@@ -114,7 +114,8 @@ export default class Account extends Component {
             backgroundColor: "#1fa67a"
           }],
           iconColor: "#ffffff",
-          marginTop: true
+          marginTop: true,
+          notify: "notify_myshop"
         },
 
         {
@@ -519,10 +520,13 @@ export default class Account extends Component {
                   <Text style={styles.profile_list_small_label}>{user_info.text_vnd}</Text>
                 </View>
 
-                {/* <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                {<View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
                   <Icon name="angle-right" size={16} color="#999999" />
-                </View> */}
+                </View>}
                 
+                {store.notify.notify_vnd > 0 && <View style={styles.stores_info_action_notify}>
+                  <Text style={styles.stores_info_action_notify_value}>{store.notify.notify_vnd}</Text></View>}
+              
 
               </View>
 
@@ -552,7 +556,8 @@ export default class Account extends Component {
                 <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
                   <Icon name="angle-right" size={16} color="#999999" />
                 </View>
-                
+                {store.notify.notify_point > 0 && <View style={styles.stores_info_action_notify}>
+                  <Text style={styles.stores_info_action_notify_value}>{store.notify.notify_point}</Text></View>}
 
               </View>
 
@@ -592,7 +597,7 @@ export default class Account extends Component {
           {user_info.choose_location && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions.choose_location()}>
+              onPress={() => Actions.choose_location({title: "CHỌN CỬA HÀNG"})}>
 
               <View style={[styles.profile_list_opt_btn, {
                 marginTop: 1,

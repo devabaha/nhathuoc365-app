@@ -280,16 +280,27 @@ export default class App extends Component {
       });
       if (response && response.status == STATUS_SUCCESS) {
         Store.setUserInfo(response.data);
-        action(() => {
-          this.setState({
-            finish: true
-          }, () => {
-            Actions.myTabBar({
-              type: ActionConst.RESET
+        if (response.data.site_id === 0) {//hien thi chon site
+          action(() => {
+            this.setState({
+              finish: true
+            }, () => {
+              Actions.choose_location({
+                type: ActionConst.RESET
+              });
             });
-          });
-        })();
-
+          })();
+        }else{
+          action(() => {
+            this.setState({
+              finish: true
+            }, () => {
+              Actions.myTabBar({
+                type: ActionConst.RESET
+              });
+            });
+          })();
+        }
         StatusBar.setBarStyle('light-content');
       }
       if (response && response.status == STATUS_UNDEFINE_USER) {
@@ -643,7 +654,7 @@ export default class App extends Component {
                 icon={TabIcon}
                 iconTitle="Tài khoản"
                 iconName="account-circle"
-                notify="updating_version"
+                notify="notify_account"
                 size={24}
                 onPress={()=> {
                   Actions._account({type: ActionConst.REFRESH});
@@ -683,7 +694,7 @@ export default class App extends Component {
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
             <Scene key="intro" initial={showIntro} hideNavBar title="" component={Intro} {...custommerNav} />
             <Scene key="_add_ref" hideNavBar title="" component={AddRef} {...custommerNav} />
-            <Scene key="choose_location" hideNavBar title="" component={ChooseLocation} {...custommerNav} />
+            <Scene key="choose_location" title="" component={ChooseLocation} {...custommerNav} />
 
             {/* Backend */}
             <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />

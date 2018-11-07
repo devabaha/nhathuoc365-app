@@ -117,7 +117,7 @@ export default class  Rating extends Component {
           ]}>
             <Text style={[styles.headingText, {
               marginTop: HEADER_HEIGHT * 0.107
-            }]}>Cảm ơn bạn!</Text>
+            }]}>Cảm ơn quý khách!</Text>
             <View style={styles.cartView}>
               <OrdersItemComponent
                 disableGoDetail={true}

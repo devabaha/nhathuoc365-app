@@ -48,10 +48,10 @@ export default class CoinWallet extends Component {
   }
 
   async onPressNew() {
-    var response = await APIHandler.user_news(167);
+    var response = await APIHandler.user_news(173);
     if (response && response.status == STATUS_SUCCESS) {
       Actions.notify_item({
-        title: 'Tích lũy xu',
+        title: 'Giới thiệu ví XU',
         data: response.data
       });
     }
@@ -62,14 +62,14 @@ export default class CoinWallet extends Component {
       <View>
         <View style={styles.containerRowView}>
           <Icon style={{ flex: 1, marginLeft: 20}} 
-                name={item.point >= 0 ? "plus-square" : "minus-square"}
+                name={item.change >= 0 ? "plus-square" : "minus-square"}
                 size={25} 
                 color="rgb(0,0,0)" />
           <View style={{ flex: 6, flexDirection: 'column' }}>
             <Text>{item.content}</Text>
             <View style={styles.bottomRowView}>
               <Text style={styles.dateText}>{item.created}</Text>
-              <Text style={styles.pointText}>{item.point >= 0 ? "+" : "-"}{item.point}</Text>
+              <Text style={styles.pointText}>{item.change >= 0 ? "+" : "-"}{item.change}</Text>
             </View>
           </View>
         </View>
@@ -110,7 +110,7 @@ export default class CoinWallet extends Component {
           onPress={() => this.onPressNew()}>
           <View style={styles.newsCoinView}>
             <Icon style={{ flex: 1, marginLeft: 20}} name="newspaper-o" size={25} color="#4267b2" />
-            <Text style={{ flex: 7, fontSize: 16 }}>Thông tin về chương trình tích lũy xu</Text>
+            <Text style={{ flex: 7, fontSize: 16 }}>Giới thiệu về ví XU</Text>
             <Icon style={{ flex: 1, marginLeft: 10}} name="chevron-right" size={20} color="rgb(200,200,200)" />
           </View>
         </TouchableWithoutFeedback>

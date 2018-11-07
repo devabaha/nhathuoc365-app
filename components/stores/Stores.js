@@ -133,8 +133,8 @@ export default class Stores extends Component {
     });
     setTimeout(() => {
       this.state.categories_data.map((item, index) => {
-        if (!this.props.goCategories) return;
-        if (this.props.goCategories.id === item.id) {
+        if (!this.props.goCategory) return;
+        if (this.props.goCategory === item.id) {
           this._changeCategory(item, index);
         }
       });

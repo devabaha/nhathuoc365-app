@@ -122,6 +122,7 @@ export default class Notifys extends Component {
         }
         {this.state.data != null ? (
           <FlatList
+            style={{marginTop:2}}
             data={this.state.data}
             onEndReached={(num) => {
 
@@ -153,7 +154,8 @@ export default class Notifys extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...MARGIN_SCREEN
+    ...MARGIN_SCREEN,
+    marginBottom: 0,
   },
   separator: {
     width: "100%",

@@ -163,9 +163,16 @@ export default class Home extends Component {
               store_data: data.site,
               // user_notice: data.notices.length > 0 ? data.notices : null, // ẩn đơn hàng của tôi
               newses_data: data.newses && data.newses.length ? data.newses : null,
+              title_newses_data: data.title_newses,
+              farm_newses_data: data.farm_newses && data.farm_newses.length ? data.farm_newses : null,
+              title_farm_newses_data: data.title_farm_newses,
               promotions: data.promotions && data.promotions.length ? data.promotions : null,
               products: data.products && data.products.length ? data.products : null,
+              title_products: data.title_products,
               like_products: data.like_products && data.like_products.length ? data.like_products : null,
+              title_like_products: data.title_like_products,
+              hot_products: data.hot_products && data.hot_products.length ? data.hot_products : null,
+              title_hot_products: data.title_hot_products,
               categorie_products: data.categories && data.categories.length ? data.categories : null,
               view_all_sites: data.view_all_sites == 1,
               view_all_notices: data.view_all_notices == 1,
@@ -321,7 +328,7 @@ export default class Home extends Component {
     }
   }
   // tới màn hình store
-  _goStores(item, categories) {
+  _goStores(item, category_id) {
     action(() => {
       store.setStoreData(item);
     })();
@@ -335,7 +342,7 @@ export default class Home extends Component {
 
     Actions.stores({
       title: item.name,
-      goCategories: categories
+      goCategory: category_id
     });
   }
   _cachedStore(key, thenFunc = () => 1, catchFunc = () => 1) {
@@ -375,17 +382,24 @@ export default class Home extends Component {
       finish,
       store_data,
       stores_data,
+      farm_newses_data,
+      title_farm_newses_data,
       newses_data,
+      title_newses_data,
       user_notice,
       view_all_newses,
       view_all_notices,
       view_all_sites,
       promotions,
-      products,
       show_tutorial_tab,
       show_add_store,
       show_go_store,
+      products,
       like_products,
+      hot_products,
+      title_products,
+      title_like_products,
+      title_hot_products,
       categorie_products
     } = this.state;
     
@@ -445,7 +459,7 @@ export default class Home extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
                     <Icon name="phone" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Gọi FoodHub</Text>
+                    <Text style={styles.add_store_action_label}>Gọi {this.state.store_data?this.state.store_data.name:""}</Text>
                   </View>
                 </TouchableHighlight>
 
@@ -455,7 +469,7 @@ export default class Home extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
                     <Icon name="comments" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Chat FoodHub</Text>
+                    <Text style={styles.add_store_action_label}>Chat {this.state.store_data?this.state.store_data.name:""}</Text>
                     {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
               <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
                   </View>
@@ -485,7 +499,7 @@ export default class Home extends Component {
               marginTop: 4,
               flexDirection: 'row'
             }}>
-              <Text style={styles.add_store_title}>NỔI BẬT</Text>
+              <Text style={styles.add_store_title}>{title_products}</Text>
 
               {(
                 <View style={styles.right_title_btn_box}>
@@ -529,7 +543,7 @@ export default class Home extends Component {
                   <Icon name="plus" size={16} color="#ffffff" />
                   <Text style={[styles.buttonActionTitle, {
                     color: "#ffffff"
-                  }]}>Vào cửa hàng</Text>
+                  }]}>Vào cửa hàng {this.state.store_data?this.state.store_data.name:""}</Text>
                 </View>
             </TouchableHighlight>
           </View>
@@ -544,14 +558,14 @@ export default class Home extends Component {
               marginTop: 4,
               flexDirection: 'row'
             }}>
-              <Text style={styles.add_store_title}>YÊU THÍCH</Text>
+              <Text style={styles.add_store_title}>{title_like_products}</Text>
 
               {(
                 <View style={styles.right_title_btn_box}>
                   <TouchableHighlight
                     style={styles.right_title_btn}
                     underlayColor="transparent"
-                    onPress={this._goStores.bind(this, this.state.store_data)}
+                    onPress={this._goStores.bind(this, this.state.store_data, 1)}
                     >
                     <Text style={[styles.add_store_title, {color: "#fa7f50"}]}>XEM TẤT CẢ</Text>
                   </TouchableHighlight>
@@ -599,7 +613,48 @@ export default class Home extends Component {
                   item={item}
                   index={index}
                   isCategories={true}
-                  onPress={this._goStores.bind(this, this.state.store_data, item)}
+                  onPress={this._goStores.bind(this, this.state.store_data, item.id)}
+                  />
+              ))}
+            </View>
+          )}
+
+          {hot_products && (<View style={styles.lineView}/>)}
+          {hot_products && (
+            <View style={{
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 4,
+              flexDirection: 'row'
+            }}>
+              <Text style={styles.add_store_title}>{title_hot_products}</Text>
+
+              {(
+                <View style={styles.right_title_btn_box}>
+                  <TouchableHighlight
+                    style={styles.right_title_btn}
+                    underlayColor="transparent"
+                    onPress={this._goStores.bind(this, this.state.store_data,2)}
+                    >
+                    <Text style={[styles.add_store_title, {color: "#fa7f50"}]}>XEM TẤT CẢ</Text>
+                  </TouchableHighlight>
+                </View>
+              )}
+            </View>
+          )}
+          {hot_products && (
+            <View style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap'
+            }}>
+              {hot_products.map((item, index) => (
+                <Items
+                  key={index}
+                  item={item}
+                  index={index}
+                  onPress={this._goItem.bind(this, item)}
                   />
               ))}
             </View>
@@ -623,6 +678,53 @@ export default class Home extends Component {
             </View>
           )}
 
+          {farm_newses_data && (<View style={styles.lineView}/>)}
+          {farm_newses_data != null && (
+            <View style={{
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 4,
+              flexDirection: 'row'
+            }}>
+            <Text style={styles.add_store_title}>{title_farm_newses_data}</Text>
+
+              <View style={styles.right_title_btn_box}>
+                <TouchableHighlight
+                  style={styles.right_title_btn}
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Actions.notifys_farm({
+                      isNotifysTime: true,
+                      title: title_farm_newses_data,
+                      news_type: "/46"
+                    });
+                  }}>
+                  <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                </TouchableHighlight>
+              </View>
+          </View>
+          )}
+          {farm_newses_data && (
+            <FlatList
+              data={farm_newses_data}
+              renderItem={({item, index}) => {
+                if (index == 0) {
+                  this.defaultNewBoxHeight = 0;
+                }
+
+                this.defaultNewBoxHeight += (isIOS ? 116 : 124);
+
+                return(
+                  <NewItemComponent
+                    item={item} />
+                );
+              }}
+              keyExtractor={item => item.id}
+            />
+          )}
+
           {newses_data && (<View style={styles.lineView}/>)}
           {newses_data != null && (
             <View style={{
@@ -633,24 +735,22 @@ export default class Home extends Component {
               marginTop: 4,
               flexDirection: 'row'
             }}>
-              <Text style={styles.add_store_title}>TIN TỨC</Text>
+            <Text style={styles.add_store_title}>{title_newses_data}</Text>
 
-              {view_all_newses && (
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions.notifys({
-                        title: "TIN KHUYẾN MÃI",
-                        news_type: "/1"
-                      });
-                    }}>
-                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
-                </View>
-              )}
-            </View>
+              <View style={styles.right_title_btn_box}>
+                <TouchableHighlight
+                  style={styles.right_title_btn}
+                  underlayColor="transparent"
+                  onPress={() => {
+                    Actions._main_notify({
+                      title: title_newses_data,
+                      news_type: "/1"
+                    });
+                  }}>
+                  <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                </TouchableHighlight>
+              </View>
+          </View>
           )}
           {newses_data && (
             <FlatList

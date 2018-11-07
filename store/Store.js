@@ -78,6 +78,9 @@ class Store {
 
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
+          if(response.data.new_totals > 0){
+            this.setRefreshNews(this.refresh_news + 1);
+          } 
           this.setNotify(response.data);
         })();
       }
