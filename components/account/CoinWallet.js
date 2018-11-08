@@ -92,7 +92,7 @@ export default class CoinWallet extends Component {
               <Text style={styles.profile_list_label}>Số dư ví XU:</Text>
               <Text style={styles.profile_list_label_point}>{user_info.point}</Text>
             </View>
-            <View style={styles.lineView} />
+            <View style={styles.lineViewWallet} />
             <View style={styles.labelCoinView}>
               <Text style={styles.profile_list_small_label}>Số Xu tạm giữ</Text>
               <Text style={styles.profile_list_label_point}>{user_info.point_expire}</Text>
@@ -187,6 +187,14 @@ const styles = StyleSheet.create({
     marginLeft: 1,
     marginRight: 1,
     marginBottom: 10,
+    height: 1,
+    backgroundColor: '#dddddd'
+  },
+  lineViewWallet: {
+    marginTop: 1,
+    marginLeft: 1,
+    marginRight: 1,
+    marginBottom: 1,
     height: 1,
     backgroundColor: '#dddddd'
   },
