@@ -42,7 +42,7 @@ export default class Notifys extends Component {
   _setOptionList() {
     return [
         {
-          key: 0,
+          key: "0",
           label: "Lịch hàng hóa",
           desc: "Thông tin hàng hóa hàng tuần tại Foodhub",
           icon: "calendar",
@@ -59,7 +59,7 @@ export default class Notifys extends Component {
           iconColor: "#ffffff"
         },
         {
-          key: 1,
+          key: "1",
           label: "Trang trại FoodHub",
           desc: "Các trang trại trong hệ thống FoodHub",
           icon: "lemon-o",

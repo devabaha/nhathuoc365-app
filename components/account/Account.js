@@ -67,7 +67,7 @@ export default class Account extends Component {
         //   boxIconStyle: []
         // },
         {
-          key: 1,
+          key: "1",
           icon: "map-marker",
           label: "Địa chỉ của tôi",
           desc: "Quản lý địa chỉ nhận hàng",
@@ -79,30 +79,9 @@ export default class Account extends Component {
           }],
           iconColor: "#ffffff"
         },
-        {
-          key: 2,
-          icon: "envelope",
-          label: "Gửi phản hồi tới quản trị ứng dụng",
-          desc: "Đóng góp, ý kiến của bạn",
-          onPress: () => {
-            var user = {}
-            // edit...
-            var to = 'info@foodhub.vn';
-            var subject = '';
-
-            var body = '';
-
-            Communications.email([to], null, null, subject, body);
-          },
-          boxIconStyle: [styles.boxIconStyle, {
-            backgroundColor: "#ff6d64"
-          }],
-          iconColor: "#ffffff",
-          marginTop: true
-        },
 
         {
-          key: 3,
+          key: "2",
           isHidden: !isAdmin,
           icon: "home",
           label: "Cửa hàng của tôi",
@@ -119,9 +98,9 @@ export default class Account extends Component {
         },
 
         {
-          key: 4,
+          key: "3",
           icon: "facebook-square",
-          label: "Fanpage Food Hub",
+          label: "Fanpage FoodHub.vn",
           desc: "Facebook fanpage của ứng dụng",
           onPress: () => Communications.web("http://fanpage.foodhub.vn"),
           boxIconStyle: [styles.boxIconStyle, {
@@ -132,7 +111,7 @@ export default class Account extends Component {
         },
 
         {
-          key: 5,
+          key: "4",
           icon: "handshake-o",
           label: "Về Food Hub - Điều khoản sử dụng",
           desc: "Điều khoản sử dụng Food Hub",
@@ -148,7 +127,7 @@ export default class Account extends Component {
         },
 
         {
-          key: 6,
+          key: "5",
           icon: "question-circle",
           label: "Thông tin ứng dụng",
           desc: "Sản phẩm của Food Hub - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
@@ -188,7 +167,7 @@ export default class Account extends Component {
 
   _onTapAvatar() {
     const options = {
-      title: 'Cập nhật ảnh đại diện',
+      title: 'Cập nhật ảnh đại diện tài khoản',
       cancelButtonTitle: 'Huỷ bỏ',
       takePhotoButtonTitle: 'Chụp ảnh',
       chooseFromLibraryButtonTitle: 'Chọn ảnh từ thư viện',
@@ -270,7 +249,7 @@ export default class Account extends Component {
     if (notify.updating_version > 0) {
       if (!this.state.options[this.key_add_new]) {
         this.state.options.push({
-          key: 7,
+          key: "6",
           icon: "cloud-download",
           label: "Cập nhật ứng dụng",
           desc: "Cập nhật lên phiên bản ổn định " + notify.new_version + " ngay!",
@@ -394,8 +373,8 @@ export default class Account extends Component {
       <View style={styles.container}>
         <View style={styles.profile_cover_box}>
           <ImageBackground style={styles.profile_cover} source={require('../../images/profile_bgr.jpg')}>
-{/* onPress={this._onTapAvatar.bind(this)} */}
             <TouchableHighlight
+              onPress={this._onTapAvatar.bind(this)}
               style={styles.profile_avatar_box}
               underlayColor="#cccccc">
               {avatar}
@@ -550,7 +529,7 @@ export default class Account extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>Ví Xu: <Text style={styles.profile_list_label_point}>{user_info.point}</Text></Text>
-                  <Text style={styles.profile_list_small_label}>Số Xu sắp hết hạn: {user_info.point_expire}</Text>
+                  <Text style={styles.profile_list_small_label}>Số Xu tạm giữ: {user_info.point_expire}</Text>
                 </View>
 
                 <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
