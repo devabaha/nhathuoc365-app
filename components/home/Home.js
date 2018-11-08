@@ -163,8 +163,10 @@ export default class Home extends Component {
               store_data: data.site,
               // user_notice: data.notices.length > 0 ? data.notices : null, // ẩn đơn hàng của tôi
               newses_data: data.newses && data.newses.length ? data.newses : null,
+              newses_type: data.newses_type,
               title_newses_data: data.title_newses,
               farm_newses_data: data.farm_newses && data.farm_newses.length ? data.farm_newses : null,
+              farm_newses_type: data.farm_newses_type,
               title_farm_newses_data: data.title_farm_newses,
               promotions: data.promotions && data.promotions.length ? data.promotions : null,
               products: data.products && data.products.length ? data.products : null,
@@ -384,8 +386,10 @@ export default class Home extends Component {
       stores_data,
       farm_newses_data,
       title_farm_newses_data,
+      farm_newses_type,
       newses_data,
       title_newses_data,
+      newses_type,
       user_notice,
       view_all_newses,
       view_all_notices,
@@ -696,9 +700,9 @@ export default class Home extends Component {
                   underlayColor="transparent"
                   onPress={() => {
                     Actions.notifys_farm({
-                      isNotifysTime: true,
+                      isNotifysTime: farm_newses_type == 1?false:true,
                       title: title_farm_newses_data,
-                      news_type: "/46"
+                      news_type: "/" + farm_newses_type
                     });
                   }}>
                   <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
@@ -742,9 +746,10 @@ export default class Home extends Component {
                   style={styles.right_title_btn}
                   underlayColor="transparent"
                   onPress={() => {
-                    Actions._main_notify({
+                    Actions.notifys_time({
+                      isNotifysTime: newses_type == 1?false:true,
                       title: title_newses_data,
-                      news_type: "/1"
+                      news_type: "/"+newses_type
                     });
                   }}>
                   <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
@@ -771,46 +776,6 @@ export default class Home extends Component {
             />
           )}
 
-          {user_notice && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-              <Text style={styles.add_store_title}>ĐƠN HÀNG CỦA TÔI</Text>
-
-              {(
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions._orders({type: ActionConst.REFRESH})
-                    }}>
-                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
-                </View>
-              )}
-            </View>
-          )}
-
-          {user_notice && (
-            <FlatList
-              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-              data={user_notice}
-              style={[styles.profile_list_opt]}
-              renderItem={({item, index}) => {
-                return(
-                  <NotifyItemComponent
-                    item={item} />
-                );
-              }}
-              keyExtractor={item => item.id}
-            />
-          )}
           <View style={styles.right_title_btn_box}>
             <Text> </Text>
           </View>
