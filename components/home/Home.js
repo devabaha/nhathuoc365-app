@@ -603,7 +603,7 @@ export default class Home extends Component {
               marginTop: 4,
               alignItems: "center"
             }}>
-              <Text style={styles.add_store_title}>DANH MỤC SẢN PHẨM</Text>
+              <Text style={styles.add_store_title}>DANH MỤC THỰC PHẨM</Text>
             </View>
           )}
           {categorie_products && (

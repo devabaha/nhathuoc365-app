@@ -286,7 +286,8 @@ export default class App extends Component {
               finish: true
             }, () => {
               Actions.choose_location({
-                type: ActionConst.RESET
+                type: ActionConst.RESET,
+                title: "CHỌN CỬA HÀNG"
               });
             });
           })();
