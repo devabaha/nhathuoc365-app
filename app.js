@@ -568,28 +568,10 @@ export default class App extends Component {
     Actions._main_notify({type: ActionConst.REFRESH});
   }
 
-  render() {
-    if (!this.state.finish) {
-      return(
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          {!Store.isConnected && (
-            <View style={styles.content}>
-              <Text style={styles.message}>Kiểm tra kết nối internet!</Text>
-            </View>
-          )}
-
-          <Indicator size="small" />
-        </View>
-      </SafeAreaView>
-      );
-    }
-
+  renderRounter() {
     // var { showIntro } = this.state;
     var showIntro = false;
-
-    return(
-      <SafeAreaView style={styles.safeArea}>
+    return (
       <Router
         backAndroidHandler={this._backAndroidHandler.bind(this)}
         createReducer={reducerCreate}
@@ -715,8 +697,35 @@ export default class App extends Component {
           <Scene key="error" component={Error}/>
         </Scene>
       </Router>
-      </SafeAreaView>
     );
+  }
+
+  render() {
+    if (!this.state.finish) {
+      return(
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.container}>
+          {!Store.isConnected && (
+            <View style={styles.content}>
+              <Text style={styles.message}>Kiểm tra kết nối internet!</Text>
+            </View>
+          )}
+
+          <Indicator size="small" />
+        </View>
+      </SafeAreaView>
+      );
+    }
+
+    if (global.isIPhoneX) {
+      return(
+        <SafeAreaView style={styles.safeArea}>
+          {this.renderRounter()}
+        </SafeAreaView>
+      );
+    } else {
+      return this.renderRounter();
+    }
   }
 }
 
