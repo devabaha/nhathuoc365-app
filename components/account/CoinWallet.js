@@ -94,7 +94,7 @@ export default class CoinWallet extends Component {
             </View>
             <View style={styles.lineViewWallet} />
             <View style={styles.labelCoinView}>
-              <Text style={styles.profile_list_small_label}>Số Xu tạm giữ</Text>
+              <Text style={styles.profile_list_small_label}>Số Xu hết hạn</Text>
               <Text style={styles.profile_list_label_point}>{user_info.point_expire}</Text>
             </View>
           </View>
@@ -116,7 +116,7 @@ export default class CoinWallet extends Component {
           </View>
         </TouchableWithoutFeedback>
         <View style={styles.lineView} />
-        <Text style={styles.historyCoinText}>Lịch sử xu</Text>
+        <Text style={styles.historyCoinText}>Lịch sử</Text>
         <FlatList
           data={this.state.historiesData}
           renderItem={(item, index) => this.renderRow(item, index)}

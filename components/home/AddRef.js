@@ -72,28 +72,26 @@ export default class AddRef extends Component {
 
     return (
       <View style={styles.container}>
-        <ImageBackground resizeMode="stretch" style={styles.image} source={require('../../images/foodhub_loadding_screen.png')}>
+        <ImageBackground resizeMode="stretch" style={styles.image} source={require('../../images/bg.png')}>
         <ScrollView
           style={{
             marginBottom: store.keyboardTop
           }}
           keyboardShouldPersistTaps="always">
           <View style={styles.store_result_item_image_box}>
-            <CachedImage mutable style={styles.store_result_item_image} source={require('../../images/icon-320.png')} />
+            <CachedImage mutable style={styles.store_result_item_image} source={require('../../images/logofoodhub-01.png')} />
           </View>
         
           <View style={styles.invite_text_input}>
             <View style={styles.invite_text_input_sub}>
             <Text style={{
               fontWeight: '500',
-              color: "#ffffff",
+              color: "#444444",
               fontSize: 16,
               marginLeft: 0,
               marginTop: 15,
               marginBottom: 8,
-              textShadowColor: 'rgba(0, 0, 0, 0.9)',
-              textShadowOffset: {width: -1, height: 1},
-              textShadowRadius: 10
+            
             }}>
               {store.user_info.km_text ? (store.user_info.km_text) : (
                 "Nhập số điện thoại Người giới thiệu để được giảm giá tới 30%"
@@ -150,7 +148,7 @@ export default class AddRef extends Component {
                     onPress={this._onFinish.bind(this)}
                     underlayColor="transparent">
                     <Text style={[styles.buttonActionTitle, {
-                        color: "#ffffff"
+                        color: "#666666"
                       }]}>Bỏ qua</Text>
                   </TouchableHighlight>
             </View>
@@ -169,7 +167,7 @@ export default class AddRef extends Component {
         }}>
         <View style={styles.invite_text_input_sub}>
           <Text style={{
-            color: "#ffffff",
+            color: "#333333",
             fontSize: 14,
             marginBottom: 10,
             textShadowColor: 'rgba(0, 0, 0, 0.9)',
@@ -221,8 +219,8 @@ const styles = StyleSheet.create({
     marginTop: 40
   },
   store_result_item_image: {
-    width: 120,
-    height: 120,
+    width: 320,
+    height: 205,
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',

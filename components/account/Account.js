@@ -529,7 +529,7 @@ export default class Account extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>Ví Xu: <Text style={styles.profile_list_label_point}>{user_info.point}</Text></Text>
-                  <Text style={styles.profile_list_small_label}>Số Xu tạm giữ: {user_info.point_expire}</Text>
+                  <Text style={styles.profile_list_small_label}>Số Xu hết hạn: {user_info.point_expire}</Text>
                 </View>
 
                 <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
