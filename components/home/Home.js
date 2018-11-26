@@ -161,7 +161,7 @@ export default class Home extends Component {
               show_add_store: false,
               stores_data: data.sites && data.sites.length > 0 ? data.sites : null,
               store_data: data.site,
-              // user_notice: data.notices.length > 0 ? data.notices : null, // ẩn đơn hàng của tôi
+              user_notice: data.notices.length > 0 ? data.notices : null,
               newses_data: data.newses && data.newses.length ? data.newses : null,
               newses_type: data.newses_type,
               title_newses_data: data.title_newses,
@@ -492,6 +492,46 @@ export default class Home extends Component {
                 </TouchableHighlight>
               </View>
             </View>
+          )}
+          {user_notice && (
+            <View style={{
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              borderBottomWidth: Util.pixel,
+              borderColor: "#dddddd",
+              marginTop: 4,
+              flexDirection: 'row'
+            }}>
+              <Text style={styles.add_store_title}>THÔNG BÁO</Text>
+
+              {view_all_notices && (
+                <View style={styles.right_title_btn_box}>
+                  <TouchableHighlight
+                    style={styles.right_title_btn}
+                    underlayColor="transparent"
+                    onPress={() => {
+                      Actions._main_notify({type: ActionConst.REFRESH});
+                    }}>
+                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
+                  </TouchableHighlight>
+                </View>
+              )}
+            </View>
+          )}
+
+          {user_notice && (
+            <FlatList
+              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+              data={user_notice}
+              style={[styles.profile_list_opt]}
+              renderItem={({item, index}) => {
+                return(
+                  <NotifyItemComponent
+                    item={item} />
+                );
+              }}
+              keyExtractor={item => item.id}
+            />
           )}
 
           {products && (

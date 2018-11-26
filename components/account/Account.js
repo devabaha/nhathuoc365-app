@@ -524,7 +524,7 @@ export default class Account extends Component {
                 <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
                   backgroundColor: "#4267b2"
                 }]}>
-                  <Icon name="product-hunt" size={16} color="#ffffff" />
+                  <CachedImage mutable style={styles.point_icon} source={require('../../images/foodhub-xu-small.png')} />
                 </View>
 
                 <View>
@@ -713,6 +713,10 @@ const styles = StyleSheet.create({
     // resizeMode: 'cover'
   },
 
+  point_icon: {
+    width: 30,
+    height: 30,
+  },
   profile_button_box: {
     position: 'absolute',
     bottom: 42,

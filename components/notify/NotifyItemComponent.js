@@ -47,6 +47,15 @@ export default class NotifyItemComponent extends Component {
           }
         });
         break;
+      case 'coin_wallet':
+        Actions.coin_wallet();
+        break;
+      case 'voucher':
+        Actions.voucher();
+        break;
+      case 'mission':
+        Actions.mission();
+        break;
     }
   }
 

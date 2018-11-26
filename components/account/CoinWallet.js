@@ -84,7 +84,7 @@ export default class CoinWallet extends Component {
       <View style={styles.profile_list_opt_btn}>
           <View style={styles.iconView}>
             <View style={styles.profile_list_icon_box}>
-              <Icon name="product-hunt" size={20} color="#ffffff" />
+              <CachedImage mutable style={styles.point_icon} source={require('../../images/foodhub-xu-small.png')} />
             </View>
           </View>
           <View style={styles.labelCoinParentView}>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   profile_list_opt_btn: {
     width: Util.size.width,
-    height: 52,
+    height: 72,
     backgroundColor: "#ffffff",
     flexDirection: 'row',
     alignItems: 'center',
@@ -143,6 +143,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderTopWidth: 0,
     borderColor: "#dddddd"
+  },
+  point_icon: {
+    width: 60,
+    height: 60,
   },
   iconView: {
     alignItems: 'center',
@@ -152,12 +156,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    width: 40,
-    height: 40,
-    marginLeft: 4,
-    marginRight: 4,
-    borderRadius: 20,
-    backgroundColor: "#4267b2"
+    width: 70,
+    height: 70
   },
   profile_list_label: {
     fontSize: 18,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   containerRowView: {
     flex: 1,
-    height: 60,
+    height: 70,
     flexDirection: 'row',
     alignItems: 'center'
   },
