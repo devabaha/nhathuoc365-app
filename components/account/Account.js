@@ -350,7 +350,7 @@ export default class Account extends Component {
 
   render() {
 
-    var is_login = store.user_info != null && store.user_info.verify_flag == STATUS_VERIFYED;
+    var is_login = store.user_info != null && store.user_info.username != null;
     var {user_info} = store;
 
     var {avatar_loading, logout_loading} = this.state;

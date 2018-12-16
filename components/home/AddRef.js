@@ -155,44 +155,6 @@ export default class AddRef extends Component {
           </View>
 
         </ScrollView>
-
-        <View style={{
-          position: 'absolute',
-          bottom: store.keyboardTop,
-          left: 0,
-          width: Util.size.width,
-          height: 80,
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-        <View style={styles.invite_text_input_sub}>
-          <Text style={{
-            color: "#333333",
-            fontSize: 14,
-            marginBottom: 10,
-            textShadowColor: 'rgba(0, 0, 0, 0.9)',
-            textShadowOffset: {width: -1, height: 1},
-            textShadowRadius: 10
-          }}>Chưa có mã giới thiệu, vào FoodHub với nhiều khuyến mại đang chờ bạn</Text>
-          
-          <TouchableHighlight
-            style={[styles.buttonAction, {
-              marginBottom: 20
-            }]}
-            onPress={this._onFinish.bind(this)}
-            underlayColor="transparent">
-            <View style={[styles.boxButtonAction, {
-              backgroundColor: DEFAULT_COLOR,
-              borderColor: DEFAULT_COLOR
-            }]}>
-              <Icon name="angle-right" size={16} color="#ffffff" />
-              <Text style={[styles.buttonActionTitle, {
-                color: "#ffffff"
-              }]}>Vào FoodHub.vn</Text>
-            </View>
-          </TouchableHighlight>
-        </View>
-        </View>
         </ImageBackground>
       </View>
     );
@@ -219,8 +181,8 @@ const styles = StyleSheet.create({
     marginTop: 40
   },
   store_result_item_image: {
-    width: 320,
-    height: 205,
+    width: 240,
+    height: 150,
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',

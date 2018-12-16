@@ -534,7 +534,7 @@ export default class Confirm extends Component {
       }
     }
 
-    var is_login = store.user_info != null && store.user_info.verify_flag == STATUS_VERIFYED;
+    var is_login = store.user_info != null && store.user_info.username != null;
     var is_ready = cart_data.status == CART_STATUS_READY;
     var is_reorder = cart_data.status == CART_STATUS_COMPLETED;
     var is_paymenting = cart_data.status == CART_STATUS_ORDERING;
