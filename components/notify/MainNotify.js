@@ -63,13 +63,13 @@ export default class MainNotify extends Component {
         },
         {
           key: 1,
-          label: "Từ Food Hub",
-          desc: "Thông báo từ Food Hub",
+          label: "Từ MACCACA",
+          desc: "Thông báo từ MACCACA",
           icon: "lemon-o",
           notify: "new_sys_news",
           onPress: () => {
             Actions.notifys({
-              title: "Từ Food Hub",
+              title: "Từ MACCACA",
               news_type: "/2"
             });
           },

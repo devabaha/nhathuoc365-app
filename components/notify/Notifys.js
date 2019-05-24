@@ -43,8 +43,8 @@ export default class Notifys extends Component {
     return [
         {
           key: "0",
-          label: "Lịch hàng hóa",
-          desc: "Thông tin hàng hóa hàng tuần tại Foodhub",
+          label: "Tin tức",
+          desc: "Thông tin MACCACA",
           icon: "calendar",
           notify: "new_calendar_news",
           onPress: () => {
@@ -60,8 +60,8 @@ export default class Notifys extends Component {
         },
         {
           key: "1",
-          label: "Trang trại FoodHub",
-          desc: "Các trang trại trong hệ thống FoodHub",
+          label: "Chương trình khuyến mại",
+          desc: "Khách hàng thân thiết MACCACA",
           icon: "lemon-o",
           notify: "new_farm_news",
           onPress: () => {

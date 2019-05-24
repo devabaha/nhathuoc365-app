@@ -84,7 +84,7 @@ export default class CoinWallet extends Component {
       <View style={styles.profile_list_opt_btn}>
           <View style={styles.iconView}>
             <View style={styles.profile_list_icon_box}>
-              <CachedImage mutable style={styles.point_icon} source={require('../../images/foodhub-xu-small.png')} />
+              <CachedImage mutable style={styles.point_icon} source={require('../../images/xu-small.png')} />
             </View>
           </View>
           <View style={styles.labelCoinParentView}>

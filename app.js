@@ -228,7 +228,7 @@ export default class App extends Component {
     OneSignal.addEventListener('ids', this._onIds.bind(this));
 
     // deep link register
-    DeepLinking.addScheme('foodhubapp://');
+    DeepLinking.addScheme('macccacaapp://');
     Linking.addEventListener('url', this.handleURL);
 
     var url = Linking.getInitialURL().then((url) => {
@@ -588,14 +588,14 @@ export default class App extends Component {
               <Scene
                 key="myTab1"
                 icon={TabIcon}
-                iconTitle="Food Hub"
+                iconTitle="MACCACA"
                 iconName="store"
                 size={24}
                 onPress={()=> {
                   Actions._home({type: ActionConst.REFRESH});
                 }}
                >
-                <Scene key="_home" title="Food Hub" component={Home} hideNavBar {...custommerNav} />
+                <Scene key="_home" title="Maccaca" component={Home} hideNavBar {...custommerNav} />
               </Scene>
 
               {/**
@@ -666,7 +666,7 @@ export default class App extends Component {
             <Scene key="orders_item" title="Chi tiết đơn hàng" component={OrdersItem} {...custommerNav} />
             <Scene key="notifys" title="Tin tức" component={Notifys} {...custommerNav} />
             <Scene key="notifys_time" title="Lịch hàng hóa" component={Notifys} {...custommerNav} />
-            <Scene key="notifys_farm" title="Trang trại FoodHub" component={Notifys} {...custommerNav} />
+            <Scene key="notifys_farm" title="Trang trại" component={Notifys} {...custommerNav} />
             <Scene key="notify_item" title="Chi tiết" component={NotifyItem} {...custommerNav} />
             <Scene key="search_store" title="Tìm cửa hàng" component={SearchStore} {...custommerNav} />
             <Scene key="scan_qr_code" title="Quét mã" component={ScanQRCode} {...custommerNav} />

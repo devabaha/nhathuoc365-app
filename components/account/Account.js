@@ -100,9 +100,9 @@ export default class Account extends Component {
         {
           key: "3",
           icon: "facebook-square",
-          label: "Fanpage FoodHub.vn",
+          label: "Fanpage MACCACA",
           desc: "Facebook fanpage của ứng dụng",
-          onPress: () => Communications.web("http://fanpage.foodhub.vn"),
+          onPress: () => Communications.web("http://fanpage.MACCACA.vn"),
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#4267b2"
           }],
@@ -113,10 +113,10 @@ export default class Account extends Component {
         {
           key: "4",
           icon: "handshake-o",
-          label: "Về Food Hub - Điều khoản sử dụng",
-          desc: "Điều khoản sử dụng Food Hub",
+          label: "Về MACCACA - Điều khoản sử dụng",
+          desc: "Điều khoản sử dụng",
           onPress: () => Actions.webview({
-            title: "Về Food Hub",
+            title: "Về MACCACA",
             url: MY_FOOD_API + "info/privacy"
           }),
           boxIconStyle: [styles.boxIconStyle, {
@@ -130,7 +130,7 @@ export default class Account extends Component {
           key: "5",
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Sản phẩm của Food Hub - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
+          desc: "Sản phẩm của MACCACA - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
           onPress: () => 1,
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"
@@ -524,7 +524,7 @@ export default class Account extends Component {
                 <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
                   backgroundColor: "#4267b2"
                 }]}>
-                  <CachedImage mutable style={styles.point_icon} source={require('../../images/foodhub-xu-small.png')} />
+                  <CachedImage mutable style={styles.point_icon} source={require('../../images/xu-small.png')} />
                 </View>
 
                 <View>

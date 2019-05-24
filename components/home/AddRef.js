@@ -79,7 +79,7 @@ export default class AddRef extends Component {
           }}
           keyboardShouldPersistTaps="always">
           <View style={styles.store_result_item_image_box}>
-            <CachedImage mutable style={styles.store_result_item_image} source={require('../../images/logofoodhub-01.png')} />
+            <CachedImage mutable style={styles.store_result_item_image} source={require('../../images/logo-640x410.jpg')} />
           </View>
         
           <View style={styles.invite_text_input}>
