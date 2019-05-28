@@ -1532,7 +1532,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.maccaca;
 				PRODUCT_NAME = my_food;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1566,7 +1566,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.maccaca;
 				PRODUCT_NAME = my_food;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
