@@ -21,7 +21,6 @@ export default class ScanQRCode extends Component {
           onRead={(e) => {
             var text_result = e.data;
             if (text_result) {
-
               if (isURL(text_result)) {
                 return Actions.webview({
                   title: text_result,

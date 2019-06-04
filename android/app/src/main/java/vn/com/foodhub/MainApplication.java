@@ -15,6 +15,7 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.horcrux.svg.SvgPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,7 +38,8 @@ public class MainApplication extends Application implements ReactApplication {
           new ReactNativeOneSignalPackage(),
           new RCTCameraPackage(),
           new VectorIconsPackage(),
-          new RNDeviceInfo()
+          new RNDeviceInfo(),
+          new SvgPackage()
       );
     }
   };
