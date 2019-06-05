@@ -75,6 +75,7 @@ import EditListProduct from './components/sale/EditListProduct';
 import Rating from './components/rating/Rating';
 import Error from './components/Error';
 import ChooseLocation from './components/home/ChooseLocation';
+import SyncNdt from './components/account/SyncNdt';
 import CoinWallet from './components/account/CoinWallet';
 
 // Backend
@@ -678,6 +679,7 @@ export default class App extends Component {
             <Scene key="intro" initial={showIntro} hideNavBar title="" component={Intro} {...custommerNav} />
             <Scene key="_add_ref" hideNavBar title="" component={AddRef} {...custommerNav} />
             <Scene key="choose_location" title="" component={ChooseLocation} {...custommerNav} />
+            <Scene key="sync_ndt" title="" component={SyncNdt} {...custommerNav} />
 
             {/* Backend */}
             <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />

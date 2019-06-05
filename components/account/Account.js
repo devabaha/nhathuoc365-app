@@ -578,7 +578,7 @@ export default class Account extends Component {
           {true && (
             <TouchableHighlight
               underlayColor="transparent"
-              // onPress={() => Actions.choose_location({title: "CHỌN CỬA HÀNG"})}
+              onPress={() => Actions.sync_ndt({title: "Nhập mã đồng bộ"})}
               >
 
               <View style={[styles.profile_list_opt_btn, {
