@@ -575,10 +575,11 @@ export default class Account extends Component {
               </View>
             </View>
           )}
-          {user_info.choose_location && (
+          {true && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions.choose_location({title: "CHỌN CỬA HÀNG"})}>
+              // onPress={() => Actions.choose_location({title: "CHỌN CỬA HÀNG"})}
+              >
 
               <View style={[styles.profile_list_opt_btn, {
                 marginTop: 1,
@@ -593,8 +594,8 @@ export default class Account extends Component {
                 </View>
 
                 <View>
-                  <Text style={styles.profile_list_label}>Chọn cửa hàng phục vụ</Text>
-                  <Text style={styles.profile_list_small_label}>Theo khu vực nhận đơn hàng</Text>
+                  <Text style={styles.profile_list_label}>Đồng bộ [Nhà đầu tư]</Text>
+                  <Text style={styles.profile_list_small_label}>Tích hợp với tài khoản trên hệ thống Nhà đầu tư</Text>
                 </View>
 
                 <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
