@@ -478,7 +478,7 @@ export default class Account extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }>
-          {user_info.open_vnd && (
+          {true && (
             <TouchableHighlight
               underlayColor="transparent">
 
@@ -495,7 +495,7 @@ export default class Account extends Component {
                 </View>
 
                 <View>
-                  <Text style={styles.profile_list_label}>Số dư ví: <Text style={styles.profile_list_label_balance}>{user_info.vnd}</Text></Text>
+                  <Text style={styles.profile_list_label}>Tài khoản Cashback: <Text style={styles.profile_list_label_balance}>{user_info.vnd}</Text></Text>
                   <Text style={styles.profile_list_small_label}>{user_info.text_vnd}</Text>
                 </View>
 
@@ -511,67 +511,69 @@ export default class Account extends Component {
 
             </TouchableHighlight>
           )}
-          {user_info.open_point && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() => Actions.coin_wallet()}>
-              <View style={[styles.profile_list_opt_btn, {
+          {(
+            <View style={{
                 marginTop: 1,
                 borderTopWidth: 0,
                 borderColor: "#dddddd"
-              }]}>
+              }}>
+              <View style={styles.add_store_actions_box}>
+                <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={styles.add_store_action_wallet}>
+                    <Icon style={{color: 'blue'}} name="credit-card" size={16} color="#333333" /> 
+                    <Text style={styles.add_store_action_wallet_text}>Đầu tư</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>10.000 CPDT</Text>
+                  </View>
+                </TouchableHighlight>
 
-                <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
-                  backgroundColor: "#4267b2"
-                }]}>
-                  <CachedImage mutable style={styles.point_icon} source={require('../../images/xu-small.png')} />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>Ví Xu: <Text style={styles.profile_list_label_point}>{user_info.point}</Text></Text>
-                  <Text style={styles.profile_list_small_label}>Số Xu hết hạn: {user_info.point_expire}</Text>
-                </View>
-
-                <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
-                  <Icon name="angle-right" size={16} color="#999999" />
-                </View>
-                {store.notify.notify_point > 0 && <View style={styles.stores_info_action_notify}>
-                  <Text style={styles.stores_info_action_notify_value}>{store.notify.notify_point}</Text></View>}
-
+                <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={[styles.add_store_action_wallet,{
+                      color: 'red'
+                    }]}>
+                      <Icon style={{color: 'red'}} name="credit-card" size={16} color="#333333" /> 
+                      <Text style={styles.add_store_action_wallet_text}>Lending</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>8.000.000 VND</Text>
+                  </View>
+                </TouchableHighlight>
               </View>
+              <View style={styles.add_store_actions_box}>
+              <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={styles.add_store_action_wallet}>
+                    <Icon style={{color: '#cc9900'}} name="credit-card" size={16} color="#333333" /> 
+                    <Text style={styles.add_store_action_wallet_text}>Sản phẩm</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>2.000.000 MAC</Text>
+                  </View>
+                </TouchableHighlight>
 
-            </TouchableHighlight>
-          )}
-          {user_info.open_point && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() => Communications.text(null, user_info.text_sms)}>
-
-              <View style={[styles.profile_list_opt_btn, {
-                marginTop: 1,
-                borderTopWidth: 0,
-                borderColor: "#dddddd"
-              }]}>
-
-                <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
-                  backgroundColor: "#51A9FF"
-                }]}>
-                  <Icon name="commenting-o" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>Mã giới thiệu: <Text style={styles.profile_list_label_invite_id}>{user_info.invite_id}</Text></Text>
-                  <Text style={styles.profile_list_small_label}>{user_info.text_intive}</Text>
-                </View>
-
-                <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
-                  <Icon name="angle-right" size={16} color="#999999" />
-                </View>
-                
-
+                <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={styles.add_store_action_wallet}>
+                    <Icon style={{color: 'green'}} name="credit-card" size={16} color="#333333" /> 
+                    <Text style={styles.add_store_action_wallet_text}>Đầu tư 4.0</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>100.000.000 VND</Text>
+                  </View>
+                </TouchableHighlight>
               </View>
-
-            </TouchableHighlight>
+            </View>
           )}
           {user_info.choose_location && (
             <TouchableHighlight
@@ -830,5 +832,45 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 20
+  },
+  add_store_actions_box: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingVertical: 8,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
+  },
+  add_store_action_btn: {
+    paddingVertical: 4
+  },
+  add_store_action_btn_box: {
+    alignItems: 'center',
+    // width: ~~((Util.size.width - 16) / 2),
+    width: ~~(Util.size.width / 2),
+    borderRightWidth: Util.pixel,
+    borderRightColor: '#ebebeb'
+  },
+  add_store_action_label: {
+    fontSize: 12,
+    color: '#404040',
+    marginTop: 4
+  },
+  add_store_action_wallet_text: {
+    fontSize: 15,
+    color: '#404040',
+    marginLeft: 3
+  },
+  add_store_action_wallet_content:{
+    fontSize: 16,
+    color: '#333333',
+    fontWeight: '700'
+  },
+  add_store_action_wallet: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    // paddingVertical: 8,
+    paddingHorizontal: 8,
+    // marginRight: 8
   },
 });
