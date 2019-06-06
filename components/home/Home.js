@@ -14,7 +14,9 @@ import {
 } from 'react-native';
 
 // library
-import Icon from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
@@ -483,6 +485,16 @@ export default class Home extends Component {
                     <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
                   </View>
                 </TouchableHighlight>
+                
+                <TouchableHighlight
+                  onPress={this._goQRCode.bind(this, this.state.store_data)}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <Icon name="barcode-scan" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Dùng thẻ</Text>
+                  </View>
+                </TouchableHighlight>
 
 
                 <TouchableHighlight
@@ -490,10 +502,8 @@ export default class Home extends Component {
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
-                    <Icon name="qrcode" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Scan QRCode</Text>
-                    {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
-                    <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
+                    <Icon name="barcode-scan" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Dùng thẻ</Text>
                   </View>
                 </TouchableHighlight>
 
@@ -502,7 +512,7 @@ export default class Home extends Component {
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                    <Icon name="shopping-cart" size={20} color="#333333" />
+                    <Icon name="shopping" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Vào Cửa hàng</Text>
                     {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
                     <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
