@@ -15,13 +15,44 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import QRCode from 'react-native-qrcode-svg';
 import Barcode from 'react-native-barcode-builder';
+import store from '../../store/Store';
+
+const timer = require("react-native-timer");
 
 export default class QRBarCode extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      index: 0
+      index: 0,
+      loading: false,
+      barcode: "barcode"
     };
+  }
+
+  componentWillMount() {
+    this._getData();
+    this.setTimmer()
+  }
+
+  setTimmer() {
+    timer.setTimeout(
+      this,
+      "hide",
+      () => {
+        this._getData();
+        this.setTimmer();
+      },
+      5000
+    );
+  }
+
+  async _getData() {
+    this.setState({ loading: true });
+    const response = await APIHandler.user_barcode(store.store_id);
+    console.log(response)
+    if (response && response.status == STATUS_SUCCESS) {
+      this.setState({ barcode: response.data.barcode})
+    }
   }
 
   renderQRCodeScanner() {
@@ -68,22 +99,25 @@ export default class QRBarCode extends Component {
   }
 
   renderMyQRCode() {
+    const { barcode } = this.state;
     return (
       <ScrollView style={{ flex: 1 }}>
         <Text style={styles.headerText}>
           Đưa mã QRCode cho thu ngân để tích điểm
         </Text>
         <Text style={styles.barcodeText}>
-          203 121 563 203 121 563 203
+          {barcode}
         </Text>
-        <Barcode 
-          value="Hello World" 
-          format="CODE128" 
-          background='transparent'/>
+        <View style={{ marginLeft: 30, marginRight: 30 }}>
+          <Barcode
+            value={barcode} 
+            format="CODE128" 
+            background='transparent'/>
+        </View>
         <View style={styles.qrCodeView}>
           <QRCode
           style={{ flex: 1 }}
-            value="Just some string value"
+            value={barcode}
             size={Util.size.width/3}
             logoBackgroundColor='transparent'
           />

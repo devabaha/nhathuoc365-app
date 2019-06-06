@@ -143,7 +143,7 @@ export default class Home extends Component {
           setTimeout(() => {
 
             var {data} = response;
-
+            
             // Animation is true when first loaded
             if (this.state.store_data == null) {
               layoutAnimation();
