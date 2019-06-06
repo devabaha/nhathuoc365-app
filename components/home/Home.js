@@ -242,6 +242,11 @@ export default class Home extends Component {
     Actions.scan_qr_code();
   }
 
+  _goQRCode() {
+    this._closePopup();
+    Actions.qr_bar_code();
+  }
+
   _closePopup() {
     if (this.refs_modal_add_store) {
         this.refs_modal_add_store.close();
@@ -475,7 +480,20 @@ export default class Home extends Component {
                     <Icon name="comments" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Chat {this.state.store_data?this.state.store_data.name:""}</Text>
                     {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
-              <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
+                    <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
+                  </View>
+                </TouchableHighlight>
+
+
+                <TouchableHighlight
+                  onPress={this._goQRCode.bind(this, this.state.store_data)}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <Icon name="qrcode" size={20} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Scan QRCode</Text>
+                    {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
+                    <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
                   </View>
                 </TouchableHighlight>
 
@@ -487,7 +505,7 @@ export default class Home extends Component {
                     <Icon name="shopping-cart" size={20} color="#333333" />
                     <Text style={styles.add_store_action_label}>Vào Cửa hàng</Text>
                     {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
-                <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
+                    <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
                   </View>
                 </TouchableHighlight>
               </View>
@@ -874,7 +892,7 @@ const styles = StyleSheet.create({
   add_store_action_btn_box: {
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 3),
+    width: ~~(Util.size.width / 4),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },

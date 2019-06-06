@@ -68,6 +68,7 @@ import NotifyItem from './components/notify/NotifyItem';
 import SearchStore from './components/home/SearchStore';
 import ListStore from './components/home/ListStore';
 import ScanQRCode from './components/home/ScanQRCode';
+import QRBarCode from './components/home/QRBarCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import ListProduct from './components/sale/ListProduct';
@@ -671,6 +672,7 @@ export default class App extends Component {
             <Scene key="notify_item" title="Chi tiết" component={NotifyItem} {...custommerNav} />
             <Scene key="search_store" title="Tìm cửa hàng" component={SearchStore} {...custommerNav} />
             <Scene key="scan_qr_code" title="Quét mã" component={ScanQRCode} {...custommerNav} />
+            <Scene key="qr_bar_code" title="Mã tài khoản" component={QRBarCode} {...custommerNav} />
             <Scene key="list_store" title="Cửa hàng" component={ListStore} {...custommerNav} />
             <Scene key="add_store" title="Thêm cửa hàng" component={AddStore} {...custommerNav} />
             <Scene key="store_orders" title="" component={StoreOrders} {...custommerNav} />

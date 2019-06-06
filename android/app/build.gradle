@@ -102,8 +102,8 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
-        manifestPlaceholders = [onesignal_app_id: "ea4623dc-3e0a-4390-b46d-0408a330ea63",
-                                onesignal_google_project_number: "810219337874"]
+        manifestPlaceholders = [onesignal_app_id: "",
+                                onesignal_google_project_number: ""]
     }
     signingConfigs {
         release {
@@ -146,6 +146,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-svg')
     compile project(':react-native-autoheight-webview')
     compile project(':react-native-image-picker')
     compile project(':react-native-fetch-blob')

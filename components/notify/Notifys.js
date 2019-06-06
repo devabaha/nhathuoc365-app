@@ -41,38 +41,38 @@ export default class Notifys extends Component {
 
   _setOptionList() {
     return [
-        {
-          key: "0",
-          label: "Tin tức",
-          desc: "Thông tin MACCACA",
-          icon: "calendar",
-          notify: "new_calendar_news",
-          onPress: () => {
-            Actions.notifys_time({ 
-              isNotifysTime: true,
-              news_type: "/47"
-            });
-          },
-          boxIconStyle: [styles.boxIconStyle, {
-            backgroundColor: "#fa7f50"
-          }],
-          iconColor: "#ffffff"
-        },
-        {
-          key: "1",
-          label: "Chương trình khuyến mại",
-          desc: "Khách hàng thân thiết MACCACA",
-          icon: "lemon-o",
-          notify: "new_farm_news",
-          onPress: () => {
-            Actions.notifys_farm({ 
-              isNotifysTime: true,
-              news_type: "/46"
-            });
-          },
-          boxIconStyle: [styles.boxIconStyle],
-          iconColor: "#ffffff"
-        }
+        // {
+        //   key: "0",
+        //   label: "Tin tức",
+        //   desc: "Thông tin MACCACA",
+        //   icon: "calendar",
+        //   notify: "new_calendar_news",
+        //   onPress: () => {
+        //     Actions.notifys_time({ 
+        //       isNotifysTime: true,
+        //       news_type: "/47"
+        //     });
+        //   },
+        //   boxIconStyle: [styles.boxIconStyle, {
+        //     backgroundColor: "#fa7f50"
+        //   }],
+        //   iconColor: "#ffffff"
+        // },
+        // {
+        //   key: "1",
+        //   label: "Chương trình khuyến mại",
+        //   desc: "Khách hàng thân thiết MACCACA",
+        //   icon: "lemon-o",
+        //   notify: "new_farm_news",
+        //   onPress: () => {
+        //     Actions.notifys_farm({ 
+        //       isNotifysTime: true,
+        //       news_type: "/46"
+        //     });
+        //   },
+        //   boxIconStyle: [styles.boxIconStyle],
+        //   iconColor: "#ffffff"
+        // }
       ];
   }
 
@@ -117,9 +117,9 @@ export default class Notifys extends Component {
 
     return (
       <View style={styles.container}>
-        {this.props.isNotifysTime ? null :
+        {/* {this.props.isNotifysTime ? null :
           (<SelectionList data={this.state.navigators} containerStyle={{ height: 125 }}/>)
-        }
+        } */}
         {this.state.data != null ? (
           <FlatList
             style={{marginTop:2}}
