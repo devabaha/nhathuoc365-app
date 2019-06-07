@@ -628,7 +628,7 @@ export default class App extends Component {
                   Actions._orders({type: ActionConst.REFRESH});
                 }}
                >
-                  <Scene key="_orders" title="Đơn hàng" component={Orders} {...custommerNav} />
+                  <Scene key="_orders" title="Đơn hàng" component={StoreOrders} {...custommerNav} />
               </Scene>
 
               {/**
@@ -679,7 +679,7 @@ export default class App extends Component {
             <Scene key="chat" title="" component={Chat} {...custommerNav} />
             <Scene key="webview" title="" component={WebView} {...custommerNav} />
             <Scene key="intro" initial={showIntro} hideNavBar title="" component={Intro} {...custommerNav} />
-            <Scene key="_add_ref" hideNavBar title="" component={AddRef} {...custommerNav} />
+            <Scene key="_add_ref" title="" component={AddRef} {...custommerNav} />
             <Scene key="choose_location" title="" component={ChooseLocation} {...custommerNav} />
             <Scene key="sync_ndt" title="" component={SyncNdt} {...custommerNav} />
 

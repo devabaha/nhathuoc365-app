@@ -607,6 +607,38 @@ export default class Account extends Component {
 
             </TouchableHighlight>
           )}
+          {true && (
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() => Actions._add_ref({title: "Nhập mã giới thiệu"})}
+              >
+
+              <View style={[styles.profile_list_opt_btn, {
+                marginTop: 1,
+                borderTopWidth: 0,
+                borderColor: "#dddddd"
+              }]}>
+
+                <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
+                  backgroundColor: "#688efb"
+                }]}>
+                  <Icon name="globe" size={16} color="#ffffff" />
+                </View>
+
+                <View>
+                  <Text style={styles.profile_list_label}>Nhập mã giới thiệu</Text>
+                  <Text style={styles.profile_list_small_label}>Tham gia hệ thống Cashback 4.0</Text>
+                </View>
+
+                <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                  <Icon name="angle-right" size={16} color="#999999" />
+                </View>
+                
+
+              </View>
+
+            </TouchableHighlight>
+          )}
           {this.state.options && (
             <SelectionList
               containerStyle={{

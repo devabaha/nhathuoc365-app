@@ -51,6 +51,11 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  async user_barcode(site_id) {
+    var api = url_for(API.USER_BARCODE+ '/' + site_id);
+    return await this.getAPI(api);
+  }
+
   /**
   * Tìm cửa hàng theo mã CH
   */

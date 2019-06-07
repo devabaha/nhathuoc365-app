@@ -25,6 +25,7 @@ exports.SITE_DETAIL = MY_FOOD_API + 'apiSite/detail';
 exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
 exports.SEARCH_PRODUCT = MY_FOOD_API + 'apiSite/search_product';
 exports.USER_SITES = MY_FOOD_API + 'apiUser/sites';
+exports.USER_BARCODE = MY_FOOD_API + 'apiSite/user_barcode';
 exports.USER_REMOVE_SITE = MY_FOOD_API + 'apiUser/remove_site';
 exports.USER_ADD_REF = MY_FOOD_API + 'apiUser/add_ctv';
 

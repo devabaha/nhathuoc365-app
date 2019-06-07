@@ -178,11 +178,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: "",
-    marginTop: 40
+    marginTop: 100
   },
   store_result_item_image: {
-    width: 240,
-    height: 150,
+    width: 120,
+    height: 75,
     resizeMode: 'cover',
     justifyContent: 'center',
     alignItems: 'center',
