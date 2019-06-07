@@ -49,7 +49,7 @@ export default class ScanQRCode extends Component {
             <View style={styles.topContent}>
               <Text style={styles.centerText}>
                 <Icon name="info-circle" size={16} color="#404040" />
-                {" Hướng máy ảnh của bạn về phía mã QR Code để thêm Cửa hàng"}
+                {" Hướng máy ảnh của bạn về phía mã QR Code để khám phá"}
               </Text>
             </View>
           )}

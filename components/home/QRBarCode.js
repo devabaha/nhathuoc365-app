@@ -25,7 +25,7 @@ export default class QRBarCode extends Component {
     this.state = {
       index: props.index || 0,
       loading: false,
-      barcode: "barcode"
+      barcode: "000 000 000 000"
     };
   }
 
@@ -90,7 +90,7 @@ export default class QRBarCode extends Component {
           <View style={styles.topContent}>
             <Text style={styles.centerText}>
               <Icon name="camera-party-mode" size={16} color="#404040" />
-              {" Hướng máy ảnh của bạn về phía mã QR Code để thêm Cửa hàng"}
+              {" Hướng máy ảnh của bạn về phía mã QR Code để khám phá"}
             </Text>
           </View>
         )}
@@ -131,7 +131,7 @@ export default class QRBarCode extends Component {
           ●  Đây là mã vạch đại diện cho tài khoản của bạn
         </Text>
         <Text style={styles.descText}>
-          ●  Sử dụng mã vạch này để nhận tiền từ người khác và nhận hoàn tiền từ cửa hàng
+          ●  Sử dụng mã vạch này để nhận hoàn tiền từ cửa hàng
         </Text>
       </ScrollView>
     );

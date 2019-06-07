@@ -608,7 +608,7 @@ export default class Home extends Component {
                   backgroundColor: "#fa7f50",
                   borderColor: "#999999"
                 }]}>
-                  <Icon name="plus" size={16} color="#ffffff" />
+                  <Icon name="shopping" size={16} color="#ffffff" />
                   <Text style={[styles.buttonActionTitle, {
                     color: "#ffffff"
                   }]}>Vào cửa hàng {this.state.store_data?this.state.store_data.name:""}</Text>
