@@ -78,6 +78,7 @@ import Error from './components/Error';
 import ChooseLocation from './components/home/ChooseLocation';
 import SyncNdt from './components/account/SyncNdt';
 import CoinWallet from './components/account/CoinWallet';
+import VndWallet from './components/account/VndWallet';
 
 // Backend
 import Dashboard from './components/dashboard/Dashboard';
@@ -313,7 +314,8 @@ export default class App extends Component {
             finish: true
           }, () => {
             Actions._add_ref({
-              type: ActionConst.RESET
+              type: ActionConst.RESET,
+              title: "Nhập mã giới thiệu"
             });
           });
         })();
@@ -682,6 +684,7 @@ export default class App extends Component {
             <Scene key="_add_ref" title="" component={AddRef} {...custommerNav} />
             <Scene key="choose_location" title="" component={ChooseLocation} {...custommerNav} />
             <Scene key="sync_ndt" title="" component={SyncNdt} {...custommerNav} />
+            <Scene key="vnd_wallet" title="" component={VndWallet} {...custommerNav} />
 
             {/* Backend */}
             <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />

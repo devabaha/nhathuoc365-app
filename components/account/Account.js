@@ -478,10 +478,10 @@ export default class Account extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }>
-          {true && (
+          {true && (//vnd_wallet
             <TouchableHighlight
-              underlayColor="transparent">
-
+              underlayColor="transparent"
+              onPress={() => Actions.vnd_wallet({title: "TK Cashback 4.0"})}>
               <View style={[styles.profile_list_opt_btn, {
                 marginTop: 0,
                 borderTopWidth: 0,

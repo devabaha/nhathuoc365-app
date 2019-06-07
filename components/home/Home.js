@@ -244,6 +244,12 @@ export default class Home extends Component {
     Actions.qr_bar_code({index:1});
   }
 
+  _goScanQR() {
+    this._closePopup();
+
+    Actions.scan_qr_code();
+  }
+
   _goQRCode() {
     this._closePopup();
     Actions.qr_bar_code();
