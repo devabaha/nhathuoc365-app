@@ -58,6 +58,7 @@ export default class QRBarCode extends Component {
   renderQRCodeScanner() {
     return (
       <QRCodeScanner
+        checkAndroid6Permissions={true}
         onRead={(e) => {
           var text_result = e.data;
           if (text_result) {
@@ -109,7 +110,7 @@ export default class QRBarCode extends Component {
           <Barcode
             value={barcode} 
             format="CODE128" 
-            width='1.5'
+            width="1"
             background='transparent'/>
         </View>
         <Text style={styles.barcodeText}>
@@ -160,7 +161,7 @@ export default class QRBarCode extends Component {
             <TouchableOpacity style={styles.bottomButton}
               onPress={() => this.onPressTabButton(0)}
               activeOpacity={1}>
-                <Icon name='qrcode-edit'
+                <Icon name='barcode-scan'
                   size={20} 
                   color={index==0 ? global.DEFAULT_COLOR : "#000"} />
                 <Text style={[styles.titleBottomButton,
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
     height: Util.size.height - global.heightTabbar - global.NAV_HEIGHT
   },
   bottomView: {
-    height: heightTabbar,
+    height: global.heightTabbar,
     flexDirection: 'row'
   },
   lineView: {

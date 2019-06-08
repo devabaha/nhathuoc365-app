@@ -23,7 +23,8 @@ export default class SyncNdt extends Component {
 
     this.state = {
       pageNum: 0,
-      stores_data: null
+      stores_data: store.stores_data,
+      user: store.user_info
     }
   }
 
@@ -68,8 +69,11 @@ export default class SyncNdt extends Component {
   }
 
   render() {
-    var {pageNum} = this.state;
-
+    var {pageNum, stores_data, user} = this.state;
+    // $user->w_ndt = 0;
+    //     $user->w_lending = 0;
+    //     $user->w_product = 0;
+    //     $user->w_ndt_40 = 0;
     return (
       <View style={styles.container}>
         <ScrollView
@@ -77,65 +81,145 @@ export default class SyncNdt extends Component {
             marginBottom: store.keyboardTop
           }}
           keyboardShouldPersistTaps="always">
-        
-          <View style={styles.invite_text_input}>
-            <View style={styles.invite_text_input_sub}>
-            <Text style={{
-              fontWeight: '500',
-              color: "#444444",
-              fontSize: 16,
-              marginLeft: 0,
-              marginTop: 15,
-              marginBottom: 8,
-            
-            }}>
-              Nhập mã xác thực trên Web [Nhà đầu tư] để đồng bộ tài khoản
-            </Text>
-            <TextInput
-              underlineColorAndroid="transparent"
-              ref={ref => this.searchInput = ref}
-              // onLayout={() => {
-              //   if (this.searchInput) {
-              //     this.searchInput.focus();
-              //   }
-              // }}
-              style={{
-                height: 42,
-                width: 250,
-                borderColor: "#dddddd",
-                borderWidth: 1,
-                marginHorizontal: 15,
-                paddingHorizontal: 8,
-                borderRadius: 2,
-                color: "#404040",
-                fontSize: 18,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: "#ffffff"
-              }}
-              placeholder=""
-              onChangeText={this._onChangeSearch.bind(this)}
-              onSubmitEditing={this._add_ref.bind(this)}
-              value={this.state.searchValue}
-            />
-            <TouchableHighlight
-                  style={[styles.buttonAction, {
-                    marginTop: 6
-                  }]}
-                  onPress={this._add_ref.bind(this)}
-                  underlayColor="transparent">
-                  <View style={[styles.boxButtonAction, {
-                    backgroundColor: "#fa7f50",
-                    borderColor: "#999999"
-                  }]}>
-                    <Icon name="check" size={16} color="#ffffff" />
-                    <Text style={[styles.buttonActionTitle, {
-                      color: "#ffffff"
-                    }]}>Xác nhận</Text>
+          {(
+            <View style={{
+                marginTop: 60,
+                borderTopWidth: 0,
+                borderColor: "#dddddd"
+              }}>
+              <View style={styles.add_store_actions_box}>
+                <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={styles.add_store_action_wallet}>
+                    <Icon style={{color: 'blue'}} name="credit-card" size={16} color="#333333" /> 
+                    <Text style={styles.add_store_action_wallet_text}>Đầu tư</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>{user.w_ndt} eCP</Text>
                   </View>
                 </TouchableHighlight>
+
+                <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={[styles.add_store_action_wallet,{
+                      color: 'red'
+                    }]}>
+                      <Icon style={{color: 'red'}} name="credit-card" size={16} color="#333333" /> 
+                      <Text style={styles.add_store_action_wallet_text}>Tiền mặt</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>{user.w_lending} VND</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+              <View style={styles.add_store_actions_box}>
+              <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={styles.add_store_action_wallet}>
+                    <Icon style={{color: '#cc9900'}} name="credit-card" size={16} color="#333333" /> 
+                    <Text style={styles.add_store_action_wallet_text}>Sản phẩm</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>{user.w_product} MAC</Text>
+                  </View>
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <View style={styles.add_store_action_wallet}>
+                    <Icon style={{color: 'green'}} name="credit-card" size={16} color="#333333" /> 
+                    <Text style={styles.add_store_action_wallet_text}>Đầu tư 4.0</Text>
+                    </View>
+                    <Text style={styles.add_store_action_wallet_content}>{user.w_ndt_40} VND</Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
             </View>
+          )}
+          {user.sync_ndt && (<View style={styles.invite_text_input}>
+              <View style={styles.invite_text_input_sub}>
+                <Text style={{
+                  fontWeight: '500',
+                  color: "#444444",
+                  fontSize: 16,
+                  marginLeft: 0,
+                  marginTop: 15,
+                  marginBottom: 8,
+                
+                }}>
+                  Nhập mã xác thực trên Web [Nhà đầu tư] để đồng bộ tài khoản
+                </Text>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  ref={ref => this.searchInput = ref}
+                  // onLayout={() => {
+                  //   if (this.searchInput) {
+                  //     this.searchInput.focus();
+                  //   }
+                  // }}
+                  style={{
+                    height: 42,
+                    width: 250,
+                    borderColor: "#dddddd",
+                    borderWidth: 1,
+                    marginHorizontal: 15,
+                    paddingHorizontal: 8,
+                    borderRadius: 2,
+                    color: "#404040",
+                    fontSize: 18,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: "#ffffff"
+                  }}
+                  placeholder=""
+                  onChangeText={this._onChangeSearch.bind(this)}
+                  onSubmitEditing={this._add_ref.bind(this)}
+                  value={this.state.searchValue}
+                />
+                <TouchableHighlight
+                    style={[styles.buttonAction, {
+                      marginTop: 6
+                    }]}
+                    onPress={this._add_ref.bind(this)}
+                    underlayColor="transparent">
+                    <View style={[styles.boxButtonAction, {
+                      backgroundColor: "#fa7f50",
+                      borderColor: "#999999"
+                    }]}>
+                      <Icon name="check" size={16} color="#ffffff" />
+                      <Text style={[styles.buttonActionTitle, {
+                        color: "#ffffff"
+                      }]}>Xác nhận</Text>
+                    </View>
+                  </TouchableHighlight>
+              </View>
           </View>
+          )}
+          {!user.sync_ndt && (<View style={styles.ndt_history}>
+              <View style={styles.ndt_history_sub}>
+                <Text style={{
+                  fontWeight: '500',
+                  color: "#444444",
+                  fontSize: 20,
+                  marginLeft: 0,
+                  marginTop: 10,
+                  marginBottom: 8,
+                
+                }}>
+                  Lịch sử tài khoản:
+                </Text>
+              </View>
+          </View>
+          )}
 
         </ScrollView>
       </View>
@@ -174,7 +258,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // backgroundColor: "",
-    marginTop: 100
+    marginTop: 30
   },
 
   invite_text_input_sub: {
@@ -211,5 +295,56 @@ const styles = StyleSheet.create({
     width: Util.size.width,
     height: Util.size.height - (isAndroid ? 24 : 0),
     alignItems: 'center'
+  },
+
+  add_store_actions_box: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingVertical: 8,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
+  },
+  add_store_action_btn: {
+    paddingVertical: 4
+  },
+  add_store_action_btn_box: {
+    alignItems: 'center',
+    // width: ~~((Util.size.width - 16) / 2),
+    width: ~~(Util.size.width / 2),
+    borderRightWidth: Util.pixel,
+    borderRightColor: '#ebebeb'
+  },
+  add_store_action_label: {
+    fontSize: 12,
+    color: '#404040',
+    marginTop: 4
+  },
+  add_store_action_wallet_text: {
+    fontSize: 15,
+    color: '#404040',
+    marginLeft: 3
+  },
+  add_store_action_wallet_content:{
+    fontSize: 16,
+    color: '#333333',
+    fontWeight: '700'
+  },
+  add_store_action_wallet: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    // paddingVertical: 8,
+    paddingHorizontal: 8,
+    // marginRight: 8
+  },
+  ndt_history: {
+    // backgroundColor: "",
+    marginTop: 10
+  },
+
+  ndt_history_sub: {
+    // backgroundColor: "",
+    marginLeft: 20,
+    marginRight: 20
   },
 });

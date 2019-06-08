@@ -37,6 +37,8 @@ export default class StoreOrders extends Component {
       cart_check_list: {},
       loading: true,
       store_id: props.store_id || store.store_id,
+      store_data: store.store_data,
+      tel: store.store_data.tel,
       title: props.title || store.store_data.name
     }
 
@@ -100,7 +102,23 @@ export default class StoreOrders extends Component {
 
     }
   }
+  _goStores(item, category_id) {
+    action(() => {
+      store.setStoreData(item);
+    })();
 
+    // hide tutorial go store
+    if (this.props.that) {
+      this.props.that.setState({
+        show_go_store: false
+      });
+    }
+
+    Actions.stores({
+      title: item.name,
+      goCategory: category_id
+    });
+  }
   // thời gian trễ khi chuyển màn hình
   _delay() {
     var delay = 400 - (Math.abs(time() - this.start_time));
@@ -117,20 +135,20 @@ export default class StoreOrders extends Component {
     return(
       <View style={styles.right_btn_box}>
         <RightButtonCall
-          tel={this.props.tel}
+          tel={this.state.tel}
         />
 
         <RightButtonChat
           title={this.state.title || undefined}
           store_id={this.state.store_id || undefined}
-          tel={this.props.tel}
+          tel={this.state.tel}
          />
       </View>
     );
   }
 
   render() {
-    var {loading, data} = this.state;
+    var {loading, data, store_data} = this.state;
 
     if (loading) {
       return <Indicator />
@@ -182,15 +200,10 @@ export default class StoreOrders extends Component {
             <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
 
             <TouchableHighlight
-              onPress={() => {
-                if (this.props.goStores) {
-                  return this.props.goStores();
-                }
-                Actions.pop();
-              }}
+             onPress={this._goStores.bind(this, this.state.store_data)}
               underlayColor="transparent">
               <View style={styles.empty_box_btn}>
-                <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
+                <Text style={styles.empty_box_btn_title}>Vào cửa hàng</Text>
               </View>
             </TouchableHighlight>
           </View>

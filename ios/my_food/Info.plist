@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>3</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -38,6 +38,20 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	NSCalendarsUsageDescription
+
+	<key>NSCalendarsUsageDescription</key>
+	<string>Cho phép sử dụng Calendar</string> 
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Cho phép sử dụng Bluetooth</string> 
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Cho phép sử dụng Apple Music</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Cho phép sử dụng nhận dạng chuyển động</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Cho phép sử dụng nhận biết lời nói</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Cho phép ứng dụng sử dụng dụng Camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

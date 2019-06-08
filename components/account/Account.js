@@ -481,7 +481,7 @@ export default class Account extends Component {
           {true && (//vnd_wallet
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions.vnd_wallet({title: "TK Cashback 4.0"})}>
+              onPress={() => Actions.vnd_wallet({title: "Tài khoản Cashback"})}>
               <View style={[styles.profile_list_opt_btn, {
                 marginTop: 0,
                 borderTopWidth: 0,
@@ -511,74 +511,10 @@ export default class Account extends Component {
 
             </TouchableHighlight>
           )}
-          {(
-            <View style={{
-                marginTop: 1,
-                borderTopWidth: 0,
-                borderColor: "#dddddd"
-              }}>
-              <View style={styles.add_store_actions_box}>
-                <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: 'blue'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Đầu tư</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>10.000 CPDT</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={[styles.add_store_action_wallet,{
-                      color: 'red'
-                    }]}>
-                      <Icon style={{color: 'red'}} name="credit-card" size={16} color="#333333" /> 
-                      <Text style={styles.add_store_action_wallet_text}>Lending</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>8.000.000 VND</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.add_store_actions_box}>
-              <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: '#cc9900'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Sản phẩm</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>2.000.000 MAC</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: 'green'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Đầu tư 4.0</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>100.000.000 VND</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            </View>
-          )}
           {true && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions.sync_ndt({title: "Nhập mã đồng bộ"})}
+              onPress={() => Actions.sync_ndt({title: "Nhà đầu tư"})}
               >
 
               <View style={[styles.profile_list_opt_btn, {
@@ -588,14 +524,14 @@ export default class Account extends Component {
               }]}>
 
                 <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
-                  backgroundColor: "#688efb"
+                  backgroundColor: "#1fa67a"
                 }]}>
-                  <Icon name="globe" size={16} color="#ffffff" />
+                  <Icon name="share-alt" size={16} color="#ffffff" />
                 </View>
 
                 <View>
-                  <Text style={styles.profile_list_label}>Đồng bộ [Nhà đầu tư]</Text>
-                  <Text style={styles.profile_list_small_label}>Tích hợp với tài khoản trên hệ thống Nhà đầu tư</Text>
+                  <Text style={styles.profile_list_label}>Tài khoản [Nhà đầu tư]</Text>
+                  <Text style={styles.profile_list_small_label}>Đồng bộ với tài khoản trên hệ thống Nhà đầu tư</Text>
                 </View>
 
                 <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
@@ -865,45 +801,5 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 20
-  },
-  add_store_actions_box: {
-    width: '100%',
-    flexDirection: 'row',
-    paddingVertical: 8,
-    backgroundColor: "#ffffff",
-    borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
-  },
-  add_store_action_btn: {
-    paddingVertical: 4
-  },
-  add_store_action_btn_box: {
-    alignItems: 'center',
-    // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 2),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
-  },
-  add_store_action_label: {
-    fontSize: 12,
-    color: '#404040',
-    marginTop: 4
-  },
-  add_store_action_wallet_text: {
-    fontSize: 15,
-    color: '#404040',
-    marginLeft: 3
-  },
-  add_store_action_wallet_content:{
-    fontSize: 16,
-    color: '#333333',
-    fontWeight: '700'
-  },
-  add_store_action_wallet: {
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    // paddingVertical: 8,
-    paddingHorizontal: 8,
-    // marginRight: 8
-  },
+  }
 });

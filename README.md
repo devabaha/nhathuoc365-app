@@ -23,3 +23,12 @@ Generate Splash Screen: https://apetools.webprofusion.com/app/#/tools/imagegoril
 Build Release
 https://facebook.github.io/react-native/docs/signed-apk-android.html
 keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+
+./gradlew clean
+./gradlew assembleRelease
+
+Build:
+1. Onesignal
+2. GA
+3. Firebase
+
