@@ -38,8 +38,6 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	NSCalendarsUsageDescription
-
 	<key>NSCalendarsUsageDescription</key>
 	<string>Cho phép sử dụng Calendar</string> 
 	<key>NSBluetoothPeripheralUsageDescription</key>
