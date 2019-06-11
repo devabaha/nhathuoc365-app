@@ -156,30 +156,30 @@ export default class QRBarCode extends Component {
             this.renderMyQRCode():
             this.renderQRCodeScanner()}
         </View>
-        <View style={styles.lineView}/>
         <View style={styles.bottomView}>
-            <TouchableOpacity style={styles.bottomButton}
-              onPress={() => this.onPressTabButton(0)}
-              activeOpacity={1}>
-                <Icon name='barcode-scan'
-                  size={20} 
-                  color={index==0 ? global.DEFAULT_COLOR : "#000"} />
-                <Text style={[styles.titleBottomButton,
-                  index==0 ? {color: global.DEFAULT_COLOR}: {color: '#000'}]}>
-                  Mã tài khoản
-                </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomButton}
-              onPress={() => this.onPressTabButton(1)}
-              activeOpacity={1}>
-                <Icon name="qrcode-scan" 
-                  size={20} 
-                  color={index==1 ? global.DEFAULT_COLOR : "#000"} />
-                <Text style={[styles.titleBottomButton,
-                  index==1 ? {color: global.DEFAULT_COLOR}: {color: '#000'}]}>
-                  Scan QRCode
-                </Text>
-            </TouchableOpacity>
+          <View style={styles.lineView}/>
+          <TouchableOpacity style={styles.bottomButton}
+            onPress={() => this.onPressTabButton(0)}
+            activeOpacity={1}>
+              <Icon name='barcode-scan'
+                size={20} 
+                color={index==0 ? global.DEFAULT_COLOR : "#000"} />
+              <Text style={[styles.titleBottomButton,
+                index==0 ? {color: global.DEFAULT_COLOR}: {color: '#000'}]}>
+                Mã tài khoản
+              </Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.bottomButton}
+            onPress={() => this.onPressTabButton(1)}
+            activeOpacity={1}>
+              <Icon name="qrcode-scan" 
+                size={20} 
+                color={index==1 ? global.DEFAULT_COLOR : "#000"} />
+              <Text style={[styles.titleBottomButton,
+                index==1 ? {color: global.DEFAULT_COLOR}: {color: '#000'}]}>
+                Scan QRCode
+              </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -206,15 +206,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   contentView: {
-    height: Util.size.height - global.heightTabbar - global.NAV_HEIGHT
+    height: Util.size.height - 49 - global.NAV_HEIGHT
   },
   bottomView: {
-    height: global.heightTabbar,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 49,
     flexDirection: 'row'
   },
   lineView: {
+    position: "absolute",
+    bottom: 50,
+    left: 0,
+    right: 0,
     height: 0.5,
-    backgroundColor: 'gray'
+    backgroundColor: 'gray',
   },
   bottomButton: {
     flex: 1,
