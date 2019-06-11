@@ -30,7 +30,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3</string>
+	<string>4</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -38,28 +38,26 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-	NSCalendarsUsageDescription
-
-	<key>NSCalendarsUsageDescription</key>
-	<string>Cho phép sử dụng Calendar</string> 
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Cho phép sử dụng Bluetooth</string> 
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Cho phép sử dụng Apple Music</string>
-	<key>NSMotionUsageDescription</key>
-	<string>Cho phép sử dụng nhận dạng chuyển động</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Cho phép sử dụng nhận biết lời nói</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Cho phép sử dụng Bluetooth</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Cho phép sử dụng Calendar</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Cho phép ứng dụng sử dụng dụng Camera</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Vị trí</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Micro</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Cho phép sử dụng nhận dạng chuyển động</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Thư viện ảnh</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Cho phép sử dụng nhận biết lời nói</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
