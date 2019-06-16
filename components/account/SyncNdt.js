@@ -9,6 +9,7 @@ import {
   StyleSheet,
   TouchableHighlight,
   ScrollView,
+  Platform,
   TextInput
 } from 'react-native';
 
@@ -49,7 +50,7 @@ export default class SyncNdt extends Component {
   
   async _add_ref() {
     if(this.state.searchValue != undefined){
-      var response = await APIHandler.user_sync_ndt(this.state.searchValue);
+      var response = await APIHandler.user_sync_ndt({"code": this.state.searchValue});
       if (response) {
         if(response.status == STATUS_SUCCESS){
           this._onFinish();
@@ -70,10 +71,6 @@ export default class SyncNdt extends Component {
 
   render() {
     var {pageNum, stores_data, user} = this.state;
-    // $user->w_ndt = 0;
-    //     $user->w_lending = 0;
-    //     $user->w_product = 0;
-    //     $user->w_ndt_40 = 0;
     return (
       <View style={styles.container}>
         <ScrollView
@@ -81,70 +78,6 @@ export default class SyncNdt extends Component {
             marginBottom: store.keyboardTop
           }}
           keyboardShouldPersistTaps="always">
-          {(
-            <View style={{
-                marginTop: 60,
-                borderTopWidth: 0,
-                borderColor: "#dddddd"
-              }}>
-              <View style={styles.add_store_actions_box}>
-                <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: 'blue'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Đầu tư</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>{user.w_ndt} eCP</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={[styles.add_store_action_wallet,{
-                      color: 'red'
-                    }]}>
-                      <Icon style={{color: 'red'}} name="credit-card" size={16} color="#333333" /> 
-                      <Text style={styles.add_store_action_wallet_text}>Tiền mặt</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>{user.w_lending} VND</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-              <View style={styles.add_store_actions_box}>
-              <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: '#cc9900'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Sản phẩm</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>{user.w_product} MAC</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: 'green'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Đầu tư 4.0</Text>
-                    </View>
-                    <Text style={styles.add_store_action_wallet_content}>{user.w_ndt_40} VND</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            </View>
-          )}
           {user.sync_ndt && (<View style={styles.invite_text_input}>
               <View style={styles.invite_text_input_sub}>
                 <Text style={{
@@ -152,7 +85,7 @@ export default class SyncNdt extends Component {
                   color: "#444444",
                   fontSize: 16,
                   marginLeft: 0,
-                  marginTop: 15,
+                  marginTop: 115,
                   marginBottom: 8,
                 
                 }}>
@@ -181,6 +114,8 @@ export default class SyncNdt extends Component {
                     backgroundColor: "#ffffff"
                   }}
                   placeholder=""
+                  // keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+                  autoFocus
                   onChangeText={this._onChangeSearch.bind(this)}
                   onSubmitEditing={this._add_ref.bind(this)}
                   value={this.state.searchValue}

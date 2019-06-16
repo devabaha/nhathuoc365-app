@@ -82,6 +82,7 @@ class Store {
             this.setRefreshNews(this.refresh_news + 1);
           } 
           this.setNotify(response.data);
+          this.setUserInfo(response.data.user);
         })();
       }
     } catch (e) {

@@ -335,7 +335,19 @@ class APIHandler {
     var api = url_for(API.USER_REGISTER);
     return await this.postAPI(api, data);
   }
-
+    
+  /**
+  * Đăng ký ten va so dien thoai gioi thieu
+  */
+  async user_op_register(data) {
+    var api = url_for(API.USER_OP_REGISTER);
+    return await this.postAPI(api, data);
+  }
+//user_sync_ndt
+  async user_sync_ndt(data) {
+    var api = url_for(API.USER_SYNC_NDT);
+    return await this.postAPI(api, data);
+  }
   /**
   * Xác thực otp đăng ký
   */

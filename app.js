@@ -51,6 +51,8 @@ import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
 import Login from './components/account/Login';
+import OpLogin from './components/account/OpLogin';
+import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
 import NewPass from './components/account/NewPass';
@@ -77,6 +79,7 @@ import Rating from './components/rating/Rating';
 import Error from './components/Error';
 import ChooseLocation from './components/home/ChooseLocation';
 import SyncNdt from './components/account/SyncNdt';
+import Ndt from './components/account/Ndt';
 import CoinWallet from './components/account/CoinWallet';
 import VndWallet from './components/account/VndWallet';
 
@@ -316,6 +319,45 @@ export default class App extends Component {
             Actions._add_ref({
               type: ActionConst.RESET,
               title: "Nhập mã giới thiệu"
+            });
+          });
+        })();
+      }
+      if (response && response.status == STATUS_SYNC_FLAG) {
+        Store.setUserInfo(response.data);
+        action(() => {
+          this.setState({
+            finish: true
+          }, () => {
+            Actions.sync_ndt({
+              type: ActionConst.RESET,
+              title: "Nhập mã đồng bộ"
+            });
+          });
+        })();
+      }
+      if (response && response.status == STATUS_FILL_INFO_USER) {
+        Store.setUserInfo(response.data);
+        action(() => {
+          this.setState({
+            finish: true
+          }, () => {
+            Actions.op_register({
+              type: ActionConst.RESET,
+              title: "Đăng ký thông tin"
+            });
+          });
+        })();
+        StatusBar.setBarStyle('light-content');
+      }
+      if (response && response.status == STATUS_UNDEFINE_USER) {
+        Store.setUserInfo(response.data);
+        action(() => {
+          this.setState({
+            finish: true
+          }, () => {
+            Actions.op_login({
+              type: ActionConst.RESET
             });
           });
         })();
@@ -657,6 +699,8 @@ export default class App extends Component {
             <Scene key="create_address" title="Thêm địa chỉ" component={CreateAddress} {...custommerNav} />
             <Scene key="register" title="Đăng ký" component={Register} {...custommerNav} />
             <Scene key="login" title="Đăng nhập" component={Login} {...custommerNav} />
+            <Scene key="op_login" title="Đăng ký" component={OpLogin} {...custommerNav} />
+            <Scene key="op_register" title="Đăng ký" component={OpRegister} {...custommerNav} />
             <Scene key="forget_verify" title="Lấy lại mật khẩu" component={ForgetVerify} {...custommerNav} />
             <Scene key="forget_active" title="Kích hoạt tài khoản" component={ForgetActive} {...custommerNav} />
             <Scene key="new_pass" title="Tạo mật khẩu mới" component={NewPass} {...custommerNav} />
@@ -684,6 +728,7 @@ export default class App extends Component {
             <Scene key="_add_ref" title="" component={AddRef} {...custommerNav} />
             <Scene key="choose_location" title="" component={ChooseLocation} {...custommerNav} />
             <Scene key="sync_ndt" title="" component={SyncNdt} {...custommerNav} />
+            <Scene key="view_ndt" title="" component={Ndt} {...custommerNav} />
             <Scene key="vnd_wallet" title="" component={VndWallet} {...custommerNav} />
 
             {/* Backend */}

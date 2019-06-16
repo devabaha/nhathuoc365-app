@@ -16,7 +16,8 @@ import {
 } from 'react-native';
 
 //library
-import Icon from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { reaction } from 'mobx';
 import store from '../../store/Store';
@@ -58,6 +59,15 @@ export default class VndWallet extends Component {
     }
   }
 
+
+  _goScanQRCode() {
+    Actions.qr_bar_code({index:1});
+  }
+
+  _goQRCode() {
+    Actions.qr_bar_code();
+  }
+
   renderRow({ item, index }) {
     return (
       <View>
@@ -82,29 +92,40 @@ export default class VndWallet extends Component {
   renderTopLabelCoin() {
     const {user_info} = store;
     return (
-        <View>
-          <View style={styles.profile_list_opt_btn}>
-            <View style={styles.labelCoinParentView}>
-              <View style={styles.labelCoinView}>
-                <Text style={styles.profile_list_label}>Số dư:</Text>
-                <Text style={{
-                  color: "#ffffff",
-                  width: 150,
-                  fontSize: 16,
-                  paddingHorizontal: 15,
-                  paddingVertical: 3,
-                  backgroundColor: "#000000",
-                  borderWidth: 2,
-                  borderColor: "#ffffff",
-                  borderRadius: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  overflow: 'hidden'
-                }}>{user_info.vnd}</Text>
-              </View>
+      <View>
+        <View style={styles.add_store_actions_box}>
+          <TouchableHighlight
+            onPress={this._goQRCode.bind(this, this.state.store_data)}
+            underlayColor="transparent"
+            style={styles.add_store_action_btn}>
+            <View style={styles.add_store_action_btn_box}>
+              <Icon name="barcode-scan" size={24} color="#333333" />
+              <Text style={styles.add_store_action_label}>Dùng thẻ</Text>
             </View>
-          </View>
+          </TouchableHighlight>
+
+
+          <TouchableHighlight
+            onPress={this._goScanQRCode.bind(this, this.state.store_data)}
+            underlayColor="transparent"
+            style={styles.add_store_action_btn}>
+            <View style={styles.add_store_action_btn_box}>
+              <Icon name="qrcode-scan" size={24} color="#333333" />
+              <Text style={styles.add_store_action_label}>Quét mã</Text>
+            </View>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            // onPress={() => Actions.vnd_wallet({})}
+            underlayColor="transparent"
+            style={styles.add_store_action_btn}>
+            <View style={[styles.add_store_action_btn_box_balance, {borderRightWidth: 0}]}>
+            <Text style={styles.add_store_action_label_balance} >Tài khoản TickID</Text>
+              <Text style={styles.add_store_action_content}>{user_info.vnd}</Text>
+            </View>
+          </TouchableHighlight>
         </View>
+      </View>
     );
   }
 
@@ -113,12 +134,11 @@ export default class VndWallet extends Component {
       
       <View style={styles.container}>
         {this.renderTopLabelCoin()}
-        <View style={styles.lineView} />
         <TouchableWithoutFeedback
           onPress={() => this.onPressNew()}>
           <View style={styles.newsCoinView}>
-            <Icon style={{ flex: 1, marginLeft: 20}} name="newspaper-o" size={25} color="#4267b2" />
-            <Text style={{ flex: 7, fontSize: 16 }}>Giới thiệu về tài khoản Cashback 4.0</Text>
+            <Icon style={{ flex: 1, marginLeft: 20}} name="help-circle" size={25} color="#4267b2" />
+            <Text style={{ flex: 7, fontSize: 13 }}>Giới thiệu về tài khoản Cashback 4.0</Text>
             <Icon style={{ flex: 1, marginLeft: 10}} name="chevron-right" size={20} color="rgb(200,200,200)" />
           </View>
         </TouchableWithoutFeedback>
@@ -231,6 +251,7 @@ const styles = StyleSheet.create({
   newsCoinView: {
     flexDirection: 'row',
     height: 30,
+    marginTop: 10,
     alignItems: 'center'
   },
   historyCoinText: {
@@ -294,5 +315,47 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     borderTopWidth: Util.pixel,
     borderColor: "#dddddd"
+  },
+
+  add_store_actions_box: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingVertical: 8,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
+  },
+  add_store_action_btn: {
+    paddingVertical: 4
+  },
+  add_store_action_btn_box: {
+    alignItems: 'center',
+    // width: ~~((Util.size.width - 16) / 2),
+    width: ~~(Util.size.width / 4),
+    borderRightWidth: Util.pixel,
+    borderRightColor: '#ebebeb'
+  },
+  add_store_action_btn_box_balance:{
+    alignItems: 'center',
+    width: ~~(Util.size.width / 2),
+    borderRightWidth: Util.pixel,
+    borderRightColor: '#ebebeb'
+  },
+  add_store_action_label: {
+    fontSize: 12,
+    color: '#404040',
+    marginTop: 4
+  },
+  add_store_action_label_balance: {
+    fontSize: 14,
+    color: '#333333',
+    marginTop: 4,
+    fontWeight: '600'
+  },
+  add_store_action_content:{
+    fontSize: 18,
+    marginTop: 5,
+    color: "#51A9FF",
+    fontWeight: '800'
   }
 });

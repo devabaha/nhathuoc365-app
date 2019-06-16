@@ -79,6 +79,8 @@ exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';
 
 // Users
 exports.USER_REGISTER = MY_FOOD_API + 'apiUser/register';
+exports.USER_OP_REGISTER = MY_FOOD_API + 'apiUser/op_register';
+exports.USER_SYNC_NDT = MY_FOOD_API + 'apiUser/investor_authen';
 exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
 exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
 exports.USER_LOGIN_SMS = MY_FOOD_API + 'apiUser/login_sms';

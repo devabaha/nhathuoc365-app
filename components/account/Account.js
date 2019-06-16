@@ -511,10 +511,10 @@ export default class Account extends Component {
 
             </TouchableHighlight>
           )}
-          {true && (
+          {user_info.view_tab_ndt && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions.sync_ndt({title: "Nhà đầu tư"})}
+              onPress={() => Actions.view_ndt({title: "Nhà đầu tư"})}
               >
 
               <View style={[styles.profile_list_opt_btn, {
@@ -543,7 +543,7 @@ export default class Account extends Component {
 
             </TouchableHighlight>
           )}
-          {true && (
+          {user_info.view_tab_invite && (
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() => Actions._add_ref({title: "Nhập mã giới thiệu"})}
