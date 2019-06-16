@@ -47,25 +47,12 @@ export default class Account extends Component {
 
   _initial = (callback) => {
     const isAdmin = store.user_info.admin_flag == 1;
+    var notify = store.notify;
+    const isUpdate = notify.updating_version == 1;
+
 
     this.setState({
       options: [
-        // {
-        //   key: 1,
-        //   icon: "heart",
-        //   label: "Ưa thích",
-        //   desc: "Xem sản phẩm đã thích",
-        //   onPress: () => 1,
-        //   boxIconStyle: []
-        // },
-        // {
-        //   key: 2,
-        //   icon: "history",
-        //   label: "Mới xem",
-        //   desc: "Sản phẩm đã xem gần đây",
-        //   onPress: () => 1,
-        //   boxIconStyle: []
-        // },
         {
           key: "1",
           icon: "map-marker",
@@ -100,9 +87,9 @@ export default class Account extends Component {
         {
           key: "3",
           icon: "facebook-square",
-          label: "Fanpage MACCACA",
+          label: "Fanpage "+ APP_NAME,
           desc: "Facebook fanpage của ứng dụng",
-          onPress: () => Communications.web("http://fanpage.MACCACA.vn"),
+          onPress: () => Communications.web("http://fanpage."+ APP_NAME +".tickid.vn"),
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#4267b2"
           }],
@@ -113,7 +100,7 @@ export default class Account extends Component {
         {
           key: "4",
           icon: "handshake-o",
-          label: "Về MACCACA - Điều khoản sử dụng",
+          label: "Về "+ APP_NAME +" - Điều khoản sử dụng",
           desc: "Điều khoản sử dụng",
           onPress: () => Actions.webview({
             title: "Về MACCACA",
@@ -130,7 +117,7 @@ export default class Account extends Component {
           key: "5",
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Sản phẩm của MACCACA - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
+          desc: "Sản phẩm của "+ APP_NAME +" - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
           onPress: () => 1,
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"
@@ -138,6 +125,23 @@ export default class Account extends Component {
           iconColor: "#ffffff",
           hideAngle: true,
           marginTop: true
+        },
+        {
+          key: "6",
+          isHidden: !isUpdate,
+          icon: "cloud-download",
+          label: "Cập nhật ứng dụng",
+          desc: "Cập nhật lên phiên bản ổn định " + notify.new_version + " ngay!",
+          onPress: () => {
+            if (notify.url_update) {
+              Communications.web(notify.url_update);
+            }
+          },
+          boxIconStyle: [styles.boxIconStyle, {
+            backgroundColor: "#dd4b39"
+          }],
+          notify: "updating_version",
+          iconColor: "#ffffff"
         }
       ]
     }, () => {
@@ -236,48 +240,7 @@ export default class Account extends Component {
       store.is_stay_account = true;
 
       store.parentTab = '_account';
-
-      // updating version
-      this._updateHandler(store.notify);
-
-      // callback when has new version
-      Events.on(CALLBACK_APP_UPDATING, CALLBACK_APP_UPDATING + 'ID', this._updateHandler.bind(this));
     });
-  }
-
-  _updateHandler(notify) {
-    if (notify.updating_version > 0) {
-      if (!this.state.options[this.key_add_new]) {
-        this.state.options.push({
-          key: "6",
-          icon: "cloud-download",
-          label: "Cập nhật ứng dụng",
-          desc: "Cập nhật lên phiên bản ổn định " + notify.new_version + " ngay!",
-          onPress: () => {
-            if (notify.url_update) {
-              Communications.web(notify.url_update);
-            }
-          },
-          boxIconStyle: [styles.boxIconStyle, {
-            backgroundColor: "#dd4b39"
-          }],
-          notify: "updating_version",
-          iconColor: "#ffffff"
-        });
-
-        this.setState({
-          options: this.state.options
-        });
-      }
-    } else {
-      if (this.state.options[this.key_add_new]) {
-        this.state.options.splice(this.key_add_new, 1);
-
-        this.setState({
-          options: this.state.options
-        });
-      }
-    }
   }
 
   componentWillReceiveProps() {
@@ -478,7 +441,7 @@ export default class Account extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }>
-          {true && (//vnd_wallet
+          {user_info.view_tab_cashback &&  (//vnd_wallet
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() => Actions.vnd_wallet({title: "Tài khoản Cashback"})}>

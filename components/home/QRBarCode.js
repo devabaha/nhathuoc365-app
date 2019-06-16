@@ -77,10 +77,14 @@ export default class QRBarCode extends Component {
                 if (this.props.onBackHandler) {
                   this.props.onBackHandler(e.data);
                 } else {
-                  Actions.search_store({
-                    site_code: e.data,
-                    type: ActionConst.REPLACE
+                  //search
+                  Actions.search({
+                    qr_code: e.data,
                   });
+                  // Actions.search_store({
+                  //   site_code: e.data,
+                  //   type: ActionConst.REPLACE
+                  // });
                 }
               }, 450);
             }

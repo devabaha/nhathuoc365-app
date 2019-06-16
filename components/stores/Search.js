@@ -50,7 +50,7 @@ export default class Search extends Component {
   }
 
   componentDidMount() {
-
+    var keyword = this.props.qr_code;
     this._getHistory();
 
     const onBack = () => {
@@ -61,7 +61,7 @@ export default class Search extends Component {
 
     Actions.refresh({
       showSearchBar: true,
-      searchValue: '',
+      searchValue: keyword || '',
       placeholder: 'Nhập tên mặt hàng',
       autoFocus: true,
       inputAnimate: true,

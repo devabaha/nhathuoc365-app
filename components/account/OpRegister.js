@@ -201,13 +201,11 @@ export default class OpRegister extends Component {
 
         } else {
           if (response && response.status == STATUS_SYNC_FLAG) {
-            store.setUserInfo(response.data);
             action(() => {
               this.setState({
                 finish: true
               }, () => {
                 Actions.sync_ndt({
-                  type: ActionConst.RESET,
                   title: "Nhập mã đồng bộ"
                 });
               });

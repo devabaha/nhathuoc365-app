@@ -78,7 +78,7 @@ export default class SyncNdt extends Component {
             marginBottom: store.keyboardTop
           }}
           keyboardShouldPersistTaps="always">
-          {user.sync_ndt && (<View style={styles.invite_text_input}>
+          <View style={styles.invite_text_input}>
               <View style={styles.invite_text_input_sub}>
                 <Text style={{
                   fontWeight: '500',
@@ -89,7 +89,7 @@ export default class SyncNdt extends Component {
                   marginBottom: 8,
                 
                 }}>
-                  Nhập mã xác thực trên Web [Nhà đầu tư] để đồng bộ tài khoản
+                  Nhập mã đồng bộ trên Web [Nhà đầu tư] để đồng bộ tài khoản.
                 </Text>
                 <TextInput
                   underlineColorAndroid="transparent"
@@ -120,6 +120,7 @@ export default class SyncNdt extends Component {
                   onSubmitEditing={this._add_ref.bind(this)}
                   value={this.state.searchValue}
                 />
+                <Text style={styles.disclaimerText}>Chưa có mã đồng bộ, hãy đăng nhập vào trang [Nhà đầu tư], bấm vào [Đồng bộ tài khoản] để nhận mã.</Text>
                 <TouchableHighlight
                     style={[styles.buttonAction, {
                       marginTop: 6
@@ -133,29 +134,11 @@ export default class SyncNdt extends Component {
                       <Icon name="check" size={16} color="#ffffff" />
                       <Text style={[styles.buttonActionTitle, {
                         color: "#ffffff"
-                      }]}>Xác nhận</Text>
+                      }]}>Đồng bộ</Text>
                     </View>
                   </TouchableHighlight>
               </View>
           </View>
-          )}
-          {!user.sync_ndt && (<View style={styles.ndt_history}>
-              <View style={styles.ndt_history_sub}>
-                <Text style={{
-                  fontWeight: '500',
-                  color: "#444444",
-                  fontSize: 20,
-                  marginLeft: 0,
-                  marginTop: 10,
-                  marginBottom: 8,
-                
-                }}>
-                  Lịch sử tài khoản:
-                </Text>
-              </View>
-          </View>
-          )}
-
         </ScrollView>
       </View>
     );
@@ -281,5 +264,11 @@ const styles = StyleSheet.create({
     // backgroundColor: "",
     marginLeft: 20,
     marginRight: 20
+  },
+  disclaimerText: {
+    marginTop: 10,
+    marginBottom: 10,
+    fontSize: 12,
+    color: 'grey'
   },
 });

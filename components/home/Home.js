@@ -471,17 +471,17 @@ export default class Home extends Component {
           {(<View>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight
-                  onPress={this._goChat.bind(this, this.state.store_data)}
+                  onPress={this._goStores.bind(this, this.state.store_data)}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <Icon name="wechat" size={24} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Chat</Text>
-                    {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
-                    <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
+                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
+                    <Icon name="shopping" size={24} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Vào Cửa hàng</Text>
+                    {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
+                    <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
                   </View>
                 </TouchableHighlight>
-
+                
                 <TouchableHighlight
                   onPress={this._goQRCode.bind(this, this.state.store_data)}
                   underlayColor="transparent"
@@ -491,7 +491,6 @@ export default class Home extends Component {
                     <Text style={styles.add_store_action_label}>Dùng thẻ</Text>
                   </View>
                 </TouchableHighlight>
-
 
                 <TouchableHighlight
                   onPress={this._goScanQRCode.bind(this, this.state.store_data)}
@@ -504,16 +503,17 @@ export default class Home extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight
-                  onPress={this._goStores.bind(this, this.state.store_data)}
+                  onPress={this._goChat.bind(this, this.state.store_data)}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
-                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                    <Icon name="shopping" size={24} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Vào Cửa hàng</Text>
-                    {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
-                    <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
+                  <View style={styles.add_store_action_btn_box}>
+                    <Icon name="wechat" size={24} color="#333333" />
+                    <Text style={styles.add_store_action_label}>Chat</Text>
+                    {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
+                    <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
                   </View>
                 </TouchableHighlight>
+
               </View>
             </View>
           )}
@@ -667,7 +667,7 @@ export default class Home extends Component {
               marginTop: 4,
               alignItems: "center"
             }}>
-              <Text style={styles.add_store_title}>DANH MỤC THỰC PHẨM</Text>
+              <Text style={styles.add_store_title}>DANH MỤC</Text>
             </View>
           )}
           {categorie_products && (
