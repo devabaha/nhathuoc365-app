@@ -25,7 +25,7 @@ export default class QRBarCode extends Component {
     this.state = {
       index: props.index || 0,
       loading: false,
-      barcode: "000 000 000 000"
+      barcode: "000 000 000"
     };
   }
 
@@ -114,7 +114,8 @@ export default class QRBarCode extends Component {
           <Barcode
             value={barcode} 
             format="CODE128" 
-            width="1"
+            width="2"
+            height="80"
             background='transparent'/>
         </View>
         <Text style={styles.barcodeText}>
