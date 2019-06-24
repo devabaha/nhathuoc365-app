@@ -46,13 +46,13 @@ export default class SelectionList extends Component {
                 borderColor: "#dddddd"
               }]}>
 
-                <View style={[styles.profile_list_icon_box, ...item.boxIconStyle]}>
+                <View style={[styles.profile_list_icon_box, item.boxIconStyle]}>
                   <Icon name={item.icon} size={16} color={item.iconColor || "#999999"} />
                 </View>
 
                 <View>
                   <Text style={styles.profile_list_label}>{item.label}</Text>
-                  <Text style={styles.profile_list_small_label}>{item.desc}</Text>
+                  {item.desc && <Text style={styles.profile_list_small_label}>{item.desc}</Text>}
                 </View>
 
                 {!item.hideAngle && (

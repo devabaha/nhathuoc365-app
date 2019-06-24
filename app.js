@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 
 // disable font scaling
-Text.defaultProps.allowFontScaling=false;
+Text.defaultProps.allowFontScaling = false;
 
 // constant, helper
 import './lib/Constant';
@@ -79,7 +79,10 @@ import Rating from './components/rating/Rating';
 import Error from './components/Error';
 import ChooseLocation from './components/home/ChooseLocation';
 import SyncNdt from './components/account/SyncNdt';
+import NdtList from './components/account/NdtList';
 import Ndt from './components/account/Ndt';
+import NdtCashInput from './components/account/NdtCashInput';
+import NdtCashWithdraw from './components/account/NdtCashWithdraw';
 import CoinWallet from './components/account/CoinWallet';
 import VndWallet from './components/account/VndWallet';
 
@@ -240,7 +243,7 @@ export default class App extends Component {
     var url = Linking.getInitialURL().then((url) => {
       if (url) {
         // do login
-        this._login(() => this.handleURL({url}));
+        this._login(() => this.handleURL({ url }));
       } else {
         // do login
         this._login();
@@ -253,7 +256,7 @@ export default class App extends Component {
     });
   }
 
-  handleURL = ({url}) => {
+  handleURL = ({ url }) => {
     if (url) {
       const route = url.replace(/.*?:\/\//g, '');
       const routeName = route.split('/')[0];
@@ -297,7 +300,7 @@ export default class App extends Component {
               });
             });
           })();
-        }else{
+        } else {
           action(() => {
             this.setState({
               finish: true
@@ -397,7 +400,7 @@ export default class App extends Component {
 
     var data = openResult.notification.payload.additionalData;
     if (data) {
-      var {page, site_id, page_id} = data;
+      var { page, site_id, page_id } = data;
 
       if (page) {
         switch (page) {
@@ -562,24 +565,24 @@ export default class App extends Component {
   }
 
   async _onIds(device) {
-	  //  console.log('Device info: ', device);
-     if (_.isObject(device)) {
-       var push_token = device.pushToken;
-       var player_id = device.userId;
+    //  console.log('Device info: ', device);
+    if (_.isObject(device)) {
+      var push_token = device.pushToken;
+      var player_id = device.userId;
 
-        try {
-          await APIHandler.add_push_token({
-            push_token,
-            player_id
-          });
-        } catch (e) {
-          console.warn(e + ' add_push_token');
+      try {
+        await APIHandler.add_push_token({
+          push_token,
+          player_id
+        });
+      } catch (e) {
+        console.warn(e + ' add_push_token');
 
-          Store.addApiQueue('add_push_token', this._onIds.bind(this, device));
-        } finally {
+        Store.addApiQueue('add_push_token', this._onIds.bind(this, device));
+      } finally {
 
-        }
-     }
+      }
+    }
   }
 
   _backAndroidHandler() {
@@ -599,19 +602,19 @@ export default class App extends Component {
         }
         return true;
       } else {
-          backButtonPressedOnceToExit = true;
-          Toast.show('Chạm lại để thoát ứng dụng', Toast.LONG);
+        backButtonPressedOnceToExit = true;
+        Toast.show('Chạm lại để thoát ứng dụng', Toast.LONG);
 
-          setTimeout(function() {
-              backButtonPressedOnceToExit = false;
-          }, 2000);
-          return true;
+        setTimeout(function () {
+          backButtonPressedOnceToExit = false;
+        }, 2000);
+        return true;
       }
     }
   }
 
   _goMainNotify() {
-    Actions._main_notify({type: ActionConst.REFRESH});
+    Actions._main_notify({ type: ActionConst.REFRESH });
   }
 
   renderRounter() {
@@ -637,10 +640,10 @@ export default class App extends Component {
                 iconTitle="MACCACA"
                 iconName="store"
                 size={24}
-                onPress={()=> {
-                  Actions._home({type: ActionConst.REFRESH});
+                onPress={() => {
+                  Actions._home({ type: ActionConst.REFRESH });
                 }}
-               >
+              >
                 <Scene key="_home" title="Maccaca" component={Home} hideNavBar {...custommerNav} />
               </Scene>
 
@@ -655,8 +658,8 @@ export default class App extends Component {
                 size={24}
                 notify="new_totals"
                 onPress={this._goMainNotify}
-               >
-                  <Scene key="_main_notify" title="Tin tức" component={Notifys} {...custommerNav} />
+              >
+                <Scene key="_main_notify" title="Tin tức" component={Notifys} {...custommerNav} />
               </Scene>
 
               {/**
@@ -668,11 +671,11 @@ export default class App extends Component {
                 iconTitle="Đơn hàng"
                 iconName="shopping-cart"
                 size={24}
-                onPress={()=> {
-                  Actions._orders({type: ActionConst.REFRESH});
+                onPress={() => {
+                  Actions._orders({ type: ActionConst.REFRESH });
                 }}
-               >
-                  <Scene key="_orders" title="Đơn hàng" component={StoreOrders} {...custommerNav} />
+              >
+                <Scene key="_orders" title="Đơn hàng" component={StoreOrders} {...custommerNav} />
               </Scene>
 
               {/**
@@ -685,11 +688,11 @@ export default class App extends Component {
                 iconName="account-circle"
                 notify="notify_account"
                 size={24}
-                onPress={()=> {
-                  Actions._account({type: ActionConst.REFRESH});
+                onPress={() => {
+                  Actions._account({ type: ActionConst.REFRESH });
                 }}
-               >
-                  <Scene hideNavBar key="_account" title="Tài khoản" component={Account} {...custommerNav} />
+              >
+                <Scene hideNavBar key="_account" title="Tài khoản" component={Account} {...custommerNav} />
               </Scene>
             </Scene>
 
@@ -728,25 +731,28 @@ export default class App extends Component {
             <Scene key="_add_ref" title="" component={AddRef} {...custommerNav} />
             <Scene key="choose_location" title="" component={ChooseLocation} {...custommerNav} />
             <Scene key="sync_ndt" title="" component={SyncNdt} {...custommerNav} />
+            <Scene key="view_ndt_list" title="Nhà đầu tư" component={NdtList} {...custommerNav} />
             <Scene key="view_ndt" title="" component={Ndt} {...custommerNav} />
+            <Scene key="view_ndt_cash_input" title="" component={NdtCashInput} {...custommerNav} />
+            <Scene key="view_ndt_cash_withdraw" title="" component={NdtCashWithdraw} {...custommerNav} />
             <Scene key="vnd_wallet" title="" component={VndWallet} {...custommerNav} />
 
             {/* Backend */}
-            <Scene key="dashboard" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />
-            <Scene key="sale_menu" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Bảng điều khiển" component={SaleMenu} {...custommerNav} />
-            <Scene key="sale_stores" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} title="Cửa hàng" component={SaleStores} {...custommerNav} />
-            <Scene key="sale" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Sale} {...custommerNav} />
-            <Scene key="order" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Order} navBar={CustomNavBar} />
-            <Scene key="sale_user_info" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={UserInfo} navBar={CustomNavBar} />
-            <Scene key="sale_chat" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={SaleChat} navBar={CustomNavBar} />
-            <Scene key="list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={ListProduct} navBar={CustomNavBar2} />
-            <Scene key="edit_list_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={EditListProduct} navBar={CustomNavBar2} />
-            <Scene key="products" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={Products} {...custommerNav} />
-            <Scene key="create_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={CreateProduct} {...custommerNav} />
-            <Scene key="edit_product" title="" navigationBarStyle={{backgroundColor: HEADER_ADMIN_BGR}} component={EditProduct} {...custommerNav} />
+            <Scene key="dashboard" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />
+            <Scene key="sale_menu" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} title="Bảng điều khiển" component={SaleMenu} {...custommerNav} />
+            <Scene key="sale_stores" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} title="Cửa hàng" component={SaleStores} {...custommerNav} />
+            <Scene key="sale" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={Sale} {...custommerNav} />
+            <Scene key="order" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={Order} navBar={CustomNavBar} />
+            <Scene key="sale_user_info" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={UserInfo} navBar={CustomNavBar} />
+            <Scene key="sale_chat" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={SaleChat} navBar={CustomNavBar} />
+            <Scene key="list_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={ListProduct} navBar={CustomNavBar2} />
+            <Scene key="edit_list_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={EditListProduct} navBar={CustomNavBar2} />
+            <Scene key="products" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={Products} {...custommerNav} />
+            <Scene key="create_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={CreateProduct} {...custommerNav} />
+            <Scene key="edit_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={EditProduct} {...custommerNav} />
 
           </Scene>
-          <Scene key="error" component={Error}/>
+          <Scene key="error" component={Error} />
         </Scene>
       </Router>
     );
@@ -754,23 +760,23 @@ export default class App extends Component {
 
   render() {
     if (!this.state.finish) {
-      return(
-      <SafeAreaView style={styles.safeArea}>
-        <View style={styles.container}>
-          {!Store.isConnected && (
-            <View style={styles.content}>
-              <Text style={styles.message}>Kiểm tra kết nối internet!</Text>
-            </View>
-          )}
+      return (
+        <SafeAreaView style={styles.safeArea}>
+          <View style={styles.container}>
+            {!Store.isConnected && (
+              <View style={styles.content}>
+                <Text style={styles.message}>Kiểm tra kết nối internet!</Text>
+              </View>
+            )}
 
-          <Indicator size="small" />
-        </View>
-      </SafeAreaView>
+            <Indicator size="small" />
+          </View>
+        </SafeAreaView>
       );
     }
 
     if (global.isIPhoneX) {
-      return(
+      return (
         <SafeAreaView style={styles.safeArea}>
           {this.renderRounter()}
         </SafeAreaView>
@@ -787,10 +793,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff"
   },
   tabBarStyle: {
-    borderTopWidth : Util.pixel,
-    borderColor    : '#cccccc',
+    borderTopWidth: Util.pixel,
+    borderColor: '#cccccc',
     backgroundColor: 'white',
-    opacity        : 1
+    opacity: 1
   },
   content: {
     width: Util.size.width,

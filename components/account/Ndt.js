@@ -16,6 +16,68 @@ import {
 import store from '../../store/Store';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import SelectionList from '../SelectionList';
+
+const OPTION_LIST = [
+  {
+    key: "1",
+    icon: "pagelines",
+    label: "Sơ đồ cây quan hệ của tài khoản",
+    onPress: () => Actions.address({
+      from_page: "account"
+    })
+  },
+  {
+    key: "2",
+    icon: "paypal",
+    label: "Lịch sử thu nhập ví Sản phẩm",
+    onPress: () => Actions.address({
+      from_page: "account"
+    })
+  },
+  {
+    key: "3",
+    icon: "paypal",
+    label: "Lịch sử rút tiền ví Sản phẩm",
+    onPress: () => Actions.address({
+      from_page: "account"
+    })
+  },
+  {
+    key: "4",
+    icon: "paypal",
+    label: "Tạo lệnh rút tiền ví Sản phẩm",
+    onPress: () => Actions.address({
+      from_page: "account"
+    })
+  },
+  {
+    key: "5",
+    icon: "credit-card",
+    label: "Lịch sử thu nhập ví Tiền mặt",
+    onPress: () => Actions.view_ndt_cash_input({
+      from_page: "view_ndt",
+      title: "Nguyễn Hoàng Minh"
+    })
+  },
+  {
+    key: "6",
+    icon: "credit-card",
+    label: "Lịch sử rút tiền ví Tiền mặt",
+    onPress: () => Actions.address({
+      from_page: "account"
+    })
+  },
+  {
+    key: "7",
+    icon: "credit-card",
+    label: "Tạo lệnh rút tiền ví Tiền mặt",
+    onPress: () => Actions.view_ndt_cash_withdraw({
+      from_page: "view_ndt",
+      title: "Nguyễn Hoàng Minh"
+    })
+  },
+]
 
 export default class SyncNdt extends Component {
   constructor(props) {
@@ -33,7 +95,7 @@ export default class SyncNdt extends Component {
   }
 
   _onFinish() {
-    if (store.user_info  && store.user_info.site_id === 0) {
+    if (store.user_info && store.user_info.site_id === 0) {
       Actions.choose_location({
         type: ActionConst.RESET,
         title: "CHỌN CỬA HÀNG"
@@ -46,22 +108,22 @@ export default class SyncNdt extends Component {
   }
 
   // thực hiện add cửa hàng vào account của user
-  
+
   async _add_ref() {
-    if(this.state.searchValue != undefined){
+    if (this.state.searchValue != undefined) {
       var response = await APIHandler.user_sync_ndt(this.state.searchValue);
       if (response) {
-        if(response.status == STATUS_SUCCESS){
+        if (response.status == STATUS_SUCCESS) {
           this._onFinish();
-        }else{
+        } else {
           Toast.show(response.message);
         }
-      }else{
+      } else {
         Toast.show("Có lỗi xảy ra, vui lòng thử lại");
       }
     }
   }
-  
+
   _onChangeSearch(text) {
     this.setState({
       searchValue: text
@@ -69,7 +131,7 @@ export default class SyncNdt extends Component {
   }
 
   render() {
-    var {pageNum, stores_data, user} = this.state;
+    var { user } = this.props;
     return (
       <View style={styles.container}>
         <ScrollView
@@ -79,10 +141,25 @@ export default class SyncNdt extends Component {
           keyboardShouldPersistTaps="always">
           {(
             <View style={{
-                marginTop: 60,
-                borderTopWidth: 0,
-                borderColor: "#dddddd"
+              marginTop: 60,
+              borderTopWidth: 0,
+              borderColor: "#dddddd"
+            }}>
+              <View style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginLeft: 15
               }}>
+                <Icon name="user" size={18} />
+                <Text style={{
+                  fontWeight: '500',
+                  color: "#444444",
+                  fontSize: 18,
+                  marginLeft: 5
+                }}>
+                  {user.name}
+                </Text>
+              </View>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight
                   // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
@@ -90,8 +167,8 @@ export default class SyncNdt extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
                     <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: 'blue'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Đầu tư</Text>
+                      <Icon style={{ color: 'blue' }} name="credit-card" size={16} color="#333333" />
+                      <Text style={styles.add_store_action_wallet_text}>Đầu tư</Text>
                     </View>
                     <Text style={styles.add_store_action_wallet_content}>{user.w_ndt}</Text>
                   </View>
@@ -102,10 +179,8 @@ export default class SyncNdt extends Component {
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
-                    <View style={[styles.add_store_action_wallet,{
-                      color: 'red'
-                    }]}>
-                      <Icon style={{color: 'red'}} name="credit-card" size={16} color="#333333" /> 
+                    <View style={[styles.add_store_action_wallet]}>
+                      <Icon style={{ color: 'red' }} name="credit-card" size={16} color="#333333" />
                       <Text style={styles.add_store_action_wallet_text}>Tiền mặt</Text>
                     </View>
                     <Text style={styles.add_store_action_wallet_content}>{user.w_lending}</Text>
@@ -113,14 +188,14 @@ export default class SyncNdt extends Component {
                 </TouchableHighlight>
               </View>
               <View style={styles.add_store_actions_box}>
-              <TouchableHighlight
+                <TouchableHighlight
                   // onPress={() => {Communications.phonecall(this.state.store_data.tel, true)}}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
                     <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: '#cc9900'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Sản phẩm</Text>
+                      <Icon style={{ color: '#cc9900' }} name="credit-card" size={16} color="#333333" />
+                      <Text style={styles.add_store_action_wallet_text}>Sản phẩm</Text>
                     </View>
                     <Text style={styles.add_store_action_wallet_content}>{user.w_product}</Text>
                   </View>
@@ -132,8 +207,8 @@ export default class SyncNdt extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
                     <View style={styles.add_store_action_wallet}>
-                    <Icon style={{color: 'green'}} name="credit-card" size={16} color="#333333" /> 
-                    <Text style={styles.add_store_action_wallet_text}>Đầu tư 4.0</Text>
+                      <Icon style={{ color: 'green' }} name="credit-card" size={16} color="#333333" />
+                      <Text style={styles.add_store_action_wallet_text}>Đầu tư 4.0</Text>
                     </View>
                     <Text style={styles.add_store_action_wallet_content}>{user.w_ndt_40}</Text>
                   </View>
@@ -141,23 +216,11 @@ export default class SyncNdt extends Component {
               </View>
             </View>
           )}
-          {(<View style={styles.ndt_history}>
-              <View style={styles.ndt_history_sub}>
-                <Text style={{
-                  fontWeight: '500',
-                  color: "#444444",
-                  fontSize: 18,
-                  marginLeft: 0,
-                  marginTop: 10,
-                  marginBottom: 8,
-                
-                }}>
-                  Lịch sử:
-                </Text>
-              </View>
-          </View>
-          )}
 
+          {
+            <SelectionList
+              data={OPTION_LIST} />
+          }
         </ScrollView>
       </View>
     );
@@ -262,7 +325,7 @@ const styles = StyleSheet.create({
     color: '#404040',
     marginLeft: 3
   },
-  add_store_action_wallet_content:{
+  add_store_action_wallet_content: {
     fontSize: 16,
     color: '#333333',
     fontWeight: '700'
@@ -283,5 +346,80 @@ const styles = StyleSheet.create({
     // backgroundColor: "",
     marginLeft: 20,
     marginRight: 20
+  },
+
+  profile_button_box: {
+    position: 'absolute',
+    bottom: 42,
+    right: 0,
+    flexDirection: 'row'
+  },
+  profile_button_login_box: {
+    backgroundColor: "#4267b2",
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 3,
+    marginRight: 15
+  },
+  profile_button_title: {
+    fontSize: 14,
+    color: "#ffffff",
+    marginLeft: 4
+  },
+  profile_list_opt: {
+    borderTopWidth: Util.pixel,
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
+  },
+  profile_list_opt_btn: {
+    width: Util.size.width,
+    height: 52,
+    backgroundColor: "#ffffff",
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 4
+  },
+  profile_list_icon_box: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30,
+    height: 30,
+    marginLeft: 4,
+    marginRight: 4
+  },
+  profile_list_icon_box_angle: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: '100%'
+  },
+  profile_list_label: {
+    fontSize: 18,
+    color: "#000000",
+    fontWeight: '400'
+  },
+  profile_list_label_balance: {
+    fontSize: 16,
+    color: DEFAULT_COLOR,
+    fontWeight: '600'
+  },
+
+  profile_list_label_point: {
+    fontSize: 16,
+    color: "#e31b23",
+    fontWeight: '600'
+  },
+  profile_list_label_invite_id: {
+    fontSize: 16,
+    color: "#51A9FF",
+    fontWeight: '600'
+  },
+  profile_list_small_label: {
+    fontSize: 12,
+    color: "#666666",
+    marginTop: 2
   },
 });

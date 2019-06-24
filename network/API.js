@@ -92,3 +92,6 @@ exports.USER_FORGET_PASSWORD_VERIFY = MY_FOOD_API + 'apiUser/forget_password_ver
 exports.USER_FORGET_NEW_PASSWORD = MY_FOOD_API + 'apiUser/forget_new_password';
 exports.USER_CHOOSE_LOCATION = MY_FOOD_API + 'apiUser/choose_site';
 exports.USER_COINS_WALLET = MY_FOOD_API + 'apiUser/point_history';
+
+//Account
+
