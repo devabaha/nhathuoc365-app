@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import { View, Text, StyleSheet, Animated, Dimensions, NetInfo } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import { View, Text, StyleSheet } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 
 import store from '../store/Store';
 
 @observer
-export default class Error extends Component {
+class Error extends Component {
   componentDidMount() {
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange);
 
@@ -54,3 +54,5 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 });
+
+export default Error;

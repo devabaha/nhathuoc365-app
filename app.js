@@ -4,19 +4,13 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
+  YellowBox,
   StyleSheet,
-  Platform,
   StatusBar,
-  PanResponder,
   BackHandler,
-  Alert,
   Linking,
   SafeAreaView
 } from 'react-native';
-
-// disable font scaling
-Text.defaultProps.allowFontScaling = false;
 
 // constant, helper
 import './lib/Constant';
@@ -43,10 +37,7 @@ import Intro from './components/intro/Intro';
 import AddStore from './components/home/AddStore';
 import AddRef from './components/home/AddRef';
 import Home from './components/home/Home';
-import HomeNavBar from './components/home/HomeNavBar';
 import Notifys from './components/notify/Notifys';
-import MainNotify from './components/notify/MainNotify';
-import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
@@ -103,6 +94,10 @@ import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
 import CustomNavBar from './components/sale/CustomNavBar';
 import CustomNavBar2 from './components/sale/CustomNavBar2';
+
+YellowBox.ignoreWarnings([
+  'Module RCTCameraManager',
+]);
 
 // navigator bar
 const custommerNav = {
@@ -179,7 +174,7 @@ function getCurrentOnBack(obj) {
 }
 
 @observer
-export default class App extends Component {
+class App extends Component {
   constructor() {
     super();
 
@@ -815,3 +810,5 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   }
 });
+
+export default App;

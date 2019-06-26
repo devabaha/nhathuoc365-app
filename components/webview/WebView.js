@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import Proptypes from 'prop-types';
 import {
   View,
-  Text,
   StyleSheet,
-  WebView
 } from 'react-native';
+import { WebView } from 'react-native-webview';
 
 import Loading from '../Loading';
 

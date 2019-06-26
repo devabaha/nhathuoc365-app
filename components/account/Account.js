@@ -21,7 +21,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import { SocialIcon } from '../../lib/react-native-elements';
 import Communications from 'react-native-communications';
-import RNFetchBlob from 'react-native-fetch-blob';
+import RNFetchBlob from 'rn-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
 import Sticker from '../Sticker';
 import {reaction} from 'mobx';
