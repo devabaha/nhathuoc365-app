@@ -1,6 +1,6 @@
 'use strict';
 
-import {StatusBar} from 'react-native';
+// import { StatusBar } from 'react-native';
 
 import API from './API';
 import axios from 'axios';

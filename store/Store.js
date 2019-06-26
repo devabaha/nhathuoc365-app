@@ -109,6 +109,7 @@ class Store {
         })();
       }
     } catch (e) {
+      console.log('e', e)
       console.warn(e + ' user_notify_chat');
 
       action(() => {

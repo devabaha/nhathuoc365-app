@@ -7,27 +7,24 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
-  Switch,
   Keyboard,
   ScrollView,
   Alert,
-  AsyncStorage
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import Modal from 'react-native-modalbox';
-var MessageBarAlert = require('react-native-message-bar').MessageBar;
-var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 // components
-import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 
+const MessageBarAlert = require('react-native-message-bar').MessageBar;
+const MessageBarManager = require('react-native-message-bar').MessageBarManager;
+
 @observer
-export default class NewPass extends Component {
+class NewPass extends Component {
   constructor(props) {
     super(props);
 
@@ -83,7 +80,7 @@ export default class NewPass extends Component {
   }
 
   _onSave() {
-    var {name, tel, password, finish_loading} = this.state;
+    let { tel, password, finish_loading } = this.state;
     password = password.trim();
 
     if (finish_loading) {
@@ -107,7 +104,7 @@ export default class NewPass extends Component {
       finish_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.user_forget_new_password({
+        const response = await APIHandler.user_forget_new_password({
           username: tel,
           password
         });
@@ -147,14 +144,14 @@ export default class NewPass extends Component {
   }
 
   _login() {
-    var {name, tel, password, finish_loading} = this.state;
+    let { name, tel, password } = this.state;
     password = password.trim();
 
     this.setState({
       finish_loading: true
     }, async () => {
       try {
-        var response = await APIHandler.user_login_password({
+        const response = await APIHandler.user_login_password({
           username: tel,
           password
         });
@@ -203,14 +200,12 @@ export default class NewPass extends Component {
         });
 
         store.addApiQueue('user_login_password', this._login.bind(this, name, tel, password));
-      } finally {
-
       }
     });
   }
 
   render() {
-    var { edit_mode, verify_loadding, tel, finish_loading } = this.state;
+    const { tel, finish_loading } = this.state;
 
     return (
       <View style={styles.container}>
@@ -375,3 +370,5 @@ const styles = StyleSheet.create({
     marginLeft: 8
   }
 });
+
+export default NewPass;

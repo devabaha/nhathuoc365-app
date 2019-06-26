@@ -4,29 +4,25 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
   FlatList,
   RefreshControl,
   ScrollView,
-  Alert
 } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { CheckBox } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import {reaction} from 'mobx';
 
 // components
-import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
 
 @observer
-export default class Orders extends Component {
+class Orders extends Component {
   constructor(props) {
     super(props);
 
@@ -417,3 +413,5 @@ const styles = StyleSheet.create({
   }
 
 });
+
+export default Orders;

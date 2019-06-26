@@ -96,6 +96,7 @@ import CustomNavBar from './components/sale/CustomNavBar';
 import CustomNavBar2 from './components/sale/CustomNavBar2';
 
 YellowBox.ignoreWarnings([
+  'Warning',
   'Module RCTCameraManager',
 ]);
 

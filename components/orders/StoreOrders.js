@@ -9,18 +9,14 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  Alert
 } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { CheckBox } from '../../lib/react-native-elements';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import {reaction} from 'mobx';
 
 // components
-import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
 import RightButtonChat from '../RightButtonChat';
@@ -148,7 +144,7 @@ export default class StoreOrders extends Component {
   }
 
   render() {
-    var {loading, data, store_data} = this.state;
+    var { loading, data } = this.state;
 
     if (loading) {
       return <Indicator />
@@ -380,7 +376,7 @@ const styles = StyleSheet.create({
 
   empty_box: {
     alignItems: 'center',
-    marginTop: "50%"
+    marginTop: Util.size.height / 3.333333
   },
   empty_box_title: {
     fontSize: 12,
