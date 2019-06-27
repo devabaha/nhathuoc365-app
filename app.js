@@ -26,7 +26,7 @@ import {
   ActionConst
 } from 'react-native-router-flux';
 import DeepLinking from 'react-native-deep-linking';
-import OneSignal from 'react-native-onesignal';
+// import OneSignal from 'react-native-onesignal';
 
 // store
 import Store from './store/Store';
@@ -226,11 +226,11 @@ class App extends Component {
   }
 
   componentDidMount() {
-    OneSignal.inFocusDisplaying(0);
-    OneSignal.addEventListener('received', this._onReceived.bind(this));
-    OneSignal.addEventListener('opened', this._onOpened.bind(this));
-    // OneSignal.addEventListener('registered', this._onRegistered.bind(this));
-    OneSignal.addEventListener('ids', this._onIds.bind(this));
+    // OneSignal.inFocusDisplaying(0);
+    // OneSignal.addEventListener('received', this._onReceived.bind(this));
+    // OneSignal.addEventListener('opened', this._onOpened.bind(this));
+    // // OneSignal.addEventListener('registered', this._onRegistered.bind(this));
+    // OneSignal.addEventListener('ids', this._onIds.bind(this));
 
     // deep link register
     DeepLinking.addScheme('macccacaapp://');
@@ -322,19 +322,6 @@ class App extends Component {
           });
         })();
       }
-      if (response && response.status == STATUS_SYNC_FLAG) {
-        Store.setUserInfo(response.data);
-        action(() => {
-          this.setState({
-            finish: true
-          }, () => {
-            Actions.sync_ndt({
-              type: ActionConst.RESET,
-              title: "Nhập mã đồng bộ"
-            });
-          });
-        })();
-      }
       if (response && response.status == STATUS_FILL_INFO_USER) {
         Store.setUserInfo(response.data);
         action(() => {
@@ -348,18 +335,6 @@ class App extends Component {
           });
         })();
         StatusBar.setBarStyle('light-content');
-      }
-      if (response && response.status == STATUS_UNDEFINE_USER) {
-        Store.setUserInfo(response.data);
-        action(() => {
-          this.setState({
-            finish: true
-          }, () => {
-            Actions.op_login({
-              type: ActionConst.RESET
-            });
-          });
-        })();
       }
     } catch (e) {
       console.warn(e + ' user_login');
