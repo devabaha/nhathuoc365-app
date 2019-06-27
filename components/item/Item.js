@@ -506,12 +506,8 @@ export default class Item extends Component {
           <View style={styles.item_content_text}>
             {item_data != null ? (
               <AutoHeightWebView
-                onError={() => console.log('on error')}
-                onLoad={() => console.log('on load')}
-                onLoadStart={() => console.log('on load start')}
-                onLoadEnd={() => console.log('on load end')}
+                zoomable={false}
                 onShouldStartLoadWithRequest={result => {
-                  console.log(result)
                   return true;
                 }}
                 style={{
@@ -519,9 +515,6 @@ export default class Item extends Component {
                 }}
                 onHeightUpdated={height => this.setState({ height })}
                 source={{ html: item_data.content }}
-                customScript={`
-
-                  `}
                 customStyle={`
                   * {
                     font-family: 'arial';
@@ -537,7 +530,8 @@ export default class Item extends Component {
                   }
                   img {
                     max-width: 100% !important;
-                  }`} />
+                  }`}
+                  />
             ) : (
               <Indicator size="small" />
             )}
