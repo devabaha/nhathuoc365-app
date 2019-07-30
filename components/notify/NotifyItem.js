@@ -137,7 +137,9 @@ export default class NotifyItem extends Component {
                   return true;
                 }}
                 style={{
-                  paddingHorizontal: 6
+                  paddingHorizontal: 6,
+                  width: '94%',
+                  margin: 10
                 }}
                 onHeightUpdated={height => this.setState({ height })}
                 source={{ html: item_data.content }}

@@ -503,7 +503,7 @@ export default class Item extends Component {
             </View>
           )}
 
-          <View style={styles.item_content_text}>
+          <View style={[styles.item_content_text]}>
             {item_data != null ? (
               <AutoHeightWebView
                 zoomable={false}
@@ -511,7 +511,9 @@ export default class Item extends Component {
                   return true;
                 }}
                 style={{
-                  paddingHorizontal: 6
+                  paddingHorizontal: 6,
+                  width: '94%',
+                  margin: 10
                 }}
                 onHeightUpdated={height => this.setState({ height })}
                 source={{ html: item_data.content }}
