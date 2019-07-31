@@ -197,12 +197,6 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    // OneSignal.inFocusDisplaying(0);
-    // OneSignal.addEventListener('received', this._onReceived.bind(this));
-    // OneSignal.addEventListener('opened', this._onOpened.bind(this));
-    // // OneSignal.addEventListener('registered', this._onRegistered.bind(this));
-    // OneSignal.addEventListener('ids', this._onIds.bind(this));
-
     // deep link register
     DeepLinking.addScheme('macccacaapp://');
     Linking.addEventListener('url', this.handleURL);
@@ -323,11 +317,6 @@ export default class App extends Component {
   }
 
   _onOpened(openResult) {
-    // console.log('Message: ', openResult.notification.payload.body);
-    // console.log('Data: ', openResult.notification.payload.additionalData);
-    // console.log('isActive: ', openResult.notification.isAppInFocus);
-    // console.log('openResult: ', openResult);
-
     var data = openResult.notification.payload.additionalData;
     if (data) {
       var { page, site_id, page_id } = data;
