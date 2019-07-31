@@ -17,11 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.4</string>
+	<string>2.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>20</string>
+	<string>22</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -37,14 +37,26 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>Cho phép sử dụng Apple Music</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Cho phép sử dụng Bluetooth</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Cho phép sử dụng Calendar</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Cho phép ứng dụng sử dụng dụng Camera quét mã Vạch và mã QR</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Cho phép ứng dụng truy cập Vị trí</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Micro</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Cho phép sử dụng nhận dạng chuyển động</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Thư viện ảnh làm ảnh đại diện</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Cho phép sử dụng nhận biết lời nói</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
