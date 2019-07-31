@@ -26,28 +26,12 @@ import PopupConfirm from '../PopupConfirm';
 export default class OpRegister extends Component {
   constructor(props) {
     super(props);
-
-    var edit_data = props.edit_data;
-
-    if (edit_data) {
-      this.state = {
-        edit_mode: true,
-        name: edit_data.name || '',
-        email: edit_data.email || '',
-        // password: edit_data.password || '',
-        // refer: edit_data.refer,
-        finish_loading: false,
-        verify_loadding: false
-      }
-    } else {
-      this.state = {
-        name: props.name_props || '',
-        email: props.email_props || '',
-        // password: props.password_props || '',
-        // refer: props.refer_props || '',
-        finish_loading: false,
-        verify_loadding: false
-      }
+    this.state = {
+      name: props.name_props || '',
+      // email: props.email_props || '',
+      // password: props.password_props || '',
+      refer: props.refer_props || '',
+      loading: false
     }
   }
 
@@ -73,10 +57,10 @@ export default class OpRegister extends Component {
   }
 
   _onSave() {
-    var {name, email} = this.state;//, password, refer
+    var {name, refer} = this.state;//email, password, refer
 
     name = name.trim();
-    email = email.trim();
+    refer = refer.trim();
 
     if (!name) {
       return Alert.alert(
@@ -91,32 +75,32 @@ export default class OpRegister extends Component {
       );
     }
 
-    if (!email) {
-      return Alert.alert(
-        'Thông báo',
-        'Hãy điền Số Email, sử dụng để lấy lại tài khoản và hỗ trợ',
-        [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs_email.focus();
-          }},
-        ],
-        { cancelable: false }
-      );
-    }
+    // if (!email) {
+    //   return Alert.alert(
+    //     'Thông báo',
+    //     'Hãy điền Số Email, sử dụng để lấy lại tài khoản và hỗ trợ',
+    //     [
+    //       {text: 'Đồng ý', onPress: () => {
+    //         this.refs_email.focus();
+    //       }},
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
 
 
-    if (!validateEmail(email)) {
-      return Alert.alert(
-        'Thông báo',
-        'Email không chính xác, vui lòng điền lại',
-        [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs_email.focus();
-          }},
-        ],
-        { cancelable: false }
-      );
-    }
+    // if (!validateEmail(email)) {
+    //   return Alert.alert(
+    //     'Thông báo',
+    //     'Email không chính xác, vui lòng điền lại',
+    //     [
+    //       {text: 'Đồng ý', onPress: () => {
+    //         this.refs_email.focus();
+    //       }},
+    //     ],
+    //     { cancelable: false }
+    //   );
+    // }
 
 
     // if (!password) {
@@ -148,7 +132,7 @@ export default class OpRegister extends Component {
       // if (!refer) {
       //   return Alert.alert(
       //     'Thông báo',
-      //     'Hãy điền mã của quản lý vùng trực tiếp.',
+      //     'Hãy điền số điện thoại người giới thiệu.',
       //     [
       //       {text: 'Đồng ý', onPress: () => {
       //         this.refs_refer.focus();
@@ -158,63 +142,37 @@ export default class OpRegister extends Component {
       //   );
       // }
 
-    if (this.successfully || this.state.finish_loading) {
+    if (this.state.loading) {
       return;
     }
 
-    this._op_register(name, email);//, password, refer
+    this._op_register(name, refer);//email, password, refer
   }
 
-  _op_register(name, email) {//, password, refer
+  _op_register(name, refer) {//, password, refer
     this.setState({
-      finish_loading: true
+      loading: true,
     }, async () => {
       try {
         var response = await APIHandler.user_op_register({
           name: name,
-          email: email
+          refer: refer
         });
         if (response && response.status == STATUS_SUCCESS) {
-          if (response.data.site_id === 0) {//hien thi chon site
-            action(() => {
-              this.setState({
-                finish: true
-              }, () => {
-                Actions.choose_location({
-                  type: ActionConst.RESET,
-                  title: "CHỌN CỬA HÀNG"
-                });
-              });
-            })();
-          }else{
-            store.setUserInfo(response.data);
-            action(() => {
-              this.setState({
-                finish: true
-              }, () => {
-                Actions.myTabBar({
-                  type: ActionConst.RESET
-                });
-              });
-            })();
-          }
-
-        } else {
-          if (response && response.status == STATUS_SYNC_FLAG) {
-            action(() => {
-              this.setState({
-                finish: true
-              }, () => {
-                Actions.sync_ndt({
-                  title: "Nhập mã đồng bộ"
-                });
-              });
-            })();
-          }else{
+          store.setUserInfo(response.data);
+          action(() => {
             this.setState({
-              finish_loading: true
+              loading: false
+            }, () => {
+              Actions.myTabBar({
+                type: ActionConst.RESET
+              });
             });
-          }
+          })();
+        } else {
+          this.setState({
+            loading: false
+          });
         }
 
         if (response) {
@@ -223,18 +181,18 @@ export default class OpRegister extends Component {
 
       } catch (e) {
         this.setState({
-          finish_loading: true
+          loading: false
         });
-        alert("catch" + e);
-
       } finally {
-
+        this.setState({
+          loading: false
+        });
       }
     });
   }
 
   render() {
-    var { edit_mode, verify_loadding } = this.state;
+    var { name, email, loading } = this.state;
 
     return (
       <View style={styles.container}>
@@ -265,8 +223,8 @@ export default class OpRegister extends Component {
                   }
                 }}
                 onSubmitEditing={() => {
-                  if (this.refs_email) {
-                    this.refs_email.focus();
+                  if (this.refs_refer) {
+                    this.refs_refer.focus();
                   }
                 }}
                 returnKeyType="next"
@@ -274,7 +232,7 @@ export default class OpRegister extends Component {
             </View>
           </View>
 
-          <View style={styles.input_box}>
+          {/* <View style={styles.input_box}>
             <Text style={styles.input_label}>Email (*)</Text>
 
             <View style={styles.input_text_box}>
@@ -294,7 +252,7 @@ export default class OpRegister extends Component {
                 value={this.state.email}
                 />
             </View>
-          </View>
+          </View> */}
 
 {/*          <View style={styles.input_box}>
             <Text style={styles.input_label}>Mật khẩu bán hàng (*)</Text>
@@ -318,6 +276,7 @@ export default class OpRegister extends Component {
             </View>
           </View>
 
+  */}
           <View style={styles.input_box}>
             <Text style={styles.input_label}>Mã giới thiệu</Text>
 
@@ -327,7 +286,7 @@ export default class OpRegister extends Component {
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
-                placeholder="Điền mã của người giới thiệu"
+                placeholder="Điền số điện thoại người giới thiệu"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
                 onChangeText={(value) => {
@@ -339,7 +298,8 @@ export default class OpRegister extends Component {
                 />
             </View>
           </View>
-  */}
+          <Text style={styles.disclaimerText}>Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại {global.APP_NAME_SHOW} nhé</Text>
+
         </ScrollView>
 
         <TouchableHighlight
@@ -353,7 +313,7 @@ export default class OpRegister extends Component {
               justifyContent: 'center',
               alignItems: 'center'
             }}>
-              {this.state.finish_loading ? (
+              {this.state.loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : (
                 <Icon name={this.state.edit_mode ? "save" : "user-plus"} size={20} color="#ffffff" />
@@ -485,5 +445,13 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     marginLeft: 8
-  }
+  },
+
+  disclaimerText: {
+    marginTop: 20,
+    marginLeft: 20,
+    marginRight: 20,
+    fontSize: 12,
+    color: 'grey'
+  },
 });

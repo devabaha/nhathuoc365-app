@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   View,
   Text,
@@ -25,7 +25,9 @@ export default class SyncNdt extends Component {
     this.state = {
       pageNum: 0,
       stores_data: store.stores_data,
-      user: store.user_info
+      user: store.user_info,
+      loading: false,
+      searchValue: ""
     }
   }
 
@@ -33,32 +35,20 @@ export default class SyncNdt extends Component {
     GoogleAnalytic('_sync_ndt');
   }
 
-  _onFinish() {
-    if (store.user_info && store.user_info.site_id === 0) {
-      Actions.choose_location({
-        type: ActionConst.RESET,
-        title: "CHỌN CỬA HÀNG"
-      });
-    } else {
-      Actions.myTabBar({
-        type: ActionConst.RESET
-      });
-    }
-  }
 
   // thực hiện add cửa hàng vào account của user
 
   async _add_ref() {
     if (this.state.searchValue != undefined) {
+      this.props.onSyncing(true);
       var response = await APIHandler.user_sync_ndt({ "code": this.state.searchValue });
+      this.props.onSyncing(false);
+
       if (response) {
         if (response.status == STATUS_SUCCESS) {
-          if(this.props.isAppBegin){
-            this._onFinish();
-          } else {
-            this.props.onSuccess(response.message);
-          }
-          
+          this.setState({ searchValue: "" });
+          store.setUserInfo(response.data);
+          Toast.show(response.message);
         } else {
           Toast.show(response.message);
         }
@@ -75,10 +65,11 @@ export default class SyncNdt extends Component {
   }
 
   render() {
-    var { pageNum, stores_data, user } = this.state;
+    var { pageNum, stores_data, user, loading } = this.state;
     let { containerStyle } = this.props;
     return (
       <View style={[styles.container]}>
+
         <ScrollView
           style={{
             marginBottom: store.keyboardTop
@@ -96,35 +87,70 @@ export default class SyncNdt extends Component {
               }}>
                 Nhập mã đồng bộ trên Web [Nhà đầu tư] để đồng bộ tài khoản.
                 </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
-                ref={ref => this.searchInput = ref}
-                // onLayout={() => {
-                //   if (this.searchInput) {
-                //     this.searchInput.focus();
-                //   }
-                // }}
-                style={{
-                  height: 42,
-                  width: 250,
-                  borderColor: "#dddddd",
-                  borderWidth: 1,
-                  marginHorizontal: 15,
-                  paddingHorizontal: 8,
-                  borderRadius: 2,
-                  color: "#404040",
-                  fontSize: 18,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: "#ffffff"
-                }}
-                placeholder=""
-                // keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-                autoFocus
-                onChangeText={this._onChangeSearch.bind(this)}
-                onSubmitEditing={this._add_ref.bind(this)}
-                value={this.state.searchValue}
-              />
+                <View style={{
+                    flexDirection: 'row',
+                  }}>
+                <TextInput
+                  underlineColorAndroid="transparent"
+                  ref={ref => this.searchInput = ref}
+                  // onLayout={() => {
+                  //   if (this.searchInput) {
+                  //     this.searchInput.focus();
+                  //   }
+                  // }}
+                  style={{
+                    height: 42,
+                    width: 250,
+                    borderColor: "#dddddd",
+                    borderWidth: 1,
+                    marginHorizontal: 15,
+                    paddingHorizontal: 8,
+                    borderRadius: 2,
+                    color: "#404040",
+                    fontSize: 18,
+                    alignItems: 'center',
+                    justifyContent: 'flex-start',
+                    backgroundColor: "#ffffff"
+                  }}
+                  placeholder=""
+                  // keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+                  // autoFocus
+                  onChangeText={this._onChangeSearch.bind(this)}
+                  onSubmitEditing={this._add_ref.bind(this)}
+                  value={this.state.searchValue}
+                />
+                  <TouchableHighlight
+                  underlayColor="transparent"
+                  style={{
+                    height: 42,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: "#ffffff"
+                  }}
+                  onPress={() => {
+                    Actions.scan_qr_code({
+                      onBackHandler: (site_code) => {
+                        this.setState({
+                          searchValue: site_code
+                        }, () => {
+                          Actions.refresh({
+                            searchValue: site_code
+                          });
+
+                          this.search_handler = setTimeout(() => {
+                            this._add_ref();
+                          }, 300);
+                        });
+                      }
+                    });
+                  }}>
+                  <Icon
+                    style={{
+                      marginLeft: 4
+                    }}
+                    name="qrcode" size={30} color="#333333" />
+                </TouchableHighlight>
+                </View>
               <Text style={styles.disclaimerText}>Chưa có mã đồng bộ, hãy đăng nhập vào trang [Nhà đầu tư], bấm vào [Đồng bộ tài khoản] để nhận mã.</Text>
               <TouchableHighlight
                 style={[styles.buttonAction, {
@@ -281,5 +307,5 @@ const styles = StyleSheet.create({
 
 SyncNdt.defaultProps = {
   isAppBegin: true,
-  onSuccess: () => {}
+  onSuccess: () => { }
 }

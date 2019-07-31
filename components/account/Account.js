@@ -17,9 +17,9 @@ import {
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
-import { SocialIcon } from '../../lib/react-native-elements';
 import Communications from 'react-native-communications';
 import RNFetchBlob from 'rn-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
@@ -69,27 +69,10 @@ export default class Account extends Component {
 
         {
           key: "2",
-          isHidden: !isAdmin,
-          icon: "home",
-          label: "Cửa hàng của tôi",
-          desc: "Quản lý cửa hàng kinh doanh",
-          onPress: () => Actions.dashboard({
-
-          }),
-          boxIconStyle: [styles.boxIconStyle, {
-            backgroundColor: "#1fa67a"
-          }],
-          iconColor: "#ffffff",
-          marginTop: true,
-          notify: "notify_myshop"
-        },
-
-        {
-          key: "3",
           icon: "facebook-square",
-          label: "Fanpage "+ APP_NAME,
-          desc: "Facebook fanpage của ứng dụng",
-          onPress: () => Communications.web("http://fanpage."+ APP_NAME +".tickid.vn"),
+          label: "Fanpage " + APP_NAME,
+          desc: "Facebook Fanpage chăm sóc khách hàng",
+          onPress: () => Communications.web(APP_FANPAGE),
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#4267b2"
           }],
@@ -98,13 +81,13 @@ export default class Account extends Component {
         },
 
         {
-          key: "4",
+          key: "3",
           icon: "handshake-o",
-          label: "Về "+ APP_NAME +" - Điều khoản sử dụng",
+          label: "Về " + APP_NAME + " - Điều khoản sử dụng",
           desc: "Điều khoản sử dụng",
           onPress: () => Actions.webview({
             title: "Về MACCACA",
-            url: MY_FOOD_API + "info/privacy"
+            url: APP_INFO
           }),
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: DEFAULT_COLOR
@@ -114,10 +97,10 @@ export default class Account extends Component {
         },
 
         {
-          key: "5",
+          key: "4",
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Sản phẩm của "+ APP_NAME +" - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
+          desc: "Sản phẩm của " + APP_NAME + " - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
           onPress: () => 1,
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"
@@ -127,7 +110,7 @@ export default class Account extends Component {
           marginTop: true
         },
         {
-          key: "6",
+          key: "5",
           isHidden: !isUpdate,
           icon: "cloud-download",
           label: "Cập nhật ứng dụng",
@@ -152,7 +135,7 @@ export default class Account extends Component {
   }
 
   _onRefresh() {
-    this.setState({refreshing: true}, () => {
+    this.setState({ refreshing: true }, () => {
       this._login(1000);
     });
   }
@@ -203,28 +186,28 @@ export default class Account extends Component {
         filename: response.fileName,
         data: response.data
       }
-
+      console.log(APIHandler.url_user_add_avatar());
       // call api post my form data
       RNFetchBlob.fetch('POST', APIHandler.url_user_add_avatar(), {
-          'Content-Type' : 'multipart/form-data',
+        'Content-Type': 'multipart/form-data',
       }, [avatar]).then((resp) => {
 
-          var {data} = resp;
-          var response = JSON.parse(data);
-          if (response && response.status == STATUS_SUCCESS) {
-            this._showSticker();
+        var { data } = resp;
+        var response = JSON.parse(data);
+        if (response && response.status == STATUS_SUCCESS) {
+          this._showSticker();
 
-            action(() => {
-              store.setUserInfo(response.data);
-            })();
-            this.setState({
-              avatar_loading: false
-            });
-          }
+          // action(() => {
+          //   store.setUserInfo(response.data);
+          // })();
+          this.setState({
+            avatar_loading: false
+          });
+        }
       }).catch((error) => {
-          console.warn(error + ' url_user_add_avatar');
+        console.warn(error + ' url_user_add_avatar');
 
-          store.addApiQueue('url_user_add_avatar', this._uploadAvatar.bind(this, response));
+        store.addApiQueue('url_user_add_avatar', this._uploadAvatar.bind(this, response));
       });
     });
   }
@@ -261,7 +244,7 @@ export default class Account extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_account) {
-      this.refs_account.scrollTo({x: 0, y: top, animated: true});
+      this.refs_account.scrollTo({ x: 0, y: top, animated: true });
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
@@ -314,24 +297,24 @@ export default class Account extends Component {
   render() {
 
     var is_login = store.user_info != null && store.user_info.username != null;
-    var {user_info} = store;
+    var { user_info } = store;
 
-    var {avatar_loading, logout_loading} = this.state;
+    var { avatar_loading, logout_loading } = this.state;
 
     if (avatar_loading) {
       var avatar = (
-        <View style={{width: '100%', height: '100%'}}>
+        <View style={{ width: '100%', height: '100%' }}>
           <Indicator size="small" />
         </View>
       );
     } else {
       var avatar = (
         <View>
-          <CachedImage mutable style={styles.profile_avatar} source={{uri: store.user_info.img}} />
+          <CachedImage mutable style={styles.profile_avatar} source={{ uri: store.user_info.img }} />
         </View>
       );
     }
-
+    
     return (
       <View style={styles.container}>
         <View style={styles.profile_cover_box}>
@@ -351,51 +334,51 @@ export default class Account extends Component {
                 backgroundColor: "transparent"
               }}>
 
-              <Text style={{
-                color: "#ffffff",
-                fontSize: 16,
+                <Text style={{
+                  color: "#ffffff",
+                  fontSize: 16,
 
-              }}>{user_info.name}</Text>
+                }}>{user_info.name}</Text>
 
-              <Text style={{
-                color: "#ffffff",
-                fontSize: 12,
-                marginTop: 4
-              }}>{user_info.tel}</Text>
+                <Text style={{
+                  color: "#ffffff",
+                  fontSize: 12,
+                  marginTop: 4
+                }}>{user_info.tel}</Text>
 
               </View>
             ) : (
-              <View style={styles.profile_button_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => {
-                    Actions.register({});
-                  }}>
+                <View style={styles.profile_button_box}>
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={() => {
+                      Actions.register({});
+                    }}>
 
-                  <View style={[styles.profile_button_login_box, {
-                    marginRight: 8,
-                    backgroundColor: "#666666"
-                  }]}>
-                    <Icon name="user-plus" size={14} color="#ffffff" />
-                    <Text style={styles.profile_button_title}>Đăng ký</Text>
-                  </View>
-                </TouchableHighlight>
+                    <View style={[styles.profile_button_login_box, {
+                      marginRight: 8,
+                      backgroundColor: "#666666"
+                    }]}>
+                      <Icon name="user-plus" size={14} color="#ffffff" />
+                      <Text style={styles.profile_button_title}>Đăng ký</Text>
+                    </View>
+                  </TouchableHighlight>
 
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => {
-                    Actions.login();
-                  }}>
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={() => {
+                      Actions.login();
+                    }}>
 
-                  <View style={[styles.profile_button_login_box, {
-                    backgroundColor: DEFAULT_COLOR
-                  }]}>
-                    <Icon name="sign-in" size={14} color="#ffffff" />
-                    <Text style={styles.profile_button_title}>Đăng nhập</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            )}
+                    <View style={[styles.profile_button_login_box, {
+                      backgroundColor: DEFAULT_COLOR
+                    }]}>
+                      <Icon name="sign-in" size={14} color="#ffffff" />
+                      <Text style={styles.profile_button_title}>Đăng nhập</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
+              )}
 
             {is_login && (
               <View style={{
@@ -406,22 +389,22 @@ export default class Account extends Component {
                 {logout_loading ? (
                   <Indicator size="small" />
                 ) : (
-                  <TouchableHighlight
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 15
-                    }}
-                    underlayColor="transparent"
-                    onPress={this._onLogout.bind(this)}>
-                    <Text style={{
-                      color: "#cccccc",
-                      fontSize: 10
-                    }}>
-                      <Icon name="sign-out" size={10} color="#cccccc" />
-                      {" Đăng xuất"}
-                    </Text>
-                  </TouchableHighlight>
-                )}
+                    <TouchableHighlight
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 15
+                      }}
+                      underlayColor="transparent"
+                      onPress={this._onLogout.bind(this)}>
+                      <Text style={{
+                        color: "#cccccc",
+                        fontSize: 10
+                      }}>
+                        <Icon name="sign-out" size={10} color="#cccccc" />
+                        {" Đăng xuất"}
+                      </Text>
+                    </TouchableHighlight>
+                  )}
               </View>
             )}
 
@@ -441,10 +424,15 @@ export default class Account extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }>
-          {user_info.view_tab_cashback &&  (//vnd_wallet
+          <View style={{
+            marginTop: 1,
+            borderTopWidth: 0,
+            borderColor: "#dddddd"
+          }}>
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions.vnd_wallet({title: "Tài khoản Cashback"})}>
+              onPress={() => Actions.qr_bar_code({ title: "Địa chỉ Ví", address: user_info.wallet_address })}
+            >
               <View style={[styles.profile_list_opt_btn, {
                 marginTop: 0,
                 borderTopWidth: 0,
@@ -452,36 +440,142 @@ export default class Account extends Component {
               }]}>
 
                 <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
-                  backgroundColor: DEFAULT_COLOR
+                  backgroundColor: "#A569BD"
                 }]}>
-                  <Icon name="credit-card" size={16} color="#ffffff" />
+                  <Ionicons name="ethereum" size={16} color="#ffffff" />
                 </View>
 
                 <View>
-                  <Text style={styles.profile_list_label}>Tài khoản Cashback: <Text style={styles.profile_list_label_balance}>{user_info.vnd}</Text></Text>
-                  <Text style={styles.profile_list_small_label}>{user_info.text_vnd}</Text>
+                  <Text style={styles.profile_list_label}>Addr: <Text style={styles.profile_list_label_address}>{typeof user_info.wallet_address == "string" ? user_info.wallet_address.substring(0, 25) + '...' : "Chưa có địa chỉ Ví"}</Text></Text>
                 </View>
 
                 {<View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
                   <Icon name="angle-right" size={16} color="#999999" />
                 </View>}
-                
-                {store.notify.notify_vnd > 0 && <View style={styles.stores_info_action_notify}>
-                  <Text style={styles.stores_info_action_notify_value}>{store.notify.notify_vnd}</Text></View>}
-              
-
               </View>
 
             </TouchableHighlight>
+          </View>
+          {user_info.default_wallet && (//vnd_wallet
+            <View style={{
+              marginTop: 1,
+              borderTopWidth: 0,
+              borderColor: "#dddddd"
+            }}>
+              <TouchableHighlight
+                underlayColor="transparent"
+                onPress={() => Actions.vnd_wallet({ title: user_info.default_wallet.name, wallet: user_info.default_wallet })}>
+                <View style={[styles.profile_list_opt_btn, {
+                  marginTop: 0,
+                  borderTopWidth: 0,
+                  borderColor: "#dddddd"
+                }]}>
+                  
+                  <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
+                    backgroundColor: user_info.default_wallet.color
+                  }]}>
+                    <Icon name={user_info.default_wallet.icon} size={16} color="#ffffff" />
+                  </View>
+
+                  <View>
+                    <Text style={styles.profile_list_label}>{user_info.default_wallet.name}: <Text style={[styles.profile_list_label_balance, {color: user_info.default_wallet.color}]}>{user_info.default_wallet.balance_view}</Text></Text>
+                  </View>
+
+                  {<View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                    <Icon name="angle-right" size={16} color="#999999" />
+                  </View>}
+                </View>
+
+              </TouchableHighlight>
+            </View>
           )}
+          {user_info.wallets && (
+            <View style={{
+              marginTop: 7,
+              borderTopWidth: 0,
+              borderColor: "#dddddd"
+            }}>
+              <View style={styles.add_store_actions_box}>
+                {user_info.wallets.map((wallet, index) => (
+                  <TouchableHighlight
+                    key={index}
+                    onPress={wallet.address?() => Actions.vnd_wallet({ title: wallet.name, wallet: wallet }):""}
+                    underlayColor="transparent"
+                    style={styles.add_store_action_btn}>
+                    <View style={styles.add_store_action_btn_box}>
+                      <View style={styles.add_store_action_wallet}>
+                        <Text style={styles.add_store_action_wallet_text}><Icon name={wallet.icon} size={16} color={wallet.color} /> {wallet.name}</Text>
+                      </View>
+                      <Text style={[styles.add_store_action_wallet_content, {color: wallet.color}]}>{wallet.balance_view}</Text>
+                    </View>
+                  </TouchableHighlight>
+
+                ))}
+              </View>
+            </View>
+          )}
+          {user_info.ext_wallets && (
+            <View style={{
+              marginTop: 1,
+              borderTopWidth: 0,
+              borderColor: "#dddddd"
+            }}>
+              <View style={styles.add_store_actions_box}>
+                {user_info.ext_wallets.map((wallet, index) => (
+
+                  <TouchableHighlight
+                    key={index}
+                    onPress={wallet.address?() => Actions.vnd_wallet({ title: wallet.name, wallet: wallet }):() => Actions.view_ndt_list()}
+                    underlayColor="transparent"
+                    style={styles.add_store_action_btn}>
+                    <View style={styles.add_store_action_btn_box}>
+                      <View style={styles.add_store_action_wallet}>
+                        <Text style={styles.add_store_action_wallet_text}><Icon name={wallet.icon} size={16} color={wallet.color} /> {wallet.name}</Text>
+                      </View>
+                      <Text style={[styles.add_store_action_wallet_content, {color: wallet.color}]}>{wallet.balance_view}</Text>
+                    </View>
+                  </TouchableHighlight>
+
+                ))}
+              </View>
+            </View>
+          )}
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={() => Actions.affiliate({aff_content: store.store_data.aff_content?store.store_data.aff_content:"Giới thiệu chương trình tiếp thị liên kết cùng MACCACA"})}>
+            <View style={[styles.profile_list_opt_btn, {
+              marginTop: 1,
+              borderTopWidth: 0,
+              borderColor: "#dddddd"
+            }]}>
+
+              <View style={[styles.profile_list_icon_box, styles.boxIconStyle, {
+                backgroundColor: "#51A9FF"
+              }]}>
+                <Icon name="commenting-o" size={16} color="#ffffff" />
+              </View>
+
+              <View>
+                <Text style={styles.profile_list_label}>Mã giới thiệu: <Text style={styles.profile_list_label_invite_id}>{user_info.username}</Text></Text>
+                <Text style={styles.profile_list_small_label}>{user_info.text_invite}</Text>
+              </View>
+
+              <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                <Icon name="angle-right" size={16} color="#999999" />
+              </View>
+
+
+            </View>
+
+          </TouchableHighlight>
           {user_info.view_tab_ndt && (
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() => Actions.view_ndt_list()}
-              >
+            >
 
               <View style={[styles.profile_list_opt_btn, {
-                marginTop: 1,
+                marginTop: 7,
                 borderTopWidth: 0,
                 borderColor: "#dddddd"
               }]}>
@@ -500,7 +594,7 @@ export default class Account extends Component {
                 <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
                   <Icon name="angle-right" size={16} color="#999999" />
                 </View>
-                
+
 
               </View>
 
@@ -509,8 +603,8 @@ export default class Account extends Component {
           {user_info.view_tab_invite && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions._add_ref({title: "Nhập mã giới thiệu"})}
-              >
+              onPress={() => Actions._add_ref({ title: "Nhập mã giới thiệu" })}
+            >
 
               <View style={[styles.profile_list_opt_btn, {
                 marginTop: 1,
@@ -532,7 +626,7 @@ export default class Account extends Component {
                 <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
                   <Icon name="angle-right" size={16} color="#999999" />
                 </View>
-                
+
 
               </View>
 
@@ -551,7 +645,7 @@ export default class Account extends Component {
         <Sticker
           active={this.state.sticker_flag}
           message="Thay ảnh đại diện thành công."
-         />
+        />
       </View>
     );
   }
@@ -561,16 +655,20 @@ export default class Account extends Component {
       'Lưu ý khi đăng xuất',
       'Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.',
       [
-        {text: 'Huỷ', onPress: () => {
+        {
+          text: 'Huỷ', onPress: () => {
 
-        }},
-        {text: 'Đăng xuất', onPress: () => {
-          this.setState({
-            logout_loading: true
-          }, () => {
-            this._logout();
-          });
-        }, style: "destructive"}
+          }
+        },
+        {
+          text: 'Đăng xuất', onPress: () => {
+            this.setState({
+              logout_loading: true
+            }, () => {
+              this._logout();
+            });
+          }, style: "destructive"
+        }
       ],
       { cancelable: false }
     );
@@ -589,6 +687,9 @@ export default class Account extends Component {
           store.setRefreshHomeChange(store.refresh_home_change + 1);
 
           store.setOrdersKeyChange(store.orders_key_change + 1);
+          Actions.op_login({
+            type: ActionConst.RESET
+          });
         })();
       }
     } catch (e) {
@@ -693,6 +794,16 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginRight: 4
   },
+
+  profile_list_icon_box_small: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 22,
+    height: 22,
+    marginLeft: 3,
+    marginRight: 0
+  },
   profile_list_icon_box_angle: {
     position: 'absolute',
     top: 0,
@@ -705,8 +816,14 @@ const styles = StyleSheet.create({
     fontWeight: '400'
   },
   profile_list_label_balance: {
+    fontSize: 18,
+    color: "#922B21",
+    fontWeight: '600',
+    left: 20,
+  },
+  profile_list_label_address: {
     fontSize: 16,
-    color: DEFAULT_COLOR,
+    color: "#0E6655",
     fontWeight: '600'
   },
 
@@ -715,7 +832,7 @@ const styles = StyleSheet.create({
     color: "#e31b23",
     fontWeight: '600'
   },
-  
+
   profile_list_label_invite_id: {
     fontSize: 16,
     color: "#51A9FF",
@@ -750,7 +867,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: '600'
   },
-  
+
   profile_list_balance_box: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -764,5 +881,47 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 20
-  }
+  },
+
+  add_store_actions_box: {
+    width: '100%',
+    flexDirection: 'row',
+    paddingVertical: 8,
+    backgroundColor: "#ffffff",
+    borderBottomWidth: Util.pixel,
+    borderColor: "#dddddd"
+  },
+  add_store_action_btn: {
+    paddingVertical: 4
+  },
+  add_store_action_btn_box: {
+    alignItems: 'center',
+    // width: ~~((Util.size.width - 16) / 2),
+    width: ~~(Util.size.width / 2),
+    borderRightWidth: Util.pixel,
+    borderRightColor: '#ebebeb'
+  },
+  add_store_action_label: {
+    fontSize: 12,
+    color: '#404040',
+    marginTop: 4
+  },
+  add_store_action_wallet_text: {
+    fontSize: 14,
+    color: '#404040',
+    marginLeft: 0,
+    marginTop: 3
+  },
+  add_store_action_wallet_content: {
+    fontSize: 16,
+    color: '#333333',
+    fontWeight: '700'
+  },
+  add_store_action_wallet: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    // paddingVertical: 8,
+    paddingHorizontal: 8,
+    // marginRight: 8
+  },
 });

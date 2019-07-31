@@ -16,6 +16,7 @@ import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
+import { BackAndroid } from 'react-native';
 
 import Sticker from '../Sticker';
 
@@ -41,6 +42,18 @@ export default class OpLogin extends Component {
       },
       sticker_flag: false
     };
+  }
+
+  componentWillMount(){
+    BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid.bind(this));
+  }
+
+  componentWillUnmount(){
+    BackAndroid.removeEventListener('hardwareBackPress', this.onBackAndroid.bind(this));
+  }
+
+  onBackAndroid() {
+    return true;
   }
 
   _showSticker() {
@@ -151,28 +164,15 @@ export default class OpLogin extends Component {
                 });
               })();
             }else{
-              if (!response.data.site_id === 0) {//hien thi chon site
-                action(() => {
-                  this.setState({
-                    finish: true
-                  }, () => {
-                    Actions.choose_location({
-                      type: ActionConst.RESET,
-                      title: "CHỌN CỬA HÀNG"
-                    });
+              action(() => {
+                this.setState({
+                  finish: true
+                }, () => {
+                  Actions.myTabBar({
+                    type: ActionConst.RESET
                   });
-                })();
-              }else{
-                action(() => {
-                  this.setState({
-                    finish: true
-                  }, () => {
-                    Actions.myTabBar({
-                      type: ActionConst.RESET
-                    });
-                  });
-                })();
-              }
+                });
+              })(); 
             }
             StatusBar.setBarStyle('light-content');
 
