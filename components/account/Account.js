@@ -101,7 +101,7 @@ export default class Account extends Component {
           icon: "question-circle",
           label: "Thông tin ứng dụng",
           desc: "Sản phẩm của " + APP_NAME + " - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
-          onPress: () => 1,
+          onPress: () => {},
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"
           }],
@@ -499,7 +499,7 @@ export default class Account extends Component {
                 {user_info.wallets.map((wallet, index) => (
                   <TouchableHighlight
                     key={index}
-                    onPress={wallet.address?() => Actions.vnd_wallet({ title: wallet.name, wallet: wallet }):""}
+                    onPress={wallet.address?() => Actions.vnd_wallet({ title: wallet.name, wallet: wallet }):() => {}}
                     underlayColor="transparent"
                     style={styles.add_store_action_btn}>
                     <View style={styles.add_store_action_btn_box}>

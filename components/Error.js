@@ -5,7 +5,7 @@ import NetInfo from "@react-native-community/netinfo";
 import store from '../store/Store';
 
 @observer
-class Error extends Component {
+export default class Error extends Component {
   componentDidMount() {
     NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange);
 
@@ -54,5 +54,3 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 });
-
-export default Error;

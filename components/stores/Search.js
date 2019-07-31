@@ -28,7 +28,7 @@ import PopupConfirm from '../PopupConfirm';
 const SEARCH_KEY = 'KeySearch';
 
 @observer
-class Search extends Component {
+export default class Search extends Component {
   constructor(props) {
     super(props);
 
@@ -60,7 +60,7 @@ class Search extends Component {
     Actions.refresh({
       showSearchBar: true,
       searchValue: keyword || '',
-      placeholder: 'Nhập tên mặt hàng',
+      placeholder: store.store_data.name?store.store_data.name:'Nhập thông tin cần tìm',
       autoFocus: true,
       inputAnimate: true,
       onSubmitEditing: () => {

@@ -22,7 +22,7 @@ import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
 
 @observer
-class Orders extends Component {
+export default class Orders extends Component {
   constructor(props) {
     super(props);
 
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
 
   empty_box: {
     alignItems: 'center',
-    marginTop: "50%"
+    marginTop: 200
   },
   empty_box_title: {
     fontSize: 12,
@@ -413,5 +413,3 @@ const styles = StyleSheet.create({
   }
 
 });
-
-export default Orders;

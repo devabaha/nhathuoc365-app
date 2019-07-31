@@ -14,7 +14,10 @@ import {
 } from 'react-native';
 
 //library
-import { Actions } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Actions, ActionConst } from 'react-native-router-flux';
+import Modal from 'react-native-modalbox';
+import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
 
@@ -32,7 +35,7 @@ const CATE_AUTO_LOAD = 'CateAutoLoad';
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
 @observer
-class Stores extends Component {
+export default class Stores extends Component {
   constructor(props) {
     super(props);
 
@@ -81,7 +84,7 @@ class Stores extends Component {
     Actions.refresh({
       showSearchBar: true,
       smallSearch: true,
-      placeholder: 'Nhập tên mặt hàng',
+      placeholder: store.store_data.name,
       searchOnpress: () => {
         return Actions.search({
           title
