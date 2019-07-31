@@ -14,10 +14,7 @@ import {
 } from 'react-native';
 
 //library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
 
@@ -35,7 +32,7 @@ const CATE_AUTO_LOAD = 'CateAutoLoad';
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
 @observer
-export default class Stores extends Component {
+class Stores extends Component {
   constructor(props) {
     super(props);
 

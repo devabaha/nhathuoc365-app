@@ -76,7 +76,7 @@ export default class Item extends Component {
     Actions.refresh({
       showSearchBar: true,
       smallSearch: true,
-      placeholder: 'Nhập tên mặt hàng',
+      placeholder: store.store_data.name,
       searchOnpress: () => {
         return Actions.search({
           title: `Tìm kiếm tại ${store.store_data.name}`,
@@ -112,9 +112,14 @@ export default class Item extends Component {
   }
 // tới màn hình store
   _goStores(item) {
-    Actions.stores({
-      title: "Cửa hàng"
-    });
+    if(store.no_refresh_home_change){
+      // Trong cua hang lien ket
+      Actions.pop();
+    }else{
+      Actions.stores({
+        title: "Cửa hàng"
+      });
+    }
   }
   // Lấy chi tiết sản phẩm
   _getData(delay) {
@@ -503,20 +508,25 @@ export default class Item extends Component {
             </View>
           )}
 
-          <View style={[styles.item_content_text]}>
+          <View style={styles.item_content_text}>
             {item_data != null ? (
               <AutoHeightWebView
-                zoomable={false}
+                onError={() => console.log('on error')}
+                onLoad={() => console.log('on load')}
+                onLoadStart={() => console.log('on load start')}
+                onLoadEnd={() => console.log('on load end')}
                 onShouldStartLoadWithRequest={result => {
+                  console.log(result)
                   return true;
                 }}
                 style={{
-                  paddingHorizontal: 6,
-                  width: '94%',
-                  margin: 10
+                  paddingHorizontal: 6
                 }}
                 onHeightUpdated={height => this.setState({ height })}
                 source={{ html: item_data.content }}
+                customScript={`
+
+                  `}
                 customStyle={`
                   * {
                     font-family: 'arial';
@@ -532,8 +542,7 @@ export default class Item extends Component {
                   }
                   img {
                     max-width: 100% !important;
-                  }`}
-                  />
+                  }`} />
             ) : (
               <Indicator size="small" />
             )}

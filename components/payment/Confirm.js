@@ -587,25 +587,35 @@ export default class Confirm extends Component {
           <View style={[styles.rows, {
             marginTop: single ? 8 : 0
           }]}>
+          <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => Actions.qr_bar_code({
+                        title: "Mã đơn hàng", 
+                        address: cart_data.cart_code,
+                        content: "Dùng QRCode mã đơn hàng để xem thông tin"
+                      })}
+                  >
             <View style={styles.address_name_box}>
+            
               <View>
                 <View style={styles.box_icon_label}>
                   <Icon style={styles.icon_label} name="info-circle" size={16} color="#999999" />
                   <Text style={styles.input_label}>Thông tin đơn hàng</Text>
                 </View>
-                <Text style={styles.desc_content}>Mã đơn hàng: #{cart_data.cart_code}</Text>
+                <Text style={styles.desc_content}>Mã đơn hàng: {cart_data.cart_code}</Text>
               </View>
               <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}>
                   <View style={styles.orders_status_box}>
                     <Text style={styles.address_default_title}>Trạng thái</Text>
                     <Text style={[styles.orders_status]}>{cart_data.status_view}</Text>
                   </View>
-                </TouchableHighlight>
               </View>
+              <View style={[styles.profile_list_icon_box, styles.profile_list_icon_box_angle]}>
+                <Icon name="angle-right" size={16} color="#999999" />
+              </View>
+              
             </View>
+            </TouchableHighlight>
           </View>
 
           <View style={[styles.rows, styles.borderBottom]}>
@@ -835,7 +845,7 @@ export default class Confirm extends Component {
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={() => 1}>
-                  <Text style={[styles.address_default_title, styles.title_active, styles.feeValue, {color: "#333333"}]}>{cart_data.total_before}</Text>
+                  <Text style={[styles.address_default_title, styles.title_active, styles.feeValue, {color: "#333333"}]}>{cart_data.total_before_view}</Text>
                 </TouchableHighlight>
               </View>
             </View>
@@ -883,7 +893,20 @@ export default class Confirm extends Component {
               </View>
             </View>
           </View>
-
+          {Object.keys(cart_data.cashback_view).map(index => {
+              return(
+                <View style={[styles.rows, styles.borderBottom, {
+                  borderTopWidth: 0
+                }]}>
+                  <View style={styles.address_name_box}>
+                    <Text style={[styles.text_total_items, styles.feeLabel, styles.both]}>{index}</Text>
+                    <View style={styles.address_default_box}>
+                        <Text style={[styles.address_default_title, styles.title_active, styles.feeValue, styles.both]}>{cart_data.cashback_view[index]}</Text>
+                    </View>
+                  </View>
+                </View>
+              );
+            })}
           {(is_ready || is_reorder || is_paymenting) && (
             <View style={styles.boxButtonActions}>
               {is_ready && (
@@ -1174,19 +1197,23 @@ export default class Confirm extends Component {
   }
 
   goBackStores(item) {
+    
     action(() => {
-      store.setStoreData({
-        id: item.site_id,
-        name: item.shop_name,
-        tel: item.tel
-      });
+      if(store.no_refresh_home_change){
+        Actions.pop();
+      }else{
+        store.setStoreData({
+          id: item.site_id,
+          name: item.shop_name,
+          tel: item.tel
+        });
+        store.goStoreNow = true;
+  
+        Actions.myTabBar({
+          type: ActionConst.RESET
+        });
+      }
     })();
-
-    store.goStoreNow = true;
-
-    Actions.myTabBar({
-      type: ActionConst.RESET
-    });
   }
 
   async _cancelCart() {
@@ -1999,5 +2026,21 @@ const styles = StyleSheet.create({
   },
   both: {
     fontWeight: '600'
-  }
+  },
+  profile_list_icon_box: {
+    // backgroundColor: "#cc9900",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30,
+    height: 30,
+    marginLeft: 4,
+    marginRight: -20
+  },
+  profile_list_icon_box_angle: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    height: '100%'
+  },
 });

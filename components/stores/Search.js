@@ -17,8 +17,6 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 
 // components
@@ -30,7 +28,7 @@ import PopupConfirm from '../PopupConfirm';
 const SEARCH_KEY = 'KeySearch';
 
 @observer
-export default class Search extends Component {
+class Search extends Component {
   constructor(props) {
     super(props);
 
