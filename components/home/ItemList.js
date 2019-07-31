@@ -22,19 +22,19 @@ export default class ItemList extends Component {
   // tới màn hình store
   _goStores(item) {
     action(() => {
+      store.setNoRefreshHomeChange(1);
       store.setStoreData(item);
-    })();
+      // hide tutorial go store
+      if (this.props.that) {
+        this.props.that.setState({
+          show_go_store: false
+        });
+      }
 
-    // hide tutorial go store
-    if (this.props.that) {
-      this.props.that.setState({
-        show_go_store: false
+      Actions.stores({
+        title: item.name
       });
-    }
-
-    Actions.stores({
-      title: item.name
-    });
+    })();
   }
 
   // tới màn hình giỏ hàng
@@ -127,7 +127,7 @@ export default class ItemList extends Component {
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onLongPress={this._showOptions.bind(this, item)}
+        // onLongPress={this._showOptions.bind(this, item)}
         onPress={this._goStores.bind(this, item)}>
 
         <View style={[styles.store_result_item, styles.store_result_item_active]}>
@@ -142,7 +142,7 @@ export default class ItemList extends Component {
 
               <View style={styles.store_result_item_add_box}>
                 <TouchableHighlight
-                  onPress={this._goChat.bind(this, item)}
+                  onPress={this._goStores.bind(this, item)}
                   underlayColor="transparent">
                   <View style={[styles.add_btn_icon_box, is_chat_active && styles.add_btn_icon_box_active]}>
                     <Icon name="comments" size={14} color={is_chat_active ? "#ffffff" : DEFAULT_COLOR} />
@@ -151,7 +151,7 @@ export default class ItemList extends Component {
                 </TouchableHighlight>
 
                 <TouchableHighlight
-                  onPress={this._goCart.bind(this, item)}
+                  onPress={this._goStores.bind(this, item)}
                   underlayColor="transparent">
                   <View style={[
                     styles.add_btn_icon_box,

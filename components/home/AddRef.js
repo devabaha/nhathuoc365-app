@@ -32,16 +32,9 @@ export default class AddRef extends Component {
   }
 
   _onFinish() {
-    if (store.user_info  && store.user_info.site_id === 0) {
-      Actions.choose_location({
-        type: ActionConst.RESET,
-        title: "CHỌN CỬA HÀNG"
-      });
-    } else {
-      Actions.myTabBar({
-        type: ActionConst.RESET
-      });
-    }
+    Actions.myTabBar({
+      type: ActionConst.RESET
+    });
   }
 
   // thực hiện add cửa hàng vào account của user
@@ -93,9 +86,7 @@ export default class AddRef extends Component {
               marginBottom: 8,
             
             }}>
-              {store.user_info.km_text ? (store.user_info.km_text) : (
-                "Nhập số điện thoại Người giới thiệu để được giảm giá tới 30%"
-                )}
+              "Nhập số điện thoại Người giới thiệu để được giảm giá tới 30%"
             </Text>
             <TextInput
               underlineColorAndroid="transparent"

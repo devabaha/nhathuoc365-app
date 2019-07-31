@@ -45,7 +45,7 @@ export default class SearchStore extends Component {
     var options = {
       showSearchBar: true,
       searchValue: site_code || '',
-      placeholder: "Tên, địa chỉ, mã cửa hàng",
+      placeholder: "Tên,địa chỉ, mã cửa hàng, ... ",
       onChangeText: this._onChangeSearch.bind(this),
       onSubmitEditing: this._search_store.bind(this),
       onSearchCancel: this._onSearchCancel.bind(this),
@@ -110,7 +110,6 @@ export default class SearchStore extends Component {
       });
     }
 
-    this._getData();
   }
 
   // onchange text value for typing
@@ -147,13 +146,17 @@ export default class SearchStore extends Component {
       loading: true
     }, async () => {
       try {
-        var response = await APIHandler.user_search_stores(this.state.searchValue);
+        var response = await APIHandler.user_search_store(this.state.searchValue);
 
         if (response && response.status == STATUS_SUCCESS) {
-          this.setState({
-            search_data: response.data,
-            loading: false
-          });
+          if(response.data.is_site_code){
+            this._goStores_(response.data.site);
+          }else{
+            this.setState({
+              search_data: response.data.sites,
+              loading: false
+            });
+          }
         } else {
           this.setState({
             search_data: null,
@@ -170,41 +173,25 @@ export default class SearchStore extends Component {
     });
   }
 
-  async _getData() {
-    try {
-      var response = await APIHandler.user_list_suggest_site();
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          suggest_data: response.data
-        });
-      } else {
-        this.setState({
-          isHide: true
+  // tới màn hình store
+  _goStores_(item) {
+    action(() => {
+      store.setNoRefreshHomeChange(1);
+      store.setStoreData(item);
+      // hide tutorial go store
+      if (this.props.that) {
+        this.props.that.setState({
+          show_go_store: false
         });
       }
 
-      // layoutAnimation();
-    } catch (e) {
-      console.warn(e + ' user_list_suggest_site');
-
-      store.addApiQueue('user_list_suggest_site', this._getData.bind(this));
-    } finally {
-
-    }
-  }
-
-  // click chọn địa điểm gợi ý
-  _onPressSuggest(store) {
-    this.setState({
-      searchValue: store.site_code
-    }, () => {
-      Actions.refresh({
-        searchValue: this.state.searchValue
+      Actions.stores({
+        title: item.name,
+        type: ActionConst.REPLACE
       });
-
-      this._search_store();
-    });
+    })();
   }
+
 
   // bấm huỷ khi search
   _onSearchCancel() {
@@ -249,32 +236,7 @@ export default class SearchStore extends Component {
             />
           ) : (
             <View style={styles.defaultBox}>
-              {this.state.suggest_data != null && (
-                <View>
-                  <Text style={styles.add_store_title}><Icon name="star" size={16} color="orange" /> CỬA HÀNG NỔI BẬT</Text>
-                  <FlatList
-                    keyboardShouldPersistTaps="always"
-                    style={styles.stores_result_box}
-                    data={this.state.suggest_data}
-                    onEndReached={(num) => {
-
-                    }}
-                    onEndReachedThreshold={0}
-                    ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-                    renderItem={({item, index}) => {
-
-                      return(
-                        <StoreItem
-                          item={item}
-                          index={index}
-                          that={this}
-                          />
-                      );
-                    }}
-                    keyExtractor={item => item.id}
-                  />
-                </View>
-              )}
+              <Text></Text>
             </View>
           )}
 
@@ -332,106 +294,35 @@ export default class SearchStore extends Component {
 class StoreItem extends Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      add_success: false
-    }
   }
 
-  // thực hiện add cửa hàng vào account của user
-  _add_store(item) {
-    var that = this.props.that;
-
-    if (this._add_store_handler) {
-      return;
-    }
-    this._add_store_handler = true;
-
-    this.setState({
-      add_loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_add_store(item.site_code);
-
-        if (response && response.status == STATUS_SUCCESS) {
-          Keyboard.dismiss();
-
-          // pass add store tutorial
-          var key_tutorial = 'KeyTutorialAddStore' + store.user_info.id;
-          storage.save({
-            key: key_tutorial,
-            data: {finish: true},
-            expires: null
-          });
-
-          // disable, hide back button
-          Actions.refresh({
-            hideBackImage: true,
-            onPress: () => 1
-          });
-
-          this.setState({
-            coppy_sticker_flag: true,
-            add_success: true
-          }, () => {
-            // reload home screen
-            action(() => {
-              store.setRefreshHomeChange(store.refresh_home_change + 1);
-            })();
-
-            clearTimeout(this.timerGoBack);
-            this.timerGoBack = setTimeout(() => {
-              that.setState({
-                coppy_sticker_flag: false
-              }, () => {
-                Actions.pop();
-                setTimeout(() => {
-                  if (that.props.onSuccess) {
-                    that.props.onSuccess();
-                  }
-                }, 500);
-              });
-            }, 2000);
-          });
-
-          // intro finish
-          storage.save({
-            key: STORAGE_INTRO_KEY,
-            data: {
-              finish: true
-            },
-            expires: null
-          });
-
-          Events.trigger(KEY_EVENTS_STORE);
-        }
-      } catch (e) {
-        console.warn(e + ' user_add_store');
-
-        store.addApiQueue('user_add_store', this._add_store.bind(this, item));
-      } finally {
-        this._add_store_handler = false;
-
-        this.setState({
-          add_loading: false
+    // tới màn hình store
+  _goStores(item) {
+    action(() => {
+      store.setNoRefreshHomeChange(1);
+      store.setStoreData(item);
+      // hide tutorial go store
+      if (this.props.that) {
+        this.props.that.setState({
+          show_go_store: false
         });
       }
-    });
+
+      Actions.stores({
+        title: item.name
+      });
+    })();
   }
+  // thực hiện add cửa hàng vào account của user
 
   render() {
     var {item, index} = this.props;
-    var {add_success, add_loading} = this.state;
-
-    if (!add_success) {
-      add_success = item.added == 1;
-    }
 
     return (
       <TouchableHighlight
         underlayColor="transparent"
         onPress={() => {
-          // Actions.stores({});
+          this._goStores.bind(this, item)
         }}>
 
         <View style={[styles.store_result_item, index < 3 ? styles.store_result_item_active : null]}>
@@ -447,21 +338,10 @@ class StoreItem extends Component {
               <View style={styles.store_result_item_add_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
-                  onPress={add_success ? null : this._add_store.bind(this, item)}>
-                  <View style={[styles.add_btn_icon_box, add_success && styles.add_btn_icon_box_active]}>
-                    {add_loading ? (
-                      <View style={{
-                        width: 14,
-                        marginRight: 4
-                      }}>
-                        <Indicator size="small" color={DEFAULT_COLOR} />
-                      </View>
-                    ) : add_success ? (
-                      <Icon name="check" size={14} color="#ffffff" />
-                    ) : (
-                      <Text style={[styles.add_btn_icon]}>+</Text>
-                    )}
-                    <Text style={[styles.add_btn_label, add_success && styles.add_btn_label_active]}>{add_loading ? "Đang thêm..." : add_success ? "Đã thêm cửa hàng" : "Thêm cửa hàng"}</Text>
+                  onPress={this._goStores.bind(this, item)}>
+                  <View style={[styles.add_btn_icon_box, styles.add_btn_icon_box_active]}>
+                    <Icon name="check" size={14} color="#ffffff" />
+                    <Text style={[styles.add_btn_label, styles.add_btn_label_active]}>Vào cửa hàng</Text>
                   </View>
                 </TouchableHighlight>
               </View>

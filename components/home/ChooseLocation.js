@@ -57,7 +57,7 @@ export default class ChooseLocation extends Component {
         {store.user_info && store.user_info.sites && (
           <View style={{marginTop: 20}}>
             <View style={styles.myFavoriteBox}>
-              <Text style={styles.add_store_title}>Mời bạn chọn cửa hàng phục vụ</Text>
+              <Text style={styles.add_store_title}>Mời bạn chọn cửa hàng để được phục vụ</Text>
             </View>
             {store.user_info.sites.map((item, index) => (
               <TouchableHighlight
