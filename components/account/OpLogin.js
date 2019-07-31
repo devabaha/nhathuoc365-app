@@ -16,7 +16,6 @@ import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
-import { BackAndroid } from 'react-native';
 
 import Sticker from '../Sticker';
 
@@ -45,11 +44,9 @@ export default class OpLogin extends Component {
   }
 
   componentWillMount(){
-    BackAndroid.addEventListener('hardwareBackPress', this.onBackAndroid.bind(this));
   }
 
   componentWillUnmount(){
-    BackAndroid.removeEventListener('hardwareBackPress', this.onBackAndroid.bind(this));
   }
 
   onBackAndroid() {

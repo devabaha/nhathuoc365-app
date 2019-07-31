@@ -26,7 +26,7 @@ import {
   ActionConst
 } from 'react-native-router-flux';
 import DeepLinking from 'react-native-deep-linking';
-// import OneSignal from 'react-native-onesignal';
+import OneSignal from 'react-native-onesignal';
 
 // store
 import Store from './store/Store';
@@ -162,9 +162,14 @@ function getCurrentOnBack(obj) {
 
 @observer
 export default class App extends Component {
-  constructor() {
-    super();
+  constructor(properties) {
+    super(properties);
+    OneSignal.init("ea4623dc-3e0a-4390-b46d-0408a330ea63");
 
+    OneSignal.addEventListener('received', this._onReceived);
+    OneSignal.addEventListener('opened', this._onOpened);
+    OneSignal.addEventListener('ids', this._onIds);
+    OneSignal.configure(); 	// triggers the ids event
     this.state = {
       loading: true,
       finish: false,
@@ -173,32 +178,6 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    // load
-    // storage.load({
-    //   key: STORAGE_INTRO_KEY,
-    //   autoSync: true,
-    //   syncInBackground: true,
-    //   syncParams: {
-    //     extraFetchOptions: {
-    //     },
-    //     someFlag: true,
-    //   },
-    // }).then(data => {
-    //   this._endLoad(false);
-    //
-    //   // StatusBar
-    //   if (isIOS) {
-    //     StatusBar.setBarStyle('light-content');
-    //   }
-    // }).catch(err => {
-    //   this._endLoad(true);
-    //
-    //   // StatusBar
-    //   if (isIOS) {
-    //     StatusBar.setBarStyle('dark-content');
-    //   }
-    // });
-
     StatusBar.setBarStyle('dark-content');
   }
 
@@ -209,6 +188,12 @@ export default class App extends Component {
       loading: false,
       showIntro
     });
+  }
+
+  componentWillUnmount() {
+    OneSignal.removeEventListener('received', this._onReceived);
+    OneSignal.removeEventListener('opened', this._onOpened);
+    OneSignal.removeEventListener('ids', this._onIds);
   }
 
   componentDidMount() {
