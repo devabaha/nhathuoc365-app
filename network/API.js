@@ -25,10 +25,13 @@ exports.SITE_DETAIL = MY_FOOD_API + 'apiSite/detail';
 exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
 exports.SEARCH_PRODUCT = MY_FOOD_API + 'apiSite/search_product';
 exports.USER_SITES = MY_FOOD_API + 'apiUser/sites';
-exports.USER_BARCODE = MY_FOOD_API + 'apiSite/user_barcode';
+exports.USER_BARCODE = MY_FOOD_API + 'apiUser/user_barcode';
+exports.USER_FROM_BARCODE = MY_FOOD_API + 'apiUser/user_from_barcode';
 exports.USER_REMOVE_SITE = MY_FOOD_API + 'apiUser/remove_site';
 exports.USER_ADD_REF = MY_FOOD_API + 'apiUser/add_ctv';
-
+exports.USER_GET_WALLET = MY_FOOD_API + 'apiUser/user_get_wallet';
+exports.USER_INVITE_HISTORY = MY_FOOD_API + 'apiUser/invite_history';
+exports.USER_CHECK_ADDRESS = MY_FOOD_API + 'apiUser/check_address';
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';
 
@@ -57,6 +60,8 @@ exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
 // Orders
 exports.SITE_CART_LIST = MY_FOOD_API + 'apiSite/cart_list';
 exports.USER_CART_LIST = MY_FOOD_API + 'apiUser/cart_list';
+//get_cart_code
+exports.USER_CART_CODE = MY_FOOD_API + 'apiUser/get_cart_code';
 
 // Chat
 exports.SITE_SEND_CHAT = MY_FOOD_API + 'apiSite/send_chat';
@@ -80,18 +85,24 @@ exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';
 // Users
 exports.USER_REGISTER = MY_FOOD_API + 'apiUser/register';
 exports.USER_OP_REGISTER = MY_FOOD_API + 'apiUser/op_register';
-exports.USER_SYNC_NDT = MY_FOOD_API + 'apiUser/investor_authen';
+exports.USER_SYNC_NDT = MY_FOOD_API + 'apiMaccaca/investor_authen';
 exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
 exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
 exports.USER_LOGIN_SMS = MY_FOOD_API + 'apiUser/login_sms';
 exports.LOGIN_SMS_VERIFY = MY_FOOD_API + 'apiUser/login_sms_verify';
 exports.USER_LOGOUT = MY_FOOD_API + 'apiUser/logout';
-exports.USER_ADD_AVATAR = MY_FOOD_API + 'apiUser/add_avatar';
+exports.USER_ADD_AVATAR = PHOTO_MY_FOOD_API + 'apiUser/add_avatar';
 exports.USER_FORGET_PASSWORD = MY_FOOD_API + 'apiUser/forget_password';
 exports.USER_FORGET_PASSWORD_VERIFY = MY_FOOD_API + 'apiUser/forget_password_verify';
 exports.USER_FORGET_NEW_PASSWORD = MY_FOOD_API + 'apiUser/forget_new_password';
 exports.USER_CHOOSE_LOCATION = MY_FOOD_API + 'apiUser/choose_site';
 exports.USER_COINS_WALLET = MY_FOOD_API + 'apiUser/point_history';
-
-//Account
-
+exports.USER_TRANSFER_BALANCE = MY_FOOD_API + 'apiUser/transfer_balance';
+exports.USER_WALLET_HISTORY = MY_FOOD_API + 'apiUser/wallet_history';
+//Ndt
+exports.USER_INVESTOR_SYNC_INFO = MY_FOOD_API + "apiMaccaca/investor_sync_info";
+exports.USER_INVESTOR_HISTORY = MY_FOOD_API + "apiMaccaca/investor_history";
+exports.USER_INVESTOR_HISTORY_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_historywithdraw";
+exports.USER_INVESTOR_SEND_CASH_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_sendwithdraw";
+exports.USER_INVESTOR_SEND_PRODUCT_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_sendwithdrawproductwallet";
+exports.USER_INVESTOR_SEND_ADVANCE_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_advancewithdraw";

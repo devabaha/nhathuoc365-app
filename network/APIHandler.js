@@ -52,7 +52,29 @@ class APIHandler {
   }
 
   async user_barcode(site_id) {
-    var api = url_for(API.USER_BARCODE+ '/' + site_id);
+    var api = url_for(API.USER_BARCODE + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
+  //user_from_barcode
+  async user_from_barcode(barcode) {
+    var api = url_for(API.USER_FROM_BARCODE + '/' + barcode);
+    return await this.getAPI(api);
+  }
+
+  /** get wallet from zone_code */
+  async user_get_wallet(zone_code) {
+    var api = url_for(API.USER_GET_WALLET + "/" + zone_code);
+    return await this.getAPI(api);
+  }
+  //check_address
+  async user_check_address(address) {
+    var api = url_for(API.USER_CHECK_ADDRESS + "/" + address);
+    return await this.getAPI(api);
+  }
+
+  async user_invite_history() {
+    var api = url_for(API.USER_INVITE_HISTORY);
     return await this.getAPI(api);
   }
 
@@ -273,6 +295,15 @@ class APIHandler {
   }
 
   /**
+   * USER_CART_CODE
+   * @param {*} store_id 
+   * @param {*} data 
+   */
+  async user_cart_code(cart_code) {
+    var api = url_for(API.USER_CART_CODE + '/' + cart_code);
+    return await this.getAPI(api);
+  }
+  /**
   * Gửi chat
   */
   async site_send_chat(store_id, data) {
@@ -335,7 +366,7 @@ class APIHandler {
     var api = url_for(API.USER_REGISTER);
     return await this.postAPI(api, data);
   }
-    
+
   /**
   * Đăng ký ten va so dien thoai gioi thieu
   */
@@ -343,9 +374,14 @@ class APIHandler {
     var api = url_for(API.USER_OP_REGISTER);
     return await this.postAPI(api, data);
   }
-//user_sync_ndt
+  //user_sync_ndt
   async user_sync_ndt(data) {
     var api = url_for(API.USER_SYNC_NDT);
+    return await this.postAPI(api, data);
+  }
+
+  async user_transfer_balance(data) {
+    var api = url_for(API.USER_TRANSFER_BALANCE);
     return await this.postAPI(api, data);
   }
   /**
@@ -442,16 +478,63 @@ class APIHandler {
   /**
   * Ví xu
   */
- async user_coins_wallet() {
-  var api = url_for(API.USER_COINS_WALLET);
-  return await this.getAPI(api);
-}
+  async user_coins_wallet() {
+    var api = url_for(API.USER_COINS_WALLET);
+    return await this.getAPI(api);
+  }
 
+  /**
+    * Lấy thông tin lịch sử thu nhập Ndt
+    */
+  async investor_history(data) {
+    var api = url_for(API.USER_INVESTOR_HISTORY);
+    return await this.postAPI(api, data);
+  }
 
+  /**
+  * Lấy thông tin lịch sử rút Ndt
+  */
+  async investor_historywithdraw(data) {
+    var api = url_for(API.USER_INVESTOR_HISTORY_WITHDRAW);
+    return await this.postAPI(api, data);
+  }
 
+  /**
+  * Tạo lệnh rút ví Tiền mặt Ndt
+  */
+  async investor_send_cash_withdraw(data) {
+    var api = url_for(API.USER_INVESTOR_SEND_CASH_WITHDRAW);
+    return await this.postAPI(api, data);
+  }
 
+  /**
+  * Tạo lệnh rút ví Sản phẩm Ndt
+  */
+  async investor_send_product_withdraw(data) {
+    var api = url_for(API.USER_INVESTOR_SEND_PRODUCT_WITHDRAW);
+    return await this.postAPI(api, data);
+  }
 
+  /**
+  * Tạo lệnh rút ví Tạm ứng Ndt
+  */
+  async investor_send_advance_withdraw(data) {
+    var api = url_for(API.USER_INVESTOR_SEND_ADVANCE_WITHDRAW);
+    return await this.postAPI(api, data);
+  }
 
+  /**
+  * Cập nhật thông tin Ndt
+  */
+  async investor_sync_info() {
+    var api = url_for(API.USER_INVESTOR_SYNC_INFO);
+    return await this.getAPI(api);
+  }
+
+  async user_wallet_history(zone_code){
+    var api = url_for(API.USER_WALLET_HISTORY + "/" + zone_code);
+    return await this.getAPI(api);
+  }
 
 
 
@@ -475,12 +558,14 @@ class APIHandler {
   /**
   * Gửi yêu cầu phương thức POST
   */
-  async postAPI(api, data){
+  async postAPI(api, data) {
     this._networkIndicator();
 
-    // console.log(api);
-    var response = await axios.post(api, encodeQueryData(data));
-    return await this.processError(response);
+    return axios.post(api, encodeQueryData(data)).then(
+      (response) => this.processError(response)
+    ).catch(
+      (err) => err
+    )
   }
 
   /**
@@ -490,7 +575,7 @@ class APIHandler {
     this._networkIndicator(false);
 
     if (response.status != HTTP_SUCCESS) {
-        throw 'Error: ' + response.statusText;
+      throw 'Error: ' + response.statusText;
     } else {
       action(() => {
         store.setConnect(true);

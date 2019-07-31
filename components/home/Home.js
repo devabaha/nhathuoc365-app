@@ -16,6 +16,7 @@ import {
 // library
 // import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
@@ -28,7 +29,6 @@ import Communications from 'react-native-communications';
 // components
 import ItemGrid from './ItemGrid';
 import ItemList from './ItemList';
-import { ItemList as AdItemList } from '../dashboard/ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
 import Items from '../stores/Items';
@@ -63,9 +63,8 @@ export default class Home extends Component {
     this._goSearchStore = this._goSearchStore.bind(this);
     this._goListStore = this._goListStore.bind(this);
     this._getData = this._getData.bind(this);
-
     // auto refresh home
-    reaction(() => store.refresh_home_change, () => this._getData(450));
+    reaction(() => store.refresh_home_change && !store.no_refresh_home_change, () => this._getData(450));
   }
 
   componentWillMount() {
@@ -136,6 +135,9 @@ export default class Home extends Component {
 
   // lấy dữ liệu trang home
   _getData(delay) {
+    if(store.no_refresh_home_change){
+      return;
+    }
     this.setState({
       loading: true
     }, async () => {
@@ -241,18 +243,12 @@ export default class Home extends Component {
   _goScanQRCode() {
     this._closePopup();
 
-    Actions.qr_bar_code({index:1});
-  }
-
-  _goScanQR() {
-    this._closePopup();
-
-    Actions.scan_qr_code();
+    Actions.qr_bar_code({title: "Quét QR Code", index:1, wallet: store.user_info.default_wallet});
   }
 
   _goQRCode() {
     this._closePopup();
-    Actions.qr_bar_code();
+    Actions.qr_bar_code({title: "Mã tài khoản"});
   }
 
   _closePopup() {
@@ -279,19 +275,6 @@ export default class Home extends Component {
     // store list
     return(
       <ItemList item={item} index={index} that={this} />
-    );
-  }
-
-  renderAdRow({item, index}, isAdmin) {
-    if (index == 0) {
-      this.defaultBoxHeight = 0;
-    }
-
-    this.defaultBoxHeight += 104;
-
-    // store list
-    return(
-      <AdItemList item={item} index={index} itemListOnPress={this._goAdStore.bind(this, item)} />
     );
   }
 
@@ -476,7 +459,7 @@ export default class Home extends Component {
                   style={styles.add_store_action_btn}>
                   <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
                     <Icon name="shopping" size={24} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Vào Cửa hàng</Text>
+                    <Text style={styles.add_store_action_label}>Vào cửa hàng</Text>
                     {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
                     <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
                   </View>
@@ -497,7 +480,7 @@ export default class Home extends Component {
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
-                    <Icon name="qrcode-scan" size={24} color="#333333" />
+                    <Ionicons name="md-qr-scanner" size={24} color="#333333" />
                     <Text style={styles.add_store_action_label}>Quét mã</Text>
                   </View>
                 </TouchableHighlight>
@@ -731,7 +714,7 @@ export default class Home extends Component {
           {stores_data && (
             <View>
               <View style={styles.myFavoriteBox}>
-                <Text style={styles.add_store_title}>CỬA HÀNG LIÊN KẾT</Text>
+                <Text style={styles.add_store_title}>CỬA HÀNG MACCA COFFEE+</Text>
               </View>
               <FlatList
                 style={styles.stores_box}
@@ -899,8 +882,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 4),
-    borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
+    borderLeftWidth: Util.pixel,
+    borderLeftColor: '#ebebeb'
   },
   add_store_action_label: {
     fontSize: 12,

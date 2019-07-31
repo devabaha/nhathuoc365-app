@@ -37,7 +37,10 @@ import Intro from './components/intro/Intro';
 import AddStore from './components/home/AddStore';
 import AddRef from './components/home/AddRef';
 import Home from './components/home/Home';
+import HomeNavBar from './components/home/HomeNavBar';
 import Notifys from './components/notify/Notifys';
+import MainNotify from './components/notify/MainNotify';
+import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
@@ -57,6 +60,7 @@ import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
+import ViewOrdersItem from './components/orders/ViewOrdersItem';
 import NotifyItem from './components/notify/NotifyItem';
 import SearchStore from './components/home/SearchStore';
 import ListStore from './components/home/ListStore';
@@ -64,42 +68,24 @@ import ScanQRCode from './components/home/ScanQRCode';
 import QRBarCode from './components/home/QRBarCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
-import ListProduct from './components/sale/ListProduct';
-import EditListProduct from './components/sale/EditListProduct';
 import Rating from './components/rating/Rating';
 import Error from './components/Error';
 import ChooseLocation from './components/home/ChooseLocation';
 import SyncNdt from './components/account/SyncNdt';
-import NdtList from './components/account/NdtList';
-import Ndt from './components/account/Ndt';
-import NdtCashInput from './components/account/NdtCashInput';
-import NdtCashWithdraw from './components/account/NdtCashWithdraw';
+import NdtList from './components/account/Ndt/NdtList';
+import Ndt from './components/account/Ndt/Ndt';
+import NdtWithdraw from './components/account/Ndt/NdtWithdraw';
 import CoinWallet from './components/account/CoinWallet';
-import VndWallet from './components/account/VndWallet';
+import VndWallet from './components/account/VndWallet/VndWallet';
+import PayWallet from './components/account/PayWallet';
+import PayAccount from './components/account/PayAccount';
+import Affiliate from './components/account/Affiliate/Affiliate';
 
 // Backend
-import Dashboard from './components/dashboard/Dashboard';
-import SaleStores from './components/sale/SaleStores';
-import SaleMenu from './components/sale/SaleMenu';
-import Sale from './components/sale/Sale';
-import Order from './components/sale/Order';
-import UserInfo from './components/sale/UserInfo';
-import SaleChat from './components/sale/SaleChat';
-import Products from './components/sale/Products/Products';
-import CreateProduct from './components/sale/Products/CreateProduct';
-import EditProduct from './components/sale/Products/EditProduct';
 
 // others
 import TabIcon from './components/TabIcon';
 import navBar from './components/NavBar';
-import CustomNavBar from './components/sale/CustomNavBar';
-import CustomNavBar2 from './components/sale/CustomNavBar2';
-
-YellowBox.ignoreWarnings([
-  'Warning',
-  'Module RCTCameraManager',
-]);
-
 // navigator bar
 const custommerNav = {
   navBar,
@@ -175,7 +161,7 @@ function getCurrentOnBack(obj) {
 }
 
 @observer
-class App extends Component {
+export default class App extends Component {
   constructor() {
     super();
 
@@ -285,42 +271,18 @@ class App extends Component {
       });
       if (response && response.status == STATUS_SUCCESS) {
         Store.setUserInfo(response.data);
-        if (response.data.site_id === 0) {//hien thi chon site
-          action(() => {
-            this.setState({
-              finish: true
-            }, () => {
-              Actions.choose_location({
-                type: ActionConst.RESET,
-                title: "CHỌN CỬA HÀNG"
-              });
-            });
-          })();
-        } else {
-          action(() => {
-            this.setState({
-              finish: true
-            }, () => {
-              Actions.myTabBar({
-                type: ActionConst.RESET
-              });
-            });
-          })();
-        }
-        StatusBar.setBarStyle('light-content');
-      }
-      if (response && response.status == STATUS_UNDEFINE_USER) {
-        Store.setUserInfo(response.data);
         action(() => {
           this.setState({
             finish: true
           }, () => {
-            Actions._add_ref({
-              type: ActionConst.RESET,
-              title: "Nhập mã giới thiệu"
+            Actions.myTabBar({
+              type: ActionConst.RESET
             });
           });
         })();
+        StatusBar.setBarStyle('light-content');
+      }else{
+        Toast.show(response.message);
       }
       if (response && response.status == STATUS_FILL_INFO_USER) {
         Store.setUserInfo(response.data);
@@ -335,6 +297,18 @@ class App extends Component {
           });
         })();
         StatusBar.setBarStyle('light-content');
+      }
+      if (response && response.status == STATUS_UNDEFINE_USER) {
+        Store.setUserInfo(response.data);
+        action(() => {
+          this.setState({
+            finish: true
+          }, () => {
+            Actions.op_login({
+              type: ActionConst.RESET
+            });
+          });
+        })();
       }
     } catch (e) {
       console.warn(e + ' user_login');
@@ -646,7 +620,7 @@ class App extends Component {
                   Actions._orders({ type: ActionConst.REFRESH });
                 }}
               >
-                <Scene key="_orders" title="Đơn hàng" component={StoreOrders} {...custommerNav} />
+                <Scene key="_orders" title="Đơn hàng" component={Orders} {...custommerNav} />
               </Scene>
 
               {/**
@@ -686,6 +660,8 @@ class App extends Component {
             <Scene key="item_image_viewer" direction="vertical" hideNavBar title="" component={ItemImageViewer} {...custommerNav} />
             <Scene key="rating" panHandlers={null} direction="vertical" hideNavBar title="" component={Rating} {...custommerNav} />
             <Scene key="orders_item" title="Chi tiết đơn hàng" component={OrdersItem} {...custommerNav} />
+            <Scene key="view_orders_item" title="Thông tin đơn hàng" component={ViewOrdersItem} {...custommerNav} />
+            
             <Scene key="notifys" title="Tin tức" component={Notifys} {...custommerNav} />
             <Scene key="notifys_time" title="Lịch hàng hóa" component={Notifys} {...custommerNav} />
             <Scene key="notifys_farm" title="Trang trại" component={Notifys} {...custommerNav} />
@@ -704,24 +680,11 @@ class App extends Component {
             <Scene key="sync_ndt" title="" component={SyncNdt} {...custommerNav} />
             <Scene key="view_ndt_list" title="Nhà đầu tư" component={NdtList} {...custommerNav} />
             <Scene key="view_ndt" title="" component={Ndt} {...custommerNav} />
-            <Scene key="view_ndt_cash_input" title="" component={NdtCashInput} {...custommerNav} />
-            <Scene key="view_ndt_cash_withdraw" title="" component={NdtCashWithdraw} {...custommerNav} />
+            <Scene key="view_ndt_withdraw" title="" component={NdtWithdraw} {...custommerNav} />
             <Scene key="vnd_wallet" title="" component={VndWallet} {...custommerNav} />
-
-            {/* Backend */}
-            <Scene key="dashboard" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} title="Danh sách cửa hàng" component={Dashboard} {...custommerNav} />
-            <Scene key="sale_menu" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} title="Bảng điều khiển" component={SaleMenu} {...custommerNav} />
-            <Scene key="sale_stores" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} title="Cửa hàng" component={SaleStores} {...custommerNav} />
-            <Scene key="sale" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={Sale} {...custommerNav} />
-            <Scene key="order" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={Order} navBar={CustomNavBar} />
-            <Scene key="sale_user_info" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={UserInfo} navBar={CustomNavBar} />
-            <Scene key="sale_chat" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={SaleChat} navBar={CustomNavBar} />
-            <Scene key="list_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={ListProduct} navBar={CustomNavBar2} />
-            <Scene key="edit_list_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={EditListProduct} navBar={CustomNavBar2} />
-            <Scene key="products" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={Products} {...custommerNav} />
-            <Scene key="create_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={CreateProduct} {...custommerNav} />
-            <Scene key="edit_product" title="" navigationBarStyle={{ backgroundColor: HEADER_ADMIN_BGR }} component={EditProduct} {...custommerNav} />
-
+            <Scene key="pay_wallet" title="" component={PayWallet} {...custommerNav} />
+            <Scene key="pay_account" title="" component={PayAccount} {...custommerNav} />
+            <Scene key="affiliate" title="" component={Affiliate} {...custommerNav} />
           </Scene>
           <Scene key="error" component={Error} />
         </Scene>
@@ -787,4 +750,3 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;

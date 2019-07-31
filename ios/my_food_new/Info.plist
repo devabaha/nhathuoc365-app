@@ -38,13 +38,13 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Cho phép ứng dụng sử dụng dụng Camera</string>
+	<string>Cho phép ứng dụng sử dụng dụng Camera quét mã Vạch và mã QR</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Micro</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Thư viện ảnh</string>
+	<string>Cho phép ứng dụng truy cập Thư viện ảnh làm ảnh đại diện</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>

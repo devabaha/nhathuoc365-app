@@ -1,4 +1,4 @@
-import {reaction, observable, observe, computed, autorun, action} from 'mobx';
+import { reaction, observable, observe, computed, autorun, action, toJS } from 'mobx';
 import autobind from 'autobind-decorator';
 
 import {
@@ -78,9 +78,9 @@ class Store {
 
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
-          if(response.data.new_totals > 0){
+          if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
-          } 
+          }
           this.setNotify(response.data);
           this.setUserInfo(response.data.user);
         })();
@@ -109,7 +109,6 @@ class Store {
         })();
       }
     } catch (e) {
-      console.log('e', e)
       console.warn(e + ' user_notify_chat');
 
       action(() => {
@@ -188,6 +187,12 @@ class Store {
 
   @action setRefreshHomeChange(data) {
     this.refresh_home_change = data;
+  }
+
+  @observable no_refresh_home_change = 0;
+
+  @action setNoRefreshHomeChange(data) {
+    this.no_refresh_home_change = data;
   }
 
   /*********** store begin **********/
@@ -303,8 +308,32 @@ class Store {
     this.cart_item_index = index;
   }
 
+  /*********** ndt history begin **********/
+  @observable ndt_history = [];
 
+  @action updateNdtHistory(res, attrName) {
+    let isExisted = false;
+    this.ndt_history.forEach((n, i) => {
+      n = toJS(n);
+      if (n.mcc_investor_username === res.mcc_investor_username) {
+        isExisted = true;
+        this.ndt_history[i].data[attrName] = res.data;
+      }
+    });
 
+    if (!isExisted) {
+      let data = {};
+      data[attrName] = res.data;
+      this.ndt_history.push({
+        mcc_investor_username: res.mcc_investor_username,
+        data
+      });
+    }
+  }
+
+  @action getNdtHistory(mcc_investor_username) {
+    return toJS(this.ndt_history.find(n => n.mcc_investor_username === mcc_investor_username))
+  }
 
 
   /*********** address begin **********/
