@@ -12,106 +12,55 @@ import {
   ImageBackground,
   RefreshControl,
   ScrollView,
-  Alert
+  Alert,
+  TextInput,
+  Platform
 } from 'react-native';
 
 //library
-// import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { reaction } from 'mobx';
 import store from '../../store/Store';
 
 @observer
-export default class VndWallet extends Component {
+export default class PayAccount extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       historiesData: null,
+      wallet: props.wallet,
+      account: props.account,
+      app: props.app,
+      barcode: props.barcode,
+      loading: false,
+      amount: props.amount?props.amount:0,
     }
   }
 
   componentWillMount() {
-    this._getWallet();
-  }
 
-  async _getWallet() {
-    // user_coins_wallet
-    try {
-      var response = await APIHandler.user_vnd_wallet();
-      console.log(response);
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({ historiesData: response.data.histories})
-      }
-    } catch (e) {
-      console.warn(e);
-    }
-  }
-
-  async onPressNew() {
-    var response = await APIHandler.user_news(208);
-    if (response && response.status == STATUS_SUCCESS) {
-      Actions.notify_item({
-        title: 'Giới thiệu tài khoản Cashback 4.0',
-        data: response.data
-      });
-    }
-  }
-
-
-  _goScanQRCode() {
-    Actions.qr_bar_code({index:1});
-  }
-
-  _goQRCode() {
-    Actions.qr_bar_code();
-  }
-
-  renderRow({ item, index }) {
-    return (
-      <View>
-        <View style={styles.containerRowView}>
-          <Icon style={{ flex: 1, marginLeft: 20}} 
-                name={item.change >= 0 ? "plus-square" : "minus-square"}
-                size={25} 
-                color="rgb(0,0,0)" />
-          <View style={{ flex: 6, flexDirection: 'column' }}>
-            <Text style={{ fontSize: 16}}>{item.content}</Text>
-            <View style={styles.bottomRowView}>
-              <Text style={styles.dateText}>{item.created}</Text>
-              <Text style={styles.pointText}>{item.change}</Text>
-            </View>
-          </View>
-        </View>
-        <View style={styles.lineRowView}/>
-      </View>
-    )
   }
 
   renderTopLabelCoin() {
+    var {wallet, account, barcode} = this.state;
     const {user_info} = store;
     return (
       <View>
         <View style={styles.add_store_actions_box}>
-          <TouchableHighlight
-            onPress={this._goQRCode.bind(this, this.state.store_data)}
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}>
-            <View style={styles.add_store_action_btn_box}>
-              <Icon name="barcode-scan" size={24} color="#333333" />
-              <Text style={styles.add_store_action_label}>Dùng thẻ</Text>
-            </View>
-          </TouchableHighlight>
-
 
           <TouchableHighlight
-            onPress={this._goScanQRCode.bind(this, this.state.store_data)}
+            // onPress={this._goScanQRCode.bind(this)}
             underlayColor="transparent"
             style={styles.add_store_action_btn}>
-            <View style={styles.add_store_action_btn_box}>
-              <Icon name="qrcode-scan" size={24} color="#333333" />
-              <Text style={styles.add_store_action_label}>Quét mã</Text>
+            <View style={styles.add_store_action_btn_box_balance}>
+              <Text style={styles.add_store_action_label_balance}>
+                <Ionicons name="account" size={15} color="#333333" /> {account.name}
+              </Text>
+              <Text style={styles.add_store_action_label_balance}>{account.username}</Text>
             </View>
           </TouchableHighlight>
 
@@ -120,8 +69,8 @@ export default class VndWallet extends Component {
             underlayColor="transparent"
             style={styles.add_store_action_btn}>
             <View style={[styles.add_store_action_btn_box_balance, {borderRightWidth: 0}]}>
-            <Text style={styles.add_store_action_label_balance} >Tài khoản TickID</Text>
-              <Text style={styles.add_store_action_content}>{user_info.vnd}</Text>
+            <Text style={styles.add_store_action_label_balance} >{wallet.name}</Text>
+              <Text style={styles.add_store_action_content}>{wallet.balance_view}</Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -130,41 +79,17 @@ export default class VndWallet extends Component {
   }
 
   render() {
+    var {wallet, account, app, barcode, loading} = this.state;
     return (
-      
-      <View style={styles.container}>
-        {this.renderTopLabelCoin()}
-        <TouchableWithoutFeedback
-          onPress={() => this.onPressNew()}>
-          <View style={styles.newsCoinView}>
-            <Icon style={{ flex: 1, marginLeft: 20}} name="help-circle" size={25} color="#4267b2" />
-            <Text style={{ flex: 7, fontSize: 13 }}>Giới thiệu về tài khoản Cashback 4.0</Text>
-            <Icon style={{ flex: 1, marginLeft: 10}} name="chevron-right" size={20} color="rgb(200,200,200)" />
-          </View>
-        </TouchableWithoutFeedback>
-        <View style={styles.lineView} />
-        {/* <View>
-          <Text>Nạp qua Ví Momo</Text>
-          <Text>Số tài khoản nhận: 0988888888</Text>
-          <Text>Nội dung: 0983982021</Text>
-          <Text>Lưu ý: Chỉ nhập mã, không nhập thêm gì khác vào nội dung</Text>
-          <Text>Thời gian xác nhận nạp tiền thành công: 5 phút</Text>
+      <View style={[styles.container, {
+        marginBottom: store.keyboardTop
+      }]}>
+          <Text style={styles.historyCoinText}>
+            <Icon name="bank" size={15} color="#333333" /> Mã tài khoản {barcode}
+          </Text>
+          {this.renderTopLabelCoin()}
+          <Text style={styles.historyCoinTextAddress}></Text>
         </View>
-        <View style={styles.lineView} />
-        <View>
-          <Text>Rút tiền qua Ví Momo</Text>
-          <Text>Số điện thoại nhận: 0988888888</Text>
-          <Text>Mã thanh toán: 0983982021</Text>
-          <Text>Rút</Text>
-          <Text>Thời gian xác nhận và rút tiền thành công: 5 phút</Text>
-        </View>
-        <View style={styles.lineView} /> */}
-        <Text style={styles.historyCoinText}>Lịch sử giao dịch:</Text>
-        <FlatList
-          data={this.state.historiesData}
-          renderItem={(item, index) => this.renderRow(item, index)}
-        />
-      </View>
     );
   }
 }
@@ -255,8 +180,18 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   historyCoinText: {
+    marginTop: 15,
     marginLeft: 20,
-    marginBottom: 20,
+    marginBottom: 10,
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: 'rgb(0,0,0)'
+  },
+  historyCoinTextAddress: {
+    alignItems: 'center',
+    marginLeft: 20,
+    marginRight: 20,
+    marginBottom: 0,
     fontSize: 18,
     color: 'rgb(0,0,0)'
   },
@@ -357,5 +292,44 @@ const styles = StyleSheet.create({
     marginTop: 5,
     color: "#51A9FF",
     fontWeight: '800'
+  },
+
+  invite_text_input: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: "",
+    // marginTop: 30,
+    marginTop: 20,
+  },
+
+  invite_text_input_sub: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    // backgroundColor: "",
+    marginLeft: 20,
+    marginRight: 20
+  },
+  boxButtonActions: {
+    backgroundColor: "#ffffff",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16
+  },
+  boxButtonAction: {
+    flexDirection: 'row',
+    borderWidth: Util.pixel,
+    borderColor: "#666666",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 5,
+    width: Util.size.width / 2 - 24,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  buttonActionTitle: {
+    color: "#333333",
+    marginLeft: 4,
+    fontSize: 14
   }
 });
