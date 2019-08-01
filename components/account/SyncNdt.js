@@ -32,7 +32,7 @@ export default class SyncNdt extends Component {
   }
 
   componentDidMount() {
-    GoogleAnalytic('_sync_ndt');
+    //GoogleAnalytic('_sync_ndt');
   }
 
 

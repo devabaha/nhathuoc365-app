@@ -29,7 +29,7 @@ export default class ChooseLocation extends Component {
   }
 
   componentDidMount() {
-    GoogleAnalytic('_choose_location');
+    //GoogleAnalytic('_choose_location');
   }
 
   async onPressLocation(item) {
