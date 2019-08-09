@@ -136,8 +136,7 @@ export default class OpLogin extends Component {
     this.setState({ spinner: true }, async () => {
       try {
         var response = await APIHandler.login_sms_verify(formData);
-
-        if (response && response.status == STATUS_SUCCESS) {
+        if (response && response.status == STATUS_SUCCESS) {//STATUS_SUCCESS
           this.refs.form.refs.textInput.blur();
 
           this._showSticker();
@@ -149,14 +148,15 @@ export default class OpLogin extends Component {
 
             store.setRefreshHomeChange(store.refresh_home_change + 1);
 
-            if (!response.data.name) {//hien thi chon site
+            if (response.data.fill_info_user) {//hien thi chon site
               action(() => {
                 this.setState({
                   finish: true
                 }, () => {
                   Actions.op_register({
                     type: ActionConst.RESET,
-                    title: "Đăng ký thông tin"
+                    title: "Đăng ký thông tin",
+                    name_props: response.data.name
                   });
                 });
               })();
@@ -171,7 +171,6 @@ export default class OpLogin extends Component {
                 });
               })(); 
             }
-            StatusBar.setBarStyle('light-content');
 
             setTimeout(() => {
               this.setState({ spinner: false }, Actions.pop);
@@ -187,7 +186,7 @@ export default class OpLogin extends Component {
         setTimeout(() => {
           this.setState({ spinner: false });
         }, 2000);
-        console.warn(e + ' login_sms_verify');
+        console.warn(err + ' login_sms_verify');
         store.addApiQueue('login_sms_verify', this._verifyCode);
       }
     });

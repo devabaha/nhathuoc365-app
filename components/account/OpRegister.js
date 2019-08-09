@@ -75,73 +75,6 @@ export default class OpRegister extends Component {
       );
     }
 
-    // if (!email) {
-    //   return Alert.alert(
-    //     'Thông báo',
-    //     'Hãy điền Số Email, sử dụng để lấy lại tài khoản và hỗ trợ',
-    //     [
-    //       {text: 'Đồng ý', onPress: () => {
-    //         this.refs_email.focus();
-    //       }},
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-
-
-    // if (!validateEmail(email)) {
-    //   return Alert.alert(
-    //     'Thông báo',
-    //     'Email không chính xác, vui lòng điền lại',
-    //     [
-    //       {text: 'Đồng ý', onPress: () => {
-    //         this.refs_email.focus();
-    //       }},
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-
-
-    // if (!password) {
-    //   return Alert.alert(
-    //     'Thông báo',
-    //     'Hãy điền Mật khẩu',
-    //     [
-    //       {text: 'Đồng ý', onPress: () => {
-    //         this.refs_password.focus();
-    //       }},
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-
-    // if (!validate4DigiPassword(password)) {
-    //   return Alert.alert(
-    //     'Thông báo',
-    //     'Hãy điền Mật khẩu gồm 4 chữ số',
-    //     [
-    //       {text: 'Đồng ý', onPress: () => {
-    //         this.refs_password.focus();
-    //       }},
-    //     ],
-    //     { cancelable: false }
-    //   );  
-    // }
-
-      // if (!refer) {
-      //   return Alert.alert(
-      //     'Thông báo',
-      //     'Hãy điền số điện thoại người giới thiệu.',
-      //     [
-      //       {text: 'Đồng ý', onPress: () => {
-      //         this.refs_refer.focus();
-      //       }},
-      //     ],
-      //     { cancelable: false }
-      //   );
-      // }
-
     if (this.state.loading) {
       return;
     }
@@ -200,7 +133,7 @@ export default class OpRegister extends Component {
           marginBottom: store.keyboardTop + 60
         }}>
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Tên (*)</Text>
+            <Text style={styles.input_label}>Tên của bạn (*)</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -232,51 +165,6 @@ export default class OpRegister extends Component {
             </View>
           </View>
 
-          {/* <View style={styles.input_box}>
-            <Text style={styles.input_label}>Email (*)</Text>
-
-            <View style={styles.input_text_box}>
-              <TextInput
-                ref={ref => this.refs_email = ref}
-                style={styles.input_text}
-                keyboardType="default"
-                maxLength={30}
-                placeholder="Điền email, sử dụng để lấy lại tài khoản"
-                placeholderTextColor="#999999"
-                underlineColorAndroid="transparent"
-                onChangeText={(value) => {
-                  this.setState({
-                    email: value.replaceAll(' ', '')
-                  });
-                }}
-                value={this.state.email}
-                />
-            </View>
-          </View> */}
-
-{/*          <View style={styles.input_box}>
-            <Text style={styles.input_label}>Mật khẩu bán hàng (*)</Text>
-
-            <View style={styles.input_text_box}>
-              <TextInput
-                ref={ref => this.refs_password = ref}
-                style={styles.input_text}
-                keyboardType="phone-pad"
-                maxLength={30}
-                placeholder="Tạo mật khẩu (4 chữ số)"
-                placeholderTextColor="#999999"
-                underlineColorAndroid="transparent"
-                onChangeText={(value) => {
-                  this.setState({
-                    password: value.replaceAll(' ', '')
-                  });
-                }}
-                value={this.state.password}
-                />
-            </View>
-          </View>
-
-  */}
           <View style={styles.input_box}>
             <Text style={styles.input_label}>Mã giới thiệu</Text>
 

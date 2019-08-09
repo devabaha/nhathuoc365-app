@@ -271,7 +271,8 @@ export default class App extends Component {
           }, () => {
             Actions.op_register({
               type: ActionConst.RESET,
-              title: "Đăng ký thông tin"
+              title: "Đăng ký thông tin",
+              name_props: response.data.name
             });
           });
         })();
