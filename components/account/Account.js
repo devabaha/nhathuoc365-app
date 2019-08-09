@@ -70,7 +70,7 @@ export default class Account extends Component {
         {
           key: "2",
           icon: "facebook-square",
-          label: "Fanpage " + APP_NAME,
+          label: "Fanpage " + APP_NAME_SHOW,
           desc: "Facebook Fanpage chăm sóc khách hàng",
           onPress: () => Communications.web(APP_FANPAGE),
           boxIconStyle: [styles.boxIconStyle, {
@@ -83,7 +83,7 @@ export default class Account extends Component {
         {
           key: "3",
           icon: "handshake-o",
-          label: "Về " + APP_NAME + " - Điều khoản sử dụng",
+          label: "Về " + APP_NAME_SHOW + " - Điều khoản sử dụng",
           desc: "Điều khoản sử dụng",
           onPress: () => Actions.webview({
             title: "Về MACCACA",
@@ -100,7 +100,7 @@ export default class Account extends Component {
           key: "4",
           icon: "question-circle",
           label: "Thông tin ứng dụng",
-          desc: "Sản phẩm của " + APP_NAME + " - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
+          desc: "Sản phẩm của " + APP_NAME_SHOW + " - Phiên bản hiện tại: " + DeviceInfo.getVersion(),
           onPress: () => {},
           boxIconStyle: [styles.boxIconStyle, {
             backgroundColor: "#688efb"

@@ -186,7 +186,7 @@ export default class OpRegister extends Component {
                 />
             </View>
           </View>
-          <Text style={styles.disclaimerText}>Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại {global.APP_NAME_SHOW} nhé</Text>
+          <Text style={styles.disclaimerText}>Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại {global.APP_NAME_SHOW_SHOW} nhé</Text>
 
         </ScrollView>
 

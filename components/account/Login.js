@@ -241,7 +241,7 @@ export default class LoginVerify extends Component {
 
     return (
       <View>
-        <Text style={styles.disclaimerText}>Nhập số điện thoại và "Gửi mã xác thực", {global.APP_NAME} sẽ gửi mã xác minh về số điện thoại của bạn. Nhập mã xác thực và đăng nhập hoàn tất.</Text>
+        <Text style={styles.disclaimerText}>Nhập số điện thoại và "Gửi mã xác thực", {global.APP_NAME_SHOW} sẽ gửi mã xác minh về số điện thoại của bạn. Nhập mã xác thực và đăng nhập hoàn tất.</Text>
       </View>
     );
   }
