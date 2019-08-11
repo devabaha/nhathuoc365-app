@@ -15,6 +15,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
 import CountryPicker from 'react-native-country-picker-modal';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
 
 import Sticker from '../Sticker';
@@ -94,7 +95,7 @@ export default class OpLogin extends Component {
       );
     }
     this.setState({ spinner: true }, async () => {
-
+      /*
       try {
 
         var response = await APIHandler.user_login_sms(formData);
@@ -125,7 +126,35 @@ export default class OpLogin extends Component {
           this.setState({ spinner: false });
         }, 1000);
       }
+      */
 
+      // Configures the account kit SDK
+      RNAccountKit.configure({
+        responseType: 'token',
+        titleType: 'login',
+        initialAuthState: '',
+        initialPhoneNumber: formData.username,
+        initialPhoneCountryPrefix: '+84',
+        facebookNotificationsEnabled: true,
+        countryWhitelist: ['VN'],
+        countryBlacklist: [],
+        defaultCountry: 'VN',
+        theme: {
+          // for iOS only
+          // hide title by setting this stuff
+          titleColor: Color.hex('#fff')
+        },
+        viewControllerMode: 'show', // for iOS only, 'present' by default
+        getACallEnabled: true,
+        setEnableInitialSmsButton: false, // true by default
+      });
+      // Shows the Facebook Account Kit view for login via SMS
+      RNAccountKit.loginWithPhone()
+        .then((res) => {
+          if (res) {
+            this._verifyFBAK(res);
+          }
+        });
     });
 
   }
@@ -188,6 +217,68 @@ export default class OpLogin extends Component {
         }, 2000);
         console.warn(err + ' login_sms_verify');
         store.addApiQueue('login_sms_verify', this._verifyCode);
+      }
+    });
+  }
+
+  // verify facebook account kit token
+  _verifyFBAK = (fbres) => {
+    this.setState({ spinner: true }, async () => {
+      try {
+        var response = await APIHandler.login_fbak_verify(fbres);
+
+        if (response && response.status == STATUS_SUCCESS) {
+          this.refs.form.refs.textInput.blur();
+
+          this._showSticker();
+
+          action(() => {
+            store.setUserInfo(response.data);
+
+            store.resetCartData();
+
+            store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+            if (!response.data.name) {//hien thi chon site
+              action(() => {
+                this.setState({
+                  finish: true
+                }, () => {
+                  Actions.op_register({
+                    type: ActionConst.RESET,
+                    title: "Đăng ký thông tin"
+                  });
+                });
+              })();
+            }else{
+              action(() => {
+                this.setState({
+                  finish: true
+                }, () => {
+                  Actions.myTabBar({
+                    type: ActionConst.RESET
+                  });
+                });
+              })();
+            }
+            StatusBar.setBarStyle('light-content');
+
+            setTimeout(() => {
+              this.setState({ spinner: false }, Actions.pop);
+            }, 2000);
+          })();
+        } else if (response) {
+          setTimeout(() => {
+            this.setState({ spinner: false });
+          }, 2000);
+          Toast.show(response.message, Toast.SHORT);
+        }
+      } catch (err) {
+        setTimeout(() => {
+          this.setState({ spinner: false });
+        }, 2000);
+        console.warn(e + ' login_fbak_verify');
+        store.addApiQueue('login_fbak_verify', this._verifyFBAK);
       }
     });
   }

@@ -3,6 +3,7 @@ package com.my_food_new;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.underscope.react.fbak.RNAccountKitPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -33,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNAccountKitPackage(),
             new ReactNativeOneSignalPackage(),
             new ImagePickerPackage(),
             new AsyncStoragePackage(),

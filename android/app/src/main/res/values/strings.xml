@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MACCACA</string>
+    <string name="fb_app_id">396660911249561</string>
+    <string name="ak_client_token">c935892dc72c8117d76bb8647d96a215</string>
 </resources>

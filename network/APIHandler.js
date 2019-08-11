@@ -410,6 +410,11 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async login_fbak_verify(data) {
+    var api = url_for(API.LOGIN_FBAK_VERIFY);
+    return await this.postAPI(api, data);
+  }
+
   /**
   * Đăng xuất
   */

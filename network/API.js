@@ -90,6 +90,7 @@ exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
 exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
 exports.USER_LOGIN_SMS = MY_FOOD_API + 'apiUser/login_sms';
 exports.LOGIN_SMS_VERIFY = MY_FOOD_API + 'apiUser/login_sms_verify';
+exports.LOGIN_FBAK_VERIFY = MY_FOOD_API + 'apiUser/login_fbak_verify';
 exports.USER_LOGOUT = MY_FOOD_API + 'apiUser/logout';
 exports.USER_ADD_AVATAR = PHOTO_MY_FOOD_API + 'apiUser/add_avatar';
 exports.USER_FORGET_PASSWORD = MY_FOOD_API + 'apiUser/forget_password';

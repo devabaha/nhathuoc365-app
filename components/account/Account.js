@@ -25,6 +25,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import ImagePicker from 'react-native-image-picker';
 import Sticker from '../Sticker';
 import {reaction} from 'mobx';
+import RNAccountKit from 'react-native-facebook-account-kit';
 
 // components
 import SelectionList from '../SelectionList';
@@ -676,6 +677,8 @@ export default class Account extends Component {
 
   async _logout() {
     try {
+      // logouts the user, so getCurrentAccessToken() will retrieve null
+      await RNAccountKit.logout();
       var response = await APIHandler.user_logout();
 
       if (response && response.status == STATUS_SUCCESS) {
