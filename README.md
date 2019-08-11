@@ -26,5 +26,8 @@ Các bước:
 2. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
+3. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker,
+   Thay Configuration'compile' is obsolete and has been replaced with 'implementation' and 'api'.
+và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
 
-3. Lỗi AndroidX: Chạy lệnh: npx jetify
+4. Lỗi AndroidX: Chạy lệnh: npx jetify ở thư mục source

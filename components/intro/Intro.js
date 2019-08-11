@@ -12,14 +12,13 @@ import {
 } from 'react-native';
 
 // library
-import Swiper from 'react-native-swiper';
-import store from '../../store/Store';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
+import store from '../../store/Store';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const images = [
-  {key: 1, image: require('../../images/slide/image_1.png')},
-  {key: 2, image: require('../../images/slide/image_2.png')},
-  {key: 3, image: require('../../images/slide/image_3.png')},
+  {key: 1, image: require('../../images/slide/image_3.png')},
 ];
 
 export default class Intro extends Component {
@@ -28,79 +27,116 @@ export default class Intro extends Component {
 
     this.state = {
       pageNum: 0,
-      finish: false,
-      stores_data: null
     }
   }
 
   componentDidMount() {
-    this._getData();
-
+    this._run_fbak();
     //GoogleAnalytic('intro');
   }
 
-  async _getData() {
-    try {
-      var response = await APIHandler.user_sites();
-
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          stores_data: response.data
-        });
-      }
-    } catch (e) {
-      console.warn(e + ' user_sites');
-
-      store.addApiQueue('user_sites', this._getData.bind(this));
-    } finally {
-      this.setState({
-        finish: true
+  _run_fbak(){
+    // Configures the account kit SDK
+    RNAccountKit.configure({
+      responseType: 'token',
+      titleType: 'login',
+      initialAuthState: '',
+      initialPhoneCountryPrefix: '+84',
+      facebookNotificationsEnabled: true,
+      countryBlacklist: [],
+      defaultCountry: 'VN',
+      theme: {
+        // for iOS only
+        // hide title by setting this stuff
+        titleColor: Color.hex('#fff')
+      },
+      viewControllerMode: 'show', // for iOS only, 'present' by default
+      getACallEnabled: true,
+      setEnableInitialSmsButton: false, // true by default
+    });
+    // Shows the Facebook Account Kit view for login via SMS
+    RNAccountKit.loginWithPhone()
+      .then((res) => {
+        if (res) {
+          this._verifyFBAK(res);
+        }
       });
-    }
   }
 
-  _renderImage({item, index}) {
-    if (index == (images.length - 1)) {
-      return(
-        <ImageBackground key={index} resizeMode="stretch" style={styles.image} source={item.image}>
-          <TouchableHighlight
-            style={styles.finish_btn_box}
-            underlayColor="transparent"
-            onPress={this._onFinish.bind(this)}>
-            <View style={styles.finish_btn}>
-              <Text style={styles.finish_text}>TRẢI NGHIỆM NGAY!</Text>
-            </View>
-          </TouchableHighlight>
-        </ImageBackground>
-      );
-    } else {
-      return(
-        <ImageBackground key={index} resizeMode="stretch" style={styles.image} source={item.image}>
+  // verify facebook account kit token
+  _verifyFBAK = (fbres) => {
+    this.setState({ spinner: true }, async () => {
+      try {
+        var response = await APIHandler.login_fbak_verify(fbres);
 
-        </ImageBackground>
-      );
-    }
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setUserInfo(response.data);
+
+            store.resetCartData();
+
+            store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+            if (!response.data.name) {//hien thi chon site
+              action(() => {
+                this.setState({
+                  finish: true
+                }, () => {
+                  Actions.op_register({
+                    type: ActionConst.RESET,
+                    title: "Đăng ký thông tin"
+                  });
+                });
+              })();
+            }else{
+              action(() => {
+                this.setState({
+                  finish: true
+                }, () => {
+                  Actions.myTabBar({
+                    type: ActionConst.RESET
+                  });
+                });
+              })();
+            }
+            StatusBar.setBarStyle('light-content');
+          })();
+        } else if (response) {
+          setTimeout(() => {
+            this.setState({ spinner: false });
+          }, 2000);
+          Toast.show(response.message, Toast.SHORT);
+        }
+      } catch (err) {
+        setTimeout(() => {
+          this.setState({ spinner: false });
+        }, 2000);
+        console.warn(e + ' login_fbak_verify');
+        store.addApiQueue('login_fbak_verify', this._verifyFBAK);
+      }
+    });
+  }
+
+
+  _renderImage({item, index}) {
+    return(
+      <ImageBackground key={index} resizeMode="stretch" style={styles.image} source={item.image}>
+        <TouchableHighlight
+          style={styles.finish_btn_box}
+          underlayColor="transparent"
+          onPress={this._onFinish.bind(this)}>
+          <View style={styles.finish_btn}>
+            <Text style={styles.finish_text}>
+              <Icon name="heart-o" size={16} color="#ffffff" /> TRẢI NGHIỆM {APP_NAME}
+            </Text>
+          </View>
+        </TouchableHighlight>
+      </ImageBackground>
+    );
   }
 
   _onFinish() {
-    if (this.state.stores_data) {
-      Actions.myTabBar({
-        type: ActionConst.RESET
-      });
-
-      // intro finish
-      storage.save({
-        key: STORAGE_INTRO_KEY,
-        data: {
-          finish: true
-        },
-        expires: null
-      });
-    } else {
-      Actions.add_store({
-        type: ActionConst.RESET
-      });
-    }
+    this._run_fbak();
   }
 
   _onScrollEnd(e) {
@@ -117,15 +153,7 @@ export default class Intro extends Component {
   }
 
   render() {
-    var {pageNum, finish} = this.state;
-
-    if (finish == false) {
-      return(
-        <View style={styles.container}>
-          <Indicator size="small" />
-        </View>
-      );
-    }
+    var {pageNum} = this.state;
 
     return (
       <View style={styles.container}>
@@ -147,8 +175,7 @@ export default class Intro extends Component {
           })}
         </View>)}
 
-        {pageNum < (images.length - 1) && (
-          <TouchableHighlight
+        <TouchableHighlight
             underlayColor="transparent"
             onPress={this._onFinish.bind(this)}
             style={{
@@ -161,9 +188,8 @@ export default class Intro extends Component {
             <Text style={{
               fontSize: 14,
               color: "#404040"
-            }}>Bỏ qua</Text>
+            }}>Tiếp tục</Text>
           </TouchableHighlight>
-        )}
       </View>
     );
   }
@@ -206,7 +232,7 @@ const styles = StyleSheet.create({
     width: Util.size.width,
     height: 100,
     position: 'absolute',
-    bottom: 0,
+    bottom: 20,
     left: 0,
     alignItems: 'center',
     justifyContent: 'center'

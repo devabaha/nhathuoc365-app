@@ -286,7 +286,7 @@ export default class App extends Component {
           this.setState({
             finish: true
           }, () => {
-            Actions.op_login({
+            Actions.intro({
               type: ActionConst.RESET
             });
           });
