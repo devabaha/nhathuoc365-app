@@ -21,7 +21,9 @@ Build:
 2. GA
 3. Firebase
 
-Các bước:
+Các bước cho Android:
+yarn install
+react-native run-android
 1. File local.properties: sdk.dir=/Users/thuclh/Library/Android/sdk
 2. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker
     compileSdkVersion 28
