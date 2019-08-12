@@ -286,7 +286,7 @@ export default class App extends Component {
           this.setState({
             finish: true
           }, () => {
-            Actions.intro({
+            Actions.login({
               type: ActionConst.RESET
             });
           });
@@ -623,7 +623,7 @@ export default class App extends Component {
             <Scene key="confirm" title="Xác nhận" component={Confirm} {...custommerNav} />
             <Scene key="create_address" title="Thêm địa chỉ" component={CreateAddress} {...custommerNav} />
             <Scene key="register" title="Đăng ký" component={Register} {...custommerNav} />
-            <Scene key="login" title="Đăng nhập" component={Login} {...custommerNav} />
+            <Scene key="login" hideNavBar title="" component={Login} {...custommerNav} />
             <Scene key="op_login" title="Đăng ký" component={OpLogin} {...custommerNav} />
             <Scene key="op_register" title="Đăng ký" component={OpRegister} {...custommerNav} />
             <Scene key="forget_verify" title="Lấy lại mật khẩu" component={ForgetVerify} {...custommerNav} />
