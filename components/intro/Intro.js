@@ -101,6 +101,7 @@ export default class Intro extends Component {
             }
             StatusBar.setBarStyle('light-content');
           })();
+          Toast.show(response.message, Toast.SHORT);
         } else if (response) {
           setTimeout(() => {
             this.setState({ spinner: false });

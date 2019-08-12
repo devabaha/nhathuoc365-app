@@ -690,7 +690,7 @@ export default class Account extends Component {
           store.setRefreshHomeChange(store.refresh_home_change + 1);
 
           store.setOrdersKeyChange(store.orders_key_change + 1);
-          Actions.op_login({
+          Actions.intro({
             type: ActionConst.RESET
           });
         })();
