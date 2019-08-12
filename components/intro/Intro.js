@@ -76,15 +76,15 @@ export default class Intro extends Component {
             store.resetCartData();
 
             store.setRefreshHomeChange(store.refresh_home_change + 1);
-
-            if (!response.data.name) {//hien thi chon site
+            if (response.data.fill_info_user) {//hien thi chon site
               action(() => {
                 this.setState({
                   finish: true
                 }, () => {
                   Actions.op_register({
                     type: ActionConst.RESET,
-                    title: "Đăng ký thông tin"
+                    title: "Đăng ký thông tin",
+                    name_props: response.data.name
                   });
                 });
               })();
@@ -97,7 +97,7 @@ export default class Intro extends Component {
                     type: ActionConst.RESET
                   });
                 });
-              })();
+              })(); 
             }
             StatusBar.setBarStyle('light-content');
           })();
