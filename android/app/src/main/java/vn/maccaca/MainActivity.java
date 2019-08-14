@@ -1,4 +1,4 @@
-package com.my_food_new;
+package vn.maccaca;
 
 import com.facebook.react.ReactActivity;
 
