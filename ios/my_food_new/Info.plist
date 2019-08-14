@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>AccountKitClientToken</key>
-	<string>5e9df70a1cf242be830af45871dcf0e9</string>
+	<string>1f0da835f32985d9ea73cb3c1d007d25</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>MACCACA</string>
+	<string>TickID</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,16 +27,16 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>ak2565314403513299</string>
+				<string>ak2794644853896597</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>301</string>
 	<key>CodePushDeploymentKey</key>
-	<string>Jrc1Tm3svn-inK16iuzCQNLdKYuQf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
+	<string>_jaoHsAy6EW4tIHabsFFZ0uHTG8hf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
 	<key>FacebookAppID</key>
-	<string>2565314403513299</string>
+	<string>2794644853896597</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

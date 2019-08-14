@@ -14,8 +14,8 @@ import {
 } from 'react-native';
 
 // library
-// import Icon from 'react-native-vector-icons/FontAwesome';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { Actions, ActionConst } from 'react-native-router-flux';
@@ -23,7 +23,7 @@ import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
-import {reaction} from 'mobx';
+import { reaction } from 'mobx';
 import Communications from 'react-native-communications';
 
 // components
@@ -37,6 +37,43 @@ import {
   AddStoreTutorial,
   GoStoreTutorial
 } from '../tutorial';
+
+const SERVICES_DATA_1 = [
+  {
+    iconName: 'mobile',
+    title: 'Nạp tiền điện thoại'
+  },
+  {
+    iconName: 'credit-card',
+    title: 'Mã thẻ di động'
+  },
+  {
+    iconName: 'plane',
+    title: 'Vé máy bay'
+  },
+  {
+    iconName: 'percent',
+    title: 'Mã giảm giá'
+  }
+];
+const SERVICES_DATA_2 = [
+  {
+    iconName: 'wrench',
+    title: 'Dịch vụ sửa chữa'
+  },
+  {
+    iconName: 'home',
+    title: 'Dịch vụ gia đình'
+  },
+  {
+    iconName: 'car',
+    title: 'Sân bay đường dài'
+  },
+  {
+    iconName: 'ellipsis-h',
+    title: 'Tất cả dịch vụ'
+  }
+]
 
 @observer
 export default class Home extends Component {
@@ -112,7 +149,7 @@ export default class Home extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_home) {
-      this.refs_home.scrollTo({x: 0, y: top, animated: true});
+      this.refs_home.scrollTo({ x: 0, y: top, animated: true });
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
@@ -135,7 +172,7 @@ export default class Home extends Component {
 
   // lấy dữ liệu trang home
   _getData(delay) {
-    if(store.no_refresh_home_change){
+    if (store.no_refresh_home_change) {
       return;
     }
     this.setState({
@@ -146,8 +183,8 @@ export default class Home extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
 
-            var {data} = response;
-            
+            var { data } = response;
+
             // Animation is true when first loaded
             if (this.state.store_data == null) {
               layoutAnimation();
@@ -199,7 +236,7 @@ export default class Home extends Component {
 
   // render button trên navbar
   _renderRightButton() {
-    return(
+    return (
       <TouchableHighlight
         style={styles.right_btn_add_store}
         underlayColor="transparent"
@@ -222,7 +259,7 @@ export default class Home extends Component {
 
   _showPopupAddStore() {
     if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.open();
+      this.refs_modal_add_store.open();
     }
   }
 
@@ -243,29 +280,29 @@ export default class Home extends Component {
   _goScanQRCode() {
     this._closePopup();
 
-    Actions.qr_bar_code({title: "Quét QR Code", index:1, wallet: store.user_info.default_wallet});
+    Actions.qr_bar_code({ title: "Quét QR Code", index: 1, wallet: store.user_info.default_wallet });
   }
 
   _goQRCode() {
     this._closePopup();
-    Actions.qr_bar_code({title: "Mã tài khoản"});
+    Actions.qr_bar_code({ title: "Mã tài khoản" });
   }
 
   _closePopup() {
     if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.close();
+      this.refs_modal_add_store.close();
     }
   }
 
   // pull to reload danh sách cửa hàng
   _onRefresh() {
-    this.setState({refreshing: true});
+    this.setState({ refreshing: true });
 
     this._getData(1000);
   }
 
   // render rows cửa hàng trong list
-  renderRow({item, index}, isAdmin) {
+  renderRow({ item, index }, isAdmin) {
     if (index == 0) {
       this.defaultBoxHeight = 0;
     }
@@ -273,7 +310,7 @@ export default class Home extends Component {
     this.defaultBoxHeight += 104;
 
     // store list
-    return(
+    return (
       <ItemList item={item} index={index} that={this} />
     );
   }
@@ -284,7 +321,7 @@ export default class Home extends Component {
       title: item.name
     });
   }
-  
+
   // tới màn hình chat
   _goChat(item) {
     action(() => {
@@ -327,20 +364,19 @@ export default class Home extends Component {
   }
   // tới màn hình store
   _goStores(item, category_id) {
-    action(() => {
-      store.setStoreData(item);
-    })();
+    // action(() => {
+    //   store.setStoreData(item);
+    // })();
 
     // hide tutorial go store
-    if (this.props.that) {
-      this.props.that.setState({
-        show_go_store: false
-      });
-    }
+    // if (this.props.that) {
+    //   this.props.that.setState({
+    //     show_go_store: false
+    //   });
+    // }
 
-    Actions.stores({
-      title: item.name,
-      goCategory: category_id
+    Actions.list_store({
+      title: "Cửa hàng",
     });
   }
   _cachedStore(key, thenFunc = () => 1, catchFunc = () => 1) {
@@ -402,430 +438,172 @@ export default class Home extends Component {
       title_hot_products,
       categorie_products
     } = this.state;
-    
+
     var count_chat = parseInt(store.notify_chat[store.store_id]);
 
     return (
       <View style={styles.container}>
         <ScrollView
-          onScroll={(event) => {
-            var scrollTop = event.nativeEvent.contentOffset.y;
-            this.setState({ scrollTop });
-          }}
-          ref={ref => this.refs_home = ref}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }>
-          {(this.state.promotions && this.state.promotions.length > 0) && (
-              <Swiper
-                width={Util.size.width}
-                height={(Util.size.width) * (160/320)}
-                autoplayTimeout={3}
-                showsPagination={true}
-                horizontal
-                autoplay>
-                {this.state.promotions.map((banner, i) => {
-                  return(
-                    <View
-                      key={i}
-                      style={{
-                        width: Util.size.width,
-                        alignItems: 'center'
-                      }}>
-                      <TouchableHighlight
-                        onPress={this._goDetail.bind(this, banner.news)}
-                        underlayColor="transparent">
-                      <CachedImage
-                        source={{uri: banner.banner}}
-                        style={{
-                          width: Util.size.width,
-                          height: (Util.size.width) * (160/320)
-                        }} />
-                        </TouchableHighlight>
-                    </View>
-                  );
-                })}
-              </Swiper>
-            )}
+          contentContainerStyle={{ flexGrow: 1 }}
+          style={{marginBottom: 15}}
+          refreshControl={<RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this._onRefresh.bind(this)}
+          />}
+        >
+          <View style={styles.header}>
+            <Text style={styles.add_store_action_label}>
+              {`Xin chào, `}
+              <Text style={{
+                fontWeight: 'bold',
+                fontSize: 18
+              }}>
+                Lê Huy Thực
+                </Text>
+            </Text>
+          </View>
 
           {(<View>
-              <View style={styles.add_store_actions_box}>
-                <TouchableHighlight
-                  onPress={this._goStores.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
-                    <Icon name="shopping" size={24} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Vào cửa hàng</Text>
-                    {store_data && store_data.count_cart > 0 && <View style={styles.stores_info_action_notify}>
-                    <Text style={styles.stores_info_action_notify_value}>{store_data.count_cart}</Text></View>}
-                  </View>
-                </TouchableHighlight>
-                
-                <TouchableHighlight
-                  onPress={this._goQRCode.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <Icon name="barcode-scan" size={24} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Dùng thẻ</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  onPress={this._goScanQRCode.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <Ionicons name="md-qr-scanner" size={24} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Quét mã</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  onPress={this._goChat.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <Icon name="wechat" size={24} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Chat</Text>
-                    {count_chat > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}>
-                    <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
-                  </View>
-                </TouchableHighlight>
-
-              </View>
-            </View>
-          )}
-          {user_notice && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-              <Text style={styles.add_store_title}>THÔNG BÁO</Text>
-
-              {view_all_notices && (
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions._main_notify({type: ActionConst.REFRESH});
-                    }}>
-                    <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
+            <View style={styles.add_store_actions_box}>
+              <TouchableHighlight
+                onPress={this._goQRCode.bind(this, this.state.store_data)}
+                underlayColor="transparent"
+                style={styles.add_store_action_btn}>
+                <View style={styles.add_store_action_btn_box}>
+                  <Icon name="qrcode" size={24} color="#ffffff" />
+                  <Text style={styles.add_store_action_label}>Mã TK</Text>
                 </View>
-              )}
-            </View>
-          )}
+              </TouchableHighlight>
 
-          {user_notice && (
-            <FlatList
-              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-              data={user_notice}
-              style={[styles.profile_list_opt]}
-              renderItem={({item, index}) => {
-                return(
-                  <NotifyItemComponent
-                    item={item} />
-                );
-              }}
-              keyExtractor={item => item.id}
-            />
-          )}
-
-          {products && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-              <Text style={styles.add_store_title}>{title_products}</Text>
-
-              {(
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={this._goStores.bind(this, this.state.store_data)}
-                    >
-                    <Text style={[styles.add_store_title, {color: "#fa7f50"}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
+              <TouchableHighlight
+                onPress={this._goScanQRCode.bind(this, this.state.store_data)}
+                underlayColor="transparent"
+                style={styles.add_store_action_btn}>
+                <View style={styles.add_store_action_btn_box}>
+                  <Icon name="minus-square-o" size={24} color="#ffffff" />
+                  <Text style={styles.add_store_action_label}>Quét mã</Text>
                 </View>
-              )}
-            </View>
-          )}
+              </TouchableHighlight>
 
-          {products && (
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap'
-            }}>
-              {products.map((item, index) => (
-                <Items
-                  key={index}
-                  item={item}
-                  index={index}
-                  onPress={this._goItem.bind(this, item)}
-                  />
-              ))}
+              {store.user_info.default_wallet && (
+                <TouchableHighlight
+                  onPress={() => Actions.vnd_wallet({ title: store.user_info.default_wallet.name, wallet: store.user_info.default_wallet })}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={[styles.add_store_action_btn_box,
+                  {
+                    width: ~~(Util.size.width / 2),
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    flexDirection: 'row',
+                    paddingHorizontal: 15
+                  }
+                  ]}>
+                    <View>
+                      <Text style={[
+                        styles.add_store_action_label,
+                        { textAlign: 'left' }
+                      ]}>
+                        {store.user_info.default_wallet.name}
+                      </Text>
+                      <Text style={[
+                        styles.add_store_action_label_balance,
+                        { textAlign: 'left' }
+                      ]}>
+                        {store.user_info.default_wallet.balance_view}
+                      </Text>
+                    </View>
+                    <Icon name='chevron-right' color='#ffffff' />
+                  </View>
+                </TouchableHighlight>)}
             </View>
-          )}
-          <View style={styles.boxButtonActions}>
-            <TouchableHighlight
-                style={styles.buttonAction}
-                onPress={this._goStores.bind(this, this.state.store_data)}
-                underlayColor="transparent">
-                <View style={[styles.boxButtonAction, {
-                  width: Util.size.width - 30,
-                  backgroundColor: "#fa7f50",
-                  borderColor: "#999999"
-                }]}>
-                  <Icon name="shopping" size={16} color="#ffffff" />
-                  <Text style={[styles.buttonActionTitle, {
-                    color: "#ffffff"
-                  }]}>Vào cửa hàng {this.state.store_data?this.state.store_data.name:""}</Text>
-                </View>
-            </TouchableHighlight>
           </View>
-
-          {like_products && (<View style={styles.lineView}/>)}
-          {like_products && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-              <Text style={styles.add_store_title}>{title_like_products}</Text>
-
-              {(
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={this._goStores.bind(this, this.state.store_data, 1)}
-                    >
-                    <Text style={[styles.add_store_title, {color: "#fa7f50"}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
-                </View>
-              )}
-            </View>
-          )}
-          {like_products && (
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap'
-            }}>
-              {like_products.map((item, index) => (
-                <Items
-                  key={index}
-                  item={item}
-                  index={index}
-                  onPress={this._goItem.bind(this, item)}
-                  />
-              ))}
-            </View>
           )}
 
-          {categorie_products && (<View style={styles.lineView}/>)}
-          {categorie_products && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              alignItems: "center"
-            }}>
-              <Text style={styles.add_store_title}>DANH MỤC</Text>
-            </View>
-          )}
-          {categorie_products && (
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap'
-            }}>
-              {categorie_products.map((item, index) => (
-                <Items
-                  key={index}
-                  item={item}
-                  index={index}
-                  isCategories={true}
-                  onPress={this._goStores.bind(this, this.state.store_data, item.id)}
-                  />
-              ))}
-            </View>
-          )}
 
-          {hot_products && (<View style={styles.lineView}/>)}
-          {hot_products && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-              <Text style={styles.add_store_title}>{title_hot_products}</Text>
-
-              {(
-                <View style={styles.right_title_btn_box}>
-                  <TouchableHighlight
-                    style={styles.right_title_btn}
-                    underlayColor="transparent"
-                    onPress={this._goStores.bind(this, this.state.store_data,2)}
-                    >
-                    <Text style={[styles.add_store_title, {color: "#fa7f50"}]}>XEM TẤT CẢ</Text>
-                  </TouchableHighlight>
-                </View>
-              )}
-            </View>
-          )}
-          {hot_products && (
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap'
-            }}>
-              {hot_products.map((item, index) => (
-                <Items
-                  key={index}
-                  item={item}
-                  index={index}
-                  onPress={this._goItem.bind(this, item)}
-                  />
-              ))}
-            </View>
-          )}
-          
-          {stores_data && (
-            <View>
-              <View style={styles.myFavoriteBox}>
-                <Text style={styles.add_store_title}>CỬA HÀNG MACCA COFFEE+</Text>
-              </View>
-              <FlatList
-                style={styles.stores_box}
-                onEndReached={(num) => {
-
+          <View style={styles.serviceBox}>
+            {SERVICES_DATA_1.map((service, index) =>
+              <ServiceButton
+                iconName={service.iconName}
+                title={service.title}
+                key={index}
+                style={index !== SERVICES_DATA_1.length - 1 && {
+                  borderRightColor: '#dddddd',
+                  borderRightWidth: 1
                 }}
-                onEndReachedThreshold={0}
-                data={stores_data}
-                renderItem={({item, index}) => this.renderRow({item, index}, false)}
-                keyExtractor={item => item.id}
+                onPress={() => { }}
               />
-            </View>
-          )}
-
-          {farm_newses_data && (<View style={styles.lineView}/>)}
-          {farm_newses_data != null && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-            <Text style={styles.add_store_title}>{title_farm_newses_data}</Text>
-
-              <View style={styles.right_title_btn_box}>
-                <TouchableHighlight
-                  style={styles.right_title_btn}
-                  underlayColor="transparent"
-                  onPress={() => {
-                    Actions.notifys_farm({
-                      isNotifysTime: farm_newses_type == 1?false:true,
-                      title: title_farm_newses_data,
-                      news_type: "/" + farm_newses_type
-                    });
-                  }}>
-                  <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                </TouchableHighlight>
-              </View>
+            )}
           </View>
+
+          <View style={styles.serviceBox}>
+            {SERVICES_DATA_2.map((service, index) =>
+              <ServiceButton
+                iconName={service.iconName}
+                title={service.title}
+                key={index}
+                style={index !== SERVICES_DATA_1.length - 1 && {
+                  borderRightColor: '#dddddd',
+                  borderRightWidth: 1
+                }}
+                onPress={() => { }}
+              />
+            )}
+          </View>
+
+          {/* <Image /> */}
+          {(this.state.promotions && this.state.promotions.length > 0) && (
+            <Swiper
+              width={Util.size.width}
+              height={(Util.size.width) * .42}
+              autoplayTimeout={3}
+              showsPagination={true}
+              horizontal
+              autoplay>
+              {this.state.promotions.map((banner, i) => {
+                return (
+                  <View
+                    key={i}
+                    style={{
+                      width: Util.size.width,
+                      alignItems: 'center'
+                    }}>
+                    <TouchableHighlight
+                      onPress={this._goDetail.bind(this, banner.news)}
+                      underlayColor="transparent">
+                      <CachedImage
+                        source={{ uri: banner.banner }}
+                        style={{
+                          width: Util.size.width,
+                          height: (Util.size.width) * .4
+                        }} />
+                    </TouchableHighlight>
+                  </View>
+                );
+              })}
+            </Swiper>
           )}
+
           {farm_newses_data && (
-            <FlatList
+            <ListHomeItems
               data={farm_newses_data}
-              renderItem={({item, index}) => {
-                if (index == 0) {
-                  this.defaultNewBoxHeight = 0;
-                }
-
-                this.defaultNewBoxHeight += (isIOS ? 116 : 124);
-
-                return(
-                  <NewItemComponent
-                    item={item} />
-                );
-              }}
-              keyExtractor={item => item.id}
+              title="Gian hàng thân thiết"
             />
           )}
 
-          {newses_data && (<View style={styles.lineView}/>)}
-          {newses_data != null && (
-            <View style={{
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderBottomWidth: Util.pixel,
-              borderColor: "#dddddd",
-              marginTop: 4,
-              flexDirection: 'row'
-            }}>
-            <Text style={styles.add_store_title}>{title_newses_data}</Text>
-
-              <View style={styles.right_title_btn_box}>
-                <TouchableHighlight
-                  style={styles.right_title_btn}
-                  underlayColor="transparent"
-                  onPress={() => {
-                    Actions.notifys_time({
-                      isNotifysTime: newses_type == 1?false:true,
-                      title: title_newses_data,
-                      news_type: "/"+newses_type
-                    });
-                  }}>
-                  <Text style={[styles.add_store_title, {color: DEFAULT_COLOR}]}>XEM TẤT CẢ</Text>
-                </TouchableHighlight>
-              </View>
-          </View>
-          )}
           {newses_data && (
-            <FlatList
+            <ListHomeItems
               data={newses_data}
-              renderItem={({item, index}) => {
-                if (index == 0) {
-                  this.defaultNewBoxHeight = 0;
-                }
-
-                this.defaultNewBoxHeight += (isIOS ? 116 : 124);
-
-                return(
-                  <NewItemComponent
-                    item={item} />
-                );
-              }}
-              keyExtractor={item => item.id}
+              title="TickID Voucher"
             />
           )}
 
-          <View style={styles.right_title_btn_box}>
-            <Text> </Text>
-          </View>
+          {newses_data && (
+            <ListHomeItems
+              data={newses_data}
+              title="Tin tức"
+            />
+          )}
         </ScrollView>
       </View>
     );
@@ -842,10 +620,14 @@ const styles = StyleSheet.create({
     borderColor: "#dddddd",
     marginBottom: 4
   },
-
+  header: {
+    padding: 15,
+    paddingTop: 45,
+    backgroundColor: DEFAULT_COLOR
+  },
   container: {
     flex: 1,
-    marginBottom: BAR_HEIGHT,
+    paddingBottom: BAR_HEIGHT,
     backgroundColor: BGR_SCREEN_COLOR
   },
   stores_box: {
@@ -853,7 +635,11 @@ const styles = StyleSheet.create({
     borderTopWidth: Util.pixel,
     borderColor: "#dddddd"
   },
-
+  serviceBox: {
+    flexDirection: 'row',
+    borderBottomColor: '#dddddd',
+    borderBottomWidth: 1
+  },
   add_store_box: {
     width: '100%',
     backgroundColor: "#ffffff",
@@ -863,7 +649,7 @@ const styles = StyleSheet.create({
   },
   add_store_title: {
     color: "#404040",
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '500',
     lineHeight: 20
   },
@@ -871,24 +657,46 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: DEFAULT_COLOR,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderTopWidth: Util.pixel,
+    borderColor: "#ffffff"
   },
   add_store_action_btn: {
-    paddingVertical: 4
+    paddingVertical: 4,
+
   },
   add_store_action_btn_box: {
     alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
     // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 4),
     borderLeftWidth: Util.pixel,
     borderLeftColor: '#ebebeb'
   },
+  add_store_action_btn_box_balance: {
+    // alignItems: 'center',
+    // width: ~~((Util.size.width - 16) / 2),
+    width: ~~(Util.size.width / 2),
+    borderLeftWidth: Util.pixel,
+    borderLeftColor: '#ebebeb',
+    marginTop: -2
+  },
+  add_store_action_label_balance: {
+    fontSize: 24,
+    color: '#ffffff',
+    marginTop: 4,
+    fontWeight: 'bold'
+  },
+  add_store_action_label_name: {
+    fontSize: 14,
+    color: '#ffffff',
+  },
   add_store_action_label: {
-    fontSize: 12,
-    color: '#404040',
-    marginTop: 4
+    fontSize: 14,
+    color: 'white',
+    marginTop: 0
   },
 
   right_btn_add_store: {
@@ -940,7 +748,7 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     flexDirection: 'row'
   },
-  
+
   stores_info_action_notify: {
     position: 'absolute',
     minWidth: 16,
@@ -955,14 +763,14 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   stores_info_action_notify_chat: {
-    
+
   },
   stores_info_action_notify_value: {
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600'
   },
-  
+
   boxButtonActions: {
     // backgroundColor: "#ffffff",
     flexDirection: 'row',
@@ -992,3 +800,90 @@ const styles = StyleSheet.create({
     backgroundColor: "rgb(225,225,225)"
   }
 });
+
+const ServiceButton = (props) => {
+  return (
+    <TouchableHighlight
+      underlayColor='transparent'
+      style={[{
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: ~~(Util.size.width / 4),
+        paddingVertical: 10
+      }]}
+      onPress={props.onPress}
+    >
+      <View style={[{
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        paddingHorizontal: 10
+      }, props.style]}>
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Icon name={props.iconName} color='#404040' size={24} />
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{
+            color: '#404040',
+            fontSize: 14,
+            textAlign: 'center'
+          }}>
+            {props.title}
+          </Text>
+        </View>
+      </View>
+    </TouchableHighlight >
+  )
+}
+
+const ListHomeItems = (props) => {
+  return (
+    <View>
+      <View style={{
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderBottomWidth: Util.pixel,
+        borderColor: "#dddddd",
+        marginTop: 4,
+        flexDirection: 'row'
+      }}>
+        <Text style={styles.add_store_title}>{props.title}</Text>
+
+        <View style={styles.right_title_btn_box}>
+          <TouchableHighlight
+            style={styles.right_title_btn}
+            underlayColor="transparent"
+            onPress={() => {
+              Actions.notifys_time({
+                isNotifysTime: newses_type == 1 ? false : true,
+                title: title_newses_data,
+                news_type: "/" + newses_type
+              });
+            }}>
+            <Text style={[styles.add_store_title, { color: DEFAULT_COLOR }]}>
+              Tất cả
+            </Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+      <FlatList
+        data={props.data}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item, index }) => {
+          // if (index == 0) {
+          //   this.defaultNewBoxHeight = 0;
+          // }
+
+          // this.defaultNewBoxHeight += (isIOS ? 116 : 124);
+
+          return (
+            <NewItemComponent
+              item={item} />
+          );
+        }}
+        keyExtractor={item => item.id}
+      />
+    </View>
+  )
+}

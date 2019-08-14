@@ -23,6 +23,9 @@ Build:
 1. Onesignal
 2. GA
 3. Firebase
+4. CodePush
+5. FBAK
+6. API Key và tên
 
 Các bước cho Android:
 yarn install
