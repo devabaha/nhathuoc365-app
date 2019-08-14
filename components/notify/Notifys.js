@@ -44,7 +44,7 @@ export default class Notifys extends Component {
         // {
         //   key: "0",
         //   label: "Tin tức",
-        //   desc: "Thông tin MACCACA",
+        //   desc: "Thông tin TickID",
         //   icon: "calendar",
         //   notify: "new_calendar_news",
         //   onPress: () => {
@@ -61,7 +61,7 @@ export default class Notifys extends Component {
         // {
         //   key: "1",
         //   label: "Chương trình khuyến mại",
-        //   desc: "Khách hàng thân thiết MACCACA",
+        //   desc: "Khách hàng thân thiết TickID",
         //   icon: "lemon-o",
         //   notify: "new_farm_news",
         //   onPress: () => {

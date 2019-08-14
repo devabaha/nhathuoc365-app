@@ -114,7 +114,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "vn.maccaca"
+        applicationId "vn.tickid"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 5000301

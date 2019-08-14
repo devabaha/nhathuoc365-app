@@ -89,7 +89,7 @@ export default class Affiliate extends Component {
 
 
           <TouchableHighlight
-            onPress={() => Communications.email(null,null,null,'Lời mời tham gia chương trình Maccaca Affiliate', user_info.text_sms)}
+            onPress={() => Communications.email(null,null,null,'Lời mời tham gia chương trình TickID Affiliate', user_info.text_sms)}
             underlayColor="transparent"
             style={styles.add_store_action_btn}>
             <View style={styles.add_store_action_btn_box}>

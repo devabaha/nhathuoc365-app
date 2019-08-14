@@ -87,7 +87,7 @@ export default class Account extends Component {
           label: "Về " + APP_NAME_SHOW + " - Điều khoản sử dụng",
           desc: "Điều khoản sử dụng",
           onPress: () => Actions.webview({
-            title: "Về MACCACA",
+            title: "Về TickID",
             url: APP_INFO
           }),
           boxIconStyle: [styles.boxIconStyle, {
@@ -543,7 +543,7 @@ export default class Account extends Component {
           )}
           <TouchableHighlight
             underlayColor="transparent"
-            onPress={() => Actions.affiliate({aff_content: store.store_data.aff_content?store.store_data.aff_content:"Giới thiệu chương trình tiếp thị liên kết cùng MACCACA"})}>
+            onPress={() => Actions.affiliate({aff_content: store.store_data.aff_content?store.store_data.aff_content:"Giới thiệu chương trình tiếp thị liên kết cùng TickID"})}>
             <View style={[styles.profile_list_opt_btn, {
               marginTop: 1,
               borderTopWidth: 0,

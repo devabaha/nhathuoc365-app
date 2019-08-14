@@ -36,7 +36,7 @@ const Recharge = (props) => {
                             {`Tài khoản: `}
                         </Text>
                         <Text style={[styles.des]}>
-                            Công ty cổ phần Maccaca
+                            Công ty cổ phần TickID
                         </Text>
                     </View>
                     <View style={[{ flexDirection: 'row' }]}>

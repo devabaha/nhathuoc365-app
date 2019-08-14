@@ -18,7 +18,7 @@ import store from '../../../store/Store';
 import { toJS } from 'mobx';
 
 const CASH_MESSAGE = "Ví Tiền mặt được rút về App vào cuối tháng.\nTrong tháng được rút về ví Tạm ứng trên App để tiêu dùng trong chuỗi Macca Cafe.";
-const PRODUCT_MESSAGE = "Ví Sản phẩm được rút về App vào cuối tháng.\nĐược sử dụng để mua trong cửa hàng Maccaca."
+const PRODUCT_MESSAGE = "Ví Sản phẩm được rút về App vào cuối tháng.\nĐược sử dụng để mua trong cửa hàng TickID."
 const formatDate = (date) => {
     date = new Date(date);
     return date.getDate() + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear()

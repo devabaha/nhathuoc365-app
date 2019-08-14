@@ -72,10 +72,6 @@ import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
 import Error from './components/Error';
 import ChooseLocation from './components/home/ChooseLocation';
-import SyncNdt from './components/account/SyncNdt';
-import NdtList from './components/account/Ndt/NdtList';
-import Ndt from './components/account/Ndt/Ndt';
-import NdtWithdraw from './components/account/Ndt/NdtWithdraw';
 import CoinWallet from './components/account/CoinWallet';
 import VndWallet from './components/account/VndWallet/VndWallet';
 import PayWallet from './components/account/PayWallet';
@@ -561,14 +557,14 @@ export default class App extends Component {
               <Scene
                 key="myTab1"
                 icon={TabIcon}
-                iconTitle="MACCACA"
+                iconTitle="TickID"
                 iconName="store"
                 size={24}
                 onPress={() => {
                   Actions._home({ type: ActionConst.REFRESH });
                 }}
               >
-                <Scene key="_home" title="Maccaca" component={Home} hideNavBar {...custommerNav} />
+                <Scene key="_home" title="TickID" component={Home} hideNavBar {...custommerNav} />
               </Scene>
 
               {/**
@@ -656,10 +652,6 @@ export default class App extends Component {
             <Scene key="intro" initial={showIntro} hideNavBar title="" component={Intro} {...custommerNav} />
             <Scene key="_add_ref" title="" component={AddRef} {...custommerNav} />
             <Scene key="choose_location" title="" component={ChooseLocation} {...custommerNav} />
-            <Scene key="sync_ndt" title="" component={SyncNdt} {...custommerNav} />
-            <Scene key="view_ndt_list" title="Nhà đầu tư" component={NdtList} {...custommerNav} />
-            <Scene key="view_ndt" title="" component={Ndt} {...custommerNav} />
-            <Scene key="view_ndt_withdraw" title="" component={NdtWithdraw} {...custommerNav} />
             <Scene key="vnd_wallet" title="" component={VndWallet} {...custommerNav} />
             <Scene key="pay_wallet" title="" component={PayWallet} {...custommerNav} />
             <Scene key="pay_account" title="" component={PayAccount} {...custommerNav} />

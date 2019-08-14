@@ -1,4 +1,4 @@
-package vn.maccaca;
+package vn.tickid;
 
 import android.app.Application;
 

@@ -374,12 +374,6 @@ class APIHandler {
     var api = url_for(API.USER_OP_REGISTER);
     return await this.postAPI(api, data);
   }
-  //user_sync_ndt
-  async user_sync_ndt(data) {
-    var api = url_for(API.USER_SYNC_NDT);
-    return await this.postAPI(api, data);
-  }
-
   async user_transfer_balance(data) {
     var api = url_for(API.USER_TRANSFER_BALANCE);
     return await this.postAPI(api, data);
@@ -485,54 +479,6 @@ class APIHandler {
   */
   async user_coins_wallet() {
     var api = url_for(API.USER_COINS_WALLET);
-    return await this.getAPI(api);
-  }
-
-  /**
-    * Lấy thông tin lịch sử thu nhập Ndt
-    */
-  async investor_history(data) {
-    var api = url_for(API.USER_INVESTOR_HISTORY);
-    return await this.postAPI(api, data);
-  }
-
-  /**
-  * Lấy thông tin lịch sử rút Ndt
-  */
-  async investor_historywithdraw(data) {
-    var api = url_for(API.USER_INVESTOR_HISTORY_WITHDRAW);
-    return await this.postAPI(api, data);
-  }
-
-  /**
-  * Tạo lệnh rút ví Tiền mặt Ndt
-  */
-  async investor_send_cash_withdraw(data) {
-    var api = url_for(API.USER_INVESTOR_SEND_CASH_WITHDRAW);
-    return await this.postAPI(api, data);
-  }
-
-  /**
-  * Tạo lệnh rút ví Sản phẩm Ndt
-  */
-  async investor_send_product_withdraw(data) {
-    var api = url_for(API.USER_INVESTOR_SEND_PRODUCT_WITHDRAW);
-    return await this.postAPI(api, data);
-  }
-
-  /**
-  * Tạo lệnh rút ví Tạm ứng Ndt
-  */
-  async investor_send_advance_withdraw(data) {
-    var api = url_for(API.USER_INVESTOR_SEND_ADVANCE_WITHDRAW);
-    return await this.postAPI(api, data);
-  }
-
-  /**
-  * Cập nhật thông tin Ndt
-  */
-  async investor_sync_info() {
-    var api = url_for(API.USER_INVESTOR_SYNC_INFO);
     return await this.getAPI(api);
   }
 

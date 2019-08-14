@@ -30,7 +30,7 @@ import Communications from 'react-native-communications';
 import ItemGrid from './ItemGrid';
 import ItemList from './ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
-import NewItemComponent from '../notify/NewItemComponent';
+import NewItemComponent2 from '../notify/NewItemComponent2';
 import Items from '../stores/Items';
 import {
   TabTutorial,
@@ -878,7 +878,7 @@ const ListHomeItems = (props) => {
           // this.defaultNewBoxHeight += (isIOS ? 116 : 124);
 
           return (
-            <NewItemComponent
+            <NewItemComponent2
               item={item} />
           );
         }}

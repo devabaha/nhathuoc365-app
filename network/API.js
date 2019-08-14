@@ -85,7 +85,6 @@ exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';
 // Users
 exports.USER_REGISTER = MY_FOOD_API + 'apiUser/register';
 exports.USER_OP_REGISTER = MY_FOOD_API + 'apiUser/op_register';
-exports.USER_SYNC_NDT = MY_FOOD_API + 'apiMaccaca/investor_authen';
 exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
 exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
 exports.USER_LOGIN_SMS = MY_FOOD_API + 'apiUser/login_sms';
@@ -100,10 +99,3 @@ exports.USER_CHOOSE_LOCATION = MY_FOOD_API + 'apiUser/choose_site';
 exports.USER_COINS_WALLET = MY_FOOD_API + 'apiUser/point_history';
 exports.USER_TRANSFER_BALANCE = MY_FOOD_API + 'apiUser/transfer_balance';
 exports.USER_WALLET_HISTORY = MY_FOOD_API + 'apiUser/wallet_history';
-//Ndt
-exports.USER_INVESTOR_SYNC_INFO = MY_FOOD_API + "apiMaccaca/investor_sync_info";
-exports.USER_INVESTOR_HISTORY = MY_FOOD_API + "apiMaccaca/investor_history";
-exports.USER_INVESTOR_HISTORY_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_historywithdraw";
-exports.USER_INVESTOR_SEND_CASH_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_sendwithdraw";
-exports.USER_INVESTOR_SEND_PRODUCT_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_sendwithdrawproductwallet";
-exports.USER_INVESTOR_SEND_ADVANCE_WITHDRAW = MY_FOOD_API + "apiMaccaca/investor_advancewithdraw";

@@ -41,5 +41,5 @@ và Configuration 'testCompile' is obsolete and has been replaced with 'testImpl
 4. Lỗi AndroidX: Chạy lệnh: npx jetify ở thư mục source
 
 Gen khóa phat hanh
-keytool -exportcert -alias vn.maccaca -keystore android/app/vn.maccaca.keystore | openssl sha1 -binary | openssl base64
+keytool -exportcert -alias vn.tickid -keystore android/app/vn.tickid.keystore | openssl sha1 -binary | openssl base64
 

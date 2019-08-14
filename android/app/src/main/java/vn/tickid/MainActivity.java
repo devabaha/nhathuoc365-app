@@ -1,4 +1,4 @@
-package vn.maccaca;
+package vn.tickid;
 
 import com.facebook.react.ReactActivity;
 
