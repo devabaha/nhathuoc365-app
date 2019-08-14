@@ -27,6 +27,7 @@ import {
 } from 'react-native-router-flux';
 import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
+import codePush from 'react-native-code-push';
 
 // store
 import Store from './store/Store';
@@ -698,6 +699,9 @@ export default class App extends Component {
     }
   }
 }
+
+// codepush initialize
+App = codePush(App);
 
 const styles = StyleSheet.create({
   container: {

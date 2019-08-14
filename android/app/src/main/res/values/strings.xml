@@ -1,4 +1,5 @@
 <resources>
+	<string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">P9zONo1PR2tEeOqNDldTdnlt4NA-f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
     <string name="app_name">MACCACA</string>
     <string name="fb_app_id">2565314403513299</string>
     <string name="ak_client_token">5e9df70a1cf242be830af45871dcf0e9</string>
