@@ -117,7 +117,7 @@ android {
         applicationId "vn.maccaca"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5000002
+        versionCode 5000301
         versionName "3.0.1"
         multiDexEnabled true
     }
