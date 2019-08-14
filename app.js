@@ -169,7 +169,7 @@ export default class App extends Component {
     OneSignal.addEventListener('received', this._onReceived);
     OneSignal.addEventListener('opened', this._onOpened);
     OneSignal.addEventListener('ids', this._onIds);
-    OneSignal.configure(); 	// triggers the ids event
+    // OneSignal.configure(); 	// triggers the ids event
     OneSignal.inFocusDisplaying(2);
 
     this.state = {
