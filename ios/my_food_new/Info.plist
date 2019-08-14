@@ -90,15 +90,15 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
   <key>FacebookAppID</key>
-  <string>2794644853896597</string>
+  <string>2565314403513299</string>
   <key>AccountKitClientToken</key>
-  <string>1f0da835f32985d9ea73cb3c1d007d25</string>
+  <string>5e9df70a1cf242be830af45871dcf0e9</string>
   <key>CFBundleURLTypes</key>
   <array>
     <dict>
       <key>CFBundleURLSchemes</key>
       <array>
-        <string>ak2794644853896597</string>
+        <string>ak2565314403513299</string>
       </array>
     </dict>
   </array>

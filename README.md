@@ -2,7 +2,7 @@
 TickID App: Ứng dụng CSKH và Tích điểm cho cửa hàng
 yarn install
 react-native run-ios
-
+Cau hinh FBSDK: Account Kit va Analytics
 Run
 adb reverse tcp:8081 tcp:8081
 
@@ -33,3 +33,7 @@ react-native run-android
 và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
 
 4. Lỗi AndroidX: Chạy lệnh: npx jetify ở thư mục source
+
+Gen khóa phat hanh
+keytool -exportcert -alias vn.maccaca -keystore android/app/vn.maccaca.keystore | openssl sha1 -binary | openssl base64
+

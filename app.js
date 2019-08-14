@@ -515,7 +515,8 @@ export default class App extends Component {
         '_home',
         '_main_notify',
         '_orders',
-        '_account'
+        '_account',
+        'login'
       ].indexOf(currentSceneName) === -1) {
         if (typeof currentSceneOnBack == 'function') {
           currentSceneOnBack();
