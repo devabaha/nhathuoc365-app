@@ -301,6 +301,11 @@ export default class Home extends Component {
     this._getData(1000);
   }
 
+  _goPhoneCard() {
+      // this._closePopup();
+      Actions.phonecard();
+  }
+
   // render rows cửa hàng trong list
   renderRow({ item, index }, isAdmin) {
     if (index == 0) {
@@ -531,7 +536,7 @@ export default class Home extends Component {
                   borderRightColor: '#dddddd',
                   borderRightWidth: 1
                 }}
-                onPress={() => { }}
+                onPress={() => Actions.phonecard()}
               />
             )}
           </View>

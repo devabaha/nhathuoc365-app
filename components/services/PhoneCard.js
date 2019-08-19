@@ -21,26 +21,319 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions, ActionConst} from 'react-native-router-flux';
 import {Button} from '../../lib/react-native-elements';
 
+const TELCO_SERVICE = [
+    {
+        id: 'telco_viettel',
+        title: 'viettel',
+        logo: 'https://media-ak.static-adayroi.com/sys_master/images/hbb/h20/15165210132510.png',
+        price_list:
+            [
+                {
+                    telco_id: '1',
+                    id: '1',
+                    value: 10000,
+                    label: '10.000 đ',
+                    discount: 2
+                },
+                {
+                    telco_id: '1',
+                    id: '2',
+                    value: 20000,
+                    label: '20.000 đ',
+                    discount: 2
+                },
+                {
+                    telco_id: '1',
+                    id: '3',
+                    value: 50000,
+                    label: '50.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '4',
+                    value: 100000,
+                    label: '100.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '5',
+                    value: 200000,
+                    label: '200.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '6',
+                    value: 300000,
+                    label: '300.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '7',
+                    value: 500000,
+                    label: '500.000 đ',
+                    discount: 10
+                },
+            ]
+    },
+    {
+        id: 'telco_mobiphone',
+        title: 'mobiphone',
+        logo: 'https://media-ak.static-adayroi.com/sys_master/images/he9/hac/15165210066974.png',
+        price_list:
+            [
+                {
+                    telco_id: '1',
+                    id: '2',
+                    value: 20000,
+                    label: '20.000 đ',
+                    discount: 2
+                },
+                {
+                    telco_id: '1',
+                    id: '3',
+                    value: 50000,
+                    label: '50.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '4',
+                    value: 100000,
+                    label: '100.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '5',
+                    value: 200000,
+                    label: '200.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '6',
+                    value: 300000,
+                    label: '300.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '7',
+                    value: 500000,
+                    label: '500.000 đ',
+                    discount: 10
+                },
+            ]
+    },
+    {
+        id: 'telco_vinaphone',
+        title: 'vinaphone',
+        logo: 'https://media-ak.static-adayroi.com/sys_master/images/h58/hd1/15165210329118.png',
+        price_list:
+            [
+                {
+                    telco_id: '1',
+                    id: '2',
+                    value: 20000,
+                    label: '20.000 đ',
+                    discount: 2
+                },
+                {
+                    telco_id: '1',
+                    id: '3',
+                    value: 50000,
+                    label: '50.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '4',
+                    value: 100000,
+                    label: '100.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '5',
+                    value: 200000,
+                    label: '200.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '6',
+                    value: 300000,
+                    label: '300.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '7',
+                    value: 500000,
+                    label: '500.000 đ',
+                    discount: 10
+                },
+            ]
+    },
+    {
+        id: 'telco_vietnammobile',
+        title: 'vietnammobile',
+        logo: 'https://media-ak.static-adayroi.com/sys_master/images/h65/h8a/15165210296350.png',
+        price_list:
+            [
+                {
+                    telco_id: '1',
+                    id: '2',
+                    value: 20000,
+                    label: '20.000 đ',
+                    discount: 2
+                },
+                {
+                    telco_id: '1',
+                    id: '3',
+                    value: 50000,
+                    label: '50.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '4',
+                    value: 100000,
+                    label: '100.000 đ',
+                    discount: 4
+                },
+                {
+                    telco_id: '1',
+                    id: '5',
+                    value: 200000,
+                    label: '200.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '6',
+                    value: 300000,
+                    label: '300.000 đ',
+                    discount: 10
+                },
+                {
+                    telco_id: '1',
+                    id: '7',
+                    value: 500000,
+                    label: '500.000 đ',
+                    discount: 10
+                },
+            ]
+    }
+];
+
 @observer
 export default class PhoneCard extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            telco: '',
+            price_list: [],
+            price: 0,
+            discount: 0,
+            pay: 0,
+            pressStatus: false,
+            selected: (new Map(): Map<string, boolean>)
+        }
     }
 
     componentDidMount() {
+        console.log(this.state);
     }
 
     _unMount() {
     }
 
+    onPress = () => {
+        this.setState({
+            telco: true,
+        });
+    }
+
+    onPressChooseTelco(telco_id, price_list) {
+        console.log(telco_id);
+        // console.log(this.state);
+
+        this.setState({
+            telco: telco_id,
+            price: 0,
+            discount: 0,
+            pay: 0,
+            price_list: price_list
+        }, () => console.log(this.state));
+    }
+
+    onPressChoosePrice(telco_id, price, discount) {
+        if (this.state.telco === '') {
+            return Alert.alert(
+                'Thông báo',
+                'Bạn cần chọn nhà  tiếp tục',
+                [
+                    {
+                        text: 'Đồng ý', onPress: () => {
+                        }
+                    },
+                ],
+                {cancelable: false}
+            );
+        } else {
+            let pay = price - (price * discount) / 100;
+            this.setState({
+                price: price,
+                discount: discount,
+                pay: pay,
+            }, () => console.log(this.state));
+        }
+    }
+
+    onPressContinue() {
+        if (this.state.pay === 0) {
+            return Alert.alert(
+                'Thông báo',
+                'Bạn cần chọn nhà mạng và mệnh gía thẻ trước khi tiếp tục.',
+                [
+                    {
+                        text: 'Đồng ý', onPress: () => {
+                        }
+                    },
+                ],
+                {cancelable: false}
+            );
+        } else {
+            return Alert.alert(
+                'Thông báo',
+                'OK',
+                [
+                    {
+                        text: 'Đồng ý', onPress: () => {
+                        }
+                    },
+                ],
+                {cancelable: false}
+            );
+        }
+    }
+
+    _keyExtractor = (item, index) => item.id;
+
     render() {
+        console.log(this.state);
         return (
             <View style={styles.container}>
                 <ScrollView
                     keyboardShouldPersistTaps="always"
                     style={{
-                        marginBottom: 0,
-                        height: '50%'
+                        marginBottom: 150,
                     }}>
                     {/* Block chon nha mang */}
 
@@ -48,103 +341,63 @@ export default class PhoneCard extends Component {
                         <FlatList
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            data={[
-                                {key: '../../images/viettel.png'},
-                                {key: '../../images/vinaphone'},
-                                {key: '../../images/mobiphone'},
-                                {key: '../../images/vietnammobile'}
-                            ]}
-                            renderItem={({item}) =>
+                            data={TELCO_SERVICE}
+                            extraData={this.state}
+                            renderItem={({item, index, separators}) => (
                                 <TouchableHighlight
+                                    id={item.id}
+                                    // onPress={this.onPress}
                                     underlayColor="transparent"
-                                    style={styles.provinder_box_action_btn}>
+                                    onPress={() => this.onPressChooseTelco(item.id, item.price_list)}
+                                    keyExtractor={this._keyExtractor}
+                                    selected={!!this.state.selected.get(item.id)}
+                                    style={this.state.telco === item.id
+                                        ? styles.provinder_box_action_btn_active
+                                        : styles.provinder_box_action_btn}>
                                     <View style={styles.provinder_box_action_logo}>
                                         <Image
                                             style={{width: 135, height: 68}}
-                                            source={require('../../images/viettel.png')}
+                                            source={{uri: item.logo}}
                                         />
                                     </View>
                                 </TouchableHighlight>
-                            }
-                            />
+                            )}
+                        />
                     </View>
 
                     {/* Block chon menh gia the */}
                     <View style={styles.block_choose_price_option}>
                         <View style={{flexDirection: 'row'}}>
-                            <Text style={styles.input_label_header}>Chọn mệnh giá thẻ</Text>
+                            <Text style={styles.input_label_header}>
+                                {this.state.telco === ''
+                                    ? "Vui lòng chọn nhà mạng"
+                                    : "Chọn mệnh giá thẻ"}
+                            </Text>
                         </View>
 
                         <View style={styles.choose_price_option}>
-                            <TouchableHighlight
-                                underlayColor="transparent"
-                                style={styles.choose_price_option_touchab}>
-                                <View style={styles.action_btn_choose_price}>
-                                    <Text style={styles.btn_choose_price_option}>
-                                        10.000 đ
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                underlayColor="transparent"
-                                style={styles.choose_price_option_touchab}>
-                                <View style={styles.action_btn_choose_price}>
-                                    <Text style={styles.btn_choose_price_option}>
-                                        20.000 đ
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                underlayColor="transparent"
-                                style={styles.choose_price_option_touchab}>
-                                <View style={styles.action_btn_choose_price}>
-                                    <Text style={styles.btn_choose_price_option}>
-                                        50.000 đ
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                underlayColor="transparent"
-                                style={styles.choose_price_option_touchab}>
-                                <View style={styles.action_btn_choose_price}>
-                                    <Text style={styles.btn_choose_price_option}>
-                                        100.000 đ
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                underlayColor="transparent"
-                                style={styles.choose_price_option_touchab}>
-                                <View style={styles.action_btn_choose_price}>
-                                    <Text style={styles.btn_choose_price_option}>
-                                        200.000 đ
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                underlayColor="transparent"
-                                style={styles.choose_price_option_touchab}>
-                                <View style={styles.action_btn_choose_price}>
-                                    <Text style={styles.btn_choose_price_option}>
-                                        300.000 đ
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
-
-                            <TouchableHighlight
-                                underlayColor="transparent"
-                                style={styles.choose_price_option_touchab}>
-                                <View style={styles.action_btn_choose_price}>
-                                    <Text style={styles.btn_choose_price_option}>
-                                        500.000 đ
-                                    </Text>
-                                </View>
-                            </TouchableHighlight>
+                            {this.state.price_list.map((item, key) => {
+                                return (
+                                    <TouchableHighlight
+                                        onPress={() => this.onPressChoosePrice(item.telco_id, item.value, item.discount)}
+                                        keyExtractor={this._keyExtractor}
+                                        selected={!!this.state.selected.get(item.id)}
+                                        style={[styles.buttonAction, {
+                                            marginRight: 6
+                                        },]}
+                                        underlayColor="transparent">
+                                        <View
+                                            style={this.state.price === item.value
+                                                ? styles.boxButtonActionChoosePriceActive
+                                                : styles.boxButtonActionChoosePrice}>
+                                            <Text
+                                                style={this.state.price === item.value
+                                                    ? styles.buttonActionTitleActive
+                                                    : styles.buttonActionTitle}>{item.label}</Text>
+                                        </View>
+                                    </TouchableHighlight>
+                                );
+                            })}
                         </View>
                     </View>
 
@@ -163,39 +416,42 @@ export default class PhoneCard extends Component {
                         </TouchableHighlight>
                     </View>
 
-                    {/*Block Continue */}
-                    <TouchableHighlight
-                        underlayColor="transparent"
-                        style={[styles.block_continue]}>
-                        <View style={[
-                            styles.block_continue_content,
-                            {flexDirection: 'row'}
-                        ]}>
-                            <View style={styles.block_continue_content_label}>
-                                <Text style={styles.blocl_continue_input_label}>Chiết khấu</Text>
-                                <View style={styles.block_continue_content_label_right}>
-                                    <Text style={styles.blocl_continue_input_label}>10%</Text>
-                                </View>
-                            </View>
-                            <View style={styles.block_continue_content_label}>
-                                <Text style={styles.blocl_continue_input_label}>Số tiền thanh </Text>
-                                <View style={styles.block_continue_content_label_right}>
-                                    <Text style={styles.blocl_continue_input_label}>18.000 đ</Text>
-                                </View>
-                            </View>
-                            <View style={[
-                                styles.btn_phone_card_next,
-                                {flexDirection: 'row'}
-                            ]}>
-                                <Button style={styles.block_continue_btn}
-                                        color="#fff"
-                                        backgroundColor="#812384"
-                                        title="TIẾP TỤC"
-                                />
+                </ScrollView>
+
+                {/*Block Continue */}
+                <TouchableHighlight
+                    underlayColor="transparent"
+                    style={[styles.block_continue]}
+                    onPress={() => this.onPressContinue()}>
+                    <View style={[
+                        styles.block_continue_content,
+                        {flexDirection: 'row'}
+                    ]}>
+                        <View style={styles.block_continue_content_label}>
+                            <Text style={styles.blocl_continue_input_label}>Chiết khấu</Text>
+                            <View style={styles.block_continue_content_label_right}>
+                                <Text style={styles.blocl_continue_input_label}>{this.state.discount} %</Text>
                             </View>
                         </View>
-                    </TouchableHighlight>
-                </ScrollView>
+                        <View style={styles.block_continue_content_label}>
+                            <Text style={styles.blocl_continue_input_label}>Số tiền thanh </Text>
+                            <View style={styles.block_continue_content_label_right}>
+                                <Text style={styles.blocl_continue_input_label}>{this.state.pay} đ</Text>
+                            </View>
+                        </View>
+
+                        <View style={[styles.boxButtonAction, {
+                            width: Util.size.width - 160,
+                            backgroundColor: DEFAULT_COLOR,
+                            borderColor: "#999999",
+                            marginTop: 5,
+                        }]}>
+                            <Text style={[styles.buttonActionTitle, {
+                                color: "#ffffff"
+                            }]}>Tiếp tục</Text>
+                        </View>
+                    </View>
+                </TouchableHighlight>
             </View>
         );
     }
@@ -216,18 +472,21 @@ const styles = StyleSheet.create({
     provinder_box: {
         width: '100%',
         flexDirection: 'row',
-        paddingVertical: 8,
+        paddingVertical: 10,
         backgroundColor: DEFAULT_COLOR,
         borderBottomWidth: Util.pixel,
         borderTopWidth: Util.pixel,
         borderColor: "#ffffff",
-        marginTop: 20,
-        paddingBottom: 20,
-        paddingTop: 20,
     },
     provinder_box_action_btn: {
-        paddingVertical: 10,
-        paddingHorizontal: 15,
+        marginVertical: 5,
+        marginHorizontal: 15,
+        opacity: 0.6
+    },
+    provinder_box_action_btn_active: {
+        marginVertical: 5,
+        marginHorizontal: 15,
+        opacity: 1
     },
     provinder_box_action_logo: {
         alignItems: 'center',
@@ -241,15 +500,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#ffffff",
         borderBottomWidth: Util.pixel,
         borderBottomColor: "#dddddd",
-        paddingHorizontal: 15,
-        paddingTop: 15,
-        paddingBottom: 15,
+        paddingHorizontal: 10,
+        paddingVertical: 10,
     },
     choose_price_option: {
         width: '100%',
         flexDirection: 'row',
         flexWrap: 'wrap',
-        alignItems: 'flex-start',
+        alignItems: 'stretch',
         paddingHorizontal: 5,
         paddingTop: 5,
         // backgroundColor: "red",
@@ -259,7 +517,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     action_btn_choose_price: {
-        alignItems: 'center',
+        alignItems: 'stretch',
         justifyContent: 'center',
         // flex: 1,
         // width: 100,
@@ -268,6 +526,31 @@ const styles = StyleSheet.create({
         borderColor: '#ebebeb',
         backgroundColor: DEFAULT_COLOR,
         flexDirection: 'row',
+    },
+    boxButtonActionChoosePrice: {
+        flexDirection: 'row',
+        borderWidth: Util.pixel,
+        borderColor: "#666666",
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        width: Util.size.width / 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
+    boxButtonActionChoosePriceActive: {
+        flexDirection: 'row',
+        borderWidth: Util.pixel,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+        width: Util.size.width / 4,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+        backgroundColor: DEFAULT_COLOR,
+        borderColor: "#999999",
     },
     btn_choose_price_option: {
         width: '100%',
@@ -316,7 +599,7 @@ const styles = StyleSheet.create({
     // Help
     block_help_box: {
         width: '100%',
-        minHeight: 100,
+        // minHeight: 100,
         backgroundColor: "#ffffff",
         paddingHorizontal: 15,
         paddingVertical: 8,
@@ -339,12 +622,11 @@ const styles = StyleSheet.create({
     },
     //Block Continue
     block_continue: {
-        // position: 'absolute',
-        // bottom: 0,
-        // left: 0,
-        // right: 0,
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        right: 0,
         width: '100%',
-        marginBottom: 50,
     },
     block_continue_content: {
         // width: '100%',
@@ -355,7 +637,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         alignItems: 'flex-start',
         margin: 10,
-        padding: 20,
+        padding: 10,
         borderWidth: Util.pixel,
         borderColor: DEFAULT_COLOR,
     },
@@ -367,7 +649,7 @@ const styles = StyleSheet.create({
     },
     block_continue_content_label: {
         width: '100%',
-        height: 45,
+        height: 35,
         backgroundColor: "#ffffff",
         borderBottomWidth: Util.pixel,
         borderBottomColor: "#dddddd",
@@ -385,7 +667,7 @@ const styles = StyleSheet.create({
         ...Platform.select({
             ios: {
                 width: 250,
-                height: 50,
+                height: 40,
             },
         }),
     },
@@ -409,11 +691,11 @@ const styles = StyleSheet.create({
         alignItems: 'flex-end'
     },
     boxButtonActions: {
-        // backgroundColor: "#ffffff",
+        backgroundColor: "#ffffff",
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 7
+        paddingVertical: 16
     },
     boxButtonAction: {
         flexDirection: 'row',
@@ -431,9 +713,25 @@ const styles = StyleSheet.create({
         marginLeft: 4,
         fontSize: 14
     },
+    buttonActionTitleActive: {
+        color: "#ffffff",
+        marginLeft: 4,
+        fontSize: 14
+    },
     lineView: {
         height: 1,
         width: "100%",
         backgroundColor: "rgb(225,225,225)"
+    },
+    button: {
+        borderColor: "#000066",
+        borderWidth: 1,
+        borderRadius: 10
+    },
+    buttonPress: {
+        borderColor: "#000066",
+        backgroundColor: "#000066",
+        borderWidth: 1,
+        borderRadius: 10
     }
 });

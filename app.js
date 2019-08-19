@@ -77,6 +77,7 @@ import VndWallet from './components/account/VndWallet/VndWallet';
 import PayWallet from './components/account/PayWallet';
 import PayAccount from './components/account/PayAccount';
 import Affiliate from './components/account/Affiliate/Affiliate';
+import PhoneCard from './components/services/PhoneCard';
 
 // Backend
 
@@ -656,6 +657,7 @@ export default class App extends Component {
             <Scene key="pay_wallet" title="" component={PayWallet} {...custommerNav} />
             <Scene key="pay_account" title="" component={PayAccount} {...custommerNav} />
             <Scene key="affiliate" title="" component={Affiliate} {...custommerNav} />
+            <Scene key="phonecard" title="Mua mã thẻ di động" component={PhoneCard} {...custommerNav} />
           </Scene>
           <Scene key="error" component={Error} />
         </Scene>
