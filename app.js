@@ -79,6 +79,7 @@ import PayAccount from "./components/account/PayAccount";
 import Affiliate from "./components/account/Affiliate/Affiliate";
 import ProfileDetail from "./components/account/ProfileDetail";
 import EditProfile from "./components/account/EditProfile";
+import DetailHistoryPayment from "./components/account/DetailHistoryPayment";
 
 // Backend
 
@@ -896,6 +897,13 @@ export default class App extends Component {
               key="edit_profile"
               title="Tài khoản của tôi"
               component={EditProfile}
+              {...custommerNav}
+            />
+
+            <Scene
+              key="detail_history_payment"
+              title="Tích điểm"
+              component={DetailHistoryPayment}
               {...custommerNav}
             />
           </Scene>

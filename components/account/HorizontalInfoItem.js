@@ -17,9 +17,18 @@ export default class HorizontalInfoItem extends Component {
     this.state = {};
   }
 
-  _renderRightView = (input, select, value, defaultValue) => {
+  _renderRightView = (input, select, value, defaultValue, specialColor) => {
     if (!input && !select) {
-      return <Text style={styles.detailTitle}>{value}</Text>;
+      return (
+        <Text
+          style={[
+            styles.detailTitle,
+            { color: specialColor ? specialColor : "black" }
+          ]}
+        >
+          {value}
+        </Text>
+      );
     } else if (input) {
       return (
         <TextInput
@@ -53,7 +62,7 @@ export default class HorizontalInfoItem extends Component {
 
   render() {
     const {
-      data: { title, value, disable, input, select, defaultValue }
+      data: { title, value, disable, input, select, defaultValue, specialColor }
     } = this.props;
     return (
       <View
@@ -63,7 +72,13 @@ export default class HorizontalInfoItem extends Component {
         ]}
       >
         <Text style={styles.title}>{title}</Text>
-        {this._renderRightView(input, select, value, defaultValue)}
+        {this._renderRightView(
+          input,
+          select,
+          value,
+          defaultValue,
+          specialColor
+        )}
       </View>
     );
   }
