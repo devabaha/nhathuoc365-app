@@ -91,7 +91,7 @@ export default class PhoneCardConfirm extends Component {
                                 <View style={styles.block_continue_content_label_no_border}>
                                     <Text style={styles.blocl_continue_input_label}>Dịch vụ </Text>
                                     <View style={styles.block_continue_content_label_right}>
-                                        <Text style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}> Mua mã thẻ {this.props.detail.telco} {this.props.detail.price_select}</Text>
+                                        <Text style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}> Mua mã {this.props.detail.telco} {this.props.detail.price_select}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.block_continue_content_label_no_border}>

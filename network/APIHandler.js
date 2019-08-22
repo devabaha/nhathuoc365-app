@@ -487,7 +487,13 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
-
+    /**
+     * Mua the dien thoai
+     */
+    async service_detail(phone_card, site_id) {
+        var api = url_for(API.SERVICE_DETAIL + "/" + phone_card + "/" + site_id);
+        return await this.getAPI(api);
+    }
 
   _networkIndicator(flag = true) {
     if (isIOS) {

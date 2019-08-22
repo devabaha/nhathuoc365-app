@@ -20,6 +20,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions, ActionConst} from 'react-native-router-flux';
 import {Button} from '../../lib/react-native-elements';
+import store from "../../store/Store";
 
 const TELCO_SERVICE = [
     {
@@ -262,6 +263,7 @@ export default class PhoneCard extends Component {
         super(props);
 
         this.state = {
+            data: '',
             telco: '',
             price_list: [],
             price: 0,
@@ -269,37 +271,80 @@ export default class PhoneCard extends Component {
             pay: 0,
             price_select: '',
             discount_label: '',
-            pressStatus: false,
-            selected: (new Map(): Map<string, boolean>)
+            loading: true,
         }
     }
 
     componentDidMount() {
-
+        this._getData();
     }
 
-    _unMount() {
+    async _getData(delay) {
+        try {
+            var response = await APIHandler.service_detail('phone_card', this.props.store.store_id);
+
+            if (response && response.status == STATUS_SUCCESS) {
+                setTimeout(() => {
+                    let data_price_list = {};
+                    let price = 0;
+                    let discount = 0;
+                    let unit = '';
+                    let discount_label = '';
+                    let telco_name = '';
+                    if (response.data && Object.keys(response.data.service_info_list_childs).length > 0) {
+                        Object.keys(response.data.service_info_list_childs).map(key => {
+                            price = Number(response.data.service_info_list_childs[0].price);
+                            discount = Number(response.data.service_info_list_childs[0].discount);
+                            unit = response.data.service_info_list_childs[0].unit;
+                            discount_label = ((discount*50000) / 100).toString() + " " + unit;
+                            telco_name = response.data.service_info_list_childs[0].name;
+                            let service_phone_card_default = response.data.service_info_list_childs[0].data;
+                            let json_price_list = JSON.parse(service_phone_card_default);
+                            if (json_price_list.price_list != "undefined") {
+                                data_price_list = json_price_list.price_list;
+                            }
+                        });
+                    }
+
+                    this.setState({
+                        data: response.data,
+                        loading: false,
+                        telco: telco_name,
+                        price: price,
+                        discount: discount,
+                        pay: 50000,
+                        price_select: '50.000 đ',
+                        price_list: data_price_list,
+                        discount_label: discount_label,
+                    });
+                }, delay || 0);
+            }
+        } catch (e) {
+            console.warn(e + ' service_phone_card');
+
+        } finally {
+
+        }
     }
 
-    onPress = () => {
-        this.setState({
-            telco: true,
-        });
-    }
-
-    onPressChooseTelco(telco_id, price_list) {
+    onPressChooseTelco(telco_id, price_list = "{}", price, discount, unit) {
         // Fix for api
-        let discount = 4;
-        let price = 50000;
         let pay = price - (price * discount) / 100;
+        let json_price_list = JSON.parse(price_list);
+        let data_price_list = {};
+        if (json_price_list.price_list != "undefined") {
+            data_price_list = json_price_list.price_list;
+        }
+
+        let discount_label = ((discount*50000) / 100).toString() + " " + unit;
         this.setState({
             telco: telco_id,
             price: 50000,
             discount: discount,
             pay: pay,
             price_select: '50.000 đ',
-            price_list: price_list,
-            discount_label: '5000 đ'
+            price_list: data_price_list,
+            discount_label: discount_label,
         }, () => console.log());
     }
 
@@ -329,6 +374,14 @@ export default class PhoneCard extends Component {
     }
 
     render() {
+        let help_content = '';
+        if (this.state.data && Object.keys(this.state.data.service_info).length > 0) {
+            Object.keys(this.state.data.service_info).map(key => {
+                let service_info = this.state.data.service_info[key];
+                help_content = service_info.content;
+            });
+        }
+        console.log(this.state);
         return (
             <View style={styles.container}>
                 <ScrollView
@@ -343,7 +396,7 @@ export default class PhoneCard extends Component {
                             ref="telco_list"
                             horizontal
                             showsHorizontalScrollIndicator={false}
-                            data={TELCO_SERVICE}
+                            data={this.state.data.service_info_list_childs}
                             extraData={this.state}
                             keyExtractor={item => item.id}
                             ItemSeparatorComponent={
@@ -353,8 +406,8 @@ export default class PhoneCard extends Component {
                                 <TouchableHighlight
                                     id={item.id}
                                     underlayColor="transparent"
-                                    onPress={() => this.onPressChooseTelco(item.title, item.price_list)}
-                                    style={this.state.telco === item.title
+                                    onPress={() => this.onPressChooseTelco(item.name, item.data, item.price, item.discount, item.unit)}
+                                    style={this.state.telco === item.name
                                         ? styles.provinder_box_action_btn_active
                                         : styles.provinder_box_action_btn}>
                                     <View style={styles.provinder_box_action_logo}>
@@ -363,7 +416,7 @@ export default class PhoneCard extends Component {
                                                 width: ~~(Util.size.width / 5), height: 70, borderWidth: Util.pixel,
                                                 borderColor: "#666666", borderRadius: 10,
                                             }}
-                                            source={{uri: item.logo}}
+                                            source={{uri: MY_FOOD_API + item.image}}
                                         />
                                     </View>
                                 </TouchableHighlight>
@@ -429,10 +482,7 @@ export default class PhoneCard extends Component {
                         </TouchableHighlight>
                         <View style={styles.desc_content}>
                             <Text style={styles.input_label_help}>
-                                1. Lợi ích khi nạp thẻ trực tuyến tại TickID
-                            </Text>
-                            <Text style={styles.input_label_help}>
-                                2. Mua thẻ cào online chiết khấu cao ở đâu?
+                                {help_content}
                             </Text>
                         </View>
                     </View>
