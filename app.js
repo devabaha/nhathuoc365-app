@@ -79,6 +79,8 @@ import PayAccount from './components/account/PayAccount';
 import Affiliate from './components/account/Affiliate/Affiliate';
 import PhoneCard from './components/services/PhoneCard';
 import PhoneCardConfirm from './components/services/PhoneCardConfirm';
+import NapTKC from './components/services/NapTKC';
+import NapTKCConfirm from './components/services/NapTKCConfirm';
 
 // Backend
 
@@ -660,6 +662,8 @@ export default class App extends Component {
             <Scene key="affiliate" title="" component={Affiliate} {...custommerNav} />
             <Scene key="phonecard" title="Mua mã thẻ di động" component={PhoneCard} {...custommerNav} />
             <Scene key="phonecard_confirm" title="Xác nhận" component={PhoneCardConfirm} {...custommerNav} />
+            <Scene key="nap_tkc" title="Nạp tiền điện thoại" component={NapTKC} {...custommerNav} />
+            <Scene key="nap_tkc_confirm" title="Xác nhận" component={NapTKCConfirm} {...custommerNav} />
           </Scene>
           <Scene key="error" component={Error} />
         </Scene>

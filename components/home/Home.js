@@ -41,19 +41,23 @@ import {
 const SERVICES_DATA_1 = [
   {
     iconName: 'mobile',
-    title: 'Nạp tiền điện thoại'
+    title: 'Nạp tiền điện thoại',
+    service_type: 'nap_tkc',
   },
   {
     iconName: 'credit-card',
-    title: 'Mã thẻ di động'
+    title: 'Mã thẻ di động',
+    service_type: 'phonecard',
   },
   {
     iconName: 'plane',
-    title: 'Vé máy bay'
+    title: 'Vé máy bay',
+    service_type: 've_may_bay',
   },
   {
     iconName: 'percent',
-    title: 'Mã giảm giá'
+    title: 'Mã giảm giá',
+    service_type: 'ma_giam_gia',
   }
 ];
 const SERVICES_DATA_2 = [
@@ -415,6 +419,20 @@ export default class Home extends Component {
     });
   }
 
+  // go to service
+  _goServiceType(item) {
+    console.log('va');
+    if (item.service_type == 'phonecard') {
+      Actions.phonecard({
+        service_type: item.service_type,
+      })
+    } else if (item.service_type == 'nap_tkc') {
+      Actions.nap_tkc({
+        service_type: item.service_type,
+      })
+    }
+  }
+
   render() {
     var {
       loading,
@@ -536,7 +554,7 @@ export default class Home extends Component {
                   borderRightColor: '#dddddd',
                   borderRightWidth: 1
                 }}
-                onPress={() => Actions.phonecard()}
+                onPress={this._goServiceType.bind(this, service)}
               />
             )}
           </View>

@@ -21,7 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions, ActionConst} from 'react-native-router-flux';
 
 @observer
-export default class PhoneCardConfirm extends Component {
+export default class NapTKCConfirm extends Component {
   constructor(props) {
     super(props);
     console.log(props);
@@ -78,10 +78,17 @@ export default class PhoneCardConfirm extends Component {
             <View style={styles.block_detail_content}>
               <View>
                 <View style={styles.block_continue_content_label_no_border}>
+                  <Text style={styles.blocl_continue_input_label}>Số </Text>
+                  <View style={styles.block_continue_content_label_right}>
+                    <Text
+                      style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}>{this.props.detail.text_tel}</Text>
+                  </View>
+                </View>
+                <View style={styles.block_continue_content_label_no_border}>
                   <Text style={styles.blocl_continue_input_label}>Dịch vụ </Text>
                   <View style={styles.block_continue_content_label_right}>
-                    <Text style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}> Mua
-                      mã {this.props.detail.telco} {this.props.detail.price_select}</Text>
+                    <Text
+                      style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}> Nạp {this.props.detail.telco} {this.props.detail.price_select}</Text>
                   </View>
                 </View>
                 <View style={styles.block_continue_content_label_no_border}>
@@ -109,7 +116,7 @@ export default class PhoneCardConfirm extends Component {
                   <Text style={styles.blocl_continue_input_label}>Tổng tiền </Text>
                   <View style={styles.block_continue_content_label_right}>
                     <Text
-                      style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}>{this.props.detail.pay}</Text>
+                      style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}>{this.props.detail.pay} đ</Text>
                   </View>
                 </View>
                 <View style={styles.block_continue_content_label_no_border}>

@@ -23,7 +23,7 @@ import {Button} from '../../lib/react-native-elements';
 import store from "../../store/Store";
 
 @observer
-export default class PhoneCard extends Component {
+export default class NapTKC extends Component {
   constructor(props) {
     super(props);
 
@@ -37,6 +37,7 @@ export default class PhoneCard extends Component {
       price_select: '',
       discount_label: '',
       loading: true,
+      text_tel: ''
     }
   }
 
@@ -46,7 +47,7 @@ export default class PhoneCard extends Component {
 
   async _getData(delay) {
     try {
-      var response = await APIHandler.service_detail('phone_card', this.props.store.store_id);
+      var response = await APIHandler.service_detail('nap_tkc', this.props.store.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
@@ -56,6 +57,7 @@ export default class PhoneCard extends Component {
           let unit = '';
           let discount_label = '';
           let telco_name = '';
+          let pay = 0;
           if (response.data && Object.keys(response.data.service_info_list_childs).length > 0) {
             Object.keys(response.data.service_info_list_childs).map(key => {
               price = Number(response.data.service_info_list_childs[0].price);
@@ -63,6 +65,8 @@ export default class PhoneCard extends Component {
               unit = response.data.service_info_list_childs[0].unit;
               discount_label = ((discount * 50000) / 100).toString() + " " + unit;
               telco_name = response.data.service_info_list_childs[0].name;
+              pay = price - (price * discount) / 100;
+
               let service_phone_card_default = response.data.service_info_list_childs[0].data;
               let json_price_list = JSON.parse(service_phone_card_default);
               if (json_price_list.price_list != "undefined") {
@@ -77,7 +81,7 @@ export default class PhoneCard extends Component {
             telco: telco_name,
             price: price,
             discount: discount,
-            pay: 50000,
+            pay: pay,
             price_select: '50.000 đ',
             price_list: data_price_list,
             discount_label: discount_label,
@@ -94,7 +98,7 @@ export default class PhoneCard extends Component {
 
   onPressChooseTelco(telco_id, price_list = "{}", price, discount, unit) {
     // Fix for api
-    let pay = price - (price * discount) / 100;
+    let pay = 50000 - (price * discount) / 100;
     let json_price_list = JSON.parse(price_list);
     let data_price_list = {};
     if (json_price_list.price_list != "undefined") {
@@ -154,8 +158,8 @@ export default class PhoneCard extends Component {
           style={{
             marginBottom: 150,
           }}>
-          {/* Block chon nha mang */}
 
+          {/* Block chon nha mang */}
           <View style={styles.provinder_box}>
             <FlatList
               ref="telco_list"
@@ -176,11 +180,10 @@ export default class PhoneCard extends Component {
                     ? styles.provinder_box_action_btn_active
                     : styles.provinder_box_action_btn}>
                   <View style={styles.provinder_box_action_logo}>
-                    <Image
-                      style={this.state.telco === item.name
-                        ? styles.provinder_logo_active
-                        : styles.provinder_logo}
-                      source={{uri: MY_FOOD_API + item.image}}
+                    <Image style={this.state.telco === item.name
+                      ? styles.provinder_logo_active
+                      : styles.provinder_logo}
+                           source={{uri: MY_FOOD_API + item.image}}
                     />
                   </View>
                 </TouchableHighlight>
@@ -200,7 +203,7 @@ export default class PhoneCard extends Component {
               <Text style={styles.input_label_header}>
                 {this.state.telco === ''
                   ? "Vui lòng chọn nhà mạng"
-                  : "Chọn mệnh giá thẻ"}
+                  : "Chọn số tiền nạp"}
               </Text>
             </View>
 
@@ -228,6 +231,43 @@ export default class PhoneCard extends Component {
                   </TouchableHighlight>
                 );
               })}
+            </View>
+          </View>
+
+          {/* Block nhap so dien thoai */}
+          <View style={styles.block_choose_price_option}>
+            <View style={{flexDirection: 'row', alignItems: "center", marginBottom: 10,}}>
+              <Icon
+                style={styles.icon_label}
+                name="phone-square"
+                size={12}
+                color="#999999"
+              />
+              <Text style={styles.input_label_header}>
+                Nhập số điện thoại nạp
+              </Text>
+            </View>
+
+            <View>
+              <TextInput
+                ref={ref => this.refs_tel = ref}
+                style={{
+                  paddingLeft: 15, height: 40, borderWidth: 1, fontSize: 16,
+                  borderColor: "#dddddd"
+                }}
+                onChangeText={(text) => this.setState({text})}
+                value={this.state.text_tel}
+                keyboardType="phone-pad"
+                maxLength={30}
+                placeholder="Nhập số điện thoại"
+                placeholderTextColor="#dddddd"
+                underlineColorAndroid="transparent"
+                onChangeText={(value) => {
+                  this.setState({
+                    text_tel: value.replaceAll(' ', '')
+                  });
+                }}
+              />
             </View>
           </View>
 
@@ -262,7 +302,7 @@ export default class PhoneCard extends Component {
             {flexDirection: 'row'}
           ]}>
             <View style={styles.block_continue_content_label}>
-              <Text style={styles.blocl_continue_input_label}>Thẻ điện thoại </Text>
+              <Text style={styles.blocl_continue_input_label}>Số {this.state.text_tel}</Text>
               <View style={styles.block_continue_content_label_right}>
                 <Text
                   style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}>{this.state.telco} {this.state.price_select}</Text>
@@ -279,9 +319,23 @@ export default class PhoneCard extends Component {
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() => {
-                Actions.phonecard_confirm({
-                  detail: this.state
-                });
+                if (this.state.text_tel === '') {
+                  return Alert.alert(
+                    'Thông báo',
+                    'Bạn cần nhập số điện thoại cần nạp',
+                    [
+                      {
+                        text: 'Đồng ý', onPress: () => {
+                        }
+                      },
+                    ],
+                    {cancelable: false}
+                  );
+                } else {
+                  Actions.nap_tkc_confirm({
+                    detail: this.state
+                  });
+                }
               }}
             >
               <View style={[styles.boxButtonAction, {
@@ -334,7 +388,7 @@ const styles = StyleSheet.create({
   },
   provinder_box_action_btn_active: {
     width: ~~(Util.size.width / 5),
-    opacity: 1
+    opacity: 1,
   },
   provinder_box_action_logo: {
     alignItems: 'center',
