@@ -88,7 +88,9 @@ const styles = StyleSheet.create({
   container: {
     minHeight: 50,
     flexDirection: "row",
-    alignItems: "center"
+    alignItems: "center",
+    paddingTop: 15,
+    paddingBottom: 15
   },
 
   title: {

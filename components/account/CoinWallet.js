@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, { Component } from "react";
 import {
   View,
   Text,
@@ -12,13 +12,13 @@ import {
   RefreshControl,
   ScrollView,
   Alert
-} from 'react-native';
+} from "react-native";
 
 //library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { reaction } from 'mobx';
-import store from '../../store/Store';
+import Icon from "react-native-vector-icons/FontAwesome";
+import { Actions, ActionConst } from "react-native-router-flux";
+import { reaction } from "mobx";
+import store from "../../store/Store";
 
 @observer
 export default class CoinWallet extends Component {
@@ -26,8 +26,8 @@ export default class CoinWallet extends Component {
     super(props);
 
     this.state = {
-      historiesData: null,
-    }
+      historiesData: null
+    };
   }
 
   componentWillMount() {
@@ -40,7 +40,7 @@ export default class CoinWallet extends Component {
       var response = await APIHandler.user_coins_wallet();
       console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState({ historiesData: response.data.histories})
+        this.setState({ historiesData: response.data.histories });
       }
     } catch (e) {
       console.warn(e);
@@ -51,7 +51,7 @@ export default class CoinWallet extends Component {
     var response = await APIHandler.user_news(173);
     if (response && response.status == STATUS_SUCCESS) {
       Actions.notify_item({
-        title: 'Giới thiệu ví XU',
+        title: "Giới thiệu ví XU",
         data: response.data
       });
     }
@@ -61,44 +61,57 @@ export default class CoinWallet extends Component {
     return (
       <View>
         <View style={styles.containerRowView}>
-          <Icon style={{ flex: 1, marginLeft: 20}} 
-                name={item.change >= 0 ? "plus-square" : "minus-square"}
-                size={25} 
-                color="rgb(0,0,0)" />
-          <View style={{ flex: 6, flexDirection: 'column' }}>
+          <Icon
+            style={{ flex: 1, marginLeft: 20 }}
+            name={item.change >= 0 ? "plus-square" : "minus-square"}
+            size={25}
+            color="rgb(0,0,0)"
+          />
+          <View style={{ flex: 6, flexDirection: "column" }}>
             <Text>{item.content}</Text>
             <View style={styles.bottomRowView}>
               <Text style={styles.dateText}>{item.created}</Text>
-              <Text style={styles.pointText}>{item.change >= 0 ? "+" : "-"}{item.change}</Text>
+              <Text style={styles.pointText}>
+                {item.change >= 0 ? "+" : "-"}
+                {item.change}
+              </Text>
             </View>
           </View>
         </View>
-        <View style={styles.lineRowView}/>
+        <View style={styles.lineRowView} />
       </View>
-    )
+    );
   }
 
   renderTopLabelCoin() {
-    const {user_info} = store;
+    const { user_info } = store;
     return (
       <View style={styles.profile_list_opt_btn}>
-          <View style={styles.iconView}>
-            <View style={styles.profile_list_icon_box}>
-              <CachedImage mutable style={styles.point_icon} source={require('../../images/xu-small.png')} />
-            </View>
-          </View>
-          <View style={styles.labelCoinParentView}>
-            <View style={styles.labelCoinView}>
-              <Text style={styles.profile_list_label}>Số dư ví XU:</Text>
-              <Text style={styles.profile_list_label_point}>{user_info.point}</Text>
-            </View>
-            <View style={styles.lineViewWallet} />
-            <View style={styles.labelCoinView}>
-              <Text style={styles.profile_list_small_label}>Số Xu hết hạn</Text>
-              <Text style={styles.profile_list_label_point}>{user_info.point_expire}</Text>
-            </View>
+        <View style={styles.iconView}>
+          <View style={styles.profile_list_icon_box}>
+            <CachedImage
+              mutable
+              style={styles.point_icon}
+              source={require("../../images/xu-small.png")}
+            />
           </View>
         </View>
+        <View style={styles.labelCoinParentView}>
+          <View style={styles.labelCoinView}>
+            <Text style={styles.profile_list_label}>Số dư ví XU:</Text>
+            <Text style={styles.profile_list_label_point}>
+              {user_info.point}
+            </Text>
+          </View>
+          <View style={styles.lineViewWallet} />
+          <View style={styles.labelCoinView}>
+            <Text style={styles.profile_list_small_label}>Số Xu hết hạn</Text>
+            <Text style={styles.profile_list_label_point}>
+              {user_info.point_expire}
+            </Text>
+          </View>
+        </View>
+      </View>
     );
   }
 
@@ -107,12 +120,21 @@ export default class CoinWallet extends Component {
       <View style={styles.container}>
         {this.renderTopLabelCoin()}
         <View style={styles.lineView} />
-        <TouchableWithoutFeedback
-          onPress={() => this.onPressNew()}>
+        <TouchableWithoutFeedback onPress={() => this.onPressNew()}>
           <View style={styles.newsCoinView}>
-            <Icon style={{ flex: 1, marginLeft: 20}} name="newspaper-o" size={25} color="#4267b2" />
+            <Icon
+              style={{ flex: 1, marginLeft: 20 }}
+              name="newspaper-o"
+              size={25}
+              color="#4267b2"
+            />
             <Text style={{ flex: 7, fontSize: 16 }}>Giới thiệu về ví XU</Text>
-            <Icon style={{ flex: 1, marginLeft: 10}} name="chevron-right" size={20} color="rgb(200,200,200)" />
+            <Icon
+              style={{ flex: 1, marginLeft: 10 }}
+              name="chevron-right"
+              size={20}
+              color="rgb(200,200,200)"
+            />
           </View>
         </TouchableWithoutFeedback>
         <View style={styles.lineView} />
@@ -131,14 +153,14 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#ffffff"
   },
   profile_list_opt_btn: {
     width: Util.size.width,
     height: 72,
     backgroundColor: "#ffffff",
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 4,
     marginTop: 20,
     borderTopWidth: 0,
@@ -146,23 +168,23 @@ const styles = StyleSheet.create({
   },
   point_icon: {
     width: 60,
-    height: 60,
+    height: 60
   },
   iconView: {
-    alignItems: 'center',
+    alignItems: "center",
     flex: 1
   },
   profile_list_icon_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     width: 70,
     height: 70
   },
   profile_list_label: {
     fontSize: 18,
     color: "#000000",
-    fontWeight: '400'
+    fontWeight: "400"
   },
   profile_list_small_label: {
     fontSize: 14,
@@ -179,8 +201,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginLeft: 0,
     marginRight: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   lineView: {
     marginTop: 10,
@@ -188,7 +210,7 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 10,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: "#dddddd"
   },
   lineViewWallet: {
     marginTop: 1,
@@ -196,45 +218,45 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 1,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: "#dddddd"
   },
   lineRowView: {
     marginTop: 0,
     marginLeft: 10,
     marginRight: 10,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: "#dddddd"
   },
   newsCoinView: {
-    flexDirection: 'row',
+    flexDirection: "row",
     height: 30,
-    alignItems: 'center'
+    alignItems: "center"
   },
   historyCoinText: {
     marginLeft: 20,
     marginBottom: 20,
     fontSize: 18,
-    color: 'rgb(0,0,0)'
+    color: "rgb(0,0,0)"
   },
   containerRowView: {
     flex: 1,
     height: 70,
-    flexDirection: 'row',
-    alignItems: 'center'
+    flexDirection: "row",
+    alignItems: "center"
   },
   bottomRowView: {
     marginTop: 5,
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+    flexDirection: "row",
+    justifyContent: "space-between"
   },
   dateText: {
     fontSize: 16,
-    color: 'rgb(150,150,150)',
+    color: "rgb(150,150,150)"
   },
   pointText: {
     fontSize: 16,
-    color: 'rgb(0,0,0)',
-    fontWeight: 'bold',
+    color: "rgb(0,0,0)",
+    fontWeight: "bold",
     marginRight: 15
   }
 });

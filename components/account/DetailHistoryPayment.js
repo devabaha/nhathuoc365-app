@@ -11,6 +11,7 @@ import store from "../../store/Store";
 import { reaction } from "mobx";
 import HorizontalInfoItem from "./HorizontalInfoItem";
 import { Actions, ActionConst } from "react-native-router-flux";
+import Moment from "moment";
 
 @observer
 export default class DetailHistoryPayment extends Component {
@@ -22,22 +23,27 @@ export default class DetailHistoryPayment extends Component {
         {
           id: "id_section_1",
           data: [
-            { id: "ma_giao_dich", title: "Mã giao dịch", value: "12345678" },
+            {
+              id: "ma_giao_dich",
+              title: "Mã giao dịch",
+              value: this.props.transaction_hash
+            },
             {
               id: "thoi_gian",
               title: "Thời gian",
-              value: "19:59 - 01/08/2019"
+              value: Moment(new Date(this.props.created)).format(
+                "HH:mm - DD/MM/YYYY"
+              )
             }
           ]
         },
         {
           id: "id_section_2",
           data: [
-            { id: "dia_diem", title: "Địa điểm", value: "KDT Việt Hưng" },
             {
-              id: "ma_don_hang",
-              title: "Mã đơn hàng",
-              value: "002236188943894839"
+              id: "noi_dung",
+              title: "Nội dung",
+              value: this.props.content
             }
           ]
         },
@@ -45,9 +51,9 @@ export default class DetailHistoryPayment extends Component {
           id: "id_section_3",
           data: [
             {
-              id: "phat_sinh",
-              title: "Phát sinh",
-              value: "+3",
+              id: "thay_doi",
+              title: "Thay đổi",
+              value: this.props.amount_view,
               specialColor: "green"
             }
           ]
