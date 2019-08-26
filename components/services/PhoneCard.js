@@ -28,6 +28,7 @@ export default class PhoneCard extends Component {
     super(props);
 
     this.state = {
+      service_type: props.service_type || 'phone_card',
       data: '',
       telco: '',
       price_list: [],
@@ -46,7 +47,7 @@ export default class PhoneCard extends Component {
 
   async _getData(delay) {
     try {
-      var response = await APIHandler.service_detail('phone_card', this.props.store.store_id);
+      var response = await APIHandler.service_detail(this.state.service_type, this.props.store.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
@@ -69,7 +70,8 @@ export default class PhoneCard extends Component {
     // Fix for api
     this.setState({
       telco_id: telco.id,
-      telco: telco.name,
+      telco_name: telco.name,
+      help_content: telco.content,
       loading: false,
       price_list: telco.data
     });
@@ -89,12 +91,7 @@ export default class PhoneCard extends Component {
   }
 
   render() {
-    let help_content = '';
-    if (this.state.data && this.state.data.service_info) {
-      let service_info = this.state.data.service_info;
-      help_content = service_info.content;
-    }
-    console.log(this.state);
+    var {help_content} = this.state;
     return (
       <View style={styles.container}>
         <ScrollView
@@ -120,12 +117,12 @@ export default class PhoneCard extends Component {
                   id={item.id}
                   underlayColor="transparent"
                   onPress={() => this.onPressChooseTelco(item)}
-                  style={this.state.telco === item.name
+                  style={this.state.telco_name === item.name
                     ? styles.provinder_box_action_btn_active
                     : styles.provinder_box_action_btn}>
                   <View style={styles.provinder_box_action_logo}>
                     <Image
-                      style={this.state.telco === item.name
+                      style={this.state.telco_name === item.name
                         ? styles.provinder_logo_active
                         : styles.provinder_logo}
                       source={{uri: item.image}}
@@ -146,7 +143,7 @@ export default class PhoneCard extends Component {
                 color="#999999"
               />
               <Text style={styles.input_label_header}>
-                {this.state.telco === ''
+                {this.state.telco_name === ''
                   ? "Vui lòng chọn nhà mạng"
                   : "Chọn mệnh giá thẻ"}
               </Text>
@@ -213,7 +210,7 @@ export default class PhoneCard extends Component {
               <Text style={styles.blocl_continue_input_label}>Thẻ điện thoại </Text>
               <View style={styles.block_continue_content_label_right}>
                 <Text
-                  style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}>{this.state.telco} {this.state.price_select}</Text>
+                  style={[styles.blocl_continue_input_label, {color: DEFAULT_COLOR}]}>{this.state.telco_name} {this.state.price_select}</Text>
               </View>
             </View>
             <View style={styles.block_continue_content_label}>

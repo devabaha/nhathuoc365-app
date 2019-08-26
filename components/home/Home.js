@@ -47,7 +47,7 @@ const SERVICES_DATA_1 = [
   {
     iconName: 'credit-card',
     title: 'Mã thẻ di động',
-    service_type: 'phonecard',
+    service_type: 'phone_card',
   },
   // {
   //   iconName: 'credit-card',
@@ -426,7 +426,7 @@ export default class Home extends Component {
 
   // go to service
   _goServiceType(item) {
-    if (item.service_type == 'phonecard') {
+    if (item.service_type == 'phone_card') {
       Actions.phonecard({
         service_type: item.service_type,
       })
