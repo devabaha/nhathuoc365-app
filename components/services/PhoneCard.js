@@ -50,38 +50,10 @@ export default class PhoneCard extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
-          let data_price_list = {};
-          let price = 0;
-          let discount = 0;
-          let unit = '';
-          let discount_label = '';
-          let telco_name = '';
-          if (response.data && Object.keys(response.data.service_info_list_childs).length > 0) {
-            Object.keys(response.data.service_info_list_childs).map(key => {
-              price = Number(response.data.service_info_list_childs[0].price);
-              discount = Number(response.data.service_info_list_childs[0].discount);
-              unit = response.data.service_info_list_childs[0].unit;
-              discount_label = ((discount * 50000) / 100).toString() + " " + unit;
-              telco_name = response.data.service_info_list_childs[0].name;
-              let service_phone_card_default = response.data.service_info_list_childs[0].data;
-              let json_price_list = JSON.parse(service_phone_card_default);
-              if (json_price_list.price_list != "undefined") {
-                data_price_list = json_price_list.price_list;
-              }
-            });
-          }
-
           this.setState({
-            data: response.data,
-            loading: false,
-            telco: telco_name,
-            price: price,
-            discount: discount,
-            pay: 50000,
-            price_select: '50.000 đ',
-            price_list: data_price_list,
-            discount_label: discount_label,
+            telcos: response.data.service_info_list_childs
           });
+          this.onPressChooseTelco(response.data.service_info_list_childs[0]);
         }, delay || 0);
       }
     } catch (e) {
@@ -92,59 +64,35 @@ export default class PhoneCard extends Component {
     }
   }
 
-  onPressChooseTelco(telco_id, price_list = "{}", price, discount, unit) {
+  //Chon nha mang
+  onPressChooseTelco(telco) {
     // Fix for api
-    let pay = price - (price * discount) / 100;
-    let json_price_list = JSON.parse(price_list);
-    let data_price_list = {};
-    if (json_price_list.price_list != "undefined") {
-      data_price_list = json_price_list.price_list;
-    }
-
-    let discount_label = ((discount * 50000) / 100).toString() + " " + unit;
     this.setState({
-      telco: telco_id,
-      price: 50000,
-      discount: discount,
-      pay: pay,
-      price_select: '50.000 đ',
-      price_list: data_price_list,
-      discount_label: discount_label,
-    }, () => console.log());
+      telco_id: telco.id,
+      telco: telco.name,
+      loading: false,
+      price_list: telco.data
+    });
+    this.onPressChoosePrice(telco.data[0]);
   }
-
-  onPressChoosePrice(telco_id, price, discount, label, discount_label) {
-    if (this.state.telco === '') {
-      return Alert.alert(
-        'Thông báo',
-        'Bạn cần chọn nhà  tiếp tục',
-        [
-          {
-            text: 'Đồng ý', onPress: () => {
-            }
-          },
-        ],
-        {cancelable: false}
-      );
-    } else {
-      let pay = price - (price * discount) / 100;
-      this.setState({
-        price: price,
-        discount: discount,
-        pay: pay,
-        price_select: label,
-        discount_label: discount_label,
-      }, () => console.log());
-    }
+  //set state khi chon gia
+  onPressChoosePrice(telco){
+    this.setState({
+      loading: false,
+      telco_id: telco.id,
+      price: telco.price,
+      discount: telco.discount,
+      pay: telco.price,
+      price_select: telco.label,
+      discount_label: telco.discount_label,
+    });
   }
 
   render() {
     let help_content = '';
-    if (this.state.data && Object.keys(this.state.data.service_info).length > 0) {
-      Object.keys(this.state.data.service_info).map(key => {
-        let service_info = this.state.data.service_info[key];
-        help_content = service_info.content;
-      });
+    if (this.state.data && this.state.data.service_info) {
+      let service_info = this.state.data.service_info;
+      help_content = service_info.content;
     }
     console.log(this.state);
     return (
@@ -161,7 +109,7 @@ export default class PhoneCard extends Component {
               ref="telco_list"
               horizontal
               showsHorizontalScrollIndicator={false}
-              data={this.state.data.service_info_list_childs}
+              data={this.state.telcos}
               extraData={this.state}
               keyExtractor={item => item.id}
               ItemSeparatorComponent={
@@ -171,7 +119,7 @@ export default class PhoneCard extends Component {
                 <TouchableHighlight
                   id={item.id}
                   underlayColor="transparent"
-                  onPress={() => this.onPressChooseTelco(item.name, item.data, item.price, item.discount, item.unit)}
+                  onPress={() => this.onPressChooseTelco(item)}
                   style={this.state.telco === item.name
                     ? styles.provinder_box_action_btn_active
                     : styles.provinder_box_action_btn}>
@@ -180,7 +128,7 @@ export default class PhoneCard extends Component {
                       style={this.state.telco === item.name
                         ? styles.provinder_logo_active
                         : styles.provinder_logo}
-                      source={{uri: MY_FOOD_API + item.image}}
+                      source={{uri: item.image}}
                     />
                   </View>
                 </TouchableHighlight>
@@ -208,20 +156,20 @@ export default class PhoneCard extends Component {
               {this.state.price_list.map((item) => {
                 return (
                   <TouchableHighlight
-                    key={item.value}
-                    onPress={() => this.onPressChoosePrice(item.telco_id, item.value, item.discount, item.label, item.discount_label)}
+                    key={item.price}
+                    onPress={() => this.onPressChoosePrice(item)}
                     ref="price_list"
                     underlayColor="transparent">
                     <View
-                      style={this.state.price === item.value
+                      style={this.state.price === item.price
                         ? styles.boxButtonActionChoosePriceActive
                         : styles.boxButtonActionChoosePrice}>
                       <Text
-                        style={this.state.price === item.value
+                        style={this.state.price === item.price
                           ? styles.buttonActionTitleActive
                           : styles.buttonActionTitle}>{item.label}</Text>
                       <Text
-                        style={this.state.price === item.value
+                        style={this.state.price === item.price
                           ? styles.buttonActionSubTitleActive
                           : styles.buttonActionSubTitle}>Hoàn lại {item.discount_label}</Text>
                     </View>
