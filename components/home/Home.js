@@ -49,6 +49,11 @@ const SERVICES_DATA_1 = [
     title: 'Mã thẻ di động',
     service_type: 'phonecard',
   },
+  // {
+  //   iconName: 'credit-card',
+  //   title: 'Nạp thẻ trong ngày',
+  //   service_type: 'md_card',
+  // },
   {
     iconName: 'plane',
     title: 'Vé máy bay',
@@ -421,13 +426,16 @@ export default class Home extends Component {
 
   // go to service
   _goServiceType(item) {
-    console.log('va');
     if (item.service_type == 'phonecard') {
       Actions.phonecard({
         service_type: item.service_type,
       })
     } else if (item.service_type == 'nap_tkc') {
       Actions.nap_tkc({
+        service_type: item.service_type,
+      })
+    } else if (item.service_type == 'md_card') {
+      Actions.md_card({
         service_type: item.service_type,
       })
     }
