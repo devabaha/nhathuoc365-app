@@ -487,7 +487,13 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
-
+  /**
+   * Service
+   */
+  async service_detail(service_type, site_id) {
+    var api = url_for(API.SERVICE_DETAIL + "/" + site_id + "/" + service_type);
+    return await this.getAPI(api);
+  }
 
   _networkIndicator(flag = true) {
     if (isIOS) {

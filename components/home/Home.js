@@ -41,19 +41,28 @@ import {
 const SERVICES_DATA_1 = [
   {
     iconName: 'mobile',
-    title: 'Nạp tiền điện thoại'
+    title: 'Nạp tiền điện thoại',
+    service_type: 'nap_tkc',
   },
   {
     iconName: 'credit-card',
-    title: 'Mã thẻ di động'
+    title: 'Mã thẻ di động',
+    service_type: 'phone_card',
   },
+  // {
+  //   iconName: 'credit-card',
+  //   title: 'Nạp thẻ trong ngày',
+  //   service_type: 'md_card',
+  // },
   {
     iconName: 'plane',
-    title: 'Vé máy bay'
+    title: 'Vé máy bay',
+    service_type: 've_may_bay',
   },
   {
     iconName: 'percent',
-    title: 'Mã giảm giá'
+    title: 'Mã giảm giá',
+    service_type: 'ma_giam_gia',
   }
 ];
 const SERVICES_DATA_2 = [
@@ -301,6 +310,11 @@ export default class Home extends Component {
     this._getData(1000);
   }
 
+  _goPhoneCard() {
+      // this._closePopup();
+      Actions.phonecard();
+  }
+
   // render rows cửa hàng trong list
   renderRow({ item, index }, isAdmin) {
     if (index == 0) {
@@ -408,6 +422,23 @@ export default class Home extends Component {
       title: item.name,
       item
     });
+  }
+
+  // go to service
+  _goServiceType(item) {
+    if (item.service_type == 'phone_card') {
+      Actions.phonecard({
+        service_type: item.service_type,
+      })
+    } else if (item.service_type == 'nap_tkc') {
+      Actions.nap_tkc({
+        service_type: item.service_type,
+      })
+    } else if (item.service_type == 'md_card') {
+      Actions.md_card({
+        service_type: item.service_type,
+      })
+    }
   }
 
   render() {
@@ -531,7 +562,7 @@ export default class Home extends Component {
                   borderRightColor: '#dddddd',
                   borderRightWidth: 1
                 }}
-                onPress={() => { }}
+                onPress={this._goServiceType.bind(this, service)}
               />
             )}
           </View>
