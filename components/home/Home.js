@@ -31,38 +31,44 @@ import ItemGrid from './ItemGrid';
 import ItemList from './ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent3 from '../notify/NewItemComponent3';
+import NewItemComponent4 from '../notify/NewItemComponent4';
+import NewItemComponent5 from '../notify/NewItemComponent5';
 import Items from '../stores/Items';
 import {
   TabTutorial,
   AddStoreTutorial,
   GoStoreTutorial
 } from '../tutorial';
+import _drawerIconLocation from "../../images/icon_location.png";
+import _drawerIconNotication from "../../images/notication.png";
+import _drawerIconPoints from "../../images/points.png";
+import _drawerIconTrans from "../../images/trans.png";
+import _drawerIconVoucher from "../../images/voucher.png";
+import _drawerIconScanQrcode from "../../images/scan_qrcode.png";
+import _drawerIconPhoneCard from "../../images/phone_card.png";
+import _drawerIconRada from "../../images/icon_rada.png";
+import _drawerIconPayBill from "../../images/pay_bill.png";
 
 const SERVICES_DATA_1 = [
   {
-    iconName: 'mobile',
+    iconName: _drawerIconScanQrcode,
+    title: 'Quét Mã QR',
+    service_type: 'scan_qc_code',
+  },
+  {
+    iconName: _drawerIconPhoneCard,
     title: 'Nạp tiền điện thoại',
-    service_type: 'nap_tkc',
+    service_type: 'phone_card',
   },
   {
-    iconName: 'credit-card',
-    title: 'Mã thẻ di động',
-    service_type: 'phonecard',
+    iconName: _drawerIconRada,
+    title: 'Dịch vụ Rada',
+    service_type: 'rada',
   },
   {
-    iconName: 'credit-card',
-    title: 'Nạp thẻ trong ngày',
-    service_type: 'md_card',
-  },
-  {
-    iconName: 'plane',
-    title: 'Vé máy bay',
-    service_type: 've_may_bay',
-  },
-  {
-    iconName: 'percent',
-    title: 'Mã giảm giá',
-    service_type: 'ma_giam_gia',
+    iconName: _drawerIconPayBill,
+    title: 'Thanh toán hóa đơn',
+    service_type: 'pay_bill',
   }
 ];
 const SERVICES_DATA_2 = [
@@ -463,26 +469,35 @@ export default class Home extends Component {
         >
           <View style={styles.header}>
             <Text style={styles.add_store_action_label}>
-              {`Xin chào, `}
               <Text style={{
                 fontWeight: 'bold',
-                fontSize: 18
+                fontSize: 20,
+                color: "#ffffff"
               }}>
                 Lê Huy Thực
                 </Text>
             </Text>
+            <View style={styles.home_box_wallet_info_label_right}>
+              <Image
+                style={styles.icon_notication}
+                source={_drawerIconNotication}
+              />
+            </View>
           </View>
 
           {/*Thong tin Vi*/}
-          {(<View>
+          {(<View style={{
+              backgroundColor: "#FAFAFA",
+            }}>
 
             <View style={styles.add_store_actions_box}>
               <View style={styles.home_box_wallet_info}>
                 <Text style={styles.add_store_action_label}>Ví tích điểm</Text>
-                <Text style={styles.add_store_action_label}>TIDI</Text>
+                <Text style={styles.add_store_action_label}> TIDI</Text>
                 <View style={styles.home_box_wallet_info_label_right}>
-                  <Text >6,390,000đ</Text>
+                  <Text style={{color: "#042C5C"}}>6,390,000đ</Text>
                 </View>
+                <Icon name='chevron-right' color='#042C5C' />
               </View>
               <View style={styles.home_box_wallet_action}>
                 <TouchableHighlight
@@ -490,8 +505,24 @@ export default class Home extends Component {
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
                   <View style={styles.add_store_action_btn_box}>
-                    <Icon name="qrcode" size={24} color="#000" />
-                    <Text style={styles.add_store_action_label}>Mã TK</Text>
+                    <Image
+                      style={styles.icon_points}
+                      source={_drawerIconPoints}
+                    />
+                    <Text style={styles.add_store_action_label}>Tích điểm</Text>
+                  </View>
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  onPress={() => Actions.vnd_wallet({ title: store.user_info.default_wallet.name, wallet: store.user_info.default_wallet })}
+                  underlayColor="transparent"
+                  style={styles.add_store_action_btn}>
+                  <View style={styles.add_store_action_btn_box}>
+                    <Image
+                      style={styles.icon_tran}
+                      source={_drawerIconTrans}
+                    />
+                    <Text style={styles.add_store_action_label}>Giao dịch</Text>
                   </View>
                 </TouchableHighlight>
 
@@ -499,43 +530,17 @@ export default class Home extends Component {
                   onPress={this._goScanQRCode.bind(this, this.state.store_data)}
                   underlayColor="transparent"
                   style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <Icon name="minus-square-o" size={24} color="#000" />
-                    <Text style={styles.add_store_action_label}>Quét mã</Text>
+                  <View style={[styles.add_store_action_btn_box, {
+                    width: ~~(Util.size.width / 4) + 30,
+                    paddingRight: 15,
+                  }]}>
+                    <Image
+                      style={styles.icon_tran}
+                      source={_drawerIconVoucher}
+                    />
+                    <Text style={styles.add_store_action_label}>Voucher của tôi</Text>
                   </View>
                 </TouchableHighlight>
-
-                {store.user_info.default_wallet && (
-                  <TouchableHighlight
-                    onPress={() => Actions.vnd_wallet({ title: store.user_info.default_wallet.name, wallet: store.user_info.default_wallet })}
-                    underlayColor="transparent"
-                    style={styles.add_store_action_btn}>
-                    <View style={[styles.add_store_action_btn_box,
-                      {
-                        width: ~~(Util.size.width / 2),
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                        paddingHorizontal: 15
-                      }
-                    ]}>
-                      <View>
-                        <Text style={[
-                          styles.add_store_action_label,
-                          { textAlign: 'left' }
-                        ]}>
-                          {store.user_info.default_wallet.name}
-                        </Text>
-                        <Text style={[
-                          styles.add_store_action_label_balance,
-                          { textAlign: 'left' }
-                        ]}>
-                          {store.user_info.default_wallet.balance_view}
-                        </Text>
-                      </View>
-                      <Icon name='chevron-right' color='#ffffff' />
-                    </View>
-                  </TouchableHighlight>)}
               </View>
             </View>
           </View>
@@ -566,68 +571,53 @@ export default class Home extends Component {
                 />
               )}
               />
-            {/*{SERVICES_DATA_1.map((service, index) =>*/}
-              {/*<ServiceButton*/}
-                {/*iconName={service.iconName}*/}
-                {/*title={service.title}*/}
-                {/*key={index}*/}
-                {/*style={index !== SERVICES_DATA_1.length - 1 && {*/}
-                  {/*borderRightColor: '#dddddd',*/}
-                  {/*borderRightWidth: 1*/}
-                {/*}}*/}
-                {/*onPress={() => { }}*/}
-              {/*/>*/}
-            {/*)}*/}
           </View>
-
-          {/*<View style={styles.serviceBox}>*/}
-            {/*{SERVICES_DATA_2.map((service, index) =>*/}
-              {/*<ServiceButton*/}
-                {/*iconName={service.iconName}*/}
-                {/*title={service.title}*/}
-                {/*key={index}*/}
-                {/*style={index !== SERVICES_DATA_1.length - 1 && {*/}
-                  {/*borderRightColor: '#dddddd',*/}
-                  {/*borderRightWidth: 1*/}
-                {/*}}*/}
-                {/*onPress={() => { }}*/}
-              {/*/>*/}
-            {/*)}*/}
-          {/*</View>*/}
 
           {/* <Image /> */}
           {(this.state.promotions && this.state.promotions.length > 0) && (
-            <Swiper
-              width={Util.size.width}
-              height={(Util.size.width) * .42}
-              autoplayTimeout={3}
-              showsPagination={true}
-              horizontal
-              autoplay>
-              {this.state.promotions.map((banner, i) => {
-                return (
-                  <View
-                    key={i}
-                    style={{
-                      width: Util.size.width,
-                      alignItems: 'center'
-                    }}>
-                    <TouchableHighlight
-                      onPress={this._goDetail.bind(this, banner.news)}
-                      underlayColor="transparent">
-                      <CachedImage
-                        source={{ uri: banner.banner }}
-                        style={{
-                          width: Util.size.width,
-                          height: (Util.size.width) * .4
-                        }} />
-                    </TouchableHighlight>
-                  </View>
-                );
-              })}
-            </Swiper>
-          )}
+            <View style={{
+              backgroundColor: "#E9E9E9",
+            }}>
+              <Swiper
+                width={Util.size.width - 30}
+                height={(Util.size.width - 30) * .42}
+                paddingHo
+                autoplayTimeout={3}
+                showsPagination={true}
+                marginHorizontal={15}
+                marginVertical={10}
+                backgroundColor={"#E9E9E9"}
+                borderRadius={4}
+                autoplay>
+                {this.state.promotions.map((banner, i) => {
+                  return (
+                    <View
+                      key={i}
+                      style={{
+                        width: Util.size.width,
+                        alignItems: 'center',
+                        borderRadius: 4,
+                      }}>
+                      <TouchableHighlight
+                        onPress={this._goDetail.bind(this, banner.news)}
+                        underlayColor="transparent">
+                        <CachedImage
+                          source={{ uri: banner.banner }}
+                          style={{
+                            width: Util.size.width,
+                            height: (Util.size.width) * .4,
 
+                          }} />
+                      </TouchableHighlight>
+                    </View>
+                  );
+                })}
+              </Swiper>
+            </View>
+          )}
+          <View style={{
+            backgroundColor: "#ffffff",
+          }}>
           {farm_newses_data && (
             <ListHomeItems
               data={farm_newses_data}
@@ -636,18 +626,19 @@ export default class Home extends Component {
           )}
 
           {newses_data && (
-            <ListHomeItems
+            <ListHomeVoucherItems
               data={newses_data}
               title="TiDi Voucher"
             />
           )}
 
           {newses_data && (
-            <ListHomeItems
+            <ListHomeNewsItems
               data={newses_data}
               title="TiDi News"
             />
           )}
+          </View>
         </ScrollView>
       </View>
     );
@@ -658,7 +649,7 @@ const styles = StyleSheet.create({
   defaultBox: {
     width: '100%',
     height: 0,
-    backgroundColor: "#ffffff",
+    backgroundColor: "#FAFAFA",
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd",
@@ -669,11 +660,13 @@ const styles = StyleSheet.create({
     paddingTop: 45,
     backgroundColor: DEFAULT_COLOR,
     paddingBottom: 100,
+    flex: 1,
+    flexDirection: 'row',
   },
   container: {
     flex: 1,
     paddingBottom: BAR_HEIGHT,
-    backgroundColor: BGR_SCREEN_COLOR
+    backgroundColor: "#FAFAFA"
   },
   stores_box: {
     marginBottom: 8,
@@ -681,10 +674,10 @@ const styles = StyleSheet.create({
     borderColor: "#dddddd"
   },
   serviceBox: {
-    marginTop: 70,
+    marginTop: 80,
+    marginBottom: 20,
     flexDirection: 'row',
-    borderBottomColor: '#dddddd',
-    borderBottomWidth: 1
+    backgroundColor: "#FAFAFA",
   },
   add_store_box: {
     width: '100%',
@@ -694,7 +687,7 @@ const styles = StyleSheet.create({
     borderColor: "#dddddd"
   },
   add_store_title: {
-    color: "#404040",
+    color: "#042C5C",
     fontSize: 16,
     fontWeight: '500',
     lineHeight: 20
@@ -704,37 +697,41 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     flex: 1,
     // paddingVertical: 8,
-    backgroundColor: "#ffffff",
-    borderWidth: Util.pixel,
-    borderColor: "#ffffff",
+    backgroundColor: "#FFFFFF",
     borderRadius: 5,
     margin: 15,
+    // padding: 15,
     position: 'absolute',
     top: -100,
     left: 0,
     right: 0,
     height: 150,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
   },
   home_box_wallet_info: {
     flexDirection: 'row',
-    flex: 1
+    flex: 1,
+    padding: 15,
   },
   home_box_wallet_action: {
     flexDirection: 'row',
-    flex: 1
+    flex: 1,
+    justifyContent: "space-between",
   },
   add_store_action_btn: {
-    paddingVertical: 4,
+    width: ~~(Util.size.width / 3),
+    // paddingVertical: 4,
 
   },
   add_store_action_btn_box: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 4),
-    borderLeftWidth: Util.pixel,
-    borderLeftColor: '#ebebeb'
+    // width: ~~(Util.size.width / 4),
+    // borderLeftWidth: Util.pixel,
+    // borderLeftColor: '#ebebeb'
   },
   add_store_action_btn_box_balance: {
     // alignItems: 'center',
@@ -756,13 +753,14 @@ const styles = StyleSheet.create({
   },
   add_store_action_label: {
     fontSize: 14,
-    color: '#000',
-    marginTop: 0
+    color: '#9B04F1',
+    // paddingVertical: 8,
+    // paddingHorizontal: 8
   },
   home_box_wallet_info_label_right: {
     flex: 1,
     alignItems: 'flex-end',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     fontWeight: 'bold',
   },
   right_btn_add_store: {
@@ -864,6 +862,21 @@ const styles = StyleSheet.create({
     height: 1,
     width: "100%",
     backgroundColor: "rgb(225,225,225)"
+  },
+  icon_notication: {
+    width: 22,
+    height: 22,
+    resizeMode: 'cover',
+  },
+  icon_points: {
+    width: 25,
+    height: 25,
+    resizeMode: 'cover',
+  },
+  icon_tran: {
+    width: 27,
+    height: 27,
+    resizeMode: 'cover',
   }
 });
 
@@ -872,21 +885,24 @@ const ServiceButton = (props) => {
     <TouchableHighlight
       underlayColor='transparent'
       style={[{
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: ~~(Util.size.width / 4),
-        paddingVertical: 10
+        // alignItems: 'center',
+        // width: ~~(Util.size.width / 4),
+        // paddingRight: 10,
+        // justifyContent: 'flex-start',
       }]}
       onPress={props.onPress}
     >
       <View style={[{
         alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-        paddingHorizontal: 10
+        width: ~~(Util.size.width / 4),
+        paddingRight: 10,
+        justifyContent: 'flex-start',
       }, props.style]}>
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-          <Icon name={props.iconName} color='#404040' size={24} />
+          <Image
+            style={styles.icon_tran}
+            source={props.iconName}
+          />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{
@@ -907,10 +923,10 @@ const ListHomeItems = (props) => {
     <View>
       <View style={{
         paddingHorizontal: 15,
-        paddingVertical: 8,
-        borderBottomWidth: Util.pixel,
-        borderColor: "#dddddd",
-        marginTop: 4,
+        paddingVertical: 4,
+        // borderBottomWidth: Util.pixel,
+        // borderColor: "#dddddd",
+        // marginTop: 4,
         flexDirection: 'row'
       }}>
         <Text style={styles.add_store_title}>{props.title}</Text>
@@ -926,7 +942,7 @@ const ListHomeItems = (props) => {
                 news_type: "/" + newses_type
               });
             }}>
-            <Text style={[styles.add_store_title, { color: DEFAULT_COLOR }]}>
+            <Text style={[styles.add_store_title, { color: "#042C5C" }]}>
               Xem tất cả
             </Text>
           </TouchableHighlight>
@@ -945,6 +961,105 @@ const ListHomeItems = (props) => {
 
           return (
             <NewItemComponent3
+              item={item} />
+          );
+        }}
+        keyExtractor={item => item.id}
+      />
+    </View>
+  )
+}
+
+const ListHomeVoucherItems = (props) => {
+  return (
+    <View>
+      <View style={{
+        paddingHorizontal: 15,
+        paddingVertical: 4,
+        // borderBottomWidth: Util.pixel,
+        // borderColor: "#dddddd",
+        // marginTop: 4,
+        flexDirection: 'row'
+      }}>
+        <Text style={styles.add_store_title}>{props.title}</Text>
+
+        <View style={styles.right_title_btn_box}>
+          <TouchableHighlight
+            style={styles.right_title_btn}
+            underlayColor="transparent"
+            onPress={() => {
+              Actions.notifys_time({
+                isNotifysTime: newses_type == 1 ? false : true,
+                title: title_newses_data,
+                news_type: "/" + newses_type
+              });
+            }}>
+            <Text style={[styles.add_store_title, { color: "#042C5C" }]}>
+              Xem tất cả
+            </Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+      <FlatList
+        data={props.data}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item, index }) => {
+          // if (index == 0) {
+          //   this.defaultNewBoxHeight = 0;
+          // }
+
+          // this.defaultNewBoxHeight += (isIOS ? 116 : 124);
+
+          return (
+            <NewItemComponent4
+              item={item} />
+          );
+        }}
+        keyExtractor={item => item.id}
+      />
+    </View>
+  )
+}
+
+const ListHomeNewsItems = (props) => {
+  return (
+    <View>
+      <View style={{
+        marginHorizontal: 15,
+        marginVertical: 4,
+        // borderBottomWidth: Util.pixel,
+        // borderColor: "#dddddd",
+        // marginTop: 4,
+        flexDirection: 'row',
+        marginRight: 15,
+      }}>
+        <Text style={styles.add_store_title}>{props.title}</Text>
+
+        <View style={styles.right_title_btn_box}>
+          <TouchableHighlight
+            style={styles.right_title_btn}
+            underlayColor="transparent"
+            onPress={() => {
+              Actions.notifys_time({
+                isNotifysTime: newses_type == 1 ? false : true,
+                title: title_newses_data,
+                news_type: "/" + newses_type
+              });
+            }}>
+            <Text style={[styles.add_store_title, { color: "#042C5C" }]}>
+              Xem tất cả
+            </Text>
+          </TouchableHighlight>
+        </View>
+      </View>
+      <FlatList
+        data={props.data}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        renderItem={({ item, index }) => {
+          return (
+            <NewItemComponent5
               item={item} />
           );
         }}

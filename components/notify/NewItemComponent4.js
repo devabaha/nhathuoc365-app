@@ -15,7 +15,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 
 import _drawerIconLocation from '../../images/icon_location.png';
 
-export default class NewItemComponent3 extends Component {
+export default class NewItemComponent4 extends Component {
 
   _goDetail(item) {
     Actions.notify_item({
@@ -35,29 +35,15 @@ export default class NewItemComponent3 extends Component {
         <View style={[styles.notify_item, item.read_flag == 0 ? styles.notify_item_active : null]}>
           <View style={styles.notify_item_image_box}>
             <CachedImage mutable style={styles.notify_item_image} source={{uri: item.image_url}} />
+            <View style={styles.home_box_info_voucher_discount}>
+              <Text style={styles.home_box_info_voucher_discount_value}>-30%</Text>
+            </View>
           </View>
 
           <View style={styles.notify_item_content}>
-            <View style={styles.notify_item_time_box_icon_loction}>
-              <Image
-                style={styles.icon_location}
-                source={_drawerIconLocation}
-              />
-            </View>
             <View style={styles.notify_item_content_box_right}>
               <View style={styles.notify_item_content_box}>
-                <Text style={styles.notify_item_title}>{sub_string(item.shop_name, 60)}</Text>
-                <View style={styles.home_box_wallet_info_label_right}>
-                  <Text style={styles.notify_item_distance}></Text>
-                </View>
-              </View>
-              <View style={styles.notify_item_content_box}>
-                <View style={styles.notify_item_time_box}>
-                  <Text style={styles.notify_item_address}>
-                    250 Nguyễn Văn Cừ, Long biên
-                    {/*{item.address}*/}
-                  </Text>
-                </View>
+                <Text style={styles.notify_item_title}>{sub_string(item.title, 55)}</Text>
               </View>
             </View>
           </View>
@@ -76,7 +62,7 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     flexDirection: 'column',
     height: isIOS ? 150 : 164,
-    width: 203,
+    width: 205,
     borderRadius: 4,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -88,9 +74,28 @@ const styles = StyleSheet.create({
   notify_item_image_box: {
     backgroundColor: "#ebebeb",
     width: '100%',
-    height: 96,
+    height: 107,
 
     // marginTop: 8
+  },
+  home_box_info_voucher_discount: {
+    position: 'absolute',
+    top: 4,
+    right: 14,
+    width: 36,
+    height: 36,
+    backgroundColor: "#1DD76C",
+    borderRadius: 18,
+    transform: [
+      {scaleX: 1.5}
+    ],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  home_box_info_voucher_discount_value: {
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: "bold"
   },
   notify_item_image: {
     width: '100%',
@@ -112,12 +117,12 @@ const styles = StyleSheet.create({
   },
   notify_item_content_box: {
     flexDirection: 'row',
-    flex: 1,
+    flex: 2,
     paddingLeft: 5,
     alignItems: 'center',
   },
   notify_item_title: {
-    fontSize: 16,
+    fontSize: 12,
     color: "#212C3A",
     fontWeight: '500',
     flex: 1,

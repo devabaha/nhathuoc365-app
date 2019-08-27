@@ -15,7 +15,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 
 import _drawerIconLocation from '../../images/icon_location.png';
 
-export default class NewItemComponent3 extends Component {
+export default class NewItemComponent5 extends Component {
 
   _goDetail(item) {
     Actions.notify_item({
@@ -38,26 +38,9 @@ export default class NewItemComponent3 extends Component {
           </View>
 
           <View style={styles.notify_item_content}>
-            <View style={styles.notify_item_time_box_icon_loction}>
-              <Image
-                style={styles.icon_location}
-                source={_drawerIconLocation}
-              />
-            </View>
             <View style={styles.notify_item_content_box_right}>
               <View style={styles.notify_item_content_box}>
-                <Text style={styles.notify_item_title}>{sub_string(item.shop_name, 60)}</Text>
-                <View style={styles.home_box_wallet_info_label_right}>
-                  <Text style={styles.notify_item_distance}></Text>
-                </View>
-              </View>
-              <View style={styles.notify_item_content_box}>
-                <View style={styles.notify_item_time_box}>
-                  <Text style={styles.notify_item_address}>
-                    250 Nguyễn Văn Cừ, Long biên
-                    {/*{item.address}*/}
-                  </Text>
-                </View>
+                <Text style={styles.notify_item_title}>{sub_string(item.title, 55)}</Text>
               </View>
             </View>
           </View>
@@ -75,8 +58,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginLeft: 15,
     flexDirection: 'column',
-    height: isIOS ? 150 : 164,
-    width: 203,
+    height: isIOS ? 177 : 177,
+    width: 263,
     borderRadius: 4,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -88,7 +71,7 @@ const styles = StyleSheet.create({
   notify_item_image_box: {
     backgroundColor: "#ebebeb",
     width: '100%',
-    height: 96,
+    height: 124,
 
     // marginTop: 8
   },
@@ -112,7 +95,7 @@ const styles = StyleSheet.create({
   },
   notify_item_content_box: {
     flexDirection: 'row',
-    flex: 1,
+    flex: 2,
     paddingLeft: 5,
     alignItems: 'center',
   },
