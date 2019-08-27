@@ -537,6 +537,10 @@ export default class App extends Component {
     Actions._main_notify({ type: ActionConst.REFRESH });
   }
 
+  _goQRCode() {
+    Actions.qr_bar_code({ title: "Mã tài khoản", direction: 'vertical' });
+  }
+
   renderRounter() {
     // var { showIntro } = this.state;
     var showIntro = false;
@@ -588,6 +592,20 @@ export default class App extends Component {
               <Scene
                 key="myTab3"
                 icon={TabIcon}
+                iconName="qrcode-scan"
+                size={24}
+                isHighlightTab
+                onPress={this._goQRCode.bind(this, this.state.store_data)}
+              >
+                <Scene key="_main_notify" title="Tin tức" component={Notifys} {...custommerNav} />
+              </Scene>
+
+              {/**
+              ************************ Tab 3 ************************
+              */}
+              <Scene
+                key="myTab4"
+                icon={TabIcon}
                 iconTitle="Đơn hàng"
                 iconName="shopping-cart"
                 size={24}
@@ -602,7 +620,7 @@ export default class App extends Component {
               ************************ Tab 4 ************************
               */}
               <Scene
-                key="myTab4"
+                key="myTab5"
                 icon={TabIcon}
                 iconTitle="Tài khoản"
                 iconName="account-circle"
