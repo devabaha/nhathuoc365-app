@@ -734,7 +734,15 @@ const styles = StyleSheet.create({
     borderTopWidth: Util.pixel,
     borderColor: '#cccccc',
     backgroundColor: 'white',
-    opacity: 1
+    opacity: 1,
+    shadowColor: 'black',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowRadius: 10,
+    shadowOpacity: 0.3,
+    elevation: 2,
   },
   content: {
     width: Util.size.width,
