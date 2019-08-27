@@ -11,6 +11,7 @@ import {
 
 // librarys
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import store from '../store/Store';
 
 @observer
@@ -24,15 +25,18 @@ export default class TabIcon extends Component {
     if (this.props.notify) {
       notifyCount = parseInt(store.notify[this.props.notify]);
     }
-
+    const { isHighlightTab } = this.props;
+    const normalIconStyle = this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title;
     return(
-      <View style={styles.tabIcon}>
-        <View style={styles.iconBox}>
-          <Icon style={[styles.iconTabbar, this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title]} name={this.props.iconName} size={this.props.size} color="#333333" />
+      <View style={styles.container}>
+        <View style={[styles.tabIcon, isHighlightTab ? { position: 'absolute', bottom: 0 } : null]}>
+          <View style={isHighlightTab ? styles.iconBoxHighlight : styles.iconBox}>
+            {isHighlightTab ? <MaterialCommunityIcons style={[styles.iconTabbar, { color: 'white' }]} name={this.props.iconName} size={this.props.size} />
+            : <Icon style={[styles.iconTabbar, normalIconStyle]} name={this.props.iconName} size={this.props.size} />}
+          </View>
+          <Text style={[this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title, styles.titleDefault]}>{this.props.iconTitle}</Text>
+          {notifyCount > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{notifyCount}</Text></View>}
         </View>
-      <Text style={[this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title, styles.titleDefault]}>{this.props.iconTitle}</Text>
-
-        {notifyCount > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{notifyCount}</Text></View>}
       </View>
     );
   }
@@ -67,11 +71,21 @@ const styles = StyleSheet.create({
   iconBox: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 4,
     width: 28,
     height: 28,
-    paddingTop: 4
   },
-
+  iconBoxHighlight: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 4,
+    width: 56,
+    height: 56,
+    backgroundColor: DEFAULT_COLOR,
+    borderRadius: 28,
+    borderWidth: 3,
+    borderColor: 'white',
+  },
   stores_info_action_notify: {
     position: 'absolute',
     minWidth: 16,
