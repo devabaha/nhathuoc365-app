@@ -731,8 +731,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff"
   },
   tabBarStyle: {
-    borderTopWidth: Util.pixel,
-    borderColor: '#cccccc',
     backgroundColor: 'white',
     opacity: 1,
     shadowColor: 'black',
