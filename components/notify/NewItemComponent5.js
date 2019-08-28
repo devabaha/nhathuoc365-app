@@ -1,17 +1,17 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   Image,
   TouchableHighlight,
-  StyleSheet,
+  StyleSheet, Platform,
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import {Actions, ActionConst} from 'react-native-router-flux';
 
 import _drawerIconLocation from '../../images/icon_location.png';
 
@@ -34,7 +34,7 @@ export default class NewItemComponent5 extends Component {
 
         <View style={[styles.notify_item, item.read_flag == 0 ? styles.notify_item_active : null]}>
           <View style={styles.notify_item_image_box}>
-            <CachedImage mutable style={styles.notify_item_image} source={{uri: item.image_url}} />
+            <CachedImage mutable style={styles.notify_item_image} source={{uri: item.image_url}}/>
           </View>
 
           <View style={styles.notify_item_content}>
@@ -56,14 +56,23 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 16,
     marginVertical: 8,
-    marginLeft: 15,
+    marginLeft: MARGIN_HORIZONTAL,
     flexDirection: 'column',
     height: isIOS ? 177 : 177,
     width: 263,
     borderRadius: 4,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    ...Platform.select({
+      ios: {
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+        borderWidth: Util.pixel,
+        borderColor: "#E1E1E1",
+      },
+    }),
   },
   notify_item_active: {
     backgroundColor: "#ebebeb"
@@ -72,8 +81,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ebebeb",
     width: '100%',
     height: 124,
-
-    // marginTop: 8
   },
   notify_item_image: {
     width: '100%',
@@ -104,8 +111,6 @@ const styles = StyleSheet.create({
     color: "#212C3A",
     fontWeight: '500',
     flex: 1,
-    // lineHeight: isIOS ? 16 : 18,
-    // marginTop: 8
   },
   notify_item_desc: {
     marginTop: 8,
@@ -133,7 +138,7 @@ const styles = StyleSheet.create({
   notify_item_time_box_icon_loction: {
     width: 17,
     height: 17,
-    borderRadius: 17/2,
+    borderRadius: 17 / 2,
     borderColor: "#E1E1E1",
     borderWidth: 1,
     justifyContent: 'center',

@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   TouchableHighlight,
   FlatList,
   ScrollView,
-  Alert
+  Alert, Platform
 } from 'react-native';
 
 // library
@@ -18,12 +18,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { Actions, ActionConst } from 'react-native-router-flux';
+import {Actions, ActionConst} from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
+import {Button} from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
-import { reaction } from 'mobx';
+import {reaction} from 'mobx';
 import Communications from 'react-native-communications';
 
 // components
@@ -48,47 +48,30 @@ import _drawerIconScanQrcode from "../../images/scan_qrcode.png";
 import _drawerIconPhoneCard from "../../images/phone_card.png";
 import _drawerIconRada from "../../images/icon_rada.png";
 import _drawerIconPayBill from "../../images/pay_bill.png";
+import _drawerIconNext from "../../images/next.png";
 
 const SERVICES_DATA_1 = [
   {
     iconName: _drawerIconScanQrcode,
-    title: 'Quét Mã QR',
+    title: 'Quét Mã \n QR',
     service_type: 'scan_qc_code',
   },
   {
     iconName: _drawerIconPhoneCard,
-    title: 'Nạp tiền điện thoại',
+    title: 'Nạp tiền \n điện thoại',
     service_type: 'phone_card',
   },
   {
     iconName: _drawerIconRada,
-    title: 'Dịch vụ Rada',
+    title: 'Dịch vụ \n Rada',
     service_type: 'rada',
   },
   {
     iconName: _drawerIconPayBill,
-    title: 'Thanh toán hóa đơn',
+    title: 'Thanh toán \n hóa đơn',
     service_type: 'pay_bill',
   }
 ];
-const SERVICES_DATA_2 = [
-  {
-    iconName: 'wrench',
-    title: 'Dịch vụ sửa chữa'
-  },
-  {
-    iconName: 'home',
-    title: 'Dịch vụ gia đình'
-  },
-  {
-    iconName: 'car',
-    title: 'Sân bay đường dài'
-  },
-  {
-    iconName: 'ellipsis-h',
-    title: 'Tất cả dịch vụ'
-  }
-]
 
 @observer
 export default class Home extends Component {
@@ -124,9 +107,6 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    // Actions.refresh({
-    //   renderRightButton: this._renderRightButton.bind(this)
-    // });
 
     this._getData();
 
@@ -164,7 +144,7 @@ export default class Home extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_home) {
-      this.refs_home.scrollTo({ x: 0, y: top, animated: true });
+      this.refs_home.scrollTo({x: 0, y: top, animated: true});
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
@@ -198,7 +178,7 @@ export default class Home extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           setTimeout(() => {
 
-            var { data } = response;
+            var {data} = response;
 
             // Animation is true when first loaded
             if (this.state.store_data == null) {
@@ -261,7 +241,7 @@ export default class Home extends Component {
           alignItems: 'center',
           marginTop: -8
         }}>
-          <Icon name="phone" size={22} color="#ffffff" />
+          <Icon name="phone" size={22} color="#ffffff"/>
           <Text style={{
             fontSize: 10,
             color: '#ffffff',
@@ -295,12 +275,12 @@ export default class Home extends Component {
   _goScanQRCode() {
     this._closePopup();
 
-    Actions.qr_bar_code({ title: "Quét QR Code", index: 1, wallet: store.user_info.default_wallet });
+    Actions.qr_bar_code({title: "Quét QR Code", index: 1, wallet: store.user_info.default_wallet});
   }
 
   _goQRCode() {
     this._closePopup();
-    Actions.qr_bar_code({ title: "Mã tài khoản" });
+    Actions.qr_bar_code({title: "Mã tài khoản"});
   }
 
   _closePopup() {
@@ -311,13 +291,13 @@ export default class Home extends Component {
 
   // pull to reload danh sách cửa hàng
   _onRefresh() {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
 
     this._getData(1000);
   }
 
   // render rows cửa hàng trong list
-  renderRow({ item, index }, isAdmin) {
+  renderRow({item, index}, isAdmin) {
     if (index == 0) {
       this.defaultBoxHeight = 0;
     }
@@ -326,7 +306,7 @@ export default class Home extends Component {
 
     // store list
     return (
-      <ItemList item={item} index={index} that={this} />
+      <ItemList item={item} index={index} that={this}/>
     );
   }
 
@@ -377,6 +357,7 @@ export default class Home extends Component {
 
     }
   }
+
   // tới màn hình store
   _goStores(item, category_id) {
     // action(() => {
@@ -394,14 +375,14 @@ export default class Home extends Component {
       title: "Cửa hàng",
     });
   }
+
   _cachedStore(key, thenFunc = () => 1, catchFunc = () => 1) {
     storage.load({
       key,
       autoSync: true,
       syncInBackground: true,
       syncParams: {
-        extraFetchOptions: {
-        },
+        extraFetchOptions: {},
         someFlag: true,
       },
     }).then(data => {
@@ -460,7 +441,7 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{flexGrow: 1}}
           style={{marginBottom: 15}}
           refreshControl={<RefreshControl
             refreshing={this.state.refreshing}
@@ -475,7 +456,7 @@ export default class Home extends Component {
                 color: "#ffffff"
               }}>
                 Lê Huy Thực
-                </Text>
+              </Text>
             </Text>
             <View style={styles.home_box_wallet_info_label_right}>
               <Image
@@ -490,62 +471,75 @@ export default class Home extends Component {
               backgroundColor: "#FAFAFA",
             }}>
 
-            <View style={styles.add_store_actions_box}>
-              <View style={styles.home_box_wallet_info}>
-                <Text style={styles.add_store_action_label}>Ví tích điểm</Text>
-                <Text style={styles.add_store_action_label}> TIDI</Text>
-                <View style={styles.home_box_wallet_info_label_right}>
-                  <Text style={{color: "#042C5C"}}>6,390,000đ</Text>
+              <View style={styles.add_store_actions_box}>
+                <View style={styles.home_box_wallet_info}>
+                  <Text style={[styles.add_store_wallet_label, {lineHeight: 20}]}>Ví tích điểm</Text>
+                  <Text style={[styles.add_store_wallet_label, {
+                    fontSize: 20,
+                    fontWeight: "bold",
+                    lineHeight: 20
+                  }]}> TIDI</Text>
+                  <View style={styles.home_box_wallet_info_label_right}>
+                    <Text style={{fontSize: 20, color: "#042C5C", fontWeight: "bold", lineHeight: 20}}>6,390,000đ</Text>
+                  </View>
+                  <TouchableHighlight
+                    onPress={this._goQRCode.bind(this, this.state.store_data)}
+                    underlayColor="transparent">
+                    <View style={{fontSize: 20, color: "#042C5C", fontWeight: "bold", lineHeight: 20, marginLeft: 10,}}>
+                      <Image
+                        style={styles.icon_next}
+                        source={_drawerIconNext}
+                      />
+                    </View>
+                  </TouchableHighlight>
                 </View>
-                <Icon name='chevron-right' color='#042C5C' />
-              </View>
-              <View style={styles.home_box_wallet_action}>
-                <TouchableHighlight
-                  onPress={this._goQRCode.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <Image
-                      style={styles.icon_points}
-                      source={_drawerIconPoints}
-                    />
-                    <Text style={styles.add_store_action_label}>Tích điểm</Text>
-                  </View>
-                </TouchableHighlight>
+                <View style={styles.home_box_wallet_action}>
+                  <TouchableHighlight
+                    onPress={this._goQRCode.bind(this, this.state.store_data)}
+                    underlayColor="transparent"
+                    style={styles.add_store_action_btn}>
+                    <View style={styles.add_store_action_btn_box}>
+                      <Image
+                        style={styles.icon_points}
+                        source={_drawerIconPoints}
+                      />
+                      <Text style={styles.add_store_action_label}>Tích điểm</Text>
+                    </View>
+                  </TouchableHighlight>
 
-                <TouchableHighlight
-                  onPress={() => Actions.vnd_wallet({ title: store.user_info.default_wallet.name, wallet: store.user_info.default_wallet })}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={styles.add_store_action_btn_box}>
-                    <Image
-                      style={styles.icon_tran}
-                      source={_drawerIconTrans}
-                    />
-                    <Text style={styles.add_store_action_label}>Giao dịch</Text>
-                  </View>
-                </TouchableHighlight>
+                  <TouchableHighlight
+                    onPress={() => Actions.vnd_wallet({
+                      title: store.user_info.default_wallet.name,
+                      wallet: store.user_info.default_wallet
+                    })}
+                    underlayColor="transparent"
+                    style={styles.add_store_action_btn}>
+                    <View style={styles.add_store_action_btn_box}>
+                      <Image
+                        style={styles.icon_tran}
+                        source={_drawerIconTrans}
+                      />
+                      <Text style={styles.add_store_action_label}>Giao dịch</Text>
+                    </View>
+                  </TouchableHighlight>
 
-                <TouchableHighlight
-                  onPress={this._goScanQRCode.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={[styles.add_store_action_btn_box, {
-                    width: ~~(Util.size.width / 4) + 30,
-                    paddingRight: 15,
-                  }]}>
-                    <Image
-                      style={styles.icon_tran}
-                      source={_drawerIconVoucher}
-                    />
-                    <Text style={styles.add_store_action_label}>Voucher của tôi</Text>
-                  </View>
-                </TouchableHighlight>
+                  <TouchableHighlight
+                    onPress={this._goScanQRCode.bind(this, this.state.store_data)}
+                    underlayColor="transparent"
+                    style={styles.add_store_action_btn}>
+                    <View style={[styles.add_store_action_btn_box, {
+                    }]}>
+                      <Image
+                        style={styles.icon_tran}
+                        source={_drawerIconVoucher}
+                      />
+                      <Text style={styles.add_store_action_label}>Voucher của tôi</Text>
+                    </View>
+                  </TouchableHighlight>
+                </View>
               </View>
             </View>
-          </View>
           )}
-
 
           <View style={styles.serviceBox}>
             <FlatList
@@ -556,21 +550,21 @@ export default class Home extends Component {
               extraData={this.state}
               keyExtractor={item => item.id}
               ItemSeparatorComponent={
-                () => <View style={{width: ~~(Util.size.width / 25)}}/>
+                () => <View style={{width: ~~(Util.size.width / 28)}}/>
               }
               renderItem={({item, index}) => (
                 <ServiceButton
                   iconName={item.iconName}
                   title={item.title}
+                  service_type={item.service_type}
                   key={index}
                   style={index !== SERVICES_DATA_1.length - 1 && {
-                    borderRightColor: '#dddddd',
-                    borderRightWidth: 1
                   }}
-                  onPress={() => { }}
+                  onPress={() => {
+                  }}
                 />
               )}
-              />
+            />
           </View>
 
           {/* <Image /> */}
@@ -581,10 +575,9 @@ export default class Home extends Component {
               <Swiper
                 width={Util.size.width - 30}
                 height={(Util.size.width - 30) * .42}
-                paddingHo
                 autoplayTimeout={3}
                 showsPagination={true}
-                marginHorizontal={15}
+                marginHorizontal={MARGIN_HORIZONTAL}
                 marginVertical={10}
                 backgroundColor={"#E9E9E9"}
                 borderRadius={4}
@@ -602,12 +595,11 @@ export default class Home extends Component {
                         onPress={this._goDetail.bind(this, banner.news)}
                         underlayColor="transparent">
                         <CachedImage
-                          source={{ uri: banner.banner }}
+                          source={{uri: banner.banner}}
                           style={{
                             width: Util.size.width,
                             height: (Util.size.width) * .4,
-
-                          }} />
+                          }}/>
                       </TouchableHighlight>
                     </View>
                   );
@@ -617,27 +609,28 @@ export default class Home extends Component {
           )}
           <View style={{
             backgroundColor: "#ffffff",
+            marginTop: 15,
           }}>
-          {farm_newses_data && (
-            <ListHomeItems
-              data={farm_newses_data}
-              title="Cửa hàng thân thiết"
-            />
-          )}
+            {farm_newses_data && (
+              <ListHomeItems
+                data={farm_newses_data}
+                title="Cửa hàng thân thiết"
+              />
+            )}
 
-          {newses_data && (
-            <ListHomeVoucherItems
-              data={newses_data}
-              title="TiDi Voucher"
-            />
-          )}
+            {newses_data && (
+              <ListHomeVoucherItems
+                data={newses_data}
+                title="TiDi Voucher"
+              />
+            )}
 
-          {newses_data && (
-            <ListHomeNewsItems
-              data={newses_data}
-              title="TiDi News"
-            />
-          )}
+            {newses_data && (
+              <ListHomeNewsItems
+                data={newses_data}
+                title="TiDi News"
+              />
+            )}
           </View>
         </ScrollView>
       </View>
@@ -662,6 +655,9 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
     flex: 1,
     flexDirection: 'row',
+    borderWidth: Util.pixel,
+    borderColor: "#dddddd",
+    borderBottomRightRadius: 30,
   },
   container: {
     flex: 1,
@@ -674,10 +670,13 @@ const styles = StyleSheet.create({
     borderColor: "#dddddd"
   },
   serviceBox: {
-    marginTop: 80,
-    marginBottom: 20,
+    marginTop: 60,
+    marginBottom: 10,
     flexDirection: 'row',
     backgroundColor: "#FAFAFA",
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingHorizontal: MARGIN_HORIZONTAL,
   },
   add_store_box: {
     width: '100%',
@@ -693,49 +692,55 @@ const styles = StyleSheet.create({
     lineHeight: 20
   },
   add_store_actions_box: {
-    // width: '100%',
     flexDirection: 'column',
     flex: 1,
-    // paddingVertical: 8,
     backgroundColor: "#FFFFFF",
     borderRadius: 5,
-    margin: 15,
-    // padding: 15,
+    margin: MARGIN_HORIZONTAL,
     position: 'absolute',
     top: -100,
     left: 0,
     right: 0,
-    height: 150,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
+    height: 125,
+    ...Platform.select({
+      ios: {
+        shadowOffset: {width: 0, height: 3},
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 2,
+        borderWidth: Util.pixel,
+        borderColor: "#E1E1E1",
+      },
+    }),
   },
   home_box_wallet_info: {
     flexDirection: 'row',
-    flex: 1,
-    padding: 15,
+    paddingHorizontal: MARGIN_HORIZONTAL,
+    paddingTop: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
   },
   home_box_wallet_action: {
     flexDirection: 'row',
     flex: 1,
     justifyContent: "space-between",
+    paddingRight: 15,
   },
   add_store_action_btn: {
-    width: ~~(Util.size.width / 3),
-    // paddingVertical: 4,
-
+    width: ~~(Util.size.width / 3.5),
+    paddingVertical: 4,
+    paddingHorizontal: 0,
   },
   add_store_action_btn_box: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    // width: ~~(Util.size.width / 4),
-    // borderLeftWidth: Util.pixel,
-    // borderLeftColor: '#ebebeb'
+    marginBottom: 15,
   },
   add_store_action_btn_box_balance: {
-    // alignItems: 'center',
-    // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 2),
     borderLeftWidth: Util.pixel,
     borderLeftColor: '#ebebeb',
@@ -752,10 +757,13 @@ const styles = StyleSheet.create({
     color: '#ffffff',
   },
   add_store_action_label: {
-    fontSize: 14,
+    fontSize: 13,
+    color: '#414242',
+    marginTop: 5,
+  },
+  add_store_wallet_label: {
+    fontSize: 12,
     color: '#9B04F1',
-    // paddingVertical: 8,
-    // paddingHorizontal: 8
   },
   home_box_wallet_info_label_right: {
     flex: 1,
@@ -767,10 +775,8 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
     paddingHorizontal: 8
   },
-
   modal_add_store: {
     width: '90%',
-    // height: 228,
     height: 180,
     borderRadius: 3
   },
@@ -778,13 +784,12 @@ const styles = StyleSheet.create({
     color: "#404040",
     fontSize: 18,
     marginTop: 12,
-    marginLeft: 15,
+    marginLeft: MARGIN_HORIZONTAL,
     marginBottom: 8
   },
   modal_add_store_btn: {
     marginTop: 12
   },
-
   separator: {
     width: '100%',
     height: Util.pixel,
@@ -795,24 +800,22 @@ const styles = StyleSheet.create({
     borderBottomWidth: Util.pixel,
     borderColor: "#dddddd"
   },
-
   right_title_btn_box: {
     flex: 1,
     alignItems: 'flex-end'
   },
   myStoresBox: {
     backgroundColor: "#f1f1f1",
-    paddingHorizontal: 15,
+    paddingHorizontal: MARGIN_HORIZONTAL,
     paddingVertical: 8,
     flexDirection: 'row'
   },
   myFavoriteBox: {
     backgroundColor: "#f1f1f1",
-    paddingHorizontal: 15,
+    paddingHorizontal: MARGIN_HORIZONTAL,
     paddingVertical: 8,
     flexDirection: 'row'
   },
-
   stores_info_action_notify: {
     position: 'absolute',
     minWidth: 16,
@@ -826,15 +829,12 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderRadius: 8
   },
-  stores_info_action_notify_chat: {
-
-  },
+  stores_info_action_notify_chat: {},
   stores_info_action_notify_value: {
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600'
   },
-
   boxButtonActions: {
     // backgroundColor: "#ffffff",
     flexDirection: 'row',
@@ -877,6 +877,16 @@ const styles = StyleSheet.create({
     width: 27,
     height: 27,
     resizeMode: 'cover',
+  },
+  icon_next: {
+    width: 20,
+    height: 20,
+    resizeMode: 'cover',
+  },
+  icon_service: {
+    width: 40,
+    height: 40,
+    resizeMode: 'cover',
   }
 });
 
@@ -885,36 +895,34 @@ const ServiceButton = (props) => {
     <TouchableHighlight
       underlayColor='transparent'
       style={[{
-        // alignItems: 'center',
-        // width: ~~(Util.size.width / 4),
-        // paddingRight: 10,
-        // justifyContent: 'flex-start',
       }]}
-      onPress={props.onPress}
+      onPress={() => {
+        if (props.service_type === 'scan_qc_code') {
+          Actions.qr_bar_code({title: "Quét QR Code", index: 1, wallet: store.user_info.default_wallet});
+        }
+      }}
     >
       <View style={[{
         alignItems: 'center',
-        width: ~~(Util.size.width / 4),
-        paddingRight: 10,
-        justifyContent: 'flex-start',
+        width: ~~(Util.size.width / 5),
       }, props.style]}>
-        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <View style={{flex: 1, justifyContent: 'flex-end', marginBottom: 10,}}>
           <Image
-            style={styles.icon_tran}
+            style={styles.icon_service}
             source={props.iconName}
           />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={{flex: 1}}>
           <Text style={{
-            color: '#404040',
-            fontSize: 14,
+            color: '#262C35',
+            fontSize: 12,
             textAlign: 'center'
           }}>
             {props.title}
           </Text>
         </View>
       </View>
-    </TouchableHighlight >
+    </TouchableHighlight>
   )
 }
 
@@ -922,11 +930,8 @@ const ListHomeItems = (props) => {
   return (
     <View>
       <View style={{
-        paddingHorizontal: 15,
+        paddingHorizontal: MARGIN_HORIZONTAL,
         paddingVertical: 4,
-        // borderBottomWidth: Util.pixel,
-        // borderColor: "#dddddd",
-        // marginTop: 4,
         flexDirection: 'row'
       }}>
         <Text style={styles.add_store_title}>{props.title}</Text>
@@ -942,7 +947,7 @@ const ListHomeItems = (props) => {
                 news_type: "/" + newses_type
               });
             }}>
-            <Text style={[styles.add_store_title, { color: "#042C5C" }]}>
+            <Text style={[styles.add_store_title, {color: "#042C5C"}]}>
               Xem tất cả
             </Text>
           </TouchableHighlight>
@@ -952,16 +957,10 @@ const ListHomeItems = (props) => {
         data={props.data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item, index }) => {
-          // if (index == 0) {
-          //   this.defaultNewBoxHeight = 0;
-          // }
-
-          // this.defaultNewBoxHeight += (isIOS ? 116 : 124);
-
+        renderItem={({item, index}) => {
           return (
             <NewItemComponent3
-              item={item} />
+              item={item}/>
           );
         }}
         keyExtractor={item => item.id}
@@ -974,11 +973,8 @@ const ListHomeVoucherItems = (props) => {
   return (
     <View>
       <View style={{
-        paddingHorizontal: 15,
+        paddingHorizontal: MARGIN_HORIZONTAL,
         paddingVertical: 4,
-        // borderBottomWidth: Util.pixel,
-        // borderColor: "#dddddd",
-        // marginTop: 4,
         flexDirection: 'row'
       }}>
         <Text style={styles.add_store_title}>{props.title}</Text>
@@ -994,7 +990,7 @@ const ListHomeVoucherItems = (props) => {
                 news_type: "/" + newses_type
               });
             }}>
-            <Text style={[styles.add_store_title, { color: "#042C5C" }]}>
+            <Text style={[styles.add_store_title, {color: "#042C5C"}]}>
               Xem tất cả
             </Text>
           </TouchableHighlight>
@@ -1004,16 +1000,10 @@ const ListHomeVoucherItems = (props) => {
         data={props.data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item, index }) => {
-          // if (index == 0) {
-          //   this.defaultNewBoxHeight = 0;
-          // }
-
-          // this.defaultNewBoxHeight += (isIOS ? 116 : 124);
-
+        renderItem={({item, index}) => {
           return (
             <NewItemComponent4
-              item={item} />
+              item={item}/>
           );
         }}
         keyExtractor={item => item.id}
@@ -1026,13 +1016,9 @@ const ListHomeNewsItems = (props) => {
   return (
     <View>
       <View style={{
-        marginHorizontal: 15,
+        marginHorizontal: MARGIN_HORIZONTAL,
         marginVertical: 4,
-        // borderBottomWidth: Util.pixel,
-        // borderColor: "#dddddd",
-        // marginTop: 4,
         flexDirection: 'row',
-        marginRight: 15,
       }}>
         <Text style={styles.add_store_title}>{props.title}</Text>
 
@@ -1047,7 +1033,7 @@ const ListHomeNewsItems = (props) => {
                 news_type: "/" + newses_type
               });
             }}>
-            <Text style={[styles.add_store_title, { color: "#042C5C" }]}>
+            <Text style={[styles.add_store_title, {color: "#042C5C"}]}>
               Xem tất cả
             </Text>
           </TouchableHighlight>
@@ -1057,10 +1043,10 @@ const ListHomeNewsItems = (props) => {
         data={props.data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({ item, index }) => {
+        renderItem={({item, index}) => {
           return (
             <NewItemComponent5
-              item={item} />
+              item={item}/>
           );
         }}
         keyExtractor={item => item.id}
