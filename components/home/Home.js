@@ -635,6 +635,8 @@ export default class Home extends Component {
               title="Tin tức"
             />
           )}
+
+          <View style={{ height: 20, backgroundColor: 'transparent' }}/>
         </ScrollView>
       </View>
     );
@@ -658,7 +660,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: BGR_SCREEN_COLOR
+    paddingBottom: 34,
+    backgroundColor: BGR_SCREEN_COLOR,
   },
   stores_box: {
     marginBottom: 8,
