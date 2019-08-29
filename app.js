@@ -80,6 +80,12 @@ import Affiliate from "./components/account/Affiliate/Affiliate";
 import ProfileDetail from "./components/account/ProfileDetail";
 import EditProfile from "./components/account/EditProfile";
 import DetailHistoryPayment from "./components/account/DetailHistoryPayment";
+import PhoneCard from "./components/services/PhoneCard";
+import PhoneCardConfirm from "./components/services/PhoneCardConfirm";
+import NapTKC from "./components/services/NapTKC";
+import NapTKCConfirm from "./components/services/NapTKCConfirm";
+import MdCard from "./components/services/MdCard";
+import MdCardConfirm from "./components/services/MdCardConfirm";
 
 // Backend
 
@@ -543,6 +549,10 @@ export default class App extends Component {
     Actions._main_notify({ type: ActionConst.REFRESH });
   }
 
+  _goQRCode() {
+    Actions.qr_bar_code({ title: "Mã tài khoản", direction: "vertical" });
+  }
+
   renderRounter() {
     // var { showIntro } = this.state;
     var showIntro = false;
@@ -608,6 +618,25 @@ export default class App extends Component {
               <Scene
                 key="myTab3"
                 icon={TabIcon}
+                iconName="qrcode-scan"
+                size={24}
+                isHighlightTab
+                onPress={this._goQRCode.bind(this, this.state.store_data)}
+              >
+                <Scene
+                  key="_main_notify"
+                  title="Tin tức"
+                  component={Notifys}
+                  {...custommerNav}
+                />
+              </Scene>
+
+              {/**
+               ************************ Tab 3 ************************
+               */}
+              <Scene
+                key="myTab4"
+                icon={TabIcon}
                 iconTitle="Đơn hàng"
                 iconName="shopping-cart"
                 size={24}
@@ -627,7 +656,7 @@ export default class App extends Component {
                ************************ Tab 4 ************************
                */}
               <Scene
-                key="myTab4"
+                key="myTab5"
                 icon={TabIcon}
                 iconTitle="Tài khoản"
                 iconName="account-circle"
@@ -906,6 +935,43 @@ export default class App extends Component {
               component={DetailHistoryPayment}
               {...custommerNav}
             />
+
+            <Scene
+              key="phonecard"
+              title="Mua mã thẻ di động"
+              component={PhoneCard}
+              {...custommerNav}
+            />
+            <Scene
+              key="phonecard_confirm"
+              title="Xác nhận"
+              component={PhoneCardConfirm}
+              {...custommerNav}
+            />
+            <Scene
+              key="nap_tkc"
+              title="Nạp tiền điện thoại"
+              component={NapTKC}
+              {...custommerNav}
+            />
+            <Scene
+              key="nap_tkc_confirm"
+              title="Xác nhận"
+              component={NapTKCConfirm}
+              {...custommerNav}
+            />
+            <Scene
+              key="md_card"
+              title="Nạp thẻ trong ngày"
+              component={MdCard}
+              {...custommerNav}
+            />
+            <Scene
+              key="md_card_confirm"
+              title="Xác nhận"
+              component={MdCardConfirm}
+              {...custommerNav}
+            />
           </Scene>
           <Scene key="error" component={Error} />
         </Scene>
@@ -954,7 +1020,15 @@ const styles = StyleSheet.create({
     borderTopWidth: Util.pixel,
     borderColor: "#cccccc",
     backgroundColor: "white",
-    opacity: 1
+    opacity: 1,
+    shadowColor: "black",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowRadius: 10,
+    shadowOpacity: 0.3,
+    elevation: 2
   },
   content: {
     width: Util.size.width,
