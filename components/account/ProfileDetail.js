@@ -17,32 +17,32 @@ export default class ProfileDetail extends Component {
   constructor(props) {
     super(props);
 
+    const { userInfo } = this.props;
+
     this.state = {
       sections: [
         {
           id: "id_section_1",
           data: [
-            { id: "ho_ten", title: "Họ & tên", value: "Lê Huy Thực" },
+            { id: "ho_ten", title: "Họ & tên", value: userInfo.name },
             {
               id: "so_dien_thoai",
               title: "Số điện thoại",
-              value: "0983 962 301"
-            },
-            { id: "ma_the", title: "Mã thẻ cứng", value: "8888 2003 8751 0113" }
+              value: userInfo.tel
+            }
           ]
         },
         {
           id: "id_section_2",
           data: [
-            { id: "cmnd", title: "Số CMND", value: "******358" },
-            { id: "ngay_sinh", title: "Ngày sinh", value: "23/01/1985" },
-            { id: "gioi_tinh", title: "Giới tính", value: "Nam" },
-            { id: "email", title: "Email", value: "thuc.lehuy@gmail.com" }
+            { id: "ngay_sinh", title: "Ngày sinh", value: userInfo.birth },
+            { id: "gioi_tinh", title: "Giới tính", value: userInfo.gender },
+            { id: "email", title: "Email", value: userInfo.email }
           ]
         },
         {
           id: "id_section_3",
-          data: [{ id: "dia_chi", title: "Địa chỉ", value: "PHÒNG 914" }]
+          data: [{ id: "dia_chi", title: "Địa chỉ", value: userInfo.address }]
         }
       ]
     };
@@ -67,7 +67,9 @@ export default class ProfileDetail extends Component {
   }
 
   _onShowEditProfile = () => {
-    Actions.edit_profile({});
+    Actions.edit_profile({
+      userInfo: this.props.userInfo
+    });
   };
 
   _renderSectionSeparator = () => {
