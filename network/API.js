@@ -85,6 +85,7 @@ exports.USER_NOTIFY = MY_FOOD_API + "apiUser/notify";
 exports.ADD_PUSH_TOKEN = MY_FOOD_API + "api/add_push_token";
 
 // Users
+
 exports.USER_REGISTER = MY_FOOD_API + "apiUser/register";
 exports.USER_OP_REGISTER = MY_FOOD_API + "apiUser/op_register";
 exports.USER_VERIFY_OTP = MY_FOOD_API + "apiUser/verify_otp";
@@ -102,3 +103,7 @@ exports.USER_CHOOSE_LOCATION = MY_FOOD_API + "apiUser/choose_site";
 exports.USER_COINS_WALLET = MY_FOOD_API + "apiUser/point_history";
 exports.USER_TRANSFER_BALANCE = MY_FOOD_API + "apiUser/transfer_balance";
 exports.USER_WALLET_HISTORY = MY_FOOD_API + "apiUser/wallet_history";
+
+// Service
+exports.SERVICE_INFO = MY_FOOD_API + "apiService/info";
+exports.SERVICE_DETAIL = MY_FOOD_API + "apiService/detail";
