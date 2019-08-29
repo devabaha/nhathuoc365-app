@@ -9,15 +9,18 @@ import {
 } from "react-native";
 
 import lodash from "lodash";
+import DatePicker from "react-native-datepicker";
 
 export default class HorizontalInfoItem extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      selectedDate: null
+    };
   }
 
-  _renderRightView = (input, select, value, defaultValue, specialColor) => {
+  _renderRightView = (id, input, select, value, defaultValue, specialColor) => {
     if (!input && !select) {
       return (
         <Text
@@ -35,34 +38,95 @@ export default class HorizontalInfoItem extends Component {
           style={styles.detailTitle}
           value={value}
           placeholder={defaultValue}
+          onChangeText={this._onChangeInputValue}
         />
       );
     } else if (select) {
-      return (
-        <TouchableOpacity
-          style={styles.btnSelect}
-          onPress={this._onSelectValue}
-        >
-          <Text
-            style={{
-              fontSize: 14,
-              color: lodash.isEmpty(value) ? "#989898" : "black"
-            }}
+      if (id === "ngay_sinh") {
+        return (
+          <View style={styles.btnSelect}>
+            <DatePicker
+              style={{ flex: 1 }}
+              date={this.state.selectedDate}
+              mode="date"
+              placeholder={defaultValue}
+              format="YYYY/MM/DD"
+              confirmBtnText="Xong"
+              cancelBtnText="Huỷ"
+              showIcon={false}
+              customStyles={{
+                dateText: {
+                  fontSize: 14,
+                  color: "black",
+                  position: "absolute",
+                  right: 0
+                },
+                placeholderText: {
+                  fontSize: 14,
+                  color: "#989898",
+                  position: "absolute",
+                  right: 0
+                },
+                dateInput: {
+                  borderColor: "transparent"
+                }
+              }}
+              onDateChange={date => {
+                this.setState({ selectedDate: date }, () => {
+                  if (lodash.isFunction(this.props.onSelectedDate)) {
+                    this.props.onSelectedDate(date);
+                  }
+                });
+              }}
+            />
+          </View>
+        );
+      } else {
+        return (
+          <TouchableOpacity
+            style={styles.btnSelect}
+            onPress={this._onSelectValue}
           >
-            {lodash.isEmpty(value) ? defaultValue : value}
-          </Text>
-        </TouchableOpacity>
-      );
+            <Text
+              style={{
+                fontSize: 14,
+                color: lodash.isEmpty(value) ? "#989898" : "black"
+              }}
+            >
+              {lodash.isEmpty(value) ? defaultValue : value}
+            </Text>
+          </TouchableOpacity>
+        );
+      }
     } else {
       return null;
     }
   };
 
-  _onSelectValue = () => {};
+  _onChangeInputValue = value => {
+    if (lodash.isFunction(this.props.onChangeInputValue)) {
+      this.props.onChangeInputValue(this.props.data, value);
+    }
+  };
+
+  _onSelectValue = () => {
+    if (lodash.isFunction(this.props.onSelectedValue)) {
+      this.props.onSelectedValue(this.props.data);
+    }
+  };
 
   render() {
     const {
-      data: { title, value, disable, input, select, defaultValue, specialColor }
+      data: {
+        id,
+        title,
+        value,
+        disable,
+        input,
+        select,
+        defaultValue,
+        specialColor
+      }
     } = this.props;
     return (
       <View
@@ -73,6 +137,7 @@ export default class HorizontalInfoItem extends Component {
       >
         <Text style={styles.title}>{title}</Text>
         {this._renderRightView(
+          id,
           input,
           select,
           value,
