@@ -654,6 +654,8 @@ export default class Home extends Component {
                 title="TiDi News"
               />
             )}
+
+            <View style={{ height: 20, backgroundColor: 'transparent' }}/>
           </View>
         </ScrollView>
       </View>
@@ -684,7 +686,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingBottom: BAR_HEIGHT,
+    paddingBottom: BAR_HEIGHT - 16,
     backgroundColor: "#FAFAFA"
   },
   stores_box: {
