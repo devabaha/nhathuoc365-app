@@ -101,4 +101,5 @@ exports.USER_TRANSFER_BALANCE = MY_FOOD_API + 'apiUser/transfer_balance';
 exports.USER_WALLET_HISTORY = MY_FOOD_API + 'apiUser/wallet_history';
 
 // Service
-exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/info';
+exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';
+exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';

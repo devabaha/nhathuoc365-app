@@ -490,8 +490,15 @@ class APIHandler {
   /**
    * Service
    */
-  async service_detail(service_type, site_id) {
-    var api = url_for(API.SERVICE_DETAIL + "/" + site_id + "/" + service_type);
+  async service_detail(service_id) {
+    var api = url_for(API.SERVICE_DETAIL + "/" + service_type);
+    return await this.getAPI(api);
+  }
+  /**
+   * 
+   */
+  async service_info(service_id) {
+    var api = url_for(API.SERVICE_INFO + "/" + service_id);
     return await this.getAPI(api);
   }
 

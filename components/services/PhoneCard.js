@@ -29,6 +29,7 @@ export default class PhoneCard extends Component {
 
     this.state = {
       service_type: props.service_type || 'phone_card',
+      service_id: props.service_id || 1,
       data: '',
       telco: '',
       price_list: [],
@@ -47,14 +48,14 @@ export default class PhoneCard extends Component {
 
   async _getData(delay) {
     try {
-      var response = await APIHandler.service_detail(this.state.service_type, this.props.store.store_id);
+      var response = await APIHandler.service_info(this.state.service_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
           this.setState({
-            telcos: response.data.service_info_list_childs
+            telcos: response.data.sub_services
           });
-          this.onPressChooseTelco(response.data.service_info_list_childs[0]);
+          this.onPressChooseTelco(response.data.sub_services[0]);
         }, delay || 0);
       }
     } catch (e) {

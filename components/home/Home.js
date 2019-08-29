@@ -55,21 +55,25 @@ const SERVICES_DATA_1 = [
     iconName: _drawerIconScanQrcode,
     title: 'Quét Mã \n QR',
     service_type: 'scan_qc_code',
+    service_id: 0
   },
   {
     iconName: _drawerIconPhoneCard,
     title: 'Nạp tiền \n điện thoại',
     service_type: 'phone_card',
+    service_id: 1
   },
   {
     iconName: _drawerIconRada,
     title: 'Dịch vụ \n Rada',
     service_type: 'rada',
+    service_id: 3
   },
   {
     iconName: _drawerIconPayBill,
-    title: 'Thanh toán \n hóa đơn',
-    service_type: 'pay_bill',
+    title: 'Đặt lịch\n giữ chỗ',
+    service_type: 'booking',
+    service_id: 3
   }
 ];
 
@@ -296,11 +300,6 @@ export default class Home extends Component {
     this._getData(1000);
   }
 
-  _goPhoneCard() {
-      // this._closePopup();
-      Actions.phonecard();
-  }
-
   // render rows cửa hàng trong list
   renderRow({item, index}, isAdmin) {
     if (index == 0) {
@@ -409,23 +408,6 @@ export default class Home extends Component {
       title: item.name,
       item
     });
-  }
-
-  // go to service
-  _goServiceType(item) {
-    if (item.service_type == 'phone_card') {
-      Actions.phonecard({
-        service_type: item.service_type,
-      })
-    } else if (item.service_type == 'nap_tkc') {
-      Actions.nap_tkc({
-        service_type: item.service_type,
-      })
-    } else if (item.service_type == 'md_card') {
-      Actions.md_card({
-        service_type: item.service_type,
-      })
-    }
   }
 
   render() {
@@ -631,6 +613,7 @@ export default class Home extends Component {
                   iconName={item.iconName}
                   title={item.title}
                   service_type={item.service_type}
+                  service_id={item.service_id}
                   key={index}
                   style={index !== SERVICES_DATA_1.length - 1 && {
                   }}
@@ -924,6 +907,22 @@ const ServiceButton = (props) => {
       onPress={() => {
         if (props.service_type === 'scan_qc_code') {
           Actions.qr_bar_code({title: "Quét QR Code", index: 1, wallet: store.user_info.default_wallet});
+        }
+        if (props.service_type == 'phone_card') {
+          Actions.phonecard({
+            service_type: props.service_type,
+            service_id: props.service_id
+          })
+        } else if (props.service_type == 'nap_tkc') {
+          Actions.nap_tkc({
+            service_type: props.service_type,
+            service_id: props.service_id
+          })
+        } else if (props.service_type == 'md_card') {
+          Actions.md_card({
+            service_type: props.service_type,
+            service_id: props.service_id
+          })
         }
       }}
     >
