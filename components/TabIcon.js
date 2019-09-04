@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   StyleSheet,
+  Platform,
 } from 'react-native';
 
 // librarys
@@ -28,10 +29,10 @@ export default class TabIcon extends Component {
     const { isHighlightTab } = this.props;
     const normalIconStyle = this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title;
     return(
-      <View style={[styles.tabIcon, isHighlightTab ? { position: 'absolute', height: 64, bottom: 0 } : null]}>
-        <View style={isHighlightTab ? styles.iconBoxHighlight : styles.iconBox}>
-          {isHighlightTab ? <MaterialCommunityIcons style={[styles.iconTabbar, { color: 'white' }]} name={this.props.iconName} size={this.props.size} />
-          : <Icon style={[styles.iconTabbar, normalIconStyle]} name={this.props.iconName} size={this.props.size} />}
+      <View style={[styles.tabIcon, isHighlightTab ? { bottom: 16 } : null]}>
+        <View style={[isHighlightTab ? styles.iconBoxHighlight : styles.iconBox, Platform.OS === 'ios' ? { paddingTop: 3 } : null]}>
+          {isHighlightTab ? <MaterialCommunityIcons style={[{ color: 'white' }]} name={this.props.iconName} size={this.props.size} />
+          : <Icon style={[normalIconStyle]} name={this.props.iconName} size={this.props.size} />}
         </View>
         <Text style={[this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title, styles.titleDefault]}>{this.props.iconTitle}</Text>
         {notifyCount > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{notifyCount}</Text></View>}
@@ -76,7 +77,6 @@ const styles = StyleSheet.create({
   iconBoxHighlight: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 4,
     width: 56,
     height: 56,
     backgroundColor: DEFAULT_COLOR,

@@ -663,8 +663,8 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
     flex: 1,
     flexDirection: 'row',
-    borderWidth: Util.pixel,
-    borderColor: "#dddddd",
+    // borderWidth: Util.pixel,
+    // borderColor: "#dddddd",
     borderBottomRightRadius: 30,
   },
   container: {
