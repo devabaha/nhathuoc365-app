@@ -35,29 +35,29 @@ export default class AddStore extends Component {
       searchValue: null,
       coppy_sticker_flag: false,
       fromIntro: props.fromIntro
-    }
+    };
   }
 
-  componentDidMount() {
-
-  }
+  componentDidMount() {}
 
   // onchange text value for typing
   _onChangeSearch(text) {
     clearTimeout(this.search_handler);
 
-    this.setState({
-      searchValue: text
-    }, () => {
-      this.search_handler = setTimeout(() => {
-        this._search_store();
-      }, 300);
-    });
+    this.setState(
+      {
+        searchValue: text
+      },
+      () => {
+        this.search_handler = setTimeout(() => {
+          this._search_store();
+        }, 300);
+      }
+    );
   }
 
   // tìm cửa hàng theo mã CH
   _search_store() {
-
     if (this.state.searchValue == '') {
       this.setState({
         search_data: null,
@@ -66,40 +66,47 @@ export default class AddStore extends Component {
       return;
     }
 
-    this.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_search_store(this.state.searchValue);
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_search_store(
+            this.state.searchValue
+          );
 
-        if (response && response.status == STATUS_SUCCESS) {
-          this.setState({
-            search_data: [response.data],
-            loading: false
-          });
-        } else {
-          this.setState({
-            search_data: null,
-            loading: false
-          });
+          if (response && response.status == STATUS_SUCCESS) {
+            this.setState({
+              search_data: [response.data],
+              loading: false
+            });
+          } else {
+            this.setState({
+              search_data: null,
+              loading: false
+            });
+          }
+        } catch (e) {
+          console.warn(e + ' user_search_store');
+
+          store.addApiQueue('user_search_store', this._search_store.bind(this));
+        } finally {
         }
-
-      } catch (e) {
-        console.warn(e + ' user_search_store');
-
-        store.addApiQueue('user_search_store', this._search_store.bind(this));
-      } finally {
       }
-    });
+    );
   }
 
   // click chọn địa điểm gợi ý
   _onPressSuggest(store) {
-    this.setState({
-      searchValue: store.site_code
-    }, () => {
-      this._search_store();
-    });
+    this.setState(
+      {
+        searchValue: store.site_code
+      },
+      () => {
+        this._search_store();
+      }
+    );
   }
 
   // bấm huỷ khi search
@@ -111,7 +118,7 @@ export default class AddStore extends Component {
   }
 
   render() {
-    var {search_data} = this.state;
+    var { search_data } = this.state;
 
     return (
       <View style={styles.container}>
@@ -119,20 +126,24 @@ export default class AddStore extends Component {
           style={{
             marginBottom: store.keyboardTop
           }}
-          keyboardShouldPersistTaps="always">
-
-          <Text style={{
-            fontWeight: '500',
-            color: "#404040",
-            fontSize: 16,
-            marginLeft: 15,
-            marginTop: 15,
-            marginBottom: 8
-          }}>Nhập mã cửa hàng yêu thích của bạn</Text>
+          keyboardShouldPersistTaps="always"
+        >
+          <Text
+            style={{
+              fontWeight: '500',
+              color: '#404040',
+              fontSize: 16,
+              marginLeft: 15,
+              marginTop: 15,
+              marginBottom: 8
+            }}
+          >
+            Nhập mã cửa hàng yêu thích của bạn
+          </Text>
           <View>
             <TextInput
               underlineColorAndroid="transparent"
-              ref={ref => this.searchInput = ref}
+              ref={ref => (this.searchInput = ref)}
               onLayout={() => {
                 if (this.searchInput) {
                   this.searchInput.focus();
@@ -140,12 +151,12 @@ export default class AddStore extends Component {
               }}
               style={{
                 height: 42,
-                borderColor: "#dddddd",
+                borderColor: '#dddddd',
                 borderWidth: 1,
                 marginHorizontal: 15,
                 paddingHorizontal: 8,
                 borderRadius: 2,
-                color: "#404040",
+                color: '#404040',
                 fontSize: 18
               }}
               placeholder="Nhập mã cửa hàng"
@@ -157,12 +168,15 @@ export default class AddStore extends Component {
               underlayColor="transparent"
               onPress={() => {
                 Actions.scan_qr_code({
-                  onBackHandler: (site_code) => {
-                    this.setState({
-                      searchValue: site_code
-                    }, () => {
-                      this._search_store();
-                    });
+                  onBackHandler: site_code => {
+                    this.setState(
+                      {
+                        searchValue: site_code
+                      },
+                      () => {
+                        this._search_store();
+                      }
+                    );
                   }
                 });
               }}
@@ -170,7 +184,8 @@ export default class AddStore extends Component {
                 position: 'absolute',
                 right: 20,
                 top: 2
-              }}>
+              }}
+            >
               <Icon name="qrcode" size={40} color="#404040" />
             </TouchableHighlight>
           </View>
@@ -180,51 +195,47 @@ export default class AddStore extends Component {
               keyboardShouldPersistTaps="always"
               style={styles.stores_result_box}
               data={search_data}
-              onEndReached={(num) => {
-
-              }}
+              onEndReached={num => {}}
               onEndReachedThreshold={0}
-              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-              renderItem={({item, index}) => {
-
-                return(
-                  <StoreItem
-                    item={item}
-                    index={index}
-                    that={this}
-                    />
-                );
+              ItemSeparatorComponent={() => (
+                <View style={styles.separator}></View>
+              )}
+              renderItem={({ item, index }) => {
+                return <StoreItem item={item} index={index} that={this} />;
               }}
               keyExtractor={item => item.id}
             />
-          ) : (
-            null
-            // <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
-          )}
-
+          ) : null
+          // <StoreSuggest onPress={this._onPressSuggest.bind(this)} />
+          }
         </ScrollView>
 
         <Sticker
           active={this.state.coppy_sticker_flag}
           message="Thêm Cửa Hàng thành công."
-         />
+        />
 
-         {search_data == null && (
-           <View style={{
-             position: 'absolute',
-             bottom: store.keyboardTop,
-             left: 0,
-             width: Util.size.width,
-             height: 80,
-             alignItems: 'center',
-             justifyContent: 'center'
-           }}>
-
-            <Text style={{
-              color: "#666666",
-              fontSize: 12,
-              marginBottom: 8
-            }}>Chưa có mã cửa hàng, mời bạn dùng thử cửa hàng trải nghiệm!</Text>
+        {search_data == null && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: store.keyboardTop,
+              left: 0,
+              width: Util.size.width,
+              height: 80,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Text
+              style={{
+                color: '#666666',
+                fontSize: 12,
+                marginBottom: 8
+              }}
+            >
+              Chưa có mã cửa hàng, mời bạn dùng thử cửa hàng trải nghiệm!
+            </Text>
             <TouchableHighlight
               style={{
                 borderWidth: Util.pixel,
@@ -234,20 +245,28 @@ export default class AddStore extends Component {
               }}
               underlayColor="transparent"
               onPress={() => {
-                this.setState({
-                  searchValue: STORE_DEMO_CODE
-                }, () => {
-                  this.search_handler = setTimeout(() => {
-                    this._search_store();
-                  }, 300);
-                });
-              }}>
-              <Text style={{
-                color: DEFAULT_COLOR
-              }}>Thêm cửa hàng trải nghiệm!</Text>
+                this.setState(
+                  {
+                    searchValue: STORE_DEMO_CODE
+                  },
+                  () => {
+                    this.search_handler = setTimeout(() => {
+                      this._search_store();
+                    }, 300);
+                  }
+                );
+              }}
+            >
+              <Text
+                style={{
+                  color: DEFAULT_COLOR
+                }}
+              >
+                Thêm cửa hàng trải nghiệm!
+              </Text>
             </TouchableHighlight>
-           </View>
-         )}
+          </View>
+        )}
       </View>
     );
   }
@@ -261,7 +280,7 @@ class StoreItem extends Component {
 
     this.state = {
       add_success: false
-    }
+    };
   }
 
   // thực hiện add cửa hàng vào account của user
@@ -273,64 +292,73 @@ class StoreItem extends Component {
     }
     this._add_store_handler = true;
 
-    this.setState({
-      add_loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_add_store(item.site_code);
+    this.setState(
+      {
+        add_loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_add_store(item.site_code);
 
-        if (response && response.status == STATUS_SUCCESS) {
-          Keyboard.dismiss();
+          if (response && response.status == STATUS_SUCCESS) {
+            Keyboard.dismiss();
+
+            this.setState(
+              {
+                coppy_sticker_flag: true,
+                add_success: true
+              },
+              () => {
+                // reload home screen
+                action(() => {
+                  store.setRefreshHomeChange(store.refresh_home_change + 1);
+                })();
+
+                clearTimeout(this.timerGoBack);
+                this.timerGoBack = setTimeout(() => {
+                  that.setState(
+                    {
+                      coppy_sticker_flag: false
+                    },
+                    () => {
+                      Actions.myTabBar({
+                        type: ActionConst.RESET
+                      });
+                    }
+                  );
+                }, 2000);
+              }
+            );
+
+            // intro finish
+            storage.save({
+              key: STORAGE_INTRO_KEY,
+              data: {
+                finish: true
+              },
+              expires: null
+            });
+
+            Events.trigger(KEY_EVENTS_STORE);
+          }
+        } catch (e) {
+          console.warn(e + ' user_add_store');
+
+          store.addApiQueue('user_add_store', this._add_store.bind(this, item));
+        } finally {
+          this._add_store_handler = false;
 
           this.setState({
-            coppy_sticker_flag: true,
-            add_success: true
-          }, () => {
-            // reload home screen
-            action(() => {
-              store.setRefreshHomeChange(store.refresh_home_change + 1);
-            })();
-
-            clearTimeout(this.timerGoBack);
-            this.timerGoBack = setTimeout(() => {
-              that.setState({
-                coppy_sticker_flag: false
-              }, () => {
-                Actions.myTabBar({
-                  type: ActionConst.RESET
-                });
-              });
-            }, 2000);
+            add_loading: false
           });
-
-          // intro finish
-          storage.save({
-            key: STORAGE_INTRO_KEY,
-            data: {
-              finish: true
-            },
-            expires: null
-          });
-
-          Events.trigger(KEY_EVENTS_STORE);
         }
-      } catch (e) {
-        console.warn(e + ' user_add_store');
-
-        store.addApiQueue('user_add_store', this._add_store.bind(this, item));
-      } finally {
-        this._add_store_handler = false;
-
-        this.setState({
-          add_loading: false
-        });
       }
-    });
+    );
   }
 
   render() {
-    var {item, index} = this.props;
-    var {add_success, add_loading} = this.state;
+    var { item, index } = this.props;
+    var { add_success, add_loading } = this.state;
 
     if (!add_success) {
       add_success = item.added == 1;
@@ -341,11 +369,20 @@ class StoreItem extends Component {
         underlayColor="transparent"
         onPress={() => {
           // Actions.stores({});
-        }}>
-
-        <View style={[styles.store_result_item, index < 3 ? styles.store_result_item_active : null]}>
+        }}
+      >
+        <View
+          style={[
+            styles.store_result_item,
+            index < 3 ? styles.store_result_item_active : null
+          ]}
+        >
           <View style={styles.store_result_item_image_box}>
-            <CachedImage mutable style={styles.store_result_item_image} source={{uri: item.logo_url}} />
+            <CachedImage
+              mutable
+              style={styles.store_result_item_image}
+              source={{ uri: item.logo_url }}
+            />
           </View>
 
           <View style={styles.store_result_item_content}>
@@ -356,13 +393,23 @@ class StoreItem extends Component {
               <View style={styles.store_result_item_add_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
-                  onPress={add_success ? null : this._add_store.bind(this, item)}>
-                  <View style={[styles.add_btn_icon_box, add_success && styles.add_btn_icon_box_active]}>
+                  onPress={
+                    add_success ? null : this._add_store.bind(this, item)
+                  }
+                >
+                  <View
+                    style={[
+                      styles.add_btn_icon_box,
+                      add_success && styles.add_btn_icon_box_active
+                    ]}
+                  >
                     {add_loading ? (
-                      <View style={{
-                        width: 14,
-                        marginRight: 4
-                      }}>
+                      <View
+                        style={{
+                          width: 14,
+                          marginRight: 4
+                        }}
+                      >
                         <Indicator size="small" color={DEFAULT_COLOR} />
                       </View>
                     ) : add_success ? (
@@ -370,7 +417,18 @@ class StoreItem extends Component {
                     ) : (
                       <Text style={[styles.add_btn_icon]}>+</Text>
                     )}
-                    <Text style={[styles.add_btn_label, add_success && styles.add_btn_label_active]}>{add_loading ? "Đang thêm..." : add_success ? "Đã thêm cửa hàng" : "Thêm cửa hàng"}</Text>
+                    <Text
+                      style={[
+                        styles.add_btn_label,
+                        add_success && styles.add_btn_label_active
+                      ]}
+                    >
+                      {add_loading
+                        ? 'Đang thêm...'
+                        : add_success
+                        ? 'Đã thêm cửa hàng'
+                        : 'Thêm cửa hàng'}
+                    </Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -387,22 +445,22 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    backgroundColor: "#ffffff"
+    backgroundColor: '#ffffff'
   },
 
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
 
   stores_result_box: {
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   store_result_item: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingVertical: 4,
     paddingHorizontal: 15,
     flexDirection: 'row',
@@ -412,7 +470,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#ebebeb"
   },
   store_result_item_image_box: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     width: 60,
     height: 60,
     marginTop: 8
@@ -431,20 +489,20 @@ const styles = StyleSheet.create({
   },
   store_result_item_title: {
     fontSize: 14,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '500',
     lineHeight: isIOS ? 16 : 18,
     marginTop: 8
   },
   store_result_item_desc: {
     marginTop: 4,
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     lineHeight: isIOS ? 16 : 18
   },
   store_result_item_time: {
     fontSize: 12,
-    color: "#666666",
+    color: '#666666',
     marginLeft: 4
   },
   store_result_item_add_box: {
@@ -470,7 +528,7 @@ const styles = StyleSheet.create({
     marginTop: -2
   },
   add_btn_icon_active: {
-    color: "#ffffff"
+    color: '#ffffff'
   },
   add_btn_label: {
     color: DEFAULT_COLOR,
@@ -478,6 +536,6 @@ const styles = StyleSheet.create({
     marginLeft: 4
   },
   add_btn_label_active: {
-    color: "#ffffff"
+    color: '#ffffff'
   }
 });

@@ -21,7 +21,7 @@ export default class StoreSuggest extends Component {
     this.state = {
       suggest_data: null,
       isHide: false
-    }
+    };
   }
 
   componentDidMount() {
@@ -47,12 +47,11 @@ export default class StoreSuggest extends Component {
 
       store.addApiQueue('user_list_suggest_site', this._getData.bind(this));
     } finally {
-
     }
   }
 
   render() {
-    var {suggest_data, isHide} = this.state;
+    var { suggest_data, isHide } = this.state;
 
     if (isHide) {
       return null;
@@ -69,8 +68,7 @@ export default class StoreSuggest extends Component {
 
         {suggest_data != null ? (
           <View style={styles.store_item_box}>
-          {
-            this.state.suggest_data.map((item, key) => (
+            {this.state.suggest_data.map((item, key) => (
               <TouchableHighlight
                 key={key}
                 style={[styles.store_item]}
@@ -79,14 +77,14 @@ export default class StoreSuggest extends Component {
                   if (this.props.onPress) {
                     this.props.onPress(item);
                   }
-                }}>
+                }}
+              >
                 <Text style={styles.store_item_title}>{item.name}</Text>
               </TouchableHighlight>
-            ))
-          }
+            ))}
           </View>
         ) : (
-          <Indicator style={{marginTop: 8}} size="small" />
+          <Indicator style={{ marginTop: 8 }} size="small" />
         )}
       </View>
     );
@@ -95,35 +93,35 @@ export default class StoreSuggest extends Component {
 
 StoreSuggest.propTypes = {
   onPress: PropTypes.func.isRequired
-}
+};
 
 const styles = StyleSheet.create({
   suggest_box: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     padding: 15,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd",
+    borderColor: '#dddddd'
   },
   suggest_heading_box: {
     flexDirection: 'row',
-    alignItems: "center",
+    alignItems: 'center',
     marginBottom: 4,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd",
+    borderColor: '#dddddd',
     paddingBottom: 14
   },
   star_box: {
     width: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: "orange",
-    justifyContent: "center",
-    alignItems: "center"
+    backgroundColor: 'orange',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   star_label: {
     fontSize: 12,
-    color: "#666666",
-    marginLeft: 8,
+    color: '#666666',
+    marginLeft: 8
   },
   store_item_box: {
     flexDirection: 'row',
@@ -140,5 +138,5 @@ const styles = StyleSheet.create({
   },
   store_item_title: {
     color: DEFAULT_COLOR
-  },
+  }
 });

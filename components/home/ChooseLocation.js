@@ -24,8 +24,7 @@ export default class ChooseLocation extends Component {
   constructor(props) {
     super();
 
-    this.state = {
-    }
+    this.state = {};
   }
 
   componentDidMount() {
@@ -35,7 +34,7 @@ export default class ChooseLocation extends Component {
   async onPressLocation(item) {
     var response = await APIHandler.user_choose_location(item.id);
     if (response) {
-      if(response.status == STATUS_SUCCESS){
+      if (response.status == STATUS_SUCCESS) {
         action(() => {
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setRefreshNews(store.refresh_news + 1);
@@ -43,11 +42,11 @@ export default class ChooseLocation extends Component {
         Actions.myTabBar({
           type: ActionConst.RESET
         });
-      }else{
+      } else {
         Toast.show(response.message);
       }
-    }else{
-      Toast.show("Có lỗi xảy ra, vui lòng thử lại");
+    } else {
+      Toast.show('Có lỗi xảy ra, vui lòng thử lại');
     }
   }
 
@@ -55,30 +54,46 @@ export default class ChooseLocation extends Component {
     return (
       <View style={styles.container}>
         {store.user_info && store.user_info.sites && (
-          <View style={{marginTop: 20}}>
+          <View style={{ marginTop: 20 }}>
             <View style={styles.myFavoriteBox}>
-              <Text style={styles.add_store_title}>Mời bạn chọn cửa hàng để được phục vụ</Text>
+              <Text style={styles.add_store_title}>
+                Mời bạn chọn cửa hàng để được phục vụ
+              </Text>
             </View>
             {store.user_info.sites.map((item, index) => (
               <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() => this.onPressLocation(item)}>
+                underlayColor="transparent"
+                onPress={() => this.onPressLocation(item)}
+              >
+                <View
+                  style={[
+                    styles.store_result_item,
+                    styles.store_result_item_active
+                  ]}
+                >
+                  <View style={styles.store_result_item_image_box}>
+                    <CachedImage
+                      mutable
+                      style={styles.store_result_item_image}
+                      source={{ uri: item.logo_url }}
+                    />
+                  </View>
 
-              <View style={[styles.store_result_item, styles.store_result_item_active]}>
-                <View style={styles.store_result_item_image_box}>
-                  <CachedImage mutable style={styles.store_result_item_image} source={{uri: item.logo_url}} />
-                </View>
-
-                <View style={styles.store_result_item_content}>
-                  <View style={styles.store_result_item_content_box}>
-                    <Text style={styles.store_result_item_title}>{item.name}</Text>
-                    <Text style={styles.store_result_item_desc}>{item.address}</Text>
+                  <View style={styles.store_result_item_content}>
+                    <View style={styles.store_result_item_content_box}>
+                      <Text style={styles.store_result_item_title}>
+                        {item.name}
+                      </Text>
+                      <Text style={styles.store_result_item_desc}>
+                        {item.address}
+                      </Text>
+                    </View>
                   </View>
                 </View>
-              </View>
-            </TouchableHighlight>
+              </TouchableHighlight>
             ))}
-          </View>)}
+          </View>
+        )}
       </View>
     );
   }
@@ -96,7 +111,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   store_result_item_image_box: {
-    marginTop: 30,
+    marginTop: 30
   },
   store_result_item_image: {
     width: 120,
@@ -109,12 +124,12 @@ const styles = StyleSheet.create({
   titleText: {
     marginTop: 70,
     fontSize: 18,
-    color: "rgb(0,0,0)",
-    fontWeight: "bold",
-    alignSelf: "center"
+    color: 'rgb(0,0,0)',
+    fontWeight: 'bold',
+    alignSelf: 'center'
   },
   myFavoriteBox: {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: '#f1f1f1',
     paddingHorizontal: 15,
     paddingVertical: 8,
     flexDirection: 'row'
@@ -122,18 +137,18 @@ const styles = StyleSheet.create({
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
 
   add_store_box: {
     width: '100%',
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingBottom: 8,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20
@@ -142,9 +157,9 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_action_btn: {
     paddingVertical: 4
@@ -174,7 +189,7 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   modal_add_store_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 18,
     marginTop: 12,
     marginLeft: 15,
@@ -187,28 +202,28 @@ const styles = StyleSheet.create({
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
   stores_result_box: {
     marginTop: 8,
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   store_result_item: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingVertical: 8,
     paddingLeft: 15,
     flexDirection: 'row',
     minHeight: 104,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   store_result_item_active: {
     // backgroundColor: "#ebebeb"
   },
   store_result_item_image_box: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     width: 60,
     height: 60,
     marginTop: 8
@@ -228,21 +243,21 @@ const styles = StyleSheet.create({
   },
   store_result_item_title: {
     fontSize: 14,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '500',
     lineHeight: isIOS ? 16 : 18,
     marginTop: 8
   },
   store_result_item_desc: {
     marginTop: 4,
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     lineHeight: isIOS ? 16 : 18,
     paddingRight: 15
   },
   store_result_item_time: {
     fontSize: 12,
-    color: "#666666",
+    color: '#666666',
     marginLeft: 4
   },
   store_result_item_add_box: {

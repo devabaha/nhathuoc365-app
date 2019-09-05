@@ -18,11 +18,11 @@ import ImageViewer from 'react-native-image-zoom-viewer';
 
 export default class ItemImageViewer extends Component {
   render() {
-    var {images} = this.props;
+    var { images } = this.props;
 
     return (
       <View style={styles.container}>
-        <ImageViewer imageUrls={images}/>
+        <ImageViewer imageUrls={images} />
 
         <TouchableHighlight
           onPress={() => {
@@ -36,7 +36,8 @@ export default class ItemImageViewer extends Component {
             height: 50,
             justifyContent: 'center',
             alignItems: 'center'
-          }}>
+          }}
+        >
           <Icon name="times-circle" size={32} color="#ffffff" />
         </TouchableHighlight>
       </View>
@@ -46,6 +47,6 @@ export default class ItemImageViewer extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
+    flex: 1
+  }
 });

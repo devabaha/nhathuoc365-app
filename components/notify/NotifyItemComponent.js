@@ -15,13 +15,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 
 export default class NotifyItemComponent extends Component {
-
   constructor(props) {
     super(props);
 
-    this.state = {
-
-    }
+    this.state = {};
   }
 
   componentWillMount() {
@@ -36,10 +33,8 @@ export default class NotifyItemComponent extends Component {
   }
 
   _goNoticeDetail(item) {
-
     switch (item.page) {
       case 'orders_item':
-
         Actions.orders_item({
           title: '#...',
           passProps: {
@@ -60,7 +55,7 @@ export default class NotifyItemComponent extends Component {
   }
 
   render() {
-    var {item} = this.props;
+    var { item } = this.props;
 
     const interpolateColor = this.animatedValue.interpolate({
       inputRange: [0, 150],
@@ -69,22 +64,26 @@ export default class NotifyItemComponent extends Component {
 
     const animatedStyle = {
       backgroundColor: interpolateColor
-    }
+    };
 
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={this._goNoticeDetail.bind(this, item)}>
-
+        onPress={this._goNoticeDetail.bind(this, item)}
+      >
         <Animated.View
           style={[
             styles.store_result_item,
             item.read_flag == 0 ? styles.store_result_item_active : null,
             item.read_flag == 0 ? animatedStyle : null
-          ]}>
-
+          ]}
+        >
           <View style={styles.store_result_item_image_box}>
-            <CachedImage mutable style={styles.store_result_item_image} source={{uri: item.image_url}} />
+            <CachedImage
+              mutable
+              style={styles.store_result_item_image}
+              source={{ uri: item.image_url }}
+            />
           </View>
 
           <View style={styles.store_result_item_content}>
@@ -110,21 +109,21 @@ const styles = StyleSheet.create({
     // marginTop: 8,
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   store_result_item: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingTop: 4,
     paddingBottom: 10,
     paddingHorizontal: 15,
     flexDirection: 'row',
-    minHeight: 104,
+    minHeight: 104
   },
   store_result_item_active: {
-    backgroundColor: "#f1f1f1"
+    backgroundColor: '#f1f1f1'
   },
   store_result_item_image_box: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     width: 80,
     height: 80,
     marginTop: 8
@@ -143,25 +142,25 @@ const styles = StyleSheet.create({
   },
   store_result_item_title: {
     fontSize: 14,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '500',
     lineHeight: isIOS ? 16 : 18,
     marginTop: 8
   },
   store_result_item_create: {
-    color: "#666666",
+    color: '#666666',
     fontSize: 10,
     marginTop: 2
   },
   store_result_item_desc: {
     marginTop: 6,
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     lineHeight: isIOS ? 16 : 18
   },
   store_result_item_time: {
     fontSize: 12,
-    color: "#666666",
+    color: '#666666',
     marginLeft: 4
-  },
+  }
 });

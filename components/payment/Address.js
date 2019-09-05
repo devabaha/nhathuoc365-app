@@ -31,7 +31,7 @@ export default class Address extends Component {
       loading: true,
       continue_loading: false,
       single: !props.from_page
-    }
+    };
 
     this._getData = this._getData.bind(this);
   }
@@ -46,11 +46,12 @@ export default class Address extends Component {
 
   // render button trên navbar
   _renderRightButton() {
-    return(
+    return (
       <TouchableHighlight
         style={styles.right_btn_add_store}
         underlayColor="transparent"
-        onPress={this._createNew.bind(this)}>
+        onPress={this._createNew.bind(this)}
+      >
         <Icon name="plus" size={20} color="#ffffff" />
       </TouchableHighlight>
     );
@@ -64,9 +65,8 @@ export default class Address extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           setTimeout(() => {
-
             this.setState({
-              data: [...response.data, {id: 0, type: 'address_add'}],
+              data: [...response.data, { id: 0, type: 'address_add' }],
               loading: false,
               item_selected: null
             });
@@ -78,13 +78,11 @@ export default class Address extends Component {
           });
         }
       }
-
     } catch (e) {
       console.warn(e + ' user_address');
 
       store.addApiQueue('user_address', this._getData.bind(this, delay));
     } finally {
-
     }
   }
 
@@ -93,9 +91,7 @@ export default class Address extends Component {
       return Alert.alert(
         'Thông báo',
         'Nhập địa chỉ nhận hàng trước khi Tiếp tục',
-        [
-          {text: 'Đồng ý', onPress: this._createNew.bind(this)},
-        ],
+        [{ text: 'Đồng ý', onPress: this._createNew.bind(this) }],
         { cancelable: false }
       );
     }
@@ -104,31 +100,36 @@ export default class Address extends Component {
   }
 
   _addSiteCart() {
-    this.setState({
-      continue_loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.site_cart_address(store.store_id, this.state.item_selected);
+    this.setState(
+      {
+        continue_loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.site_cart_address(
+            store.store_id,
+            this.state.item_selected
+          );
 
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-            this.setState({
-              continue_loading: false
-            });
-            Toast.show(response.message);
-          })();
+          if (response && response.status == STATUS_SUCCESS) {
+            action(() => {
+              store.setCartData(response.data);
+              this.setState({
+                continue_loading: false
+              });
+              Toast.show(response.message);
+            })();
 
-          this._goConfirm();
+            this._goConfirm();
+          }
+        } catch (e) {
+          console.warn(e + ' site_cart_address');
+
+          store.addApiQueue('site_cart_address', this._addSiteCart.bind(this));
+        } finally {
         }
-      } catch (e) {
-        console.warn(e + ' site_cart_address');
-
-        store.addApiQueue('site_cart_address', this._addSiteCart.bind(this));
-      } finally {
-
       }
-    });
+    );
   }
 
   _goConfirm() {
@@ -139,7 +140,6 @@ export default class Address extends Component {
 
   // chọn địa chỉ cho đơn hàng
   async _addressSelectHanlder(item) {
-
     this.setState({
       item_selected: item.id
     });
@@ -159,35 +159,59 @@ export default class Address extends Component {
       <View style={styles.container}>
         {single && (
           <View style={styles.payments_nav}>
-            <TouchableHighlight
-              onPress={() => {
-
-              }}
-              underlayColor="transparent">
+            <TouchableHighlight onPress={() => {}} underlayColor="transparent">
               <View style={styles.payments_nav_items}>
-                <View style={[styles.payments_nav_icon_box, styles.payments_nav_icon_box_active]}>
-                  <Icon style={[styles.payments_nav_icon, styles.payments_nav_icon_active]} name="map-marker" size={20} color="#999" />
+                <View
+                  style={[
+                    styles.payments_nav_icon_box,
+                    styles.payments_nav_icon_box_active
+                  ]}
+                >
+                  <Icon
+                    style={[
+                      styles.payments_nav_icon,
+                      styles.payments_nav_icon_active
+                    ]}
+                    name="map-marker"
+                    size={20}
+                    color="#999"
+                  />
                 </View>
-                <Text style={[styles.payments_nav_items_title, styles.payments_nav_items_title_active]}>1. Địa chỉ</Text>
+                <Text
+                  style={[
+                    styles.payments_nav_items_title,
+                    styles.payments_nav_items_title_active
+                  ]}
+                >
+                  1. Địa chỉ
+                </Text>
 
                 <View style={styles.payments_nav_items_active} />
               </View>
             </TouchableHighlight>
 
             <TouchableHighlight
-              onPress={() =>  {
+              onPress={() => {
                 if (store.cart_data.address_id == 0) {
                   this._goConfirmPage();
                 } else {
                   this._goConfirm();
                 }
               }}
-              underlayColor="transparent">
+              underlayColor="transparent"
+            >
               <View style={styles.payments_nav_items}>
                 <View style={[styles.payments_nav_icon_box]}>
-                  <Icon style={[styles.payments_nav_icon]} name="check" size={20} color="#999" />
+                  <Icon
+                    style={[styles.payments_nav_icon]}
+                    name="check"
+                    size={20}
+                    color="#999"
+                  />
                 </View>
-                <Text style={[styles.payments_nav_items_title]}>2. Xác nhận</Text>
+                <Text style={[styles.payments_nav_items_title]}>
+                  2. Xác nhận
+                </Text>
 
                 <View style={styles.payments_nav_items_right_active} />
               </View>
@@ -195,39 +219,56 @@ export default class Address extends Component {
           </View>
         )}
 
-        <ScrollView style={[styles.content, {
-          marginBottom: single ? 60 : 0
-        }]}>
+        <ScrollView
+          style={[
+            styles.content,
+            {
+              marginBottom: single ? 60 : 0
+            }
+          ]}
+        >
           {!single && (
-            <View style={{
-              backgroundColor: "#f1f1f1",
-              paddingHorizontal: 15,
-              paddingVertical: 8,
-              borderTopWidth: Util.pixel,
-              borderColor: "#dddddd"
-            }}>
+            <View
+              style={{
+                backgroundColor: '#f1f1f1',
+                paddingHorizontal: 15,
+                paddingVertical: 8,
+                borderTopWidth: Util.pixel,
+                borderColor: '#dddddd'
+              }}
+            >
               <Text style={styles.add_store_title}>ĐỊA CHỈ NHẬN HÀNG</Text>
             </View>
           )}
-          <View style={[styles.address_list_box, {
-            marginTop: single ? 8 : 0
-          }]}>
+          <View
+            style={[
+              styles.address_list_box,
+              {
+                marginTop: single ? 8 : 0
+              }
+            ]}
+          >
             {this.state.data != null ? (
               <FlatList
                 ref="address_list"
                 data={this.state.data}
                 extraData={this.state}
                 keyExtractor={item => item.id}
-                ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-                renderItem={({item, index}) => {
-                  if(item.type == 'address_add') {
-                    return(
+                ItemSeparatorComponent={() => (
+                  <View style={styles.separator}></View>
+                )}
+                renderItem={({ item, index }) => {
+                  if (item.type == 'address_add') {
+                    return (
                       <TouchableHighlight
                         underlayColor="transparent"
                         onPress={this._createNew.bind(this)}
-                        style={styles.address_add_box}>
+                        style={styles.address_add_box}
+                      >
                         <View style={styles.address_add_content}>
-                          <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
+                          <Text style={styles.address_add_title}>
+                            Thêm địa chỉ mới
+                          </Text>
                           <View style={styles.address_add_icon_box}>
                             <Icon name="plus" size={18} color="#999999" />
                           </View>
@@ -242,7 +283,10 @@ export default class Address extends Component {
                     if (this.state.item_selected == item.id) {
                       is_selected = true;
                     }
-                  } else if (store.cart_data && store.cart_data.address_id != 0) {
+                  } else if (
+                    store.cart_data &&
+                    store.cart_data.address_id != 0
+                  ) {
                     is_selected = store.cart_data.address_id == item.id;
                     if (is_selected) {
                       this.state.item_selected = item.id;
@@ -252,18 +296,23 @@ export default class Address extends Component {
                     is_selected = true;
                   }
 
-                  return(
+                  return (
                     <TouchableHighlight
                       underlayColor="transparent"
-                      onPress={this._addressSelectHanlder.bind(this, item)}>
+                      onPress={this._addressSelectHanlder.bind(this, item)}
+                    >
                       <View style={[styles.address_box]}>
                         <View style={styles.address_name_box}>
                           <Text style={styles.address_name}>{item.name}</Text>
                         </View>
 
                         <View style={styles.address_content}>
-                          <Text style={styles.address_content_phone}>{item.tel}</Text>
-                          <Text style={styles.address_content_address_detail}>{item.address}</Text>
+                          <Text style={styles.address_content_phone}>
+                            {item.tel}
+                          </Text>
+                          <Text style={styles.address_content_address_detail}>
+                            {item.address}
+                          </Text>
                           {/*<Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
                           <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
                           <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
@@ -271,14 +320,22 @@ export default class Address extends Component {
 
                         {is_selected && single && (
                           <View style={styles.address_selected_box}>
-                            <Icon name="check" size={24} color={DEFAULT_COLOR} />
-                            <Text style={styles.address_label}>Giao tới địa chỉ này</Text>
+                            <Icon
+                              name="check"
+                              size={24}
+                              color={DEFAULT_COLOR}
+                            />
+                            <Text style={styles.address_label}>
+                              Giao tới địa chỉ này
+                            </Text>
                           </View>
                         )}
 
                         {item.default_flag == 1 && (
                           <View style={styles.address_edit_btn}>
-                            <Text style={styles.address_default_title}>[Mặc định]</Text>
+                            <Text style={styles.address_default_title}>
+                              [Mặc định]
+                            </Text>
                           </View>
                         )}
 
@@ -288,14 +345,21 @@ export default class Address extends Component {
                             onPress={() => {
                               Actions.create_address({
                                 edit_data: item,
-                                title: "Sửa địa chỉ",
+                                title: 'Sửa địa chỉ',
                                 addressReload: this._getData,
                                 from_page: this.props.from_page
                               });
-                            }}>
+                            }}
+                          >
                             <View style={styles.address_edit_box}>
-                              <Icon name="pencil-square-o" size={12} color="#999999" />
-                              <Text style={styles.address_edit_label}>Chỉnh sửa</Text>
+                              <Icon
+                                name="pencil-square-o"
+                                size={12}
+                                color="#999999"
+                              />
+                              <Text style={styles.address_edit_label}>
+                                Chỉnh sửa
+                              </Text>
                             </View>
                           </TouchableHighlight>
                         </View>
@@ -303,8 +367,12 @@ export default class Address extends Component {
                         {!is_selected && single && (
                           <TouchableHighlight
                             underlayColor="transparent"
-                            onPress={this._addressSelectHanlder.bind(this, item)}
-                            style={styles.uncheckOverlay}>
+                            onPress={this._addressSelectHanlder.bind(
+                              this,
+                              item
+                            )}
+                            style={styles.uncheckOverlay}
+                          >
                             <View></View>
                           </TouchableHighlight>
                         )}
@@ -316,9 +384,11 @@ export default class Address extends Component {
             ) : (
               <View>
                 {this.state.loading && (
-                  <View style={{
-                    paddingVertical: 16
-                  }}>
+                  <View
+                    style={{
+                      paddingVertical: 16
+                    }}
+                  >
                     <Indicator size="small" />
                   </View>
                 )}
@@ -326,12 +396,18 @@ export default class Address extends Component {
                 <TouchableHighlight
                   underlayColor="transparent"
                   onPress={this._createNew.bind(this)}
-                  style={[styles.address_add_box, {
-                    marginTop: 0,
-                    borderTopWidth: 0
-                  }]}>
+                  style={[
+                    styles.address_add_box,
+                    {
+                      marginTop: 0,
+                      borderTopWidth: 0
+                    }
+                  ]}
+                >
                   <View style={styles.address_add_content}>
-                    <Text style={styles.address_add_title}>Thêm địa chỉ mới</Text>
+                    <Text style={styles.address_add_title}>
+                      Thêm địa chỉ mới
+                    </Text>
                     <View style={styles.address_add_icon_box}>
                       <Icon name="plus" size={18} color="#999999" />
                     </View>
@@ -346,15 +422,18 @@ export default class Address extends Component {
           <TouchableHighlight
             underlayColor="transparent"
             onPress={this._goConfirmPage.bind(this)}
-            style={styles.address_continue}>
+            style={styles.address_continue}
+          >
             <View style={styles.address_continue_content}>
               <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
-              <View style={{
-                minWidth: 20,
-                height: '100%',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}>
+              <View
+                style={{
+                  minWidth: 20,
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
                 {this.state.continue_loading ? (
                   <Indicator size="small" color="#fff" />
                 ) : (
@@ -371,7 +450,7 @@ export default class Address extends Component {
 
 const styles = StyleSheet.create({
   add_store_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20
@@ -388,17 +467,17 @@ const styles = StyleSheet.create({
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#dddddd"
+    backgroundColor: '#dddddd'
   },
   address_list_box: {
     marginTop: 8,
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   address_box: {
     paddingVertical: 8,
     paddingHorizontal: 15,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     minHeight: 120
   },
   address_name_box: {
@@ -407,8 +486,7 @@ const styles = StyleSheet.create({
   },
   address_name: {
     fontSize: 16,
-    color: "#000000",
-
+    color: '#000000'
   },
   address_default_box: {
     alignItems: 'flex-end',
@@ -427,27 +505,27 @@ const styles = StyleSheet.create({
     width: Util.size.width - 140
   },
   address_content_phone: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 16,
     marginTop: 4
   },
   address_content_address_detail: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     marginTop: 4
   },
   address_content_phuong: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     marginTop: 4
   },
   address_content_city: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     marginTop: 4
   },
   address_content_tinh: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     marginTop: 4
   },
@@ -462,15 +540,15 @@ const styles = StyleSheet.create({
   },
   address_label: {
     fontSize: 10,
-    color: "#666666",
+    color: '#666666',
     marginTop: 4
   },
 
   address_add_box: {
     marginTop: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderTopWidth: Util.pixel,
-    borderTopColor: "#dddddd"
+    borderTopColor: '#dddddd'
   },
   address_add_content: {
     width: '100%',
@@ -479,10 +557,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#dddddd"
+    borderBottomColor: '#dddddd'
   },
   address_add_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14
   },
   address_add_icon_box: {
@@ -534,12 +612,12 @@ const styles = StyleSheet.create({
   },
   address_edit_label: {
     fontSize: 12,
-    color: "#999999",
+    color: '#999999',
     marginLeft: 4
   },
 
   uncheckOverlay: {
-    backgroundColor: "rgba(0,0,0,0.03)",
+    backgroundColor: 'rgba(0,0,0,0.03)',
     position: 'absolute',
     top: 0,
     left: 0,
@@ -552,7 +630,7 @@ const styles = StyleSheet.create({
     height: 60,
     flexDirection: 'row',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   payments_nav_items: {
     justifyContent: 'center',
@@ -587,7 +665,7 @@ const styles = StyleSheet.create({
   },
   borderBottom: {
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#dddddd"
+    borderBottomColor: '#dddddd'
   },
   right_btn_add_store: {
     paddingVertical: 1,
@@ -596,7 +674,7 @@ const styles = StyleSheet.create({
 
   payments_nav_icon_box: {
     borderWidth: Util.pixel,
-    borderColor: "#cccccc",
+    borderColor: '#cccccc',
     width: 28,
     height: 28,
     borderRadius: 14,

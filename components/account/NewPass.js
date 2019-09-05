@@ -9,7 +9,7 @@ import {
   TouchableHighlight,
   Keyboard,
   ScrollView,
-  Alert,
+  Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -38,7 +38,7 @@ class NewPass extends Component {
       finish_loading: false,
       verify_loadding: false,
       sticker_flag: false
-    }
+    };
   }
 
   componentDidMount() {
@@ -70,19 +70,22 @@ class NewPass extends Component {
   }
 
   _showSticker() {
-    this.setState({
-      sticker_flag: true
-    }, () => {
-      setTimeout(() => {
-        this.setState({
-          sticker_flag: false
-        });
-      }, 2000);
-    });
+    this.setState(
+      {
+        sticker_flag: true
+      },
+      () => {
+        setTimeout(() => {
+          this.setState({
+            sticker_flag: false
+          });
+        }, 2000);
+      }
+    );
   }
 
   _onSave() {
-    var {name, tel, password, finish_loading} = this.state;
+    var { name, tel, password, finish_loading } = this.state;
     password = password.trim();
 
     if (finish_loading) {
@@ -94,118 +97,130 @@ class NewPass extends Component {
         'Thông báo',
         'Hãy điền mật khẩu mới',
         [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs_password.focus();
-          }},
+          {
+            text: 'Đồng ý',
+            onPress: () => {
+              this.refs_password.focus();
+            }
+          }
         ],
         { cancelable: false }
       );
     }
 
-    this.setState({
-      finish_loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_forget_new_password({
-          username: tel,
-          password
-        });
-
-        if (response && response.status == STATUS_SUCCESS) {
-          MessageBarManager.showAlert({
-            message: response.message + `. Đang đăng nhập...`,
-            alertType: 'success'
+    this.setState(
+      {
+        finish_loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_forget_new_password({
+            username: tel,
+            password
           });
 
-          Actions.refresh({
-            onBack: () => false,
-            hideBackImage: true
-          });
+          if (response && response.status == STATUS_SUCCESS) {
+            MessageBarManager.showAlert({
+              message: response.message + `. Đang đăng nhập...`,
+              alertType: 'success'
+            });
 
-          setTimeout(() => {
-            this._login();
-          }, 3000);
-        } else if (response && response.message) {
-          MessageBarManager.showAlert({
-            message: response.message,
-            alertType: 'warning',
-            duration: 5000
+            Actions.refresh({
+              onBack: () => false,
+              hideBackImage: true
+            });
+
+            setTimeout(() => {
+              this._login();
+            }, 3000);
+          } else if (response && response.message) {
+            MessageBarManager.showAlert({
+              message: response.message,
+              alertType: 'warning',
+              duration: 5000
+            });
+          }
+        } catch (e) {
+          console.warn(e + ' user_forget_new_password');
+
+          store.addApiQueue(
+            'user_forget_new_password',
+            this._onSave.bind(this)
+          );
+        } finally {
+          this.setState({
+            finish_loading: false
           });
         }
-
-      } catch (e) {
-        console.warn(e + ' user_forget_new_password');
-
-        store.addApiQueue('user_forget_new_password', this._onSave.bind(this));
-      } finally {
-        this.setState({
-          finish_loading: false
-        });
       }
-    });
+    );
   }
 
   _login() {
-    var {name, tel, password, finish_loading} = this.state;
+    var { name, tel, password, finish_loading } = this.state;
     password = password.trim();
 
-    this.setState({
-      finish_loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_login_password({
-          username: tel,
-          password
-        });
-
-        if (response && response.status == STATUS_SUCCESS) {
-          try {
-            await AsyncStorage.setItem('@username:key', tel);
-          } catch (error) {
-            console.warn(error);
-          }
-
-          action(() => {
-            store.setUserInfo(response.data);
-
-            store.resetCartData();
-
-            store.setRefreshHomeChange(store.refresh_home_change + 1);
-
-            Actions.pop({
-              popNum: 4,
-              refresh: {
-                username: tel,
-                password
-              }
-            });
-          })();
-        } else if (response && response.message) {
-          MessageBarManager.showAlert({
-            message: response.message,
-            alertType: 'warning',
-            duration: 5000
+    this.setState(
+      {
+        finish_loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_login_password({
+            username: tel,
+            password
           });
 
-          setTimeout(() => {
-            this.setState({
-              finish_loading: false
+          if (response && response.status == STATUS_SUCCESS) {
+            try {
+              await AsyncStorage.setItem('@username:key', tel);
+            } catch (error) {
+              console.warn(error);
+            }
+
+            action(() => {
+              store.setUserInfo(response.data);
+
+              store.resetCartData();
+
+              store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+              Actions.pop({
+                popNum: 4,
+                refresh: {
+                  username: tel,
+                  password
+                }
+              });
+            })();
+          } else if (response && response.message) {
+            MessageBarManager.showAlert({
+              message: response.message,
+              alertType: 'warning',
+              duration: 5000
             });
-          }, 5000);
+
+            setTimeout(() => {
+              this.setState({
+                finish_loading: false
+              });
+            }, 5000);
+          }
+        } catch (e) {
+          console.warn(e + ' user_login_password');
+
+          this.setState({
+            finish_loading: false
+          });
+
+          store.addApiQueue(
+            'user_login_password',
+            this._login.bind(this, name, tel, password)
+          );
+        } finally {
         }
-
-      } catch (e) {
-        console.warn(e + ' user_login_password');
-
-        this.setState({
-          finish_loading: false
-        });
-
-        store.addApiQueue('user_login_password', this._login.bind(this, name, tel, password));
-      } finally {
-
       }
-    });
+    );
   }
 
   render() {
@@ -217,24 +232,34 @@ class NewPass extends Component {
           keyboardShouldPersistTaps="always"
           style={{
             marginBottom: store.keyboardTop + 60
-          }}>
-
-          <View style={{
-            height: 60,
-            width: Util.size.width,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Text style={{
-              fontSize: 16,
-              color: '#404040',
-              fontWeight: '500'
-            }}>{tel}</Text>
-            <Text style={{
-              fontSize: 12,
-              marginTop: 4,
-              color: '#666666'
-            }}>Tạo mật khẩu mới cho tài khoản</Text>
+          }}
+        >
+          <View
+            style={{
+              height: 60,
+              width: Util.size.width,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: '#404040',
+                fontWeight: '500'
+              }}
+            >
+              {tel}
+            </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                marginTop: 4,
+                color: '#666666'
+              }}
+            >
+              Tạo mật khẩu mới cho tài khoản
+            </Text>
           </View>
 
           <View style={styles.input_box}>
@@ -244,13 +269,14 @@ class NewPass extends Component {
                 if (this.refs_password) {
                   this.refs_password.focus();
                 }
-              }}>
+              }}
+            >
               <Text style={styles.input_label}>Mật khẩu mới</Text>
             </TouchableHighlight>
 
             <View style={styles.input_text_box}>
               <TextInput
-                ref={ref => this.refs_password = ref}
+                ref={ref => (this.refs_password = ref)}
                 onLayout={() => {
                   if (this.refs_password) {
                     setTimeout(() => this.refs_password.focus(), 300);
@@ -262,13 +288,13 @@ class NewPass extends Component {
                 placeholder="Nhập mật khẩu mới"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
-                onChangeText={(value) => {
+                onChangeText={value => {
                   this.setState({
                     password: value
                   });
                 }}
                 value={this.state.password}
-                />
+              />
             </View>
           </View>
         </ScrollView>
@@ -276,10 +302,18 @@ class NewPass extends Component {
         <TouchableHighlight
           underlayColor="transparent"
           onPress={this._onSave.bind(this)}
-          style={[styles.address_continue, {bottom: store.keyboardTop}]}>
-          <View style={[styles.address_continue_content, {
-            backgroundColor: finish_loading ? hexToRgbA(DEFAULT_COLOR, 0.6) : DEFAULT_COLOR
-          }]}>
+          style={[styles.address_continue, { bottom: store.keyboardTop }]}
+        >
+          <View
+            style={[
+              styles.address_continue_content,
+              {
+                backgroundColor: finish_loading
+                  ? hexToRgbA(DEFAULT_COLOR, 0.6)
+                  : DEFAULT_COLOR
+              }
+            ]}
+          >
             <Text style={styles.address_continue_title}>HOÀN TẤT</Text>
           </View>
         </TouchableHighlight>
@@ -287,7 +321,7 @@ class NewPass extends Component {
         <Sticker
           active={this.state.sticker_flag}
           message="Đăng nhập thành công."
-         />
+        />
 
         <MessageBarAlert ref="alert" />
       </View>
@@ -304,9 +338,9 @@ const styles = StyleSheet.create({
   input_box: {
     width: '100%',
     height: 44,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#dddddd",
+    borderBottomColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15
@@ -318,13 +352,13 @@ const styles = StyleSheet.create({
   },
   input_label: {
     fontSize: 14,
-    color: "#000000"
+    color: '#000000'
   },
   input_text: {
     width: '96%',
     height: 38,
     paddingLeft: 8,
-    color: "#000000",
+    color: '#000000',
     fontSize: 14,
     textAlign: 'right',
     paddingVertical: 0
@@ -333,20 +367,20 @@ const styles = StyleSheet.create({
   input_address_box: {
     width: '100%',
     minHeight: 100,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#dddddd",
+    borderBottomColor: '#dddddd'
   },
   input_label_help: {
     fontSize: 12,
     marginTop: 2,
-    color: "#666666"
+    color: '#666666'
   },
   input_address_text: {
     width: '100%',
-    color: "#000000",
+    color: '#000000',
     fontSize: 14,
     marginTop: 4,
     paddingVertical: 0
@@ -374,4 +408,3 @@ const styles = StyleSheet.create({
     marginLeft: 8
   }
 });
-

@@ -43,7 +43,7 @@ export default class Stores extends Component {
       loading: true,
       category_nav_index: 0,
       categories_data: null
-    }
+    };
 
     action(() => {
       store.setStoresFinish(false);
@@ -57,7 +57,7 @@ export default class Stores extends Component {
     var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
     storage.save({
       key: key_tutorial,
-      data: {finish: true},
+      data: { finish: true },
       expires: null
     });
   }
@@ -68,13 +68,16 @@ export default class Stores extends Component {
         store.setStoresFinish(false);
       })();
 
-      this.setState({
-        loading: true,
-        category_nav_index: 0,
-        categories_data: null
-      }, () => {
-        this._initial(nextProps);
-      });
+      this.setState(
+        {
+          loading: true,
+          category_nav_index: 0,
+          categories_data: null
+        },
+        () => {
+          this._initial(nextProps);
+        }
+      );
     }
   }
 
@@ -122,13 +125,16 @@ export default class Stores extends Component {
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 400 - (Math.abs(time() - this.start_time));
+    var delay = 400 - Math.abs(time() - this.start_time);
     return delay;
   }
 
   parseDataCategories(response) {
     this.setState({
-      categories_data: [{id: 0, name: "Cửa hàng"}, ...response.data.categories],
+      categories_data: [
+        { id: 0, name: 'Cửa hàng' },
+        ...response.data.categories
+      ],
       promotions: response.data.promotions
     });
     setTimeout(() => {
@@ -139,7 +145,6 @@ export default class Stores extends Component {
         }
       });
     }, 1000);
-    
   }
 
   async _getCategoriesNavFromServer() {
@@ -148,47 +153,49 @@ export default class Stores extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => this.parseDataCategories(response), this._delay());
       }
-
     } catch (e) {
       console.warn(e + ' site_info');
 
-      store.addApiQueue('site_info', this._getCategoriesNavFromServer.bind(this));
+      store.addApiQueue(
+        'site_info',
+        this._getCategoriesNavFromServer.bind(this)
+      );
     } finally {
-
     }
   }
 
   _renderRightButton() {
-    return(
+    return (
       <View style={styles.right_btn_box}>
-        <RightButtonOrders
-          tel={store.store_data.tel}
-         />
-        <RightButtonChat
-          tel={store.store_data.tel}
-         />
+        <RightButtonOrders tel={store.store_data.tel} />
+        <RightButtonChat tel={store.store_data.tel} />
       </View>
     );
   }
 
   _changeCategory(item, index, nav_only) {
     if (this.refs_category_nav) {
-
       var categories_count = this.state.categories_data.length;
-      var end_of_list = (categories_count - index - 1) >= 3;
+      var end_of_list = categories_count - index - 1 >= 3;
 
       // nav
       if (index > 0 && end_of_list) {
-        this.refs_category_nav.scrollToIndex({index: index - 1, animated: true});
+        this.refs_category_nav.scrollToIndex({
+          index: index - 1,
+          animated: true
+        });
       } else if (!end_of_list) {
         this.refs_category_nav.scrollToEnd();
       } else if (index == 0) {
-        this.refs_category_nav.scrollToIndex({index, animated: true});
+        this.refs_category_nav.scrollToIndex({ index, animated: true });
       }
 
       // content
       if (this.refs_category_screen && !nav_only) {
-        this.refs_category_screen.scrollToIndex({index: index, animated: true});
+        this.refs_category_screen.scrollToIndex({
+          index: index,
+          animated: true
+        });
       }
 
       this.setState({
@@ -200,29 +207,40 @@ export default class Stores extends Component {
   render() {
     return (
       <View style={styles.container}>
-
         <View style={styles.categories_nav}>
           {this.state.categories_data != null ? (
             <FlatList
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              ref={ref => this.refs_category_nav = ref}
-              onScrollToIndexFailed={()=>{}}
+              ref={ref => (this.refs_category_nav = ref)}
+              onScrollToIndexFailed={() => {}}
               data={this.state.categories_data}
               extraData={this.state.category_nav_index}
               keyExtractor={item => item.id}
               horizontal={true}
               style={styles.categories_nav}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 let active = this.state.category_nav_index == index;
-                return(
+                return (
                   <TouchableHighlight
                     onPress={() => this._changeCategory(item, index)}
-                    underlayColor="transparent">
+                    underlayColor="transparent"
+                  >
                     <View style={styles.categories_nav_items}>
-                      <Text style={[styles.categories_nav_items_title, active ? styles.categories_nav_items_title_active : null]}>{item.name}</Text>
+                      <Text
+                        style={[
+                          styles.categories_nav_items_title,
+                          active
+                            ? styles.categories_nav_items_title_active
+                            : null
+                        ]}
+                      >
+                        {item.name}
+                      </Text>
 
-                      {active && <View style={styles.categories_nav_items_active} />}
+                      {active && (
+                        <View style={styles.categories_nav_items_active} />
+                      )}
                     </View>
                   </TouchableHighlight>
                 );
@@ -233,15 +251,16 @@ export default class Stores extends Component {
           )}
         </View>
 
-        {//this._renderItemsContent.call(this)
+        {
+          //this._renderItemsContent.call(this)
         }
 
         {this.state.categories_data != null ? (
           <FlatList
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            ref={ref => this.refs_category_screen = ref}
-            onScrollToIndexFailed={()=>{}}
+            ref={ref => (this.refs_category_screen = ref)}
+            onScrollToIndexFailed={() => {}}
             data={this.state.categories_data}
             extraData={this.state.category_nav_index}
             keyExtractor={item => item.id}
@@ -253,30 +272,40 @@ export default class Stores extends Component {
               width: Util.size.width
             }}
             getItemLayout={(data, index) => {
-              return {length: Util.size.width, offset: Util.size.width * index, index};
+              return {
+                length: Util.size.width,
+                offset: Util.size.width * index,
+                index
+              };
             }}
-            renderItem={({item, index}) => <CategoryScreen item={item} index={index} cate_index={this.state.category_nav_index} that={this} />}
+            renderItem={({ item, index }) => (
+              <CategoryScreen
+                item={item}
+                index={index}
+                cate_index={this.state.category_nav_index}
+                that={this}
+              />
+            )}
           />
         ) : (
           <Indicator />
         )}
 
-
         {store.stores_finish == true && (
           <CartFooter
             perfix="stores"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
-           />
+          />
         )}
 
         <PopupConfirm
-          ref_popup={ref => this.refs_modal_delete_cart_item = ref}
+          ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
           title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
           height={110}
           noConfirm={this._closePopup.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
           otherClose={false}
-          />
+        />
 
         {store.cart_fly_show && (
           <View
@@ -290,18 +319,19 @@ export default class Stores extends Component {
               borderWidth: 1,
               borderColor: DEFAULT_COLOR,
               overflow: 'hidden'
-            }}>
+            }}
+          >
             {store.cart_fly_image && (
               <CachedImage
                 style={{
                   width: store.cart_fly_position.width,
                   height: store.cart_fly_position.height
                 }}
-                source={store.cart_fly_image} />
+                source={store.cart_fly_image}
+              />
             )}
           </View>
         )}
-
       </View>
     );
   }
@@ -350,7 +380,7 @@ export default class Stores extends Component {
             if (isAndroid && store.cart_item_index > 0) {
               var index = store.cart_item_index - 1;
               store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, {index});
+              Events.trigger(NEXT_PREV_CART, { index });
             }
           })();
         }, 450);
@@ -363,17 +393,15 @@ export default class Stores extends Component {
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
-
     }
   }
 }
-
 
 class CategoryScreen extends Component {
   constructor(props) {
     super(props);
 
-    var {item, index, that} = props;
+    var { item, index, that } = props;
 
     if (item.id == 0) {
       var header_title = `— Cửa hàng —`;
@@ -390,17 +418,17 @@ class CategoryScreen extends Component {
       page: 0,
       promotions: that.state.promotions,
       isAll: item.id == 0
-    }
+    };
   }
 
   // thời gian trễ khi chuyển màn hình
   _delay() {
-    var delay = 400 - (Math.abs(time() - this.start_time));
+    var delay = 400 - Math.abs(time() - this.start_time);
     return delay;
   }
 
   componentDidMount() {
-    var {item, index, cate_index} = this.props;
+    var { item, index, cate_index } = this.props;
     this.start_time = 0;
 
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
@@ -410,7 +438,7 @@ class CategoryScreen extends Component {
     } else {
       Events.on(keyAutoLoad, keyAutoLoad, () => {
         if (this.state.items_data == null) {
-            this._getItemByCateId(item.id);
+          this._getItemByCateId(item.id);
         }
       });
     }
@@ -421,9 +449,13 @@ class CategoryScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    var {item, index, cate_index} = nextProps;
+    var { item, index, cate_index } = nextProps;
 
-    if (index == cate_index && this.state.items_data == null && this.props != nextProps) {
+    if (
+      index == cate_index &&
+      this.state.items_data == null &&
+      this.props != nextProps
+    ) {
       this.start_time = time();
       // get list products by category_id
       this._getItemByCateId(item.id);
@@ -432,7 +464,6 @@ class CategoryScreen extends Component {
 
   // tới màn hình chi tiết item
   _goItem(item) {
-
     Actions.item({
       title: item.name,
       item
@@ -440,70 +471,86 @@ class CategoryScreen extends Component {
   }
 
   _onRefresh() {
-    this.setState({
-      refreshing: true,
-      page: 0
-    }, () => {
-      this._getItemByCateIdFromServer(this.props.item.id, 1000);
-    });
+    this.setState(
+      {
+        refreshing: true,
+        page: 0
+      },
+      () => {
+        this._getItemByCateIdFromServer(this.props.item.id, 1000);
+      }
+    );
   }
 
   // lấy d/s sản phẩm theo category_id
   _getItemByCateId(category_id) {
-    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
+    var store_category_key =
+      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
 
-    this.setState({
-      loading: this.state.items_data ? false : true
-    }, () => {
-      // load
-      storage.load({
-      	key: store_category_key,
-      	autoSync: true,
-      	syncInBackground: true,
-      	syncParams: {
-      	  extraFetchOptions: {
-      	  },
-      	  someFlag: true,
-      	},
-      }).then(data => {
-        // delay append data
-        setTimeout(() => {
-          if (this.props.index == 0) {
-            layoutAnimation();
-          }
+    this.setState(
+      {
+        loading: this.state.items_data ? false : true
+      },
+      () => {
+        // load
+        storage
+          .load({
+            key: store_category_key,
+            autoSync: true,
+            syncInBackground: true,
+            syncParams: {
+              extraFetchOptions: {},
+              someFlag: true
+            }
+          })
+          .then(data => {
+            // delay append data
+            setTimeout(() => {
+              if (this.props.index == 0) {
+                layoutAnimation();
+              }
 
-          this.setState({
-            items_data: data.length > STORES_LOAD_MORE ? [...data, {id: -1, type: 'loadmore'}] : data,
-            items_data_bak: data,
-            loading: false,
-            refreshing: false,
-            page: 1
+              this.setState({
+                items_data:
+                  data.length > STORES_LOAD_MORE
+                    ? [...data, { id: -1, type: 'loadmore' }]
+                    : data,
+                items_data_bak: data,
+                loading: false,
+                refreshing: false,
+                page: 1
+              });
+
+              action(() => {
+                store.setStoresFinish(true);
+              })();
+
+              // load next category
+              this._loadNextCate();
+            }, this._delay());
+          })
+          .catch(err => {
+            this._getItemByCateIdFromServer(category_id);
           });
-
-          action(() => {
-            store.setStoresFinish(true);
-          })();
-
-          // load next category
-          this._loadNextCate();
-
-        }, this._delay());
-      }).catch(err => {
-        this._getItemByCateIdFromServer(category_id);
-      });
-    });
+      }
+    );
   }
 
   async _getItemByCateIdFromServer(category_id, delay, loadmore) {
-    var store_category_key = STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
+    var store_category_key =
+      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
 
     try {
-      var response = await APIHandler.site_category_product(store.store_id, category_id, this.state.page);
+      var response = await APIHandler.site_category_product(
+        store.store_id,
+        category_id,
+        this.state.page
+      );
 
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           if (loadmore) {
-              this.state.page += 1;
+            this.state.page += 1;
           } else {
             this.state.page = 1;
           }
@@ -514,9 +561,14 @@ class CategoryScreen extends Component {
               layoutAnimation();
             }
 
-            var items_data = loadmore ? [...this.state.items_data_bak, ...response.data] : response.data;
+            var items_data = loadmore
+              ? [...this.state.items_data_bak, ...response.data]
+              : response.data;
             this.setState({
-              items_data: response.data.length >= STORES_LOAD_MORE ? [...items_data, {id: -1, type: 'loadmore'}] : items_data,
+              items_data:
+                response.data.length >= STORES_LOAD_MORE
+                  ? [...items_data, { id: -1, type: 'loadmore' }]
+                  : items_data,
               items_data_bak: items_data,
               loading: false,
               refreshing: false,
@@ -539,7 +591,6 @@ class CategoryScreen extends Component {
               });
             }
           }, delay || this._delay());
-
         } else {
           this.setState({
             loading: false,
@@ -551,11 +602,13 @@ class CategoryScreen extends Component {
           this._loadNextCate();
         }
       }
-
     } catch (e) {
       console.warn(e + ' site_category_product');
 
-      store.addApiQueue('site_category_product', this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore));
+      store.addApiQueue(
+        'site_category_product',
+        this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore)
+      );
     }
   }
 
@@ -573,88 +626,95 @@ class CategoryScreen extends Component {
   render() {
     // show loading
     if (this.state.loading) {
-      return(
+      return (
         <View style={styles.containerScreen}>
           <Indicator />
         </View>
       );
     }
 
-    var {items_data, header_title} = this.state;
+    var { items_data, header_title } = this.state;
 
     if (items_data == null) {
-      return(
+      return (
         <View style={styles.containerScreen}>
           <CenterText title="Chưa có mặt hàng nào :(" />
         </View>
       );
     }
 
-    return(
+    return (
       <View style={styles.containerScreen}>
-
         {items_data && (
-
           <ScrollView
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
                 onRefresh={this._onRefresh.bind(this)}
               />
-            }>
-
-            {(this.state.isAll && this.state.promotions && this.state.promotions.length > 0) && (
-              <Swiper
-                style={{
-                  marginVertical: 8
-                }}
-                width={Util.size.width}
-                height={(Util.size.width  * 0.96) * (50/320) + 16}
-                autoplayTimeout={3}
-                showsPagination={false}
-                horizontal
-                autoplay>
-                {this.state.promotions.map((banner, i) => {
-                  return(
-                    <View
-                      key={i}
-                      style={{
-                        width: Util.size.width,
-                        alignItems: 'center'
-                      }}>
-                      <CachedImage
-                        source={{uri: banner.banner}}
+            }
+          >
+            {this.state.isAll &&
+              this.state.promotions &&
+              this.state.promotions.length > 0 && (
+                <Swiper
+                  style={{
+                    marginVertical: 8
+                  }}
+                  width={Util.size.width}
+                  height={Util.size.width * 0.96 * (50 / 320) + 16}
+                  autoplayTimeout={3}
+                  showsPagination={false}
+                  horizontal
+                  autoplay
+                >
+                  {this.state.promotions.map((banner, i) => {
+                    return (
+                      <View
+                        key={i}
                         style={{
-                          width: Util.size.width * 0.96,
-                          height: (Util.size.width  * 0.96) * (50/320)
-                        }} />
-                    </View>
-                  );
-                })}
-              </Swiper>
-            )}
+                          width: Util.size.width,
+                          alignItems: 'center'
+                        }}
+                      >
+                        <CachedImage
+                          source={{ uri: banner.banner }}
+                          style={{
+                            width: Util.size.width * 0.96,
+                            height: Util.size.width * 0.96 * (50 / 320)
+                          }}
+                        />
+                      </View>
+                    );
+                  })}
+                </Swiper>
+              )}
 
             <ListHeader title={header_title} />
 
-            <View style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap'
-            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap'
+              }}
+            >
               {items_data.map((item, index) => (
                 <Items
                   key={index}
                   item={item}
                   index={index}
-                  onPress={item.type != 'loadmore' ? this._goItem.bind(this, item) : this._loadMore.bind(this)}
-                  />
+                  onPress={
+                    item.type != 'loadmore'
+                      ? this._goItem.bind(this, item)
+                      : this._loadMore.bind(this)
+                  }
+                />
               ))}
             </View>
           </ScrollView>
         )}
-
       </View>
     );
-
   }
 }
 
@@ -681,7 +741,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     height: 40,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#dddddd"
+    borderBottomColor: '#dddddd'
   },
   categories_nav_items: {
     justifyContent: 'center',

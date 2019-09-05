@@ -28,10 +28,10 @@ export default class Cart extends Component {
     super(props);
 
     this.state = {
-     refreshing: false,
-     cart_check_list: {},
-     loading: true
-    }
+      refreshing: false,
+      cart_check_list: {},
+      loading: true
+    };
   }
 
   componentWillMount() {
@@ -43,13 +43,16 @@ export default class Cart extends Component {
   componentDidMount() {
     this.start_time = time();
 
-    var {cart_data, cart_products, store_id} = store;
+    var { cart_data, cart_products, store_id } = store;
 
-    if (cart_data == null || cart_products == null || (cart_data && cart_data.site_id != store_id)) {
+    if (
+      cart_data == null ||
+      cart_products == null ||
+      (cart_data && cart_data.site_id != store_id)
+    ) {
       this._getCart();
     } else {
       setTimeout(() => {
-
         this.setState({
           loading: false
         });
@@ -63,9 +66,7 @@ export default class Cart extends Component {
       var response = await APIHandler.site_cart(store.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
-
         setTimeout(() => {
-
           action(() => {
             store.setCartData(response.data);
             this.setState({
@@ -74,7 +75,6 @@ export default class Cart extends Component {
             });
           })();
         }, delay || this._delay());
-
       } else {
         action(() => {
           this.setState({
@@ -83,38 +83,39 @@ export default class Cart extends Component {
           store.resetCartData();
         })();
       }
-
     } catch (e) {
       console.warn(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this, delay));
     } finally {
-
     }
   }
 
   // pull to refresh
   _onRefresh() {
-    this.setState({refreshing: true});
+    this.setState({ refreshing: true });
 
     this._getCart(1000);
   }
 
   _renderRightButton() {
-    var {store_data} = store;
+    var { store_data } = store;
 
-    return(
+    return (
       <View style={styles.right_btn_box}>
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
             Actions.chat();
-          }}>
+          }}
+        >
           <View style={styles.right_btn_add_store}>
             <Icon name="commenting" size={20} color="#ffffff" />
             {store_data && store_data.count_chat > 0 && (
               <View style={styles.stores_info_action_notify}>
-                <Text style={styles.stores_info_action_notify_value}>{store_data.count_chat}</Text>
+                <Text style={styles.stores_info_action_notify_value}>
+                  {store_data.count_chat}
+                </Text>
               </View>
             )}
           </View>
@@ -134,7 +135,6 @@ export default class Cart extends Component {
 
   // xử lý trừ số lượng, số lượng = 0 confirm xoá
   _item_qnt_decrement_handler(item) {
-
     if (item.quantity <= 1) {
       this._removeItemCartConfirm(item);
     } else {
@@ -144,7 +144,6 @@ export default class Cart extends Component {
 
   // giảm số lượng item trong giỏ hàng
   async _item_qnt_decrement(item) {
-
     try {
       var response = await APIHandler.site_cart_down(store.store_id, item.id);
 
@@ -153,14 +152,15 @@ export default class Cart extends Component {
           store.setCartData(response.data);
           Toast.show(response.message);
         })();
-
       }
     } catch (e) {
       console.warn(e + ' site_cart_down');
 
-      store.addApiQueue('site_cart_down', this._item_qnt_decrement.bind(this, item));
+      store.addApiQueue(
+        'site_cart_down',
+        this._item_qnt_decrement.bind(this, item)
+      );
     } finally {
-
     }
   }
 
@@ -174,14 +174,15 @@ export default class Cart extends Component {
           store.setCartData(response.data);
           Toast.show(response.message);
         })();
-      
       }
     } catch (e) {
       console.warn(e + ' site_cart_up');
 
-      store.addApiQueue('site_cart_up', this._item_qnt_increment.bind(this, item));
+      store.addApiQueue(
+        'site_cart_up',
+        this._item_qnt_increment.bind(this, item)
+      );
     } finally {
-
     }
   }
 
@@ -193,7 +194,7 @@ export default class Cart extends Component {
   }
 
   _delay() {
-    var delay = 400 - (Math.abs(time() - this.start_time));
+    var delay = 400 - Math.abs(time() - this.start_time);
     return delay;
   }
 
@@ -213,9 +214,7 @@ export default class Cart extends Component {
       var response = await APIHandler.site_cart_remove(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
-
         setTimeout(() => {
-
           action(() => {
             store.setCartData(response.data);
             // prev item in list
@@ -233,17 +232,21 @@ export default class Cart extends Component {
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
-
     }
   }
 
   async _checkBoxHandler(item) {
-
     try {
       if (item.selected == 1) {
-        var response = await APIHandler.site_cart_unselect(store.store_id, item.id);
+        var response = await APIHandler.site_cart_unselect(
+          store.store_id,
+          item.id
+        );
       } else {
-        var response = await APIHandler.site_cart_select(store.store_id, item.id);
+        var response = await APIHandler.site_cart_select(
+          store.store_id,
+          item.id
+        );
       }
 
       if (response && response.status == STATUS_SUCCESS) {
@@ -252,13 +255,14 @@ export default class Cart extends Component {
           Toast.show(response.message);
         })();
       }
-
     } catch (e) {
       console.warn(e + ' site_cart_select');
 
-      store.addApiQueue('site_cart_select', this._checkBoxHandler.bind(this, item));
+      store.addApiQueue(
+        'site_cart_select',
+        this._checkBoxHandler.bind(this, item)
+      );
     } finally {
-
     }
   }
 
@@ -271,11 +275,14 @@ export default class Cart extends Component {
         'Thông báo',
         'Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục',
         [
-          {text: 'Đồng ý', onPress: () => {
-            if (this.props.add_new) {
-              this.props.add_new();
+          {
+            text: 'Đồng ý',
+            onPress: () => {
+              if (this.props.add_new) {
+                this.props.add_new();
+              }
             }
-          }},
+          }
         ],
         { cancelable: false }
       );
@@ -288,92 +295,109 @@ export default class Cart extends Component {
       return <Indicator />;
     }
 
-    var {cart_data, cart_products} = store;
+    var { cart_data, cart_products } = store;
 
     // cart is empty
     if (cart_data == null || cart_products == null) {
-      return(
-        <CenterText
-          title="Chưa có sản phẩm nào"
-          />
-      );
+      return <CenterText title="Chưa có sản phẩm nào" />;
     }
 
     return (
       <View style={styles.container}>
-
-        {cart_products != null && <FlatList
-          style={styles.items_box}
-          data={cart_products}
-          extraData={cart_products}
-          renderItem={({item, index}) => {
-            return(
-              <View style={[styles.cart_item_box]}>
-                <View style={styles.cart_item_check_box}>
-                  <CheckBox
-                    containerStyle={styles.cart_item_check}
-                    checked={item.selected == 1 ? true : false}
-                    checkedColor={DEFAULT_COLOR}
-                    hiddenTextElement
-                    onPress={this._checkBoxHandler.bind(this, item)}
+        {cart_products != null && (
+          <FlatList
+            style={styles.items_box}
+            data={cart_products}
+            extraData={cart_products}
+            renderItem={({ item, index }) => {
+              return (
+                <View style={[styles.cart_item_box]}>
+                  <View style={styles.cart_item_check_box}>
+                    <CheckBox
+                      containerStyle={styles.cart_item_check}
+                      checked={item.selected == 1 ? true : false}
+                      checkedColor={DEFAULT_COLOR}
+                      hiddenTextElement
+                      onPress={this._checkBoxHandler.bind(this, item)}
                     />
-                </View>
+                  </View>
 
-                <View style={styles.cart_item_image_box}>
-                  <CachedImage mutable style={styles.cart_item_image} source={{uri: item.image}} />
-                </View>
+                  <View style={styles.cart_item_image_box}>
+                    <CachedImage
+                      mutable
+                      style={styles.cart_item_image}
+                      source={{ uri: item.image }}
+                    />
+                  </View>
 
-                <View style={styles.cart_item_info}>
-                  <View style={styles.cart_item_info_content}>
-                    <Text style={styles.cart_item_info_name}>{item.name}</Text>
-                    <View style={styles.cart_item_actions}>
-                      <TouchableHighlight
-                        style={styles.cart_item_actions_btn}
-                        underlayColor="transparent"
-                        onPress={this._item_qnt_decrement_handler.bind(this, item)}>
-                        <Text style={styles.cart_item_btn_label}>-</Text>
-                      </TouchableHighlight>
+                  <View style={styles.cart_item_info}>
+                    <View style={styles.cart_item_info_content}>
+                      <Text style={styles.cart_item_info_name}>
+                        {item.name}
+                      </Text>
+                      <View style={styles.cart_item_actions}>
+                        <TouchableHighlight
+                          style={styles.cart_item_actions_btn}
+                          underlayColor="transparent"
+                          onPress={this._item_qnt_decrement_handler.bind(
+                            this,
+                            item
+                          )}
+                        >
+                          <Text style={styles.cart_item_btn_label}>-</Text>
+                        </TouchableHighlight>
 
-                      <Text style={styles.cart_item_actions_quantity}>{item.quantity_view}</Text>
+                        <Text style={styles.cart_item_actions_quantity}>
+                          {item.quantity_view}
+                        </Text>
 
-                      <TouchableHighlight
-                        style={styles.cart_item_actions_btn}
-                        underlayColor="transparent"
-                        onPress={this._item_qnt_increment.bind(this, item)}>
-                        <Text style={styles.cart_item_btn_label}>+</Text>
-                      </TouchableHighlight>
-                    </View>
+                        <TouchableHighlight
+                          style={styles.cart_item_actions_btn}
+                          underlayColor="transparent"
+                          onPress={this._item_qnt_increment.bind(this, item)}
+                        >
+                          <Text style={styles.cart_item_btn_label}>+</Text>
+                        </TouchableHighlight>
+                      </View>
 
-                    <View style={styles.cart_item_price_box}>
-                      {item.discount_percent > 0 && (
-                        <Text style={styles.cart_item_price_price_safe_off}>{item.discount}</Text>
-                      )}
-                      <Text style={styles.cart_item_price_price}>{item.price_view}</Text>
+                      <View style={styles.cart_item_price_box}>
+                        {item.discount_percent > 0 && (
+                          <Text style={styles.cart_item_price_price_safe_off}>
+                            {item.discount}
+                          </Text>
+                        )}
+                        <Text style={styles.cart_item_price_price}>
+                          {item.price_view}
+                        </Text>
+                      </View>
                     </View>
                   </View>
-                </View>
 
-                {item.discount_percent > 0 && (
-                  <View style={styles.item_safe_off}>
-                    <View style={styles.item_safe_off_percent}>
-                      <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
+                  {item.discount_percent > 0 && (
+                    <View style={styles.item_safe_off}>
+                      <View style={styles.item_safe_off_percent}>
+                        <Text style={styles.item_safe_off_percent_val}>
+                          -{item.discount_percent}%
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                )}
+                  )}
 
-                {item.selected != 1 && (
-                  <TouchableHighlight
-                    underlayColor="transparent"
-                    onPress={this._checkBoxHandler.bind(this, item)}
-                    style={styles.uncheckOverlay}>
-                    <View></View>
-                  </TouchableHighlight>
-                )}
-              </View>
-            );
-          }}
-          keyExtractor={item => item.id}
-        />}
+                  {item.selected != 1 && (
+                    <TouchableHighlight
+                      underlayColor="transparent"
+                      onPress={this._checkBoxHandler.bind(this, item)}
+                      style={styles.uncheckOverlay}
+                    >
+                      <View></View>
+                    </TouchableHighlight>
+                  )}
+                </View>
+              );
+            }}
+            keyExtractor={item => item.id}
+          />
+        )}
 
         <View style={styles.cart_payment_box}>
           {/*<View style={styles.cart_payment_rows}>
@@ -389,9 +413,13 @@ export default class Cart extends Component {
             </View>
           </View>*/}
           <View style={[styles.cart_payment_rows, styles.mt12]}>
-            <Text style={[styles.cart_payment_label, styles.text_both]}>TỔNG CỘNG</Text>
+            <Text style={[styles.cart_payment_label, styles.text_both]}>
+              TỔNG CỘNG
+            </Text>
             <View style={styles.cart_payment_price_box}>
-              <Text style={[styles.cart_payment_price, styles.text_both]}>{cart_data.total_selected}</Text>
+              <Text style={[styles.cart_payment_price, styles.text_both]}>
+                {cart_data.total_selected}
+              </Text>
             </View>
           </View>
         </View>
@@ -399,23 +427,22 @@ export default class Cart extends Component {
         <TouchableHighlight
           style={styles.cart_payment_btn_box}
           underlayColor="transparent"
-          onPress={this._goPayment.bind(this)}>
-
+          onPress={this._goPayment.bind(this)}
+        >
           <View style={styles.cart_payment_btn}>
             <Icon name="shopping-cart" size={24} color="#ffffff" />
             <Text style={styles.cart_payment_btn_title}>ĐẶT HÀNG</Text>
           </View>
-
         </TouchableHighlight>
 
         <PopupConfirm
-          ref_popup={ref => this.refs_remove_item_confirm = ref}
+          ref_popup={ref => (this.refs_remove_item_confirm = ref)}
           title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
           otherClose={false}
-          />
+        />
       </View>
     );
   }
@@ -457,7 +484,7 @@ const styles = StyleSheet.create({
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#dddddd"
+    backgroundColor: '#dddddd'
   },
 
   items_box: {
@@ -468,10 +495,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 32,
     justifyContent: 'center',
-    backgroundColor: "#fa7f50"
+    backgroundColor: '#fa7f50'
   },
   cart_section_title: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 14,
     paddingLeft: 8,
     fontWeight: '600'
@@ -482,9 +509,9 @@ const styles = StyleSheet.create({
     height: 94,
     paddingVertical: 8,
     flexDirection: 'row',
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   cart_item_image_box: {
     width: '20%',
@@ -503,9 +530,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   cart_item_info_name: {
-    color: "#000000",
+    color: '#000000',
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   cart_item_actions: {
     flexDirection: 'row',
@@ -518,18 +545,18 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderWidth: Util.pixel,
-    borderColor: "#666666",
+    borderColor: '#666666',
     borderRadius: 3
   },
   cart_item_actions_quantity: {
     paddingHorizontal: 8,
     minWidth: '30%',
     textAlign: 'center',
-    color: "#404040",
+    color: '#404040',
     fontWeight: '500'
   },
   cart_item_btn_label: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 20,
     lineHeight: isIOS ? 20 : 24
   },
@@ -553,7 +580,7 @@ const styles = StyleSheet.create({
   cart_item_price_price_safe_off: {
     textDecorationLine: 'line-through',
     fontSize: 14,
-    color: "#666666",
+    color: '#666666',
     marginRight: 4
   },
   cart_item_price_price: {
@@ -568,11 +595,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     height: 107,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingVertical: 4,
     paddingHorizontal: 15,
     borderTopWidth: Util.pixel,
-    borderTopColor: "#cccccc"
+    borderTopColor: '#cccccc'
   },
   cart_payment_rows: {
     width: '100%',
@@ -586,21 +613,21 @@ const styles = StyleSheet.create({
   },
   cart_payment_price: {
     fontSize: 14,
-    color: "#666666",
+    color: '#666666',
     fontWeight: '500'
   },
   cart_payment_label: {
     fontSize: 14,
-    color: "#666666",
+    color: '#666666',
     fontWeight: '500'
   },
   text_both: {
-    color: "#000000",
+    color: '#000000',
     fontSize: 18
   },
   borderBottom: {
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#cccccc"
+    borderBottomColor: '#cccccc'
   },
   mt12: {
     marginTop: 10
@@ -622,7 +649,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   cart_payment_btn_title: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 18,
     marginLeft: 8
   },
@@ -646,12 +673,12 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   item_safe_off_percent_val: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 12
   },
 
   uncheckOverlay: {
-    backgroundColor: "rgba(0,0,0,0.05)",
+    backgroundColor: 'rgba(0,0,0,0.05)',
     position: 'absolute',
     top: 0,
     left: 0,

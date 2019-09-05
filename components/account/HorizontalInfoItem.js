@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity
-} from "react-native";
+} from 'react-native';
 
-import lodash from "lodash";
-import DatePicker from "react-native-datepicker";
+import lodash from 'lodash';
+import DatePicker from 'react-native-datepicker';
 
 export default class HorizontalInfoItem extends Component {
   constructor(props) {
@@ -26,7 +26,7 @@ export default class HorizontalInfoItem extends Component {
         <Text
           style={[
             styles.detailTitle,
-            { color: specialColor ? specialColor : "black" }
+            { color: specialColor ? specialColor : 'black' }
           ]}
         >
           {value}
@@ -42,7 +42,7 @@ export default class HorizontalInfoItem extends Component {
         />
       );
     } else if (select) {
-      if (id === "ngay_sinh") {
+      if (id === 'ngay_sinh') {
         return (
           <View style={styles.btnSelect}>
             <DatePicker
@@ -57,18 +57,18 @@ export default class HorizontalInfoItem extends Component {
               customStyles={{
                 dateText: {
                   fontSize: 14,
-                  color: "black",
-                  position: "absolute",
+                  color: 'black',
+                  position: 'absolute',
                   right: 0
                 },
                 placeholderText: {
                   fontSize: 14,
-                  color: "#989898",
-                  position: "absolute",
+                  color: '#989898',
+                  position: 'absolute',
                   right: 0
                 },
                 dateInput: {
-                  borderColor: "transparent"
+                  borderColor: 'transparent'
                 }
               }}
               onDateChange={date => {
@@ -90,7 +90,7 @@ export default class HorizontalInfoItem extends Component {
             <Text
               style={{
                 fontSize: 14,
-                color: lodash.isEmpty(value) ? "#989898" : "black"
+                color: lodash.isEmpty(value) ? '#989898' : 'black'
               }}
             >
               {lodash.isEmpty(value) ? defaultValue : value}
@@ -132,7 +132,7 @@ export default class HorizontalInfoItem extends Component {
       <View
         style={[
           styles.container,
-          { backgroundColor: disable ? "#EAF0F6" : "white" }
+          { backgroundColor: disable ? '#EAF0F6' : 'white' }
         ]}
       >
         <Text style={styles.title}>{title}</Text>
@@ -152,32 +152,32 @@ export default class HorizontalInfoItem extends Component {
 const styles = StyleSheet.create({
   container: {
     minHeight: 50,
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingTop: 15,
     paddingBottom: 15
   },
 
   title: {
     fontSize: 14,
-    color: "#989898",
+    color: '#989898',
     marginLeft: 20,
-    textAlign: "left",
+    textAlign: 'left',
     flex: 0.4
   },
 
   detailTitle: {
     flex: 0.6,
     fontSize: 14,
-    color: "black",
+    color: 'black',
     marginRight: 20,
-    textAlign: "right"
+    textAlign: 'right'
   },
 
   btnSelect: {
     flex: 0.6,
     marginRight: 20,
-    justifyContent: "center",
-    alignItems: "flex-end"
+    justifyContent: 'center',
+    alignItems: 'flex-end'
   }
 });

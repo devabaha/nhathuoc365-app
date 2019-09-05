@@ -18,7 +18,6 @@ import store from '../../store/Store';
 
 @observer
 export default class ItemList extends Component {
-
   // tới màn hình store
   _goStores(item) {
     action(() => {
@@ -72,8 +71,16 @@ export default class ItemList extends Component {
       item.name,
       null,
       [
-        {text: 'Huỷ', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-        {text: 'Xoá cửa hàng', onPress: this._removeStore.bind(this, item), style: 'destructive'}
+        {
+          text: 'Huỷ',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        },
+        {
+          text: 'Xoá cửa hàng',
+          onPress: this._removeStore.bind(this, item),
+          style: 'destructive'
+        }
       ],
       { cancelable: false }
     );
@@ -84,12 +91,14 @@ export default class ItemList extends Component {
       'Xoá cửa hàng',
       'Bạn sẽ không nhận được thông báo khuyến mãi từ cửa hàng này nữa.',
       [
-        {text: 'Huỷ', onPress: () => false, style: 'cancel'},
-        {text: 'Xoá cửa hàng', onPress: () => {
-
-          this._removeStoreTrue(item);
-
-        }, style: 'destructive'}
+        { text: 'Huỷ', onPress: () => false, style: 'cancel' },
+        {
+          text: 'Xoá cửa hàng',
+          onPress: () => {
+            this._removeStoreTrue(item);
+          },
+          style: 'destructive'
+        }
       ],
       { cancelable: false }
     );
@@ -109,15 +118,16 @@ export default class ItemList extends Component {
     } catch (e) {
       console.warn(e + ' user_remove_site');
 
-      store.addApiQueue('user_remove_site', this._removeStoreTrue.bind(this, item));
+      store.addApiQueue(
+        'user_remove_site',
+        this._removeStoreTrue.bind(this, item)
+      );
     } finally {
-
     }
   }
 
   render() {
-
-    var {item} = this.props;
+    var { item } = this.props;
 
     var count_chat = parseInt(store.notify_chat[item.id]);
 
@@ -128,11 +138,17 @@ export default class ItemList extends Component {
       <TouchableHighlight
         underlayColor="transparent"
         // onLongPress={this._showOptions.bind(this, item)}
-        onPress={this._goStores.bind(this, item)}>
-
-        <View style={[styles.store_result_item, styles.store_result_item_active]}>
+        onPress={this._goStores.bind(this, item)}
+      >
+        <View
+          style={[styles.store_result_item, styles.store_result_item_active]}
+        >
           <View style={styles.store_result_item_image_box}>
-            <CachedImage mutable style={styles.store_result_item_image} source={{uri: item.logo_url}} />
+            <CachedImage
+              mutable
+              style={styles.store_result_item_image}
+              source={{ uri: item.logo_url }}
+            />
           </View>
 
           <View style={styles.store_result_item_content}>
@@ -143,29 +159,77 @@ export default class ItemList extends Component {
               <View style={styles.store_result_item_add_box}>
                 <TouchableHighlight
                   onPress={this._goStores.bind(this, item)}
-                  underlayColor="transparent">
-                  <View style={[styles.add_btn_icon_box, is_chat_active && styles.add_btn_icon_box_active]}>
-                    <Icon name="comments" size={14} color={is_chat_active ? "#ffffff" : DEFAULT_COLOR} />
-                    <Text style={[styles.add_btn_label, is_chat_active && styles.add_btn_label_active]}>Chat</Text>
+                  underlayColor="transparent"
+                >
+                  <View
+                    style={[
+                      styles.add_btn_icon_box,
+                      is_chat_active && styles.add_btn_icon_box_active
+                    ]}
+                  >
+                    <Icon
+                      name="comments"
+                      size={14}
+                      color={is_chat_active ? '#ffffff' : DEFAULT_COLOR}
+                    />
+                    <Text
+                      style={[
+                        styles.add_btn_label,
+                        is_chat_active && styles.add_btn_label_active
+                      ]}
+                    >
+                      Chat
+                    </Text>
                   </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight
                   onPress={this._goStores.bind(this, item)}
-                  underlayColor="transparent">
-                  <View style={[
-                    styles.add_btn_icon_box,
-                    is_orders_active && styles.add_btn_icon_box_active,
-                    {marginRight: 15}
-                  ]}>
-                    <Icon name="shopping-cart" size={14} color={is_orders_active ? "#ffffff" : DEFAULT_COLOR} />
-                    <Text style={[styles.add_btn_label, is_orders_active && styles.add_btn_label_active]}>Đơn hàng</Text>
+                  underlayColor="transparent"
+                >
+                  <View
+                    style={[
+                      styles.add_btn_icon_box,
+                      is_orders_active && styles.add_btn_icon_box_active,
+                      { marginRight: 15 }
+                    ]}
+                  >
+                    <Icon
+                      name="shopping-cart"
+                      size={14}
+                      color={is_orders_active ? '#ffffff' : DEFAULT_COLOR}
+                    />
+                    <Text
+                      style={[
+                        styles.add_btn_label,
+                        is_orders_active && styles.add_btn_label_active
+                      ]}
+                    >
+                      Đơn hàng
+                    </Text>
                   </View>
                 </TouchableHighlight>
               </View>
 
-              {is_orders_active > 0 && <View style={styles.stores_info_action_notify}><Text style={styles.stores_info_action_notify_value}>{item.count_cart}</Text></View>}
-              {is_chat_active > 0 && <View style={[styles.stores_info_action_notify, styles.stores_info_action_notify_chat]}><Text style={styles.stores_info_action_notify_value}>{count_chat}</Text></View>}
+              {is_orders_active > 0 && (
+                <View style={styles.stores_info_action_notify}>
+                  <Text style={styles.stores_info_action_notify_value}>
+                    {item.count_cart}
+                  </Text>
+                </View>
+              )}
+              {is_chat_active > 0 && (
+                <View
+                  style={[
+                    styles.stores_info_action_notify,
+                    styles.stores_info_action_notify_chat
+                  ]}
+                >
+                  <Text style={styles.stores_info_action_notify_value}>
+                    {count_chat}
+                  </Text>
+                </View>
+              )}
             </View>
           </View>
         </View>
@@ -176,29 +240,29 @@ export default class ItemList extends Component {
 
 ItemList.propTypes = {
   item: PropTypes.object.isRequired
-}
+};
 
 const styles = StyleSheet.create({
   stores_result_box: {
     marginTop: 8,
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   store_result_item: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingVertical: 8,
     paddingLeft: 15,
     flexDirection: 'row',
     minHeight: 104,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   store_result_item_active: {
     // backgroundColor: "#ebebeb"
   },
   store_result_item_image_box: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     width: 60,
     height: 60,
     marginTop: 8
@@ -218,21 +282,21 @@ const styles = StyleSheet.create({
   },
   store_result_item_title: {
     fontSize: 14,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '500',
     lineHeight: isIOS ? 16 : 18,
     marginTop: 8
   },
   store_result_item_desc: {
     marginTop: 4,
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     lineHeight: isIOS ? 16 : 18,
     paddingRight: 15
   },
   store_result_item_time: {
     fontSize: 12,
-    color: "#666666",
+    color: '#666666',
     marginLeft: 4
   },
   store_result_item_add_box: {
@@ -265,7 +329,7 @@ const styles = StyleSheet.create({
     marginLeft: 4
   },
   add_btn_label_active: {
-    color: "#ffffff"
+    color: '#ffffff'
   },
 
   stores_info_action_notify: {

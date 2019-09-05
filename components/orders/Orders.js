@@ -8,14 +8,14 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  ScrollView,
+  ScrollView
 } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
-import {reaction} from 'mobx';
+import { reaction } from 'mobx';
 
 // components
 import PopupConfirm from '../PopupConfirm';
@@ -34,7 +34,7 @@ export default class Orders extends Component {
       empty: false,
       finish: false,
       scrollTop: 0
-    }
+    };
 
     this._getData = this._getData.bind(this);
 
@@ -68,7 +68,7 @@ export default class Orders extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_orders) {
-      this.refs_orders.scrollTo({x: 0, y: top, animated: true});
+      this.refs_orders.scrollTo({ x: 0, y: top, animated: true });
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
@@ -80,13 +80,16 @@ export default class Orders extends Component {
   }
 
   _scrollOverTopAndReload() {
-    this.setState({
-      refreshing: true
-    }, () => {
-      this._scrollToTop(-60);
+    this.setState(
+      {
+        refreshing: true
+      },
+      () => {
+        this._scrollToTop(-60);
 
-      this._getData(1000);
-    });
+        this._getData(1000);
+      }
+    );
   }
 
   async _getData(delay, noScroll = false) {
@@ -95,7 +98,6 @@ export default class Orders extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
-
           this.setState({
             data: response.data,
             refreshing: false,
@@ -109,7 +111,6 @@ export default class Orders extends Component {
           }
         }, delay || 0);
       } else {
-
         setTimeout(() => {
           this.setState({
             loading: false,
@@ -121,7 +122,10 @@ export default class Orders extends Component {
     } catch (e) {
       console.warn(e + ' user_cart_list');
 
-      store.addApiQueue('user_cart_list', this._getData.bind(this, delay, noScroll));
+      store.addApiQueue(
+        'user_cart_list',
+        this._getData.bind(this, delay, noScroll)
+      );
     } finally {
       store.getNoitify();
     }
@@ -134,59 +138,61 @@ export default class Orders extends Component {
   }
 
   _onRefresh() {
-    this.setState({
-      refreshing: true
-    }, this._getData.bind(this, 1000));
+    this.setState(
+      {
+        refreshing: true
+      },
+      this._getData.bind(this, 1000)
+    );
   }
 
   render() {
-
-    var {loading, data} = this.state;
+    var { loading, data } = this.state;
 
     if (loading) {
-      return <Indicator />
+      return <Indicator />;
     }
 
     return (
       <View style={styles.container}>
-
         {data != null ? (
           <ScrollView
-            onScroll={(event) => {
+            onScroll={event => {
               this.setState({
                 scrollTop: event.nativeEvent.contentOffset.y
               });
             }}
-            ref={ref => this.refs_orders = ref}
+            ref={ref => (this.refs_orders = ref)}
             // renderSectionHeader={({section}) => (
             //   <View style={styles.cart_section_box}>
             //     <CachedImage mutable style={styles.cart_section_image} source={{uri: section.image}} />
             //     <Text style={styles.cart_section_title}>{section.key}</Text>
             //   </View>
             // )}
-            onEndReached={(num) => {
-
-            }}
+            onEndReached={num => {}}
             onEndReachedThreshold={0}
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
                 onRefresh={this._onRefresh.bind(this)}
               />
-            }>
+            }
+          >
             <FlatList
-              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+              ItemSeparatorComponent={() => (
+                <View style={styles.separator}></View>
+              )}
               style={styles.items_box}
               data={this.state.data}
               extraData={this.state}
-              renderItem={({item, index}) => {
-                return(
+              renderItem={({ item, index }) => {
+                return (
                   <OrdersItemComponent
                     confirmCancelCart={this.confirmCancelCart.bind(this)}
                     confirmCoppyCart={this.confirmCoppyCart.bind(this)}
                     confirmEditCart={this.confirmEditCart.bind(this)}
                     item={item}
-                    />
+                  />
                 );
               }}
               keyExtractor={item => item.id}
@@ -194,14 +200,19 @@ export default class Orders extends Component {
           </ScrollView>
         ) : (
           <View style={styles.empty_box}>
-            <Icon name="shopping-basket" size={32} color={hexToRgbA(DEFAULT_COLOR, 0.6)} />
+            <Icon
+              name="shopping-basket"
+              size={32}
+              color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+            />
             <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
 
             <TouchableHighlight
               onPress={() => {
-                Actions._home({type: ActionConst.REFRESH});
+                Actions._home({ type: ActionConst.REFRESH });
               }}
-              underlayColor="transparent">
+              underlayColor="transparent"
+            >
               <View style={styles.empty_box_btn}>
                 <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
               </View>
@@ -210,31 +221,31 @@ export default class Orders extends Component {
         )}
 
         <PopupConfirm
-          ref_popup={ref => this.refs_cancel_cart = ref}
+          ref_popup={ref => (this.refs_cancel_cart = ref)}
           title="Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
           yesConfirm={this._cancelCart.bind(this)}
           otherClose={false}
-          />
+        />
 
         <PopupConfirm
-          ref_popup={ref => this.refs_coppy_cart = ref}
+          ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-          />
+        />
 
         <PopupConfirm
-          ref_popup={ref => this.refs_edit_cart = ref}
+          ref_popup={ref => (this.refs_edit_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
           height={110}
           noConfirm={this._closePopupEdit.bind(this)}
           yesConfirm={this._editCart.bind(this)}
           otherClose={false}
-          />
+        />
       </View>
     );
   }
@@ -242,7 +253,10 @@ export default class Orders extends Component {
   async _coppyCart() {
     if (this.item_coppy) {
       try {
-        var response = await APIHandler.site_cart_reorder(this.item_coppy.site_id, this.item_coppy.id);
+        var response = await APIHandler.site_cart_reorder(
+          this.item_coppy.site_id,
+          this.item_coppy.id
+        );
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
@@ -257,7 +271,6 @@ export default class Orders extends Component {
 
         store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       } finally {
-
       }
     }
 
@@ -267,7 +280,10 @@ export default class Orders extends Component {
   async _editCart() {
     if (this.item_edit) {
       try {
-        var response = await APIHandler.site_cart_edit(this.item_edit.site_id, this.item_edit.id);
+        var response = await APIHandler.site_cart_edit(
+          this.item_edit.site_id,
+          this.item_edit.id
+        );
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
@@ -275,15 +291,12 @@ export default class Orders extends Component {
           })();
 
           this._getData();
-
-
         }
       } catch (e) {
         console.warn(e + ' site_cart_edit');
 
         store.addApiQueue('site_cart_edit', this._editCart.bind(this));
       } finally {
-
       }
     }
 
@@ -304,9 +317,11 @@ export default class Orders extends Component {
 
   async _cancelCart() {
     if (this.item_cancel) {
-
       try {
-        var response = await APIHandler.site_cart_cancel(this.item_cancel.site_id, this.item_cancel.id);
+        var response = await APIHandler.site_cart_cancel(
+          this.item_cancel.site_id,
+          this.item_cancel.id
+        );
 
         if (response && response.status == STATUS_SUCCESS) {
           this._getData(450, true);
@@ -317,9 +332,7 @@ export default class Orders extends Component {
 
         store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
       } finally {
-
       }
-
     }
 
     this._closePopupConfirm();
@@ -385,7 +398,7 @@ const styles = StyleSheet.create({
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#dddddd",
+    backgroundColor: '#dddddd'
   },
 
   empty_box: {
@@ -395,13 +408,13 @@ const styles = StyleSheet.create({
   empty_box_title: {
     fontSize: 12,
     marginTop: 8,
-    color: "#404040"
+    color: '#404040'
   },
   empty_box_btn: {
     borderWidth: Util.pixel,
     borderColor: DEFAULT_COLOR,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginTop: 12,
@@ -409,7 +422,6 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   },
   empty_box_btn_title: {
-    color: "#ffffff"
+    color: '#ffffff'
   }
-
 });

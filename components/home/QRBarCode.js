@@ -17,7 +17,7 @@ import QRCode from 'react-native-qrcode-svg';
 import Barcode from 'react-native-barcode-builder';
 import store from '../../store/Store';
 
-const timer = require("react-native-timer");
+const timer = require('react-native-timer');
 
 export default class QRBarCode extends Component {
   constructor(props) {
@@ -27,27 +27,29 @@ export default class QRBarCode extends Component {
       wallet: props.wallet || false,
       loading: false,
       from: props.from || false,
-      barcode: props.address || "0x000000000",
-      title: props.title?props.title:"Mã tài khoản",
-      content: props.content?props.content:"Dùng QRCode địa chỉ Ví để nhận chuyển khoản"
+      barcode: props.address || '0x000000000',
+      title: props.title ? props.title : 'Mã tài khoản',
+      content: props.content
+        ? props.content
+        : 'Dùng QRCode địa chỉ Ví để nhận chuyển khoản'
     };
   }
 
   componentWillMount() {
-    if(!this.props.address){
+    if (!this.props.address) {
       this._getData();
-      this.setTimmer()
+      this.setTimmer();
     }
   }
 
   componentWillUnmount() {
-    timer.clearTimeout(this, "barcodeupdate");
+    timer.clearTimeout(this, 'barcodeupdate');
   }
 
   setTimmer() {
     timer.setTimeout(
       this,
-      "barcodeupdate",
+      'barcodeupdate',
       () => {
         this._getData();
         this.setTimmer();
@@ -59,138 +61,165 @@ export default class QRBarCode extends Component {
   async _getData() {
     this.setState({ loading: true });
     const response = await APIHandler.user_barcode(store.store_id);
-    console.log(response)
+    console.log(response);
     if (response && response.status == STATUS_SUCCESS) {
-      this.setState({ barcode: response.data.barcode})
+      this.setState({ barcode: response.data.barcode });
     }
   }
-  
-  /***
-  * Lay ma code qua url trong qrcode
-  */
- _getSearchCodeByLink(link) {//, password, refer
-  var existGet = stristr(link, '?');
-  var existViewApp = stristr(link, 'view=app');
 
-  if (!existViewApp) {
-    link = link + (existGet ? '&' : '?') + 'view=app';
-  }
-  this.setState({
-    loading: true,
-  }, async () => {
-    try {
-      
-      var response = await APIHandler.getAPI(link);
-      if (response && response.status == STATUS_SUCCESS) {
+  /***
+   * Lay ma code qua url trong qrcode
+   */
+  _getSearchCodeByLink(link) {
+    //, password, refer
+    var existGet = stristr(link, '?');
+    var existViewApp = stristr(link, 'view=app');
+
+    if (!existViewApp) {
+      link = link + (existGet ? '&' : '?') + 'view=app';
+    }
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.getAPI(link);
+          if (response && response.status == STATUS_SUCCESS) {
+            action(() => {
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  setTimeout(() => {
+                    this._proccessQRCodeResult(response.data.barcode);
+                  }, 450);
+                }
+              );
+            })();
+          } else {
+            action(() => {
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  this._open_webview(link);
+                }
+              );
+            })();
+          }
+        } catch (e) {
           action(() => {
-            this.setState({
-              loading: false
-            }, () => {
-              setTimeout(() => {
-                this._proccessQRCodeResult(response.data.barcode);
-              }, 450);
-            });
+            this.setState(
+              {
+                loading: false
+              },
+              () => {
+                this._open_webview(link);
+              }
+            );
           })();
-      } else {
-        action(() => {
+        } finally {
           this.setState({
             loading: false
-          }, () => {
-            this._open_webview(link);
           });
-        })();
+        }
       }
-      
-    } catch (e) {
-      action(() => {
-        this.setState({
-          loading: false
-        }, () => {
-          this._open_webview(link);
-        });
-      })();
-    } finally {
-      this.setState({
-        loading: false
-      });
-    }
-  });
-}
+    );
+  }
 
   /***
    * Lay tai khoan tu Ma Tai khoan
    */
-  _getAccountByBarcode(barcode) {//, password, refer
-    this.setState({
-      loading: true,
-    }, async () => {
-      try {
-        var response = await APIHandler.user_from_barcode(barcode);
-        if (response && response.status == STATUS_SUCCESS) {
+  _getAccountByBarcode(barcode) {
+    //, password, refer
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_from_barcode(barcode);
+          if (response && response.status == STATUS_SUCCESS) {
             action(() => {
-              this.setState({
-                loading: false
-              }, () => {
-                Actions.pay_account({
-                  title: "Thông tin tài khoản", 
-                  barcode: barcode,
-                  wallet: response.data.account.default_wallet, 
-                  account: response.data.account,
-                  app: response.data.app,
-                  type: ActionConst.REPLACE
-                });
-                Toast.show(response.message, Toast.SHORT);
-              });
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  Actions.pay_account({
+                    title: 'Thông tin tài khoản',
+                    barcode: barcode,
+                    wallet: response.data.account.default_wallet,
+                    account: response.data.account,
+                    app: response.data.app,
+                    type: ActionConst.REPLACE
+                  });
+                  Toast.show(response.message, Toast.SHORT);
+                }
+              );
             })();
-        } else {
-          this._search_store(barcode);
+          } else {
+            this._search_store(barcode);
+          }
+        } catch (e) {
+          this.setState({
+            loading: false
+          });
+        } finally {
+          this.setState({
+            loading: false
+          });
         }
-        
-      } catch (e) {
-        this.setState({
-          loading: false
-        });
-      } finally {
-        this.setState({
-          loading: false
-        });
       }
-    });
+    );
   }
 
   /***
    * Lay cart
    */
-  _getWalletByAddressAndZoneCode(barcode) {//, 
-    this.setState({
-      loading: true,
-    }, async () => {
-      try {
-        var data = isWalletAddressWithZoneCode(barcode);
-        var response = await APIHandler.user_get_wallet(data[1]);
-        if (response && response.data.wallet && response.status == STATUS_SUCCESS) {
+  _getWalletByAddressAndZoneCode(barcode) {
+    //,
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var data = isWalletAddressWithZoneCode(barcode);
+          var response = await APIHandler.user_get_wallet(data[1]);
+          if (
+            response &&
+            response.data.wallet &&
+            response.status == STATUS_SUCCESS
+          ) {
             action(() => {
-              this.setState({
-                loading: false
-              }, () => {
-                Actions.pay_wallet({
-                  title: "Chuyển khoản", 
-                  wallet: response.data.wallet, 
-                  address: data[0],
-                  type: ActionConst.REPLACE
-                });
-                // Toast.show(response.message, Toast.SHORT);
-              });
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  Actions.pay_wallet({
+                    title: 'Chuyển khoản',
+                    wallet: response.data.wallet,
+                    address: data[0],
+                    type: ActionConst.REPLACE
+                  });
+                  // Toast.show(response.message, Toast.SHORT);
+                }
+              );
             })();
-        } else {
+          } else {
+            this._search_store(barcode);
+          }
+        } catch (e) {
           this._search_store(barcode);
+        } finally {
         }
-      } catch (e) {
-        this._search_store(barcode);
-      } finally {
-        
       }
-    });
+    );
   }
 
   // tới màn hình store
@@ -231,106 +260,136 @@ export default class QRBarCode extends Component {
   /***
    * Lay cart
    */
-  _check_address(barcode) {//, 
-    this.setState({
-      loading: true,
-    }, async () => {
-      try {
-        var response = await APIHandler.user_check_address(barcode);
-        if (response && response.status == STATUS_SUCCESS) {
+  _check_address(barcode) {
+    //,
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_check_address(barcode);
+          if (response && response.status == STATUS_SUCCESS) {
             action(() => {
-              this.setState({
-                loading: false
-              }, () => {
-                if(response.data.object.type == OBJECT_TYPE_KEY_USER){
-                  Actions.pay_wallet({
-                    title: "Chuyển khoản", 
-                    wallet: this.state.wallet, 
-                    address: barcode,
-                    type: ActionConst.REPLACE
-                  });
-                }else if(response.data.object.type == OBJECT_TYPE_KEY_ADDRESS){
-                  this._goStores(response.data.item);
-                }else if(response.data.object.type == OBJECT_TYPE_KEY_SITE){
-                  this._goStores(response.data.item);
-                }else if(response.data.object.type == OBJECT_TYPE_KEY_PRODUCT_CATEGORY){
-                  this._goStores(response.data.item, response.data.item.site_product_category_id);
-                }else if(response.data.object.type == OBJECT_TYPE_KEY_PRODUCT){
-                  this._goProduct(response.data.item);
-                }else if(response.data.object.type == OBJECT_TYPE_KEY_NEWS){
-                  this._goNewsDetail(response.data.item);
-                }else if(response.data.object.type == OBJECT_TYPE_KEY_CART){
-                    Actions.view_orders_item({
-                      data: response.data.item,
-                      title: "#" + response.data.item.cart_code,
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  if (response.data.object.type == OBJECT_TYPE_KEY_USER) {
+                    Actions.pay_wallet({
+                      title: 'Chuyển khoản',
+                      wallet: this.state.wallet,
+                      address: barcode,
                       type: ActionConst.REPLACE
                     });
-                }else{
-                  this._search_store(barcode);
+                  } else if (
+                    response.data.object.type == OBJECT_TYPE_KEY_ADDRESS
+                  ) {
+                    this._goStores(response.data.item);
+                  } else if (
+                    response.data.object.type == OBJECT_TYPE_KEY_SITE
+                  ) {
+                    this._goStores(response.data.item);
+                  } else if (
+                    response.data.object.type ==
+                    OBJECT_TYPE_KEY_PRODUCT_CATEGORY
+                  ) {
+                    this._goStores(
+                      response.data.item,
+                      response.data.item.site_product_category_id
+                    );
+                  } else if (
+                    response.data.object.type == OBJECT_TYPE_KEY_PRODUCT
+                  ) {
+                    this._goProduct(response.data.item);
+                  } else if (
+                    response.data.object.type == OBJECT_TYPE_KEY_NEWS
+                  ) {
+                    this._goNewsDetail(response.data.item);
+                  } else if (
+                    response.data.object.type == OBJECT_TYPE_KEY_CART
+                  ) {
+                    Actions.view_orders_item({
+                      data: response.data.item,
+                      title: '#' + response.data.item.cart_code,
+                      type: ActionConst.REPLACE
+                    });
+                  } else {
+                    this._search_store(barcode);
+                  }
+                  // Toast.show(response.message, Toast.SHORT);
                 }
-                // Toast.show(response.message, Toast.SHORT);
-              });
+              );
             })();
-        } else {
+          } else {
+            this._search_store(barcode);
+          }
+        } catch (e) {
           this._search_store(barcode);
+        } finally {
         }
-      } catch (e) {
-        this._search_store(barcode);
-      } finally {
-        
       }
-    });
+    );
   }
 
   /***
    * Lay cart
    */
-  _getCartByCartcode(barcode) {//, 
-    this.setState({
-      loading: true,
-    }, async () => {
-      try {
-        var response = await APIHandler.user_cart_code(barcode);
-        if (response && response.status == STATUS_SUCCESS) {
+  _getCartByCartcode(barcode) {
+    //,
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_cart_code(barcode);
+          if (response && response.status == STATUS_SUCCESS) {
             action(() => {
-              this.setState({
-                loading: false
-              }, () => {
-                Actions.view_orders_item({
-                  data: response.data,
-                  title: "#" + barcode,
-                  tel: response.data.tel,
-                  type: ActionConst.REPLACE
-                });
-                // Toast.show(response.message, Toast.SHORT);
-              });
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  Actions.view_orders_item({
+                    data: response.data,
+                    title: '#' + barcode,
+                    tel: response.data.tel,
+                    type: ActionConst.REPLACE
+                  });
+                  // Toast.show(response.message, Toast.SHORT);
+                }
+              );
             })();
-        } else {
+          } else {
+            this._search_store(barcode);
+          }
+        } catch (e) {
           this._search_store(barcode);
+        } finally {
         }
-        
-      } catch (e) {
-        this._search_store(barcode);
-      } finally {
-        
       }
-    });
+    );
   }
 
-  _search_store(barcode){
+  _search_store(barcode) {
     action(() => {
-      this.setState({
-        loading: false
-      }, () => {
-        Actions.search_store({
-          site_code: barcode,
-          type: ActionConst.REPLACE
-        });
-      });
+      this.setState(
+        {
+          loading: false
+        },
+        () => {
+          Actions.search_store({
+            site_code: barcode,
+            type: ActionConst.REPLACE
+          });
+        }
+      );
     })();
   }
 
-  _open_webview(link){
+  _open_webview(link) {
     Actions.webview({
       title: link,
       url: link,
@@ -338,37 +397,37 @@ export default class QRBarCode extends Component {
     });
   }
 
-  _proccessQRCodeResult(text_result){
+  _proccessQRCodeResult(text_result) {
     const { wallet, title, from } = this.state;
     if (text_result) {
       if (isURL(text_result)) {
-        if(isLinkTickID(text_result)){
+        if (isLinkTickID(text_result)) {
           this._getSearchCodeByLink(text_result);
-        }else{
+        } else {
           this._open_webview(text_result);
         }
-      } else if(isWalletAddress(text_result)){
-        if(from == "vndwallet"){
+      } else if (isWalletAddress(text_result)) {
+        if (from == 'vndwallet') {
           Actions.pay_wallet({
-            title: "Chuyển khoản", 
-            wallet: wallet, 
+            title: 'Chuyển khoản',
+            wallet: wallet,
             address: text_result,
             type: ActionConst.REPLACE
           });
-        }else{
+        } else {
           this._check_address(text_result);
         }
-      }else if(isAccountCode(text_result)){
+      } else if (isAccountCode(text_result)) {
         setTimeout(() => {
           this._getAccountByBarcode(text_result);
         }, 450);
-      }else if(isCartCode(text_result)){
+      } else if (isCartCode(text_result)) {
         setTimeout(() => {
           this._getCartByCartcode(text_result);
         }, 450);
-      }else if(isWalletAddressWithZoneCode(text_result)){
+      } else if (isWalletAddressWithZoneCode(text_result)) {
         this._getWalletByAddressAndZoneCode(text_result);
-      }else{
+      } else {
         this._search_store(text_result);
       }
     }
@@ -379,18 +438,20 @@ export default class QRBarCode extends Component {
     return (
       <QRCodeScanner
         checkAndroid6Permissions={true}
-        ref={(node) => { this.scanner = node }}
-        onRead={(e) => {
+        ref={node => {
+          this.scanner = node;
+        }}
+        onRead={e => {
           this._proccessQRCodeResult(e.data);
         }}
-        topContent={(
+        topContent={
           <View style={styles.topContent}>
             <Text style={styles.centerText}>
               <Icon name="camera-party-mode" size={16} color="#404040" />
-              {" Hướng máy ảnh của bạn về phía mã QR Code để khám phá"}
+              {' Hướng máy ảnh của bạn về phía mã QR Code để khám phá'}
             </Text>
           </View>
-        )}
+        }
       />
     );
   }
@@ -404,32 +465,31 @@ export default class QRBarCode extends Component {
         </Text>
         <View style={{ marginLeft: 30, marginRight: 30 }}>
           <Barcode
-            value={barcode} 
-            format="CODE128" 
+            value={barcode}
+            format="CODE128"
             width="1"
             height="80"
-            background='transparent'/>
-        </View>
-        <Text style={styles.barcodeText}>
-          {barcode}
-        </Text>
-        <View style={styles.qrCodeView}>
-          <QRCode
-          style={{ flex: 1 }}
-            value={barcode}
-            size={Util.size.width/3}
-            logoBackgroundColor='transparent'
+            background="transparent"
           />
         </View>
-        <Text style={[styles.barcodeText, {fontSize: 16}]}>
-          <Icon name="reload" size={16} color="#000"/>
+        <Text style={styles.barcodeText}>{barcode}</Text>
+        <View style={styles.qrCodeView}>
+          <QRCode
+            style={{ flex: 1 }}
+            value={barcode}
+            size={Util.size.width / 3}
+            logoBackgroundColor="transparent"
+          />
+        </View>
+        <Text style={[styles.barcodeText, { fontSize: 16 }]}>
+          <Icon name="reload" size={16} color="#000" />
           Tự động cập nhật sau 60 giây
         </Text>
         <Text style={styles.descText}>
-          ●  Đây là mã vạch đại diện cho tài khoản của bạn
+          ● Đây là mã vạch đại diện cho tài khoản của bạn
         </Text>
         <Text style={styles.descText}>
-          ●  Sử dụng mã vạch này để nhận hoàn tiền từ cửa hàng
+          ● Sử dụng mã vạch này để nhận hoàn tiền từ cửa hàng
         </Text>
       </ScrollView>
     );
@@ -439,29 +499,25 @@ export default class QRBarCode extends Component {
     const { barcode, content } = this.state;
     return (
       <ScrollView style={{ flex: 1 }}>
-        <Text style={styles.addressText}>
-        {barcode}
-        </Text>
+        <Text style={styles.addressText}>{barcode}</Text>
         <View style={styles.addressQrCodeView}>
           <QRCode
-          style={{ flex: 1 }}
+            style={{ flex: 1 }}
             value={barcode}
-            size={Util.size.width/1.5}
-            logoBackgroundColor='transparent'
+            size={Util.size.width / 1.5}
+            logoBackgroundColor="transparent"
           />
         </View>
-        <Text style={styles.addressText}>
-          ●  {content}
-        </Text>
+        <Text style={styles.addressText}>● {content}</Text>
       </ScrollView>
     );
   }
 
   onPressTabButton(index) {
     if (index == 0) {
-      Actions.refresh({ title: this.state.title, address: this.props.address});
+      Actions.refresh({ title: this.state.title, address: this.props.address });
     } else {
-      Actions.refresh({ title: "Scan QRCode"});
+      Actions.refresh({ title: 'Scan QRCode' });
     }
     this.setState({ index: index });
   }
@@ -471,33 +527,51 @@ export default class QRBarCode extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.contentView}>
-          {index == 0 ? 
-            (this.props.address?this.renderOnlyQRCode():this.renderMyQRCode()):
-            this.renderQRCodeScanner()}
+          {index == 0
+            ? this.props.address
+              ? this.renderOnlyQRCode()
+              : this.renderMyQRCode()
+            : this.renderQRCodeScanner()}
         </View>
         <View style={styles.bottomView}>
-          <View style={styles.lineView}/>
-          <TouchableOpacity style={styles.bottomButton}
+          <View style={styles.lineView} />
+          <TouchableOpacity
+            style={styles.bottomButton}
             onPress={() => this.onPressTabButton(0)}
-            activeOpacity={1}>
-              <Icon name='barcode-scan'
-                size={20} 
-                color={index==0 ? global.DEFAULT_COLOR : "#000"} />
-              <Text style={[styles.titleBottomButton,
-                index==0 ? {color: global.DEFAULT_COLOR}: {color: '#000'}]}>
-                {title}
-              </Text>
+            activeOpacity={1}
+          >
+            <Icon
+              name="barcode-scan"
+              size={20}
+              color={index == 0 ? global.DEFAULT_COLOR : '#000'}
+            />
+            <Text
+              style={[
+                styles.titleBottomButton,
+                index == 0 ? { color: global.DEFAULT_COLOR } : { color: '#000' }
+              ]}
+            >
+              {title}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bottomButton}
+          <TouchableOpacity
+            style={styles.bottomButton}
             onPress={() => this.onPressTabButton(1)}
-            activeOpacity={1}>
-              <Icon name="qrcode-scan" 
-                size={20} 
-                color={index==1 ? global.DEFAULT_COLOR : "#000"} />
-              <Text style={[styles.titleBottomButton,
-                index==1 ? {color: global.DEFAULT_COLOR}: {color: '#000'}]}>
-                Scan QRCode
-              </Text>
+            activeOpacity={1}
+          >
+            <Icon
+              name="qrcode-scan"
+              size={20}
+              color={index == 1 ? global.DEFAULT_COLOR : '#000'}
+            />
+            <Text
+              style={[
+                styles.titleBottomButton,
+                index == 1 ? { color: global.DEFAULT_COLOR } : { color: '#000' }
+              ]}
+            >
+              Scan QRCode
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -515,12 +589,12 @@ const styles = StyleSheet.create({
   topContent: {
     width: Util.size.width,
     paddingVertical: 16,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
   centerText: {
     lineHeight: 20,
     fontSize: 16,
-    color: "#404040",
+    color: '#404040',
     marginLeft: 8,
     paddingHorizontal: 15
   },
@@ -528,7 +602,7 @@ const styles = StyleSheet.create({
     height: Util.size.height - 49 - global.NAV_HEIGHT
   },
   bottomView: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
@@ -536,18 +610,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   lineView: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 50,
     left: 0,
     right: 0,
     height: 0.5,
-    backgroundColor: 'gray',
+    backgroundColor: 'gray'
   },
   bottomButton: {
     flex: 1,
     alignItems: 'center',
     alignContent: 'center',
-    justifyContent: 'center' 
+    justifyContent: 'center'
   },
   titleBottomButton: {
     color: '#000',
@@ -562,8 +636,8 @@ const styles = StyleSheet.create({
   },
   qrCodeView: {
     marginTop: 0,
-    width: Util.size.width/3,
-    height: Util.size.width/3,
+    width: Util.size.width / 3,
+    height: Util.size.width / 3,
     alignSelf: 'center'
   },
   barcodeText: {
@@ -596,14 +670,14 @@ const styles = StyleSheet.create({
   poweredText: {
     fontSize: 14,
     color: '#000',
-    bottom: 20,    
-    textAlign: 'center',
+    bottom: 20,
+    textAlign: 'center'
   },
   addressQrCodeView: {
     marginTop: 0,
-    marginBottom:20,
-    width: Util.size.width/1.5,
-    height: Util.size.width/1.5,
+    marginBottom: 20,
+    width: Util.size.width / 1.5,
+    height: Util.size.width / 1.5,
     alignSelf: 'center'
-  },
+  }
 });

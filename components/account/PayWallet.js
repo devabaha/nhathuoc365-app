@@ -36,36 +36,32 @@ export default class PayWallet extends Component {
       address: props.address,
       loading: false,
       amount: 0
-    }
+    };
   }
 
-  componentWillMount() {
-  }
+  componentWillMount() {}
   // thực hiện add cửa hàng vào account của user
 
   _onSave() {
-    var {wallet, address, amount} = this.state;
+    var { wallet, address, amount } = this.state;
     if (!address) {
       return Alert.alert(
         'Thông báo',
         'Địa chỉ không chính xác',
-        [
-          {text: 'Đồng ý'},
-        ],
+        [{ text: 'Đồng ý' }],
         { cancelable: false }
       );
     }
 
     if (!amount || !validateMoney(amount)) {
-      return Alert.alert(
-        'Thông báo',
-        'Số lượng nhập không đúng',
-        [
-          {text: 'Đồng ý', onPress: () => {
+      return Alert.alert('Thông báo', 'Số lượng nhập không đúng', [
+        {
+          text: 'Đồng ý',
+          onPress: () => {
             this.amountInput.focus();
-          }},
-        ],
-      );
+          }
+        }
+      ]);
     }
 
     // if (!password) {
@@ -87,61 +83,66 @@ export default class PayWallet extends Component {
     this._transfer(wallet, address, amount);
   }
 
-  _transfer(wallet, address, amount) {//, password, refer
-    this.setState({
-      loading: true,
-    }, async () => {
-      try {
-        var response = await APIHandler.user_transfer_balance({
-          zone_code: wallet.zone_code,
-          receive_address: address,
-          amount: amount
-        });
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
+  _transfer(wallet, address, amount) {
+    //, password, refer
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_transfer_balance({
+            zone_code: wallet.zone_code,
+            receive_address: address,
+            amount: amount
+          });
+          if (response && response.status == STATUS_SUCCESS) {
+            action(() => {
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {}
+              );
+            })();
+          } else {
             this.setState({
               loading: false
-            }, () => {
-              
             });
-          })();
+          }
 
-        } else {
+          if (response) {
+            Toast.show(response.message, Toast.SHORT);
+          }
+        } catch (e) {
+          this.setState({
+            loading: false
+          });
+        } finally {
           this.setState({
             loading: false
           });
         }
-
-        if (response) {
-          Toast.show(response.message, Toast.SHORT);
-        }
-
-      } catch (e) {
-        this.setState({
-          loading: false
-        });
-      } finally {
-        this.setState({
-          loading: false
-        });
       }
-    });
+    );
   }
 
   renderTopLabelCoin() {
-    var {wallet} = this.state;
-    const {user_info} = store;
+    var { wallet } = this.state;
+    const { user_info } = store;
     return (
       <View>
         <View style={styles.add_store_actions_box}>
-
           <TouchableHighlight
             // onPress={this._goScanQRCode.bind(this)}
             underlayColor="transparent"
-            style={styles.add_store_action_btn}>
+            style={styles.add_store_action_btn}
+          >
             <View style={styles.add_store_action_btn_box_balance}>
               <Icon name={wallet.icon} size={24} color="#333333" />
-              <Text style={styles.add_store_action_label_balance}>{wallet.name}</Text>
+              <Text style={styles.add_store_action_label_balance}>
+                {wallet.name}
+              </Text>
               {/* <Text style={styles.add_store_action_label_balance}>{wallet.address}</Text> */}
             </View>
           </TouchableHighlight>
@@ -149,10 +150,18 @@ export default class PayWallet extends Component {
           <TouchableHighlight
             // onPress={() => Actions.vnd_wallet({})}
             underlayColor="transparent"
-            style={styles.add_store_action_btn}>
-            <View style={[styles.add_store_action_btn_box_balance, {borderRightWidth: 0}]}>
-            <Text style={styles.add_store_action_label_balance} >Số dư</Text>
-              <Text style={styles.add_store_action_content}>{wallet.balance_view}</Text>
+            style={styles.add_store_action_btn}
+          >
+            <View
+              style={[
+                styles.add_store_action_btn_box_balance,
+                { borderRightWidth: 0 }
+              ]}
+            >
+              <Text style={styles.add_store_action_label_balance}>Số dư</Text>
+              <Text style={styles.add_store_action_content}>
+                {wallet.balance_view}
+              </Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -161,85 +170,112 @@ export default class PayWallet extends Component {
   }
 
   render() {
-    var {wallet, address, loading} = this.state;
+    var { wallet, address, loading } = this.state;
     return (
-      <View style={[styles.container, {
-        marginBottom: store.keyboardTop
-      }]}>
+      <View
+        style={[
+          styles.container,
+          {
+            marginBottom: store.keyboardTop
+          }
+        ]}
+      >
         {this.renderTopLabelCoin()}
 
-          <Text style={styles.historyCoinText}>
-            <Icon name="bank" size={15} color="#333333" /> Chuyển khoản {wallet.name} tới địa chỉ
-          </Text>
-          <Text style={styles.historyCoinTextAddress}>{address}</Text>
-          <View style={styles.invite_text_input}>
-            <View style={styles.invite_text_input_sub}>
-              <Text style={{
+        <Text style={styles.historyCoinText}>
+          <Icon name="bank" size={15} color="#333333" /> Chuyển khoản{' '}
+          {wallet.name} tới địa chỉ
+        </Text>
+        <Text style={styles.historyCoinTextAddress}>{address}</Text>
+        <View style={styles.invite_text_input}>
+          <View style={styles.invite_text_input_sub}>
+            <Text
+              style={{
                 fontWeight: '500',
-                color: "#444444",
+                color: '#444444',
                 fontSize: 16,
                 marginLeft: 0,
-                marginBottom: 8,
-
-              }}>
-                Nhập số lượng {wallet.currency} trong {wallet.name} cần chuyển
-                </Text>
-              <TextInput
-                underlineColorAndroid="transparent"
-                ref={ref => this.amountInput = ref}
-                style={{
-                  height: 42,
-                  width: 250,
-                  borderColor: "#dddddd",
-                  borderWidth: 1,
-                  marginHorizontal: 15,
-                  paddingHorizontal: 8,
-                  borderRadius: 2,
-                  color: "#404040",
-                  fontSize: 18,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: "#ffffff",
-                  marginBottom: 10
-                }}
-                placeholder=""
-                keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-                onChangeText={(value) => {
-                  this.setState({
-                    amount: value.replaceAll(' ', '')
-                  });
-                }}
-                // autoFocus
-                value={this.state.amount}
-              />
-              <Text style={styles.disclaimerText}>Hãy xác nhận đúng địa chỉ Ví, không thể lấy lại nếu đã chuyển đi.</Text>
-              <TouchableHighlight
-                style={[styles.buttonAction, {
+                marginBottom: 8
+              }}
+            >
+              Nhập số lượng {wallet.currency} trong {wallet.name} cần chuyển
+            </Text>
+            <TextInput
+              underlineColorAndroid="transparent"
+              ref={ref => (this.amountInput = ref)}
+              style={{
+                height: 42,
+                width: 250,
+                borderColor: '#dddddd',
+                borderWidth: 1,
+                marginHorizontal: 15,
+                paddingHorizontal: 8,
+                borderRadius: 2,
+                color: '#404040',
+                fontSize: 18,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#ffffff',
+                marginBottom: 10
+              }}
+              placeholder=""
+              keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+              onChangeText={value => {
+                this.setState({
+                  amount: value.replaceAll(' ', '')
+                });
+              }}
+              // autoFocus
+              value={this.state.amount}
+            />
+            <Text style={styles.disclaimerText}>
+              Hãy xác nhận đúng địa chỉ Ví, không thể lấy lại nếu đã chuyển đi.
+            </Text>
+            <TouchableHighlight
+              style={[
+                styles.buttonAction,
+                {
                   marginTop: 6
-                }]}
-                onPress={this._onSave.bind(this)}
-                underlayColor="transparent">
-                <View style={[styles.boxButtonAction, {
-                  backgroundColor: "#fa7f50",
-                  borderColor: "#999999"
-                }]}>
-                  {loading ? (
-                    <View style={{
+                }
+              ]}
+              onPress={this._onSave.bind(this)}
+              underlayColor="transparent"
+            >
+              <View
+                style={[
+                  styles.boxButtonAction,
+                  {
+                    backgroundColor: '#fa7f50',
+                    borderColor: '#999999'
+                  }
+                ]}
+              >
+                {loading ? (
+                  <View
+                    style={{
                       width: 16
-                    }}>
-                      <Indicator size="small" />
-                    </View>
-                  ) : (
-                    <Icon name="check" size={16} color="#ffffff" />
-                  )}
-                  <Text style={[styles.buttonActionTitle, {
-                    color: "#ffffff"
-                  }]}>Chuyển khoản</Text>
-                </View>
-              </TouchableHighlight>
-            </View>
+                    }}
+                  >
+                    <Indicator size="small" />
+                  </View>
+                ) : (
+                  <Icon name="check" size={16} color="#ffffff" />
+                )}
+                <Text
+                  style={[
+                    styles.buttonActionTitle,
+                    {
+                      color: '#ffffff'
+                    }
+                  ]}
+                >
+                  Chuyển khoản
+                </Text>
+              </View>
+            </TouchableHighlight>
           </View>
         </View>
+      </View>
     );
   }
 }
@@ -249,22 +285,22 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff'
   },
   profile_list_opt_btn: {
     width: Util.size.width,
     height: 32,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 4,
     marginTop: 20,
     borderTopWidth: 0,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   point_icon: {
     width: 60,
-    height: 60,
+    height: 60
   },
   iconView: {
     alignItems: 'center',
@@ -279,12 +315,12 @@ const styles = StyleSheet.create({
   },
   profile_list_label: {
     fontSize: 18,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '400'
   },
   profile_list_small_label: {
     fontSize: 14,
-    color: "#666666",
+    color: '#666666',
     marginTop: 2
   },
   labelCoinParentView: {
@@ -358,7 +394,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 12,
-    color: 'rgb(150,150,150)',
+    color: 'rgb(150,150,150)'
   },
   pointText: {
     fontSize: 16,
@@ -369,7 +405,7 @@ const styles = StyleSheet.create({
 
   profile_cover_box: {
     width: '100%',
-    backgroundColor: "#ccc",
+    backgroundColor: '#ccc',
     height: 120
   },
   profile_cover: {
@@ -382,9 +418,9 @@ const styles = StyleSheet.create({
     left: 24,
     width: 70,
     height: 70,
-    backgroundColor: "#cccccc",
+    backgroundColor: '#cccccc',
     borderWidth: 2,
-    borderColor: "#ffffff",
+    borderColor: '#ffffff',
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
@@ -393,22 +429,22 @@ const styles = StyleSheet.create({
   profile_avatar: {
     width: 76,
     height: 76,
-    borderRadius: 38,
+    borderRadius: 38
     // resizeMode: 'cover'
   },
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
 
   add_store_actions_box: {
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_action_btn: {
     paddingVertical: 4
@@ -420,7 +456,7 @@ const styles = StyleSheet.create({
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
-  add_store_action_btn_box_balance:{
+  add_store_action_btn_box_balance: {
     alignItems: 'center',
     width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
@@ -437,10 +473,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: '600'
   },
-  add_store_action_content:{
+  add_store_action_content: {
     fontSize: 18,
     marginTop: 5,
-    color: "#51A9FF",
+    color: '#51A9FF',
     fontWeight: '800'
   },
 
@@ -449,7 +485,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // backgroundColor: "",
     // marginTop: 30,
-    marginTop: 20,
+    marginTop: 20
   },
 
   invite_text_input_sub: {
@@ -460,7 +496,7 @@ const styles = StyleSheet.create({
     marginRight: 20
   },
   boxButtonActions: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -469,7 +505,7 @@ const styles = StyleSheet.create({
   boxButtonAction: {
     flexDirection: 'row',
     borderWidth: Util.pixel,
-    borderColor: "#666666",
+    borderColor: '#666666',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 5,
@@ -478,7 +514,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonActionTitle: {
-    color: "#333333",
+    color: '#333333',
     marginLeft: 4,
     fontSize: 14
   }

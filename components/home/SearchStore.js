@@ -35,7 +35,7 @@ export default class SearchStore extends Component {
       coppy_sticker_flag: false,
       fromIntro: props.fromIntro,
       suggest_data: null
-    }
+    };
   }
 
   componentDidMount() {
@@ -45,7 +45,7 @@ export default class SearchStore extends Component {
     var options = {
       showSearchBar: true,
       searchValue: site_code || '',
-      placeholder: "Tên,địa chỉ, mã cửa hàng, ... ",
+      placeholder: 'Tên,địa chỉ, mã cửa hàng, ... ',
       onChangeText: this._onChangeSearch.bind(this),
       onSubmitEditing: this._search_store.bind(this),
       onSearchCancel: this._onSearchCancel.bind(this),
@@ -58,35 +58,42 @@ export default class SearchStore extends Component {
       autoFocus: true,
       cancelIsPop: true,
       renderIconInput: () => {
-        return(
+        return (
           <TouchableHighlight
             underlayColor="transparent"
             onPress={() => {
               Actions.scan_qr_code({
-                onBackHandler: (site_code) => {
-                  this.setState({
-                    searchValue: site_code
-                  }, () => {
-                    Actions.refresh({
+                onBackHandler: site_code => {
+                  this.setState(
+                    {
                       searchValue: site_code
-                    });
+                    },
+                    () => {
+                      Actions.refresh({
+                        searchValue: site_code
+                      });
 
-                    this.search_handler = setTimeout(() => {
-                      this._search_store();
-                    }, 300);
-                  });
+                      this.search_handler = setTimeout(() => {
+                        this._search_store();
+                      }, 300);
+                    }
+                  );
                 }
               });
-            }}>
+            }}
+          >
             <Icon
               style={{
                 marginLeft: 4
               }}
-              name="qrcode" size={24} color="#999999" />
+              name="qrcode"
+              size={24}
+              color="#999999"
+            />
           </TouchableHighlight>
         );
       }
-    }
+    };
 
     if (fromIntro) {
       options.hideBackImage = true;
@@ -99,17 +106,17 @@ export default class SearchStore extends Component {
 
     // search when has site_code
     if (site_code) {
-      this.setState({
-        searchValue: site_code
-      }, () => {
-        this.search_handler = setTimeout(() => {
-
-          this._search_store();
-
-        }, 300);
-      });
+      this.setState(
+        {
+          searchValue: site_code
+        },
+        () => {
+          this.search_handler = setTimeout(() => {
+            this._search_store();
+          }, 300);
+        }
+      );
     }
-
   }
 
   // onchange text value for typing
@@ -120,20 +127,20 @@ export default class SearchStore extends Component {
       searchValue: text
     });
 
-    this.setState({
-      searchValue: text
-    }, () => {
-      this.search_handler = setTimeout(() => {
-
-        this._search_store();
-
-      }, 300);
-    });
+    this.setState(
+      {
+        searchValue: text
+      },
+      () => {
+        this.search_handler = setTimeout(() => {
+          this._search_store();
+        }, 300);
+      }
+    );
   }
 
   // tìm cửa hàng theo mã CH
   _search_store() {
-
     if (this.state.searchValue == '') {
       this.setState({
         search_data: null,
@@ -142,35 +149,39 @@ export default class SearchStore extends Component {
       return;
     }
 
-    this.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_search_store(this.state.searchValue);
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_search_store(
+            this.state.searchValue
+          );
 
-        if (response && response.status == STATUS_SUCCESS) {
-          if(response.data.is_site_code){
-            this._goStores_(response.data.site);
-          }else{
+          if (response && response.status == STATUS_SUCCESS) {
+            if (response.data.is_site_code) {
+              this._goStores_(response.data.site);
+            } else {
+              this.setState({
+                search_data: response.data.sites,
+                loading: false
+              });
+            }
+          } else {
             this.setState({
-              search_data: response.data.sites,
+              search_data: null,
               loading: false
             });
           }
-        } else {
-          this.setState({
-            search_data: null,
-            loading: false
-          });
+        } catch (e) {
+          console.warn(e + ' user_search_store');
+
+          store.addApiQueue('user_search_store', this._search_store.bind(this));
+        } finally {
         }
-
-      } catch (e) {
-        console.warn(e + ' user_search_store');
-
-        store.addApiQueue('user_search_store', this._search_store.bind(this));
-      } finally {
       }
-    });
+    );
   }
 
   // tới màn hình store
@@ -192,7 +203,6 @@ export default class SearchStore extends Component {
     })();
   }
 
-
   // bấm huỷ khi search
   _onSearchCancel() {
     this.setState({
@@ -202,7 +212,7 @@ export default class SearchStore extends Component {
   }
 
   render() {
-    var {search_data} = this.state;
+    var { search_data } = this.state;
 
     return (
       <View style={styles.container}>
@@ -210,27 +220,20 @@ export default class SearchStore extends Component {
           style={{
             marginBottom: store.keyboardTop
           }}
-          keyboardShouldPersistTaps="always">
-
+          keyboardShouldPersistTaps="always"
+        >
           {this.state.search_data != null ? (
             <FlatList
               keyboardShouldPersistTaps="always"
               style={styles.stores_result_box}
               data={search_data}
-              onEndReached={(num) => {
-
-              }}
+              onEndReached={num => {}}
               onEndReachedThreshold={0}
-              ItemSeparatorComponent={() => <View style={styles.separator}></View>}
-              renderItem={({item, index}) => {
-
-                return(
-                  <StoreItem
-                    item={item}
-                    index={index}
-                    that={this}
-                    />
-                );
+              ItemSeparatorComponent={() => (
+                <View style={styles.separator}></View>
+              )}
+              renderItem={({ item, index }) => {
+                return <StoreItem item={item} index={index} that={this} />;
               }}
               keyExtractor={item => item.id}
             />
@@ -239,24 +242,25 @@ export default class SearchStore extends Component {
               <Text></Text>
             </View>
           )}
-
         </ScrollView>
 
         <Sticker
           active={this.state.coppy_sticker_flag}
           message="Thêm Cửa Hàng thành công."
-         />
+        />
 
-         {this.state.fromIntro && (
-           <View style={{
-             position: 'absolute',
-             bottom: store.keyboardTop,
-             left: 0,
-             width: Util.size.width,
-             height: 60,
-             alignItems: 'center',
-             justifyContent: 'center'
-           }}>
+        {this.state.fromIntro && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: store.keyboardTop,
+              left: 0,
+              width: Util.size.width,
+              height: 60,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
             <TouchableHighlight
               style={{
                 borderWidth: Util.pixel,
@@ -266,24 +270,32 @@ export default class SearchStore extends Component {
               }}
               underlayColor="transparent"
               onPress={() => {
-                this.setState({
-                  searchValue: STORE_DEMO_CODE
-                }, () => {
-                  Actions.refresh({
+                this.setState(
+                  {
                     searchValue: STORE_DEMO_CODE
-                  });
+                  },
+                  () => {
+                    Actions.refresh({
+                      searchValue: STORE_DEMO_CODE
+                    });
 
-                  this.search_handler = setTimeout(() => {
-                    this._search_store();
-                  }, 300);
-                });
-              }}>
-              <Text style={{
-                color: DEFAULT_COLOR
-              }}>Thêm cửa hàng Trải nghiệm</Text>
+                    this.search_handler = setTimeout(() => {
+                      this._search_store();
+                    }, 300);
+                  }
+                );
+              }}
+            >
+              <Text
+                style={{
+                  color: DEFAULT_COLOR
+                }}
+              >
+                Thêm cửa hàng Trải nghiệm
+              </Text>
             </TouchableHighlight>
-           </View>
-         )}
+          </View>
+        )}
       </View>
     );
   }
@@ -296,7 +308,7 @@ class StoreItem extends Component {
     super(props);
   }
 
-    // tới màn hình store
+  // tới màn hình store
   _goStores(item) {
     action(() => {
       store.setNoRefreshHomeChange(1);
@@ -316,18 +328,27 @@ class StoreItem extends Component {
   // thực hiện add cửa hàng vào account của user
 
   render() {
-    var {item, index} = this.props;
+    var { item, index } = this.props;
 
     return (
       <TouchableHighlight
         underlayColor="transparent"
         onPress={() => {
-          this._goStores.bind(this, item)
-        }}>
-
-        <View style={[styles.store_result_item, index < 3 ? styles.store_result_item_active : null]}>
+          this._goStores.bind(this, item);
+        }}
+      >
+        <View
+          style={[
+            styles.store_result_item,
+            index < 3 ? styles.store_result_item_active : null
+          ]}
+        >
           <View style={styles.store_result_item_image_box}>
-            <CachedImage mutable style={styles.store_result_item_image} source={{uri: item.logo_url}} />
+            <CachedImage
+              mutable
+              style={styles.store_result_item_image}
+              source={{ uri: item.logo_url }}
+            />
           </View>
 
           <View style={styles.store_result_item_content}>
@@ -338,10 +359,23 @@ class StoreItem extends Component {
               <View style={styles.store_result_item_add_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
-                  onPress={this._goStores.bind(this, item)}>
-                  <View style={[styles.add_btn_icon_box, styles.add_btn_icon_box_active]}>
+                  onPress={this._goStores.bind(this, item)}
+                >
+                  <View
+                    style={[
+                      styles.add_btn_icon_box,
+                      styles.add_btn_icon_box_active
+                    ]}
+                  >
                     <Icon name="check" size={14} color="#ffffff" />
-                    <Text style={[styles.add_btn_label, styles.add_btn_label_active]}>Vào cửa hàng</Text>
+                    <Text
+                      style={[
+                        styles.add_btn_label,
+                        styles.add_btn_label_active
+                      ]}
+                    >
+                      Vào cửa hàng
+                    </Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -363,16 +397,16 @@ const styles = StyleSheet.create({
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
 
   stores_result_box: {
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   store_result_item: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingVertical: 4,
     paddingHorizontal: 15,
     flexDirection: 'row',
@@ -382,7 +416,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#ebebeb"
   },
   store_result_item_image_box: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     width: 60,
     height: 60,
     marginTop: 8
@@ -401,20 +435,20 @@ const styles = StyleSheet.create({
   },
   store_result_item_title: {
     fontSize: 14,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '500',
     lineHeight: isIOS ? 16 : 18,
     marginTop: 8
   },
   store_result_item_desc: {
     marginTop: 4,
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     lineHeight: isIOS ? 16 : 18
   },
   store_result_item_time: {
     fontSize: 12,
-    color: "#666666",
+    color: '#666666',
     marginLeft: 4
   },
   store_result_item_add_box: {
@@ -440,7 +474,7 @@ const styles = StyleSheet.create({
     marginTop: -2
   },
   add_btn_icon_active: {
-    color: "#ffffff"
+    color: '#ffffff'
   },
   add_btn_label: {
     color: DEFAULT_COLOR,
@@ -448,17 +482,15 @@ const styles = StyleSheet.create({
     marginLeft: 4
   },
   add_btn_label_active: {
-    color: "#ffffff"
+    color: '#ffffff'
   },
   add_store_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20,
     marginVertical: 8,
     marginLeft: 15
   },
-  defaultBox: {
-
-  }
+  defaultBox: {}
 });

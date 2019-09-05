@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,8 @@ import {
   TouchableHighlight,
   FlatList,
   ScrollView,
-  Alert, Platform
+  Alert,
+  Platform
 } from 'react-native';
 
 // library
@@ -18,12 +19,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 // import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import {Actions, ActionConst} from 'react-native-router-flux';
+import { Actions, ActionConst } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
-import {Button} from '../../lib/react-native-elements';
+import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
-import {reaction} from 'mobx';
+import { reaction } from 'mobx';
 import Communications from 'react-native-communications';
 
 // components
@@ -34,21 +35,17 @@ import NewItemComponent3 from '../notify/NewItemComponent3';
 import NewItemComponent4 from '../notify/NewItemComponent4';
 import NewItemComponent5 from '../notify/NewItemComponent5';
 import Items from '../stores/Items';
-import {
-  TabTutorial,
-  AddStoreTutorial,
-  GoStoreTutorial
-} from '../tutorial';
-import _drawerIconLocation from "../../images/icon_location.png";
-import _drawerIconNotication from "../../images/notication.png";
-import _drawerIconPoints from "../../images/points.png";
-import _drawerIconTrans from "../../images/trans.png";
-import _drawerIconVoucher from "../../images/voucher.png";
-import _drawerIconScanQrcode from "../../images/scan_qrcode.png";
-import _drawerIconPhoneCard from "../../images/phone_card.png";
-import _drawerIconRada from "../../images/icon_rada.png";
-import _drawerIconPayBill from "../../images/pay_bill.png";
-import _drawerIconNext from "../../images/next.png";
+import { TabTutorial, AddStoreTutorial, GoStoreTutorial } from '../tutorial';
+import _drawerIconLocation from '../../images/icon_location.png';
+import _drawerIconNotication from '../../images/notication.png';
+import _drawerIconPoints from '../../images/points.png';
+import _drawerIconTrans from '../../images/trans.png';
+import _drawerIconVoucher from '../../images/voucher.png';
+import _drawerIconScanQrcode from '../../images/scan_qrcode.png';
+import _drawerIconPhoneCard from '../../images/phone_card.png';
+import _drawerIconRada from '../../images/icon_rada.png';
+import _drawerIconPayBill from '../../images/pay_bill.png';
+import _drawerIconNext from '../../images/next.png';
 
 const SERVICES_DATA_1 = [
   {
@@ -103,15 +100,15 @@ export default class Home extends Component {
     this._goListStore = this._goListStore.bind(this);
     this._getData = this._getData.bind(this);
     // auto refresh home
-    reaction(() => store.refresh_home_change && !store.no_refresh_home_change, () => this._getData(450));
+    reaction(
+      () => store.refresh_home_change && !store.no_refresh_home_change,
+      () => this._getData(450)
+    );
   }
 
-  componentWillMount() {
-
-  }
+  componentWillMount() {}
 
   componentDidMount() {
-
     this._getData();
 
     store.parentTab = '_home';
@@ -123,7 +120,6 @@ export default class Home extends Component {
   }
 
   componentWillReceiveProps() {
-
     if (store.goStoreNow) {
       store.goStoreNow = undefined;
       return Actions.stores();
@@ -148,7 +144,7 @@ export default class Home extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_home) {
-      this.refs_home.scrollTo({x: 0, y: top, animated: true});
+      this.refs_home.scrollTo({ x: 0, y: top, animated: true });
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
@@ -160,13 +156,16 @@ export default class Home extends Component {
   }
 
   _scrollOverTopAndReload() {
-    this.setState({
-      refreshing: true
-    }, () => {
-      this._scrollToTop(-60);
+    this.setState(
+      {
+        refreshing: true
+      },
+      () => {
+        this._scrollToTop(-60);
 
-      this._getData(1000);
-    });
+        this._getData(1000);
+      }
+    );
   }
 
   // lấy dữ liệu trang home
@@ -174,63 +173,83 @@ export default class Home extends Component {
     if (store.no_refresh_home_change) {
       return;
     }
-    this.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_site_home();
-        if (response && response.status == STATUS_SUCCESS) {
-          setTimeout(() => {
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_site_home();
+          if (response && response.status == STATUS_SUCCESS) {
+            setTimeout(() => {
+              var { data } = response;
 
-            var {data} = response;
+              // Animation is true when first loaded
+              if (this.state.store_data == null) {
+                layoutAnimation();
+              }
 
-            // Animation is true when first loaded
-            if (this.state.store_data == null) {
-              layoutAnimation();
-            }
-
-            if (data.vote_cart && data.vote_cart.site_id) {
-              Actions.rating({
-                cart_data: data.vote_cart
+              if (data.vote_cart && data.vote_cart.site_id) {
+                Actions.rating({
+                  cart_data: data.vote_cart
+                });
+              }
+              this.setState({
+                finish: true,
+                loading: false,
+                refreshing: false,
+                show_add_store: false,
+                stores_data:
+                  data.sites && data.sites.length > 0 ? data.sites : null,
+                store_data: data.site,
+                user_notice: data.notices.length > 0 ? data.notices : null,
+                newses_data:
+                  data.newses && data.newses.length ? data.newses : null,
+                newses_type: data.newses_type,
+                title_newses_data: data.title_newses,
+                farm_newses_data:
+                  data.farm_newses && data.farm_newses.length
+                    ? data.farm_newses
+                    : null,
+                farm_newses_type: data.farm_newses_type,
+                title_farm_newses_data: data.title_farm_newses,
+                promotions:
+                  data.promotions && data.promotions.length
+                    ? data.promotions
+                    : null,
+                products:
+                  data.products && data.products.length ? data.products : null,
+                title_products: data.title_products,
+                like_products:
+                  data.like_products && data.like_products.length
+                    ? data.like_products
+                    : null,
+                title_like_products: data.title_like_products,
+                hot_products:
+                  data.hot_products && data.hot_products.length
+                    ? data.hot_products
+                    : null,
+                title_hot_products: data.title_hot_products,
+                categorie_products:
+                  data.categories && data.categories.length
+                    ? data.categories
+                    : null,
+                view_all_sites: data.view_all_sites == 1,
+                view_all_notices: data.view_all_notices == 1,
+                view_all_newses: data.view_all_newses == 1
               });
-            }
-            this.setState({
-              finish: true,
-              loading: false,
-              refreshing: false,
-              show_add_store: false,
-              stores_data: data.sites && data.sites.length > 0 ? data.sites : null,
-              store_data: data.site,
-              user_notice: data.notices.length > 0 ? data.notices : null,
-              newses_data: data.newses && data.newses.length ? data.newses : null,
-              newses_type: data.newses_type,
-              title_newses_data: data.title_newses,
-              farm_newses_data: data.farm_newses && data.farm_newses.length ? data.farm_newses : null,
-              farm_newses_type: data.farm_newses_type,
-              title_farm_newses_data: data.title_farm_newses,
-              promotions: data.promotions && data.promotions.length ? data.promotions : null,
-              products: data.products && data.products.length ? data.products : null,
-              title_products: data.title_products,
-              like_products: data.like_products && data.like_products.length ? data.like_products : null,
-              title_like_products: data.title_like_products,
-              hot_products: data.hot_products && data.hot_products.length ? data.hot_products : null,
-              title_hot_products: data.title_hot_products,
-              categorie_products: data.categories && data.categories.length ? data.categories : null,
-              view_all_sites: data.view_all_sites == 1,
-              view_all_notices: data.view_all_notices == 1,
-              view_all_newses: data.view_all_newses == 1,
-            });
-            store.setStoreData(data.site);
+              store.setStoreData(data.site);
 
-            //this._scrollToTop(0);
-          }, delay || 0);
+              //this._scrollToTop(0);
+            }, delay || 0);
+          }
+        } catch (e) {
+          console.warn(e + ' user_home');
+
+          store.addApiQueue('user_home', this._getData.bind(this));
         }
-      } catch (e) {
-        console.warn(e + ' user_home');
-
-        store.addApiQueue('user_home', this._getData.bind(this));
       }
-    });
+    );
   }
 
   // render button trên navbar
@@ -239,18 +258,25 @@ export default class Home extends Component {
       <TouchableHighlight
         style={styles.right_btn_add_store}
         underlayColor="transparent"
-        onPress={this._showPopupAddStore.bind(this)}>
-        <View style={{
-          height: 34,
-          alignItems: 'center',
-          marginTop: -8
-        }}>
-          <Icon name="phone" size={22} color="#FAFAFA"/>
-          <Text style={{
-            fontSize: 10,
-            color: '#FAFAFA',
-            marginTop: 2
-          }}>Gọi hỗ trợ</Text>
+        onPress={this._showPopupAddStore.bind(this)}
+      >
+        <View
+          style={{
+            height: 34,
+            alignItems: 'center',
+            marginTop: -8
+          }}
+        >
+          <Icon name="phone" size={22} color="#FAFAFA" />
+          <Text
+            style={{
+              fontSize: 10,
+              color: '#FAFAFA',
+              marginTop: 2
+            }}
+          >
+            Gọi hỗ trợ
+          </Text>
         </View>
       </TouchableHighlight>
     );
@@ -279,12 +305,16 @@ export default class Home extends Component {
   _goScanQRCode() {
     this._closePopup();
 
-    Actions.qr_bar_code({title: "Quét QR Code", index: 1, wallet: store.user_info.default_wallet});
+    Actions.qr_bar_code({
+      title: 'Quét QR Code',
+      index: 1,
+      wallet: store.user_info.default_wallet
+    });
   }
 
   _goQRCode() {
     this._closePopup();
-    Actions.qr_bar_code({title: "Mã tài khoản"});
+    Actions.qr_bar_code({ title: 'Mã tài khoản' });
   }
 
   _closePopup() {
@@ -295,13 +325,13 @@ export default class Home extends Component {
 
   // pull to reload danh sách cửa hàng
   _onRefresh() {
-    this.setState({refreshing: true});
+    this.setState({ refreshing: true });
 
     this._getData(1000);
   }
 
   // render rows cửa hàng trong list
-  renderRow({item, index}, isAdmin) {
+  renderRow({ item, index }, isAdmin) {
     if (index == 0) {
       this.defaultBoxHeight = 0;
     }
@@ -309,9 +339,7 @@ export default class Home extends Component {
     this.defaultBoxHeight += 104;
 
     // store list
-    return (
-      <ItemList item={item} index={index} that={this}/>
-    );
+    return <ItemList item={item} index={index} that={this} />;
   }
 
   _goAdStore(item) {
@@ -358,7 +386,6 @@ export default class Home extends Component {
 
       Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     } finally {
-
     }
   }
 
@@ -376,24 +403,27 @@ export default class Home extends Component {
     // }
 
     Actions.list_store({
-      title: "Cửa hàng",
+      title: 'Cửa hàng'
     });
   }
 
   _cachedStore(key, thenFunc = () => 1, catchFunc = () => 1) {
-    storage.load({
-      key,
-      autoSync: true,
-      syncInBackground: true,
-      syncParams: {
-        extraFetchOptions: {},
-        someFlag: true,
-      },
-    }).then(data => {
-      thenFunc(data);
-    }).catch(err => {
-      catchFunc(err);
-    });
+    storage
+      .load({
+        key,
+        autoSync: true,
+        syncInBackground: true,
+        syncParams: {
+          extraFetchOptions: {},
+          someFlag: true
+        }
+      })
+      .then(data => {
+        thenFunc(data);
+      })
+      .catch(err => {
+        catchFunc(err);
+      });
   }
 
   _goDetail(item) {
@@ -445,20 +475,24 @@ export default class Home extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
-          contentContainerStyle={{flexGrow: 1}}
-          style={{marginBottom: 15}}
-          refreshControl={<RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this._onRefresh.bind(this)}
-          />}
+          contentContainerStyle={{ flexGrow: 1 }}
+          style={{ marginBottom: 15 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
         >
           <View style={styles.header}>
             <Text style={styles.add_store_action_label}>
-              <Text style={{
-                fontWeight: 'bold',
-                fontSize: 20,
-                color: "#FAFAFA"
-              }}>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontSize: 20,
+                  color: '#FAFAFA'
+                }}
+              >
                 Lê Huy Thực
               </Text>
             </Text>
@@ -471,25 +505,57 @@ export default class Home extends Component {
           </View>
 
           {/*Thong tin Vi*/}
-          {(<View style={{
-              backgroundColor: "#FAFAFA",
-            }}>
-
+          {
+            <View
+              style={{
+                backgroundColor: '#FAFAFA'
+              }}
+            >
               <View style={styles.add_store_actions_box}>
                 <View style={styles.home_box_wallet_info}>
-                  <Text style={[styles.add_store_wallet_label, {lineHeight: 20}]}>Ví tích điểm</Text>
-                  <Text style={[styles.add_store_wallet_label, {
-                    fontSize: 20,
-                    fontWeight: "bold",
-                    lineHeight: 20
-                  }]}> TIDI</Text>
+                  <Text
+                    style={[styles.add_store_wallet_label, { lineHeight: 20 }]}
+                  >
+                    Ví tích điểm
+                  </Text>
+                  <Text
+                    style={[
+                      styles.add_store_wallet_label,
+                      {
+                        fontSize: 20,
+                        fontWeight: 'bold',
+                        lineHeight: 20
+                      }
+                    ]}
+                  >
+                    {' '}
+                    TIDI
+                  </Text>
                   <View style={styles.home_box_wallet_info_label_right}>
-                    <Text style={{fontSize: 20, color: "#042C5C", fontWeight: "bold", lineHeight: 20}}>6,390,000đ</Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: '#042C5C',
+                        fontWeight: 'bold',
+                        lineHeight: 20
+                      }}
+                    >
+                      6,390,000đ
+                    </Text>
                   </View>
                   <TouchableHighlight
                     onPress={this._goQRCode.bind(this, this.state.store_data)}
-                    underlayColor="transparent">
-                    <View style={{fontSize: 20, color: "#042C5C", fontWeight: "bold", lineHeight: 20, marginLeft: 10,}}>
+                    underlayColor="transparent"
+                  >
+                    <View
+                      style={{
+                        fontSize: 20,
+                        color: '#042C5C',
+                        fontWeight: 'bold',
+                        lineHeight: 20,
+                        marginLeft: 10
+                      }}
+                    >
                       <Image
                         style={styles.icon_next}
                         source={_drawerIconNext}
@@ -501,66 +567,82 @@ export default class Home extends Component {
                   <TouchableHighlight
                     onPress={this._goQRCode.bind(this, this.state.store_data)}
                     underlayColor="transparent"
-                    style={styles.add_store_action_btn}>
+                    style={styles.add_store_action_btn}
+                  >
                     <View style={styles.add_store_action_btn_box}>
                       <Image
                         style={styles.icon_points}
                         source={_drawerIconPoints}
                       />
-                      <Text style={styles.add_store_action_label}>Tích điểm</Text>
+                      <Text style={styles.add_store_action_label}>
+                        Tích điểm
+                      </Text>
                     </View>
                   </TouchableHighlight>
 
                   <TouchableHighlight
-                    onPress={() => Actions.vnd_wallet({
-                      title: store.user_info.default_wallet.name,
-                      wallet: store.user_info.default_wallet
-                    })}
+                    onPress={() =>
+                      Actions.vnd_wallet({
+                        title: store.user_info.default_wallet.name,
+                        wallet: store.user_info.default_wallet
+                      })
+                    }
                     underlayColor="transparent"
-                    style={styles.add_store_action_btn}>
+                    style={styles.add_store_action_btn}
+                  >
                     <View style={styles.add_store_action_btn_box}>
                       <Image
                         style={styles.icon_tran}
                         source={_drawerIconTrans}
                       />
-                      <Text style={styles.add_store_action_label}>Giao dịch</Text>
+                      <Text style={styles.add_store_action_label}>
+                        Giao dịch
+                      </Text>
                     </View>
                   </TouchableHighlight>
 
                   <TouchableHighlight
-                    onPress={this._goScanQRCode.bind(this, this.state.store_data)}
+                    onPress={this._goScanQRCode.bind(
+                      this,
+                      this.state.store_data
+                    )}
                     underlayColor="transparent"
-                    style={styles.add_store_action_btn}>
-                    <View style={[styles.add_store_action_btn_box, {
-                    }]}>
+                    style={styles.add_store_action_btn}
+                  >
+                    <View style={[styles.add_store_action_btn_box, {}]}>
                       <Image
                         style={styles.icon_tran}
                         source={_drawerIconVoucher}
                       />
-                      <Text style={styles.add_store_action_label}>Voucher của tôi</Text>
+                      <Text style={styles.add_store_action_label}>
+                        Voucher của tôi
+                      </Text>
                     </View>
                   </TouchableHighlight>
                 </View>
               </View>
             </View>
-          )}
+          }
 
           {/* <Image /> */}
-          {(this.state.promotions && this.state.promotions.length > 0) && (
-            <View style={{
-              backgroundColor: "#FAFAFA",
-              marginTop: 45,
-            }}>
+          {this.state.promotions && this.state.promotions.length > 0 && (
+            <View
+              style={{
+                backgroundColor: '#FAFAFA',
+                marginTop: 45
+              }}
+            >
               <Swiper
                 width={Util.size.width - 30}
-                height={(Util.size.width - 30) * .33}
+                height={(Util.size.width - 30) * 0.33}
                 autoplayTimeout={3}
                 showsPagination={true}
                 marginHorizontal={MARGIN_HORIZONTAL}
                 marginVertical={10}
-                backgroundColor={"#E9E9E9"}
+                backgroundColor={'#E9E9E9'}
                 borderRadius={4}
-                autoplay>
+                autoplay
+              >
                 {this.state.promotions.map((banner, i) => {
                   return (
                     <View
@@ -568,17 +650,20 @@ export default class Home extends Component {
                       style={{
                         width: Util.size.width,
                         alignItems: 'center',
-                        borderRadius: 4,
-                      }}>
+                        borderRadius: 4
+                      }}
+                    >
                       <TouchableHighlight
                         onPress={this._goDetail.bind(this, banner.news)}
-                        underlayColor="transparent">
+                        underlayColor="transparent"
+                      >
                         <CachedImage
-                          source={{uri: banner.banner}}
+                          source={{ uri: banner.banner }}
                           style={{
                             width: Util.size.width,
-                            height: (Util.size.width) * .4,
-                          }}/>
+                            height: Util.size.width * 0.4
+                          }}
+                        />
                       </TouchableHighlight>
                     </View>
                   );
@@ -586,10 +671,12 @@ export default class Home extends Component {
               </Swiper>
             </View>
           )}
-          <View style={{
-            backgroundColor: "#FAFAFA",
-            marginTop: 15,
-          }}>
+          <View
+            style={{
+              backgroundColor: '#FAFAFA',
+              marginTop: 15
+            }}
+          >
             {farm_newses_data && (
               <ListHomeItems
                 data={farm_newses_data}
@@ -597,48 +684,40 @@ export default class Home extends Component {
               />
             )}
 
-          <View style={styles.serviceBox}>
-            <FlatList
-              ref="service_list"
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={SERVICES_DATA_1}
-              extraData={this.state}
-              keyExtractor={item => item.id}
-              ItemSeparatorComponent={
-                () => <View style={{width: ~~(Util.size.width / 28)}}/>
-              }
-              renderItem={({item, index}) => (
-                <ServiceButton
-                  iconName={item.iconName}
-                  title={item.title}
-                  service_type={item.service_type}
-                  service_id={item.service_id}
-                  key={index}
-                  style={index !== SERVICES_DATA_1.length - 1 && {
-                  }}
-                  onPress={() => {
-                  }}
-                />
-              )}
-            />
-          </View>
+            <View style={styles.serviceBox}>
+              <FlatList
+                ref="service_list"
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={SERVICES_DATA_1}
+                extraData={this.state}
+                keyExtractor={item => item.id}
+                ItemSeparatorComponent={() => (
+                  <View style={{ width: ~~(Util.size.width / 28) }} />
+                )}
+                renderItem={({ item, index }) => (
+                  <ServiceButton
+                    iconName={item.iconName}
+                    title={item.title}
+                    service_type={item.service_type}
+                    service_id={item.service_id}
+                    key={index}
+                    style={index !== SERVICES_DATA_1.length - 1 && {}}
+                    onPress={() => {}}
+                  />
+                )}
+              />
+            </View>
 
             {newses_data && (
-              <ListHomeVoucherItems
-                data={newses_data}
-                title="TiDi Voucher"
-              />
+              <ListHomeVoucherItems data={newses_data} title="TiDi Voucher" />
             )}
 
             {newses_data && (
-              <ListHomeNewsItems
-                data={newses_data}
-                title="TiDi News"
-              />
+              <ListHomeNewsItems data={newses_data} title="TiDi News" />
             )}
 
-            <View style={{ height: 20, backgroundColor: 'transparent' }}/>
+            <View style={{ height: 20, backgroundColor: 'transparent' }} />
           </View>
         </ScrollView>
       </View>
@@ -650,10 +729,10 @@ const styles = StyleSheet.create({
   defaultBox: {
     width: '100%',
     height: 0,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd",
+    borderColor: '#dddddd',
     marginBottom: 4
   },
   header: {
@@ -665,36 +744,36 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     // borderWidth: Util.pixel,
     // borderColor: "#dddddd",
-    borderBottomRightRadius: 30,
+    borderBottomRightRadius: 30
   },
   container: {
     flex: 1,
     paddingBottom: BAR_HEIGHT - 16,
-    backgroundColor: "#FAFAFA"
+    backgroundColor: '#FAFAFA'
   },
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   serviceBox: {
     marginTop: 10,
     marginBottom: 10,
     flexDirection: 'row',
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     flex: 1,
     justifyContent: 'space-between',
-    paddingHorizontal: MARGIN_HORIZONTAL,
+    paddingHorizontal: MARGIN_HORIZONTAL
   },
   add_store_box: {
     width: '100%',
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     paddingBottom: 8,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_title: {
-    color: "#042C5C",
+    color: '#042C5C',
     fontSize: 16,
     fontWeight: '500',
     lineHeight: 20
@@ -702,7 +781,7 @@ const styles = StyleSheet.create({
   add_store_actions_box: {
     flexDirection: 'column',
     flex: 1,
-    backgroundColor: "#FAFAFA",
+    backgroundColor: '#FAFAFA',
     borderRadius: 5,
     margin: MARGIN_HORIZONTAL,
     position: 'absolute',
@@ -712,16 +791,16 @@ const styles = StyleSheet.create({
     height: 125,
     ...Platform.select({
       ios: {
-        shadowOffset: {width: 0, height: 3},
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.2,
-        shadowRadius: 5,
+        shadowRadius: 5
       },
       android: {
         elevation: 2,
         borderWidth: Util.pixel,
-        borderColor: "#E1E1E1",
-      },
-    }),
+        borderColor: '#E1E1E1'
+      }
+    })
   },
   home_box_wallet_info: {
     flexDirection: 'row',
@@ -729,24 +808,24 @@ const styles = StyleSheet.create({
     paddingTop: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 20
   },
   home_box_wallet_action: {
     flexDirection: 'row',
     flex: 1,
-    justifyContent: "space-between",
-    paddingRight: 15,
+    justifyContent: 'space-between',
+    paddingRight: 15
   },
   add_store_action_btn: {
     width: ~~(Util.size.width / 3.5),
     paddingVertical: 4,
-    paddingHorizontal: 0,
+    paddingHorizontal: 0
   },
   add_store_action_btn_box: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    marginBottom: 15,
+    marginBottom: 15
   },
   add_store_action_btn_box_balance: {
     width: ~~(Util.size.width / 2),
@@ -762,22 +841,22 @@ const styles = StyleSheet.create({
   },
   add_store_action_label_name: {
     fontSize: 14,
-    color: '#FAFAFA',
+    color: '#FAFAFA'
   },
   add_store_action_label: {
     fontSize: 13,
     color: '#414242',
-    marginTop: 5,
+    marginTop: 5
   },
   add_store_wallet_label: {
     fontSize: 12,
-    color: '#9B04F1',
+    color: '#9B04F1'
   },
   home_box_wallet_info_label_right: {
     flex: 1,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    fontWeight: 'bold',
+    fontWeight: 'bold'
   },
   right_btn_add_store: {
     paddingVertical: 1,
@@ -789,7 +868,7 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   modal_add_store_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 18,
     marginTop: 12,
     marginLeft: MARGIN_HORIZONTAL,
@@ -801,25 +880,25 @@ const styles = StyleSheet.create({
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
 
   profile_list_opt: {
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   right_title_btn_box: {
     flex: 1,
     alignItems: 'flex-end'
   },
   myStoresBox: {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: '#f1f1f1',
     paddingHorizontal: MARGIN_HORIZONTAL,
     paddingVertical: 8,
     flexDirection: 'row'
   },
   myFavoriteBox: {
-    backgroundColor: "#f1f1f1",
+    backgroundColor: '#f1f1f1',
     paddingHorizontal: MARGIN_HORIZONTAL,
     paddingVertical: 8,
     flexDirection: 'row'
@@ -853,7 +932,7 @@ const styles = StyleSheet.create({
   boxButtonAction: {
     flexDirection: 'row',
     borderWidth: Util.pixel,
-    borderColor: "#666666",
+    borderColor: '#666666',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 5,
@@ -862,102 +941,111 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonActionTitle: {
-    color: "#333333",
+    color: '#333333',
     marginLeft: 4,
     fontSize: 14
   },
   lineView: {
     height: 1,
-    width: "100%",
-    backgroundColor: "rgb(225,225,225)"
+    width: '100%',
+    backgroundColor: 'rgb(225,225,225)'
   },
   icon_notication: {
     width: 22,
     height: 22,
-    resizeMode: 'cover',
+    resizeMode: 'cover'
   },
   icon_points: {
     width: 25,
     height: 25,
-    resizeMode: 'cover',
+    resizeMode: 'cover'
   },
   icon_tran: {
     width: 27,
     height: 27,
-    resizeMode: 'cover',
+    resizeMode: 'cover'
   },
   icon_next: {
     width: 20,
     height: 20,
-    resizeMode: 'cover',
+    resizeMode: 'cover'
   },
   icon_service: {
     width: 40,
     height: 40,
-    resizeMode: 'cover',
+    resizeMode: 'cover'
   }
 });
 
-const ServiceButton = (props) => {
+const ServiceButton = props => {
   return (
     <TouchableHighlight
-      underlayColor='transparent'
-      style={[{
-      }]}
+      underlayColor="transparent"
+      style={[{}]}
       onPress={() => {
         if (props.service_type === 'scan_qc_code') {
-          Actions.qr_bar_code({title: "Quét QR Code", index: 1, wallet: store.user_info.default_wallet});
+          Actions.qr_bar_code({
+            title: 'Quét QR Code',
+            index: 1,
+            wallet: store.user_info.default_wallet
+          });
         }
         if (props.service_type == 'phone_card') {
           Actions.phonecard({
             service_type: props.service_type,
             service_id: props.service_id
-          })
+          });
         } else if (props.service_type == 'nap_tkc') {
           Actions.nap_tkc({
             service_type: props.service_type,
             service_id: props.service_id
-          })
+          });
         } else if (props.service_type == 'md_card') {
           Actions.md_card({
             service_type: props.service_type,
             service_id: props.service_id
-          })
+          });
         }
       }}
     >
-      <View style={[{
-        alignItems: 'center',
-        width: ~~(Util.size.width / 5),
-      }, props.style]}>
-        <View style={{flex: 1, justifyContent: 'flex-end', marginBottom: 10,}}>
-          <Image
-            style={styles.icon_service}
-            source={props.iconName}
-          />
+      <View
+        style={[
+          {
+            alignItems: 'center',
+            width: ~~(Util.size.width / 5)
+          },
+          props.style
+        ]}
+      >
+        <View style={{ flex: 1, justifyContent: 'flex-end', marginBottom: 10 }}>
+          <Image style={styles.icon_service} source={props.iconName} />
         </View>
-        <View style={{flex: 1}}>
-          <Text style={{
-            color: '#262C35',
-            fontSize: 12,
-            textAlign: 'center'
-          }}>
+        <View style={{ flex: 1 }}>
+          <Text
+            style={{
+              color: '#262C35',
+              fontSize: 12,
+              textAlign: 'center'
+            }}
+          >
             {props.title}
           </Text>
         </View>
       </View>
     </TouchableHighlight>
-  )
-}
+  );
+};
 
-const ListHomeItems = (props) => {
+const ListHomeItems = props => {
   return (
     <View>
-      <View style={{
-        paddingHorizontal: MARGIN_HORIZONTAL,
-        paddingVertical: 4,
-        flexDirection: 'row'
-      }}>
+      <View
+        style={{
+          paddingHorizontal: MARGIN_HORIZONTAL,
+          paddingVertical: 4,
+          flexDirection: 'row'
+        }}
+      >
         <Text style={styles.add_store_title}>{props.title}</Text>
 
         <View style={styles.right_title_btn_box}>
@@ -968,10 +1056,11 @@ const ListHomeItems = (props) => {
               Actions.notifys_time({
                 isNotifysTime: newses_type == 1 ? false : true,
                 title: title_newses_data,
-                news_type: "/" + newses_type
+                news_type: '/' + newses_type
               });
-            }}>
-            <Text style={[styles.add_store_title, {color: "#042C5C"}]}>
+            }}
+          >
+            <Text style={[styles.add_store_title, { color: '#042C5C' }]}>
               Xem tất cả
             </Text>
           </TouchableHighlight>
@@ -981,26 +1070,25 @@ const ListHomeItems = (props) => {
         data={props.data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({item, index}) => {
-          return (
-            <NewItemComponent3
-              item={item}/>
-          );
+        renderItem={({ item, index }) => {
+          return <NewItemComponent3 item={item} />;
         }}
         keyExtractor={item => item.id}
       />
     </View>
-  )
-}
+  );
+};
 
-const ListHomeVoucherItems = (props) => {
+const ListHomeVoucherItems = props => {
   return (
     <View>
-      <View style={{
-        paddingHorizontal: MARGIN_HORIZONTAL,
-        paddingVertical: 4,
-        flexDirection: 'row'
-      }}>
+      <View
+        style={{
+          paddingHorizontal: MARGIN_HORIZONTAL,
+          paddingVertical: 4,
+          flexDirection: 'row'
+        }}
+      >
         <Text style={styles.add_store_title}>{props.title}</Text>
 
         <View style={styles.right_title_btn_box}>
@@ -1011,10 +1099,11 @@ const ListHomeVoucherItems = (props) => {
               Actions.notifys_time({
                 isNotifysTime: newses_type == 1 ? false : true,
                 title: title_newses_data,
-                news_type: "/" + newses_type
+                news_type: '/' + newses_type
               });
-            }}>
-            <Text style={[styles.add_store_title, {color: "#042C5C"}]}>
+            }}
+          >
+            <Text style={[styles.add_store_title, { color: '#042C5C' }]}>
               Xem tất cả
             </Text>
           </TouchableHighlight>
@@ -1024,26 +1113,25 @@ const ListHomeVoucherItems = (props) => {
         data={props.data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({item, index}) => {
-          return (
-            <NewItemComponent4
-              item={item}/>
-          );
+        renderItem={({ item, index }) => {
+          return <NewItemComponent4 item={item} />;
         }}
         keyExtractor={item => item.id}
       />
     </View>
-  )
-}
+  );
+};
 
-const ListHomeNewsItems = (props) => {
+const ListHomeNewsItems = props => {
   return (
     <View>
-      <View style={{
-        marginHorizontal: MARGIN_HORIZONTAL,
-        marginVertical: 4,
-        flexDirection: 'row',
-      }}>
+      <View
+        style={{
+          marginHorizontal: MARGIN_HORIZONTAL,
+          marginVertical: 4,
+          flexDirection: 'row'
+        }}
+      >
         <Text style={styles.add_store_title}>{props.title}</Text>
 
         <View style={styles.right_title_btn_box}>
@@ -1054,10 +1142,11 @@ const ListHomeNewsItems = (props) => {
               Actions.notifys_time({
                 isNotifysTime: newses_type == 1 ? false : true,
                 title: title_newses_data,
-                news_type: "/" + newses_type
+                news_type: '/' + newses_type
               });
-            }}>
-            <Text style={[styles.add_store_title, {color: "#042C5C"}]}>
+            }}
+          >
+            <Text style={[styles.add_store_title, { color: '#042C5C' }]}>
               Xem tất cả
             </Text>
           </TouchableHighlight>
@@ -1067,14 +1156,11 @@ const ListHomeNewsItems = (props) => {
         data={props.data}
         horizontal
         showsHorizontalScrollIndicator={false}
-        renderItem={({item, index}) => {
-          return (
-            <NewItemComponent5
-              item={item}/>
-          );
+        renderItem={({ item, index }) => {
+          return <NewItemComponent5 item={item} />;
         }}
         keyExtractor={item => item.id}
       />
     </View>
-  )
-}
+  );
+};

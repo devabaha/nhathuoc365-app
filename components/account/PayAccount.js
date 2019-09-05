@@ -37,40 +37,51 @@ export default class PayAccount extends Component {
       app: props.app,
       barcode: props.barcode,
       loading: false,
-      amount: props.amount?props.amount:0,
-    }
+      amount: props.amount ? props.amount : 0
+    };
   }
 
-  componentWillMount() {
-
-  }
+  componentWillMount() {}
 
   renderTopLabelCoin() {
-    var {wallet, account, barcode} = this.state;
-    const {user_info} = store;
+    var { wallet, account, barcode } = this.state;
+    const { user_info } = store;
     return (
       <View>
         <View style={styles.add_store_actions_box}>
-
           <TouchableHighlight
             // onPress={this._goScanQRCode.bind(this)}
             underlayColor="transparent"
-            style={styles.add_store_action_btn}>
+            style={styles.add_store_action_btn}
+          >
             <View style={styles.add_store_action_btn_box_balance}>
               <Text style={styles.add_store_action_label_balance}>
-                <Ionicons name="account" size={15} color="#333333" /> {account.name}
+                <Ionicons name="account" size={15} color="#333333" />{' '}
+                {account.name}
               </Text>
-              <Text style={styles.add_store_action_label_balance}>{account.username}</Text>
+              <Text style={styles.add_store_action_label_balance}>
+                {account.username}
+              </Text>
             </View>
           </TouchableHighlight>
 
           <TouchableHighlight
             // onPress={() => Actions.vnd_wallet({})}
             underlayColor="transparent"
-            style={styles.add_store_action_btn}>
-            <View style={[styles.add_store_action_btn_box_balance, {borderRightWidth: 0}]}>
-            <Text style={styles.add_store_action_label_balance} >{wallet.name}</Text>
-              <Text style={styles.add_store_action_content}>{wallet.balance_view}</Text>
+            style={styles.add_store_action_btn}
+          >
+            <View
+              style={[
+                styles.add_store_action_btn_box_balance,
+                { borderRightWidth: 0 }
+              ]}
+            >
+              <Text style={styles.add_store_action_label_balance}>
+                {wallet.name}
+              </Text>
+              <Text style={styles.add_store_action_content}>
+                {wallet.balance_view}
+              </Text>
             </View>
           </TouchableHighlight>
         </View>
@@ -79,17 +90,22 @@ export default class PayAccount extends Component {
   }
 
   render() {
-    var {wallet, account, app, barcode, loading} = this.state;
+    var { wallet, account, app, barcode, loading } = this.state;
     return (
-      <View style={[styles.container, {
-        marginBottom: store.keyboardTop
-      }]}>
-          <Text style={styles.historyCoinText}>
-            <Icon name="bank" size={15} color="#333333" /> Mã tài khoản {barcode}
-          </Text>
-          {this.renderTopLabelCoin()}
-          <Text style={styles.historyCoinTextAddress}></Text>
-        </View>
+      <View
+        style={[
+          styles.container,
+          {
+            marginBottom: store.keyboardTop
+          }
+        ]}
+      >
+        <Text style={styles.historyCoinText}>
+          <Icon name="bank" size={15} color="#333333" /> Mã tài khoản {barcode}
+        </Text>
+        {this.renderTopLabelCoin()}
+        <Text style={styles.historyCoinTextAddress}></Text>
+      </View>
     );
   }
 }
@@ -99,22 +115,22 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff'
   },
   profile_list_opt_btn: {
     width: Util.size.width,
     height: 32,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 4,
     marginTop: 20,
     borderTopWidth: 0,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   point_icon: {
     width: 60,
-    height: 60,
+    height: 60
   },
   iconView: {
     alignItems: 'center',
@@ -129,12 +145,12 @@ const styles = StyleSheet.create({
   },
   profile_list_label: {
     fontSize: 18,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '400'
   },
   profile_list_small_label: {
     fontSize: 14,
-    color: "#666666",
+    color: '#666666',
     marginTop: 2
   },
   labelCoinParentView: {
@@ -208,7 +224,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 12,
-    color: 'rgb(150,150,150)',
+    color: 'rgb(150,150,150)'
   },
   pointText: {
     fontSize: 16,
@@ -219,7 +235,7 @@ const styles = StyleSheet.create({
 
   profile_cover_box: {
     width: '100%',
-    backgroundColor: "#ccc",
+    backgroundColor: '#ccc',
     height: 120
   },
   profile_cover: {
@@ -232,9 +248,9 @@ const styles = StyleSheet.create({
     left: 24,
     width: 70,
     height: 70,
-    backgroundColor: "#cccccc",
+    backgroundColor: '#cccccc',
     borderWidth: 2,
-    borderColor: "#ffffff",
+    borderColor: '#ffffff',
     borderRadius: 40,
     justifyContent: 'center',
     alignItems: 'center',
@@ -243,22 +259,22 @@ const styles = StyleSheet.create({
   profile_avatar: {
     width: 76,
     height: 76,
-    borderRadius: 38,
+    borderRadius: 38
     // resizeMode: 'cover'
   },
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
 
   add_store_actions_box: {
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_action_btn: {
     paddingVertical: 4
@@ -270,7 +286,7 @@ const styles = StyleSheet.create({
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
-  add_store_action_btn_box_balance:{
+  add_store_action_btn_box_balance: {
     alignItems: 'center',
     width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
@@ -287,10 +303,10 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: '600'
   },
-  add_store_action_content:{
+  add_store_action_content: {
     fontSize: 18,
     marginTop: 5,
-    color: "#51A9FF",
+    color: '#51A9FF',
     fontWeight: '800'
   },
 
@@ -299,7 +315,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // backgroundColor: "",
     // marginTop: 30,
-    marginTop: 20,
+    marginTop: 20
   },
 
   invite_text_input_sub: {
@@ -310,7 +326,7 @@ const styles = StyleSheet.create({
     marginRight: 20
   },
   boxButtonActions: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -319,7 +335,7 @@ const styles = StyleSheet.create({
   boxButtonAction: {
     flexDirection: 'row',
     borderWidth: Util.pixel,
-    borderColor: "#666666",
+    borderColor: '#666666',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 5,
@@ -328,7 +344,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonActionTitle: {
-    color: "#333333",
+    color: '#333333',
     marginLeft: 4,
     fontSize: 14
   }

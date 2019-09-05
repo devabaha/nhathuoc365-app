@@ -32,11 +32,11 @@ export default class CartFooter extends Component {
       increment_loading: false,
       decrement_loading: false,
       perfix: props.perfix || ''
-    }
+    };
   }
 
   componentDidMount() {
-    var {cart_data, cart_products, store_id} = store;
+    var { cart_data, cart_products, store_id } = store;
 
     var is_change_store = store.cart_store_id != store_id;
     if (is_change_store) {
@@ -51,7 +51,7 @@ export default class CartFooter extends Component {
       });
     }
 
-    Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.perfix, (data) => {
+    Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.perfix, data => {
       this._goTopIndex(data.index);
     });
   }
@@ -64,14 +64,11 @@ export default class CartFooter extends Component {
         action(() => {
           store.setCartData(response.data);
         })();
-
       } else {
         action(() => {
           store.resetCartData();
         })();
-
       }
-
     } catch (e) {
       console.warn(e + ' site_cart');
 
@@ -84,7 +81,6 @@ export default class CartFooter extends Component {
   }
 
   _item_qnt_decrement_handler(item) {
-
     if (item.quantity <= 1) {
       if (this.props.confirmRemove) {
         this.props.confirmRemove(item);
@@ -95,57 +91,68 @@ export default class CartFooter extends Component {
   }
 
   _item_qnt_decrement(item) {
-    this.setState({
-      decrement_loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.site_cart_down(store.store_id, item.id);
+    this.setState(
+      {
+        decrement_loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.site_cart_down(
+            store.store_id,
+            item.id
+          );
 
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-            this.setState({
-              decrement_loading: false
-            });
-            Toast.show(response.message);
-          })();
+          if (response && response.status == STATUS_SUCCESS) {
+            action(() => {
+              store.setCartData(response.data);
+              this.setState({
+                decrement_loading: false
+              });
+              Toast.show(response.message);
+            })();
+          }
+        } catch (e) {
+          console.warn(e + ' site_cart_down');
 
+          store.addApiQueue(
+            'site_cart_down',
+            this._item_qnt_decrement.bind(this, item)
+          );
+        } finally {
         }
-      } catch (e) {
-        console.warn(e + ' site_cart_down');
-
-        store.addApiQueue('site_cart_down', this._item_qnt_decrement.bind(this, item));
-      } finally {
-
       }
-    });
+    );
   }
 
   _item_qnt_increment(item) {
-    this.setState({
-      increment_loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.site_cart_up(store.store_id, item.id);
+    this.setState(
+      {
+        increment_loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.site_cart_up(store.store_id, item.id);
 
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-            this.setState({
-              increment_loading: false
-            });
-            Toast.show(response.message);
-          })();
+          if (response && response.status == STATUS_SUCCESS) {
+            action(() => {
+              store.setCartData(response.data);
+              this.setState({
+                increment_loading: false
+              });
+              Toast.show(response.message);
+            })();
+          }
+        } catch (e) {
+          console.warn(e + ' site_cart_up');
 
+          store.addApiQueue(
+            'site_cart_up',
+            this._item_qnt_increment.bind(this, item)
+          );
+        } finally {
         }
-      } catch (e) {
-        console.warn(e + ' site_cart_up');
-
-        store.addApiQueue('site_cart_up', this._item_qnt_increment.bind(this, item));
-      } finally {
-
       }
-    });
+    );
   }
 
   _store_cart_prev() {
@@ -155,7 +162,7 @@ export default class CartFooter extends Component {
 
     var index = store.cart_item_index - 1;
     store.setCartItemIndex(index);
-    Events.trigger(NEXT_PREV_CART, {index});
+    Events.trigger(NEXT_PREV_CART, { index });
   }
 
   _store_cart_next() {
@@ -165,42 +172,55 @@ export default class CartFooter extends Component {
 
     var index = store.cart_item_index + 1;
     store.setCartItemIndex(index);
-    Events.trigger(NEXT_PREV_CART, {index});
+    Events.trigger(NEXT_PREV_CART, { index });
   }
 
   _goTopIndex(index) {
     if (store.cart_data == null || store.cart_products == null) {
       return;
     }
-    if ((index + 1) > store.cart_products.length) {
+    if (index + 1 > store.cart_products.length) {
       index = 0;
     }
     if (this.refs_store_cart) {
-        this.refs_store_cart.scrollToIndex({index, animated: true});
+      this.refs_store_cart.scrollToIndex({ index, animated: true });
     }
   }
 
-  renderItems({item}) {
-    return(
+  renderItems({ item }) {
+    return (
       <View style={styles.store_cart_item}>
         <View style={styles.store_cart_item_image_box}>
-          <CachedImage mutable style={styles.store_cart_item_image} source={{uri: item.image}} />
+          <CachedImage
+            mutable
+            style={styles.store_cart_item_image}
+            source={{ uri: item.image }}
+          />
         </View>
         <View style={styles.store_cart_item_title_box}>
-          <Text style={styles.store_cart_item_title}>{sub_string(item.name, 32)}</Text>
-          <Text style={[styles.store_cart_item_price, {
-            position: 'absolute',
-            right: 0,
-            top: 18
-          }]}>{item.price_view}</Text>
+          <Text style={styles.store_cart_item_title}>
+            {sub_string(item.name, 32)}
+          </Text>
+          <Text
+            style={[
+              styles.store_cart_item_price,
+              {
+                position: 'absolute',
+                right: 0,
+                top: 18
+              }
+            ]}
+          >
+            {item.price_view}
+          </Text>
         </View>
 
         <View style={styles.store_cart_calculator}>
           <TouchableHighlight
             onPress={this._item_qnt_decrement_handler.bind(this, item)}
             underlayColor="transparent"
-            style={styles.p8}>
-
+            style={styles.p8}
+          >
             <View style={styles.store_cart_item_qnt_change}>
               {this.state.decrement_loading ? (
                 <Indicator size="small" />
@@ -215,8 +235,8 @@ export default class CartFooter extends Component {
           <TouchableHighlight
             onPress={this._item_qnt_increment.bind(this, item)}
             underlayColor="transparent"
-            style={styles.p8}>
-
+            style={styles.p8}
+          >
             <View style={styles.store_cart_item_qnt_change}>
               {this.state.increment_loading ? (
                 <Indicator size="small" />
@@ -243,31 +263,35 @@ export default class CartFooter extends Component {
 
   _renderContent() {
     if (this.state.loading) {
-      return(
+      return (
         <View style={styles.store_cart_container}>
           <Indicator size="small" />
         </View>
       );
     }
 
-    var {cart_data, cart_products} = store;
+    var { cart_data, cart_products } = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
     if (isset_cart) {
-      return(
+      return (
         <View style={styles.store_cart_container}>
           <View style={styles.store_cart_content}>
             <FlatList
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              ref={ref => this.refs_store_cart = ref}
+              ref={ref => (this.refs_store_cart = ref)}
               data={cart_products}
               pagingEnabled
               onMomentumScrollEnd={this._onScrollEnd.bind(this)}
               extraData={cart_products}
               initialScrollIndex={store.cart_item_index}
               getItemLayout={(data, index) => {
-                return {length: Util.size.width - 140, offset: (Util.size.width - 140) * index, index};
+                return {
+                  length: Util.size.width - 140,
+                  offset: (Util.size.width - 140) * index,
+                  index
+                };
               }}
               renderItem={this.renderItems.bind(this)}
               keyExtractor={item => item.id}
@@ -278,25 +302,27 @@ export default class CartFooter extends Component {
           <TouchableHighlight
             style={[styles.store_cart_btn, styles.store_cart_btn_left]}
             underlayColor="#f1efef"
-            onPress={this._store_cart_prev.bind(this)}>
+            onPress={this._store_cart_prev.bind(this)}
+          >
             <Icon name="angle-left" size={36} color="rgba(0,0,0,.3)" />
           </TouchableHighlight>
 
           <TouchableHighlight
             style={[styles.store_cart_btn, styles.store_cart_btn_right]}
             underlayColor="#f1efef"
-            onPress={this._store_cart_next.bind(this)}>
+            onPress={this._store_cart_next.bind(this)}
+          >
             <Icon name="angle-right" size={36} color="rgba(0,0,0,.3)" />
           </TouchableHighlight>
         </View>
       );
     } else {
-      return(
+      return (
         <View style={styles.store_cart_container}>
           <CenterText
             marginTop={-8}
-            title={"Giỏ hàng trống\nHãy mua sắm ngay!"}
-            />
+            title={'Giỏ hàng trống\nHãy mua sắm ngay!'}
+          />
         </View>
       );
     }
@@ -313,17 +339,19 @@ export default class CartFooter extends Component {
           redirect: 'confirm'
         });
       }
-
     } else {
       return Alert.alert(
         'Thông báo',
         'Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục',
         [
-          {text: 'Đồng ý', onPress: () => {
-            if (this.props.add_new) {
-              this.props.add_new();
+          {
+            text: 'Đồng ý',
+            onPress: () => {
+              if (this.props.add_new) {
+                this.props.add_new();
+              }
             }
-          }},
+          }
         ],
         { cancelable: false }
       );
@@ -331,7 +359,7 @@ export default class CartFooter extends Component {
   }
 
   render() {
-    var {cart_data, cart_products} = store;
+    var { cart_data, cart_products } = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
     if (!isset_cart) {
@@ -339,77 +367,105 @@ export default class CartFooter extends Component {
     }
 
     return (
-      <View style={[styles.store_cart_box, {
-        height: (cart_data.promotions && cart_data.promotions.title) ? 87 : 69
-      }]}>
-        {(cart_data.promotions && cart_data.promotions.title) && (
-          <View style={{
-            width: Util.size.width,
-            height: 18,
-            backgroundColor: 'brown',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            <Text style={{
-              fontSize: 10,
-              color: '#ffffff'
-            }}>{cart_data.promotions.title} giảm {cart_data.promotions.discount_text}</Text>
+      <View
+        style={[
+          styles.store_cart_box,
+          {
+            height: cart_data.promotions && cart_data.promotions.title ? 87 : 69
+          }
+        ]}
+      >
+        {cart_data.promotions && cart_data.promotions.title && (
+          <View
+            style={{
+              width: Util.size.width,
+              height: 18,
+              backgroundColor: 'brown',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 10,
+                color: '#ffffff'
+              }}
+            >
+              {cart_data.promotions.title} giảm{' '}
+              {cart_data.promotions.discount_text}
+            </Text>
           </View>
         )}
 
-        <View style={{
-          flexDirection: 'row',
-          height: 69,
-          borderTopWidth: Util.pixel,
-          borderTopColor: '#dddddd'
-        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            height: 69,
+            borderTopWidth: Util.pixel,
+            borderTopColor: '#dddddd'
+          }}
+        >
           {this._renderContent.call(this)}
 
           <TouchableHighlight
             onPress={this._goPayment.bind(this)}
             style={styles.checkout_btn}
             underlayColor="transparent"
+          >
+            <View
+              style={{
+                width: '100%',
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: DEFAULT_COLOR
+              }}
             >
-            <View style={{
-              width: '100%',
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center',
-              backgroundColor: DEFAULT_COLOR
-            }}>
               <View style={styles.checkout_box}>
                 <Icon name="shopping-cart" size={22} color="#ffffff" />
-                <Text style={styles.checkout_title}>{isset_cart ? "ĐẶT HÀNG" : "GIỎ HÀNG"}</Text>
+                <Text style={styles.checkout_title}>
+                  {isset_cart ? 'ĐẶT HÀNG' : 'GIỎ HÀNG'}
+                </Text>
 
                 {isset_cart && (
-                  <View style={{
-                    position: 'absolute',
-                    left: 18,
-                    top: 0,
-                    backgroundColor: "red",
-                    minWidth: 16,
-                    height: 16,
-                    borderRadius: 8,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    overflow: 'hidden',
-                    paddingHorizontal: 2
-                  }}>
-                    <Text style={{
-                      fontSize: 10,
-                      color: '#ffffff',
-                      fontWeight: '600'
-                    }}>{cart_data.count}</Text>
+                  <View
+                    style={{
+                      position: 'absolute',
+                      left: 18,
+                      top: 0,
+                      backgroundColor: 'red',
+                      minWidth: 16,
+                      height: 16,
+                      borderRadius: 8,
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      overflow: 'hidden',
+                      paddingHorizontal: 2
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 10,
+                        color: '#ffffff',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {cart_data.count}
+                    </Text>
                   </View>
                 )}
               </View>
 
               {isset_cart && (
-                <Text style={{
-                  fontSize: 14,
-                  color: "#ffffff",
-                  fontWeight: '600'
-                }}>{cart_data.total}</Text>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: '#ffffff',
+                    fontWeight: '600'
+                  }}
+                >
+                  {cart_data.total}
+                </Text>
               )}
             </View>
           </TouchableHighlight>
@@ -453,7 +509,7 @@ const styles = StyleSheet.create({
   },
   checkout_btn: {
     width: 100,
-    height: '100%',
+    height: '100%'
   },
   checkout_box: {
     width: '100%',
@@ -464,7 +520,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
   checkout_title: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 12,
     fontWeight: '500',
     paddingLeft: 4
@@ -493,7 +549,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   store_cart_item_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     marginTop: 4,
     fontWeight: '500'
@@ -524,7 +580,7 @@ const styles = StyleSheet.create({
   },
   store_cart_item_qnt: {
     fontWeight: '600',
-    color: "#404040",
+    color: '#404040',
     fontSize: 16,
     paddingHorizontal: 8
   },

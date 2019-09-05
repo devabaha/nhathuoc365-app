@@ -23,7 +23,7 @@ export default class Items extends Component {
     this.state = {
       buying: false,
       loadmore: false
-    }
+    };
   }
 
   // add item vào giỏ hàng
@@ -36,134 +36,158 @@ export default class Items extends Component {
     //   this._getMeasure(item);
     // }
 
-    this.setState({
-      buying: true
-    }, async () => {
-      try {
-        var response = await APIHandler.site_cart_adding(store.store_id, item.id);
+    this.setState(
+      {
+        buying: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.site_cart_adding(
+            store.store_id,
+            item.id
+          );
 
-        if (response && response.status == STATUS_SUCCESS) {
+          if (response && response.status == STATUS_SUCCESS) {
+            action(() => {
+              // if (isIOS) {
+              //   store.setCartFlyShow(true);
+              // }
 
-          action(() => {
-            // if (isIOS) {
-            //   store.setCartFlyShow(true);
-            // }
+              store.setCartData(response.data);
 
-            store.setCartData(response.data);
+              var index = null,
+                length = 0;
+              if (response.data.products) {
+                length = Object.keys(response.data.products).length;
 
-            var index = null, length = 0;
-            if (response.data.products) {
-              length = Object.keys(response.data.products).length;
+                Object.keys(response.data.products)
+                  .reverse()
+                  .some((key, key_index) => {
+                    let value = response.data.products[key];
+                    if (value.id == item.id) {
+                      index = key_index;
+                      return true;
+                    }
+                  });
+              }
 
-              Object.keys(response.data.products).reverse().some((key, key_index) => {
-                let value = response.data.products[key];
-                if (value.id == item.id) {
-                  index = key_index;
-                  return true;
-                }
+              // if (isIOS) {
+              //   setTimeout(() => {
+              //     store.setCartFlyPosition({
+              //       px: 24,
+              //       py: Util.size.height - NAV_HEIGHT - 64,
+              //       width: 60,
+              //       height: 60
+              //     });
+              //     layoutAnimation();
+              //   }, 500);
+              // }
+
+              if (index !== null && index < length) {
+                store.setCartItemIndex(index);
+
+                Events.trigger(NEXT_PREV_CART, { index });
+
+                // setTimeout(() => {
+                //   store.setCartFlyShow(false);
+                //   store.setCartFlyImage(null);
+                // }, 750);
+              }
+              this.setState({
+                buying: false
               });
-            }
+              Toast.show(response.message);
+            })();
+          }
+        } catch (e) {
+          console.warn(e + ' site_cart_adding');
 
-            // if (isIOS) {
-            //   setTimeout(() => {
-            //     store.setCartFlyPosition({
-            //       px: 24,
-            //       py: Util.size.height - NAV_HEIGHT - 64,
-            //       width: 60,
-            //       height: 60
-            //     });
-            //     layoutAnimation();
-            //   }, 500);
-            // }
-
-            if (index !== null && index < length) {
-              store.setCartItemIndex(index);
-
-              Events.trigger(NEXT_PREV_CART, {index});
-
-              // setTimeout(() => {
-              //   store.setCartFlyShow(false);
-              //   store.setCartFlyImage(null);
-              // }, 750);
-            }
-            this.setState({
-              buying: false
-            });
-            Toast.show(response.message);
-          })();
-
+          store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
+        } finally {
         }
-
-      } catch (e) {
-        console.warn(e + ' site_cart_adding');
-
-        store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
-      } finally {
-
       }
-    });
+    );
   }
 
   _getMeasure(item) {
     action(() => {
-      store.setCartFlyImage({uri: item.image});
+      store.setCartFlyImage({ uri: item.image });
     })();
 
     if (this.ref_item) {
       this.ref_item.measure((a, b, width, height, px, py) => {
         action(() => {
-          store.setCartFlyPosition({ px, py: py - (isIOS ? NAV_HEIGHT : 0), width: ITEM_WIDTH, height: ITEM_IMG_HEIGHT });
+          store.setCartFlyPosition({
+            px,
+            py: py - (isIOS ? NAV_HEIGHT : 0),
+            width: ITEM_WIDTH,
+            height: ITEM_IMG_HEIGHT
+          });
         })();
       });
     }
   }
 
   render() {
-    let {item, index, onPress, isCategories, isLocationItem} = this.props;
+    let { item, index, onPress, isCategories, isLocationItem } = this.props;
 
     // render item chọn khu vực đặt hàng
 
     if (isLocationItem) {
       return (
-        <TouchableHighlight
-        onPress={onPress}
-        underlayColor="transparent">
-        <View
-          style={[styles.item_box, {
-            marginRight: index % 2 == 0 ? 8 : 0,
-            marginLeft: index % 2 == 0 ? 8 : 0,
-            backgroundColor: "transparent"
-          }]}>
+        <TouchableHighlight onPress={onPress} underlayColor="transparent">
           <View
-            ref={ref => this.ref_item = ref}
-            style={styles.item_image_box}>
-            <CachedImage mutable style={styles.item_image} source={{uri: item.logo_url}} />
+            style={[
+              styles.item_box,
+              {
+                marginRight: index % 2 == 0 ? 8 : 0,
+                marginLeft: index % 2 == 0 ? 8 : 0,
+                backgroundColor: 'transparent'
+              }
+            ]}
+          >
+            <View
+              ref={ref => (this.ref_item = ref)}
+              style={styles.item_image_box}
+            >
+              <CachedImage
+                mutable
+                style={styles.item_image}
+                source={{ uri: item.logo_url }}
+              />
+            </View>
+            <Text style={styles.nameLocation}>{item.name}</Text>
           </View>
-          <Text style={styles.nameLocation}>{item.name}</Text>
-        </View>
-      </TouchableHighlight>
+        </TouchableHighlight>
       );
     }
 
     // render item danh mục sản phẩm màn home
     if (isCategories) {
       return (
-        <TouchableHighlight
-        onPress={onPress}
-        underlayColor="transparent">
-        <View
-          style={[styles.item_box, {
-            marginRight: index % 2 == 0 ? 8 : 0,
-            marginLeft: index % 2 == 0 ? 8 : 0,
-            height: ITEM_IMG_HEIGHT
-          }]}>
+        <TouchableHighlight onPress={onPress} underlayColor="transparent">
           <View
-            ref={ref => this.ref_item = ref}
-            style={styles.item_image_box}>
-            <CachedImage mutable style={styles.item_image} source={{uri: item.image}} />
+            style={[
+              styles.item_box,
+              {
+                marginRight: index % 2 == 0 ? 8 : 0,
+                marginLeft: index % 2 == 0 ? 8 : 0,
+                height: ITEM_IMG_HEIGHT
+              }
+            ]}
+          >
+            <View
+              ref={ref => (this.ref_item = ref)}
+              style={styles.item_image_box}
+            >
+              <CachedImage
+                mutable
+                style={styles.item_image}
+                source={{ uri: item.image }}
+              />
+            </View>
           </View>
-        </View>
-      </TouchableHighlight>
+        </TouchableHighlight>
       );
     }
 
@@ -180,27 +204,38 @@ export default class Items extends Component {
               loadmore: true
             });
           }}
-          underlayColor="transparent">
+          underlayColor="transparent"
+        >
           <View
-            style={[styles.item_box, {
-              marginRight: index % 2 == 0 ? 8 : 0,
-              marginLeft: index % 2 == 0 ? 8 : 0,
-              justifyContent: 'center',
-              alignItems: 'center'
-            }]}>
+            style={[
+              styles.item_box,
+              {
+                marginRight: index % 2 == 0 ? 8 : 0,
+                marginLeft: index % 2 == 0 ? 8 : 0,
+                justifyContent: 'center',
+                alignItems: 'center'
+              }
+            ]}
+          >
             {this.state.loadmore ? (
               <Indicator size="small" />
             ) : (
-              <View style={{
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}
+              >
                 <Icon name="th" size={24} color="#404040" />
-                <Text style={{
-                  marginTop: 8,
-                  color: "#404040",
-                  fontSize: 14
-                }}>XEM THÊM</Text>
+                <Text
+                  style={{
+                    marginTop: 8,
+                    color: '#404040',
+                    fontSize: 14
+                  }}
+                >
+                  XEM THÊM
+                </Text>
               </View>
             )}
           </View>
@@ -211,19 +246,25 @@ export default class Items extends Component {
     var quantity = 0;
 
     return (
-      <TouchableHighlight
-        onPress={onPress}
-        underlayColor="transparent">
+      <TouchableHighlight onPress={onPress} underlayColor="transparent">
         <View
-          style={[styles.item_box, {
-            marginRight: index % 2 == 0 ? 8 : 0,
-            marginLeft: index % 2 == 0 ? 8 : 0
-          }]}>
-
+          style={[
+            styles.item_box,
+            {
+              marginRight: index % 2 == 0 ? 8 : 0,
+              marginLeft: index % 2 == 0 ? 8 : 0
+            }
+          ]}
+        >
           <View
-            ref={ref => this.ref_item = ref}
-            style={styles.item_image_box}>
-            <CachedImage mutable style={styles.item_image} source={{uri: item.image}} />
+            ref={ref => (this.ref_item = ref)}
+            style={styles.item_image_box}
+          >
+            <CachedImage
+              mutable
+              style={styles.item_image}
+              source={{ uri: item.image }}
+            />
           </View>
 
           <View style={styles.item_info_box}>
@@ -231,57 +272,75 @@ export default class Items extends Component {
               {item.made_in != '' && (
                 <View style={styles.directionRow}>
                   <Icon name="map-marker" size={12} color="#666666" />
-                  <Text style={styles.item_info_made_title}>{item.made_in}</Text>
+                  <Text style={styles.item_info_made_title}>
+                    {item.made_in}
+                  </Text>
                 </View>
               )}
 
               <View style={styles.item_info_weight}>
-                <Text style={styles.item_info_made_title}>{item.unit_name_view}</Text>
+                <Text style={styles.item_info_made_title}>
+                  {item.unit_name_view}
+                </Text>
               </View>
             </View>
             <Text style={styles.item_info_name}>{item.name}</Text>
             <View style={styles.price_box}>
               {item.discount_percent > 0 && (
-                <Text style={styles.item_safe_off_price}>{item.discount_view}</Text>
+                <Text style={styles.item_safe_off_price}>
+                  {item.discount_view}
+                </Text>
               )}
 
-              <Text style={[styles.item_info_price, {
-                color: item.discount_percent > 0 ? "#fa7f50" : DEFAULT_COLOR
-              }]}>{item.price_view}</Text>
+              <Text
+                style={[
+                  styles.item_info_price,
+                  {
+                    color: item.discount_percent > 0 ? '#fa7f50' : DEFAULT_COLOR
+                  }
+                ]}
+              >
+                {item.price_view}
+              </Text>
             </View>
           </View>
 
           <TouchableHighlight
             style={styles.item_add_cart_btn}
             underlayColor="transparent"
-            onPress={this._addCart.bind(this, item)}>
-            <View style={{
-              width: '100%',
-              height: '100%'
-            }}>
+            onPress={this._addCart.bind(this, item)}
+          >
+            <View
+              style={{
+                width: '100%',
+                height: '100%'
+              }}
+            >
               <View style={styles.item_add_cart_box}>
                 {this.state.buying ? (
-                  <View style={{
-                    width: 24,
-                    height: 24
-                  }}>
+                  <View
+                    style={{
+                      width: 24,
+                      height: 24
+                    }}
+                  >
                     <Indicator size="small" />
                   </View>
+                ) : item.book_flag == 1 ? (
+                  <Icon
+                    name="cart-arrow-down"
+                    size={22}
+                    color={DEFAULT_COLOR}
+                  />
                 ) : (
-                  item.book_flag == 1 ? (
-                        <Icon name="cart-arrow-down" size={22} color={DEFAULT_COLOR} />
-                      ) : (
                   <Icon name="cart-plus" size={22} color={DEFAULT_COLOR_RED} />
-                      )
                 )}
-                {
-                  item.book_flag == 1 ? (
-                      <Text style={styles.item_add_book_title}>Đặt trước</Text>
-                      ) : (
-                <Text style={styles.item_add_cart_title}>Chọn mua</Text>
-                      )
-                  }
-                
+                {item.book_flag == 1 ? (
+                  <Text style={styles.item_add_book_title}>Đặt trước</Text>
+                ) : (
+                  <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+                )}
+
                 {quantity > 0 && (
                   <View style={styles.quantity_box}>
                     <Text style={styles.quantity_value}>{quantity}</Text>
@@ -294,11 +353,12 @@ export default class Items extends Component {
           {item.discount_percent > 0 && (
             <View style={styles.item_safe_off}>
               <View style={styles.item_safe_off_percent}>
-                <Text style={styles.item_safe_off_percent_val}>-{item.discount_percent}%</Text>
+                <Text style={styles.item_safe_off_percent_val}>
+                  -{item.discount_percent}%
+                </Text>
               </View>
             </View>
           )}
-
         </View>
       </TouchableHighlight>
     );
@@ -309,11 +369,11 @@ Items.propTypes = {
   item: PropTypes.object.isRequired,
   index: PropTypes.number.isRequired,
   onPress: PropTypes.func.isRequired
-}
+};
 
 const ITEM_WIDTH = ~~(Util.size.width / 2 - 12);
-const ITEM_HEIGHT = ~~(Util.size.width / 2 * 1.333);
-const ITEM_IMG_HEIGHT = ~~(Util.size.width / 2 * 1.333 * 0.666);
+const ITEM_HEIGHT = ~~((Util.size.width / 2) * 1.333);
+const ITEM_IMG_HEIGHT = ~~((Util.size.width / 2) * 1.333 * 0.666);
 
 const styles = StyleSheet.create({
   item_box: {
@@ -322,7 +382,7 @@ const styles = StyleSheet.create({
     // borderWidth: Util.pixel,
     // borderWidth: Util.pixel,
     // borderColor: "#dddddd",
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     marginBottom: 8
   },
   directionRow: {
@@ -331,7 +391,7 @@ const styles = StyleSheet.create({
   },
   item_image_box: {
     width: '100%',
-    height: ~~(Util.size.width / 2 * 1.333 * 0.666)
+    height: ~~((Util.size.width / 2) * 1.333 * 0.666)
   },
   item_image: {
     width: '100%',
@@ -347,7 +407,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     bottom: 0,
-    backgroundColor: "rgba(255,255,255,0.7)"
+    backgroundColor: 'rgba(255,255,255,0.7)'
   },
   item_info_made: {
     flexDirection: 'row'
@@ -372,7 +432,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: DEFAULT_COLOR,
-    marginLeft: 4,
+    marginLeft: 4
   },
   item_add_cart_btn: {
     position: 'absolute',
@@ -385,7 +445,7 @@ const styles = StyleSheet.create({
   item_add_cart_box: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: hexToRgbA("#ffffff", 0.8),
+    backgroundColor: hexToRgbA('#ffffff', 0.8),
     paddingVertical: 2
   },
   item_add_cart_title: {
@@ -406,7 +466,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 20,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   item_safe_off_percent: {
     backgroundColor: '#fa7f50',
@@ -416,11 +476,11 @@ const styles = StyleSheet.create({
     height: '100%'
   },
   item_safe_off_percent_val: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 12
   },
   item_safe_off_price: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 11,
     textDecorationLine: 'line-through'
   },
@@ -433,13 +493,13 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     overflow: 'hidden',
-    backgroundColor: "red",
+    backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 2
   },
   quantity_value: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 10,
     fontWeight: '500'
   },
@@ -450,9 +510,9 @@ const styles = StyleSheet.create({
   },
   nameLocation: {
     fontSize: 14,
-    color: "rgb(0,0,0)",
-    alignSelf: "center",
+    color: 'rgb(0,0,0)',
+    alignSelf: 'center',
     marginTop: 10,
-    fontWeight: "bold"
+    fontWeight: 'bold'
   }
 });
