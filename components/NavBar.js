@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -29,28 +28,28 @@ const styles = StyleSheet.create({
     color: TITLE_HEADER_COLOR,
     fontSize: 18,
     width: 180,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   titleImage: {
     width: 180,
-    alignSelf: 'center',
+    alignSelf: 'center'
   },
   titleWrapper: {
     marginTop: 10,
     position: 'absolute',
     ...Platform.select({
       ios: {
-        top: 20,
+        top: 20
       },
       android: {
-        top: 5,
+        top: 5
       },
       windows: {
-        top: 5,
-      },
+        top: 5
+      }
     }),
     left: 0,
-    right: 0,
+    right: 0
   },
   header: {
     backgroundColor: HEADER_BGR,
@@ -58,19 +57,19 @@ const styles = StyleSheet.create({
     top: 0,
     ...Platform.select({
       ios: {
-        height: 64,
+        height: 64
       },
       android: {
-        height: 54,
+        height: 54
       },
       windows: {
-        height: 54,
-      },
+        height: 54
+      }
     }),
     right: 0,
     left: 0,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#cccccc",
+    borderBottomColor: '#cccccc',
     position: 'absolute'
   },
   backButton: {
@@ -79,36 +78,36 @@ const styles = StyleSheet.create({
     position: 'absolute',
     ...Platform.select({
       ios: {
-        top: 22,
+        top: 22
       },
       android: {
-        top: 10,
+        top: 10
       },
       windows: {
-        top: 8,
-      },
+        top: 8
+      }
     }),
     left: 2,
     padding: 8,
     flexDirection: 'row',
-    transform: [{ scaleX: I18nManager.isRTL ? -1 : 1 }],
+    transform: [{ scaleX: I18nManager.isRTL ? -1 : 1 }]
   },
   rightButton: {
     height: 37,
     position: 'absolute',
     ...Platform.select({
       ios: {
-        top: 22,
+        top: 22
       },
       android: {
-        top: 10,
+        top: 10
       },
       windows: {
-        top: 8,
-      },
+        top: 8
+      }
     }),
     right: 2,
-    padding: 8,
+    padding: 8
   },
   leftButton: {
     height: 37,
@@ -116,42 +115,42 @@ const styles = StyleSheet.create({
     position: 'absolute',
     ...Platform.select({
       ios: {
-        top: 20,
+        top: 20
       },
       android: {
-        top: 8,
+        top: 8
       },
       windows: {
-        top: 8,
-      },
+        top: 8
+      }
     }),
     left: 2,
-    padding: 8,
+    padding: 8
   },
   barRightButtonText: {
     color: 'rgb(0, 122, 255)',
     textAlign: 'right',
-    fontSize: 17,
+    fontSize: 17
   },
   barBackButtonText: {
     color: 'rgb(0, 122, 255)',
     textAlign: 'left',
     fontSize: 17,
-    paddingLeft: 6,
+    paddingLeft: 6
   },
   barLeftButtonText: {
     color: 'rgb(0, 122, 255)',
     textAlign: 'left',
-    fontSize: 17,
+    fontSize: 17
   },
   backButtonImage: {
     width: 13,
-    height: 21,
+    height: 21
   },
   defaultImageStyle: {
     height: 24,
-    resizeMode: 'contain',
-  },
+    resizeMode: 'contain'
+  }
 });
 
 const propTypes = {
@@ -199,11 +198,10 @@ const contextTypes = {
 const defaultProps = {
   drawerImage: _drawerImage,
   backButtonImage: _backButtonImage,
-  titleOpacity: 1,
+  titleOpacity: 1
 };
 
 class NavBar extends React.Component {
-
   constructor(props) {
     super(props);
 
@@ -216,9 +214,9 @@ class NavBar extends React.Component {
 
     this.state = {
       search_width: Util.size.width * 0.75,
-      search_left: Util.size.width * 0.25 / 2,
+      search_left: (Util.size.width * 0.25) / 2,
       autoFocus: false
-    }
+    };
   }
 
   componentWillReceiveProps(nextProps) {
@@ -242,19 +240,21 @@ class NavBar extends React.Component {
   renderBackButton() {
     const state = this.props.navigationState;
     const childState = state.children[state.index];
-    const BackButton = (childState.component && childState.component.backButton) || state.backButton
-      || childState.backButton;
+    const BackButton =
+      (childState.component && childState.component.backButton) ||
+      state.backButton ||
+      childState.backButton;
     const textButtonStyle = [
       styles.barBackButtonText,
       this.props.backButtonTextStyle,
       state.backButtonTextStyle,
-      childState.backButtonTextStyle,
+      childState.backButtonTextStyle
     ];
     const style = [
       styles.backButton,
       this.props.leftButtonStyle,
       state.leftButtonStyle,
-      childState.leftButtonStyle,
+      childState.leftButtonStyle
     ];
 
     if (state.index === 0 && (!state.parentIndex || state.parentIndex === 0)) {
@@ -271,8 +271,10 @@ class NavBar extends React.Component {
         />
       );
     }
-    const buttonImage = childState.backButtonImage ||
-      state.backButtonImage || this.props.backButtonImage;
+    const buttonImage =
+      childState.backButtonImage ||
+      state.backButtonImage ||
+      this.props.backButtonImage;
     let onPress = childState.onBack || childState.component.onBack;
     if (onPress) {
       onPress = onPress.bind(null, state);
@@ -280,19 +282,13 @@ class NavBar extends React.Component {
       onPress = Actions.pop;
     }
 
-    const text = childState.backTitle ?
-      (<Text style={textButtonStyle}>
-        {childState.backTitle}
-      </Text>)
-      : null;
+    const text = childState.backTitle ? (
+      <Text style={textButtonStyle}>{childState.backTitle}</Text>
+    ) : null;
 
     return (
-      <TouchableOpacity
-        testID="backNavButton"
-        style={style}
-        onPress={onPress}
-      >
-        {buttonImage && !childState.hideBackImage &&
+      <TouchableOpacity testID="backNavButton" style={style} onPress={onPress}>
+        {buttonImage && !childState.hideBackImage && (
           <Image
             source={buttonImage}
             style={[
@@ -300,10 +296,10 @@ class NavBar extends React.Component {
               this.props.leftButtonIconStyle,
               state.barButtonIconStyle,
               state.leftButtonIconStyle,
-              childState.leftButtonIconStyle,
+              childState.leftButtonIconStyle
             ]}
           />
-        }
+        )}
         {text}
       </TouchableOpacity>
     );
@@ -320,11 +316,23 @@ class NavBar extends React.Component {
       let onPress = state.onRight;
       let buttonImage = state.rightButtonImage;
       let menuIcon = state.drawerIcon;
-      const style = [styles.rightButton, self.props.rightButtonStyle, state.rightButtonStyle];
-      const textStyle = [styles.barRightButtonText, self.props.rightButtonTextStyle,
-        state.rightButtonTextStyle];
-      const rightButtonStyle = [styles.defaultImageStyle, state.rightButtonIconStyle];
-      const rightTitle = state.getRightTitle ? state.getRightTitle(navProps) : state.rightTitle;
+      const style = [
+        styles.rightButton,
+        self.props.rightButtonStyle,
+        state.rightButtonStyle
+      ];
+      const textStyle = [
+        styles.barRightButtonText,
+        self.props.rightButtonTextStyle,
+        state.rightButtonTextStyle
+      ];
+      const rightButtonStyle = [
+        styles.defaultImageStyle,
+        state.rightButtonIconStyle
+      ];
+      const rightTitle = state.getRightTitle
+        ? state.getRightTitle(navProps)
+        : state.rightTitle;
 
       if (state.rightButton) {
         let Button = state.rightButton;
@@ -343,18 +351,18 @@ class NavBar extends React.Component {
         );
       }
 
-      if (!onPress && !!drawer && typeof drawer.toggle === 'function' && drawer.props.side === 'right') {
+      if (
+        !onPress &&
+        !!drawer &&
+        typeof drawer.toggle === 'function' &&
+        drawer.props.side === 'right'
+      ) {
         buttonImage = state.drawerImage;
         if (buttonImage || menuIcon) {
           onPress = drawer.toggle;
         }
         if (!menuIcon) {
-          menuIcon = (
-            <Image
-              source={buttonImage}
-              style={rightButtonStyle}
-            />
-          );
+          menuIcon = <Image source={buttonImage} style={rightButtonStyle} />;
         }
       }
 
@@ -367,33 +375,46 @@ class NavBar extends React.Component {
             style={style}
             onPress={onPress}
           >
-            {rightTitle &&
-              <Text style={textStyle}>
-                {rightTitle}
-              </Text>
-            }
-            {buttonImage &&
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-end' }}>
-                {menuIcon || <Image
-                  source={buttonImage}
-                  style={state.rightButtonIconStyle || styles.defaultImageStyle}
-                />
-                }
+            {rightTitle && <Text style={textStyle}>{rightTitle}</Text>}
+            {buttonImage && (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'flex-end'
+                }}
+              >
+                {menuIcon || (
+                  <Image
+                    source={buttonImage}
+                    style={
+                      state.rightButtonIconStyle || styles.defaultImageStyle
+                    }
+                  />
+                )}
               </View>
-            }
+            )}
           </TouchableOpacity>
         );
       }
-      if ((!!state.onRight ^ !!(typeof (rightTitle) !== 'undefined'
-        || typeof (buttonImage) !== 'undefined'))) {
+      if (
+        !!state.onRight ^
+        !!(
+          typeof rightTitle !== 'undefined' ||
+          typeof buttonImage !== 'undefined'
+        )
+      ) {
         console.warn(
           `Both onRight and rightTitle/rightButtonImage
-            must be specified for the scene: ${state.name}`,
+            must be specified for the scene: ${state.name}`
         );
       }
       return null;
     }
-    return tryRender(this.props.component, this.props.wrapBy) || tryRender(this.props);
+    return (
+      tryRender(this.props.component, this.props.wrapBy) ||
+      tryRender(this.props)
+    );
   }
 
   renderLeftButton(navProps) {
@@ -403,11 +424,23 @@ class NavBar extends React.Component {
       let onPress = state.onLeft;
       let buttonImage = state.leftButtonImage;
       let menuIcon = state.drawerIcon;
-      const style = [styles.leftButton, self.props.leftButtonStyle, state.leftButtonStyle];
-      const textStyle = [styles.barLeftButtonText, self.props.leftButtonTextStyle,
-        state.leftButtonTextStyle];
-      const leftButtonStyle = [styles.defaultImageStyle, state.leftButtonIconStyle];
-      const leftTitle = state.getLeftTitle ? state.getLeftTitle(navProps) : state.leftTitle;
+      const style = [
+        styles.leftButton,
+        self.props.leftButtonStyle,
+        state.leftButtonStyle
+      ];
+      const textStyle = [
+        styles.barLeftButtonText,
+        self.props.leftButtonTextStyle,
+        state.leftButtonTextStyle
+      ];
+      const leftButtonStyle = [
+        styles.defaultImageStyle,
+        state.leftButtonIconStyle
+      ];
+      const leftTitle = state.getLeftTitle
+        ? state.getLeftTitle(navProps)
+        : state.leftTitle;
 
       if (state.leftButton) {
         let Button = state.leftButton;
@@ -426,18 +459,18 @@ class NavBar extends React.Component {
         );
       }
 
-      if (!onPress && !!drawer && typeof drawer.toggle === 'function' && drawer.props.side === 'left') {
+      if (
+        !onPress &&
+        !!drawer &&
+        typeof drawer.toggle === 'function' &&
+        drawer.props.side === 'left'
+      ) {
         buttonImage = state.drawerImage;
         if (buttonImage || menuIcon) {
           onPress = drawer.toggle;
         }
         if (!menuIcon) {
-          menuIcon = (
-            <Image
-              source={buttonImage}
-              style={leftButtonStyle}
-            />
-          );
+          menuIcon = <Image source={buttonImage} style={leftButtonStyle} />;
         }
       }
 
@@ -450,37 +483,45 @@ class NavBar extends React.Component {
             style={style}
             onPress={onPress}
           >
-            {leftTitle &&
-              <Text style={textStyle}>
-                {leftTitle}
-              </Text>
-            }
-            {buttonImage &&
-              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'flex-start' }}>
-                {menuIcon || <Image
-                  source={buttonImage}
-                  style={state.leftButtonIconStyle || styles.defaultImageStyle}
-                />
-                }
+            {leftTitle && <Text style={textStyle}>{leftTitle}</Text>}
+            {buttonImage && (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'flex-start'
+                }}
+              >
+                {menuIcon || (
+                  <Image
+                    source={buttonImage}
+                    style={
+                      state.leftButtonIconStyle || styles.defaultImageStyle
+                    }
+                  />
+                )}
               </View>
-            }
+            )}
           </TouchableOpacity>
         );
       }
-      if ((!!state.onLeft ^ !!(leftTitle || buttonImage))) {
+      if (!!state.onLeft ^ !!(leftTitle || buttonImage)) {
         console.warn(
           `Both onLeft and leftTitle/leftButtonImage
-            must be specified for the scene: ${state.name}`,
+            must be specified for the scene: ${state.name}`
         );
       }
       return null;
     }
-    return tryRender(this.props.component, this.props.wrapBy) || tryRender(this.props);
+    return (
+      tryRender(this.props.component, this.props.wrapBy) ||
+      tryRender(this.props)
+    );
   }
 
   _enableSearch() {
     Actions.refresh({
-      rightTitle: "Huỷ",
+      rightTitle: 'Huỷ',
       onRight: () => {
         Keyboard.dismiss();
 
@@ -497,11 +538,11 @@ class NavBar extends React.Component {
         });
       },
       rightButtonTextStyle: {
-        color: "#ebebeb",
+        color: '#ebebeb',
         fontSize: 14,
         marginTop: isIOS ? 1 : 1,
         marginRight: 2
-      },
+      }
       // hideBackImage: this.props.inputAnimate ? true : false
     });
 
@@ -514,12 +555,18 @@ class NavBar extends React.Component {
     // }
   }
 
-  renderTitle(childState, index:number) {
-    let title = this.props.getTitle ? this.props.getTitle(childState) : childState.title;
-    if (title === undefined && childState.component && childState.component.title) {
+  renderTitle(childState, index: number) {
+    let title = this.props.getTitle
+      ? this.props.getTitle(childState)
+      : childState.title;
+    if (
+      title === undefined &&
+      childState.component &&
+      childState.component.title
+    ) {
       title = childState.component.title;
     }
-    if (typeof (title) === 'function') {
+    if (typeof title === 'function') {
       title = title(childState);
     }
 
@@ -545,19 +592,23 @@ class NavBar extends React.Component {
               {
                 opacity: this.props.position.interpolate({
                   inputRange: [index - 1, index, index + 1],
-                  outputRange: [0, this.props.titleOpacity, 0],
+                  outputRange: [0, this.props.titleOpacity, 0]
                 }),
                 left: this.props.position.interpolate({
                   inputRange: [index - 1, index + 1],
-                  outputRange: [200, -200],
+                  outputRange: [200, -200]
                 }),
                 right: this.props.position.interpolate({
                   inputRange: [index - 1, index + 1],
-                  outputRange: [-200, 200],
+                  outputRange: [-200, 200]
                 }),
-                backgroundColor: "rgba(0,0,0,0.6)",
-                width: this.props.smallSearch ? (this.state.search_width - Util.size.width * 0.25 / 2) : this.state.search_width,
-                marginRight: this.props.smallSearch ? (Util.size.width * 0.25) : (Util.size.width * 0.25 / 2),
+                backgroundColor: 'rgba(0,0,0,0.6)',
+                width: this.props.smallSearch
+                  ? this.state.search_width - (Util.size.width * 0.25) / 2
+                  : this.state.search_width,
+                marginRight: this.props.smallSearch
+                  ? Util.size.width * 0.25
+                  : (Util.size.width * 0.25) / 2,
                 height: isIOS ? 28 : 32,
                 top: isIOS ? -3 : -2,
                 borderRadius: 3,
@@ -571,43 +622,48 @@ class NavBar extends React.Component {
               style={{
                 marginLeft: 8
               }}
-              name="search" size={12} color="#999999" />
+              name="search"
+              size={12}
+              color="#999999"
+            />
 
             {this.props.searchOnpress ? (
               <TouchableOpacity
                 style={{
                   justifyContent: 'center',
-                  width: this.state.search_width - (Util.size.width * 0.25 / 2),
+                  width: this.state.search_width - (Util.size.width * 0.25) / 2,
                   height: '100%'
                 }}
                 onPress={this.props.searchOnpress}
                 returnKeyType="search"
                 placeholderTextColor="#999999"
-                underlineColorAndroid="transparent">
-
-                  <Text
-                    style={{
+                underlineColorAndroid="transparent"
+              >
+                <Text
+                  style={{
                     fontSize: 14,
-                    color: "#999999",
+                    color: '#999999',
                     paddingHorizontal: 4,
                     paddingVertical: 0
-                  }}>{sub_string(this.props.placeholder, 20) || "Tìm kiếm"}</Text>
-
-                </TouchableOpacity>
+                  }}
+                >
+                  {sub_string(this.props.placeholder, 20) || 'Tìm kiếm'}
+                </Text>
+              </TouchableOpacity>
             ) : (
               <TextInput
-                ref={ref => this.refs_search_input = ref}
-                placeholder={this.props.placeholder || "Tìm kiếm"}
+                ref={ref => (this.refs_search_input = ref)}
+                placeholder={this.props.placeholder || 'Tìm kiếm'}
                 returnKeyType="search"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
                 selectTextOnFocus
                 style={{
                   fontSize: 14,
-                  color: "#ffffff",
+                  color: '#ffffff',
                   paddingHorizontal: 4,
                   paddingVertical: 0,
-                  width: this.state.search_width - (Util.size.width * 0.25 / 2),
+                  width: this.state.search_width - (Util.size.width * 0.25) / 2,
                   height: '100%'
                 }}
                 value={this.props.searchValue}
@@ -626,7 +682,7 @@ class NavBar extends React.Component {
 
                   Actions.refresh({
                     rightTitle: undefined,
-                    onRight: undefined,
+                    onRight: undefined
                     // hideBackImage: hideBackBtn ? true : false
                   });
 
@@ -638,7 +694,7 @@ class NavBar extends React.Component {
                   //   });
                   // }
                 }}
-               />
+              />
             )}
 
             {this.props.searchValue != '' && this.props.searchValue != null ? (
@@ -654,12 +710,16 @@ class NavBar extends React.Component {
                   if (this.refs_search_input) {
                     this.refs_search_input.focus();
                   }
-                }}>
+                }}
+              >
                 <Icon
                   style={{
                     marginLeft: 8
                   }}
-                  name="times-circle" size={14} color="#999999" />
+                  name="times-circle"
+                  size={14}
+                  color="#999999"
+                />
               </TouchableOpacity>
             ) : this.props.renderIconInput ? (
               this.props.renderIconInput()
@@ -671,10 +731,7 @@ class NavBar extends React.Component {
       return (
         <Animated.View
           key={childState.key}
-          style={[
-            styles.titleWrapper,
-            this.props.titleWrapperStyle,
-          ]}
+          style={[styles.titleWrapper, this.props.titleWrapperStyle]}
         >
           <Animated.Text
             lineBreakMode="tail"
@@ -688,17 +745,17 @@ class NavBar extends React.Component {
               {
                 opacity: this.props.position.interpolate({
                   inputRange: [index - 1, index, index + 1],
-                  outputRange: [0, this.props.titleOpacity, 0],
+                  outputRange: [0, this.props.titleOpacity, 0]
                 }),
                 left: this.props.position.interpolate({
                   inputRange: [index - 1, index + 1],
-                  outputRange: [200, -200],
+                  outputRange: [200, -200]
                 }),
                 right: this.props.position.interpolate({
                   inputRange: [index - 1, index + 1],
-                  outputRange: [-200, 200],
-                }),
-              },
+                  outputRange: [-200, 200]
+                })
+              }
             ]}
           >
             {title}
@@ -710,26 +767,30 @@ class NavBar extends React.Component {
 
   renderImageTitle() {
     const state = this.props.navigationState;
-    const navigationBarTitleImage = this.props.navigationBarTitleImage ||
-      state.navigationBarTitleImage;
-    const navigationBarTitleImageStyle = this.props.navigationBarTitleImageStyle ||
+    const navigationBarTitleImage =
+      this.props.navigationBarTitleImage || state.navigationBarTitleImage;
+    const navigationBarTitleImageStyle =
+      this.props.navigationBarTitleImageStyle ||
       state.navigationBarTitleImageStyle;
-    const navigationBarShowImageSelection = this.props.navigationBarShowImageSelection ||
-      state.navigationBarShowImageSelection || false;
-    const navigationBarSelecionStyle = this.props.navigationBarSelecionStyle ||
-      state.navigationBarSelecionStyle || {};
+    const navigationBarShowImageSelection =
+      this.props.navigationBarShowImageSelection ||
+      state.navigationBarShowImageSelection ||
+      false;
+    const navigationBarSelecionStyle =
+      this.props.navigationBarSelecionStyle ||
+      state.navigationBarSelecionStyle ||
+      {};
     return (
       <Animated.View
-        style={[
-          styles.titleWrapper,
-          this.props.titleWrapperStyle,
-        ]}
+        style={[styles.titleWrapper, this.props.titleWrapperStyle]}
       >
         <Animated.Image
           style={[styles.titleImage, navigationBarTitleImageStyle]}
           source={navigationBarTitleImage}
         />
-        {navigationBarShowImageSelection && <Animated.View style={navigationBarSelecionStyle} />}
+        {navigationBarShowImageSelection && (
+          <Animated.View style={navigationBarSelecionStyle} />
+        )}
       </Animated.View>
     );
   }
@@ -744,37 +805,56 @@ class NavBar extends React.Component {
     const navProps = { ...this.props, ...selected };
 
     const wrapByStyle = (component, wrapStyle) => {
-      if (!component) { return null; }
+      if (!component) {
+        return null;
+      }
       return props => <View style={wrapStyle}>{component(props)}</View>;
     };
 
-    const leftButtonStyle = [styles.leftButton, { alignItems: 'flex-start' }, this.props.leftButtonStyle, state.leftButtonStyle];
-    const rightButtonStyle = [styles.rightButton, { alignItems: 'flex-end' }, this.props.rightButtonStyle, state.rightButtonStyle];
+    const leftButtonStyle = [
+      styles.leftButton,
+      { alignItems: 'flex-start' },
+      this.props.leftButtonStyle,
+      state.leftButtonStyle
+    ];
+    const rightButtonStyle = [
+      styles.rightButton,
+      { alignItems: 'flex-end' },
+      this.props.rightButtonStyle,
+      state.rightButtonStyle
+    ];
 
-    const renderLeftButton = wrapByStyle(selected.renderLeftButton, leftButtonStyle) ||
+    const renderLeftButton =
+      wrapByStyle(selected.renderLeftButton, leftButtonStyle) ||
       wrapByStyle(selected.component.renderLeftButton, leftButtonStyle) ||
       this.renderLeftButton;
-    const renderRightButton = wrapByStyle(selected.renderRightButton, rightButtonStyle) ||
+    const renderRightButton =
+      wrapByStyle(selected.renderRightButton, rightButtonStyle) ||
       wrapByStyle(selected.component.renderRightButton, rightButtonStyle) ||
       this.renderRightButton;
-    const renderBackButton = wrapByStyle(selected.renderBackButton, leftButtonStyle) ||
+    const renderBackButton =
+      wrapByStyle(selected.renderBackButton, leftButtonStyle) ||
       wrapByStyle(selected.component.renderBackButton, leftButtonStyle) ||
       this.renderBackButton;
-    const renderTitle = selected.renderTitle ||
+    const renderTitle =
+      selected.renderTitle ||
       selected.component.renderTitle ||
       this.props.renderTitle;
-    const navigationBarBackgroundImage = this.props.navigationBarBackgroundImage ||
+    const navigationBarBackgroundImage =
+      this.props.navigationBarBackgroundImage ||
       state.navigationBarBackgroundImage;
-    const navigationBarBackgroundImageStyle = this.props.navigationBarBackgroundImageStyle ||
+    const navigationBarBackgroundImageStyle =
+      this.props.navigationBarBackgroundImageStyle ||
       state.navigationBarBackgroundImageStyle;
-    const navigationBarTitleImage = this.props.navigationBarTitleImage ||
-      state.navigationBarTitleImage;
+    const navigationBarTitleImage =
+      this.props.navigationBarTitleImage || state.navigationBarTitleImage;
     let imageOrTitle = null;
     if (navigationBarTitleImage) {
       imageOrTitle = this.renderImageTitle();
     } else {
-      imageOrTitle = renderTitle ? renderTitle(navProps)
-      : state.children.map(this.renderTitle, this);
+      imageOrTitle = renderTitle
+        ? renderTitle(navProps)
+        : state.children.map(this.renderTitle, this);
     }
     const contents = (
       <View>
@@ -789,14 +869,19 @@ class NavBar extends React.Component {
           styles.header,
           this.props.navigationBarStyle,
           state.navigationBarStyle,
-          selected.navigationBarStyle,
+          selected.navigationBarStyle
         ]}
       >
         {navigationBarBackgroundImage ? (
-          <ImageBackground style={navigationBarBackgroundImageStyle} source={navigationBarBackgroundImage}>
+          <ImageBackground
+            style={navigationBarBackgroundImageStyle}
+            source={navigationBarBackgroundImage}
+          >
             {contents}
           </ImageBackground>
-        ) : contents}
+        ) : (
+          contents
+        )}
       </Animated.View>
     );
   }

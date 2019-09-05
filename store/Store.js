@@ -1,43 +1,53 @@
-import { reaction, observable, observe, computed, autorun, action, toJS } from 'mobx';
+import {
+  reaction,
+  observable,
+  observe,
+  computed,
+  autorun,
+  action,
+  toJS
+} from 'mobx';
 import autobind from 'autobind-decorator';
 
-import {
-  Keyboard
-} from 'react-native';
+import { Keyboard } from 'react-native';
 
 @autobind
 class Store {
   constructor() {
-
     // reset cart index every store_id changed
-    reaction(() => this.store_id, () => {
-      this.setCartItemIndex(0);
+    reaction(
+      () => this.store_id,
+      () => {
+        this.setCartItemIndex(0);
 
-      if (!this.store_data) {
-        this._getStoreInfo();
-      }
-    });
-
-    reaction(() => this.isConnected, () => {
-      if (this.isConnected) {
-        var queue = Object.keys(this.apiQueue);
-        if (queue.length > 0) {
-          queue.map(key => {
-            let queueFunc = this.apiQueue[key];
-            if (typeof queueFunc == 'function') {
-              queueFunc();
-            }
-          });
+        if (!this.store_data) {
+          this._getStoreInfo();
         }
-
-        this.apiQueue = {};
       }
-    });
+    );
+
+    reaction(
+      () => this.isConnected,
+      () => {
+        if (this.isConnected) {
+          var queue = Object.keys(this.apiQueue);
+          if (queue.length > 0) {
+            queue.map(key => {
+              let queueFunc = this.apiQueue[key];
+              if (typeof queueFunc == 'function') {
+                queueFunc();
+              }
+            });
+          }
+
+          this.apiQueue = {};
+        }
+      }
+    );
 
     // Keyboard handler
     Keyboard.addListener('keyboardWillShow', this.keyboardWillShow);
     Keyboard.addListener('keyboardWillHide', this.keyboardWillHide);
-
 
     // Notify
     this.getNotifyFlag = true;
@@ -66,7 +76,6 @@ class Store {
 
       this.addApiQueue('site_info', this._getStoreInfo);
     } finally {
-
     }
   }
 
@@ -162,7 +171,7 @@ class Store {
     updating_version: 0,
     new_version: '',
     url_update: ''
-  }
+  };
   @observable notify_chat = {};
   @observable notify_admin_chat = {};
 
@@ -178,9 +187,6 @@ class Store {
   @action setNotifyChat(data) {
     this.notify_chat = data || {};
   }
-
-
-
 
   /*********** home begin **********/
   @observable refresh_home_change = 0;
@@ -218,7 +224,6 @@ class Store {
     this.store_data = data;
     this.store_id = data.id;
   }
-
 
   /*********** home begin **********/
   @observable refresh_news = 0;
@@ -286,7 +291,8 @@ class Store {
 
     // object to array and reverse stack
     if (data && Object.keys(data.products).length > 0) {
-      var cart_products = [], cart_products_confirm = [];
+      var cart_products = [],
+        cart_products_confirm = [];
       Object.keys(data.products).map(key => {
         let product = data.products[key];
         cart_products.push(product);
@@ -332,9 +338,12 @@ class Store {
   }
 
   @action getNdtHistory(mcc_investor_username) {
-    return toJS(this.ndt_history.find(n => n.mcc_investor_username === mcc_investor_username))
+    return toJS(
+      this.ndt_history.find(
+        n => n.mcc_investor_username === mcc_investor_username
+      )
+    );
   }
-
 
   /*********** address begin **********/
   @observable address_key_change = 0;
@@ -342,7 +351,6 @@ class Store {
   @action setAddressKeyChange(data) {
     this.address_key_change = data;
   }
-
 
   /*********** orders begin **********/
   @observable orders_key_change = 0;
@@ -368,9 +376,6 @@ class Store {
     this.cart_fly_position = data;
   }
 
-
-
-
   @observable isConnected = true;
   apiQueue = {};
 
@@ -383,7 +388,6 @@ class Store {
       this.apiQueue[key] = func;
     }
   }
-
 }
 
 export default new Store();

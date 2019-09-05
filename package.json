@@ -12,10 +12,13 @@
     "autobind-decorator": "^2.1.0",
     "axios": "^0.18.0",
     "babel-plugin-transform-remove-console": "^6.9.0",
+    "husky": "^3.0.5",
+    "lint-staged": "^9.2.5",
     "lodash": "^4.17.5",
     "mobx": "^3.6.1",
     "mobx-react": "^4.4.2",
     "moment": "^2.24.0",
+    "prettier": "^1.18.2",
     "react": "16.8.3",
     "react-native": "0.59.9",
     "react-native-actionsheet": "^2.4.2",
@@ -74,5 +77,16 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "lint-staged": {
+    "**/**/*.{js,jsx,json}": [
+      "prettier --single-quote es6 --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
