@@ -22,7 +22,6 @@ import Modal from 'react-native-modalbox';
 import { FormInput } from '../../lib/react-native-elements';
 import store from '../../store/Store';
 import { reaction } from 'mobx';
-// test prettier
 
 // components
 import RightButtonCall from '../RightButtonCall';

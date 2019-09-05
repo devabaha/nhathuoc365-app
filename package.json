@@ -79,7 +79,7 @@
     "preset": "react-native"
   },
   "lint-staged": {
-    "**/**/*.{js,jsx,json}": [
+    "**/*.{js,jsx,json}": [
       "prettier --single-quote es6 --write",
       "git add"
     ]
