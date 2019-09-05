@@ -1,6 +1,6 @@
-"use strict";
+'use strict';
 
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -10,11 +10,11 @@ import {
   BackHandler,
   Linking,
   SafeAreaView
-} from "react-native";
+} from 'react-native';
 
 // constant, helper
-import "./lib/Constant";
-import "./lib/Helper";
+import './lib/Constant';
+import './lib/Helper';
 
 // library
 import {
@@ -24,79 +24,79 @@ import {
   Reducer,
   Actions,
   ActionConst
-} from "react-native-router-flux";
-import DeepLinking from "react-native-deep-linking";
-import OneSignal from "react-native-onesignal";
-import codePush from "react-native-code-push";
+} from 'react-native-router-flux';
+import DeepLinking from 'react-native-deep-linking';
+import OneSignal from 'react-native-onesignal';
+import codePush from 'react-native-code-push';
 
 // store
-import Store from "./store/Store";
+import Store from './store/Store';
 
 // import components
 // screen
-import Intro from "./components/intro/Intro";
-import AddStore from "./components/home/AddStore";
-import AddRef from "./components/home/AddRef";
-import Home from "./components/home/Home";
-import HomeNavBar from "./components/home/HomeNavBar";
-import Notifys from "./components/notify/Notifys";
-import MainNotify from "./components/notify/MainNotify";
-import Orders from "./components/orders/Orders";
-import StoreOrders from "./components/orders/StoreOrders";
-import Account from "./components/account/Account";
-import Register from "./components/account/Register";
-import Login from "./components/account/Login";
-import OpLogin from "./components/account/OpLogin";
-import OpRegister from "./components/account/OpRegister";
-import ForgetVerify from "./components/account/ForgetVerify";
-import ForgetActive from "./components/account/ForgetActive";
-import NewPass from "./components/account/NewPass";
-import Stores from "./components/stores/Stores";
-import StoresList from "./components/stores/StoresList";
-import Search from "./components/stores/Search";
-import Item from "./components/item/Item";
-import ItemImageViewer from "./components/item/ItemImageViewer";
-import Cart from "./components/cart/Cart";
-import Address from "./components/payment/Address";
-import Confirm from "./components/payment/Confirm";
-import CreateAddress from "./components/payment/CreateAddress";
-import OrdersItem from "./components/orders/OrdersItem";
-import ViewOrdersItem from "./components/orders/ViewOrdersItem";
-import NotifyItem from "./components/notify/NotifyItem";
-import SearchStore from "./components/home/SearchStore";
-import ListStore from "./components/home/ListStore";
-import ScanQRCode from "./components/home/ScanQRCode";
-import QRBarCode from "./components/home/QRBarCode";
-import Chat from "./components/chat/Chat";
-import WebView from "./components/webview/WebView";
-import Rating from "./components/rating/Rating";
-import Error from "./components/Error";
-import ChooseLocation from "./components/home/ChooseLocation";
-import CoinWallet from "./components/account/CoinWallet";
-import VndWallet from "./components/account/VndWallet/VndWallet";
-import PayWallet from "./components/account/PayWallet";
-import PayAccount from "./components/account/PayAccount";
-import Affiliate from "./components/account/Affiliate/Affiliate";
-import ProfileDetail from "./components/account/ProfileDetail";
-import EditProfile from "./components/account/EditProfile";
-import DetailHistoryPayment from "./components/account/DetailHistoryPayment";
-import PhoneCard from "./components/services/PhoneCard";
-import PhoneCardConfirm from "./components/services/PhoneCardConfirm";
-import NapTKC from "./components/services/NapTKC";
-import NapTKCConfirm from "./components/services/NapTKCConfirm";
-import MdCard from "./components/services/MdCard";
-import MdCardConfirm from "./components/services/MdCardConfirm";
+import Intro from './components/intro/Intro';
+import AddStore from './components/home/AddStore';
+import AddRef from './components/home/AddRef';
+import Home from './components/home/Home';
+import HomeNavBar from './components/home/HomeNavBar';
+import Notifys from './components/notify/Notifys';
+import MainNotify from './components/notify/MainNotify';
+import Orders from './components/orders/Orders';
+import StoreOrders from './components/orders/StoreOrders';
+import Account from './components/account/Account';
+import Register from './components/account/Register';
+import Login from './components/account/Login';
+import OpLogin from './components/account/OpLogin';
+import OpRegister from './components/account/OpRegister';
+import ForgetVerify from './components/account/ForgetVerify';
+import ForgetActive from './components/account/ForgetActive';
+import NewPass from './components/account/NewPass';
+import Stores from './components/stores/Stores';
+import StoresList from './components/stores/StoresList';
+import Search from './components/stores/Search';
+import Item from './components/item/Item';
+import ItemImageViewer from './components/item/ItemImageViewer';
+import Cart from './components/cart/Cart';
+import Address from './components/payment/Address';
+import Confirm from './components/payment/Confirm';
+import CreateAddress from './components/payment/CreateAddress';
+import OrdersItem from './components/orders/OrdersItem';
+import ViewOrdersItem from './components/orders/ViewOrdersItem';
+import NotifyItem from './components/notify/NotifyItem';
+import SearchStore from './components/home/SearchStore';
+import ListStore from './components/home/ListStore';
+import ScanQRCode from './components/home/ScanQRCode';
+import QRBarCode from './components/home/QRBarCode';
+import Chat from './components/chat/Chat';
+import WebView from './components/webview/WebView';
+import Rating from './components/rating/Rating';
+import Error from './components/Error';
+import ChooseLocation from './components/home/ChooseLocation';
+import CoinWallet from './components/account/CoinWallet';
+import VndWallet from './components/account/VndWallet/VndWallet';
+import PayWallet from './components/account/PayWallet';
+import PayAccount from './components/account/PayAccount';
+import Affiliate from './components/account/Affiliate/Affiliate';
+import ProfileDetail from './components/account/ProfileDetail';
+import EditProfile from './components/account/EditProfile';
+import DetailHistoryPayment from './components/account/DetailHistoryPayment';
+import PhoneCard from './components/services/PhoneCard';
+import PhoneCardConfirm from './components/services/PhoneCardConfirm';
+import NapTKC from './components/services/NapTKC';
+import NapTKCConfirm from './components/services/NapTKCConfirm';
+import MdCard from './components/services/MdCard';
+import MdCardConfirm from './components/services/MdCardConfirm';
 
 // Backend
 
 // others
-import TabIcon from "./components/TabIcon";
-import navBar from "./components/NavBar";
+import TabIcon from './components/TabIcon';
+import navBar from './components/NavBar';
 // navigator bar
 const custommerNav = {
   navBar,
   sceneStyle: {
-    backgroundColor: "#f3f3f3"
+    backgroundColor: '#f3f3f3'
   }
 };
 
@@ -104,11 +104,11 @@ var currentSceneName = null;
 var currentSceneOnBack = null;
 var backButtonPressedOnceToExit = false;
 
-var _oldName = "";
+var _oldName = '';
 const reducerCreate = params => {
   const defaultReducer = Reducer(params);
   return (state, action) => {
-    if (action.type == "back") {
+    if (action.type == 'back') {
       Store.runStoreUnMount();
     }
 
@@ -132,16 +132,16 @@ const reducerCreate = params => {
 };
 
 function currentTabHandler(key) {
-  if (key != "_home") {
+  if (key != '_home') {
     Store.is_stay_home = false;
   }
-  if (key != "_main_notify") {
+  if (key != '_main_notify') {
     Store.is_stay_main_notify = false;
   }
-  if (key != "_orders") {
+  if (key != '_orders') {
     Store.is_stay_orders = false;
   }
-  if (key != "_account") {
+  if (key != '_account') {
     Store.is_stay_account = false;
   }
 }
@@ -170,11 +170,11 @@ function getCurrentOnBack(obj) {
 export default class App extends Component {
   constructor(properties) {
     super(properties);
-    OneSignal.init("ea4623dc-3e0a-4390-b46d-0408a330ea63");
+    OneSignal.init('ea4623dc-3e0a-4390-b46d-0408a330ea63');
 
-    OneSignal.addEventListener("received", this._onReceived);
-    OneSignal.addEventListener("opened", this._onOpened);
-    OneSignal.addEventListener("ids", this._onIds);
+    OneSignal.addEventListener('received', this._onReceived);
+    OneSignal.addEventListener('opened', this._onOpened);
+    OneSignal.addEventListener('ids', this._onIds);
     // OneSignal.configure(); 	// triggers the ids event
     OneSignal.inFocusDisplaying(2);
 
@@ -186,30 +186,21 @@ export default class App extends Component {
   }
 
   componentWillMount() {
-    StatusBar.setBarStyle("dark-content");
-  }
-
-  _endLoad(showIntro) {
-    layoutAnimation();
-
-    this.setState({
-      loading: false,
-      showIntro
-    });
+    StatusBar.setBarStyle('dark-content');
   }
 
   componentWillUnmount() {
-    OneSignal.removeEventListener("received", this._onReceived);
-    OneSignal.removeEventListener("opened", this._onOpened);
-    OneSignal.removeEventListener("ids", this._onIds);
+    OneSignal.removeEventListener('received', this._onReceived);
+    OneSignal.removeEventListener('opened', this._onOpened);
+    OneSignal.removeEventListener('ids', this._onIds);
   }
 
   componentDidMount() {
     // deep link register
-    DeepLinking.addScheme("macccacaapp://");
-    Linking.addEventListener("url", this.handleURL);
+    DeepLinking.addScheme('macccacaapp://');
+    Linking.addEventListener('url', this.handleURL);
 
-    var url = Linking.getInitialURL()
+    Linking.getInitialURL()
       .then(url => {
         if (url) {
           // do login
@@ -223,27 +214,27 @@ export default class App extends Component {
         // do login
         this._login();
 
-        console.error("An error occurred", err);
+        console.error('An error occurred', err);
       });
   }
 
   handleURL = ({ url }) => {
     if (url) {
-      const route = url.replace(/.*?:\/\//g, "");
-      const routeName = route.split("/")[0];
-      const id = route.split("/")[1];
+      const route = url.replace(/.*?:\/\//g, '');
+      const routeName = route.split('/')[0];
+      const id = route.split('/')[1];
 
       switch (routeName) {
-        case "code":
+        case 'code':
           Actions.search_store({
             site_code: id
           });
           break;
-        case "store":
+        case 'store':
           this._pushGoStore(id);
           break;
-        case "item":
-          const item_id = route.split("/")[2];
+        case 'item':
+          const item_id = route.split('/')[2];
           this._pushGoItem(id, item_id);
           break;
         default:
@@ -255,7 +246,7 @@ export default class App extends Component {
   async _login(callback) {
     try {
       var response = await APIHandler.user_login({
-        fb_access_token: ""
+        fb_access_token: ''
       });
       if (response && response.status == STATUS_SUCCESS) {
         Store.setUserInfo(response.data);
@@ -271,7 +262,7 @@ export default class App extends Component {
             }
           );
         })();
-        StatusBar.setBarStyle("light-content");
+        StatusBar.setBarStyle('light-content');
       } else {
         Toast.show(response.message);
       }
@@ -285,13 +276,13 @@ export default class App extends Component {
             () => {
               Actions.op_register({
                 type: ActionConst.RESET,
-                title: "Đăng ký thông tin",
+                title: 'Đăng ký thông tin',
                 name_props: response.data.name
               });
             }
           );
         })();
-        StatusBar.setBarStyle("light-content");
+        StatusBar.setBarStyle('light-content');
       }
       if (response && response.status == STATUS_UNDEFINE_USER) {
         Store.setUserInfo(response.data);
@@ -309,9 +300,9 @@ export default class App extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + " user_login");
+      console.warn(e + ' user_login');
 
-      Store.addApiQueue("user_login", this._login.bind(this));
+      Store.addApiQueue('user_login', this._login.bind(this));
     }
   }
 
@@ -325,9 +316,9 @@ export default class App extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + " user_sites");
+      console.warn(e + ' user_sites');
 
-      Store.addApiQueue("user_sites", this._getData.bind(this));
+      Store.addApiQueue('user_sites', this._getData.bind(this));
     }
   }
 
@@ -342,20 +333,20 @@ export default class App extends Component {
 
       if (page) {
         switch (page) {
-          case "store":
+          case 'store':
             if (page_id) {
               this._pushGoStore(page_id);
             }
             break;
-          case "new":
+          case 'new':
             if (page_id) {
               this._pushGoNews(page_id);
             }
             break;
-          case "order":
+          case 'order':
             if (site_id && page_id) {
               Actions.orders_item({
-                title: "#...",
+                title: '#...',
                 passProps: {
                   notice_data: {
                     site_id,
@@ -385,15 +376,15 @@ export default class App extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + " site_info");
+      console.warn(e + ' site_info');
 
-      Store.addApiQueue("site_info", this._pushGoStore.bind(this, page_id));
+      Store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
     } finally {
     }
   }
 
   _goStore(response) {
-    if (currentSceneName == "stores") {
+    if (currentSceneName == 'stores') {
       setTimeout(() => {
         Actions.stores({
           title: response.data.name,
@@ -413,7 +404,7 @@ export default class App extends Component {
     try {
       var response = await APIHandler.user_news(page_id);
       if (response && response.status == STATUS_SUCCESS) {
-        if (currentSceneName == "notify_item") {
+        if (currentSceneName == 'notify_item') {
           setTimeout(() => {
             Actions.notify_item({
               title: response.data.title,
@@ -431,9 +422,9 @@ export default class App extends Component {
         }
       }
     } catch (e) {
-      console.warn(e + " user_news");
+      console.warn(e + ' user_news');
 
-      Store.addApiQueue("user_news", this._pushGoNews.bind(this, page_id));
+      Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     } finally {
     }
   }
@@ -458,7 +449,7 @@ export default class App extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + " site_info");
+      console.warn(e + ' site_info');
     } finally {
     }
   }
@@ -469,7 +460,7 @@ export default class App extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         var item = response.data;
 
-        if (currentSceneName == "item") {
+        if (currentSceneName == 'item') {
           setTimeout(() => {
             Actions.item({
               title: item.name,
@@ -487,9 +478,9 @@ export default class App extends Component {
         }
       }
     } catch (e) {
-      console.warn(e + " user_news");
+      console.warn(e + ' user_news');
 
-      Store.addApiQueue("user_news", this._pushGoNews.bind(this, page_id));
+      Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     } finally {
     }
   }
@@ -510,9 +501,9 @@ export default class App extends Component {
           player_id
         });
       } catch (e) {
-        console.warn(e + " add_push_token");
+        console.warn(e + ' add_push_token');
 
-        Store.addApiQueue("add_push_token", this._onIds.bind(this, device));
+        Store.addApiQueue('add_push_token', this._onIds.bind(this, device));
       } finally {
       }
     }
@@ -523,11 +514,11 @@ export default class App extends Component {
       BackHandler.exitApp();
     } else {
       if (
-        ["_home", "_main_notify", "_orders", "_account", "login"].indexOf(
+        ['_home', '_main_notify', '_orders', '_account', 'login'].indexOf(
           currentSceneName
         ) === -1
       ) {
-        if (typeof currentSceneOnBack == "function") {
+        if (typeof currentSceneOnBack == 'function') {
           currentSceneOnBack();
         } else {
           Actions.pop();
@@ -535,7 +526,7 @@ export default class App extends Component {
         return true;
       } else {
         backButtonPressedOnceToExit = true;
-        Toast.show("Chạm lại để thoát ứng dụng", Toast.LONG);
+        Toast.show('Chạm lại để thoát ứng dụng', Toast.LONG);
 
         setTimeout(function() {
           backButtonPressedOnceToExit = false;
@@ -550,7 +541,7 @@ export default class App extends Component {
   }
 
   _goQRCode() {
-    Actions.qr_bar_code({ title: "Mã tài khoản", direction: "vertical" });
+    Actions.qr_bar_code({ title: 'Mã tài khoản', direction: 'vertical' });
   }
 
   renderRounter() {
@@ -1014,14 +1005,14 @@ App = codePush(App);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff"
+    backgroundColor: '#ffffff'
   },
   tabBarStyle: {
     borderTopWidth: Util.pixel,
-    borderColor: "#cccccc",
-    backgroundColor: "white",
+    borderColor: '#cccccc',
+    backgroundColor: 'white',
     opacity: 1,
-    shadowColor: "black",
+    shadowColor: 'black',
     shadowOffset: {
       width: 0,
       height: 2
@@ -1033,13 +1024,13 @@ const styles = StyleSheet.create({
   content: {
     width: Util.size.width,
     height: 28,
-    backgroundColor: "#FFD2D2",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#FFD2D2',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginTop: isIOS ? 20 : 0
   },
   message: {
-    color: "#D8000C",
+    color: '#D8000C',
     fontSize: 14
   },
   safeArea: {
