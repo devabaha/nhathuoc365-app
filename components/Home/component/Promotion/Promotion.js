@@ -52,14 +52,13 @@ function Promotion(props) {
   return (
     <View style={styles.container}>
       <Swiper
-        autoplayTimeout={3}
-        showsPagination={true}
-        marginHorizontal={MARGIN_HORIZONTAL}
-        marginVertical={10}
-        backgroundColor={'#E9E9E9'}
-        borderRadius={8}
-        renderPagination={renderPagination}
         autoplay
+        autoplayTimeout={3}
+        borderRadius={8}
+        width={PROMOTION_WIDTH}
+        backgroundColor="#fff"
+        showsPagination={true}
+        renderPagination={renderPagination}
       >
         {props.data.map((promotion, index) => renderItem(promotion, index))}
       </Swiper>
@@ -78,8 +77,9 @@ Promotion.defaultProps = {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 148,
-    marginTop: 58
+    height: 128,
+    marginTop: 68,
+    paddingHorizontal: 16
   },
   bannerImage: {
     width: Util.size.width,
@@ -93,8 +93,7 @@ const styles = StyleSheet.create({
     width: PROMOTION_WIDTH,
     height: 16,
     position: 'relative',
-    marginHorizontal: 16,
-    top: -26,
+    top: -16,
     overflow: 'hidden',
     borderRadius: 8
   },

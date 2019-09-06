@@ -3,7 +3,7 @@ import _drawerIconPhoneCard from '../../images/phone_card.png';
 import _drawerIconRada from '../../images/icon_rada.png';
 import _drawerIconPayBill from '../../images/pay_bill.png';
 
-export const SERVICES_DATA_1 = [
+export const SERVICES_LIST = [
   {
     id: 1,
     iconName: _drawerIconScanQrcode,

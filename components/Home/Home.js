@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   RefreshControl,
   TouchableHighlight,
@@ -10,271 +10,83 @@ import {
   ScrollView,
   Platform
 } from 'react-native';
-
-// library
-import { Actions } from 'react-native-router-flux';
-import store from '../../store/Store';
-import { reaction } from 'mobx';
-
-// components
 import ServiceButton from './component/ServiceButton';
 import Promotion from './component/Promotion';
+import Header from './component/Header';
+import PrimaryActions from './component/PrimaryActions';
+
 import NewItemComponent3 from '../notify/NewItemComponent3';
 import NewItemComponent4 from '../notify/NewItemComponent4';
 import NewItemComponent5 from '../notify/NewItemComponent5';
-import _drawerIconNotication from '../../images/notication.png';
-import _drawerIconPoints from '../../images/points.png';
-import _drawerIconTrans from '../../images/trans.png';
-import _drawerIconVoucher from '../../images/voucher.png';
-import _drawerIconNext from '../../images/next.png';
 
-import { SERVICES_DATA_1 } from './constants';
+import { SERVICES_LIST } from './constants';
+
+const defaultListener = () => {};
 
 @observer
 class Home extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      store_data: null,
-      refreshing: false,
-      loading: false,
-      scrollTop: 0,
-      promotions: null
-    };
-
-    // auto refresh home
-    reaction(
-      () => store.refresh_home_change && !store.no_refresh_home_change,
-      () => this.getHomeDataFromApi(450)
-    );
-  }
-
-  get hasPromotion() {
-    return (
-      Array.isArray(this.state.promotions) && this.state.promotions.length > 0
-    );
-  }
-
-  componentDidMount() {
-    this.getHomeDataFromApi();
-
-    store.parentTab = '_home';
-
-    if (!store.launched) {
-      store.launched = true;
-      Actions.error();
-    }
-  }
-
-  // lấy dữ liệu trang home
-  getHomeDataFromApi = (delay = 0) => {
-    if (store.no_refresh_home_change) {
-      return;
-    }
-    this.setState(
-      {
-        loading: true
-      },
-      async () => {
-        try {
-          const response = await APIHandler.user_site_home();
-          if (response && response.status == STATUS_SUCCESS) {
-            setTimeout(() => {
-              const { data } = response;
-              this.setState({
-                loading: false,
-                refreshing: false,
-                store_data: data.site,
-                newses_data:
-                  data.newses && data.newses.length ? data.newses : null,
-                farm_newses_data:
-                  data.farm_newses && data.farm_newses.length
-                    ? data.farm_newses
-                    : null,
-                promotions:
-                  data.promotions && data.promotions.length
-                    ? data.promotions
-                    : null
-              });
-              store.setStoreData(data.site);
-            }, delay || 0);
-          }
-        } catch (e) {
-          console.warn(e + ' user_home');
-          store.addApiQueue('user_home', this.getHomeDataFromApi.bind(this));
-        }
-      }
-    );
+  static propTypes = {
+    onSavePoint: PropTypes.func,
+    onSurplusNext: PropTypes.func,
+    onMyVoucher: PropTypes.func,
+    onTransaction: PropTypes.func,
+    onServicePressed: PropTypes.func,
+    onPromotionPressed: PropTypes.func,
+    hasPromotion: PropTypes.bool,
+    refreshing: PropTypes.bool,
+    promotions: PropTypes.array,
+    farmNewsesData: PropTypes.array
   };
 
-  goScanQRCodeScene() {
-    Actions.qr_bar_code({
-      title: 'Quét QR Code',
-      index: 1,
-      wallet: store.user_info.default_wallet
-    });
-  }
-
-  goQRCodeScene() {
-    Actions.qr_bar_code({ title: 'Mã tài khoản' });
-  }
-
-  onPullToRefresh() {
-    this.setState({ refreshing: true });
-
-    const delayOneSecond = 1000;
-    this.getHomeDataFromApi(delayOneSecond);
-  }
-
-  handlePromotionPressed(item) {
-    Actions.notify_item({
-      title: item.title,
-      data: item
-    });
-  }
-
-  handleServicePressed = (serviceType, serviceId) => {
-    switch (serviceType) {
-      case 'scan_qc_code':
-        Actions.qr_bar_code({
-          title: 'Quét QR Code',
-          index: 1,
-          wallet: store.user_info.default_wallet
-        });
-        break;
-      case 'phone_card':
-        Actions.phonecard({
-          service_type: serviceType,
-          service_id: serviceId
-        });
-        break;
-      case 'nap_tkc':
-        Actions.nap_tkc({
-          service_type: serviceType,
-          service_id: serviceId
-        });
-        break;
-      case 'md_card':
-        Actions.md_card({
-          service_type: serviceType,
-          service_id: serviceId
-        });
-        break;
-    }
+  static defaultProps = {
+    onSavePoint: defaultListener,
+    onSurplusNext: defaultListener,
+    onMyVoucher: defaultListener,
+    onTransaction: defaultListener,
+    onServicePressed: defaultListener,
+    onPromotionPressed: defaultListener,
+    hasPromotion: false,
+    refreshing: false,
+    promotions: [],
+    farmNewsesData: []
   };
+
+  renderServiceItem = ({ item, index }) => (
+    <ServiceButton
+      key={index}
+      iconName={item.iconName}
+      title={item.title}
+      service_type={item.service_type}
+      service_id={item.service_id}
+      onPress={this.props.onServicePressed}
+    />
+  );
 
   render() {
-    const { farm_newses_data, newses_data } = this.state;
     return (
       <ScrollView
         refreshControl={
           <RefreshControl
-            refreshing={this.state.refreshing}
-            onRefresh={this.onPullToRefresh.bind(this)}
+            refreshing={this.props.refreshing}
+            onRefresh={this.props.onPullToRefresh}
           />
         }
       >
         <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.haloNameWrapper}>
-              <Text style={styles.haloName}>Xin chào,</Text>
-              <Text style={[styles.haloName, styles.haloNameBold]}>
-                {' '}
-                Lê Huy Thực
-              </Text>
-            </Text>
-            <View style={styles.homeBoxWalletInfoLabelRight}>
-              <Image
-                style={styles.iconNotication}
-                source={_drawerIconNotication}
-              />
-            </View>
-          </View>
+          <Header name="Lê Huy Thực" />
 
-          <View style={styles.addStoreActionsBoxWrapper}>
-            <View style={styles.addStoreActionsBox}>
-              <View style={styles.homeBoxWalletInfo}>
-                <Text style={styles.walletNameLabel}>Ví tích điểm</Text>
-                <Text style={styles.walletName}> Tick</Text>
-                <View style={styles.homeBoxWalletInfoLabelRight}>
-                  <Text style={styles.surplus}>6,390,000đ</Text>
-                </View>
-                <TouchableHighlight
-                  onPress={this.goQRCodeScene.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                >
-                  <View
-                    style={{
-                      fontSize: 20,
-                      color: '#042C5C',
-                      fontWeight: 'bold',
-                      lineHeight: 20,
-                      marginLeft: 10
-                    }}
-                  >
-                    <Image style={styles.iconNext} source={_drawerIconNext} />
-                  </View>
-                </TouchableHighlight>
-              </View>
+          <PrimaryActions
+            surplus="10,000,000đ"
+            onSavePoint={this.props.onSavePoint}
+            onSurplusNext={this.props.onSurplusNext}
+            onMyVoucher={this.props.onMyVoucher}
+            onTransaction={this.props.onTransaction}
+          />
 
-              <View style={styles.homeBoxWalletAction}>
-                <TouchableHighlight
-                  onPress={this.goQRCodeScene.bind(this, this.state.store_data)}
-                  underlayColor="transparent"
-                  style={styles.addStoreActionBtn}
-                >
-                  <View style={styles.addStoreActionBtnBox}>
-                    <Image
-                      style={styles.iconPoint}
-                      source={_drawerIconPoints}
-                    />
-                    <Text style={styles.addStoreActionLabel}>Tích điểm</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  onPress={this.goScanQRCodeScene.bind(
-                    this,
-                    this.state.store_data
-                  )}
-                  underlayColor="transparent"
-                  style={styles.addStoreActionBtn}
-                >
-                  <View style={[styles.addStoreActionBtnBox, {}]}>
-                    <Image
-                      style={styles.iconTran}
-                      source={_drawerIconVoucher}
-                    />
-                    <Text style={styles.addStoreActionLabel}>
-                      Voucher của tôi
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  onPress={() =>
-                    Actions.vnd_wallet({
-                      title: store.user_info.default_wallet.name,
-                      wallet: store.user_info.default_wallet
-                    })
-                  }
-                  underlayColor="transparent"
-                  style={styles.addStoreActionBtn}
-                >
-                  <View style={styles.addStoreActionBtnBox}>
-                    <Image style={styles.iconTran} source={_drawerIconTrans} />
-                    <Text style={styles.addStoreActionLabel}>Giao dịch</Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            </View>
-          </View>
-
-          {this.hasPromotion && (
+          {this.props.hasPromotion && (
             <Promotion
-              data={this.state.promotions}
-              onPress={this.handlePromotionPressed}
+              data={this.props.promotions}
+              onPress={this.props.onPromotionPressed}
             />
           )}
 
@@ -284,43 +96,38 @@ class Home extends Component {
               marginTop: 15
             }}
           >
-            {farm_newses_data && (
+            {this.props.farmNewsesData && (
               <ListHomeItems
-                data={farm_newses_data}
+                data={this.props.farmNewsesData}
                 title="Cửa hàng thân thiết"
               />
             )}
 
             <View style={styles.serviceBox}>
               <FlatList
-                ref="service_list"
                 horizontal
+                data={SERVICES_LIST}
                 showsHorizontalScrollIndicator={false}
-                data={SERVICES_DATA_1}
-                extraData={this.state}
                 keyExtractor={item => `${item.id}`}
+                renderItem={this.renderServiceItem}
                 ItemSeparatorComponent={() => (
                   <View style={{ width: ~~(Util.size.width / 28) }} />
-                )}
-                renderItem={({ item, index }) => (
-                  <ServiceButton
-                    key={index}
-                    iconName={item.iconName}
-                    title={item.title}
-                    service_type={item.service_type}
-                    service_id={item.service_id}
-                    onPress={this.handleServicePressed}
-                  />
                 )}
               />
             </View>
 
-            {newses_data && (
-              <ListHomeVoucherItems data={newses_data} title="TiDi Voucher" />
+            {this.props.newsesData && (
+              <ListHomeVoucherItems
+                title="TiDi Voucher"
+                data={this.props.newsesData}
+              />
             )}
 
-            {newses_data && (
-              <ListHomeNewsItems data={newses_data} title="TiDi News" />
+            {this.props.newsesData && (
+              <ListHomeNewsItems
+                title="TiDi News"
+                data={this.props.newsesData}
+              />
             )}
 
             <View style={{ height: 20, backgroundColor: 'transparent' }} />
@@ -334,15 +141,8 @@ class Home extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: BAR_HEIGHT
-  },
-  header: {
-    padding: 15,
-    paddingTop: 25,
-    backgroundColor: DEFAULT_COLOR,
-    paddingBottom: 100,
-    flexDirection: 'row',
-    borderBottomRightRadius: 30
+    paddingBottom: BAR_HEIGHT,
+    backgroundColor: '#fff'
   },
   serviceBox: {
     marginTop: 10,
