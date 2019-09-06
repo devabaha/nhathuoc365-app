@@ -1,10 +1,7 @@
-'use strict';
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  YellowBox,
   StyleSheet,
   StatusBar,
   BackHandler,
@@ -28,19 +25,16 @@ import {
 import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
+import TickIdScaningButton from 'app-packages/tickid-scaning-button';
 
 // store
-import Store from './store/Store';
+import Store from 'app-store';
 
-// import components
-// screen
 import Intro from './components/intro/Intro';
 import AddStore from './components/home/AddStore';
 import AddRef from './components/home/AddRef';
 import Home from './components/home/Home';
-import HomeNavBar from './components/home/HomeNavBar';
 import Notifys from './components/notify/Notifys';
-import MainNotify from './components/notify/MainNotify';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
@@ -86,8 +80,6 @@ import NapTKC from './components/services/NapTKC';
 import NapTKCConfirm from './components/services/NapTKCConfirm';
 import MdCard from './components/services/MdCard';
 import MdCardConfirm from './components/services/MdCardConfirm';
-
-// Backend
 
 // others
 import TabIcon from './components/TabIcon';
@@ -569,7 +561,7 @@ export default class App extends Component {
                 icon={TabIcon}
                 iconTitle="TickID"
                 iconName="store"
-                size={24}
+                iconSize={24}
                 onPress={() => {
                   Actions._home({ type: ActionConst.REFRESH });
                 }}
@@ -591,8 +583,8 @@ export default class App extends Component {
                 icon={TabIcon}
                 iconTitle="Tin tức"
                 iconName="notifications"
-                size={24}
-                notify="new_totals"
+                iconSize={24}
+                notifyKey="new_totals"
                 onPress={this._goMainNotify}
               >
                 <Scene
@@ -608,10 +600,7 @@ export default class App extends Component {
                */}
               <Scene
                 key="myTab3"
-                icon={TabIcon}
-                iconName="qrcode-scan"
-                size={24}
-                isHighlightTab
+                icon={TickIdScaningButton}
                 onPress={this._goQRCode.bind(this, this.state.store_data)}
               >
                 <Scene
@@ -630,7 +619,7 @@ export default class App extends Component {
                 icon={TabIcon}
                 iconTitle="Đơn hàng"
                 iconName="shopping-cart"
-                size={24}
+                iconSize={24}
                 onPress={() => {
                   Actions._orders({ type: ActionConst.REFRESH });
                 }}
@@ -651,8 +640,8 @@ export default class App extends Component {
                 icon={TabIcon}
                 iconTitle="Tài khoản"
                 iconName="account-circle"
-                notify="notify_account"
-                size={24}
+                notifyKey="notify_account"
+                iconSize={24}
                 onPress={() => {
                   Actions._account({ type: ActionConst.REFRESH });
                 }}

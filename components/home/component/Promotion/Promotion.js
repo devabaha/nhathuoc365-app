@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, TouchableHighlight, StyleSheet, Animated } from 'react-native';
 import Swiper from 'react-native-swiper';
-import { debounce } from 'lodash';
+
+const PROMOTION_WIDTH = Util.size.width - 32;
 
 function Promotion(props) {
   const [paginationLeft] = useState(new Animated.Value(0));
@@ -25,7 +26,7 @@ function Promotion(props) {
 
   function handleAnimation(index, total) {
     const animationConfig = {
-      toValue: (index * Util.size.width) / total,
+      toValue: (index * PROMOTION_WIDTH) / total,
       duration: 250
     };
     Animated.timing(paginationLeft, animationConfig).start();
@@ -40,7 +41,7 @@ function Promotion(props) {
             styles.pagination,
             {
               left: paginationLeft,
-              width: Util.size.width / total
+              width: PROMOTION_WIDTH / total
             }
           ]}
         />
@@ -89,7 +90,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   paginationWrapper: {
-    width: Util.size.width - 32,
+    width: PROMOTION_WIDTH,
     height: 16,
     position: 'relative',
     marginHorizontal: 16,

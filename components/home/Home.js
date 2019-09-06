@@ -298,7 +298,7 @@ class Home extends Component {
                 showsHorizontalScrollIndicator={false}
                 data={SERVICES_DATA_1}
                 extraData={this.state}
-                keyExtractor={item => item.id}
+                keyExtractor={item => `${item.id}`}
                 ItemSeparatorComponent={() => (
                   <View style={{ width: ~~(Util.size.width / 28) }} />
                 )}
@@ -543,7 +543,7 @@ const ListHomeItems = props => {
         renderItem={({ item, index }) => {
           return <NewItemComponent3 item={item} />;
         }}
-        keyExtractor={item => item.id}
+        keyExtractor={item => `${item.id}`}
       />
     </View>
   );
@@ -580,7 +580,7 @@ const ListHomeVoucherItems = props => {
         renderItem={({ item, index }) => {
           return <NewItemComponent4 item={item} />;
         }}
-        keyExtractor={item => item.id}
+        keyExtractor={item => `${item.id}`}
       />
     </View>
   );
@@ -617,7 +617,7 @@ const ListHomeNewsItems = props => {
         renderItem={({ item, index }) => {
           return <NewItemComponent5 item={item} />;
         }}
-        keyExtractor={item => item.id}
+        keyExtractor={item => `${item.id}`}
       />
     </View>
   );
