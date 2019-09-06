@@ -30,10 +30,11 @@ import TickIdScaningButton from 'app-packages/tickid-scaning-button';
 // store
 import Store from 'app-store';
 
+import HomeContainer from './container/Home';
+
 import Intro from './components/intro/Intro';
-import AddStore from './components/home/AddStore';
-import AddRef from './components/home/AddRef';
-import Home from './components/home/Home';
+import AddStore from './components/Home/AddStore';
+import AddRef from './components/Home/AddRef';
 import Notifys from './components/notify/Notifys';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
@@ -57,15 +58,15 @@ import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
 import ViewOrdersItem from './components/orders/ViewOrdersItem';
 import NotifyItem from './components/notify/NotifyItem';
-import SearchStore from './components/home/SearchStore';
-import ListStore from './components/home/ListStore';
-import ScanQRCode from './components/home/ScanQRCode';
-import QRBarCode from './components/home/QRBarCode';
+import SearchStore from './components/Home/SearchStore';
+import ListStore from './components/Home/ListStore';
+import ScanQRCode from './components/Home/ScanQRCode';
+import QRBarCode from './components/Home/QRBarCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
 import Error from './components/Error';
-import ChooseLocation from './components/home/ChooseLocation';
+import ChooseLocation from './components/Home/ChooseLocation';
 import CoinWallet from './components/account/CoinWallet';
 import VndWallet from './components/account/VndWallet/VndWallet';
 import PayWallet from './components/account/PayWallet';
@@ -159,7 +160,7 @@ function getCurrentOnBack(obj) {
 }
 
 @observer
-export default class App extends Component {
+class App extends Component {
   constructor(properties) {
     super(properties);
     OneSignal.init('ea4623dc-3e0a-4390-b46d-0408a330ea63');
@@ -569,7 +570,7 @@ export default class App extends Component {
                 <Scene
                   key="_home"
                   title="TickID"
-                  component={Home}
+                  component={HomeContainer}
                   hideNavBar
                   {...custommerNav}
                 />
@@ -1027,3 +1028,5 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   }
 });
+
+export default App;

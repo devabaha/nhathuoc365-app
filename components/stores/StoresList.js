@@ -22,8 +22,8 @@ import store from '../../store/Store';
 import { reaction } from 'mobx';
 
 // components
-import ItemGrid from '../home/ItemGrid';
-import ItemList from '../home/ItemList';
+import ItemGrid from '../Home/ItemGrid';
+import ItemList from '../Home/ItemList';
 import NotifyItemComponent from '../notify/NotifyItemComponent';
 import NewItemComponent from '../notify/NewItemComponent';
 
