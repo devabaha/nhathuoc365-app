@@ -125,6 +125,15 @@ class Home extends Component {
     });
   }
 
+  handleVoucherPressed = item => {
+    Actions.notify_item({
+      title: item.title,
+      data: item
+    });
+  };
+
+  handleShowAllVouchers = () => {};
+
   render() {
     return (
       <HomeComponent
@@ -134,6 +143,8 @@ class Home extends Component {
         onTransaction={this.handlePressedTransaction}
         onServicePressed={this.handleServicePressed}
         onPromotionPressed={this.handlePromotionPressed}
+        onVoucherPressed={this.handleVoucherPressed}
+        onShowAllVouchers={this.handleShowAllVouchers}
         hasPromotion={this.hasPromotion}
         refreshing={this.state.refreshing}
         promotions={this.state.promotions}

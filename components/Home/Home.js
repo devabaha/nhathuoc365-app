@@ -14,9 +14,9 @@ import ServiceButton from './component/ServiceButton';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
+import ListVouchers from './component/ListVouchers';
 
 import NewItemComponent3 from '../notify/NewItemComponent3';
-import NewItemComponent4 from '../notify/NewItemComponent4';
 import NewItemComponent5 from '../notify/NewItemComponent5';
 
 import { SERVICES_LIST } from './constants';
@@ -32,6 +32,8 @@ class Home extends Component {
     onTransaction: PropTypes.func,
     onServicePressed: PropTypes.func,
     onPromotionPressed: PropTypes.func,
+    onVoucherPressed: PropTypes.func,
+    onShowAllVouchers: PropTypes.func,
     hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
     promotions: PropTypes.array,
@@ -45,6 +47,8 @@ class Home extends Component {
     onTransaction: defaultListener,
     onServicePressed: defaultListener,
     onPromotionPressed: defaultListener,
+    onVoucherPressed: defaultListener,
+    onShowAllVouchers: defaultListener,
     hasPromotion: false,
     refreshing: false,
     promotions: [],
@@ -117,9 +121,11 @@ class Home extends Component {
             </View>
 
             {this.props.newsesData && (
-              <ListHomeVoucherItems
+              <ListVouchers
                 title="TiDi Voucher"
                 data={this.props.newsesData}
+                onShowAll={this.props.onShowAllVouchers}
+                onVoucherPressed={this.props.onVoucherPressed}
               />
             )}
 
@@ -342,43 +348,6 @@ const ListHomeItems = props => {
         showsHorizontalScrollIndicator={false}
         renderItem={({ item, index }) => {
           return <NewItemComponent3 item={item} />;
-        }}
-        keyExtractor={item => `${item.id}`}
-      />
-    </View>
-  );
-};
-
-const ListHomeVoucherItems = props => {
-  return (
-    <View>
-      <View
-        style={{
-          paddingHorizontal: MARGIN_HORIZONTAL,
-          paddingVertical: 4,
-          flexDirection: 'row'
-        }}
-      >
-        <Text style={styles.addStoreTitle}>{props.title}</Text>
-
-        <View style={styles.rightTitleBtnBox}>
-          <TouchableHighlight
-            style={styles.right_title_btn}
-            underlayColor="transparent"
-            onPress={() => {}}
-          >
-            <Text style={[styles.addStoreTitle, { color: '#042C5C' }]}>
-              Xem tất cả
-            </Text>
-          </TouchableHighlight>
-        </View>
-      </View>
-      <FlatList
-        data={props.data}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item, index }) => {
-          return <NewItemComponent4 item={item} />;
         }}
         keyExtractor={item => `${item.id}`}
       />

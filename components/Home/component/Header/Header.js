@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   homeBoxWalletInfo: {
     flexDirection: 'row',
-    paddingHorizontal: MARGIN_HORIZONTAL,
+    paddingHorizontal: 16,
     paddingTop: 20,
     alignItems: 'center',
     justifyContent: 'center',

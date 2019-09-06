@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     backgroundColor: '#FAFAFA',
     borderRadius: 8,
-    margin: MARGIN_HORIZONTAL,
+    margin: 16,
     position: 'absolute',
     top: -99,
     left: 0,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
   },
   walletInfoWrapper: {
     flexDirection: 'row',
-    paddingHorizontal: MARGIN_HORIZONTAL,
+    paddingHorizontal: 16,
     paddingTop: 20,
     alignItems: 'center',
     justifyContent: 'center',
