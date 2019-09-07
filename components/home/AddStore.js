@@ -85,7 +85,7 @@ export default class AddStore extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_search_store');
+        console.log(e + ' user_search_store');
 
         store.addApiQueue('user_search_store', this._search_store.bind(this));
       } finally {
@@ -315,7 +315,7 @@ class StoreItem extends Component {
           Events.trigger(KEY_EVENTS_STORE);
         }
       } catch (e) {
-        console.warn(e + ' user_add_store');
+        console.log(e + ' user_add_store');
 
         store.addApiQueue('user_add_store', this._add_store.bind(this, item));
       } finally {

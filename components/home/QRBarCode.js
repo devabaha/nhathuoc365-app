@@ -406,8 +406,8 @@ export default class QRBarCode extends Component {
           <Barcode
             value={barcode} 
             format="CODE128" 
-            width="1"
-            height="80"
+            width={1}
+            height={80}
             background='transparent'/>
         </View>
         <Text style={styles.barcodeText}>

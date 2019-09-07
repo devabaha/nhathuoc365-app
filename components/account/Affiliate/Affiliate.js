@@ -44,7 +44,7 @@ export default class Affiliate extends Component {
         this.setState({ historiesData: response.data.histories })
       }
     } catch (e) {
-      console.warn(e);
+      console.log(e);
     }
   }
 

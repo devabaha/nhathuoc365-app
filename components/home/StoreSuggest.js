@@ -43,7 +43,7 @@ export default class StoreSuggest extends Component {
 
       layoutAnimation();
     } catch (e) {
-      console.warn(e + ' user_list_suggest_site');
+      console.log(e + ' user_list_suggest_site');
 
       store.addApiQueue('user_list_suggest_site', this._getData.bind(this));
     } finally {

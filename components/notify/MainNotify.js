@@ -159,7 +159,7 @@ export default class MainNotify extends Component {
           });
         }
       } catch (e) {
-        console.warn(e + ' user_notice');
+        console.log(e + ' user_notice');
 
         store.addApiQueue('user_notice', this._getData.bind(this, delay));
       } finally {

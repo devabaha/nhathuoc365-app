@@ -150,7 +150,7 @@ export default class Stores extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' site_info');
+      console.log(e + ' site_info');
 
       store.addApiQueue('site_info', this._getCategoriesNavFromServer.bind(this));
     } finally {
@@ -359,7 +359,7 @@ export default class Stores extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
@@ -553,7 +553,7 @@ class CategoryScreen extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' site_category_product');
+      console.log(e + ' site_category_product');
 
       store.addApiQueue('site_category_product', this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore));
     }

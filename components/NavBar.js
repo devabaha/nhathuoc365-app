@@ -386,7 +386,7 @@ class NavBar extends React.Component {
       }
       if ((!!state.onRight ^ !!(typeof (rightTitle) !== 'undefined'
         || typeof (buttonImage) !== 'undefined'))) {
-        console.warn(
+        console.log(
           `Both onRight and rightTitle/rightButtonImage
             must be specified for the scene: ${state.name}`,
         );
@@ -468,7 +468,7 @@ class NavBar extends React.Component {
         );
       }
       if ((!!state.onLeft ^ !!(leftTitle || buttonImage))) {
-        console.warn(
+        console.log(
           `Both onLeft and leftTitle/leftButtonImage
             must be specified for the scene: ${state.name}`,
         );

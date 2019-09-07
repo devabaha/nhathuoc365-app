@@ -64,7 +64,7 @@ class NdtWithdraw extends Component {
                         Toast.show(response.message, Toast.SHORT);
                     }
                 } catch (err) {
-                    console.warn(e + ' investor_withdraw');
+                    console.log(e + ' investor_withdraw');
                     store.addApiQueue('investor_withdraw', this.withdrawMoney);
                 }
             });

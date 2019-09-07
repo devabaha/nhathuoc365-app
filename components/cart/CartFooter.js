@@ -73,7 +73,7 @@ export default class CartFooter extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' site_cart');
+      console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this));
     } finally {
@@ -112,7 +112,7 @@ export default class CartFooter extends Component {
 
         }
       } catch (e) {
-        console.warn(e + ' site_cart_down');
+        console.log(e + ' site_cart_down');
 
         store.addApiQueue('site_cart_down', this._item_qnt_decrement.bind(this, item));
       } finally {
@@ -139,7 +139,7 @@ export default class CartFooter extends Component {
 
         }
       } catch (e) {
-        console.warn(e + ' site_cart_up');
+        console.log(e + ' site_cart_up');
 
         store.addApiQueue('site_cart_up', this._item_qnt_increment.bind(this, item));
       } finally {

@@ -132,7 +132,7 @@ export default class ForgetActive extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_forget_password_verify');
+        console.log(e + ' user_forget_password_verify');
 
         store.addApiQueue('user_forget_password_verify', this._onActive.bind(this));
       } finally {
@@ -180,7 +180,7 @@ export default class ForgetActive extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' user_forget_password');
+      console.log(e + ' user_forget_password');
 
       store.addApiQueue('user_forget_password', this._reSendCode.bind(this));
     } finally {

@@ -134,7 +134,7 @@ class NewPass extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_forget_new_password');
+        console.log(e + ' user_forget_new_password');
 
         store.addApiQueue('user_forget_new_password', this._onSave.bind(this));
       } finally {
@@ -162,7 +162,7 @@ class NewPass extends Component {
           try {
             await AsyncStorage.setItem('@username:key', tel);
           } catch (error) {
-            console.warn(error);
+            console.log(error);
           }
 
           action(() => {
@@ -195,7 +195,7 @@ class NewPass extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_login_password');
+        console.log(e + ' user_login_password');
 
         this.setState({
           finish_loading: false

@@ -47,7 +47,7 @@ export default class VndWallet extends Component {
         this.setState({ historiesData: response.data.histories });
       }
     } catch (e) {
-      console.warn(e);
+      console.log(e);
     }
   }
 
