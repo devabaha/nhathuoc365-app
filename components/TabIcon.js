@@ -8,12 +8,16 @@ import {
   Image,
   StyleSheet,
   Platform,
+  Dimensions,
 } from 'react-native';
 
 // librarys
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import store from '../store/Store';
+
+const { width } = Dimensions.get('window');
+const highlightTabWidth = width * 0.18;
 
 @observer
 export default class TabIcon extends Component {
@@ -29,7 +33,7 @@ export default class TabIcon extends Component {
     const { isHighlightTab } = this.props;
     const normalIconStyle = this.props.selected || this.props.iconActive ? styles.titleSelected : styles.title;
     return(
-      <View style={[styles.tabIcon, isHighlightTab ? { bottom: 16 } : null]}>
+      <View style={[styles.tabIcon, isHighlightTab ? { bottom: highlightTabWidth / 8 } : null]}>
         <View style={[isHighlightTab ? styles.iconBoxHighlight : styles.iconBox, Platform.OS === 'ios' ? { paddingTop: 3 } : null]}>
           {isHighlightTab ? <MaterialCommunityIcons style={[{ color: 'white' }]} name={this.props.iconName} size={this.props.size} />
           : <Icon style={[normalIconStyle]} name={this.props.iconName} size={this.props.size} />}
@@ -77,10 +81,10 @@ const styles = StyleSheet.create({
   iconBoxHighlight: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 56,
-    height: 56,
+    width: highlightTabWidth,
+    aspectRatio: 1,
     backgroundColor: DEFAULT_COLOR,
-    borderRadius: 28,
+    borderRadius: highlightTabWidth / 2,
     borderWidth: 3,
     borderColor: 'white',
   },
