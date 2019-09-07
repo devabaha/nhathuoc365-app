@@ -92,7 +92,7 @@ export default class StoresList extends Component {
           }, delay || this._delay());
         }
       } catch (e) {
-        console.warn(e + ' user_sites');
+        console.log(e + ' user_sites');
 
         store.addApiQueue('user_sites', this._getData.bind(this, delay));
       } finally {

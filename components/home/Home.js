@@ -55,7 +55,7 @@ const SERVICES_DATA_1 = [
     iconName: _drawerIconScanQrcode,
     title: 'Quét Mã \n QR',
     service_type: 'scan_qc_code',
-    service_id: 0
+    service_id: 0,
   },
   {
     iconName: _drawerIconPhoneCard,
@@ -73,7 +73,7 @@ const SERVICES_DATA_1 = [
     iconName: _drawerIconPayBill,
     title: 'Đặt lịch\n giữ chỗ',
     service_type: 'booking',
-    service_id: 3
+    service_id: 3,
   }
 ];
 
@@ -226,7 +226,7 @@ export default class Home extends Component {
           }, delay || 0);
         }
       } catch (e) {
-        console.warn(e + ' user_home');
+        console.log(e + ' user_home');
 
         store.addApiQueue('user_home', this._getData.bind(this));
       }
@@ -354,7 +354,7 @@ export default class Home extends Component {
         }
       }
     } catch (e) {
-      console.warn(e + ' user_news');
+      console.log(e + ' user_news');
 
       Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     } finally {
@@ -604,7 +604,7 @@ export default class Home extends Component {
               showsHorizontalScrollIndicator={false}
               data={SERVICES_DATA_1}
               extraData={this.state}
-              keyExtractor={item => item.id}
+              keyExtractor={(item, index) => `k-${index}`}
               ItemSeparatorComponent={
                 () => <View style={{width: ~~(Util.size.width / 28)}}/>
               }

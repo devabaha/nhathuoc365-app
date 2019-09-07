@@ -161,7 +161,7 @@ export default class Search extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' search_product');
+        console.log(e + ' search_product');
 
         store.addApiQueue('search_product', this._onSearch.bind(this, keyword));
       }
@@ -404,7 +404,7 @@ export default class Search extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {

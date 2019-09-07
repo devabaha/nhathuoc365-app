@@ -199,7 +199,7 @@ export default class Chat extends Component {
 
         this.chat_processing = false;
       } catch (e) {
-        console.warn(e + ' site_load_chat');
+        console.log(e + ' site_load_chat');
 
         store.addApiQueue('site_load_chat', this._getData.bind(this, delay));
       } finally {
@@ -247,7 +247,7 @@ export default class Chat extends Component {
 
       this.submiting = false;
     } catch (e) {
-      console.warn(e + ' site_send_chat');
+      console.log(e + ' site_send_chat');
 
       store.addApiQueue('site_send_chat', this._onSubmit.bind(this));
     } finally {

@@ -102,7 +102,7 @@ class NdtHistory extends Component {
                     ...state
                 });
             } catch (e) {
-                console.warn(e + ' investor_history');
+                console.log(e + ' investor_history');
                 store.addApiQueue('investor_history', this._getInvestorHistory);
             }
         });

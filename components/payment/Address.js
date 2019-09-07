@@ -80,7 +80,7 @@ export default class Address extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' user_address');
+      console.log(e + ' user_address');
 
       store.addApiQueue('user_address', this._getData.bind(this, delay));
     } finally {
@@ -122,7 +122,7 @@ export default class Address extends Component {
           this._goConfirm();
         }
       } catch (e) {
-        console.warn(e + ' site_cart_address');
+        console.log(e + ' site_cart_address');
 
         store.addApiQueue('site_cart_address', this._addSiteCart.bind(this));
       } finally {

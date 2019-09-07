@@ -95,7 +95,7 @@ export default class StoreOrders extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + ' site_cart_list');
+      console.log(e + ' site_cart_list');
 
       store.addApiQueue('site_cart_list', this._getData.bind(this, delay));
     } finally {
@@ -269,7 +269,7 @@ export default class StoreOrders extends Component {
           Toast.show(response.message);
         }
       } catch (e) {
-        console.warn(e + ' site_cart_cancel');
+        console.log(e + ' site_cart_cancel');
 
         store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
       } finally {
@@ -303,7 +303,7 @@ export default class StoreOrders extends Component {
           Toast.show(response.message);
         }
       } catch (e) {
-        console.warn(e + ' site_cart_reorder');
+        console.log(e + ' site_cart_reorder');
 
         store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       } finally {
@@ -343,7 +343,7 @@ export default class StoreOrders extends Component {
 
         }
       } catch (e) {
-        console.warn(e + ' site_cart_edit');
+        console.log(e + ' site_cart_edit');
 
         store.addApiQueue('site_cart_edit', this._editCart.bind(this));
       } finally {

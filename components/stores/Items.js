@@ -95,7 +95,7 @@ export default class Items extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' site_cart_adding');
+        console.log(e + ' site_cart_adding');
 
         store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
       } finally {

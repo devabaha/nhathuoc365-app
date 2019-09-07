@@ -106,7 +106,7 @@ export default class ForgetVerify extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_forget_password');
+        console.log(e + ' user_forget_password');
 
         store.addApiQueue('user_forget_password', this._onSave.bind(this));
       } finally {

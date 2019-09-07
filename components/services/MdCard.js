@@ -89,7 +89,7 @@ export default class MdCard extends Component {
         }, delay || 0);
       }
     } catch (e) {
-      console.warn(e + ' service_md_card');
+      console.log(e + ' service_md_card');
 
     } finally {
 

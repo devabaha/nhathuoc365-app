@@ -211,7 +211,7 @@ export default class Item extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' site_product');
+      console.log(e + ' site_product');
 
       store.addApiQueue('site_product', this._getDataFromServer.bind(this, delay));
     } finally {
@@ -274,7 +274,7 @@ export default class Item extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' site_cart_adding');
+        console.log(e + ' site_cart_adding');
 
         store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
       } finally {
@@ -310,7 +310,7 @@ export default class Item extends Component {
           });
         }
       } catch (e) {
-        console.warn(e + ' site_like');
+        console.log(e + ' site_like');
 
         store.addApiQueue('site_like', this._likeHandler.bind(this, item));
       } finally {
@@ -693,7 +693,7 @@ export default class Item extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {

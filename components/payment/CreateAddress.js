@@ -174,7 +174,7 @@ export default class CreateAddress extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' site_add_address');
+        console.log(e + ' site_add_address');
 
         store.addApiQueue('site_add_address', this._onSave.bind(this));
       } finally {
@@ -200,7 +200,7 @@ export default class CreateAddress extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' site_cart');
+      console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this));
     } finally {
@@ -234,7 +234,7 @@ export default class CreateAddress extends Component {
         Actions.pop();
       }
     } catch (e) {
-      console.warn(e + ' user_delete_address');
+      console.log(e + ' user_delete_address');
 
       store.addApiQueue('user_delete_address', this._removeAddressItem.bind(this));
     } finally {

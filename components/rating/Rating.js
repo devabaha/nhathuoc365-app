@@ -56,7 +56,7 @@ export default class  Rating extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' ');
+      console.log(e + ' ');
     } finally {
 
     }
@@ -269,7 +269,7 @@ export default class  Rating extends Component {
       }
 
     } catch (e) {
-      console.warn(e + ' ');
+      console.log(e + ' ');
     } finally {
 
     }

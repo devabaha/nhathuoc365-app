@@ -98,7 +98,7 @@ export default class Login extends Component {
         setTimeout(() => {
           this.setState({ spinner: false });
         }, 2000);
-        console.warn(e + ' login_fbak_verify');
+        console.log(e + ' login_fbak_verify');
         store.addApiQueue('login_fbak_verify', this._verifyFBAK);
       }
     });

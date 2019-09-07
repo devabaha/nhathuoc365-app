@@ -309,7 +309,7 @@ export default class App extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + " user_login");
+      console.log(e + " user_login");
 
       Store.addApiQueue("user_login", this._login.bind(this));
     }
@@ -325,7 +325,7 @@ export default class App extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + " user_sites");
+      console.log(e + " user_sites");
 
       Store.addApiQueue("user_sites", this._getData.bind(this));
     }
@@ -385,7 +385,7 @@ export default class App extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + " site_info");
+      console.log(e + " site_info");
 
       Store.addApiQueue("site_info", this._pushGoStore.bind(this, page_id));
     } finally {
@@ -431,7 +431,7 @@ export default class App extends Component {
         }
       }
     } catch (e) {
-      console.warn(e + " user_news");
+      console.log(e + " user_news");
 
       Store.addApiQueue("user_news", this._pushGoNews.bind(this, page_id));
     } finally {
@@ -458,7 +458,7 @@ export default class App extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + " site_info");
+      console.log(e + " site_info");
     } finally {
     }
   }
@@ -487,7 +487,7 @@ export default class App extends Component {
         }
       }
     } catch (e) {
-      console.warn(e + " user_news");
+      console.log(e + " user_news");
 
       Store.addApiQueue("user_news", this._pushGoNews.bind(this, page_id));
     } finally {
@@ -510,7 +510,7 @@ export default class App extends Component {
           player_id
         });
       } catch (e) {
-        console.warn(e + " add_push_token");
+        console.log(e + " add_push_token");
 
         Store.addApiQueue("add_push_token", this._onIds.bind(this, device));
       } finally {

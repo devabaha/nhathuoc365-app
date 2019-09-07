@@ -35,7 +35,7 @@ class NdtList extends Component {
         try {
             await APIHandler.investor_sync_info();
         } catch (e) {
-            console.warn(e + 'sync_ndt_info');
+            console.log(e + 'sync_ndt_info');
             store.addApiQueue('sync_ndt_info', this.syncNdtInfo);
         }
     }

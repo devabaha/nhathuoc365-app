@@ -78,7 +78,7 @@ export default class NotifyItem extends Component {
           }, delay || 0);
         }
       } catch (e) {
-        console.warn(e + ' user_news');
+        console.log(e + ' user_news');
 
         store.addApiQueue('user_news', this._getData.bind(this, delay));
       } finally {
@@ -257,7 +257,7 @@ export default class NotifyItem extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {

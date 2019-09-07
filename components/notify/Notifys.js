@@ -96,7 +96,7 @@ export default class Notifys extends Component {
         }, delay || 0);
       }
     } catch (e) {
-      console.warn(e + ' user_news_list');
+      console.log(e + ' user_news_list');
 
       store.addApiQueue('user_news_list', this._getData.bind(this, delay));
     } finally {

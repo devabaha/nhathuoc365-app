@@ -89,7 +89,7 @@ export default class NapTKC extends Component {
         }, delay || 0);
       }
     } catch (e) {
-      console.warn(e + ' service_phone_card');
+      console.log(e + ' service_phone_card');
 
     } finally {
 

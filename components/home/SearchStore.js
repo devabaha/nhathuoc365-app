@@ -165,7 +165,7 @@ export default class SearchStore extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_search_store');
+        console.log(e + ' user_search_store');
 
         store.addApiQueue('user_search_store', this._search_store.bind(this));
       } finally {

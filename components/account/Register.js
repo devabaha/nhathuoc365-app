@@ -179,7 +179,7 @@ export default class Register extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_register');
+        console.log(e + ' user_register');
 
         store.addApiQueue('user_register', this._register.bind(this, name, tel, password));
       } finally {
@@ -412,7 +412,7 @@ export default class Register extends Component {
         }
 
       } catch (e) {
-        console.warn(e + ' user_verify_otp');
+        console.log(e + ' user_verify_otp');
 
         store.addApiQueue('user_verify_otp', this._verify.bind(this));
       } finally {
