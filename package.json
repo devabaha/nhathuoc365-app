@@ -9,6 +9,7 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.5.0",
     "@react-native-community/netinfo": "^3.2.1",
+    "@tickid/tickid-scaning-button": "^1.0.0",
     "autobind-decorator": "^2.1.0",
     "axios": "^0.18.0",
     "babel-plugin-transform-remove-console": "^6.9.0",

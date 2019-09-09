@@ -25,7 +25,7 @@ import {
 import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
-import TickIdScaningButton from 'app-packages/tickid-scaning-button';
+import TickIdScaningButton from '@tickid/tickid-scaning-button';
 
 // store
 import Store from 'app-store';
@@ -372,7 +372,6 @@ class App extends Component {
       console.warn(e + ' site_info');
 
       Store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
-    } finally {
     }
   }
 
@@ -418,7 +417,6 @@ class App extends Component {
       console.warn(e + ' user_news');
 
       Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
-    } finally {
     }
   }
 
@@ -443,7 +441,6 @@ class App extends Component {
       }
     } catch (e) {
       console.warn(e + ' site_info');
-    } finally {
     }
   }
 
@@ -474,7 +471,6 @@ class App extends Component {
       console.warn(e + ' user_news');
 
       Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
-    } finally {
     }
   }
 
@@ -497,7 +493,6 @@ class App extends Component {
         console.warn(e + ' add_push_token');
 
         Store.addApiQueue('add_push_token', this._onIds.bind(this, device));
-      } finally {
       }
     }
   }
@@ -602,6 +597,7 @@ class App extends Component {
               <Scene
                 key="myTab3"
                 icon={TickIdScaningButton}
+                primaryColor={DEFAULT_COLOR} // optional for TickIdScaningButton
                 onPress={this._goQRCode.bind(this, this.state.store_data)}
               >
                 <Scene

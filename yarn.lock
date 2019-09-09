@@ -915,6 +915,13 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@tickid/tickid-scaning-button@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-scaning-button/-/tickid-scaning-button-1.0.0.tgz#bc6808bbaeab12a0beef31bb63155a3303940ff2"
+  integrity sha512-4joEiQ9zS9ptmVB//8K5b1NDgET8usLbMgqz6ZPzMZoKSH+BRaJA0b+gR7ZOYUAZd283cDB1D39DVTv6UpDw/Q==
+  dependencies:
+    prop-types "^15.7.2"
+
 "@types/babel__core@^7.1.0":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@types/babel__core/-/babel__core-7.1.3.tgz#e441ea7df63cd080dfcd02ab199e6d16a735fc30"
