@@ -1,22 +1,15 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl,
   ScrollView,
   Alert
 } from 'react-native';
-
-//library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { reaction } from 'mobx';
 import store from '../../store/Store';
 
 @observer
@@ -79,10 +72,9 @@ export default class Address extends Component {
         }
       }
     } catch (e) {
-      console.warn(e + ' user_address');
+      console.log(e + ' user_address');
 
       store.addApiQueue('user_address', this._getData.bind(this, delay));
-    } finally {
     }
   }
 
@@ -123,10 +115,9 @@ export default class Address extends Component {
             this._goConfirm();
           }
         } catch (e) {
-          console.warn(e + ' site_cart_address');
+          console.log(e + ' site_cart_address');
 
           store.addApiQueue('site_cart_address', this._addSiteCart.bind(this));
-        } finally {
         }
       }
     );
@@ -153,7 +144,7 @@ export default class Address extends Component {
   }
 
   render() {
-    var { loading, single } = this.state;
+    var { single } = this.state;
 
     return (
       <View style={styles.container}>

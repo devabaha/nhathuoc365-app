@@ -116,7 +116,7 @@ export default class ItemList extends Component {
         Events.trigger(KEY_EVENTS_STORE);
       }
     } catch (e) {
-      console.warn(e + ' user_remove_site');
+      console.log(e + ' user_remove_site');
 
       store.addApiQueue(
         'user_remove_site',

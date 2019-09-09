@@ -1,29 +1,18 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   FlatList,
   TouchableHighlight,
-  RefreshControl,
   Keyboard,
-  ScrollView,
-  Alert
+  ScrollView
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
+import { Actions } from 'react-native-router-flux';
 import { FormInput } from '../../lib/react-native-elements';
 import store from '../../store/Store';
-import { reaction } from 'mobx';
-
-// components
 import RightButtonCall from '../RightButtonCall';
 
 const _CHAT_KEY = 'ChatKeysStorage';
@@ -214,7 +203,7 @@ export default class Chat extends Component {
 
           this.chat_processing = false;
         } catch (e) {
-          console.warn(e + ' site_load_chat');
+          console.log(e + ' site_load_chat');
 
           store.addApiQueue('site_load_chat', this._getData.bind(this, delay));
         } finally {
@@ -263,7 +252,7 @@ export default class Chat extends Component {
 
       this.submiting = false;
     } catch (e) {
-      console.warn(e + ' site_send_chat');
+      console.log(e + ' site_send_chat');
 
       store.addApiQueue('site_send_chat', this._onSubmit.bind(this));
     } finally {

@@ -55,7 +55,7 @@ export default class Rating extends Component {
         }
       }
     } catch (e) {
-      console.warn(e + ' ');
+      console.log(e + ' ');
     } finally {
     }
   };
@@ -320,7 +320,7 @@ export default class Rating extends Component {
         Toast.show('Góp ý của bạn đã được ghi nhận!');
       }
     } catch (e) {
-      console.warn(e + ' ');
+      console.log(e + ' ');
     } finally {
     }
   };

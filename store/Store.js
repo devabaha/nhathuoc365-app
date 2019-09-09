@@ -72,7 +72,7 @@ class Store {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_info');
+      console.log(e + ' site_info');
 
       this.addApiQueue('site_info', this._getStoreInfo);
     } finally {
@@ -95,7 +95,7 @@ class Store {
         })();
       }
     } catch (e) {
-      console.warn(e + ' user_notify');
+      console.log(e + ' user_notify');
     } finally {
       this.getNotifyFlag = true;
 
@@ -118,7 +118,7 @@ class Store {
         })();
       }
     } catch (e) {
-      console.warn(e + ' user_notify_chat');
+      console.log(e + ' user_notify_chat');
 
       action(() => {
         this.setConnect(false);

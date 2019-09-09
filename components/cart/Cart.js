@@ -84,7 +84,7 @@ export default class Cart extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_cart');
+      console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this, delay));
     } finally {
@@ -154,7 +154,7 @@ export default class Cart extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_cart_down');
+      console.log(e + ' site_cart_down');
 
       store.addApiQueue(
         'site_cart_down',
@@ -176,7 +176,7 @@ export default class Cart extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_cart_up');
+      console.log(e + ' site_cart_up');
 
       store.addApiQueue(
         'site_cart_up',
@@ -228,7 +228,7 @@ export default class Cart extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
     } finally {
@@ -256,7 +256,7 @@ export default class Cart extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_cart_select');
+      console.log(e + ' site_cart_select');
 
       store.addApiQueue(
         'site_cart_select',

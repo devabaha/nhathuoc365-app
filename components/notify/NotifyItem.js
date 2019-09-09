@@ -1,21 +1,14 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
-  TouchableHighlight,
   StyleSheet,
   ScrollView,
   RefreshControl,
-  Alert,
   FlatList
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import ListHeader from '../stores/ListHeader';
 import Items from '../stores/Items';
@@ -76,16 +69,14 @@ export default class NotifyItem extends Component {
               this.setState({
                 item_data: response.data,
                 refreshing: false,
-                loading: false,
-                refreshing: false
+                loading: false
               });
             }, delay || 0);
           }
         } catch (e) {
-          console.warn(e + ' user_news');
+          console.log(e + ' user_news');
 
           store.addApiQueue('user_news', this._getData.bind(this, delay));
-        } finally {
         }
       }
     );
@@ -270,10 +261,9 @@ export default class NotifyItem extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
-    } finally {
     }
   }
 }

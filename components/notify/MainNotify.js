@@ -1,25 +1,17 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableHighlight,
   FlatList,
   RefreshControl,
-  ScrollView,
-  Alert
+  ScrollView
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import { reaction } from 'mobx';
-
-// components
 import SelectionList from '../SelectionList';
 import NotifyItemComponent from './NotifyItemComponent';
 
@@ -168,7 +160,7 @@ export default class MainNotify extends Component {
             });
           }
         } catch (e) {
-          console.warn(e + ' user_notice');
+          console.log(e + ' user_notice');
 
           store.addApiQueue('user_notice', this._getData.bind(this, delay));
         } finally {

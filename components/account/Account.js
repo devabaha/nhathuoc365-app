@@ -196,7 +196,7 @@ export default class Account extends Component {
     ImagePicker.showImagePicker(options, response => {
       if (response.didCancel) {
       } else if (response.error) {
-        console.warn(response.error);
+        console.log(response.error);
       } else {
         this._uploadAvatar(response);
       }
@@ -239,7 +239,7 @@ export default class Account extends Component {
             }
           })
           .catch(error => {
-            console.warn(error + ' url_user_add_avatar');
+            console.log(error + ' url_user_add_avatar');
 
             store.addApiQueue(
               'url_user_add_avatar',
@@ -330,7 +330,7 @@ export default class Account extends Component {
             }, delay || 0);
           }
         } catch (e) {
-          console.warn(e + ' user_login');
+          console.log(e + ' user_login');
 
           store.addApiQueue('user_login', this._login.bind(this, delay));
         }
@@ -962,7 +962,7 @@ export default class Account extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' user_logout');
+      console.log(e + ' user_logout');
 
       store.addApiQueue('user_logout', this._logout.bind(this));
     } finally {

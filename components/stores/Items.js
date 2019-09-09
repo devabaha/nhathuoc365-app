@@ -1,17 +1,6 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  Image,
-  TouchableHighlight,
-  StyleSheet,
-  Alert
-} from 'react-native';
-
-// library
+import { View, Text, TouchableHighlight, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 
@@ -103,7 +92,6 @@ export default class Items extends Component {
           console.warn(e + ' site_cart_adding');
 
           store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
-        } finally {
         }
       }
     );

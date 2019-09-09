@@ -120,7 +120,7 @@ export default class Orders extends Component {
         }, delay || 0);
       }
     } catch (e) {
-      console.warn(e + ' user_cart_list');
+      console.log(e + ' user_cart_list');
 
       store.addApiQueue(
         'user_cart_list',
@@ -267,7 +267,7 @@ export default class Orders extends Component {
           Toast.show(response.message);
         }
       } catch (e) {
-        console.warn(e + ' site_cart_reorder');
+        console.log(e + ' site_cart_reorder');
 
         store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       } finally {
@@ -293,7 +293,7 @@ export default class Orders extends Component {
           this._getData();
         }
       } catch (e) {
-        console.warn(e + ' site_cart_edit');
+        console.log(e + ' site_cart_edit');
 
         store.addApiQueue('site_cart_edit', this._editCart.bind(this));
       } finally {
@@ -328,7 +328,7 @@ export default class Orders extends Component {
           Toast.show(response.message);
         }
       } catch (e) {
-        console.warn(e + ' site_cart_cancel');
+        console.log(e + ' site_cart_cancel');
 
         store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
       } finally {

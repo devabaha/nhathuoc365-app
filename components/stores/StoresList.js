@@ -1,31 +1,19 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   RefreshControl,
   TouchableHighlight,
   FlatList,
-  ScrollView,
-  Alert
+  ScrollView
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
-import { reaction } from 'mobx';
-
-// components
-import ItemGrid from '../Home/ItemGrid';
 import ItemList from '../Home/ItemList';
-import NotifyItemComponent from '../notify/NotifyItemComponent';
-import NewItemComponent from '../notify/NewItemComponent';
 
 @observer
 export default class StoresList extends Component {
@@ -98,10 +86,8 @@ export default class StoresList extends Component {
             }, delay || this._delay());
           }
         } catch (e) {
-          console.warn(e + ' user_sites');
-
+          console.log(e + ' user_sites');
           store.addApiQueue('user_sites', this._getData.bind(this, delay));
-        } finally {
         }
       }
     );
@@ -174,7 +160,7 @@ export default class StoresList extends Component {
   }
 
   render() {
-    var { loading, finish, stores_data, newses_data, user_notice } = this.state;
+    var { loading, finish, stores_data } = this.state;
 
     return (
       <View style={styles.container}>

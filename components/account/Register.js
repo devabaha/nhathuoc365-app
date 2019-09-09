@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -7,20 +5,14 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
-  Switch,
   Keyboard,
   ScrollView,
   Alert
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Modal from 'react-native-modalbox';
-
-// components
-import PopupConfirm from '../PopupConfirm';
 
 @observer
 export default class Register extends Component {
@@ -187,20 +179,19 @@ export default class Register extends Component {
             Toast.show(response.message, Toast.SHORT);
           }
         } catch (e) {
-          console.warn(e + ' user_register');
+          console.log(e + ' user_register');
 
           store.addApiQueue(
             'user_register',
             this._register.bind(this, name, tel, password)
           );
-        } finally {
         }
       }
     );
   }
 
   render() {
-    var { edit_mode, verify_loadding } = this.state;
+    var { verify_loadding } = this.state;
 
     return (
       <View style={styles.container}>
@@ -437,7 +428,7 @@ export default class Register extends Component {
             Toast.show(response.message, Toast.SHORT);
           }
         } catch (e) {
-          console.warn(e + ' user_verify_otp');
+          console.log(e + ' user_verify_otp');
 
           store.addApiQueue('user_verify_otp', this._verify.bind(this));
         } finally {

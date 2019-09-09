@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -12,13 +10,9 @@ import {
   ScrollView,
   Alert
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
-
-// components
 import PopupConfirm from '../PopupConfirm';
 
 @observer
@@ -79,7 +73,7 @@ export default class CreateAddress extends Component {
   }
 
   _onSave() {
-    var { name, tel, address, default_flag } = this.state;
+    var { name, tel, address } = this.state;
 
     name = name.trim();
     tel = tel.trim();
@@ -189,10 +183,9 @@ export default class CreateAddress extends Component {
             }
           }
         } catch (e) {
-          console.warn(e + ' site_add_address');
+          console.log(e + ' site_add_address');
 
           store.addApiQueue('site_add_address', this._onSave.bind(this));
-        } finally {
         }
       }
     );
@@ -212,10 +205,9 @@ export default class CreateAddress extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_cart');
+      console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this));
-    } finally {
     }
   }
 
@@ -247,13 +239,12 @@ export default class CreateAddress extends Component {
         Actions.pop();
       }
     } catch (e) {
-      console.warn(e + ' user_delete_address');
+      console.log(e + ' user_delete_address');
 
       store.addApiQueue(
         'user_delete_address',
         this._removeAddressItem.bind(this)
       );
-    } finally {
     }
   }
 

@@ -1,24 +1,24 @@
 /* @flow */
 
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
   TouchableHighlight,
   StyleSheet,
   FlatList
-} from "react-native";
+} from 'react-native';
 
 //library
-import Icon from "react-native-vector-icons/FontAwesome";
-import { Actions } from "react-native-router-flux";
-import store from "../../../store/Store";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { Actions } from 'react-native-router-flux';
+import store from '../../../store/Store';
 
 //component
-import Withdraw from "./Withdraw";
-import History from "./History";
-import Recharge from "./Recharge";
-import Info from "./Info";
+import Withdraw from './Withdraw';
+import History from './History';
+import Recharge from './Recharge';
+import Info from './Info';
 
 @observer
 export default class VndWallet extends Component {
@@ -47,15 +47,15 @@ export default class VndWallet extends Component {
         this.setState({ historiesData: response.data.histories });
       }
     } catch (e) {
-      console.warn(e);
+      console.log(e);
     }
   }
 
   _goScanQRCode() {
     Actions.qr_bar_code({
-      title: "Địa chỉ ví",
+      title: 'Địa chỉ ví',
       index: 1,
-      from: "vndwallet",
+      from: 'vndwallet',
       wallet: this.state.wallet,
       address: this.state.wallet.address
     });
@@ -63,9 +63,9 @@ export default class VndWallet extends Component {
 
   _goQRCode() {
     Actions.qr_bar_code({
-      title: "Địa chỉ ví",
+      title: 'Địa chỉ ví',
       wallet: this.state.wallet,
-      address: this.state.wallet.address + "|" + this.state.wallet.zone_code
+      address: this.state.wallet.address + '|' + this.state.wallet.zone_code
     });
   }
 
@@ -103,11 +103,11 @@ export default class VndWallet extends Component {
         <View style={styles.containerRowView}>
           <Icon
             style={{ flex: 1, marginLeft: 20 }}
-            name={item.change >= 0 ? "plus-square" : "minus-square"}
+            name={item.change >= 0 ? 'plus-square' : 'minus-square'}
             size={25}
             color="rgb(0,0,0)"
           />
-          <View style={{ flex: 6, flexDirection: "column" }}>
+          <View style={{ flex: 6, flexDirection: 'column' }}>
             <Text style={{ fontSize: 16 }}>{item.content}</Text>
             <View style={styles.bottomRowView}>
               <Text style={styles.dateText}>{item.created}</Text>
@@ -163,8 +163,8 @@ export default class VndWallet extends Component {
                 style={[
                   styles.add_store_action_label_balance,
                   {
-                    textAlign: "left",
-                    width: "100%",
+                    textAlign: 'left',
+                    width: '100%',
                     paddingHorizontal: 15
                   }
                 ]}
@@ -175,8 +175,8 @@ export default class VndWallet extends Component {
                 style={[
                   styles.add_store_action_content,
                   {
-                    textAlign: "right",
-                    width: "100%",
+                    textAlign: 'right',
+                    width: '100%',
                     paddingHorizontal: 15,
                     color: wallet.color
                   }
@@ -196,7 +196,7 @@ export default class VndWallet extends Component {
     const data = [
       {
         key: 0,
-        title: "Lịch sử",
+        title: 'Lịch sử',
         component: <History historyData={historiesData} />
       },
       // {
@@ -211,7 +211,7 @@ export default class VndWallet extends Component {
       // },
       {
         key: 1,
-        title: "Thông tin",
+        title: 'Thông tin',
         component: <Info content={wallet.content} />
       }
     ];
@@ -230,15 +230,15 @@ export default class VndWallet extends Component {
         <View
           style={[
             i !== data.length - 1 && {
-              borderRightColor: "#dddddd",
+              borderRightColor: '#dddddd',
               borderRightWidth: 1
             }
           ]}
         >
           <Text
             style={{
-              textAlign: "center",
-              color: "#404040"
+              textAlign: 'center',
+              color: '#404040'
             }}
           >
             {d.title}
@@ -251,8 +251,8 @@ export default class VndWallet extends Component {
         {this.renderTopLabelCoin()}
         <View
           style={{
-            flexDirection: "row",
-            borderBottomColor: "#dddddd",
+            flexDirection: 'row',
+            borderBottomColor: '#dddddd',
             borderBottomWidth: 1
           }}
         >
@@ -317,42 +317,42 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    backgroundColor: "#ffffff"
+    backgroundColor: '#ffffff'
   },
   profile_list_opt_btn: {
     width: Util.size.width,
     height: 32,
-    backgroundColor: "#ffffff",
-    flexDirection: "row",
-    alignItems: "center",
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 4,
     marginTop: 20,
     borderTopWidth: 0,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   point_icon: {
     width: 60,
     height: 60
   },
   iconView: {
-    alignItems: "center",
+    alignItems: 'center',
     flex: 1
   },
   profile_list_icon_box: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 70,
     height: 70
   },
   profile_list_label: {
     fontSize: 18,
-    color: "#000000",
-    fontWeight: "400"
+    color: '#000000',
+    fontWeight: '400'
   },
   profile_list_small_label: {
     fontSize: 14,
-    color: "#666666",
+    color: '#666666',
     marginTop: 2
   },
   labelCoinParentView: {
@@ -365,8 +365,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginLeft: 0,
     marginRight: 0,
-    flexDirection: "row",
-    justifyContent: "space-between"
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   lineView: {
     marginTop: 10,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 10,
     height: 1,
-    backgroundColor: "#dddddd"
+    backgroundColor: '#dddddd'
   },
   lineViewWallet: {
     marginTop: 1,
@@ -382,71 +382,71 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 1,
     height: 1,
-    backgroundColor: "#dddddd"
+    backgroundColor: '#dddddd'
   },
   lineRowView: {
     marginTop: 0,
     marginLeft: 10,
     marginRight: 10,
     height: 1,
-    backgroundColor: "#dddddd"
+    backgroundColor: '#dddddd'
   },
   newsCoinView: {
-    flexDirection: "row",
+    flexDirection: 'row',
     height: 30,
     marginTop: 10,
-    alignItems: "center"
+    alignItems: 'center'
   },
   historyCoinText: {
     marginLeft: 20,
     marginBottom: 20,
     fontSize: 18,
-    color: "rgb(0,0,0)"
+    color: 'rgb(0,0,0)'
   },
   containerRowView: {
     flex: 1,
     height: 70,
-    flexDirection: "row",
-    alignItems: "center"
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   bottomRowView: {
     marginTop: 5,
-    flexDirection: "row",
-    justifyContent: "space-between"
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   dateText: {
     fontSize: 12,
-    color: "rgb(150,150,150)"
+    color: 'rgb(150,150,150)'
   },
   pointText: {
     fontSize: 16,
-    color: "rgb(0,0,0)",
-    fontWeight: "bold",
+    color: 'rgb(0,0,0)',
+    fontWeight: 'bold',
     marginRight: 15
   },
 
   profile_cover_box: {
-    width: "100%",
-    backgroundColor: "#ccc",
+    width: '100%',
+    backgroundColor: '#ccc',
     height: 120
   },
   profile_cover: {
-    width: "100%",
-    height: "100%"
+    width: '100%',
+    height: '100%'
   },
   profile_avatar_box: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 20,
     left: 24,
     width: 70,
     height: 70,
-    backgroundColor: "#cccccc",
+    backgroundColor: '#cccccc',
     borderWidth: 2,
-    borderColor: "#ffffff",
+    borderColor: '#ffffff',
     borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden"
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden'
   },
   profile_avatar: {
     width: 76,
@@ -457,53 +457,53 @@ const styles = StyleSheet.create({
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
 
   add_store_actions_box: {
-    width: "100%",
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_action_btn: {
     paddingVertical: 4
   },
   add_store_action_btn_box: {
-    alignItems: "center",
+    alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 4),
     borderRightWidth: Util.pixel,
-    borderRightColor: "#ebebeb"
+    borderRightColor: '#ebebeb'
   },
   add_store_action_btn_box_balance: {
-    alignItems: "center",
+    alignItems: 'center',
     width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
-    borderRightColor: "#ebebeb"
+    borderRightColor: '#ebebeb'
   },
   add_store_action_label: {
     fontSize: 14,
-    color: "#404040",
+    color: '#404040',
     marginTop: 4
   },
   add_store_action_label_balance: {
     fontSize: 14,
-    color: "#333333",
+    color: '#333333',
     marginTop: 4,
-    fontWeight: "600"
+    fontWeight: '600'
   },
   add_store_action_content: {
     fontSize: 19,
     marginTop: 5,
-    color: "#51A9FF",
-    fontWeight: "800"
+    color: '#51A9FF',
+    fontWeight: '800'
   },
   tabStyle: {
     flex: 1,
-    borderBottomColor: "#dddddd",
+    borderBottomColor: '#dddddd',
     borderBottomWidth: 1
   },
   activeTab: {

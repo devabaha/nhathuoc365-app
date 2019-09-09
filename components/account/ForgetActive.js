@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -7,22 +5,16 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
-  Switch,
   Keyboard,
   ScrollView,
   Alert
 } from 'react-native';
-
-// library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import Modal from 'react-native-modalbox';
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 // components
-import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 
 @observer
@@ -139,7 +131,7 @@ export default class ForgetActive extends Component {
             });
           }
         } catch (e) {
-          console.warn(e + ' user_forget_password_verify');
+          console.log(e + ' user_forget_password_verify');
 
           store.addApiQueue(
             'user_forget_password_verify',
@@ -193,22 +185,14 @@ export default class ForgetActive extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + ' user_forget_password');
+      console.log(e + ' user_forget_password');
 
       store.addApiQueue('user_forget_password', this._reSendCode.bind(this));
-    } finally {
     }
   }
 
   render() {
-    var {
-      finish_loading,
-      edit_mode,
-      verify_loadding,
-      tel,
-      count_down,
-      sended
-    } = this.state;
+    var { finish_loading, tel, count_down, sended } = this.state;
 
     return (
       <View style={styles.container}>

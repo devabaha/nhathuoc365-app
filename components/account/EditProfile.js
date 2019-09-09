@@ -171,7 +171,7 @@ export default class EditProfile extends Component {
         }
       } catch (e) {
         this.setState({ loading: false });
-        console.warn(e + ' user_update_profile');
+        console.log(e + ' user_update_profile');
       }
     });
   };

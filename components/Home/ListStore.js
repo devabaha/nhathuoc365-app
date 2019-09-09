@@ -1,22 +1,17 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableHighlight,
   ScrollView,
-  RefreshControl,
   FlatList,
-  Keyboard,
-  Alert
+  Keyboard
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 
 // components
@@ -40,7 +35,6 @@ export default class ListStore extends Component {
   componentDidMount() {
     Actions.refresh({
       showSearchBar: true,
-      searchValue: '',
       placeholder: 'Nhập mã cửa hàng',
       // autoFocus: true,
       onChangeText: this._onChangeSearch.bind(this),
@@ -79,10 +73,9 @@ export default class ListStore extends Component {
             }, this._delay());
           }
         } catch (e) {
-          console.warn(e + ' user_list_site');
+          console.log(e + ' user_list_site');
 
           store.addApiQueue('user_list_site', this._getData.bind(this));
-        } finally {
         }
       }
     );
@@ -132,10 +125,9 @@ export default class ListStore extends Component {
         });
       }
     } catch (e) {
-      console.warn(e + ' user_search_store');
+      console.log(e + ' user_search_store');
 
       store.addApiQueue('user_search_store', this._search_store.bind(this));
-    } finally {
     }
   }
 
@@ -245,7 +237,7 @@ class StoreItem extends Component {
             })();
           }
         } catch (e) {
-          console.warn(e + ' user_add_store');
+          console.log(e + ' user_add_store');
 
           store.addApiQueue('user_add_store', this._add_store.bind(this, item));
         } finally {

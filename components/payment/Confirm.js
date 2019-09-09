@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -15,14 +13,10 @@ import {
   Alert,
   Animated
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import _ from 'lodash';
-
-// components
 import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
@@ -122,10 +116,9 @@ export default class Confirm extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_info');
+      console.log(e + ' site_info');
 
       store.addApiQueue('site_info', this._siteInfo.bind(this, site_id));
-    } finally {
     }
   }
 
@@ -145,7 +138,7 @@ export default class Confirm extends Component {
         Toast.show(response.message);
       }
     } catch (e) {
-      console.warn(e + ' site_cart_by_id');
+      console.log(e + ' site_cart_by_id');
 
       store.addApiQueue(
         'site_cart_by_id',
@@ -193,7 +186,7 @@ export default class Confirm extends Component {
             Toast.show(response.message);
           }
         } catch (e) {
-          console.warn(e + ' site_cart_node');
+          console.log(e + ' site_cart_node');
 
           store.addApiQueue(
             'site_cart_node',
@@ -254,13 +247,12 @@ export default class Confirm extends Component {
             Toast.show(response.message);
           }
         } catch (e) {
-          console.warn(e + ' site_cart_orders');
+          console.log(e + ' site_cart_orders');
 
           store.addApiQueue(
             'site_cart_orders',
             this._siteCartOrders.bind(this)
           );
-        } finally {
         }
       }
     );
@@ -390,10 +382,9 @@ export default class Confirm extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
-    } finally {
     }
   }
 
@@ -1603,10 +1594,9 @@ export default class Confirm extends Component {
           Toast.show(response.message);
         }
       } catch (e) {
-        console.warn(e + ' site_cart_cancel');
+        console.log(e + ' site_cart_cancel');
 
         store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
-      } finally {
       }
     }
 
@@ -1634,7 +1624,7 @@ export default class Confirm extends Component {
 
     name = name.trim();
     tel = tel.trim();
-    password = pass.trim();
+    let password = pass.trim();
 
     if (!name) {
       return Alert.alert(
@@ -1717,10 +1707,9 @@ export default class Confirm extends Component {
           }, 1000);
         }
       } catch (e) {
-        console.warn(e + ' site_cart_reorder');
+        console.log(e + ' site_cart_reorder');
 
         store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
-      } finally {
       }
     }
 
@@ -1749,10 +1738,9 @@ export default class Confirm extends Component {
           Toast.show(response.message);
         }
       } catch (e) {
-        console.warn(e + ' site_cart_edit');
+        console.log(e + ' site_cart_edit');
 
         store.addApiQueue('site_cart_edit', this._editCart.bind(this));
-      } finally {
       }
     }
 
@@ -1828,9 +1816,9 @@ class ItemCartComponent extends Component {
           }
         } catch (e) {
           if (item.selected == 1) {
-            console.warn(e + ' site_cart_unselect');
+            console.log(e + ' site_cart_unselect');
           } else {
-            console.warn(e + ' site_cart_select');
+            console.log(e + ' site_cart_select');
           }
 
           store.addApiQueue(
@@ -1875,7 +1863,7 @@ class ItemCartComponent extends Component {
             Toast.show(response.message);
           }
         } catch (e) {
-          console.warn(e + ' site_cart_down');
+          console.log(e + ' site_cart_down');
 
           store.addApiQueue(
             'site_cart_down',
@@ -1907,7 +1895,7 @@ class ItemCartComponent extends Component {
             })();
           }
         } catch (e) {
-          console.warn(e + ' site_cart_up');
+          console.log(e + ' site_cart_up');
 
           store.addApiQueue(
             'site_cart_up',
@@ -2384,10 +2372,6 @@ const styles = StyleSheet.create({
     left: 0,
     height: Util.pixel,
     backgroundColor: DEFAULT_COLOR
-  },
-  borderBottom: {
-    borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd'
   },
   right_btn_add_store: {
     paddingVertical: 1,

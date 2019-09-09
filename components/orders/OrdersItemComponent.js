@@ -36,7 +36,7 @@ export default class OrdersItemComponent extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_cart');
+      console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this, callback));
     } finally {

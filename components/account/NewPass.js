@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -12,18 +10,13 @@ import {
   Alert
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-
-// library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import Modal from 'react-native-modalbox';
-var MessageBarAlert = require('react-native-message-bar').MessageBar;
-var MessageBarManager = require('react-native-message-bar').MessageBarManager;
-
-// components
 import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
+
+const MessageBarAlert = require('react-native-message-bar').MessageBar;
+const MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 @observer
 class NewPass extends Component {
@@ -85,7 +78,7 @@ class NewPass extends Component {
   }
 
   _onSave() {
-    var { name, tel, password, finish_loading } = this.state;
+    var { tel, password, finish_loading } = this.state;
     password = password.trim();
 
     if (finish_loading) {
@@ -141,7 +134,7 @@ class NewPass extends Component {
             });
           }
         } catch (e) {
-          console.warn(e + ' user_forget_new_password');
+          console.log(e + ' user_forget_new_password');
 
           store.addApiQueue(
             'user_forget_new_password',
@@ -157,7 +150,7 @@ class NewPass extends Component {
   }
 
   _login() {
-    var { name, tel, password, finish_loading } = this.state;
+    var { name, tel, password } = this.state;
     password = password.trim();
 
     this.setState(
@@ -175,7 +168,7 @@ class NewPass extends Component {
             try {
               await AsyncStorage.setItem('@username:key', tel);
             } catch (error) {
-              console.warn(error);
+              console.log(error);
             }
 
             action(() => {
@@ -207,7 +200,7 @@ class NewPass extends Component {
             }, 5000);
           }
         } catch (e) {
-          console.warn(e + ' user_login_password');
+          console.log(e + ' user_login_password');
 
           this.setState({
             finish_loading: false
@@ -217,14 +210,13 @@ class NewPass extends Component {
             'user_login_password',
             this._login.bind(this, name, tel, password)
           );
-        } finally {
         }
       }
     );
   }
 
   render() {
-    var { edit_mode, verify_loadding, tel, finish_loading } = this.state;
+    var { tel, finish_loading } = this.state;
 
     return (
       <View style={styles.container}>

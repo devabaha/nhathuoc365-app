@@ -125,7 +125,7 @@ export default class OpLogin extends Component {
         }
 
       } catch (err) {
-        console.warn(e + ' user_login_sms');
+        console.log(e + ' user_login_sms');
         store.addApiQueue('user_login_sms', this._getCode);
       } finally {
         setTimeout(() => {
@@ -227,7 +227,7 @@ export default class OpLogin extends Component {
         setTimeout(() => {
           this.setState({ spinner: false });
         }, 2000);
-        console.warn(err + ' login_sms_verify');
+        console.log(err + ' login_sms_verify');
         store.addApiQueue('login_sms_verify', this._verifyCode);
       }
     });
@@ -292,11 +292,11 @@ export default class OpLogin extends Component {
           }, 2000);
           Toast.show(response.message, Toast.SHORT);
         }
-      } catch (err) {
+      } catch (e) {
         setTimeout(() => {
           this.setState({ spinner: false });
         }, 2000);
-        console.warn(e + ' login_fbak_verify');
+        console.log(e + ' login_fbak_verify');
         store.addApiQueue('login_fbak_verify', this._verifyFBAK);
       }
     });

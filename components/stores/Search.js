@@ -1,25 +1,16 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableHighlight,
   FlatList,
-  RefreshControl,
   ScrollView,
-  Keyboard,
-  Alert
+  Keyboard
 } from 'react-native';
-
-//library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-
-// components
 import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
@@ -163,8 +154,7 @@ export default class Search extends Component {
             }
           }
         } catch (e) {
-          console.warn(e + ' search_product');
-
+          console.log(e + ' search_product');
           store.addApiQueue(
             'search_product',
             this._onSearch.bind(this, keyword)
@@ -248,7 +238,6 @@ export default class Search extends Component {
   render() {
     var {
       loading,
-      finish,
       search_data,
       keyboard_state,
       history,
@@ -430,10 +419,9 @@ export default class Search extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
-    } finally {
     }
   }
 }

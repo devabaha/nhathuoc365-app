@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -7,23 +5,16 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
-  Switch,
   Keyboard,
   ScrollView,
   Alert
 } from 'react-native';
-
-// library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import Modal from 'react-native-modalbox';
-var MessageBarAlert = require('react-native-message-bar').MessageBar;
-var MessageBarManager = require('react-native-message-bar').MessageBarManager;
-
-// components
-import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
+
+const MessageBarAlert = require('react-native-message-bar').MessageBar;
+const MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 @observer
 export default class ForgetVerify extends Component {
@@ -110,7 +101,7 @@ export default class ForgetVerify extends Component {
             });
           }
         } catch (e) {
-          console.warn(e + ' user_forget_password');
+          console.log(e + ' user_forget_password');
 
           store.addApiQueue('user_forget_password', this._onSave.bind(this));
         } finally {
@@ -158,7 +149,7 @@ export default class ForgetVerify extends Component {
   }
 
   render() {
-    var { edit_mode, verify_loadding, finish_loading } = this.state;
+    var { finish_loading } = this.state;
 
     return (
       <View style={styles.container}>

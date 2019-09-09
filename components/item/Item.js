@@ -1,28 +1,18 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
   ScrollView,
   FlatList,
-  RefreshControl,
-  Alert
+  RefreshControl
 } from 'react-native';
-
-//library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
+import { Actions } from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import store from '../../store/Store';
-import ImageViewer from 'react-native-image-zoom-viewer';
-
-// components
 import Items from '../stores/Items';
 import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
@@ -217,13 +207,12 @@ export default class Item extends Component {
         }, delay || this._delay());
       }
     } catch (e) {
-      console.warn(e + ' site_product');
+      console.log(e + ' site_product');
 
       store.addApiQueue(
         'site_product',
         this._getDataFromServer.bind(this, delay)
       );
-    } finally {
     }
   }
 
@@ -286,10 +275,9 @@ export default class Item extends Component {
             Toast.show(response.message);
           }
         } catch (e) {
-          console.warn(e + ' site_cart_adding');
+          console.log(e + ' site_cart_adding');
 
           store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
-        } finally {
         }
       }
     );
@@ -331,10 +319,9 @@ export default class Item extends Component {
             );
           }
         } catch (e) {
-          console.warn(e + ' site_like');
+          console.log(e + ' site_like');
 
           store.addApiQueue('site_like', this._likeHandler.bind(this, item));
-        } finally {
         }
       }
     );
@@ -342,8 +329,6 @@ export default class Item extends Component {
 
   render() {
     var { item, item_data, buying, like_loading, like_flag } = this.state;
-    var { cart_data, cart_products } = store;
-
     var is_like = like_flag == 1;
 
     return (
@@ -810,10 +795,9 @@ export default class Item extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.warn(e + ' site_cart_remove');
+      console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
-    } finally {
     }
   }
 }

@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -7,20 +5,14 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
-  Switch,
-  Keyboard,
   ScrollView,
   Alert,
   Image,
   FlatList,
   Platform
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { Button } from '../../lib/react-native-elements';
-import store from '../../store/Store';
+import { Actions } from 'react-native-router-flux';
 
 @observer
 export default class NapTKC extends Component {
@@ -99,8 +91,7 @@ export default class NapTKC extends Component {
         }, delay || 0);
       }
     } catch (e) {
-      console.warn(e + ' service_phone_card');
-    } finally {
+      console.log(e + ' service_phone_card');
     }
   }
 
@@ -162,12 +153,11 @@ export default class NapTKC extends Component {
       this.state.data &&
       Object.keys(this.state.data.service_info).length > 0
     ) {
-      Object.keys(this.state.data.service_info).map(key => {
+      Object.keys(this.state.data.service_info).forEach(key => {
         let service_info = this.state.data.service_info[key];
         help_content = service_info.content;
       });
     }
-    console.log(this.state);
     return (
       <View style={styles.container}>
         <ScrollView

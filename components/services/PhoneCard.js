@@ -1,26 +1,16 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableHighlight,
-  Switch,
-  Keyboard,
   ScrollView,
-  Alert,
   Image,
   FlatList,
   Platform
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { Button } from '../../lib/react-native-elements';
-import store from '../../store/Store';
+import { Actions } from 'react-native-router-flux';
 
 @observer
 export default class PhoneCard extends Component {
@@ -59,8 +49,7 @@ export default class PhoneCard extends Component {
         }, delay || 0);
       }
     } catch (e) {
-      console.warn(e + ' service_phone_card');
-    } finally {
+      console.log(e + ' service_phone_card');
     }
   }
 

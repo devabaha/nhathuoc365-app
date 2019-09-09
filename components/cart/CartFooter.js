@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -13,10 +11,7 @@ import {
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
-import { reaction } from 'mobx';
+import { Actions } from 'react-native-router-flux';
 
 import store from '../../store/Store';
 
@@ -70,7 +65,7 @@ export default class CartFooter extends Component {
         })();
       }
     } catch (e) {
-      console.warn(e + ' site_cart');
+      console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this));
     } finally {
@@ -112,13 +107,12 @@ export default class CartFooter extends Component {
             })();
           }
         } catch (e) {
-          console.warn(e + ' site_cart_down');
+          console.log(e + ' site_cart_down');
 
           store.addApiQueue(
             'site_cart_down',
             this._item_qnt_decrement.bind(this, item)
           );
-        } finally {
         }
       }
     );
@@ -149,7 +143,6 @@ export default class CartFooter extends Component {
             'site_cart_up',
             this._item_qnt_increment.bind(this, item)
           );
-        } finally {
         }
       }
     );
