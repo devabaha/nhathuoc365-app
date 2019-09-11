@@ -1,12 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 // library
 import QRCodeScanner from 'react-native-qrcode-scanner';
@@ -18,7 +13,7 @@ export default class ScanQRCode extends Component {
     return (
       <View style={styles.container}>
         <QRCodeScanner
-          onRead={(e) => {
+          onRead={e => {
             var text_result = e.data;
             if (text_result) {
               if (isURL(text_result)) {
@@ -29,7 +24,7 @@ export default class ScanQRCode extends Component {
                 });
               } else {
                 if (this.props.onBackHandler) {
-                    Actions.pop();
+                  Actions.pop();
                 }
                 setTimeout(() => {
                   if (this.props.onBackHandler) {
@@ -42,17 +37,16 @@ export default class ScanQRCode extends Component {
                   }
                 }, 450);
               }
-
             }
           }}
-          topContent={(
+          topContent={
             <View style={styles.topContent}>
               <Text style={styles.centerText}>
                 <Icon name="info-circle" size={16} color="#404040" />
-                {" Hướng máy ảnh của bạn về phía mã QR Code để khám phá"}
+                {' Hướng máy ảnh của bạn về phía mã QR Code để khám phá'}
               </Text>
             </View>
-          )}
+          }
         />
       </View>
     );
@@ -69,12 +63,12 @@ const styles = StyleSheet.create({
   topContent: {
     width: Util.size.width,
     paddingVertical: 16,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
   centerText: {
     lineHeight: 20,
     fontSize: 16,
-    color: "#404040",
+    color: '#404040',
     marginLeft: 8,
     paddingHorizontal: 15
   }

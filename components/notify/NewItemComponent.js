@@ -6,7 +6,7 @@ import {
   Text,
   Image,
   TouchableHighlight,
-  StyleSheet,
+  StyleSheet
 } from 'react-native';
 
 // library
@@ -14,7 +14,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 
 export default class NewItemComponent extends Component {
-
   _goDetail(item) {
     Actions.notify_item({
       title: item.title,
@@ -23,21 +22,32 @@ export default class NewItemComponent extends Component {
   }
 
   render() {
-    var {item} = this.props;
+    var { item } = this.props;
 
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={this._goDetail.bind(this, item)}>
-
-        <View style={[styles.notify_item, item.read_flag == 0 ? styles.notify_item_active : null]}>
+        onPress={this._goDetail.bind(this, item)}
+      >
+        <View
+          style={[
+            styles.notify_item,
+            item.read_flag == 0 ? styles.notify_item_active : null
+          ]}
+        >
           <View style={styles.notify_item_image_box}>
-            <CachedImage mutable style={styles.notify_item_image} source={{uri: item.image_url}} />
+            <CachedImage
+              mutable
+              style={styles.notify_item_image}
+              source={{ uri: item.image_url }}
+            />
           </View>
 
           <View style={styles.notify_item_content}>
             <View style={styles.notify_item_content_box}>
-              <Text style={styles.notify_item_title}>{sub_string(item.title, 60)}</Text>
+              <Text style={styles.notify_item_title}>
+                {sub_string(item.title, 60)}
+              </Text>
               <View style={styles.notify_item_time_box}>
                 <Text style={styles.notify_item_time}>
                   <Icon name="map-marker" size={10} color="#666666" />
@@ -46,7 +56,9 @@ export default class NewItemComponent extends Component {
                   {' ' + item.created}
                 </Text>
               </View>
-              <Text style={styles.notify_item_desc}>{sub_string(item.short_content, 60)}</Text>
+              <Text style={styles.notify_item_desc}>
+                {sub_string(item.short_content, 60)}
+              </Text>
             </View>
           </View>
         </View>
@@ -57,19 +69,19 @@ export default class NewItemComponent extends Component {
 
 const styles = StyleSheet.create({
   notify_item: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingVertical: 8,
     paddingHorizontal: 15,
     flexDirection: 'row',
     height: isIOS ? 116 : 124,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   notify_item_active: {
-    backgroundColor: "#ebebeb"
+    backgroundColor: '#ebebeb'
   },
   notify_item_image_box: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     width: 80,
     height: 80,
     marginTop: 8
@@ -89,24 +101,24 @@ const styles = StyleSheet.create({
   },
   notify_item_title: {
     fontSize: 14,
-    color: "#000000",
+    color: '#000000',
     fontWeight: '500',
     lineHeight: isIOS ? 16 : 18,
     marginTop: 8
   },
   notify_item_desc: {
     marginTop: 8,
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     lineHeight: isIOS ? 16 : 18
   },
   notify_item_time_box: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    marginTop: 4
   },
   notify_item_time: {
     fontSize: 10,
-    color: "#666666"
+    color: '#666666'
   }
 });

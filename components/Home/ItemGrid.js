@@ -7,7 +7,7 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
-  Image,
+  Image
 } from 'react-native';
 
 // library
@@ -20,9 +20,7 @@ export default class ItemGrid extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-
-    }
+    this.state = {};
   }
 
   // tới màn hình store
@@ -55,16 +53,19 @@ export default class ItemGrid extends Component {
   }
 
   render() {
-
-    var {item} = this.props;
+    var { item } = this.props;
 
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={this._goStores.bind(this, item)}>
+        onPress={this._goStores.bind(this, item)}
+      >
         <View style={styles.stores}>
-
-          <CachedImage mutable style={styles.stores_image} source={{uri: item.image_url}} />
+          <CachedImage
+            mutable
+            style={styles.stores_image}
+            source={{ uri: item.image_url }}
+          />
 
           <View style={styles.stores_info}>
             <View style={styles.stores_info_text}>
@@ -76,14 +77,17 @@ export default class ItemGrid extends Component {
               <TouchableHighlight
                 onPress={this._goChat.bind(this, item)}
                 underlayColor="transparent"
-                style={styles.stores_info_action}>
+                style={styles.stores_info_action}
+              >
                 <View style={styles.stores_info_action_box}>
                   <Icon name="commenting" size={20} color="#ffffff" />
                   <Text style={styles.stores_info_action_label}>Tin nhắn</Text>
 
                   {item.count_chat > 0 && (
                     <View style={styles.stores_info_action_notify}>
-                      <Text style={styles.stores_info_action_notify_value}>{item.count_chat}</Text>
+                      <Text style={styles.stores_info_action_notify_value}>
+                        {item.count_chat}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -92,14 +96,17 @@ export default class ItemGrid extends Component {
               <TouchableHighlight
                 onPress={this._goCart.bind(this, item)}
                 underlayColor="transparent"
-                style={styles.stores_info_action}>
+                style={styles.stores_info_action}
+              >
                 <View style={styles.stores_info_action_box}>
                   <Icon name="shopping-cart" size={22} color="#ffffff" />
                   <Text style={styles.stores_info_action_label}>Đơn hàng</Text>
 
                   {item.count_cart > 0 && (
                     <View style={styles.stores_info_action_notify}>
-                      <Text style={styles.stores_info_action_notify_value}>{item.count_cart}</Text>
+                      <Text style={styles.stores_info_action_notify_value}>
+                        {item.count_cart}
+                      </Text>
                     </View>
                   )}
                 </View>
@@ -114,7 +121,7 @@ export default class ItemGrid extends Component {
 
 ItemGrid.propTypes = {
   item: PropTypes.object.isRequired
-}
+};
 
 const styles = StyleSheet.create({
   stores: {
@@ -132,7 +139,7 @@ const styles = StyleSheet.create({
   stores_info: {
     width: '100%',
     minHeight: 56,
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: 'rgba(0,0,0,0.7)',
     position: 'absolute',
     left: 0,
     right: 0,
@@ -162,7 +169,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    paddingRight: 10,
+    paddingRight: 10
   },
   stores_info_action: {
     padding: 10
@@ -194,5 +201,5 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600'
-  },
+  }
 });

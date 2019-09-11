@@ -1,31 +1,19 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   RefreshControl,
   TouchableHighlight,
   FlatList,
-  ScrollView,
-  Alert
+  ScrollView
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import { Button } from '../../lib/react-native-elements';
 import store from '../../store/Store';
-import {reaction} from 'mobx';
-
-// components
-import ItemGrid from '../home/ItemGrid';
-import ItemList from '../home/ItemList';
-import NotifyItemComponent from '../notify/NotifyItemComponent';
-import NewItemComponent from '../notify/NewItemComponent';
+import ItemList from '../Home/ItemList';
 
 @observer
 export default class StoresList extends Component {
@@ -62,7 +50,11 @@ export default class StoresList extends Component {
     this._getData();
 
     // auto refresh home
-    Events.on(KEY_EVENTS_STORE, KEY_EVENTS_STORE + 'ID', this._getData.bind(this));
+    Events.on(
+      KEY_EVENTS_STORE,
+      KEY_EVENTS_STORE + 'ID',
+      this._getData.bind(this)
+    );
   }
 
   _unMount() {
@@ -71,48 +63,49 @@ export default class StoresList extends Component {
 
   // lấy dữ liệu trang home
   _getData(delay) {
-    this.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_sites();
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_sites();
 
-        if (response && response.status == STATUS_SUCCESS) {
-          setTimeout(() => {
-            if (this.state.stores_data == null) {
-              layoutAnimation();
-            }
+          if (response && response.status == STATUS_SUCCESS) {
+            setTimeout(() => {
+              if (this.state.stores_data == null) {
+                layoutAnimation();
+              }
 
-            this.setState({
-              finish: true,
-              loading: false,
-              refreshing: false,
-              stores_data: response.data,
-            });
-          }, delay || this._delay());
+              this.setState({
+                finish: true,
+                loading: false,
+                refreshing: false,
+                stores_data: response.data
+              });
+            }, delay || this._delay());
+          }
+        } catch (e) {
+          console.log(e + ' user_sites');
+          store.addApiQueue('user_sites', this._getData.bind(this, delay));
         }
-      } catch (e) {
-        console.log(e + ' user_sites');
-
-        store.addApiQueue('user_sites', this._getData.bind(this, delay));
-      } finally {
-
       }
-    });
+    );
   }
 
   _delay() {
-    var delay = 400 - (Math.abs(time() - this.start_time));
+    var delay = 400 - Math.abs(time() - this.start_time);
     return delay;
   }
 
   // render button trên navbar
   _renderRightButton() {
-    return(
+    return (
       <TouchableHighlight
         style={styles.right_btn_add_store}
         underlayColor="transparent"
-        onPress={this._showPopupAddStore.bind(this)}>
+        onPress={this._showPopupAddStore.bind(this)}
+      >
         <Icon name="plus" size={20} color="#ffffff" />
       </TouchableHighlight>
     );
@@ -120,14 +113,14 @@ export default class StoresList extends Component {
 
   _showPopupAddStore() {
     if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.open()
+      this.refs_modal_add_store.open();
     }
   }
 
   // tới màn hình tìm cửa hàng theo mã CH
   _goSearchStore() {
     if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.close();
+      this.refs_modal_add_store.close();
     }
     Actions.search_store();
   }
@@ -135,27 +128,27 @@ export default class StoresList extends Component {
   // tới màn hình tìm cửa hàng theo danh sách
   _goListStore() {
     if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.close();
+      this.refs_modal_add_store.close();
     }
     Actions.list_store();
   }
 
   _goScanQRCode() {
     if (this.refs_modal_add_store) {
-        this.refs_modal_add_store.close();
+      this.refs_modal_add_store.close();
     }
     Actions.scan_qr_code();
   }
 
   // pull to reload danh sách cửa hàng
   _onRefresh() {
-    this.setState({refreshing: true});
+    this.setState({ refreshing: true });
 
     this._getData(1000);
   }
 
   // render rows cửa hàng trong list
-  renderRow({item, index}) {
+  renderRow({ item, index }) {
     if (index == 0) {
       this.defaultBoxHeight = 0;
     }
@@ -163,52 +156,54 @@ export default class StoresList extends Component {
     this.defaultBoxHeight += 104;
 
     // store list
-    return(
-      <ItemList item={item} />
-    );
+    return <ItemList item={item} />;
   }
 
   render() {
-
-    var {loading, finish, stores_data, newses_data, user_notice} = this.state;
+    var { loading, finish, stores_data } = this.state;
 
     return (
       <View style={styles.container}>
         <ScrollView
-          onScroll={(event) => {
+          onScroll={event => {
             this.setState({
               scrollTop: event.nativeEvent.contentOffset.y
             });
           }}
-          ref={ref => this.refs_home = ref}
+          ref={ref => (this.refs_home = ref)}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this._onRefresh.bind(this)}
             />
-          }>
-
-          <View style={{
-            backgroundColor: "#f1f1f1",
-            paddingHorizontal: 15,
-            paddingVertical: 8,
-            flexDirection: 'row'
-          }}>
+          }
+        >
+          <View
+            style={{
+              backgroundColor: '#f1f1f1',
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              flexDirection: 'row'
+            }}
+          >
             <Text style={styles.add_store_title}>CỬA HÀNG YÊU THÍCH</Text>
           </View>
 
           {loading && this.state.stores_data == null ? (
-            <View style={[styles.defaultBox, {
-              height: this.defaultBoxHeight || 104
-            }]}>
+            <View
+              style={[
+                styles.defaultBox,
+                {
+                  height: this.defaultBoxHeight || 104
+                }
+              ]}
+            >
               <Indicator size="small" />
             </View>
           ) : stores_data != null ? (
             <FlatList
               style={styles.stores_box}
-              onEndReached={(num) => {
-
-              }}
+              onEndReached={num => {}}
               onEndReachedThreshold={0}
               data={this.state.stores_data}
               renderItem={this.renderRow.bind(this)}
@@ -218,43 +213,59 @@ export default class StoresList extends Component {
             <TouchableHighlight
               underlayColor="transparent"
               onPress={this._showPopupAddStore.bind(this)}
-              >
+            >
               <View style={styles.defaultBox}>
                 <CenterText
                   marginTop={0}
-                  title={"Chưa có cửa hàng\nThêm cửa hàng bạn yêu thích ngay!"} />
+                  title={'Chưa có cửa hàng\nThêm cửa hàng bạn yêu thích ngay!'}
+                />
               </View>
             </TouchableHighlight>
           )}
 
           {finish && (
             <View>
-              <View style={{
-                paddingHorizontal: 15,
-                paddingVertical: 8,
-                borderBottomWidth: Util.pixel,
-                borderColor: "#dddddd"
-              }}>
-                <Text style={styles.add_store_title}>THÊM CỬA HÀNG YÊU THÍCH</Text>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                  paddingVertical: 8,
+                  borderBottomWidth: Util.pixel,
+                  borderColor: '#dddddd'
+                }}
+              >
+                <Text style={styles.add_store_title}>
+                  THÊM CỬA HÀNG YÊU THÍCH
+                </Text>
               </View>
               <View style={styles.add_store_actions_box}>
                 <TouchableHighlight
                   onPress={this._goScanQRCode.bind(this)}
                   underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
+                  style={styles.add_store_action_btn}
+                >
                   <View style={styles.add_store_action_btn_box}>
                     <Icon name="qrcode" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Quét QR code</Text>
+                    <Text style={styles.add_store_action_label}>
+                      Quét QR code
+                    </Text>
                   </View>
                 </TouchableHighlight>
 
                 <TouchableHighlight
                   onPress={this._goSearchStore}
                   underlayColor="transparent"
-                  style={styles.add_store_action_btn}>
-                  <View style={[styles.add_store_action_btn_box, {borderRightWidth: 0}]}>
+                  style={styles.add_store_action_btn}
+                >
+                  <View
+                    style={[
+                      styles.add_store_action_btn_box,
+                      { borderRightWidth: 0 }
+                    ]}
+                  >
                     <Icon name="search-plus" size={20} color="#333333" />
-                    <Text style={styles.add_store_action_label}>Nhập mã cửa hàng</Text>
+                    <Text style={styles.add_store_action_label}>
+                      Nhập mã cửa hàng
+                    </Text>
                   </View>
                 </TouchableHighlight>
 
@@ -270,29 +281,32 @@ export default class StoresList extends Component {
               </View>
             </View>
           )}
-
         </ScrollView>
 
         <Modal
           entry="top"
           style={[styles.modal, styles.modal_add_store]}
-          ref={ref => this.refs_modal_add_store = ref}>
-
-          <Text style={styles.modal_add_store_title}>Thêm cửa hàng bạn yêu thích</Text>
+          ref={ref => (this.refs_modal_add_store = ref)}
+        >
+          <Text style={styles.modal_add_store_title}>
+            Thêm cửa hàng bạn yêu thích
+          </Text>
 
           <Button
             onPress={this._goScanQRCode.bind(this)}
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor="#009588"
-            icon={{name: 'qrcode', type: 'font-awesome'}}
-            title='Quét QR code' />
+            icon={{ name: 'qrcode', type: 'font-awesome' }}
+            title="Quét QR code"
+          />
 
           <Button
             buttonStyle={styles.modal_add_store_btn}
             backgroundColor={DEFAULT_COLOR}
             onPress={this._goSearchStore}
-            icon={{name: 'search-plus', type: 'font-awesome'}}
-            title='Nhập mã cửa hàng' />
+            icon={{ name: 'search-plus', type: 'font-awesome' }}
+            title="Nhập mã cửa hàng"
+          />
 
           {/*<Button
             buttonStyle={styles.modal_add_store_btn}
@@ -310,10 +324,10 @@ const styles = StyleSheet.create({
   defaultBox: {
     width: '100%',
     height: 104,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd",
+    borderColor: '#dddddd',
     marginBottom: 4
   },
 
@@ -325,18 +339,18 @@ const styles = StyleSheet.create({
   stores_box: {
     marginBottom: 8,
     borderTopWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
 
   add_store_box: {
     width: '100%',
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingBottom: 8,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20
@@ -345,9 +359,9 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_action_btn: {
     paddingVertical: 4
@@ -377,7 +391,7 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   modal_add_store_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 18,
     marginTop: 12,
     marginLeft: 15,
@@ -390,12 +404,12 @@ const styles = StyleSheet.create({
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
 
   profile_list_opt: {
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
 
   right_title_btn_box: {

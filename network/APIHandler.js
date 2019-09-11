@@ -1,10 +1,10 @@
-"use strict";
+'use strict';
 
 // import { StatusBar } from 'react-native';
 
-import API from "./API";
-import axios from "axios";
-import store from "../store/Store";
+import API from './API';
+import axios from 'axios';
+import store from '../store/Store';
 
 var HTTP_SUCCESS = 200;
 
@@ -51,24 +51,24 @@ class APIHandler {
   }
 
   async user_barcode(site_id) {
-    var api = url_for(API.USER_BARCODE + "/" + site_id);
+    var api = url_for(API.USER_BARCODE + '/' + site_id);
     return await this.getAPI(api);
   }
 
   //user_from_barcode
   async user_from_barcode(barcode) {
-    var api = url_for(API.USER_FROM_BARCODE + "/" + barcode);
+    var api = url_for(API.USER_FROM_BARCODE + '/' + barcode);
     return await this.getAPI(api);
   }
 
   /** get wallet from zone_code */
   async user_get_wallet(zone_code) {
-    var api = url_for(API.USER_GET_WALLET + "/" + zone_code);
+    var api = url_for(API.USER_GET_WALLET + '/' + zone_code);
     return await this.getAPI(api);
   }
   //check_address
   async user_check_address(address) {
-    var api = url_for(API.USER_CHECK_ADDRESS + "/" + address);
+    var api = url_for(API.USER_CHECK_ADDRESS + '/' + address);
     return await this.getAPI(api);
   }
 
@@ -81,12 +81,12 @@ class APIHandler {
    * Tìm cửa hàng theo mã CH
    */
   async user_search_store(store_code) {
-    var api = url_for(API.USER_SEARCH_SITE + "/" + store_code);
+    var api = url_for(API.USER_SEARCH_SITE + '/' + store_code);
     return await this.getAPI(api);
   }
 
   async user_search_stores(store_code) {
-    var api = url_for(API.USER_SEARCH_SITES + "/" + store_code);
+    var api = url_for(API.USER_SEARCH_SITES + '/' + store_code);
     return await this.getAPI(api);
   }
 
@@ -107,12 +107,12 @@ class APIHandler {
    * Thêm cửa hàng bằng mã cửa hàng
    */
   async user_add_store(store_code) {
-    var api = url_for(API.USER_ADD_SITE + "/" + store_code);
+    var api = url_for(API.USER_ADD_SITE + '/' + store_code);
     return await this.getAPI(api);
   }
 
   async user_add_ref(ref_code) {
-    var api = url_for(API.USER_ADD_REF + "/" + ref_code);
+    var api = url_for(API.USER_ADD_REF + '/' + ref_code);
     return await this.getAPI(api);
   }
 
@@ -128,17 +128,17 @@ class APIHandler {
    * Lấy thông tin cửa hàng
    */
   async site_info(site_id) {
-    var api = url_for(API.SITE_INFO + "/" + site_id);
+    var api = url_for(API.SITE_INFO + '/' + site_id);
     return await this.getAPI(api);
   }
 
   async site_detail(site_id) {
-    var api = url_for(API.SITE_DETAIL + "/" + site_id);
+    var api = url_for(API.SITE_DETAIL + '/' + site_id);
     return await this.getAPI(api);
   }
 
   async cart_site_update(site_id, cart_id, data) {
-    var api = url_for(API.CART_SITE_UPDATE + "/" + site_id + "/" + cart_id);
+    var api = url_for(API.CART_SITE_UPDATE + '/' + site_id + '/' + cart_id);
     return await this.postAPI(api, data);
   }
 
@@ -148,11 +148,11 @@ class APIHandler {
   async site_category_product(store_id, category_id, page_num) {
     var api = url_for(
       API.SITE_CATEGORY_PRODUCT +
-        "/" +
+        '/' +
         store_id +
-        "/" +
+        '/' +
         category_id +
-        "/" +
+        '/' +
         page_num
     );
     return await this.getAPI(api);
@@ -162,7 +162,7 @@ class APIHandler {
    * Lấy chi tiết sản phẩm theo product id
    */
   async site_product(store_id, product_id) {
-    var api = url_for(API.SITE_PRODUCT + "/" + store_id + "/" + product_id);
+    var api = url_for(API.SITE_PRODUCT + '/' + store_id + '/' + product_id);
     return await this.getAPI(api);
   }
 
@@ -170,7 +170,7 @@ class APIHandler {
    * Lấy chi tiết sản phẩm theo product id
    */
   async site_cart_adding(store_id, product_id) {
-    var api = url_for(API.SITE_CART_ADDING + "/" + store_id + "/" + product_id);
+    var api = url_for(API.SITE_CART_ADDING + '/' + store_id + '/' + product_id);
     return await this.getAPI(api);
   }
 
@@ -178,12 +178,12 @@ class APIHandler {
    * Sao chép đơn hàng
    */
   async site_cart_reorder(store_id, cart_id) {
-    var api = url_for(API.SITE_CART_REORDER + "/" + store_id + "/" + cart_id);
+    var api = url_for(API.SITE_CART_REORDER + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
   }
 
   async site_cart_edit(store_id, cart_id) {
-    var api = url_for(API.SITE_CART_EDIT + "/" + store_id + "/" + cart_id);
+    var api = url_for(API.SITE_CART_EDIT + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
   }
 
@@ -191,12 +191,12 @@ class APIHandler {
    * Lấy thông tin giỏ hàng theo site id
    */
   async site_cart(store_id) {
-    var api = url_for(API.SITE_CART + "/" + store_id);
+    var api = url_for(API.SITE_CART + '/' + store_id);
     return await this.getAPI(api);
   }
 
   async site_cart_by_id(store_id, cart_id) {
-    var api = url_for(API.SITE_CART + "/" + store_id + "/" + cart_id);
+    var api = url_for(API.SITE_CART + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
   }
 
@@ -204,7 +204,7 @@ class APIHandler {
    * Giảm số lượng sản phẩm trong giỏ hàng
    */
   async site_cart_down(store_id, product_id) {
-    var api = url_for(API.SITE_CART_DOWN + "/" + store_id + "/" + product_id);
+    var api = url_for(API.SITE_CART_DOWN + '/' + store_id + '/' + product_id);
     return await this.getAPI(api);
   }
 
@@ -212,7 +212,7 @@ class APIHandler {
    * Tăng số lượng sản phẩm trong giỏ hàng
    */
   async site_cart_up(store_id, product_id) {
-    var api = url_for(API.SITE_CART_UP + "/" + store_id + "/" + product_id);
+    var api = url_for(API.SITE_CART_UP + '/' + store_id + '/' + product_id);
     return await this.getAPI(api);
   }
 
@@ -220,7 +220,7 @@ class APIHandler {
    * Xoá sản phẩm trong giỏ hàng
    */
   async site_cart_remove(store_id, product_id) {
-    var api = url_for(API.SITE_CART_REMOVE + "/" + store_id + "/" + product_id);
+    var api = url_for(API.SITE_CART_REMOVE + '/' + store_id + '/' + product_id);
     return await this.getAPI(api);
   }
 
@@ -236,12 +236,12 @@ class APIHandler {
    * Thêm/sửa địa chỉ
    */
   async site_add_address(site_id, address_id, data) {
-    var api = url_for(API.SITE_ADD_ADDRESS + "/" + site_id + "/" + address_id);
+    var api = url_for(API.SITE_ADD_ADDRESS + '/' + site_id + '/' + address_id);
     return await this.postAPI(api, data);
   }
 
   async user_add_address(address_id, data) {
-    var api = url_for(API.USER_ADD_ADDRESS + "/" + address_id);
+    var api = url_for(API.USER_ADD_ADDRESS + '/' + address_id);
     return await this.postAPI(api, data);
   }
 
@@ -250,7 +250,7 @@ class APIHandler {
    */
   async site_cart_address(store_id, address_id) {
     var api = url_for(
-      API.SITE_CART_ADDRESS + "/" + store_id + "/" + address_id
+      API.SITE_CART_ADDRESS + '/' + store_id + '/' + address_id
     );
     return await this.getAPI(api);
   }
@@ -259,7 +259,7 @@ class APIHandler {
    * Xoá địa chỉ
    */
   async user_delete_address(address_id) {
-    var api = url_for(API.USER_DELETE_ADDRESS + "/" + address_id);
+    var api = url_for(API.USER_DELETE_ADDRESS + '/' + address_id);
     return await this.getAPI(api);
   }
 
@@ -267,7 +267,7 @@ class APIHandler {
    * Chọn mặt hàng trong giỏ hàng
    */
   async site_cart_select(store_id, product_id) {
-    var api = url_for(API.SITE_CART_SELECT + "/" + store_id + "/" + product_id);
+    var api = url_for(API.SITE_CART_SELECT + '/' + store_id + '/' + product_id);
     return await this.getAPI(api);
   }
 
@@ -276,7 +276,7 @@ class APIHandler {
    */
   async site_cart_unselect(store_id, product_id) {
     var api = url_for(
-      API.SITE_CART_UNSELECT + "/" + store_id + "/" + product_id
+      API.SITE_CART_UNSELECT + '/' + store_id + '/' + product_id
     );
     return await this.getAPI(api);
   }
@@ -285,7 +285,7 @@ class APIHandler {
    * Note giỏ hàng
    */
   async site_cart_node(store_id, data) {
-    var api = url_for(API.SITE_CART_NODE + "/" + store_id);
+    var api = url_for(API.SITE_CART_NODE + '/' + store_id);
     return await this.postAPI(api, data);
   }
 
@@ -293,7 +293,7 @@ class APIHandler {
    * Xác nhận đặt hàng
    */
   async site_cart_orders(store_id) {
-    var api = url_for(API.SITE_CART_ORDERS + "/" + store_id);
+    var api = url_for(API.SITE_CART_ORDERS + '/' + store_id);
     return await this.getAPI(api);
   }
 
@@ -301,7 +301,7 @@ class APIHandler {
    * Danh sách đơn hàng (theo shop) của user
    */
   async site_cart_list(store_id) {
-    var api = url_for(API.SITE_CART_LIST + "/" + store_id);
+    var api = url_for(API.SITE_CART_LIST + '/' + store_id);
     return await this.getAPI(api);
   }
 
@@ -319,14 +319,14 @@ class APIHandler {
    * @param {*} data
    */
   async user_cart_code(cart_code) {
-    var api = url_for(API.USER_CART_CODE + "/" + cart_code);
+    var api = url_for(API.USER_CART_CODE + '/' + cart_code);
     return await this.getAPI(api);
   }
   /**
    * Gửi chat
    */
   async site_send_chat(store_id, data) {
-    var api = url_for(API.SITE_SEND_CHAT + "/" + store_id);
+    var api = url_for(API.SITE_SEND_CHAT + '/' + store_id);
     return await this.postAPI(api, data);
   }
 
@@ -334,7 +334,7 @@ class APIHandler {
    * Load chat
    */
   async site_load_chat(store_id, chat_id) {
-    var api = url_for(API.SITE_LOAD_CHAT + "/" + store_id + "/" + chat_id);
+    var api = url_for(API.SITE_LOAD_CHAT + '/' + store_id + '/' + chat_id);
     return await this.getAPI(api);
   }
 
@@ -342,14 +342,14 @@ class APIHandler {
    * Tìm sản phẩm theo store_id
    */
   async search_product(store_id, data) {
-    var api = url_for(API.SEARCH_PRODUCT + "/" + store_id);
+    var api = url_for(API.SEARCH_PRODUCT + '/' + store_id);
     return await this.postAPI(api, data);
   }
 
   /**
    * Load news list
    */
-  async user_news_list(type = "") {
+  async user_news_list(type = '') {
     var api = url_for(API.USER_NEWS_LIST + type);
     return await this.getAPI(api);
   }
@@ -358,7 +358,7 @@ class APIHandler {
    * Load a news by id
    */
   async user_news(news_id) {
-    var api = url_for(API.USER_NEWS + "/" + news_id);
+    var api = url_for(API.USER_NEWS + '/' + news_id);
     return await this.getAPI(api);
   }
 
@@ -455,7 +455,7 @@ class APIHandler {
    * Lấy số lượng chat chưa đọc
    */
   async site_notify_chat(store_id) {
-    var api = url_for(API.SITE_NOTIFY_CHAT + "/" + store_id);
+    var api = url_for(API.SITE_NOTIFY_CHAT + '/' + store_id);
     return await this.getAPI(api);
   }
 
@@ -469,7 +469,7 @@ class APIHandler {
    */
   async site_like(store_id, product_id, flag) {
     var api = url_for(
-      API.SITE_LIKE + "/" + store_id + "/" + product_id + "/" + flag
+      API.SITE_LIKE + '/' + store_id + '/' + product_id + '/' + flag
     );
     return await this.getAPI(api);
   }
@@ -478,12 +478,12 @@ class APIHandler {
    * Xoá site
    */
   async user_remove_site(store_id) {
-    var api = url_for(API.USER_REMOVE_SITE + "/" + store_id);
+    var api = url_for(API.USER_REMOVE_SITE + '/' + store_id);
     return await this.getAPI(api);
   }
 
   async site_cart_cancel(store_id, cart_id) {
-    var api = url_for(API.SITE_CART_CANCEL + "/" + store_id + "/" + cart_id);
+    var api = url_for(API.SITE_CART_CANCEL + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
   }
 
@@ -491,7 +491,7 @@ class APIHandler {
    * User chọn khu vực đặt hàng
    */
   async user_choose_location(site_id) {
-    var api = url_for(API.USER_CHOOSE_LOCATION + "/" + site_id);
+    var api = url_for(API.USER_CHOOSE_LOCATION + '/' + site_id);
     return await this.getAPI(api);
   }
 
@@ -504,7 +504,7 @@ class APIHandler {
   }
 
   async user_wallet_history(zone_code) {
-    var api = url_for(API.USER_WALLET_HISTORY + "/" + zone_code);
+    var api = url_for(API.USER_WALLET_HISTORY + '/' + zone_code);
     return await this.getAPI(api);
   }
 
@@ -512,14 +512,14 @@ class APIHandler {
    * Service
    */
   async service_detail(service_id) {
-    var api = url_for(API.SERVICE_DETAIL + "/" + service_type);
+    var api = url_for(API.SERVICE_DETAIL + '/' + service_type);
     return await this.getAPI(api);
   }
   /**
    *
    */
   async service_info(service_id) {
-    var api = url_for(API.SERVICE_INFO + "/" + service_id);
+    var api = url_for(API.SERVICE_INFO + '/' + service_id);
     return await this.getAPI(api);
   }
 
@@ -559,7 +559,7 @@ class APIHandler {
     this._networkIndicator(false);
 
     if (response.status != HTTP_SUCCESS) {
-      throw "Error: " + response.statusText;
+      throw 'Error: ' + response.statusText;
     } else {
       action(() => {
         store.setConnect(true);

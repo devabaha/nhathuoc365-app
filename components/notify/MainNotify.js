@@ -1,25 +1,17 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableHighlight,
   FlatList,
   RefreshControl,
-  ScrollView,
-  Alert
+  ScrollView
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
-import {reaction} from 'mobx';
-
-// components
+import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import NotifyItemComponent from './NotifyItemComponent';
 
@@ -35,11 +27,14 @@ export default class MainNotify extends Component {
       refreshing: false,
       finish: false,
       scrollTop: 0
-    }
+    };
 
-    reaction(() => store.notify, () => {
-      this._setOptionList();
-    });
+    reaction(
+      () => store.notify,
+      () => {
+        this._setOptionList();
+      }
+    );
   }
 
   _setOptionList() {
@@ -47,34 +42,37 @@ export default class MainNotify extends Component {
       navigators: [
         {
           key: 0,
-          label: "Tin tức",
-          desc: "Tin tức mới nhất từ các cửa hàng",
-          icon: "bookmark",
-          notify: "new_site_news",
+          label: 'Tin tức',
+          desc: 'Tin tức mới nhất từ các cửa hàng',
+          icon: 'bookmark',
+          notify: 'new_site_news',
           onPress: () => {
             Actions.notifys({
-              news_type: "/1"
+              news_type: '/1'
             });
           },
-          boxIconStyle: [styles.boxIconStyle, {
-            backgroundColor: "#fa7f50"
-          }],
-          iconColor: "#ffffff"
+          boxIconStyle: [
+            styles.boxIconStyle,
+            {
+              backgroundColor: '#fa7f50'
+            }
+          ],
+          iconColor: '#ffffff'
         },
         {
           key: 1,
-          label: "Từ TickID",
-          desc: "Thông báo từ TickID",
-          icon: "lemon-o",
-          notify: "new_sys_news",
+          label: 'Từ TickID',
+          desc: 'Thông báo từ TickID',
+          icon: 'lemon-o',
+          notify: 'new_sys_news',
           onPress: () => {
             Actions.notifys({
-              title: "Từ TickID",
-              news_type: "/2"
+              title: 'Từ TickID',
+              news_type: '/2'
             });
           },
           boxIconStyle: [styles.boxIconStyle],
-          iconColor: "#ffffff"
+          iconColor: '#ffffff'
         }
       ]
     });
@@ -111,7 +109,7 @@ export default class MainNotify extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_main_notify) {
-      this.refs_main_notify.scrollTo({x: 0, y: top, animated: true});
+      this.refs_main_notify.scrollTo({ x: 0, y: top, animated: true });
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
@@ -123,77 +121,83 @@ export default class MainNotify extends Component {
   }
 
   _scrollOverTopAndReload() {
-    this.setState({
-      refreshing: true
-    }, () => {
-      this._scrollToTop(-60);
+    this.setState(
+      {
+        refreshing: true
+      },
+      () => {
+        this._scrollToTop(-60);
 
-      this._getData(1000);
-    });
+        this._getData(1000);
+      }
+    );
   }
 
   _getData(delay) {
-    this.setState({
-      loading: true
-    }, async () => {
-      try {
-        var response = await APIHandler.user_notice();
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_notice();
 
-        if (response && response.status == STATUS_SUCCESS) {
+          if (response && response.status == STATUS_SUCCESS) {
+            setTimeout(() => {
+              this.setState({
+                loading: false,
+                user_notice: response.data,
+                refreshing: false,
+                finish: true
+              });
 
-          setTimeout(() => {
+              this._scrollToTop(0);
+            }, delay || 0);
+          } else {
             this.setState({
               loading: false,
-              user_notice: response.data,
-              refreshing: false,
-              finish: true
+              refreshing: false
             });
+          }
+        } catch (e) {
+          console.log(e + ' user_notice');
 
-            this._scrollToTop(0);
-          }, delay || 0);
-        } else {
-
-          this.setState({
-            loading: false,
-            refreshing: false
-          });
+          store.addApiQueue('user_notice', this._getData.bind(this, delay));
+        } finally {
+          store.getNoitify();
         }
-      } catch (e) {
-        console.log(e + ' user_notice');
-
-        store.addApiQueue('user_notice', this._getData.bind(this, delay));
-      } finally {
-        store.getNoitify();
       }
-    });
+    );
   }
 
   _onRefresh() {
-    this.setState({
-      refreshing: true
-    }, this._getData.bind(this, 1000));
+    this.setState(
+      {
+        refreshing: true
+      },
+      this._getData.bind(this, 1000)
+    );
   }
 
   render() {
-
-    var {user_notice, loading} = this.state;
+    var { user_notice, loading } = this.state;
 
     return (
       <View style={styles.container}>
         <ScrollView
-          onScroll={(event) => {
+          onScroll={event => {
             this.setState({
               scrollTop: event.nativeEvent.contentOffset.y
             });
           }}
-          ref={ref => this.refs_main_notify = ref}
+          ref={ref => (this.refs_main_notify = ref)}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
               onRefresh={this._onRefresh.bind(this)}
             />
-          }>
-
+          }
+        >
           {this.state.navigators != null && (
             <SelectionList data={this.state.navigators} />
           )}
@@ -211,27 +215,31 @@ export default class MainNotify extends Component {
               </View>
             ) : user_notice != null ? (
               <FlatList
-                ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+                ItemSeparatorComponent={() => (
+                  <View style={styles.separator}></View>
+                )}
                 data={user_notice}
                 style={[styles.profile_list_opt]}
-                renderItem={({item, index}) => {
-                  return(
-                    <NotifyItemComponent
-                      item={item} />
-                  );
+                renderItem={({ item, index }) => {
+                  return <NotifyItemComponent item={item} />;
                 }}
                 keyExtractor={item => item.id}
               />
             ) : (
               <View style={styles.empty_box}>
-                <Icon name="shopping-basket" size={32} color={hexToRgbA(DEFAULT_COLOR, 0.6)} />
+                <Icon
+                  name="shopping-basket"
+                  size={32}
+                  color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+                />
                 <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
 
                 <TouchableHighlight
                   onPress={() => {
-                    Actions._home({type: ActionConst.REFRESH});
+                    Actions._home({ type: ActionConst.REFRESH });
                   }}
-                  underlayColor="transparent">
+                  underlayColor="transparent"
+                >
                   <View style={styles.empty_box_btn}>
                     <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
                   </View>
@@ -249,7 +257,7 @@ const styles = StyleSheet.create({
   defaultBox: {
     width: '100%',
     height: 120,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     marginBottom: 8
   },
 
@@ -273,10 +281,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   headding_title: {
-    color: "#404040",
+    color: '#404040',
     fontSize: 14,
     fontWeight: '500',
     lineHeight: 20
@@ -293,13 +301,13 @@ const styles = StyleSheet.create({
   empty_box_title: {
     fontSize: 12,
     marginTop: 8,
-    color: "#404040"
+    color: '#404040'
   },
   empty_box_btn: {
     borderWidth: Util.pixel,
     borderColor: DEFAULT_COLOR,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 8,
     paddingHorizontal: 16,
     marginTop: 12,
@@ -307,17 +315,17 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   },
   empty_box_btn_title: {
-    color: "#ffffff"
+    color: '#ffffff'
   },
 
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#dddddd"
+    backgroundColor: '#dddddd'
   },
 
   profile_list_opt: {
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   }
 });

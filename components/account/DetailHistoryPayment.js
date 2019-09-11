@@ -1,17 +1,17 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   SectionList,
   TouchableHighlight
-} from "react-native";
+} from 'react-native';
 
-import store from "../../store/Store";
-import { reaction } from "mobx";
-import HorizontalInfoItem from "./HorizontalInfoItem";
-import { Actions, ActionConst } from "react-native-router-flux";
-import Moment from "moment";
+import store from '../../store/Store';
+import { reaction } from 'mobx';
+import HorizontalInfoItem from './HorizontalInfoItem';
+import { Actions, ActionConst } from 'react-native-router-flux';
+import Moment from 'moment';
 
 @observer
 export default class DetailHistoryPayment extends Component {
@@ -21,40 +21,40 @@ export default class DetailHistoryPayment extends Component {
     this.state = {
       sections: [
         {
-          id: "id_section_1",
+          id: 'id_section_1',
           data: [
             {
-              id: "ma_giao_dich",
-              title: "Mã giao dịch",
+              id: 'ma_giao_dich',
+              title: 'Mã giao dịch',
               value: this.props.transaction_hash
             },
             {
-              id: "thoi_gian",
-              title: "Thời gian",
+              id: 'thoi_gian',
+              title: 'Thời gian',
               value: Moment(new Date(this.props.created)).format(
-                "HH:mm - DD/MM/YYYY"
+                'HH:mm - DD/MM/YYYY'
               )
             }
           ]
         },
         {
-          id: "id_section_2",
+          id: 'id_section_2',
           data: [
             {
-              id: "noi_dung",
-              title: "Nội dung",
+              id: 'noi_dung',
+              title: 'Nội dung',
               value: this.props.content
             }
           ]
         },
         {
-          id: "id_section_3",
+          id: 'id_section_3',
           data: [
             {
-              id: "thay_doi",
-              title: "Thay đổi",
+              id: 'thay_doi',
+              title: 'Thay đổi',
               value: this.props.amount_view,
-              specialColor: "green"
+              specialColor: 'green'
             }
           ]
         }
@@ -97,25 +97,25 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    width: "100%",
-    backgroundColor: "#EFEFF4"
+    width: '100%',
+    backgroundColor: '#EFEFF4'
   },
 
   separatorSection: {
-    width: "100%",
+    width: '100%',
     height: 5
   },
 
   separatorItem: {
     height: 1,
-    backgroundColor: "#EFEFF4"
+    backgroundColor: '#EFEFF4'
   },
 
   rightBtnEdit: {
     width: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
     top: 0,
     right: 0,
     bottom: 0
@@ -123,6 +123,6 @@ const styles = StyleSheet.create({
 
   txtEdit: {
     fontSize: 14,
-    color: "white"
+    color: 'white'
   }
 });

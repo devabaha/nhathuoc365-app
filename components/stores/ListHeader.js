@@ -1,20 +1,21 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
 export default class ListHeader extends Component {
   render() {
-    let {title, alignLeft} = this.props;
+    let { title, alignLeft } = this.props;
 
     return (
-      <View style={[styles.store_heading_box, {
-        alignItems: alignLeft ? 'flex-start' : 'center'
-      }]}>
+      <View
+        style={[
+          styles.store_heading_box,
+          {
+            alignItems: alignLeft ? 'flex-start' : 'center'
+          }
+        ]}
+      >
         <Text style={styles.store_heading_title}>{title}</Text>
       </View>
     );

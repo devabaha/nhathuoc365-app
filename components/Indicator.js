@@ -2,12 +2,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator
-} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
 export default class Indicator extends Component {
   constructor(props) {
@@ -15,18 +10,18 @@ export default class Indicator extends Component {
 
     this.state = {
       animating: true
-    }
+    };
   }
 
   render() {
-    if (this.props.size == "small") {
+    if (this.props.size == 'small') {
       return (
         <View style={[styles.container, this.props.style]}>
           <ActivityIndicator
-                 animating={this.state.animating}
-                 color={this.props.color || "#666666"}
-                 size="small"
-              />
+            animating={this.state.animating}
+            color={this.props.color || '#666666'}
+            size="small"
+          />
         </View>
       );
     }
@@ -35,10 +30,10 @@ export default class Indicator extends Component {
       <View style={[styles.container, this.props.style]}>
         <View style={styles.loading_box}>
           <ActivityIndicator
-                 animating={this.state.animating}
-                 color={this.props.color || "#ffffff"}
-                 size="large"
-              />
+            animating={this.state.animating}
+            color={this.props.color || '#ffffff'}
+            size="large"
+          />
         </View>
       </View>
     );
@@ -62,7 +57,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 69,
     height: 69,
-    backgroundColor: "rgba(0,0,0,0.7)",
+    backgroundColor: 'rgba(0,0,0,0.7)',
     borderRadius: 5,
     marginTop: -NAV_HEIGHT / 2
   }

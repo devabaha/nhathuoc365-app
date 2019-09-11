@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -25,9 +25,7 @@ export default class HomeNavBar extends Component {
 
     return (
       <View style={styles.container}>
-        <View style={styles.leftNav}>
-
-        </View>
+        <View style={styles.leftNav}></View>
 
         <View style={styles.centerNav}>
           <Text style={styles.title}>{title}</Text>

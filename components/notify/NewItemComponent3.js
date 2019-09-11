@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -12,12 +12,11 @@ import {
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions, ActionConst} from 'react-native-router-flux';
+import { Actions, ActionConst } from 'react-native-router-flux';
 
 import _drawerIconLocation from '../../images/icon_location.png';
 
 export default class NewItemComponent3 extends Component {
-
   _goDetail(item) {
     Actions.notify_item({
       title: item.title,
@@ -26,16 +25,25 @@ export default class NewItemComponent3 extends Component {
   }
 
   render() {
-    var {item} = this.props;
+    var { item } = this.props;
 
     return (
       <TouchableHighlight
         underlayColor="transparent"
-        onPress={this._goDetail.bind(this, item)}>
-
-        <View style={[styles.notify_item, item.read_flag == 0 ? styles.notify_item_active : null]}>
+        onPress={this._goDetail.bind(this, item)}
+      >
+        <View
+          style={[
+            styles.notify_item,
+            item.read_flag == 0 ? styles.notify_item_active : null
+          ]}
+        >
           <View style={styles.notify_item_image_box}>
-            <CachedImage mutable style={styles.notify_item_image} source={{uri: item.image_url}}/>
+            <CachedImage
+              mutable
+              style={styles.notify_item_image}
+              source={{ uri: item.image_url }}
+            />
           </View>
 
           <View style={styles.notify_item_content}>
@@ -47,7 +55,9 @@ export default class NewItemComponent3 extends Component {
             </View>
             <View style={styles.notify_item_content_box_right}>
               <View style={styles.notify_item_content_box}>
-                <Text style={styles.notify_item_title}>{sub_string(item.shop_name, 60)}</Text>
+                <Text style={styles.notify_item_title}>
+                  {sub_string(item.shop_name, 60)}
+                </Text>
                 <View style={styles.home_box_wallet_info_label_right}>
                   <Text style={styles.notify_item_distance}></Text>
                 </View>
@@ -70,7 +80,7 @@ export default class NewItemComponent3 extends Component {
 
 const styles = StyleSheet.create({
   notify_item: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     marginTop: 8,
     marginBottom: 16,
     marginVertical: 8,
@@ -81,24 +91,24 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     ...Platform.select({
       ios: {
-        shadowOffset: {width: 0, height: 3},
+        shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.2,
-        shadowRadius: 4,
+        shadowRadius: 4
       },
       android: {
         elevation: 2,
         borderWidth: Util.pixel,
-        borderColor: "#E1E1E1",
-      },
-    }),
+        borderColor: '#E1E1E1'
+      }
+    })
   },
   notify_item_active: {
-    backgroundColor: "#ebebeb"
+    backgroundColor: '#ebebeb'
   },
   notify_item_image_box: {
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     width: '100%',
-    height: 96,
+    height: 96
   },
   notify_item_image: {
     width: '100%',
@@ -112,59 +122,59 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 3,
-    paddingTop: 8,
+    paddingTop: 8
   },
   notify_item_content_box_right: {
     flexDirection: 'column',
-    flex: 1,
+    flex: 1
   },
   notify_item_content_box: {
     flexDirection: 'row',
     flex: 1,
     paddingLeft: 5,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   notify_item_title: {
     fontSize: 16,
-    color: "#212C3A",
+    color: '#212C3A',
     fontWeight: '500',
-    flex: 1,
+    flex: 1
   },
   notify_item_desc: {
     marginTop: 8,
-    color: "#404040",
+    color: '#404040',
     fontSize: 12,
     lineHeight: isIOS ? 16 : 18
   },
   notify_item_time_box: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   notify_item_address: {
     fontSize: 10,
-    color: "#212C3A"
+    color: '#212C3A'
   },
   notify_item_distance: {
     fontSize: 12,
-    color: '#212C3A',
+    color: '#212C3A'
   },
   home_box_wallet_info_label_right: {
     flex: 1,
     alignItems: 'flex-end',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   notify_item_time_box_icon_loction: {
     width: 17,
     height: 17,
     borderRadius: 17 / 2,
-    borderColor: "#E1E1E1",
+    borderColor: '#E1E1E1',
     borderWidth: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   icon_location: {
     width: 9.6,
     height: 14,
-    resizeMode: 'cover',
+    resizeMode: 'cover'
   }
 });

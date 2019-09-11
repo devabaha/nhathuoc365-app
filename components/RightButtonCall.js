@@ -1,12 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -24,7 +19,8 @@ export default class RightButtonCall extends Component {
           if (this.props.tel && this.props.tel != '') {
             Communications.phonecall(this.props.tel, true);
           }
-        }}>
+        }}
+      >
         <View style={styles.right_btn_add_store}>
           <Icon name="phone" size={20} color="#ffffff" />
         </View>

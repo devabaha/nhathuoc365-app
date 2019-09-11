@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -6,16 +6,16 @@ import {
   SectionList,
   TouchableHighlight,
   Alert
-} from "react-native";
+} from 'react-native';
 
-import store from "../../store/Store";
-import { reaction } from "mobx";
-import HorizontalInfoItem from "./HorizontalInfoItem";
-import { Actions, ActionConst } from "react-native-router-flux";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import ActionSheet from "react-native-actionsheet";
-import lodash from "lodash";
-import Loading from "../Loading";
+import store from '../../store/Store';
+import { reaction } from 'mobx';
+import HorizontalInfoItem from './HorizontalInfoItem';
+import { Actions, ActionConst } from 'react-native-router-flux';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import ActionSheet from 'react-native-actionsheet';
+import lodash from 'lodash';
+import Loading from '../Loading';
 
 @observer
 export default class EditProfile extends Component {
@@ -28,54 +28,54 @@ export default class EditProfile extends Component {
       loading: false,
       sections: [
         {
-          id: "id_section_1",
+          id: 'id_section_1',
           data: [
             {
-              id: "ho_ten",
-              title: "Họ & tên",
+              id: 'ho_ten',
+              title: 'Họ & tên',
               value: userInfo.name,
               input: true
             },
             {
-              id: "so_dien_thoai",
-              title: "Số điện thoại",
-              value: "0983 962 301",
+              id: 'so_dien_thoai',
+              title: 'Số điện thoại',
+              value: '0983 962 301',
               disable: true
             }
           ]
         },
         {
-          id: "id_section_2",
+          id: 'id_section_2',
           data: [
             {
-              id: "ngay_sinh",
-              title: "Ngày sinh",
+              id: 'ngay_sinh',
+              title: 'Ngày sinh',
               value: userInfo.birth,
-              defaultValue: "Chọn ngày sinh",
+              defaultValue: 'Chọn ngày sinh',
               select: true
             },
             {
-              id: "gioi_tinh",
-              title: "Giới tính",
+              id: 'gioi_tinh',
+              title: 'Giới tính',
               value: userInfo.gender,
-              defaultValue: "Chọn giới tính",
+              defaultValue: 'Chọn giới tính',
               select: true
             },
             {
-              id: "email",
-              title: "Email",
+              id: 'email',
+              title: 'Email',
               value: userInfo.email,
               input: true
             }
           ]
         },
         {
-          id: "id_section_3",
+          id: 'id_section_3',
           data: [
             {
-              id: "dia_chi",
-              title: "Địa chỉ cụ thể",
-              value: "PHÒNG 914",
+              id: 'dia_chi',
+              title: 'Địa chỉ cụ thể',
+              value: 'PHÒNG 914',
               input: true
             }
           ]
@@ -103,46 +103,46 @@ export default class EditProfile extends Component {
   }
 
   _onSaveProfile = async () => {
-    let name = "";
-    let email = "";
-    let birth = "";
-    let address = "";
-    let gender = "";
-    let errorMessage = "";
+    let name = '';
+    let email = '';
+    let birth = '';
+    let address = '';
+    let gender = '';
+    let errorMessage = '';
 
     this.state.sections.forEach(element => {
       element.data.forEach(item => {
-        if (item.id === "ho_ten") {
+        if (item.id === 'ho_ten') {
           name = item.value;
-        } else if (item.id === "ngay_sinh") {
+        } else if (item.id === 'ngay_sinh') {
           birth = item.value;
-        } else if (item.id === "gioi_tinh") {
+        } else if (item.id === 'gioi_tinh') {
           gender = item.value;
-        } else if (item.id === "email") {
+        } else if (item.id === 'email') {
           email = item.value;
-        } else if (item.id === "dia_chi") {
+        } else if (item.id === 'dia_chi') {
           address = item.value;
         }
       });
     });
 
     if (lodash.isEmpty(name)) {
-      errorMessage = "Hãy điền tên của bạn";
+      errorMessage = 'Hãy điền tên của bạn';
     } else if (lodash.isEmpty(email)) {
-      errorMessage = "Hãy điền email của bạn";
+      errorMessage = 'Hãy điền email của bạn';
     } else if (!this._is_email(email)) {
-      errorMessage = "Email của bạn không đúng định dạng";
+      errorMessage = 'Email của bạn không đúng định dạng';
     } else if (lodash.isEmpty(address)) {
-      errorMessage = "Hãy điền địa chỉ của bạn";
+      errorMessage = 'Hãy điền địa chỉ của bạn';
     }
 
     if (!lodash.isEmpty(errorMessage)) {
       return Alert.alert(
-        "Thông báo",
+        'Thông báo',
         errorMessage,
         [
           {
-            text: "Đồng ý"
+            text: 'Đồng ý'
           }
         ],
         { cancelable: false }
@@ -171,7 +171,7 @@ export default class EditProfile extends Component {
         }
       } catch (e) {
         this.setState({ loading: false });
-        console.log(e + " user_update_profile");
+        console.log(e + ' user_update_profile');
       }
     });
   };
@@ -205,7 +205,7 @@ export default class EditProfile extends Component {
   };
 
   _onSelectedDate = date => {
-    this._onUpdateSections("ngay_sinh", date);
+    this._onUpdateSections('ngay_sinh', date);
   };
 
   _onChangeInputValue = (data, value) => {
@@ -213,7 +213,7 @@ export default class EditProfile extends Component {
   };
 
   _onSelectedValue = data => {
-    if (data.id === "gioi_tinh") {
+    if (data.id === 'gioi_tinh') {
       if (this.actionSheet) {
         this.actionSheet.show();
       }
@@ -221,7 +221,7 @@ export default class EditProfile extends Component {
   };
 
   _onChangeGender = value => {
-    this._onUpdateSections("gioi_tinh", value);
+    this._onUpdateSections('gioi_tinh', value);
   };
 
   _onUpdateSections = (id, value) => {
@@ -252,11 +252,11 @@ export default class EditProfile extends Component {
         </KeyboardAwareScrollView>
         <ActionSheet
           ref={ref => (this.actionSheet = ref)}
-          options={["Nữ", "Nam", "Huỷ"]}
+          options={['Nữ', 'Nam', 'Huỷ']}
           cancelButtonIndex={2}
           onPress={index => {
             if (index !== 2) {
-              this._onChangeGender(index === 1 ? "Nam" : "Nữ");
+              this._onChangeGender(index === 1 ? 'Nam' : 'Nữ');
             }
           }}
         />
@@ -271,25 +271,25 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    width: "100%",
-    backgroundColor: "#EFEFF4"
+    width: '100%',
+    backgroundColor: '#EFEFF4'
   },
 
   separatorSection: {
-    width: "100%",
+    width: '100%',
     height: 5
   },
 
   separatorItem: {
     height: 1,
-    backgroundColor: "#EFEFF4"
+    backgroundColor: '#EFEFF4'
   },
 
   rightBtnEdit: {
     width: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
     top: 0,
     right: 0,
     bottom: 0
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
 
   txtEdit: {
     fontSize: 14,
-    color: "white"
+    color: 'white'
   },
 
   mainScroll: {

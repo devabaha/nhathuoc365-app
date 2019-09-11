@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
 import Proptypes from 'prop-types';
-import {
-  View,
-  StyleSheet,
-} from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import Loading from '../Loading';
 
 export default class WebViewClass extends Component {
   static propTypes = {
-      url: Proptypes.string.isRequired
-  }
+    url: Proptypes.string.isRequired
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
       showLoading: false
-    }
+    };
   }
 
   onLoadStart() {
@@ -39,8 +36,8 @@ export default class WebViewClass extends Component {
         <WebView
           onLoadStart={this.onLoadStart.bind(this)}
           onLoadEnd={this.onLoadEnd.bind(this)}
-					onLoad={this.onLoadEnd.bind(this)}
-          source={{uri: this.props.url}}
+          onLoad={this.onLoadEnd.bind(this)}
+          source={{ uri: this.props.url }}
           style={styles.webView}
         />
 
@@ -53,7 +50,7 @@ export default class WebViewClass extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     ...MARGIN_SCREEN,
     marginBottom: 0
   },
@@ -66,13 +63,13 @@ const styles = StyleSheet.create({
     top: 0,
     width: '100%',
     height: '100%',
-    backgroundColor: "#ebebeb",
+    backgroundColor: '#ebebeb',
     justifyContent: 'center',
     alignItems: 'center'
   },
   loadingTitle: {
     fontSize: 14,
     marginTop: 4,
-    color: "#404040"
+    color: '#404040'
   }
 });

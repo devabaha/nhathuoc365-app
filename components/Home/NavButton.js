@@ -1,16 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 import PropTypes from 'prop-types';
 
 import Icon from 'react-native-vector-icons/Ionicons';
-
 
 export default class NavButton extends Component {
   static propTypes = {
@@ -19,22 +13,15 @@ export default class NavButton extends Component {
     icon: PropTypes.string,
     size: PropTypes.number,
     viewLayout: PropTypes.bool
-  }
+  };
 
   static defaultProps = {
     size: 20,
     viewLayout: false
-  }
+  };
 
   render() {
-    var {
-      onPress,
-      label,
-      icon,
-      size,
-      style,
-      viewLayout
-    } = this.props;
+    var { onPress, label, icon, size, style, viewLayout } = this.props;
 
     if (viewLayout) {
       var Wrappner = View;
@@ -46,12 +33,11 @@ export default class NavButton extends Component {
       <Wrappner
         style={[styles.container, style]}
         onPress={onPress}
-        underlayColor="transparent">
+        underlayColor="transparent"
+      >
         <View style={styles.content}>
           <Icon name={icon} size={size} color="#ffffff" />
-          {label != null && (
-            <Text style={styles.title}>{label}</Text>
-          )}
+          {label != null && <Text style={styles.title}>{label}</Text>}
         </View>
       </Wrappner>
     );
@@ -72,6 +58,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 10,
-    color: "#ffffff"
+    color: '#ffffff'
   }
 });

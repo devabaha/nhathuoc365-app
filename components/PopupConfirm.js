@@ -2,12 +2,7 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 //library
 import Modal from 'react-native-modalbox';
@@ -22,29 +17,49 @@ export default class PopupConfirm extends Component {
         backdropPressToClose={this.props.otherClose}
         backButtonClose={this.props.otherClose}
         entry="top"
-        style={[styles.modal, styles.modal_confirm, {
-          height: this.props.height || 110,
-          marginTop: this.props.height ? -(this.props.height / 3) : -(110 / 3)
-        }, this.props.style]}
-        ref={this.props.ref_popup}>
-
-        {this.props.content ? this.props.content(this.props.title) : <Text style={styles.modal_confirm_title}>{this.props.title}</Text>}
+        style={[
+          styles.modal,
+          styles.modal_confirm,
+          {
+            height: this.props.height || 110,
+            marginTop: this.props.height ? -(this.props.height / 3) : -(110 / 3)
+          },
+          this.props.style
+        ]}
+        ref={this.props.ref_popup}
+      >
+        {this.props.content ? (
+          this.props.content(this.props.title)
+        ) : (
+          <Text style={styles.modal_confirm_title}>{this.props.title}</Text>
+        )}
 
         <View style={styles.modal_confirm_actions}>
           <TouchableHighlight
             style={[styles.modal_confirm_btn, styles.modal_confirm_btn_left]}
             underlayColor="transparent"
-            onPress={this.props.noConfirm}>
-            <Text style={[styles.modal_confirm_label, {
-              color: this.props.noBlur ? "#999999" : DEFAULT_COLOR
-            }]}>{this.props.noTitle || 'Không'}</Text>
+            onPress={this.props.noConfirm}
+          >
+            <Text
+              style={[
+                styles.modal_confirm_label,
+                {
+                  color: this.props.noBlur ? '#999999' : DEFAULT_COLOR
+                }
+              ]}
+            >
+              {this.props.noTitle || 'Không'}
+            </Text>
           </TouchableHighlight>
 
           <TouchableHighlight
             style={styles.modal_confirm_btn}
             underlayColor="transparent"
-            onPress={this.props.yesConfirm}>
-            <Text style={styles.modal_confirm_label}>{this.props.yesTitle || 'Có'}</Text>
+            onPress={this.props.yesConfirm}
+          >
+            <Text style={styles.modal_confirm_label}>
+              {this.props.yesTitle || 'Có'}
+            </Text>
           </TouchableHighlight>
         </View>
       </Modal>
@@ -53,19 +68,19 @@ export default class PopupConfirm extends Component {
 }
 
 PopupConfirm.propTypes = {
-    ref_popup: PropTypes.func.isRequired,
-    title: PropTypes.string.isRequired,
-    noTitle: PropTypes.string,
-    yesTitle: PropTypes.string,
-    height: PropTypes.number,
-    noConfirm: PropTypes.func.isRequired,
-    yesConfirm: PropTypes.func.isRequired,
+  ref_popup: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  noTitle: PropTypes.string,
+  yesTitle: PropTypes.string,
+  height: PropTypes.number,
+  noConfirm: PropTypes.func.isRequired,
+  yesConfirm: PropTypes.func.isRequired,
 
-    onClosed: PropTypes.func,
-    onOpened: PropTypes.func,
-    otherClose: PropTypes.bool,
-    isOpen: PropTypes.bool,
-    content: PropTypes.any
+  onClosed: PropTypes.func,
+  onOpened: PropTypes.func,
+  otherClose: PropTypes.bool,
+  isOpen: PropTypes.bool,
+  content: PropTypes.any
 };
 
 const styles = StyleSheet.create({
@@ -78,7 +93,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     marginTop: 16,
     textAlign: 'center',
-    color: "#666666",
+    color: '#666666',
     fontSize: 14
   },
   modal_confirm_actions: {
@@ -88,7 +103,7 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     borderBottomLeftRadius: 3,
     borderBottomRightRadius: 3
@@ -99,15 +114,15 @@ const styles = StyleSheet.create({
     width: '50%',
 
     borderTopWidth: Util.pixel,
-    borderTopColor: "#dddddd",
+    borderTopColor: '#dddddd'
   },
   modal_confirm_btn_left: {
     borderRightWidth: Util.pixel,
-    borderRightColor: "#dddddd"
+    borderRightColor: '#dddddd'
   },
   modal_confirm_label: {
     fontSize: 16,
     color: DEFAULT_COLOR,
-    lineHeight: 20,
+    lineHeight: 20
   }
 });

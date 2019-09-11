@@ -13,14 +13,15 @@ import {
 
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions} from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import OrdersItemComponent from '../orders/OrdersItemComponent';
 
-var DEFAULT_RATING_MSG = 'Đánh giá, góp ý của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn!';
+var DEFAULT_RATING_MSG =
+  'Đánh giá, góp ý của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn!';
 
 @observer
-export default class  Rating extends Component {
+export default class Rating extends Component {
   constructor(props) {
     super(props);
 
@@ -33,19 +34,18 @@ export default class  Rating extends Component {
       rating_selection: [],
       comment: '',
       HEADER_HEIGHT: 280
-    }
+    };
 
     // alert(JSON.stringify(this.state.cart_data))
   }
 
   componentDidMount() {
-    this._getData()
+    this._getData();
   }
 
   _getData = async () => {
     var { site_id } = this.state.cart_data;
     try {
-
       var response = await APIHandler.site_detail(site_id);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.rating_data) {
@@ -54,13 +54,11 @@ export default class  Rating extends Component {
           });
         }
       }
-
     } catch (e) {
       console.log(e + ' ');
     } finally {
-
     }
-  }
+  };
 
   _setStar(current) {
     this.setState(prevState => {
@@ -71,23 +69,30 @@ export default class  Rating extends Component {
       return {
         current,
         had_action: true,
-        rating_msg: current <= 3 ? 'Chúng tôi cần cải thiện điều gì?' : DEFAULT_RATING_MSG
-      }
+        rating_msg:
+          current <= 3 ? 'Chúng tôi cần cải thiện điều gì?' : DEFAULT_RATING_MSG
+      };
     });
 
     // layoutAnimation();
   }
 
   _renderStar() {
-    var {current, isFocus} = this.state;
-    return [1,2,3,4,5].map((star, index) => {
+    var { current, isFocus } = this.state;
+    return [1, 2, 3, 4, 5].map((star, index) => {
       let active = current >= star;
-      return(
+      return (
         <TouchableHighlight
           key={index}
           onPress={this._setStar.bind(this, star)}
-          underlayColor="transparent">
-          <Icon style={styles.starIcon} name="star" size={isFocus ? 20 : 36} color={active ? 'yellow' : 'rgba(0,0,0,.3)'} />
+          underlayColor="transparent"
+        >
+          <Icon
+            style={styles.starIcon}
+            name="star"
+            size={isFocus ? 20 : 36}
+            color={active ? 'yellow' : 'rgba(0,0,0,.3)'}
+          />
         </TouchableHighlight>
       );
     });
@@ -109,28 +114,41 @@ export default class  Rating extends Component {
     const WrapperView = isIOS ? ScrollView : View;
 
     return (
-      <ScrollView
-        keyboardShouldPersistTaps="always"
-      >
+      <ScrollView keyboardShouldPersistTaps="always">
         <View style={styles.container}>
-          <View style={[styles.header
-          ]}>
-            <Text style={[styles.headingText, {
-              marginTop: HEADER_HEIGHT * 0.107
-            }]}>Cảm ơn quý khách!</Text>
+          <View style={[styles.header]}>
+            <Text
+              style={[
+                styles.headingText,
+                {
+                  marginTop: HEADER_HEIGHT * 0.107
+                }
+              ]}
+            >
+              Cảm ơn quý khách!
+            </Text>
             <View style={styles.cartView}>
-              <OrdersItemComponent
-                disableGoDetail={true}
-                item={cart_data}
-              />
+              <OrdersItemComponent disableGoDetail={true} item={cart_data} />
             </View>
 
-            <Text style={[styles.descText, {
-              marginTop: HEADER_HEIGHT * 0.057
-            }]}>Vui lòng đánh giá chất lượng phục vụ cho đơn hàng</Text>
-            <View style={[styles.starBox, {
-              marginTop: HEADER_HEIGHT * 0.0928
-            }]}>
+            <Text
+              style={[
+                styles.descText,
+                {
+                  marginTop: HEADER_HEIGHT * 0.057
+                }
+              ]}
+            >
+              Vui lòng đánh giá chất lượng phục vụ cho đơn hàng
+            </Text>
+            <View
+              style={[
+                styles.starBox,
+                {
+                  marginTop: HEADER_HEIGHT * 0.0928
+                }
+              ]}
+            >
               {this._renderStar.call(this)}
             </View>
 
@@ -142,11 +160,16 @@ export default class  Rating extends Component {
                 left: 0
               }}
               onPress={Actions.pop}
-              underlayColor="transparent">
-              <Text style={{
-                fontSize: 14,
-                color: '#ffffff'
-              }}>Đóng</Text>
+              underlayColor="transparent"
+            >
+              <Text
+                style={{
+                  fontSize: 14,
+                  color: '#ffffff'
+                }}
+              >
+                Đóng
+              </Text>
             </TouchableHighlight>
           </View>
 
@@ -155,39 +178,59 @@ export default class  Rating extends Component {
 
             {current <= 3 && rating_data && had_action && (
               <View style={styles.ratingMoreBox}>
-              {rating_data.map((rating, index) => {
-                var active = this._isRatingSelected(rating);
+                {rating_data.map((rating, index) => {
+                  var active = this._isRatingSelected(rating);
 
-                return(
-                  <TouchableHighlight
-                    key={index}
-                    onPress={this._ratingHandle.bind(this, rating)}
-                    underlayColor="transparent">
-                    <View style={{
-                      alignItems: 'center'
-                    }}>
-                      <View style={[styles.ratingMore, {
-                        borderColor: active ? DEFAULT_COLOR : "#999999",
-                        width: HEADER_HEIGHT * 0.193,
-                        height: HEADER_HEIGHT * 0.193,
-                        borderRadius: HEADER_HEIGHT * 0.193 / 2,
-                      }]}>
-                        <Icon style={styles.ratingIcon} name="truck" size={24} color={active ? DEFAULT_COLOR : "#999999"} />
+                  return (
+                    <TouchableHighlight
+                      key={index}
+                      onPress={this._ratingHandle.bind(this, rating)}
+                      underlayColor="transparent"
+                    >
+                      <View
+                        style={{
+                          alignItems: 'center'
+                        }}
+                      >
+                        <View
+                          style={[
+                            styles.ratingMore,
+                            {
+                              borderColor: active ? DEFAULT_COLOR : '#999999',
+                              width: HEADER_HEIGHT * 0.193,
+                              height: HEADER_HEIGHT * 0.193,
+                              borderRadius: (HEADER_HEIGHT * 0.193) / 2
+                            }
+                          ]}
+                        >
+                          <Icon
+                            style={styles.ratingIcon}
+                            name="truck"
+                            size={24}
+                            color={active ? DEFAULT_COLOR : '#999999'}
+                          />
+                        </View>
+                        {!isFocus && (
+                          <Text
+                            style={[
+                              styles.ratingShip,
+                              {
+                                color: active ? DEFAULT_COLOR : '#999999'
+                              }
+                            ]}
+                          >
+                            {rating.name}
+                          </Text>
+                        )}
                       </View>
-                      {!isFocus && (
-                        <Text style={[styles.ratingShip, {
-                          color: active ? DEFAULT_COLOR : "#999999"
-                        }]}>{rating.name}</Text>
-                      )}
-                    </View>
-                  </TouchableHighlight>
-                );
-              })}
+                    </TouchableHighlight>
+                  );
+                })}
               </View>
             )}
 
             <TextInput
-              ref={ref => this.refs_cart_note = ref}
+              ref={ref => (this.refs_cart_note = ref)}
               style={styles.ratingNote}
               keyboardType="default"
               maxLength={1000}
@@ -195,7 +238,7 @@ export default class  Rating extends Component {
               placeholderTextColor="#999999"
               multiline={true}
               underlineColorAndroid="transparent"
-              onChangeText={(value) => {
+              onChangeText={value => {
                 this.setState({
                   comment: value
                 });
@@ -215,31 +258,40 @@ export default class  Rating extends Component {
                 layoutAnimation();
               }}
               value={comment}
-              />
+            />
           </View>
 
-          <View style={{
-            width: Util.size.width,
-            height: 60,
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
+          <View
+            style={{
+              width: Util.size.width,
+              height: 60,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
             <TouchableHighlight
               onPress={this._onSave}
-              underlayColor="transparent">
-              <View style={{
-                width: Util.size.width - 30,
-                height: 42,
-                backgroundColor: DEFAULT_COLOR,
-                borderRadius: 3,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <Text style={{
-                  color: '#ffffff',
-                  fontSize: 14,
-                  fontWeight: '600'
-                }}>Gửi</Text>
+              underlayColor="transparent"
+            >
+              <View
+                style={{
+                  width: Util.size.width - 30,
+                  height: 42,
+                  backgroundColor: DEFAULT_COLOR,
+                  borderRadius: 3,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Text
+                  style={{
+                    color: '#ffffff',
+                    fontSize: 14,
+                    fontWeight: '600'
+                  }}
+                >
+                  Gửi
+                </Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -252,8 +304,8 @@ export default class  Rating extends Component {
     Keyboard.dismiss();
 
     try {
-      var {current, comment, rating_selection} = this.state;
-      var {site_id, id} = this.state.cart_data;
+      var { current, comment, rating_selection } = this.state;
+      var { site_id, id } = this.state.cart_data;
 
       var response = await APIHandler.cart_site_update(site_id, id, {
         star: current,
@@ -267,13 +319,11 @@ export default class  Rating extends Component {
         }, 1000);
         Toast.show('Góp ý của bạn đã được ghi nhận!');
       }
-
     } catch (e) {
       console.log(e + ' ');
     } finally {
-
     }
-  }
+  };
 
   _isRatingSelected(rating) {
     return this.state.rating_selection.indexOf(rating.name) != -1;
@@ -310,7 +360,7 @@ export default class  Rating extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   header: {
     width: '100%',
@@ -336,7 +386,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     fontWeight: 'bold',
-    backgroundColor: "transparent"
+    backgroundColor: 'transparent'
   },
   starBox: {
     width: '100%',
@@ -384,9 +434,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16
   },
-  ratingIcon: {
-
-  },
+  ratingIcon: {},
   ratingShip: {
     color: '#999999',
     fontSize: 10
@@ -395,7 +443,7 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginLeft: 0,
     marginRight: 0,
-    width: "100%",
-    backgroundColor: "#fff"
+    width: '100%',
+    backgroundColor: '#fff'
   }
 });
