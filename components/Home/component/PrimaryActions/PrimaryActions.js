@@ -8,6 +8,7 @@ import {
   TouchableHighlight,
   Platform
 } from 'react-native';
+import appConfig from 'app-config';
 import imageIconPoints from '../../../../images/points.png';
 import imageIconTrans from '../../../../images/trans.png';
 import imageIconVoucher from '../../../../images/voucher.png';
@@ -100,14 +101,11 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   actionsWrapper: {
+    width: appConfig.device.width - 32,
+    marginHorizontal: 16,
     flexDirection: 'column',
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#fff',
     borderRadius: 8,
-    margin: 16,
-    position: 'absolute',
-    top: -99,
-    left: 0,
-    right: 0,
     height: 140,
     ...Platform.select({
       ios: {

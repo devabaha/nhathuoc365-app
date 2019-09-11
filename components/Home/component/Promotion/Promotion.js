@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, TouchableHighlight, StyleSheet, Animated } from 'react-native';
 import Swiper from 'react-native-swiper';
+import appConfig from 'app-config';
 
-const PROMOTION_WIDTH = Util.size.width - 32;
+const PROMOTION_WIDTH = appConfig.device.width - 32;
 
 function Promotion(props) {
   const [paginationLeft] = useState(new Animated.Value(0));
@@ -53,12 +54,15 @@ function Promotion(props) {
     <View style={styles.container}>
       <Swiper
         autoplay
-        autoplayTimeout={3}
+        autoplayTimeout={5}
         borderRadius={8}
         width={PROMOTION_WIDTH}
+        height={PROMOTION_WIDTH * 0.3333}
         backgroundColor="#fff"
         showsPagination={true}
         renderPagination={renderPagination}
+        containerStyle={styles.slideContainerStyle}
+        style={styles.slideStyle}
       >
         {props.data.map((promotion, index) => renderItem(promotion, index))}
       </Swiper>
@@ -76,11 +80,13 @@ Promotion.defaultProps = {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
-    height: 128,
-    marginTop: 68,
-    paddingHorizontal: 16
+    alignItems: 'center'
   },
+  slideContainerStyle: {
+    position: 'relative',
+    marginTop: 8
+  },
+  slideStyle: {},
   bannerImage: {
     width: Util.size.width,
     height: Util.size.width * 0.4
@@ -92,8 +98,8 @@ const styles = StyleSheet.create({
   paginationWrapper: {
     width: PROMOTION_WIDTH,
     height: 16,
-    position: 'relative',
-    top: -16,
+    position: 'absolute',
+    bottom: 0,
     overflow: 'hidden',
     borderRadius: 8
   },

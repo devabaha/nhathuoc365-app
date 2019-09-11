@@ -12,6 +12,7 @@ import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import ListVouchers from './component/ListVouchers';
+import ListServices from './component/ListServices';
 
 import { SERVICES_LIST } from './constants';
 
@@ -60,59 +61,49 @@ class Home extends Component {
     />
   );
 
+  getRefreshControl() {
+    return (
+      <RefreshControl
+        refreshing={this.props.refreshing}
+        onRefresh={this.props.onPullToRefresh}
+      />
+    );
+  }
+
   render() {
     return (
-      <ScrollView
-        refreshControl={
-          <RefreshControl
-            refreshing={this.props.refreshing}
-            onRefresh={this.props.onPullToRefresh}
-          />
-        }
-      >
+      <ScrollView refreshControl={this.getRefreshControl()}>
         <View style={styles.container}>
+          <View style={styles.headerBackground} />
+
           <Header name="Lê Huy Thực" />
 
-          <PrimaryActions
-            surplus="10,000,000đ"
-            onSavePoint={this.props.onSavePoint}
-            onSurplusNext={this.props.onSurplusNext}
-            onMyVoucher={this.props.onMyVoucher}
-            onTransaction={this.props.onTransaction}
-          />
-
-          {this.props.hasPromotion && (
-            <Promotion
-              data={this.props.promotions}
-              onPress={this.props.onPromotionPressed}
+          <View style={styles.primaryActionsWrapper}>
+            <PrimaryActions
+              surplus="10,000,000đ"
+              onSavePoint={this.props.onSavePoint}
+              onSurplusNext={this.props.onSurplusNext}
+              onMyVoucher={this.props.onMyVoucher}
+              onTransaction={this.props.onTransaction}
             />
-          )}
+          </View>
 
-          <View
-            style={{
-              backgroundColor: '#FAFAFA',
-              marginTop: 15
-            }}
-          >
+          <ListServices data={SERVICES_LIST} />
+
+          <View style={styles.contentWrapper}>
+            {this.props.hasPromotion && (
+              <Promotion
+                data={this.props.promotions}
+                onPress={this.props.onPromotionPressed}
+              />
+            )}
+
             {this.props.farmNewsesData && (
               <ListVouchers
                 data={this.props.farmNewsesData}
                 title="Cửa hàng thân thiết"
               />
             )}
-
-            <View style={styles.serviceBox}>
-              <FlatList
-                horizontal
-                data={SERVICES_LIST}
-                showsHorizontalScrollIndicator={false}
-                keyExtractor={item => `${item.id}`}
-                renderItem={this.renderServiceItem}
-                ItemSeparatorComponent={() => (
-                  <View style={{ width: ~~(Util.size.width / 28) }} />
-                )}
-              />
-            </View>
 
             {this.props.newsesData && (
               <ListVouchers
@@ -137,15 +128,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: BAR_HEIGHT,
+    position: 'relative',
     backgroundColor: '#fff'
   },
-  serviceBox: {
-    marginTop: 10,
-    marginBottom: 10,
-    flexDirection: 'row',
-    backgroundColor: '#FAFAFA',
-    justifyContent: 'space-between',
-    paddingHorizontal: MARGIN_HORIZONTAL
+  headerBackground: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 150,
+    backgroundColor: DEFAULT_COLOR,
+    borderBottomRightRadius: 30
+  },
+  contentWrapper: {
+    backgroundColor: '#f1f1f1'
+  },
+  primaryActionsWrapper: {
+    paddingBottom: 8
   }
 });
 

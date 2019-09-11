@@ -32,10 +32,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
     paddingTop: 25,
-    backgroundColor: DEFAULT_COLOR,
-    paddingBottom: 100,
-    flexDirection: 'row',
-    borderBottomRightRadius: 30
+    flexDirection: 'row'
   },
   homeBoxWalletInfo: {
     flexDirection: 'row',
