@@ -13,7 +13,8 @@ function ListVouchers(props) {
   function renderVoucherItem({ item, index }) {
     return (
       <VoucherItem
-        item={item}
+        title={item.title}
+        imageUrl={item.image_url}
         onPress={props.onVoucherPressed}
         last={props.data.length - 1 === index}
       />
@@ -21,21 +22,17 @@ function ListVouchers(props) {
   }
 
   return (
-    <Fragment>
+    <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.addStoreTitle}>{props.title}</Text>
+        <Text style={styles.title}>{props.title}</Text>
 
-        <View style={styles.rightTitleBtnBox}>
-          <TouchableHighlight
-            style={styles.rightTitleBtn}
-            underlayColor="transparent"
-            onPress={props.onShowAll}
-          >
-            <Text style={[styles.addStoreTitle, { color: '#042C5C' }]}>
-              Xem tất cả
-            </Text>
-          </TouchableHighlight>
-        </View>
+        <TouchableHighlight
+          style={styles.showAllBtn}
+          underlayColor="transparent"
+          onPress={props.onShowAll}
+        >
+          <Text style={styles.viewAll}>Xem tất cả</Text>
+        </TouchableHighlight>
       </View>
 
       <FlatList
@@ -45,9 +42,39 @@ function ListVouchers(props) {
         renderItem={renderVoucherItem}
         keyExtractor={item => `${item.id}`}
       />
-    </Fragment>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    marginTop: 8,
+    paddingBottom: 16
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingVertical: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'baseline'
+  },
+  showAllBtn: {
+    paddingTop: 12,
+    paddingBottom: 6
+  },
+  title: {
+    color: '#333',
+    fontSize: 16,
+    fontWeight: '500',
+    lineHeight: 20
+  },
+  viewAll: {
+    color: '#0084ff',
+    fontSize: 15,
+    fontWeight: '500'
+  }
+});
 
 const defaultListener = () => {};
 
@@ -62,23 +89,5 @@ ListVouchers.defaultProps = {
   onVoucherPressed: defaultListener,
   onShowAll: defaultListener
 };
-
-const styles = StyleSheet.create({
-  content: {
-    paddingHorizontal: 16,
-    paddingVertical: 4,
-    flexDirection: 'row'
-  },
-  addStoreTitle: {
-    color: '#042C5C',
-    fontSize: 16,
-    fontWeight: '500',
-    lineHeight: 20
-  },
-  rightTitleBtnBox: {
-    flex: 1,
-    alignItems: 'flex-end'
-  }
-});
 
 export default ListVouchers;
