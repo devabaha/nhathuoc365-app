@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 
 // librarys
-import {Actions, ActionConst} from 'react-native-router-flux';
+import { Actions, ActionConst } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modalbox';
 import _ from 'lodash';
@@ -21,7 +21,7 @@ export default class Selections extends Component {
 
     this.state = {
       datas: props.datas
-    }
+    };
   }
 
   _rowsOnpress(value) {
@@ -35,7 +35,7 @@ export default class Selections extends Component {
 
   positionHandle = () => {
     var itemHeight = 48;
-    var {datas, selected, height} = this.props;
+    var { datas, selected, height } = this.props;
 
     if (height && height >= 400) {
       var topSpace = 4;
@@ -48,7 +48,7 @@ export default class Selections extends Component {
       if (index < topSpace) {
         // on top 4
         return false;
-      } else if ((datas.length - index) <= bottomSpace) {
+      } else if (datas.length - index <= bottomSpace) {
         // on bottom 5
         toEnd = true;
       } else {
@@ -59,18 +59,18 @@ export default class Selections extends Component {
       this.showTimer = setTimeout(() => {
         if (this.ref_scroll) {
           if (toEnd) {
-            this.ref_scroll.scrollToEnd({animated: true});
+            this.ref_scroll.scrollToEnd({ animated: true });
           } else {
-            this.ref_scroll.scrollTo({x: 0, y, animated: true});
+            this.ref_scroll.scrollTo({ x: 0, y, animated: true });
           }
         }
       }, 500);
     }
-  }
+  };
 
   renderRows() {
     var views = [];
-    var {datas} = this.state;
+    var { datas } = this.state;
 
     if (datas) {
       datas.forEach((value, i) => {
@@ -78,21 +78,37 @@ export default class Selections extends Component {
           <TouchableHighlight
             key={i}
             underlayColor="transparent"
-            onPress={this._rowsOnpress.bind(this, value)}>
-            <View style={[styles.selectionRows, this.props.selected == (_.isObject(value) ? value.id : value) ? styles.selectionRowsSelected : null]}>
-              <Text style={styles.selectionRowsValue}>{_.isObject(value) ? value.name : value}</Text>
+            onPress={this._rowsOnpress.bind(this, value)}
+          >
+            <View
+              style={[
+                styles.selectionRows,
+                this.props.selected == (_.isObject(value) ? value.id : value)
+                  ? styles.selectionRowsSelected
+                  : null
+              ]}
+            >
+              <Text style={styles.selectionRowsValue}>
+                {_.isObject(value) ? value.name : value}
+              </Text>
             </View>
           </TouchableHighlight>
         );
       });
     } else {
-      for(let i = this.props.start; i <= this.props.end; i++) {
+      for (let i = this.props.start; i <= this.props.end; i++) {
         views.push(
           <TouchableHighlight
             key={i}
             underlayColor="transparent"
-            onPress={this._rowsOnpress.bind(this, i)}>
-            <View style={[styles.selectionRows, this.props.selected == i ? styles.selectionRowsSelected : null]}>
+            onPress={this._rowsOnpress.bind(this, i)}
+          >
+            <View
+              style={[
+                styles.selectionRows,
+                this.props.selected == i ? styles.selectionRowsSelected : null
+              ]}
+            >
               <Text style={styles.selectionRowsValue}>{i}</Text>
             </View>
           </TouchableHighlight>
@@ -118,8 +134,8 @@ export default class Selections extends Component {
           borderRadius: 5,
           overflow: 'hidden'
         }}
-        >
-        <ScrollView ref={ref => this.ref_scroll = ref}>
+      >
+        <ScrollView ref={ref => (this.ref_scroll = ref)}>
           {this.renderRows.call(this)}
         </ScrollView>
       </Modal>

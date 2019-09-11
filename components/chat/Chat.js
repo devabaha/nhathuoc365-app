@@ -1,29 +1,18 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   FlatList,
   TouchableHighlight,
-  RefreshControl,
   Keyboard,
-  ScrollView,
-  Alert
+  ScrollView
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
+import { Actions } from 'react-native-router-flux';
 import { FormInput } from '../../lib/react-native-elements';
 import store from '../../store/Store';
-import {reaction} from 'mobx';
-
-// components
 import RightButtonCall from '../RightButtonCall';
 
 const _CHAT_KEY = 'ChatKeysStorage';
@@ -39,7 +28,7 @@ export default class Chat extends Component {
       tel: props.tel || null,
       data: [],
       loading: true
-    }
+    };
 
     this.last_item_id = '';
     this.delayScroll = 500;
@@ -66,11 +55,9 @@ export default class Chat extends Component {
       return null;
     }
 
-    return(
+    return (
       <View style={styles.right_btn_box}>
-        <RightButtonCall
-          tel={this.state.tel}
-        />
+        <RightButtonCall tel={this.state.tel} />
       </View>
     );
   }
@@ -92,51 +79,58 @@ export default class Chat extends Component {
 
     var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
 
-    storage.load({
-    	key: chat_key,
+    storage
+      .load({
+        key: chat_key,
 
-    	// autoSync(default true) means if data not found or expired,
-    	// then invoke the corresponding sync method
-    	autoSync: true,
+        // autoSync(default true) means if data not found or expired,
+        // then invoke the corresponding sync method
+        autoSync: true,
 
-    	// syncInBackground(default true) means if data expired,
-    	// return the outdated data first while invoke the sync method.
-    	// It can be set to false to always return data provided by sync method when expired.(Of course it's slower)
-    	syncInBackground: true,
+        // syncInBackground(default true) means if data expired,
+        // return the outdated data first while invoke the sync method.
+        // It can be set to false to always return data provided by sync method when expired.(Of course it's slower)
+        syncInBackground: true,
 
-    	// you can pass extra params to sync method
-    	// see sync example below for example
-    	syncParams: {
-    	  extraFetchOptions: {
-    	    // blahblah
-    	  },
-    	  someFlag: true,
-    	},
-    }).then(data => {
-    	// found data go to then()
-      this.setState({
-        data,
-        loading: false,
-        finish: true
-      }, () => {
-        this._scrollToEnd();
+        // you can pass extra params to sync method
+        // see sync example below for example
+        syncParams: {
+          extraFetchOptions: {
+            // blahblah
+          },
+          someFlag: true
+        }
+      })
+      .then(data => {
+        // found data go to then()
+        this.setState(
+          {
+            data,
+            loading: false,
+            finish: true
+          },
+          () => {
+            this._scrollToEnd();
 
-        this.last_item_id = data[data.length-1] ? data[data.length-1].id : '';
+            this.last_item_id = data[data.length - 1]
+              ? data[data.length - 1].id
+              : '';
 
+            if (!this.chat_processing) {
+              this._getData(450);
+            }
+
+            this._autoUpdate();
+          }
+        );
+      })
+      .catch(err => {
         if (!this.chat_processing) {
           this._getData(450);
         }
 
         this._autoUpdate();
       });
-    }).catch(err => {
-      if (!this.chat_processing) {
-        this._getData(450);
-      }
-
-      this._autoUpdate();
-    });
-
 
     // Listenner
     Events.on(KEY_BOARD_SHOW, KEY_BOARD_SHOW, () => {
@@ -161,53 +155,64 @@ export default class Chat extends Component {
   _getData(delay) {
     this.chat_processing = true;
 
-    this.setState({
-      finish: false
-    }, async () => {
-      try {
-        var response = await APIHandler.site_load_chat(this.state.store_id, this.last_item_id);
+    this.setState(
+      {
+        finish: false
+      },
+      async () => {
+        try {
+          var response = await APIHandler.site_load_chat(
+            this.state.store_id,
+            this.last_item_id
+          );
 
-        if (response && response.status == STATUS_SUCCESS) {
-          if (response.data) {
-            var data = response.data.reverse();
+          if (response && response.status == STATUS_SUCCESS) {
+            if (response.data) {
+              var data = response.data.reverse();
 
-            setTimeout(() => {
+              setTimeout(() => {
+                this.setState(
+                  {
+                    data:
+                      this.state.data != null
+                        ? [...this.state.data, ...data]
+                        : data,
+                    loading: false
+                  },
+                  () => {
+                    this._scrollToEnd();
+
+                    var chat_key =
+                      _CHAT_KEY + this.state.store_id + store.user_info.id;
+
+                    storage.save({
+                      key: chat_key,
+                      data: this.state.data,
+                      expires: CHAT_CACHE
+                    });
+                  }
+                );
+              }, delay || 0);
+            } else {
               this.setState({
-                data: this.state.data != null ? [...this.state.data, ...data] : data,
-                loading: false
-              }, () => {
-                this._scrollToEnd();
-
-                var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
-
-                storage.save({
-                	key: chat_key,
-                	data: this.state.data,
-                	expires: CHAT_CACHE
-                });
-
+                loading: false,
+                finish: true
               });
-            }, delay || 0);
-
-          } else {
-            this.setState({
-              loading: false,
-              finish: true
-            });
+            }
           }
+
+          this.chat_processing = false;
+        } catch (e) {
+          console.log(e + ' site_load_chat');
+
+          store.addApiQueue('site_load_chat', this._getData.bind(this, delay));
+        } finally {
+          this.setState({
+            finish: true
+          });
         }
-
-        this.chat_processing = false;
-      } catch (e) {
-        console.log(e + ' site_load_chat');
-
-        store.addApiQueue('site_load_chat', this._getData.bind(this, delay));
-      } finally {
-        this.setState({
-          finish: true
-        });
       }
-    });
+    );
   }
 
   _scrollToEnd() {
@@ -251,35 +256,31 @@ export default class Chat extends Component {
 
       store.addApiQueue('site_send_chat', this._onSubmit.bind(this));
     } finally {
-
     }
   }
 
   render() {
-    var {data, loading} = this.state;
+    var { data, loading } = this.state;
 
     if (loading) {
-      return <Indicator />
+      return <Indicator />;
     }
 
     return (
       <View style={styles.container}>
-
         <ScrollView
-          ref={ref => this.refs_chat = ref}
+          ref={ref => (this.refs_chat = ref)}
           style={{
             marginBottom: 42 + store.keyboardTop
-          }}>
-
+          }}
+        >
           {data.length > 0 ? (
             <FlatList
-              onEndReached={(num) => {
-
-              }}
+              onEndReached={num => {}}
               onEndReachedThreshold={0}
               data={data}
               extraData={this.state}
-              renderItem={({item, index}) => {
+              renderItem={({ item, index }) => {
                 if (index == 0) {
                   this.last_admin_id = undefined;
                 }
@@ -293,56 +294,94 @@ export default class Chat extends Component {
                 // marginTop for last item
                 let last_item = data.length - 1 == index;
                 if (last_item) {
-                    this.last_item_id = item.id;
+                  this.last_item_id = item.id;
                 }
 
                 if (item.admin_id == 0) {
                   return (
                     <View style={styles.chat_parent_right}>
-                      <View style={[styles.chat_box_item, styles.chat_box_item_right, {
-                        marginTop: !just_user ? 12 : 6
-                      }]}>
+                      <View
+                        style={[
+                          styles.chat_box_item,
+                          styles.chat_box_item_right,
+                          {
+                            marginTop: !just_user ? 12 : 6
+                          }
+                        ]}
+                      >
                         <View style={styles.chat_box_avatar}>
                           {!just_user && (
-                            <CachedImage mutable style={styles.chat_avatar} source={{uri: item.user_logo}} />
+                            <CachedImage
+                              mutable
+                              style={styles.chat_avatar}
+                              source={{ uri: item.user_logo }}
+                            />
                           )}
                         </View>
 
-                        <View style={[styles.chat_content, styles.chat_content_right]}>
-                          <Text style={styles.chat_content_text}>{item.content}</Text>
+                        <View
+                          style={[
+                            styles.chat_content,
+                            styles.chat_content_right
+                          ]}
+                        >
+                          <Text style={styles.chat_content_text}>
+                            {item.content}
+                          </Text>
                         </View>
                       </View>
 
                       {last_item && (
-                        <View style={{
-                          height: 8,
-                          width: '100%'
-                        }} />
+                        <View
+                          style={{
+                            height: 8,
+                            width: '100%'
+                          }}
+                        />
                       )}
                     </View>
                   );
                 } else {
                   return (
                     <View style={styles.chat_parent_left}>
-                      <View style={[styles.chat_box_item, styles.chat_box_item_left, {
-                        marginTop: !just_user ? 12 : 6
-                      }]}>
+                      <View
+                        style={[
+                          styles.chat_box_item,
+                          styles.chat_box_item_left,
+                          {
+                            marginTop: !just_user ? 12 : 6
+                          }
+                        ]}
+                      >
                         <View style={styles.chat_box_avatar}>
                           {!just_user && (
-                            <CachedImage mutable style={styles.chat_avatar} source={{uri: item.site_logo}} />
+                            <CachedImage
+                              mutable
+                              style={styles.chat_avatar}
+                              source={{ uri: item.site_logo }}
+                            />
                           )}
                         </View>
 
-                        <View style={[styles.chat_content, styles.chat_content_left]}>
-                          <Text style={styles.chat_content_text}>{item.content}</Text>
+                        <View
+                          style={[
+                            styles.chat_content,
+                            styles.chat_content_left
+                          ]}
+                        >
+                          <Text style={styles.chat_content_text}>
+                            {item.content}
+                          </Text>
                         </View>
                       </View>
 
                       {last_item && (
-                        <View style={{
-                          height: 8,
-                          width: '100%'
-                        }} />
+                        <View
+                          style={{
+                            height: 8,
+                            width: '100%'
+                          }}
+                        />
                       )}
                     </View>
                   );
@@ -351,38 +390,52 @@ export default class Chat extends Component {
               keyExtractor={item => item.id}
             />
           ) : (
-            <View style={{
-              width: Util.size.width,
-              height: Util.size.height - NAV_HEIGHT - 40
-            }}>
-              <CenterText showIcon title="Xin chào, tôi có thể giúp gì cho bạn?" />
+            <View
+              style={{
+                width: Util.size.width,
+                height: Util.size.height - NAV_HEIGHT - 40
+              }}
+            >
+              <CenterText
+                showIcon
+                title="Xin chào, tôi có thể giúp gì cho bạn?"
+              />
             </View>
           )}
-
         </ScrollView>
 
-      <View style={[styles.chat_input_box, {
-        bottom: store.keyboardTop
-      }]}>
-        <FormInput
-          inputStyle={styles.chat_input}
-          containerStyle={styles.chat_input_container}
-          maxLength={300}
-          value={this.state.content}
-          onChangeText={(content) => this.setState({content})}
-          placeholder="Nhập tin nhắn"
-          placeholderTextColor="#999999"
-          underlineColorAndroid="transparent"
-          onSubmitEditing={this._onSubmit.bind(this)}
+        <View
+          style={[
+            styles.chat_input_box,
+            {
+              bottom: store.keyboardTop
+            }
+          ]}
+        >
+          <FormInput
+            inputStyle={styles.chat_input}
+            containerStyle={styles.chat_input_container}
+            maxLength={300}
+            value={this.state.content}
+            onChangeText={content => this.setState({ content })}
+            placeholder="Nhập tin nhắn"
+            placeholderTextColor="#999999"
+            underlineColorAndroid="transparent"
+            onSubmitEditing={this._onSubmit.bind(this)}
           />
 
           <TouchableHighlight
             underlayColor="transparent"
             onPress={this._onSubmit.bind(this)}
-            style={styles.chat_input_submit}>
-            <Icon name="send" size={22} color={this.state.content ? DEFAULT_COLOR : "#cccccc"} />
+            style={styles.chat_input_submit}
+          >
+            <Icon
+              name="send"
+              size={22}
+              color={this.state.content ? DEFAULT_COLOR : '#cccccc'}
+            />
           </TouchableHighlight>
-      </View>
+        </View>
       </View>
     );
   }
@@ -390,7 +443,7 @@ export default class Chat extends Component {
 
 Chat.propTypes = {
   store_id: PropTypes.string.isRequired
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -411,7 +464,7 @@ const styles = StyleSheet.create({
     width: '80%',
     flexDirection: 'row',
     paddingLeft: 15,
-    marginTop: 4,
+    marginTop: 4
   },
   chat_box_item_right: {
     flexDirection: 'row-reverse'
@@ -425,14 +478,14 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: "transparent"
+    backgroundColor: 'transparent'
   },
   chat_content: {
     borderRadius: 5,
     overflow: 'hidden'
   },
   chat_content_left: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     marginLeft: 8
   },
   chat_content_right: {
@@ -441,19 +494,19 @@ const styles = StyleSheet.create({
   },
   chat_content_text: {
     fontSize: 14,
-    color: "#000000",
+    color: '#000000',
     paddingVertical: 8,
     paddingHorizontal: 8,
     lineHeight: 18
   },
 
   chat_input_box: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     position: 'absolute',
     right: 0,
     width: '100%',
     borderTopWidth: Util.pixel,
-    borderTopColor: "#dddddd"
+    borderTopColor: '#dddddd'
   },
   chat_input: {
     width: '100%',
@@ -464,18 +517,18 @@ const styles = StyleSheet.create({
   chat_input_container: {
     borderBottomWidth: 0,
     height: 42,
-    justifyContent: "center",
+    justifyContent: 'center',
     width: Util.size.width - 68,
     paddingVertical: 0
   },
   chat_input_submit: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     right: 0,
     width: 40,
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center"
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   right_btn_box: {

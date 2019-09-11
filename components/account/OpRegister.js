@@ -32,7 +32,7 @@ export default class OpRegister extends Component {
       // password: props.password_props || '',
       refer: props.refer_props || '',
       loading: false
-    }
+    };
   }
 
   componentDidMount() {
@@ -57,7 +57,7 @@ export default class OpRegister extends Component {
   }
 
   _onSave() {
-    var {name, refer} = this.state;//email, password, refer
+    var { name, refer } = this.state; //email, password, refer
 
     name = name.trim();
     refer = refer.trim();
@@ -67,9 +67,12 @@ export default class OpRegister extends Component {
         'Thông báo',
         'Hãy điền tên của bạn',
         [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs_name.focus();
-          }},
+          {
+            text: 'Đồng ý',
+            onPress: () => {
+              this.refs_name.focus();
+            }
+          }
         ],
         { cancelable: false }
       );
@@ -79,49 +82,55 @@ export default class OpRegister extends Component {
       return;
     }
 
-    this._op_register(name, refer);//email, password, refer
+    this._op_register(name, refer); //email, password, refer
   }
 
-  _op_register(name, refer) {//, password, refer
-    this.setState({
-      loading: true,
-    }, async () => {
-      try {
-        var response = await APIHandler.user_op_register({
-          name: name,
-          refer: refer
-        });
-        if (response && response.status == STATUS_SUCCESS) {
-          store.setUserInfo(response.data);
-          action(() => {
+  _op_register(name, refer) {
+    //, password, refer
+    this.setState(
+      {
+        loading: true
+      },
+      async () => {
+        try {
+          var response = await APIHandler.user_op_register({
+            name: name,
+            refer: refer
+          });
+          if (response && response.status == STATUS_SUCCESS) {
+            store.setUserInfo(response.data);
+            action(() => {
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  Actions.myTabBar({
+                    type: ActionConst.RESET
+                  });
+                }
+              );
+            })();
+          } else {
             this.setState({
               loading: false
-            }, () => {
-              Actions.myTabBar({
-                type: ActionConst.RESET
-              });
             });
-          })();
-        } else {
+          }
+
+          if (response) {
+            Toast.show(response.message, Toast.SHORT);
+          }
+        } catch (e) {
+          this.setState({
+            loading: false
+          });
+        } finally {
           this.setState({
             loading: false
           });
         }
-
-        if (response) {
-          Toast.show(response.message, Toast.SHORT);
-        }
-
-      } catch (e) {
-        this.setState({
-          loading: false
-        });
-      } finally {
-        this.setState({
-          loading: false
-        });
       }
-    });
+    );
   }
 
   render() {
@@ -129,22 +138,24 @@ export default class OpRegister extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView style={{
-          marginBottom: store.keyboardTop + 60
-        }}>
+        <ScrollView
+          style={{
+            marginBottom: store.keyboardTop + 60
+          }}
+        >
           <View style={styles.input_box}>
             <Text style={styles.input_label}>Tên của bạn (*)</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
-                ref={ref => this.refs_name = ref}
+                ref={ref => (this.refs_name = ref)}
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
                 placeholder="Điền họ và tên"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
-                onChangeText={(value) => {
+                onChangeText={value => {
                   this.setState({
                     name: value
                   });
@@ -161,7 +172,7 @@ export default class OpRegister extends Component {
                   }
                 }}
                 returnKeyType="next"
-                />
+              />
             </View>
           </View>
 
@@ -170,44 +181,55 @@ export default class OpRegister extends Component {
 
             <View style={styles.input_text_box}>
               <TextInput
-                ref={ref => this.refs_refer = ref}
+                ref={ref => (this.refs_refer = ref)}
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
                 placeholder="Điền số điện thoại người giới thiệu"
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
-                onChangeText={(value) => {
+                onChangeText={value => {
                   this.setState({
                     refer: value.replaceAll(' ', '')
                   });
                 }}
                 value={this.state.refer}
-                />
+              />
             </View>
           </View>
-          <Text style={styles.disclaimerText}>Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại {global.APP_NAME_SHOW_SHOW} nhé</Text>
-
+          <Text style={styles.disclaimerText}>
+            Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại{' '}
+            {global.APP_NAME_SHOW_SHOW} nhé
+          </Text>
         </ScrollView>
 
         <TouchableHighlight
           underlayColor="transparent"
           onPress={this._onSave.bind(this)}
-          style={[styles.address_continue, {bottom: store.keyboardTop}]}>
+          style={[styles.address_continue, { bottom: store.keyboardTop }]}
+        >
           <View style={styles.address_continue_content}>
-            <View style={{
-              minWidth: 20,
-              height: '100%',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
+            <View
+              style={{
+                minWidth: 20,
+                height: '100%',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
               {this.state.loading ? (
                 <Indicator size="small" color="#ffffff" />
               ) : (
-                <Icon name={this.state.edit_mode ? "save" : "user-plus"} size={20} color="#ffffff" />
+                <Icon
+                  name={this.state.edit_mode ? 'save' : 'user-plus'}
+                  size={20}
+                  color="#ffffff"
+                />
               )}
             </View>
-            <Text style={styles.address_continue_title}>{this.state.edit_mode ? "LƯU LẠI" : "ĐĂNG KÝ"}</Text>
+            <Text style={styles.address_continue_title}>
+              {this.state.edit_mode ? 'LƯU LẠI' : 'ĐĂNG KÝ'}
+            </Text>
           </View>
         </TouchableHighlight>
       </View>
@@ -220,7 +242,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 210,
     borderRadius: 2,
-    marginTop: -(NAV_HEIGHT/2),
+    marginTop: -(NAV_HEIGHT / 2),
     alignItems: 'center'
   },
   verify_title: {
@@ -231,18 +253,18 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 12,
     paddingHorizontal: 16,
-    color: "#666666"
+    color: '#666666'
   },
   input_text_verify: {
     borderWidth: Util.pixel,
-    borderColor: "#cccccc",
+    borderColor: '#cccccc',
     marginTop: 20,
     height: 40,
     width: '69%',
     paddingHorizontal: 15,
     textAlign: 'center',
     fontSize: 18,
-    color: "#404040"
+    color: '#404040'
   },
   verify_btn: {
     backgroundColor: DEFAULT_COLOR,
@@ -253,7 +275,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   verify_btn_title: {
-    color: "#ffffff",
+    color: '#ffffff',
     marginLeft: 4
   },
 
@@ -265,9 +287,9 @@ const styles = StyleSheet.create({
   input_box: {
     width: '100%',
     height: 44,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#dddddd",
+    borderBottomColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15
@@ -279,13 +301,13 @@ const styles = StyleSheet.create({
   },
   input_label: {
     fontSize: 14,
-    color: "#000000"
+    color: '#000000'
   },
   input_text: {
     width: '96%',
     height: 38,
     paddingLeft: 8,
-    color: "#000000",
+    color: '#000000',
     fontSize: 14,
     textAlign: 'right',
     paddingVertical: 0
@@ -294,20 +316,20 @@ const styles = StyleSheet.create({
   input_address_box: {
     width: '100%',
     minHeight: 100,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: "#dddddd",
+    borderBottomColor: '#dddddd'
   },
   input_label_help: {
     fontSize: 12,
     marginTop: 2,
-    color: "#666666"
+    color: '#666666'
   },
   input_address_text: {
     width: '100%',
-    color: "#000000",
+    color: '#000000',
     fontSize: 14,
     marginTop: 4,
     paddingVertical: 0
@@ -341,5 +363,5 @@ const styles = StyleSheet.create({
     marginRight: 20,
     fontSize: 12,
     color: 'grey'
-  },
+  }
 });

@@ -1,12 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -26,7 +21,8 @@ export default class RightButtonOrders extends Component {
             tel: this.props.tel || undefined,
             hideContinue: true
           });
-        }}>
+        }}
+      >
         <View style={styles.right_btn_add_store}>
           <Icon name="shopping-cart" size={20} color="#ffffff" />
         </View>

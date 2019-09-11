@@ -1,16 +1,16 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   SectionList,
   TouchableHighlight
-} from "react-native";
+} from 'react-native';
 
-import store from "../../store/Store";
-import { reaction } from "mobx";
-import HorizontalInfoItem from "./HorizontalInfoItem";
-import { Actions, ActionConst } from "react-native-router-flux";
+import store from '../../store/Store';
+import { reaction } from 'mobx';
+import HorizontalInfoItem from './HorizontalInfoItem';
+import { Actions, ActionConst } from 'react-native-router-flux';
 
 @observer
 export default class ProfileDetail extends Component {
@@ -22,27 +22,27 @@ export default class ProfileDetail extends Component {
     this.state = {
       sections: [
         {
-          id: "id_section_1",
+          id: 'id_section_1',
           data: [
-            { id: "ho_ten", title: "Họ & tên", value: userInfo.name },
+            { id: 'ho_ten', title: 'Họ & tên', value: userInfo.name },
             {
-              id: "so_dien_thoai",
-              title: "Số điện thoại",
+              id: 'so_dien_thoai',
+              title: 'Số điện thoại',
               value: userInfo.tel
             }
           ]
         },
         {
-          id: "id_section_2",
+          id: 'id_section_2',
           data: [
-            { id: "ngay_sinh", title: "Ngày sinh", value: userInfo.birth },
-            { id: "gioi_tinh", title: "Giới tính", value: userInfo.gender },
-            { id: "email", title: "Email", value: userInfo.email }
+            { id: 'ngay_sinh', title: 'Ngày sinh', value: userInfo.birth },
+            { id: 'gioi_tinh', title: 'Giới tính', value: userInfo.gender },
+            { id: 'email', title: 'Email', value: userInfo.email }
           ]
         },
         {
-          id: "id_section_3",
-          data: [{ id: "dia_chi", title: "Địa chỉ", value: userInfo.address }]
+          id: 'id_section_3',
+          data: [{ id: 'dia_chi', title: 'Địa chỉ', value: userInfo.address }]
         }
       ]
     };
@@ -105,25 +105,25 @@ const styles = StyleSheet.create({
     flex: 1,
     ...MARGIN_SCREEN,
     marginBottom: 0,
-    width: "100%",
-    backgroundColor: "#EFEFF4"
+    width: '100%',
+    backgroundColor: '#EFEFF4'
   },
 
   separatorSection: {
-    width: "100%",
+    width: '100%',
     height: 5
   },
 
   separatorItem: {
     height: 1,
-    backgroundColor: "#EFEFF4"
+    backgroundColor: '#EFEFF4'
   },
 
   rightBtnEdit: {
     width: 60,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
     top: 0,
     right: 0,
     bottom: 0
@@ -131,6 +131,6 @@ const styles = StyleSheet.create({
 
   txtEdit: {
     fontSize: 14,
-    color: "white"
+    color: 'white'
   }
 });

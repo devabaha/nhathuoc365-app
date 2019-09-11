@@ -27,33 +27,34 @@ export default class SyncNdt extends Component {
       stores_data: store.stores_data,
       user: store.user_info,
       loading: false,
-      searchValue: ""
-    }
+      searchValue: ''
+    };
   }
 
   componentDidMount() {
     //GoogleAnalytic('_sync_ndt');
   }
 
-
   // thực hiện add cửa hàng vào account của user
 
   async _add_ref() {
     if (this.state.searchValue != undefined) {
       this.props.onSyncing(true);
-      var response = await APIHandler.user_sync_ndt({ "code": this.state.searchValue });
+      var response = await APIHandler.user_sync_ndt({
+        code: this.state.searchValue
+      });
       this.props.onSyncing(false);
 
       if (response) {
         if (response.status == STATUS_SUCCESS) {
-          this.setState({ searchValue: "" });
+          this.setState({ searchValue: '' });
           store.setUserInfo(response.data);
           Toast.show(response.message);
         } else {
           Toast.show(response.message);
         }
       } else {
-        Toast.show("Có lỗi xảy ra, vui lòng thử lại");
+        Toast.show('Có lỗi xảy ra, vui lòng thử lại');
       }
     }
   }
@@ -69,30 +70,33 @@ export default class SyncNdt extends Component {
     let { containerStyle } = this.props;
     return (
       <View style={[styles.container]}>
-
         <ScrollView
           style={{
             marginBottom: store.keyboardTop
           }}
-          keyboardShouldPersistTaps="always">
+          keyboardShouldPersistTaps="always"
+        >
           <View style={[styles.invite_text_input, containerStyle]}>
             <View style={styles.invite_text_input_sub}>
-              <Text style={{
-                fontWeight: '500',
-                color: "#444444",
-                fontSize: 16,
-                marginLeft: 0,
-                marginBottom: 8,
-
-              }}>
+              <Text
+                style={{
+                  fontWeight: '500',
+                  color: '#444444',
+                  fontSize: 16,
+                  marginLeft: 0,
+                  marginBottom: 8
+                }}
+              >
                 Nhập mã đồng bộ trên Web [Nhà đầu tư] để đồng bộ tài khoản.
-                </Text>
-                <View style={{
-                    flexDirection: 'row',
-                  }}>
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row'
+                }}
+              >
                 <TextInput
                   underlineColorAndroid="transparent"
-                  ref={ref => this.searchInput = ref}
+                  ref={ref => (this.searchInput = ref)}
                   // onLayout={() => {
                   //   if (this.searchInput) {
                   //     this.searchInput.focus();
@@ -101,16 +105,16 @@ export default class SyncNdt extends Component {
                   style={{
                     height: 42,
                     width: 250,
-                    borderColor: "#dddddd",
+                    borderColor: '#dddddd',
                     borderWidth: 1,
                     marginHorizontal: 15,
                     paddingHorizontal: 8,
                     borderRadius: 2,
-                    color: "#404040",
+                    color: '#404040',
                     fontSize: 18,
                     alignItems: 'center',
                     justifyContent: 'flex-start',
-                    backgroundColor: "#ffffff"
+                    backgroundColor: '#ffffff'
                   }}
                   placeholder=""
                   // keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
@@ -119,53 +123,79 @@ export default class SyncNdt extends Component {
                   onSubmitEditing={this._add_ref.bind(this)}
                   value={this.state.searchValue}
                 />
-                  <TouchableHighlight
+                <TouchableHighlight
                   underlayColor="transparent"
                   style={{
                     height: 42,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: "#ffffff"
+                    backgroundColor: '#ffffff'
                   }}
                   onPress={() => {
                     Actions.scan_qr_code({
-                      onBackHandler: (site_code) => {
-                        this.setState({
-                          searchValue: site_code
-                        }, () => {
-                          Actions.refresh({
+                      onBackHandler: site_code => {
+                        this.setState(
+                          {
                             searchValue: site_code
-                          });
+                          },
+                          () => {
+                            Actions.refresh({
+                              searchValue: site_code
+                            });
 
-                          this.search_handler = setTimeout(() => {
-                            this._add_ref();
-                          }, 300);
-                        });
+                            this.search_handler = setTimeout(() => {
+                              this._add_ref();
+                            }, 300);
+                          }
+                        );
                       }
                     });
-                  }}>
+                  }}
+                >
                   <Icon
                     style={{
                       marginLeft: 4
                     }}
-                    name="qrcode" size={30} color="#333333" />
+                    name="qrcode"
+                    size={30}
+                    color="#333333"
+                  />
                 </TouchableHighlight>
-                </View>
-              <Text style={styles.disclaimerText}>Chưa có mã đồng bộ, hãy đăng nhập vào trang [Nhà đầu tư], bấm vào [Đồng bộ tài khoản] để nhận mã.</Text>
+              </View>
+              <Text style={styles.disclaimerText}>
+                Chưa có mã đồng bộ, hãy đăng nhập vào trang [Nhà đầu tư], bấm
+                vào [Đồng bộ tài khoản] để nhận mã.
+              </Text>
               <TouchableHighlight
-                style={[styles.buttonAction, {
-                  marginTop: 6
-                }]}
+                style={[
+                  styles.buttonAction,
+                  {
+                    marginTop: 6
+                  }
+                ]}
                 onPress={this._add_ref.bind(this)}
-                underlayColor="transparent">
-                <View style={[styles.boxButtonAction, {
-                  backgroundColor: "#fa7f50",
-                  borderColor: "#999999"
-                }]}>
+                underlayColor="transparent"
+              >
+                <View
+                  style={[
+                    styles.boxButtonAction,
+                    {
+                      backgroundColor: '#fa7f50',
+                      borderColor: '#999999'
+                    }
+                  ]}
+                >
                   <Icon name="check" size={16} color="#ffffff" />
-                  <Text style={[styles.buttonActionTitle, {
-                    color: "#ffffff"
-                  }]}>Đồng bộ</Text>
+                  <Text
+                    style={[
+                      styles.buttonActionTitle,
+                      {
+                        color: '#ffffff'
+                      }
+                    ]}
+                  >
+                    Đồng bộ
+                  </Text>
                 </View>
               </TouchableHighlight>
             </View>
@@ -180,13 +210,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 0,
-    backgroundColor: "#ffffff"
+    backgroundColor: '#ffffff'
   },
 
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: "#cccccc"
+    backgroundColor: '#cccccc'
   },
 
   store_result_item_image_box: {
@@ -200,7 +230,7 @@ const styles = StyleSheet.create({
     height: 150,
     resizeMode: 'cover',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
 
   invite_text_input: {
@@ -208,7 +238,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // backgroundColor: "",
     // marginTop: 30,
-    marginTop: 145,
+    marginTop: 145
   },
 
   invite_text_input_sub: {
@@ -219,7 +249,7 @@ const styles = StyleSheet.create({
     marginRight: 20
   },
   boxButtonActions: {
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -228,7 +258,7 @@ const styles = StyleSheet.create({
   boxButtonAction: {
     flexDirection: 'row',
     borderWidth: Util.pixel,
-    borderColor: "#666666",
+    borderColor: '#666666',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 5,
@@ -237,7 +267,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   buttonActionTitle: {
-    color: "#333333",
+    color: '#333333',
     marginLeft: 4,
     fontSize: 14
   },
@@ -251,9 +281,9 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_action_btn: {
     paddingVertical: 4
@@ -284,7 +314,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     // paddingVertical: 8,
-    paddingHorizontal: 8,
+    paddingHorizontal: 8
     // marginRight: 8
   },
   ndt_history: {
@@ -302,10 +332,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     fontSize: 12,
     color: 'grey'
-  },
+  }
 });
 
 SyncNdt.defaultProps = {
   isAppBegin: true,
-  onSuccess: () => { }
-}
+  onSuccess: () => {}
+};

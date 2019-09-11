@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -14,22 +14,22 @@ import {
   RefreshControl,
   Alert,
   TouchableOpacity
-} from "react-native";
+} from 'react-native';
 
 // library
-import Icon from "react-native-vector-icons/FontAwesome";
-import Ionicons from "react-native-vector-icons/MaterialCommunityIcons";
-import { Actions, ActionConst } from "react-native-router-flux";
-import store from "../../store/Store";
-import Communications from "react-native-communications";
-import RNFetchBlob from "rn-fetch-blob";
-import ImagePicker from "react-native-image-picker";
-import Sticker from "../Sticker";
-import { reaction } from "mobx";
-import RNAccountKit from "react-native-facebook-account-kit";
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Actions, ActionConst } from 'react-native-router-flux';
+import store from '../../store/Store';
+import Communications from 'react-native-communications';
+import RNFetchBlob from 'rn-fetch-blob';
+import ImagePicker from 'react-native-image-picker';
+import Sticker from '../Sticker';
+import { reaction } from 'mobx';
+import RNAccountKit from 'react-native-facebook-account-kit';
 
 // components
-import SelectionList from "../SelectionList";
+import SelectionList from '../SelectionList';
 
 @observer
 export default class Account extends Component {
@@ -56,47 +56,47 @@ export default class Account extends Component {
       {
         options: [
           {
-            key: "1",
-            icon: "map-marker",
-            label: "Địa chỉ của tôi",
-            desc: "Quản lý địa chỉ nhận hàng",
+            key: '1',
+            icon: 'map-marker',
+            label: 'Địa chỉ của tôi',
+            desc: 'Quản lý địa chỉ nhận hàng',
             onPress: () =>
               Actions.address({
-                from_page: "account"
+                from_page: 'account'
               }),
             boxIconStyle: [
               styles.boxIconStyle,
               {
-                backgroundColor: "#fcb309"
+                backgroundColor: '#fcb309'
               }
             ],
-            iconColor: "#ffffff"
+            iconColor: '#ffffff'
           },
 
           {
-            key: "2",
-            icon: "facebook-square",
-            label: "Fanpage " + APP_NAME_SHOW,
-            desc: "Facebook Fanpage chăm sóc khách hàng",
+            key: '2',
+            icon: 'facebook-square',
+            label: 'Fanpage ' + APP_NAME_SHOW,
+            desc: 'Facebook Fanpage chăm sóc khách hàng',
             onPress: () => Communications.web(APP_FANPAGE),
             boxIconStyle: [
               styles.boxIconStyle,
               {
-                backgroundColor: "#4267b2"
+                backgroundColor: '#4267b2'
               }
             ],
-            iconColor: "#ffffff",
+            iconColor: '#ffffff',
             marginTop: !isAdmin
           },
 
           {
-            key: "3",
-            icon: "handshake-o",
-            label: "Về " + APP_NAME_SHOW + " - Điều khoản sử dụng",
-            desc: "Điều khoản sử dụng",
+            key: '3',
+            icon: 'handshake-o',
+            label: 'Về ' + APP_NAME_SHOW + ' - Điều khoản sử dụng',
+            desc: 'Điều khoản sử dụng',
             onPress: () =>
               Actions.webview({
-                title: "Về TickID",
+                title: 'Về TickID',
                 url: APP_INFO
               }),
             boxIconStyle: [
@@ -105,37 +105,37 @@ export default class Account extends Component {
                 backgroundColor: DEFAULT_COLOR
               }
             ],
-            iconColor: "#ffffff"
+            iconColor: '#ffffff'
             // marginTop: true
           },
 
           {
-            key: "4",
-            icon: "question-circle",
-            label: "Thông tin ứng dụng",
+            key: '4',
+            icon: 'question-circle',
+            label: 'Thông tin ứng dụng',
             desc:
-              "Sản phẩm của " +
+              'Sản phẩm của ' +
               APP_NAME_SHOW +
-              " - Phiên bản hiện tại: " +
+              ' - Phiên bản hiện tại: ' +
               DeviceInfo.getVersion(),
             onPress: () => {},
             boxIconStyle: [
               styles.boxIconStyle,
               {
-                backgroundColor: "#688efb"
+                backgroundColor: '#688efb'
               }
             ],
-            iconColor: "#ffffff",
+            iconColor: '#ffffff',
             hideAngle: true,
             marginTop: true
           },
           {
-            key: "5",
+            key: '5',
             isHidden: !isUpdate,
-            icon: "cloud-download",
-            label: "Cập nhật ứng dụng",
+            icon: 'cloud-download',
+            label: 'Cập nhật ứng dụng',
             desc:
-              "Cập nhật lên phiên bản ổn định " + notify.new_version + " ngay!",
+              'Cập nhật lên phiên bản ổn định ' + notify.new_version + ' ngay!',
             onPress: () => {
               if (notify.url_update) {
                 Communications.web(notify.url_update);
@@ -144,16 +144,16 @@ export default class Account extends Component {
             boxIconStyle: [
               styles.boxIconStyle,
               {
-                backgroundColor: "#dd4b39"
+                backgroundColor: '#dd4b39'
               }
             ],
-            notify: "updating_version",
-            iconColor: "#ffffff"
+            notify: 'updating_version',
+            iconColor: '#ffffff'
           }
         ]
       },
       () => {
-        if (typeof callback == "function") {
+        if (typeof callback == 'function') {
           callback();
         }
       }
@@ -183,13 +183,13 @@ export default class Account extends Component {
 
   _onTapAvatar() {
     const options = {
-      title: "Cập nhật ảnh đại diện tài khoản",
-      cancelButtonTitle: "Huỷ bỏ",
-      takePhotoButtonTitle: "Chụp ảnh",
-      chooseFromLibraryButtonTitle: "Chọn ảnh từ thư viện",
+      title: 'Cập nhật ảnh đại diện tài khoản',
+      cancelButtonTitle: 'Huỷ bỏ',
+      takePhotoButtonTitle: 'Chụp ảnh',
+      chooseFromLibraryButtonTitle: 'Chọn ảnh từ thư viện',
       storageOptions: {
         skipBackup: true,
-        path: "images"
+        path: 'images'
       }
     };
 
@@ -210,17 +210,17 @@ export default class Account extends Component {
       },
       () => {
         const avatar = {
-          name: "avatar",
+          name: 'avatar',
           filename: response.fileName,
           data: response.data
         };
         console.log(APIHandler.url_user_add_avatar());
         // call api post my form data
         RNFetchBlob.fetch(
-          "POST",
+          'POST',
           APIHandler.url_user_add_avatar(),
           {
-            "Content-Type": "multipart/form-data"
+            'Content-Type': 'multipart/form-data'
           },
           [avatar]
         )
@@ -239,10 +239,10 @@ export default class Account extends Component {
             }
           })
           .catch(error => {
-            console.log(error + " url_user_add_avatar");
+            console.log(error + ' url_user_add_avatar');
 
             store.addApiQueue(
-              "url_user_add_avatar",
+              'url_user_add_avatar',
               this._uploadAvatar.bind(this, response)
             );
           });
@@ -260,12 +260,12 @@ export default class Account extends Component {
 
       store.is_stay_account = true;
 
-      store.parentTab = "_account";
+      store.parentTab = '_account';
     });
   }
 
   componentWillReceiveProps() {
-    store.parentTab = "_account";
+    store.parentTab = '_account';
 
     store.getNoitify();
 
@@ -313,7 +313,7 @@ export default class Account extends Component {
       async () => {
         try {
           var response = await APIHandler.user_login({
-            fb_access_token: ""
+            fb_access_token: ''
           });
 
           if (response && response.status == STATUS_SUCCESS) {
@@ -330,9 +330,9 @@ export default class Account extends Component {
             }, delay || 0);
           }
         } catch (e) {
-          console.log(e + " user_login");
+          console.log(e + ' user_login');
 
-          store.addApiQueue("user_login", this._login.bind(this, delay));
+          store.addApiQueue('user_login', this._login.bind(this, delay));
         }
       }
     );
@@ -352,7 +352,7 @@ export default class Account extends Component {
 
     if (avatar_loading) {
       var avatar = (
-        <View style={{ width: "100%", height: "100%" }}>
+        <View style={{ width: '100%', height: '100%' }}>
           <Indicator size="small" />
         </View>
       );
@@ -373,7 +373,7 @@ export default class Account extends Component {
         <View style={styles.profile_cover_box}>
           <ImageBackground
             style={styles.profile_cover}
-            source={require("../../images/profile_bgr.jpg")}
+            source={require('../../images/profile_bgr.jpg')}
           >
             <TouchableHighlight
               onPress={this._onTapAvatar.bind(this)}
@@ -386,11 +386,11 @@ export default class Account extends Component {
             {is_login ? (
               <TouchableOpacity
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   left: 120,
                   bottom: 48,
-                  backgroundColor: "transparent",
-                  flexDirection: "row"
+                  backgroundColor: 'transparent',
+                  flexDirection: 'row'
                 }}
                 activeOpacity={1}
                 onPress={this._onShowProfileDetail}
@@ -398,7 +398,7 @@ export default class Account extends Component {
                 <View style={{ maxWidth: 150 }}>
                   <Text
                     style={{
-                      color: "#ffffff",
+                      color: '#ffffff',
                       fontSize: 16
                     }}
                     numberOfLines={1}
@@ -408,7 +408,7 @@ export default class Account extends Component {
 
                   <Text
                     style={{
-                      color: "#ffffff",
+                      color: '#ffffff',
                       fontSize: 12,
                       marginTop: 4
                     }}
@@ -437,7 +437,7 @@ export default class Account extends Component {
                       styles.profile_button_login_box,
                       {
                         marginRight: 8,
-                        backgroundColor: "#666666"
+                        backgroundColor: '#666666'
                       }
                     ]}
                   >
@@ -470,7 +470,7 @@ export default class Account extends Component {
             {is_login && (
               <View
                 style={{
-                  position: "absolute",
+                  position: 'absolute',
                   bottom: 0,
                   right: 0
                 }}
@@ -488,12 +488,12 @@ export default class Account extends Component {
                   >
                     <Text
                       style={{
-                        color: "#cccccc",
+                        color: '#cccccc',
                         fontSize: 10
                       }}
                     >
                       <Icon name="sign-out" size={10} color="#cccccc" />
-                      {" Đăng xuất"}
+                      {' Đăng xuất'}
                     </Text>
                   </TouchableHighlight>
                 )}
@@ -520,14 +520,14 @@ export default class Account extends Component {
             style={{
               marginTop: 1,
               borderTopWidth: 0,
-              borderColor: "#dddddd"
+              borderColor: '#dddddd'
             }}
           >
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() =>
                 Actions.qr_bar_code({
-                  title: "Địa chỉ Ví",
+                  title: 'Địa chỉ Ví',
                   address: user_info.wallet_address
                 })
               }
@@ -538,7 +538,7 @@ export default class Account extends Component {
                   {
                     marginTop: 0,
                     borderTopWidth: 0,
-                    borderColor: "#dddddd"
+                    borderColor: '#dddddd'
                   }
                 ]}
               >
@@ -547,7 +547,7 @@ export default class Account extends Component {
                     styles.profile_list_icon_box,
                     styles.boxIconStyle,
                     {
-                      backgroundColor: "#A569BD"
+                      backgroundColor: '#A569BD'
                     }
                   ]}
                 >
@@ -556,11 +556,11 @@ export default class Account extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>
-                    Addr:{" "}
+                    Addr:{' '}
                     <Text style={styles.profile_list_label_address}>
-                      {typeof user_info.wallet_address == "string"
-                        ? user_info.wallet_address.substring(0, 25) + "..."
-                        : "Chưa có địa chỉ Ví"}
+                      {typeof user_info.wallet_address == 'string'
+                        ? user_info.wallet_address.substring(0, 25) + '...'
+                        : 'Chưa có địa chỉ Ví'}
                     </Text>
                   </Text>
                 </View>
@@ -583,7 +583,7 @@ export default class Account extends Component {
               style={{
                 marginTop: 1,
                 borderTopWidth: 0,
-                borderColor: "#dddddd"
+                borderColor: '#dddddd'
               }}
             >
               <TouchableHighlight
@@ -601,7 +601,7 @@ export default class Account extends Component {
                     {
                       marginTop: 0,
                       borderTopWidth: 0,
-                      borderColor: "#dddddd"
+                      borderColor: '#dddddd'
                     }
                   ]}
                 >
@@ -623,7 +623,7 @@ export default class Account extends Component {
 
                   <View>
                     <Text style={styles.profile_list_label}>
-                      {user_info.default_wallet.name}:{" "}
+                      {user_info.default_wallet.name}:{' '}
                       <Text
                         style={[
                           styles.profile_list_label_balance,
@@ -654,7 +654,7 @@ export default class Account extends Component {
               style={{
                 marginTop: 7,
                 borderTopWidth: 0,
-                borderColor: "#dddddd"
+                borderColor: '#dddddd'
               }}
             >
               <View style={styles.add_store_actions_box}>
@@ -680,7 +680,7 @@ export default class Account extends Component {
                             name={wallet.icon}
                             size={16}
                             color={wallet.color}
-                          />{" "}
+                          />{' '}
                           {wallet.name}
                         </Text>
                       </View>
@@ -703,7 +703,7 @@ export default class Account extends Component {
               style={{
                 marginTop: 1,
                 borderTopWidth: 0,
-                borderColor: "#dddddd"
+                borderColor: '#dddddd'
               }}
             >
               <View style={styles.add_store_actions_box}>
@@ -729,7 +729,7 @@ export default class Account extends Component {
                             name={wallet.icon}
                             size={16}
                             color={wallet.color}
-                          />{" "}
+                          />{' '}
                           {wallet.name}
                         </Text>
                       </View>
@@ -753,7 +753,7 @@ export default class Account extends Component {
               Actions.affiliate({
                 aff_content: store.store_data.aff_content
                   ? store.store_data.aff_content
-                  : "Giới thiệu chương trình tiếp thị liên kết cùng TickID"
+                  : 'Giới thiệu chương trình tiếp thị liên kết cùng TickID'
               })
             }
           >
@@ -763,7 +763,7 @@ export default class Account extends Component {
                 {
                   marginTop: 1,
                   borderTopWidth: 0,
-                  borderColor: "#dddddd"
+                  borderColor: '#dddddd'
                 }
               ]}
             >
@@ -772,7 +772,7 @@ export default class Account extends Component {
                   styles.profile_list_icon_box,
                   styles.boxIconStyle,
                   {
-                    backgroundColor: "#51A9FF"
+                    backgroundColor: '#51A9FF'
                   }
                 ]}
               >
@@ -781,7 +781,7 @@ export default class Account extends Component {
 
               <View>
                 <Text style={styles.profile_list_label}>
-                  Mã giới thiệu:{" "}
+                  Mã giới thiệu:{' '}
                   <Text style={styles.profile_list_label_invite_id}>
                     {user_info.username}
                   </Text>
@@ -812,7 +812,7 @@ export default class Account extends Component {
                   {
                     marginTop: 7,
                     borderTopWidth: 0,
-                    borderColor: "#dddddd"
+                    borderColor: '#dddddd'
                   }
                 ]}
               >
@@ -821,7 +821,7 @@ export default class Account extends Component {
                     styles.profile_list_icon_box,
                     styles.boxIconStyle,
                     {
-                      backgroundColor: "#1fa67a"
+                      backgroundColor: '#1fa67a'
                     }
                   ]}
                 >
@@ -851,7 +851,7 @@ export default class Account extends Component {
           {user_info.view_tab_invite && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions._add_ref({ title: "Nhập mã giới thiệu" })}
+              onPress={() => Actions._add_ref({ title: 'Nhập mã giới thiệu' })}
             >
               <View
                 style={[
@@ -859,7 +859,7 @@ export default class Account extends Component {
                   {
                     marginTop: 1,
                     borderTopWidth: 0,
-                    borderColor: "#dddddd"
+                    borderColor: '#dddddd'
                   }
                 ]}
               >
@@ -868,7 +868,7 @@ export default class Account extends Component {
                     styles.profile_list_icon_box,
                     styles.boxIconStyle,
                     {
-                      backgroundColor: "#688efb"
+                      backgroundColor: '#688efb'
                     }
                   ]}
                 >
@@ -915,15 +915,15 @@ export default class Account extends Component {
 
   _onLogout() {
     Alert.alert(
-      "Lưu ý khi đăng xuất",
-      "Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.",
+      'Lưu ý khi đăng xuất',
+      'Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.',
       [
         {
-          text: "Huỷ",
+          text: 'Huỷ',
           onPress: () => {}
         },
         {
-          text: "Đăng xuất",
+          text: 'Đăng xuất',
           onPress: () => {
             this.setState(
               {
@@ -934,7 +934,7 @@ export default class Account extends Component {
               }
             );
           },
-          style: "destructive"
+          style: 'destructive'
         }
       ],
       { cancelable: false }
@@ -962,9 +962,9 @@ export default class Account extends Component {
         })();
       }
     } catch (e) {
-      console.log(e + " user_logout");
+      console.log(e + ' user_logout');
 
-      store.addApiQueue("user_logout", this._logout.bind(this));
+      store.addApiQueue('user_logout', this._logout.bind(this));
     } finally {
       this.setState({
         logout_loading: false
@@ -976,7 +976,7 @@ export default class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f1f1f1",
+    backgroundColor: '#f1f1f1',
     marginBottom: BAR_HEIGHT
   },
 
@@ -988,27 +988,27 @@ const styles = StyleSheet.create({
   },
 
   profile_cover_box: {
-    width: "100%",
-    backgroundColor: "#ccc",
+    width: '100%',
+    backgroundColor: '#ccc',
     height: 180
   },
   profile_cover: {
-    width: "100%",
-    height: "100%"
+    width: '100%',
+    height: '100%'
   },
   profile_avatar_box: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 20,
     left: 24,
     width: 80,
     height: 80,
-    backgroundColor: "#cccccc",
+    backgroundColor: '#cccccc',
     borderWidth: 2,
-    borderColor: "#ffffff",
+    borderColor: '#ffffff',
     borderRadius: 40,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden"
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden'
   },
   profile_avatar: {
     width: 76,
@@ -1022,15 +1022,15 @@ const styles = StyleSheet.create({
     height: 30
   },
   profile_button_box: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 42,
     right: 0,
-    flexDirection: "row"
+    flexDirection: 'row'
   },
   profile_button_login_box: {
-    backgroundColor: "#4267b2",
-    flexDirection: "row",
-    alignItems: "center",
+    backgroundColor: '#4267b2',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 3,
@@ -1038,26 +1038,26 @@ const styles = StyleSheet.create({
   },
   profile_button_title: {
     fontSize: 14,
-    color: "#ffffff",
+    color: '#ffffff',
     marginLeft: 4
   },
   profile_list_opt: {
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   profile_list_opt_btn: {
     width: Util.size.width,
     height: 52,
-    backgroundColor: "#ffffff",
-    flexDirection: "row",
-    alignItems: "center",
+    backgroundColor: '#ffffff',
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 4
   },
   profile_list_icon_box: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 30,
     height: 30,
     marginLeft: 4,
@@ -1065,130 +1065,130 @@ const styles = StyleSheet.create({
   },
 
   profile_list_icon_box_small: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 22,
     height: 22,
     marginLeft: 3,
     marginRight: 0
   },
   profile_list_icon_box_angle: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     right: 0,
-    height: "100%"
+    height: '100%'
   },
   profile_list_label: {
     fontSize: 16,
-    color: "#000000",
-    fontWeight: "400"
+    color: '#000000',
+    fontWeight: '400'
   },
   profile_list_label_balance: {
     fontSize: 18,
-    color: "#922B21",
-    fontWeight: "600",
+    color: '#922B21',
+    fontWeight: '600',
     left: 20
   },
   profile_list_label_address: {
     fontSize: 16,
-    color: "#0E6655",
-    fontWeight: "600"
+    color: '#0E6655',
+    fontWeight: '600'
   },
 
   profile_list_label_point: {
     fontSize: 16,
-    color: "#e31b23",
-    fontWeight: "600"
+    color: '#e31b23',
+    fontWeight: '600'
   },
 
   profile_list_label_invite_id: {
     fontSize: 16,
-    color: "#51A9FF",
-    fontWeight: "600"
+    color: '#51A9FF',
+    fontWeight: '600'
   },
   profile_list_small_label: {
     fontSize: 12,
-    color: "#666666",
+    color: '#666666',
     marginTop: 2
   },
   separator: {
-    width: "100%",
+    width: '100%',
     height: Util.pixel,
-    backgroundColor: "#dddddd"
+    backgroundColor: '#dddddd'
   },
 
   stores_info_action_notify: {
-    position: "absolute",
+    position: 'absolute',
     minWidth: 16,
     paddingHorizontal: 2,
     height: 16,
-    backgroundColor: "red",
+    backgroundColor: 'red',
     top: 4,
     left: 30,
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
     borderRadius: 8
   },
   stores_info_action_notify_value: {
     fontSize: 10,
-    color: "#ffffff",
-    fontWeight: "600"
+    color: '#ffffff',
+    fontWeight: '600'
   },
 
   profile_list_balance_box: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 130,
     height: 30,
     marginLeft: 4,
     marginRight: 4
   },
   profile_list_balance_box_angle: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     right: 20
   },
 
   add_store_actions_box: {
-    width: "100%",
-    flexDirection: "row",
+    width: '100%',
+    flexDirection: 'row',
     paddingVertical: 8,
-    backgroundColor: "#ffffff",
+    backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: "#dddddd"
+    borderColor: '#dddddd'
   },
   add_store_action_btn: {
     paddingVertical: 4
   },
   add_store_action_btn_box: {
-    alignItems: "center",
+    alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
-    borderRightColor: "#ebebeb"
+    borderRightColor: '#ebebeb'
   },
   add_store_action_label: {
     fontSize: 12,
-    color: "#404040",
+    color: '#404040',
     marginTop: 4
   },
   add_store_action_wallet_text: {
     fontSize: 14,
-    color: "#404040",
+    color: '#404040',
     marginLeft: 0,
     marginTop: 3
   },
   add_store_action_wallet_content: {
     fontSize: 16,
-    color: "#333333",
-    fontWeight: "700"
+    color: '#333333',
+    fontWeight: '700'
   },
   add_store_action_wallet: {
-    flexDirection: "row",
-    alignItems: "stretch",
+    flexDirection: 'row',
+    alignItems: 'stretch',
     // paddingVertical: 8,
     paddingHorizontal: 8
     // marginRight: 8

@@ -17,17 +17,15 @@ import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const images = [
-  {key: 1, image: require('../../images/slide/image_3.png')},
-];
+const images = [{ key: 1, image: require('../../images/slide/image_3.png') }];
 
 export default class Intro extends Component {
   constructor(props) {
     super();
 
     this.state = {
-      pageNum: 0,
-    }
+      pageNum: 0
+    };
   }
 
   componentDidMount() {
@@ -35,7 +33,7 @@ export default class Intro extends Component {
     //GoogleAnalytic('intro');
   }
 
-  _run_fbak(){
+  _run_fbak() {
     // Configures the account kit SDK
     RNAccountKit.configure({
       responseType: 'token',
@@ -52,19 +50,18 @@ export default class Intro extends Component {
       },
       viewControllerMode: 'show', // for iOS only, 'present' by default
       getACallEnabled: true,
-      setEnableInitialSmsButton: false, // true by default
+      setEnableInitialSmsButton: false // true by default
     });
     // Shows the Facebook Account Kit view for login via SMS
-    RNAccountKit.loginWithPhone()
-      .then((res) => {
-        if (res) {
-          this._verifyFBAK(res);
-        }
-      });
+    RNAccountKit.loginWithPhone().then(res => {
+      if (res) {
+        this._verifyFBAK(res);
+      }
+    });
   }
 
   // verify facebook account kit token
-  _verifyFBAK = (fbres) => {
+  _verifyFBAK = fbres => {
     this.setState({ spinner: true }, async () => {
       try {
         var response = await APIHandler.login_fbak_verify(fbres);
@@ -76,28 +73,35 @@ export default class Intro extends Component {
             store.resetCartData();
 
             store.setRefreshHomeChange(store.refresh_home_change + 1);
-            if (response.data.fill_info_user) {//hien thi chon site
+            if (response.data.fill_info_user) {
+              //hien thi chon site
               action(() => {
-                this.setState({
-                  finish: true
-                }, () => {
-                  Actions.op_register({
-                    type: ActionConst.RESET,
-                    title: "Đăng ký thông tin",
-                    name_props: response.data.name
-                  });
-                });
+                this.setState(
+                  {
+                    finish: true
+                  },
+                  () => {
+                    Actions.op_register({
+                      type: ActionConst.RESET,
+                      title: 'Đăng ký thông tin',
+                      name_props: response.data.name
+                    });
+                  }
+                );
               })();
-            }else{
+            } else {
               action(() => {
-                this.setState({
-                  finish: true
-                }, () => {
-                  Actions.myTabBar({
-                    type: ActionConst.RESET
-                  });
-                });
-              })(); 
+                this.setState(
+                  {
+                    finish: true
+                  },
+                  () => {
+                    Actions.myTabBar({
+                      type: ActionConst.RESET
+                    });
+                  }
+                );
+              })();
             }
             StatusBar.setBarStyle('light-content');
           })();
@@ -116,19 +120,25 @@ export default class Intro extends Component {
         store.addApiQueue('login_fbak_verify', this._verifyFBAK);
       }
     });
-  }
+  };
 
-
-  _renderImage({item, index}) {
-    return(
-      <ImageBackground key={index} resizeMode="stretch" style={styles.image} source={item.image}>
+  _renderImage({ item, index }) {
+    return (
+      <ImageBackground
+        key={index}
+        resizeMode="stretch"
+        style={styles.image}
+        source={item.image}
+      >
         <TouchableHighlight
           style={styles.finish_btn_box}
           underlayColor="transparent"
-          onPress={this._onFinish.bind(this)}>
+          onPress={this._onFinish.bind(this)}
+        >
           <View style={styles.finish_btn}>
             <Text style={styles.finish_text}>
-              <Icon name="heart-o" size={16} color="#ffffff" /> TRẢI NGHIỆM {APP_NAME}
+              <Icon name="heart-o" size={16} color="#ffffff" /> TRẢI NGHIỆM{' '}
+              {APP_NAME}
             </Text>
           </View>
         </TouchableHighlight>
@@ -154,7 +164,7 @@ export default class Intro extends Component {
   }
 
   render() {
-    var {pageNum} = this.state;
+    var { pageNum } = this.state;
 
     return (
       <View style={styles.container}>
@@ -168,29 +178,38 @@ export default class Intro extends Component {
           renderItem={this._renderImage.bind(this)}
         />
 
-        {pageNum < (images.length - 1) && (<View style={styles.pagination}>
-          {images.map((item, index) => {
-            return(
-              <View key={index} style={[styles.dot, index == pageNum ? styles.dotActive : {}]} />
-            );
-          })}
-        </View>)}
+        {pageNum < images.length - 1 && (
+          <View style={styles.pagination}>
+            {images.map((item, index) => {
+              return (
+                <View
+                  key={index}
+                  style={[styles.dot, index == pageNum ? styles.dotActive : {}]}
+                />
+              );
+            })}
+          </View>
+        )}
 
         <TouchableHighlight
-            underlayColor="transparent"
-            onPress={this._onFinish.bind(this)}
+          underlayColor="transparent"
+          onPress={this._onFinish.bind(this)}
+          style={{
+            position: 'absolute',
+            right: 0,
+            paddingTop: isIOS ? 24 : 4,
+            paddingHorizontal: 15
+          }}
+        >
+          <Text
             style={{
-              position: 'absolute',
-              right: 0,
-              paddingTop: isIOS ? 24 : 4,
-              paddingHorizontal: 15
-            }}
-            >
-            <Text style={{
               fontSize: 14,
-              color: "#404040"
-            }}>Tiếp tục</Text>
-          </TouchableHighlight>
+              color: '#404040'
+            }}
+          >
+            Tiếp tục
+          </Text>
+        </TouchableHighlight>
       </View>
     );
   }
@@ -199,7 +218,7 @@ export default class Intro extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff"
+    backgroundColor: '#ffffff'
   },
   pagination: {
     width: Util.size.width,
@@ -212,7 +231,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   dot: {
-    backgroundColor:'rgba(0,0,0,.3)',
+    backgroundColor: 'rgba(0,0,0,.3)',
     width: 8,
     height: 8,
     borderRadius: 4,
@@ -244,7 +263,7 @@ const styles = StyleSheet.create({
     borderRadius: 2
   },
   finish_text: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 16
   }
 });

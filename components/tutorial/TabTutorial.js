@@ -1,12 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 // librarys
 import * as Animatable from 'react-native-animatable';
@@ -21,14 +16,13 @@ export default class TabTutorial extends Component {
         },
         to: {
           bottom: 2
-        },
+        }
       }
     });
   }
 
   render() {
-
-    var {title, left, onPress} = this.props;
+    var { title, left, onPress } = this.props;
 
     return (
       <View style={styles.container}>
@@ -44,7 +38,8 @@ export default class TabTutorial extends Component {
               if (onPress) {
                 onPress();
               }
-            }}>
+            }}
+          >
             <Text style={styles.btnTitle}>ĐÃ HIỂU</Text>
           </TouchableHighlight>
         </View>
@@ -54,9 +49,13 @@ export default class TabTutorial extends Component {
           iterationCount="infinite"
           direction="alternate"
           duration={300}
-          style={[styles.aniTab, {
-            left: left || Util.size.width / 4 / 2
-          }]}>
+          style={[
+            styles.aniTab,
+            {
+              left: left || Util.size.width / 4 / 2
+            }
+          ]}
+        >
           <Icon name="caret-down" size={30} color={DEFAULT_COLOR} />
         </Animatable.View>
       </View>
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
-    backgroundColor: hexToRgbA("#000000", 0.8),
+    backgroundColor: hexToRgbA('#000000', 0.8)
   },
   content: {
     position: 'absolute',
@@ -83,12 +82,12 @@ const styles = StyleSheet.create({
     borderRadius: 5
   },
   title: {
-    color: "#ffffff"
+    color: '#ffffff'
   },
   btnBox: {
     position: 'absolute',
     right: 15,
-    bottom: 36,
+    bottom: 36
   },
   btn: {
     backgroundColor: hexToRgbA(DEFAULT_COLOR, 0.8),
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
     borderRadius: 3
   },
   btnTitle: {
-    color: "#ffffff",
+    color: '#ffffff',
     fontSize: 14
   },
   aniTab: {

@@ -1,22 +1,25 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import NetInfo from "@react-native-community/netinfo";
+import NetInfo from '@react-native-community/netinfo';
 
 import store from '../store/Store';
 
 @observer
 export default class Error extends Component {
   componentDidMount() {
-    NetInfo.isConnected.addEventListener('connectionChange', this.handleConnectionChange);
+    NetInfo.isConnected.addEventListener(
+      'connectionChange',
+      this.handleConnectionChange
+    );
 
     NetInfo.isConnected
-    .fetch()
-    .done(isConnected => store.setConnect(isConnected));
+      .fetch()
+      .done(isConnected => store.setConnect(isConnected));
   }
 
-  handleConnectionChange = (isConnected) => {
+  handleConnectionChange = isConnected => {
     store.setConnect(isConnected);
-  }
+  };
 
   render() {
     var { isConnected } = store;

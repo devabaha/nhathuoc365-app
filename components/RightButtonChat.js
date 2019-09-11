@@ -1,12 +1,7 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -28,12 +23,15 @@ export default class RightButtonChat extends Component {
             title: this.props.title || undefined,
             tel: this.props.tel || undefined
           });
-        }}>
+        }}
+      >
         <View style={styles.right_btn_add_store}>
           <Icon name="commenting" size={20} color="#ffffff" />
           {count_chat > 0 && (
             <View style={styles.stores_info_action_notify}>
-              <Text style={styles.stores_info_action_notify_value}>{count_chat}</Text>
+              <Text style={styles.stores_info_action_notify_value}>
+                {count_chat}
+              </Text>
             </View>
           )}
         </View>

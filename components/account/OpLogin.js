@@ -30,7 +30,6 @@ const countryPickerCustomStyles = {};
 const brandColor = DEFAULT_COLOR;
 
 export default class OpLogin extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -44,26 +43,27 @@ export default class OpLogin extends Component {
     };
   }
 
-  componentWillMount(){
-  }
+  componentWillMount() {}
 
-  componentWillUnmount(){
-  }
+  componentWillUnmount() {}
 
   onBackAndroid() {
     return true;
   }
 
   _showSticker() {
-    this.setState({
-      sticker_flag: true
-    }, () => {
-      setTimeout(() => {
-        this.setState({
-          sticker_flag: false
-        });
-      }, 2000);
-    });
+    this.setState(
+      {
+        sticker_flag: true
+      },
+      () => {
+        setTimeout(() => {
+          this.setState({
+            sticker_flag: false
+          });
+        }, 2000);
+      }
+    );
   }
 
   _getCode = () => {
@@ -74,9 +74,12 @@ export default class OpLogin extends Component {
         'Thông báo',
         'Hãy điền Số điện thoại',
         [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs.form.refs.textInput.focus()
-          }},
+          {
+            text: 'Đồng ý',
+            onPress: () => {
+              this.refs.form.refs.textInput.focus();
+            }
+          }
         ],
         { cancelable: false }
       );
@@ -87,9 +90,12 @@ export default class OpLogin extends Component {
         'Thông báo',
         'Số điện thoại chưa đúng, vui lòng điền lại. Ex: 0988123456',
         [
-          {text: 'Đồng ý', onPress: () => {
-            this.refs.form.refs.textInput.focus()
-          }},
+          {
+            text: 'Đồng ý',
+            onPress: () => {
+              this.refs.form.refs.textInput.focus();
+            }
+          }
         ],
         { cancelable: false }
       );
@@ -146,18 +152,16 @@ export default class OpLogin extends Component {
         },
         viewControllerMode: 'show', // for iOS only, 'present' by default
         getACallEnabled: true,
-        setEnableInitialSmsButton: false, // true by default
+        setEnableInitialSmsButton: false // true by default
       });
       // Shows the Facebook Account Kit view for login via SMS
-      RNAccountKit.loginWithPhone()
-        .then((res) => {
-          if (res) {
-            this._verifyFBAK(res);
-          }
-        });
+      RNAccountKit.loginWithPhone().then(res => {
+        if (res) {
+          this._verifyFBAK(res);
+        }
+      });
     });
-
-  }
+  };
 
   _verifyCode = () => {
     var formData = this.refs.form.getValues();
@@ -165,7 +169,8 @@ export default class OpLogin extends Component {
     this.setState({ spinner: true }, async () => {
       try {
         var response = await APIHandler.login_sms_verify(formData);
-        if (response && response.status == STATUS_SUCCESS) {//STATUS_SUCCESS
+        if (response && response.status == STATUS_SUCCESS) {
+          //STATUS_SUCCESS
           this.refs.form.refs.textInput.blur();
 
           this._showSticker();
@@ -177,28 +182,35 @@ export default class OpLogin extends Component {
 
             store.setRefreshHomeChange(store.refresh_home_change + 1);
 
-            if (response.data.fill_info_user) {//hien thi chon site
+            if (response.data.fill_info_user) {
+              //hien thi chon site
               action(() => {
-                this.setState({
-                  finish: true
-                }, () => {
-                  Actions.op_register({
-                    type: ActionConst.RESET,
-                    title: "Đăng ký thông tin",
-                    name_props: response.data.name
-                  });
-                });
+                this.setState(
+                  {
+                    finish: true
+                  },
+                  () => {
+                    Actions.op_register({
+                      type: ActionConst.RESET,
+                      title: 'Đăng ký thông tin',
+                      name_props: response.data.name
+                    });
+                  }
+                );
               })();
-            }else{
+            } else {
               action(() => {
-                this.setState({
-                  finish: true
-                }, () => {
-                  Actions.myTabBar({
-                    type: ActionConst.RESET
-                  });
-                });
-              })(); 
+                this.setState(
+                  {
+                    finish: true
+                  },
+                  () => {
+                    Actions.myTabBar({
+                      type: ActionConst.RESET
+                    });
+                  }
+                );
+              })();
             }
 
             setTimeout(() => {
@@ -219,10 +231,10 @@ export default class OpLogin extends Component {
         store.addApiQueue('login_sms_verify', this._verifyCode);
       }
     });
-  }
+  };
 
   // verify facebook account kit token
-  _verifyFBAK = (fbres) => {
+  _verifyFBAK = fbres => {
     this.setState({ spinner: true }, async () => {
       try {
         var response = await APIHandler.login_fbak_verify(fbres);
@@ -239,26 +251,33 @@ export default class OpLogin extends Component {
 
             store.setRefreshHomeChange(store.refresh_home_change + 1);
 
-            if (!response.data.name) {//hien thi chon site
+            if (!response.data.name) {
+              //hien thi chon site
               action(() => {
-                this.setState({
-                  finish: true
-                }, () => {
-                  Actions.op_register({
-                    type: ActionConst.RESET,
-                    title: "Đăng ký thông tin"
-                  });
-                });
+                this.setState(
+                  {
+                    finish: true
+                  },
+                  () => {
+                    Actions.op_register({
+                      type: ActionConst.RESET,
+                      title: 'Đăng ký thông tin'
+                    });
+                  }
+                );
               })();
-            }else{
+            } else {
               action(() => {
-                this.setState({
-                  finish: true
-                }, () => {
-                  Actions.myTabBar({
-                    type: ActionConst.RESET
-                  });
-                });
+                this.setState(
+                  {
+                    finish: true
+                  },
+                  () => {
+                    Actions.myTabBar({
+                      type: ActionConst.RESET
+                    });
+                  }
+                );
               })();
             }
             StatusBar.setBarStyle('light-content');
@@ -281,84 +300,85 @@ export default class OpLogin extends Component {
         store.addApiQueue('login_fbak_verify', this._verifyFBAK);
       }
     });
-  }
+  };
 
-  _onChangeText = (val) => {
+  _onChangeText = val => {
     if (!this.state.enterCode) return;
-    if (val.length === MAX_LENGTH_CODE)
-    this._verifyCode();
-  }
+    if (val.length === MAX_LENGTH_CODE) this._verifyCode();
+  };
 
   _tryAgain = () => {
-    this.refs.form.refs.textInput.setNativeProps({ text: '' })
+    this.refs.form.refs.textInput.setNativeProps({ text: '' });
     this.refs.form.refs.textInput.focus();
     this.setState({ enterCode: false });
-  }
+  };
 
   _getSubmitAction = () => {
     this.state.enterCode ? this._verifyCode() : this._getCode();
-  }
+  };
 
   render() {
-
-    let headerText = `Đăng nhập`
+    let headerText = `Đăng nhập`;
     let buttonText = this.state.enterCode ? 'Xác minh' : 'Gửi mã xác thực';
-    let textStyle = this.state.enterCode ? {
-      height: 50,
-      textAlign: 'center',
-      fontSize: 40,
-      fontWeight: 'bold',
-      fontFamily: 'Courier'
-    } : {};
+    let textStyle = this.state.enterCode
+      ? {
+          height: 50,
+          textAlign: 'center',
+          fontSize: 40,
+          fontWeight: 'bold',
+          fontFamily: 'Courier'
+        }
+      : {};
 
     return (
-
       <View style={styles.container}>
-
         <Text style={styles.header}>{headerText}</Text>
 
         <Form ref={'form'} style={styles.form}>
-
           <View style={{ flexDirection: 'row' }}>
-
             <TextInput
               ref={'textInput'}
-              name={this.state.enterCode ? 'otp' : 'username' }
+              name={this.state.enterCode ? 'otp' : 'username'}
               type={'TextInput'}
               underlineColorAndroid={'transparent'}
               autoCapitalize={'none'}
               autoCorrect={false}
               onChangeText={this._onChangeText}
-              placeholder={this.state.enterCode ? '_ _ _ _' : 'Nhập số điện thoại (Ex:0988123456)'}
+              placeholder={
+                this.state.enterCode
+                  ? '_ _ _ _'
+                  : 'Nhập số điện thoại (Ex:0988123456)'
+              }
               keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-              style={[ styles.textInput, textStyle ]}
-              returnKeyType='go'
+              style={[styles.textInput, textStyle]}
+              returnKeyType="go"
               autoFocus
               placeholderTextColor="#999999"
               selectionColor="#999999"
-              maxLength={this.state.enterCode ? MAX_LENGTH_CODE : MAX_LENGTH_NUMBER}
-              onSubmitEditing={this._getSubmitAction} />
-
+              maxLength={
+                this.state.enterCode ? MAX_LENGTH_CODE : MAX_LENGTH_NUMBER
+              }
+              onSubmitEditing={this._getSubmitAction}
+            />
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={this._getSubmitAction}>
-            <Text style={styles.buttonText}>{ buttonText }</Text>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={this._getSubmitAction}
+          >
+            <Text style={styles.buttonText}>{buttonText}</Text>
           </TouchableOpacity>
 
           {this._renderFooter()}
-
         </Form>
 
-        <Spinner
-          visible={this.state.spinner}
-          />
+        <Spinner visible={this.state.spinner} />
 
         <Sticker
           active={this.state.sticker_flag}
           message="Đăng nhập thành công."
-         />
+        />
       </View>
-
     );
   }
 
@@ -369,7 +389,13 @@ export default class OpLogin extends Component {
           <Text style={styles.wrongNumberText}>
             Nhập mã xác thực đã gửi tới số điện thoại của bạn!
           </Text>
-          <Text style={[styles.wrongNumberText, {color: DEFAULT_COLOR, fontSize: 12}]} onPress={this._tryAgain}>
+          <Text
+            style={[
+              styles.wrongNumberText,
+              { color: DEFAULT_COLOR, fontSize: 12 }
+            ]}
+            onPress={this._tryAgain}
+          >
             Chưa nhận được mã, thử lại!
           </Text>
         </View>
@@ -377,10 +403,14 @@ export default class OpLogin extends Component {
 
     return (
       <View>
-        <Text style={styles.disclaimerText}>Nhập số điện thoại và "Gửi mã xác thực", {global.APP_NAME_SHOW_SHOW} sẽ gửi mã xác minh về số điện thoại của bạn. Nhập mã xác thực và đăng nhập hoàn tất.</Text>
+        <Text style={styles.disclaimerText}>
+          Nhập số điện thoại và "Gửi mã xác thực", {global.APP_NAME_SHOW_SHOW}{' '}
+          sẽ gửi mã xác minh về số điện thoại của bạn. Nhập mã xác thực và đăng
+          nhập hoàn tất.
+        </Text>
       </View>
     );
-  }
+  };
 }
 
 const styles = StyleSheet.create({
@@ -397,7 +427,7 @@ const styles = StyleSheet.create({
     marginTop: 60,
     fontSize: 22,
     margin: 20,
-    color: '#4A4A4A',
+    color: '#4A4A4A'
   },
   form: {
     margin: 20
@@ -407,7 +437,7 @@ const styles = StyleSheet.create({
     margin: 0,
     flex: 1,
     fontSize: 20,
-    color: "#333333"
+    color: '#333333'
   },
   button: {
     marginTop: 20,
@@ -415,7 +445,7 @@ const styles = StyleSheet.create({
     backgroundColor: brandColor,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5,
+    borderRadius: 5
   },
   buttonText: {
     color: '#fff',
