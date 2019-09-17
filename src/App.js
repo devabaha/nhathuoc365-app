@@ -33,6 +33,7 @@ import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
+import { Voucher as VoucherContainer } from './packages/tickid-voucher';
 
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
@@ -575,6 +576,17 @@ class App extends Component {
                       />
                     </Stack>
                   </Tabs>
+
+                  {/* ================ MAIN VOUCHER ================ */}
+                  <Stack key={appConfig.routes.mainVoucher}>
+                    <Scene
+                      key={`${appConfig.routes.mainVoucher}_1`}
+                      title="TickID Voucher"
+                      component={VoucherContainer}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
 
                   <Stack key="address">
                     <Scene

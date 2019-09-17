@@ -29,7 +29,9 @@ const config = Object.freeze({
     scanQrCodeTab: 'scanQrCodeTab',
 
     scanQrCode: 'scanQrCode',
-    qrBarCode: 'qrBarCode'
+    qrBarCode: 'qrBarCode',
+
+    mainVoucher: 'mainVoucher'
   }
 });
 

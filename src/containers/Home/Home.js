@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import HomeComponent from '../../components/Home';
 import { Actions } from 'react-native-router-flux';
+import appConfig from 'app-config';
 import store from 'app-store';
 
 @observer
@@ -84,7 +85,9 @@ class Home extends Component {
 
   handlePressedSurplusNext = () => {};
 
-  handlePressedMyVoucher = () => {};
+  handlePressedMyVoucher = () => {
+    Actions.push(appConfig.routes.mainVoucher);
+  };
 
   handlePressedTransaction = () => {};
 
