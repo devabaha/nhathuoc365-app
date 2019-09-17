@@ -56,7 +56,7 @@ export default class ScanQRCode extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...MARGIN_SCREEN,
+
     marginBottom: 0,
     width: '100%'
   },

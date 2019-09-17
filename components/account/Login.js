@@ -83,7 +83,7 @@ export default class Login extends Component {
                     finish: true
                   },
                   () => {
-                    Actions.myTabBar({
+                    Actions.primaryTabbar({
                       type: ActionConst.RESET
                     });
                   }

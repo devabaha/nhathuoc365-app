@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-    ...MARGIN_SCREEN,
+
     marginBottom: 0
   },
   webView: {

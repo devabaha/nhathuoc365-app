@@ -321,7 +321,7 @@ class StoreItem extends Component {
                       coppy_sticker_flag: false
                     },
                     () => {
-                      Actions.myTabBar({
+                      Actions.primaryTabbar({
                         type: ActionConst.RESET
                       });
                     }
@@ -443,7 +443,7 @@ class StoreItem extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...MARGIN_SCREEN,
+
     marginBottom: 0,
     backgroundColor: '#ffffff'
   },

@@ -96,7 +96,7 @@ export default class Intro extends Component {
                     finish: true
                   },
                   () => {
-                    Actions.myTabBar({
+                    Actions.primaryTabbar({
                       type: ActionConst.RESET
                     });
                   }

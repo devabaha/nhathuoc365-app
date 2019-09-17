@@ -262,8 +262,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    flex: 1,
-    ...MARGIN_SCREEN
+    flex: 1
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,

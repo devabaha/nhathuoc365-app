@@ -1,4 +1,11 @@
 import React, { Component } from 'react';
+
+import './lib/Constant';
+import './lib/Helper';
+
+import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import appConfig from 'app-config';
+import store from 'app-store';
 import {
   View,
   Text,
@@ -8,34 +15,29 @@ import {
   Linking,
   SafeAreaView
 } from 'react-native';
-
-// constant, helper
-import './lib/Constant';
-import './lib/Helper';
-
 // library
 import {
   Scene,
   Router,
-  Modal,
-  Reducer,
   Actions,
-  ActionConst
+  ActionConst,
+  Overlay,
+  Tabs,
+  Stack,
+  Modal,
+  Lightbox
 } from 'react-native-router-flux';
 import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
 
-// store
-import Store from 'app-store';
-
 import HomeContainer from './container/Home';
 
 import Intro from './components/intro/Intro';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
-import Notifys from './components/notify/Notifys';
+import Notify from './components/notify/Notify';
 import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
@@ -65,7 +67,6 @@ import QRBarCode from './components/Home/QRBarCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
-import Error from './components/Error';
 import ChooseLocation from './components/Home/ChooseLocation';
 import CoinWallet from './components/account/CoinWallet';
 import VndWallet from './components/account/VndWallet/VndWallet';
@@ -81,83 +82,29 @@ import NapTKC from './components/services/NapTKC';
 import NapTKCConfirm from './components/services/NapTKCConfirm';
 import MdCard from './components/services/MdCard';
 import MdCardConfirm from './components/services/MdCardConfirm';
-
-// others
 import TabIcon from './components/TabIcon';
-import navBar from './components/NavBar';
-// navigator bar
-const custommerNav = {
-  navBar,
-  sceneStyle: {
-    backgroundColor: '#f3f3f3'
+
+const transitionConfig = () => ({
+  screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid
+});
+
+const navBarConfig = {
+  navigationBarStyle: {
+    backgroundColor: appConfig.colors.primary
+  },
+  titleStyle: {
+    color: appConfig.colors.white,
+    alignSelf: 'center'
+  },
+  navBarButtonColor: appConfig.colors.white,
+  backButtonTextStyle: {
+    color: appConfig.colors.white
   }
 };
 
 var currentSceneName = null;
 var currentSceneOnBack = null;
 var backButtonPressedOnceToExit = false;
-
-var _oldName = '';
-const reducerCreate = params => {
-  const defaultReducer = Reducer(params);
-  return (state, action) => {
-    if (action.type == 'back') {
-      Store.runStoreUnMount();
-    }
-
-    // get next state
-    var nextState = defaultReducer(state, action);
-
-    // get current scene key
-    currentSceneName = getCurrentName(nextState);
-    currentTabHandler(currentSceneName);
-
-    if (currentSceneName && _oldName != currentSceneName) {
-      _oldName = currentSceneName;
-
-      GoogleAnalytic(currentSceneName);
-    }
-
-    // get current scene onback function
-    currentSceneOnBack = getCurrentOnBack(nextState);
-    return nextState;
-  };
-};
-
-function currentTabHandler(key) {
-  if (key != '_home') {
-    Store.is_stay_home = false;
-  }
-  if (key != '_main_notify') {
-    Store.is_stay_main_notify = false;
-  }
-  if (key != '_orders') {
-    Store.is_stay_orders = false;
-  }
-  if (key != '_account') {
-    Store.is_stay_account = false;
-  }
-}
-
-function getCurrentName(obj) {
-  const { index, children, name } = obj;
-  if (index !== undefined) {
-    if (children) {
-      return getCurrentName(children[index]);
-    }
-  }
-  return name;
-}
-
-function getCurrentOnBack(obj) {
-  const { index, children, onBack } = obj;
-  if (index !== undefined) {
-    if (children) {
-      return getCurrentOnBack(children[index]);
-    }
-  }
-  return onBack;
-}
 
 @observer
 class App extends Component {
@@ -242,14 +189,14 @@ class App extends Component {
         fb_access_token: ''
       });
       if (response && response.status == STATUS_SUCCESS) {
-        Store.setUserInfo(response.data);
+        store.setUserInfo(response.data);
         action(() => {
           this.setState(
             {
               finish: true
             },
             () => {
-              Actions.myTabBar({
+              Actions.primaryTabbar({
                 type: ActionConst.RESET
               });
             }
@@ -260,7 +207,7 @@ class App extends Component {
         Toast.show(response.message);
       }
       if (response && response.status == STATUS_FILL_INFO_USER) {
-        Store.setUserInfo(response.data);
+        store.setUserInfo(response.data);
         action(() => {
           this.setState(
             {
@@ -278,7 +225,7 @@ class App extends Component {
         StatusBar.setBarStyle('light-content');
       }
       if (response && response.status == STATUS_UNDEFINE_USER) {
-        Store.setUserInfo(response.data);
+        store.setUserInfo(response.data);
         action(() => {
           this.setState(
             {
@@ -295,23 +242,7 @@ class App extends Component {
     } catch (e) {
       console.warn(e + ' user_login');
 
-      Store.addApiQueue('user_login', this._login.bind(this));
-    }
-  }
-
-  async _getData() {
-    try {
-      var response = await APIHandler.user_sites();
-
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({
-          stores_data: response.data
-        });
-      }
-    } catch (e) {
-      console.warn(e + ' user_sites');
-
-      Store.addApiQueue('user_sites', this._getData.bind(this));
+      store.addApiQueue('user_login', this._login.bind(this));
     }
   }
 
@@ -359,7 +290,7 @@ class App extends Component {
       var response = await APIHandler.site_info(page_id);
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
-          Store.setStoreData(response.data);
+          store.setStoreData(response.data);
 
           this._goStore(response);
         })();
@@ -371,7 +302,7 @@ class App extends Component {
     } catch (e) {
       console.warn(e + ' site_info');
 
-      Store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
+      store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
     }
   }
 
@@ -416,7 +347,7 @@ class App extends Component {
     } catch (e) {
       console.warn(e + ' user_news');
 
-      Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
+      store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     }
   }
 
@@ -425,7 +356,7 @@ class App extends Component {
       var response = await APIHandler.site_info(page_id);
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
-          Store.setStoreData(response.data);
+          store.setStoreData(response.data);
           this._goStore(response);
           this._goItem(page_id, item_id);
         })();
@@ -433,7 +364,7 @@ class App extends Component {
         Actions.search_store({
           site_code: response.data.site_code,
           onSuccess: () => {
-            Store.setStoreData(response.data);
+            store.setStoreData(response.data);
             this._goStore(response);
             this._goItem(page_id, item_id);
           }
@@ -470,12 +401,8 @@ class App extends Component {
     } catch (e) {
       console.warn(e + ' user_news');
 
-      Store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
+      store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
     }
-  }
-
-  _onRegistered(notifData) {
-    // console.log("Device had been registered for push notifys!", notifData);
   }
 
   async _onIds(device) {
@@ -492,7 +419,7 @@ class App extends Component {
       } catch (e) {
         console.warn(e + ' add_push_token');
 
-        Store.addApiQueue('add_push_token', this._onIds.bind(this, device));
+        store.addApiQueue('add_push_token', this._onIds.bind(this, device));
       }
     }
   }
@@ -538,420 +465,409 @@ class App extends Component {
     return (
       <Router
         backAndroidHandler={this._backAndroidHandler.bind(this)}
-        createReducer={reducerCreate}
-        store={Store}
+        store={store}
       >
-        <Scene key="modal" component={Modal}>
-          <Scene key="root">
-            <Scene
-              key="myTabBar"
-              tabs={true}
-              tabBarStyle={styles.tabBarStyle}
-              pressOpacity={1}
-            >
-              {/**
-               ************************ Tab 1 ************************
-               */}
+        <Overlay key="overlay">
+          <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
+            <Lightbox key="lightbox">
               <Scene
-                key="myTab1"
-                icon={TabIcon}
-                iconTitle="TickID"
-                iconName="store"
-                iconSize={24}
-                onPress={() => {
-                  Actions._home({ type: ActionConst.REFRESH });
-                }}
+                key="root"
+                titleStyle={{ alignSelf: 'center' }}
+                headerLayoutPreset="center"
+                hideNavBar
               >
+                <Tabs
+                  key="primaryTabbar"
+                  showLabel={false}
+                  tabBarStyle={styles.tabBarStyle}
+                  activeBackgroundColor="white"
+                  inactiveBackgroundColor="white"
+                  {...navBarConfig}
+                >
+                  {/**
+                   ************************ Tab 1 ************************
+                   */}
+                  <Stack
+                    key="myTab1"
+                    icon={TabIcon}
+                    iconLabel="TickID"
+                    iconName="store"
+                    iconSize={24}
+                  >
+                    <Scene
+                      key="_home"
+                      title="TickID"
+                      component={HomeContainer}
+                      hideNavBar
+                    />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 2 ************************
+                   */}
+                  <Stack
+                    key="myTab2"
+                    icon={TabIcon}
+                    iconLabel="Tin tức"
+                    iconName="notifications"
+                    iconSize={24}
+                    notifyKey="new_totals"
+                  >
+                    <Scene
+                      key="_main_notify"
+                      title="Tin tức"
+                      component={Notify}
+                    />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 3 ************************
+                   */}
+                  <Stack
+                    key="myTab3"
+                    icon={TickIdScaningButton}
+                    primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
+                  >
+                    <Scene
+                      key="_main_notify"
+                      title="Tin tức"
+                      component={Notify}
+                    />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 3 ************************
+                   */}
+                  <Stack
+                    key="myTab4"
+                    icon={TabIcon}
+                    iconLabel="Đơn hàng"
+                    iconName="shopping-cart"
+                    iconSize={24}
+                  >
+                    <Scene key="_orders" title="Đơn hàng" component={Orders} />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 4 ************************
+                   */}
+                  <Stack
+                    key="myTab5"
+                    icon={TabIcon}
+                    iconLabel="Tài khoản"
+                    iconName="account-circle"
+                    notifyKey="notify_account"
+                    iconSize={24}
+                  >
+                    <Scene
+                      hideNavBar
+                      key="_account"
+                      title="Tài khoản"
+                      component={Account}
+                    />
+                  </Stack>
+                </Tabs>
+
                 <Scene
-                  key="_home"
-                  title="TickID"
-                  component={HomeContainer}
+                  key="address"
+                  title="Địa chỉ"
+                  component={Address}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="coin_wallet"
+                  title="Tài khoản xu"
+                  component={CoinWallet}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="confirm"
+                  title="Xác nhận"
+                  component={Confirm}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="create_address"
+                  title="Thêm địa chỉ"
+                  component={CreateAddress}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="register"
+                  title="Đăng ký"
+                  component={Register}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="login"
                   hideNavBar
-                  {...custommerNav}
+                  title=""
+                  component={Login}
+                  {...navBarConfig}
                 />
-              </Scene>
-
-              {/**
-               ************************ Tab 2 ************************
-               */}
-              <Scene
-                key="myTab2"
-                icon={TabIcon}
-                iconTitle="Tin tức"
-                iconName="notifications"
-                iconSize={24}
-                notifyKey="new_totals"
-                onPress={this._goMainNotify}
-              >
                 <Scene
-                  key="_main_notify"
-                  title="Tin tức"
-                  component={Notifys}
-                  {...custommerNav}
+                  key="op_login"
+                  title="Đăng ký"
+                  component={OpLogin}
+                  {...navBarConfig}
                 />
-              </Scene>
-
-              {/**
-               ************************ Tab 3 ************************
-               */}
-              <Scene
-                key="myTab3"
-                icon={TickIdScaningButton}
-                primaryColor={DEFAULT_COLOR} // optional for TickIdScaningButton
-                onPress={this._goQRCode.bind(this, this.state.store_data)}
-              >
                 <Scene
-                  key="_main_notify"
-                  title="Tin tức"
-                  component={Notifys}
-                  {...custommerNav}
+                  key="op_register"
+                  title="Đăng ký"
+                  component={OpRegister}
+                  {...navBarConfig}
                 />
-              </Scene>
-
-              {/**
-               ************************ Tab 3 ************************
-               */}
-              <Scene
-                key="myTab4"
-                icon={TabIcon}
-                iconTitle="Đơn hàng"
-                iconName="shopping-cart"
-                iconSize={24}
-                onPress={() => {
-                  Actions._orders({ type: ActionConst.REFRESH });
-                }}
-              >
                 <Scene
-                  key="_orders"
-                  title="Đơn hàng"
-                  component={Orders}
-                  {...custommerNav}
+                  key="forget_verify"
+                  title="Lấy lại mật khẩu"
+                  component={ForgetVerify}
+                  {...navBarConfig}
                 />
-              </Scene>
-
-              {/**
-               ************************ Tab 4 ************************
-               */}
-              <Scene
-                key="myTab5"
-                icon={TabIcon}
-                iconTitle="Tài khoản"
-                iconName="account-circle"
-                notifyKey="notify_account"
-                iconSize={24}
-                onPress={() => {
-                  Actions._account({ type: ActionConst.REFRESH });
-                }}
-              >
                 <Scene
+                  key="forget_active"
+                  title="Kích hoạt tài khoản"
+                  component={ForgetActive}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="new_pass"
+                  title="Tạo mật khẩu mới"
+                  component={NewPass}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="cart"
+                  title="Giỏ hàng"
+                  component={Cart}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="stores"
+                  title="Cửa hàng"
+                  component={Stores}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="stores_list"
+                  title="Cửa hàng"
+                  component={StoresList}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="search"
+                  title="Tìm kiếm"
+                  component={Search}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="item"
+                  title="Chi tiết sản phẩm"
+                  component={Item}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="item_image_viewer"
+                  direction="vertical"
                   hideNavBar
-                  key="_account"
-                  title="Tài khoản"
-                  component={Account}
-                  {...custommerNav}
+                  title=""
+                  component={ItemImageViewer}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="rating"
+                  panHandlers={null}
+                  direction="vertical"
+                  hideNavBar
+                  title=""
+                  component={Rating}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="orders_item"
+                  title="Chi tiết đơn hàng"
+                  component={OrdersItem}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="view_orders_item"
+                  title="Thông tin đơn hàng"
+                  component={ViewOrdersItem}
+                  {...navBarConfig}
+                />
+
+                <Scene
+                  key="notifys"
+                  title="Tin tức"
+                  component={Notify}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="notifys_time"
+                  title="Lịch hàng hóa"
+                  component={Notify}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="notifys_farm"
+                  title="Trang trại"
+                  component={Notify}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="notify_item"
+                  title="Chi tiết"
+                  component={NotifyItem}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="search_store"
+                  title="Tìm cửa hàng"
+                  component={SearchStore}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="scan_qr_code"
+                  title="Quét mã"
+                  component={ScanQRCode}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="qr_bar_code"
+                  title="Mã tài khoản"
+                  component={QRBarCode}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="list_store"
+                  title="Cửa hàng"
+                  component={ListStore}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="add_store"
+                  title="Thêm cửa hàng"
+                  component={AddStore}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="store_orders"
+                  title=""
+                  component={StoreOrders}
+                  {...navBarConfig}
+                />
+                <Scene key="chat" title="" component={Chat} {...navBarConfig} />
+                <Scene
+                  key="webview"
+                  title=""
+                  component={WebView}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="intro"
+                  initial={showIntro}
+                  hideNavBar
+                  title=""
+                  component={Intro}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="_add_ref"
+                  title=""
+                  component={AddRef}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="choose_location"
+                  title=""
+                  component={ChooseLocation}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="vnd_wallet"
+                  title=""
+                  component={VndWallet}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="pay_wallet"
+                  title=""
+                  component={PayWallet}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="pay_account"
+                  title=""
+                  component={PayAccount}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="affiliate"
+                  title=""
+                  component={Affiliate}
+                  {...navBarConfig}
+                />
+
+                <Scene
+                  key="profile_detail"
+                  title="Tài khoản của tôi"
+                  component={ProfileDetail}
+                  {...navBarConfig}
+                />
+
+                <Scene
+                  key="edit_profile"
+                  title="Tài khoản của tôi"
+                  component={EditProfile}
+                  {...navBarConfig}
+                />
+
+                <Scene
+                  key="detail_history_payment"
+                  title="Tích điểm"
+                  component={DetailHistoryPayment}
+                  {...navBarConfig}
+                />
+
+                <Scene
+                  key="phonecard"
+                  title="Mua mã thẻ di động"
+                  component={PhoneCard}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="phonecard_confirm"
+                  title="Xác nhận"
+                  component={PhoneCardConfirm}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="nap_tkc"
+                  title="Nạp tiền điện thoại"
+                  component={NapTKC}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="nap_tkc_confirm"
+                  title="Xác nhận"
+                  component={NapTKCConfirm}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="md_card"
+                  title="Nạp thẻ trong ngày"
+                  component={MdCard}
+                  {...navBarConfig}
+                />
+                <Scene
+                  key="md_card_confirm"
+                  title="Xác nhận"
+                  component={MdCardConfirm}
+                  {...navBarConfig}
                 />
               </Scene>
-            </Scene>
-
-            <Scene
-              key="address"
-              title="Địa chỉ"
-              component={Address}
-              {...custommerNav}
-            />
-            <Scene
-              key="coin_wallet"
-              title="Tài khoản xu"
-              component={CoinWallet}
-              {...custommerNav}
-            />
-            <Scene
-              key="confirm"
-              title="Xác nhận"
-              component={Confirm}
-              {...custommerNav}
-            />
-            <Scene
-              key="create_address"
-              title="Thêm địa chỉ"
-              component={CreateAddress}
-              {...custommerNav}
-            />
-            <Scene
-              key="register"
-              title="Đăng ký"
-              component={Register}
-              {...custommerNav}
-            />
-            <Scene
-              key="login"
-              hideNavBar
-              title=""
-              component={Login}
-              {...custommerNav}
-            />
-            <Scene
-              key="op_login"
-              title="Đăng ký"
-              component={OpLogin}
-              {...custommerNav}
-            />
-            <Scene
-              key="op_register"
-              title="Đăng ký"
-              component={OpRegister}
-              {...custommerNav}
-            />
-            <Scene
-              key="forget_verify"
-              title="Lấy lại mật khẩu"
-              component={ForgetVerify}
-              {...custommerNav}
-            />
-            <Scene
-              key="forget_active"
-              title="Kích hoạt tài khoản"
-              component={ForgetActive}
-              {...custommerNav}
-            />
-            <Scene
-              key="new_pass"
-              title="Tạo mật khẩu mới"
-              component={NewPass}
-              {...custommerNav}
-            />
-            <Scene
-              key="cart"
-              title="Giỏ hàng"
-              component={Cart}
-              {...custommerNav}
-            />
-            <Scene
-              key="stores"
-              title="Cửa hàng"
-              component={Stores}
-              {...custommerNav}
-            />
-            <Scene
-              key="stores_list"
-              title="Cửa hàng"
-              component={StoresList}
-              {...custommerNav}
-            />
-            <Scene
-              key="search"
-              title="Tìm kiếm"
-              component={Search}
-              {...custommerNav}
-            />
-            <Scene
-              key="item"
-              title="Chi tiết sản phẩm"
-              component={Item}
-              {...custommerNav}
-            />
-            <Scene
-              key="item_image_viewer"
-              direction="vertical"
-              hideNavBar
-              title=""
-              component={ItemImageViewer}
-              {...custommerNav}
-            />
-            <Scene
-              key="rating"
-              panHandlers={null}
-              direction="vertical"
-              hideNavBar
-              title=""
-              component={Rating}
-              {...custommerNav}
-            />
-            <Scene
-              key="orders_item"
-              title="Chi tiết đơn hàng"
-              component={OrdersItem}
-              {...custommerNav}
-            />
-            <Scene
-              key="view_orders_item"
-              title="Thông tin đơn hàng"
-              component={ViewOrdersItem}
-              {...custommerNav}
-            />
-
-            <Scene
-              key="notifys"
-              title="Tin tức"
-              component={Notifys}
-              {...custommerNav}
-            />
-            <Scene
-              key="notifys_time"
-              title="Lịch hàng hóa"
-              component={Notifys}
-              {...custommerNav}
-            />
-            <Scene
-              key="notifys_farm"
-              title="Trang trại"
-              component={Notifys}
-              {...custommerNav}
-            />
-            <Scene
-              key="notify_item"
-              title="Chi tiết"
-              component={NotifyItem}
-              {...custommerNav}
-            />
-            <Scene
-              key="search_store"
-              title="Tìm cửa hàng"
-              component={SearchStore}
-              {...custommerNav}
-            />
-            <Scene
-              key="scan_qr_code"
-              title="Quét mã"
-              component={ScanQRCode}
-              {...custommerNav}
-            />
-            <Scene
-              key="qr_bar_code"
-              title="Mã tài khoản"
-              component={QRBarCode}
-              {...custommerNav}
-            />
-            <Scene
-              key="list_store"
-              title="Cửa hàng"
-              component={ListStore}
-              {...custommerNav}
-            />
-            <Scene
-              key="add_store"
-              title="Thêm cửa hàng"
-              component={AddStore}
-              {...custommerNav}
-            />
-            <Scene
-              key="store_orders"
-              title=""
-              component={StoreOrders}
-              {...custommerNav}
-            />
-            <Scene key="chat" title="" component={Chat} {...custommerNav} />
-            <Scene
-              key="webview"
-              title=""
-              component={WebView}
-              {...custommerNav}
-            />
-            <Scene
-              key="intro"
-              initial={showIntro}
-              hideNavBar
-              title=""
-              component={Intro}
-              {...custommerNav}
-            />
-            <Scene
-              key="_add_ref"
-              title=""
-              component={AddRef}
-              {...custommerNav}
-            />
-            <Scene
-              key="choose_location"
-              title=""
-              component={ChooseLocation}
-              {...custommerNav}
-            />
-            <Scene
-              key="vnd_wallet"
-              title=""
-              component={VndWallet}
-              {...custommerNav}
-            />
-            <Scene
-              key="pay_wallet"
-              title=""
-              component={PayWallet}
-              {...custommerNav}
-            />
-            <Scene
-              key="pay_account"
-              title=""
-              component={PayAccount}
-              {...custommerNav}
-            />
-            <Scene
-              key="affiliate"
-              title=""
-              component={Affiliate}
-              {...custommerNav}
-            />
-
-            <Scene
-              key="profile_detail"
-              title="Tài khoản của tôi"
-              component={ProfileDetail}
-              {...custommerNav}
-            />
-
-            <Scene
-              key="edit_profile"
-              title="Tài khoản của tôi"
-              component={EditProfile}
-              {...custommerNav}
-            />
-
-            <Scene
-              key="detail_history_payment"
-              title="Tích điểm"
-              component={DetailHistoryPayment}
-              {...custommerNav}
-            />
-
-            <Scene
-              key="phonecard"
-              title="Mua mã thẻ di động"
-              component={PhoneCard}
-              {...custommerNav}
-            />
-            <Scene
-              key="phonecard_confirm"
-              title="Xác nhận"
-              component={PhoneCardConfirm}
-              {...custommerNav}
-            />
-            <Scene
-              key="nap_tkc"
-              title="Nạp tiền điện thoại"
-              component={NapTKC}
-              {...custommerNav}
-            />
-            <Scene
-              key="nap_tkc_confirm"
-              title="Xác nhận"
-              component={NapTKCConfirm}
-              {...custommerNav}
-            />
-            <Scene
-              key="md_card"
-              title="Nạp thẻ trong ngày"
-              component={MdCard}
-              {...custommerNav}
-            />
-            <Scene
-              key="md_card_confirm"
-              title="Xác nhận"
-              component={MdCardConfirm}
-              {...custommerNav}
-            />
-          </Scene>
-          <Scene key="error" component={Error} />
-        </Scene>
+            </Lightbox>
+          </Modal>
+        </Overlay>
       </Router>
     );
   }
@@ -961,7 +877,7 @@ class App extends Component {
       return (
         <SafeAreaView style={styles.safeArea}>
           <View style={styles.container}>
-            {!Store.isConnected && (
+            {!store.isConnected && (
               <View style={styles.content}>
                 <Text style={styles.message}>Kiểm tra kết nối internet!</Text>
               </View>
@@ -1021,7 +937,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: appConfig.colors.primary
   }
 });
 

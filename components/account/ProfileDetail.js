@@ -103,7 +103,7 @@ export default class ProfileDetail extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...MARGIN_SCREEN,
+
     marginBottom: 0,
     width: '100%',
     backgroundColor: '#EFEFF4'

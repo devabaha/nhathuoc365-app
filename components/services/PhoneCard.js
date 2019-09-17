@@ -294,7 +294,7 @@ export default class PhoneCard extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...MARGIN_SCREEN,
+
     marginBottom: 0
   },
   input_label_header: {

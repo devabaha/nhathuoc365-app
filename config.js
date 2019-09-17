@@ -16,7 +16,14 @@ const config = Object.freeze({
     height: Dimensions.get('window').height,
     statusBarHeight: getStatusBarHeight(),
     bottomSpace: getBottomSpace()
-  })
+  }),
+  colors: {
+    primary: '#812384',
+    white: '#fff'
+  },
+  routes: {
+    primaryTabbar: 'primaryTabbar'
+  }
 });
 
 export default config;

@@ -205,7 +205,7 @@ export default class OpLogin extends Component {
                     finish: true
                   },
                   () => {
-                    Actions.myTabBar({
+                    Actions.primaryTabbar({
                       type: ActionConst.RESET
                     });
                   }
@@ -273,7 +273,7 @@ export default class OpLogin extends Component {
                     finish: true
                   },
                   () => {
-                    Actions.myTabBar({
+                    Actions.primaryTabbar({
                       type: ActionConst.RESET
                     });
                   }

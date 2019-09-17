@@ -1,39 +1,36 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import store from 'app-store';
+import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { View, Text, StyleSheet, Platform } from 'react-native';
+import appConfig from 'app-config';
 
 @observer
 class TabIcon extends Component {
-  get normalStyle() {
-    return this.props.selected || this.props.iconActive
-      ? styles.titleSelected
-      : styles.title;
-  }
+  static propTypes = {
+    focused: PropTypes.bool,
+    label: PropTypes.string,
+    iconLabel: PropTypes.string,
+    notifyKey: PropTypes.string,
+    iconSize: PropTypes.number
+  };
 
-  get notifyCount() {
-    if (this.props.notifyKey) {
-      return parseInt(store.notify[this.props.notifyKey]);
-    }
-    return 0;
-  }
+  static defaultProps = {
+    focused: false,
+    label: '',
+    iconLabel: '',
+    notifyKey: '',
+    iconSize: 24
+  };
 
-  renderNotify(notifyCount) {
-    if (notifyCount > 0) {
-      return (
-        <View style={styles.storesInfoActionNotify}>
-          <Text style={styles.storesInfoActionNotifyValue}>{notifyCount}</Text>
-        </View>
-      );
-    }
-    return null;
-  }
-
-  renderTitle() {
+  renderLabel() {
     return (
-      <Text style={[this.normalStyle, styles.titleDefault]}>
-        {this.props.iconTitle}
+      <Text
+        style={[
+          this.props.focused ? styles.labelSelected : styles.label,
+          styles.labelDefault
+        ]}
+      >
+        {this.props.iconLabel}
       </Text>
     );
   }
@@ -43,11 +40,11 @@ class TabIcon extends Component {
       <View
         style={[
           styles.iconBox,
-          Platform.OS === 'ios' ? { paddingTop: 3 } : null
+          appConfig.device.isIOS ? { paddingTop: 3 } : null
         ]}
       >
         <Icon
-          style={this.normalStyle}
+          style={this.props.focused ? styles.labelSelected : styles.label}
           name={this.props.iconName}
           size={this.props.iconSize}
         />
@@ -59,30 +56,11 @@ class TabIcon extends Component {
     return (
       <View style={styles.tabIcon}>
         {this.renderIcon()}
-        {this.renderTitle()}
-        {this.renderNotify(this.notifyCount)}
+        {this.renderLabel()}
       </View>
     );
   }
 }
-
-TabIcon.propTypes = {
-  selected: PropTypes.bool,
-  title: PropTypes.string,
-  iconActive: PropTypes.string,
-  iconTitle: PropTypes.string,
-  notifyKey: PropTypes.string,
-  iconSize: PropTypes.number
-};
-
-TabIcon.defaultProps = {
-  selected: false,
-  title: '',
-  iconActive: '',
-  iconTitle: '',
-  notifyKey: '',
-  iconSize: 24
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -93,13 +71,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  titleSelected: {
-    color: DEFAULT_COLOR
+  labelSelected: {
+    color: appConfig.colors.primary
   },
-  title: {
+  label: {
     color: '#7f7f7f'
   },
-  titleDefault: {
+  labelDefault: {
     fontSize: 10,
     marginTop: 2,
     fontWeight: '400'
@@ -111,7 +89,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28
   },
-  storesInfoActionNotify: {
+  notificationCountWrapper: {
     position: 'absolute',
     minWidth: 16,
     paddingHorizontal: 2,
@@ -124,7 +102,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderRadius: 8
   },
-  storesInfoActionNotifyValue: {
+  notificationCount: {
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600'

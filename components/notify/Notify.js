@@ -24,7 +24,7 @@ import { reaction } from 'mobx';
 import NewItemComponent from './NewItemComponent';
 
 @observer
-export default class Notifys extends Component {
+export default class Notify extends Component {
   constructor(props) {
     super(props);
 
@@ -49,7 +49,7 @@ export default class Notifys extends Component {
       //   notify: "new_calendar_news",
       //   onPress: () => {
       //     Actions.notifys_time({
-      //       isNotifysTime: true,
+      //       isNotifyTime: true,
       //       news_type: "/47"
       //     });
       //   },
@@ -66,7 +66,7 @@ export default class Notifys extends Component {
       //   notify: "new_farm_news",
       //   onPress: () => {
       //     Actions.notifys_farm({
-      //       isNotifysTime: true,
+      //       isNotifyTime: true,
       //       news_type: "/46"
       //     });
       //   },
@@ -115,7 +115,7 @@ export default class Notifys extends Component {
 
     return (
       <View style={styles.container}>
-        {/* {this.props.isNotifysTime ? null :
+        {/* {this.props.isNotifyTime ? null :
           (<SelectionList data={this.state.navigators} containerStyle={{ height: 125 }}/>)
         } */}
         {this.state.data != null ? (
@@ -146,7 +146,6 @@ export default class Notifys extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...MARGIN_SCREEN,
     marginBottom: 0
   },
   separator: {

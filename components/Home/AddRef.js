@@ -32,7 +32,7 @@ export default class AddRef extends Component {
   }
 
   _onFinish() {
-    Actions.myTabBar({
+    Actions.primaryTabbar({
       type: ActionConst.RESET
     });
   }

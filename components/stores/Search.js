@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    ...MARGIN_SCREEN,
+
     marginBottom: 0
   },
   right_btn_add_store: {

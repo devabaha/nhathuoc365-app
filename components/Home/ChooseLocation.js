@@ -39,7 +39,7 @@ export default class ChooseLocation extends Component {
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setRefreshNews(store.refresh_news + 1);
         })();
-        Actions.myTabBar({
+        Actions.primaryTabbar({
           type: ActionConst.RESET
         });
       } else {

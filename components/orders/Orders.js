@@ -365,8 +365,7 @@ export default class Orders extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    ...MARGIN_SCREEN
+    flex: 1
   },
   right_btn_add_store: {
     paddingVertical: 1,
