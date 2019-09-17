@@ -34,7 +34,8 @@ import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
 
-import HomeContainer from './container/Home';
+import HomeContainer from './containers/Home';
+import QRBarCode from './containers/QRBarCode';
 
 import Intro from './components/intro/Intro';
 import AddStore from './components/Home/AddStore';
@@ -65,7 +66,6 @@ import NotifyItem from './components/notify/NotifyItem';
 import SearchStore from './components/Home/SearchStore';
 import ListStore from './components/Home/ListStore';
 import ScanQRCode from './components/Home/ScanQRCode';
-import QRBarCode from './components/Home/QRBarCode';
 import Chat from './components/chat/Chat';
 import WebView from './components/webview/WebView';
 import Rating from './components/rating/Rating';
@@ -89,6 +89,22 @@ import TabIcon from './components/TabIcon';
 const transitionConfig = () => ({
   screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid
 });
+
+const touchedTabs = {};
+
+const handleTabBarOnPress = props => {
+  // const isTouched = () => touchedTabs[props.navigation.state.key];
+
+  switch (props.navigation.state.key) {
+    case appConfig.routes.scanQrCodeTab:
+      Actions.push(appConfig.routes.qrBarCode);
+      break;
+    default:
+      props.defaultHandler();
+  }
+
+  touchedTabs[props.navigation.state.key] = true;
+};
 
 const navBarConfig = {
   navigationBarStyle: {
@@ -453,14 +469,6 @@ class App extends Component {
     }
   }
 
-  _goMainNotify() {
-    Actions._main_notify({ type: ActionConst.REFRESH });
-  }
-
-  _goQRCode() {
-    Actions.qr_bar_code({ title: 'Mã tài khoản', direction: 'vertical' });
-  }
-
   renderRounter() {
     // var { showIntro } = this.state;
     var showIntro = false;
@@ -485,20 +493,19 @@ class App extends Component {
                     tabBarStyle={styles.tabBarStyle}
                     activeBackgroundColor="white"
                     inactiveBackgroundColor="white"
+                    tabBarOnPress={handleTabBarOnPress}
                     {...navBarConfig}
                   >
-                    {/**
-                     ************************ Tab 1 ************************
-                     */}
+                    {/* ================ HOME TAB ================ */}
                     <Stack
-                      key="myTab1"
+                      key={appConfig.routes.homeTab}
                       icon={TabIcon}
                       iconLabel="TickID"
                       iconName="store"
                       iconSize={24}
                     >
                       <Scene
-                        key="_home"
+                        key={`${appConfig.routes.homeTab}_1`}
                         title="TickID"
                         component={HomeContainer}
                         hideNavBar
@@ -523,19 +530,13 @@ class App extends Component {
                       />
                     </Stack>
 
-                    {/**
-                     ************************ Tab 3 ************************
-                     */}
+                    {/* ================ SCAN QR TAB ================ */}
                     <Stack
-                      key="myTab3"
+                      key={appConfig.routes.scanQrCodeTab}
                       icon={TickIdScaningButton}
                       primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
                     >
-                      <Scene
-                        key="_main_notify"
-                        title="Tin tức"
-                        component={Notify}
-                      />
+                      <Scene component={() => null} />
                     </Stack>
 
                     {/**
@@ -830,9 +831,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="scan_qr_code">
+                  <Stack key={appConfig.routes.scanQrCode}>
                     <Scene
-                      key="scan_qr_code_1"
+                      key={`${appConfig.routes.scanQrCode}_1`}
                       title="Quét mã"
                       component={ScanQRCode}
                       {...navBarConfig}
@@ -840,9 +841,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="qr_bar_code">
+                  <Stack key={appConfig.routes.qrBarCode}>
                     <Scene
-                      key="qr_bar_code_1"
+                      key={`${appConfig.routes.qrBarCode}_1`}
                       title="Mã tài khoản"
                       component={QRBarCode}
                       {...navBarConfig}

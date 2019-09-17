@@ -1,6 +1,5 @@
-/* @flow */
-
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -8,18 +7,22 @@ import {
   TouchableOpacity,
   ScrollView
 } from 'react-native';
-
-// library
+import DeviceBrightness from 'react-native-device-brightness';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import QRCode from 'react-native-qrcode-svg';
 import Barcode from 'react-native-barcode-builder';
-import store from '../../store/Store';
+import appConfig from 'app-config';
+import timer from 'react-native-timer';
 
-const timer = require('react-native-timer');
+const MAXIMUM_LUMINOUS = 1;
 
-export default class QRBarCode extends Component {
+class QRBarCode extends Component {
+  static propTypes = {
+    store: PropTypes.object
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -31,20 +34,32 @@ export default class QRBarCode extends Component {
       title: props.title ? props.title : 'Mã tài khoản',
       content: props.content
         ? props.content
-        : 'Dùng QRCode địa chỉ Ví để nhận chuyển khoản'
+        : 'Dùng QRCode địa chỉ Ví để nhận chuyển khoản',
+      originLuminous: 0.5
     };
   }
 
-  componentWillMount() {
+  componentDidMount() {
     if (!this.props.address) {
       this._getData();
       this.setTimmer();
     }
+
+    this.handleBrightnessLevel();
   }
 
   componentWillUnmount() {
     timer.clearTimeout(this, 'barcodeupdate');
+    DeviceBrightness.setBrightnessLevel(this.state.originLuminous);
   }
+
+  handleBrightnessLevel = () => {
+    DeviceBrightness.getBrightnessLevel().then(originLuminous => {
+      this.setState({ originLuminous }, () =>
+        DeviceBrightness.setBrightnessLevel(MAXIMUM_LUMINOUS)
+      );
+    });
+  };
 
   setTimmer() {
     timer.setTimeout(
@@ -60,8 +75,7 @@ export default class QRBarCode extends Component {
 
   async _getData() {
     this.setState({ loading: true });
-    const response = await APIHandler.user_barcode(store.store_id);
-    console.log(response);
+    const response = await APIHandler.user_barcode(this.props.store.store_id);
     if (response && response.status == STATUS_SUCCESS) {
       this.setState({ barcode: response.data.barcode });
     }
@@ -216,7 +230,6 @@ export default class QRBarCode extends Component {
           }
         } catch (e) {
           this._search_store(barcode);
-        } finally {
         }
       }
     );
@@ -225,7 +238,7 @@ export default class QRBarCode extends Component {
   // tới màn hình store
   _goStores(item, category_id) {
     action(() => {
-      store.setStoreData(item);
+      this.props.store.setStoreData(item);
     })();
 
     // hide tutorial go store
@@ -327,7 +340,6 @@ export default class QRBarCode extends Component {
           }
         } catch (e) {
           this._search_store(barcode);
-        } finally {
         }
       }
     );
@@ -367,7 +379,6 @@ export default class QRBarCode extends Component {
           }
         } catch (e) {
           this._search_store(barcode);
-        } finally {
         }
       }
     );
@@ -398,7 +409,7 @@ export default class QRBarCode extends Component {
   }
 
   _proccessQRCodeResult(text_result) {
-    const { wallet, title, from } = this.state;
+    const { wallet, from } = this.state;
     if (text_result) {
       if (isURL(text_result)) {
         if (isLinkTickID(text_result)) {
@@ -434,13 +445,10 @@ export default class QRBarCode extends Component {
   }
 
   renderQRCodeScanner(text_result) {
-    const { wallet, title } = this.state;
     return (
       <QRCodeScanner
         checkAndroid6Permissions={true}
-        ref={node => {
-          this.scanner = node;
-        }}
+        ref={node => (this.scanner = node)}
         onRead={e => {
           this._proccessQRCodeResult(e.data);
         }}
@@ -477,7 +485,7 @@ export default class QRBarCode extends Component {
           <QRCode
             style={{ flex: 1 }}
             value={barcode}
-            size={Util.size.width / 3}
+            size={appConfig.device.width / 3}
             logoBackgroundColor="transparent"
           />
         </View>
@@ -504,7 +512,7 @@ export default class QRBarCode extends Component {
           <QRCode
             style={{ flex: 1 }}
             value={barcode}
-            size={Util.size.width / 1.5}
+            size={appConfig.device.width / 1.5}
             logoBackgroundColor="transparent"
           />
         </View>
@@ -582,12 +590,11 @@ export default class QRBarCode extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     marginBottom: 0,
     width: '100%'
   },
   topContent: {
-    width: Util.size.width,
+    width: appConfig.device.width,
     paddingVertical: 16,
     backgroundColor: '#cccccc'
   },
@@ -636,8 +643,8 @@ const styles = StyleSheet.create({
   },
   qrCodeView: {
     marginTop: 0,
-    width: Util.size.width / 3,
-    height: Util.size.width / 3,
+    width: appConfig.device.width / 3,
+    height: appConfig.device.width / 3,
     alignSelf: 'center'
   },
   barcodeText: {
@@ -676,8 +683,10 @@ const styles = StyleSheet.create({
   addressQrCodeView: {
     marginTop: 0,
     marginBottom: 20,
-    width: Util.size.width / 1.5,
-    height: Util.size.width / 1.5,
+    width: appConfig.device.width / 1.5,
+    height: appConfig.device.width / 1.5,
     alignSelf: 'center'
   }
 });
+
+export default QRBarCode;

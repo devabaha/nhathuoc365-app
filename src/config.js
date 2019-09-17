@@ -23,7 +23,13 @@ const config = Object.freeze({
     white: '#fff'
   },
   routes: {
-    primaryTabbar: 'primaryTabbar'
+    primaryTabbar: 'primaryTabbar',
+
+    homeTab: 'homeTab',
+    scanQrCodeTab: 'scanQrCodeTab',
+
+    scanQrCode: 'scanQrCode',
+    qrBarCode: 'qrBarCode'
   }
 });
 

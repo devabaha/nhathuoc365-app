@@ -6735,6 +6735,11 @@ react-native-deep-linking@^2.1.0:
   resolved "https://registry.yarnpkg.com/react-native-deep-linking/-/react-native-deep-linking-2.2.0.tgz#45451c4ebcbe7307e094b8df38979d0bd745bb54"
   integrity sha512-PKShbOsa/oxjSzZ/Bag98O/J+jaZOI6ic5YdanPirTpRAraAvKUzJWQUhE5Yy0Isl9yfIkSogOClE9BRfSyUbA==
 
+react-native-device-brightness@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-device-brightness/-/react-native-device-brightness-1.2.0.tgz#f6498ca5af4c6283212f74aa2f05d1cff0596af0"
+  integrity sha512-EWH4UOvsSiXrNpWSboPe/gHYoOxiZ0vp0JfY67Gjn+TJuAP+gWyvGobpC8mYV//ioirco000ZH9Zu9o5ezUzxg==
+
 react-native-device-info@^0.17.3:
   version "0.17.4"
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-0.17.4.tgz#c135d4719f0512729de1c72e058a137e29ea1e3e"
