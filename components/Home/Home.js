@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  FlatList,
-  ScrollView
-} from 'react-native';
-import ServiceButton from './component/ServiceButton';
+import { View, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
@@ -50,17 +43,6 @@ class Home extends Component {
     farmNewsesData: []
   };
 
-  renderServiceItem = ({ item, index }) => (
-    <ServiceButton
-      key={index}
-      iconName={item.iconName}
-      title={item.title}
-      service_type={item.service_type}
-      service_id={item.service_id}
-      onPress={this.props.onServicePressed}
-    />
-  );
-
   getRefreshControl() {
     return (
       <RefreshControl
@@ -88,7 +70,10 @@ class Home extends Component {
             />
           </View>
 
-          <ListServices data={SERVICES_LIST} />
+          <ListServices
+            data={SERVICES_LIST}
+            onItemPress={item => alert(item.title)}
+          />
 
           <View style={styles.contentWrapper}>
             {this.props.hasPromotion && (
