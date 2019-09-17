@@ -7,10 +7,10 @@ module.exports = {
       {
         root: ['.'],
         alias: {
-          'app-util': './util',
-          'app-store': './store',
-          'app-config': './config',
-          'app-packages': './packages'
+          'app-util': './src/util',
+          'app-store': './src/store',
+          'app-config': './src/config',
+          'app-packages': './src/packages'
         }
       }
     ]
