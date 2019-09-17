@@ -6,6 +6,7 @@ import {
 } from 'react-native-iphone-x-helper';
 
 const config = Object.freeze({
+  namespace: 'app',
   device: Object.freeze({
     isIphoneX: isIphoneX(),
     isAndroid: Platform.OS.toLowerCase() === 'android',

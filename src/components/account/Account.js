@@ -976,8 +976,7 @@ export default class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
-    marginBottom: BAR_HEIGHT
+    backgroundColor: '#f1f1f1'
   },
 
   boxIconStyle: {

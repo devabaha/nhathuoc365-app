@@ -237,7 +237,7 @@ const ListItem = props => {
             <Switch
               onValueChange={onSwitch}
               disabled={switchDisabled}
-              onTintColor={switchOnTintColor}
+              trackColor={switchOnTintColor}
               thumbTintColor={switchThumbTintColor}
               tintColor={switchTintColor}
               value={switched}

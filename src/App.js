@@ -4,8 +4,10 @@ import './lib/Constant';
 import './lib/Helper';
 
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import { Provider } from 'react-redux';
 import appConfig from 'app-config';
 import store from 'app-store';
+import reduxStore from './reduxStore';
 import {
   View,
   Text,
@@ -463,412 +465,608 @@ class App extends Component {
     // var { showIntro } = this.state;
     var showIntro = false;
     return (
-      <Router
-        backAndroidHandler={this._backAndroidHandler.bind(this)}
-        store={store}
-      >
-        <Overlay key="overlay">
-          <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
-            <Lightbox key="lightbox">
-              <Scene
-                key="root"
-                titleStyle={{ alignSelf: 'center' }}
-                headerLayoutPreset="center"
-                hideNavBar
-              >
-                <Tabs
-                  key="primaryTabbar"
-                  showLabel={false}
-                  tabBarStyle={styles.tabBarStyle}
-                  activeBackgroundColor="white"
-                  inactiveBackgroundColor="white"
-                  {...navBarConfig}
+      <Provider store={reduxStore}>
+        <Router
+          backAndroidHandler={this._backAndroidHandler.bind(this)}
+          store={store}
+        >
+          <Overlay key="overlay">
+            <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
+              <Lightbox key="lightbox">
+                <Scene
+                  key="root"
+                  titleStyle={{ alignSelf: 'center' }}
+                  headerLayoutPreset="center"
+                  hideNavBar
                 >
-                  {/**
-                   ************************ Tab 1 ************************
-                   */}
-                  <Stack
-                    key="myTab1"
-                    icon={TabIcon}
-                    iconLabel="TickID"
-                    iconName="store"
-                    iconSize={24}
+                  <Tabs
+                    key="primaryTabbar"
+                    showLabel={false}
+                    tabBarStyle={styles.tabBarStyle}
+                    activeBackgroundColor="white"
+                    inactiveBackgroundColor="white"
+                    {...navBarConfig}
                   >
+                    {/**
+                     ************************ Tab 1 ************************
+                     */}
+                    <Stack
+                      key="myTab1"
+                      icon={TabIcon}
+                      iconLabel="TickID"
+                      iconName="store"
+                      iconSize={24}
+                    >
+                      <Scene
+                        key="_home"
+                        title="TickID"
+                        component={HomeContainer}
+                        hideNavBar
+                      />
+                    </Stack>
+
+                    {/**
+                     ************************ Tab 2 ************************
+                     */}
+                    <Stack
+                      key="myTab2"
+                      icon={TabIcon}
+                      iconLabel="Tin tức"
+                      iconName="notifications"
+                      iconSize={24}
+                      notifyKey="new_totals"
+                    >
+                      <Scene
+                        key="_main_notify"
+                        title="Tin tức"
+                        component={Notify}
+                      />
+                    </Stack>
+
+                    {/**
+                     ************************ Tab 3 ************************
+                     */}
+                    <Stack
+                      key="myTab3"
+                      icon={TickIdScaningButton}
+                      primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
+                    >
+                      <Scene
+                        key="_main_notify"
+                        title="Tin tức"
+                        component={Notify}
+                      />
+                    </Stack>
+
+                    {/**
+                     ************************ Tab 3 ************************
+                     */}
+                    <Stack
+                      key="myTab4"
+                      icon={TabIcon}
+                      iconLabel="Đơn hàng"
+                      iconName="shopping-cart"
+                      iconSize={24}
+                    >
+                      <Scene
+                        key="_orders"
+                        title="Đơn hàng"
+                        component={Orders}
+                      />
+                    </Stack>
+
+                    {/**
+                     ************************ Tab 4 ************************
+                     */}
+                    <Stack
+                      key="myTab5"
+                      icon={TabIcon}
+                      iconLabel="Tài khoản"
+                      iconName="account-circle"
+                      notifyKey="notify_account"
+                      iconSize={24}
+                    >
+                      <Scene
+                        hideNavBar
+                        key="_account"
+                        title="Tài khoản"
+                        component={Account}
+                      />
+                    </Stack>
+                  </Tabs>
+
+                  <Stack key="address">
                     <Scene
-                      key="_home"
-                      title="TickID"
-                      component={HomeContainer}
-                      hideNavBar
+                      key="address_1"
+                      title="Địa chỉ"
+                      component={Address}
+                      {...navBarConfig}
+                      back
                     />
                   </Stack>
 
-                  {/**
-                   ************************ Tab 2 ************************
-                   */}
-                  <Stack
-                    key="myTab2"
-                    icon={TabIcon}
-                    iconLabel="Tin tức"
-                    iconName="notifications"
-                    iconSize={24}
-                    notifyKey="new_totals"
-                  >
+                  <Stack key="coin_wallet">
                     <Scene
-                      key="_main_notify"
+                      key="coin_wallet_1"
+                      title="Tài khoản xu"
+                      component={CoinWallet}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="confirm">
+                    <Scene
+                      key="confirm_1"
+                      title="Xác nhận"
+                      component={Confirm}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="create_address">
+                    <Scene
+                      key="create_address_1"
+                      title="Thêm địa chỉ"
+                      component={CreateAddress}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="register">
+                    <Scene
+                      key="register_1"
+                      title="Đăng ký"
+                      component={Register}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="login">
+                    <Scene
+                      key="login_1"
+                      hideNavBar
+                      title=""
+                      component={Login}
+                      {...navBarConfig}
+                    />
+                  </Stack>
+
+                  <Stack key="op_login">
+                    <Scene
+                      key="op_login_1"
+                      title="Đăng ký"
+                      component={OpLogin}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="op_register">
+                    <Scene
+                      key="op_register_1"
+                      title="Đăng ký"
+                      component={OpRegister}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="forget_verify">
+                    <Scene
+                      key="forget_verify_1"
+                      title="Lấy lại mật khẩu"
+                      component={ForgetVerify}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="forget_active">
+                    <Scene
+                      key="forget_active_1"
+                      title="Kích hoạt tài khoản"
+                      component={ForgetActive}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="new_pass">
+                    <Scene
+                      key="new_pass_1"
+                      title="Tạo mật khẩu mới"
+                      component={NewPass}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="cart">
+                    <Scene
+                      key="cart_1"
+                      title="Giỏ hàng"
+                      component={Cart}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="stores">
+                    <Scene
+                      key="stores_1"
+                      title="Cửa hàng"
+                      component={Stores}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="stores_list">
+                    <Scene
+                      key="stores_list_1"
+                      title="Cửa hàng"
+                      component={StoresList}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="search">
+                    <Scene
+                      key="search_1"
+                      title="Tìm kiếm"
+                      component={Search}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="item">
+                    <Scene
+                      key="item_1"
+                      title="Chi tiết sản phẩm"
+                      component={Item}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="item_image_viewer">
+                    <Scene
+                      key="item_image_viewer_1"
+                      direction="vertical"
+                      hideNavBar
+                      title=""
+                      component={ItemImageViewer}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="rating">
+                    <Scene
+                      key="rating_1"
+                      panHandlers={null}
+                      direction="vertical"
+                      hideNavBar
+                      title=""
+                      component={Rating}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="orders_item">
+                    <Scene
+                      key="orders_item_1"
+                      title="Chi tiết đơn hàng"
+                      component={OrdersItem}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="view_orders_item">
+                    <Scene
+                      key="view_orders_item_1"
+                      title="Thông tin đơn hàng"
+                      component={ViewOrdersItem}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="notifys">
+                    <Scene
+                      key="notifys_1"
                       title="Tin tức"
                       component={Notify}
+                      {...navBarConfig}
+                      back
                     />
                   </Stack>
 
-                  {/**
-                   ************************ Tab 3 ************************
-                   */}
-                  <Stack
-                    key="myTab3"
-                    icon={TickIdScaningButton}
-                    primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
-                  >
+                  <Stack key="notifys_time">
                     <Scene
-                      key="_main_notify"
-                      title="Tin tức"
+                      key="notifys_time_1"
+                      title="Lịch hàng hóa"
                       component={Notify}
+                      {...navBarConfig}
+                      back
                     />
                   </Stack>
 
-                  {/**
-                   ************************ Tab 3 ************************
-                   */}
-                  <Stack
-                    key="myTab4"
-                    icon={TabIcon}
-                    iconLabel="Đơn hàng"
-                    iconName="shopping-cart"
-                    iconSize={24}
-                  >
-                    <Scene key="_orders" title="Đơn hàng" component={Orders} />
-                  </Stack>
-
-                  {/**
-                   ************************ Tab 4 ************************
-                   */}
-                  <Stack
-                    key="myTab5"
-                    icon={TabIcon}
-                    iconLabel="Tài khoản"
-                    iconName="account-circle"
-                    notifyKey="notify_account"
-                    iconSize={24}
-                  >
+                  <Stack key="notifys_farm">
                     <Scene
-                      hideNavBar
-                      key="_account"
-                      title="Tài khoản"
-                      component={Account}
+                      key="notifys_farm_1"
+                      title="Trang trại"
+                      component={Notify}
+                      {...navBarConfig}
+                      back
                     />
                   </Stack>
-                </Tabs>
 
-                <Scene
-                  key="address"
-                  title="Địa chỉ"
-                  component={Address}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="coin_wallet"
-                  title="Tài khoản xu"
-                  component={CoinWallet}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="confirm"
-                  title="Xác nhận"
-                  component={Confirm}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="create_address"
-                  title="Thêm địa chỉ"
-                  component={CreateAddress}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="register"
-                  title="Đăng ký"
-                  component={Register}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="login"
-                  hideNavBar
-                  title=""
-                  component={Login}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="op_login"
-                  title="Đăng ký"
-                  component={OpLogin}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="op_register"
-                  title="Đăng ký"
-                  component={OpRegister}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="forget_verify"
-                  title="Lấy lại mật khẩu"
-                  component={ForgetVerify}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="forget_active"
-                  title="Kích hoạt tài khoản"
-                  component={ForgetActive}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="new_pass"
-                  title="Tạo mật khẩu mới"
-                  component={NewPass}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="cart"
-                  title="Giỏ hàng"
-                  component={Cart}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="stores"
-                  title="Cửa hàng"
-                  component={Stores}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="stores_list"
-                  title="Cửa hàng"
-                  component={StoresList}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="search"
-                  title="Tìm kiếm"
-                  component={Search}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="item"
-                  title="Chi tiết sản phẩm"
-                  component={Item}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="item_image_viewer"
-                  direction="vertical"
-                  hideNavBar
-                  title=""
-                  component={ItemImageViewer}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="rating"
-                  panHandlers={null}
-                  direction="vertical"
-                  hideNavBar
-                  title=""
-                  component={Rating}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="orders_item"
-                  title="Chi tiết đơn hàng"
-                  component={OrdersItem}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="view_orders_item"
-                  title="Thông tin đơn hàng"
-                  component={ViewOrdersItem}
-                  {...navBarConfig}
-                />
+                  <Stack key="notify_item">
+                    <Scene
+                      key="notify_item_1"
+                      title="Chi tiết"
+                      component={NotifyItem}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
 
-                <Scene
-                  key="notifys"
-                  title="Tin tức"
-                  component={Notify}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="notifys_time"
-                  title="Lịch hàng hóa"
-                  component={Notify}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="notifys_farm"
-                  title="Trang trại"
-                  component={Notify}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="notify_item"
-                  title="Chi tiết"
-                  component={NotifyItem}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="search_store"
-                  title="Tìm cửa hàng"
-                  component={SearchStore}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="scan_qr_code"
-                  title="Quét mã"
-                  component={ScanQRCode}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="qr_bar_code"
-                  title="Mã tài khoản"
-                  component={QRBarCode}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="list_store"
-                  title="Cửa hàng"
-                  component={ListStore}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="add_store"
-                  title="Thêm cửa hàng"
-                  component={AddStore}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="store_orders"
-                  title=""
-                  component={StoreOrders}
-                  {...navBarConfig}
-                />
-                <Scene key="chat" title="" component={Chat} {...navBarConfig} />
-                <Scene
-                  key="webview"
-                  title=""
-                  component={WebView}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="intro"
-                  initial={showIntro}
-                  hideNavBar
-                  title=""
-                  component={Intro}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="_add_ref"
-                  title=""
-                  component={AddRef}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="choose_location"
-                  title=""
-                  component={ChooseLocation}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="vnd_wallet"
-                  title=""
-                  component={VndWallet}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="pay_wallet"
-                  title=""
-                  component={PayWallet}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="pay_account"
-                  title=""
-                  component={PayAccount}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="affiliate"
-                  title=""
-                  component={Affiliate}
-                  {...navBarConfig}
-                />
+                  <Stack key="search_store">
+                    <Scene
+                      key="search_store_1"
+                      title="Tìm cửa hàng"
+                      component={SearchStore}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
 
-                <Scene
-                  key="profile_detail"
-                  title="Tài khoản của tôi"
-                  component={ProfileDetail}
-                  {...navBarConfig}
-                />
+                  <Stack key="scan_qr_code">
+                    <Scene
+                      key="scan_qr_code_1"
+                      title="Quét mã"
+                      component={ScanQRCode}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
 
-                <Scene
-                  key="edit_profile"
-                  title="Tài khoản của tôi"
-                  component={EditProfile}
-                  {...navBarConfig}
-                />
+                  <Stack key="qr_bar_code">
+                    <Scene
+                      key="qr_bar_code_1"
+                      title="Mã tài khoản"
+                      component={QRBarCode}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
 
-                <Scene
-                  key="detail_history_payment"
-                  title="Tích điểm"
-                  component={DetailHistoryPayment}
-                  {...navBarConfig}
-                />
+                  <Stack key="list_store">
+                    <Scene
+                      key="list_store_1"
+                      title="Cửa hàng"
+                      component={ListStore}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
 
-                <Scene
-                  key="phonecard"
-                  title="Mua mã thẻ di động"
-                  component={PhoneCard}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="phonecard_confirm"
-                  title="Xác nhận"
-                  component={PhoneCardConfirm}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="nap_tkc"
-                  title="Nạp tiền điện thoại"
-                  component={NapTKC}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="nap_tkc_confirm"
-                  title="Xác nhận"
-                  component={NapTKCConfirm}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="md_card"
-                  title="Nạp thẻ trong ngày"
-                  component={MdCard}
-                  {...navBarConfig}
-                />
-                <Scene
-                  key="md_card_confirm"
-                  title="Xác nhận"
-                  component={MdCardConfirm}
-                  {...navBarConfig}
-                />
-              </Scene>
-            </Lightbox>
-          </Modal>
-        </Overlay>
-      </Router>
+                  <Stack key="add_store">
+                    <Scene
+                      key="add_store_1"
+                      title="Thêm cửa hàng"
+                      component={AddStore}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="store_orders">
+                    <Scene
+                      key="store_orders_1"
+                      title=""
+                      component={StoreOrders}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="chat">
+                    <Scene
+                      key="chat_1"
+                      title=""
+                      component={Chat}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="webview">
+                    <Scene
+                      key="webview_1"
+                      title=""
+                      component={WebView}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="intro">
+                    <Scene
+                      key="intro_1"
+                      initial={showIntro}
+                      hideNavBar
+                      title=""
+                      component={Intro}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="_add_ref">
+                    <Scene
+                      key="_add_ref_1"
+                      title=""
+                      component={AddRef}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="choose_location">
+                    <Scene
+                      key="choose_location_1"
+                      title=""
+                      component={ChooseLocation}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="vnd_wallet">
+                    <Scene
+                      key="vnd_wallet_1"
+                      title=""
+                      component={VndWallet}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="pay_wallet">
+                    <Scene
+                      key="pay_wallet_1"
+                      title=""
+                      component={PayWallet}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="pay_account">
+                    <Scene
+                      key="pay_account_1"
+                      title=""
+                      component={PayAccount}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="affiliate">
+                    <Scene
+                      key="affiliate_1"
+                      title=""
+                      component={Affiliate}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="profile_detail">
+                    <Scene
+                      key="profile_detail_1"
+                      title="Tài khoản của tôi"
+                      component={ProfileDetail}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="edit_profile">
+                    <Scene
+                      key="edit_profile_1"
+                      title="Tài khoản của tôi"
+                      component={EditProfile}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="detail_history_payment">
+                    <Scene
+                      key="detail_history_payment_1"
+                      title="Tích điểm"
+                      component={DetailHistoryPayment}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="phonecard">
+                    <Scene
+                      key="phonecard_1"
+                      title="Mua mã thẻ di động"
+                      component={PhoneCard}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="phonecard_confirm">
+                    <Scene
+                      key="phonecard_confirm_1"
+                      title="Xác nhận"
+                      component={PhoneCardConfirm}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="nap_tkc">
+                    <Scene
+                      key="nap_tkc_1"
+                      title="Nạp tiền điện thoại"
+                      component={NapTKC}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="nap_tkc_confirm">
+                    <Scene
+                      key="nap_tkc_confirm_1"
+                      title="Xác nhận"
+                      component={NapTKCConfirm}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="md_card">
+                    <Scene
+                      key="md_card_1"
+                      title="Nạp thẻ trong ngày"
+                      component={MdCard}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="md_card_confirm">
+                    <Scene
+                      key="md_card_confirm_1"
+                      title="Xác nhận"
+                      component={MdCardConfirm}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+                </Scene>
+              </Lightbox>
+            </Modal>
+          </Overlay>
+        </Router>
+      </Provider>
     );
   }
 

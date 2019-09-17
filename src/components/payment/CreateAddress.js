@@ -16,7 +16,7 @@ import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
 
 @observer
-export default class CreateAddress extends Component {
+class CreateAddress extends Component {
   constructor(props) {
     super(props);
 
@@ -380,7 +380,7 @@ export default class CreateAddress extends Component {
                   });
                 }}
                 value={this.state.default_flag}
-                onTintColor={DEFAULT_COLOR}
+                trackColor={DEFAULT_COLOR}
               />
             </View>
           </View>
@@ -549,3 +549,5 @@ const styles = StyleSheet.create({
     fontSize: 18
   }
 });
+
+export default CreateAddress;

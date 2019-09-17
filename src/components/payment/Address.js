@@ -13,7 +13,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 
 @observer
-export default class Address extends Component {
+class Address extends Component {
   constructor(props) {
     super(props);
 
@@ -244,7 +244,7 @@ export default class Address extends Component {
                 ref="address_list"
                 data={this.state.data}
                 extraData={this.state}
-                keyExtractor={item => item.id}
+                keyExtractor={item => `${item.id}`}
                 ItemSeparatorComponent={() => (
                   <View style={styles.separator}></View>
                 )}
@@ -680,3 +680,5 @@ const styles = StyleSheet.create({
     borderColor: DEFAULT_COLOR
   }
 });
+
+export default Address;
