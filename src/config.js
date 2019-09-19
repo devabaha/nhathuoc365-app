@@ -31,7 +31,9 @@ const config = Object.freeze({
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',
 
-    mainVoucher: 'mainVoucher'
+    mainVoucher: 'mainVoucher',
+
+    upToPhone: 'upToPhone'
   }
 });
 
