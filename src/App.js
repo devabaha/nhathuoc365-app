@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-
 import './lib/Constant';
 import './lib/Helper';
 
@@ -34,6 +33,7 @@ import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
 import { Voucher as VoucherContainer } from './packages/tickid-voucher';
+import { CloseButton } from 'app-packages/tickid-navbar';
 
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
@@ -853,16 +853,6 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key={appConfig.routes.qrBarCode}>
-                    <Scene
-                      key={`${appConfig.routes.qrBarCode}_1`}
-                      title="Mã tài khoản"
-                      component={QRBarCode}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
                   <Stack key="list_store">
                     <Scene
                       key="list_store_1"
@@ -1015,9 +1005,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="phonecard">
+                  <Stack key={appConfig.routes.upToPhone}>
                     <Scene
-                      key="phonecard_1"
+                      key={`${appConfig.routes.upToPhone}_1`}
                       title="Mua mã thẻ di động"
                       component={PhoneCard}
                       {...navBarConfig}
@@ -1076,6 +1066,17 @@ class App extends Component {
                   </Stack>
                 </Scene>
               </Lightbox>
+
+              {/* ================ MODAL ZONE ================ */}
+              <Stack key={appConfig.routes.qrBarCode}>
+                <Scene
+                  key={`${appConfig.routes.qrBarCode}_1`}
+                  title="Mã tài khoản"
+                  component={QRBarCode}
+                  renderBackButton={CloseButton}
+                  back
+                />
+              </Stack>
             </Modal>
           </Overlay>
         </Router>

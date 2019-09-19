@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
-import HomeComponent from '../../components/Home';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from 'app-store';
+import HomeComponent, {
+  SCAN_QR_CODE_TYPE,
+  TOP_UP_PHONE_TYPE,
+  RADA_SERVICE_TYPE,
+  BOOKING_30DAY_TYPE,
+  ACCUMULATE_POINTS_TYPE,
+  MY_VOUCHER_TYPE,
+  TRANSACTION_TYPE
+} from '../../components/Home';
 
 @observer
 class Home extends Component {
@@ -75,51 +83,7 @@ class Home extends Component {
     this.getHomeDataFromApi(delayOneSecond);
   }
 
-  handlePressedSavePoint = () => {
-    Actions.qr_bar_code({
-      title: 'Quét QR Code',
-      index: 1,
-      wallet: store.user_info.default_wallet
-    });
-  };
-
   handlePressedSurplusNext = () => {};
-
-  handlePressedMyVoucher = () => {
-    Actions.push(appConfig.routes.mainVoucher);
-  };
-
-  handlePressedTransaction = () => {};
-
-  handleServicePressed = (serviceType, serviceId) => {
-    switch (serviceType) {
-      case 'scan_qc_code':
-        Actions.qr_bar_code({
-          title: 'Quét QR Code',
-          index: 1,
-          wallet: store.user_info.default_wallet
-        });
-        break;
-      case 'phone_card':
-        Actions.phonecard({
-          service_type: serviceType,
-          service_id: serviceId
-        });
-        break;
-      case 'nap_tkc':
-        Actions.nap_tkc({
-          service_type: serviceType,
-          service_id: serviceId
-        });
-        break;
-      case 'md_card':
-        Actions.md_card({
-          service_type: serviceType,
-          service_id: serviceId
-        });
-        break;
-    }
-  };
 
   handlePromotionPressed(item) {
     Actions.notify_item({
@@ -137,17 +101,53 @@ class Home extends Component {
 
   handleShowAllVouchers = () => {};
 
+  handleActionPress = action => {
+    switch (action.type) {
+      case ACCUMULATE_POINTS_TYPE:
+        Actions.push(appConfig.routes.qrBarCode);
+        break;
+      case MY_VOUCHER_TYPE:
+        Actions.push(appConfig.routes.mainVoucher);
+        break;
+      case TRANSACTION_TYPE:
+        //
+        break;
+    }
+  };
+
+  handlePressService = service => {
+    switch (service.type) {
+      case SCAN_QR_CODE_TYPE:
+        Actions.push(appConfig.routes.qrBarCode, {
+          index: 1,
+          title: 'Quét QR Code',
+          wallet: store.user_info.default_wallet
+        });
+        break;
+      case TOP_UP_PHONE_TYPE:
+        Actions.push(appConfig.routes.upToPhone, {
+          service_type: service.type,
+          service_id: service.id
+        });
+        break;
+      case RADA_SERVICE_TYPE:
+        //
+        break;
+      case BOOKING_30DAY_TYPE:
+        //
+        break;
+    }
+  };
+
   render() {
     return (
       <HomeComponent
-        onSavePoint={this.handlePressedSavePoint}
+        onActionPress={this.handleActionPress}
         onSurplusNext={this.handlePressedSurplusNext}
-        onMyVoucher={this.handlePressedMyVoucher}
-        onTransaction={this.handlePressedTransaction}
-        onServicePressed={this.handleServicePressed}
         onPromotionPressed={this.handlePromotionPressed}
         onVoucherPressed={this.handleVoucherPressed}
         onShowAllVouchers={this.handleShowAllVouchers}
+        onPressService={this.handlePressService}
         hasPromotion={this.hasPromotion}
         refreshing={this.state.refreshing}
         promotions={this.state.promotions}

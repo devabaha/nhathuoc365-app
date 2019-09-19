@@ -9,9 +9,9 @@ import {
   Platform
 } from 'react-native';
 import appConfig from 'app-config';
-import imageIconPoints from '../../../../images/points.png';
-import imageIconTrans from '../../../../images/trans.png';
-import imageIconVoucher from '../../../../images/voucher.png';
+import Button from 'react-native-button';
+import getImageRatio from 'app-packages/tickid-util/getImageRatio';
+import { PRIMARY_ACTIONS } from '../../constants';
 import imageIconNext from '../../../../images/next.png';
 
 function PrimaryActions(props) {
@@ -37,40 +37,31 @@ function PrimaryActions(props) {
         </View>
 
         <View style={styles.walletAction}>
-          <TouchableHighlight
-            onPress={props.onSavePoint}
-            underlayColor="transparent"
-            style={styles.actionBtn}
-          >
-            <View style={styles.actionBtnWrapper}>
-              <Image style={styles.iconPoint} source={imageIconPoints} />
-              <Text style={[styles.actionLabel, { marginTop: 10 }]}>
-                Tích điểm
-              </Text>
-            </View>
-          </TouchableHighlight>
-
-          <TouchableHighlight
-            onPress={props.onMyVoucher}
-            underlayColor="transparent"
-            style={styles.actionBtn}
-          >
-            <View style={styles.actionBtnWrapper}>
-              <Image style={styles.iconTransaction} source={imageIconVoucher} />
-              <Text style={styles.actionLabel}>Voucher của tôi</Text>
-            </View>
-          </TouchableHighlight>
-
-          <TouchableHighlight
-            onPress={props.onTransaction}
-            underlayColor="transparent"
-            style={styles.actionBtn}
-          >
-            <View style={styles.actionBtnWrapper}>
-              <Image style={styles.iconTransaction} source={imageIconTrans} />
-              <Text style={styles.actionLabel}>Giao dịch</Text>
-            </View>
-          </TouchableHighlight>
+          {PRIMARY_ACTIONS.map(action => (
+            <Button
+              key={action.type}
+              onPress={() => props.onPressItem(action)}
+              containerStyle={styles.actionButton}
+            >
+              <View style={styles.actionWrapper}>
+                <Image
+                  source={action.icon}
+                  style={[
+                    styles.actionIcon,
+                    {
+                      ...getImageRatio(
+                        action.iconOriginSize.width,
+                        action.iconOriginSize.height,
+                        undefined,
+                        35
+                      )
+                    }
+                  ]}
+                />
+                <Text style={styles.actionTitle}>{action.title}</Text>
+              </View>
+            </Button>
+          ))}
         </View>
       </View>
     </View>
@@ -81,18 +72,14 @@ const defaultListener = () => {};
 
 PrimaryActions.propTypes = {
   surplus: PropTypes.string,
-  onSavePoint: PropTypes.func,
   onSurplusNext: PropTypes.func,
-  onMyVoucher: PropTypes.func,
-  onTransaction: PropTypes.func
+  onPressItem: PropTypes.func
 };
 
 PrimaryActions.defaultProps = {
   surplus: '1,000,000đ',
-  onSavePoint: defaultListener,
   onSurplusNext: defaultListener,
-  onMyVoucher: defaultListener,
-  onTransaction: defaultListener
+  onPressItem: defaultListener
 };
 
 const styles = StyleSheet.create({
@@ -136,38 +123,11 @@ const styles = StyleSheet.create({
     borderTopColor: '#ebebeb',
     paddingTop: 16
   },
-  actionBtn: {
-    width: ~~(Util.size.width / 3.5),
-    paddingVertical: 4,
-    paddingHorizontal: 0
-  },
-  actionBtnWrapper: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 15
-  },
-  actionLabel: {
-    fontSize: 12,
-    marginTop: 5,
-    color: '#414242',
-    fontWeight: '500'
-  },
   walletLabelRight: {
     flex: 1,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     fontWeight: 'bold'
-  },
-  iconPoint: {
-    width: 28,
-    height: 28,
-    resizeMode: 'cover'
-  },
-  iconTransaction: {
-    width: 32,
-    height: 32,
-    resizeMode: 'cover'
   },
   iconNextWrapper: {
     fontSize: 20,
@@ -197,6 +157,22 @@ const styles = StyleSheet.create({
     color: '#042C5C',
     fontWeight: '600',
     lineHeight: 20
+  },
+  actionButton: {
+    flex: 1
+  },
+  actionWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  actionIcon: {
+    backgroundColor: appConfig.colors.primary
+  },
+  actionTitle: {
+    fontSize: 12,
+    marginTop: 5,
+    color: '#414242',
+    fontWeight: '500'
   }
 });
 

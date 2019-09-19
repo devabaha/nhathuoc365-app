@@ -20,7 +20,7 @@ const MAXIMUM_LUMINOUS = 1;
 
 class QRBarCode extends Component {
   static propTypes = {
-    store: PropTypes.object
+    mobxStore: PropTypes.object
   };
 
   constructor(props) {
@@ -75,7 +75,9 @@ class QRBarCode extends Component {
 
   async _getData() {
     this.setState({ loading: true });
-    const response = await APIHandler.user_barcode(this.props.store.store_id);
+    const response = await APIHandler.user_barcode(
+      this.props.mobxStore.store_id
+    );
     if (response && response.status == STATUS_SUCCESS) {
       this.setState({ barcode: response.data.barcode });
     }
@@ -238,7 +240,7 @@ class QRBarCode extends Component {
   // tới màn hình store
   _goStores(item, category_id) {
     action(() => {
-      this.props.store.setStoreData(item);
+      this.props.mobxStore.setStoreData(item);
     })();
 
     // hide tutorial go store
@@ -591,12 +593,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginBottom: 0,
-    width: '100%'
+    width: '100%',
+    backgroundColor: '#fff'
   },
   topContent: {
     width: appConfig.device.width,
-    paddingVertical: 16,
-    backgroundColor: '#cccccc'
+    paddingVertical: 16
   },
   centerText: {
     lineHeight: 20,

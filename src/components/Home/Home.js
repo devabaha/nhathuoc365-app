@@ -14,14 +14,12 @@ const defaultListener = () => {};
 @observer
 class Home extends Component {
   static propTypes = {
-    onSavePoint: PropTypes.func,
+    onActionPress: PropTypes.func,
     onSurplusNext: PropTypes.func,
-    onMyVoucher: PropTypes.func,
-    onTransaction: PropTypes.func,
-    onServicePressed: PropTypes.func,
     onPromotionPressed: PropTypes.func,
     onVoucherPressed: PropTypes.func,
     onShowAllVouchers: PropTypes.func,
+    onPressService: PropTypes.func,
     hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
     promotions: PropTypes.array,
@@ -29,14 +27,12 @@ class Home extends Component {
   };
 
   static defaultProps = {
-    onSavePoint: defaultListener,
+    onActionPress: defaultListener,
     onSurplusNext: defaultListener,
-    onMyVoucher: defaultListener,
-    onTransaction: defaultListener,
-    onServicePressed: defaultListener,
     onPromotionPressed: defaultListener,
     onVoucherPressed: defaultListener,
     onShowAllVouchers: defaultListener,
+    onPressService: defaultListener,
     hasPromotion: false,
     refreshing: false,
     promotions: [],
@@ -63,16 +59,14 @@ class Home extends Component {
           <View style={styles.primaryActionsWrapper}>
             <PrimaryActions
               surplus="10,000,000đ"
-              onSavePoint={this.props.onSavePoint}
+              onPressItem={this.props.onActionPress}
               onSurplusNext={this.props.onSurplusNext}
-              onMyVoucher={this.props.onMyVoucher}
-              onTransaction={this.props.onTransaction}
             />
           </View>
 
           <ListServices
             data={SERVICES_LIST}
-            onItemPress={item => alert(item.title)}
+            onItemPress={this.props.onPressService}
           />
 
           <View style={styles.contentWrapper}>
