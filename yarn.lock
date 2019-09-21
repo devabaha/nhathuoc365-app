@@ -922,12 +922,37 @@
   dependencies:
     any-observable "^0.3.0"
 
+"@tickid/react-native-accordion@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@tickid/react-native-accordion/-/react-native-accordion-1.0.0.tgz#6593652a7e9e88907e33b6445b461b5f5673fe62"
+  integrity sha512-rl2UFYfGUSWmo6/SHMbb82lNoCiL/s3AnB974mmqbLcHDTzGuZJJLo2wWkurcSeeibMkYCCBTvc1u3bBE41XiQ==
+  dependencies:
+    prop-types "^15.7.2"
+    react-native-button "^2.4.0"
+    react-native-vector-icons "^6.5.0"
+
+"@tickid/react-native-tabs@^1.0.0":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@tickid/react-native-tabs/-/react-native-tabs-1.0.5.tgz#e0e3ef6a8e0cd250716e9bd12c3a1804b0ec3ee9"
+  integrity sha512-6qEZhG3lN+HZxvbMNkIa/9ZBodi6+8s52uHudnwLNqmf1JfRQzQJtYYZLqM6jwVn6kOkiAy4zKzZoAoepTHJMA==
+  dependencies:
+    prop-types "^15.7.2"
+    react-native-button "^2.4.0"
+
 "@tickid/tickid-scaning-button@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@tickid/tickid-scaning-button/-/tickid-scaning-button-1.0.0.tgz#bc6808bbaeab12a0beef31bb63155a3303940ff2"
   integrity sha512-4joEiQ9zS9ptmVB//8K5b1NDgET8usLbMgqz6ZPzMZoKSH+BRaJA0b+gR7ZOYUAZd283cDB1D39DVTv6UpDw/Q==
   dependencies:
     prop-types "^15.7.2"
+
+"@tickid/tickid-tab-view@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-tab-view/-/tickid-tab-view-1.0.0.tgz#43a37d0aea653a754fadda0ae2bf3f7d04105252"
+  integrity sha512-tA4a2gJRQqwoCahOZGgj0eNxIgO7oHegtzaUkU1En2+/8MS+RhKRjemO/r4+0Uv6Cga5H0ZGcS/tIPIsjY3Yqw==
+  dependencies:
+    prop-types "^15.7.2"
+    react-native-button "^2.4.0"
 
 "@types/babel__core@^7.1.0":
   version "7.1.3"
