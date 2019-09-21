@@ -12,6 +12,16 @@ class BaseContainer extends Component {
       );
     }
   }
+
+  validateRequiredMethods(requiredMethods = []) {
+    requiredMethods.forEach(method => {
+      if (typeof this[method] !== 'function') {
+        throw new Error(
+          `Method ${method} is required in the class extends Voucher`
+        );
+      }
+    });
+  }
 }
 
 export default BaseContainer;

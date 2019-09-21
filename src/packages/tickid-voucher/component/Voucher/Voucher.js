@@ -7,7 +7,9 @@ import {
   Image,
   StyleSheet,
   FlatList,
-  Dimensions
+  Dimensions,
+  Platform,
+  RefreshControl
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Button from 'react-native-button';
@@ -24,12 +26,16 @@ const defaultListener = () => {};
 class Voucher extends Component {
   static propTypes = {
     onPressVoucher: PropTypes.func,
-    onPressMyVoucher: PropTypes.func
+    onPressMyVoucher: PropTypes.func,
+    onRefresh: PropTypes.func,
+    refreshing: PropTypes.bool
   };
 
   static defaultProps = {
     onPressVoucher: defaultListener,
-    onPressMyVoucher: defaultListener
+    onPressMyVoucher: defaultListener,
+    onRefresh: defaultListener,
+    refreshing: false
   };
 
   constructor(props) {
@@ -65,7 +71,16 @@ class Voucher extends Component {
         <View style={styles.headerBackground} />
         <Image style={styles.voucherX2Backgound} source={vouchersX2Image} />
 
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.refreshing}
+              onRefresh={this.props.onRefresh}
+              colors={[config.colors.white]}
+              tintColor={config.colors.white}
+            />
+          }
+        >
           <View style={styles.placeWrapper}>
             <Text style={styles.placeLabel}>Địa điểm</Text>
 
@@ -84,7 +99,13 @@ class Voucher extends Component {
           <Button onPress={this.props.onPressMyVoucher}>
             <View style={styles.myVoucherWrapper}>
               <Image source={iconVoucher} style={styles.myVoucherIcon} />
-              <Text style={styles.myVoucherTitle}>Voucher của tôi</Text>
+              <View style={styles.myVoucherTitleWrapper}>
+                <Text style={styles.myVoucherTitle}>Voucher của tôi</Text>
+                <Text style={styles.myVoucherInfo}>
+                  <Text style={styles.myVoucherCount}>5 </Text>
+                  mã chưa sử dụng
+                </Text>
+              </View>
               <Icon name="chevron-right" size={16} color="#999" />
             </View>
           </Button>
@@ -146,18 +167,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 8,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5
+      },
+      android: {
+        elevation: 2,
+        borderWidth: 1,
+        borderColor: '#E1E1E1'
+      }
+    })
   },
   myVoucherIcon: {
     ...getImageRatio(152, 136, undefined, 35),
     backgroundColor: config.colors.primary
   },
+  myVoucherTitleWrapper: {
+    flex: 1,
+    marginLeft: 16
+  },
   myVoucherTitle: {
     fontSize: 16,
-    marginLeft: 16,
     fontWeight: '500',
-    color: '#333',
-    flex: 1
+    color: '#333'
+  },
+  myVoucherInfo: {
+    fontSize: 13,
+    color: '#666'
+  },
+  myVoucherCount: {
+    color: config.colors.red,
+    fontWeight: '500',
+    fontSize: 13
   }
 });
 

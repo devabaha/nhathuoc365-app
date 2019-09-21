@@ -1,26 +1,35 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Platform } from 'react-native';
 import Button from 'react-native-button';
+import config from '../../config';
+
+function renderDotsLeft() {
+  const output = [];
+  for (let i = 0; i < 8; i++) {
+    output.push(<View key={i} style={styles.dotLeft} />);
+  }
+  return <View style={styles.dotLeftWrapper}>{output}</View>;
+}
 
 function MyVoucherItem(props) {
   return (
-    <Button onPress={props.onPress}>
-      <View
-        style={[
-          styles.container,
-          {
-            marginBottom: props.last ? 16 : 0
-          }
-        ]}
-      >
-        <Image source={{ uri: props.image }} style={styles.thumbnail} />
+    <Button onPress={props.onPress} containerStyle={styles.btnWrapper}>
+      <View style={[styles.dotLarge, styles.dotTop]} />
+      <View style={[styles.dotLarge, styles.dotBottom]} />
+
+      <View style={[styles.container, { marginBottom: props.last ? 16 : 0 }]}>
+        <View style={styles.avatarWrapper}>
+          <Image style={styles.avatar} source={{ uri: props.avatar }} />
+          {renderDotsLeft()}
+        </View>
+
         <View style={styles.infoWrapper}>
           <Text style={styles.title}>{props.title}</Text>
-        </View>
-        <Image source={{ uri: props.image }} style={styles.avatar} />
-        <View style={styles.discountWrapper}>
-          <Text style={styles.discount}>- 10%</Text>
+          <Text style={styles.remaining}>
+            Còn <Text style={styles.remainingCount}>{props.remaining}</Text>{' '}
+            ngày
+          </Text>
         </View>
       </View>
     </Button>
@@ -28,69 +37,109 @@ function MyVoucherItem(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginTop: 16,
-    borderRadius: 8,
-    overflow: 'hidden',
+  btnWrapper: {
     position: 'relative'
   },
-  thumbnail: {
-    width: '100%',
-    height: 180,
-    resizeMode: 'cover'
+  dotLarge: {
+    position: 'absolute',
+    width: 14,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: '#f1f1f1',
+    left: 98,
+    zIndex: 1
+  },
+  dotTop: {
+    top: 12
+  },
+  dotBottom: {
+    bottom: -4
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    paddingHorizontal: 16,
+    marginTop: 16,
+    borderRadius: 8,
+    position: 'relative',
+    height: 106,
+    flexDirection: 'row',
+    ...Platform.select({
+      ios: {
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 0.05,
+        shadowRadius: 5
+      },
+      android: {
+        elevation: 2,
+        borderWidth: 1,
+        borderColor: '#E1E1E1'
+      }
+    })
+  },
+  avatarWrapper: {
+    flexDirection: 'row',
+    width: 74,
+    justifyContent: 'center',
+    position: 'relative',
+    paddingRight: 16
+  },
+  avatar: {
+    width: 48,
+    resizeMode: 'contain'
   },
   infoWrapper: {
-    padding: 16
+    flex: 1,
+    justifyContent: 'center',
+    paddingLeft: 16
   },
   title: {
     fontSize: 15,
-    color: '#000',
     fontWeight: '500',
-    marginTop: 4
+    color: config.colors.black
   },
-  avatar: {
+  remaining: {
+    fontSize: 13,
+    fontWeight: '400',
+    color: '#666',
+    marginTop: 8
+  },
+  remainingCount: {
+    color: 'orange',
+    fontWeight: '500'
+  },
+  dotLeftWrapper: {
     position: 'absolute',
-    top: 148,
-    left: 16,
-    width: 46,
-    height: 46,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#fff'
+    right: 0,
+    top: 18,
+    bottom: 18,
+    width: 2,
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
-  discountWrapper: {
-    position: 'absolute',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-    top: -60,
-    left: -20,
-    backgroundColor: '#7fc845',
-    width: 120,
-    height: 120,
-    borderRadius: 60
-  },
-  discount: {
-    fontSize: 22,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 20
+  dotLeft: {
+    width: 2,
+    height: 2,
+    borderRadius: 2,
+    backgroundColor: '#d6d6d6'
   }
 });
 
 const defaultListener = () => {};
 
 MyVoucherItem.propTypes = {
-  image: PropTypes.string,
+  avatar: PropTypes.string,
   title: PropTypes.string,
+  remaining: PropTypes.string,
   last: PropTypes.bool,
   onPress: PropTypes.func
 };
 
 MyVoucherItem.defaultProps = {
-  image: '',
+  avatar: '',
   title: '',
+  remaining: '',
   last: false,
   onPress: defaultListener
 };
