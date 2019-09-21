@@ -20,7 +20,9 @@ const config = Object.freeze({
   }),
   colors: {
     primary: '#812384',
-    white: '#fff'
+    white: '#fff',
+    black: '#000',
+    text: '#333'
   },
   routes: {
     primaryTabbar: 'primaryTabbar',
@@ -32,6 +34,7 @@ const config = Object.freeze({
     qrBarCode: 'qrBarCode',
 
     mainVoucher: 'mainVoucher',
+    voucherDetail: 'voucherDetail',
 
     upToPhone: 'upToPhone'
   }

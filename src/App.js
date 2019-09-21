@@ -32,11 +32,12 @@ import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
-import { Voucher as VoucherContainer } from './packages/tickid-voucher';
 import { CloseButton } from 'app-packages/tickid-navbar';
 
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
+import VoucherContainer from './containers/Voucher';
+import VoucherDetailContainer from './containers/VoucherDetail';
 
 import Intro from './components/intro/Intro';
 import AddStore from './components/Home/AddStore';
@@ -118,6 +119,20 @@ const navBarConfig = {
   navBarButtonColor: appConfig.colors.white,
   backButtonTextStyle: {
     color: appConfig.colors.white
+  }
+};
+
+const whiteNavbarConfig = {
+  navigationBarStyle: {
+    backgroundColor: appConfig.colors.white
+  },
+  titleStyle: {
+    color: appConfig.colors.text,
+    alignSelf: 'center'
+  },
+  navBarButtonColor: appConfig.colors.text,
+  backButtonTextStyle: {
+    color: appConfig.colors.text
   }
 };
 
@@ -583,7 +598,17 @@ class App extends Component {
                       key={`${appConfig.routes.mainVoucher}_1`}
                       title="TickID Voucher"
                       component={VoucherContainer}
-                      {...navBarConfig}
+                      {...whiteNavbarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  {/* ================ VOUCHER DETAIL ================ */}
+                  <Stack key={appConfig.routes.voucherDetail}>
+                    <Scene
+                      key={`${appConfig.routes.voucherDetail}_1`}
+                      component={VoucherDetailContainer}
+                      {...whiteNavbarConfig}
                       back
                     />
                   </Stack>
