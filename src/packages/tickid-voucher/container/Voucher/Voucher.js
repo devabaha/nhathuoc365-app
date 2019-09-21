@@ -3,26 +3,36 @@ import VoucherComponent from '../../component/Voucher';
 import BaseContainer from '../BaseContainer';
 
 class Voucher extends BaseContainer {
-  componentWillMount() {
-    this.validateRequiredMethods();
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      refreshing: false
+    };
   }
 
-  validateRequiredMethods() {
-    const requiredMethods = ['handlePressVoucher', 'handlePressMyVoucher'];
-    requiredMethods.forEach(method => {
-      if (typeof this[method] !== 'function') {
-        throw new Error(
-          `Method ${method} is required in the class extends Voucher`
-        );
-      }
-    });
+  componentWillMount() {
+    this.validateRequiredMethods([
+      'handlePressVoucher',
+      'handlePressMyVoucher'
+    ]);
   }
+
+  handleOnRefresh = () => {
+    this.setState({ refreshing: true });
+
+    setTimeout(() => {
+      this.setState({ refreshing: false });
+    }, 1000);
+  };
 
   render() {
     return (
       <VoucherComponent
         onPressVoucher={this.handlePressVoucher}
         onPressMyVoucher={this.handlePressMyVoucher}
+        onRefresh={this.handleOnRefresh}
+        refreshing={this.state.refreshing}
       />
     );
   }

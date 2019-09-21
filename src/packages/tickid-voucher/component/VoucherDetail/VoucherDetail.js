@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-  Dimensions
+  Dimensions,
+  RefreshControl
 } from 'react-native';
 import { Tabs, Tab } from '@tickid/react-native-tabs';
 import { Accordion, Panel } from '@tickid/react-native-accordion';
@@ -20,17 +21,31 @@ const defaultListener = () => {};
 
 class VoucherDetail extends Component {
   static propTypes = {
-    image: PropTypes.string
+    image: PropTypes.string,
+    onRefresh: PropTypes.func,
+    onGetVoucher: PropTypes.func,
+    refreshing: PropTypes.bool
   };
 
   static defaultProps = {
-    image: ''
+    image: '',
+    onRefresh: defaultListener,
+    onGetVoucher: defaultListener,
+    refreshing: false
   };
 
   render() {
     return (
       <Fragment>
-        <ScrollView style={styles.scrollViewWrapper}>
+        <ScrollView
+          style={styles.scrollViewWrapper}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.refreshing}
+              onRefresh={this.props.onRefresh}
+            />
+          }
+        >
           <View style={styles.container}>
             <View style={styles.topImageWrapper}>
               <Image
@@ -154,6 +169,7 @@ class VoucherDetail extends Component {
           <Button
             containerStyle={styles.getVoucherBtn}
             style={styles.getVoucherTitle}
+            onPress={this.props.onGetVoucher}
           >
             Nhận mã giảm giá
           </Button>
