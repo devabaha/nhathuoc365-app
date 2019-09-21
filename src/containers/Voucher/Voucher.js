@@ -18,6 +18,12 @@ class Voucher extends TickIDVoucher {
       title: '[Loyal Tea] Giảm 30% menu toàn bộ đồ uống'
     });
   };
+
+  handlePressMyVoucher = () => {
+    Actions.push(appConfig.routes.myVoucher, {
+      title: 'Voucher của tôi'
+    });
+  };
 }
 
 export default Voucher;
