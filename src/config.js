@@ -34,6 +34,7 @@ const config = Object.freeze({
     qrBarCode: 'qrBarCode',
 
     mainVoucher: 'mainVoucher',
+    myVoucher: 'myVoucher',
     voucherDetail: 'voucherDetail',
 
     upToPhone: 'upToPhone'

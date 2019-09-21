@@ -37,6 +37,7 @@ import { CloseButton } from 'app-packages/tickid-navbar';
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
 import VoucherContainer from './containers/Voucher';
+import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
 
 import Intro from './components/intro/Intro';
@@ -88,6 +89,10 @@ import MdCard from './components/services/MdCard';
 import MdCardConfirm from './components/services/MdCardConfirm';
 import TabIcon from './components/TabIcon';
 
+import { initialize } from './packages/tickid-voucher';
+
+initialize();
+
 const transitionConfig = () => ({
   screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid
 });
@@ -110,7 +115,8 @@ const handleTabBarOnPress = props => {
 
 const navBarConfig = {
   navigationBarStyle: {
-    backgroundColor: appConfig.colors.primary
+    backgroundColor: appConfig.colors.primary,
+    borderBottomWidth: 0
   },
   titleStyle: {
     color: appConfig.colors.white,
@@ -122,7 +128,7 @@ const navBarConfig = {
   }
 };
 
-const whiteNavbarConfig = {
+const whiteNavBarConfig = {
   navigationBarStyle: {
     backgroundColor: appConfig.colors.white
   },
@@ -598,7 +604,7 @@ class App extends Component {
                       key={`${appConfig.routes.mainVoucher}_1`}
                       title="TickID Voucher"
                       component={VoucherContainer}
-                      {...whiteNavbarConfig}
+                      {...navBarConfig}
                       back
                     />
                   </Stack>
@@ -608,7 +614,28 @@ class App extends Component {
                     <Scene
                       key={`${appConfig.routes.voucherDetail}_1`}
                       component={VoucherDetailContainer}
-                      {...whiteNavbarConfig}
+                      {...whiteNavBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  {/* ================ MY VOUCHER ================ */}
+                  <Stack key={appConfig.routes.myVoucher}>
+                    <Scene
+                      key={`${appConfig.routes.myVoucher}_1`}
+                      title="Voucher của tôi"
+                      component={MyVoucherContainer}
+                      {...whiteNavBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  {/* ================ VOUCHER DETAIL ================ */}
+                  <Stack key={appConfig.routes.voucherDetail}>
+                    <Scene
+                      key={`${appConfig.routes.voucherDetail}_1`}
+                      component={VoucherDetailContainer}
+                      {...whiteNavBarConfig}
                       back
                     />
                   </Stack>

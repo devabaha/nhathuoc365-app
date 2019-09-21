@@ -1,17 +1,30 @@
-import React, { Component } from 'react';
+import React from 'react';
 import VoucherComponent from '../../component/Voucher';
+import BaseContainer from '../BaseContainer';
 
-class Voucher extends Component {
+class Voucher extends BaseContainer {
   componentWillMount() {
-    if (typeof this.handlePressVoucher !== 'function') {
-      throw new Error(
-        'Method `handlePressVoucher` is required in the class extends Voucher'
-      );
-    }
+    this.validateRequiredMethods();
+  }
+
+  validateRequiredMethods() {
+    const requiredMethods = ['handlePressVoucher', 'handlePressMyVoucher'];
+    requiredMethods.forEach(method => {
+      if (typeof this[method] !== 'function') {
+        throw new Error(
+          `Method ${method} is required in the class extends Voucher`
+        );
+      }
+    });
   }
 
   render() {
-    return <VoucherComponent onPressVoucher={this.handlePressVoucher} />;
+    return (
+      <VoucherComponent
+        onPressVoucher={this.handlePressVoucher}
+        onPressMyVoucher={this.handlePressMyVoucher}
+      />
+    );
   }
 }
 
