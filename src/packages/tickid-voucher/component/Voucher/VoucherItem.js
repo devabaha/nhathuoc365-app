@@ -5,7 +5,7 @@ import Button from 'react-native-button';
 
 function VoucherItem(props) {
   return (
-    <Button onPress={props.onPress}>
+    <Button onPress={props.onPress} containerStyle={styles.containerBtn}>
       <View
         style={[
           styles.container,
@@ -28,10 +28,12 @@ function VoucherItem(props) {
 }
 
 const styles = StyleSheet.create({
+  containerBtn: {
+    marginTop: 16
+  },
   container: {
     backgroundColor: '#fff',
     marginHorizontal: 16,
-    marginTop: 16,
     borderRadius: 8,
     overflow: 'hidden',
     position: 'relative'

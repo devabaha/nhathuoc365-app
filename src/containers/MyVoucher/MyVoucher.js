@@ -1,3 +1,4 @@
+import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import { MyVoucher as TickIDMyVoucher } from 'app-packages/tickid-voucher';
 

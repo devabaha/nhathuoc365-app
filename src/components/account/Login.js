@@ -90,7 +90,6 @@ export default class Login extends Component {
                 );
               })();
             }
-            StatusBar.setBarStyle('light-content');
           })();
           Toast.show(response.message, Toast.SHORT);
         } else if (response) {

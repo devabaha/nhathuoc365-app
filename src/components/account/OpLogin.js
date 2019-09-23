@@ -280,7 +280,6 @@ export default class OpLogin extends Component {
                 );
               })();
             }
-            StatusBar.setBarStyle('light-content');
 
             setTimeout(() => {
               this.setState({ spinner: false }, Actions.pop);

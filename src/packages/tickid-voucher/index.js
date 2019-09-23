@@ -13,6 +13,7 @@ export const initialize = (newConfig = {}) => {
 export { default as Voucher } from './container/Voucher';
 export { default as MyVoucher } from './container/MyVoucher';
 export { default as VoucherDetail } from './container/VoucherDetail';
+export { default as SelectProvince } from './container/SelectProvince';
 
 // ------------------------------ PUBLIC CONFIG ------------------------------ //
 export { default as config } from './config';

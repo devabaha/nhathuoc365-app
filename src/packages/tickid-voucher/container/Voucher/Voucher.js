@@ -7,14 +7,16 @@ class Voucher extends BaseContainer {
     super(props);
 
     this.state = {
-      refreshing: false
+      refreshing: false,
+      provinceSelected: { id: 2, name: 'Hồ Chí Minh' }
     };
   }
 
   componentWillMount() {
     this.validateRequiredMethods([
       'handlePressVoucher',
-      'handlePressMyVoucher'
+      'handlePressMyVoucher',
+      'handlePressSelectProvince'
     ]);
   }
 
@@ -26,13 +28,22 @@ class Voucher extends BaseContainer {
     }, 1000);
   };
 
+  handleSetProvince = provinceSelected => {
+    this.setState({ provinceSelected });
+  };
+
   render() {
     return (
       <VoucherComponent
         onPressVoucher={this.handlePressVoucher}
         onPressMyVoucher={this.handlePressMyVoucher}
+        onPressSelectProvince={this.handlePressSelectProvince.bind(this, {
+          setProvince: this.handleSetProvince,
+          provinceSelected: this.state.provinceSelected
+        })}
         onRefresh={this.handleOnRefresh}
         refreshing={this.state.refreshing}
+        provinceSelected={this.state.provinceSelected}
       />
     );
   }

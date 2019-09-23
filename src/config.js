@@ -36,6 +36,7 @@ const config = Object.freeze({
     mainVoucher: 'mainVoucher',
     myVoucher: 'myVoucher',
     voucherDetail: 'voucherDetail',
+    voucherSelectProvince: 'voucherSelectProvince',
 
     upToPhone: 'upToPhone'
   }

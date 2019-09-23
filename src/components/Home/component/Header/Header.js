@@ -1,20 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
-import _drawerIconNotication from '../../../../images/notication.png';
+import iconNotication from '../../../../images/notication.png';
 
 function Header(props) {
   return (
     <View style={styles.container}>
       <Text style={styles.haloNameWrapper}>
-        <Text style={styles.haloName}>Xin chào,</Text>
+        <Text style={styles.haloName}>Xin chào</Text>
         <Text style={[styles.haloName, styles.haloNameBold]}>
-          {` ${props.name}`}
+          {props.name ? `, ${props.name}` : ''}
         </Text>
       </Text>
 
       <View style={styles.homeBoxWalletInfoLabelRight}>
-        <Image style={styles.iconNotication} source={_drawerIconNotication} />
+        <Image style={styles.iconNotication} source={iconNotication} />
       </View>
     </View>
   );

@@ -1,45 +1,28 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableHighlight
-} from 'react-native';
-import VoucherItem from './VoucherItem';
+import Button from 'react-native-button';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-function ListVouchers(props) {
-  function renderVoucherItem({ item, index }) {
-    return (
-      <VoucherItem
-        title={item.title}
-        imageUrl={item.image_url}
-        onPress={props.onVoucherPressed}
-        last={props.data.length - 1 === index}
-      />
-    );
-  }
-
+function HomeCardList(props) {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>{props.title}</Text>
 
-        <TouchableHighlight
-          style={styles.showAllBtn}
+        <Button
+          containerStyle={styles.showAllBtn}
           underlayColor="transparent"
           onPress={props.onShowAll}
         >
           <Text style={styles.viewAll}>Xem tất cả</Text>
-        </TouchableHighlight>
+        </Button>
       </View>
 
       <FlatList
         horizontal
         data={props.data}
         showsHorizontalScrollIndicator={false}
-        renderItem={renderVoucherItem}
+        renderItem={props.children}
         keyExtractor={item => `${item.id}`}
       />
     </View>
@@ -76,18 +59,18 @@ const styles = StyleSheet.create({
   }
 });
 
-const defaultListener = () => {};
+const defaultListener = () => null;
 
-ListVouchers.propTypes = {
+HomeCardList.propTypes = {
   data: PropTypes.array,
-  onVoucherPressed: PropTypes.func,
-  onShowAll: PropTypes.func
+  onShowAll: PropTypes.func,
+  children: PropTypes.func.isRequired
 };
 
-ListVouchers.defaultProps = {
+HomeCardList.defaultProps = {
   data: [],
-  onVoucherPressed: defaultListener,
-  onShowAll: defaultListener
+  onShowAll: defaultListener,
+  children: defaultListener
 };
 
-export default ListVouchers;
+export default HomeCardList;
