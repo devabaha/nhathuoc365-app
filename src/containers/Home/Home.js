@@ -18,10 +18,12 @@ class Home extends Component {
     super(props);
 
     this.state = {
-      store_data: null,
       refreshing: false,
-      loading: false,
-      scrollTop: 0,
+      site: null,
+      sites: null,
+      newses: null,
+      notices: null,
+      campaigns: null,
       promotions: null
     };
   }
@@ -36,52 +38,34 @@ class Home extends Component {
     this.getHomeDataFromApi();
   }
 
-  getHomeDataFromApi = (delay = 0) => {
-    if (store.no_refresh_home_change) {
-      return;
-    }
-    this.setState(
-      {
-        loading: true
-      },
-      async () => {
-        try {
-          const response = await APIHandler.user_site_home();
-          if (response && response.status == STATUS_SUCCESS) {
-            setTimeout(() => {
-              const { data } = response;
-              this.setState({
-                loading: false,
-                refreshing: false,
-                store_data: data.site,
-                newses_data:
-                  data.newses && data.newses.length ? data.newses : null,
-                farm_newses_data:
-                  data.farm_newses && data.farm_newses.length
-                    ? data.farm_newses
-                    : null,
-                promotions:
-                  data.promotions && data.promotions.length
-                    ? data.promotions
-                    : null
-              });
-              store.setStoreData(data.site);
-            }, delay || 0);
-          }
-        } catch (e) {
-          console.warn(e + ' user_home');
-          store.addApiQueue('user_home', this.getHomeDataFromApi.bind(this));
-        }
+  getHomeDataFromApi = async () => {
+    try {
+      const response = await APIHandler.user_site_home();
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          site: response.data.site,
+          sites: response.data.sites,
+          newses: response.data.newses,
+          notices: response.data.notices,
+          campaigns: response.data.campaigns,
+          promotions: response.data.promotions
+        });
       }
-    );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({
+        refreshing: false
+      });
+    }
   };
 
-  onPullToRefresh() {
+  handlePullToRefresh = () => {
     this.setState({ refreshing: true });
 
-    const delayOneSecond = 1000;
-    this.getHomeDataFromApi(delayOneSecond);
-  }
+    const oneSecond = 1000;
+    setTimeout(this.getHomeDataFromApi, oneSecond);
+  };
 
   handlePressedSurplusNext = () => {};
 
@@ -139,20 +123,47 @@ class Home extends Component {
     }
   };
 
+  handleShowAllSites = () => {};
+
+  handleShowAllCampaigns = () => {
+    Actions.push(appConfig.routes.mainVoucher);
+  };
+
+  handleShowAllNews = () => {};
+
+  handlePressSiteItem = site => {};
+
+  handlePressCampaignItem = campaign => {
+    Actions.push(appConfig.routes.voucherDetail, {
+      title: campaign.title
+    });
+  };
+
+  handlePressNewItem = newItem => {};
+
   render() {
     return (
       <HomeComponent
+        sites={this.state.sites}
+        newses={this.state.newses}
+        notices={this.state.notices}
+        campaigns={this.state.campaigns}
+        promotions={this.state.promotions}
         onActionPress={this.handleActionPress}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
         onVoucherPressed={this.handleVoucherPressed}
         onShowAllVouchers={this.handleShowAllVouchers}
         onPressService={this.handlePressService}
+        onPullToRefresh={this.handlePullToRefresh}
+        onShowAllSites={this.handleShowAllSites}
+        onShowAllCampaigns={this.handleShowAllCampaigns}
+        onShowAllNews={this.handleShowAllNews}
+        onPressSiteItem={this.handlePressSiteItem}
+        onPressCampaignItem={this.handlePressCampaignItem}
+        onPressNewItem={this.handlePressNewItem}
         hasPromotion={this.hasPromotion}
         refreshing={this.state.refreshing}
-        promotions={this.state.promotions}
-        farmNewsesData={this.state.farm_newses_data}
-        newsesData={this.state.newses_data}
       />
     );
   }

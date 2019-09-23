@@ -32,7 +32,10 @@ import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
+import { Loading as LoadingOverlay } from 'app-packages/tickid-loading';
 import { CloseButton } from 'app-packages/tickid-navbar';
+import handleStatusBarStyle from './helper/handleStatusBarStyle';
+import TickIDStatusBar from 'app-packages/tickid-status-bar';
 
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
@@ -89,7 +92,7 @@ import MdCard from './components/services/MdCard';
 import MdCardConfirm from './components/services/MdCardConfirm';
 import TabIcon from './components/TabIcon';
 
-import { initialize } from './packages/tickid-voucher';
+import { initialize, SelectProvince } from './packages/tickid-voucher';
 
 initialize();
 
@@ -98,10 +101,8 @@ const transitionConfig = () => ({
 });
 
 const touchedTabs = {};
-
 const handleTabBarOnPress = props => {
   // const isTouched = () => touchedTabs[props.navigation.state.key];
-
   switch (props.navigation.state.key) {
     case appConfig.routes.scanQrCodeTab:
       Actions.push(appConfig.routes.qrBarCode);
@@ -142,9 +143,9 @@ const whiteNavBarConfig = {
   }
 };
 
-var currentSceneName = null;
-var currentSceneOnBack = null;
-var backButtonPressedOnceToExit = false;
+let currentSceneName = null;
+let currentSceneOnBack = null;
+let backButtonPressedOnceToExit = false;
 
 @observer
 class App extends Component {
@@ -163,10 +164,8 @@ class App extends Component {
       finish: false,
       showIntro: false
     };
-  }
 
-  componentWillMount() {
-    StatusBar.setBarStyle('dark-content');
+    StatusBar.setBarStyle('light-content', true);
   }
 
   componentWillUnmount() {
@@ -242,7 +241,6 @@ class App extends Component {
             }
           );
         })();
-        StatusBar.setBarStyle('light-content');
       } else {
         Toast.show(response.message);
       }
@@ -255,14 +253,12 @@ class App extends Component {
             },
             () => {
               Actions.op_register({
-                type: ActionConst.RESET,
                 title: 'Đăng ký thông tin',
                 name_props: response.data.name
               });
             }
           );
         })();
-        StatusBar.setBarStyle('light-content');
       }
       if (response && response.status == STATUS_UNDEFINE_USER) {
         store.setUserInfo(response.data);
@@ -272,9 +268,7 @@ class App extends Component {
               finish: true
             },
             () => {
-              Actions.login({
-                type: ActionConst.RESET
-              });
+              Actions.login();
             }
           );
         })();
@@ -464,7 +458,7 @@ class App extends Component {
     }
   }
 
-  _backAndroidHandler() {
+  backAndroidHandler() {
     if (backButtonPressedOnceToExit) {
       BackHandler.exitApp();
     } else {
@@ -497,8 +491,11 @@ class App extends Component {
     return (
       <Provider store={reduxStore}>
         <Router
-          backAndroidHandler={this._backAndroidHandler.bind(this)}
           store={store}
+          backAndroidHandler={this.backAndroidHandler.bind(this)}
+          onStateChange={(prevState, newState, action) => {
+            handleStatusBarStyle(prevState, newState, action);
+          }}
         >
           <Overlay key="overlay">
             <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
@@ -1117,6 +1114,11 @@ class App extends Component {
                     />
                   </Stack>
                 </Scene>
+
+                <Stack
+                  key={appConfig.routes.voucherSelectProvince}
+                  component={SelectProvince}
+                />
               </Lightbox>
 
               {/* ================ MODAL ZONE ================ */}
@@ -1130,6 +1132,9 @@ class App extends Component {
                 />
               </Stack>
             </Modal>
+
+            <Scene component={LoadingOverlay} />
+            <Scene component={TickIDStatusBar} />
           </Overlay>
         </Router>
       </Provider>
@@ -1164,9 +1169,6 @@ class App extends Component {
     }
   }
 }
-
-// codepush initialize
-App = codePush(App);
 
 const styles = StyleSheet.create({
   container: {
@@ -1205,4 +1207,5 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
+// wrap App with codepush HOC
+export default codePush(App);

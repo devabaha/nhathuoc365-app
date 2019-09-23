@@ -1,14 +1,5 @@
-'use strict';
-
 import React from 'react';
-import {
-  Text,
-  View,
-  Platform,
-  LayoutAnimation,
-  // UIManager,
-  StatusBar
-} from 'react-native';
+import { View, Platform, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import Events from './Events';
@@ -41,18 +32,6 @@ global._ = _;
 // APIHandler
 import APIHandler from '../network/APIHandler';
 global.APIHandler = APIHandler;
-
-// status bar
-const MyStatusBar = ({ ...props }) => (
-  <View style={{ height: isIOS ? 20 : 0, backgroundColor: DEFAULT_COLOR }}>
-    <StatusBar
-      //backgroundColor={DEFAULT_COLOR}
-      {...props}
-      barStyle="light-content"
-    />
-  </View>
-);
-global.MyStatusBar = MyStatusBar;
 
 // default message toast error
 global.defaultToastError = () => Toast.show(MESSAGE_OTHER_ERROR, Toast.SHORT);

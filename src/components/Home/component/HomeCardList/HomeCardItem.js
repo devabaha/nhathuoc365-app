@@ -1,25 +1,21 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { stringHelper } from 'app-util';
-import {
-  View,
-  Text,
-  TouchableHighlight,
-  StyleSheet,
-  Image
-} from 'react-native';
+import Button from 'react-native-button';
+import { View, Text, StyleSheet, Image } from 'react-native';
 
-function VoucherItem(props) {
+function HomeCardItem(props) {
   return (
-    <TouchableHighlight underlayColor="transparent" onPress={props.onPress}>
-      <View
-        style={[
-          styles.container,
-          {
-            marginRight: props.last ? 16 : 0
-          }
-        ]}
-      >
+    <Button
+      onPress={props.onPress}
+      containerStyle={[
+        styles.containerBtn,
+        {
+          marginRight: props.last ? 16 : 0
+        }
+      ]}
+    >
+      <View style={styles.container}>
         <Image style={styles.image} source={{ uri: props.imageUrl }} />
         <View style={styles.titleWrapper}>
           <Text style={styles.title}>
@@ -27,14 +23,16 @@ function VoucherItem(props) {
           </Text>
         </View>
       </View>
-    </TouchableHighlight>
+    </Button>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: 205,
+  containerBtn: {
     marginLeft: 16
+  },
+  container: {
+    width: 205
   },
   image: {
     backgroundColor: '#ebebeb',
@@ -51,16 +49,16 @@ const styles = StyleSheet.create({
   }
 });
 
-VoucherItem.propTypes = {
+HomeCardItem.propTypes = {
   title: PropTypes.string,
   imageUrl: PropTypes.string,
   last: PropTypes.bool
 };
 
-VoucherItem.defaultProps = {
+HomeCardItem.defaultProps = {
   title: '',
   imageUrl: '',
   last: false
 };
 
-export default VoucherItem;
+export default HomeCardItem;

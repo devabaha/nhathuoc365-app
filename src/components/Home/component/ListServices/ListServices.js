@@ -60,8 +60,9 @@ ListServices.defaultProps = {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 16,
-    paddingHorizontal: 12
+    paddingVertical: 16,
+    paddingHorizontal: 12,
+    backgroundColor: '#fff'
   },
   buttonWrapper: {
     flex: 1

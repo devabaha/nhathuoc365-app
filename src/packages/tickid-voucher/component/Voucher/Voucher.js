@@ -27,21 +27,27 @@ class Voucher extends Component {
   static propTypes = {
     onPressVoucher: PropTypes.func,
     onPressMyVoucher: PropTypes.func,
+    onPressSelectProvince: PropTypes.func,
     onRefresh: PropTypes.func,
-    refreshing: PropTypes.bool
+    refreshing: PropTypes.bool,
+    provinceSelected: PropTypes.object
   };
 
   static defaultProps = {
     onPressVoucher: defaultListener,
     onPressMyVoucher: defaultListener,
+    onPressSelectProvince: defaultListener,
     onRefresh: defaultListener,
-    refreshing: false
+    refreshing: false,
+    provinceSelected: undefined
   };
 
   constructor(props) {
     super(props);
 
-    this.state = {};
+    this.state = {
+      hideVoucherX2: false
+    };
   }
 
   renderVouchers() {
@@ -65,13 +71,37 @@ class Voucher extends Component {
     );
   };
 
+  handleScrollTop = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 190) {
+      if (!this.state.hideVoucherX2) {
+        this.setState({ hideVoucherX2: true });
+      }
+    } else {
+      if (this.state.hideVoucherX2) {
+        this.setState({ hideVoucherX2: false });
+      }
+    }
+  };
+
+  get provinceName() {
+    if (this.props.provinceSelected) {
+      return this.props.provinceSelected.name;
+    }
+    return '';
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.headerBackground} />
-        <Image style={styles.voucherX2Backgound} source={vouchersX2Image} />
+        {!this.state.hideVoucherX2 && (
+          <Image style={styles.voucherX2Backgound} source={vouchersX2Image} />
+        )}
 
         <ScrollView
+          onScroll={this.handleScrollTop}
+          scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
               refreshing={this.props.refreshing}
@@ -84,19 +114,23 @@ class Voucher extends Component {
           <View style={styles.placeWrapper}>
             <Text style={styles.placeLabel}>Địa điểm</Text>
 
-            <Button>
+            <Button onPress={this.props.onPressSelectProvince}>
               <View style={styles.placeNameWrapper}>
-                <Text style={styles.placeName}>Hồ Chí Minh</Text>
+                <Text style={styles.placeName}>{this.provinceName}</Text>
                 <Icon
                   name="chevron-down"
                   size={16}
                   color={config.colors.white}
+                  style={styles.placeDropDownIcon}
                 />
               </View>
             </Button>
           </View>
 
-          <Button onPress={this.props.onPressMyVoucher}>
+          <Button
+            onPress={this.props.onPressMyVoucher}
+            containerStyle={styles.myVoucherBtn}
+          >
             <View style={styles.myVoucherWrapper}>
               <Image source={iconVoucher} style={styles.myVoucherIcon} />
               <View style={styles.myVoucherTitleWrapper}>
@@ -158,9 +192,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: config.colors.white
   },
+  placeDropDownIcon: {
+    marginTop: 4
+  },
 
+  myVoucherBtn: {
+    marginTop: 16
+  },
   myVoucherWrapper: {
-    marginTop: 16,
     marginHorizontal: 16,
     backgroundColor: config.colors.white,
     paddingVertical: 16,
