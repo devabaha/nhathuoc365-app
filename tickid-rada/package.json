@@ -1,0 +1,26 @@
+{
+  "name": "@tickid/tickid-rada",
+  "version": "1.0.0",
+  "description": "Module React Native cho Rada",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/tickid/apps/tickid-rada.git"
+  },
+  "author": "tickid",
+  "license": "ISC",
+  "dependencies": {
+    "prop-types": "^15.7.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
+    "eslint-plugin-react": "^7.14.3",
+    "react": "^16.9.0",
+    "react-native": "^0.60.5",
+    "react-native-render-html": "^4.1.2"
+  }
+}
