@@ -3,10 +3,10 @@ import { Actions } from 'react-native-router-flux';
 import { Voucher as TickIDVoucher } from 'app-packages/tickid-voucher';
 
 class Voucher extends TickIDVoucher {
-  handlePressVoucher = voucher => {
+  handlePressVoucher = campaign => {
     Actions.push(appConfig.routes.voucherDetail, {
-      voucher,
-      title: '[Loyal Tea] Giảm 30% menu toàn bộ đồ uống'
+      campaignId: campaign.data.id,
+      title: campaign.data.title
     });
   };
 

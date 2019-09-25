@@ -30,7 +30,8 @@ class Voucher extends Component {
     onPressSelectProvince: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
-    provinceSelected: PropTypes.object
+    provinceSelected: PropTypes.object,
+    campaigns: PropTypes.array
   };
 
   static defaultProps = {
@@ -39,7 +40,8 @@ class Voucher extends Component {
     onPressSelectProvince: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
-    provinceSelected: undefined
+    provinceSelected: undefined,
+    campaigns: []
   };
 
   constructor(props) {
@@ -50,23 +52,36 @@ class Voucher extends Component {
     };
   }
 
+  get totalCampaigns() {
+    return this.props.campaigns.length;
+  }
+
+  get provinceName() {
+    if (this.props.provinceSelected) {
+      return this.props.provinceSelected.name;
+    }
+    return '';
+  }
+
   renderVouchers() {
     return (
       <FlatList
-        data={[{}, {}, {}, {}]}
-        keyExtractor={(item, key) => `${key}`}
+        data={this.props.campaigns}
+        keyExtractor={item => `${item.data.id}`}
         renderItem={this.renderVoucher}
       />
     );
   }
 
-  renderVoucher = ({ item: voucher, index }) => {
+  renderVoucher = ({ item: campaign, index }) => {
     return (
       <VoucherItem
-        image="https://ipos.vn/wp-content/uploads/2017/04/banner-02.png"
-        title="[Loyal Tea] Giảm 30% menu toàn bộ đồ uống tại cơ sở số 2 Phạm Ngọc Thạch"
-        onPress={() => this.props.onPressVoucher(voucher)}
-        last={3 === index}
+        title={campaign.data.title}
+        image={campaign.data.image_url}
+        logoImage={campaign.data.shop_logo_url}
+        expireDate={campaign.data.expire_date}
+        onPress={() => this.props.onPressVoucher(campaign)}
+        last={this.totalCampaigns - 1 === index}
       />
     );
   };
@@ -83,13 +98,6 @@ class Voucher extends Component {
       }
     }
   };
-
-  get provinceName() {
-    if (this.props.provinceSelected) {
-      return this.props.provinceSelected.name;
-    }
-    return '';
-  }
 
   render() {
     return (

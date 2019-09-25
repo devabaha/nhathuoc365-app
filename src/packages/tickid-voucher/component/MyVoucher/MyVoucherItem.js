@@ -26,10 +26,12 @@ function MyVoucherItem(props) {
 
         <View style={styles.infoWrapper}>
           <Text style={styles.title}>{props.title}</Text>
-          <Text style={styles.remaining}>
-            Còn <Text style={styles.remainingCount}>{props.remaining}</Text>{' '}
-            ngày
-          </Text>
+          {!!props.remaining && (
+            <Text style={styles.remaining}>
+              Còn <Text style={styles.remainingCount}>{props.remaining}</Text>{' '}
+              ngày
+            </Text>
+          )}
         </View>
       </View>
     </Button>

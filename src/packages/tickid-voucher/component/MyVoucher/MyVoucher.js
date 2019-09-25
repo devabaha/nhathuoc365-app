@@ -9,20 +9,26 @@ class MyVoucher extends Component {
   static propTypes = {
     onPressVoucher: PropTypes.func,
     onRefresh: PropTypes.func,
-    refreshing: PropTypes.bool
+    refreshing: PropTypes.bool,
+    campaigns: PropTypes.array
   };
 
   static defaultProps = {
     onPressVoucher: defaultListener,
     onRefresh: defaultListener,
-    refreshing: false
+    refreshing: false,
+    campaigns: []
   };
+
+  get totalCampaigns() {
+    return this.props.campaigns.length;
+  }
 
   renderMyVouchers() {
     return (
       <FlatList
-        data={[{}, {}, {}, {}, {}]}
-        keyExtractor={(item, index) => `${index}`}
+        data={this.props.campaigns}
+        keyExtractor={item => `${item.data.id}`}
         renderItem={this.renderMyVoucher}
         refreshControl={
           <RefreshControl
@@ -34,14 +40,14 @@ class MyVoucher extends Component {
     );
   }
 
-  renderMyVoucher = ({ item, index }) => {
+  renderMyVoucher = ({ item: campaign, index }) => {
     return (
       <MyVoucherItem
-        title="[Phở ông Hùng] Giảm 10% tổng hóa đơn"
-        remaining="2"
-        avatar="https://scontent.fhan2-1.fna.fbcdn.net/v/t1.0-9/31895380_186603668820258_510303184904781824_n.jpg?_nc_cat=103&_nc_oc=AQkZyIKqNm6_uksfCxdGfcgaxtCUSSvyLl7PuD_nnjp14rSZff_TP4AAkJQxjwxpD-U&_nc_ht=scontent.fhan2-1.fna&oh=369fbee953486122a190d9f72a45134e&oe=5DF246CC"
-        last={4 === index}
+        title={campaign.data.title}
+        remaining=""
+        avatar={campaign.data.shop_logo_url}
         onPress={this.props.onPressVoucher}
+        last={this.totalCampaigns - 1 === index}
       />
     );
   };
