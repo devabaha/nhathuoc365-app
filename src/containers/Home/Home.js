@@ -130,13 +130,39 @@ class Home extends Component {
   }
 
   handleBookingFail(err) {
-    console.log(err.message);
+    console.log(err);
+    if (err && err.data) {
+      if (err.data.customer.length != 0) {
+        Toast.show(err.data.customer[0]);
+        console.log(err.data.customer[0]);
+      } else {
+        console.log(err.message || '');
+      }
+    } else if (err.message) {
+      console.log(err.message);
+    } else {
+      console.log('Có lỗi xảy ra, vui lòng thử lại');
+    }
   }
 
-  handleCallWebHookSuccess(response) {}
+  handleCallWebHookSuccess(response) {
+    Actions.homeTab();
+  }
 
   handleCallWebHookFail(err) {
-    console.log(err.message);
+    console.log(err);
+    if (err && err.data) {
+      if (err.data.customer.length != 0) {
+        Toast.show(err.data.customer[0]);
+        console.log(err.data.customer[0]);
+      } else {
+        console.log(err.message || '');
+      }
+    } else if (err.message) {
+      console.log(err.message);
+    } else {
+      console.log('Có lỗi xảy ra, vui lòng thử lại');
+    }
   }
 
   handleShowAllVouchers = () => {};
