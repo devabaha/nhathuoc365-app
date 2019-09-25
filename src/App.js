@@ -91,6 +91,7 @@ import NapTKCConfirm from './components/services/NapTKCConfirm';
 import MdCard from './components/services/MdCard';
 import MdCardConfirm from './components/services/MdCardConfirm';
 import TabIcon from './components/TabIcon';
+import TickIDRada from '@tickid/tickid-rada';
 
 import { initialize, SelectProvince } from './packages/tickid-voucher';
 
@@ -158,6 +159,13 @@ class App extends Component {
     OneSignal.addEventListener('ids', this._onIds);
     // OneSignal.configure(); 	// triggers the ids event
     OneSignal.inFocusDisplaying(2);
+    let config = {
+      partnerAuthorization:
+        'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIml4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm',
+      webhookUrl: null,
+      defaultLocation: '37.33233141,-122.0312186'
+    };
+    TickIDRada.init(config);
 
     this.state = {
       loading: true,
@@ -1099,6 +1107,42 @@ class App extends Component {
                       key="md_card_1"
                       title="Nạp thẻ trong ngày"
                       component={MdCard}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="tickidRada">
+                    <Scene
+                      key="tickidRada1"
+                      component={TickIDRada.Category}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="tickidRadaListService">
+                    <Scene
+                      key="tickidRadaListService1"
+                      component={TickIDRada.ListService}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="tickidRadaServiceDetail">
+                    <Scene
+                      key="tickidRadaServiceDetail1"
+                      component={TickIDRada.ServiceDetail}
+                      {...navBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  <Stack key="tickidRadaBooking">
+                    <Scene
+                      key="tickidRadaBooking1"
+                      component={TickIDRada.Booking}
                       {...navBarConfig}
                       back
                     />

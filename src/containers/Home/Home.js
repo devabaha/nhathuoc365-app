@@ -83,6 +83,62 @@ class Home extends Component {
     });
   };
 
+  handleCategoryPress(item) {
+    Actions.push('tickidRadaListService', {
+      category: item,
+      title: item.name,
+      onPressItem: item => {
+        this.handleServicePress(item);
+      }
+    });
+  }
+
+  handleServicePress(item) {
+    Actions.push('tickidRadaServiceDetail', {
+      service: item,
+      title: item.name,
+      onPressOrder: item => {
+        this.handleOrderButtonPress(item);
+      }
+    });
+  }
+
+  handleOrderButtonPress(service) {
+    Actions.push('tickidRadaBooking', {
+      service: service,
+      title: 'Booking',
+      customerName: '',
+      phone: '',
+      address: '',
+      onBookingSuccess: response => {
+        this.handleBookingSuccess(response);
+      },
+      onBookingFail: err => {
+        this.handleBookingFail(err);
+      },
+      onCallWebHookSuccess: response => {
+        this.handleCallWebHookSuccess(response);
+      },
+      onCallWebHookFail: err => {
+        this.handleCallWebHookFail(err);
+      }
+    });
+  }
+
+  handleBookingSuccess(response) {
+    Actions.homeTab();
+  }
+
+  handleBookingFail(err) {
+    console.log(err.message);
+  }
+
+  handleCallWebHookSuccess(response) {}
+
+  handleCallWebHookFail(err) {
+    console.log(err.message);
+  }
+
   handleShowAllVouchers = () => {};
 
   handleActionPress = action => {
@@ -115,7 +171,14 @@ class Home extends Component {
         });
         break;
       case RADA_SERVICE_TYPE:
-        //
+        Actions.push('tickidRada', {
+          service_type: service.type,
+          service_id: service.id,
+          title: 'Dịch vụ Rada',
+          onPressItem: item => {
+            this.handleCategoryPress(item);
+          }
+        });
         break;
       case BOOKING_30DAY_TYPE:
         //
