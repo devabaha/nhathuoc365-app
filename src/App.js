@@ -160,9 +160,10 @@ class App extends Component {
     // OneSignal.configure(); 	// triggers the ids event
     OneSignal.inFocusDisplaying(2);
     let config = {
-      partnerAuthorization: '1',
+      partnerAuthorization:
+        'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIml4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm',
       webhookUrl: null,
-      defaultLocation: '1'
+      defaultLocation: '37.33233141,-122.0312186'
     };
     TickIDRada.init(config);
 
