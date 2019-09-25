@@ -9,9 +9,11 @@ import {
   Dimensions,
   RefreshControl
 } from 'react-native';
+import HTML from 'react-native-render-html';
 import { Tabs, Tab } from '@tickid/react-native-tabs';
 import { Accordion, Panel } from '@tickid/react-native-accordion';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import CampaignEntity from '../../entity/CampaignEntity';
 import Button from 'react-native-button';
 import AddressItem from '../AddressItem';
 
@@ -21,20 +23,75 @@ const defaultListener = () => {};
 
 class VoucherDetail extends Component {
   static propTypes = {
-    image: PropTypes.string,
     onRefresh: PropTypes.func,
     onGetVoucher: PropTypes.func,
-    refreshing: PropTypes.bool
+    onUseVoucher: PropTypes.func,
+    onPressAddressPhoneNumber: PropTypes.func,
+    onPressAddressLocation: PropTypes.func,
+    onPressCampaignProvider: PropTypes.func,
+    refreshing: PropTypes.bool,
+    canUseNow: PropTypes.bool,
+    campaign: PropTypes.instanceOf(CampaignEntity),
+    addresses: PropTypes.object
   };
 
   static defaultProps = {
-    image: '',
     onRefresh: defaultListener,
     onGetVoucher: defaultListener,
-    refreshing: false
+    onUseVoucher: defaultListener,
+    onPressAddressPhoneNumber: defaultListener,
+    onPressAddressLocation: defaultListener,
+    onPressCampaignProvider: defaultListener,
+    refreshing: false,
+    canUseNow: false,
+    campaign: undefined,
+    addresses: undefined
   };
 
+  get totalPlaces() {
+    let totalPlaces = 0;
+    const addresses = Object.values(this.props.addresses);
+    if (addresses.length > 0) {
+      addresses.forEach(places => (totalPlaces += places.length));
+    }
+    return totalPlaces;
+  }
+
+  renderAddresses() {
+    return (
+      <Accordion
+        showChevron
+        expandMultiple
+        containerStyle={styles.addressAccordion}
+        panelContainerStyle={styles.addressAccordionPanel}
+      >
+        {Object.keys(this.props.addresses).map(provinceName => {
+          const places = this.props.addresses[provinceName];
+          return (
+            <Panel title={provinceName} key={provinceName}>
+              {places.map(place => (
+                <AddressItem
+                  key={place.data.id}
+                  title={place.data.name}
+                  address={place.data.address}
+                  phoneNumber={place.data.tel}
+                  onPressPhoneNumber={() =>
+                    this.props.onPressAddressPhoneNumber(place.data.tel)
+                  }
+                  onPressLocation={() =>
+                    this.props.onPressAddressLocation(place.data.tel)
+                  }
+                />
+              ))}
+            </Panel>
+          );
+        })}
+      </Accordion>
+    );
+  }
+
   render() {
+    const campaign = this.props.campaign || { data: {} };
     return (
       <Fragment>
         <ScrollView
@@ -51,19 +108,23 @@ class VoucherDetail extends Component {
               <Image
                 style={styles.topImage}
                 resizeMode="cover"
-                source={{ uri: this.props.image }}
+                source={{ uri: campaign.data.image_url }}
               />
-              <Image source={{ uri: this.props.image }} style={styles.avatar} />
+              <Image
+                source={{ uri: campaign.data.shop_logo_url }}
+                style={styles.avatar}
+              />
             </View>
 
             <View style={[styles.row, styles.headerWrapper]}>
-              <Text style={styles.heading}>
-                [Soya Garden] Đồng giá Cold Brew chỉ 29,000đ
-              </Text>
+              <Text style={styles.heading}>{campaign.data.title}</Text>
 
               <View style={styles.exprireWrapper}>
                 <View style={styles.exprireBox}>
-                  <Text style={styles.exprire}>Dùng đến 30/09/19</Text>
+                  <Text style={styles.exprire}>
+                    <Text>Dùng đến </Text>
+                    <Text>{campaign.data.expire_date}</Text>
+                  </Text>
                 </View>
               </View>
             </View>
@@ -72,76 +133,28 @@ class VoucherDetail extends Component {
               <Tabs>
                 {/* INFOMATION TAB */}
                 <Tab heading="Thông tin">
-                  <Text style={styles.infoHeading}>Cách dùng</Text>
-                  <Text style={styles.infoText}>
-                    Quét mã QR tại quầy thu ngân hoặc hỏi nhân viên cửa hàng về
-                    chương trình ưu đãi trước khi sử dụng dịch vụ.
-                  </Text>
-
-                  <Text style={styles.infoHeading}>Thông tin voucher</Text>
-                  <Text style={styles.infoText}>
-                    [HN] Áp dụng cho menu đồ uống
-                  </Text>
-
-                  <Text style={styles.infoHeading}>Điều kiện sử dụng</Text>
-                  <Text style={styles.infoText}>
-                    Quét mã QR tại quầy thu ngân hoặc hỏi nhân viên cửa hàng về
-                    chương trình ưu đãi trước khi sử dụng dịch vụ.
-                  </Text>
+                  <HTML
+                    html={campaign.data.content || '<span></span>'}
+                    imagesMaxWidth={screenWidth - 32}
+                  />
                 </Tab>
 
                 {/* LOCATION TAB */}
                 <Tab heading="Điểm áp dụng">
                   <View style={styles.addressWrapper}>
                     <Text style={styles.infoHeading}>Địa chỉ cửa hàng</Text>
-                    <Text style={styles.infoSubHeading}>20 cửa hàng</Text>
+                    <Text style={styles.infoSubHeading}>
+                      {this.totalPlaces} cửa hàng
+                    </Text>
                   </View>
 
-                  <Accordion
-                    showChevron
-                    expandMultiple
-                    containerStyle={styles.addressAccordion}
-                    panelContainerStyle={styles.addressAccordionPanel}
-                  >
-                    <Panel title="Hà Nội (1)">
-                      <AddressItem
-                        title="Soya Garden Trần Duy Hưng"
-                        address="Số 20 ngõ 80 đường Trần Duy Hưng, Cầu Giấy, Hà Nội"
-                        phoneNumber="0987654321"
-                        onPressPhoneNumber={() => {}}
-                        onPressLocation={() => {}}
-                      />
-                    </Panel>
-                    <Panel title="Hòa Bình (3)">
-                      <AddressItem
-                        title="Soya Garden Trần Duy Hưng"
-                        address="Số 20 ngõ 80 đường Trần Duy Hưng, Cầu Giấy, Hà Nội"
-                        phoneNumber="0987654321"
-                        onPressPhoneNumber={() => {}}
-                        onPressLocation={() => {}}
-                      />
-                      <AddressItem
-                        title="Soya Garden Trần Duy Hưng"
-                        address="Số 20 ngõ 80 đường Trần Duy Hưng, Cầu Giấy, Hà Nội"
-                        phoneNumber="0987654321"
-                        onPressPhoneNumber={() => {}}
-                        onPressLocation={() => {}}
-                      />
-                      <AddressItem
-                        title="Soya Garden Trần Duy Hưng"
-                        address="Số 20 ngõ 80 đường Trần Duy Hưng, Cầu Giấy, Hà Nội"
-                        phoneNumber="0987654321"
-                        onPressPhoneNumber={() => {}}
-                        onPressLocation={() => {}}
-                      />
-                    </Panel>
-                  </Accordion>
+                  {this.renderAddresses()}
                 </Tab>
               </Tabs>
             </View>
 
             <View style={styles.providerWrapper}>
-              <Button>
+              <Button onPress={this.props.onPressCampaignProvider}>
                 <View style={styles.providerBody}>
                   <Image
                     style={styles.providerImage}
@@ -169,9 +182,15 @@ class VoucherDetail extends Component {
           <Button
             containerStyle={styles.getVoucherBtn}
             style={styles.getVoucherTitle}
-            onPress={this.props.onGetVoucher}
+            onPress={() => {
+              if (this.props.canUseNow) {
+                this.props.onUseVoucher(this.props.campaign);
+              } else {
+                this.props.onGetVoucher(this.props.campaign);
+              }
+            }}
           >
-            Nhận mã giảm giá
+            {this.props.canUseNow ? 'Dùng ngay' : 'Nhận mã giảm giá'}
           </Button>
         </View>
       </Fragment>
@@ -234,16 +253,6 @@ const styles = StyleSheet.create({
   contentWrapper: {
     marginTop: 8,
     marginBottom: 8
-  },
-  infoHeading: {
-    fontWeight: 'bold',
-    color: '#404040',
-    fontSize: 16
-  },
-  infoText: {
-    marginTop: 8,
-    marginBottom: 20,
-    fontSize: 15
   },
   getVoucherWrapper: {
     backgroundColor: '#fff',

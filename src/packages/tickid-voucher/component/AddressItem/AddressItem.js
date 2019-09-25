@@ -3,8 +3,10 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Button from 'react-native-button';
+import { isLongLat } from '../../helper/validator';
 
 function AddressItem(props) {
+  const logLatIsValid = isLongLat(props.longitude) && isLongLat(props.latitude);
   return (
     <Fragment>
       <View style={styles.locationWrapper}>
@@ -22,13 +24,15 @@ function AddressItem(props) {
           <Icon name="phone" size={20} color="#0084ff" />
           <Text style={styles.addessActionText}>{props.phoneNumber}</Text>
         </Button>
-        <Button
-          containerStyle={styles.addressActionBtn}
-          onPress={props.onPressLocation}
-        >
-          <Icon name="location-arrow" size={20} color="#0084ff" />
-          <Text style={styles.addessActionText}>Dẫn đường</Text>
-        </Button>
+        {logLatIsValid && (
+          <Button
+            containerStyle={styles.addressActionBtn}
+            onPress={props.onPressLocation}
+          >
+            <Icon name="location-arrow" size={20} color="#0084ff" />
+            <Text style={styles.addessActionText}>Dẫn đường</Text>
+          </Button>
+        )}
       </View>
     </Fragment>
   );
@@ -40,6 +44,8 @@ AddressItem.propTypes = {
   title: PropTypes.string,
   address: PropTypes.string,
   phoneNumber: PropTypes.string,
+  latitude: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  longitude: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   onPressPhoneNumber: PropTypes.func,
   onPressLocation: PropTypes.func
 };
@@ -48,6 +54,8 @@ AddressItem.defaultProps = {
   title: '',
   address: '',
   phoneNumber: '',
+  latitude: undefined,
+  longitude: undefined,
   onPressPhoneNumber: defaultListener,
   onPressLocation: defaultListener
 };

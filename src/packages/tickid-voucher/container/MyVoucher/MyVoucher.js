@@ -1,19 +1,44 @@
 import React from 'react';
-import MyVoucherComponent from '../../component/MyVoucher';
+import config from '../../config';
 import BaseContainer from '../BaseContainer';
+import MyVoucherComponent from '../../component/MyVoucher';
+import CampaignEntity from '../../entity/CampaignEntity';
+import { internalFetch } from '../../helper/apiFetch';
 
 class MyVoucher extends BaseContainer {
   constructor(props) {
     super(props);
 
     this.state = {
-      refreshing: false
+      refreshing: false,
+      campaigns: []
     };
   }
 
   componentWillMount() {
     this.validateRequiredMethods(['handlePressVoucher']);
   }
+
+  componentDidMount() {
+    this.getMyCampaigns();
+  }
+
+  getMyCampaigns = async () => {
+    try {
+      const response = await internalFetch(config.rest.myVouchers());
+      if (response.status === config.httpCode.success) {
+        this.setState({
+          campaigns: response.data.campaigns.map(
+            campaign => new CampaignEntity(campaign)
+          )
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({ refreshing: false });
+    }
+  };
 
   handleOnRefresh = () => {
     this.setState({ refreshing: true });
@@ -29,6 +54,7 @@ class MyVoucher extends BaseContainer {
         onPressVoucher={this.handlePressVoucher}
         onRefresh={this.handleOnRefresh}
         refreshing={this.state.refreshing}
+        campaigns={this.state.campaigns}
       />
     );
   }

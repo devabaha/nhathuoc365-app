@@ -1,6 +1,9 @@
 import React from 'react';
-import VoucherComponent from '../../component/Voucher';
+import config from '../../config';
 import BaseContainer from '../BaseContainer';
+import VoucherComponent from '../../component/Voucher';
+import CampaignEntity from '../../entity/CampaignEntity';
+import { internalFetch } from '../../helper/apiFetch';
 
 class Voucher extends BaseContainer {
   constructor(props) {
@@ -8,7 +11,8 @@ class Voucher extends BaseContainer {
 
     this.state = {
       refreshing: false,
-      provinceSelected: { id: 2, name: 'Hồ Chí Minh' }
+      provinceSelected: { id: 2, name: 'Hồ Chí Minh' },
+      campaigns: []
     };
   }
 
@@ -20,12 +24,30 @@ class Voucher extends BaseContainer {
     ]);
   }
 
+  componentDidMount() {
+    this.getListCampaigns();
+  }
+
+  getListCampaigns = async () => {
+    try {
+      const response = await internalFetch(config.rest.listCampaigns());
+      if (response.status === config.httpCode.success) {
+        this.setState({
+          campaigns: response.data.campaigns.map(
+            campaign => new CampaignEntity(campaign)
+          )
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({ refreshing: false });
+    }
+  };
+
   handleOnRefresh = () => {
     this.setState({ refreshing: true });
-
-    setTimeout(() => {
-      this.setState({ refreshing: false });
-    }, 1000);
+    setTimeout(this.getListCampaigns, 1000);
   };
 
   handleSetProvince = provinceSelected => {
@@ -44,6 +66,7 @@ class Voucher extends BaseContainer {
         onRefresh={this.handleOnRefresh}
         refreshing={this.state.refreshing}
         provinceSelected={this.state.provinceSelected}
+        campaigns={this.state.campaigns}
       />
     );
   }
