@@ -12,11 +12,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
-
-const MessageBarAlert = require('react-native-message-bar').MessageBar;
-const MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 @observer
 class NewPass extends Component {
@@ -48,14 +44,10 @@ class NewPass extends Component {
         this.refs_name.focus();
       }, 450);
     }
-
-    MessageBarManager.registerMessageBar(this.refs.alert);
   }
 
   _unMount() {
     Keyboard.dismiss();
-
-    MessageBarManager.unregisterMessageBar();
 
     if (this.props.onBackCustomer) {
       this.props.onBackCustomer();
@@ -113,11 +105,6 @@ class NewPass extends Component {
           });
 
           if (response && response.status == STATUS_SUCCESS) {
-            MessageBarManager.showAlert({
-              message: response.message + `. Đang đăng nhập...`,
-              alertType: 'success'
-            });
-
             Actions.refresh({
               onBack: () => false,
               hideBackImage: true
@@ -127,11 +114,7 @@ class NewPass extends Component {
               this._login();
             }, 3000);
           } else if (response && response.message) {
-            MessageBarManager.showAlert({
-              message: response.message,
-              alertType: 'warning',
-              duration: 5000
-            });
+            //
           }
         } catch (e) {
           console.log(e + ' user_forget_new_password');
@@ -187,12 +170,6 @@ class NewPass extends Component {
               });
             })();
           } else if (response && response.message) {
-            MessageBarManager.showAlert({
-              message: response.message,
-              alertType: 'warning',
-              duration: 5000
-            });
-
             setTimeout(() => {
               this.setState({
                 finish_loading: false
@@ -314,8 +291,6 @@ class NewPass extends Component {
           active={this.state.sticker_flag}
           message="Đăng nhập thành công."
         />
-
-        <MessageBarAlert ref="alert" />
       </View>
     );
   }

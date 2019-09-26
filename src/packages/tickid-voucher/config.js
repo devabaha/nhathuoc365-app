@@ -15,7 +15,8 @@ const config = {
     endpoint: () => 'https://apiapp.tickid.vn',
     listCampaigns: () => '/apiUser/list_campaign',
     myVouchers: () => '/apiUser/my_voucher',
-    detailCampaigns: id => `/apiUser/detail_campaign/${id}`,
+    detailCampaign: id => `/apiUser/detail_campaign/${id}`,
+    detailVoucher: id => `/apiUser/detail_voucher/${id}`,
     saveCampaign: id => `/apiUser/save_campaign/${id}`,
     useVoucher: (id, code) => `/apiUser/use_voucher/${id}/${code}`
   },

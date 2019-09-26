@@ -1,8 +1,17 @@
 /**
- * Check is valid `latitude` or `longitude`
+ * Check is valid `latitude`
  * @param {*} value
  */
-export const isLongLat = value => {
-  const reg = new RegExp('^-?([1-8]?[1-9]|[1-9]0).{1}d{1,6}');
-  return reg.exec(value);
-};
+export function isLatitude(lat) {
+  if (lat != 0 && lat !== '' && !lat) return false;
+  return isFinite(lat) && Math.abs(lat) <= 90;
+}
+
+/**
+ * Check is valid `longitude`
+ * @param {*} value
+ */
+export function isLongitude(lng) {
+  if (lng != 0 && lng !== '' && !lng) return false;
+  return isFinite(lng) && Math.abs(lng) <= 180;
+}

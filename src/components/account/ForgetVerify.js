@@ -13,9 +13,6 @@ import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
 
-const MessageBarAlert = require('react-native-message-bar').MessageBar;
-const MessageBarManager = require('react-native-message-bar').MessageBarManager;
-
 @observer
 export default class ForgetVerify extends Component {
   constructor(props) {
@@ -50,13 +47,11 @@ export default class ForgetVerify extends Component {
   }
 
   registerMsgBar = () => {
-    MessageBarManager.registerMessageBar(this.refs.alert);
+    //
   };
 
   _unMount() {
     Keyboard.dismiss();
-
-    MessageBarManager.unregisterMessageBar();
   }
 
   _showSticker() {
@@ -94,11 +89,7 @@ export default class ForgetVerify extends Component {
               onBackCustomer: this.registerMsgBar
             });
           } else if (response && response.message) {
-            MessageBarManager.showAlert({
-              message: response.message,
-              alertType: 'warning',
-              duration: 5000
-            });
+            //
           }
         } catch (e) {
           console.log(e + ' user_forget_password');
@@ -237,8 +228,6 @@ export default class ForgetVerify extends Component {
           active={this.state.sticker_flag}
           message="Đăng nhập thành công."
         />
-
-        <MessageBarAlert ref="alert" />
       </View>
     );
   }
