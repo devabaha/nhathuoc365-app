@@ -40,13 +40,13 @@ class MyVoucher extends Component {
     );
   }
 
-  renderMyVoucher = ({ item: campaign, index }) => {
+  renderMyVoucher = ({ item: voucher, index }) => {
     return (
       <MyVoucherItem
-        title={campaign.data.title}
+        title={voucher.data.title}
         remaining=""
-        avatar={campaign.data.shop_logo_url}
-        onPress={this.props.onPressVoucher}
+        avatar={voucher.data.shop_logo_url}
+        onPress={() => this.props.onPressVoucher(voucher)}
         last={this.totalCampaigns - 1 === index}
       />
     );

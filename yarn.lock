@@ -862,6 +862,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.6.1.tgz#19be07fc1d65c77bdeb20f46108ba12076aad1c5"
   integrity sha512-1WA28xfdhG+unkTEk/lXnqI2izv6belo0CYw7UdvaeHm8TIYT6eTmIIdGR7oiCa2xSKEnaPQqRMH6h7gyLNbww==
 
+"@react-native-community/async-storage@^1.6.1":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.6.2.tgz#a19ca7149c4dfe8216f2330e6b1ebfe2d075ef92"
+  integrity sha512-EJGsbrHubK1mGxPjWB74AaHAd5m9I+Gg2RRPZzMK6org7QOU9WOBnIMFqoeVto3hKOaEPlk8NV74H6G34/2pZQ==
+
 "@react-native-community/cli@^1.2.1":
   version "1.11.2"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli/-/cli-1.11.2.tgz#b14967f24a389f5a16889a747345cf0e5757a2f1"
@@ -939,13 +944,12 @@
     prop-types "^15.7.2"
     react-native-render-html "^4.1.2"
 
-"@tickid/tickid-rn-message-bar@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rn-message-bar/-/tickid-rn-message-bar-1.0.0.tgz#1a924136af8b4c7632eec1df3d061f38052a0982"
-  integrity sha512-MuP+H9V1um/fTwpLm33UIzOTawD8drVCarLdiMUy1aNiWGzRRHaJW9u8YAicj6z04Z62da330pT1xPtolTaI6g==
+"@tickid/tickid-rn-message-bar@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rn-message-bar/-/tickid-rn-message-bar-1.0.2.tgz#9c7e7d3caf151e3a26a28a7ec4b879ddf981eb07"
+  integrity sha512-1kqhDwQl1qghZU30xv5+CRp8X6E3zVzOyx4ZNKsLQLzVjJSWhcncFQ5QG+lPhb4PhOzRJFYpivDc7X9wWDL8CQ==
   dependencies:
     prop-types "^15.7.2"
-    react-native-iphone-x-helper "^1.2.1"
     react-native-message-bar "^2.0.10"
 
 "@tickid/tickid-scaning-button@^1.0.0":
@@ -6466,12 +6470,16 @@ react-native-permissions@^1.1.1:
   resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-1.2.0.tgz#0deb616bf1565c17c91f1cb1f953809b2892c29e"
   integrity sha512-+KrP1JZ30RI9p30wsGlGQx22qwiClDnznSQZPpvBMkOIZQ9kXOkLAFXS+vwiHRiiRu/pBMBXYHfI7ng6t2+LbQ==
 
-react-native-qrcode-scanner@0.0.30:
-  version "0.0.30"
-  resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-0.0.30.tgz#ebe260c9211599438afbd311d1fee973236dac10"
-  integrity sha512-Gc3+z9G5nrnqXxIpKdthuTvpVr5OhY8Y3hSM1bLyqh5SLJciMvyqcyTV1fYw6RUPrDUXw902zKTLb15RYzGR4Q==
+react-native-qrcode-scanner@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.2.3.tgz#1f3d12eb604914619458cbc996cd2e6f6a4fd759"
+  integrity sha512-YP2h95w1tXqzG9XlEHHmJujr1hRfvdDt090ofWY0v0mwvp2FLExp3tf1UybVTt4whmarjdk2BYkkyU863Ffung==
   dependencies:
+    "@react-native-community/async-storage" "^1.6.1"
+    opencollective "^1.0.3"
+    opencollective-postinstall "^2.0.2"
     prop-types "^15.5.10"
+    react-native-permissions "^1.1.1"
 
 react-native-qrcode-svg@^5.1.2:
   version "5.2.0"
