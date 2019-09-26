@@ -3,7 +3,7 @@ import { VOUCHER_INITIALIZED } from '../constants';
 const isObject = val =>
   Object.prototype.toString.call(val) === '[object Object]';
 
-function merge(oldConfig, newConfig) {
+export const merge = (oldConfig, newConfig) => {
   if (!isObject(oldConfig) || !isObject(newConfig)) {
     return newConfig;
   }
@@ -17,7 +17,7 @@ function merge(oldConfig, newConfig) {
   });
 
   return result;
-}
+};
 
 export default function configure(oldConfig, newConfig) {
   Object.keys(newConfig).forEach(key => {

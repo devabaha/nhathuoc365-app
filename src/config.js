@@ -6,6 +6,7 @@ import {
 } from 'react-native-iphone-x-helper';
 
 const config = Object.freeze({
+  appName: 'TICKID',
   namespace: 'app',
   device: Object.freeze({
     isIphoneX: isIphoneX(),

@@ -2,20 +2,11 @@ import React, { Component } from 'react';
 import './lib/Constant';
 import './lib/Helper';
 
-import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import { Provider } from 'react-redux';
 import appConfig from 'app-config';
 import store from 'app-store';
 import reduxStore from './reduxStore';
-import {
-  View,
-  Text,
-  StyleSheet,
-  StatusBar,
-  BackHandler,
-  Linking,
-  SafeAreaView
-} from 'react-native';
+import { StyleSheet, StatusBar, Linking, Platform } from 'react-native';
 // library
 import {
   Scene,
@@ -35,6 +26,9 @@ import TickIdScaningButton from '@tickid/tickid-scaning-button';
 import { Loading as LoadingOverlay } from 'app-packages/tickid-loading';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
+import handleTabBarOnPress from './helper/handleTabBarOnPress';
+import getTransitionConfig from './helper/getTransitionConfig';
+import handleBackAndroid from './helper/handleBackAndroid';
 import TickIDStatusBar from 'app-packages/tickid-status-bar';
 
 import HomeContainer from './containers/Home';
@@ -42,8 +36,6 @@ import QRBarCode from './containers/QRBarCode';
 import VoucherContainer from './containers/Voucher';
 import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
-
-import Intro from './components/intro/Intro';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
@@ -92,97 +84,66 @@ import MdCard from './components/services/MdCard';
 import MdCardConfirm from './components/services/MdCardConfirm';
 import TabIcon from './components/TabIcon';
 import TickIDRada from '@tickid/tickid-rada';
+import {
+  initialize as initializeVoucherModule,
+  SelectProvince
+} from './packages/tickid-voucher';
+import { MessageBarContainer } from '@tickid/tickid-rn-message-bar';
+import DeviceInfo from 'react-native-device-info';
+import getTickUniqueID from 'app-util/getTickUniqueID';
+import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
+import env from 'react-native-config';
 
-import { initialize, SelectProvince } from './packages/tickid-voucher';
-
-initialize();
-
-const transitionConfig = () => ({
-  screenInterpolator: StackViewStyleInterpolator.forFadeFromBottomAndroid
+/**
+ * Initializes config for Voucher module
+ */
+initializeVoucherModule({
+  private: {
+    appKey: 'tickidkey',
+    secretKey: '0011tickidkey001122private'
+  },
+  device: {
+    appVersion: DeviceInfo.getVersion(),
+    deviceId: getTickUniqueID(),
+    deviceType: DeviceInfo.getBrand(),
+    os: Platform.OS,
+    osVersion: DeviceInfo.getSystemVersion(),
+    store: ''
+  }
 });
 
-const touchedTabs = {};
-const handleTabBarOnPress = props => {
-  // const isTouched = () => touchedTabs[props.navigation.state.key];
-  switch (props.navigation.state.key) {
-    case appConfig.routes.scanQrCodeTab:
-      Actions.push(appConfig.routes.qrBarCode);
-      break;
-    default:
-      props.defaultHandler();
-  }
-
-  touchedTabs[props.navigation.state.key] = true;
+/**
+ * Initializes config for Rada module
+ */
+const config = {
+  partnerAuthorization: env.RADA_PARTNER_AUTHORIZATION,
+  webhookUrl: null,
+  defaultLocation: '37.33233141,-122.0312186'
 };
+TickIDRada.init(config);
 
-const navBarConfig = {
-  navigationBarStyle: {
-    backgroundColor: appConfig.colors.primary,
-    borderBottomWidth: 0
-  },
-  titleStyle: {
-    color: appConfig.colors.white,
-    alignSelf: 'center'
-  },
-  navBarButtonColor: appConfig.colors.white,
-  backButtonTextStyle: {
-    color: appConfig.colors.white
-  }
-};
-
-const whiteNavBarConfig = {
-  navigationBarStyle: {
-    backgroundColor: appConfig.colors.white
-  },
-  titleStyle: {
-    color: appConfig.colors.text,
-    alignSelf: 'center'
-  },
-  navBarButtonColor: appConfig.colors.text,
-  backButtonTextStyle: {
-    color: appConfig.colors.text
-  }
-};
-
-let currentSceneName = null;
-let currentSceneOnBack = null;
-let backButtonPressedOnceToExit = false;
-
-@observer
 class App extends Component {
   constructor(properties) {
     super(properties);
-    OneSignal.init('ea4623dc-3e0a-4390-b46d-0408a330ea63');
-
-    OneSignal.addEventListener('received', this._onReceived);
-    OneSignal.addEventListener('opened', this._onOpened);
-    OneSignal.addEventListener('ids', this._onIds);
-    // OneSignal.configure(); 	// triggers the ids event
-    OneSignal.inFocusDisplaying(2);
-    let config = {
-      partnerAuthorization:
-        'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIml4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm',
-      webhookUrl: null,
-      defaultLocation: '37.33233141,-122.0312186'
-    };
-    TickIDRada.init(config);
 
     this.state = {
-      loading: true,
-      finish: false,
-      showIntro: false
+      loading: true
     };
-
-    StatusBar.setBarStyle('light-content', true);
   }
 
   componentWillUnmount() {
-    OneSignal.removeEventListener('received', this._onReceived);
-    OneSignal.removeEventListener('opened', this._onOpened);
-    OneSignal.removeEventListener('ids', this._onIds);
+    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
+    OneSignal.removeEventListener('ids', this.handleAddPushToken);
   }
 
   componentDidMount() {
+    StatusBar.setBarStyle('light-content', true);
+
+    OneSignal.init('ea4623dc-3e0a-4390-b46d-0408a330ea63');
+    OneSignal.addEventListener('opened', this.handleOpenningNotification);
+    OneSignal.addEventListener('ids', this.handleAddPushToken);
+    OneSignal.inFocusDisplaying(2);
+
     // deep link register
     DeepLinking.addScheme('macccacaapp://');
     Linking.addEventListener('url', this.handleURL);
@@ -191,122 +152,86 @@ class App extends Component {
       .then(url => {
         if (url) {
           // do login
-          this._login(() => this.handleURL({ url }));
+          this.handleLogin(() => this.handleURL({ url }));
         } else {
           // do login
-          this._login();
+          this.handleLogin();
         }
       })
       .catch(err => {
         // do login
-        this._login();
-
+        this.handleLogin();
         console.error('An error occurred', err);
       });
   }
 
-  handleURL = ({ url }) => {
-    if (url) {
-      const route = url.replace(/.*?:\/\//g, '');
-      const routeName = route.split('/')[0];
-      const id = route.split('/')[1];
+  // handleURL = ({ url }) => {
+  //   if (url) {
+  //     const route = url.replace(/.*?:\/\//g, '');
+  //     const routeName = route.split('/')[0];
+  //     const id = route.split('/')[1];
 
-      switch (routeName) {
-        case 'code':
-          Actions.search_store({
-            site_code: id
-          });
-          break;
-        case 'store':
-          this._pushGoStore(id);
-          break;
-        case 'item':
-          const item_id = route.split('/')[2];
-          this._pushGoItem(id, item_id);
-          break;
-        default:
-      }
-    }
-  };
+  //     switch (routeName) {
+  //       case 'code':
+  //         //
+  //         break;
+  //       case 'store':
+  //         //
+  //         break;
+  //       case 'item':
+  //         //
+  //         break;
+  //       default:
+  //     }
+  //   }
+  // };
 
-  // login khi mở app
-  async _login(callback) {
+  /**
+   * Handling login when opening the application
+   */
+  async handleLogin() {
     try {
-      var response = await APIHandler.user_login({
+      const response = await APIHandler.user_login({
         fb_access_token: ''
       });
       if (response && response.status == STATUS_SUCCESS) {
         store.setUserInfo(response.data);
-        action(() => {
-          this.setState(
-            {
-              finish: true
-            },
-            () => {
-              Actions.primaryTabbar({
-                type: ActionConst.RESET
-              });
-            }
-          );
-        })();
+        Actions.primaryTabbar({
+          type: ActionConst.RESET
+        });
       } else {
         Toast.show(response.message);
       }
       if (response && response.status == STATUS_FILL_INFO_USER) {
         store.setUserInfo(response.data);
-        action(() => {
-          this.setState(
-            {
-              finish: true
-            },
-            () => {
-              Actions.op_register({
-                title: 'Đăng ký thông tin',
-                name_props: response.data.name
-              });
-            }
-          );
-        })();
+        Actions.op_register({
+          title: 'Đăng ký thông tin',
+          name_props: response.data.name
+        });
       }
       if (response && response.status == STATUS_UNDEFINE_USER) {
         store.setUserInfo(response.data);
-        action(() => {
-          this.setState(
-            {
-              finish: true
-            },
-            () => {
-              Actions.login();
-            }
-          );
-        })();
+        Actions.login();
       }
-    } catch (e) {
-      console.warn(e + ' user_login');
-
-      store.addApiQueue('user_login', this._login.bind(this));
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  _onReceived(notify) {
-    // console.log("Notification received: ", notify);
-  }
-
-  _onOpened(openResult) {
-    var data = openResult.notification.payload.additionalData;
+  handleOpenningNotification(openResult) {
+    const data = openResult.notification.payload.additionalData;
     if (data) {
-      var { page, site_id, page_id } = data;
-
+      const { page, site_id, page_id } = data;
       if (page) {
         switch (page) {
           case 'store':
             if (page_id) {
-              this._pushGoStore(page_id);
+              this.goToStoreScene(page_id);
             }
             break;
           case 'new':
             if (page_id) {
-              this._pushGoNews(page_id);
+              this.goToNewsScene(page_id);
             }
             break;
           case 'order':
@@ -327,7 +252,7 @@ class App extends Component {
     }
   }
 
-  async _pushGoStore(page_id) {
+  async goToStoreScene(page_id) {
     try {
       var response = await APIHandler.site_info(page_id);
       if (response && response.status == STATUS_SUCCESS) {
@@ -341,31 +266,12 @@ class App extends Component {
           site_code: response.data.site_code
         });
       }
-    } catch (e) {
-      console.warn(e + ' site_info');
-
-      store.addApiQueue('site_info', this._pushGoStore.bind(this, page_id));
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  _goStore(response) {
-    if (currentSceneName == 'stores') {
-      setTimeout(() => {
-        Actions.stores({
-          title: response.data.name,
-          type: ActionConst.REFRESH
-        });
-      }, 660);
-    } else {
-      setTimeout(() => {
-        Actions.stores({
-          title: response.data.name
-        });
-      }, 660);
-    }
-  }
-
-  async _pushGoNews(page_id) {
+  async goToNewsScene(page_id) {
     try {
       var response = await APIHandler.user_news(page_id);
       if (response && response.status == STATUS_SUCCESS) {
@@ -386,127 +292,43 @@ class App extends Component {
           }, 660);
         }
       }
-    } catch (e) {
-      console.warn(e + ' user_news');
-
-      store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  async _pushGoItem(page_id, item_id) {
-    try {
-      var response = await APIHandler.site_info(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setStoreData(response.data);
-          this._goStore(response);
-          this._goItem(page_id, item_id);
-        })();
-      } else if (response && response.data) {
-        Actions.search_store({
-          site_code: response.data.site_code,
-          onSuccess: () => {
-            store.setStoreData(response.data);
-            this._goStore(response);
-            this._goItem(page_id, item_id);
-          }
-        });
-      }
-    } catch (e) {
-      console.warn(e + ' site_info');
-    }
-  }
-
-  async _goItem(page_id, item_id) {
-    try {
-      var response = await APIHandler.site_product(page_id, item_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        var item = response.data;
-
-        if (currentSceneName == 'item') {
-          setTimeout(() => {
-            Actions.item({
-              title: item.name,
-              item,
-              type: ActionConst.REFRESH
-            });
-          }, 1200);
-        } else {
-          setTimeout(() => {
-            Actions.item({
-              title: item.name,
-              item
-            });
-          }, 1200);
-        }
-      }
-    } catch (e) {
-      console.warn(e + ' user_news');
-
-      store.addApiQueue('user_news', this._pushGoNews.bind(this, page_id));
-    }
-  }
-
-  async _onIds(device) {
-    //  console.log('Device info: ', device);
+  async handleAddPushToken(device) {
     if (_.isObject(device)) {
-      var push_token = device.pushToken;
-      var player_id = device.userId;
+      const push_token = device.pushToken;
+      const player_id = device.userId;
 
       try {
         await APIHandler.add_push_token({
           push_token,
           player_id
         });
-      } catch (e) {
-        console.warn(e + ' add_push_token');
-
-        store.addApiQueue('add_push_token', this._onIds.bind(this, device));
+      } catch (error) {
+        console.log(error);
       }
     }
   }
 
-  backAndroidHandler() {
-    if (backButtonPressedOnceToExit) {
-      BackHandler.exitApp();
-    } else {
-      if (
-        ['_home', '_main_notify', '_orders', '_account', 'login'].indexOf(
-          currentSceneName
-        ) === -1
-      ) {
-        if (typeof currentSceneOnBack == 'function') {
-          currentSceneOnBack();
-        } else {
-          Actions.pop();
-        }
-        return true;
-      } else {
-        backButtonPressedOnceToExit = true;
-        Toast.show('Chạm lại để thoát ứng dụng', Toast.LONG);
-
-        setTimeout(function() {
-          backButtonPressedOnceToExit = false;
-        }, 2000);
-        return true;
-      }
-    }
-  }
-
-  renderRounter() {
-    // var { showIntro } = this.state;
-    var showIntro = false;
+  render() {
     return (
       <Provider store={reduxStore}>
         <Router
           store={store}
-          backAndroidHandler={this.backAndroidHandler.bind(this)}
+          backAndroidHandler={handleBackAndroid}
           onStateChange={(prevState, newState, action) => {
             handleStatusBarStyle(prevState, newState, action);
           }}
         >
           <Overlay key="overlay">
-            <Modal key="modal" hideNavBar transitionConfig={transitionConfig}>
+            <Modal
+              key="modal"
+              hideNavBar
+              transitionConfig={getTransitionConfig}
+            >
               <Lightbox key="lightbox">
                 <Scene
                   key="root"
@@ -960,18 +782,6 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="intro">
-                    <Scene
-                      key="intro_1"
-                      initial={showIntro}
-                      hideNavBar
-                      title=""
-                      component={Intro}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
                   <Stack key="_add_ref">
                     <Scene
                       key="_add_ref_1"
@@ -1179,38 +989,11 @@ class App extends Component {
 
             <Scene component={LoadingOverlay} />
             <Scene component={TickIDStatusBar} />
+            <Scene component={MessageBarContainer} />
           </Overlay>
         </Router>
       </Provider>
     );
-  }
-
-  render() {
-    if (!this.state.finish) {
-      return (
-        <SafeAreaView style={styles.safeArea}>
-          <View style={styles.container}>
-            {!store.isConnected && (
-              <View style={styles.content}>
-                <Text style={styles.message}>Kiểm tra kết nối internet!</Text>
-              </View>
-            )}
-
-            <Indicator size="small" />
-          </View>
-        </SafeAreaView>
-      );
-    }
-
-    if (global.isIPhoneX) {
-      return (
-        <SafeAreaView style={styles.safeArea}>
-          {this.renderRounter()}
-        </SafeAreaView>
-      );
-    } else {
-      return this.renderRounter();
-    }
   }
 }
 
