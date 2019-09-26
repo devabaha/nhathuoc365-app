@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import {
-  AppRegistry,
   StyleSheet,
   Text,
   TextInput,
@@ -13,7 +12,6 @@ import {
 
 import Spinner from 'react-native-loading-spinner-overlay';
 import Form from 'react-native-form';
-import CountryPicker from 'react-native-country-picker-modal';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
@@ -22,9 +20,6 @@ import Sticker from '../Sticker';
 
 const MAX_LENGTH_CODE = 4;
 const MAX_LENGTH_NUMBER = 20;
-
-// if you want to customize the country picker
-const countryPickerCustomStyles = {};
 
 // your brand's theme primary color
 const brandColor = DEFAULT_COLOR;
