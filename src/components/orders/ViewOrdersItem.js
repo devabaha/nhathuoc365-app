@@ -28,7 +28,7 @@ import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
-import { CheckBox } from '../../lib/react-native-elements';
+import { CheckBox } from 'react-native-elements';
 
 @observer
 export default class ViewOrdersItem extends Component {

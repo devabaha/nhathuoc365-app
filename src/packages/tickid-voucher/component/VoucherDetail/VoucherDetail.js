@@ -14,8 +14,10 @@ import { Tabs, Tab } from '@tickid/react-native-tabs';
 import { Accordion, Panel } from '@tickid/react-native-accordion';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import CampaignEntity from '../../entity/CampaignEntity';
+import SiteEntity from '../../entity/SiteEntity';
 import Button from 'react-native-button';
 import AddressItem from '../AddressItem';
+import config from '../../config';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -31,7 +33,9 @@ class VoucherDetail extends Component {
     onPressCampaignProvider: PropTypes.func,
     refreshing: PropTypes.bool,
     canUseNow: PropTypes.bool,
+    isFromMyVoucher: PropTypes.bool,
     campaign: PropTypes.instanceOf(CampaignEntity),
+    site: PropTypes.instanceOf(SiteEntity),
     addresses: PropTypes.object
   };
 
@@ -44,8 +48,10 @@ class VoucherDetail extends Component {
     onPressCampaignProvider: defaultListener,
     refreshing: false,
     canUseNow: false,
+    isFromMyVoucher: false,
     campaign: undefined,
-    addresses: undefined
+    addresses: undefined,
+    site: undefined
   };
 
   get totalPlaces() {
@@ -75,11 +81,16 @@ class VoucherDetail extends Component {
                   title={place.data.name}
                   address={place.data.address}
                   phoneNumber={place.data.tel}
+                  latitude={place.data.latitude}
+                  longitude={place.data.longitude}
                   onPressPhoneNumber={() =>
                     this.props.onPressAddressPhoneNumber(place.data.tel)
                   }
                   onPressLocation={() =>
-                    this.props.onPressAddressLocation(place.data.tel)
+                    this.props.onPressAddressLocation({
+                      latitude: place.data.latitude,
+                      longitude: place.data.longitude
+                    })
                   }
                 />
               ))}
@@ -153,28 +164,30 @@ class VoucherDetail extends Component {
               </Tabs>
             </View>
 
-            <View style={styles.providerWrapper}>
-              <Button onPress={this.props.onPressCampaignProvider}>
-                <View style={styles.providerBody}>
-                  <Image
-                    style={styles.providerImage}
-                    resizeMode="cover"
-                    source={{ uri: this.props.image }}
-                  />
+            {this.props.site && (
+              <View style={styles.providerWrapper}>
+                <Button onPress={this.props.onPressCampaignProvider}>
+                  <View style={styles.providerBody}>
+                    <Image
+                      style={styles.providerImage}
+                      resizeMode="cover"
+                      source={{ uri: this.props.site.data.logo_url }}
+                    />
 
-                  <View style={styles.providerInfo}>
-                    <Text style={styles.providerBy}>Cung cấp bởi</Text>
-                    <Text style={styles.providerName}>
-                      Điện Máy Xanh HighTech
-                    </Text>
-                  </View>
+                    <View style={styles.providerInfo}>
+                      <Text style={styles.providerBy}>Cung cấp bởi</Text>
+                      <Text style={styles.providerName}>
+                        {this.props.site.data.name}
+                      </Text>
+                    </View>
 
-                  <View style={styles.chevronRightWrapper}>
-                    <Icon name="chevron-right" size={20} color="#999" />
+                    <View style={styles.chevronRightWrapper}>
+                      <Icon name="chevron-right" size={20} color="#999" />
+                    </View>
                   </View>
-                </View>
-              </Button>
-            </View>
+                </Button>
+              </View>
+            )}
           </View>
         </ScrollView>
 
@@ -223,7 +236,7 @@ const styles = StyleSheet.create({
     height: 58,
     borderRadius: 5,
     borderWidth: 1,
-    borderColor: '#fff'
+    borderColor: config.colors.white
   },
   headerWrapper: {
     backgroundColor: '#ffffff',
@@ -244,7 +257,7 @@ const styles = StyleSheet.create({
     marginTop: 14
   },
   exprire: {
-    color: '#fff',
+    color: config.colors.white,
     fontSize: 14,
     fontWeight: '400',
     paddingHorizontal: 8,
@@ -255,18 +268,18 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   getVoucherWrapper: {
-    backgroundColor: '#fff',
+    backgroundColor: config.colors.white,
     height: 62,
     paddingHorizontal: 16,
     justifyContent: 'center'
   },
   getVoucherBtn: {
-    backgroundColor: '#812384',
+    backgroundColor: config.colors.primary,
     borderRadius: 8,
     paddingVertical: 14
   },
   getVoucherTitle: {
-    color: '#fff',
+    color: config.colors.white,
     textTransform: 'uppercase',
     fontWeight: '600',
     fontSize: 16
@@ -275,7 +288,7 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   providerBody: {
-    backgroundColor: '#fff',
+    backgroundColor: config.colors.white,
     padding: 16,
     flexDirection: 'row'
   },

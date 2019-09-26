@@ -15,7 +15,7 @@ import {
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { CheckBox } from '../../lib/react-native-elements';
+import { CheckBox } from 'react-native-elements';
 import store from '../../store/Store';
 
 // components

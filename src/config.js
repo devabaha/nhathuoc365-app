@@ -38,6 +38,8 @@ const config = Object.freeze({
     myVoucher: 'myVoucher',
     voucherDetail: 'voucherDetail',
     voucherSelectProvince: 'voucherSelectProvince',
+    voucherScanner: 'voucherScanner',
+    alreadyVoucher: 'alreadyVoucher',
 
     upToPhone: 'upToPhone'
   }

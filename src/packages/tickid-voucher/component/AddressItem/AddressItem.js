@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Button from 'react-native-button';
-import { isLongLat } from '../../helper/validator';
+import { isLatitude, isLongitude } from '../../helper/validator';
 
 function AddressItem(props) {
-  const logLatIsValid = isLongLat(props.longitude) && isLongLat(props.latitude);
+  const logLatIsValid =
+    isLongitude(props.longitude) && isLatitude(props.latitude);
   return (
     <Fragment>
       <View style={styles.locationWrapper}>

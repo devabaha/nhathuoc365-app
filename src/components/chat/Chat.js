@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
-import { FormInput } from '../../lib/react-native-elements';
+import { FormInput } from 'react-native-elements';
 import store from '../../store/Store';
 import RightButtonCall from '../RightButtonCall';
 

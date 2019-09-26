@@ -36,6 +36,7 @@ import QRBarCode from './containers/QRBarCode';
 import VoucherContainer from './containers/Voucher';
 import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
+import VoucherScanScreenContainer from './containers/VoucherScanScreen';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
@@ -86,7 +87,8 @@ import TabIcon from './components/TabIcon';
 import TickIDRada from '@tickid/tickid-rada';
 import {
   initialize as initializeVoucherModule,
-  SelectProvince
+  SelectProvince as VoucherSelectProvinceContainer,
+  AlreadyVoucher as AlreadyVoucherContainer
 } from './packages/tickid-voucher';
 import { MessageBarContainer } from '@tickid/tickid-rn-message-bar';
 import DeviceInfo from 'react-native-device-info';
@@ -971,7 +973,12 @@ class App extends Component {
 
                 <Stack
                   key={appConfig.routes.voucherSelectProvince}
-                  component={SelectProvince}
+                  component={VoucherSelectProvinceContainer}
+                />
+
+                <Stack
+                  key={appConfig.routes.alreadyVoucher}
+                  component={AlreadyVoucherContainer}
                 />
               </Lightbox>
 
@@ -981,6 +988,17 @@ class App extends Component {
                   key={`${appConfig.routes.qrBarCode}_1`}
                   title="Mã tài khoản"
                   component={QRBarCode}
+                  renderBackButton={CloseButton}
+                  back
+                />
+              </Stack>
+
+              {/* ================ MODAL VOUCHER SCAN ================ */}
+              <Stack key={appConfig.routes.voucherScanner}>
+                <Scene
+                  key={`${appConfig.routes.voucherScanner}_1`}
+                  title="Quét mã QR"
+                  component={VoucherScanScreenContainer}
                   renderBackButton={CloseButton}
                   back
                 />

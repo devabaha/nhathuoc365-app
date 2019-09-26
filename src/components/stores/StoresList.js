@@ -11,7 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
+import { Button } from 'react-native-elements';
 import store from '../../store/Store';
 import ItemList from '../Home/ItemList';
 
