@@ -136,6 +136,11 @@ class VoucherDetail extends BaseContainer {
           message: 'Bạn đã nhận thành công voucher này.'
         });
         this.setState({ canUseNow: true });
+
+        /**
+         * @NOTE: 201 means user already this voucher
+         * thuclh said
+         */
       } else if (response.status === 201) {
         setTimeout(() => {
           this.getVoucherDisabled = true;
@@ -144,6 +149,7 @@ class VoucherDetail extends BaseContainer {
             campaign,
             message: response.message,
             onCheckMyVoucher: () => {
+              // prevent duplicate touchs to `Get Voucher` button
               setTimeout(() => (this.getVoucherDisabled = false), 1000);
             },
             onClose: () => {

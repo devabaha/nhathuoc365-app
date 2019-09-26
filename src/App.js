@@ -997,8 +997,10 @@ class App extends Component {
               <Stack key={appConfig.routes.voucherScanner}>
                 <Scene
                   key={`${appConfig.routes.voucherScanner}_1`}
+                  title="Quét mã QR"
                   component={VoucherScanScreenContainer}
-                  hideNavBar
+                  renderBackButton={CloseButton}
+                  back
                 />
               </Stack>
             </Modal>

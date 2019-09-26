@@ -20,7 +20,13 @@ class VoucherDetail extends TickIDVoucherDetail {
       heading: 'Đã lấy mã giảm giá',
       message,
       onCheckMyVoucher: () => {
+        /**
+         * @NOTE:
+         * step 1: `Actions.pop` to back/close `Already Voucher Modal`
+         * step 2: Navigate user to `My Voucher` screen (logic in JS call stack at bottom)
+         */
         Actions.pop();
+
         setTimeout(() => {
           Actions.push(appConfig.routes.myVoucher, {
             title: 'Voucher của tôi'

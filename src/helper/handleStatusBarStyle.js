@@ -6,7 +6,8 @@ export default function handleStatusBarStyle(prevState, newState, action) {
   const darkStatusBarScenes = [
     appConfig.routes.qrBarCode,
     appConfig.routes.myVoucher,
-    appConfig.routes.voucherDetail
+    appConfig.routes.voucherDetail,
+    appConfig.routes.voucherScanner
   ];
   switch (action.type) {
     case 'Navigation/PUSH':
