@@ -27,10 +27,7 @@ function MyVoucherItem(props) {
         <View style={styles.infoWrapper}>
           <Text style={styles.title}>{props.title}</Text>
           {!!props.remaining && (
-            <Text style={styles.remaining}>
-              Còn <Text style={styles.remainingCount}>{props.remaining}</Text>{' '}
-              ngày
-            </Text>
+            <Text style={styles.remaining}>{props.remaining}</Text>
           )}
         </View>
       </View>
@@ -106,10 +103,6 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#666',
     marginTop: 8
-  },
-  remainingCount: {
-    color: 'orange',
-    fontWeight: '500'
   },
   dotLeftWrapper: {
     position: 'absolute',

@@ -8,7 +8,7 @@ import {
 import {
   constants as loadingConstants,
   reducer as loadingReducer
-} from 'app-packages/tickid-loading';
+} from '@tickid/tickid-rn-loading';
 import {
   constants as statusBarConstants,
   reducer as statusBarReducer

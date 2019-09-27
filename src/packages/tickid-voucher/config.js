@@ -1,9 +1,13 @@
+import { Dimensions } from 'react-native';
+
 const config = {
   private: {
     appKey: 'tickidkey',
     secretKey: '0011tickidkey001122private'
   },
   device: {
+    width: Dimensions.get('screen').width,
+    height: Dimensions.get('screen').height,
     appVersion: '',
     deviceId: '',
     deviceType: '',

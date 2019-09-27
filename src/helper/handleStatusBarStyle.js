@@ -7,7 +7,10 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.qrBarCode,
     appConfig.routes.myVoucher,
     appConfig.routes.voucherDetail,
-    appConfig.routes.voucherScanner
+    appConfig.routes.voucherScanner,
+    appConfig.routes.alreadyVoucher,
+    appConfig.routes.voucherShowBarcode,
+    appConfig.routes.voucherEnterCodeManual
   ];
   switch (action.type) {
     case 'Navigation/PUSH':

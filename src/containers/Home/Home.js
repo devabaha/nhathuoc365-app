@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { StatusBar } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -11,8 +12,12 @@ import HomeComponent, {
   MY_VOUCHER_TYPE,
   TRANSACTION_TYPE
 } from '../../components/Home';
+import {
+  actions as statusBarActions,
+  constants as statusBarConstants
+} from 'app-packages/tickid-status-bar';
+import reduxStore from '../../reduxStore';
 
-@observer
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -198,11 +203,45 @@ class Home extends Component {
 
   handlePressCampaignItem = campaign => {
     Actions.push(appConfig.routes.voucherDetail, {
-      title: campaign.title
+      title: campaign.title,
+      campaignId: campaign.id
     });
   };
 
   handlePressNewItem = newItem => {};
+
+  statusBarStyle = statusBarConstants.LIGHT;
+
+  handleBodyScrollTop = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 68) {
+      if (this.statusBarStyle !== statusBarConstants.DARK) {
+        this.statusBarStyle = statusBarConstants.DARK;
+
+        StatusBar.setBarStyle('dark-content', true);
+
+        // reduxStore.dispatch(
+        //   statusBarActions.showStatusBar({
+        //     barStyle: statusBarConstants.DARK,
+        //     backgroundColor: '#fff'
+        //   })
+        // );
+      }
+    } else {
+      if (this.statusBarStyle !== statusBarConstants.LIGHT) {
+        this.statusBarStyle = statusBarConstants.LIGHT;
+
+        StatusBar.setBarStyle('light-content', true);
+
+        // reduxStore.dispatch(
+        //   statusBarActions.showStatusBar({
+        //     barStyle: statusBarConstants.LIGHT,
+        //     backgroundColor: 'transparent'
+        //   })
+        // );
+      }
+    }
+  };
 
   render() {
     return (
@@ -225,6 +264,7 @@ class Home extends Component {
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
+        onBodyScrollTop={this.handleBodyScrollTop}
         hasPromotion={this.hasPromotion}
         refreshing={this.state.refreshing}
       />

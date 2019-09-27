@@ -1,28 +1,19 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableHighlight,
   ScrollView,
-  RefreshControl,
   FlatList,
   Keyboard,
-  Alert,
   TextInput
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
-
-// components
 import Sticker from '../Sticker';
-import StoreSuggest from './StoreSuggest';
+// import appConfig from 'app-config';
 
 @observer
 export default class AddStore extends Component {
@@ -368,7 +359,7 @@ class StoreItem extends Component {
       <TouchableHighlight
         underlayColor="transparent"
         onPress={() => {
-          // Actions.stores({});
+          // Actions.push(appConfig.routes.store, {});
         }}
       >
         <View

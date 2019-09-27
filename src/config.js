@@ -34,12 +34,18 @@ const config = Object.freeze({
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',
 
+    store: 'store',
+
+    // ** Begin routes of Voucher module
     mainVoucher: 'mainVoucher',
     myVoucher: 'myVoucher',
     voucherDetail: 'voucherDetail',
     voucherSelectProvince: 'voucherSelectProvince',
     voucherScanner: 'voucherScanner',
     alreadyVoucher: 'alreadyVoucher',
+    voucherEnterCodeManual: 'voucherEnterCodeManual',
+    voucherShowBarcode: 'voucherShowBarcode',
+    // end routes of Voucher module **
 
     upToPhone: 'upToPhone'
   }

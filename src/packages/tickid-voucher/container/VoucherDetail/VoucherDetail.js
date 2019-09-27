@@ -167,8 +167,8 @@ class VoucherDetail extends BaseContainer {
     }
   };
 
-  handleUseVoucher = campaign => {
-    this.handleOpenScanScreen();
+  handleUseVoucher = voucher => {
+    this.handleOpenScanScreen(voucher);
   };
 
   useVoucherFetching;

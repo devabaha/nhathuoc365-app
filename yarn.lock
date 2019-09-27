@@ -944,6 +944,13 @@
     prop-types "^15.7.2"
     react-native-render-html "^4.1.2"
 
+"@tickid/tickid-rn-loading@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rn-loading/-/tickid-rn-loading-1.0.0.tgz#bd8ca876270499c55ea64d4ed7f06897ae3605c2"
+  integrity sha512-F1t7eqCKEYYb8MAKXW42lm0PByiQxOcHZO+KVIXQJVph/ew4mAWDIJp/HvU7sWdQm0HvgCEWR0IEgJmbShThPw==
+  dependencies:
+    prop-types "^15.7.2"
+
 "@tickid/tickid-rn-message-bar@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@tickid/tickid-rn-message-bar/-/tickid-rn-message-bar-1.0.2.tgz#9c7e7d3caf151e3a26a28a7ec4b879ddf981eb07"
