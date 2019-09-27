@@ -250,7 +250,7 @@ class QRBarCode extends Component {
       });
     }
 
-    Actions.stores({
+    Actions.push(appConfig.routes.store, {
       title: item.name,
       goCategory: category_id,
       type: ActionConst.REPLACE

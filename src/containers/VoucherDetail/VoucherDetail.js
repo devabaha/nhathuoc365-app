@@ -5,9 +5,9 @@ import { Actions } from 'react-native-router-flux';
 class VoucherDetail extends TickIDVoucherDetail {
   handlePressCampaignProvider = campaign => {};
 
-  handleOpenScanScreen = campaign => {
+  handleOpenScanScreen = voucher => {
     Actions.push(appConfig.routes.voucherScanner, {
-      campaign
+      voucher
     });
   };
 

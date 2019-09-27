@@ -12,7 +12,8 @@ class Voucher extends BaseContainer {
     this.state = {
       refreshing: false,
       provinceSelected: { id: 2, name: 'Hồ Chí Minh' },
-      campaigns: []
+      campaigns: [],
+      newVoucherNum: 0
     };
   }
 
@@ -35,7 +36,8 @@ class Voucher extends BaseContainer {
         this.setState({
           campaigns: response.data.campaigns.map(
             campaign => new CampaignEntity(campaign)
-          )
+          ),
+          newVoucherNum: response.data.new_voucher_num
         });
       }
     } catch (error) {
@@ -57,16 +59,17 @@ class Voucher extends BaseContainer {
   render() {
     return (
       <VoucherComponent
+        refreshing={this.state.refreshing}
+        provinceSelected={this.state.provinceSelected}
+        campaigns={this.state.campaigns}
+        newVoucherNum={this.state.newVoucherNum}
         onPressVoucher={this.handlePressVoucher}
         onPressMyVoucher={this.handlePressMyVoucher}
+        onRefresh={this.handleOnRefresh}
         onPressSelectProvince={this.handlePressSelectProvince.bind(this, {
           setProvince: this.handleSetProvince,
           provinceSelected: this.state.provinceSelected
         })}
-        onRefresh={this.handleOnRefresh}
-        refreshing={this.state.refreshing}
-        provinceSelected={this.state.provinceSelected}
-        campaigns={this.state.campaigns}
       />
     );
   }

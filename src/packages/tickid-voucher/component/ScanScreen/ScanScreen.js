@@ -41,7 +41,7 @@ function ScanScreen(props) {
 
   return (
     <QRCodeScanner
-      onRead={props.onReadedCode}
+      onRead={event => props.onReadedCode(event.data)}
       containerStyle={styles.containerStyle}
       cameraStyle={styles.cameraStyle}
       topContent={renderTopContent()}

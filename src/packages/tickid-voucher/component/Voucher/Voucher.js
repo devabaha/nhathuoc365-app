@@ -31,7 +31,8 @@ class Voucher extends Component {
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
     provinceSelected: PropTypes.object,
-    campaigns: PropTypes.array
+    campaigns: PropTypes.array,
+    newVoucherNum: PropTypes.number
   };
 
   static defaultProps = {
@@ -41,7 +42,8 @@ class Voucher extends Component {
     onRefresh: defaultListener,
     refreshing: false,
     provinceSelected: undefined,
-    campaigns: []
+    campaigns: [],
+    newVoucherNum: PropTypes.number
   };
 
   constructor(props) {
@@ -144,7 +146,9 @@ class Voucher extends Component {
               <View style={styles.myVoucherTitleWrapper}>
                 <Text style={styles.myVoucherTitle}>Voucher của tôi</Text>
                 <Text style={styles.myVoucherInfo}>
-                  <Text style={styles.myVoucherCount}>5 </Text>
+                  <Text
+                    style={styles.myVoucherCount}
+                  >{`${this.props.newVoucherNum} `}</Text>
                   mã chưa sử dụng
                 </Text>
               </View>

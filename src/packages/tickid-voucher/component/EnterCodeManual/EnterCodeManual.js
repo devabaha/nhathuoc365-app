@@ -6,33 +6,30 @@ import {
   View,
   Text,
   TextInput,
-  Image,
-  ScrollView,
-  FlatList,
   StyleSheet,
   Animated,
   Keyboard
 } from 'react-native';
 import Header from './Header';
-import iconSearch from '../../assets/images/icon_search.png';
-import iconChecked from '../../assets/images/icon_checked.png';
 
 const ANIMATION_TIME = 250;
 const ANIMATION_CLOSE_TIME = 150;
 
 const defaultListener = () => {};
 
-class SelectProvince extends Component {
+class EnterCodeManual extends Component {
   static propTypes = {
     onClose: PropTypes.func,
-    onSelect: PropTypes.func,
-    provinceSelected: PropTypes.object
+    onSendCode: PropTypes.func,
+    heading: PropTypes.string,
+    message: PropTypes.string
   };
 
   static defaultProps = {
     onClose: defaultListener,
-    onSelect: defaultListener,
-    provinceSelected: undefined
+    onSendCode: defaultListener,
+    heading: '',
+    message: ''
   };
 
   constructor(props) {
@@ -41,7 +38,8 @@ class SelectProvince extends Component {
     this.state = {
       opacity: new Animated.Value(0),
       bottom: new Animated.Value(-20),
-      keyboardShow: false
+      keyboardShow: false,
+      code: ''
     };
   }
 
@@ -84,48 +82,37 @@ class SelectProvince extends Component {
     Animated.timing(animation, { toValue, duration }).start();
   }
 
+  runCloseAnimation() {
+    this.startAnimation(this.state.opacity, 0, ANIMATION_CLOSE_TIME);
+    this.startAnimation(this.state.bottom, -20, ANIMATION_CLOSE_TIME);
+  }
+
   closing;
 
   onClose = () => {
     if (this.closing) return;
     this.closing = true;
 
-    this.startAnimation(this.state.opacity, 0, ANIMATION_CLOSE_TIME);
-    this.startAnimation(this.state.bottom, -20, ANIMATION_CLOSE_TIME);
+    this.runCloseAnimation();
 
     setTimeout(() => {
       this.props.onClose();
     }, ANIMATION_CLOSE_TIME);
   };
 
-  onSelect = province => {
-    this.onClose();
+  onSendCode = () => {
+    if (this.closing || !this.state.code) return;
+    this.closing = true;
+
+    this.runCloseAnimation();
 
     setTimeout(() => {
-      this.props.onSelect(province);
-    }, ANIMATION_TIME);
+      this.props.onSendCode(this.state.code);
+    }, ANIMATION_CLOSE_TIME);
   };
 
-  renderProvince = ({ item: province }) => {
-    const isActive =
-      (this.props.provinceSelected && this.props.provinceSelected.id) ===
-      province.id;
-    return (
-      <Button
-        containerStyle={[
-          styles.provinceItemWrap,
-          {
-            borderBottomWidth: this.props.last ? 0 : 1,
-            backgroundColor: isActive ? '#f7f6fb' : config.colors.white
-          }
-        ]}
-        style={styles.provinceItem}
-        onPress={() => this.onSelect(province)}
-      >
-        <Text style={styles.provinceItem}>{province.name}</Text>
-        {isActive && <Image style={styles.iconChecked} source={iconChecked} />}
-      </Button>
-    );
+  handleChangeCode = code => {
+    this.setState({ code });
   };
 
   render() {
@@ -144,25 +131,35 @@ class SelectProvince extends Component {
         />
 
         <View style={styles.content}>
-          <Header onClose={this.onClose} />
+          <Header onClose={this.onClose} title={this.props.heading} />
 
-          <ScrollView keyboardShouldPersistTaps="handled">
-            <View style={styles.searchWrapper}>
-              <Image style={styles.searchIcon} source={iconSearch} />
-              <TextInput style={styles.searchInput} placeholder="Tìm kiếm" />
-            </View>
-
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              data={[
-                { id: 1, name: 'Toàn quốc' },
-                { id: 2, name: 'Hà Nội' },
-                { id: 3, name: 'Hồ Chí Minh' }
-              ]}
-              keyExtractor={item => `${item.id}`}
-              renderItem={this.renderProvince}
+          <View style={styles.body}>
+            <TextInput
+              style={styles.codeInput}
+              value={this.state.code}
+              placeholder="Nhập mã cửa hàng"
+              placeholderTextColor="#c1c1c1"
+              onChangeText={this.handleChangeCode}
+              autoFocus
             />
-          </ScrollView>
+            <Text style={styles.codeHelp}>
+              Hãy hỏi nhân viên để được hướng dẫn
+            </Text>
+            <Button
+              style={styles.submitButtonTitle}
+              containerStyle={[
+                styles.submitButton,
+                {
+                  backgroundColor: this.state.code
+                    ? config.colors.primary
+                    : '#c1c1c1'
+                }
+              ]}
+              onPress={this.onSendCode}
+            >
+              Gửi mã
+            </Button>
+          </View>
         </View>
       </Animated.View>
     );
@@ -176,7 +173,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    zIndex: 99999
   },
   btnCloseTransparent: {
     position: 'absolute',
@@ -197,43 +195,35 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
     zIndex: 2
   },
-  searchWrapper: {
-    paddingHorizontal: 16,
-    position: 'relative'
+  body: {
+    padding: 16
   },
-  searchIcon: {
-    position: 'absolute',
-    top: 26,
-    left: 24,
-    width: 20,
-    height: 20
+  codeInput: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    paddingBottom: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginTop: 12
   },
-  searchInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    marginVertical: 16,
-    paddingVertical: 11,
-    paddingLeft: 34,
-    paddingRight: 8,
+  codeHelp: {
     fontSize: 14,
-    color: '#666'
-  },
-  provinceItemWrap: {
-    justifyContent: 'space-between',
-    paddingVertical: 16,
-    borderColor: '#fafafa',
-    paddingHorizontal: 16
-  },
-  provinceItem: {
-    fontSize: 15,
+    color: '#666',
     fontWeight: '400',
-    color: '#444'
+    marginTop: 8,
+    marginBottom: 20
   },
-  iconChecked: {
-    width: 20,
-    height: 20
+  submitButton: {
+    borderRadius: 8,
+    paddingVertical: 14
+  },
+  submitButtonTitle: {
+    color: config.colors.white,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    fontSize: 16
   }
 });
 
-export default SelectProvince;
+export default EnterCodeManual;

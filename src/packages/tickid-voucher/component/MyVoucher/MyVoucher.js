@@ -44,7 +44,7 @@ class MyVoucher extends Component {
     return (
       <MyVoucherItem
         title={voucher.data.title}
-        remaining=""
+        remaining={voucher.data.remain_time}
         avatar={voucher.data.shop_logo_url}
         onPress={() => this.props.onPressVoucher(voucher)}
         last={this.totalCampaigns - 1 === index}

@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  ScrollView,
-  StatusBar
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, { HomeCardItem } from './component/HomeCardList';
-import { actions as statusBarActions } from 'app-packages/tickid-status-bar';
 import ListServices from './component/ListServices';
 import appConfig from 'app-config';
 import { SERVICES_LIST } from './constants';
@@ -39,7 +32,8 @@ class Home extends Component {
     onShowAllNews: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
-    onPressNewItem: PropTypes.func
+    onPressNewItem: PropTypes.func,
+    onBodyScrollTop: PropTypes.func
   };
 
   static defaultProps = {
@@ -62,16 +56,8 @@ class Home extends Component {
     onShowAllNews: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
-    onPressNewItem: defaultListener
-  };
-
-  handleScrollTop = event => {
-    const yOffset = event.nativeEvent.contentOffset.y;
-    if (yOffset > 68) {
-      StatusBar.setBarStyle('dark-content', true);
-    } else {
-      StatusBar.setBarStyle('light-content', true);
-    }
+    onPressNewItem: defaultListener,
+    onBodyScrollTop: defaultListener
   };
 
   render() {
@@ -80,7 +66,7 @@ class Home extends Component {
         <View style={styles.headerBackground} />
 
         <ScrollView
-          onScroll={this.handleScrollTop}
+          onScroll={this.props.onBodyScrollTop}
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
