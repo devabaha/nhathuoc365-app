@@ -13,23 +13,32 @@ const defaultOptions = {
   }
 };
 
+function prepareBody(options) {
+  if (!options.body) return options;
+
+  const body = new FormData();
+  for (const field in options.body) {
+    body.append(field, options.body[field]);
+  }
+
+  return { ...options, body };
+}
+
 /**
  * Fetch api in the internal tick system
  * @param {*} url
- * @param {*} newOptions
+ * @param {*} options
  */
-export function internalFetch(url = '', newOptions = {}) {
-  return externalFetch(urlFor(config.rest.endpoint() + url), newOptions);
+export function internalFetch(url = '', options = {}) {
+  return externalFetch(urlFor(config.rest.endpoint() + url), options);
 }
 
 /**
  * Fetch api outside the tick system
  * @param {*} url
- * @param {*} newOptions
+ * @param {*} options
  */
-export function externalFetch(url = '', newOptions = {}) {
-  if (newOptions.body) {
-    newOptions.body = JSON.stringify(newOptions.body);
-  }
+export function externalFetch(url = '', options = {}) {
+  const newOptions = prepareBody(options);
   return fetch(url, merge(defaultOptions, newOptions)).then(res => res.json());
 }
