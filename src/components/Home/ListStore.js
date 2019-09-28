@@ -8,15 +8,12 @@ import {
   FlatList,
   Keyboard
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-
-// components
 import Sticker from '../Sticker';
 import StoreSuggest from './StoreSuggest';
+// import appConfig from 'app-config';
 
 @observer
 export default class ListStore extends Component {
@@ -262,7 +259,7 @@ class StoreItem extends Component {
       <TouchableHighlight
         underlayColor="transparent"
         onPress={() => {
-          // Actions.stores({});
+          // Actions.push(appConfig.routes.store, {});
         }}
       >
         <View

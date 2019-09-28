@@ -19,6 +19,7 @@ import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonOrders from '../RightButtonOrders';
+import appConfig from 'app-config';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -109,7 +110,7 @@ export default class Item extends Component {
       // Trong cua hang lien ket
       Actions.pop();
     } else {
-      Actions.stores({
+      Actions.push(appConfig.routes.store, {
         title: 'Cửa hàng'
       });
     }

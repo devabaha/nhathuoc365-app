@@ -1,30 +1,20 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl,
-  Alert
+  RefreshControl
 } from 'react-native';
-
-//library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { CheckBox } from 'react-native-elements';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import { reaction } from 'mobx';
-
-// components
-import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
+import appConfig from 'app-config';
 
 @observer
 export default class StoreOrders extends Component {
@@ -117,7 +107,7 @@ export default class StoreOrders extends Component {
       Actions.pop();
     } else {
       //Ở Store chinh
-      Actions.stores({
+      Actions.push(appConfig.routes.store, {
         title: item.name,
         goCategory: category_id
       });

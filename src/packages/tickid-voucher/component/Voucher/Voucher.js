@@ -30,8 +30,9 @@ class Voucher extends Component {
     onPressSelectProvince: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
-    provinceSelected: PropTypes.object,
-    campaigns: PropTypes.array
+    provinceSelected: PropTypes.string,
+    campaigns: PropTypes.array,
+    newVoucherNum: PropTypes.number
   };
 
   static defaultProps = {
@@ -40,8 +41,9 @@ class Voucher extends Component {
     onPressSelectProvince: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
-    provinceSelected: undefined,
-    campaigns: []
+    provinceSelected: '',
+    campaigns: [],
+    newVoucherNum: PropTypes.number
   };
 
   constructor(props) {
@@ -54,13 +56,6 @@ class Voucher extends Component {
 
   get totalCampaigns() {
     return this.props.campaigns.length;
-  }
-
-  get provinceName() {
-    if (this.props.provinceSelected) {
-      return this.props.provinceSelected.name;
-    }
-    return '';
   }
 
   renderVouchers() {
@@ -124,7 +119,9 @@ class Voucher extends Component {
 
             <Button onPress={this.props.onPressSelectProvince}>
               <View style={styles.placeNameWrapper}>
-                <Text style={styles.placeName}>{this.provinceName}</Text>
+                <Text style={styles.placeName}>
+                  {this.props.provinceSelected}
+                </Text>
                 <Icon
                   name="chevron-down"
                   size={16}
@@ -144,7 +141,9 @@ class Voucher extends Component {
               <View style={styles.myVoucherTitleWrapper}>
                 <Text style={styles.myVoucherTitle}>Voucher của tôi</Text>
                 <Text style={styles.myVoucherInfo}>
-                  <Text style={styles.myVoucherCount}>5 </Text>
+                  <Text
+                    style={styles.myVoucherCount}
+                  >{`${this.props.newVoucherNum} `}</Text>
                   mã chưa sử dụng
                 </Text>
               </View>

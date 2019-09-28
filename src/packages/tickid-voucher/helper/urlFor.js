@@ -24,7 +24,7 @@ export default function urlFor(url) {
   );
   const data = {
     app_key: config.private.appKey,
-    app_version: config.private.appVersion,
+    app_version: config.device.appVersion,
     device_id: config.device.deviceId,
     device_type: config.device.deviceType,
     os: config.device.os,

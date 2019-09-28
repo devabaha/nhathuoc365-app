@@ -36,10 +36,11 @@ function TickIDStatusBarComponent(props) {
         left: 0,
         right: 0,
         height: 20,
+        zIndex: 0,
         backgroundColor: props.backgroundColor
       }}
     >
-      <StatusBar barStyle={props.barStyle} />
+      <StatusBar barStyle={`${props.barStyle}-content`} animated={true} />
     </View>
   );
 }

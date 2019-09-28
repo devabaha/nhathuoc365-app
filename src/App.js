@@ -23,7 +23,7 @@ import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
-import { Loading as LoadingOverlay } from 'app-packages/tickid-loading';
+import { Loading as LoadingOverlay } from '@tickid/tickid-rn-loading';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
@@ -37,6 +37,7 @@ import VoucherContainer from './containers/Voucher';
 import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
 import VoucherScanScreenContainer from './containers/VoucherScanScreen';
+import VoucherShowBarcodeContainer from './containers/VoucherShowBarcode';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
@@ -88,7 +89,8 @@ import TickIDRada from '@tickid/tickid-rada';
 import {
   initialize as initializeVoucherModule,
   SelectProvince as VoucherSelectProvinceContainer,
-  AlreadyVoucher as AlreadyVoucherContainer
+  AlreadyVoucher as AlreadyVoucherContainer,
+  EnterCodeManual as VoucherEnterCodeManualContainer
 } from './packages/tickid-voucher';
 import { MessageBarContainer } from '@tickid/tickid-rn-message-bar';
 import DeviceInfo from 'react-native-device-info';
@@ -589,9 +591,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="stores">
+                  <Stack key={appConfig.routes.store}>
                     <Scene
-                      key="stores_1"
+                      key={`${appConfig.routes.store}_1`}
                       title="Cửa hàng"
                       component={Stores}
                       {...navBarConfig}
@@ -969,20 +971,39 @@ class App extends Component {
                       back
                     />
                   </Stack>
+
+                  {/* ================ SCENE VOUCHER SCAN ================ */}
+                  <Stack key={appConfig.routes.voucherScanner}>
+                    <Scene
+                      key={`${appConfig.routes.voucherScanner}_1`}
+                      title="Quét mã QR"
+                      component={VoucherScanScreenContainer}
+                      {...whiteNavBarConfig}
+                      back
+                    />
+                  </Stack>
                 </Scene>
 
+                {/* ================ LIGHT BOX SELECT PROVINCE ================ */}
                 <Stack
                   key={appConfig.routes.voucherSelectProvince}
                   component={VoucherSelectProvinceContainer}
                 />
 
+                {/* ================ LIGHT BOX ALREADY VOUCHER ================ */}
                 <Stack
                   key={appConfig.routes.alreadyVoucher}
                   component={AlreadyVoucherContainer}
                 />
+
+                {/* ================ LIGHT BOX ENTER CODE MANUAL ================ */}
+                <Stack
+                  key={appConfig.routes.voucherEnterCodeManual}
+                  component={VoucherEnterCodeManualContainer}
+                />
               </Lightbox>
 
-              {/* ================ MODAL ZONE ================ */}
+              {/* ================ MODAL SHOW QR/BAR CODE ================ */}
               <Stack key={appConfig.routes.qrBarCode}>
                 <Scene
                   key={`${appConfig.routes.qrBarCode}_1`}
@@ -993,12 +1014,12 @@ class App extends Component {
                 />
               </Stack>
 
-              {/* ================ MODAL VOUCHER SCAN ================ */}
-              <Stack key={appConfig.routes.voucherScanner}>
+              {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
+              <Stack key={appConfig.routes.voucherShowBarcode}>
                 <Scene
-                  key={`${appConfig.routes.voucherScanner}_1`}
-                  title="Quét mã QR"
-                  component={VoucherScanScreenContainer}
+                  key={`${appConfig.routes.voucherShowBarcode}_1`}
+                  title="Mã voucher"
+                  component={VoucherShowBarcodeContainer}
                   renderBackButton={CloseButton}
                   back
                 />

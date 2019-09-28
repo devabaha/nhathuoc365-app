@@ -133,8 +133,7 @@ class VoucherDetail extends Component {
               <View style={styles.exprireWrapper}>
                 <View style={styles.exprireBox}>
                   <Text style={styles.exprire}>
-                    <Text>Dùng đến </Text>
-                    <Text>{campaign.data.expire_date}</Text>
+                    {campaign.data.expire_date}
                   </Text>
                 </View>
               </View>
