@@ -74,7 +74,12 @@ class Home extends Component {
     setTimeout(this.getHomeDataFromApi, oneSecond);
   };
 
-  handlePressedSurplusNext = () => {};
+  handlePressedSurplusNext = () => {
+    Actions.vnd_wallet({
+      title: store.user_info.default_wallet.name,
+      wallet: store.user_info.default_wallet
+    });
+  };
 
   handlePromotionPressed(item) {
     Actions.notify_item({
@@ -159,7 +164,10 @@ class Home extends Component {
         Actions.push(appConfig.routes.mainVoucher);
         break;
       case TRANSACTION_TYPE:
-        //
+        Actions.vnd_wallet({
+          title: store.user_info.default_wallet.name,
+          wallet: store.user_info.default_wallet
+        });
         break;
     }
   };

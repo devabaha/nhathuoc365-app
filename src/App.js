@@ -399,14 +399,14 @@ class App extends Component {
                      ************************ Tab 3 ************************
                      */}
                     <Stack
-                      key="myTab4"
+                      key="{appConfig.routes.ordersTab}"
                       icon={TabIcon}
                       iconLabel="Đơn hàng"
                       iconName="shopping-cart"
                       iconSize={24}
                     >
                       <Scene
-                        key="_orders"
+                        key={`${appConfig.routes.ordersTab}_1`}
                         title="Đơn hàng"
                         component={Orders}
                       />
