@@ -516,68 +516,6 @@ export default class Account extends Component {
             />
           }
         >
-          <View
-            style={{
-              marginTop: 1,
-              borderTopWidth: 0,
-              borderColor: '#dddddd'
-            }}
-          >
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() =>
-                Actions.qr_bar_code({
-                  title: 'Địa chỉ Ví',
-                  address: user_info.wallet_address
-                })
-              }
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 0,
-                    borderTopWidth: 0,
-                    borderColor: '#dddddd'
-                  }
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: '#A569BD'
-                    }
-                  ]}
-                >
-                  <Ionicons name="ethereum" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    Addr:{' '}
-                    <Text style={styles.profile_list_label_address}>
-                      {typeof user_info.wallet_address == 'string'
-                        ? user_info.wallet_address.substring(0, 25) + '...'
-                        : 'Chưa có địa chỉ Ví'}
-                    </Text>
-                  </Text>
-                </View>
-
-                {
-                  <View
-                    style={[
-                      styles.profile_list_icon_box,
-                      styles.profile_list_icon_box_angle
-                    ]}
-                  >
-                    <Icon name="angle-right" size={16} color="#999999" />
-                  </View>
-                }
-              </View>
-            </TouchableHighlight>
-          </View>
           {user_info.default_wallet && ( //vnd_wallet
             <View
               style={{
@@ -751,9 +689,10 @@ export default class Account extends Component {
             underlayColor="transparent"
             onPress={() =>
               Actions.affiliate({
-                aff_content: store.store_data.aff_content
+                aff_content: store.store_data
                   ? store.store_data.aff_content
-                  : 'Giới thiệu chương trình tiếp thị liên kết cùng TickID'
+                  : 'Thông tin chương trình tiếp thị liên kết cùng ' +
+                    APP_NAME_SHOW
               })
             }
           >

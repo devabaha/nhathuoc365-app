@@ -103,8 +103,8 @@ import env from 'react-native-config';
  */
 initializeVoucherModule({
   private: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: env.APP_KEY,
+    secretKey: env.SECRET_KEY
   },
   device: {
     appVersion: DeviceInfo.getVersion(),
@@ -113,6 +113,9 @@ initializeVoucherModule({
     os: Platform.OS,
     osVersion: DeviceInfo.getSystemVersion(),
     store: ''
+  },
+  rest: {
+    endpoint: () => MY_FOOD_API
   }
 });
 
@@ -525,7 +528,6 @@ class App extends Component {
                     <Scene
                       key="login_1"
                       hideNavBar
-                      title=""
                       component={Login}
                       {...navBarConfig}
                     />
@@ -636,7 +638,6 @@ class App extends Component {
                       key="item_image_viewer_1"
                       direction="vertical"
                       hideNavBar
-                      title=""
                       component={ItemImageViewer}
                       {...navBarConfig}
                       back
@@ -649,7 +650,6 @@ class App extends Component {
                       panHandlers={null}
                       direction="vertical"
                       hideNavBar
-                      title=""
                       component={Rating}
                       {...navBarConfig}
                       back
@@ -759,7 +759,6 @@ class App extends Component {
                   <Stack key="store_orders">
                     <Scene
                       key="store_orders_1"
-                      title=""
                       component={StoreOrders}
                       {...navBarConfig}
                       back
@@ -769,7 +768,6 @@ class App extends Component {
                   <Stack key="chat">
                     <Scene
                       key="chat_1"
-                      title=""
                       component={Chat}
                       {...navBarConfig}
                       back
@@ -779,7 +777,6 @@ class App extends Component {
                   <Stack key="webview">
                     <Scene
                       key="webview_1"
-                      title=""
                       component={WebView}
                       {...navBarConfig}
                       back
@@ -789,7 +786,6 @@ class App extends Component {
                   <Stack key="_add_ref">
                     <Scene
                       key="_add_ref_1"
-                      title=""
                       component={AddRef}
                       {...navBarConfig}
                       back
@@ -799,7 +795,6 @@ class App extends Component {
                   <Stack key="choose_location">
                     <Scene
                       key="choose_location_1"
-                      title=""
                       component={ChooseLocation}
                       {...navBarConfig}
                       back
@@ -809,7 +804,6 @@ class App extends Component {
                   <Stack key="vnd_wallet">
                     <Scene
                       key="vnd_wallet_1"
-                      title=""
                       component={VndWallet}
                       {...navBarConfig}
                       back
@@ -819,7 +813,6 @@ class App extends Component {
                   <Stack key="pay_wallet">
                     <Scene
                       key="pay_wallet_1"
-                      title=""
                       component={PayWallet}
                       {...navBarConfig}
                       back
@@ -829,7 +822,6 @@ class App extends Component {
                   <Stack key="pay_account">
                     <Scene
                       key="pay_account_1"
-                      title=""
                       component={PayAccount}
                       {...navBarConfig}
                       back
@@ -839,7 +831,6 @@ class App extends Component {
                   <Stack key="affiliate">
                     <Scene
                       key="affiliate_1"
-                      title=""
                       component={Affiliate}
                       {...navBarConfig}
                       back

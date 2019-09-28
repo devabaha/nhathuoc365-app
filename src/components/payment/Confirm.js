@@ -23,6 +23,7 @@ import Sticker from '../Sticker';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
 import { CheckBox } from 'react-native-elements';
+import appConfig from 'app-config';
 
 @observer
 export default class Confirm extends Component {
@@ -648,7 +649,7 @@ export default class Confirm extends Component {
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() =>
-                Actions.qr_bar_code({
+                Actions.push(appConfig.routes.qrBarCode, {
                   title: 'Mã đơn hàng',
                   address: cart_data.cart_code,
                   content: 'Dùng QRCode mã đơn hàng để xem thông tin'
