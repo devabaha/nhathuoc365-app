@@ -133,7 +133,8 @@ const styles = StyleSheet.create({
     minHeight: 40,
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
-    zIndex: 2
+    zIndex: 2,
+    marginBottom: config.device.bottomSpace
   },
   body: {
     padding: 16

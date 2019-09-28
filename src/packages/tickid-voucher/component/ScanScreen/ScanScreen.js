@@ -4,18 +4,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Button from 'react-native-button';
 import config from '../../config';
-
-const defaultListener = () => {};
-
-ScanScreen.propTypes = {
-  onPressEnterCode: PropTypes.func,
-  onReadedCode: PropTypes.func
-};
-
-ScanScreen.defaultProps = {
-  onPressEnterCode: defaultListener,
-  onReadedCode: defaultListener
-};
+import LoadingComponent from '@tickid/tickid-rn-loading';
 
 function ScanScreen(props) {
   const renderBottomContent = () => {
@@ -40,19 +29,28 @@ function ScanScreen(props) {
   };
 
   return (
-    <QRCodeScanner
-      onRead={event => props.onReadedCode(event.data)}
-      containerStyle={styles.containerStyle}
-      cameraStyle={styles.cameraStyle}
-      topContent={renderTopContent()}
-      bottomContent={renderBottomContent()}
-    />
+    <View style={styles.wrapper}>
+      {props.showLoading && <LoadingComponent loading />}
+
+      <QRCodeScanner
+        onRead={event => props.onReadedCode(event.data)}
+        containerStyle={styles.containerStyle}
+        cameraStyle={styles.cameraStyle}
+        topContent={renderTopContent()}
+        bottomContent={renderBottomContent()}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    marginBottom: config.device.bottomSpace
+  },
   containerStyle: {
-    backgroundColor: '#f1f1f1'
+    backgroundColor: '#f1f1f1',
+    flex: 1
   },
   topContent: {
     padding: 16
@@ -76,5 +74,19 @@ const styles = StyleSheet.create({
     color: config.colors.black
   }
 });
+
+const defaultListener = () => {};
+
+ScanScreen.propTypes = {
+  onPressEnterCode: PropTypes.func,
+  onReadedCode: PropTypes.func,
+  showLoading: PropTypes.bool
+};
+
+ScanScreen.defaultProps = {
+  onPressEnterCode: defaultListener,
+  onReadedCode: defaultListener,
+  showLoading: false
+};
 
 export default ScanScreen;

@@ -71,7 +71,8 @@ class SelectProvince extends Component {
 
   keyboardWillShow = e => {
     this.setState({
-      keyboardShow: true
+      keyboardShow: true,
+      keyboardHeight: e.endCoordinates.height
     });
     this.startAnimation(this.state.bottom, e.endCoordinates.height, 200);
   };
@@ -139,11 +140,20 @@ class SelectProvince extends Component {
 
     if (this.state.keyboardShow) {
       containerStyle.top = 0;
-      contentStyle.maxHeight = Math.floor(
-        config.device.height - this.state.keyboardHeight
-      );
+      if (config.device.isIphoneX) {
+        const iPhoneXBuffer =
+          config.device.statusBarHeight + config.device.bottomSpace;
+        contentStyle.maxHeight = Math.floor(
+          config.device.height - this.state.keyboardHeight - iPhoneXBuffer
+        );
+      } else {
+        contentStyle.maxHeight = Math.floor(
+          config.device.height - this.state.keyboardHeight
+        );
+      }
     } else {
       contentStyle.maxHeight = 360;
+      contentStyle.marginBottom = config.device.bottomSpace;
     }
 
     return (

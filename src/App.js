@@ -7,7 +7,6 @@ import appConfig from 'app-config';
 import store from 'app-store';
 import reduxStore from './reduxStore';
 import { StyleSheet, StatusBar, Linking, Platform } from 'react-native';
-// library
 import {
   Scene,
   Router,
@@ -23,13 +22,12 @@ import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
-import { Loading as LoadingOverlay } from '@tickid/tickid-rn-loading';
+import FlashMessage from 'react-native-flash-message';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
-import TickIDStatusBar from 'app-packages/tickid-status-bar';
 
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
@@ -92,7 +90,6 @@ import {
   AlreadyVoucher as AlreadyVoucherContainer,
   EnterCodeManual as VoucherEnterCodeManualContainer
 } from './packages/tickid-voucher';
-import { MessageBarContainer } from '@tickid/tickid-rn-message-bar';
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
@@ -1016,9 +1013,7 @@ class App extends Component {
               </Stack>
             </Modal>
 
-            <Scene component={LoadingOverlay} />
-            <Scene component={TickIDStatusBar} />
-            <Scene component={MessageBarContainer} />
+            <Scene component={FlashMessage} />
           </Overlay>
         </Router>
       </Provider>
