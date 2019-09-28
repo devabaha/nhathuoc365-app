@@ -26,13 +26,15 @@ class SelectProvince extends Component {
   static propTypes = {
     onClose: PropTypes.func,
     onSelect: PropTypes.func,
-    provinceSelected: PropTypes.object
+    provinceSelected: PropTypes.string,
+    listCities: PropTypes.array
   };
 
   static defaultProps = {
     onClose: defaultListener,
     onSelect: defaultListener,
-    provinceSelected: undefined
+    provinceSelected: '',
+    listCities: []
   };
 
   constructor(props) {
@@ -41,7 +43,8 @@ class SelectProvince extends Component {
     this.state = {
       opacity: new Animated.Value(0),
       bottom: new Animated.Value(-20),
-      keyboardShow: false
+      keyboardShow: false,
+      keyboardHeight: 0
     };
   }
 
@@ -75,7 +78,8 @@ class SelectProvince extends Component {
 
   keyboardWillHide = () => {
     this.setState({
-      keyboardShow: false
+      keyboardShow: false,
+      keyboardHeight: 0
     });
     this.startAnimation(this.state.bottom, 0, 200);
   };
@@ -107,9 +111,7 @@ class SelectProvince extends Component {
   };
 
   renderProvince = ({ item: province }) => {
-    const isActive =
-      (this.props.provinceSelected && this.props.provinceSelected.id) ===
-      province.id;
+    const isActive = this.props.provinceSelected === province;
     return (
       <Button
         containerStyle={[
@@ -122,7 +124,7 @@ class SelectProvince extends Component {
         style={styles.provinceItem}
         onPress={() => this.onSelect(province)}
       >
-        <Text style={styles.provinceItem}>{province.name}</Text>
+        <Text style={styles.provinceItem}>{province}</Text>
         {isActive && <Image style={styles.iconChecked} source={iconChecked} />}
       </Button>
     );
@@ -133,9 +135,17 @@ class SelectProvince extends Component {
       opacity: this.state.opacity,
       bottom: this.state.bottom
     };
+    const contentStyle = {};
+
     if (this.state.keyboardShow) {
       containerStyle.top = 0;
+      contentStyle.maxHeight = Math.floor(
+        config.device.height - this.state.keyboardHeight
+      );
+    } else {
+      contentStyle.maxHeight = 360;
     }
+
     return (
       <Animated.View style={[styles.container, containerStyle]}>
         <Button
@@ -143,7 +153,7 @@ class SelectProvince extends Component {
           onPress={this.onClose}
         />
 
-        <View style={styles.content}>
+        <View style={[styles.content, contentStyle]}>
           <Header onClose={this.onClose} />
 
           <ScrollView keyboardShouldPersistTaps="handled">
@@ -154,12 +164,8 @@ class SelectProvince extends Component {
 
             <FlatList
               keyboardShouldPersistTaps="handled"
-              data={[
-                { id: 1, name: 'Toàn quốc' },
-                { id: 2, name: 'Hà Nội' },
-                { id: 3, name: 'Hồ Chí Minh' }
-              ]}
-              keyExtractor={item => `${item.id}`}
+              data={this.props.listCities}
+              keyExtractor={item => item}
               renderItem={this.renderProvince}
             />
           </ScrollView>
