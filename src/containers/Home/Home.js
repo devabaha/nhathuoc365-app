@@ -17,7 +17,9 @@ import {
   constants as statusBarConstants
 } from 'app-packages/tickid-status-bar';
 import reduxStore from '../../reduxStore';
+import { observer } from 'mobx-react';
 
+@observer
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -251,6 +253,7 @@ class Home extends Component {
         sites={this.state.sites}
         newses={this.state.newses}
         notices={this.state.notices}
+        userInfo={store.user_info}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         onActionPress={this.handleActionPress}
