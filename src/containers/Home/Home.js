@@ -12,12 +12,6 @@ import HomeComponent, {
   MY_VOUCHER_TYPE,
   TRANSACTION_TYPE
 } from '../../components/Home';
-import {
-  actions as statusBarActions,
-  constants as statusBarConstants
-} from 'app-packages/tickid-status-bar';
-import reduxStore from '../../reduxStore';
-import { observer } from 'mobx-react';
 
 @observer
 class Home extends Component {
@@ -222,35 +216,19 @@ class Home extends Component {
 
   handlePressNewItem = newItem => {};
 
-  statusBarStyle = statusBarConstants.LIGHT;
-
   handleBodyScrollTop = event => {
     const yOffset = event.nativeEvent.contentOffset.y;
     if (yOffset > 68) {
-      if (this.statusBarStyle !== statusBarConstants.DARK) {
-        this.statusBarStyle = statusBarConstants.DARK;
+      if (this.statusBarStyle !== 'dark') {
+        this.statusBarStyle = 'dark';
 
         StatusBar.setBarStyle('dark-content', true);
-
-        // reduxStore.dispatch(
-        //   statusBarActions.showStatusBar({
-        //     barStyle: statusBarConstants.DARK,
-        //     backgroundColor: '#fff'
-        //   })
-        // );
       }
     } else {
-      if (this.statusBarStyle !== statusBarConstants.LIGHT) {
-        this.statusBarStyle = statusBarConstants.LIGHT;
+      if (this.statusBarStyle !== 'light') {
+        this.statusBarStyle = 'light';
 
         StatusBar.setBarStyle('light-content', true);
-
-        // reduxStore.dispatch(
-        //   statusBarActions.showStatusBar({
-        //     barStyle: statusBarConstants.LIGHT,
-        //     backgroundColor: 'transparent'
-        //   })
-        // );
       }
     }
   };

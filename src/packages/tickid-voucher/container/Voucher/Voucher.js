@@ -11,7 +11,8 @@ class Voucher extends BaseContainer {
 
     this.state = {
       refreshing: false,
-      provinceSelected: 'Hà Nội',
+      showLoading: false,
+      provinceSelected: '',
       campaigns: [],
       newVoucherNum: 0
     };
@@ -29,12 +30,18 @@ class Voucher extends BaseContainer {
     this.getListCampaigns();
   }
 
-  getListCampaigns = async (city = '') => {
+  getListCampaigns = async (city = '', showLoading = true) => {
+    if (showLoading) {
+      this.setState({ showLoading: true });
+    }
+
     try {
       const options = {
-        method: 'POST',
-        body: { city }
+        method: 'POST'
       };
+      if (city) {
+        options.body = { city };
+      }
       const response = await internalFetch(
         config.rest.listCampaigns(),
         options
@@ -44,19 +51,27 @@ class Voucher extends BaseContainer {
           campaigns: response.data.campaigns.map(
             campaign => new CampaignEntity(campaign)
           ),
-          newVoucherNum: response.data.new_voucher_num
+          newVoucherNum: response.data.new_voucher_num,
+          provinceSelected: response.data.city
         });
       }
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ refreshing: false });
+      this.setState({
+        refreshing: false,
+        showLoading: false
+      });
     }
   };
 
   handleOnRefresh = () => {
     this.setState({ refreshing: true });
-    setTimeout(this.getListCampaigns, 1000);
+
+    setTimeout(() => {
+      const showLoading = false;
+      this.getListCampaigns(this.state.provinceSelected, showLoading);
+    }, 1000);
   };
 
   handleSetProvince = provinceSelected => {
@@ -68,6 +83,7 @@ class Voucher extends BaseContainer {
     return (
       <VoucherComponent
         refreshing={this.state.refreshing}
+        showLoading={this.state.showLoading}
         provinceSelected={this.state.provinceSelected}
         campaigns={this.state.campaigns}
         newVoucherNum={this.state.newVoucherNum}

@@ -71,7 +71,8 @@ function ShowBarcode({ voucher, code }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: config.colors.white
+    backgroundColor: config.colors.white,
+    marginBottom: config.device.bottomSpace
   },
   cardWrapper: {
     width: config.device.width - 24,

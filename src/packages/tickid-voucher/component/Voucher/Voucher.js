@@ -18,6 +18,7 @@ import VoucherItem from './VoucherItem';
 import config from '../../config';
 import iconVoucher from '../../assets/images/icon_voucher.png';
 import vouchersX2Image from '../../assets/images/vouchers-x2.png';
+import LoadingComponent from '@tickid/tickid-rn-loading';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -30,6 +31,7 @@ class Voucher extends Component {
     onPressSelectProvince: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
+    showLoading: PropTypes.bool,
     provinceSelected: PropTypes.string,
     campaigns: PropTypes.array,
     newVoucherNum: PropTypes.number
@@ -41,6 +43,7 @@ class Voucher extends Component {
     onPressSelectProvince: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
+    showLoading: false,
     provinceSelected: '',
     campaigns: [],
     newVoucherNum: PropTypes.number
@@ -97,6 +100,8 @@ class Voucher extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {this.props.showLoading && <LoadingComponent loading />}
+
         <View style={styles.headerBackground} />
         {!this.state.hideVoucherX2 && (
           <Image style={styles.voucherX2Backgound} source={vouchersX2Image} />
@@ -162,7 +167,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f1f1f1',
-    position: 'relative'
+    position: 'relative',
+    marginBottom: config.device.bottomSpace
   },
   headerBackground: {
     backgroundColor: config.colors.primary,

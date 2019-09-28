@@ -4,12 +4,20 @@ import config from '../../config';
 import BaseContainer from '../BaseContainer';
 import ScanScreenComponent from '../../component/ScanScreen';
 import { internalFetch } from '../../helper/apiFetch';
-import MessageBar from '@tickid/tickid-rn-message-bar';
+import { showMessage } from 'react-native-flash-message';
 
 class ScanScreen extends BaseContainer {
   static propTypes = {
     voucher: PropTypes.object.isRequired
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      showLoading: false
+    };
+  }
 
   componentWillMount() {
     this.validateRequiredMethods([
@@ -32,7 +40,17 @@ class ScanScreen extends BaseContainer {
     });
   };
 
+  apiSending;
+
   sendApiUseCode = async code => {
+    if (this.apiSending) return;
+
+    this.apiSending = true;
+
+    this.setState({
+      showLoading: true
+    });
+
     const { voucher } = this.props;
     try {
       const response = await internalFetch(
@@ -44,12 +62,17 @@ class ScanScreen extends BaseContainer {
           voucher
         });
       } else {
-        MessageBar.showError({
-          message: response.message
+        showMessage({
+          message: response.message,
+          type: 'danger'
         });
       }
     } catch (error) {
       console.log(error);
+      this.setState({
+        showLoading: false
+      });
+      this.apiSending = false;
     }
   };
 
@@ -58,6 +81,7 @@ class ScanScreen extends BaseContainer {
       <ScanScreenComponent
         onReadedCode={this.handleAfterReadedCode}
         onPressEnterCode={this.handleBeforeShowEnterCode}
+        showLoading={this.state.showLoading}
       />
     );
   }

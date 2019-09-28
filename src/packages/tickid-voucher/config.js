@@ -1,9 +1,14 @@
 import { Dimensions } from 'react-native';
+import {
+  isIphoneX,
+  getStatusBarHeight,
+  getBottomSpace
+} from 'react-native-iphone-x-helper';
 
 const config = {
   private: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: '',
+    secretKey: ''
   },
   device: {
     width: Dimensions.get('screen').width,
@@ -13,7 +18,10 @@ const config = {
     deviceType: '',
     os: '',
     osVersion: '',
-    store: ''
+    store: '',
+    isIphoneX: isIphoneX(),
+    statusBarHeight: getStatusBarHeight(),
+    bottomSpace: getBottomSpace()
   },
   rest: {
     endpoint: () => 'https://apiapp.tickid.vn',
