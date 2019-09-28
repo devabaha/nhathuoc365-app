@@ -11,7 +11,7 @@ class Voucher extends BaseContainer {
 
     this.state = {
       refreshing: false,
-      provinceSelected: { id: 2, name: 'Hồ Chí Minh' },
+      provinceSelected: 'Hà Nội',
       campaigns: [],
       newVoucherNum: 0
     };
@@ -29,9 +29,16 @@ class Voucher extends BaseContainer {
     this.getListCampaigns();
   }
 
-  getListCampaigns = async () => {
+  getListCampaigns = async (city = '') => {
     try {
-      const response = await internalFetch(config.rest.listCampaigns());
+      const options = {
+        method: 'POST',
+        body: { city }
+      };
+      const response = await internalFetch(
+        config.rest.listCampaigns(),
+        options
+      );
       if (response.status === config.httpCode.success) {
         this.setState({
           campaigns: response.data.campaigns.map(
@@ -54,6 +61,7 @@ class Voucher extends BaseContainer {
 
   handleSetProvince = provinceSelected => {
     this.setState({ provinceSelected });
+    this.getListCampaigns(provinceSelected);
   };
 
   render() {

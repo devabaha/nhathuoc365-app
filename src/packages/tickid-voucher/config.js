@@ -19,6 +19,7 @@ const config = {
     endpoint: () => 'https://apiapp.tickid.vn',
     listCampaigns: () => '/apiUser/list_campaign',
     myVouchers: () => '/apiUser/my_voucher',
+    listCities: () => '/apiUser/list_city',
     detailCampaign: id => `/apiUser/detail_campaign/${id}`,
     detailVoucher: id => `/apiUser/detail_voucher/${id}`,
     saveCampaign: id => `/apiUser/save_campaign/${id}`,

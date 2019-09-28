@@ -1,14 +1,5 @@
-import {
-  reaction,
-  observable,
-  observe,
-  computed,
-  autorun,
-  action,
-  toJS
-} from 'mobx';
+import { reaction, observable, action, toJS } from 'mobx';
 import autobind from 'autobind-decorator';
-
 import { Keyboard } from 'react-native';
 
 @autobind
@@ -75,7 +66,6 @@ class Store {
       console.log(e + ' site_info');
 
       this.addApiQueue('site_info', this._getStoreInfo);
-    } finally {
     }
   }
 

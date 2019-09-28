@@ -8,12 +8,13 @@ import { merge } from '../helper/configure';
 const defaultOptions = {
   method: 'GET',
   headers: {
+    Accept: 'application/json',
     'Content-Type': 'application/json'
   }
 };
 
 /**
- * Fetch api in the internal system tick
+ * Fetch api in the internal tick system
  * @param {*} url
  * @param {*} newOptions
  */
@@ -27,5 +28,8 @@ export function internalFetch(url = '', newOptions = {}) {
  * @param {*} newOptions
  */
 export function externalFetch(url = '', newOptions = {}) {
+  if (newOptions.body) {
+    newOptions.body = JSON.stringify(newOptions.body);
+  }
   return fetch(url, merge(defaultOptions, newOptions)).then(res => res.json());
 }
