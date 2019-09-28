@@ -998,7 +998,6 @@ class App extends Component {
               <Stack key={appConfig.routes.qrBarCode}>
                 <Scene
                   key={`${appConfig.routes.qrBarCode}_1`}
-                  title="Mã tài khoản"
                   component={QRBarCode}
                   renderBackButton={CloseButton}
                   back

@@ -149,7 +149,9 @@ class Home extends Component {
   handleActionPress = action => {
     switch (action.type) {
       case ACCUMULATE_POINTS_TYPE:
-        Actions.push(appConfig.routes.qrBarCode);
+        Actions.push(appConfig.routes.qrBarCode, {
+          title: 'Mã tài khoản'
+        });
         break;
       case MY_VOUCHER_TYPE:
         Actions.push(appConfig.routes.mainVoucher);

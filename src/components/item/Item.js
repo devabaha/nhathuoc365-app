@@ -601,10 +601,14 @@ export default class Item extends Component {
                   return true;
                 }}
                 style={{
-                  paddingHorizontal: 6
+                  paddingHorizontal: 6,
+                  marginHorizontal: 15,
+                  width: appConfig.device.width - 30
                 }}
                 onHeightUpdated={height => this.setState({ height })}
                 source={{ html: item_data.content }}
+                zoomable={false}
+                scrollEnabled={false}
                 customScript={`
 
                   `}
