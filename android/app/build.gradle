@@ -117,8 +117,8 @@ android {
         applicationId "vn.tickid"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5000301
-        versionName "3.0.1"
+        versionCode 5000302
+        versionName "3.0.2"
         multiDexEnabled true
     }
     signingConfigs {

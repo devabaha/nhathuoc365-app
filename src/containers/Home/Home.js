@@ -203,9 +203,20 @@ class Home extends Component {
     Actions.push(appConfig.routes.mainVoucher);
   };
 
-  handleShowAllNews = () => {};
+  handleShowAllNews = () => {
+    Actions._main_notify();
+  };
 
-  handlePressSiteItem = site => {};
+  handlePressSiteItem = site => {
+    action(() => {
+      store.setStoreData(site);
+      //appConfig.routes.store
+      Actions.push(appConfig.routes.store, {
+        title: site.name
+        // goCategory: category_id
+      });
+    })();
+  };
 
   handlePressCampaignItem = campaign => {
     Actions.push(appConfig.routes.voucherDetail, {
