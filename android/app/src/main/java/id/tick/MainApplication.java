@@ -5,7 +5,6 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import org.reactnative.camera.RNCameraPackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
-import com.lugg.ReactNativeConfig.ReactNativeConfigPackage;
 import com.microsoft.codepush.react.CodePush;
 import io.underscope.react.fbak.RNAccountKitPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
@@ -44,7 +43,6 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new RNCameraPackage(),
             new RNDeviceBrightness(),
-            new ReactNativeConfigPackage(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new RNAccountKitPackage(),
             new ReactNativeOneSignalPackage(),

@@ -164,7 +164,7 @@ class VoucherDetail extends BaseContainer {
 
         showMessage({
           message: 'Bạn đã nhận thành công voucher này.',
-          type: 'danger'
+          type: 'success'
         });
         this.setState({ canUseNow: true });
 

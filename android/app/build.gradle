@@ -170,7 +170,6 @@ android {
 dependencies {
     implementation project(':react-native-camera')
     implementation project(':react-native-device-brightness')
-    implementation project(':react-native-config')
     implementation project(':react-native-code-push')
     implementation project(':react-native-facebook-account-kit')
     implementation project(':react-native-onesignal')

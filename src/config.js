@@ -8,6 +8,15 @@ import {
 const config = Object.freeze({
   appName: 'TICKID',
   namespace: 'app',
+  reduxLoggerEnable: false,
+  voucherModule: {
+    appKey: 'tickidkey',
+    secretKey: '0011tickidkey001122private'
+  },
+  radaModule: {
+    partnerAuthorization:
+      'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIml4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
+  },
   device: Object.freeze({
     isIphoneX: isIphoneX(),
     isAndroid: Platform.OS.toLowerCase() === 'android',

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import './lib/Constant';
 import './lib/Helper';
-
 import { Provider } from 'react-redux';
-import appConfig from 'app-config';
+import appConfig from './config';
 import store from 'app-store';
 import reduxStore from './reduxStore';
 import { StyleSheet, StatusBar, Linking, Platform } from 'react-native';
@@ -28,7 +27,6 @@ import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
-
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
 import VoucherContainer from './containers/Voucher';
@@ -93,15 +91,14 @@ import {
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
-import env from 'react-native-config';
 
 /**
  * Initializes config for Voucher module
  */
 initializeVoucherModule({
   private: {
-    appKey: env.APP_KEY,
-    secretKey: env.SECRET_KEY
+    appKey: appConfig.voucherModule.appKey,
+    secretKey: appConfig.voucherModule.secretKey
   },
   device: {
     appVersion: DeviceInfo.getVersion(),
@@ -120,7 +117,7 @@ initializeVoucherModule({
  * Initializes config for Rada module
  */
 const config = {
-  partnerAuthorization: env.RADA_PARTNER_AUTHORIZATION,
+  partnerAuthorization: appConfig.radaModule.partnerAuthorization,
   webhookUrl: null,
   defaultLocation: '37.33233141,-122.0312186'
 };
