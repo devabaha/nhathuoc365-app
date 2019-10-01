@@ -85,12 +85,12 @@ class Home extends Component {
           <View style={styles.primaryActionsWrapper}>
             <PrimaryActions
               walletName={
-                this.props.userInfo
+                this.props.userInfo && this.props.userInfo.default_wallet
                   ? this.props.userInfo.default_wallet.name
                   : ''
               }
               surplus={
-                this.props.userInfo
+                this.props.userInfo && this.props.userInfo.default_wallet
                   ? this.props.userInfo.default_wallet.balance_view
                   : ''
               }

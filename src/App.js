@@ -143,13 +143,13 @@ class App extends Component {
   componentDidMount() {
     StatusBar.setBarStyle('light-content', true);
 
-    OneSignal.init('ea4623dc-3e0a-4390-b46d-0408a330ea63');
+    OneSignal.init('e2e80243-08c0-405a-9a36-5d060ba0af12');
     OneSignal.addEventListener('opened', this.handleOpenningNotification);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
     OneSignal.inFocusDisplaying(2);
 
     // deep link register
-    DeepLinking.addScheme('macccacaapp://');
+    DeepLinking.addScheme('tickidapp://');
     Linking.addEventListener('url', this.handleURL);
 
     Linking.getInitialURL()

@@ -46,38 +46,8 @@ app/build.gradle
                 keyPassword MYAPP_RELEASE_KEY_PASSWORD
 
 Build: cần xóa trống trong thư mục app/build trước 
-gradlew clean
-gradlew assembleRelease
-Set config open_tawkto_url = https://tawk.to/chat/59fab32c198bd56b8c038f55/default/?$_tawk_popout=true
-
-#Android - Doi package name
-I've changed project' subfolder name from: "android/app/src/main/java/MY/APP/OLD_ID/" to: "android/app/src/main/java/MY/APP/NEW_ID/"
-
-Then manually switched the old and new package ids:
-
-In: android/app/src/main/java/MY/APP/NEW_ID/MainActivity.java:
-
-package MY.APP.NEW_ID;
-In android/app/src/main/java/MY/APP/NEW_ID/MainApplication.java:
-
-package MY.APP.NEW_ID;
-In android/app/src/main/AndroidManifest.xml:
-
-package="MY.APP.NEW_ID"
-And in android/app/build.gradle:
-
-applicationId "MY.APP.NEW_ID"
-(Optional) In android/app/BUCK:
-
-android_build_config(
-  package="MY.APP.NEW_ID"
-)
-android_resource(
-  package="MY.APP.NEW_ID"
-)
-Gradle' cleaning in the end (in /android folder):
-
 ./gradlew clean
+./gradlew assembleRelease
 
 
 # README #
