@@ -18,6 +18,7 @@ class Home extends Component {
     notices: PropTypes.array,
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
+    userInfo: PropTypes.object,
     hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
     onActionPress: PropTypes.func,
@@ -42,6 +43,7 @@ class Home extends Component {
     notices: [],
     campaigns: [],
     promotions: [],
+    userInfo: undefined,
     hasPromotion: false,
     refreshing: false,
     onActionPress: defaultListener,
@@ -76,11 +78,22 @@ class Home extends Component {
             />
           }
         >
-          <Header name="" />
+          <Header
+            name={this.props.userInfo ? this.props.userInfo.name : 'Khách'}
+          />
 
           <View style={styles.primaryActionsWrapper}>
             <PrimaryActions
-              surplus="10,000,000đ"
+              walletName={
+                this.props.userInfo && this.props.userInfo.default_wallet
+                  ? this.props.userInfo.default_wallet.name
+                  : ''
+              }
+              surplus={
+                this.props.userInfo && this.props.userInfo.default_wallet
+                  ? this.props.userInfo.default_wallet.balance_view
+                  : ''
+              }
               onPressItem={this.props.onActionPress}
               onSurplusNext={this.props.onSurplusNext}
             />
@@ -160,7 +173,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    paddingTop: appConfig.device.statusBarHeight
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,

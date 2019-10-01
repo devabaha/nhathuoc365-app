@@ -130,7 +130,16 @@ class EnterCodeManual extends Component {
           onPress={this.onClose}
         />
 
-        <View style={styles.content}>
+        <View
+          style={[
+            styles.content,
+            {
+              marginBottom: this.state.keyboardShow
+                ? 0
+                : config.device.bottomSpace
+            }
+          ]}
+        >
           <Header onClose={this.onClose} title={this.props.heading} />
 
           <View style={styles.body}>

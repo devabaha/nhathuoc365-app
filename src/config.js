@@ -30,6 +30,7 @@ const config = Object.freeze({
 
     homeTab: 'homeTab',
     scanQrCodeTab: 'scanQrCodeTab',
+    ordersTab: 'ordersTab',
 
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',
@@ -47,6 +48,9 @@ const config = Object.freeze({
     voucherShowBarcode: 'voucherShowBarcode',
     // end routes of Voucher module **
 
+    // Routes of Order
+    orders: 'Orders',
+    //
     upToPhone: 'upToPhone'
   }
 });

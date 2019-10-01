@@ -12,12 +12,8 @@ import HomeComponent, {
   MY_VOUCHER_TYPE,
   TRANSACTION_TYPE
 } from '../../components/Home';
-import {
-  actions as statusBarActions,
-  constants as statusBarConstants
-} from 'app-packages/tickid-status-bar';
-import reduxStore from '../../reduxStore';
 
+@observer
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -72,7 +68,12 @@ class Home extends Component {
     setTimeout(this.getHomeDataFromApi, oneSecond);
   };
 
-  handlePressedSurplusNext = () => {};
+  handlePressedSurplusNext = () => {
+    Actions.vnd_wallet({
+      title: store.user_info.default_wallet.name,
+      wallet: store.user_info.default_wallet
+    });
+  };
 
   handlePromotionPressed(item) {
     Actions.notify_item({
@@ -149,13 +150,18 @@ class Home extends Component {
   handleActionPress = action => {
     switch (action.type) {
       case ACCUMULATE_POINTS_TYPE:
-        Actions.push(appConfig.routes.qrBarCode);
+        Actions.push(appConfig.routes.qrBarCode, {
+          title: 'Mã tài khoản'
+        });
         break;
       case MY_VOUCHER_TYPE:
         Actions.push(appConfig.routes.mainVoucher);
         break;
       case TRANSACTION_TYPE:
-        //
+        Actions.vnd_wallet({
+          title: store.user_info.default_wallet.name,
+          wallet: store.user_info.default_wallet
+        });
         break;
     }
   };
@@ -197,9 +203,20 @@ class Home extends Component {
     Actions.push(appConfig.routes.mainVoucher);
   };
 
-  handleShowAllNews = () => {};
+  handleShowAllNews = () => {
+    Actions._main_notify();
+  };
 
-  handlePressSiteItem = site => {};
+  handlePressSiteItem = site => {
+    action(() => {
+      store.setStoreData(site);
+      //appConfig.routes.store
+      Actions.push(appConfig.routes.store, {
+        title: site.name
+        // goCategory: category_id
+      });
+    })();
+  };
 
   handlePressCampaignItem = campaign => {
     Actions.push(appConfig.routes.voucherDetail, {
@@ -210,35 +227,19 @@ class Home extends Component {
 
   handlePressNewItem = newItem => {};
 
-  statusBarStyle = statusBarConstants.LIGHT;
-
   handleBodyScrollTop = event => {
     const yOffset = event.nativeEvent.contentOffset.y;
     if (yOffset > 68) {
-      if (this.statusBarStyle !== statusBarConstants.DARK) {
-        this.statusBarStyle = statusBarConstants.DARK;
+      if (this.statusBarStyle !== 'dark') {
+        this.statusBarStyle = 'dark';
 
         StatusBar.setBarStyle('dark-content', true);
-
-        // reduxStore.dispatch(
-        //   statusBarActions.showStatusBar({
-        //     barStyle: statusBarConstants.DARK,
-        //     backgroundColor: '#fff'
-        //   })
-        // );
       }
     } else {
-      if (this.statusBarStyle !== statusBarConstants.LIGHT) {
-        this.statusBarStyle = statusBarConstants.LIGHT;
+      if (this.statusBarStyle !== 'light') {
+        this.statusBarStyle = 'light';
 
         StatusBar.setBarStyle('light-content', true);
-
-        // reduxStore.dispatch(
-        //   statusBarActions.showStatusBar({
-        //     barStyle: statusBarConstants.LIGHT,
-        //     backgroundColor: 'transparent'
-        //   })
-        // );
       }
     }
   };
@@ -249,6 +250,7 @@ class Home extends Component {
         sites={this.state.sites}
         newses={this.state.newses}
         notices={this.state.notices}
+        userInfo={store.user_info}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         onActionPress={this.handleActionPress}

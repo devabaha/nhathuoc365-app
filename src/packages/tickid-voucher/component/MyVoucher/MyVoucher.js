@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import config from '../../config';
 import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
+import LoadingComponent from '@tickid/tickid-rn-loading';
 import MyVoucherItem from './MyVoucherItem';
 
 const defaultListener = () => {};
@@ -10,6 +12,7 @@ class MyVoucher extends Component {
     onPressVoucher: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
+    showLoading: PropTypes.bool,
     campaigns: PropTypes.array
   };
 
@@ -17,6 +20,7 @@ class MyVoucher extends Component {
     onPressVoucher: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
+    showLoading: false,
     campaigns: []
   };
 
@@ -53,14 +57,20 @@ class MyVoucher extends Component {
   };
 
   render() {
-    return <View style={styles.container}>{this.renderMyVouchers()}</View>;
+    return (
+      <View style={styles.container}>
+        {this.props.showLoading && <LoadingComponent loading />}
+        {this.renderMyVouchers()}
+      </View>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f1f1'
+    backgroundColor: '#f1f1f1',
+    marginBottom: config.device.bottomSpace
   }
 });
 

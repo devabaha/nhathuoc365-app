@@ -937,19 +937,17 @@
     react-native-button "^2.4.0"
 
 "@tickid/tickid-rada@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.0.4.tgz#4dcecf8978fb6e22e8fca47b782c04d512719dca"
-  integrity sha512-VerTUM9T5Y5utjT2Yg5dC9xGxPJ4Z5JR/lbUD1dY8SjtP4cA0uBtYLQ8rBfOlKbSmCe5U6QsyPCrOz0h7QWTMg==
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.0.5.tgz#b1b6594031e0b2e8c0279ecb00dd744ec4588e6a"
+  integrity sha512-w7U2WdNXAg7OzjA1NP8NRfkibqTlI3+mq4lfe2jE3ZutfHoI0GGsa9CgWBmXoS78EPp9Zb7Bc4PAOKByTViYvQ==
   dependencies:
     prop-types "^15.7.2"
     react-native-render-html "^4.1.2"
 
 "@tickid/tickid-rn-loading@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rn-loading/-/tickid-rn-loading-1.0.0.tgz#bd8ca876270499c55ea64d4ed7f06897ae3605c2"
-  integrity sha512-F1t7eqCKEYYb8MAKXW42lm0PByiQxOcHZO+KVIXQJVph/ew4mAWDIJp/HvU7sWdQm0HvgCEWR0IEgJmbShThPw==
-  dependencies:
-    prop-types "^15.7.2"
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rn-loading/-/tickid-rn-loading-1.0.1.tgz#d87ee677a36c775ed90690dfec098f13b2c76c05"
+  integrity sha512-Q/N7aqDgye2fqmSEbiPaI3NQnplPfGzWueCUObGRF4wjDRkBakDH3fKM8z1pFEEE+mwV9jlkTSsofQfVXYc5Jw==
 
 "@tickid/tickid-rn-message-bar@^1.0.2":
   version "1.0.2"
@@ -6255,10 +6253,15 @@ react-devtools-core@^3.6.0:
     shell-quote "^1.6.1"
     ws "^3.3.1"
 
-react-is@^16.5.2, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.3, react-is@^16.8.4, react-is@^16.9.0:
+react-is@^16.5.2, react-is@^16.7.0, react-is@^16.8.3, react-is@^16.8.4, react-is@^16.9.0:
   version "16.9.0"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.9.0.tgz#21ca9561399aad0ff1a7701c01683e8ca981edcb"
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
+
+react-is@^16.8.1:
+  version "16.10.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.10.1.tgz#0612786bf19df406502d935494f0450b40b8294f"
+  integrity sha512-BXUMf9sIOPXXZWqr7+c5SeOKJykyVr2u0UDzEf4LNGc6taGkQe1A9DFD07umCIXz45RLr9oAAwZbAJ0Pkknfaw==
 
 react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -6385,6 +6388,14 @@ react-native-facebook-account-kit@1.1.0:
   integrity sha512-1FwFcJ5p3OM80ExIpHg7CUb1+RA5E/gaPmhZl2hB6gfqi4EezRpNuXCZiJ6IvZTw/I8xhXzUkmf7kJMQv30YqA==
   dependencies:
     prop-types "^15.5.10"
+
+react-native-flash-message@^0.1.14:
+  version "0.1.14"
+  resolved "https://registry.yarnpkg.com/react-native-flash-message/-/react-native-flash-message-0.1.14.tgz#a53e7382230392ce3322b719f5c8ecfbdbb8fed0"
+  integrity sha512-yZAKuPgiceuBqh8cwScle01lTggBv7l6sNDcUWOpEpBEQNYim6QoVNRhw6ZDggGLaREbbak8ORYhRsRVjgaG7w==
+  dependencies:
+    prop-types "^15.7.2"
+    react-native-iphone-x-helper "^1.2.1"
 
 react-native-form@^2.1.2:
   version "2.1.3"

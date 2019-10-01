@@ -7,7 +7,6 @@ import appConfig from 'app-config';
 import store from 'app-store';
 import reduxStore from './reduxStore';
 import { StyleSheet, StatusBar, Linking, Platform } from 'react-native';
-// library
 import {
   Scene,
   Router,
@@ -23,13 +22,12 @@ import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
-import { Loading as LoadingOverlay } from '@tickid/tickid-rn-loading';
+import FlashMessage from 'react-native-flash-message';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
-import TickIDStatusBar from 'app-packages/tickid-status-bar';
 
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
@@ -92,7 +90,6 @@ import {
   AlreadyVoucher as AlreadyVoucherContainer,
   EnterCodeManual as VoucherEnterCodeManualContainer
 } from './packages/tickid-voucher';
-import { MessageBarContainer } from '@tickid/tickid-rn-message-bar';
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
@@ -103,8 +100,8 @@ import env from 'react-native-config';
  */
 initializeVoucherModule({
   private: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: env.APP_KEY,
+    secretKey: env.SECRET_KEY
   },
   device: {
     appVersion: DeviceInfo.getVersion(),
@@ -113,6 +110,9 @@ initializeVoucherModule({
     os: Platform.OS,
     osVersion: DeviceInfo.getSystemVersion(),
     store: ''
+  },
+  rest: {
+    endpoint: () => MY_FOOD_API
   }
 });
 
@@ -143,13 +143,13 @@ class App extends Component {
   componentDidMount() {
     StatusBar.setBarStyle('light-content', true);
 
-    OneSignal.init('ea4623dc-3e0a-4390-b46d-0408a330ea63');
+    OneSignal.init('e2e80243-08c0-405a-9a36-5d060ba0af12');
     OneSignal.addEventListener('opened', this.handleOpenningNotification);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
     OneSignal.inFocusDisplaying(2);
 
     // deep link register
-    DeepLinking.addScheme('macccacaapp://');
+    DeepLinking.addScheme('tickidapp://');
     Linking.addEventListener('url', this.handleURL);
 
     Linking.getInitialURL()
@@ -396,14 +396,14 @@ class App extends Component {
                      ************************ Tab 3 ************************
                      */}
                     <Stack
-                      key="myTab4"
+                      key="{appConfig.routes.ordersTab}"
                       icon={TabIcon}
                       iconLabel="Đơn hàng"
                       iconName="shopping-cart"
                       iconSize={24}
                     >
                       <Scene
-                        key="_orders"
+                        key={`${appConfig.routes.ordersTab}_1`}
                         title="Đơn hàng"
                         component={Orders}
                       />
@@ -525,7 +525,6 @@ class App extends Component {
                     <Scene
                       key="login_1"
                       hideNavBar
-                      title=""
                       component={Login}
                       {...navBarConfig}
                     />
@@ -636,7 +635,6 @@ class App extends Component {
                       key="item_image_viewer_1"
                       direction="vertical"
                       hideNavBar
-                      title=""
                       component={ItemImageViewer}
                       {...navBarConfig}
                       back
@@ -649,7 +647,6 @@ class App extends Component {
                       panHandlers={null}
                       direction="vertical"
                       hideNavBar
-                      title=""
                       component={Rating}
                       {...navBarConfig}
                       back
@@ -759,7 +756,6 @@ class App extends Component {
                   <Stack key="store_orders">
                     <Scene
                       key="store_orders_1"
-                      title=""
                       component={StoreOrders}
                       {...navBarConfig}
                       back
@@ -769,7 +765,6 @@ class App extends Component {
                   <Stack key="chat">
                     <Scene
                       key="chat_1"
-                      title=""
                       component={Chat}
                       {...navBarConfig}
                       back
@@ -779,7 +774,6 @@ class App extends Component {
                   <Stack key="webview">
                     <Scene
                       key="webview_1"
-                      title=""
                       component={WebView}
                       {...navBarConfig}
                       back
@@ -789,7 +783,6 @@ class App extends Component {
                   <Stack key="_add_ref">
                     <Scene
                       key="_add_ref_1"
-                      title=""
                       component={AddRef}
                       {...navBarConfig}
                       back
@@ -799,7 +792,6 @@ class App extends Component {
                   <Stack key="choose_location">
                     <Scene
                       key="choose_location_1"
-                      title=""
                       component={ChooseLocation}
                       {...navBarConfig}
                       back
@@ -809,7 +801,6 @@ class App extends Component {
                   <Stack key="vnd_wallet">
                     <Scene
                       key="vnd_wallet_1"
-                      title=""
                       component={VndWallet}
                       {...navBarConfig}
                       back
@@ -819,7 +810,6 @@ class App extends Component {
                   <Stack key="pay_wallet">
                     <Scene
                       key="pay_wallet_1"
-                      title=""
                       component={PayWallet}
                       {...navBarConfig}
                       back
@@ -829,7 +819,6 @@ class App extends Component {
                   <Stack key="pay_account">
                     <Scene
                       key="pay_account_1"
-                      title=""
                       component={PayAccount}
                       {...navBarConfig}
                       back
@@ -839,7 +828,6 @@ class App extends Component {
                   <Stack key="affiliate">
                     <Scene
                       key="affiliate_1"
-                      title=""
                       component={Affiliate}
                       {...navBarConfig}
                       back
@@ -1007,7 +995,6 @@ class App extends Component {
               <Stack key={appConfig.routes.qrBarCode}>
                 <Scene
                   key={`${appConfig.routes.qrBarCode}_1`}
-                  title="Mã tài khoản"
                   component={QRBarCode}
                   renderBackButton={CloseButton}
                   back
@@ -1026,9 +1013,7 @@ class App extends Component {
               </Stack>
             </Modal>
 
-            <Scene component={LoadingOverlay} />
-            <Scene component={TickIDStatusBar} />
-            <Scene component={MessageBarContainer} />
+            <Scene component={FlashMessage} />
           </Overlay>
         </Router>
       </Provider>

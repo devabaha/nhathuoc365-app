@@ -15,6 +15,7 @@ import Items from '../stores/Items';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import store from '../../store/Store';
+import appConfig from 'app-config';
 
 @observer
 export default class NotifyItem extends Component {
@@ -140,10 +141,14 @@ export default class NotifyItem extends Component {
                   return true;
                 }}
                 style={{
-                  paddingHorizontal: 6
+                  paddingHorizontal: 6,
+                  marginHorizontal: 15,
+                  width: appConfig.device.width - 30
                 }}
                 onHeightUpdated={height => this.setState({ height })}
                 source={{ html: item_data.content }}
+                zoomable={false}
+                scrollEnabled={false}
                 customScript={`
 
                   `}

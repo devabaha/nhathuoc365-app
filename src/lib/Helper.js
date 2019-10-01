@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Platform, LayoutAnimation } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import env from 'react-native-config';
 
 import Events from './Events';
 global.Events = Events;
@@ -251,9 +252,9 @@ global.url_for = url => {
     substring = '?';
   var existGet = string.includes(substring);
 
-  var secret_key = '0011tickidkey001122private';
+  var secret_key = env.SECRET_KEY;
   var device_id = getTickUniqueID();
-  var app_key = 'tickidkey';
+  var app_key = env.APP_KEY;
   var os = Platform.OS;
   var os_version = DeviceInfo.getSystemVersion();
   var store = '';

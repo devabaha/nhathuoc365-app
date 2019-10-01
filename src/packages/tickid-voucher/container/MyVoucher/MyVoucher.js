@@ -11,6 +11,7 @@ class MyVoucher extends BaseContainer {
 
     this.state = {
       refreshing: false,
+      showLoading: false,
       campaigns: []
     };
   }
@@ -20,10 +21,16 @@ class MyVoucher extends BaseContainer {
   }
 
   componentDidMount() {
-    this.getMyCampaigns();
+    this.getMyVouchers();
   }
 
-  getMyCampaigns = async () => {
+  getMyVouchers = async (showLoading = true) => {
+    if (showLoading) {
+      this.setState({
+        showLoading: true
+      });
+    }
+
     try {
       const response = await internalFetch(config.rest.myVouchers());
       if (response.status === config.httpCode.success) {
@@ -36,7 +43,10 @@ class MyVoucher extends BaseContainer {
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ refreshing: false });
+      this.setState({
+        refreshing: false,
+        showLoading: false
+      });
     }
   };
 
@@ -44,7 +54,8 @@ class MyVoucher extends BaseContainer {
     this.setState({ refreshing: true });
 
     setTimeout(() => {
-      this.setState({ refreshing: false });
+      const showLoading = false;
+      this.getMyVouchers(showLoading);
     }, 1000);
   };
 
@@ -54,6 +65,7 @@ class MyVoucher extends BaseContainer {
         onPressVoucher={this.handlePressVoucher}
         onRefresh={this.handleOnRefresh}
         refreshing={this.state.refreshing}
+        showLoading={this.state.showLoading}
         campaigns={this.state.campaigns}
       />
     );

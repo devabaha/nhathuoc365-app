@@ -13,6 +13,7 @@ import HTML from 'react-native-render-html';
 import { Tabs, Tab } from '@tickid/react-native-tabs';
 import { Accordion, Panel } from '@tickid/react-native-accordion';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import LoadingComponent from '@tickid/tickid-rn-loading';
 import CampaignEntity from '../../entity/CampaignEntity';
 import SiteEntity from '../../entity/SiteEntity';
 import Button from 'react-native-button';
@@ -33,7 +34,7 @@ class VoucherDetail extends Component {
     onPressCampaignProvider: PropTypes.func,
     refreshing: PropTypes.bool,
     canUseNow: PropTypes.bool,
-    isFromMyVoucher: PropTypes.bool,
+    showLoading: PropTypes.bool,
     campaign: PropTypes.instanceOf(CampaignEntity),
     site: PropTypes.instanceOf(SiteEntity),
     addresses: PropTypes.object
@@ -48,7 +49,7 @@ class VoucherDetail extends Component {
     onPressCampaignProvider: defaultListener,
     refreshing: false,
     canUseNow: false,
-    isFromMyVoucher: false,
+    showLoading: false,
     campaign: undefined,
     addresses: undefined,
     site: undefined
@@ -74,7 +75,10 @@ class VoucherDetail extends Component {
         {Object.keys(this.props.addresses).map(provinceName => {
           const places = this.props.addresses[provinceName];
           return (
-            <Panel title={provinceName} key={provinceName}>
+            <Panel
+              title={`${provinceName} (${places.length})`}
+              key={provinceName}
+            >
               {places.map(place => (
                 <AddressItem
                   key={place.data.id}
@@ -105,6 +109,8 @@ class VoucherDetail extends Component {
     const campaign = this.props.campaign || { data: {} };
     return (
       <Fragment>
+        {this.props.showLoading && <LoadingComponent loading />}
+
         <ScrollView
           style={styles.scrollViewWrapper}
           refreshControl={
@@ -142,7 +148,12 @@ class VoucherDetail extends Component {
             <View style={styles.contentWrapper}>
               <Tabs>
                 {/* INFOMATION TAB */}
-                <Tab heading="Thông tin">
+                <Tab
+                  heading="Thông tin"
+                  containerStyle={{
+                    paddingBottom: 12
+                  }}
+                >
                   <HTML
                     html={campaign.data.content || '<span></span>'}
                     imagesMaxWidth={screenWidth - 32}
@@ -270,7 +281,8 @@ const styles = StyleSheet.create({
     backgroundColor: config.colors.white,
     height: 62,
     paddingHorizontal: 16,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginBottom: config.device.bottomSpace
   },
   getVoucherBtn: {
     backgroundColor: config.colors.primary,

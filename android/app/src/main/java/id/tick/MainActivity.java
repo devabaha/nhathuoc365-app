@@ -1,4 +1,4 @@
-package vn.tickid;
+package id.tick;
 
 import com.facebook.react.ReactActivity;
 

@@ -74,6 +74,7 @@ export default class OrdersItemComponent extends Component {
 
   _goOrdersItem(item) {
     if (this.props.disableGoDetail) return;
+    store.setStoreData(item.site);
     Actions.orders_item({
       data: item,
       title: `#${item.cart_code}`,
@@ -82,6 +83,7 @@ export default class OrdersItemComponent extends Component {
   }
 
   _goStoreOrders(item) {
+    store.setStoreData(item.site);
     Actions.store_orders({
       store_id: item.site_id,
       title: item.shop_name,

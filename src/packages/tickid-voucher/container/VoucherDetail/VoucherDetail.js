@@ -10,7 +10,7 @@ import SiteEntity from '../../entity/SiteEntity';
 import { internalFetch } from '../../helper/apiFetch';
 import { isLatitude, isLongitude } from '../../helper/validator';
 import openMap from 'react-native-open-maps';
-import MessageBar from '@tickid/tickid-rn-message-bar';
+import { showMessage } from 'react-native-flash-message';
 
 class VoucherDetail extends BaseContainer {
   /**
@@ -32,6 +32,7 @@ class VoucherDetail extends BaseContainer {
     this.state = {
       refreshing: false,
       canUseNow: false,
+      showLoading: false,
       site: null,
       campaign: null,
       addresses: {}
@@ -66,7 +67,12 @@ class VoucherDetail extends BaseContainer {
     }
   }
 
-  getVoucherById = async id => {
+  getVoucherById = async (id, showLoading = true) => {
+    if (showLoading) {
+      this.setState({
+        showLoading: true
+      });
+    }
     try {
       const response = await internalFetch(config.rest.detailVoucher(id));
       if (response.status === config.httpCode.success) {
@@ -75,11 +81,20 @@ class VoucherDetail extends BaseContainer {
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ refreshing: false });
+      this.setState({
+        refreshing: false,
+        showLoading: false
+      });
     }
   };
 
-  getCampaignById = async id => {
+  getCampaignById = async (id, showLoading = true) => {
+    if (showLoading) {
+      this.setState({
+        showLoading: true
+      });
+    }
+
     try {
       const response = await internalFetch(config.rest.detailCampaign(id));
       if (response.status === config.httpCode.success) {
@@ -88,7 +103,10 @@ class VoucherDetail extends BaseContainer {
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ refreshing: false });
+      this.setState({
+        refreshing: false,
+        showLoading: false
+      });
     }
   };
 
@@ -116,7 +134,13 @@ class VoucherDetail extends BaseContainer {
     this.setState({ refreshing: true });
 
     setTimeout(() => {
-      this.getCampaignById(this.props.campaignId);
+      const showLoading = false;
+
+      if (this.props.voucherId) {
+        this.getVoucherById(this.props.voucherId, showLoading);
+      } else if (this.props.campaignId) {
+        this.getCampaignById(this.props.campaignId, showLoading);
+      }
     }, 1000);
   };
 
@@ -127,69 +151,56 @@ class VoucherDetail extends BaseContainer {
 
     this.getVoucherDisabled = true;
 
+    this.setState({
+      showLoading: true
+    });
+
     try {
       const response = await internalFetch(
         config.rest.saveCampaign(campaign.data.id)
       );
       if (response.status === config.httpCode.success) {
-        MessageBar.showSuccess({
-          message: 'Bạn đã nhận thành công voucher này.'
+        this.getVoucherDisabled = false;
+
+        showMessage({
+          message: 'Bạn đã nhận thành công voucher này.',
+          type: 'danger'
         });
         this.setState({ canUseNow: true });
 
         /**
-         * @NOTE: 201 means user already this voucher
+         * @NOTE: 201 means the user has this voucher
          * thuclh said
          */
       } else if (response.status === 201) {
-        setTimeout(() => {
-          this.getVoucherDisabled = true;
-
-          this.handleAlreadyThisVoucher({
-            campaign,
-            message: response.message,
-            onCheckMyVoucher: () => {
-              // prevent duplicate touchs to `Get Voucher` button
-              setTimeout(() => (this.getVoucherDisabled = false), 1000);
-            },
-            onClose: () => {
-              this.getVoucherDisabled = false;
-            }
-          });
-        }, 0);
+        this.handleAlreadyThisVoucher({
+          campaign,
+          message: response.message,
+          onCheckMyVoucher: () => {
+            // prevent duplicate touchs to `Get Voucher` button
+            setTimeout(() => (this.getVoucherDisabled = false), 1000);
+          },
+          onClose: () => {
+            this.getVoucherDisabled = false;
+          }
+        });
       } else {
-        this.showMessage('Thông báo', response.message);
+        setTimeout(() => {
+          this.getVoucherDisabled = false;
+          this.showMessage('Thông báo', response.message);
+        }, 500);
       }
     } catch (error) {
       console.log(error);
     } finally {
-      this.getVoucherDisabled = false;
+      this.setState({
+        showLoading: false
+      });
     }
   };
 
   handleUseVoucher = voucher => {
     this.handleOpenScanScreen(voucher);
-  };
-
-  useVoucherFetching;
-
-  useVoucher = async (id, code) => {
-    if (this.useVoucherFetching) return;
-
-    this.useVoucherFetching = true;
-
-    try {
-      const response = await internalFetch(config.rest.useVoucher(id, code));
-      if (response.status === config.httpCode.success) {
-        // use voucher success
-      } else {
-        this.showMessage('Thông báo', response.message);
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      this.useVoucherFetching = false;
-    }
   };
 
   handlePressAddressPhoneNumber = phoneNumber => {
@@ -213,6 +224,7 @@ class VoucherDetail extends BaseContainer {
         campaign={this.state.campaign}
         addresses={this.state.addresses}
         refreshing={this.state.refreshing}
+        showLoading={this.state.showLoading}
         isFromMyVoucher={this.isFromMyVoucher}
         onRefresh={this.handleOnRefresh}
         onGetVoucher={this.handleGetVoucher}

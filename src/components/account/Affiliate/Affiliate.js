@@ -26,7 +26,10 @@ export default class Affiliate extends Component {
 
     this.state = {
       historiesData: null,
-      content: props.aff_content,
+      content: props.aff_content
+        ? props.aff_content
+        : 'Nhập mã giới thiệu để nhận được phần thưởng hấp dẫn từ ' +
+          APP_NAME_SHOW,
       activeTab: 0,
       loading: [true, false, false, false]
     };
