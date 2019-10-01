@@ -114,12 +114,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "vn.tickid"
+        applicationId "id.tick"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5000302
-        versionName "3.0.2"
+        versionCode 1
+        versionName "1.0.1"
         multiDexEnabled true
+        missingDimensionStrategy 'react-native-camera', 'general' 
     }
     signingConfigs {
         release {
@@ -141,6 +142,7 @@ android {
     }
     buildTypes {
         release {
+            // shrinkResources true
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
@@ -194,19 +196,6 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 allprojects {
     repositories {
-        //start here
-        configurations.all {
-            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                def requested = details.requested
-                if (requested.group == 'com.google.android.gms') {
-                    details.useVersion '12.0.1'
-                }
-                if (requested.group == 'com.google.firebase') {
-                    details.useVersion '12.0.1'
-                }
-            }
-        }
-        //end
         jcenter()
         maven {
             url "https://maven.google.com"
