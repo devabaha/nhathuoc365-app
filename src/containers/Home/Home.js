@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar } from 'react-native';
+import { StatusBar, Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -198,8 +198,10 @@ class Home extends Component {
         });
         break;
       case BOOKING_30DAY_TYPE:
-        alert(
-          'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.'
+        Alert.alert(
+          'Thông báo',
+          'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
+          [{ text: 'Đồng ý' }]
         );
         break;
     }
@@ -218,7 +220,6 @@ class Home extends Component {
   handlePressSiteItem = site => {
     action(() => {
       store.setStoreData(site);
-      //appConfig.routes.store
       Actions.push(appConfig.routes.store, {
         title: site.name
         // goCategory: category_id

@@ -19,9 +19,12 @@ function VoucherItem(props) {
           <Text style={styles.title}>{props.title}</Text>
         </View>
         <Image source={{ uri: props.logoImage }} style={styles.avatar} />
-        <View style={styles.discountWrapper}>
-          <Text style={styles.discount}>- 10%</Text>
-        </View>
+
+        {!!props.discount && (
+          <View style={styles.discountWrapper}>
+            <Text style={styles.discount}>{props.discount}</Text>
+          </View>
+        )}
       </View>
     </Button>
   );
@@ -86,6 +89,7 @@ const defaultListener = () => {};
 VoucherItem.propTypes = {
   image: PropTypes.string,
   title: PropTypes.string,
+  discount: PropTypes.string,
   logoImage: PropTypes.string,
   last: PropTypes.bool,
   onPress: PropTypes.func
@@ -94,6 +98,7 @@ VoucherItem.propTypes = {
 VoucherItem.defaultProps = {
   image: '',
   title: '',
+  discount: '',
   logoImage: '',
   last: false,
   onPress: defaultListener

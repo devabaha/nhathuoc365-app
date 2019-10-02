@@ -807,32 +807,10 @@ export default class Item extends Component {
   }
 }
 
-const html_styles = StyleSheet.create({
-  div: {
-    color: '#404040',
-    fontSize: 14
-  },
-  p: {
-    color: '#404040',
-    fontSize: 14
-  },
-  a: {
-    fontWeight: '300',
-    color: '#FF3366'
-  },
-  img: {
-    width: '200',
-    height: '100',
-    padding: 10,
-    marginTop: 10
-  }
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
-    marginBottom: 0,
+    marginBottom: appConfig.device.bottomSpace,
     backgroundColor: '#ffffff'
   },
   right_btn_box: {

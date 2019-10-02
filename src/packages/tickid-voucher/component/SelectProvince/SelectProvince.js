@@ -44,7 +44,8 @@ class SelectProvince extends Component {
       opacity: new Animated.Value(0),
       bottom: new Animated.Value(-20),
       keyboardShow: false,
-      keyboardHeight: 0
+      keyboardHeight: 0,
+      searchText: ''
     };
   }
 
@@ -131,53 +132,93 @@ class SelectProvince extends Component {
     );
   };
 
-  render() {
+  get containerStyle() {
     const containerStyle = {
       opacity: this.state.opacity,
       bottom: this.state.bottom
     };
+    if (this.state.keyboardShow) {
+      containerStyle.top = 0;
+    }
+    return containerStyle;
+  }
+
+  get contentStyle() {
     const contentStyle = {};
 
     if (this.state.keyboardShow) {
-      containerStyle.top = 0;
       if (config.device.isIphoneX) {
         const iPhoneXBuffer =
           config.device.statusBarHeight + config.device.bottomSpace;
-        contentStyle.maxHeight = Math.floor(
+        contentStyle.height = Math.floor(
           config.device.height - this.state.keyboardHeight - iPhoneXBuffer
         );
       } else {
-        contentStyle.maxHeight = Math.floor(
+        contentStyle.height = Math.floor(
           config.device.height - this.state.keyboardHeight
         );
       }
     } else {
-      contentStyle.maxHeight = 360;
+      contentStyle.height = 360;
       contentStyle.marginBottom = config.device.bottomSpace;
     }
+    return contentStyle;
+  }
 
+  handleSearch = searchText => {
+    this.setState({ searchText });
+  };
+
+  get listCities() {
+    const { searchText } = this.state;
+    if (searchText) {
+      return this.props.listCities.filter(cityName => {
+        return cityName.toLowerCase().includes(searchText.toLowerCase());
+      });
+    }
+    return this.props.listCities;
+  }
+
+  get hasResult() {
+    return Array.isArray(this.listCities) && this.listCities.length > 0;
+  }
+
+  render() {
     return (
-      <Animated.View style={[styles.container, containerStyle]}>
+      <Animated.View style={[styles.container, this.containerStyle]}>
         <Button
           containerStyle={styles.btnCloseTransparent}
           onPress={this.onClose}
         />
 
-        <View style={[styles.content, contentStyle]}>
+        <View style={[styles.content, this.contentStyle]}>
           <Header onClose={this.onClose} />
 
           <ScrollView keyboardShouldPersistTaps="handled">
             <View style={styles.searchWrapper}>
               <Image style={styles.searchIcon} source={iconSearch} />
-              <TextInput style={styles.searchInput} placeholder="Tìm kiếm" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Tìm kiếm"
+                onChangeText={this.handleSearch}
+                value={this.state.searchText}
+              />
             </View>
 
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              data={this.props.listCities}
-              keyExtractor={item => item}
-              renderItem={this.renderProvince}
-            />
+            {this.hasResult ? (
+              <FlatList
+                keyboardShouldPersistTaps="handled"
+                data={this.listCities}
+                keyExtractor={item => item}
+                renderItem={this.renderProvince}
+              />
+            ) : (
+              <View style={styles.noResultWrapper}>
+                <Text style={styles.noResult}>
+                  Không có kết quả phù hợp cho "{this.state.searchText}"
+                </Text>
+              </View>
+            )}
           </ScrollView>
         </View>
       </Animated.View>
@@ -249,6 +290,15 @@ const styles = StyleSheet.create({
   iconChecked: {
     width: 20,
     height: 20
+  },
+  noResultWrapper: {
+    marginHorizontal: 16,
+    paddingVertical: 20
+  },
+  noResult: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: '400'
   }
 });
 

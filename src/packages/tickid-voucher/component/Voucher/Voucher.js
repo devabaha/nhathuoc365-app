@@ -77,6 +77,7 @@ class Voucher extends Component {
         title={campaign.data.title}
         image={campaign.data.image_url}
         logoImage={campaign.data.shop_logo_url}
+        discount={campaign.data.discount}
         expireDate={campaign.data.expire_date}
         onPress={() => this.props.onPressVoucher(campaign)}
         last={this.totalCampaigns - 1 === index}
