@@ -14,7 +14,7 @@ function HomeCardList(props) {
           underlayColor="transparent"
           onPress={props.onShowAll}
         >
-          <Text style={styles.viewAll}>Xem tất cả</Text>
+          {props.onShowAll && <Text style={styles.viewAll}>Xem tất cả</Text>}
         </Button>
       </View>
 
