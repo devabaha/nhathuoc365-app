@@ -85,7 +85,9 @@ react-native run-android
    Thay Configuration'compile' is obsolete and has been replaced with 'implementation' and 'api'.
 và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
 
-4. Lỗi AndroidX: Chạy lệnh: npx jetify ở thư mục source
+4. Lỗi AndroidX: Chạy lệnh: 
+   npx jetify 
+5. ở thư mục source
 
 Gen khóa phat hanh
 keytool -exportcert -alias com.phongvenhanvan -keystore android/app/com.phongvenhanvan.keystore | openssl sha1 -binary | openssl base64
@@ -94,6 +96,8 @@ keytool -exportcert -alias com.phongvenhanvan -keystore android/app/com.phongven
 https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
 yo rn-toolbox:assets --icon icon.jpg --splash splash.png --store
 yo rn-toolbox:assets --icon icon.png --android
+yo rn-toolbox:assets --icon icon.jpg --ios
+
 yo rn-toolbox:assets --android-notification-icon icon.png
 1. Onesignal: thay onesignal id vao app.js
 2. 

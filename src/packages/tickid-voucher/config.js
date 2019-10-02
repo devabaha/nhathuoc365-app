@@ -25,13 +25,13 @@ const config = {
   },
   rest: {
     endpoint: () => 'https://apiapp.tickid.vn',
-    listCampaigns: () => '/apiUser/list_campaign',
-    myVouchers: () => '/apiUser/my_voucher',
-    listCities: () => '/apiUser/list_city',
-    detailCampaign: id => `/apiUser/detail_campaign/${id}`,
-    detailVoucher: id => `/apiUser/detail_voucher/${id}`,
-    saveCampaign: id => `/apiUser/save_campaign/${id}`,
-    useVoucher: (id, code) => `/apiUser/use_voucher/${id}/${code}`
+    listCampaigns: () => '/apiVoucher/list_campaign',
+    myVouchers: () => '/apiVoucher/my_voucher',
+    listCities: () => '/apiVoucher/list_city',
+    detailCampaign: id => `/apiVoucher/detail_campaign/${id}`,
+    detailVoucher: id => `/apiVoucher/detail_voucher/${id}`,
+    saveCampaign: id => `/apiVoucher/save_campaign/${id}`,
+    useVoucher: (id, code) => `/apiVoucher/use_voucher/${id}/${code}`
   },
   httpCode: {
     success: 200

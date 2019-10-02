@@ -24,7 +24,7 @@ function renderService({ item, onPress }) {
           {item.iconType === IMAGE_ICON_TYPE ? (
             <Image style={styles.icon} source={item.icon} />
           ) : (
-            <MaterialCommunityIcons name={item.icon} color="#fff" size={28} />
+            <MaterialCommunityIcons name={item.icon} color="#fff" size={32} />
           )}
         </View>
         <Text style={styles.title}>{item.title}</Text>

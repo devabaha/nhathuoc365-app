@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import iconNotication from '../../../../images/notication.png';
+import Button from 'react-native-button';
 
 function Header(props) {
   return (
@@ -14,7 +15,9 @@ function Header(props) {
       </Text>
 
       <View style={styles.homeBoxWalletInfoLabelRight}>
-        <Image style={styles.iconNotication} source={iconNotication} />
+        <Button onPress={props.onPressButtonChat}>
+          <Image style={styles.iconNotication} source={iconNotication} />
+        </Button>
       </View>
     </View>
   );

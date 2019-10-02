@@ -49,6 +49,7 @@ export const IMAGE_ICON_TYPE = 'image';
 
 export const SCAN_QR_CODE_TYPE = 'SCAN_QR_CODE_TYPE';
 export const TOP_UP_PHONE_TYPE = 'TOP_UP_PHONE_TYPE';
+export const VOUCHER_SERVICE_TYPE = 'VOUCHER_SERVICE_TYPE';
 export const RADA_SERVICE_TYPE = 'RADA_SERVICE_TYPE';
 export const BOOKING_30DAY_TYPE = 'BOOKING_30DAY_TYPE';
 
@@ -63,9 +64,9 @@ export const SERVICES_LIST = [
   },
   {
     id: 2,
-    icon: 'cellphone',
-    title: 'Nạp tiền\nđiện thoại',
-    type: TOP_UP_PHONE_TYPE,
+    icon: 'ticket-percent',
+    title: 'Voucher\nGiảm giá',
+    type: VOUCHER_SERVICE_TYPE,
     bgrColor: '#f63d27'
   },
   {

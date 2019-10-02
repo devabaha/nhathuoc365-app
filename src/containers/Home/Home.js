@@ -7,6 +7,7 @@ import HomeComponent, {
   SCAN_QR_CODE_TYPE,
   TOP_UP_PHONE_TYPE,
   RADA_SERVICE_TYPE,
+  VOUCHER_SERVICE_TYPE,
   BOOKING_30DAY_TYPE,
   ACCUMULATE_POINTS_TYPE,
   MY_VOUCHER_TYPE,
@@ -155,7 +156,9 @@ class Home extends Component {
         });
         break;
       case MY_VOUCHER_TYPE:
-        Actions.push(appConfig.routes.mainVoucher);
+        Actions.push(appConfig.routes.myVoucher, {
+          title: 'Voucher của tôi'
+        });
         break;
       case TRANSACTION_TYPE:
         Actions.vnd_wallet({
@@ -181,6 +184,9 @@ class Home extends Component {
           service_id: service.id
         });
         break;
+      case VOUCHER_SERVICE_TYPE:
+        Actions.push(appConfig.routes.mainVoucher);
+        break;
       case RADA_SERVICE_TYPE:
         Actions.push('tickidRada', {
           service_type: service.type,
@@ -192,7 +198,9 @@ class Home extends Component {
         });
         break;
       case BOOKING_30DAY_TYPE:
-        //
+        alert(
+          'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.'
+        );
         break;
     }
   };
@@ -244,12 +252,24 @@ class Home extends Component {
     }
   };
 
+  handlePressButtonChat(item) {
+    action(() => {
+      store.setStoreData(item);
+    })();
+
+    Actions.chat({
+      tel: item.tel,
+      title: item.name
+    });
+  }
+
   render() {
     return (
       <HomeComponent
         sites={this.state.sites}
         newses={this.state.newses}
         notices={this.state.notices}
+        app={this.state.site}
         userInfo={store.user_info}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
@@ -266,6 +286,7 @@ class Home extends Component {
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
+        onPressButtonChat={this.handlePressButtonChat}
         onBodyScrollTop={this.handleBodyScrollTop}
         hasPromotion={this.hasPromotion}
         refreshing={this.state.refreshing}

@@ -18,6 +18,7 @@ class Home extends Component {
     notices: PropTypes.array,
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
+    app: PropTypes.object,
     userInfo: PropTypes.object,
     hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
@@ -43,6 +44,7 @@ class Home extends Component {
     notices: [],
     campaigns: [],
     promotions: [],
+    app: undefined,
     userInfo: undefined,
     hasPromotion: false,
     refreshing: false,
@@ -79,7 +81,10 @@ class Home extends Component {
           }
         >
           <Header
-            name={this.props.userInfo ? this.props.userInfo.name : 'Khách'}
+            name={this.props.userInfo ? this.props.userInfo.name : 'Tk Khách'}
+            onPressButtonChat={() =>
+              this.props.onPressButtonChat(this.props.app)
+            }
           />
 
           <View style={styles.primaryActionsWrapper}>
