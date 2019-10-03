@@ -852,7 +852,7 @@ class App extends Component {
                     <Scene
                       key="tickidRada1"
                       component={TickIDRada.Category}
-                      {...navBarConfig}
+                      {...whiteNavBarConfig}
                       back
                     />
                   </Stack>
@@ -861,7 +861,7 @@ class App extends Component {
                     <Scene
                       key="tickidRadaListService1"
                       component={TickIDRada.ListService}
-                      {...navBarConfig}
+                      {...whiteNavBarConfig}
                       back
                     />
                   </Stack>
@@ -870,7 +870,7 @@ class App extends Component {
                     <Scene
                       key="tickidRadaServiceDetail1"
                       component={TickIDRada.ServiceDetail}
-                      {...navBarConfig}
+                      {...whiteNavBarConfig}
                       back
                     />
                   </Stack>
@@ -879,7 +879,7 @@ class App extends Component {
                     <Scene
                       key="tickidRadaBooking1"
                       component={TickIDRada.Booking}
-                      {...navBarConfig}
+                      {...whiteNavBarConfig}
                       back
                     />
                   </Stack>
