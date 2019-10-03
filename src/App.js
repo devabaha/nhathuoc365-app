@@ -83,7 +83,13 @@ import NapTKCConfirm from './components/services/NapTKCConfirm';
 import MdCard from './components/services/MdCard';
 import MdCardConfirm from './components/services/MdCardConfirm';
 import TabIcon from './components/TabIcon';
-import TickIDRada from '@tickid/tickid-rada';
+import {
+  initialize as initializeRadaModule,
+  Category,
+  ListService,
+  ServiceDetail,
+  Booking
+} from '@tickid/tickid-rada';
 import {
   initialize as initializeVoucherModule,
   SelectProvince
@@ -115,12 +121,13 @@ initializeVoucherModule({
 /**
  * Initializes config for Rada module
  */
-const config = {
-  partnerAuthorization: env.RADA_PARTNER_AUTHORIZATION,
-  webhookUrl: null,
-  defaultLocation: '37.33233141,-122.0312186'
-};
-TickIDRada.init(config);
+initializeRadaModule({
+  private: {
+    partnerAuthorization: env.RADA_PARTNER_AUTHORIZATION,
+    webhookUrl: null,
+    defaultLocation: '37.33233141,-122.0312186'
+  }
+});
 
 class App extends Component {
   constructor(properties) {
@@ -925,7 +932,7 @@ class App extends Component {
                   <Stack key="tickidRada">
                     <Scene
                       key="tickidRada1"
-                      component={TickIDRada.Category}
+                      component={Category}
                       {...navBarConfig}
                       back
                     />
@@ -934,7 +941,7 @@ class App extends Component {
                   <Stack key="tickidRadaListService">
                     <Scene
                       key="tickidRadaListService1"
-                      component={TickIDRada.ListService}
+                      component={ListService}
                       {...navBarConfig}
                       back
                     />
@@ -943,7 +950,7 @@ class App extends Component {
                   <Stack key="tickidRadaServiceDetail">
                     <Scene
                       key="tickidRadaServiceDetail1"
-                      component={TickIDRada.ServiceDetail}
+                      component={ServiceDetail}
                       {...navBarConfig}
                       back
                     />
@@ -952,7 +959,7 @@ class App extends Component {
                   <Stack key="tickidRadaBooking">
                     <Scene
                       key="tickidRadaBooking1"
-                      component={TickIDRada.Booking}
+                      component={Booking}
                       {...navBarConfig}
                       back
                     />
