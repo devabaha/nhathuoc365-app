@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import iconNotication from '../../../../images/notication.png';
 import Button from 'react-native-button';
+import appConfig from 'app-config';
 
 function Header(props) {
   return (
@@ -34,8 +35,8 @@ Header.defaultProps = {
 const styles = StyleSheet.create({
   container: {
     padding: 15,
-    paddingTop: 25,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingTop: appConfig.device.isIphoneX ? 40 : 25
   },
   homeBoxWalletInfo: {
     flexDirection: 'row',

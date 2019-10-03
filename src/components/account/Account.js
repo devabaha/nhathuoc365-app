@@ -1,35 +1,27 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   ImageBackground,
-  Touch,
   TouchableHighlight,
   StyleSheet,
   ScrollView,
-  FlatList,
   RefreshControl,
   Alert,
   TouchableOpacity
 } from 'react-native';
-
-// library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import store from '../../store/Store';
-import Communications from 'react-native-communications';
-import RNFetchBlob from 'rn-fetch-blob';
+import { Actions } from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
+import { showMessage } from 'react-native-flash-message';
+import Communications from 'react-native-communications';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
+import store from '../../store/Store';
+import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';
 import { reaction } from 'mobx';
-import RNAccountKit from 'react-native-facebook-account-kit';
-
-// components
 import SelectionList from '../SelectionList';
+import appConfig from 'app-config';
 
 @observer
 export default class Account extends Component {
@@ -44,10 +36,10 @@ export default class Account extends Component {
       scrollTop: 0
     };
 
-    reaction(() => store.user_info, this._initial);
+    reaction(() => store.user_info, this.initial);
   }
 
-  _initial = callback => {
+  initial = callback => {
     const isAdmin = store.user_info.admin_flag == 1;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
@@ -160,13 +152,13 @@ export default class Account extends Component {
     );
   };
 
-  _onRefresh() {
+  onRefresh() {
     this.setState({ refreshing: true }, () => {
-      this._login(1000);
+      this.login(1000);
     });
   }
 
-  _showSticker() {
+  showSticker() {
     this.setState(
       {
         sticker_flag: true
@@ -181,7 +173,7 @@ export default class Account extends Component {
     );
   }
 
-  _onTapAvatar() {
+  onTapAvatar() {
     const options = {
       title: 'Cập nhật ảnh đại diện tài khoản',
       cancelButtonTitle: 'Huỷ bỏ',
@@ -194,16 +186,15 @@ export default class Account extends Component {
     };
 
     ImagePicker.showImagePicker(options, response => {
-      if (response.didCancel) {
-      } else if (response.error) {
+      if (response.error) {
         console.log(response.error);
       } else {
-        this._uploadAvatar(response);
+        this.uploadAvatar(response);
       }
     });
   }
 
-  _uploadAvatar(response) {
+  uploadAvatar(response) {
     this.setState(
       {
         avatar_loading: true
@@ -228,22 +219,17 @@ export default class Account extends Component {
             var { data } = resp;
             var response = JSON.parse(data);
             if (response && response.status == STATUS_SUCCESS) {
-              this._showSticker();
-
-              // action(() => {
-              //   store.setUserInfo(response.data);
-              // })();
+              this.showSticker();
               this.setState({
                 avatar_loading: false
               });
             }
           })
           .catch(error => {
-            console.log(error + ' url_user_add_avatar');
-
+            console.log(error);
             store.addApiQueue(
               'url_user_add_avatar',
-              this._uploadAvatar.bind(this, response)
+              this.uploadAvatar.bind(this, response)
             );
           });
       }
@@ -251,122 +237,113 @@ export default class Account extends Component {
   }
 
   componentDidMount() {
-    this._initial(() => {
+    this.initial(() => {
       this.key_add_new = this.state.options.length;
-
-      this.setState({
-        finish: true
-      });
-
       store.is_stay_account = true;
-
       store.parentTab = '_account';
     });
   }
 
-  componentWillReceiveProps() {
-    store.parentTab = '_account';
+  login = async delay => {
+    try {
+      var response = await APIHandler.user_login({
+        fb_access_token: ''
+      });
 
-    store.getNoitify();
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(() => {
+          action(() => {
+            store.setUserInfo(response.data);
 
-    if (this.state.finish && store.is_stay_account) {
-      if (this.state.scrollTop == 0) {
-        this._scrollOverTopAndReload();
-      } else {
-        this._scrollToTop(0);
+            store.setOrdersKeyChange(store.orders_key_change + 1);
+
+            this.setState({
+              refreshing: false
+            });
+          })();
+        }, delay || 0);
       }
+    } catch (error) {
+      console.log(error);
+      store.addApiQueue('user_login', () => this.login(delay));
     }
+  };
 
-    store.is_stay_account = true;
-  }
-
-  _scrollToTop(top = 0) {
-    if (this.refs_account) {
-      this.refs_account.scrollTo({ x: 0, y: top, animated: true });
-
-      clearTimeout(this._scrollTimer);
-      this._scrollTimer = setTimeout(() => {
-        this.setState({
-          scrollTop: top
-        });
-      }, 500);
-    }
-  }
-
-  _scrollOverTopAndReload() {
-    this.setState(
-      {
-        refreshing: true
-      },
-      () => {
-        this._scrollToTop(-60);
-        this._login(1000);
-      }
-    );
-  }
-
-  _login(delay) {
-    this.setState(
-      {
-        loading: true
-      },
-      async () => {
-        try {
-          var response = await APIHandler.user_login({
-            fb_access_token: ''
-          });
-
-          if (response && response.status == STATUS_SUCCESS) {
-            setTimeout(() => {
-              action(() => {
-                store.setUserInfo(response.data);
-
-                store.setOrdersKeyChange(store.orders_key_change + 1);
-
-                this.setState({
-                  refreshing: false
-                });
-              })();
-            }, delay || 0);
-          }
-        } catch (e) {
-          console.log(e + ' user_login');
-
-          store.addApiQueue('user_login', this._login.bind(this, delay));
-        }
-      }
-    );
-  }
-
-  _onShowProfileDetail = () => {
+  handleShowProfileDetail = () => {
     Actions.profile_detail({
       userInfo: store.user_info
     });
   };
 
-  render() {
-    var is_login = store.user_info != null && store.user_info.username != null;
-    var { user_info } = store;
+  runFBAccoutKit() {
+    // Configures the account kit SDK
+    RNAccountKit.configure({
+      responseType: 'token',
+      titleType: 'login',
+      initialAuthState: '',
+      initialPhoneCountryPrefix: '+84',
+      facebookNotificationsEnabled: true,
+      countryBlacklist: [],
+      defaultCountry: 'VN',
+      theme: {
+        // for iOS only
+        // hide title by setting this stuff
+        titleColor: Color.hex('#fff')
+      },
+      viewControllerMode: 'show', // for iOS only, 'present' by default
+      getACallEnabled: true,
+      setEnableInitialSmsButton: false // true by default
+    });
 
-    var { avatar_loading, logout_loading } = this.state;
+    // Shows the Facebook Account Kit view for login via SMS
+    RNAccountKit.loginWithPhone().then(this.verifyFBAccountKitToken);
+  }
 
-    if (avatar_loading) {
-      var avatar = (
-        <View style={{ width: '100%', height: '100%' }}>
-          <Indicator size="small" />
-        </View>
-      );
-    } else {
-      var avatar = (
-        <View>
-          <CachedImage
-            mutable
-            style={styles.profile_avatar}
-            source={{ uri: store.user_info.img }}
-          />
-        </View>
-      );
+  // verify facebook account kit token
+  verifyFBAccountKitToken = async token => {
+    if (!token) return;
+    try {
+      const response = await APIHandler.login_fbak_verify(token);
+      if (response && response.status == STATUS_SUCCESS) {
+        showMessage({
+          message: response.message,
+          type: 'success'
+        });
+
+        action(() => {
+          store.setUserInfo(response.data);
+          store.resetCartData();
+          store.setRefreshHomeChange(store.refresh_home_change + 1);
+
+          if (response.data.fill_info_user) {
+            // hien thi chon site
+            Actions.op_register({
+              title: 'Đăng ký thông tin',
+              name_props: response.data.name
+            });
+          }
+        })();
+      } else if (response) {
+        showMessage({
+          message: response.message,
+          type: 'danger'
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      store.addApiQueue('login_fbak_verify', this.verifyFBAccountKitToken);
     }
+  };
+
+  handleLogin = () => {
+    this.runFBAccoutKit();
+  };
+
+  render() {
+    const { user_info } = store;
+    const is_login =
+      store.user_info != null && store.user_info.username != null;
+    const { avatar_loading, logout_loading } = this.state;
 
     return (
       <View style={styles.container}>
@@ -376,11 +353,23 @@ export default class Account extends Component {
             source={require('../../images/profile_bgr.jpg')}
           >
             <TouchableHighlight
-              onPress={this._onTapAvatar.bind(this)}
+              onPress={this.onTapAvatar.bind(this)}
               style={styles.profile_avatar_box}
               underlayColor="#cccccc"
             >
-              {avatar}
+              {avatar_loading ? (
+                <View style={{ width: '100%', height: '100%' }}>
+                  <Indicator size="small" />
+                </View>
+              ) : (
+                <View>
+                  <CachedImage
+                    mutable
+                    style={styles.profile_avatar}
+                    source={{ uri: store.user_info.img }}
+                  />
+                </View>
+              )}
             </TouchableHighlight>
 
             {is_login ? (
@@ -393,7 +382,7 @@ export default class Account extends Component {
                   flexDirection: 'row'
                 }}
                 activeOpacity={1}
-                onPress={this._onShowProfileDetail}
+                onPress={this.handleShowProfileDetail}
               >
                 <View style={{ maxWidth: 150 }}>
                   <Text
@@ -428,29 +417,7 @@ export default class Account extends Component {
               <View style={styles.profile_button_box}>
                 <TouchableHighlight
                   underlayColor="transparent"
-                  onPress={() => {
-                    Actions.register({});
-                  }}
-                >
-                  <View
-                    style={[
-                      styles.profile_button_login_box,
-                      {
-                        marginRight: 8,
-                        backgroundColor: '#666666'
-                      }
-                    ]}
-                  >
-                    <Icon name="user-plus" size={14} color="#ffffff" />
-                    <Text style={styles.profile_button_title}>Đăng ký</Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => {
-                    Actions.login();
-                  }}
+                  onPress={this.handleLogin}
                 >
                   <View
                     style={[
@@ -461,7 +428,9 @@ export default class Account extends Component {
                     ]}
                   >
                     <Icon name="sign-in" size={14} color="#ffffff" />
-                    <Text style={styles.profile_button_title}>Đăng nhập</Text>
+                    <Text style={styles.profile_button_title}>
+                      Đăng nhập/đăng ký
+                    </Text>
                   </View>
                 </TouchableHighlight>
               </View>
@@ -484,15 +453,15 @@ export default class Account extends Component {
                       paddingHorizontal: 15
                     }}
                     underlayColor="transparent"
-                    onPress={this._onLogout.bind(this)}
+                    onPress={this.handleLogout.bind(this)}
                   >
                     <Text
                       style={{
                         color: '#cccccc',
-                        fontSize: 10
+                        fontSize: 12
                       }}
                     >
-                      <Icon name="sign-out" size={10} color="#cccccc" />
+                      <Icon name="sign-out" size={12} color="#cccccc" />
                       {' Đăng xuất'}
                     </Text>
                   </TouchableHighlight>
@@ -512,7 +481,7 @@ export default class Account extends Component {
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
+              onRefresh={this.onRefresh.bind(this)}
             />
           }
         >
@@ -852,7 +821,7 @@ export default class Account extends Component {
     );
   }
 
-  _onLogout() {
+  handleLogout() {
     Alert.alert(
       'Lưu ý khi đăng xuất',
       'Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.',
@@ -863,16 +832,7 @@ export default class Account extends Component {
         },
         {
           text: 'Đăng xuất',
-          onPress: () => {
-            this.setState(
-              {
-                logout_loading: true
-              },
-              () => {
-                this._logout();
-              }
-            );
-          },
+          onPress: this.logout,
           style: 'destructive'
         }
       ],
@@ -880,36 +840,36 @@ export default class Account extends Component {
     );
   }
 
-  async _logout() {
+  logout = async () => {
+    this.setState({
+      logout_loading: true
+    });
     try {
-      // logouts the user, so getCurrentAccessToken() will retrieve null
-      await RNAccountKit.logout();
-      var response = await APIHandler.user_logout();
-
+      const response = await APIHandler.user_logout();
       if (response && response.status == STATUS_SUCCESS) {
+        await RNAccountKit.logout();
+
+        showMessage({
+          message: 'Đăng xuất thành công',
+          type: 'info'
+        });
+
         action(() => {
           store.setUserInfo(response.data);
-
           store.resetCartData();
-
           store.setRefreshHomeChange(store.refresh_home_change + 1);
-
           store.setOrdersKeyChange(store.orders_key_change + 1);
-          Actions.login({
-            type: ActionConst.RESET
-          });
         })();
       }
-    } catch (e) {
-      console.log(e + ' user_logout');
-
-      store.addApiQueue('user_logout', this._logout.bind(this));
+    } catch (error) {
+      console.log(error);
+      store.addApiQueue('user_logout', this.logout.bind(this));
     } finally {
       this.setState({
         logout_loading: false
       });
     }
-  }
+  };
 }
 
 const styles = StyleSheet.create({

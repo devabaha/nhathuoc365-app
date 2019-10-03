@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import appConfig from './config';
 import store from 'app-store';
 import reduxStore from './reduxStore';
-import { StyleSheet, StatusBar, Linking, Platform } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import {
   Scene,
   Router,
@@ -17,7 +17,6 @@ import {
   Modal,
   Lightbox
 } from 'react-native-router-flux';
-import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
@@ -29,6 +28,7 @@ import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
+import LaunchContainer from './containers/Launch';
 import VoucherContainer from './containers/Voucher';
 import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
@@ -124,100 +124,31 @@ const config = {
 TickIDRada.init(config);
 
 class App extends Component {
-  constructor(properties) {
-    super(properties);
+  constructor(props) {
+    super(props);
 
-    this.state = {
-      loading: true
-    };
-  }
-
-  componentWillUnmount() {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
-    OneSignal.removeEventListener('ids', this.handleAddPushToken);
+    this.state = {};
   }
 
   componentDidMount() {
-    StatusBar.setBarStyle('light-content', true);
+    this.handleAddListenerOneSignal();
+  }
 
-    OneSignal.init('e2e80243-08c0-405a-9a36-5d060ba0af12');
+  componentWillUnmount() {
+    this.handleRemoveListenerOneSignal();
+  }
+
+  handleAddListenerOneSignal = () => {
+    OneSignal.init(appConfig.oneSignal.appKey);
     OneSignal.addEventListener('opened', this.handleOpenningNotification);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
     OneSignal.inFocusDisplaying(2);
+  };
 
-    // deep link register
-    DeepLinking.addScheme('tickidapp://');
-    Linking.addEventListener('url', this.handleURL);
-
-    Linking.getInitialURL()
-      .then(url => {
-        if (url) {
-          // do login
-          this.handleLogin(() => this.handleURL({ url }));
-        } else {
-          // do login
-          this.handleLogin();
-        }
-      })
-      .catch(err => {
-        // do login
-        this.handleLogin();
-        console.error('An error occurred', err);
-      });
-  }
-
-  // handleURL = ({ url }) => {
-  //   if (url) {
-  //     const route = url.replace(/.*?:\/\//g, '');
-  //     const routeName = route.split('/')[0];
-  //     const id = route.split('/')[1];
-
-  //     switch (routeName) {
-  //       case 'code':
-  //         //
-  //         break;
-  //       case 'store':
-  //         //
-  //         break;
-  //       case 'item':
-  //         //
-  //         break;
-  //       default:
-  //     }
-  //   }
-  // };
-
-  /**
-   * Handling login when opening the application
-   */
-  async handleLogin() {
-    try {
-      const response = await APIHandler.user_login({
-        fb_access_token: ''
-      });
-      if (response && response.status == STATUS_SUCCESS) {
-        store.setUserInfo(response.data);
-        Actions.primaryTabbar({
-          type: ActionConst.RESET
-        });
-      } else {
-        Toast.show(response.message);
-      }
-      if (response && response.status == STATUS_FILL_INFO_USER) {
-        store.setUserInfo(response.data);
-        Actions.op_register({
-          title: 'Đăng ký thông tin',
-          name_props: response.data.name
-        });
-      }
-      if (response && response.status == STATUS_UNDEFINE_USER) {
-        store.setUserInfo(response.data);
-        Actions.login();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  handleRemoveListenerOneSignal = () => {
+    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
+    OneSignal.removeEventListener('ids', this.handleAddPushToken);
+  };
 
   handleOpenningNotification(openResult) {
     const data = openResult.notification.payload.additionalData;
@@ -330,16 +261,21 @@ class App extends Component {
               hideNavBar
               transitionConfig={getTransitionConfig}
             >
-              <Lightbox key="lightbox">
+              <Lightbox key={appConfig.routes.sceneWrapper}>
                 <Scene
                   key="root"
                   titleStyle={{ alignSelf: 'center' }}
                   headerLayoutPreset="center"
                   hideNavBar
                 >
+                  <Scene
+                    key={appConfig.routes.launch}
+                    component={LaunchContainer}
+                    initial
+                  />
                   <Tabs
-                    key="primaryTabbar"
                     showLabel={false}
+                    key={appConfig.routes.primaryTabbar}
                     tabBarStyle={styles.tabBarStyle}
                     activeBackgroundColor="white"
                     inactiveBackgroundColor="white"

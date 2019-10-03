@@ -178,8 +178,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#fff',
-    paddingTop: appConfig.device.statusBarHeight
+    backgroundColor: '#fff'
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,

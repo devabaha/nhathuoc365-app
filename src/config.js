@@ -17,6 +17,9 @@ const config = Object.freeze({
     partnerAuthorization:
       'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIml4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
   },
+  oneSignal: {
+    appKey: 'e2e80243-08c0-405a-9a36-5d060ba0af12'
+  },
   device: Object.freeze({
     isIphoneX: isIphoneX(),
     isAndroid: Platform.OS.toLowerCase() === 'android',
@@ -35,6 +38,10 @@ const config = Object.freeze({
     text: '#333'
   },
   routes: {
+    sceneWrapper: 'sceneWrapper',
+
+    launch: 'launch',
+
     primaryTabbar: 'primaryTabbar',
 
     homeTab: 'homeTab',

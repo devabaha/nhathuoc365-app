@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -7,23 +5,17 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
-  Switch,
   Keyboard,
   ScrollView,
   Alert
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import Modal from 'react-native-modalbox';
-
-// components
-import PopupConfirm from '../PopupConfirm';
+import appConfig from 'app-config';
 
 @observer
-export default class OpRegister extends Component {
+class OpRegister extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -105,9 +97,7 @@ export default class OpRegister extends Component {
                   loading: false
                 },
                 () => {
-                  Actions.primaryTabbar({
-                    type: ActionConst.RESET
-                  });
+                  Actions.reset(appConfig.routes.sceneWrapper);
                 }
               );
             })();
@@ -365,3 +355,5 @@ const styles = StyleSheet.create({
     color: 'grey'
   }
 });
+
+export default OpRegister;
