@@ -234,7 +234,12 @@ class Home extends Component {
     });
   };
 
-  handlePressNewItem = newItem => {};
+  handlePressNewItem = item => {
+    Actions.notify_item({
+      title: item.title,
+      data: item
+    });
+  };
 
   handleBodyScrollTop = event => {
     const yOffset = event.nativeEvent.contentOffset.y;
