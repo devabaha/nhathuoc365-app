@@ -21,7 +21,6 @@ import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
-import appConfig from 'app-config';
 
 @observer
 export default class Account extends Component {
@@ -654,61 +653,65 @@ export default class Account extends Component {
               </View>
             </View>
           )}
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={() =>
-              Actions.affiliate({
-                aff_content: store.store_data
-                  ? store.store_data.aff_content
-                  : 'Thông tin chương trình tiếp thị liên kết cùng ' +
-                    APP_NAME_SHOW
-              })
-            }
-          >
-            <View
-              style={[
-                styles.profile_list_opt_btn,
-                {
-                  marginTop: 1,
-                  borderTopWidth: 0,
-                  borderColor: '#dddddd'
-                }
-              ]}
+
+          {!!user_info.username && (
+            <TouchableHighlight
+              underlayColor="transparent"
+              onPress={() =>
+                Actions.affiliate({
+                  aff_content: store.store_data
+                    ? store.store_data.aff_content
+                    : 'Thông tin chương trình tiếp thị liên kết cùng ' +
+                      APP_NAME_SHOW
+                })
+              }
             >
               <View
                 style={[
-                  styles.profile_list_icon_box,
-                  styles.boxIconStyle,
+                  styles.profile_list_opt_btn,
                   {
-                    backgroundColor: '#51A9FF'
+                    marginTop: 1,
+                    borderTopWidth: 0,
+                    borderColor: '#dddddd'
                   }
                 ]}
               >
-                <Icon name="commenting-o" size={16} color="#ffffff" />
-              </View>
+                <View
+                  style={[
+                    styles.profile_list_icon_box,
+                    styles.boxIconStyle,
+                    {
+                      backgroundColor: '#51A9FF'
+                    }
+                  ]}
+                >
+                  <Icon name="commenting-o" size={16} color="#ffffff" />
+                </View>
 
-              <View>
-                <Text style={styles.profile_list_label}>
-                  Mã giới thiệu:{' '}
-                  <Text style={styles.profile_list_label_invite_id}>
-                    {user_info.username}
+                <View>
+                  <Text style={styles.profile_list_label}>
+                    Mã giới thiệu:{' '}
+                    <Text style={styles.profile_list_label_invite_id}>
+                      {user_info.username}
+                    </Text>
                   </Text>
-                </Text>
-                <Text style={styles.profile_list_small_label}>
-                  {user_info.text_invite}
-                </Text>
-              </View>
+                  <Text style={styles.profile_list_small_label}>
+                    {user_info.text_invite}
+                  </Text>
+                </View>
 
-              <View
-                style={[
-                  styles.profile_list_icon_box,
-                  styles.profile_list_icon_box_angle
-                ]}
-              >
-                <Icon name="angle-right" size={16} color="#999999" />
+                <View
+                  style={[
+                    styles.profile_list_icon_box,
+                    styles.profile_list_icon_box_angle
+                  ]}
+                >
+                  <Icon name="angle-right" size={16} color="#999999" />
+                </View>
               </View>
-            </View>
-          </TouchableHighlight>
+            </TouchableHighlight>
+          )}
+
           {user_info.view_tab_ndt && (
             <TouchableHighlight
               underlayColor="transparent"

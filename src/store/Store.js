@@ -69,54 +69,26 @@ class Store {
     }
   }
 
-  async getNoitify() {
+  getNoitify = async () => {
     this.getNotifyFlag = false;
-
     try {
-      var response = await APIHandler.user_notify();
-
+      const response = await APIHandler.user_notify();
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
           }
-          this.setNotify(response.data);
-          this.setUserInfo(response.data.user);
+          const { user, ...notifies } = response.data;
+          this.setUserInfo(user);
+          this.setNotify(notifies);
         })();
       }
-    } catch (e) {
-      console.log(e + ' user_notify');
+    } catch (error) {
+      console.log(error);
     } finally {
       this.getNotifyFlag = true;
-
-      // notify_chat
-      if (this.updateNotifyFlag) {
-        this.getNoitifyChat();
-      }
     }
-  }
-
-  async getNoitifyChat() {
-    this.getNotifyChatFlag = false;
-
-    try {
-      var response = await APIHandler.user_notify_chat();
-
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          this.setNotifyChat(response.data);
-        })();
-      }
-    } catch (e) {
-      console.log(e + ' user_notify_chat');
-
-      action(() => {
-        this.setConnect(false);
-      })();
-    } finally {
-      this.getNotifyChatFlag = true;
-    }
-  }
+  };
 
   storeUnMount = {};
 

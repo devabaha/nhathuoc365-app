@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import appConfig from 'app-config';
+import store from 'app-store';
 
 @observer
 class TabIcon extends Component {
@@ -52,24 +53,35 @@ class TabIcon extends Component {
     );
   }
 
+  renderNotifyCount() {
+    const notifyCount = store.notify[this.props.notifyKey];
+    if (notifyCount) {
+      return (
+        <View style={styles.notifyWrapper}>
+          <Text style={styles.notifyText}>{notifyCount}</Text>
+        </View>
+      );
+    }
+    return null;
+  }
+
   render() {
     return (
       <View style={styles.tabIcon}>
         {this.renderIcon()}
         {this.renderLabel()}
+        {this.renderNotifyCount()}
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
   tabIcon: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    position: 'relative'
   },
   labelSelected: {
     color: appConfig.colors.primary
@@ -89,7 +101,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28
   },
-  notificationCountWrapper: {
+  notifyWrapper: {
     position: 'absolute',
     minWidth: 16,
     paddingHorizontal: 2,
@@ -102,7 +114,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderRadius: 8
   },
-  notificationCount: {
+  notifyText: {
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600'

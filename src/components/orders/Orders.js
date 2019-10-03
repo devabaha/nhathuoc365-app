@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -10,19 +8,16 @@ import {
   RefreshControl,
   ScrollView
 } from 'react-native';
-
-//library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import store from '../../store/Store';
 import { reaction } from 'mobx';
-
-// components
+import appConfig from 'app-config';
+import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
+import { Actions } from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 @observer
-export default class Orders extends Component {
+class Orders extends Component {
   constructor(props) {
     super(props);
 
@@ -119,9 +114,8 @@ export default class Orders extends Component {
           });
         }, delay || 0);
       }
-    } catch (e) {
-      console.log(e + ' user_cart_list');
-
+    } catch (error) {
+      console.log(error);
       store.addApiQueue(
         'user_cart_list',
         this._getData.bind(this, delay, noScroll)
@@ -209,7 +203,7 @@ export default class Orders extends Component {
 
             <TouchableHighlight
               onPress={() => {
-                Actions._home({ type: ActionConst.REFRESH });
+                Actions.jump(appConfig.routes.homeTab);
               }}
               underlayColor="transparent"
             >
@@ -266,11 +260,9 @@ export default class Orders extends Component {
 
           Toast.show(response.message);
         }
-      } catch (e) {
-        console.log(e + ' site_cart_reorder');
-
+      } catch (error) {
+        console.log(error);
         store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
-      } finally {
       }
     }
 
@@ -292,11 +284,9 @@ export default class Orders extends Component {
 
           this._getData();
         }
-      } catch (e) {
-        console.log(e + ' site_cart_edit');
-
+      } catch (error) {
+        console.log(error);
         store.addApiQueue('site_cart_edit', this._editCart.bind(this));
-      } finally {
       }
     }
 
@@ -327,11 +317,9 @@ export default class Orders extends Component {
           this._getData(450, true);
           Toast.show(response.message);
         }
-      } catch (e) {
-        console.log(e + ' site_cart_cancel');
-
+      } catch (error) {
+        console.log(error);
         store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
-      } finally {
       }
     }
 
@@ -424,3 +412,5 @@ const styles = StyleSheet.create({
     color: '#ffffff'
   }
 });
+
+export default Orders;

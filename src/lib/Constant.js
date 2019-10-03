@@ -48,7 +48,7 @@ global.APP_NAME = 'TICKID'; //Ma cua ung dung, khong thay doi, vi dung ten nay g
 global.APP_NAME_SHOW = 'TickID';
 //appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
-global.DELAY_UPDATE_NOTICE = 5000;
+global.DELAY_UPDATE_NOTICE = 3000;
 
 global.GA_ID = 'UA-143334124-2';
 

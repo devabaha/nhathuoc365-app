@@ -272,6 +272,7 @@ class Home extends Component {
         notices={this.state.notices}
         app={this.state.site}
         userInfo={store.user_info}
+        notify={store.notify}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         onActionPress={this.handleActionPress}
