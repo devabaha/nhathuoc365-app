@@ -302,7 +302,7 @@ class App extends Component {
                      ************************ Tab 2 ************************
                      */}
                     <Stack
-                      key="myTab2"
+                      key={appConfig.routes.newsTab}
                       icon={TabIcon}
                       iconLabel="Tin tức"
                       iconName="notifications"
@@ -310,7 +310,7 @@ class App extends Component {
                       notifyKey="new_totals"
                     >
                       <Scene
-                        key="_main_notify"
+                        key={`${appConfig.routes.newsTab}_1`}
                         title="Tin tức"
                         component={Notify}
                       />
@@ -405,9 +405,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="address">
+                  <Stack key={appConfig.routes.myAddress}>
                     <Scene
-                      key="address_1"
+                      key={`${appConfig.routes.myAddress}_1`}
                       title="Địa chỉ"
                       component={Address}
                       {...navBarConfig}

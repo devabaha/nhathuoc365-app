@@ -9,6 +9,10 @@ import HomeComponent, {
   RADA_SERVICE_TYPE,
   VOUCHER_SERVICE_TYPE,
   BOOKING_30DAY_TYPE,
+  MY_VOUCHER_SERVICE_TYPE,
+  MY_ADDRESS_SERVICE_TYPE,
+  NEWS_SERVICE_TYPE,
+  ORDERS_SERVICE_TYPE,
   ACCUMULATE_POINTS_TYPE,
   MY_VOUCHER_TYPE,
   TRANSACTION_TYPE
@@ -26,7 +30,8 @@ class Home extends Component {
       newses: null,
       notices: null,
       campaigns: null,
-      promotions: null
+      promotions: null,
+      services: []
     };
   }
 
@@ -49,6 +54,7 @@ class Home extends Component {
           sites: response.data.sites,
           newses: response.data.newses,
           notices: response.data.notices,
+          services: response.data.services,
           campaigns: response.data.campaigns,
           promotions: response.data.promotions
         });
@@ -148,7 +154,7 @@ class Home extends Component {
 
   handleShowAllVouchers = () => {};
 
-  handleActionPress = action => {
+  handlePressAction = action => {
     switch (action.type) {
       case ACCUMULATE_POINTS_TYPE:
         Actions.push(appConfig.routes.qrBarCode, {
@@ -204,6 +210,20 @@ class Home extends Component {
           [{ text: 'Đồng ý' }]
         );
         break;
+      case MY_VOUCHER_SERVICE_TYPE:
+        Actions.push(appConfig.routes.myVoucher);
+        break;
+      case MY_ADDRESS_SERVICE_TYPE:
+        Actions.push(appConfig.routes.myAddress, {
+          from_page: 'account'
+        });
+        break;
+      case NEWS_SERVICE_TYPE:
+        Actions.jump(appConfig.routes.newsTab);
+        break;
+      case ORDERS_SERVICE_TYPE:
+        Actions.jump(appConfig.routes.ordersTab);
+        break;
     }
   };
 
@@ -241,6 +261,9 @@ class Home extends Component {
     });
   };
 
+  /**
+   * @TODO: Need a package to management status bar
+   */
   handleBodyScrollTop = event => {
     const yOffset = event.nativeEvent.contentOffset.y;
     if (yOffset > 68) {
@@ -275,12 +298,13 @@ class Home extends Component {
         sites={this.state.sites}
         newses={this.state.newses}
         notices={this.state.notices}
+        services={this.state.services}
         app={this.state.site}
         userInfo={store.user_info}
         notify={store.notify}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
-        onActionPress={this.handleActionPress}
+        onActionPress={this.handlePressAction}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
         onVoucherPressed={this.handleVoucherPressed}

@@ -16,6 +16,7 @@ class Home extends Component {
     sites: PropTypes.array,
     newses: PropTypes.array,
     notices: PropTypes.array,
+    services: PropTypes.array,
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
     app: PropTypes.object,
@@ -43,6 +44,7 @@ class Home extends Component {
     sites: [],
     newses: [],
     notices: [],
+    services: [],
     campaigns: [],
     promotions: [],
     app: undefined,
@@ -109,6 +111,7 @@ class Home extends Component {
 
           <ListServices
             data={SERVICES_LIST}
+            services={this.props.services}
             onItemPress={this.props.onPressService}
           />
 

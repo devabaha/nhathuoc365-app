@@ -39,12 +39,12 @@ const config = Object.freeze({
   },
   routes: {
     sceneWrapper: 'sceneWrapper',
-
     launch: 'launch',
 
     primaryTabbar: 'primaryTabbar',
 
     homeTab: 'homeTab',
+    newsTab: 'newsTab',
     scanQrCodeTab: 'scanQrCodeTab',
     ordersTab: 'ordersTab',
 
@@ -52,6 +52,7 @@ const config = Object.freeze({
     qrBarCode: 'qrBarCode',
 
     store: 'store',
+    myAddress: 'myAddress',
 
     // ** Begin routes of Rada module
     tickidRada: 'tickidRada',

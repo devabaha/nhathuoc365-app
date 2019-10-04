@@ -145,7 +145,6 @@ export default class Confirm extends Component {
         'site_cart_by_id',
         this._getOrdersItem.bind(this, site_id, page_id)
       );
-    } finally {
     }
   }
 
@@ -319,7 +318,7 @@ export default class Confirm extends Component {
       });
     };
 
-    Actions.address({
+    Actions.push(appConfig.routes.myAddress, {
       type: ActionConst.REPLACE,
       onBack
     });

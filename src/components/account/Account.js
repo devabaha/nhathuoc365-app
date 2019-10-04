@@ -21,6 +21,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
+import appConfig from 'app-config';
 
 @observer
 export default class Account extends Component {
@@ -52,7 +53,7 @@ export default class Account extends Component {
             label: 'Địa chỉ của tôi',
             desc: 'Quản lý địa chỉ nhận hàng',
             onPress: () =>
-              Actions.address({
+              Actions.push(appConfig.routes.myAddress, {
                 from_page: 'account'
               }),
             boxIconStyle: [

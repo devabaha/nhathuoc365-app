@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -8,19 +6,14 @@ import {
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl,
   Alert
 } from 'react-native';
-
-//library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import { CheckBox } from 'react-native-elements';
 import store from '../../store/Store';
-
-// components
-import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
+import appConfig from 'app-config';
 
 @observer
 export default class Cart extends Component {
@@ -87,7 +80,6 @@ export default class Cart extends Component {
       console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this, delay));
-    } finally {
     }
   }
 
@@ -160,7 +152,6 @@ export default class Cart extends Component {
         'site_cart_down',
         this._item_qnt_decrement.bind(this, item)
       );
-    } finally {
     }
   }
 
@@ -182,7 +173,6 @@ export default class Cart extends Component {
         'site_cart_up',
         this._item_qnt_increment.bind(this, item)
       );
-    } finally {
     }
   }
 
@@ -231,7 +221,6 @@ export default class Cart extends Component {
       console.log(e + ' site_cart_remove');
 
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
-    } finally {
     }
   }
 
@@ -269,7 +258,7 @@ export default class Cart extends Component {
   // go payment screen
   _goPayment() {
     if (store.cart_data.count_selected > 0) {
-      Actions.address();
+      Actions.push(appConfig.routes.myAddress);
     } else {
       return Alert.alert(
         'Thông báo',
