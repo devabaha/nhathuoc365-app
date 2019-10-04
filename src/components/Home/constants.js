@@ -24,7 +24,7 @@ export const PRIMARY_ACTIONS = [
     type: ACCUMULATE_POINTS_TYPE
   },
   {
-    title: 'Tick Voucher',
+    title: 'Voucher của tôi',
     icon: iconVoucher,
     iconOriginSize: {
       width: 152,

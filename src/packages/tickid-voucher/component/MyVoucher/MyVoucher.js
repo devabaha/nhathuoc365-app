@@ -4,6 +4,7 @@ import config from '../../config';
 import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import MyVoucherItem from './MyVoucherItem';
+import NoResult from '../NoResult';
 
 const defaultListener = () => {};
 
@@ -26,6 +27,10 @@ class MyVoucher extends Component {
 
   get totalCampaigns() {
     return this.props.campaigns.length;
+  }
+
+  get hasCampaigns() {
+    return this.totalCampaigns > 0;
   }
 
   renderMyVouchers() {
@@ -60,7 +65,14 @@ class MyVoucher extends Component {
     return (
       <View style={styles.container}>
         {this.props.showLoading && <LoadingComponent loading />}
-        {this.renderMyVouchers()}
+        {this.hasCampaigns ? (
+          this.renderMyVouchers()
+        ) : (
+          <NoResult
+            title="Bạn chưa có phiếu giảm giá"
+            text="Đi săn voucher ở TickID Voucher ngay thôi"
+          />
+        )}
       </View>
     );
   }

@@ -19,6 +19,7 @@ import config from '../../config';
 import iconVoucher from '../../assets/images/icon_voucher.png';
 import vouchersX2Image from '../../assets/images/vouchers-x2.png';
 import LoadingComponent from '@tickid/tickid-rn-loading';
+import NoResult from '../NoResult';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -59,6 +60,10 @@ class Voucher extends Component {
 
   get totalCampaigns() {
     return this.props.campaigns.length;
+  }
+
+  get hasCampaigns() {
+    return this.totalCampaigns > 0;
   }
 
   renderVouchers() {
@@ -109,6 +114,7 @@ class Voucher extends Component {
         )}
 
         <ScrollView
+          contentContainerStyle={{ flex: 1 }}
           onScroll={this.handleScrollTop}
           scrollEventThrottle={16}
           refreshControl={
@@ -146,18 +152,31 @@ class Voucher extends Component {
               <Image source={iconVoucher} style={styles.myVoucherIcon} />
               <View style={styles.myVoucherTitleWrapper}>
                 <Text style={styles.myVoucherTitle}>Voucher của tôi</Text>
-                <Text style={styles.myVoucherInfo}>
-                  <Text
-                    style={styles.myVoucherCount}
-                  >{`${this.props.newVoucherNum} `}</Text>
-                  mã chưa sử dụng
-                </Text>
+                {this.props.newVoucherNum > 0 ? (
+                  <Text style={styles.myVoucherInfo}>
+                    <Text
+                      style={styles.myVoucherCount}
+                    >{`${this.props.newVoucherNum} `}</Text>
+                    mã chưa sử dụng
+                  </Text>
+                ) : (
+                  <Text style={styles.myVoucherInfo}>
+                    Bạn chưa có mã giảm giá
+                  </Text>
+                )}
               </View>
               <Icon name="chevron-right" size={16} color="#999" />
             </View>
           </Button>
 
-          {this.renderVouchers()}
+          {this.hasCampaigns ? (
+            this.renderVouchers()
+          ) : (
+            <NoResult
+              title="Địa điểm chưa có ưu đãi"
+              text="Chưa có chương trình ưu đãi cho địa điểm này"
+            />
+          )}
         </ScrollView>
       </View>
     );
