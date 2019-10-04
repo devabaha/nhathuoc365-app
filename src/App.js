@@ -848,7 +848,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRada">
+                  <Stack key={appConfig.routes.tickidRada}>
                     <Scene
                       key="tickidRada1"
                       component={TickIDRada.Category}
@@ -857,7 +857,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRadaListService">
+                  <Stack key={appConfig.routes.tickidRadaListService}>
                     <Scene
                       key="tickidRadaListService1"
                       component={TickIDRada.ListService}
@@ -866,7 +866,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRadaServiceDetail">
+                  <Stack key={appConfig.routes.tickidRadaServiceDetail}>
                     <Scene
                       key="tickidRadaServiceDetail1"
                       component={TickIDRada.ServiceDetail}
@@ -875,7 +875,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRadaBooking">
+                  <Stack key={appConfig.routes.tickidRadaBooking}>
                     <Scene
                       key="tickidRadaBooking1"
                       component={TickIDRada.Booking}

@@ -97,9 +97,6 @@ export default class Stores extends Component {
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
 
-    // notify chat
-    store.getNoitifyChat();
-
     if (props.orderIsPop) {
       store.orderIsPop = true;
     }

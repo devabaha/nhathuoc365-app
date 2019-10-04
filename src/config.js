@@ -53,6 +53,13 @@ const config = Object.freeze({
 
     store: 'store',
 
+    // ** Begin routes of Rada module
+    tickidRada: 'tickidRada',
+    tickidRadaListService: 'tickidRadaListService',
+    tickidRadaServiceDetail: 'tickidRadaServiceDetail',
+    tickidRadaBooking: 'tickidRadaBooking',
+    // end routes of Rada module **
+
     // ** Begin routes of Voucher module
     mainVoucher: 'mainVoucher',
     myVoucher: 'myVoucher',

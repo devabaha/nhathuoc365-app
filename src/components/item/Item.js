@@ -89,9 +89,6 @@ export default class Item extends Component {
     this.start_time = time();
 
     this._getData();
-
-    // notify chat
-    store.getNoitifyChat();
   }
 
   _unMount() {

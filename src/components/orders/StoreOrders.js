@@ -56,9 +56,6 @@ export default class StoreOrders extends Component {
 
     // Listenner
     Events.on(RELOAD_STORE_ORDERS, RELOAD_STORE_ORDERS + 'ID', this._getData);
-
-    // notify chat
-    store.getNoitifyChat();
   }
 
   _unMount() {
