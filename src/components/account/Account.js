@@ -15,13 +15,14 @@ import ImagePicker from 'react-native-image-picker';
 import { showMessage } from 'react-native-flash-message';
 import Communications from 'react-native-communications';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
+import RNAccountKit from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
 import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
+import { runFbAccountKit } from '../../helper/fbAccountKit';
 
 @observer
 export default class Account extends Component {
@@ -275,68 +276,19 @@ export default class Account extends Component {
     });
   };
 
-  runFBAccoutKit() {
-    // Configures the account kit SDK
-    RNAccountKit.configure({
-      responseType: 'token',
-      titleType: 'login',
-      initialAuthState: '',
-      initialPhoneCountryPrefix: '+84',
-      facebookNotificationsEnabled: true,
-      countryBlacklist: [],
-      defaultCountry: 'VN',
-      theme: {
-        // for iOS only
-        // hide title by setting this stuff
-        titleColor: Color.hex('#fff')
-      },
-      viewControllerMode: 'show', // for iOS only, 'present' by default
-      getACallEnabled: true,
-      setEnableInitialSmsButton: false // true by default
-    });
-
-    // Shows the Facebook Account Kit view for login via SMS
-    RNAccountKit.loginWithPhone().then(this.verifyFBAccountKitToken);
-  }
-
-  // verify facebook account kit token
-  verifyFBAccountKitToken = async token => {
-    if (!token) return;
-    try {
-      const response = await APIHandler.login_fbak_verify(token);
-      if (response && response.status == STATUS_SUCCESS) {
-        showMessage({
-          message: response.message,
-          type: 'success'
-        });
-
-        action(() => {
-          store.setUserInfo(response.data);
-          store.resetCartData();
-          store.setRefreshHomeChange(store.refresh_home_change + 1);
-
-          if (response.data.fill_info_user) {
-            // hien thi chon site
-            Actions.op_register({
-              title: 'Đăng ký thông tin',
-              name_props: response.data.name
-            });
-          }
-        })();
-      } else if (response) {
-        showMessage({
-          message: response.message,
-          type: 'danger'
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      store.addApiQueue('login_fbak_verify', this.verifyFBAccountKitToken);
-    }
-  };
-
   handleLogin = () => {
-    this.runFBAccoutKit();
+    runFbAccountKit({
+      onSuccess: response => {
+        if (response.data.fill_info_user) {
+          // hien thi chon site
+          Actions.op_register({
+            title: 'Đăng ký thông tin',
+            name_props: response.data.name
+          });
+        }
+      },
+      onFailure: () => {}
+    });
   };
 
   render() {

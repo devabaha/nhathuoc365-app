@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
+import { runFbAccountKit } from '../../helper/fbAccountKit';
 import appConfig from '../../config';
 import store from '../../store';
 
@@ -41,8 +42,20 @@ class Launch extends Component {
         });
         break;
       case STATUS_UNDEFINE_USER:
-        store.setUserInfo(response.data);
-        Actions.login();
+        runFbAccountKit({
+          onSuccess: res => {
+            if (res.data.fill_info_user) {
+              Actions.op_register({
+                title: 'Đăng ký thông tin',
+                name_props: res.data.name
+              });
+            }
+          },
+          onFailure: () => {
+            store.setUserInfo(response.data);
+            Actions.replace(appConfig.routes.primaryTabbar);
+          }
+        });
         break;
       default:
         showMessage({
