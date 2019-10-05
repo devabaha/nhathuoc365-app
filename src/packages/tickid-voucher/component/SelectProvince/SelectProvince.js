@@ -26,13 +26,15 @@ class SelectProvince extends Component {
   static propTypes = {
     onClose: PropTypes.func,
     onSelect: PropTypes.func,
-    provinceSelected: PropTypes.object
+    provinceSelected: PropTypes.string,
+    listCities: PropTypes.array
   };
 
   static defaultProps = {
     onClose: defaultListener,
     onSelect: defaultListener,
-    provinceSelected: undefined
+    provinceSelected: '',
+    listCities: []
   };
 
   constructor(props) {
@@ -41,8 +43,9 @@ class SelectProvince extends Component {
     this.state = {
       opacity: new Animated.Value(0),
       bottom: new Animated.Value(-20),
+      keyboardShow: false,
       keyboardHeight: 0,
-      keyboardShow: false
+      searchText: ''
     };
   }
 
@@ -72,12 +75,15 @@ class SelectProvince extends Component {
       keyboardShow: true,
       keyboardHeight: e.endCoordinates.height
     });
+    this.startAnimation(this.state.bottom, e.endCoordinates.height, 200);
   };
 
   keyboardWillHide = () => {
     this.setState({
+      keyboardShow: false,
       keyboardHeight: 0
     });
+    this.startAnimation(this.state.bottom, 0, 200);
   };
 
   startAnimation(animation, toValue, duration) {
@@ -107,9 +113,7 @@ class SelectProvince extends Component {
   };
 
   renderProvince = ({ item: province }) => {
-    const isActive =
-      (this.props.provinceSelected && this.props.provinceSelected.id) ===
-      province.id;
+    const isActive = this.props.provinceSelected === province;
     return (
       <Button
         containerStyle={[
@@ -122,47 +126,99 @@ class SelectProvince extends Component {
         style={styles.provinceItem}
         onPress={() => this.onSelect(province)}
       >
-        <Text style={styles.provinceItem}>{province.name}</Text>
+        <Text style={styles.provinceItem}>{province}</Text>
         {isActive && <Image style={styles.iconChecked} source={iconChecked} />}
       </Button>
     );
   };
 
-  render() {
+  get containerStyle() {
     const containerStyle = {
       opacity: this.state.opacity,
       bottom: this.state.bottom
     };
     if (this.state.keyboardShow) {
       containerStyle.top = 0;
-      containerStyle.bottom = this.state.keyboardHeight;
     }
+    return containerStyle;
+  }
+
+  get contentStyle() {
+    const contentStyle = {};
+
+    if (this.state.keyboardShow) {
+      if (config.device.isIphoneX) {
+        const iPhoneXBuffer =
+          config.device.statusBarHeight + config.device.bottomSpace;
+        contentStyle.height = Math.floor(
+          config.device.height - this.state.keyboardHeight - iPhoneXBuffer
+        );
+      } else {
+        contentStyle.height = Math.floor(
+          config.device.height - this.state.keyboardHeight
+        );
+      }
+    } else {
+      contentStyle.height = 360;
+      contentStyle.marginBottom = config.device.bottomSpace;
+    }
+    return contentStyle;
+  }
+
+  handleSearch = searchText => {
+    this.setState({ searchText });
+  };
+
+  get listCities() {
+    const { searchText } = this.state;
+    if (searchText) {
+      return this.props.listCities.filter(cityName => {
+        return cityName.toLowerCase().includes(searchText.toLowerCase());
+      });
+    }
+    return this.props.listCities;
+  }
+
+  get hasResult() {
+    return Array.isArray(this.listCities) && this.listCities.length > 0;
+  }
+
+  render() {
     return (
-      <Animated.View style={[styles.container, containerStyle]}>
+      <Animated.View style={[styles.container, this.containerStyle]}>
         <Button
           containerStyle={styles.btnCloseTransparent}
           onPress={this.onClose}
         />
 
-        <View style={styles.content}>
+        <View style={[styles.content, this.contentStyle]}>
           <Header onClose={this.onClose} />
 
           <ScrollView keyboardShouldPersistTaps="handled">
             <View style={styles.searchWrapper}>
               <Image style={styles.searchIcon} source={iconSearch} />
-              <TextInput style={styles.searchInput} placeholder="Tìm kiếm" />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="Tìm kiếm"
+                onChangeText={this.handleSearch}
+                value={this.state.searchText}
+              />
             </View>
 
-            <FlatList
-              keyboardShouldPersistTaps="handled"
-              data={[
-                { id: 1, name: 'Toàn quốc' },
-                { id: 2, name: 'Hà Nội' },
-                { id: 3, name: 'Hồ Chí Minh' }
-              ]}
-              keyExtractor={item => `${item.id}`}
-              renderItem={this.renderProvince}
-            />
+            {this.hasResult ? (
+              <FlatList
+                keyboardShouldPersistTaps="handled"
+                data={this.listCities}
+                keyExtractor={item => item}
+                renderItem={this.renderProvince}
+              />
+            ) : (
+              <View style={styles.noResultWrapper}>
+                <Text style={styles.noResult}>
+                  Không có kết quả phù hợp cho "{this.state.searchText}"
+                </Text>
+              </View>
+            )}
           </ScrollView>
         </View>
       </Animated.View>
@@ -177,9 +233,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8
+    backgroundColor: 'rgba(0, 0, 0, 0.3)'
   },
   btnCloseTransparent: {
     position: 'absolute',
@@ -236,6 +290,15 @@ const styles = StyleSheet.create({
   iconChecked: {
     width: 20,
     height: 20
+  },
+  noResultWrapper: {
+    marginHorizontal: 16,
+    paddingVertical: 20
+  },
+  noResult: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: '400'
   }
 });
 

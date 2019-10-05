@@ -11,8 +11,6 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-var MessageBarAlert = require('react-native-message-bar').MessageBar;
-var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 // components
 import Sticker from '../Sticker';
@@ -50,9 +48,7 @@ export default class ForgetActive extends Component {
     this.registerMsgBar();
   }
 
-  registerMsgBar = () => {
-    MessageBarManager.registerMessageBar(this.refs.alert);
-  };
+  registerMsgBar = () => {};
 
   _unMount() {
     Keyboard.dismiss();
@@ -60,8 +56,6 @@ export default class ForgetActive extends Component {
     clearInterval(this._countDownTimer);
 
     clearTimeout(this._timerEnableBtn);
-
-    MessageBarManager.unregisterMessageBar();
 
     if (this.props.onBackCustomer) {
       this.props.onBackCustomer();
@@ -124,11 +118,7 @@ export default class ForgetActive extends Component {
               onBackCustomer: this.registerMsgBar
             });
           } else if (response && response.message) {
-            MessageBarManager.showAlert({
-              message: response.message,
-              alertType: 'warning',
-              duration: 5000
-            });
+            //
           }
         } catch (e) {
           console.log(e + ' user_forget_password_verify');
@@ -178,11 +168,7 @@ export default class ForgetActive extends Component {
           );
         }, 1000);
       } else if (response && response.message) {
-        MessageBarManager.showAlert({
-          message: response.message,
-          alertType: 'warning',
-          duration: 5000
-        });
+        //
       }
     } catch (e) {
       console.log(e + ' user_forget_password');
@@ -321,8 +307,6 @@ export default class ForgetActive extends Component {
           active={this.state.sticker_flag}
           message="Đăng nhập thành công."
         />
-
-        <MessageBarAlert ref="alert" />
       </View>
     );
   }

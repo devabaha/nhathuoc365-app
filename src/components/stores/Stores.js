@@ -1,36 +1,25 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableHighlight,
   FlatList,
   RefreshControl,
-  Alert,
   ScrollView
 } from 'react-native';
-
-//library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
-import { Button } from '../../lib/react-native-elements';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
-
-// components
 import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonOrders from '../RightButtonOrders';
+import appConfig from '../../config';
 
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
-const STORE_KEY = 'KeyStore';
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
@@ -108,9 +97,6 @@ export default class Stores extends Component {
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
 
-    // notify chat
-    store.getNoitifyChat();
-
     if (props.orderIsPop) {
       store.orderIsPop = true;
     }
@@ -160,7 +146,6 @@ export default class Stores extends Component {
         'site_info',
         this._getCategoriesNavFromServer.bind(this)
       );
-    } finally {
     }
   }
 
@@ -216,7 +201,7 @@ export default class Stores extends Component {
               onScrollToIndexFailed={() => {}}
               data={this.state.categories_data}
               extraData={this.state.category_nav_index}
-              keyExtractor={item => item.id}
+              keyExtractor={item => `${item.id}`}
               horizontal={true}
               style={styles.categories_nav}
               renderItem={({ item, index }) => {
@@ -251,10 +236,6 @@ export default class Stores extends Component {
           )}
         </View>
 
-        {
-          //this._renderItemsContent.call(this)
-        }
-
         {this.state.categories_data != null ? (
           <FlatList
             showsHorizontalScrollIndicator={false}
@@ -263,7 +244,7 @@ export default class Stores extends Component {
             onScrollToIndexFailed={() => {}}
             data={this.state.categories_data}
             extraData={this.state.category_nav_index}
-            keyExtractor={item => item.id}
+            keyExtractor={item => `${item.id}`}
             horizontal={true}
             pagingEnabled
             onMomentumScrollEnd={this._onScrollEnd.bind(this)}
@@ -390,9 +371,7 @@ export default class Stores extends Component {
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.log(e + ' site_cart_remove');
-
       store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
-    } finally {
     }
   }
 }
@@ -401,12 +380,13 @@ class CategoryScreen extends Component {
   constructor(props) {
     super(props);
 
-    var { item, index, that } = props;
+    const { item, that } = props;
+    let header_title;
 
     if (item.id == 0) {
-      var header_title = `— Cửa hàng —`;
+      header_title = `— Cửa hàng —`;
     } else {
-      var header_title = `— Sản phẩm ${item.name} —`;
+      header_title = `— Sản phẩm ${item.name} —`;
     }
 
     this.state = {
@@ -428,7 +408,7 @@ class CategoryScreen extends Component {
   }
 
   componentDidMount() {
-    var { item, index, cate_index } = this.props;
+    var { item, index } = this.props;
     this.start_time = 0;
 
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
@@ -723,11 +703,9 @@ const styles = StyleSheet.create({
     width: Util.size.width,
     flex: 1
   },
-
   container: {
     flex: 1,
-
-    marginBottom: 0
+    marginBottom: appConfig.device.bottomSpace
   },
   right_btn_box: {
     flexDirection: 'row'

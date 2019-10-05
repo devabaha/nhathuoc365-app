@@ -9,13 +9,17 @@ function HomeCardList(props) {
       <View style={styles.content}>
         <Text style={styles.title}>{props.title}</Text>
 
-        <Button
-          containerStyle={styles.showAllBtn}
-          underlayColor="transparent"
-          onPress={props.onShowAll}
-        >
-          <Text style={styles.viewAll}>Xem tất cả</Text>
-        </Button>
+        {props.onShowAll ? (
+          <Button
+            containerStyle={styles.showAllBtn}
+            underlayColor="transparent"
+            onPress={props.onShowAll}
+          >
+            <Text style={styles.viewAll}>Xem tất cả</Text>
+          </Button>
+        ) : (
+          <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
+        )}
       </View>
 
       <FlatList
@@ -40,7 +44,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'baseline'
+    alignItems: 'flex-end'
   },
   showAllBtn: {
     paddingTop: 12,
@@ -50,7 +54,9 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 16,
     fontWeight: '500',
-    lineHeight: 20
+    lineHeight: 20,
+    marginTop: 12,
+    marginBottom: 6
   },
   viewAll: {
     color: '#0084ff',
@@ -63,7 +69,7 @@ const defaultListener = () => null;
 
 HomeCardList.propTypes = {
   data: PropTypes.array,
-  onShowAll: PropTypes.func,
+  onShowAll: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]),
   children: PropTypes.func.isRequired
 };
 

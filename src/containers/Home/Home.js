@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { StatusBar, Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -7,7 +7,12 @@ import HomeComponent, {
   SCAN_QR_CODE_TYPE,
   TOP_UP_PHONE_TYPE,
   RADA_SERVICE_TYPE,
+  VOUCHER_SERVICE_TYPE,
   BOOKING_30DAY_TYPE,
+  MY_VOUCHER_SERVICE_TYPE,
+  MY_ADDRESS_SERVICE_TYPE,
+  NEWS_SERVICE_TYPE,
+  ORDERS_SERVICE_TYPE,
   ACCUMULATE_POINTS_TYPE,
   MY_VOUCHER_TYPE,
   TRANSACTION_TYPE
@@ -25,7 +30,8 @@ class Home extends Component {
       newses: null,
       notices: null,
       campaigns: null,
-      promotions: null
+      promotions: null,
+      services: []
     };
   }
 
@@ -48,6 +54,7 @@ class Home extends Component {
           sites: response.data.sites,
           newses: response.data.newses,
           notices: response.data.notices,
+          services: response.data.services,
           campaigns: response.data.campaigns,
           promotions: response.data.promotions
         });
@@ -68,7 +75,12 @@ class Home extends Component {
     setTimeout(this.getHomeDataFromApi, oneSecond);
   };
 
-  handlePressedSurplusNext = () => {};
+  handlePressedSurplusNext = () => {
+    Actions.vnd_wallet({
+      title: store.user_info.default_wallet.name,
+      wallet: store.user_info.default_wallet
+    });
+  };
 
   handlePromotionPressed(item) {
     Actions.notify_item({
@@ -215,16 +227,23 @@ class Home extends Component {
 
   handleShowAllVouchers = () => {};
 
-  handleActionPress = action => {
+  handlePressAction = action => {
     switch (action.type) {
       case ACCUMULATE_POINTS_TYPE:
-        Actions.push(appConfig.routes.qrBarCode);
+        Actions.push(appConfig.routes.qrBarCode, {
+          title: 'Mã tài khoản'
+        });
         break;
       case MY_VOUCHER_TYPE:
-        Actions.push(appConfig.routes.mainVoucher);
+        Actions.push(appConfig.routes.myVoucher, {
+          title: 'Voucher của tôi'
+        });
         break;
       case TRANSACTION_TYPE:
-        //
+        Actions.vnd_wallet({
+          title: store.user_info.default_wallet.name,
+          wallet: store.user_info.default_wallet
+        });
         break;
     }
   };
@@ -244,6 +263,9 @@ class Home extends Component {
           service_id: service.id
         });
         break;
+      case VOUCHER_SERVICE_TYPE:
+        Actions.push(appConfig.routes.mainVoucher);
+        break;
       case RADA_SERVICE_TYPE:
         Actions.push('tickidRada', {
           service_type: service.type,
@@ -255,7 +277,25 @@ class Home extends Component {
         });
         break;
       case BOOKING_30DAY_TYPE:
-        //
+        Alert.alert(
+          'Thông báo',
+          'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
+          [{ text: 'Đồng ý' }]
+        );
+        break;
+      case MY_VOUCHER_SERVICE_TYPE:
+        Actions.push(appConfig.routes.myVoucher);
+        break;
+      case MY_ADDRESS_SERVICE_TYPE:
+        Actions.push(appConfig.routes.myAddress, {
+          from_page: 'account'
+        });
+        break;
+      case NEWS_SERVICE_TYPE:
+        Actions.jump(appConfig.routes.newsTab);
+        break;
+      case ORDERS_SERVICE_TYPE:
+        Actions.jump(appConfig.routes.ordersTab);
         break;
     }
   };
@@ -266,17 +306,64 @@ class Home extends Component {
     Actions.push(appConfig.routes.mainVoucher);
   };
 
-  handleShowAllNews = () => {};
+  handleShowAllNews = () => {
+    Actions._main_notify();
+  };
 
-  handlePressSiteItem = site => {};
+  handlePressSiteItem = site => {
+    action(() => {
+      store.setStoreData(site);
+      Actions.push(appConfig.routes.store, {
+        title: site.name
+        // goCategory: category_id
+      });
+    })();
+  };
 
   handlePressCampaignItem = campaign => {
     Actions.push(appConfig.routes.voucherDetail, {
-      title: campaign.title
+      title: campaign.title,
+      campaignId: campaign.id
     });
   };
 
-  handlePressNewItem = newItem => {};
+  handlePressNewItem = item => {
+    Actions.notify_item({
+      title: item.title,
+      data: item
+    });
+  };
+
+  /**
+   * @TODO: Need a package to management status bar
+   */
+  handleBodyScrollTop = event => {
+    const yOffset = event.nativeEvent.contentOffset.y;
+    if (yOffset > 68) {
+      if (this.statusBarStyle !== 'dark') {
+        this.statusBarStyle = 'dark';
+
+        StatusBar.setBarStyle('dark-content', true);
+      }
+    } else {
+      if (this.statusBarStyle !== 'light') {
+        this.statusBarStyle = 'light';
+
+        StatusBar.setBarStyle('light-content', true);
+      }
+    }
+  };
+
+  handlePressButtonChat(item) {
+    action(() => {
+      store.setStoreData(item);
+    })();
+
+    Actions.chat({
+      tel: item.tel,
+      title: item.name
+    });
+  }
 
   render() {
     return (
@@ -284,9 +371,13 @@ class Home extends Component {
         sites={this.state.sites}
         newses={this.state.newses}
         notices={this.state.notices}
+        services={this.state.services}
+        app={this.state.site}
+        userInfo={store.user_info}
+        notify={store.notify}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
-        onActionPress={this.handleActionPress}
+        onActionPress={this.handlePressAction}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
         onVoucherPressed={this.handleVoucherPressed}
@@ -299,6 +390,8 @@ class Home extends Component {
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
+        onPressButtonChat={this.handlePressButtonChat}
+        onBodyScrollTop={this.handleBodyScrollTop}
         hasPromotion={this.hasPromotion}
         refreshing={this.state.refreshing}
       />

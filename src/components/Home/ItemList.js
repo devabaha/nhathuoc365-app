@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -7,14 +5,12 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
-  Image,
   Alert
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
+import appConfig from 'app-config';
 
 @observer
 export default class ItemList extends Component {
@@ -30,7 +26,7 @@ export default class ItemList extends Component {
         });
       }
 
-      Actions.stores({
+      Actions.push(appConfig.routes.store, {
         title: item.name
       });
     })();
@@ -43,7 +39,7 @@ export default class ItemList extends Component {
 
       Actions.store_orders({
         goStores: () => {
-          Actions.stores({
+          Actions.push(appConfig.routes.store, {
             title: item.name,
             type: ActionConst.REPLACE
           });

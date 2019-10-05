@@ -4,7 +4,7 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 
 // API URL
 // global.MY_FOOD_API = 'https://abaha.net/';
-// global.MY_FOOD_API = 'http://192.168.4.112:8000/';
+// global.MY_FOOD_API = 'http://localhost:8000/';
 global.MY_FOOD_API = 'https://apiapp.tickid.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
 global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
@@ -46,8 +46,9 @@ global.KEY_BOARD_HIDE = 'keyboardWillHide';
 // Apps
 global.APP_NAME = 'TICKID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
 global.APP_NAME_SHOW = 'TickID';
+//appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
-global.DELAY_UPDATE_NOTICE = 5000;
+global.DELAY_UPDATE_NOTICE = 3000;
 
 global.GA_ID = 'UA-143334124-2';
 

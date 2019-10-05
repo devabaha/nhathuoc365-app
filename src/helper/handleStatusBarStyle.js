@@ -1,12 +1,24 @@
-import appConfig from 'app-config';
+import appConfig from '../config';
 import { StatusBar } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
 export default function handleStatusBarStyle(prevState, newState, action) {
+  if (appConfig.device.isAndroid) return;
+
   const darkStatusBarScenes = [
     appConfig.routes.qrBarCode,
+
     appConfig.routes.myVoucher,
-    appConfig.routes.voucherDetail
+    appConfig.routes.voucherDetail,
+    appConfig.routes.voucherScanner,
+    appConfig.routes.alreadyVoucher,
+    appConfig.routes.voucherShowBarcode,
+    appConfig.routes.voucherEnterCodeManual,
+
+    appConfig.routes.tickidRada,
+    appConfig.routes.tickidRadaListService,
+    appConfig.routes.tickidRadaServiceDetail,
+    appConfig.routes.tickidRadaBooking
   ];
   switch (action.type) {
     case 'Navigation/PUSH':

@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -9,14 +7,11 @@ import {
   FlatList,
   TouchableHighlight
 } from 'react-native';
-
-// librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../store/Store';
 
 @observer
-export default class SelectionList extends Component {
+class SelectionList extends Component {
   render() {
     var { data, containerStyle } = this.props;
 
@@ -25,7 +20,7 @@ export default class SelectionList extends Component {
         ItemSeparatorComponent={() => <View style={styles.separator}></View>}
         data={data}
         style={[styles.profile_list_opt, containerStyle]}
-        renderItem={({ item, index }) => {
+        renderItem={({ item }) => {
           if (item.isHidden) {
             return null;
           }
@@ -162,3 +157,5 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+export default SelectionList;

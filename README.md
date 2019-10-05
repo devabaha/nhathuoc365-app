@@ -26,6 +26,53 @@ Build:
 4. CodePush
 5. FBAK
 6. API Key và tên
+# README # Vlink
+1. Chuẩn bị Logo
+2. 
+Build Release
+https://facebook.github.io/react-native/docs/signed-apk-android.html
+keytool -genkey -v -keystore id.tick.keystore -alias id.tick -keyalg RSA -keysize 2048 -validity 10000
+
+file gradle.properties
+MYAPP_RELEASE_STORE_FILE=vlink.keystore
+MYAPP_RELEASE_KEY_ALIAS=vn.vlink
+MYAPP_RELEASE_STORE_PASSWORD=123456
+MYAPP_RELEASE_KEY_PASSWORD=123456
+
+app/build.gradle
+				storeFile file(MYAPP_RELEASE_STORE_FILE)
+                storePassword MYAPP_RELEASE_STORE_PASSWORD
+                keyAlias MYAPP_RELEASE_KEY_ALIAS
+                keyPassword MYAPP_RELEASE_KEY_PASSWORD
+
+Build: cần xóa trống trong thư mục app/build trước 
+./gradlew clean
+./gradlew assembleRelease
+
+
+# README #
+yarn install
+react-native run-ios
+Run
+adb reverse tcp:8081 tcp:8081
+
+
+
+Android: 
+Build Release
+https://facebook.github.io/react-native/docs/signed-apk-android.html
+keytool -genkey -v -keystore com.phongvenhanvan.keystore -alias com.phongvenhanvan -keyalg RSA -keysize 2048 -validity 10000
+
+
+
+
+./gradlew clean
+./gradlew assembleRelease
+
+Build:
+1. Onesignal
+2. GA
+3. Firebase
 
 Các bước cho Android:
 yarn install
@@ -38,8 +85,17 @@ react-native run-android
    Thay Configuration'compile' is obsolete and has been replaced with 'implementation' and 'api'.
 và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
 
-4. Lỗi AndroidX: Chạy lệnh: npx jetify ở thư mục source
+4. Lỗi AndroidX: Chạy lệnh: 
+   npx jetify 
+5. ở thư mục source
 
 Gen khóa phat hanh
-keytool -exportcert -alias vn.tickid -keystore android/app/vn.tickid.keystore | openssl sha1 -binary | openssl base64
+keytool -exportcert -alias com.phongvenhanvan -keystore android/app/com.phongvenhanvan.keystore | openssl sha1 -binary | openssl base64
 
+1. Sinh anh splash va logo
+https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
+yo rn-toolbox:assets --icon icon.jpg --splash splash.png --store
+yo rn-toolbox:assets --icon icon.png --android
+yo rn-toolbox:assets --android-notification-icon icon.png
+1. Onesignal: thay onesignal id vao app.js
+2. 

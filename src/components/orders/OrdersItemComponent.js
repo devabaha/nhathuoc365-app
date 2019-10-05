@@ -1,20 +1,10 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableHighlight,
-  Alert
-} from 'react-native';
-
-//library
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
+import appConfig from 'app-config';
 
 @observer
 export default class OrdersItemComponent extends Component {
@@ -58,7 +48,7 @@ export default class OrdersItemComponent extends Component {
     ) {
       Actions.pop();
     } else {
-      Actions.stores({
+      Actions.push(appConfig.routes.store, {
         title: item.shop_name,
         orderIsPop: store.parentTab == '_orders' ? true : false
       });
@@ -84,6 +74,7 @@ export default class OrdersItemComponent extends Component {
 
   _goOrdersItem(item) {
     if (this.props.disableGoDetail) return;
+    store.setStoreData(item.site);
     Actions.orders_item({
       data: item,
       title: `#${item.cart_code}`,
@@ -92,6 +83,7 @@ export default class OrdersItemComponent extends Component {
   }
 
   _goStoreOrders(item) {
+    store.setStoreData(item.site);
     Actions.store_orders({
       store_id: item.site_id,
       title: item.shop_name,

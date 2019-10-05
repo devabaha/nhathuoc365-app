@@ -18,24 +18,19 @@ function PrimaryActions(props) {
   return (
     <View style={styles.container}>
       <View style={styles.actionsWrapper}>
-        <View style={styles.walletInfoWrapper}>
-          <Text style={styles.walletNameLabel}>Ví tích điểm</Text>
-          <Text style={styles.walletName}> Tick</Text>
+        <Button onPress={() => props.onSurplusNext()}>
+          <View style={styles.walletInfoWrapper}>
+            <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+            <Text style={styles.walletName}> Tick</Text>
 
-          <View style={styles.walletLabelRight}>
-            <Text style={styles.surplus}>{props.surplus}</Text>
-          </View>
-
-          <TouchableHighlight
-            onPress={props.onSurplusNext}
-            underlayColor="transparent"
-          >
+            <View style={styles.walletLabelRight}>
+              <Text style={styles.surplus}>{props.surplus}</Text>
+            </View>
             <View style={styles.iconNextWrapper}>
               <Image style={styles.iconNext} source={imageIconNext} />
             </View>
-          </TouchableHighlight>
-        </View>
-
+          </View>
+        </Button>
         <View style={styles.walletAction}>
           {PRIMARY_ACTIONS.map(action => (
             <Button

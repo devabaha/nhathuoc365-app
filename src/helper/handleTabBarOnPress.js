@@ -6,7 +6,9 @@ export default function handleTabBarOnPress(props) {
   // const isTouched = () => touchedTabs[props.navigation.state.key];
   switch (props.navigation.state.key) {
     case appConfig.routes.scanQrCodeTab:
-      Actions.push(appConfig.routes.qrBarCode);
+      Actions.push(appConfig.routes.qrBarCode, {
+        title: 'Mã tài khoản'
+      });
       break;
     default:
       props.defaultHandler();

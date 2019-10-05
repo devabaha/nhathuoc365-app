@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import './lib/Constant';
 import './lib/Helper';
-
 import { Provider } from 'react-redux';
-import appConfig from 'app-config';
+import appConfig from './config';
 import store from 'app-store';
 import reduxStore from './reduxStore';
-import { StyleSheet, StatusBar, Linking, Platform } from 'react-native';
-// library
+import { StyleSheet, Platform } from 'react-native';
 import {
   Scene,
   Router,
@@ -19,23 +17,23 @@ import {
   Modal,
   Lightbox
 } from 'react-native-router-flux';
-import DeepLinking from 'react-native-deep-linking';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
-import { Loading as LoadingOverlay } from 'app-packages/tickid-loading';
+import FlashMessage from 'react-native-flash-message';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
-import TickIDStatusBar from 'app-packages/tickid-status-bar';
-
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
+import LaunchContainer from './containers/Launch';
 import VoucherContainer from './containers/Voucher';
 import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
+import VoucherScanScreenContainer from './containers/VoucherScanScreen';
+import VoucherShowBarcodeContainer from './containers/VoucherShowBarcode';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
@@ -92,21 +90,21 @@ import {
 } from '@tickid/tickid-rada';
 import {
   initialize as initializeVoucherModule,
-  SelectProvince
+  SelectProvince as VoucherSelectProvinceContainer,
+  AlreadyVoucher as AlreadyVoucherContainer,
+  EnterCodeManual as VoucherEnterCodeManualContainer
 } from './packages/tickid-voucher';
-import { MessageBarContainer } from '@tickid/tickid-rn-message-bar';
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
-import env from 'react-native-config';
 
 /**
  * Initializes config for Voucher module
  */
 initializeVoucherModule({
   private: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: appConfig.voucherModule.appKey,
+    secretKey: appConfig.voucherModule.secretKey
   },
   device: {
     appVersion: DeviceInfo.getVersion(),
@@ -115,6 +113,9 @@ initializeVoucherModule({
     os: Platform.OS,
     osVersion: DeviceInfo.getSystemVersion(),
     store: ''
+  },
+  rest: {
+    endpoint: () => MY_FOOD_API
   }
 });
 
@@ -130,100 +131,31 @@ initializeRadaModule({
 });
 
 class App extends Component {
-  constructor(properties) {
-    super(properties);
+  constructor(props) {
+    super(props);
 
-    this.state = {
-      loading: true
-    };
-  }
-
-  componentWillUnmount() {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
-    OneSignal.removeEventListener('ids', this.handleAddPushToken);
+    this.state = {};
   }
 
   componentDidMount() {
-    StatusBar.setBarStyle('light-content', true);
+    this.handleAddListenerOneSignal();
+  }
 
-    OneSignal.init('ea4623dc-3e0a-4390-b46d-0408a330ea63');
+  componentWillUnmount() {
+    this.handleRemoveListenerOneSignal();
+  }
+
+  handleAddListenerOneSignal = () => {
+    OneSignal.init(appConfig.oneSignal.appKey);
     OneSignal.addEventListener('opened', this.handleOpenningNotification);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
     OneSignal.inFocusDisplaying(2);
+  };
 
-    // deep link register
-    DeepLinking.addScheme('macccacaapp://');
-    Linking.addEventListener('url', this.handleURL);
-
-    Linking.getInitialURL()
-      .then(url => {
-        if (url) {
-          // do login
-          this.handleLogin(() => this.handleURL({ url }));
-        } else {
-          // do login
-          this.handleLogin();
-        }
-      })
-      .catch(err => {
-        // do login
-        this.handleLogin();
-        console.error('An error occurred', err);
-      });
-  }
-
-  // handleURL = ({ url }) => {
-  //   if (url) {
-  //     const route = url.replace(/.*?:\/\//g, '');
-  //     const routeName = route.split('/')[0];
-  //     const id = route.split('/')[1];
-
-  //     switch (routeName) {
-  //       case 'code':
-  //         //
-  //         break;
-  //       case 'store':
-  //         //
-  //         break;
-  //       case 'item':
-  //         //
-  //         break;
-  //       default:
-  //     }
-  //   }
-  // };
-
-  /**
-   * Handling login when opening the application
-   */
-  async handleLogin() {
-    try {
-      const response = await APIHandler.user_login({
-        fb_access_token: ''
-      });
-      if (response && response.status == STATUS_SUCCESS) {
-        store.setUserInfo(response.data);
-        Actions.primaryTabbar({
-          type: ActionConst.RESET
-        });
-      } else {
-        Toast.show(response.message);
-      }
-      if (response && response.status == STATUS_FILL_INFO_USER) {
-        store.setUserInfo(response.data);
-        Actions.op_register({
-          title: 'Đăng ký thông tin',
-          name_props: response.data.name
-        });
-      }
-      if (response && response.status == STATUS_UNDEFINE_USER) {
-        store.setUserInfo(response.data);
-        Actions.login();
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+  handleRemoveListenerOneSignal = () => {
+    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
+    OneSignal.removeEventListener('ids', this.handleAddPushToken);
+  };
 
   handleOpenningNotification(openResult) {
     const data = openResult.notification.payload.additionalData;
@@ -336,16 +268,21 @@ class App extends Component {
               hideNavBar
               transitionConfig={getTransitionConfig}
             >
-              <Lightbox key="lightbox">
+              <Lightbox key={appConfig.routes.sceneWrapper}>
                 <Scene
                   key="root"
                   titleStyle={{ alignSelf: 'center' }}
                   headerLayoutPreset="center"
                   hideNavBar
                 >
+                  <Scene
+                    key={appConfig.routes.launch}
+                    component={LaunchContainer}
+                    initial
+                  />
                   <Tabs
-                    key="primaryTabbar"
                     showLabel={false}
+                    key={appConfig.routes.primaryTabbar}
                     tabBarStyle={styles.tabBarStyle}
                     activeBackgroundColor="white"
                     inactiveBackgroundColor="white"
@@ -372,7 +309,7 @@ class App extends Component {
                      ************************ Tab 2 ************************
                      */}
                     <Stack
-                      key="myTab2"
+                      key={appConfig.routes.newsTab}
                       icon={TabIcon}
                       iconLabel="Tin tức"
                       iconName="notifications"
@@ -380,7 +317,7 @@ class App extends Component {
                       notifyKey="new_totals"
                     >
                       <Scene
-                        key="_main_notify"
+                        key={`${appConfig.routes.newsTab}_1`}
                         title="Tin tức"
                         component={Notify}
                       />
@@ -399,14 +336,15 @@ class App extends Component {
                      ************************ Tab 3 ************************
                      */}
                     <Stack
-                      key="myTab4"
+                      key={appConfig.routes.ordersTab}
                       icon={TabIcon}
+                      iconSize={24}
                       iconLabel="Đơn hàng"
                       iconName="shopping-cart"
-                      iconSize={24}
+                      notifyKey="notify_cart"
                     >
                       <Scene
-                        key="_orders"
+                        key={`${appConfig.routes.ordersTab}_1`}
                         title="Đơn hàng"
                         component={Orders}
                       />
@@ -474,9 +412,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="address">
+                  <Stack key={appConfig.routes.myAddress}>
                     <Scene
-                      key="address_1"
+                      key={`${appConfig.routes.myAddress}_1`}
                       title="Địa chỉ"
                       component={Address}
                       {...navBarConfig}
@@ -528,7 +466,6 @@ class App extends Component {
                     <Scene
                       key="login_1"
                       hideNavBar
-                      title=""
                       component={Login}
                       {...navBarConfig}
                     />
@@ -594,9 +531,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="stores">
+                  <Stack key={appConfig.routes.store}>
                     <Scene
-                      key="stores_1"
+                      key={`${appConfig.routes.store}_1`}
                       title="Cửa hàng"
                       component={Stores}
                       {...navBarConfig}
@@ -639,7 +576,6 @@ class App extends Component {
                       key="item_image_viewer_1"
                       direction="vertical"
                       hideNavBar
-                      title=""
                       component={ItemImageViewer}
                       {...navBarConfig}
                       back
@@ -652,7 +588,6 @@ class App extends Component {
                       panHandlers={null}
                       direction="vertical"
                       hideNavBar
-                      title=""
                       component={Rating}
                       {...navBarConfig}
                       back
@@ -762,7 +697,6 @@ class App extends Component {
                   <Stack key="store_orders">
                     <Scene
                       key="store_orders_1"
-                      title=""
                       component={StoreOrders}
                       {...navBarConfig}
                       back
@@ -772,7 +706,6 @@ class App extends Component {
                   <Stack key="chat">
                     <Scene
                       key="chat_1"
-                      title=""
                       component={Chat}
                       {...navBarConfig}
                       back
@@ -782,7 +715,6 @@ class App extends Component {
                   <Stack key="webview">
                     <Scene
                       key="webview_1"
-                      title=""
                       component={WebView}
                       {...navBarConfig}
                       back
@@ -792,7 +724,6 @@ class App extends Component {
                   <Stack key="_add_ref">
                     <Scene
                       key="_add_ref_1"
-                      title=""
                       component={AddRef}
                       {...navBarConfig}
                       back
@@ -802,7 +733,6 @@ class App extends Component {
                   <Stack key="choose_location">
                     <Scene
                       key="choose_location_1"
-                      title=""
                       component={ChooseLocation}
                       {...navBarConfig}
                       back
@@ -812,7 +742,6 @@ class App extends Component {
                   <Stack key="vnd_wallet">
                     <Scene
                       key="vnd_wallet_1"
-                      title=""
                       component={VndWallet}
                       {...navBarConfig}
                       back
@@ -822,7 +751,6 @@ class App extends Component {
                   <Stack key="pay_wallet">
                     <Scene
                       key="pay_wallet_1"
-                      title=""
                       component={PayWallet}
                       {...navBarConfig}
                       back
@@ -832,7 +760,6 @@ class App extends Component {
                   <Stack key="pay_account">
                     <Scene
                       key="pay_account_1"
-                      title=""
                       component={PayAccount}
                       {...navBarConfig}
                       back
@@ -842,7 +769,6 @@ class App extends Component {
                   <Stack key="affiliate">
                     <Scene
                       key="affiliate_1"
-                      title=""
                       component={Affiliate}
                       {...navBarConfig}
                       back
@@ -929,7 +855,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRada">
+                  <Stack key={appConfig.routes.tickidRada}>
                     <Scene
                       key="tickidRada1"
                       component={Category}
@@ -938,7 +864,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRadaListService">
+                  <Stack key={appConfig.routes.tickidRadaListService}>
                     <Scene
                       key="tickidRadaListService1"
                       component={ListService}
@@ -947,7 +873,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRadaServiceDetail">
+                  <Stack key={appConfig.routes.tickidRadaServiceDetail}>
                     <Scene
                       key="tickidRadaServiceDetail1"
                       component={ServiceDetail}
@@ -956,7 +882,7 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="tickidRadaBooking">
+                  <Stack key={appConfig.routes.tickidRadaBooking}>
                     <Scene
                       key="tickidRadaBooking1"
                       component={Booking}
@@ -974,29 +900,61 @@ class App extends Component {
                       back
                     />
                   </Stack>
+
+                  {/* ================ SCENE VOUCHER SCAN ================ */}
+                  <Stack key={appConfig.routes.voucherScanner}>
+                    <Scene
+                      key={`${appConfig.routes.voucherScanner}_1`}
+                      title="Quét mã QR"
+                      component={VoucherScanScreenContainer}
+                      {...whiteNavBarConfig}
+                      back
+                    />
+                  </Stack>
                 </Scene>
 
+                {/* ================ LIGHT BOX SELECT PROVINCE ================ */}
                 <Stack
                   key={appConfig.routes.voucherSelectProvince}
-                  component={SelectProvince}
+                  component={VoucherSelectProvinceContainer}
+                />
+
+                {/* ================ LIGHT BOX ALREADY VOUCHER ================ */}
+                <Stack
+                  key={appConfig.routes.alreadyVoucher}
+                  component={AlreadyVoucherContainer}
+                />
+
+                {/* ================ LIGHT BOX ENTER CODE MANUAL ================ */}
+                <Stack
+                  key={appConfig.routes.voucherEnterCodeManual}
+                  component={VoucherEnterCodeManualContainer}
                 />
               </Lightbox>
 
-              {/* ================ MODAL ZONE ================ */}
+              {/* ================ MODAL SHOW QR/BAR CODE ================ */}
               <Stack key={appConfig.routes.qrBarCode}>
                 <Scene
                   key={`${appConfig.routes.qrBarCode}_1`}
-                  title="Mã tài khoản"
                   component={QRBarCode}
+                  renderBackButton={CloseButton}
+                  back
+                />
+              </Stack>
+
+              {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
+              <Stack key={appConfig.routes.voucherShowBarcode}>
+                <Scene
+                  key={`${appConfig.routes.voucherShowBarcode}_1`}
+                  title="Mã voucher"
+                  component={VoucherShowBarcodeContainer}
                   renderBackButton={CloseButton}
                   back
                 />
               </Stack>
             </Modal>
 
-            <Scene component={LoadingOverlay} />
-            <Scene component={TickIDStatusBar} />
-            <Scene component={MessageBarContainer} />
+            <Scene component={FlashMessage} />
           </Overlay>
         </Router>
       </Provider>

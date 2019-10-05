@@ -22,7 +22,8 @@ import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
-import { CheckBox } from '../../lib/react-native-elements';
+import { CheckBox } from 'react-native-elements';
+import appConfig from 'app-config';
 
 @observer
 export default class Confirm extends Component {
@@ -144,7 +145,6 @@ export default class Confirm extends Component {
         'site_cart_by_id',
         this._getOrdersItem.bind(this, site_id, page_id)
       );
-    } finally {
     }
   }
 
@@ -318,7 +318,7 @@ export default class Confirm extends Component {
       });
     };
 
-    Actions.address({
+    Actions.push(appConfig.routes.myAddress, {
       type: ActionConst.REPLACE,
       onBack
     });
@@ -648,7 +648,7 @@ export default class Confirm extends Component {
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() =>
-                Actions.qr_bar_code({
+                Actions.push(appConfig.routes.qrBarCode, {
                   title: 'Mã đơn hàng',
                   address: cart_data.cart_code,
                   content: 'Dùng QRCode mã đơn hàng để xem thông tin'

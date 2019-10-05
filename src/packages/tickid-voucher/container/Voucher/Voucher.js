@@ -11,8 +11,10 @@ class Voucher extends BaseContainer {
 
     this.state = {
       refreshing: false,
-      provinceSelected: { id: 2, name: 'Hồ Chí Minh' },
-      campaigns: []
+      showLoading: false,
+      provinceSelected: '',
+      campaigns: [],
+      newVoucherNum: 0
     };
   }
 
@@ -28,45 +30,70 @@ class Voucher extends BaseContainer {
     this.getListCampaigns();
   }
 
-  getListCampaigns = async () => {
+  getListCampaigns = async (city = '', showLoading = true) => {
+    if (showLoading) {
+      this.setState({ showLoading: true });
+    }
+
     try {
-      const response = await internalFetch(config.rest.listCampaigns());
+      const options = {
+        method: 'POST'
+      };
+      if (city) {
+        options.body = { city };
+      }
+      const response = await internalFetch(
+        config.rest.listCampaigns(),
+        options
+      );
       if (response.status === config.httpCode.success) {
         this.setState({
           campaigns: response.data.campaigns.map(
             campaign => new CampaignEntity(campaign)
-          )
+          ),
+          newVoucherNum: response.data.new_voucher_num,
+          provinceSelected: response.data.city
         });
       }
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({ refreshing: false });
+      this.setState({
+        refreshing: false,
+        showLoading: false
+      });
     }
   };
 
   handleOnRefresh = () => {
     this.setState({ refreshing: true });
-    setTimeout(this.getListCampaigns, 1000);
+
+    setTimeout(() => {
+      const showLoading = false;
+      this.getListCampaigns(this.state.provinceSelected, showLoading);
+    }, 1000);
   };
 
   handleSetProvince = provinceSelected => {
     this.setState({ provinceSelected });
+    this.getListCampaigns(provinceSelected);
   };
 
   render() {
     return (
       <VoucherComponent
+        refreshing={this.state.refreshing}
+        showLoading={this.state.showLoading}
+        provinceSelected={this.state.provinceSelected}
+        campaigns={this.state.campaigns}
+        newVoucherNum={this.state.newVoucherNum}
         onPressVoucher={this.handlePressVoucher}
         onPressMyVoucher={this.handlePressMyVoucher}
+        onRefresh={this.handleOnRefresh}
         onPressSelectProvince={this.handlePressSelectProvince.bind(this, {
           setProvince: this.handleSetProvince,
           provinceSelected: this.state.provinceSelected
         })}
-        onRefresh={this.handleOnRefresh}
-        refreshing={this.state.refreshing}
-        provinceSelected={this.state.provinceSelected}
-        campaigns={this.state.campaigns}
       />
     );
   }

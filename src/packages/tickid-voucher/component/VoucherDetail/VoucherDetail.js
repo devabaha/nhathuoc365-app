@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import {
   View,
   Text,
-  StyleSheet,
   Image,
   ScrollView,
   Dimensions,
@@ -13,9 +12,12 @@ import HTML from 'react-native-render-html';
 import { Tabs, Tab } from '@tickid/react-native-tabs';
 import { Accordion, Panel } from '@tickid/react-native-accordion';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import LoadingComponent from '@tickid/tickid-rn-loading';
 import CampaignEntity from '../../entity/CampaignEntity';
+import SiteEntity from '../../entity/SiteEntity';
 import Button from 'react-native-button';
 import AddressItem from '../AddressItem';
+import styles from './styles';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -31,7 +33,9 @@ class VoucherDetail extends Component {
     onPressCampaignProvider: PropTypes.func,
     refreshing: PropTypes.bool,
     canUseNow: PropTypes.bool,
+    showLoading: PropTypes.bool,
     campaign: PropTypes.instanceOf(CampaignEntity),
+    site: PropTypes.instanceOf(SiteEntity),
     addresses: PropTypes.object
   };
 
@@ -44,8 +48,10 @@ class VoucherDetail extends Component {
     onPressCampaignProvider: defaultListener,
     refreshing: false,
     canUseNow: false,
+    showLoading: false,
     campaign: undefined,
-    addresses: undefined
+    addresses: undefined,
+    site: undefined
   };
 
   get totalPlaces() {
@@ -63,23 +69,30 @@ class VoucherDetail extends Component {
         showChevron
         expandMultiple
         containerStyle={styles.addressAccordion}
-        panelContainerStyle={styles.addressAccordionPanel}
       >
         {Object.keys(this.props.addresses).map(provinceName => {
           const places = this.props.addresses[provinceName];
           return (
-            <Panel title={provinceName} key={provinceName}>
+            <Panel
+              title={`${provinceName} (${places.length})`}
+              key={provinceName}
+            >
               {places.map(place => (
                 <AddressItem
                   key={place.data.id}
                   title={place.data.name}
                   address={place.data.address}
                   phoneNumber={place.data.tel}
+                  latitude={place.data.latitude}
+                  longitude={place.data.longitude}
                   onPressPhoneNumber={() =>
                     this.props.onPressAddressPhoneNumber(place.data.tel)
                   }
                   onPressLocation={() =>
-                    this.props.onPressAddressLocation(place.data.tel)
+                    this.props.onPressAddressLocation({
+                      latitude: place.data.latitude,
+                      longitude: place.data.longitude
+                    })
                   }
                 />
               ))}
@@ -94,6 +107,8 @@ class VoucherDetail extends Component {
     const campaign = this.props.campaign || { data: {} };
     return (
       <Fragment>
+        {this.props.showLoading && <LoadingComponent loading />}
+
         <ScrollView
           style={styles.scrollViewWrapper}
           refreshControl={
@@ -122,8 +137,7 @@ class VoucherDetail extends Component {
               <View style={styles.exprireWrapper}>
                 <View style={styles.exprireBox}>
                   <Text style={styles.exprire}>
-                    <Text>Dùng đến </Text>
-                    <Text>{campaign.data.expire_date}</Text>
+                    {campaign.data.expire_date}
                   </Text>
                 </View>
               </View>
@@ -132,7 +146,12 @@ class VoucherDetail extends Component {
             <View style={styles.contentWrapper}>
               <Tabs>
                 {/* INFOMATION TAB */}
-                <Tab heading="Thông tin">
+                <Tab
+                  heading="Thông tin"
+                  containerStyle={{
+                    paddingBottom: 12
+                  }}
+                >
                   <HTML
                     html={campaign.data.content || '<span></span>'}
                     imagesMaxWidth={screenWidth - 32}
@@ -153,28 +172,34 @@ class VoucherDetail extends Component {
               </Tabs>
             </View>
 
-            <View style={styles.providerWrapper}>
-              <Button onPress={this.props.onPressCampaignProvider}>
-                <View style={styles.providerBody}>
-                  <Image
-                    style={styles.providerImage}
-                    resizeMode="cover"
-                    source={{ uri: this.props.image }}
-                  />
+            {this.props.site && (
+              <View style={styles.providerWrapper}>
+                <Button
+                  onPress={() =>
+                    this.props.onPressCampaignProvider(this.props.site)
+                  }
+                >
+                  <View style={styles.providerBody}>
+                    <Image
+                      style={styles.providerImage}
+                      resizeMode="cover"
+                      source={{ uri: this.props.site.data.logo_url }}
+                    />
 
-                  <View style={styles.providerInfo}>
-                    <Text style={styles.providerBy}>Cung cấp bởi</Text>
-                    <Text style={styles.providerName}>
-                      Điện Máy Xanh HighTech
-                    </Text>
-                  </View>
+                    <View style={styles.providerInfo}>
+                      <Text style={styles.providerBy}>Cung cấp bởi</Text>
+                      <Text style={styles.providerName}>
+                        {this.props.site.data.name}
+                      </Text>
+                    </View>
 
-                  <View style={styles.chevronRightWrapper}>
-                    <Icon name="chevron-right" size={20} color="#999" />
+                    <View style={styles.chevronRightWrapper}>
+                      <Icon name="chevron-right" size={20} color="#999" />
+                    </View>
                   </View>
-                </View>
-              </Button>
-            </View>
+                </Button>
+              </View>
+            )}
           </View>
         </ScrollView>
 
@@ -197,123 +222,5 @@ class VoucherDetail extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  scrollViewWrapper: {
-    backgroundColor: '#f1f1f1'
-  },
-  container: {
-    flex: 1
-  },
-  row: {
-    paddingHorizontal: 16
-  },
-  topImageWrapper: {
-    position: 'relative',
-    zIndex: 1
-  },
-  topImage: {
-    height: 180
-  },
-  avatar: {
-    position: 'absolute',
-    top: 138,
-    left: screenWidth / 2 - 29,
-    width: 58,
-    height: 58,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#fff'
-  },
-  headerWrapper: {
-    backgroundColor: '#ffffff',
-    paddingBottom: 18
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#222',
-    marginTop: 24
-  },
-  exprireWrapper: {
-    alignItems: 'flex-start'
-  },
-  exprireBox: {
-    backgroundColor: '#00bc3c',
-    borderRadius: 4,
-    marginTop: 14
-  },
-  exprire: {
-    color: '#fff',
-    fontSize: 14,
-    fontWeight: '400',
-    paddingHorizontal: 8,
-    paddingVertical: 5
-  },
-  contentWrapper: {
-    marginTop: 8,
-    marginBottom: 8
-  },
-  getVoucherWrapper: {
-    backgroundColor: '#fff',
-    height: 62,
-    paddingHorizontal: 16,
-    justifyContent: 'center'
-  },
-  getVoucherBtn: {
-    backgroundColor: '#812384',
-    borderRadius: 8,
-    paddingVertical: 14
-  },
-  getVoucherTitle: {
-    color: '#fff',
-    textTransform: 'uppercase',
-    fontWeight: '600',
-    fontSize: 16
-  },
-  providerWrapper: {
-    marginBottom: 8
-  },
-  providerBody: {
-    backgroundColor: '#fff',
-    padding: 16,
-    flexDirection: 'row'
-  },
-  providerImage: {
-    width: 50,
-    borderRadius: 5
-  },
-  providerInfo: {
-    flex: 1,
-    minHeight: 50,
-    marginLeft: 16,
-    justifyContent: 'center'
-  },
-  providerBy: {
-    fontSize: 14,
-    color: '#666'
-  },
-  providerName: {
-    marginTop: 6,
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333'
-  },
-  chevronRightWrapper: {
-    justifyContent: 'center'
-  },
-  addressWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-  },
-  infoSubHeading: {
-    fontSize: 14,
-    color: '#666'
-  },
-  addressAccordion: {
-    marginTop: 12
-  },
-  addressAccordionPanel: {}
-});
 
 export default VoucherDetail;

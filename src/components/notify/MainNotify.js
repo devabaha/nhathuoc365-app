@@ -8,15 +8,16 @@ import {
   RefreshControl,
   ScrollView
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import store from '../../store/Store';
 import { reaction } from 'mobx';
+import appConfig from 'app-config';
+import store from '../../store/Store';
 import SelectionList from '../SelectionList';
+import { Actions } from 'react-native-router-flux';
 import NotifyItemComponent from './NotifyItemComponent';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 @observer
-export default class MainNotify extends Component {
+class MainNotify extends Component {
   constructor(props) {
     super(props);
 
@@ -236,7 +237,7 @@ export default class MainNotify extends Component {
 
                 <TouchableHighlight
                   onPress={() => {
-                    Actions._home({ type: ActionConst.REFRESH });
+                    Actions.jump(appConfig.routes.homeTab);
                   }}
                   underlayColor="transparent"
                 >
@@ -328,3 +329,5 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd'
   }
 });
+
+export default MainNotify;

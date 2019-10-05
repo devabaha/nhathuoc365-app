@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -8,17 +6,12 @@ import {
   StyleSheet,
   FlatList
 } from 'react-native';
-
-//library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import store from '../../../store/Store';
-
-//component
-import Withdraw from './Withdraw';
 import History from './History';
-import Recharge from './Recharge';
 import Info from './Info';
+import appConfig from 'app-config';
 
 @observer
 export default class VndWallet extends Component {
@@ -52,7 +45,7 @@ export default class VndWallet extends Component {
   }
 
   _goScanQRCode() {
-    Actions.qr_bar_code({
+    Actions.push(appConfig.routes.qrBarCode, {
       title: 'Địa chỉ ví',
       index: 1,
       from: 'vndwallet',
@@ -62,10 +55,10 @@ export default class VndWallet extends Component {
   }
 
   _goQRCode() {
-    Actions.qr_bar_code({
+    Actions.push(appConfig.routes.qrBarCode, {
       title: 'Địa chỉ ví',
       wallet: this.state.wallet,
-      address: this.state.wallet.address + '|' + this.state.wallet.zone_code
+      address: this.state.wallet.address
     });
   }
 

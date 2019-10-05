@@ -18,6 +18,8 @@ import VoucherItem from './VoucherItem';
 import config from '../../config';
 import iconVoucher from '../../assets/images/icon_voucher.png';
 import vouchersX2Image from '../../assets/images/vouchers-x2.png';
+import LoadingComponent from '@tickid/tickid-rn-loading';
+import NoResult from '../NoResult';
 
 const screenWidth = Dimensions.get('screen').width;
 
@@ -30,8 +32,10 @@ class Voucher extends Component {
     onPressSelectProvince: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
-    provinceSelected: PropTypes.object,
-    campaigns: PropTypes.array
+    showLoading: PropTypes.bool,
+    provinceSelected: PropTypes.string,
+    campaigns: PropTypes.array,
+    newVoucherNum: PropTypes.number
   };
 
   static defaultProps = {
@@ -40,8 +44,10 @@ class Voucher extends Component {
     onPressSelectProvince: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
-    provinceSelected: undefined,
-    campaigns: []
+    showLoading: false,
+    provinceSelected: '',
+    campaigns: [],
+    newVoucherNum: PropTypes.number
   };
 
   constructor(props) {
@@ -56,11 +62,8 @@ class Voucher extends Component {
     return this.props.campaigns.length;
   }
 
-  get provinceName() {
-    if (this.props.provinceSelected) {
-      return this.props.provinceSelected.name;
-    }
-    return '';
+  get hasCampaigns() {
+    return this.totalCampaigns > 0;
   }
 
   renderVouchers() {
@@ -79,6 +82,7 @@ class Voucher extends Component {
         title={campaign.data.title}
         image={campaign.data.image_url}
         logoImage={campaign.data.shop_logo_url}
+        discount={campaign.data.discount}
         expireDate={campaign.data.expire_date}
         onPress={() => this.props.onPressVoucher(campaign)}
         last={this.totalCampaigns - 1 === index}
@@ -102,12 +106,15 @@ class Voucher extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {this.props.showLoading && <LoadingComponent loading />}
+
         <View style={styles.headerBackground} />
         {!this.state.hideVoucherX2 && (
           <Image style={styles.voucherX2Backgound} source={vouchersX2Image} />
         )}
 
         <ScrollView
+          contentContainerStyle={{ flex: 1 }}
           onScroll={this.handleScrollTop}
           scrollEventThrottle={16}
           refreshControl={
@@ -124,7 +131,9 @@ class Voucher extends Component {
 
             <Button onPress={this.props.onPressSelectProvince}>
               <View style={styles.placeNameWrapper}>
-                <Text style={styles.placeName}>{this.provinceName}</Text>
+                <Text style={styles.placeName}>
+                  {this.props.provinceSelected}
+                </Text>
                 <Icon
                   name="chevron-down"
                   size={16}
@@ -143,16 +152,31 @@ class Voucher extends Component {
               <Image source={iconVoucher} style={styles.myVoucherIcon} />
               <View style={styles.myVoucherTitleWrapper}>
                 <Text style={styles.myVoucherTitle}>Voucher của tôi</Text>
-                <Text style={styles.myVoucherInfo}>
-                  <Text style={styles.myVoucherCount}>5 </Text>
-                  mã chưa sử dụng
-                </Text>
+                {this.props.newVoucherNum > 0 ? (
+                  <Text style={styles.myVoucherInfo}>
+                    <Text
+                      style={styles.myVoucherCount}
+                    >{`${this.props.newVoucherNum} `}</Text>
+                    mã chưa sử dụng
+                  </Text>
+                ) : (
+                  <Text style={styles.myVoucherInfo}>
+                    Bạn chưa có mã giảm giá
+                  </Text>
+                )}
               </View>
               <Icon name="chevron-right" size={16} color="#999" />
             </View>
           </Button>
 
-          {this.renderVouchers()}
+          {this.hasCampaigns ? (
+            this.renderVouchers()
+          ) : (
+            <NoResult
+              title="Địa điểm chưa có ưu đãi"
+              text="Chưa có chương trình ưu đãi cho địa điểm này"
+            />
+          )}
         </ScrollView>
       </View>
     );
@@ -163,7 +187,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f1f1f1',
-    position: 'relative'
+    position: 'relative',
+    marginBottom: config.device.bottomSpace
   },
   headerBackground: {
     backgroundColor: config.colors.primary,

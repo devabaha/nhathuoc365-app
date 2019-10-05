@@ -11,14 +11,19 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
-import { FormInput } from '../../lib/react-native-elements';
-import store from '../../store/Store';
+import { FormInput } from 'react-native-elements';
 import RightButtonCall from '../RightButtonCall';
+import store from '../../store/Store';
+import appConfig from '../../config';
 
 const _CHAT_KEY = 'ChatKeysStorage';
 
 @observer
-export default class Chat extends Component {
+class Chat extends Component {
+  static propTypes = {
+    store_id: PropTypes.string.isRequired
+  };
+
   constructor(props) {
     super(props);
 
@@ -202,9 +207,8 @@ export default class Chat extends Component {
           }
 
           this.chat_processing = false;
-        } catch (e) {
-          console.log(e + ' site_load_chat');
-
+        } catch (error) {
+          console.log(error);
           store.addApiQueue('site_load_chat', this._getData.bind(this, delay));
         } finally {
           this.setState({
@@ -255,7 +259,6 @@ export default class Chat extends Component {
       console.log(e + ' site_send_chat');
 
       store.addApiQueue('site_send_chat', this._onSubmit.bind(this));
-    } finally {
     }
   }
 
@@ -441,15 +444,10 @@ export default class Chat extends Component {
   }
 }
 
-Chat.propTypes = {
-  store_id: PropTypes.string.isRequired
-};
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
-    marginBottom: 0
+    marginBottom: appConfig.device.bottomSpace
   },
 
   chat_parent_left: {
@@ -535,3 +533,5 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   }
 });
+
+export default Chat;

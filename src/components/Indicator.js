@@ -1,33 +1,52 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, Animated } from 'react-native';
 
-export default class Indicator extends Component {
+const FADE_SHOW_VALUE = 1;
+const FADE_HIDE_VALUE = 0;
+const FADE_DURATION = 1000;
+
+class Indicator extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      animating: true
+      animating: true,
+      fadeIn: new Animated.Value(FADE_HIDE_VALUE)
     };
   }
 
+  componentDidMount() {
+    Animated.timing(this.state.fadeIn, {
+      toValue: FADE_SHOW_VALUE,
+      duration: FADE_DURATION,
+      useNativeDriver: true
+    }).start();
+  }
+
   render() {
+    const containerStyle = {
+      opacity: this.state.fadeIn
+    };
+
     if (this.props.size == 'small') {
       return (
-        <View style={[styles.container, this.props.style]}>
+        <Animated.View
+          style={[styles.container, this.props.style, containerStyle]}
+        >
           <ActivityIndicator
             animating={this.state.animating}
             color={this.props.color || '#666666'}
             size="small"
           />
-        </View>
+        </Animated.View>
       );
     }
 
     return (
-      <View style={[styles.container, this.props.style]}>
+      <Animated.View
+        style={[styles.container, this.props.style, containerStyle]}
+      >
         <View style={styles.loading_box}>
           <ActivityIndicator
             animating={this.state.animating}
@@ -35,7 +54,7 @@ export default class Indicator extends Component {
             size="large"
           />
         </View>
-      </View>
+      </Animated.View>
     );
   }
 }
@@ -62,3 +81,5 @@ const styles = StyleSheet.create({
     marginTop: -NAV_HEIGHT / 2
   }
 });
+
+export default Indicator;

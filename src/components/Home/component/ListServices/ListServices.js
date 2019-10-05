@@ -5,7 +5,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Button from 'react-native-button';
 import { IMAGE_ICON_TYPE } from '../../constants';
 
-function renderService({ item, onPress }) {
+function renderService({ item: serviceType, data, onPress }) {
+  const item = data.find(service => service.type === serviceType);
+  if (!item) return null;
+
   const handleOnPress = () => {
     onPress(item);
   };
@@ -24,7 +27,7 @@ function renderService({ item, onPress }) {
           {item.iconType === IMAGE_ICON_TYPE ? (
             <Image style={styles.icon} source={item.icon} />
           ) : (
-            <MaterialCommunityIcons name={item.icon} color="#fff" size={28} />
+            <MaterialCommunityIcons name={item.icon} color="#fff" size={32} />
           )}
         </View>
         <Text style={styles.title}>{item.title}</Text>
@@ -37,11 +40,16 @@ function ListServices(props) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={props.data}
+        data={props.services}
         renderItem={({ item, index }) =>
-          renderService({ item, index, onPress: props.onItemPress })
+          renderService({
+            item,
+            index,
+            onPress: props.onItemPress,
+            data: props.data
+          })
         }
-        keyExtractor={item => `${item.id}`}
+        keyExtractor={item => item}
         numColumns={4}
       />
     </View>
@@ -50,17 +58,19 @@ function ListServices(props) {
 
 ListServices.propTypes = {
   data: PropTypes.array,
+  services: PropTypes.array,
   onItemPress: PropTypes.func
 };
 
 ListServices.defaultProps = {
   data: [],
+  services: [],
   onItemPress: () => {}
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingTop: 16,
     paddingHorizontal: 12,
     backgroundColor: '#fff'
   },
@@ -68,7 +78,8 @@ const styles = StyleSheet.create({
     flex: 1
   },
   itemWrapper: {
-    alignItems: 'center'
+    alignItems: 'center',
+    marginBottom: 16
   },
   iconWrapper: {
     width: 45,

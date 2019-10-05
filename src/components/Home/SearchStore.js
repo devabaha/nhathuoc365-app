@@ -2,24 +2,16 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
   TouchableHighlight,
   ScrollView,
-  RefreshControl,
-  FlatList,
-  Keyboard,
-  Alert
+  FlatList
 } from 'react-native';
-
-// library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
-
-// components
 import Sticker from '../Sticker';
-import StoreSuggest from './StoreSuggest';
+import appConfig from 'app-config';
 
 @observer
 export default class SearchStore extends Component {
@@ -193,7 +185,7 @@ export default class SearchStore extends Component {
         });
       }
 
-      Actions.stores({
+      Actions.push(appConfig.routes.store, {
         title: item.name,
         type: ActionConst.REPLACE
       });
@@ -317,7 +309,7 @@ class StoreItem extends Component {
         });
       }
 
-      Actions.stores({
+      Actions.push(appConfig.routes.store, {
         title: item.name
       });
     })();

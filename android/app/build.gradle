@@ -114,12 +114,13 @@ android {
     }
 
     defaultConfig {
-        applicationId "vn.tickid"
+        applicationId "id.tick"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5000301
-        versionName "3.0.1"
+        versionCode 4
+        versionName "1.0.3"
         multiDexEnabled true
+        missingDimensionStrategy 'react-native-camera', 'general' 
     }
     signingConfigs {
         release {
@@ -141,6 +142,7 @@ android {
     }
     buildTypes {
         release {
+            // shrinkResources true
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
@@ -165,8 +167,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-camera')
     implementation project(':react-native-device-brightness')
-    implementation project(':react-native-config')
     implementation project(':react-native-code-push')
     implementation project(':react-native-facebook-account-kit')
     implementation project(':react-native-onesignal')
@@ -177,7 +179,6 @@ dependencies {
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webview')
     implementation project(':react-native-device-info')
-    implementation project(':react-native-camera')
     implementation project(':rn-fetch-blob')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
@@ -194,19 +195,6 @@ task copyDownloadableDepsToLibs(type: Copy) {
 
 allprojects {
     repositories {
-        //start here
-        configurations.all {
-            resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-                def requested = details.requested
-                if (requested.group == 'com.google.android.gms') {
-                    details.useVersion '12.0.1'
-                }
-                if (requested.group == 'com.google.firebase') {
-                    details.useVersion '12.0.1'
-                }
-            }
-        }
-        //end
         jcenter()
         maven {
             url "https://maven.google.com"

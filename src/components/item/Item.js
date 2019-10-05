@@ -19,6 +19,7 @@ import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonOrders from '../RightButtonOrders';
+import appConfig from 'app-config';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -88,9 +89,6 @@ export default class Item extends Component {
     this.start_time = time();
 
     this._getData();
-
-    // notify chat
-    store.getNoitifyChat();
   }
 
   _unMount() {
@@ -109,7 +107,7 @@ export default class Item extends Component {
       // Trong cua hang lien ket
       Actions.pop();
     } else {
-      Actions.stores({
+      Actions.push(appConfig.routes.store, {
         title: 'Cửa hàng'
       });
     }
@@ -600,10 +598,14 @@ export default class Item extends Component {
                   return true;
                 }}
                 style={{
-                  paddingHorizontal: 6
+                  paddingHorizontal: 6,
+                  marginHorizontal: 15,
+                  width: appConfig.device.width - 30
                 }}
                 onHeightUpdated={height => this.setState({ height })}
                 source={{ html: item_data.content }}
+                zoomable={false}
+                scrollEnabled={false}
                 customScript={`
 
                   `}
@@ -802,32 +804,10 @@ export default class Item extends Component {
   }
 }
 
-const html_styles = StyleSheet.create({
-  div: {
-    color: '#404040',
-    fontSize: 14
-  },
-  p: {
-    color: '#404040',
-    fontSize: 14
-  },
-  a: {
-    fontWeight: '300',
-    color: '#FF3366'
-  },
-  img: {
-    width: '200',
-    height: '100',
-    padding: 10,
-    marginTop: 10
-  }
-});
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
-    marginBottom: 0,
+    marginBottom: appConfig.device.bottomSpace,
     backgroundColor: '#ffffff'
   },
   right_btn_box: {

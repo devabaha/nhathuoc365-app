@@ -1,23 +1,37 @@
+import { Dimensions } from 'react-native';
+import {
+  isIphoneX,
+  getStatusBarHeight,
+  getBottomSpace
+} from 'react-native-iphone-x-helper';
+
 const config = {
   private: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: '',
+    secretKey: ''
   },
   device: {
+    width: Dimensions.get('screen').width,
+    height: Dimensions.get('screen').height,
     appVersion: '',
     deviceId: '',
     deviceType: '',
     os: '',
     osVersion: '',
-    store: ''
+    store: '',
+    isIphoneX: isIphoneX(),
+    statusBarHeight: getStatusBarHeight(),
+    bottomSpace: getBottomSpace()
   },
   rest: {
     endpoint: () => 'https://apiapp.tickid.vn',
-    listCampaigns: () => '/apiUser/list_campaign',
-    myVouchers: () => '/apiUser/my_voucher',
-    detailCampaigns: id => `/apiUser/detail_campaign/${id}`,
-    saveCampaign: id => `/apiUser/save_campaign/${id}`,
-    useVoucher: (id, code) => `/apiUser/use_voucher/${id}/${code}`
+    listCampaigns: () => '/apiVoucher/list_campaign',
+    myVouchers: () => '/apiVoucher/my_voucher',
+    listCities: () => '/apiVoucher/list_city',
+    detailCampaign: id => `/apiVoucher/detail_campaign/${id}`,
+    detailVoucher: id => `/apiVoucher/detail_voucher/${id}`,
+    saveCampaign: id => `/apiVoucher/save_campaign/${id}`,
+    useVoucher: (id, code) => `/apiVoucher/use_voucher/${id}/${code}`
   },
   httpCode: {
     success: 200

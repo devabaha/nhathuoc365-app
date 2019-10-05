@@ -31,7 +31,7 @@ class QRBarCode extends Component {
       loading: false,
       from: props.from || false,
       barcode: props.address || '0x000000000',
-      title: props.title ? props.title : 'Mã tài khoản',
+      title: props.title || 'Mã tài khoản',
       content: props.content
         ? props.content
         : 'Dùng QRCode địa chỉ Ví để nhận chuyển khoản',
@@ -250,7 +250,7 @@ class QRBarCode extends Component {
       });
     }
 
-    Actions.stores({
+    Actions.push(appConfig.routes.store, {
       title: item.name,
       goCategory: category_id,
       type: ActionConst.REPLACE

@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  ScrollView,
-  StatusBar
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, ScrollView } from 'react-native';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, { HomeCardItem } from './component/HomeCardList';
-import { actions as statusBarActions } from 'app-packages/tickid-status-bar';
 import ListServices from './component/ListServices';
 import appConfig from 'app-config';
 import { SERVICES_LIST } from './constants';
@@ -23,8 +16,12 @@ class Home extends Component {
     sites: PropTypes.array,
     newses: PropTypes.array,
     notices: PropTypes.array,
+    services: PropTypes.array,
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
+    app: PropTypes.object,
+    notify: PropTypes.object,
+    userInfo: PropTypes.object,
     hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
     onActionPress: PropTypes.func,
@@ -39,15 +36,20 @@ class Home extends Component {
     onShowAllNews: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
-    onPressNewItem: PropTypes.func
+    onPressNewItem: PropTypes.func,
+    onBodyScrollTop: PropTypes.func
   };
 
   static defaultProps = {
     sites: [],
     newses: [],
     notices: [],
+    services: [],
     campaigns: [],
     promotions: [],
+    app: undefined,
+    notify: {},
+    userInfo: undefined,
     hasPromotion: false,
     refreshing: false,
     onActionPress: defaultListener,
@@ -62,16 +64,8 @@ class Home extends Component {
     onShowAllNews: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
-    onPressNewItem: defaultListener
-  };
-
-  handleScrollTop = event => {
-    const yOffset = event.nativeEvent.contentOffset.y;
-    if (yOffset > 68) {
-      StatusBar.setBarStyle('dark-content', true);
-    } else {
-      StatusBar.setBarStyle('light-content', true);
-    }
+    onPressNewItem: defaultListener,
+    onBodyScrollTop: defaultListener
   };
 
   render() {
@@ -80,7 +74,7 @@ class Home extends Component {
         <View style={styles.headerBackground} />
 
         <ScrollView
-          onScroll={this.handleScrollTop}
+          onScroll={this.props.onBodyScrollTop}
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
@@ -90,11 +84,26 @@ class Home extends Component {
             />
           }
         >
-          <Header name="" />
+          <Header
+            notify={this.props.notify}
+            name={this.props.userInfo ? this.props.userInfo.name : 'Tk Khách'}
+            onPressButtonChat={() =>
+              this.props.onPressButtonChat(this.props.app)
+            }
+          />
 
           <View style={styles.primaryActionsWrapper}>
             <PrimaryActions
-              surplus="10,000,000đ"
+              walletName={
+                this.props.userInfo && this.props.userInfo.default_wallet
+                  ? this.props.userInfo.default_wallet.name
+                  : ''
+              }
+              surplus={
+                this.props.userInfo && this.props.userInfo.default_wallet
+                  ? this.props.userInfo.default_wallet.balance_view
+                  : ''
+              }
               onPressItem={this.props.onActionPress}
               onSurplusNext={this.props.onSurplusNext}
             />
@@ -102,6 +111,7 @@ class Home extends Component {
 
           <ListServices
             data={SERVICES_LIST}
+            services={this.props.services}
             onItemPress={this.props.onPressService}
           />
 
@@ -115,7 +125,7 @@ class Home extends Component {
 
             {this.props.sites && (
               <HomeCardList
-                onShowAll={this.props.onShowAllSites}
+                onShowAll={false} //this.props.onShowAllSites
                 data={this.props.sites}
                 title="Cửa hàng thân thiết"
               >

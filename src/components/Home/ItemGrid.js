@@ -1,19 +1,10 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableHighlight,
-  Image
-} from 'react-native';
-
-// library
+import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
+import appConfig from 'app-config';
 
 @observer
 export default class ItemGrid extends Component {
@@ -29,7 +20,7 @@ export default class ItemGrid extends Component {
       store.setStoreData(item);
     })();
 
-    Actions.stores({
+    Actions.push(appConfig.routes.store, {
       title: item.name
     });
   }
