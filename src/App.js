@@ -124,7 +124,7 @@ initializeVoucherModule({
  */
 initializeRadaModule({
   private: {
-    partnerAuthorization: env.RADA_PARTNER_AUTHORIZATION,
+    partnerAuthorization: '',
     webhookUrl: null,
     defaultLocation: '37.33233141,-122.0312186'
   }
