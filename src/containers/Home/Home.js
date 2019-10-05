@@ -126,7 +126,7 @@ class Home extends Component {
   handleOrderButtonPress(service) {
     Actions.push('tickidRadaBooking', {
       service: service,
-      title: 'Booking',
+      title: service.name || '',
       customerName: '',
       phone: '',
       address: '',
