@@ -14,8 +14,7 @@ const config = Object.freeze({
     secretKey: '0011tickidkey001122private'
   },
   radaModule: {
-    partnerAuthorization:
-      'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIml4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
+    partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
   },
   oneSignal: {
     appKey: 'e2e80243-08c0-405a-9a36-5d060ba0af12'
