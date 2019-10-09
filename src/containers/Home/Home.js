@@ -102,6 +102,9 @@ class Home extends Component {
       title: item.name,
       onPressItem: item => {
         this.handleServicePress(item);
+      },
+      onPressCartImage: item => {
+        this.handleCartImagePress(item);
       }
     });
   }
@@ -116,10 +119,14 @@ class Home extends Component {
     });
   }
 
+  handleCartImagePress(item) {
+    this.handleOrderButtonPress(item);
+  }
+
   handleOrderButtonPress(service) {
     Actions.push('tickidRadaBooking', {
       service: service,
-      title: 'Booking',
+      title: service.name || '',
       customerName: '',
       phone: '',
       address: '',
@@ -139,17 +146,83 @@ class Home extends Component {
   }
 
   handleBookingSuccess(response) {
-    Actions.homeTab();
+    return Alert.alert(
+      'Thông báo',
+      'Bạn đã đặt dịch vụ thành công!',
+      [{ text: 'Đồng ý', onPress: () => Actions.homeTab() }],
+      { cancelable: false }
+    );
   }
 
   handleBookingFail(err) {
-    console.log(err.message);
+    if (err && err.data) {
+      if (err.data.customer.length != 0) {
+        return Alert.alert(
+          'Thông báo',
+          err.data.customer[0],
+          [{ text: 'Đồng ý' }],
+          { cancelable: false }
+        );
+      } else {
+        return Alert.alert(
+          'Thông báo',
+          err.message || '',
+          [{ text: 'Đồng ý' }],
+          { cancelable: false }
+        );
+      }
+    } else if (err.message) {
+      return Alert.alert('Thông báo', err.message, [{ text: 'Đồng ý' }], {
+        cancelable: false
+      });
+    } else {
+      return Alert.alert(
+        'Thông báo',
+        'Có lỗi xảy ra, vui lòng thử lại',
+        [{ text: 'Đồng ý' }],
+        { cancelable: false }
+      );
+    }
   }
 
-  handleCallWebHookSuccess(response) {}
+  handleCallWebHookSuccess(response) {
+    return Alert.alert(
+      'Thông báo',
+      'Bạn đã đặt dịch vụ thành công!',
+      [{ text: 'Đồng ý', onPress: () => Actions.homeTab() }],
+      { cancelable: false }
+    );
+  }
 
   handleCallWebHookFail(err) {
-    console.log(err.message);
+    if (err && err.data) {
+      if (err.data.customer.length != 0) {
+        return Alert.alert(
+          'Thông báo',
+          err.data.customer[0],
+          [{ text: 'Đồng ý' }],
+          { cancelable: false }
+        );
+      } else {
+        return Alert.alert(
+          'Thông báo',
+          err.message || '',
+          [{ text: 'Đồng ý' }],
+          { cancelable: false }
+        );
+      }
+    } else if (err.message) {
+      return Alert.alert('Thông báo', err.message, [{ text: 'Đồng ý' }], {
+        cancelable: false
+      });
+    } else {
+      return Alert.alert(
+        'Thông báo',
+        'Có lỗi xảy ra, vui lòng thử lại',
+        [{ text: 'Đồng ý' }],
+        { cancelable: false }
+      );
+    }
   }
 
   handleShowAllVouchers = () => {};
