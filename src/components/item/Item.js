@@ -72,7 +72,7 @@ export default class Item extends Component {
       smallSearch: true,
       placeholder: store.store_data.name,
       searchOnpress: () => {
-        return Actions.search({
+        return Actions.push(appConfig.routes.searchStore, {
           title: `Tìm kiếm tại ${store.store_data.name}`,
           from_item: true,
           itemRefresh: this._itemRefresh.bind(this)

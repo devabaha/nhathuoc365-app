@@ -47,9 +47,10 @@ import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
 import NewPass from './components/account/NewPass';
-import Stores from './components/stores/Stores';
+import StoreContainer from './components/stores/Stores';
+import SearchNavBarContainer from './components/stores/SearchNavBar';
 import StoresList from './components/stores/StoresList';
-import Search from './components/stores/Search';
+import SearchStoreContainer from './components/stores/Search';
 import Item from './components/item/Item';
 import ItemImageViewer from './components/item/ItemImageViewer';
 import Cart from './components/cart/Cart';
@@ -535,7 +536,8 @@ class App extends Component {
                     <Scene
                       key={`${appConfig.routes.store}_1`}
                       title="Cửa hàng"
-                      component={Stores}
+                      component={StoreContainer}
+                      navBar={SearchNavBarContainer}
                       {...navBarConfig}
                       back
                     />
@@ -551,11 +553,12 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="search">
+                  <Stack key={appConfig.routes.searchStore}>
                     <Scene
-                      key="search_1"
+                      key={`${appConfig.routes.searchStore}_1`}
                       title="Tìm kiếm"
-                      component={Search}
+                      component={SearchStoreContainer}
+                      navBar={SearchNavBarContainer}
                       {...navBarConfig}
                       back
                     />

@@ -78,7 +78,7 @@ export default class Stores extends Component {
       smallSearch: true,
       placeholder: store.store_data.name,
       searchOnpress: () => {
-        return Actions.search({
+        return Actions.push(appConfig.routes.searchStore, {
           title
         });
       },
