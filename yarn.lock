@@ -936,10 +936,10 @@
     prop-types "^15.7.2"
     react-native-button "^2.4.0"
 
-"@tickid/tickid-rada@^2.0.4":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.0.5.tgz#b1b6594031e0b2e8c0279ecb00dd744ec4588e6a"
-  integrity sha512-w7U2WdNXAg7OzjA1NP8NRfkibqTlI3+mq4lfe2jE3ZutfHoI0GGsa9CgWBmXoS78EPp9Zb7Bc4PAOKByTViYvQ==
+"@tickid/tickid-rada@^2.0.7":
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.0.7.tgz#7ffc9a31711fb1b80c33f592c53d0b561c7cb48e"
+  integrity sha512-E0Vj29g4DN/Ks+LVxtMKTnnIJ5P58mCQPUfQuQLh7JIqbRUWiPCDnjmwU9POmnnB5/jelaAUXszheif/SfS24Q==
   dependencies:
     prop-types "^15.7.2"
     react-native-render-html "^4.1.2"
