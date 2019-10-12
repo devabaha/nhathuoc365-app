@@ -62,13 +62,13 @@ class MainNotify extends Component {
         },
         {
           key: 1,
-          label: 'Từ TickID',
-          desc: 'Thông báo từ TickID',
+          label: 'Từ ' + APP_NAME_SHOW,
+          desc: 'Thông báo từ ' + APP_NAME_SHOW,
           icon: 'lemon-o',
           notify: 'new_sys_news',
           onPress: () => {
             Actions.notifys({
-              title: 'Từ TickID',
+              title: 'Từ ' + APP_NAME_SHOW,
               news_type: '/2'
             });
           },
