@@ -97,7 +97,7 @@ export default class Affiliate extends Component {
                 null,
                 null,
                 null,
-                'Lời mời tham gia chương trình TickID Affiliate',
+                'Lời mời tham gia chương trình ' + APP_NAME_SHOW + ' Affiliate',
                 user_info.text_sms
               )
             }

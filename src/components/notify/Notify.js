@@ -61,7 +61,7 @@ export default class Notify extends Component {
       // {
       //   key: "1",
       //   label: "Chương trình khuyến mại",
-      //   desc: "Khách hàng thân thiết TickID",
+      //   desc: "Khách hàng thân thiết",
       //   icon: "lemon-o",
       //   notify: "new_farm_news",
       //   onPress: () => {

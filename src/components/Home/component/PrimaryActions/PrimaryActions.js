@@ -21,7 +21,7 @@ function PrimaryActions(props) {
         <Button onPress={() => props.onSurplusNext()}>
           <View style={styles.walletInfoWrapper}>
             <Text style={styles.walletNameLabel}>{props.walletName}</Text>
-            <Text style={styles.walletName}> Tick</Text>
+            {/* <Text style={styles.walletName}> Tick</Text> */}
 
             <View style={styles.walletLabelRight}>
               <Text style={styles.surplus}>{props.surplus}</Text>

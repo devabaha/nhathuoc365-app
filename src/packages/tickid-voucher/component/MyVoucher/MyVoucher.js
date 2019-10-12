@@ -70,7 +70,7 @@ class MyVoucher extends Component {
         ) : (
           <NoResult
             title="Bạn chưa có phiếu giảm giá"
-            text="Đi săn voucher ở TickID Voucher ngay thôi"
+            text={'Đi săn voucher ở ' + APP_NAME_SHOW + ' Voucher ngay thôi'}
           />
         )}
       </View>
