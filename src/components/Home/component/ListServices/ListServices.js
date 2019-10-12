@@ -5,9 +5,10 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Button from 'react-native-button';
 import { IMAGE_ICON_TYPE } from '../../constants';
 
-function renderService({ item: serviceType, data, onPress }) {
+function renderService({ item: serviceType, data, app, notify, onPress }) {
   const item = data.find(service => service.type === serviceType);
   if (!item) return null;
+  item.app = app;
 
   const handleOnPress = () => {
     onPress(item);
@@ -31,6 +32,12 @@ function renderService({ item: serviceType, data, onPress }) {
           )}
         </View>
         <Text style={styles.title}>{item.title}</Text>
+
+        {notify.notify_chat > 0 && item.type == CHAT_SERVICE_TYPE && (
+          <View style={styles.notifyWrapper}>
+            <Text style={styles.notify}>{notify.notify_chat}</Text>
+          </View>
+        )}
       </View>
     </Button>
   );
@@ -46,7 +53,9 @@ function ListServices(props) {
             item,
             index,
             onPress: props.onItemPress,
-            data: props.data
+            data: props.data,
+            app: props.app,
+            notify: props.notify
           })
         }
         keyExtractor={item => item}
@@ -59,12 +68,16 @@ function ListServices(props) {
 ListServices.propTypes = {
   data: PropTypes.array,
   services: PropTypes.array,
+  app: PropTypes.object,
+  notify: PropTypes.object,
   onItemPress: PropTypes.func
 };
 
 ListServices.defaultProps = {
   data: [],
   services: [],
+  app: {},
+  notify: {},
   onItemPress: () => {}
 };
 
@@ -100,6 +113,24 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#333',
     marginTop: 6
+  },
+  notifyWrapper: {
+    position: 'absolute',
+    minWidth: 16,
+    paddingHorizontal: 2,
+    height: 16,
+    backgroundColor: 'red',
+    top: 0,
+    right: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8
+  },
+  notify: {
+    fontSize: 10,
+    color: '#ffffff',
+    fontWeight: '600'
   }
 });
 

@@ -89,7 +89,7 @@ export default class Account extends Component {
             desc: 'Điều khoản sử dụng',
             onPress: () =>
               Actions.webview({
-                title: 'Về TickID',
+                title: 'Về ' + APP_NAME_SHOW,
                 url: APP_INFO
               }),
             boxIconStyle: [

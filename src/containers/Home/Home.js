@@ -15,7 +15,8 @@ import HomeComponent, {
   ORDERS_SERVICE_TYPE,
   ACCUMULATE_POINTS_TYPE,
   MY_VOUCHER_TYPE,
-  TRANSACTION_TYPE
+  TRANSACTION_TYPE,
+  CHAT_SERVICE_TYPE
 } from '../../components/Home';
 
 @observer
@@ -297,6 +298,9 @@ class Home extends Component {
       case ORDERS_SERVICE_TYPE:
         Actions.jump(appConfig.routes.ordersTab);
         break;
+      case CHAT_SERVICE_TYPE:
+        this.handlePressButtonChat(service.app);
+        break;
     }
   };
 
@@ -307,7 +311,7 @@ class Home extends Component {
   };
 
   handleShowAllNews = () => {
-    Actions._main_notify();
+    Actions.jump(appConfig.routes.newsTab);
   };
 
   handlePressSiteItem = site => {
