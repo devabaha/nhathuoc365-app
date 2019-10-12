@@ -8,10 +8,12 @@ import { HeaderBackButton } from 'react-navigation';
 class SearchNavBar extends Component {
   renderLeft() {
     return (
-      <HeaderBackButton
-        onPress={Actions.pop}
-        tintColor={appConfig.colors.white}
-      />
+      <View style={styles.backButton}>
+        <HeaderBackButton
+          onPress={Actions.pop}
+          tintColor={appConfig.colors.white}
+        />
+      </View>
     );
   }
 
@@ -47,6 +49,10 @@ const styles = StyleSheet.create({
         height: Platform.OS === 'ios' ? 64 : 54
       }
     )
+  },
+  backButton: {
+    position: 'relative',
+    top: -6
   },
   searchWrapper: {
     flex: 1,

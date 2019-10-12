@@ -537,7 +537,6 @@ class App extends Component {
                       key={`${appConfig.routes.store}_1`}
                       title="Cửa hàng"
                       component={StoreContainer}
-                      navBar={SearchNavBarContainer}
                       {...navBarConfig}
                       back
                     />
