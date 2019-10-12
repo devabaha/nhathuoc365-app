@@ -57,6 +57,7 @@ export const BOOKING_30DAY_TYPE = '30day_service';
 export const NEWS_SERVICE_TYPE = 'news';
 export const ORDERS_SERVICE_TYPE = 'orders';
 export const MY_ADDRESS_SERVICE_TYPE = 'my_address';
+export const CHAT_SERVICE_TYPE = 'chat';
 
 export const SERVICES_LIST = [
   {
@@ -123,6 +124,13 @@ export const SERVICES_LIST = [
     icon: 'cart',
     title: 'Đơn hàng',
     type: ORDERS_SERVICE_TYPE,
+    bgrColor: appConfig.colors.primary
+  },
+  {
+    id: 10,
+    icon: 'chat',
+    title: 'Chat với\n' + APP_NAME_SHOW,
+    type: CHAT_SERVICE_TYPE,
     bgrColor: appConfig.colors.primary
   }
 ];

@@ -112,6 +112,8 @@ class Home extends Component {
           <ListServices
             data={SERVICES_LIST}
             services={this.props.services}
+            app={this.props.app}
+            notify={this.props.notify}
             onItemPress={this.props.onPressService}
           />
 

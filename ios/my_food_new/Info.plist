@@ -56,6 +56,8 @@
 	<string>Cho phép sử dụng Apple Music</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>Cho phép sử dụng Bluetooth</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Cho phép luôn luôn sử dụng Bluetooth</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Cho phép sử dụng Calendar</string>
 	<key>NSCameraUsageDescription</key>
