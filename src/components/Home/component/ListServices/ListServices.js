@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from 'react-native-button';
-import { IMAGE_ICON_TYPE } from '../../constants';
+import { IMAGE_ICON_TYPE, CHAT_SERVICE_TYPE } from '../../constants';
 
 function renderService({ item: serviceType, data, app, notify, onPress }) {
   const item = data.find(service => service.type === serviceType);
@@ -48,6 +48,7 @@ function ListServices(props) {
     <View style={styles.container}>
       <FlatList
         data={props.services}
+        extraData={props.notify}
         renderItem={({ item, index }) =>
           renderService({
             item,
