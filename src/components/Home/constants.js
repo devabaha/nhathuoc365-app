@@ -131,6 +131,6 @@ export const SERVICES_LIST = [
     icon: 'chat',
     title: 'Chat với\n' + APP_NAME_SHOW,
     type: CHAT_SERVICE_TYPE,
-    bgrColor: appConfig.colors.primary
+    bgrColor: '#55b947'
   }
 ];
