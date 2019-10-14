@@ -535,7 +535,6 @@ class App extends Component {
                   <Stack key={appConfig.routes.store}>
                     <Scene
                       key={`${appConfig.routes.store}_1`}
-                      title="Cửa hàng"
                       component={StoreContainer}
                       {...navBarConfig}
                       back
