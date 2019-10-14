@@ -17,14 +17,16 @@ import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonOrders from '../RightButtonOrders';
+import Button from 'react-native-button';
 import appConfig from '../../config';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
 @observer
-export default class Stores extends Component {
+class Stores extends Component {
   constructor(props) {
     super(props);
 
@@ -49,7 +51,28 @@ export default class Stores extends Component {
       data: { finish: true },
       expires: null
     });
+
+    setTimeout(() => {
+      Actions.refresh({
+        right: this.renderRightButton()
+      });
+    });
   }
+
+  renderRightButton = () => {
+    return (
+      <Button
+        containerStyle={{
+          paddingHorizontal: 12
+        }}
+        onPress={() => {
+          Actions.push(appConfig.routes.searchStore);
+        }}
+      >
+        <Icon size={30} color={appConfig.colors.white} name="ios-search" />
+      </Button>
+    );
+  };
 
   componentWillReceiveProps(nextProps) {
     if (this.props.title != nextProps.title) {
@@ -397,7 +420,8 @@ class CategoryScreen extends Component {
       items_data_bak: null,
       page: 0,
       promotions: that.state.promotions,
-      isAll: item.id == 0
+      isAll: item.id == 0,
+      fetched: false
     };
   }
 
@@ -497,6 +521,7 @@ class CategoryScreen extends Component {
                     : data,
                 items_data_bak: data,
                 loading: false,
+                fetched: true,
                 refreshing: false,
                 page: 1
               });
@@ -506,7 +531,7 @@ class CategoryScreen extends Component {
               })();
 
               // load next category
-              this._loadNextCate();
+              // this._loadNextCate();
             }, this._delay());
           })
           .catch(err => {
@@ -560,7 +585,7 @@ class CategoryScreen extends Component {
             })();
 
             // load next category
-            this._loadNextCate();
+            // this._loadNextCate();
 
             // cache in five minutes
             if (response.data && !loadmore) {
@@ -579,7 +604,7 @@ class CategoryScreen extends Component {
           });
 
           // load next category
-          this._loadNextCate();
+          // this._loadNextCate();
         }
       }
     } catch (e) {
@@ -613,12 +638,12 @@ class CategoryScreen extends Component {
       );
     }
 
-    var { items_data, header_title } = this.state;
+    var { items_data, header_title, fetched } = this.state;
 
     if (items_data == null) {
       return (
         <View style={styles.containerScreen}>
-          <CenterText title="Chưa có mặt hàng nào :(" />
+          {fetched && <CenterText title="Chưa có mặt hàng nào :(" />}
         </View>
       );
     }
@@ -743,3 +768,5 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   }
 });
+
+export default Stores;
