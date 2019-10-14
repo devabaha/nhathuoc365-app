@@ -146,7 +146,7 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
                 data={this.props.campaigns}
-                title="Tick Voucher"
+                title="Voucher giảm giá"
               >
                 {({ item, index }) => (
                   <HomeCardItem

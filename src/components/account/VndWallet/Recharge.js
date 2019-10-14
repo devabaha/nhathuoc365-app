@@ -24,7 +24,7 @@ const Recharge = props => {
         <View style={[{ paddingLeft: 10 }]}>
           <View style={[{ flexDirection: 'row' }]}>
             <Text style={[styles.des]}>{`Tài khoản: `}</Text>
-            <Text style={[styles.des]}>Công ty cổ phần TickID</Text>
+            <Text style={[styles.des]}>Công ty cổ phần FoodHub</Text>
           </View>
           <View style={[{ flexDirection: 'row' }]}>
             <Text style={[styles.des]}>{`Vietcombank: `}</Text>

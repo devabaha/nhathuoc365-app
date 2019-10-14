@@ -1,6 +1,6 @@
 <resources>
 	<string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">9qJpK0qBZvKbTEzuKBOKKBr4qaRWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
-    <string name="app_name">TickID</string>
-    <string name="fb_app_id">2794644853896597</string>
-    <string name="ak_client_token">1f0da835f32985d9ea73cb3c1d007d25</string>
+    <string name="app_name">FoodHub</string>
+    <string name="fb_app_id">2175231729436595</string>
+    <string name="ak_client_token">b0fc635c6c2fc8daf08452221a0f32d7</string>
 </resources>

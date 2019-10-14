@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>AccountKitClientToken</key>
-	<string>1f0da835f32985d9ea73cb3c1d007d25</string>
+	<string>b0fc635c6c2fc8daf08452221a0f32d7</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>TickID</string>
+	<string>FoodHub</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>3.0.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -27,16 +27,16 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>ak2794644853896597</string>
+				<string>ak2175231729436595</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>CodePushDeploymentKey</key>
-	<string>_jaoHsAy6EW4tIHabsFFZ0uHTG8hf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
+	<string>05sIMwVy1pa6_e9_j5uG1lctT_o2f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
 	<key>FacebookAppID</key>
-	<string>2794644853896597</string>
+	<string>2175231729436595</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

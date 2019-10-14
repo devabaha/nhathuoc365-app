@@ -1,5 +1,5 @@
 # README #
-TickID App: Ứng dụng CSKH và Tích điểm cho cửa hàng
+FoodHub App: Ứng dụng CSKH và Tích điểm cho cửa hàng
 yarn install
 react-native run-ios
 Cau hinh FBSDK: Account Kit va Analytics

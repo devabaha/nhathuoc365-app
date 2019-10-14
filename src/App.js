@@ -294,13 +294,13 @@ class App extends Component {
                     <Stack
                       key={appConfig.routes.homeTab}
                       icon={TabIcon}
-                      iconLabel="TickID"
+                      iconLabel="FoodHub"
                       iconName="store"
                       iconSize={24}
                     >
                       <Scene
                         key={`${appConfig.routes.homeTab}_1`}
-                        title="TickID"
+                        title="FoodHub"
                         component={HomeContainer}
                         hideNavBar
                       />
@@ -375,7 +375,7 @@ class App extends Component {
                   <Stack key={appConfig.routes.mainVoucher}>
                     <Scene
                       key={`${appConfig.routes.mainVoucher}_1`}
-                      title="TickID Voucher"
+                      title="FoodHub Voucher"
                       component={VoucherContainer}
                       {...navBarConfig}
                       back

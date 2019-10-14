@@ -20,7 +20,7 @@ import { toJS } from 'mobx';
 const CASH_MESSAGE =
   'Ví Tiền mặt được rút về App vào cuối tháng.\nTrong tháng được rút về ví Tạm ứng trên App để tiêu dùng trong chuỗi Macca Cafe.';
 const PRODUCT_MESSAGE =
-  'Ví Sản phẩm được rút về App vào cuối tháng.\nĐược sử dụng để mua trong cửa hàng TickID.';
+  'Ví Sản phẩm được rút về App vào cuối tháng.\nĐược sử dụng để mua trong cửa hàng FoodHub.';
 const formatDate = date => {
   date = new Date(date);
   return (

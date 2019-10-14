@@ -12,7 +12,7 @@ exports.SITE_LIKE = MY_FOOD_API + 'apiSite/like';
 
 // Home
 exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
-exports.USER_SITE_HOME = MY_FOOD_API + 'apiUser/site_home';
+exports.USER_SITE_HOME = MY_FOOD_API + 'apiUser/site_home_new';
 
 // Store
 exports.USER_SEARCH_SITE = MY_FOOD_API + 'apiUser/search_site';

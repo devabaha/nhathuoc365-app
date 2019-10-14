@@ -8,12 +8,12 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 global.MY_FOOD_API = 'https://apiapp.tickid.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
 global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
-global.HOTLINE = '+8490 345 1368';
+global.HOTLINE = '+84888301518';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: '_jaoHsAy6EW4tIHabsFFZ0uHTG8hf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
-  android: '9qJpK0qBZvKbTEzuKBOKKBr4qaRWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7'
+  ios: '05sIMwVy1pa6_e9_j5uG1lctT_o2f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
+  android: 'Gni0uQSIyLbN6t_3XcWyqwQDAxaQf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7'
 };
 
 // width, height of screen
@@ -44,18 +44,18 @@ global.KEY_BOARD_SHOW = 'keyboardWillShow';
 global.KEY_BOARD_HIDE = 'keyboardWillHide';
 
 // Apps
-global.APP_NAME = 'TICKID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
-global.APP_NAME_SHOW = 'TickID';
+global.APP_NAME = 'FoodHub'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
+global.APP_NAME_SHOW = 'FoodHub';
 //appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
 global.DELAY_UPDATE_NOTICE = 3000;
 
-global.GA_ID = 'UA-143334124-2';
+global.GA_ID = 'UA-106153171-1';
 
 // color
-global.DEFAULT_COLOR = '#812384'; //2c6ca3
-global.DEFAULT_COLOR_RED = '#55b947';
-global.DEFAULT_ADMIN_COLOR = '#55b947';
+global.DEFAULT_COLOR = '#55b947'; //2c6ca3
+global.DEFAULT_COLOR_RED = '#e31b23';
+global.DEFAULT_ADMIN_COLOR = '#3c8dbc';
 global.HEADER_BGR = DEFAULT_COLOR;
 global.HEADER_ADMIN_BGR = DEFAULT_ADMIN_COLOR;
 global.TITLE_HEADER_COLOR = '#ffffff';
@@ -132,9 +132,9 @@ global.FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
 
 global.MESSAGE_OTHER_ERROR = 'Lỗi không xác định, xin thử lại';
 
-global.EMAIL_SUPPORT = 'hi@tickid.vn';
-global.APP_FANPAGE = 'http://fanpage.tickid.vn';
-global.APP_INFO = 'http://tickid.vn';
+global.EMAIL_SUPPORT = 'info@foodhub.vn';
+global.APP_FANPAGE = 'http://foodhub-fanpage.tickid.vn';
+global.APP_INFO = 'http://foodhub-info.tickid.vn';
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;

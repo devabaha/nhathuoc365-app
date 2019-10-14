@@ -6,18 +6,18 @@ import {
 } from 'react-native-iphone-x-helper';
 
 const config = Object.freeze({
-  appName: 'TICKID',
+  appName: 'FoodHub',
   namespace: 'app',
   reduxLoggerEnable: false,
   voucherModule: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: 'mydinhhubkey',
+    secretKey: '0406mydinhhubjfsdfd1414h52'
   },
   radaModule: {
     partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
   },
   oneSignal: {
-    appKey: 'e2e80243-08c0-405a-9a36-5d060ba0af12'
+    appKey: 'c437636c-1e52-489c-b3bd-e64616fe2735'
   },
   device: Object.freeze({
     isIphoneX: isIphoneX(),
@@ -31,7 +31,7 @@ const config = Object.freeze({
     bottomSpace: getBottomSpace()
   }),
   colors: {
-    primary: '#812384',
+    primary: '#55b947',
     white: '#fff',
     black: '#000',
     text: '#333'
