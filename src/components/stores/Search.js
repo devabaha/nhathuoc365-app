@@ -19,7 +19,7 @@ import PopupConfirm from '../PopupConfirm';
 const SEARCH_KEY = 'KeySearch';
 
 @observer
-export default class Search extends Component {
+class Search extends Component {
   constructor(props) {
     super(props);
 
@@ -28,7 +28,6 @@ export default class Search extends Component {
       finish: false,
       header_title: '',
       search_data: null,
-      keyboard_state: 'always',
       history: null,
       buying_idx: [],
       searchValue: ''
@@ -42,53 +41,30 @@ export default class Search extends Component {
     var keyword = this.props.qr_code;
     this._getHistory();
 
-    const onBack = () => {
-      Keyboard.dismiss();
+    setTimeout(() => {
+      Actions.refresh({
+        searchValue: keyword || '',
+        placeholder: 'Tìm kiếm tại cửa hàng...',
+        autoFocus: true,
+        onSearch: text => {
+          Actions.refresh({
+            searchValue: text
+          });
 
-      Actions.pop();
-    };
+          this.setState({
+            searchValue: text
+          });
 
-    Actions.refresh({
-      showSearchBar: true,
-      searchValue: keyword || '',
-      placeholder: store.store_data.name
-        ? store.store_data.name
-        : 'Nhập thông tin cần tìm',
-      autoFocus: true,
-      inputAnimate: true,
-      onSubmitEditing: () => {
-        this._onSearch(this.state.searchValue);
-      },
-      onChangeText: text => {
-        Actions.refresh({
-          searchValue: text
-        });
-
-        this.setState({
-          searchValue: text
-        });
-
-        // auto search on changed text
-        clearTimeout(this._onSearchTimer);
-        this._onSearchTimer = setTimeout(() => {
-          this._onSearch(text);
-        }, 400);
-      },
-      cancelIsPop: true,
-      onSearchCancel: () => {
-        Keyboard.dismiss();
-      },
-      onCleanSearch: () => {
-        this._getHistory();
-
-        this.setState({
-          search_data: null,
-          loading: false,
-          finish: true,
-          keyboard_state: 'always'
-        });
-      },
-      onBack
+          // auto search on changed text
+          clearTimeout(this._onSearchTimer);
+          this._onSearchTimer = setTimeout(() => {
+            this._onSearch(text);
+          }, 400);
+        },
+        onCancel: () => {
+          Keyboard.dismiss();
+        }
+      });
     });
   }
 
@@ -116,8 +92,7 @@ export default class Search extends Component {
       this.setState({
         search_data: null,
         loading: false,
-        finish: true,
-        keyboard_state: 'always'
+        finish: true
       });
     }
 
@@ -139,8 +114,7 @@ export default class Search extends Component {
                 search_data: response.data,
                 loading: false,
                 finish: true,
-                header_title: `— Kết quả cho "${keyword}" —`,
-                keyboard_state: 'never'
+                header_title: `— Kết quả cho "${keyword}" —`
               });
             } else {
               this._getHistory();
@@ -148,8 +122,7 @@ export default class Search extends Component {
               this.setState({
                 search_data: null,
                 loading: false,
-                finish: true,
-                keyboard_state: 'always'
+                finish: true
               });
             }
           }
@@ -236,13 +209,7 @@ export default class Search extends Component {
   }
 
   render() {
-    var {
-      loading,
-      search_data,
-      keyboard_state,
-      history,
-      buying_idx
-    } = this.state;
+    var { loading, search_data, history, buying_idx } = this.state;
     // show loading
     if (loading) {
       return <Indicator />;
@@ -252,7 +219,7 @@ export default class Search extends Component {
       <View style={styles.container}>
         {search_data != null ? (
           <FlatList
-            keyboardShouldPersistTaps={keyboard_state}
+            keyboardShouldPersistTaps="handled"
             onEndReached={num => {}}
             onEndReachedThreshold={0}
             style={[styles.items_box]}
@@ -286,7 +253,7 @@ export default class Search extends Component {
                     marginBottom: store.keyboardTop
                   }
                 ]}
-                keyboardShouldPersistTaps={keyboard_state}
+                keyboardShouldPersistTaps="handled"
               >
                 <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
 
@@ -517,3 +484,5 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   }
 });
+
+export default Search;

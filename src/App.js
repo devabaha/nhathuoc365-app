@@ -559,7 +559,6 @@ class App extends Component {
                       component={SearchStoreContainer}
                       navBar={SearchNavBarContainer}
                       {...navBarConfig}
-                      back
                     />
                   </Stack>
 

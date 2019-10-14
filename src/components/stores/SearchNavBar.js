@@ -1,26 +1,57 @@
 import React, { Component } from 'react';
 import appConfig from 'app-config';
+import PropTypes from 'prop-types';
 import { Platform, StyleSheet, Text, View, TextInput } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
-import { HeaderBackButton } from 'react-navigation';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Button from 'react-native-button';
 
 class SearchNavBar extends Component {
-  renderLeft() {
+  static propTypes = {
+    onCancel: PropTypes.func,
+    onSearch: PropTypes.func,
+    placeholder: PropTypes.string,
+    searchValue: PropTypes.string
+  };
+
+  static defaultProps = {
+    onCancel: () => {},
+    onSearch: () => {},
+    placeholder: '',
+    searchValue: ''
+  };
+
+  renderRight() {
     return (
-      <View style={styles.backButton}>
-        <HeaderBackButton
-          onPress={Actions.pop}
-          tintColor={appConfig.colors.white}
-        />
-      </View>
+      <Button
+        containerStyle={styles.cancelButton}
+        onPress={() => {
+          Actions.pop();
+          this.props.onCancel();
+        }}
+      >
+        <Text style={styles.cancelText}>Hủy</Text>
+      </Button>
     );
   }
 
   renderMiddle() {
     return (
       <View style={styles.searchWrapper}>
-        <TextInput style={styles.searchInput} />
+        <Icon
+          size={20}
+          color="#ccc"
+          style={styles.searchIcon}
+          name="ios-search"
+        />
+        <TextInput
+          style={styles.searchInput}
+          placeholder={this.props.placeholder}
+          placeholderTextColor="#ccc"
+          onChangeText={this.props.onSearch}
+          value={this.props.searchValue}
+        />
       </View>
     );
   }
@@ -28,8 +59,8 @@ class SearchNavBar extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.renderLeft()}
         {this.renderMiddle()}
+        {this.renderRight()}
       </View>
     );
   }
@@ -50,15 +81,33 @@ const styles = StyleSheet.create({
       }
     )
   },
-  backButton: {
+  cancelButton: {
+    justifyContent: 'center',
+    paddingHorizontal: 16
+  },
+  cancelText: {
+    fontSize: 16,
+    color: '#fff'
+  },
+  searchIcon: {
     position: 'relative',
-    top: -6
+    top: 2
   },
   searchWrapper: {
     flex: 1,
-    justifyContent: 'center'
+    paddingLeft: 8,
+    marginLeft: 10,
+    marginVertical: 8,
+    borderRadius: 15,
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)'
   },
-  searchInput: {}
+  searchInput: {
+    flex: 1,
+    paddingHorizontal: 8,
+    color: appConfig.colors.white
+  }
 });
 
 export default SearchNavBar;
