@@ -30,13 +30,18 @@ class ScanScreen extends BaseContainer {
   handleAfterReadedCode = code => {
     this.handleReadedCode({
       code,
-      onDone: () => this.sendApiUseCode(code)
+      onDone: () =>
+        this.isFromMyVoucher
+          ? this.sendApiSaveCode(code)
+          : this.sendApiUseCode(code)
     });
   };
 
   handleBeforeShowEnterCode = () => {
     this.handlePressEnterCode({
-      onSendCode: this.sendApiUseCode
+      onSendCode: this.isFromMyVoucher
+        ? this.sendApiSaveCode
+        : this.sendApiUseCode
     });
   };
 
@@ -76,12 +81,52 @@ class ScanScreen extends BaseContainer {
     }
   };
 
+  sendApiSaveCode = async code => {
+    if (this.apiSending) return;
+
+    this.apiSending = true;
+
+    this.setState({
+      showLoading: true
+    });
+
+    try {
+      const response = await internalFetch(config.rest.useVoucher(code));
+      if (response.status === config.httpCode.success) {
+        showMessage({
+          message: 'Bạn đã nhận thành công voucher này.',
+          type: 'success'
+        });
+      } else {
+        showMessage({
+          message: response.message,
+          type: 'danger'
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      this.setState(
+        {
+          showLoading: false
+        },
+        function() {
+          showMessage({
+            message: 'Kết nối tới máy chủ thất bại. Vui lòng thử lại sau',
+            type: 'danger'
+          });
+        }
+      );
+      this.apiSending = false;
+    }
+  };
+
   render() {
     return (
       <ScanScreenComponent
         onReadedCode={this.handleAfterReadedCode}
         onPressEnterCode={this.handleBeforeShowEnterCode}
         showLoading={this.state.showLoading}
+        topContentText={this.topContentText}
       />
     );
   }

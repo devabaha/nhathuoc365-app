@@ -67,6 +67,7 @@ const config = Object.freeze({
     voucherDetail: 'voucherDetail',
     voucherSelectProvince: 'voucherSelectProvince',
     voucherScanner: 'voucherScanner',
+    myVoucherScanner: 'myVoucherScanner',
     alreadyVoucher: 'alreadyVoucher',
     voucherEnterCodeManual: 'voucherEnterCodeManual',
     voucherShowBarcode: 'voucherShowBarcode',
