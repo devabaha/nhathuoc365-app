@@ -6,7 +6,8 @@ import {
   TouchableHighlight,
   FlatList,
   ScrollView,
-  Keyboard
+  Keyboard,
+  Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
@@ -33,13 +34,13 @@ class Search extends Component {
       searchValue: ''
     };
 
-    this._onSearch = this._onSearch.bind(this);
-    this._getHistory = this._getHistory.bind(this);
+    this.onSearch = this.onSearch.bind(this);
+    this.getHistory = this.getHistory.bind(this);
   }
 
   componentDidMount() {
     var keyword = this.props.qr_code;
-    this._getHistory();
+    this.getHistory();
 
     setTimeout(() => {
       Actions.refresh({
@@ -56,19 +57,30 @@ class Search extends Component {
           });
 
           // auto search on changed text
-          clearTimeout(this._onSearchTimer);
-          this._onSearchTimer = setTimeout(() => {
-            this._onSearch(text);
+          clearTimeout(this.onSearchTimer);
+          this.onSearchTimer = setTimeout(() => {
+            this.onSearch(text);
           }, 400);
         },
         onCancel: () => {
           Keyboard.dismiss();
+        },
+        onClearText: () => {
+          Actions.refresh({
+            searchValue: ''
+          });
+
+          this.setState({
+            searchValue: ''
+          });
+
+          this.onSearch('');
         }
       });
     });
   }
 
-  _getHistory() {
+  getHistory() {
     storage
       .load({
         key: SEARCH_KEY + store.user_info.id,
@@ -87,7 +99,7 @@ class Search extends Component {
       .catch(e => {});
   }
 
-  _onSearch(keyword) {
+  onSearch(keyword) {
     if (keyword == null || keyword == '') {
       this.setState({
         search_data: null,
@@ -117,7 +129,7 @@ class Search extends Component {
                 header_title: `— Kết quả cho "${keyword}" —`
               });
             } else {
-              this._getHistory();
+              this.getHistory();
 
               this.setState({
                 search_data: null,
@@ -130,7 +142,7 @@ class Search extends Component {
           console.log(e + ' search_product');
           store.addApiQueue(
             'search_product',
-            this._onSearch.bind(this, keyword)
+            this.onSearch.bind(this, keyword)
           );
         }
       }
@@ -170,7 +182,7 @@ class Search extends Component {
   _onTouchHistory(item) {
     this._insertName(item);
 
-    this._onSearch(item.name);
+    this.onSearch(item.name);
   }
 
   _updateHistory(item) {
@@ -220,6 +232,9 @@ class Search extends Component {
         {search_data != null ? (
           <FlatList
             keyboardShouldPersistTaps="handled"
+            keyboardDismissMode={
+              Platform.OS === 'ios' ? 'on-drag' : 'interactive'
+            }
             onEndReached={num => {}}
             onEndReachedThreshold={0}
             style={[styles.items_box]}
@@ -254,6 +269,9 @@ class Search extends Component {
                   }
                 ]}
                 keyboardShouldPersistTaps="handled"
+                keyboardDismissMode={
+                  Platform.OS === 'ios' ? 'on-drag' : 'interactive'
+                }
               >
                 <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
 
