@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from 'react-native-button';
-import { IMAGE_ICON_TYPE, CHAT_SERVICE_TYPE } from '../../constants';
+import { IMAGE_ICON_TYPE } from '../../constants';
 
 function renderService({ item, data, app, notify, onPress }) {
   const handleOnPress = () => {
@@ -29,7 +29,7 @@ function renderService({ item, data, app, notify, onPress }) {
         </View>
         <Text style={styles.title}>{item.title}</Text>
 
-        {notify.notify_chat > 0 && item.type == CHAT_SERVICE_TYPE && (
+        {notify.notify_chat > 0 && item.type === 'chat' && (
           <View style={styles.notifyWrapper}>
             <Text style={styles.notify}>{notify.notify_chat}</Text>
           </View>
