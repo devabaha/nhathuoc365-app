@@ -31,7 +31,7 @@ class EnterCodeManual extends Component {
     onSendCode: defaultListener,
     heading: '',
     message: '',
-    placeholder: 'Nhập mã cửa hàng'
+    placeholder: ''
   };
 
   constructor(props) {

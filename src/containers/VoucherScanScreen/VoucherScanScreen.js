@@ -7,6 +7,7 @@ class VoucherScanScreen extends TickIDVoucherScanScreen {
     Actions.push(appConfig.routes.voucherEnterCodeManual, {
       onClose: Actions.pop,
       heading: 'Nhập mã thủ công',
+      placeholder: this.props.placeholder,
       /**
        * In case enter code manual
        * @NOTE: pop 2 times to go back `Voucher Detail` screen
