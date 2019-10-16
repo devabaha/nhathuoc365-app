@@ -17,7 +17,10 @@ class MyVoucher extends BaseContainer {
   }
 
   componentWillMount() {
-    this.validateRequiredMethods(['handlePressVoucher']);
+    this.validateRequiredMethods([
+      'handlePressVoucher',
+      'handlePressEnterVoucher'
+    ]);
   }
 
   componentDidMount() {
@@ -63,6 +66,7 @@ class MyVoucher extends BaseContainer {
     return (
       <MyVoucherComponent
         onPressVoucher={this.handlePressVoucher}
+        onPressEnterVoucher={this.handlePressEnterVoucher}
         onRefresh={this.handleOnRefresh}
         refreshing={this.state.refreshing}
         showLoading={this.state.showLoading}
