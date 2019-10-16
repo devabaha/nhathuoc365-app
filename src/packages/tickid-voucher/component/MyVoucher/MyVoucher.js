@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import Button from 'react-native-button';
 import PropTypes from 'prop-types';
 import config from '../../config';
 import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
@@ -11,6 +12,7 @@ const defaultListener = () => {};
 class MyVoucher extends Component {
   static propTypes = {
     onPressVoucher: PropTypes.func,
+    onPressEnterVoucher: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
     showLoading: PropTypes.bool,
@@ -19,6 +21,7 @@ class MyVoucher extends Component {
 
   static defaultProps = {
     onPressVoucher: defaultListener,
+    onPressEnterVoucher: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
     showLoading: false,
@@ -35,17 +38,30 @@ class MyVoucher extends Component {
 
   renderMyVouchers() {
     return (
-      <FlatList
-        data={this.props.campaigns}
-        keyExtractor={item => `${item.data.id}`}
-        renderItem={this.renderMyVoucher}
-        refreshControl={
-          <RefreshControl
-            refreshing={this.props.refreshing}
-            onRefresh={this.props.onRefresh}
-          />
-        }
-      />
+      <Fragment>
+        <FlatList
+          data={this.props.campaigns}
+          keyExtractor={item => `${item.data.id}`}
+          renderItem={this.renderMyVoucher}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.refreshing}
+              onRefresh={this.props.onRefresh}
+            />
+          }
+        />
+        <View style={styles.getVoucherWrapper}>
+          <Button
+            containerStyle={styles.getVoucherBtn}
+            style={styles.getVoucherTitle}
+            onPress={() => {
+              this.props.onPressEnterVoucher();
+            }}
+          >
+            {'Nhập mã voucher'}
+          </Button>
+        </View>
+      </Fragment>
     );
   }
 
@@ -83,6 +99,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f1f1f1',
     marginBottom: config.device.bottomSpace
+  },
+  getVoucherWrapper: {
+    backgroundColor: config.colors.white,
+    height: 62,
+    paddingHorizontal: 16,
+    justifyContent: 'center'
+  },
+  getVoucherBtn: {
+    backgroundColor: config.colors.primary,
+    borderRadius: 8,
+    paddingVertical: 14
+  },
+  getVoucherTitle: {
+    color: config.colors.white,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    fontSize: 16
   }
 });
 

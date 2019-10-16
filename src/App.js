@@ -33,6 +33,7 @@ import VoucherContainer from './containers/Voucher';
 import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
 import VoucherScanScreenContainer from './containers/VoucherScanScreen';
+import MyVoucherScanScreenContainer from './containers/MyVoucherScanScreen';
 import VoucherShowBarcodeContainer from './containers/VoucherShowBarcode';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
@@ -907,6 +908,17 @@ class App extends Component {
                       key={`${appConfig.routes.voucherScanner}_1`}
                       title="Quét mã QR"
                       component={VoucherScanScreenContainer}
+                      {...whiteNavBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  {/* ================ SCENE VOUCHER SCAN ================ */}
+                  <Stack key={appConfig.routes.myVoucherScanner}>
+                    <Scene
+                      key={`${appConfig.routes.myVoucherScanner}_1`}
+                      title="Quét mã QR"
+                      component={MyVoucherScanScreenContainer}
                       {...whiteNavBarConfig}
                       back
                     />

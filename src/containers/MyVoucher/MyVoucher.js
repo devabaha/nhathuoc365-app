@@ -9,6 +9,9 @@ class MyVoucher extends TickIDMyVoucher {
       title: voucher.data.title
     });
   };
+  handlePressEnterVoucher = () => {
+    Actions.push(appConfig.routes.myVoucherScanner, {});
+  };
 }
 
 export default MyVoucher;
