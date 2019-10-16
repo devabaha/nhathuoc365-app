@@ -22,7 +22,6 @@ class Home extends Component {
     listService: PropTypes.array,
     notify: PropTypes.object,
     userInfo: PropTypes.object,
-    hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
     apiFetching: PropTypes.bool,
     onActionPress: PropTypes.func,
@@ -51,7 +50,6 @@ class Home extends Component {
     listService: [],
     notify: {},
     userInfo: undefined,
-    hasPromotion: false,
     refreshing: false,
     apiFetching: false,
     onActionPress: defaultListener,
@@ -69,6 +67,26 @@ class Home extends Component {
     onPressNewItem: defaultListener,
     onBodyScrollTop: defaultListener
   };
+
+  get hasPromotion() {
+    return (
+      Array.isArray(this.props.promotions) && this.props.promotions.length > 0
+    );
+  }
+
+  get hasCampaigns() {
+    return (
+      Array.isArray(this.props.campaigns) && this.props.campaigns.length > 0
+    );
+  }
+
+  get hasSites() {
+    return Array.isArray(this.props.sites) && this.props.sites.length > 0;
+  }
+
+  get hasNews() {
+    return Array.isArray(this.props.newses) && this.props.newses.length > 0;
+  }
 
   render() {
     return (
@@ -119,14 +137,14 @@ class Home extends Component {
           />
 
           <View style={styles.contentWrapper}>
-            {this.props.hasPromotion && (
+            {this.hasPromotion && (
               <Promotion
                 data={this.props.promotions}
                 onPress={this.props.onPromotionPressed}
               />
             )}
 
-            {this.props.sites && (
+            {this.hasSites && (
               <HomeCardList
                 onShowAll={false} //this.props.onShowAllSites
                 data={this.props.sites}
@@ -143,7 +161,7 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.props.campaigns && (
+            {this.hasCampaigns && (
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
                 data={this.props.campaigns}
@@ -160,7 +178,7 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.props.newses && (
+            {this.hasNews && (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}

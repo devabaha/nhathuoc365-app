@@ -29,12 +29,6 @@ class Home extends Component {
     };
   }
 
-  get hasPromotion() {
-    return (
-      Array.isArray(this.state.promotions) && this.state.promotions.length > 0
-    );
-  }
-
   componentDidMount() {
     this.getHomeDataFromApi();
   }
@@ -428,7 +422,6 @@ class Home extends Component {
         onPressNewItem={this.handlePressNewItem}
         onPressButtonChat={this.handlePressButtonChat}
         onBodyScrollTop={this.handleBodyScrollTop}
-        hasPromotion={this.hasPromotion}
         refreshing={this.state.refreshing}
       />
     );
