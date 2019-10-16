@@ -10,6 +10,7 @@ import {
   Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Items from './Items';
@@ -399,7 +400,10 @@ class Search extends Component {
             Events.trigger(NEXT_PREV_CART, { index });
           }
         })();
-        Toast.show(response.message);
+        showMessage({
+          type: 'info',
+          message: response.message
+        });
       }
 
       this.cartItemConfirmRemove = undefined;
