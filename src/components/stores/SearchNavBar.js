@@ -55,6 +55,7 @@ class SearchNavBar extends Component {
           placeholderTextColor="#ccc"
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
+          autoFocus
         />
 
         {!!this.props.searchValue && (
@@ -142,6 +143,7 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     flex: 1,
+    height: 28,
     paddingHorizontal: 8,
     color: appConfig.colors.white
   }
