@@ -11,7 +11,7 @@ class Voucher extends BaseContainer {
 
     this.state = {
       refreshing: false,
-      showLoading: false,
+      apiFetching: false,
       provinceSelected: '',
       campaigns: [],
       newVoucherNum: 0
@@ -32,7 +32,7 @@ class Voucher extends BaseContainer {
 
   getListCampaigns = async (city = '', showLoading = true) => {
     if (showLoading) {
-      this.setState({ showLoading: true });
+      this.setState({ apiFetching: true });
     }
 
     try {
@@ -60,7 +60,7 @@ class Voucher extends BaseContainer {
     } finally {
       this.setState({
         refreshing: false,
-        showLoading: false
+        apiFetching: false
       });
     }
   };
@@ -69,8 +69,8 @@ class Voucher extends BaseContainer {
     this.setState({ refreshing: true });
 
     setTimeout(() => {
-      const showLoading = false;
-      this.getListCampaigns(this.state.provinceSelected, showLoading);
+      const apiFetching = false;
+      this.getListCampaigns(this.state.provinceSelected, apiFetching);
     }, 1000);
   };
 
@@ -83,7 +83,7 @@ class Voucher extends BaseContainer {
     return (
       <VoucherComponent
         refreshing={this.state.refreshing}
-        showLoading={this.state.showLoading}
+        apiFetching={this.state.apiFetching}
         provinceSelected={this.state.provinceSelected}
         campaigns={this.state.campaigns}
         newVoucherNum={this.state.newVoucherNum}

@@ -5,9 +5,9 @@ import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, { HomeCardItem } from './component/HomeCardList';
+import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
 import appConfig from 'app-config';
-import { SERVICES_LIST } from './constants';
 
 const defaultListener = () => {};
 
@@ -19,11 +19,12 @@ class Home extends Component {
     services: PropTypes.array,
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
-    app: PropTypes.object,
+    listService: PropTypes.array,
     notify: PropTypes.object,
     userInfo: PropTypes.object,
     hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
+    apiFetching: PropTypes.bool,
     onActionPress: PropTypes.func,
     onSurplusNext: PropTypes.func,
     onPromotionPressed: PropTypes.func,
@@ -47,11 +48,12 @@ class Home extends Component {
     services: [],
     campaigns: [],
     promotions: [],
-    app: undefined,
+    listService: [],
     notify: {},
     userInfo: undefined,
     hasPromotion: false,
     refreshing: false,
+    apiFetching: false,
     onActionPress: defaultListener,
     onSurplusNext: defaultListener,
     onPromotionPressed: defaultListener,
@@ -71,6 +73,8 @@ class Home extends Component {
   render() {
     return (
       <View style={styles.container}>
+        {this.props.apiFetching && <LoadingComponent loading />}
+
         <View style={styles.headerBackground} />
 
         <ScrollView
@@ -87,9 +91,7 @@ class Home extends Component {
           <Header
             notify={this.props.notify}
             name={this.props.userInfo ? this.props.userInfo.name : 'Tk Khách'}
-            onPressButtonChat={() =>
-              this.props.onPressButtonChat(this.props.app)
-            }
+            onPressButtonChat={this.props.onPressButtonChat}
           />
 
           <View style={styles.primaryActionsWrapper}>
@@ -110,9 +112,8 @@ class Home extends Component {
           </View>
 
           <ListServices
-            data={SERVICES_LIST}
             services={this.props.services}
-            app={this.props.app}
+            listService={this.props.listService}
             notify={this.props.notify}
             onItemPress={this.props.onPressService}
           />

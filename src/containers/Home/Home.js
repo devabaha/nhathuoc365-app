@@ -1,22 +1,13 @@
 import React, { Component } from 'react';
 import { StatusBar, Alert } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import Communications from 'react-native-communications';
 import appConfig from 'app-config';
 import store from 'app-store';
 import HomeComponent, {
-  SCAN_QR_CODE_TYPE,
-  TOP_UP_PHONE_TYPE,
-  RADA_SERVICE_TYPE,
-  VOUCHER_SERVICE_TYPE,
-  BOOKING_30DAY_TYPE,
-  MY_VOUCHER_SERVICE_TYPE,
-  MY_ADDRESS_SERVICE_TYPE,
-  NEWS_SERVICE_TYPE,
-  ORDERS_SERVICE_TYPE,
   ACCUMULATE_POINTS_TYPE,
   MY_VOUCHER_TYPE,
-  TRANSACTION_TYPE,
-  CHAT_SERVICE_TYPE
+  TRANSACTION_TYPE
 } from '../../components/Home';
 
 @observer
@@ -26,13 +17,15 @@ class Home extends Component {
 
     this.state = {
       refreshing: false,
+      apiFetching: false,
       site: null,
       sites: null,
       newses: null,
       notices: null,
       campaigns: null,
       promotions: null,
-      services: []
+      services: [],
+      listService: []
     };
   }
 
@@ -46,7 +39,13 @@ class Home extends Component {
     this.getHomeDataFromApi();
   }
 
-  getHomeDataFromApi = async () => {
+  getHomeDataFromApi = async (showLoading = true) => {
+    if (showLoading) {
+      this.setState({
+        apiFetching: true
+      });
+    }
+
     try {
       const response = await APIHandler.user_site_home();
       if (response && response.status == STATUS_SUCCESS) {
@@ -57,14 +56,16 @@ class Home extends Component {
           notices: response.data.notices,
           services: response.data.services,
           campaigns: response.data.campaigns,
-          promotions: response.data.promotions
+          promotions: response.data.promotions,
+          listService: response.data.list_service
         });
       }
     } catch (error) {
       console.log(error);
     } finally {
       this.setState({
-        refreshing: false
+        refreshing: false,
+        apiFetching: false
       });
     }
   };
@@ -72,8 +73,10 @@ class Home extends Component {
   handlePullToRefresh = () => {
     this.setState({ refreshing: true });
 
-    const oneSecond = 1000;
-    setTimeout(this.getHomeDataFromApi, oneSecond);
+    setTimeout(() => {
+      const showLoading = false;
+      this.getHomeDataFromApi(showLoading);
+    }, 1000);
   };
 
   handlePressedSurplusNext = () => {
@@ -249,25 +252,27 @@ class Home extends Component {
     }
   };
 
+  shopOpening;
+
   handlePressService = service => {
     switch (service.type) {
-      case SCAN_QR_CODE_TYPE:
+      case 'qrscan':
         Actions.push(appConfig.routes.qrBarCode, {
           index: 1,
           title: 'Quét QR Code',
           wallet: store.user_info.default_wallet
         });
         break;
-      case TOP_UP_PHONE_TYPE:
+      case 'up_to_phone':
         Actions.push(appConfig.routes.upToPhone, {
           service_type: service.type,
           service_id: service.id
         });
         break;
-      case VOUCHER_SERVICE_TYPE:
+      case 'list_voucher':
         Actions.push(appConfig.routes.mainVoucher);
         break;
-      case RADA_SERVICE_TYPE:
+      case 'rada_service':
         Actions.push('tickidRada', {
           service_type: service.type,
           service_id: service.id,
@@ -277,29 +282,55 @@ class Home extends Component {
           }
         });
         break;
-      case BOOKING_30DAY_TYPE:
+      case '30day_service':
         Alert.alert(
           'Thông báo',
           'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
           [{ text: 'Đồng ý' }]
         );
         break;
-      case MY_VOUCHER_SERVICE_TYPE:
+      case 'my_voucher':
         Actions.push(appConfig.routes.myVoucher);
         break;
-      case MY_ADDRESS_SERVICE_TYPE:
+      case 'my_address':
         Actions.push(appConfig.routes.myAddress, {
           from_page: 'account'
         });
         break;
-      case NEWS_SERVICE_TYPE:
+      case 'news':
         Actions.jump(appConfig.routes.newsTab);
         break;
-      case ORDERS_SERVICE_TYPE:
+      case 'orders':
         Actions.jump(appConfig.routes.ordersTab);
         break;
-      case CHAT_SERVICE_TYPE:
-        this.handlePressButtonChat(service.app);
+      case 'chat':
+        this.handlePressButtonChat(this.state.site);
+        break;
+      case 'open_shop':
+        if (this.shopOpening) return;
+        this.setState({
+          showLoading: true
+        });
+        APIHandler.site_info(service.siteId)
+          .then(response => {
+            if (response && response.status == STATUS_SUCCESS) {
+              action(() => {
+                store.setStoreData(response.data);
+                Actions.push(appConfig.routes.store, {
+                  title: response.data.name
+                });
+              })();
+            }
+          })
+          .finally(() => {
+            this.shopOpening = false;
+            this.setState({
+              showLoading: false
+            });
+          });
+        break;
+      case 'call':
+        Communications.phonecall(service.tel, true);
         break;
     }
   };
@@ -358,16 +389,16 @@ class Home extends Component {
     }
   };
 
-  handlePressButtonChat(item) {
+  handlePressButtonChat = () => {
     action(() => {
-      store.setStoreData(item);
+      store.setStoreData(this.state.site);
     })();
 
     Actions.chat({
-      tel: item.tel,
-      title: item.name
+      tel: this.state.site.tel,
+      title: this.state.site.name
     });
-  }
+  };
 
   render() {
     return (
@@ -376,11 +407,12 @@ class Home extends Component {
         newses={this.state.newses}
         notices={this.state.notices}
         services={this.state.services}
-        app={this.state.site}
         userInfo={store.user_info}
         notify={store.notify}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
+        listService={this.state.listService}
+        apiFetching={this.state.apiFetching}
         onActionPress={this.handlePressAction}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
