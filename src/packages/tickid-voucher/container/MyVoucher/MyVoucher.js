@@ -11,7 +11,7 @@ class MyVoucher extends BaseContainer {
 
     this.state = {
       refreshing: false,
-      showLoading: false,
+      apiFetching: false,
       campaigns: []
     };
   }
@@ -30,7 +30,7 @@ class MyVoucher extends BaseContainer {
   getMyVouchers = async (showLoading = true) => {
     if (showLoading) {
       this.setState({
-        showLoading: true
+        apiFetching: true
       });
     }
 
@@ -48,7 +48,7 @@ class MyVoucher extends BaseContainer {
     } finally {
       this.setState({
         refreshing: false,
-        showLoading: false
+        apiFetching: false
       });
     }
   };
@@ -69,7 +69,7 @@ class MyVoucher extends BaseContainer {
         onPressEnterVoucher={this.handlePressEnterVoucher}
         onRefresh={this.handleOnRefresh}
         refreshing={this.state.refreshing}
-        showLoading={this.state.showLoading}
+        apiFetching={this.state.apiFetching}
         campaigns={this.state.campaigns}
       />
     );

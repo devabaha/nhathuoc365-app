@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, TouchableHighlight, StyleSheet } from 'react-native';
+import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 
@@ -85,7 +86,10 @@ export default class Items extends Component {
               this.setState({
                 buying: false
               });
-              Toast.show(response.message);
+              showMessage({
+                type: 'success',
+                message: response.message
+              });
             })();
           }
         } catch (e) {

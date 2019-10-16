@@ -9,6 +9,7 @@ import {
   ScrollView
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
 import Items from './Items';
@@ -388,7 +389,10 @@ class Stores extends Component {
             }
           })();
         }, 450);
-        Toast.show(response.message);
+        showMessage({
+          type: 'info',
+          message: response.message
+        });
       }
 
       this.cartItemConfirmRemove = undefined;

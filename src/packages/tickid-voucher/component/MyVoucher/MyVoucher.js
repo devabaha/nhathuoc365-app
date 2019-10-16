@@ -15,7 +15,7 @@ class MyVoucher extends Component {
     onPressEnterVoucher: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
-    showLoading: PropTypes.bool,
+    apiFetching: PropTypes.bool,
     campaigns: PropTypes.array
   };
 
@@ -24,7 +24,7 @@ class MyVoucher extends Component {
     onPressEnterVoucher: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
-    showLoading: false,
+    apiFetching: false,
     campaigns: []
   };
 
@@ -80,10 +80,10 @@ class MyVoucher extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.props.showLoading && <LoadingComponent loading />}
-        {this.hasCampaigns ? (
-          this.renderMyVouchers()
-        ) : (
+        {this.props.apiFetching && <LoadingComponent loading />}
+        {this.hasCampaigns && this.renderMyVouchers()}
+
+        {!this.props.apiFetching && !this.hasCampaigns && (
           <NoResult
             title="Bạn chưa có phiếu giảm giá"
             text={'Đi săn voucher ở ' + APP_NAME_SHOW + ' Voucher ngay thôi'}

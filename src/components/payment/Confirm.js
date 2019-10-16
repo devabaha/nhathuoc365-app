@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
 import _ from 'lodash';
 import ListHeader from '../stores/ListHeader';
@@ -377,7 +378,10 @@ export default class Confirm extends Component {
             }
           })();
         }, this._delay());
-        Toast.show(response.message);
+        showMessage({
+          type: 'info',
+          message: response.message
+        });
       }
 
       this.cartItemConfirmRemove = undefined;
@@ -1860,7 +1864,10 @@ class ItemCartComponent extends Component {
             action(() => {
               store.setCartData(response.data);
             })();
-            Toast.show(response.message);
+            showMessage({
+              type: 'info',
+              message: response.message
+            });
           }
         } catch (e) {
           console.log(e + ' site_cart_down');
@@ -1891,8 +1898,12 @@ class ItemCartComponent extends Component {
           if (response && response.status == STATUS_SUCCESS) {
             action(() => {
               store.setCartData(response.data);
-              Toast.show(response.message);
             })();
+
+            showMessage({
+              type: 'info',
+              message: response.message
+            });
           }
         } catch (e) {
           console.log(e + ' site_cart_up');

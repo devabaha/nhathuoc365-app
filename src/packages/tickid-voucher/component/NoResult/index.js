@@ -1,10 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ViewPropTypes } from 'react-native';
 
 function NoResult(props) {
   return (
-    <View style={styles.noResultWrapper}>
+    <View style={[styles.noResultWrapper, props.style]}>
       <Text style={styles.noResultTitle}>{props.title}</Text>
       <Text style={styles.noResultText}>{props.text}</Text>
     </View>
@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
 
 NoResult.propTypes = {
   title: PropTypes.string.isRequired,
-  text: PropTypes.string.isRequired
+  text: PropTypes.string.isRequired,
+  style: ViewPropTypes.style
 };
 
 export default NoResult;

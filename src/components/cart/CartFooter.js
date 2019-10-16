@@ -8,8 +8,7 @@ import {
   FlatList,
   Alert
 } from 'react-native';
-
-//library
+import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 
@@ -103,7 +102,10 @@ export default class CartFooter extends Component {
               this.setState({
                 decrement_loading: false
               });
-              Toast.show(response.message);
+              showMessage({
+                type: 'info',
+                message: response.message
+              });
             })();
           }
         } catch (e) {
@@ -133,7 +135,10 @@ export default class CartFooter extends Component {
               this.setState({
                 increment_loading: false
               });
-              Toast.show(response.message);
+              showMessage({
+                type: 'info',
+                message: response.message
+              });
             })();
           }
         } catch (e) {

@@ -74,7 +74,6 @@ export default class StoreOrders extends Component {
             loading: false
           });
         }, delay || this._delay());
-        Toast.show(response.message);
       } else {
         this.setState({
           loading: false
