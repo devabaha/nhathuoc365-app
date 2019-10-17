@@ -14,7 +14,10 @@ class MyVoucher extends TickIDMyVoucher {
       placeholder: 'Nhập mã Voucher',
       topContentText:
         'Hướng máy ảnh của bạn về phía mã QR Code để nhận voucher',
-      isFromMyVoucher: true
+      isFromMyVoucher: true,
+      refreshMyVoucher: () => {
+        this.getMyVouchers();
+      }
     });
   };
 }

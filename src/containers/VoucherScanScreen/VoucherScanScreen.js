@@ -37,6 +37,10 @@ class VoucherScanScreen extends TickIDVoucherScanScreen {
       voucher
     });
   };
+
+  handleRefreshMyVoucher() {
+    this.props.refreshMyVoucher();
+  }
 }
 
 export default VoucherScanScreen;

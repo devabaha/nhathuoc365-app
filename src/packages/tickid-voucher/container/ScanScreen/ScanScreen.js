@@ -32,7 +32,8 @@ class ScanScreen extends BaseContainer {
     this.validateRequiredMethods([
       'handlePressEnterCode',
       'handleReadedCode',
-      'handleShowBarcode'
+      'handleShowBarcode',
+      'handleRefreshMyVoucher'
     ]);
   }
 
@@ -106,6 +107,7 @@ class ScanScreen extends BaseContainer {
           message: 'Bạn đã nhận thành công voucher này.',
           type: 'success'
         });
+        this.handleRefreshMyVoucher();
       } else {
         showMessage({
           message: response.message,
@@ -118,7 +120,7 @@ class ScanScreen extends BaseContainer {
         {
           showLoading: false
         },
-        function() {
+        () => {
           showMessage({
             message: 'Kết nối tới máy chủ thất bại. Vui lòng thử lại sau',
             type: 'danger'
