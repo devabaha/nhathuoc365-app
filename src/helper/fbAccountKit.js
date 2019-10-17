@@ -1,4 +1,5 @@
 import store from 'app-store';
+import { showMessage } from 'react-native-flash-message';
 import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
 
 const defaultListener = () => {};
@@ -33,10 +34,13 @@ export const runFbAccountKit = ({
 
 export const verifyFbAccountKitToken = token => {
   return new Promise(async (resolve, reject) => {
-    if (!token) reject();
+    if (!token) {
+      reject(new Error('Token not valid'));
+      return;
+    }
     try {
       const response = await APIHandler.login_fbak_verify(token);
-      if (response && response.status == STATUS_SUCCESS) {
+      if (response && response.status === 200) {
         showMessage({
           message: response.message,
           type: 'success'

@@ -489,7 +489,6 @@ class App extends Component {
                       title="Đăng ký"
                       component={OpRegister}
                       {...navBarConfig}
-                      back
                     />
                   </Stack>
 

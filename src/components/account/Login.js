@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -8,14 +6,14 @@ import {
   StyleSheet,
   TouchableHighlight
 } from 'react-native';
-
-// library
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import appConfig from 'app-config';
+import { showMessage } from 'react-native-flash-message';
 
-export default class Login extends Component {
+class Login extends Component {
   componentDidMount() {
     this._run_fbak();
   }
@@ -68,8 +66,7 @@ export default class Login extends Component {
                     finish: true
                   },
                   () => {
-                    Actions.op_register({
-                      type: ActionConst.RESET,
+                    Actions.replace('op_register', {
                       title: 'Đăng ký thông tin',
                       name_props: response.data.name
                     });
@@ -83,20 +80,24 @@ export default class Login extends Component {
                     finish: true
                   },
                   () => {
-                    Actions.primaryTabbar({
-                      type: ActionConst.RESET
-                    });
+                    Actions.replace(appConfig.routes.primaryTabbar);
                   }
                 );
               })();
             }
           })();
-          Toast.show(response.message, Toast.SHORT);
+          showMessage({
+            message: response.message,
+            type: 'info'
+          });
         } else if (response) {
           setTimeout(() => {
             this.setState({ spinner: false });
           }, 2000);
-          Toast.show(response.message, Toast.SHORT);
+          showMessage({
+            message: response.message,
+            type: 'info'
+          });
         }
       } catch (err) {
         setTimeout(() => {
@@ -169,3 +170,5 @@ const styles = StyleSheet.create({
     fontSize: 16
   }
 });
+
+export default Login;
