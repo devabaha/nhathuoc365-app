@@ -4,11 +4,7 @@ import { Actions } from 'react-native-router-flux';
 import Communications from 'react-native-communications';
 import appConfig from 'app-config';
 import store from 'app-store';
-import HomeComponent, {
-  ACCUMULATE_POINTS_TYPE,
-  MY_VOUCHER_TYPE,
-  TRANSACTION_TYPE
-} from '../../components/Home';
+import HomeComponent from '../../components/Home';
 
 @observer
 class Home extends Component {
@@ -25,7 +21,8 @@ class Home extends Component {
       campaigns: null,
       promotions: null,
       services: [],
-      listService: []
+      listService: [],
+      primaryActions: []
     };
   }
 
@@ -51,7 +48,8 @@ class Home extends Component {
           services: response.data.services,
           campaigns: response.data.campaigns,
           promotions: response.data.promotions,
-          listService: response.data.list_service
+          listService: response.data.list_service,
+          primaryActions: response.data.primary_actions
         });
       }
     } catch (error) {
@@ -227,17 +225,17 @@ class Home extends Component {
 
   handlePressAction = action => {
     switch (action.type) {
-      case ACCUMULATE_POINTS_TYPE:
+      case 'ACCUMULATE_POINTS_TYPE':
         Actions.push(appConfig.routes.qrBarCode, {
           title: 'Mã tài khoản'
         });
         break;
-      case MY_VOUCHER_TYPE:
+      case 'MY_VOUCHER_TYPE':
         Actions.push(appConfig.routes.myVoucher, {
           title: 'Voucher của tôi'
         });
         break;
-      case TRANSACTION_TYPE:
+      case 'TRANSACTION_TYPE':
         Actions.vnd_wallet({
           title: store.user_info.default_wallet.name,
           wallet: store.user_info.default_wallet
@@ -406,6 +404,7 @@ class Home extends Component {
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         listService={this.state.listService}
+        primaryActions={this.state.primaryActions}
         apiFetching={this.state.apiFetching}
         onActionPress={this.handlePressAction}
         onSurplusNext={this.handlePressedSurplusNext}

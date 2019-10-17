@@ -20,6 +20,7 @@ class Home extends Component {
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
     listService: PropTypes.array,
+    primaryActions: PropTypes.array,
     notify: PropTypes.object,
     userInfo: PropTypes.object,
     refreshing: PropTypes.bool,
@@ -48,6 +49,7 @@ class Home extends Component {
     campaigns: [],
     promotions: [],
     listService: [],
+    primaryActions: [],
     notify: {},
     userInfo: undefined,
     refreshing: false,
@@ -124,6 +126,7 @@ class Home extends Component {
                   ? this.props.userInfo.default_wallet.balance_view
                   : ''
               }
+              primaryActions={this.props.primaryActions}
               onPressItem={this.props.onActionPress}
               onSurplusNext={this.props.onSurplusNext}
             />
