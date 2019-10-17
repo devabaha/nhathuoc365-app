@@ -1,4 +1,4 @@
-package id.tick;
+package vn.foodhub;
 
 import com.facebook.react.ReactActivity;
 

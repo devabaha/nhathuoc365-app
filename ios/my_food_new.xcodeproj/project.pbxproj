@@ -1968,7 +1968,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = id.tick;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub;
 				PRODUCT_NAME = my_food_new;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2014,7 +2014,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = id.tick;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub;
 				PRODUCT_NAME = my_food_new;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -2043,7 +2043,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = id.tick.OneSignalNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2073,7 +2073,7 @@
 					"$(inherited)",
 				);
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = id.tick.OneSignalNotificationServiceExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -31,7 +31,7 @@ Build:
 2. 
 Build Release
 https://facebook.github.io/react-native/docs/signed-apk-android.html
-keytool -genkey -v -keystore id.tick.keystore -alias id.tick -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -keystore vn.foodhub.keystore -alias vn.foodhub -keyalg RSA -keysize 2048 -validity 10000
 
 file gradle.properties
 MYAPP_RELEASE_STORE_FILE=vlink.keystore

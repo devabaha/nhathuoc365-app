@@ -114,7 +114,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "id.tick"
+        applicationId "vn.foodhub"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 4
