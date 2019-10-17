@@ -14,11 +14,17 @@ function renderDotsLeft() {
 
 function MyVoucherItem(props) {
   return (
-    <Button onPress={props.onPress} containerStyle={styles.btnWrapper}>
+    <Button
+      onPress={props.onPress}
+      containerStyle={[
+        styles.btnWrapper,
+        { marginBottom: props.last ? 16 : 0 }
+      ]}
+    >
       <View style={[styles.dotLarge, styles.dotTop]} />
       <View style={[styles.dotLarge, styles.dotBottom]} />
 
-      <View style={[styles.container, { marginBottom: props.last ? 16 : 0 }]}>
+      <View style={styles.container}>
         <View style={styles.avatarWrapper}>
           <Image style={styles.avatar} source={{ uri: props.avatar }} />
           {renderDotsLeft()}

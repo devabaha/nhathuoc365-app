@@ -32,7 +32,7 @@ class Voucher extends Component {
     onPressSelectProvince: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
-    showLoading: PropTypes.bool,
+    apiFetching: PropTypes.bool,
     provinceSelected: PropTypes.string,
     campaigns: PropTypes.array,
     newVoucherNum: PropTypes.number
@@ -44,7 +44,7 @@ class Voucher extends Component {
     onPressSelectProvince: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
-    showLoading: false,
+    apiFetching: false,
     provinceSelected: '',
     campaigns: [],
     newVoucherNum: PropTypes.number
@@ -106,7 +106,7 @@ class Voucher extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.props.showLoading && <LoadingComponent loading />}
+        {this.props.apiFetching && <LoadingComponent loading />}
 
         <View style={styles.headerBackground} />
         {!this.state.hideVoucherX2 && (
@@ -114,7 +114,6 @@ class Voucher extends Component {
         )}
 
         <ScrollView
-          contentContainerStyle={{ flex: 1 }}
           onScroll={this.handleScrollTop}
           scrollEventThrottle={16}
           refreshControl={
@@ -169,10 +168,13 @@ class Voucher extends Component {
             </View>
           </Button>
 
-          {this.hasCampaigns ? (
-            this.renderVouchers()
-          ) : (
+          {this.hasCampaigns && this.renderVouchers()}
+
+          {!this.props.apiFetching && !this.hasCampaigns && (
             <NoResult
+              style={{
+                marginTop: config.device.height / 2 - 168
+              }}
               title="Địa điểm chưa có ưu đãi"
               text="Chưa có chương trình ưu đãi cho địa điểm này"
             />

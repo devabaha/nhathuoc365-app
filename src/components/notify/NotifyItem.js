@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
+import { showMessage } from 'react-native-flash-message';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import ListHeader from '../stores/ListHeader';
 import Items from '../stores/Items';
@@ -259,7 +260,10 @@ export default class NotifyItem extends Component {
               store.setCartItemIndex(index);
               Events.trigger(NEXT_PREV_CART, { index });
             }
-            Toast.show(response.message);
+            showMessage({
+              type: 'info',
+              message: response.message
+            });
           })();
         }, 450);
       }

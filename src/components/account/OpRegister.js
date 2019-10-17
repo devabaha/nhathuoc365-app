@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
+import { showMessage } from 'react-native-flash-message';
 
 @observer
 class OpRegister extends Component {
@@ -108,7 +109,10 @@ class OpRegister extends Component {
           }
 
           if (response) {
-            Toast.show(response.message, Toast.SHORT);
+            showMessage({
+              message: response.message,
+              type: 'info'
+            });
           }
         } catch (e) {
           this.setState({

@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import AutoHeightWebView from 'react-native-autoheight-webview';
+import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
 import Items from '../stores/Items';
 import ListHeader from '../stores/ListHeader';
@@ -270,7 +271,10 @@ export default class Item extends Component {
             this.setState({
               buying: false
             });
-            Toast.show(response.message);
+            showMessage({
+              type: 'success',
+              message: response.message
+            });
           }
         } catch (e) {
           console.log(e + ' site_cart_adding');
@@ -790,7 +794,10 @@ export default class Item extends Component {
               store.setCartItemIndex(index);
               Events.trigger(NEXT_PREV_CART, { index });
             }
-            Toast.show(response.message);
+            showMessage({
+              type: 'info',
+              message: response.message
+            });
           })();
         }, 450);
       }

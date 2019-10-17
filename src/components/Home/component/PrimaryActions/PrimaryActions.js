@@ -1,17 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableHighlight,
-  Platform
-} from 'react-native';
+import { View, Text, Image, StyleSheet, Platform } from 'react-native';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import getImageRatio from 'app-packages/tickid-util/getImageRatio';
-import { PRIMARY_ACTIONS } from '../../constants';
 import imageIconNext from '../../../../images/next.png';
 
 function PrimaryActions(props) {
@@ -21,7 +13,6 @@ function PrimaryActions(props) {
         <Button onPress={() => props.onSurplusNext()}>
           <View style={styles.walletInfoWrapper}>
             <Text style={styles.walletNameLabel}>{props.walletName}</Text>
-            {/* <Text style={styles.walletName}> Tick</Text> */}
 
             <View style={styles.walletLabelRight}>
               <Text style={styles.surplus}>{props.surplus}</Text>
@@ -32,7 +23,7 @@ function PrimaryActions(props) {
           </View>
         </Button>
         <View style={styles.walletAction}>
-          {PRIMARY_ACTIONS.map(action => (
+          {props.primaryActions.map(action => (
             <Button
               key={action.type}
               onPress={() => props.onPressItem(action)}
@@ -40,7 +31,7 @@ function PrimaryActions(props) {
             >
               <View style={styles.actionWrapper}>
                 <Image
-                  source={action.icon}
+                  source={{ uri: action.icon }}
                   style={[
                     styles.actionIcon,
                     {
@@ -68,7 +59,8 @@ const defaultListener = () => {};
 PrimaryActions.propTypes = {
   surplus: PropTypes.string,
   onSurplusNext: PropTypes.func,
-  onPressItem: PropTypes.func
+  onPressItem: PropTypes.func,
+  primaryActions: PropTypes.array
 };
 
 PrimaryActions.defaultProps = {
@@ -140,12 +132,6 @@ const styles = StyleSheet.create({
     color: '#9B04F1',
     fontSize: 14,
     fontWeight: '500'
-  },
-  walletName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    lineHeight: 18,
-    color: '#9B04F1'
   },
   surplus: {
     fontSize: 18,
