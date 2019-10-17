@@ -131,8 +131,8 @@ class Login extends Component {
           >
             <View style={styles.finish_btn}>
               <Text style={styles.finish_text}>
-                <Icon name="heart-o" size={16} color="#ffffff" /> TRẢI NGHIỆM{' '}
-                {APP_NAME}
+                <Icon name="heart-o" size={16} color="#ffffff" /> Trải nghiệm{' '}
+                {APP_NAME_SHOW}
               </Text>
             </View>
           </TouchableHighlight>
