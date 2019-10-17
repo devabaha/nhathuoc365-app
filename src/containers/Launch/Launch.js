@@ -36,26 +36,14 @@ class Launch extends Component {
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(response.data);
-        Actions.op_register({
+        Actions.replace('op_register', {
           title: 'Đăng ký thông tin',
-          name_props: response.data.name
+          name_props: response.data.name,
+          hideBackImage: true
         });
         break;
       case STATUS_UNDEFINE_USER:
-        runFbAccountKit({
-          onSuccess: res => {
-            if (res.data.fill_info_user) {
-              Actions.op_register({
-                title: 'Đăng ký thông tin',
-                name_props: res.data.name
-              });
-            }
-          },
-          onFailure: () => {
-            store.setUserInfo(response.data);
-            Actions.replace(appConfig.routes.primaryTabbar);
-          }
-        });
+        Actions.replace('login');
         break;
       default:
         showMessage({

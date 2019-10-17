@@ -5,11 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Button from 'react-native-button';
 import { IMAGE_ICON_TYPE } from '../../constants';
 
-function renderService({ item: serviceType, data, app, notify, onPress }) {
-  const item = data.find(service => service.type === serviceType);
-  if (!item) return null;
-  item.app = app;
-
+function renderService({ item, data, app, notify, onPress }) {
   const handleOnPress = () => {
     onPress(item);
   };
@@ -26,14 +22,14 @@ function renderService({ item: serviceType, data, app, notify, onPress }) {
           ]}
         >
           {item.iconType === IMAGE_ICON_TYPE ? (
-            <Image style={styles.icon} source={item.icon} />
+            <Image style={styles.icon} source={{ uri: item.icon }} />
           ) : (
             <MaterialCommunityIcons name={item.icon} color="#fff" size={32} />
           )}
         </View>
         <Text style={styles.title}>{item.title}</Text>
 
-        {notify.notify_chat > 0 && item.type == CHAT_SERVICE_TYPE && (
+        {notify.notify_chat > 0 && item.type === 'chat' && (
           <View style={styles.notifyWrapper}>
             <Text style={styles.notify}>{notify.notify_chat}</Text>
           </View>
@@ -47,18 +43,18 @@ function ListServices(props) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={props.services}
+        data={props.listService}
+        extraData={props.notify}
         renderItem={({ item, index }) =>
           renderService({
             item,
             index,
             onPress: props.onItemPress,
             data: props.data,
-            app: props.app,
             notify: props.notify
           })
         }
-        keyExtractor={item => item}
+        keyExtractor={item => item.type}
         numColumns={4}
       />
     </View>
@@ -68,7 +64,7 @@ function ListServices(props) {
 ListServices.propTypes = {
   data: PropTypes.array,
   services: PropTypes.array,
-  app: PropTypes.object,
+  listService: PropTypes.array,
   notify: PropTypes.object,
   onItemPress: PropTypes.func
 };
@@ -76,7 +72,7 @@ ListServices.propTypes = {
 ListServices.defaultProps = {
   data: [],
   services: [],
-  app: {},
+  listService: [],
   notify: {},
   onItemPress: () => {}
 };

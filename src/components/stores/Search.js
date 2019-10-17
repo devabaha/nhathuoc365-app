@@ -6,9 +6,11 @@ import {
   TouchableHighlight,
   FlatList,
   ScrollView,
-  Keyboard
+  Keyboard,
+  Platform
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Items from './Items';
@@ -19,7 +21,7 @@ import PopupConfirm from '../PopupConfirm';
 const SEARCH_KEY = 'KeySearch';
 
 @observer
-export default class Search extends Component {
+class Search extends Component {
   constructor(props) {
     super(props);
 
@@ -28,71 +30,58 @@ export default class Search extends Component {
       finish: false,
       header_title: '',
       search_data: null,
-      keyboard_state: 'always',
       history: null,
       buying_idx: [],
       searchValue: ''
     };
 
-    this._onSearch = this._onSearch.bind(this);
-    this._getHistory = this._getHistory.bind(this);
+    this.onSearch = this.onSearch.bind(this);
+    this.getHistory = this.getHistory.bind(this);
   }
 
   componentDidMount() {
     var keyword = this.props.qr_code;
-    this._getHistory();
+    this.getHistory();
 
-    const onBack = () => {
-      Keyboard.dismiss();
+    setTimeout(() => {
+      Actions.refresh({
+        searchValue: keyword || '',
+        placeholder: 'Tìm kiếm tại cửa hàng...',
+        autoFocus: true,
+        onSearch: text => {
+          Actions.refresh({
+            searchValue: text
+          });
 
-      Actions.pop();
-    };
+          this.setState({
+            searchValue: text
+          });
 
-    Actions.refresh({
-      showSearchBar: true,
-      searchValue: keyword || '',
-      placeholder: store.store_data.name
-        ? store.store_data.name
-        : 'Nhập thông tin cần tìm',
-      autoFocus: true,
-      inputAnimate: true,
-      onSubmitEditing: () => {
-        this._onSearch(this.state.searchValue);
-      },
-      onChangeText: text => {
-        Actions.refresh({
-          searchValue: text
-        });
+          // auto search on changed text
+          clearTimeout(this.onSearchTimer);
+          this.onSearchTimer = setTimeout(() => {
+            this.onSearch(text);
+          }, 400);
+        },
+        onCancel: () => {
+          Keyboard.dismiss();
+        },
+        onClearText: () => {
+          Actions.refresh({
+            searchValue: ''
+          });
 
-        this.setState({
-          searchValue: text
-        });
+          this.setState({
+            searchValue: ''
+          });
 
-        // auto search on changed text
-        clearTimeout(this._onSearchTimer);
-        this._onSearchTimer = setTimeout(() => {
-          this._onSearch(text);
-        }, 400);
-      },
-      cancelIsPop: true,
-      onSearchCancel: () => {
-        Keyboard.dismiss();
-      },
-      onCleanSearch: () => {
-        this._getHistory();
-
-        this.setState({
-          search_data: null,
-          loading: false,
-          finish: true,
-          keyboard_state: 'always'
-        });
-      },
-      onBack
+          this.onSearch('');
+        }
+      });
     });
   }
 
-  _getHistory() {
+  getHistory() {
     storage
       .load({
         key: SEARCH_KEY + store.user_info.id,
@@ -111,13 +100,12 @@ export default class Search extends Component {
       .catch(e => {});
   }
 
-  _onSearch(keyword) {
+  onSearch(keyword) {
     if (keyword == null || keyword == '') {
       this.setState({
         search_data: null,
         loading: false,
-        finish: true,
-        keyboard_state: 'always'
+        finish: true
       });
     }
 
@@ -139,17 +127,15 @@ export default class Search extends Component {
                 search_data: response.data,
                 loading: false,
                 finish: true,
-                header_title: `— Kết quả cho "${keyword}" —`,
-                keyboard_state: 'never'
+                header_title: `— Kết quả cho "${keyword}" —`
               });
             } else {
-              this._getHistory();
+              this.getHistory();
 
               this.setState({
                 search_data: null,
                 loading: false,
-                finish: true,
-                keyboard_state: 'always'
+                finish: true
               });
             }
           }
@@ -157,7 +143,7 @@ export default class Search extends Component {
           console.log(e + ' search_product');
           store.addApiQueue(
             'search_product',
-            this._onSearch.bind(this, keyword)
+            this.onSearch.bind(this, keyword)
           );
         }
       }
@@ -197,7 +183,7 @@ export default class Search extends Component {
   _onTouchHistory(item) {
     this._insertName(item);
 
-    this._onSearch(item.name);
+    this.onSearch(item.name);
   }
 
   _updateHistory(item) {
@@ -236,13 +222,7 @@ export default class Search extends Component {
   }
 
   render() {
-    var {
-      loading,
-      search_data,
-      keyboard_state,
-      history,
-      buying_idx
-    } = this.state;
+    var { loading, search_data, history, buying_idx } = this.state;
     // show loading
     if (loading) {
       return <Indicator />;
@@ -252,7 +232,10 @@ export default class Search extends Component {
       <View style={styles.container}>
         {search_data != null ? (
           <FlatList
-            keyboardShouldPersistTaps={keyboard_state}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode={
+              Platform.OS === 'ios' ? 'on-drag' : 'interactive'
+            }
             onEndReached={num => {}}
             onEndReachedThreshold={0}
             style={[styles.items_box]}
@@ -286,7 +269,10 @@ export default class Search extends Component {
                     marginBottom: store.keyboardTop
                   }
                 ]}
-                keyboardShouldPersistTaps={keyboard_state}
+                keyboardShouldPersistTaps="handled"
+                keyboardDismissMode={
+                  Platform.OS === 'ios' ? 'on-drag' : 'interactive'
+                }
               >
                 <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
 
@@ -414,7 +400,10 @@ export default class Search extends Component {
             Events.trigger(NEXT_PREV_CART, { index });
           }
         })();
-        Toast.show(response.message);
+        showMessage({
+          type: 'info',
+          message: response.message
+        });
       }
 
       this.cartItemConfirmRemove = undefined;
@@ -517,3 +506,5 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR
   }
 });
+
+export default Search;

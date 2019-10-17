@@ -146,7 +146,7 @@ global.GoogleAnalytic = screen => {
     let clientId = getTickUniqueID();
     ga = new Analytics(GA_ID, clientId, 1, DeviceInfo.getUserAgent());
     var screenView = new GAHits.ScreenView(
-      APP_NAME,
+      APP_NAME_SHOW,
       screen,
       DeviceInfo.getReadableVersion(),
       DeviceInfo.getBundleId()

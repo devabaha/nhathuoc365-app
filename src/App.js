@@ -33,6 +33,7 @@ import VoucherContainer from './containers/Voucher';
 import MyVoucherContainer from './containers/MyVoucher';
 import VoucherDetailContainer from './containers/VoucherDetail';
 import VoucherScanScreenContainer from './containers/VoucherScanScreen';
+import MyVoucherScanScreenContainer from './containers/MyVoucherScanScreen';
 import VoucherShowBarcodeContainer from './containers/VoucherShowBarcode';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
@@ -47,9 +48,10 @@ import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
 import NewPass from './components/account/NewPass';
-import Stores from './components/stores/Stores';
+import StoreContainer from './components/stores/Stores';
+import SearchNavBarContainer from './components/stores/SearchNavBar';
 import StoresList from './components/stores/StoresList';
-import Search from './components/stores/Search';
+import SearchStoreContainer from './components/stores/Search';
 import Item from './components/item/Item';
 import ItemImageViewer from './components/item/ItemImageViewer';
 import Cart from './components/cart/Cart';
@@ -487,7 +489,6 @@ class App extends Component {
                       title="Đăng ký"
                       component={OpRegister}
                       {...navBarConfig}
-                      back
                     />
                   </Stack>
 
@@ -534,8 +535,7 @@ class App extends Component {
                   <Stack key={appConfig.routes.store}>
                     <Scene
                       key={`${appConfig.routes.store}_1`}
-                      title="Cửa hàng"
-                      component={Stores}
+                      component={StoreContainer}
                       {...navBarConfig}
                       back
                     />
@@ -551,13 +551,13 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="search">
+                  <Stack key={appConfig.routes.searchStore}>
                     <Scene
-                      key="search_1"
+                      key={`${appConfig.routes.searchStore}_1`}
                       title="Tìm kiếm"
-                      component={Search}
+                      component={SearchStoreContainer}
+                      navBar={SearchNavBarContainer}
                       {...navBarConfig}
-                      back
                     />
                   </Stack>
 
@@ -907,6 +907,17 @@ class App extends Component {
                       key={`${appConfig.routes.voucherScanner}_1`}
                       title="Quét mã QR"
                       component={VoucherScanScreenContainer}
+                      {...whiteNavBarConfig}
+                      back
+                    />
+                  </Stack>
+
+                  {/* ================ SCENE VOUCHER SCAN ================ */}
+                  <Stack key={appConfig.routes.myVoucherScanner}>
+                    <Scene
+                      key={`${appConfig.routes.myVoucherScanner}_1`}
+                      title="Quét mã QR"
+                      component={MyVoucherScanScreenContainer}
                       {...whiteNavBarConfig}
                       back
                     />

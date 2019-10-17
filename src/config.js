@@ -51,6 +51,7 @@ const config = Object.freeze({
     qrBarCode: 'qrBarCode',
 
     store: 'store',
+    searchStore: 'searchStore',
     myAddress: 'myAddress',
 
     // ** Begin routes of Rada module
@@ -66,6 +67,7 @@ const config = Object.freeze({
     voucherDetail: 'voucherDetail',
     voucherSelectProvince: 'voucherSelectProvince',
     voucherScanner: 'voucherScanner',
+    myVoucherScanner: 'myVoucherScanner',
     alreadyVoucher: 'alreadyVoucher',
     voucherEnterCodeManual: 'voucherEnterCodeManual',
     voucherShowBarcode: 'voucherShowBarcode',

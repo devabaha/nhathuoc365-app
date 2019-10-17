@@ -9,6 +9,7 @@ import {
   Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
 import { CheckBox } from 'react-native-elements';
 import store from '../../store/Store';
@@ -211,7 +212,10 @@ export default class Cart extends Component {
             if (isAndroid && store.cart_item_index > 0) {
               store.setCartItemIndex(store.cart_item_index - 1);
             }
-            Toast.show(response.message);
+            showMessage({
+              type: 'info',
+              message: response.message
+            });
           })();
         }, this._delay());
       }
