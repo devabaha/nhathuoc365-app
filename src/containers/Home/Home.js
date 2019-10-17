@@ -241,6 +241,9 @@ class Home extends Component {
           wallet: store.user_info.default_wallet
         });
         break;
+      case 'ORDERS_TYPE':
+        Actions.jump(appConfig.routes.ordersTab);
+        break;
     }
   };
 
