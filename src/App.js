@@ -19,7 +19,7 @@ import {
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
-import TickIdScaningButton from '@tickid/tickid-scaning-button';
+import FoodHubCartButton from './components/FoodHubCartButton';
 import FlashMessage from 'react-native-flash-message';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
@@ -295,7 +295,7 @@ class App extends Component {
                     <Stack
                       key={appConfig.routes.homeTab}
                       icon={TabIcon}
-                      iconLabel="FoodHub"
+                      iconLabel="Trang chủ"
                       iconName="store"
                       iconSize={24}
                     >
@@ -328,8 +328,8 @@ class App extends Component {
                     {/* ================ SCAN QR TAB ================ */}
                     <Stack
                       key={appConfig.routes.scanQrCodeTab}
-                      icon={TickIdScaningButton}
-                      primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
+                      icon={FoodHubCartButton}
+                      primaryColor={appConfig.colors.primary}
                     >
                       <Scene component={() => null} />
                     </Stack>

@@ -21,6 +21,7 @@ class Home extends Component {
       campaigns: null,
       promotions: null,
       services: [],
+      products: [],
       listService: [],
       primaryActions: []
     };
@@ -40,6 +41,7 @@ class Home extends Component {
     try {
       const response = await APIHandler.user_site_home();
       if (response && response.status == STATUS_SUCCESS) {
+        console.log('response', response);
         this.setState({
           site: response.data.site,
           sites: response.data.sites,
@@ -47,6 +49,7 @@ class Home extends Component {
           notices: response.data.notices,
           services: response.data.services,
           campaigns: response.data.campaigns,
+          products: response.data.products,
           promotions: response.data.promotions,
           listService: response.data.list_service,
           primaryActions: response.data.primary_actions
@@ -395,6 +398,36 @@ class Home extends Component {
     });
   };
 
+  productOpening;
+
+  handlePressProduct = product => {
+    if (this.productOpening) return;
+    this.productOpening = true;
+
+    this.setState({
+      showLoading: true
+    });
+
+    APIHandler.site_info(product.site_id)
+      .then(response => {
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setStoreData(response.data);
+            Actions.item({
+              title: product.name,
+              item: product
+            });
+          })();
+        }
+      })
+      .finally(() => {
+        this.productOpening = false;
+        this.setState({
+          showLoading: false
+        });
+      });
+  };
+
   render() {
     return (
       <HomeComponent
@@ -404,12 +437,14 @@ class Home extends Component {
         services={this.state.services}
         userInfo={store.user_info}
         notify={store.notify}
+        products={this.state.products}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         listService={this.state.listService}
         primaryActions={this.state.primaryActions}
         apiFetching={this.state.apiFetching}
         onActionPress={this.handlePressAction}
+        onPressProduct={this.handlePressProduct}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
         onVoucherPressed={this.handleVoucherPressed}

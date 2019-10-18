@@ -8,6 +8,7 @@ import {
 const config = Object.freeze({
   appName: 'FoodHub',
   namespace: 'app',
+  defaultSiteId: 28, // @NOTE: id cửa hàng ở menu
   reduxLoggerEnable: false,
   voucherModule: {
     appKey: 'mydinhhubkey',
