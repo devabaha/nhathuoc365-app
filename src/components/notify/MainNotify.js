@@ -48,7 +48,7 @@ class MainNotify extends Component {
           icon: 'bookmark',
           notify: 'new_site_news',
           onPress: () => {
-            Actions.notifys({
+            Actions.notifies({
               news_type: '/1'
             });
           },
@@ -67,7 +67,7 @@ class MainNotify extends Component {
           icon: 'lemon-o',
           notify: 'new_sys_news',
           onPress: () => {
-            Actions.notifys({
+            Actions.notifies({
               title: 'Từ ' + APP_NAME_SHOW,
               news_type: '/2'
             });

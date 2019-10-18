@@ -614,9 +614,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="notifys">
+                  <Stack key={appConfig.routes.notifies}>
                     <Scene
-                      key="notifys_1"
+                      key={`${appConfig.routes.notifies}_1`}
                       title="Tin tức"
                       component={Notify}
                       {...navBarConfig}
@@ -624,9 +624,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="notifys_time">
+                  <Stack key="notifies_time">
                     <Scene
-                      key="notifys_time_1"
+                      key="notifies_time_1"
                       title="Lịch hàng hóa"
                       component={Notify}
                       {...navBarConfig}
@@ -634,9 +634,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="notifys_farm">
+                  <Stack key="notifies_farm">
                     <Scene
-                      key="notifys_farm_1"
+                      key="notifies_farm_1"
                       title="Trang trại"
                       component={Notify}
                       {...navBarConfig}

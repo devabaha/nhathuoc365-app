@@ -48,7 +48,7 @@ export default class Notify extends Component {
       //   icon: "calendar",
       //   notify: "new_calendar_news",
       //   onPress: () => {
-      //     Actions.notifys_time({
+      //     Actions.notifies_time({
       //       isNotifyTime: true,
       //       news_type: "/47"
       //     });
@@ -65,7 +65,7 @@ export default class Notify extends Component {
       //   icon: "lemon-o",
       //   notify: "new_farm_news",
       //   onPress: () => {
-      //     Actions.notifys_farm({
+      //     Actions.notifies_farm({
       //       isNotifyTime: true,
       //       news_type: "/46"
       //     });

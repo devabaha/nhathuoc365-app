@@ -48,6 +48,8 @@ const config = Object.freeze({
     scanQrCodeTab: 'scanQrCodeTab',
     ordersTab: 'ordersTab',
 
+    notifies: 'notifies',
+
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',
 
