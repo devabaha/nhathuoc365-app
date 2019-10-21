@@ -1,6 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, TouchableHighlight, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableHighlight,
+  StyleSheet
+} from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
@@ -142,11 +148,12 @@ export default class Items extends Component {
               ref={ref => (this.ref_item = ref)}
               style={styles.item_image_box}
             >
-              <CachedImage
-                mutable
-                style={styles.item_image}
-                source={{ uri: item.logo_url }}
-              />
+              {!!item.logo_url && (
+                <Image
+                  style={styles.item_image}
+                  source={{ uri: item.logo_url }}
+                />
+              )}
             </View>
             <Text style={styles.nameLocation}>{item.name}</Text>
           </View>
@@ -172,11 +179,9 @@ export default class Items extends Component {
               ref={ref => (this.ref_item = ref)}
               style={styles.item_image_box}
             >
-              <CachedImage
-                mutable
-                style={styles.item_image}
-                source={{ uri: item.image }}
-              />
+              {!!item.image && (
+                <Image style={styles.item_image} source={{ uri: item.image }} />
+              )}
             </View>
           </View>
         </TouchableHighlight>
@@ -252,11 +257,9 @@ export default class Items extends Component {
             ref={ref => (this.ref_item = ref)}
             style={styles.item_image_box}
           >
-            <CachedImage
-              mutable
-              style={styles.item_image}
-              source={{ uri: item.image }}
-            />
+            {!!item.image && (
+              <Image style={styles.item_image} source={{ uri: item.image }} />
+            )}
           </View>
 
           <View style={styles.item_info_box}>

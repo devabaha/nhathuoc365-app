@@ -149,11 +149,11 @@ class Stores extends Component {
   }
 
   parseDataCategories(response) {
+    if (!this.props.categoryId) {
+      response.data.categories.unshift({ id: 0, name: 'Cửa hàng' });
+    }
     this.setState({
-      categories_data: [
-        { id: 0, name: 'Cửa hàng' },
-        ...response.data.categories
-      ],
+      categories_data: response.data.categories,
       promotions: response.data.promotions
     });
     setTimeout(() => {
@@ -173,11 +173,6 @@ class Stores extends Component {
         this.props.categoryId
       );
       if (response && response.status == STATUS_SUCCESS) {
-        if (this.props.categoryId && response.data.category) {
-          Actions.refresh({
-            title: response.data.category.name
-          });
-        }
         setTimeout(() => this.parseDataCategories(response), this._delay());
       }
     } catch (e) {
