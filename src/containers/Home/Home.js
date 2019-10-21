@@ -329,6 +329,12 @@ class Home extends Component {
       case 'call':
         Communications.phonecall(service.tel, true);
         break;
+      case 'news_category':
+        Actions.push(appConfig.routes.notifies, {
+          title: service.title,
+          news_type: `/${service.categoryId}`
+        });
+        break;
     }
   };
 
