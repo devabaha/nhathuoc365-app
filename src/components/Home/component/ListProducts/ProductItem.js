@@ -7,6 +7,8 @@ class ProductItem extends Component {
   static propTypes = {
     name: PropTypes.string,
     image: PropTypes.string,
+    discount_view: PropTypes.string,
+    discount_percent: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     price_view: PropTypes.string,
     onPress: PropTypes.func,
     last: PropTypes.bool
@@ -15,6 +17,8 @@ class ProductItem extends Component {
   static defaultProps = {
     name: '',
     image: '',
+    discount_view: '',
+    discount_percent: 0,
     price_view: '',
     onPress: () => {},
     last: false
@@ -32,8 +36,14 @@ class ProductItem extends Component {
           <Image style={styles.image} source={{ uri: this.props.image }} />
           <View style={styles.infoWrapper}>
             <Text style={styles.name}>{this.props.name}</Text>
+
             <View style={styles.priceWrapper}>
-              <Text style={styles.price}>{this.props.price_view}</Text>
+              {this.props.discount_percent > 0 && (
+                <Text style={styles.discount}>{this.props.discount_view}</Text>
+              )}
+              <View style={styles.priceBox}>
+                <Text style={styles.price}>{this.props.price_view}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -62,6 +72,17 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   priceWrapper: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  discount: {
+    color: '#404040',
+    fontSize: 13,
+    textDecorationLine: 'line-through'
+  },
+  priceBox: {
     marginTop: 4,
     paddingVertical: 2,
     paddingHorizontal: 4,

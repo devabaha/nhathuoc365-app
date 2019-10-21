@@ -213,6 +213,8 @@ class Home extends Component {
                   <ProductItem
                     name={product.name}
                     image={product.image}
+                    discount_view={product.discount_view}
+                    discount_percent={product.discount_percent}
                     price_view={product.price_view}
                     onPress={() => this.props.onPressProduct(product)}
                     last={this.props.products.length - 1 === index}
