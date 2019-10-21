@@ -50,6 +50,8 @@ const config = Object.freeze({
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',
 
+    notifies: 'notifies',
+
     store: 'store',
     searchStore: 'searchStore',
     myAddress: 'myAddress',
