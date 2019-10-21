@@ -94,7 +94,7 @@ keytool -exportcert -alias com.phongvenhanvan -keystore android/app/com.phongven
 
 1. Sinh anh splash va logo
 https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
-yo rn-toolbox:assets --icon icon.jpg --splash splash.png --store
+yo rn-toolbox:assets --icon icon.jpg --splash splash.jpg --store
 yo rn-toolbox:assets --icon icon.png --android
 yo rn-toolbox:assets --android-notification-icon icon.png
 1. Onesignal: thay onesignal id vao app.js
