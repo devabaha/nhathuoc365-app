@@ -477,7 +477,7 @@ class QRBarCode extends Component {
           <Barcode
             value={barcode}
             format="CODE128"
-            width={1}
+            width={1.5}
             height={80}
             background="transparent"
           />
