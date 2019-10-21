@@ -314,7 +314,7 @@ class Home extends Component {
               action(() => {
                 store.setStoreData(response.data);
                 Actions.push(appConfig.routes.store, {
-                  title: response.data.name,
+                  title: service.name || response.data.name,
                   categoryId: service.categoryId || 0
                 });
               })();
