@@ -7,6 +7,7 @@ import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, { HomeCardItem } from './component/HomeCardList';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
+import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
 
 const defaultListener = () => {};
@@ -19,6 +20,7 @@ class Home extends Component {
     services: PropTypes.array,
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
+    products: PropTypes.array,
     listService: PropTypes.array,
     primaryActions: PropTypes.array,
     notify: PropTypes.object,
@@ -35,6 +37,7 @@ class Home extends Component {
     onShowAllSites: PropTypes.func,
     onShowAllCampaigns: PropTypes.func,
     onShowAllNews: PropTypes.func,
+    onPressProduct: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
     onPressNewItem: PropTypes.func,
@@ -48,6 +51,7 @@ class Home extends Component {
     services: [],
     campaigns: [],
     promotions: [],
+    products: [],
     listService: [],
     primaryActions: [],
     notify: {},
@@ -64,6 +68,7 @@ class Home extends Component {
     onShowAllSites: defaultListener,
     onShowAllCampaigns: defaultListener,
     onShowAllNews: defaultListener,
+    onPressProduct: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
     onPressNewItem: defaultListener,
@@ -88,6 +93,10 @@ class Home extends Component {
 
   get hasNews() {
     return Array.isArray(this.props.newses) && this.props.newses.length > 0;
+  }
+
+  get hasProducts() {
+    return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
 
   render() {
@@ -196,6 +205,22 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
+            )}
+
+            {this.hasProducts && (
+              <ListProducts data={this.props.products}>
+                {({ item: product, index }) => (
+                  <ProductItem
+                    name={product.name}
+                    image={product.image}
+                    discount_view={product.discount_view}
+                    discount_percent={product.discount_percent}
+                    price_view={product.price_view}
+                    onPress={() => this.props.onPressProduct(product)}
+                    last={this.props.products.length - 1 === index}
+                  />
+                )}
+              </ListProducts>
             )}
           </View>
         </ScrollView>

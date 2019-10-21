@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
   Text,
@@ -28,6 +29,14 @@ const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
 @observer
 class Stores extends Component {
+  static propTypes = {
+    categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+  };
+
+  static defaultProps = {
+    categoryId: 0
+  };
+
   constructor(props) {
     super(props);
 
@@ -140,11 +149,11 @@ class Stores extends Component {
   }
 
   parseDataCategories(response) {
+    if (!this.props.categoryId) {
+      response.data.categories.unshift({ id: 0, name: 'Cửa hàng' });
+    }
     this.setState({
-      categories_data: [
-        { id: 0, name: 'Cửa hàng' },
-        ...response.data.categories
-      ],
+      categories_data: response.data.categories,
       promotions: response.data.promotions
     });
     setTimeout(() => {
@@ -159,7 +168,10 @@ class Stores extends Component {
 
   async _getCategoriesNavFromServer() {
     try {
-      var response = await APIHandler.site_info(store.store_id);
+      var response = await APIHandler.site_info(
+        store.store_id,
+        this.props.categoryId
+      );
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => this.parseDataCategories(response), this._delay());
       }

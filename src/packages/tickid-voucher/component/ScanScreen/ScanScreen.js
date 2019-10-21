@@ -86,7 +86,7 @@ ScanScreen.defaultProps = {
   onPressEnterCode: defaultListener,
   onReadedCode: defaultListener,
   showLoading: false,
-  topContentText: 'Hướng máy ảnh của bạn về phía mã QR Code để sử dụng voucher'
+  topContentText: ''
 };
 
 export default ScanScreen;

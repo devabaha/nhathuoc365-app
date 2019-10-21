@@ -98,7 +98,7 @@ global.isAccountCode = address => {
 
 //Kiem tra la ma tai khoan
 global.isCartCode = address => {
-  return /^(0x)?[0-9a-z]{9}$/.test(address);
+  return /^(00)?[0-9a-z]{9}$/.test(address);
 };
 
 global.stristr = (haystack, needle, bool) => {

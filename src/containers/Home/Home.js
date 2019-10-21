@@ -21,6 +21,7 @@ class Home extends Component {
       campaigns: null,
       promotions: null,
       services: [],
+      products: [],
       listService: [],
       primaryActions: []
     };
@@ -47,6 +48,7 @@ class Home extends Component {
           notices: response.data.notices,
           services: response.data.services,
           campaigns: response.data.campaigns,
+          products: response.data.products,
           promotions: response.data.promotions,
           listService: response.data.list_service,
           primaryActions: response.data.primary_actions
@@ -312,7 +314,8 @@ class Home extends Component {
               action(() => {
                 store.setStoreData(response.data);
                 Actions.push(appConfig.routes.store, {
-                  title: response.data.name
+                  title: service.name || response.data.name,
+                  categoryId: service.categoryId || 0
                 });
               })();
             }
@@ -326,6 +329,12 @@ class Home extends Component {
         break;
       case 'call':
         Communications.phonecall(service.tel, true);
+        break;
+      case 'news_category':
+        Actions.push(appConfig.routes.notifies, {
+          title: service.title,
+          news_type: `/${service.categoryId}`
+        });
         break;
     }
   };
@@ -395,6 +404,36 @@ class Home extends Component {
     });
   };
 
+  productOpening;
+
+  handlePressProduct = product => {
+    if (this.productOpening) return;
+    this.productOpening = true;
+
+    this.setState({
+      showLoading: true
+    });
+
+    APIHandler.site_info(product.site_id)
+      .then(response => {
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setStoreData(response.data);
+            Actions.item({
+              title: product.name,
+              item: product
+            });
+          })();
+        }
+      })
+      .finally(() => {
+        this.productOpening = false;
+        this.setState({
+          showLoading: false
+        });
+      });
+  };
+
   render() {
     return (
       <HomeComponent
@@ -404,12 +443,14 @@ class Home extends Component {
         services={this.state.services}
         userInfo={store.user_info}
         notify={store.notify}
+        products={this.state.products}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         listService={this.state.listService}
         primaryActions={this.state.primaryActions}
         apiFetching={this.state.apiFetching}
         onActionPress={this.handlePressAction}
+        onPressProduct={this.handlePressProduct}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
         onVoucherPressed={this.handleVoucherPressed}

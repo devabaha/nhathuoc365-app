@@ -50,6 +50,8 @@ const config = Object.freeze({
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',
 
+    notifies: 'notifies',
+
     store: 'store',
     searchStore: 'searchStore',
     myAddress: 'myAddress',
@@ -67,7 +69,6 @@ const config = Object.freeze({
     voucherDetail: 'voucherDetail',
     voucherSelectProvince: 'voucherSelectProvince',
     voucherScanner: 'voucherScanner',
-    myVoucherScanner: 'myVoucherScanner',
     alreadyVoucher: 'alreadyVoucher',
     voucherEnterCodeManual: 'voucherEnterCodeManual',
     voucherShowBarcode: 'voucherShowBarcode',

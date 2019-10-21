@@ -8,7 +8,16 @@ import { showMessage } from 'react-native-flash-message';
 
 class ScanScreen extends BaseContainer {
   static propTypes = {
-    voucher: PropTypes.object.isRequired
+    voucher: PropTypes.object.isRequired,
+    topContentText: PropTypes.string,
+    placeholder: PropTypes.string,
+    isFromMyVoucher: PropTypes.bool
+  };
+
+  static defaultProps = {
+    topContentText: '',
+    placeholder: '',
+    isFromMyVoucher: false
   };
 
   constructor(props) {
@@ -23,7 +32,8 @@ class ScanScreen extends BaseContainer {
     this.validateRequiredMethods([
       'handlePressEnterCode',
       'handleReadedCode',
-      'handleShowBarcode'
+      'handleShowBarcode',
+      'handleRefreshMyVoucher'
     ]);
   }
 
@@ -31,7 +41,7 @@ class ScanScreen extends BaseContainer {
     this.handleReadedCode({
       code,
       onDone: () =>
-        this.isFromMyVoucher
+        this.props.isFromMyVoucher
           ? this.sendApiSaveCode(code)
           : this.sendApiUseCode(code)
     });
@@ -39,7 +49,7 @@ class ScanScreen extends BaseContainer {
 
   handleBeforeShowEnterCode = () => {
     this.handlePressEnterCode({
-      onSendCode: this.isFromMyVoucher
+      onSendCode: this.props.isFromMyVoucher
         ? this.sendApiSaveCode
         : this.sendApiUseCode
     });
@@ -91,12 +101,13 @@ class ScanScreen extends BaseContainer {
     });
 
     try {
-      const response = await internalFetch(config.rest.useVoucher(code));
+      const response = await internalFetch(config.rest.saveVoucher(code));
       if (response.status === config.httpCode.success) {
         showMessage({
           message: 'Bạn đã nhận thành công voucher này.',
           type: 'success'
         });
+        this.handleRefreshMyVoucher();
       } else {
         showMessage({
           message: response.message,
@@ -109,7 +120,7 @@ class ScanScreen extends BaseContainer {
         {
           showLoading: false
         },
-        function() {
+        () => {
           showMessage({
             message: 'Kết nối tới máy chủ thất bại. Vui lòng thử lại sau',
             type: 'danger'
@@ -126,7 +137,7 @@ class ScanScreen extends BaseContainer {
         onReadedCode={this.handleAfterReadedCode}
         onPressEnterCode={this.handleBeforeShowEnterCode}
         showLoading={this.state.showLoading}
-        topContentText={this.topContentText}
+        topContentText={this.props.topContentText}
       />
     );
   }
