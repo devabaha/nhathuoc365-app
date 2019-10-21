@@ -127,8 +127,8 @@ class APIHandler {
   /**
    * Lấy thông tin cửa hàng
    */
-  async site_info(site_id) {
-    var api = url_for(API.SITE_INFO + '/' + site_id);
+  async site_info(site_id, category_id = 0) {
+    var api = url_for(API.SITE_INFO + '/' + site_id + '/' + category_id);
     return await this.getAPI(api);
   }
 
