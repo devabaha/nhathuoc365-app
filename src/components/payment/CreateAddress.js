@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
+import appConfig from 'app-config';
 
 @observer
 class CreateAddress extends Component {
@@ -175,7 +176,7 @@ class CreateAddress extends Component {
             this._reloadParent();
 
             if (this.props.redirect == 'confirm') {
-              Actions.confirm({
+              Actions.push(appConfig.routes.paymentConfirm, {
                 type: ActionConst.REPLACE
               });
             } else {

@@ -21,3 +21,5 @@ export { default as EnterCodeManual } from './container/EnterCodeManual';
 
 // ------------------------------ PUBLIC CONFIG ------------------------------ //
 export { default as config } from './config';
+
+export { USE_ONLINE } from './constants';
