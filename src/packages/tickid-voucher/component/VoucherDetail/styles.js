@@ -71,6 +71,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 14
   },
+  removeVoucherBtn: {
+    backgroundColor: '#fe796c'
+  },
   getVoucherTitle: {
     color: config.colors.white,
     textTransform: 'uppercase',

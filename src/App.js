@@ -433,9 +433,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="confirm">
+                  <Stack key={appConfig.routes.paymentConfirm}>
                     <Scene
-                      key="confirm_1"
+                      key={`${appConfig.routes.paymentConfirm}_1`}
                       title="Xác nhận"
                       component={Confirm}
                       {...navBarConfig}
