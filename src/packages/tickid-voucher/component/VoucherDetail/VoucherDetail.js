@@ -28,27 +28,31 @@ class VoucherDetail extends Component {
     onRefresh: PropTypes.func,
     onGetVoucher: PropTypes.func,
     onUseVoucher: PropTypes.func,
+    onRemoveVoucherOnline: PropTypes.func,
     onPressAddressPhoneNumber: PropTypes.func,
     onPressAddressLocation: PropTypes.func,
     onPressCampaignProvider: PropTypes.func,
     refreshing: PropTypes.bool,
     canUseNow: PropTypes.bool,
     showLoading: PropTypes.bool,
+    isUseOnlineMode: PropTypes.bool,
     campaign: PropTypes.instanceOf(CampaignEntity),
     site: PropTypes.instanceOf(SiteEntity),
-    addresses: PropTypes.object
+    addresses: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
   };
 
   static defaultProps = {
     onRefresh: defaultListener,
     onGetVoucher: defaultListener,
     onUseVoucher: defaultListener,
+    onRemoveVoucherOnline: defaultListener,
     onPressAddressPhoneNumber: defaultListener,
     onPressAddressLocation: defaultListener,
     onPressCampaignProvider: defaultListener,
     refreshing: false,
     canUseNow: false,
     showLoading: false,
+    isUseOnlineMode: false,
     campaign: undefined,
     addresses: undefined,
     site: undefined
@@ -61,6 +65,11 @@ class VoucherDetail extends Component {
       addresses.forEach(places => (totalPlaces += places.length));
     }
     return totalPlaces;
+  }
+
+  get hasAddress() {
+    const addresses = Object.values(this.props.addresses);
+    return addresses.length > 0;
   }
 
   renderAddresses() {
@@ -105,6 +114,36 @@ class VoucherDetail extends Component {
 
   render() {
     const campaign = this.props.campaign || { data: {} };
+    const tabs = [
+      <Tab
+        key={1}
+        heading="Thông tin"
+        containerStyle={{
+          paddingBottom: 12
+        }}
+      >
+        <HTML
+          html={campaign.data.content || '<span></span>'}
+          imagesMaxWidth={screenWidth - 32}
+        />
+      </Tab>
+    ];
+
+    if (this.hasAddress) {
+      tabs.push(
+        <Tab key={2} heading="Điểm áp dụng">
+          <View style={styles.addressWrapper}>
+            <Text style={styles.infoHeading}>Địa chỉ cửa hàng</Text>
+            <Text style={styles.infoSubHeading}>
+              {this.totalPlaces} cửa hàng
+            </Text>
+          </View>
+
+          {this.renderAddresses()}
+        </Tab>
+      );
+    }
+
     return (
       <Fragment>
         {this.props.showLoading && <LoadingComponent loading />}
@@ -144,32 +183,7 @@ class VoucherDetail extends Component {
             </View>
 
             <View style={styles.contentWrapper}>
-              <Tabs>
-                {/* INFOMATION TAB */}
-                <Tab
-                  heading="Thông tin"
-                  containerStyle={{
-                    paddingBottom: 12
-                  }}
-                >
-                  <HTML
-                    html={campaign.data.content || '<span></span>'}
-                    imagesMaxWidth={screenWidth - 32}
-                  />
-                </Tab>
-
-                {/* LOCATION TAB */}
-                <Tab heading="Điểm áp dụng">
-                  <View style={styles.addressWrapper}>
-                    <Text style={styles.infoHeading}>Địa chỉ cửa hàng</Text>
-                    <Text style={styles.infoSubHeading}>
-                      {this.totalPlaces} cửa hàng
-                    </Text>
-                  </View>
-
-                  {this.renderAddresses()}
-                </Tab>
-              </Tabs>
+              <Tabs>{tabs}</Tabs>
             </View>
 
             {this.props.site && (
@@ -204,19 +218,29 @@ class VoucherDetail extends Component {
         </ScrollView>
 
         <View style={styles.getVoucherWrapper}>
-          <Button
-            containerStyle={styles.getVoucherBtn}
-            style={styles.getVoucherTitle}
-            onPress={() => {
-              if (this.props.canUseNow) {
-                this.props.onUseVoucher(this.props.campaign);
-              } else {
-                this.props.onGetVoucher(this.props.campaign);
-              }
-            }}
-          >
-            {this.props.canUseNow ? 'Dùng ngay' : 'Nhận mã giảm giá'}
-          </Button>
+          {this.props.isUseOnlineMode ? (
+            <Button
+              containerStyle={[styles.getVoucherBtn, styles.removeVoucherBtn]}
+              style={styles.getVoucherTitle}
+              onPress={this.props.onRemoveVoucherOnline}
+            >
+              Dùng sau
+            </Button>
+          ) : (
+            <Button
+              containerStyle={styles.getVoucherBtn}
+              style={styles.getVoucherTitle}
+              onPress={() => {
+                if (this.props.canUseNow) {
+                  this.props.onUseVoucher(this.props.campaign);
+                } else {
+                  this.props.onGetVoucher(this.props.campaign);
+                }
+              }}
+            >
+              {this.props.canUseNow ? 'Dùng ngay' : 'Nhận mã giảm giá'}
+            </Button>
+          )}
         </View>
       </Fragment>
     );

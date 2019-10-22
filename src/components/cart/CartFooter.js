@@ -11,7 +11,7 @@ import {
 import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
-
+import appConfig from 'app-config';
 import store from '../../store/Store';
 
 @observer
@@ -329,7 +329,7 @@ export default class CartFooter extends Component {
   _goPayment() {
     if (store.cart_data && store.cart_products) {
       if (store.cart_data.address_id != 0) {
-        Actions.confirm({
+        Actions.push(appConfig.routes.paymentConfirm, {
           goConfirm: true
         });
       } else {
