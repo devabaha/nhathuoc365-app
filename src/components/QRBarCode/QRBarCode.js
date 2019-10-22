@@ -30,7 +30,7 @@ class QRBarCode extends Component {
       wallet: props.wallet || false,
       loading: false,
       from: props.from || false,
-      barcode: props.address || '0x000000000',
+      barcode: props.address || '000000000000',
       title: props.title || 'Mã tài khoản',
       content: props.content
         ? props.content
@@ -329,6 +329,13 @@ class QRBarCode extends Component {
                       data: response.data.item,
                       title: '#' + response.data.item.cart_code,
                       type: ActionConst.REPLACE
+                    });
+                  } else if (
+                    response.data.object.type == OBJECT_TYPE_KEY_CAMPAIGN
+                  ) {
+                    Actions.push(appConfig.routes.voucherDetail, {
+                      title: response.data.item.title,
+                      campaignId: response.data.item.id
                     });
                   } else {
                     this._search_store(barcode);

@@ -79,6 +79,7 @@ const config = Object.freeze({
 
     // Routes of Order
     orders: 'Orders',
+    paymentConfirm: 'paymentConfirm',
     //
     upToPhone: 'upToPhone'
   }

@@ -32,9 +32,19 @@ function MyVoucherItem(props) {
 
         <View style={styles.infoWrapper}>
           <Text style={styles.title}>{props.title}</Text>
-          {!!props.remaining && (
-            <Text style={styles.remaining}>{props.remaining}</Text>
-          )}
+          <View style={styles.additionalInfo}>
+            {!!props.remaining && (
+              <Text style={styles.remaining}>{props.remaining}</Text>
+            )}
+            {props.isUseOnlineMode && (
+              <Button
+                onPress={props.onPressUseOnline}
+                style={styles.useNowTitle}
+              >
+                Sử dụng bây giờ
+              </Button>
+            )}
+          </View>
         </View>
       </View>
     </Button>
@@ -99,6 +109,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingLeft: 16
   },
+  additionalInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
   title: {
     fontSize: 15,
     fontWeight: '500',
@@ -107,8 +122,13 @@ const styles = StyleSheet.create({
   remaining: {
     fontSize: 13,
     fontWeight: '400',
-    color: '#666',
-    marginTop: 8
+    color: '#666'
+  },
+  useNowTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    paddingVertical: 8,
+    color: '#00a5cf'
   },
   dotLeftWrapper: {
     position: 'absolute',
@@ -134,7 +154,9 @@ MyVoucherItem.propTypes = {
   title: PropTypes.string,
   remaining: PropTypes.string,
   last: PropTypes.bool,
-  onPress: PropTypes.func
+  isUseOnlineMode: PropTypes.bool,
+  onPress: PropTypes.func,
+  onPressUseOnline: PropTypes.func
 };
 
 MyVoucherItem.defaultProps = {
@@ -142,7 +164,9 @@ MyVoucherItem.defaultProps = {
   title: '',
   remaining: '',
   last: false,
-  onPress: defaultListener
+  isUseOnlineMode: false,
+  onPress: defaultListener,
+  onPressUseOnline: defaultListener
 };
 
 export default MyVoucherItem;
