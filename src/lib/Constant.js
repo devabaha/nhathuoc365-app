@@ -12,8 +12,8 @@ global.HOTLINE = '+84888301518';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: '05sIMwVy1pa6_e9_j5uG1lctT_o2f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
-  android: 'Gni0uQSIyLbN6t_3XcWyqwQDAxaQf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7'
+  ios: 'IjE1p0Oymztmj5fKvyOQehDxxsHWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
+  android: 'ovDsGSUDYu_nfXdgWYsw_oQnO79cf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7'
 };
 
 // width, height of screen
