@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0.1</string>
+	<string>3.0.2</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>302</string>
 	<key>CodePushDeploymentKey</key>
 	<string>IjE1p0Oymztmj5fKvyOQehDxxsHWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
 	<key>FacebookAppID</key>
@@ -54,10 +54,10 @@
 	</dict>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Cho phép sử dụng Apple Music</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Cho phép sử dụng Bluetooth</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Cho phép luôn luôn sử dụng Bluetooth</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Cho phép sử dụng Bluetooth</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Cho phép sử dụng Calendar</string>
 	<key>NSCameraUsageDescription</key>
