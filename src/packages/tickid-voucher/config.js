@@ -43,7 +43,7 @@ const config = {
     success: 200
   },
   colors: {
-    primary: '#812384',
+    primary: '#14964d',
     white: '#fff',
     black: '#000',
     red: 'red'
