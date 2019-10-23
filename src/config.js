@@ -32,7 +32,7 @@ const config = Object.freeze({
     bottomSpace: getBottomSpace()
   }),
   colors: {
-    primary: '#55b947',
+    primary: '#14964d',
     white: '#fff',
     black: '#000',
     text: '#333'
