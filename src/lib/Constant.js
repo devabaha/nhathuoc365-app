@@ -4,10 +4,10 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 
 // API URL
 // global.MY_FOOD_API = 'https://abaha.net/';
-global.MY_FOOD_API = 'http://localhost:8000/';
-// global.MY_FOOD_API = 'https://apiapp.tickid.vn/';
+// global.MY_FOOD_API = 'http://localhost:8000/';
+global.MY_FOOD_API = 'https://apiapp.tickid.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
-global.PHOTO_MY_FOOD_API = 'http://localhost:8000/';
+global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
 global.HOTLINE = '+84888301518';
 
 // codepush deployment keys (production)
@@ -53,7 +53,7 @@ global.DELAY_UPDATE_NOTICE = 3000;
 global.GA_ID = 'UA-106153171-1';
 
 // color
-global.DEFAULT_COLOR = '#55b947'; //2c6ca3
+global.DEFAULT_COLOR = '#14964d'; //2c6ca3
 global.DEFAULT_COLOR_RED = '#e31b23';
 global.DEFAULT_ADMIN_COLOR = '#3c8dbc';
 global.HEADER_BGR = DEFAULT_COLOR;
