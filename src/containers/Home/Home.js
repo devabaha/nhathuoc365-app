@@ -246,6 +246,13 @@ class Home extends Component {
       case 'ORDERS_TYPE':
         Actions.jump(appConfig.routes.ordersTab);
         break;
+      case 'QRCODE_SCAN_TYPE':
+        Actions.push(appConfig.routes.qrBarCode, {
+          index: 1,
+          title: 'Quét QR Code',
+          wallet: store.user_info.default_wallet
+        });
+        break;
     }
   };
 
