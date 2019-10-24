@@ -56,5 +56,5 @@ code-push app add tick-tickid-android android react-native
 │ Staging    │ HzM0ZE3HI9MC09-70ljG7aUktD1zf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-tickid-ios ios -d "Production" -m --description "Thu thay doi home"
-code-push release-react tick-tickid-android android -d "Production" -m --description "Thu thay doi home"
+code-push release-react tick-tickid-ios ios -d "Production" -m --description "Them dung ma voucher trong don hang"
+code-push release-react tick-tickid-android android -d "Production" -m --description "Them dung ma voucher trong don hang"
