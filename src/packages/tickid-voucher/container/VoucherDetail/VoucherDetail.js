@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert, Linking } from 'react-native';
 import config from '../../config';
 import BaseContainer from '../BaseContainer';
+import { USE_ONLINE } from '../../constants';
 import VoucherDetailComponent from '../../component/VoucherDetail';
 import CampaignEntity from '../../entity/CampaignEntity';
 import AddressEntity from '../../entity/AddressEntity';
@@ -12,18 +13,26 @@ import { isLatitude, isLongitude } from '../../helper/validator';
 import openMap from 'react-native-open-maps';
 import { showMessage } from 'react-native-flash-message';
 
+const defaultFn = () => {};
+
 class VoucherDetail extends BaseContainer {
   /**
    * Transfer campaignId or voucherId to load the corresponding data
    */
   static propTypes = {
+    mode: PropTypes.string,
     campaignId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    voucherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    voucherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    onRemoveVoucherSuccess: PropTypes.func,
+    onRemoveVoucherFailure: PropTypes.func
   };
 
   static defaultProps = {
+    mode: '',
     campaignId: undefined,
-    voucherId: undefined
+    voucherId: undefined,
+    onRemoveVoucherSuccess: defaultFn,
+    onRemoveVoucherFailure: defaultFn
   };
 
   constructor(props) {
@@ -49,6 +58,10 @@ class VoucherDetail extends BaseContainer {
 
   get isFromMyVoucher() {
     return !!this.props.voucherId;
+  }
+
+  get isUseOnlineMode() {
+    return this.props.mode === USE_ONLINE;
   }
 
   componentWillMount() {
@@ -200,7 +213,49 @@ class VoucherDetail extends BaseContainer {
   };
 
   handleUseVoucher = voucher => {
-    this.handleOpenScanScreen(voucher);
+    // @NOTE: is from my voucher screen with user-online mode
+    if (this.props.isUseOnlineMode) {
+      this.handlePressUseOnline(voucher);
+    } else {
+      this.handleOpenScanScreen(voucher);
+    }
+  };
+
+  useVoucherFetching;
+
+  handlePressUseOnline = async voucher => {
+    if (this.useVoucherFetching) return;
+    this.useVoucherFetching = true;
+
+    this.setState({
+      showLoading: true
+    });
+
+    try {
+      const response = await internalFetch(
+        config.rest.useVoucherOnline(voucher.data.site_id, voucher.data.id)
+      );
+      if (response.status === config.httpCode.success) {
+        showMessage({
+          type: 'success',
+          message: response.message
+        });
+        this.props.onUseVoucherOnlineSuccess(response.data, true);
+      } else {
+        showMessage({
+          type: 'danger',
+          message: response.message
+        });
+        this.props.onUseVoucherOnlineFailure(response);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.useVoucherFetching = false;
+      this.setState({
+        showLoading: false
+      });
+    }
   };
 
   handlePressAddressPhoneNumber = phoneNumber => {
@@ -216,6 +271,45 @@ class VoucherDetail extends BaseContainer {
     }
   };
 
+  voucherRemoving;
+
+  handleRemoveVoucherOnline = async () => {
+    if (this.voucherRemoving) return;
+    this.voucherRemoving = true;
+
+    this.setState({
+      showLoading: true
+    });
+    try {
+      const response = await internalFetch(
+        config.rest.removeVoucherOnline(
+          this.state.campaign.data.site_id,
+          this.state.campaign.data.id
+        )
+      );
+      if (response.status === config.httpCode.success) {
+        showMessage({
+          type: 'success',
+          message: response.message
+        });
+        this.props.onRemoveVoucherSuccess(response.data);
+      } else {
+        showMessage({
+          type: 'danger',
+          message: response.message
+        });
+        this.props.onRemoveVoucherFailure(response);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({
+        showLoading: false
+      });
+      this.voucherRemoving = false;
+    }
+  };
+
   render() {
     return (
       <VoucherDetailComponent
@@ -226,9 +320,11 @@ class VoucherDetail extends BaseContainer {
         refreshing={this.state.refreshing}
         showLoading={this.state.showLoading}
         isFromMyVoucher={this.isFromMyVoucher}
+        isUseOnlineMode={this.isUseOnlineMode}
         onRefresh={this.handleOnRefresh}
         onGetVoucher={this.handleGetVoucher}
         onUseVoucher={this.handleUseVoucher}
+        onRemoveVoucherOnline={this.handleRemoveVoucherOnline}
         onPressAddressPhoneNumber={this.handlePressAddressPhoneNumber}
         onPressAddressLocation={this.handlePressAddressLocation}
         onPressCampaignProvider={this.handlePressCampaignProvider}

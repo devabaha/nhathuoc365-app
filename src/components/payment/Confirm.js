@@ -10,10 +10,10 @@ import {
   TextInput,
   Clipboard,
   Keyboard,
-  Alert,
-  Animated
+  Alert
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Material from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
@@ -25,6 +25,8 @@ import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
 import { CheckBox } from 'react-native-elements';
 import appConfig from 'app-config';
+import Button from 'react-native-button';
+import { USE_ONLINE } from 'app-packages/tickid-voucher';
 
 @observer
 export default class Confirm extends Component {
@@ -45,13 +47,6 @@ export default class Confirm extends Component {
       tel_register: store.cart_data ? store.cart_data.address.tel : '',
       pass_register: ''
     };
-  }
-
-  componentWillMount() {
-    if (this.state.single && store.noteHighlight) {
-      this.animatedValue = new Animated.Value(0);
-      store.noteHighlight = false;
-    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -314,7 +309,7 @@ export default class Confirm extends Component {
 
   _goAddress() {
     const onBack = () => {
-      Actions.confirm({
+      Actions.push(appConfig.routes.paymentConfirm, {
         type: ActionConst.REPLACE
       });
     };
@@ -468,13 +463,6 @@ export default class Confirm extends Component {
         noteOffset: event.nativeEvent.layout.y - 8
       });
     }
-
-    if (this.animatedValue) {
-      Animated.timing(this.animatedValue, {
-        toValue: 150,
-        duration: 2000
-      }).start();
-    }
   }
 
   _scrollToTop(top = 0) {
@@ -485,6 +473,46 @@ export default class Confirm extends Component {
       });
     }
   }
+
+  openMyVoucher = () => {
+    Actions.push(appConfig.routes.myVoucher, {
+      mode: USE_ONLINE,
+      siteId: this.props.store.cart_store_id,
+      onUseVoucherOnlineSuccess: this.handleUseVoucherOnlineSuccess,
+      onUseVoucherOnlineFailure: this.handleUseOnlineFailure
+    });
+  };
+
+  openCurrentVoucher = userVoucher => {
+    Actions.push(appConfig.routes.voucherDetail, {
+      mode: USE_ONLINE,
+      title: userVoucher.voucher_name,
+      voucherId: userVoucher.id,
+      onRemoveVoucherSuccess: this.handleRemoveVoucherSuccess,
+      onRemoveVoucherFailure: this.handleRemoveVoucherFailure
+    });
+  };
+
+  handleUseVoucherOnlineSuccess = (cartData, fromDetailVoucher = false) => {
+    Actions.pop();
+    if (fromDetailVoucher) {
+      setTimeout(Actions.pop, 0);
+    }
+    action(() => {
+      store.setCartData(cartData);
+    })();
+  };
+
+  handleUseOnlineFailure = response => {};
+
+  handleRemoveVoucherSuccess = cartData => {
+    Actions.pop();
+    action(() => {
+      store.setCartData(cartData);
+    })();
+  };
+
+  handleRemoveVoucherFailure = response => {};
 
   render() {
     var { single } = this.state;
@@ -528,27 +556,6 @@ export default class Confirm extends Component {
           <Indicator />
         </View>
       );
-    }
-
-    // animation
-    var interpolateColor, interpolateColor2, animatedStyle, animatedStyle2;
-
-    if (this.animatedValue) {
-      interpolateColor = this.animatedValue.interpolate({
-        inputRange: [0, 150],
-        outputRange: [hexToRgbA(DEFAULT_COLOR, 0.8), hexToRgbA('#ffffff', 1)]
-      });
-      interpolateColor2 = this.animatedValue.interpolate({
-        inputRange: [0, 150],
-        outputRange: [hexToRgbA('#ffffff', 1), hexToRgbA('#000000', 1)]
-      });
-
-      animatedStyle = {
-        backgroundColor: interpolateColor
-      };
-      animatedStyle2 = {
-        // color: interpolateColor2
-      };
     }
 
     var is_login = store.user_info != null && store.user_info.username != null;
@@ -820,14 +827,9 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <Animated.View
+          <View
             onLayout={this._onLayout.bind(this)}
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              styles.mt8,
-              animatedStyle
-            ]}
+            style={[styles.rows, styles.borderBottom, styles.mt8]}
           >
             <TouchableHighlight
               underlayColor="#ffffff"
@@ -844,9 +846,7 @@ export default class Confirm extends Component {
                   size={15}
                   color="#999999"
                 />
-                <Animated.Text style={[styles.input_label, animatedStyle2]}>
-                  Ghi chú
-                </Animated.Text>
+                <Text style={styles.input_label}>Ghi chú</Text>
               </View>
             </TouchableHighlight>
             {single ? (
@@ -903,32 +903,6 @@ export default class Confirm extends Component {
                 {cart_data.user_note || 'Không có ghi chú'}
               </Text>
             )}
-          </Animated.View>
-
-          <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
-            <View style={styles.address_name_box}>
-              <View style={styles.box_icon_label}>
-                <Icon
-                  style={styles.icon_label}
-                  name="usd"
-                  size={14}
-                  color="#999999"
-                />
-                <Text style={styles.input_label}>Thành tiền</Text>
-              </View>
-              <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}
-                >
-                  <Text
-                    style={[styles.address_default_title, styles.title_active]}
-                  >
-                    {cart_data.total_selected}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
           </View>
 
           <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
@@ -1162,6 +1136,57 @@ export default class Confirm extends Component {
               </View>
             </View>
           </View>
+
+          <View
+            style={[
+              styles.rows,
+              styles.borderBottom,
+              {
+                borderTopWidth: 0
+              }
+            ]}
+          >
+            <View style={styles.address_name_box}>
+              <View style={styles.useVoucherLabelWrapper}>
+                <Material name="ticket-percent" size={20} color="#05b051" />
+                <Text
+                  style={[
+                    styles.text_total_items,
+                    styles.feeLabel,
+                    styles.both,
+                    styles.useVoucherLabel
+                  ]}
+                >
+                  Khuyến mãi
+                </Text>
+              </View>
+              <Button
+                containerStyle={[
+                  styles.address_default_box,
+                  styles.addVoucherWrapper
+                ]}
+                onPress={
+                  cart_data.user_voucher
+                    ? this.openCurrentVoucher.bind(this, cart_data.user_voucher)
+                    : this.openMyVoucher
+                }
+              >
+                {cart_data.user_voucher ? (
+                  <Text
+                    ellipsizeMode="tail"
+                    numberOfLines={1}
+                    style={[styles.addVoucherLabel, { marginLeft: 10 }]}
+                  >
+                    <Material name="check-circle" size={16} color="#05b051" />
+                    {` ${cart_data.user_voucher.voucher_name}`}
+                  </Text>
+                ) : (
+                  <Text style={styles.addVoucherLabel}>Thêm khuyến mãi</Text>
+                )}
+              </Button>
+            </View>
+          </View>
+
           {Object.keys(cart_data.cashback_view).map(index => {
             return (
               <View
@@ -1705,7 +1730,7 @@ export default class Confirm extends Component {
           Actions.pop();
 
           setTimeout(() => {
-            Actions.confirm({
+            Actions.push(appConfig.routes.paymentConfirm, {
               goConfirm: true
             });
           }, 1000);
@@ -2468,5 +2493,24 @@ const styles = StyleSheet.create({
     top: 0,
     right: 0,
     height: '100%'
+  },
+  useVoucherLabelWrapper: {
+    flex: 1,
+    flexDirection: 'row'
+  },
+  useVoucherLabel: {
+    marginLeft: 4
+  },
+  addVoucherWrapper: {
+    flex: 1,
+    borderLeftWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderColor: '#ebebeb'
+  },
+  addVoucherLabel: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#333'
   }
 });

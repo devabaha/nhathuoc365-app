@@ -13,18 +13,22 @@ class MyVoucher extends Component {
   static propTypes = {
     onPressVoucher: PropTypes.func,
     onPressEnterVoucher: PropTypes.func,
+    onPressUseOnline: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
     apiFetching: PropTypes.bool,
+    isUseOnlineMode: PropTypes.bool,
     campaigns: PropTypes.array
   };
 
   static defaultProps = {
     onPressVoucher: defaultListener,
     onPressEnterVoucher: defaultListener,
+    onPressUseOnline: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
     apiFetching: false,
+    isUseOnlineMode: false,
     campaigns: []
   };
 
@@ -38,30 +42,17 @@ class MyVoucher extends Component {
 
   renderMyVouchers() {
     return (
-      <Fragment>
-        <FlatList
-          data={this.props.campaigns}
-          keyExtractor={item => `${item.data.id}`}
-          renderItem={this.renderMyVoucher}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.props.refreshing}
-              onRefresh={this.props.onRefresh}
-            />
-          }
-        />
-        <View style={styles.getVoucherWrapper}>
-          <Button
-            containerStyle={styles.getVoucherBtn}
-            style={styles.getVoucherTitle}
-            onPress={() => {
-              this.props.onPressEnterVoucher();
-            }}
-          >
-            {'Nhập mã voucher'}
-          </Button>
-        </View>
-      </Fragment>
+      <FlatList
+        data={this.props.campaigns}
+        keyExtractor={item => `${item.data.id}`}
+        renderItem={this.renderMyVoucher}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.props.refreshing}
+            onRefresh={this.props.onRefresh}
+          />
+        }
+      />
     );
   }
 
@@ -70,8 +61,10 @@ class MyVoucher extends Component {
       <MyVoucherItem
         title={voucher.data.title}
         remaining={voucher.data.remain_time}
+        isUseOnlineMode={this.props.isUseOnlineMode}
         avatar={voucher.data.shop_logo_url}
         onPress={() => this.props.onPressVoucher(voucher)}
+        onPressUseOnline={() => this.props.onPressUseOnline(voucher)}
         last={this.totalCampaigns - 1 === index}
       />
     );
@@ -89,6 +82,18 @@ class MyVoucher extends Component {
             text={'Đi săn voucher ở ' + APP_NAME_SHOW + ' Voucher ngay thôi'}
           />
         )}
+
+        <View style={styles.getVoucherWrapper}>
+          <Button
+            containerStyle={styles.getVoucherBtn}
+            style={styles.getVoucherTitle}
+            onPress={() => {
+              this.props.onPressEnterVoucher();
+            }}
+          >
+            Nhập mã voucher
+          </Button>
+        </View>
       </View>
     );
   }

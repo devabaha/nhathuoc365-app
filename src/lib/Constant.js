@@ -103,6 +103,7 @@ global.OBJECT_TYPE_KEY_PRODUCT = 'site_product';
 global.OBJECT_TYPE_KEY_NEWS = 'site_news';
 global.OBJECT_TYPE_KEY_CART = 'site_cart';
 global.OBJECT_TYPE_KEY_VOUCHER = 'site_voucher';
+global.OBJECT_TYPE_KEY_CAMPAIGN = 'voucher_campaign';
 
 // user
 global.STATUS_VERIFYED = 1;
