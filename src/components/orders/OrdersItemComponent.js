@@ -29,7 +29,6 @@ export default class OrdersItemComponent extends Component {
       console.log(e + ' site_cart');
 
       store.addApiQueue('site_cart', this._getCart.bind(this, callback));
-    } finally {
     }
   }
 
@@ -92,7 +91,7 @@ export default class OrdersItemComponent extends Component {
   }
 
   render() {
-    var { item, onPress, storeOnPress, from_page } = this.props;
+    var { item, from_page } = this.props;
     var single = from_page != 'store_orders';
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     // var is_ready = item.status == CART_STATUS_READY;
@@ -182,7 +181,7 @@ export default class OrdersItemComponent extends Component {
                         var items_string = '';
                         Object.keys(item.products)
                           .reverse()
-                          .map(key => {
+                          .forEach(key => {
                             let item_product = item.products[key];
                             if (item_product.selected == 1) {
                               items_string +=
