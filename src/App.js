@@ -584,9 +584,7 @@ class App extends Component {
                   <Stack key="rating">
                     <Scene
                       key="rating_1"
-                      panHandlers={null}
-                      direction="vertical"
-                      hideNavBar
+                      title="Cảm ơn quý khách!"
                       component={Rating}
                       {...navBarConfig}
                       back
