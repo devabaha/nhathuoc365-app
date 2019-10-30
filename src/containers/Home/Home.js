@@ -41,7 +41,11 @@ class Home extends Component {
     try {
       const response = await APIHandler.user_site_home();
       if (response && response.status == STATUS_SUCCESS) {
-        console.log('response', response);
+        if (response.data.vote_cart && response.data.vote_cart.site_id) {
+          Actions.rating({
+            cart_data: response.data.vote_cart
+          });
+        }
         this.setState({
           site: response.data.site,
           sites: response.data.sites,

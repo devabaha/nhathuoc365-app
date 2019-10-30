@@ -1,5 +1,3 @@
-/* @flow */
-
 import React, { Component } from 'react';
 import {
   View,
@@ -10,43 +8,77 @@ import {
   ScrollView,
   Keyboard
 } from 'react-native';
-
-// librarys
-import Icon from 'react-native-vector-icons/FontAwesome';
+import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
-import store from '../../store/Store';
+import { showMessage } from 'react-native-flash-message';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import OrdersItemComponent from '../orders/OrdersItemComponent';
 
-var DEFAULT_RATING_MSG =
+const DEFAULT_RATING_MSG =
   'Đánh giá, góp ý của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn!';
 
-@observer
-export default class Rating extends Component {
+class Rating extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       current: 0,
+      keyboardHeight: 0,
       cart_data: props.cart_data,
       rating_data: null,
       had_action: false,
       rating_msg: DEFAULT_RATING_MSG,
       rating_selection: [],
-      comment: '',
-      HEADER_HEIGHT: 280
+      comment: ''
     };
-
-    // alert(JSON.stringify(this.state.cart_data))
   }
 
   componentDidMount() {
-    this._getData();
+    this.getSiteDetailData();
   }
 
-  _getData = async () => {
-    var { site_id } = this.state.cart_data;
+  componentWillMount() {
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      this.keyboardDidShow
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      this.keyboardDidHide
+    );
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  keyboardDidShow = e => {
+    this.setState(
+      {
+        keyboardShow: true,
+        keyboardHeight: e.endCoordinates.height
+      },
+      () => {
+        setTimeout(() => {
+          this.refRating && this.refRating.scrollToEnd({ animated: true });
+        }, 0);
+      }
+    );
+  };
+
+  keyboardDidHide = () => {
+    layoutAnimation();
+    this.setState({
+      keyboardShow: false,
+      keyboardHeight: 0
+    });
+  };
+
+  getSiteDetailData = async () => {
+    const { site_id } = this.state.cart_data;
     try {
-      var response = await APIHandler.site_detail(site_id);
+      const response = await APIHandler.site_detail(site_id);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.rating_data) {
           this.setState({
@@ -54,18 +86,16 @@ export default class Rating extends Component {
           });
         }
       }
-    } catch (e) {
-      console.log(e + ' ');
-    } finally {
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  _setStar(current) {
+  setStar = current => {
     this.setState(prevState => {
       if (prevState.current == 1 && current == 1) {
         current = 0;
       }
-
       return {
         current,
         had_action: true,
@@ -73,241 +103,37 @@ export default class Rating extends Component {
           current <= 3 ? 'Chúng tôi cần cải thiện điều gì?' : DEFAULT_RATING_MSG
       };
     });
+  };
 
-    // layoutAnimation();
-  }
-
-  _renderStar() {
-    var { current, isFocus } = this.state;
+  renderStar = () => {
+    const { current } = this.state;
     return [1, 2, 3, 4, 5].map((star, index) => {
       let active = current >= star;
       return (
         <TouchableHighlight
           key={index}
-          onPress={this._setStar.bind(this, star)}
+          onPress={this.setStar.bind(this, star)}
           underlayColor="transparent"
         >
           <Icon
             style={styles.starIcon}
             name="star"
-            size={isFocus ? 20 : 36}
-            color={active ? 'yellow' : 'rgba(0,0,0,.3)'}
+            size={36}
+            color={active ? 'rgb(255, 235, 0)' : 'rgba(0, 0, 0, .2)'}
           />
         </TouchableHighlight>
       );
     });
-  }
+  };
 
-  render() {
-    var {
-      cart_data,
-      current,
-      rating_data,
-      had_action,
-      rating_msg,
-      rating_selection,
-      comment,
-      isFocus,
-      HEADER_HEIGHT
-    } = this.state;
-
-    const WrapperView = isIOS ? ScrollView : View;
-
-    return (
-      <ScrollView keyboardShouldPersistTaps="always">
-        <View style={styles.container}>
-          <View style={[styles.header]}>
-            <Text
-              style={[
-                styles.headingText,
-                {
-                  marginTop: HEADER_HEIGHT * 0.107
-                }
-              ]}
-            >
-              Cảm ơn quý khách!
-            </Text>
-            <View style={styles.cartView}>
-              <OrdersItemComponent disableGoDetail={true} item={cart_data} />
-            </View>
-
-            <Text
-              style={[
-                styles.descText,
-                {
-                  marginTop: HEADER_HEIGHT * 0.057
-                }
-              ]}
-            >
-              Vui lòng đánh giá chất lượng phục vụ cho đơn hàng
-            </Text>
-            <View
-              style={[
-                styles.starBox,
-                {
-                  marginTop: HEADER_HEIGHT * 0.0928
-                }
-              ]}
-            >
-              {this._renderStar.call(this)}
-            </View>
-
-            <TouchableHighlight
-              style={{
-                padding: 16,
-                position: 'absolute',
-                top: isIOS ? 14 : 0,
-                left: 0
-              }}
-              onPress={Actions.pop}
-              underlayColor="transparent"
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  color: '#ffffff'
-                }}
-              >
-                Đóng
-              </Text>
-            </TouchableHighlight>
-          </View>
-
-          <View style={styles.content}>
-            <Text style={styles.questText}>{rating_msg}</Text>
-
-            {current <= 3 && rating_data && had_action && (
-              <View style={styles.ratingMoreBox}>
-                {rating_data.map((rating, index) => {
-                  var active = this._isRatingSelected(rating);
-
-                  return (
-                    <TouchableHighlight
-                      key={index}
-                      onPress={this._ratingHandle.bind(this, rating)}
-                      underlayColor="transparent"
-                    >
-                      <View
-                        style={{
-                          alignItems: 'center'
-                        }}
-                      >
-                        <View
-                          style={[
-                            styles.ratingMore,
-                            {
-                              borderColor: active ? DEFAULT_COLOR : '#999999',
-                              width: HEADER_HEIGHT * 0.193,
-                              height: HEADER_HEIGHT * 0.193,
-                              borderRadius: (HEADER_HEIGHT * 0.193) / 2
-                            }
-                          ]}
-                        >
-                          <Icon
-                            style={styles.ratingIcon}
-                            name="truck"
-                            size={24}
-                            color={active ? DEFAULT_COLOR : '#999999'}
-                          />
-                        </View>
-                        {!isFocus && (
-                          <Text
-                            style={[
-                              styles.ratingShip,
-                              {
-                                color: active ? DEFAULT_COLOR : '#999999'
-                              }
-                            ]}
-                          >
-                            {rating.name}
-                          </Text>
-                        )}
-                      </View>
-                    </TouchableHighlight>
-                  );
-                })}
-              </View>
-            )}
-
-            <TextInput
-              ref={ref => (this.refs_cart_note = ref)}
-              style={styles.ratingNote}
-              keyboardType="default"
-              maxLength={1000}
-              placeholder="Nhập ghi chú của bạn tại đây"
-              placeholderTextColor="#999999"
-              multiline={true}
-              underlineColorAndroid="transparent"
-              onChangeText={value => {
-                this.setState({
-                  comment: value
-                });
-              }}
-              onFocus={() => {
-                this.setState({
-                  HEADER_HEIGHT: 200,
-                  isFocus: true
-                });
-                // layoutAnimation();
-              }}
-              onBlur={() => {
-                this.setState({
-                  HEADER_HEIGHT: 280,
-                  isFocus: false
-                });
-                layoutAnimation();
-              }}
-              value={comment}
-            />
-          </View>
-
-          <View
-            style={{
-              width: Util.size.width,
-              height: 60,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            <TouchableHighlight
-              onPress={this._onSave}
-              underlayColor="transparent"
-            >
-              <View
-                style={{
-                  width: Util.size.width - 30,
-                  height: 42,
-                  backgroundColor: DEFAULT_COLOR,
-                  borderRadius: 3,
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                <Text
-                  style={{
-                    color: '#ffffff',
-                    fontSize: 14,
-                    fontWeight: '600'
-                  }}
-                >
-                  Gửi
-                </Text>
-              </View>
-            </TouchableHighlight>
-          </View>
-        </View>
-      </ScrollView>
-    );
-  }
-
-  _onSave = async () => {
+  onSave = async () => {
     Keyboard.dismiss();
 
     try {
-      var { current, comment, rating_selection } = this.state;
-      var { site_id, id } = this.state.cart_data;
+      const { current, comment, rating_selection } = this.state;
+      const { site_id, id } = this.state.cart_data;
 
-      var response = await APIHandler.cart_site_update(site_id, id, {
+      const response = await APIHandler.cart_site_update(site_id, id, {
         star: current,
         comment,
         rating_data: rating_selection.join(', ')
@@ -317,30 +143,32 @@ export default class Rating extends Component {
         setTimeout(() => {
           Actions.pop();
         }, 1000);
-        Toast.show('Góp ý của bạn đã được ghi nhận!');
+        showMessage({
+          type: 'success',
+          message: 'Góp ý của bạn đã được ghi nhận!'
+        });
       }
-    } catch (e) {
-      console.log(e + ' ');
-    } finally {
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  _isRatingSelected(rating) {
+  isRatingSelected = rating => {
     return this.state.rating_selection.indexOf(rating.name) != -1;
-  }
+  };
 
-  _pushRating(rating) {
-    var index = this.state.rating_selection.indexOf(rating.name);
+  pushRating = rating => {
+    const index = this.state.rating_selection.indexOf(rating.name);
     if (index == -1) {
       this.state.rating_selection.push(rating.name);
       this.setState({
         rating_selection: this.state.rating_selection
       });
     }
-  }
+  };
 
-  _removeRating(rating) {
-    var index = this.state.rating_selection.indexOf(rating.name);
+  removeRating(rating) {
+    const index = this.state.rating_selection.indexOf(rating.name);
     if (index != -1) {
       this.state.rating_selection.splice(index, 1);
       this.setState({
@@ -349,12 +177,133 @@ export default class Rating extends Component {
     }
   }
 
-  _ratingHandle(rating) {
-    if (this._isRatingSelected(rating)) {
-      this._removeRating(rating);
+  ratingHandle(rating) {
+    if (this.isRatingSelected(rating)) {
+      this.removeRating(rating);
     } else {
-      this._pushRating(rating);
+      this.pushRating(rating);
     }
+  }
+
+  render() {
+    const {
+      cart_data,
+      current,
+      rating_data,
+      had_action,
+      rating_msg,
+      comment
+    } = this.state;
+
+    return (
+      <View style={styles.container}>
+        <ScrollView
+          ref={ref => (this.refRating = ref)}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.cartView}>
+            <OrdersItemComponent disableGoDetail={true} item={cart_data} />
+          </View>
+
+          <View
+            style={[
+              styles.feedbackWrapper,
+              {
+                marginBottom: this.state.keyboardHeight
+              }
+            ]}
+          >
+            <Text style={styles.descText}>
+              Vui lòng đánh giá chất lượng phục vụ cho đơn hàng
+            </Text>
+
+            <View style={styles.starBox}>{this.renderStar()}</View>
+
+            <View style={styles.content}>
+              <Text style={styles.questText}>{rating_msg}</Text>
+
+              {current <= 3 && rating_data && had_action && (
+                <View style={styles.ratingMoreBox}>
+                  {rating_data.map((rating, index) => {
+                    const active = this.isRatingSelected(rating);
+
+                    return (
+                      <TouchableHighlight
+                        key={index}
+                        onPress={this.ratingHandle.bind(this, rating)}
+                        underlayColor="transparent"
+                      >
+                        <View
+                          style={{
+                            alignItems: 'center'
+                          }}
+                        >
+                          <View
+                            style={[
+                              styles.ratingMore,
+                              {
+                                borderColor: active
+                                  ? appConfig.colors.primary
+                                  : '#999999'
+                              }
+                            ]}
+                          >
+                            <Icon
+                              name="truck"
+                              size={24}
+                              color={
+                                active ? appConfig.colors.primary : '#999999'
+                              }
+                            />
+                          </View>
+                          <Text
+                            style={[
+                              styles.ratingShip,
+                              {
+                                color: active
+                                  ? appConfig.colors.primary
+                                  : '#999999'
+                              }
+                            ]}
+                          >
+                            {rating.name}
+                          </Text>
+                        </View>
+                      </TouchableHighlight>
+                    );
+                  })}
+                </View>
+              )}
+
+              <TextInput
+                ref={ref => (this.refs_cart_note = ref)}
+                style={styles.ratingNote}
+                keyboardType="default"
+                maxLength={1000}
+                placeholder="Nhập ghi chú của bạn tại đây"
+                placeholderTextColor="#999999"
+                multiline={true}
+                underlineColorAndroid="transparent"
+                onChangeText={value => {
+                  this.setState({
+                    comment: value
+                  });
+                }}
+                value={comment}
+              />
+            </View>
+          </View>
+        </ScrollView>
+
+        <View style={styles.submitBtnWrapper}>
+          <TouchableHighlight onPress={this.onSave} underlayColor="transparent">
+            <View style={styles.submitBtnContent}>
+              <Text style={styles.submitLabel}>GỬI ĐÁNH GIÁ</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+      </View>
+    );
   }
 }
 
@@ -362,34 +311,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  header: {
-    width: '100%',
-    backgroundColor: DEFAULT_COLOR,
-    alignItems: 'center'
-  },
-  headingText: {
-    fontSize: 18,
-    color: '#ffffff'
-  },
-  storeAvatarBox: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#ffffff'
-  },
-  storeAvatar: {
-    backgroundColor: '#ccc'
-  },
   descText: {
-    color: '#ebebeb',
+    color: '#333',
+    marginTop: 2,
     marginLeft: 10,
     marginRight: 10,
     fontSize: 14,
     textAlign: 'center',
-    fontWeight: 'bold',
-    backgroundColor: 'transparent'
+    fontWeight: 'bold'
   },
   starBox: {
-    width: '100%',
+    marginTop: 32,
     marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'center'
@@ -407,19 +339,17 @@ const styles = StyleSheet.create({
     marginTop: 16,
     textAlign: 'center'
   },
-
   ratingNote: {
     fontSize: 14,
-    width: Util.size.width * 0.9,
-    height: 69,
-    backgroundColor: '#dddddd',
+    width: appConfig.device.width - 32,
+    minHeight: 90,
+    backgroundColor: 'rgba(0, 0, 0, 0.08)',
     marginTop: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 4
+    paddingVertical: 16,
+    paddingHorizontal: 8
   },
-
   ratingMoreBox: {
-    width: Util.size.width,
+    width: appConfig.device.width,
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 15,
@@ -434,16 +364,39 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16
   },
-  ratingIcon: {},
   ratingShip: {
     color: '#999999',
     fontSize: 10
   },
   cartView: {
-    marginTop: 30,
     marginLeft: 0,
     marginRight: 0,
-    width: '100%',
-    backgroundColor: '#fff'
+    width: '100%'
+  },
+  submitBtnWrapper: {
+    width: appConfig.device.width,
+    height: 60,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: appConfig.colors.white
+  },
+  submitBtnContent: {
+    width: appConfig.device.width - 30,
+    height: 42,
+    backgroundColor: appConfig.colors.primary,
+    borderRadius: 3,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  submitLabel: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '600'
+  },
+  feedbackWrapper: {
+    paddingVertical: 16,
+    backgroundColor: appConfig.colors.white
   }
 });
+
+export default Rating;
