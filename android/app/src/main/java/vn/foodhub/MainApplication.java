@@ -3,6 +3,10 @@ package vn.foodhub;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
+import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
+import com.swmansion.reanimated.ReanimatedPackage;
 import org.reactnative.camera.RNCameraPackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.microsoft.codepush.react.CodePush;
@@ -41,6 +45,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ReactNativeFingerprintScannerPackage(),
+            new ReactNativeContacts(),
+            new RNGestureHandlerPackage(),
+            new ReanimatedPackage(),
             new RNCameraPackage(),
             new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
