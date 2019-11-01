@@ -37,12 +37,12 @@ function StatusBarBackground(props) {
 
 const styles = StyleSheet.create({
   statusBar: {
-    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: 20,
-    backgroundColor: '#fff'
+    position: 'absolute',
+    backgroundColor: '#fff',
+    height: config.device.statusBarHeight
   }
 });
 

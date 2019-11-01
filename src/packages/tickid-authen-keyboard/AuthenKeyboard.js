@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { getBottomSpace } from 'react-native-iphone-x-helper';
 import {
   View,
   Text,
@@ -164,7 +165,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     backgroundColor: '#fff',
     borderTopLeftRadius: 8,
-    borderTopRightRadius: 8
+    borderTopRightRadius: 8,
+    marginBottom: getBottomSpace()
   },
   forgotBtn: {
     marginTop: 12,
