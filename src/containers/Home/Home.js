@@ -267,6 +267,32 @@ class Home extends Component {
 
   handlePressService = service => {
     switch (service.type) {
+      case 'ACCUMULATE_POINTS_TYPE':
+        Actions.push(appConfig.routes.qrBarCode, {
+          title: 'Mã tài khoản'
+        });
+        break;
+      case 'MY_VOUCHER_TYPE':
+        Actions.push(appConfig.routes.myVoucher, {
+          title: 'Voucher của tôi'
+        });
+        break;
+      case 'TRANSACTION_TYPE':
+        Actions.vnd_wallet({
+          title: store.user_info.default_wallet.name,
+          wallet: store.user_info.default_wallet
+        });
+        break;
+      case 'ORDERS_TYPE':
+        Actions.jump(appConfig.routes.ordersTab);
+        break;
+      case 'QRCODE_SCAN_TYPE':
+        Actions.push(appConfig.routes.qrBarCode, {
+          index: 1,
+          title: 'Quét QR Code',
+          wallet: store.user_info.default_wallet
+        });
+        break;
       case 'qrscan':
         Actions.push(appConfig.routes.qrBarCode, {
           index: 1,
@@ -349,6 +375,11 @@ class Home extends Component {
           title: service.title,
           news_type: `/${service.categoryId}`
         });
+        break;
+      default:
+        Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
+          { text: 'Đồng ý' }
+        ]);
         break;
     }
   };
@@ -444,7 +475,7 @@ class Home extends Component {
         listService={this.state.listService}
         primaryActions={this.state.primaryActions}
         apiFetching={this.state.apiFetching}
-        onActionPress={this.handlePressAction}
+        onActionPress={this.handlePressService}
         onPressProduct={this.handlePressProduct}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
