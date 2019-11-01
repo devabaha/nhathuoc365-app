@@ -27,6 +27,7 @@ import { CheckBox } from 'react-native-elements';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import { USE_ONLINE } from 'app-packages/tickid-voucher';
+import { runFbAccountKit } from '../../helper/fbAccountKit';
 
 @observer
 export default class Confirm extends Component {
@@ -584,7 +585,7 @@ export default class Confirm extends Component {
                       styles.payments_nav_icon_active
                     ]}
                     name="map-marker"
-                    size={20}
+                    size={18}
                     color="#999"
                   />
                 </View>
@@ -615,7 +616,7 @@ export default class Confirm extends Component {
                       styles.payments_nav_icon_active
                     ]}
                     name="check"
-                    size={20}
+                    size={18}
                     color="#999"
                   />
                 </View>
@@ -680,6 +681,9 @@ export default class Confirm extends Component {
                   <Text style={styles.desc_content}>
                     Mã đơn hàng: {cart_data.cart_code}
                   </Text>
+                  <Text style={styles.desc_content}>
+                    Thanh toán: Khi nhận hàng (COD)
+                  </Text>
                 </View>
                 <View style={styles.address_default_box}>
                   <View style={styles.orders_status_box}>
@@ -699,30 +703,6 @@ export default class Confirm extends Component {
                 </View>
               </View>
             </TouchableHighlight>
-          </View>
-
-          <View style={[styles.rows, styles.borderBottom]}>
-            <View style={styles.address_name_box}>
-              <View style={styles.box_icon_label}>
-                <Icon
-                  style={styles.icon_label}
-                  name="credit-card"
-                  size={12}
-                  color="#999999"
-                />
-                <Text style={styles.input_label}>Phương thức thanh toán</Text>
-              </View>
-              <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}
-                >
-                  <Text style={styles.address_default_title}>
-                    {cart_data.payment}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
           </View>
 
           {single && <ListHeader title="Thông tin này đã chính xác?" />}
@@ -846,24 +826,14 @@ export default class Confirm extends Component {
                   size={15}
                   color="#999999"
                 />
-                <Text style={styles.input_label}>Ghi chú</Text>
+                <Text style={styles.input_label}>Ghi chú </Text>
+                <Text style={styles.input_label_help}>
+                  (Thời gian giao hàng, ghi chú khác)
+                </Text>
               </View>
             </TouchableHighlight>
             {single ? (
               <View>
-                <TouchableHighlight
-                  underlayColor="#ffffff"
-                  onPress={() => {
-                    if (this.refs_cart_note) {
-                      this.refs_cart_note.focus();
-                    }
-                  }}
-                >
-                  <Text style={styles.input_label_help}>
-                    (Thời gian giao hàng, ghi chú khác)
-                  </Text>
-                </TouchableHighlight>
-
                 <TextInput
                   ref={ref => (this.refs_cart_note = ref)}
                   style={[
@@ -951,7 +921,14 @@ export default class Confirm extends Component {
                       }
                     ]}
                   >
-                    <View style={styles.cart_item_image_box}>
+                    <View
+                      style={[
+                        styles.cart_item_image_box,
+                        {
+                          marginLeft: 16
+                        }
+                      ]}
+                    >
                       <CachedImage
                         mutable
                         style={styles.cart_item_image}
@@ -1137,59 +1114,59 @@ export default class Confirm extends Component {
             </View>
           </View>
 
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              {
-                borderTopWidth: 0
-              }
-            ]}
-          >
-            <View style={styles.address_name_box}>
-              <View style={styles.useVoucherLabelWrapper}>
-                <Material name="ticket-percent" size={20} color="#05b051" />
-                <Text
-                  style={[
-                    styles.text_total_items,
-                    styles.feeLabel,
-                    styles.both,
-                    styles.useVoucherLabel
-                  ]}
-                >
-                  Khuyến mãi
-                </Text>
-              </View>
-              <Button
-                containerStyle={[
-                  styles.address_default_box,
-                  styles.addVoucherWrapper
-                ]}
-                onPress={
-                  cart_data.user_voucher
-                    ? this.openCurrentVoucher.bind(this, cart_data.user_voucher)
-                    : this.openMyVoucher
-                }
-              >
-                {cart_data.user_voucher ? (
+          {single && (
+            <View
+              style={[styles.rows, styles.borderBottom, { marginVertical: 8 }]}
+            >
+              <View style={styles.address_name_box}>
+                <View style={styles.useVoucherLabelWrapper}>
+                  <Material name="ticket-percent" size={20} color="#05b051" />
                   <Text
-                    ellipsizeMode="tail"
-                    numberOfLines={1}
-                    style={[styles.addVoucherLabel, { marginLeft: 10 }]}
+                    style={[
+                      styles.text_total_items,
+                      styles.feeLabel,
+                      styles.both,
+                      styles.useVoucherLabel
+                    ]}
                   >
-                    <Material name="check-circle" size={16} color="#05b051" />
-                    {` ${cart_data.user_voucher.voucher_name}`}
+                    Khuyến mãi
                   </Text>
-                ) : (
-                  <Text style={styles.addVoucherLabel}>Thêm khuyến mãi</Text>
-                )}
-              </Button>
+                </View>
+                <Button
+                  containerStyle={[
+                    styles.address_default_box,
+                    styles.addVoucherWrapper
+                  ]}
+                  onPress={
+                    cart_data.user_voucher
+                      ? this.openCurrentVoucher.bind(
+                          this,
+                          cart_data.user_voucher
+                        )
+                      : this.openMyVoucher
+                  }
+                >
+                  {cart_data.user_voucher ? (
+                    <Text
+                      ellipsizeMode="tail"
+                      numberOfLines={1}
+                      style={[styles.addVoucherLabel, { marginLeft: 10 }]}
+                    >
+                      <Material name="check-circle" size={16} color="#05b051" />
+                      {` ${cart_data.user_voucher.voucher_name}`}
+                    </Text>
+                  ) : (
+                    <Text style={styles.addVoucherLabel}>Thêm khuyến mãi</Text>
+                  )}
+                </Button>
+              </View>
             </View>
-          </View>
+          )}
 
           {Object.keys(cart_data.cashback_view).map(index => {
             return (
               <View
+                key={index}
                 style={[
                   styles.rows,
                   styles.borderBottom,
@@ -1647,67 +1624,18 @@ export default class Confirm extends Component {
   }
 
   _onRegister() {
-    var name = this.state.name_register;
-    var tel = this.state.tel_register;
-    var pass = this.state.pass_register;
-
-    name = name.trim();
-    tel = tel.trim();
-    let password = pass.trim();
-
-    if (!name) {
-      return Alert.alert(
-        'Thông báo',
-        'Hãy điền tên của bạn',
-        [
-          {
-            text: 'Đồng ý',
-            onPress: () => {
-              this.refs_name_register.focus();
-            }
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-
-    if (!tel) {
-      return Alert.alert(
-        'Thông báo',
-        'Hãy điền Số điện thoại',
-        [
-          {
-            text: 'Đồng ý',
-            onPress: () => {
-              this.refs_tel_register.focus();
-            }
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-
-    // if (!password) {
-    //   return Alert.alert(
-    //     'Thông báo',
-    //     'Hãy điền Mật khẩu',
-    //     [
-    //       {text: 'Đồng ý', onPress: () => {
-    //         this.refs_pass_register.focus();
-    //       }},
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-
-    Keyboard.dismiss();
-
-    // go register screen
-    Actions.register({
-      name_props: name,
-      tel_props: tel,
-      password_props: password,
-      registerNow: true
+    runFbAccountKit({
+      onSuccess: response => {
+        if (response.data.fill_info_user) {
+          // hien thi chon site
+          Actions.op_register({
+            title: 'Đăng ký thông tin',
+            name_props: response.data.name
+          });
+        }
+      },
+      onFailure: () => {},
+      initialPhoneNumber: this.state.tel_register
     });
   }
 
@@ -1841,7 +1769,10 @@ class ItemCartComponent extends Component {
             action(() => {
               store.setCartData(response.data);
             })();
-            Toast.show(response.message);
+            showMessage({
+              type: 'info',
+              message: response.message
+            });
           }
         } catch (e) {
           if (item.selected == 1) {
@@ -1957,7 +1888,7 @@ class ItemCartComponent extends Component {
         style={[
           styles.cart_item_box,
           {
-            height: 120
+            height: 87
           }
         ]}
       >
@@ -1987,7 +1918,21 @@ class ItemCartComponent extends Component {
 
         <View style={styles.cart_item_info}>
           <View style={styles.cart_item_info_content}>
-            <Text style={styles.cart_item_info_name}>{item.name}</Text>
+            <Text numberOfLines={1} style={styles.cart_item_info_name}>
+              {item.name}
+            </Text>
+
+            <View style={styles.cart_item_price_box}>
+              {item.discount_percent > 0 && (
+                <Text style={styles.cart_item_price_price_safe_off}>
+                  {item.discount}
+                </Text>
+              )}
+              <Text style={styles.cart_item_price_price}>
+                {item.price_view}
+              </Text>
+            </View>
+
             <View style={styles.cart_item_actions}>
               <TouchableHighlight
                 style={styles.cart_item_actions_btn}
@@ -2028,17 +1973,6 @@ class ItemCartComponent extends Component {
                   )}
                 </View>
               </TouchableHighlight>
-            </View>
-
-            <View style={styles.cart_item_price_box}>
-              {item.discount_percent > 0 && (
-                <Text style={styles.cart_item_price_price_safe_off}>
-                  {item.discount}
-                </Text>
-              )}
-              <Text style={styles.cart_item_price_price}>
-                {item.price_view}
-              </Text>
             </View>
           </View>
         </View>
@@ -2180,17 +2114,14 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd'
   },
   cart_item_image_box: {
-    width: '20%',
-    height: '100%',
-    marginLeft: 8
+    width: 50
   },
   cart_item_image: {
     height: '100%',
     resizeMode: 'contain'
   },
   cart_item_info: {
-    width: Util.size.width * 0.68 - 8,
-    height: '100%'
+    flex: 1
   },
   cart_item_info_content: {
     paddingHorizontal: 15
@@ -2198,19 +2129,18 @@ const styles = StyleSheet.create({
   cart_item_info_name: {
     color: '#000000',
     fontSize: 14,
-    fontWeight: '600',
-    marginRight: 30
+    fontWeight: '600'
   },
   cart_item_actions: {
     flexDirection: 'row',
-    marginVertical: 8,
+    marginTop: 8,
     alignItems: 'center'
   },
   cart_item_actions_btn: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 26,
-    height: 26,
+    width: 22,
+    height: 22,
     borderWidth: Util.pixel,
     borderColor: '#666666',
     borderRadius: 3
@@ -2228,17 +2158,16 @@ const styles = StyleSheet.create({
     lineHeight: isIOS ? 20 : 24
   },
   cart_item_check_box: {
-    width: '10%',
-    justifyContent: 'center',
-    marginLeft: '2%'
+    width: 61,
+    justifyContent: 'center'
   },
   cart_item_check: {
-    padding: 0,
-    margin: 0,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 0,
-    width: 24
+    paddingRight: 0,
+    marginRight: 0,
+    backgroundColor: '#fff'
   },
   cart_item_price_box: {
     flexDirection: 'row',
@@ -2357,7 +2286,7 @@ const styles = StyleSheet.create({
     height: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-start'
   },
   item_safe_off_percent: {
     backgroundColor: '#fa7f50',

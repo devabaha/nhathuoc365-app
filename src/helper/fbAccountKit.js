@@ -6,13 +6,15 @@ const defaultListener = () => {};
 
 export const runFbAccountKit = ({
   onSuccess = defaultListener,
-  onFailure = defaultListener
+  onFailure = defaultListener,
+  initialPhoneNumber = undefined
 }) => {
   RNAccountKit.configure({
     responseType: 'token',
     titleType: 'login',
     initialAuthState: '',
     initialPhoneCountryPrefix: '+84',
+    initialPhoneNumber,
     facebookNotificationsEnabled: true,
     countryBlacklist: [],
     defaultCountry: 'VN',

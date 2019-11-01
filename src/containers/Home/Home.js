@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StatusBar, Alert } from 'react-native';
+import { View, Alert, StyleSheet } from 'react-native';
+import store from 'app-store';
+import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import Communications from 'react-native-communications';
-import appConfig from 'app-config';
-import store from 'app-store';
 import HomeComponent from '../../components/Home';
 
 @observer
@@ -14,6 +14,7 @@ class Home extends Component {
     this.state = {
       refreshing: false,
       apiFetching: false,
+      isDarkStatusBar: false,
       site: null,
       sites: null,
       newses: null,
@@ -41,6 +42,12 @@ class Home extends Component {
     try {
       const response = await APIHandler.user_site_home();
       if (response && response.status == STATUS_SUCCESS) {
+        if (response.data.vote_cart && response.data.vote_cart.site_id) {
+          Actions.rating({
+            cart_data: response.data.vote_cart
+          });
+        }
+
         this.setState({
           site: response.data.site,
           sites: response.data.sites,
@@ -260,6 +267,32 @@ class Home extends Component {
 
   handlePressService = service => {
     switch (service.type) {
+      case 'ACCUMULATE_POINTS_TYPE':
+        Actions.push(appConfig.routes.qrBarCode, {
+          title: 'Mã tài khoản'
+        });
+        break;
+      case 'MY_VOUCHER_TYPE':
+        Actions.push(appConfig.routes.myVoucher, {
+          title: 'Voucher của tôi'
+        });
+        break;
+      case 'TRANSACTION_TYPE':
+        Actions.vnd_wallet({
+          title: store.user_info.default_wallet.name,
+          wallet: store.user_info.default_wallet
+        });
+        break;
+      case 'ORDERS_TYPE':
+        Actions.jump(appConfig.routes.ordersTab);
+        break;
+      case 'QRCODE_SCAN_TYPE':
+        Actions.push(appConfig.routes.qrBarCode, {
+          index: 1,
+          title: 'Quét QR Code',
+          wallet: store.user_info.default_wallet
+        });
+        break;
       case 'qrscan':
         Actions.push(appConfig.routes.qrBarCode, {
           index: 1,
@@ -343,6 +376,11 @@ class Home extends Component {
           news_type: `/${service.categoryId}`
         });
         break;
+      default:
+        Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
+          { text: 'Đồng ý' }
+        ]);
+        break;
     }
   };
 
@@ -378,26 +416,6 @@ class Home extends Component {
       title: item.title,
       data: item
     });
-  };
-
-  /**
-   * @TODO: Need a package to management status bar
-   */
-  handleBodyScrollTop = event => {
-    const yOffset = event.nativeEvent.contentOffset.y;
-    if (yOffset > 68) {
-      if (this.statusBarStyle !== 'dark') {
-        this.statusBarStyle = 'dark';
-
-        StatusBar.setBarStyle('dark-content', true);
-      }
-    } else {
-      if (this.statusBarStyle !== 'light') {
-        this.statusBarStyle = 'light';
-
-        StatusBar.setBarStyle('light-content', true);
-      }
-    }
   };
 
   handlePressButtonChat = () => {
@@ -444,6 +462,7 @@ class Home extends Component {
   render() {
     return (
       <HomeComponent
+        site={this.state.site}
         sites={this.state.sites}
         newses={this.state.newses}
         notices={this.state.notices}
@@ -456,7 +475,7 @@ class Home extends Component {
         listService={this.state.listService}
         primaryActions={this.state.primaryActions}
         apiFetching={this.state.apiFetching}
-        onActionPress={this.handlePressAction}
+        onActionPress={this.handlePressService}
         onPressProduct={this.handlePressProduct}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
@@ -471,11 +490,17 @@ class Home extends Component {
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
         onPressButtonChat={this.handlePressButtonChat}
-        onBodyScrollTop={this.handleBodyScrollTop}
         refreshing={this.state.refreshing}
       />
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative'
+  }
+});
 
 export default Home;
