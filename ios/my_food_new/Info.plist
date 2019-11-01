@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>FoodHub</string>
+	<string>Food Hub</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.0.2</string>
+	<string>3.0.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>302</string>
+	<string>303</string>
 	<key>CodePushDeploymentKey</key>
 	<string>IjE1p0Oymztmj5fKvyOQehDxxsHWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
 	<key>FacebookAppID</key>
@@ -52,14 +52,8 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Cho phép sử dụng Apple Music</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Danh bạ</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Cho phép sử dụng Bluetooth</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Cho phép luôn luôn sử dụng Bluetooth</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
@@ -68,6 +62,10 @@
 	<string>Cho phép sử dụng Calendar</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Cho phép ứng dụng sử dụng dụng Camera quét mã Vạch và mã QR</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Danh bạ</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
