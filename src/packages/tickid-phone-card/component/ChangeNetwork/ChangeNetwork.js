@@ -59,7 +59,8 @@ class ChangeNetwork extends Component {
       >
         <View style={styles.body}>
           <Text style={styles.message}>
-            Vui lòng chọn nhà mạng bạn muốn nạp tiền
+            Lưu ý chỉ thay đổi nhà mạng khi bạn đã đăng ký chuyển mạng giữ số
+            điện thoại
           </Text>
 
           {this.renderNetworks()}
