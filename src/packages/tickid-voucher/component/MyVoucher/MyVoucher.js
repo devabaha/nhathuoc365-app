@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import Button from 'react-native-button';
 import PropTypes from 'prop-types';
 import config from '../../config';
