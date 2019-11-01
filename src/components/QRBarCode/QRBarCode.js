@@ -30,7 +30,7 @@ class QRBarCode extends Component {
       wallet: props.wallet || false,
       loading: false,
       from: props.from || false,
-      barcode: props.address || '0x000000000',
+      barcode: props.address || '000000000000',
       title: props.title || 'Mã tài khoản',
       content: props.content
         ? props.content
@@ -292,46 +292,78 @@ class QRBarCode extends Component {
                 },
                 () => {
                   if (response.data.object.type == OBJECT_TYPE_KEY_USER) {
-                    Actions.pay_wallet({
-                      title: 'Chuyển khoản',
-                      wallet: this.state.wallet,
-                      address: barcode,
-                      type: ActionConst.REPLACE
-                    });
+                    Actions.pop();
+                    setTimeout(() => {
+                      Actions.pay_wallet({
+                        title: 'Chuyển khoản',
+                        wallet: this.state.wallet,
+                        address: barcode
+                      });
+                    }, 0);
                   } else if (
                     response.data.object.type == OBJECT_TYPE_KEY_ADDRESS
                   ) {
-                    this._goStores(response.data.item);
+                    Actions.pop();
+                    setTimeout(() => {
+                      this._goStores(response.data.item);
+                    }, 0);
                   } else if (
                     response.data.object.type == OBJECT_TYPE_KEY_SITE
                   ) {
-                    this._goStores(response.data.item);
+                    Actions.pop();
+                    setTimeout(() => {
+                      this._goStores(response.data.item);
+                    }, 0);
                   } else if (
                     response.data.object.type ==
                     OBJECT_TYPE_KEY_PRODUCT_CATEGORY
                   ) {
-                    this._goStores(
-                      response.data.item,
-                      response.data.item.site_product_category_id
-                    );
+                    Actions.pop();
+                    setTimeout(() => {
+                      this._goStores(
+                        response.data.item,
+                        response.data.item.site_product_category_id
+                      );
+                    }, 0);
                   } else if (
                     response.data.object.type == OBJECT_TYPE_KEY_PRODUCT
                   ) {
-                    this._goProduct(response.data.item);
+                    Actions.pop();
+                    setTimeout(() => {
+                      this._goProduct(response.data.item);
+                    }, 0);
                   } else if (
                     response.data.object.type == OBJECT_TYPE_KEY_NEWS
                   ) {
-                    this._goNewsDetail(response.data.item);
+                    Actions.pop();
+                    setTimeout(() => {
+                      this._goNewsDetail(response.data.item);
+                    }, 0);
                   } else if (
                     response.data.object.type == OBJECT_TYPE_KEY_CART
                   ) {
-                    Actions.view_orders_item({
-                      data: response.data.item,
-                      title: '#' + response.data.item.cart_code,
-                      type: ActionConst.REPLACE
-                    });
+                    Actions.pop();
+                    setTimeout(() => {
+                      Actions.view_orders_item({
+                        data: response.data.item,
+                        title: '#' + response.data.item.cart_code
+                      });
+                    }, 0);
+                  } else if (
+                    response.data.object.type == OBJECT_TYPE_KEY_CAMPAIGN
+                  ) {
+                    Actions.pop();
+                    setTimeout(() => {
+                      Actions.push(appConfig.routes.voucherDetail, {
+                        title: response.data.item.title,
+                        campaignId: response.data.item.id
+                      });
+                    }, 0);
                   } else {
-                    this._search_store(barcode);
+                    Actions.pop();
+                    setTimeout(() => {
+                      this._search_store(barcode);
+                    }, 0);
                   }
                   // Toast.show(response.message, Toast.SHORT);
                 }
@@ -387,27 +419,17 @@ class QRBarCode extends Component {
   }
 
   _search_store(barcode) {
-    action(() => {
-      this.setState(
-        {
-          loading: false
-        },
-        () => {
-          Actions.search_store({
-            site_code: barcode,
-            type: ActionConst.REPLACE
-          });
-        }
-      );
-    })();
+    alert('Mã QR Code không hợp lệ, vui lòng thử lại');
   }
 
   _open_webview(link) {
-    Actions.webview({
-      title: link,
-      url: link,
-      type: ActionConst.REPLACE
-    });
+    Actions.pop();
+    setTimeout(() => {
+      Actions.webview({
+        title: link,
+        url: link
+      });
+    }, 0);
   }
 
   _proccessQRCodeResult(text_result) {
@@ -421,12 +443,14 @@ class QRBarCode extends Component {
         }
       } else if (isWalletAddress(text_result)) {
         if (from == 'vndwallet') {
-          Actions.pay_wallet({
-            title: 'Chuyển khoản',
-            wallet: wallet,
-            address: text_result,
-            type: ActionConst.REPLACE
-          });
+          Actions.pop();
+          setTimeout(() => {
+            Actions.pay_wallet({
+              title: 'Chuyển khoản',
+              wallet: wallet,
+              address: text_result
+            });
+          }, 0);
         } else {
           this._check_address(text_result);
         }
@@ -477,7 +501,7 @@ class QRBarCode extends Component {
           <Barcode
             value={barcode}
             format="CODE128"
-            width={1}
+            width={1.5}
             height={80}
             background="transparent"
           />

@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
+import appConfig from 'app-config';
 
 @observer
 class Address extends Component {
@@ -124,7 +125,7 @@ class Address extends Component {
   }
 
   _goConfirm() {
-    Actions.confirm({
+    Actions.push(appConfig.routes.paymentConfirm, {
       type: ActionConst.REPLACE
     });
   }

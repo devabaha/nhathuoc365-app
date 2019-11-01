@@ -8,7 +8,16 @@ import { showMessage } from 'react-native-flash-message';
 
 class ScanScreen extends BaseContainer {
   static propTypes = {
-    voucher: PropTypes.object.isRequired
+    voucher: PropTypes.object.isRequired,
+    topContentText: PropTypes.string,
+    placeholder: PropTypes.string,
+    isFromMyVoucher: PropTypes.bool
+  };
+
+  static defaultProps = {
+    topContentText: '',
+    placeholder: '',
+    isFromMyVoucher: false
   };
 
   constructor(props) {
@@ -23,20 +32,26 @@ class ScanScreen extends BaseContainer {
     this.validateRequiredMethods([
       'handlePressEnterCode',
       'handleReadedCode',
-      'handleShowBarcode'
+      'handleShowBarcode',
+      'handleRefreshMyVoucher'
     ]);
   }
 
   handleAfterReadedCode = code => {
     this.handleReadedCode({
       code,
-      onDone: () => this.sendApiUseCode(code)
+      onDone: () =>
+        this.props.isFromMyVoucher
+          ? this.sendApiSaveCode(code)
+          : this.sendApiUseCode(code)
     });
   };
 
   handleBeforeShowEnterCode = () => {
     this.handlePressEnterCode({
-      onSendCode: this.sendApiUseCode
+      onSendCode: this.props.isFromMyVoucher
+        ? this.sendApiSaveCode
+        : this.sendApiUseCode
     });
   };
 
@@ -76,12 +91,53 @@ class ScanScreen extends BaseContainer {
     }
   };
 
+  sendApiSaveCode = async code => {
+    if (this.apiSending) return;
+
+    this.apiSending = true;
+
+    this.setState({
+      showLoading: true
+    });
+
+    try {
+      const response = await internalFetch(config.rest.saveVoucher(code));
+      if (response.status === config.httpCode.success) {
+        showMessage({
+          message: 'Bạn đã nhận thành công voucher này.',
+          type: 'success'
+        });
+        this.handleRefreshMyVoucher();
+      } else {
+        showMessage({
+          message: response.message,
+          type: 'danger'
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      this.setState(
+        {
+          showLoading: false
+        },
+        () => {
+          showMessage({
+            message: 'Kết nối tới máy chủ thất bại. Vui lòng thử lại sau',
+            type: 'danger'
+          });
+        }
+      );
+      this.apiSending = false;
+    }
+  };
+
   render() {
     return (
       <ScanScreenComponent
         onReadedCode={this.handleAfterReadedCode}
         onPressEnterCode={this.handleBeforeShowEnterCode}
         showLoading={this.state.showLoading}
+        topContentText={this.props.topContentText}
       />
     );
   }

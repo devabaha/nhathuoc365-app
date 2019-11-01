@@ -22,14 +22,16 @@ class EnterCodeManual extends Component {
     onClose: PropTypes.func,
     onSendCode: PropTypes.func,
     heading: PropTypes.string,
-    message: PropTypes.string
+    message: PropTypes.string,
+    placeholder: PropTypes.string
   };
 
   static defaultProps = {
     onClose: defaultListener,
     onSendCode: defaultListener,
     heading: '',
-    message: ''
+    message: '',
+    placeholder: ''
   };
 
   constructor(props) {
@@ -146,7 +148,7 @@ class EnterCodeManual extends Component {
             <TextInput
               style={styles.codeInput}
               value={this.state.code}
-              placeholder="Nhập mã cửa hàng"
+              placeholder={this.props.placeholder}
               placeholderTextColor="#c1c1c1"
               onChangeText={this.handleChangeCode}
               autoFocus

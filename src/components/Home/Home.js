@@ -1,13 +1,23 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, RefreshControl, ScrollView } from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  RefreshControl,
+  ScrollView
+} from 'react-native';
+import StatusBarBackground, {
+  showBgrStatusIfOffsetTop
+} from 'app-packages/tickid-bgr-status-bar';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, { HomeCardItem } from './component/HomeCardList';
+import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
+import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
-import { SERVICES_LIST } from './constants';
 
 const defaultListener = () => {};
 
@@ -19,11 +29,13 @@ class Home extends Component {
     services: PropTypes.array,
     campaigns: PropTypes.array,
     promotions: PropTypes.array,
-    app: PropTypes.object,
+    products: PropTypes.array,
+    listService: PropTypes.array,
+    primaryActions: PropTypes.array,
     notify: PropTypes.object,
     userInfo: PropTypes.object,
-    hasPromotion: PropTypes.bool,
     refreshing: PropTypes.bool,
+    apiFetching: PropTypes.bool,
     onActionPress: PropTypes.func,
     onSurplusNext: PropTypes.func,
     onPromotionPressed: PropTypes.func,
@@ -34,10 +46,10 @@ class Home extends Component {
     onShowAllSites: PropTypes.func,
     onShowAllCampaigns: PropTypes.func,
     onShowAllNews: PropTypes.func,
+    onPressProduct: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
-    onPressNewItem: PropTypes.func,
-    onBodyScrollTop: PropTypes.func
+    onPressNewItem: PropTypes.func
   };
 
   static defaultProps = {
@@ -47,11 +59,13 @@ class Home extends Component {
     services: [],
     campaigns: [],
     promotions: [],
-    app: undefined,
+    products: [],
+    listService: [],
+    primaryActions: [],
     notify: {},
     userInfo: undefined,
-    hasPromotion: false,
     refreshing: false,
+    apiFetching: false,
     onActionPress: defaultListener,
     onSurplusNext: defaultListener,
     onPromotionPressed: defaultListener,
@@ -62,19 +76,57 @@ class Home extends Component {
     onShowAllSites: defaultListener,
     onShowAllCampaigns: defaultListener,
     onShowAllNews: defaultListener,
+    onPressProduct: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
-    onPressNewItem: defaultListener,
-    onBodyScrollTop: defaultListener
+    onPressNewItem: defaultListener
   };
+
+  get hasPromotion() {
+    return (
+      Array.isArray(this.props.promotions) && this.props.promotions.length > 0
+    );
+  }
+
+  get hasCampaigns() {
+    return (
+      Array.isArray(this.props.campaigns) && this.props.campaigns.length > 0
+    );
+  }
+
+  get hasSites() {
+    return Array.isArray(this.props.sites) && this.props.sites.length > 0;
+  }
+
+  get hasNews() {
+    return Array.isArray(this.props.newses) && this.props.newses.length > 0;
+  }
+
+  get hasProducts() {
+    return Array.isArray(this.props.products) && this.props.products.length > 0;
+  }
+
+  showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
+    `${appConfig.routes.homeTab}_1`,
+    68
+  );
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.headerBackground} />
+        {this.props.apiFetching && <LoadingComponent loading />}
+
+        <View style={styles.headerBackground}>
+          {this.props.site && this.props.site.app_event_banner_image && (
+            <Image
+              style={styles.headerImage}
+              source={{ uri: this.props.site.app_event_banner_image }}
+            />
+          )}
+        </View>
 
         <ScrollView
-          onScroll={this.props.onBodyScrollTop}
+          onScroll={this.showBgrStatusIfOffsetTop}
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
@@ -87,9 +139,7 @@ class Home extends Component {
           <Header
             notify={this.props.notify}
             name={this.props.userInfo ? this.props.userInfo.name : 'Tk Khách'}
-            onPressButtonChat={() =>
-              this.props.onPressButtonChat(this.props.app)
-            }
+            onPressButtonChat={this.props.onPressButtonChat}
           />
 
           <View style={styles.primaryActionsWrapper}>
@@ -104,26 +154,28 @@ class Home extends Component {
                   ? this.props.userInfo.default_wallet.balance_view
                   : ''
               }
+              primaryActions={this.props.primaryActions}
               onPressItem={this.props.onActionPress}
               onSurplusNext={this.props.onSurplusNext}
             />
           </View>
 
           <ListServices
-            data={SERVICES_LIST}
             services={this.props.services}
+            listService={this.props.listService}
+            notify={this.props.notify}
             onItemPress={this.props.onPressService}
           />
 
           <View style={styles.contentWrapper}>
-            {this.props.hasPromotion && (
+            {this.hasPromotion && (
               <Promotion
                 data={this.props.promotions}
                 onPress={this.props.onPromotionPressed}
               />
             )}
 
-            {this.props.sites && (
+            {this.hasSites && (
               <HomeCardList
                 onShowAll={false} //this.props.onShowAllSites
                 data={this.props.sites}
@@ -140,7 +192,7 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.props.campaigns && (
+            {this.hasCampaigns && (
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
                 data={this.props.campaigns}
@@ -157,7 +209,7 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.props.newses && (
+            {this.hasNews && (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
@@ -173,8 +225,26 @@ class Home extends Component {
                 )}
               </HomeCardList>
             )}
+
+            {this.hasProducts && (
+              <ListProducts data={this.props.products}>
+                {({ item: product, index }) => (
+                  <ProductItem
+                    name={product.name}
+                    image={product.image}
+                    discount_view={product.discount_view}
+                    discount_percent={product.discount_percent}
+                    price_view={product.price_view}
+                    onPress={() => this.props.onPressProduct(product)}
+                    last={this.props.products.length - 1 === index}
+                  />
+                )}
+              </ListProducts>
+            )}
           </View>
         </ScrollView>
+
+        <StatusBarBackground />
       </View>
     );
   }
@@ -193,7 +263,16 @@ const styles = StyleSheet.create({
     borderRadius: 480,
     position: 'absolute',
     top: -820,
-    left: appConfig.device.width / 2 - 500
+    left: appConfig.device.width / 2 - 500,
+    alignItems: 'center',
+    overflow: 'hidden'
+  },
+  headerImage: {
+    height: 180,
+    resizeMode: 'cover',
+    width: appConfig.device.width,
+    position: 'absolute',
+    bottom: 0
   },
   contentWrapper: {
     backgroundColor: '#f1f1f1',

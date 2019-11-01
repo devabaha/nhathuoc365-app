@@ -47,9 +47,10 @@ import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
 import NewPass from './components/account/NewPass';
-import Stores from './components/stores/Stores';
+import StoreContainer from './components/stores/Stores';
+import SearchNavBarContainer from './components/stores/SearchNavBar';
 import StoresList from './components/stores/StoresList';
-import Search from './components/stores/Search';
+import SearchStoreContainer from './components/stores/Search';
 import Item from './components/item/Item';
 import ItemImageViewer from './components/item/ItemImageViewer';
 import Cart from './components/cart/Cart';
@@ -74,11 +75,14 @@ import Affiliate from './components/account/Affiliate/Affiliate';
 import ProfileDetail from './components/account/ProfileDetail';
 import EditProfile from './components/account/EditProfile';
 import DetailHistoryPayment from './components/account/DetailHistoryPayment';
-import PhoneCard from './components/services/PhoneCard';
-import PhoneCardConfirm from './components/services/PhoneCardConfirm';
-import NapTKC from './components/services/NapTKC';
-import NapTKCConfirm from './components/services/NapTKCConfirm';
-import MdCard from './components/services/MdCard';
+import PhoneCard, {
+  config as phoneCardConfig,
+  initialize as initializePhoneCardModule,
+  Contact as PhoneCardContactContainer,
+  CardHistory as PhoneCardCardHistoryContainer,
+  BuyCardConfirm as PhoneCardBuyCardConfirmContainer,
+  BuyCardSuccess as PhoneCardBuyCardSuccessContainer
+} from 'app-packages/tickid-phone-card';
 import MdCardConfirm from './components/services/MdCardConfirm';
 import TabIcon from './components/TabIcon';
 import {
@@ -97,6 +101,29 @@ import {
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
+
+/**
+ * Initializes config for Phone Card module
+ */
+initializePhoneCardModule({
+  device: {
+    appVersion: DeviceInfo.getVersion(),
+    deviceId: getTickUniqueID(),
+    deviceType: DeviceInfo.getBrand(),
+    os: Platform.OS,
+    osVersion: DeviceInfo.getSystemVersion(),
+    store: ''
+  },
+  route: {
+    push: (path, props) => {
+      Actions.push(path, props);
+    },
+    pop: Actions.pop,
+    pushToMain: () => {
+      Actions.reset(appConfig.routes.sceneWrapper);
+    }
+  }
+});
 
 /**
  * Initializes config for Voucher module
@@ -124,7 +151,7 @@ initializeVoucherModule({
  */
 initializeRadaModule({
   private: {
-    partnerAuthorization: '',
+    partnerAuthorization: appConfig.radaModule.partnerAuthorization,
     webhookUrl: null,
     defaultLocation: '37.33233141,-122.0312186'
   }
@@ -432,9 +459,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="confirm">
+                  <Stack key={appConfig.routes.paymentConfirm}>
                     <Scene
-                      key="confirm_1"
+                      key={`${appConfig.routes.paymentConfirm}_1`}
                       title="Xác nhận"
                       component={Confirm}
                       {...navBarConfig}
@@ -487,7 +514,6 @@ class App extends Component {
                       title="Đăng ký"
                       component={OpRegister}
                       {...navBarConfig}
-                      back
                     />
                   </Stack>
 
@@ -534,8 +560,7 @@ class App extends Component {
                   <Stack key={appConfig.routes.store}>
                     <Scene
                       key={`${appConfig.routes.store}_1`}
-                      title="Cửa hàng"
-                      component={Stores}
+                      component={StoreContainer}
                       {...navBarConfig}
                       back
                     />
@@ -551,13 +576,13 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="search">
+                  <Stack key={appConfig.routes.searchStore}>
                     <Scene
-                      key="search_1"
+                      key={`${appConfig.routes.searchStore}_1`}
                       title="Tìm kiếm"
-                      component={Search}
+                      component={SearchStoreContainer}
+                      navBar={SearchNavBarContainer}
                       {...navBarConfig}
-                      back
                     />
                   </Stack>
 
@@ -585,9 +610,7 @@ class App extends Component {
                   <Stack key="rating">
                     <Scene
                       key="rating_1"
-                      panHandlers={null}
-                      direction="vertical"
-                      hideNavBar
+                      title="Cảm ơn quý khách!"
                       component={Rating}
                       {...navBarConfig}
                       back
@@ -614,9 +637,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="notifys">
+                  <Stack key={appConfig.routes.notifies}>
                     <Scene
-                      key="notifys_1"
+                      key={`${appConfig.routes.notifies}_1`}
                       title="Tin tức"
                       component={Notify}
                       {...navBarConfig}
@@ -624,9 +647,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="notifys_time">
+                  <Stack key="notifies_time">
                     <Scene
-                      key="notifys_time_1"
+                      key="notifies_time_1"
                       title="Lịch hàng hóa"
                       component={Notify}
                       {...navBarConfig}
@@ -634,9 +657,9 @@ class App extends Component {
                     />
                   </Stack>
 
-                  <Stack key="notifys_farm">
+                  <Stack key="notifies_farm">
                     <Scene
-                      key="notifys_farm_1"
+                      key="notifies_farm_1"
                       title="Trang trại"
                       component={Notify}
                       {...navBarConfig}
@@ -808,48 +831,49 @@ class App extends Component {
                   <Stack key={appConfig.routes.upToPhone}>
                     <Scene
                       key={`${appConfig.routes.upToPhone}_1`}
-                      title="Mua mã thẻ di động"
+                      title="Nạp tiền điện thoại"
                       component={PhoneCard}
                       {...navBarConfig}
                       back
                     />
                   </Stack>
 
-                  <Stack key="phonecard_confirm">
+                  <Stack key={phoneCardConfig.routes.contact}>
                     <Scene
-                      key="phonecard_confirm_1"
-                      title="Xác nhận"
-                      component={PhoneCardConfirm}
+                      key={`${phoneCardConfig.routes.contact}_1`}
+                      title="Danh bạ"
+                      component={PhoneCardContactContainer}
                       {...navBarConfig}
                       back
                     />
                   </Stack>
 
-                  <Stack key="nap_tkc">
+                  <Stack
+                    key={phoneCardConfig.routes.buyCardSuccess}
+                    panHandlers={null}
+                  >
                     <Scene
-                      key="nap_tkc_1"
-                      title="Nạp tiền điện thoại"
-                      component={NapTKC}
+                      key={`${phoneCardConfig.routes.buyCardSuccess}_1`}
+                      component={PhoneCardBuyCardSuccessContainer}
+                      hideNavBar
+                    />
+                  </Stack>
+
+                  <Stack key={phoneCardConfig.routes.cardHistory}>
+                    <Scene
+                      key={`${phoneCardConfig.routes.cardHistory}_1`}
+                      title="Mua gần đây"
+                      component={PhoneCardCardHistoryContainer}
                       {...navBarConfig}
                       back
                     />
                   </Stack>
 
-                  <Stack key="nap_tkc_confirm">
+                  <Stack key={phoneCardConfig.routes.buyCardConfirm}>
                     <Scene
-                      key="nap_tkc_confirm_1"
-                      title="Xác nhận"
-                      component={NapTKCConfirm}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="md_card">
-                    <Scene
-                      key="md_card_1"
-                      title="Nạp thẻ trong ngày"
-                      component={MdCard}
+                      key={`${phoneCardConfig.routes.buyCardConfirm}_1`}
+                      title="Thanh toán an toàn"
+                      component={PhoneCardBuyCardConfirmContainer}
                       {...navBarConfig}
                       back
                     />

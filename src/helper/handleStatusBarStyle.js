@@ -1,6 +1,7 @@
 import appConfig from '../config';
 import { StatusBar } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { config as bgrStatusBarConfig } from 'app-packages/tickid-bgr-status-bar';
 
 export default function handleStatusBarStyle(prevState, newState, action) {
   if (appConfig.device.isAndroid) return;
@@ -20,12 +21,19 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.tickidRadaServiceDetail,
     appConfig.routes.tickidRadaBooking
   ];
+
   switch (action.type) {
     case 'Navigation/PUSH':
     case 'Navigation/BACK':
-      const isDark = !!darkStatusBarScenes.some(
-        sceneName => `${Actions.currentScene}`.indexOf(sceneName) !== -1
-      );
+    case 'Navigation/NAVIGATE':
+    case 'REACT_NATIVE_ROUTER_FLUX_REPLACE':
+      const statusBarInState =
+        bgrStatusBarConfig.statusBarState[Actions.currentScene];
+      const isDark =
+        !!darkStatusBarScenes.some(
+          sceneName => `${Actions.currentScene}`.indexOf(sceneName) !== -1
+        ) || statusBarInState === bgrStatusBarConfig.mode.dark;
+
       if (isDark) {
         StatusBar.setBarStyle('dark-content', true);
       } else {

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Button from 'react-native-button';
 import PropTypes from 'prop-types';
 import config from '../../config';
 import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
@@ -11,17 +12,23 @@ const defaultListener = () => {};
 class MyVoucher extends Component {
   static propTypes = {
     onPressVoucher: PropTypes.func,
+    onPressEnterVoucher: PropTypes.func,
+    onPressUseOnline: PropTypes.func,
     onRefresh: PropTypes.func,
     refreshing: PropTypes.bool,
-    showLoading: PropTypes.bool,
+    apiFetching: PropTypes.bool,
+    isUseOnlineMode: PropTypes.bool,
     campaigns: PropTypes.array
   };
 
   static defaultProps = {
     onPressVoucher: defaultListener,
+    onPressEnterVoucher: defaultListener,
+    onPressUseOnline: defaultListener,
     onRefresh: defaultListener,
     refreshing: false,
-    showLoading: false,
+    apiFetching: false,
+    isUseOnlineMode: false,
     campaigns: []
   };
 
@@ -54,8 +61,10 @@ class MyVoucher extends Component {
       <MyVoucherItem
         title={voucher.data.title}
         remaining={voucher.data.remain_time}
+        isUseOnlineMode={this.props.isUseOnlineMode}
         avatar={voucher.data.shop_logo_url}
         onPress={() => this.props.onPressVoucher(voucher)}
+        onPressUseOnline={() => this.props.onPressUseOnline(voucher)}
         last={this.totalCampaigns - 1 === index}
       />
     );
@@ -64,15 +73,27 @@ class MyVoucher extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.props.showLoading && <LoadingComponent loading />}
-        {this.hasCampaigns ? (
-          this.renderMyVouchers()
-        ) : (
+        {this.props.apiFetching && <LoadingComponent loading />}
+        {this.hasCampaigns && this.renderMyVouchers()}
+
+        {!this.props.apiFetching && !this.hasCampaigns && (
           <NoResult
             title="Bạn chưa có phiếu giảm giá"
-            text="Đi săn voucher ở TickID Voucher ngay thôi"
+            text={'Đi săn voucher ở ' + APP_NAME_SHOW + ' Voucher ngay thôi'}
           />
         )}
+
+        <View style={styles.getVoucherWrapper}>
+          <Button
+            containerStyle={styles.getVoucherBtn}
+            style={styles.getVoucherTitle}
+            onPress={() => {
+              this.props.onPressEnterVoucher();
+            }}
+          >
+            Nhập mã voucher
+          </Button>
+        </View>
       </View>
     );
   }
@@ -83,6 +104,23 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f1f1f1',
     marginBottom: config.device.bottomSpace
+  },
+  getVoucherWrapper: {
+    backgroundColor: config.colors.white,
+    height: 62,
+    paddingHorizontal: 16,
+    justifyContent: 'center'
+  },
+  getVoucherBtn: {
+    backgroundColor: config.colors.primary,
+    borderRadius: 8,
+    paddingVertical: 14
+  },
+  getVoucherTitle: {
+    color: config.colors.white,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    fontSize: 16
   }
 });
 

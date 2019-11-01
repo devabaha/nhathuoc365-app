@@ -137,7 +137,7 @@ export default class Intro extends Component {
           <View style={styles.finish_btn}>
             <Text style={styles.finish_text}>
               <Icon name="heart-o" size={16} color="#ffffff" /> TRẢI NGHIỆM{' '}
-              {APP_NAME}
+              {APP_NAME_SHOW}
             </Text>
           </View>
         </TouchableHighlight>

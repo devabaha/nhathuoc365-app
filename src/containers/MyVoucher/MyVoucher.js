@@ -6,7 +6,22 @@ class MyVoucher extends TickIDMyVoucher {
   handlePressVoucher = voucher => {
     Actions.push(appConfig.routes.voucherDetail, {
       voucherId: voucher.data.id,
-      title: voucher.data.title
+      title: voucher.data.title,
+      isUseOnlineMode: this.isUseOnlineMode,
+      onUseVoucherOnlineSuccess: this.props.onUseVoucherOnlineSuccess,
+      onUseVoucherOnlineFailure: this.props.onUseVoucherOnlineFailure
+    });
+  };
+
+  handlePressEnterVoucher = () => {
+    Actions.push(appConfig.routes.voucherScanner, {
+      placeholder: 'Nhập mã Voucher',
+      topContentText:
+        'Hướng máy ảnh của bạn về phía mã QR Code để nhận voucher',
+      isFromMyVoucher: true,
+      refreshMyVoucher: () => {
+        this.getMyVouchers();
+      }
     });
   };
 }

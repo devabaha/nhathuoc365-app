@@ -98,7 +98,7 @@ global.isAccountCode = address => {
 
 //Kiem tra la ma tai khoan
 global.isCartCode = address => {
-  return /^(0x)?[0-9a-z]{9}$/.test(address);
+  return /^(00)?[0-9a-z]{9}$/.test(address);
 };
 
 global.stristr = (haystack, needle, bool) => {
@@ -146,7 +146,7 @@ global.GoogleAnalytic = screen => {
     let clientId = getTickUniqueID();
     ga = new Analytics(GA_ID, clientId, 1, DeviceInfo.getUserAgent());
     var screenView = new GAHits.ScreenView(
-      APP_NAME,
+      APP_NAME_SHOW,
       screen,
       DeviceInfo.getReadableVersion(),
       DeviceInfo.getBundleId()

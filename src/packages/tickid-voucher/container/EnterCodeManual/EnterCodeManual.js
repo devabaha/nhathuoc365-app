@@ -10,14 +10,16 @@ class EnterCodeManual extends BaseContainer {
     onSendCode: PropTypes.func,
     onClose: PropTypes.func,
     heading: PropTypes.string,
-    message: PropTypes.string
+    message: PropTypes.string,
+    placeholder: PropTypes.string
   };
 
   static defaultProps = {
     onSendCode: defaultListener,
     onClose: defaultListener,
     heading: '',
-    message: ''
+    message: '',
+    placeholder: ''
   };
 
   render() {
@@ -27,6 +29,7 @@ class EnterCodeManual extends BaseContainer {
         heading={this.props.heading}
         message={this.props.message}
         onSendCode={this.props.onSendCode}
+        placeholder={this.props.placeholder}
       />
     );
   }

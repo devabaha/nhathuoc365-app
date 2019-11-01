@@ -21,9 +21,7 @@ function ScanScreen(props) {
   const renderTopContent = () => {
     return (
       <View style={styles.topContent}>
-        <Text style={styles.topContentText}>
-          Hướng máy ảnh của bạn về phía mã QR Code để sử dụng voucher
-        </Text>
+        <Text style={styles.topContentText}>{props.topContentText}</Text>
       </View>
     );
   };
@@ -80,13 +78,15 @@ const defaultListener = () => {};
 ScanScreen.propTypes = {
   onPressEnterCode: PropTypes.func,
   onReadedCode: PropTypes.func,
-  showLoading: PropTypes.bool
+  showLoading: PropTypes.bool,
+  topContentText: PropTypes.string
 };
 
 ScanScreen.defaultProps = {
   onPressEnterCode: defaultListener,
   onReadedCode: defaultListener,
-  showLoading: false
+  showLoading: false,
+  topContentText: ''
 };
 
 export default ScanScreen;

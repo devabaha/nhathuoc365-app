@@ -107,3 +107,6 @@ exports.USER_WALLET_HISTORY = MY_FOOD_API + 'apiUser/wallet_history';
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';
 exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';
+
+// Voucher
+exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + '/apiVoucher/my_voucher';

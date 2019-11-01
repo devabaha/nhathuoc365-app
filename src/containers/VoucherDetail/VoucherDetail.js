@@ -16,7 +16,11 @@ class VoucherDetail extends TickIDVoucherDetail {
 
   handleOpenScanScreen = voucher => {
     Actions.push(appConfig.routes.voucherScanner, {
-      voucher
+      voucher,
+      placeholder: 'Nhập mã cửa hàng',
+      topContentText:
+        'Hướng máy ảnh của bạn về phía mã QR Code để sử dụng voucher',
+      isFromMyVoucher: false
     });
   };
 

@@ -124,11 +124,16 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async get_my_voucher_by_site(siteId) {
+    const api = url_for(API.GET_MY_VOUCHER_BY_SITE + '/' + siteId);
+    return await this.getAPI(api);
+  }
+
   /**
    * Lấy thông tin cửa hàng
    */
-  async site_info(site_id) {
-    var api = url_for(API.SITE_INFO + '/' + site_id);
+  async site_info(site_id, category_id = 0) {
+    var api = url_for(API.SITE_INFO + '/' + site_id + '/' + category_id);
     return await this.getAPI(api);
   }
 
