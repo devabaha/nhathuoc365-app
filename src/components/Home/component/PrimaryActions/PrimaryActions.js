@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
     resizeMode: 'cover'
   },
   walletNameLabel: {
-    color: '#9B04F1',
-    fontSize: 14,
+    color: '#042C5C',
+    fontSize: 16,
     fontWeight: '500'
   },
   surplus: {
