@@ -1,6 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, RefreshControl, ScrollView } from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  RefreshControl,
+  ScrollView
+} from 'react-native';
+import StatusBarBackground, {
+  showBgrStatusIfOffsetTop
+} from 'app-packages/tickid-bgr-status-bar';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
@@ -40,8 +49,7 @@ class Home extends Component {
     onPressProduct: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
-    onPressNewItem: PropTypes.func,
-    onBodyScrollTop: PropTypes.func
+    onPressNewItem: PropTypes.func
   };
 
   static defaultProps = {
@@ -71,8 +79,7 @@ class Home extends Component {
     onPressProduct: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
-    onPressNewItem: defaultListener,
-    onBodyScrollTop: defaultListener
+    onPressNewItem: defaultListener
   };
 
   get hasPromotion() {
@@ -99,15 +106,27 @@ class Home extends Component {
     return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
 
+  showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
+    `${appConfig.routes.homeTab}_1`,
+    68
+  );
+
   render() {
     return (
       <View style={styles.container}>
         {this.props.apiFetching && <LoadingComponent loading />}
 
-        <View style={styles.headerBackground} />
+        <View style={styles.headerBackground}>
+          {this.props.site && this.props.site.app_event_banner_image && (
+            <Image
+              style={styles.headerImage}
+              source={{ uri: this.props.site.app_event_banner_image }}
+            />
+          )}
+        </View>
 
         <ScrollView
-          onScroll={this.props.onBodyScrollTop}
+          onScroll={this.showBgrStatusIfOffsetTop}
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
@@ -224,6 +243,8 @@ class Home extends Component {
             )}
           </View>
         </ScrollView>
+
+        <StatusBarBackground />
       </View>
     );
   }
@@ -242,7 +263,16 @@ const styles = StyleSheet.create({
     borderRadius: 480,
     position: 'absolute',
     top: -820,
-    left: appConfig.device.width / 2 - 500
+    left: appConfig.device.width / 2 - 500,
+    alignItems: 'center',
+    overflow: 'hidden'
+  },
+  headerImage: {
+    height: 180,
+    resizeMode: 'cover',
+    width: appConfig.device.width,
+    position: 'absolute',
+    bottom: 0
   },
   contentWrapper: {
     backgroundColor: '#f1f1f1',

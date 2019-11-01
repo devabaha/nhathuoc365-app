@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { StatusBar, Alert } from 'react-native';
+import { View, Alert, StyleSheet } from 'react-native';
+import store from 'app-store';
+import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import Communications from 'react-native-communications';
-import appConfig from 'app-config';
-import store from 'app-store';
 import HomeComponent from '../../components/Home';
 
 @observer
@@ -14,6 +14,7 @@ class Home extends Component {
     this.state = {
       refreshing: false,
       apiFetching: false,
+      isDarkStatusBar: false,
       site: null,
       sites: null,
       newses: null,
@@ -385,26 +386,6 @@ class Home extends Component {
     });
   };
 
-  /**
-   * @TODO: Need a package to management status bar
-   */
-  handleBodyScrollTop = event => {
-    const yOffset = event.nativeEvent.contentOffset.y;
-    if (yOffset > 68) {
-      if (this.statusBarStyle !== 'dark') {
-        this.statusBarStyle = 'dark';
-
-        StatusBar.setBarStyle('dark-content', true);
-      }
-    } else {
-      if (this.statusBarStyle !== 'light') {
-        this.statusBarStyle = 'light';
-
-        StatusBar.setBarStyle('light-content', true);
-      }
-    }
-  };
-
   handlePressButtonChat = () => {
     action(() => {
       store.setStoreData(this.state.site);
@@ -449,6 +430,7 @@ class Home extends Component {
   render() {
     return (
       <HomeComponent
+        site={this.state.site}
         sites={this.state.sites}
         newses={this.state.newses}
         notices={this.state.notices}
@@ -476,11 +458,17 @@ class Home extends Component {
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
         onPressButtonChat={this.handlePressButtonChat}
-        onBodyScrollTop={this.handleBodyScrollTop}
         refreshing={this.state.refreshing}
       />
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative'
+  }
+});
 
 export default Home;

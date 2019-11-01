@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet, SafeAreaView } from 'react-native';
 import PrepayContainer from '../Prepay';
 import PostpaidContainer from '../Postpaid';
 import BuyCardContainer from '../BuyCard';
@@ -31,30 +31,35 @@ class PhoneCard extends BaseContainer {
 
   render() {
     return (
-      <TabView
-        navigationState={this.state}
-        renderTabBar={props => (
-          <TabBar
-            {...props}
-            renderLabel={this.renderTabBarLabel}
-            indicatorStyle={styles.indicatorStyle}
-            style={styles.tabBarStyle}
-          />
-        )}
-        renderScene={SceneMap({
-          prepay: PrepayContainer,
-          buycard: BuyCardContainer,
-          postpaid: PostpaidContainer
-        })}
-        onIndexChange={index => this.setState({ index })}
-        initialLayout={{ width: config.device.width }}
-        style={styles.tabBarContainer}
-      />
+      <SafeAreaView style={styles.container}>
+        <TabView
+          navigationState={this.state}
+          renderTabBar={props => (
+            <TabBar
+              {...props}
+              renderLabel={this.renderTabBarLabel}
+              indicatorStyle={styles.indicatorStyle}
+              style={styles.tabBarStyle}
+            />
+          )}
+          renderScene={SceneMap({
+            prepay: PrepayContainer,
+            buycard: BuyCardContainer,
+            postpaid: PostpaidContainer
+          })}
+          onIndexChange={index => this.setState({ index })}
+          initialLayout={{ width: config.device.width }}
+          style={styles.tabBarContainer}
+        />
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
   tabBarStyle: {
     backgroundColor: config.colors.white
   },
