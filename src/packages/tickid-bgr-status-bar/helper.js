@@ -9,24 +9,20 @@ export const hide = () => {
   config.methods.hide();
 };
 
-let statusBarStyle;
-
 export const showBgrStatusIfOffsetTop = (currentScene, offsetTop = 0) => {
   return event => {
     if (Platform.OS !== 'ios') return;
     const yOffset = event.nativeEvent.contentOffset.y;
     if (yOffset > offsetTop) {
-      if (statusBarStyle !== config.mode.dark) {
-        show();
-        statusBarStyle = config.mode.dark;
+      if (config.statusBarState[currentScene] !== config.mode.dark) {
         config.statusBarState[currentScene] = config.mode.dark;
+        show();
       }
       StatusBar.setBarStyle('dark-content', true);
     } else {
-      if (statusBarStyle !== config.mode.light) {
-        hide();
-        statusBarStyle = config.mode.light;
+      if (config.statusBarState[currentScene] !== config.mode.light) {
         config.statusBarState[currentScene] = config.mode.light;
+        hide();
       }
       StatusBar.setBarStyle('light-content', true);
     }

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   TouchableOpacity,
   ScrollView,
@@ -8,6 +7,9 @@ import {
   StyleSheet,
   Image
 } from 'react-native';
+import BgrStatusBar, {
+  showBgrStatusIfOffsetTop
+} from 'app-packages/tickid-bgr-status-bar';
 import successImage from '../../assets/images/success.png';
 import CardItemComponent from '../../component/CardItem';
 import SubmitButton from '../../component/SubmitButton';
@@ -27,9 +29,17 @@ function BuyCardSuccess(props) {
     config.route.pushToMain();
   };
 
+  const handleShowBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
+    'buy_card_succcess',
+    140
+  );
+
   return (
     <View style={styles.container}>
-      <ScrollView>
+      <ScrollView
+        scrollEventThrottle={16}
+        onScroll={handleShowBgrStatusIfOffsetTop}
+      >
         <View style={styles.header}>
           <Image source={successImage} style={styles.successImage} />
           <Text style={styles.successText}>Giao dịch thành công</Text>
@@ -97,13 +107,17 @@ function BuyCardSuccess(props) {
         style={styles.comeHomeBtn}
         title="Màn hình chính"
       />
+
+      <BgrStatusBar />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    position: 'relative',
+    marginBottom: config.device.bottomSpace
   },
   header: {
     alignItems: 'center',

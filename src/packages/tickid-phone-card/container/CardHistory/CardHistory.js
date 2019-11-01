@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, StyleSheet, Clipboard } from 'react-native';
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  Clipboard,
+  SafeAreaView
+} from 'react-native';
 import Communications from 'react-native-communications';
 import ActionSheet from 'react-native-actionsheet';
 import CardItemComponent from '../../component/CardItem';
@@ -278,74 +285,77 @@ class CardHistory extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
-        <Text style={styles.heading}>09/2019</Text>
+      <SafeAreaView style={styles.container}>
+        <ScrollView>
+          <Text style={styles.heading}>09/2019</Text>
 
-        <CardItemComponent
-          cardId="001"
-          networkType="viettel"
-          networkName="Viettel"
-          price="200.000đ"
-          buyTime="29/09/2019 - 11:54"
-          cardCode="4757865826328"
-          cardSeri="1000348293472"
-          onUseNow={this.handleShowUseNowModal}
-          onSendCard={this.handleShowSendCardModal}
-          onOpenMoreMenu={this.handleOnOpenMoreMenu}
-          onCopyCardCode={this.handleShowCopyCardCodeModal}
-        />
+          <CardItemComponent
+            cardId="001"
+            networkType="viettel"
+            networkName="Viettel"
+            price="200.000đ"
+            buyTime="29/09/2019 - 11:54"
+            cardCode="4757865826328"
+            cardSeri="1000348293472"
+            onUseNow={this.handleShowUseNowModal}
+            onSendCard={this.handleShowSendCardModal}
+            onOpenMoreMenu={this.handleOnOpenMoreMenu}
+            onCopyCardCode={this.handleShowCopyCardCodeModal}
+          />
 
-        <CardItemComponent
-          cardId="001"
-          networkType="viettel"
-          networkName="Viettel"
-          price="200.000đ"
-          buyTime="29/09/2019 - 11:54"
-          cardCode="4757865826328"
-          cardSeri="1000348293472"
-          onUseNow={this.handleShowUseNowModal}
-          onSendCard={this.handleShowSendCardModal}
-          onOpenMoreMenu={this.handleOnOpenMoreMenu}
-          onCopyCardCode={this.handleShowCopyCardCodeModal}
-        />
+          <CardItemComponent
+            cardId="001"
+            networkType="viettel"
+            networkName="Viettel"
+            price="200.000đ"
+            buyTime="29/09/2019 - 11:54"
+            cardCode="4757865826328"
+            cardSeri="1000348293472"
+            onUseNow={this.handleShowUseNowModal}
+            onSendCard={this.handleShowSendCardModal}
+            onOpenMoreMenu={this.handleOnOpenMoreMenu}
+            onCopyCardCode={this.handleShowCopyCardCodeModal}
+          />
 
-        <CardItemComponent
-          cardId="001"
-          networkType="viettel"
-          networkName="Viettel"
-          price="200.000đ"
-          buyTime="29/09/2019 - 11:54"
-          cardCode="4757865826328"
-          cardSeri="1000348293472"
-          onUseNow={this.handleShowUseNowModal}
-          onSendCard={this.handleShowSendCardModal}
-          onOpenMoreMenu={this.handleOnOpenMoreMenu}
-          onCopyCardCode={this.handleShowCopyCardCodeModal}
-        />
+          <CardItemComponent
+            cardId="001"
+            networkType="viettel"
+            networkName="Viettel"
+            price="200.000đ"
+            buyTime="29/09/2019 - 11:54"
+            cardCode="4757865826328"
+            cardSeri="1000348293472"
+            onUseNow={this.handleShowUseNowModal}
+            onSendCard={this.handleShowSendCardModal}
+            onOpenMoreMenu={this.handleOnOpenMoreMenu}
+            onCopyCardCode={this.handleShowCopyCardCodeModal}
+          />
 
-        {this.renderSendCardModal()}
+          {this.renderSendCardModal()}
 
-        {this.renderUseCardNowModal()}
+          {this.renderUseCardNowModal()}
 
-        {this.renderCopyCardModal()}
+          {this.renderCopyCardModal()}
 
-        <ActionSheet
-          ref={ref => (this.refActionSheet = ref)}
-          title={'Tùy chọn khác'}
-          options={this.moreOptions}
-          cancelButtonIndex={CANCEL_ACTION}
-          destructiveButtonIndex={DELETE_ACTION}
-          onPress={this.handleSelectMoreOptions}
-        />
+          <ActionSheet
+            ref={ref => (this.refActionSheet = ref)}
+            title={'Tùy chọn khác'}
+            options={this.moreOptions}
+            cancelButtonIndex={CANCEL_ACTION}
+            destructiveButtonIndex={DELETE_ACTION}
+            onPress={this.handleSelectMoreOptions}
+          />
 
-        <View style={styles.bottomSpace} />
-      </ScrollView>
+          <View style={styles.bottomSpace} />
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: '#fff'
   },
   bottomSpace: {
