@@ -3,7 +3,7 @@
 
 target 'my_food_new' do
   # Comment the next line if you don't want to use dynamic frameworks
-  use_frameworks!
+    # use_frameworks!
 	# Required by RNFirebase
 	pod 'Firebase/Core'
 	pod 'Firebase/Analytics'
