@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Linking } from 'react-native';
+import { Alert, Linking, View, Text, StyleSheet } from 'react-native';
+import Button from 'react-native-button';
 import config from '../../config';
 import BaseContainer from '../BaseContainer';
 import { USE_ONLINE } from '../../constants';
 import VoucherDetailComponent from '../../component/VoucherDetail';
+import ModalConfirm from '../../component/ModalConfirm';
 import CampaignEntity from '../../entity/CampaignEntity';
 import AddressEntity from '../../entity/AddressEntity';
 import SiteEntity from '../../entity/SiteEntity';
@@ -42,6 +44,7 @@ class VoucherDetail extends BaseContainer {
       refreshing: false,
       canUseNow: false,
       showLoading: false,
+      useOnlineConfirmVisible: false,
       site: null,
       campaign: null,
       addresses: {}
@@ -213,11 +216,18 @@ class VoucherDetail extends BaseContainer {
   };
 
   handleUseVoucher = voucher => {
-    // @NOTE: is from my voucher screen with user-online mode
-    if (this.props.isUseOnlineMode) {
-      this.handlePressUseOnline(voucher);
+    // @NOTE: if only use online
+    if (this.state.campaign.isOnlyUseOnline) {
+      this.setState({
+        useOnlineConfirmVisible: true
+      });
     } else {
-      this.handleOpenScanScreen(voucher);
+      // @NOTE: is from my voucher (from orders) screen with user-online mode
+      if (this.props.isUseOnlineMode) {
+        this.handlePressUseOnline(voucher);
+      } else {
+        this.handleOpenScanScreen(voucher);
+      }
     }
   };
 
@@ -310,27 +320,85 @@ class VoucherDetail extends BaseContainer {
     }
   };
 
+  handleUseOnlineConfirm = () => {
+    this.setState({ useOnlineConfirmVisible: false });
+    this.handlePressUseOnline(this.state.campaign);
+  };
+
   render() {
     return (
-      <VoucherDetailComponent
-        canUseNow={this.state.canUseNow || this.isFromMyVoucher}
-        site={this.state.site}
-        campaign={this.state.campaign}
-        addresses={this.state.addresses}
-        refreshing={this.state.refreshing}
-        showLoading={this.state.showLoading}
-        isFromMyVoucher={this.isFromMyVoucher}
-        isUseOnlineMode={this.isUseOnlineMode}
-        onRefresh={this.handleOnRefresh}
-        onGetVoucher={this.handleGetVoucher}
-        onUseVoucher={this.handleUseVoucher}
-        onRemoveVoucherOnline={this.handleRemoveVoucherOnline}
-        onPressAddressPhoneNumber={this.handlePressAddressPhoneNumber}
-        onPressAddressLocation={this.handlePressAddressLocation}
-        onPressCampaignProvider={this.handlePressCampaignProvider}
-      />
+      <View style={styles.container}>
+        <VoucherDetailComponent
+          canUseNow={this.state.canUseNow || this.isFromMyVoucher}
+          site={this.state.site}
+          campaign={this.state.campaign}
+          addresses={this.state.addresses}
+          refreshing={this.state.refreshing}
+          showLoading={this.state.showLoading}
+          isFromMyVoucher={this.isFromMyVoucher}
+          isUseOnlineMode={this.isUseOnlineMode}
+          onRefresh={this.handleOnRefresh}
+          onGetVoucher={this.handleGetVoucher}
+          onUseVoucher={this.handleUseVoucher}
+          onRemoveVoucherOnline={this.handleRemoveVoucherOnline}
+          onPressAddressPhoneNumber={this.handlePressAddressPhoneNumber}
+          onPressAddressLocation={this.handlePressAddressLocation}
+          onPressCampaignProvider={this.handlePressCampaignProvider}
+        />
+
+        <ModalConfirm
+          hideCloseTitle
+          visible={this.state.useOnlineConfirmVisible}
+          heading="Sử dụng khuyến mại"
+          textMessage="Sử dụng khuyến mại này với đơn hàng của bạn?"
+          onCancel={() => this.setState({ useOnlineConfirmVisible: false })}
+          onConfirm={this.handleUseOnlineConfirm}
+        />
+      </View>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  confirmContent: {
+    padding: 16
+  },
+  confirmText: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: '#666'
+  },
+  confirmBtnWrap: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 32
+  },
+  confirmBtnContainer: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#666',
+    paddingVertical: 8,
+    borderRadius: 6
+  },
+  btnContainerCancel: {
+    marginRight: 8
+  },
+  btnContainerOk: {
+    marginLeft: 8,
+    borderColor: config.colors.primary,
+    backgroundColor: config.colors.primary
+  },
+  confirmBtn: {},
+  btnCancel: {
+    color: '#666'
+  },
+  btnOk: {
+    color: '#fff'
+  }
+});
 
 export default VoucherDetail;

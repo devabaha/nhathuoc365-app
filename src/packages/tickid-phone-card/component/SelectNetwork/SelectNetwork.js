@@ -3,42 +3,36 @@ import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import config from '../../config';
-import { NETWORKS, VIETTEL_TYPE } from '../../constants';
 
 class NetworkProvider extends Component {
   static propTypes = {
-    visible: PropTypes.bool,
+    data: PropTypes.array,
     onSelectNetwork: PropTypes.func,
-    networkType: PropTypes.oneOf(
-      Object.values(NETWORKS).map(network => network.type)
-    )
+    networkType: PropTypes.string
   };
 
   static defaultProps = {
-    visible: false,
+    data: [],
     onSelectNetwork: () => {},
-    networkType: VIETTEL_TYPE
+    networkType: ''
   };
-
-  get currentNetworkType() {
-    return NETWORKS[this.props.networkType];
-  }
 
   renderNetworks() {
     return (
       <FlatList
         horizontal
-        data={Object.values(NETWORKS)}
+        data={this.props.data}
+        extraData={this.props.networkType}
         renderItem={this.renderNetworkItem}
-        keyExtractor={item => item.type}
+        keyExtractor={item => item.id}
         showsHorizontalScrollIndicator={false}
       />
     );
   }
 
   renderNetworkItem = ({ item: network, index }) => {
-    const isActive = this.currentNetworkType.type === network.type;
-    const last = index === Object.keys(NETWORKS).length - 1;
+    const isActive = this.props.networkType === network.type;
+    const last = index === this.props.data.length - 1;
     return (
       <Button
         onPress={() => this.props.onSelectNetwork(network)}
@@ -50,7 +44,7 @@ class NetworkProvider extends Component {
           }
         ]}
       >
-        <Image style={styles.networkImage} source={network.image} />
+        <Image style={styles.networkImage} source={network.localImage} />
       </Button>
     );
   };

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Text, StyleSheet, SafeAreaView } from 'react-native';
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import PrepayContainer from '../Prepay';
 import PostpaidContainer from '../Postpaid';
 import BuyCardContainer from '../BuyCard';
 import BaseContainer from '../BaseContainer';
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import config from '../../config';
+import { internalFetch } from '../../helper/apiFetch';
+import { normalize } from '../../helper/normalizer';
 
 class PhoneCard extends BaseContainer {
   constructor(props) {
@@ -13,13 +15,25 @@ class PhoneCard extends BaseContainer {
 
     this.state = {
       index: 0,
-      routes: [
-        { key: 'prepay', title: 'Trả trước' },
-        { key: 'buycard', title: 'Mua mã thẻ' },
-        { key: 'postpaid', title: 'Trả sau' }
-      ]
+      routes: [],
+      cardServiceData: {},
+      isReady: false
     };
   }
+
+  componentDidMount() {
+    this.getPhoneCardService();
+  }
+
+  getPhoneCardService = () => {
+    internalFetch(config.rest.phoneCardService()).then(response => {
+      const { routes, ...normalizeData } = normalize(response.data);
+      this.setState({
+        routes,
+        cardServiceData: normalizeData
+      });
+    });
+  };
 
   renderTabBarLabel = ({ focused, route: { title } }) => {
     return (
@@ -27,6 +41,34 @@ class PhoneCard extends BaseContainer {
         {title}
       </Text>
     );
+  };
+
+  renderScene = ({ route }) => {
+    switch (route.key) {
+      case 'phone_prepaid':
+        return (
+          <PrepayContainer
+            routeKey={route.key}
+            {...this.state.cardServiceData}
+          />
+        );
+      case 'phone_card':
+        return (
+          <BuyCardContainer
+            routeKey={route.key}
+            {...this.state.cardServiceData}
+          />
+        );
+      case 'phone_postpaid':
+        return (
+          <PostpaidContainer
+            routeKey={route.key}
+            {...this.state.cardServiceData}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   render() {
@@ -42,11 +84,7 @@ class PhoneCard extends BaseContainer {
               style={styles.tabBarStyle}
             />
           )}
-          renderScene={SceneMap({
-            prepay: PrepayContainer,
-            buycard: BuyCardContainer,
-            postpaid: PostpaidContainer
-          })}
+          renderScene={this.renderScene}
           onIndexChange={index => this.setState({ index })}
           initialLayout={{ width: config.device.width }}
           style={styles.tabBarContainer}
