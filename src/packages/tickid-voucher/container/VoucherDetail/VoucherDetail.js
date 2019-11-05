@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert, Linking, View, Text, StyleSheet } from 'react-native';
-import Button from 'react-native-button';
+import { Alert, Linking, View, StyleSheet } from 'react-native';
 import config from '../../config';
 import BaseContainer from '../BaseContainer';
 import { USE_ONLINE } from '../../constants';
@@ -45,6 +44,7 @@ class VoucherDetail extends BaseContainer {
       canUseNow: false,
       showLoading: false,
       useOnlineConfirmVisible: false,
+      changePointGetCampaignVisible: false,
       site: null,
       campaign: null,
       addresses: {}
@@ -59,12 +59,21 @@ class VoucherDetail extends BaseContainer {
     }
   }
 
+  get isCampaign() {
+    return !!this.props.campaignId;
+  }
+
   get isFromMyVoucher() {
     return !!this.props.voucherId;
   }
 
   get isUseOnlineMode() {
     return this.props.mode === USE_ONLINE;
+  }
+
+  get canChangePointGetCampaign() {
+    if (!this.state.campaign) return false;
+    return this.isCampaign && this.state.campaign.point > 0;
   }
 
   componentWillMount() {
@@ -325,11 +334,54 @@ class VoucherDetail extends BaseContainer {
     this.handlePressUseOnline(this.state.campaign);
   };
 
+  handleChangePointGetCampaign = () => {
+    this.setState({
+      changePointGetCampaignVisible: true
+    });
+  };
+
+  campaignBuying;
+
+  handleChangePointGetCampaignConfirm = async () => {
+    if (this.campaignBuying) return;
+    this.campaignBuying = true;
+
+    this.setState({
+      showLoading: true,
+      changePointGetCampaignVisible: false
+    });
+
+    try {
+      const response = await internalFetch(
+        config.rest.buyCampaign(this.state.campaign.data.id)
+      );
+      if (response.status === config.httpCode.success) {
+        showMessage({
+          type: 'success',
+          message: response.message
+        });
+      } else {
+        showMessage({
+          type: 'danger',
+          message: response.message
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      this.setState({
+        showLoading: false
+      });
+      this.campaignBuying = false;
+    }
+  };
+
   render() {
     return (
       <View style={styles.container}>
         <VoucherDetailComponent
           canUseNow={this.state.canUseNow || this.isFromMyVoucher}
+          canChangePointGetCampaign={this.canChangePointGetCampaign}
           site={this.state.site}
           campaign={this.state.campaign}
           addresses={this.state.addresses}
@@ -341,9 +393,22 @@ class VoucherDetail extends BaseContainer {
           onGetVoucher={this.handleGetVoucher}
           onUseVoucher={this.handleUseVoucher}
           onRemoveVoucherOnline={this.handleRemoveVoucherOnline}
+          onChangePointGetCampaign={this.handleChangePointGetCampaign}
           onPressAddressPhoneNumber={this.handlePressAddressPhoneNumber}
           onPressAddressLocation={this.handlePressAddressLocation}
           onPressCampaignProvider={this.handlePressCampaignProvider}
+        />
+
+        <ModalConfirm
+          hideCloseTitle
+          visible={this.state.changePointGetCampaignVisible}
+          heading="Đổi thưởng"
+          textMessage={`Đổi ${this.state.campaign &&
+            this.state.campaign.point} điểm lấy khuyến mại này?`}
+          onCancel={() =>
+            this.setState({ changePointGetCampaignVisible: false })
+          }
+          onConfirm={this.handleChangePointGetCampaignConfirm}
         />
 
         <ModalConfirm

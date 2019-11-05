@@ -32,6 +32,8 @@ class VoucherDetail extends Component {
     onPressAddressPhoneNumber: PropTypes.func,
     onPressAddressLocation: PropTypes.func,
     onPressCampaignProvider: PropTypes.func,
+    onChangePointGetCampaign: PropTypes.func,
+    canChangePointGetCampaign: PropTypes.bool,
     refreshing: PropTypes.bool,
     canUseNow: PropTypes.bool,
     showLoading: PropTypes.bool,
@@ -49,6 +51,8 @@ class VoucherDetail extends Component {
     onPressAddressPhoneNumber: defaultListener,
     onPressAddressLocation: defaultListener,
     onPressCampaignProvider: defaultListener,
+    onChangePointGetCampaign: defaultListener,
+    canChangePointGetCampaign: false,
     refreshing: false,
     canUseNow: false,
     showLoading: false,
@@ -111,6 +115,46 @@ class VoucherDetail extends Component {
       </Accordion>
     );
   }
+
+  renderSubmitButtons = () => {
+    if (this.props.isUseOnlineMode) {
+      return (
+        <Button
+          containerStyle={[styles.getVoucherBtn, styles.removeVoucherBtn]}
+          style={styles.getVoucherTitle}
+          onPress={this.props.onRemoveVoucherOnline}
+        >
+          Dùng sau
+        </Button>
+      );
+    } else if (this.props.canChangePointGetCampaign) {
+      return (
+        <Button
+          containerStyle={styles.getVoucherBtn}
+          style={styles.getVoucherTitle}
+          onPress={this.props.onChangePointGetCampaign}
+        >
+          Đổi thưởng
+        </Button>
+      );
+    } else {
+      return (
+        <Button
+          containerStyle={styles.getVoucherBtn}
+          style={styles.getVoucherTitle}
+          onPress={() => {
+            if (this.props.canUseNow) {
+              this.props.onUseVoucher(this.props.campaign);
+            } else {
+              this.props.onGetVoucher(this.props.campaign);
+            }
+          }}
+        >
+          {this.props.canUseNow ? 'Dùng ngay' : 'Nhận mã giảm giá'}
+        </Button>
+      );
+    }
+  };
 
   render() {
     const campaign = this.props.campaign || { data: {} };
@@ -218,29 +262,7 @@ class VoucherDetail extends Component {
         </ScrollView>
 
         <View style={styles.getVoucherWrapper}>
-          {this.props.isUseOnlineMode ? (
-            <Button
-              containerStyle={[styles.getVoucherBtn, styles.removeVoucherBtn]}
-              style={styles.getVoucherTitle}
-              onPress={this.props.onRemoveVoucherOnline}
-            >
-              Dùng sau
-            </Button>
-          ) : (
-            <Button
-              containerStyle={styles.getVoucherBtn}
-              style={styles.getVoucherTitle}
-              onPress={() => {
-                if (this.props.canUseNow) {
-                  this.props.onUseVoucher(this.props.campaign);
-                } else {
-                  this.props.onGetVoucher(this.props.campaign);
-                }
-              }}
-            >
-              {this.props.canUseNow ? 'Dùng ngay' : 'Nhận mã giảm giá'}
-            </Button>
-          )}
+          {this.renderSubmitButtons()}
         </View>
       </Fragment>
     );

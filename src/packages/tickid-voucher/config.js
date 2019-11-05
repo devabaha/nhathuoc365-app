@@ -37,7 +37,8 @@ const config = {
       `/apiSite/use_voucher/${siteId}/${userVoucherId}`,
     removeVoucherOnline: (siteId, userVoucherId) =>
       `/apiSite/remove_voucher/${siteId}/${userVoucherId}`,
-    saveVoucher: code => `/apiVoucher/save_voucher/${code}`
+    saveVoucher: code => `/apiVoucher/save_voucher/${code}`,
+    buyCampaign: campaignId => `apiVoucher/buy_campaign/${campaignId}`
   },
   httpCode: {
     success: 200
