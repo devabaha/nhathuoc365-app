@@ -22,18 +22,24 @@ class VoucherDetail extends BaseContainer {
    */
   static propTypes = {
     mode: PropTypes.string,
+    from: PropTypes.oneOf(['home']),
     campaignId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     voucherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onRemoveVoucherSuccess: PropTypes.func,
-    onRemoveVoucherFailure: PropTypes.func
+    onRemoveVoucherFailure: PropTypes.func,
+    onUseVoucherOnlineSuccess: PropTypes.func,
+    onUseVoucherOnlineFailure: PropTypes.func
   };
 
   static defaultProps = {
     mode: '',
+    from: undefined,
     campaignId: undefined,
     voucherId: undefined,
     onRemoveVoucherSuccess: defaultFn,
-    onRemoveVoucherFailure: defaultFn
+    onRemoveVoucherFailure: defaultFn,
+    onUseVoucherOnlineSuccess: defaultFn,
+    onUseVoucherOnlineFailure: defaultFn
   };
 
   constructor(props) {
@@ -44,7 +50,7 @@ class VoucherDetail extends BaseContainer {
       canUseNow: false,
       showLoading: false,
       useOnlineConfirmVisible: false,
-      changePointGetCampaignVisible: false,
+      buyCampaignVisible: false,
       site: null,
       campaign: null,
       addresses: {}
@@ -59,6 +65,10 @@ class VoucherDetail extends BaseContainer {
     }
   }
 
+  get isFromHome() {
+    return this.props.from === 'home';
+  }
+
   get isCampaign() {
     return !!this.props.campaignId;
   }
@@ -71,17 +81,13 @@ class VoucherDetail extends BaseContainer {
     return this.props.mode === USE_ONLINE;
   }
 
-  get canChangePointGetCampaign() {
-    if (!this.state.campaign) return false;
-    return this.isCampaign && this.state.campaign.point > 0;
+  get campaignPoint() {
+    if (!this.state.campaign) return 0;
+    return this.state.campaign.point;
   }
 
-  componentWillMount() {
-    this.validateRequiredMethods([
-      'handlePressCampaignProvider',
-      'handleOpenScanScreen',
-      'handleAlreadyThisVoucher'
-    ]);
+  get canBuyCampaign() {
+    return this.campaignPoint > 0 && this.isCampaign;
   }
 
   componentDidMount() {
@@ -91,6 +97,46 @@ class VoucherDetail extends BaseContainer {
       this.getCampaignById(this.props.campaignId);
     }
   }
+
+  handlePressCampaignProvider = store => {
+    config.route.pushToStoreBySiteData(store.data);
+  };
+
+  handleOpenScanScreen = voucher => {
+    config.route.push(config.routes.voucherScanner, {
+      voucher,
+      placeholder: 'Nhập mã cửa hàng',
+      topContentText:
+        'Hướng máy ảnh của bạn về phía mã QR Code để sử dụng voucher',
+      isFromMyVoucher: false
+    });
+  };
+
+  handleAlreadyThisVoucher = ({ message, onCheckMyVoucher, onClose }) => {
+    config.route.push(config.routes.alreadyVoucher, {
+      onClose: () => {
+        config.route.pop();
+        onClose();
+      },
+      heading: 'Đã lấy mã giảm giá',
+      message,
+      onCheckMyVoucher: () => {
+        /**
+         * @NOTE:
+         * step 1: `Actions.pop` to back/close `Already Voucher Modal`
+         * step 2: Navigate user to `My Voucher` screen (logic in JS call stack at bottom)
+         */
+        config.route.pop();
+
+        setTimeout(() => {
+          config.route.push(config.routes.myVoucher, {
+            title: 'Voucher của tôi'
+          });
+          onCheckMyVoucher();
+        }, 0);
+      }
+    });
+  };
 
   getVoucherById = async (id, showLoading = true) => {
     if (showLoading) {
@@ -260,6 +306,9 @@ class VoucherDetail extends BaseContainer {
           message: response.message
         });
         this.props.onUseVoucherOnlineSuccess(response.data, true);
+        if (this.isFromHome) {
+          config.route.backToMainAndOpenShop(response.data.site);
+        }
       } else {
         showMessage({
           type: 'danger',
@@ -334,21 +383,21 @@ class VoucherDetail extends BaseContainer {
     this.handlePressUseOnline(this.state.campaign);
   };
 
-  handleChangePointGetCampaign = () => {
+  handleBuyCampaign = () => {
     this.setState({
-      changePointGetCampaignVisible: true
+      buyCampaignVisible: true
     });
   };
 
   campaignBuying;
 
-  handleChangePointGetCampaignConfirm = async () => {
+  handleBuyCampaignConfirm = async () => {
     if (this.campaignBuying) return;
     this.campaignBuying = true;
 
     this.setState({
       showLoading: true,
-      changePointGetCampaignVisible: false
+      buyCampaignVisible: false
     });
 
     try {
@@ -359,6 +408,11 @@ class VoucherDetail extends BaseContainer {
         showMessage({
           type: 'success',
           message: response.message
+        });
+
+        this.setState({
+          campaign: new CampaignEntity(response.data.campaign),
+          canUseNow: true
         });
       } else {
         showMessage({
@@ -381,7 +435,8 @@ class VoucherDetail extends BaseContainer {
       <View style={styles.container}>
         <VoucherDetailComponent
           canUseNow={this.state.canUseNow || this.isFromMyVoucher}
-          canChangePointGetCampaign={this.canChangePointGetCampaign}
+          canBuyCampaign={this.canBuyCampaign}
+          campaignPoint={this.campaignPoint}
           site={this.state.site}
           campaign={this.state.campaign}
           addresses={this.state.addresses}
@@ -393,7 +448,7 @@ class VoucherDetail extends BaseContainer {
           onGetVoucher={this.handleGetVoucher}
           onUseVoucher={this.handleUseVoucher}
           onRemoveVoucherOnline={this.handleRemoveVoucherOnline}
-          onChangePointGetCampaign={this.handleChangePointGetCampaign}
+          onBuyCampaign={this.handleBuyCampaign}
           onPressAddressPhoneNumber={this.handlePressAddressPhoneNumber}
           onPressAddressLocation={this.handlePressAddressLocation}
           onPressCampaignProvider={this.handlePressCampaignProvider}
@@ -401,14 +456,11 @@ class VoucherDetail extends BaseContainer {
 
         <ModalConfirm
           hideCloseTitle
-          visible={this.state.changePointGetCampaignVisible}
+          visible={this.state.buyCampaignVisible}
           heading="Đổi thưởng"
-          textMessage={`Đổi ${this.state.campaign &&
-            this.state.campaign.point} điểm lấy khuyến mại này?`}
-          onCancel={() =>
-            this.setState({ changePointGetCampaignVisible: false })
-          }
-          onConfirm={this.handleChangePointGetCampaignConfirm}
+          textMessage={`Đổi ${this.campaignPoint} điểm lấy khuyến mại này?`}
+          onCancel={() => this.setState({ buyCampaignVisible: false })}
+          onConfirm={this.handleBuyCampaignConfirm}
         />
 
         <ModalConfirm

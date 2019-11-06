@@ -3,7 +3,6 @@ import './lib/Constant';
 import './lib/Helper';
 import appConfig from './config';
 import store from 'app-store';
-import { observer } from 'mobx-react/native';
 import { StyleSheet, Platform } from 'react-native';
 import {
   Scene,
@@ -28,11 +27,6 @@ import handleBackAndroid from './helper/handleBackAndroid';
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
-import VoucherContainer from './containers/Voucher';
-import MyVoucherContainer from './containers/MyVoucher';
-import VoucherDetailContainer from './containers/VoucherDetail';
-import VoucherScanScreenContainer from './containers/VoucherScanScreen';
-import VoucherShowBarcodeContainer from './containers/VoucherShowBarcode';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
@@ -95,11 +89,17 @@ import {
   initialize as initializeVoucherModule,
   SelectProvince as VoucherSelectProvinceContainer,
   AlreadyVoucher as AlreadyVoucherContainer,
-  EnterCodeManual as VoucherEnterCodeManualContainer
+  EnterCodeManual as VoucherEnterCodeManualContainer,
+  ShowBarcode as VoucherShowBarcodeContainer,
+  MyVoucher as MyVoucherContainer,
+  Voucher as VoucherContainer,
+  VoucherDetail as VoucherDetailContainer,
+  ScanScreen as VoucherScanScreenContainer
 } from './packages/tickid-voucher';
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
+import { addJob } from './helper/jobsOnReset';
 
 /**
  * Initializes config for Phone Card module
@@ -114,9 +114,7 @@ initializePhoneCardModule({
     store: ''
   },
   route: {
-    push: (path, props) => {
-      Actions.push(path, props);
-    },
+    push: Actions.push,
     pop: Actions.pop,
     pushToMain: () => {
       Actions.reset(appConfig.routes.sceneWrapper);
@@ -142,6 +140,29 @@ initializeVoucherModule({
   },
   rest: {
     endpoint: () => MY_FOOD_API
+  },
+  route: {
+    push: Actions.push,
+    pop: Actions.pop,
+    backToMainAndOpenShop: siteData => {
+      addJob(() => {
+        action(() => {
+          store.setStoreData(siteData);
+          Actions.push(appConfig.routes.store, {
+            title: siteData.name
+          });
+        })();
+      });
+      Actions.reset(appConfig.routes.sceneWrapper);
+    },
+    pushToStoreBySiteData: siteData => {
+      action(() => {
+        store.setStoreData(siteData);
+        Actions.push(appConfig.routes.store, {
+          title: siteData.name
+        });
+      })();
+    }
   }
 });
 
@@ -281,7 +302,7 @@ class App extends Component {
   render() {
     return (
       <Router
-        wrapBy={observer}
+        store={store}
         backAndroidHandler={handleBackAndroid}
         onStateChange={(prevState, newState, action) => {
           handleStatusBarStyle(prevState, newState, action);

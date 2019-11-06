@@ -13,6 +13,7 @@ const defaultFn = () => {};
 class MyVoucher extends BaseContainer {
   static propTypes = {
     mode: PropTypes.string,
+    from: PropTypes.oneOf(['home']),
     siteId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onUseVoucherOnlineSuccess: PropTypes.func,
     onUseVoucherOnlineFailure: PropTypes.func
@@ -20,10 +21,15 @@ class MyVoucher extends BaseContainer {
 
   static defaultProps = {
     mode: '',
+    from: undefined,
     siteId: '',
     onUseVoucherOnlineSuccess: defaultFn,
     onUseVoucherOnlineFailure: defaultFn
   };
+
+  get isFromHome() {
+    return this.props.from === 'home';
+  }
 
   constructor(props) {
     super(props);
@@ -39,17 +45,33 @@ class MyVoucher extends BaseContainer {
     return this.props.mode === USE_ONLINE;
   }
 
-  componentWillMount() {
-    this.validateRequiredMethods([
-      'handlePressVoucher',
-      'handlePressEnterVoucher'
-    ]);
-  }
-
   componentDidMount() {
     const showLoading = true;
     this.getMyVouchers(showLoading, this.props.siteId);
   }
+
+  handlePressVoucher = voucher => {
+    config.route.push(config.routes.voucherDetail, {
+      voucherId: voucher.data.id,
+      from: this.props.from,
+      title: voucher.data.title,
+      isUseOnlineMode: this.isUseOnlineMode,
+      onUseVoucherOnlineSuccess: this.props.onUseVoucherOnlineSuccess,
+      onUseVoucherOnlineFailure: this.props.onUseVoucherOnlineFailure
+    });
+  };
+
+  handlePressEnterVoucher = () => {
+    config.route.push(config.routes.voucherScanner, {
+      placeholder: 'Nhập mã Voucher',
+      topContentText:
+        'Hướng máy ảnh của bạn về phía mã QR Code để nhận voucher',
+      isFromMyVoucher: true,
+      refreshMyVoucher: () => {
+        this.getMyVouchers();
+      }
+    });
+  };
 
   getMyVouchers = async (showLoading = true, siteId = null) => {
     if (showLoading) {
