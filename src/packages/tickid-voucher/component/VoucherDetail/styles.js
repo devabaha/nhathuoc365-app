@@ -43,6 +43,35 @@ const styles = StyleSheet.create({
   exprireWrapper: {
     alignItems: 'flex-start'
   },
+  canBuyCampaign: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 24
+  },
+  voucherField: {
+    flex: 1,
+    paddingLeft: 16
+  },
+  rightField: {
+    borderLeftWidth: StyleSheet.hairlineWidth,
+    borderLeftColor: '#ccc'
+  },
+  voucherFieldLabel: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '400'
+  },
+  voucherFieldValue: {
+    fontSize: 15,
+    color: config.colors.black,
+    fontWeight: '400',
+    marginTop: 6
+  },
+  fieldPoint: {
+    color: '#00b140',
+    fontWeight: '600'
+  },
   exprireBox: {
     backgroundColor: '#00bc3c',
     borderRadius: 4,

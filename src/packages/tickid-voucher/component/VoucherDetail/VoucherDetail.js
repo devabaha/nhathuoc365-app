@@ -32,12 +32,13 @@ class VoucherDetail extends Component {
     onPressAddressPhoneNumber: PropTypes.func,
     onPressAddressLocation: PropTypes.func,
     onPressCampaignProvider: PropTypes.func,
-    onChangePointGetCampaign: PropTypes.func,
-    canChangePointGetCampaign: PropTypes.bool,
+    onBuyCampaign: PropTypes.func,
+    canBuyCampaign: PropTypes.bool,
     refreshing: PropTypes.bool,
     canUseNow: PropTypes.bool,
     showLoading: PropTypes.bool,
     isUseOnlineMode: PropTypes.bool,
+    campaignPoint: PropTypes.number,
     campaign: PropTypes.instanceOf(CampaignEntity),
     site: PropTypes.instanceOf(SiteEntity),
     addresses: PropTypes.oneOfType([PropTypes.array, PropTypes.object])
@@ -51,12 +52,13 @@ class VoucherDetail extends Component {
     onPressAddressPhoneNumber: defaultListener,
     onPressAddressLocation: defaultListener,
     onPressCampaignProvider: defaultListener,
-    onChangePointGetCampaign: defaultListener,
-    canChangePointGetCampaign: false,
+    onBuyCampaign: defaultListener,
+    canBuyCampaign: false,
     refreshing: false,
     canUseNow: false,
     showLoading: false,
     isUseOnlineMode: false,
+    campaignPoint: 0,
     campaign: undefined,
     addresses: undefined,
     site: undefined
@@ -74,6 +76,10 @@ class VoucherDetail extends Component {
   get hasAddress() {
     const addresses = Object.values(this.props.addresses);
     return addresses.length > 0;
+  }
+
+  get canBuyCampaign() {
+    return this.props.canBuyCampaign;
   }
 
   renderAddresses() {
@@ -127,16 +133,6 @@ class VoucherDetail extends Component {
           Dùng sau
         </Button>
       );
-    } else if (this.props.canChangePointGetCampaign) {
-      return (
-        <Button
-          containerStyle={styles.getVoucherBtn}
-          style={styles.getVoucherTitle}
-          onPress={this.props.onChangePointGetCampaign}
-        >
-          Đổi thưởng
-        </Button>
-      );
     } else {
       return (
         <Button
@@ -145,12 +141,18 @@ class VoucherDetail extends Component {
           onPress={() => {
             if (this.props.canUseNow) {
               this.props.onUseVoucher(this.props.campaign);
+            } else if (this.canBuyCampaign) {
+              this.props.onBuyCampaign(this.props.campaign);
             } else {
               this.props.onGetVoucher(this.props.campaign);
             }
           }}
         >
-          {this.props.canUseNow ? 'Dùng ngay' : 'Nhận mã giảm giá'}
+          {this.props.canUseNow
+            ? 'Dùng ngay'
+            : this.canBuyCampaign
+            ? 'Đổi thưởng'
+            : 'Nhận mã giảm giá'}
         </Button>
       );
     }
@@ -217,12 +219,37 @@ class VoucherDetail extends Component {
             <View style={[styles.row, styles.headerWrapper]}>
               <Text style={styles.heading}>{campaign.data.title}</Text>
 
-              <View style={styles.exprireWrapper}>
-                <View style={styles.exprireBox}>
-                  <Text style={styles.exprire}>
-                    {campaign.data.expire_date}
-                  </Text>
-                </View>
+              <View
+                style={[
+                  styles.exprireWrapper,
+                  this.canBuyCampaign && styles.canBuyCampaign
+                ]}
+              >
+                {this.canBuyCampaign ? (
+                  <Fragment>
+                    <View style={styles.voucherField}>
+                      <Text style={styles.voucherFieldLabel}>Đổi điểm</Text>
+                      <Text style={styles.voucherFieldValue}>
+                        <Text style={styles.fieldPoint}>
+                          {this.props.campaignPoint}
+                        </Text>
+                        {' điểm'}
+                      </Text>
+                    </View>
+                    <View style={[styles.voucherField, styles.rightField]}>
+                      <Text style={styles.voucherFieldLabel}>Dùng đến</Text>
+                      <Text style={styles.voucherFieldValue}>
+                        {campaign.data.expire_date}
+                      </Text>
+                    </View>
+                  </Fragment>
+                ) : (
+                  <View style={styles.exprireBox}>
+                    <Text style={styles.exprire}>
+                      {`Dùng đến ${campaign.data.expire_date}`}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
 

@@ -8,7 +8,6 @@ import { showMessage } from 'react-native-flash-message';
 
 class ScanScreen extends BaseContainer {
   static propTypes = {
-    voucher: PropTypes.object.isRequired,
     topContentText: PropTypes.string,
     placeholder: PropTypes.string,
     isFromMyVoucher: PropTypes.bool
@@ -28,13 +27,43 @@ class ScanScreen extends BaseContainer {
     };
   }
 
-  componentWillMount() {
-    this.validateRequiredMethods([
-      'handlePressEnterCode',
-      'handleReadedCode',
-      'handleShowBarcode',
-      'handleRefreshMyVoucher'
-    ]);
+  handlePressEnterCode = ({ onSendCode }) => {
+    config.route.push(config.routes.voucherEnterCodeManual, {
+      onClose: config.route.pop,
+      heading: 'Nhập mã thủ công',
+      placeholder: this.props.placeholder,
+      /**
+       * In case enter code manual
+       * @NOTE: pop 2 times to go back `Voucher Detail` screen
+       */
+      onSendCode: code => {
+        config.route.pop();
+        setTimeout(() => {
+          config.route.pop();
+          setTimeout(() => onSendCode(code), 0);
+        }, 0);
+      }
+    });
+  };
+
+  /**
+   * In case scan QR code with camera
+   * @NOTE: pop 1 time to go back `Voucher Detail` screen
+   */
+  handleReadedCode = ({ onDone }) => {
+    config.route.pop();
+    setTimeout(onDone, 0);
+  };
+
+  handleShowBarcode = ({ code, voucher }) => {
+    config.route.push(config.routes.voucherShowBarcode, {
+      code,
+      voucher
+    });
+  };
+
+  handleRefreshMyVoucher() {
+    this.props.refreshMyVoucher();
   }
 
   handleAfterReadedCode = code => {

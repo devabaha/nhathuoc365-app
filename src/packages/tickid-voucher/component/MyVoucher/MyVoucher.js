@@ -73,7 +73,11 @@ class MyVoucher extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {this.props.apiFetching && <LoadingComponent loading />}
+        {this.props.apiFetching && (
+          <View style={{ flex: 1 }}>
+            <LoadingComponent loading />
+          </View>
+        )}
         {this.hasCampaigns && this.renderMyVouchers()}
 
         {!this.props.apiFetching && !this.hasCampaigns && (
