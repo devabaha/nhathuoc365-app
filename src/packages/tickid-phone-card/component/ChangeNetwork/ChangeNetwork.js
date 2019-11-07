@@ -5,30 +5,25 @@ import Button from 'react-native-button';
 import config from '../../config';
 import ModalOverlay from '../ModalOverlay';
 import checkImage from '../../assets/images/check.png';
-import { NETWORKS, VIETTEL_TYPE } from '../../constants';
 
 class ChangeNetwork extends Component {
   static propTypes = {
+    data: PropTypes.array,
     visible: PropTypes.bool,
     onNetworkChange: PropTypes.func,
-    networkType: PropTypes.oneOf(
-      Object.values(NETWORKS).map(network => network.type)
-    )
+    networkType: PropTypes.string
   };
 
   static defaultProps = {
+    data: [],
     visible: false,
     onNetworkChange: () => {},
-    networkType: VIETTEL_TYPE
+    networkType: ''
   };
 
-  get currentNetworkType() {
-    return NETWORKS[this.props.networkType];
-  }
-
   renderNetworks() {
-    return Object.values(NETWORKS).map(network => {
-      const isActive = this.currentNetworkType.type === network.type;
+    return this.props.data.map(network => {
+      const isActive = this.props.networkType === network.type;
       return (
         <Button
           key={network.type}
@@ -38,10 +33,12 @@ class ChangeNetwork extends Component {
             isActive && styles.networkBtnActive
           ]}
         >
-          <Image style={styles.networkImage} source={network.image} />
+          <Image style={styles.networkImage} source={network.localImage} />
           <View style={styles.networkInfoWrapper}>
             <Text style={styles.networkName}>{network.name}</Text>
-            <Text style={styles.networkDescription}>{network.description}</Text>
+            <Text style={styles.networkDescription}>
+              {network.discount_label}
+            </Text>
           </View>
           {isActive && <Image style={styles.checkImage} source={checkImage} />}
         </Button>

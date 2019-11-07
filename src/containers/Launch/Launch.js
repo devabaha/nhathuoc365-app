@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
-import { runFbAccountKit } from '../../helper/fbAccountKit';
 import appConfig from '../../config';
 import store from '../../store';
 
@@ -25,6 +24,7 @@ class Launch extends Component {
       this.handleAuthWithResponse(response);
     } catch (error) {
       console.log(error);
+      setTimeout(this.handleAuthorization, 1000);
     }
   };
 
@@ -46,10 +46,7 @@ class Launch extends Component {
         Actions.replace('login');
         break;
       default:
-        showMessage({
-          message: response.message || 'Kết nối với máy chủ thất bại',
-          type: 'danger'
-        });
+        setTimeout(this.handleAuthorization, 1000);
     }
   };
 

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import { NETWORKS, VIETTEL_TYPE } from '../../constants';
 import phoneBookImage from '../../assets/images/phone-book.png';
 import config from '../../config';
 import Button from 'react-native-button';
@@ -10,27 +9,29 @@ const defaultListener = () => {};
 
 class EnterPhone extends Component {
   static propTypes = {
+    data: PropTypes.array,
     hideChangeNetwork: PropTypes.bool,
     contactName: PropTypes.string,
     contactPhone: PropTypes.string,
     onOpenContact: PropTypes.func,
     onPressSelectNetwork: PropTypes.func,
-    networkType: PropTypes.oneOf(
-      Object.values(NETWORKS).map(network => network.type)
-    )
+    networkType: PropTypes.string
   };
 
   static defaultProps = {
+    data: [],
     hideChangeNetwork: false,
     contactName: 'Đặng Ngọc Sơn',
     contactPhone: '035 353 8222',
     onOpenContact: defaultListener,
     onPressSelectNetwork: defaultListener,
-    networkType: VIETTEL_TYPE
+    networkType: ''
   };
 
   get currentNetworkType() {
-    return NETWORKS[this.props.networkType];
+    return this.props.data.find(
+      network => network.type === this.props.networkType
+    );
   }
 
   render() {
@@ -62,7 +63,7 @@ class EnterPhone extends Component {
             >
               <Image
                 style={styles.networkImage}
-                source={this.currentNetworkType.image}
+                source={this.currentNetworkType.localImage}
               />
             </Button>
           )}
