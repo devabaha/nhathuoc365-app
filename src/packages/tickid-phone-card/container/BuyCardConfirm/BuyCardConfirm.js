@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView } from 'react-native';
+import {
+  View,
+  SafeAreaView,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView
+} from 'react-native';
 import lockImage from '../../assets/images/locked.png';
 import SubmitButton from '../../component/SubmitButton';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
@@ -93,7 +100,7 @@ class BuyCardConfirm extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         <ScrollView>
           <View>
             <View style={styles.row}>
@@ -156,7 +163,7 @@ class BuyCardConfirm extends Component {
           onForgotPress={this.handleForgotPress}
           onOpenFingerprint={this.handleOpenFingerprint}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import config from '../../config';
 import BaseContainer from '../BaseContainer';
 import VoucherComponent from '../../component/Voucher';
@@ -6,6 +7,14 @@ import CampaignEntity from '../../entity/CampaignEntity';
 import { internalFetch } from '../../helper/apiFetch';
 
 class Voucher extends BaseContainer {
+  static propTypes = {
+    from: PropTypes.oneOf(['home'])
+  };
+
+  static defaultProps = {
+    from: undefined
+  };
+
   constructor(props) {
     super(props);
 
@@ -18,17 +27,36 @@ class Voucher extends BaseContainer {
     };
   }
 
-  componentWillMount() {
-    this.validateRequiredMethods([
-      'handlePressVoucher',
-      'handlePressMyVoucher',
-      'handlePressSelectProvince'
-    ]);
+  get isFromHome() {
+    return this.props.from === 'home';
   }
 
   componentDidMount() {
     this.getListCampaigns();
   }
+
+  handlePressVoucher = campaign => {
+    config.route.push(config.routes.voucherDetail, {
+      campaignId: campaign.data.id,
+      from: this.props.from,
+      title: campaign.data.title
+    });
+  };
+
+  handlePressMyVoucher = () => {
+    config.route.push(config.routes.myVoucher, {
+      title: 'Voucher của tôi',
+      from: this.props.from
+    });
+  };
+
+  handlePressSelectProvince = ({ setProvince, provinceSelected }) => {
+    config.route.push(config.routes.voucherSelectProvince, {
+      provinceSelected: provinceSelected,
+      onSelectProvince: setProvince,
+      onClose: config.route.pop
+    });
+  };
 
   getListCampaigns = async (city = '', showLoading = true) => {
     if (showLoading) {

@@ -24,7 +24,8 @@ const config = {
     bottomSpace: getBottomSpace()
   },
   rest: {
-    endpoint: () => 'https://apiapp.tickid.vn'
+    endpoint: () => 'https://apiapp.tickid.vn',
+    phoneCardService: () => '/apiService/info/100'
   },
   route: {
     push: () => {},

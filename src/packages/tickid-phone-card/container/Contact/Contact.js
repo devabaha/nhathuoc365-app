@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, FlatList, StyleSheet, Platform } from 'react-native';
+import { FlatList, StyleSheet, Platform, SafeAreaView } from 'react-native';
 import Contacts from 'react-native-contacts';
 import SearchComponent from '../../component/Search';
 import ContactItemComponent from '../../component/ContactItem';
@@ -46,18 +46,25 @@ class Contact extends Component {
     this.setState({
       showLoading: true
     });
-    Contacts.getAll((err, contacts) => {
-      if (err) {
-        throw err;
-      }
-      this.setState({
-        showLoading: false,
-        contacts: contacts.map(contact => new ContactEntity(contact)),
-        contactsToRender: contacts
-          .slice(0, CONTACTS_PER_PAGE)
-          .map(contact => new ContactEntity(contact))
+
+    try {
+      Contacts.getAll((err, contacts) => {
+        if (err) {
+          throw err;
+        }
+        this.setState({
+          showLoading: false,
+          contacts: contacts.map(contact => new ContactEntity(contact)),
+          contactsToRender: contacts
+            .slice(0, CONTACTS_PER_PAGE)
+            .map(contact => new ContactEntity(contact))
+        });
       });
-    });
+    } catch (error) {
+      this.setState({
+        showLoading: false
+      });
+    }
   };
 
   renderContacts = () => {
@@ -141,7 +148,7 @@ class Contact extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.showLoading && <LoadingComponent loading />}
 
         <SearchComponent
@@ -151,7 +158,7 @@ class Contact extends Component {
         />
 
         {this.renderContacts()}
-      </View>
+      </SafeAreaView>
     );
   }
 }

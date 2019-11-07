@@ -74,7 +74,7 @@ class SelectCardHistory extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.label}>Chọn nhà mạng</Text>
+          <Text style={styles.label}>Mua thẻ nhanh</Text>
 
           {this.props.showHistory && (
             <Button onPress={this.props.onShowHistory}>

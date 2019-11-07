@@ -4,44 +4,34 @@ import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import config from '../../config';
 import numberFormat from '../../helper/numberFormat';
-import { CARD_VALUES, CARD_10K } from '../../constants';
 
 class SelectCardValue extends Component {
   static propTypes = {
-    visible: PropTypes.bool,
+    data: PropTypes.array,
     onSelectCardValue: PropTypes.func,
-    cardValueType: PropTypes.oneOf(
-      Object.values(CARD_VALUES).map(cardValue => cardValue.type)
-    )
+    cardValueType: PropTypes.string
   };
 
   static defaultProps = {
-    visible: false,
+    data: [],
     onSelectCardValue: () => {},
-    cardValueType: CARD_10K
+    cardValueType: ''
   };
-
-  get currentCardValueType() {
-    return CARD_VALUES[this.props.cardValueType];
-  }
 
   renderCardValues() {
     return (
       <FlatList
         numColumns={3}
-        data={Object.values(CARD_VALUES)}
+        data={this.props.data}
+        extraData={this.props.cardValueType}
         renderItem={this.renderCardValueItem}
         keyExtractor={item => item.type}
       />
     );
   }
 
-  getCashback = cashback => {
-    return numberFormat(cashback) + 'đ';
-  };
-
   renderCardValueItem = ({ item: cardValue }) => {
-    const isActive = this.currentCardValueType.type === cardValue.type;
+    const isActive = this.props.cardValueType === cardValue.type;
     return (
       <Button
         onPress={() => this.props.onSelectCardValue(cardValue)}
@@ -53,15 +43,15 @@ class SelectCardValue extends Component {
         <View style={styles.btnContent}>
           <View style={styles.valueWrapper}>
             <Text style={[styles.value, isActive && styles.valueActive]}>
-              {cardValue.name}
+              {cardValue.label}
             </Text>
           </View>
           <View style={styles.descriptionWrapper}>
             <Text style={styles.description}>
-              Hoàn lại:{' '}
-              <Text style={styles.cashback}>
-                {this.getCashback(cardValue.cashback)}
-              </Text>
+              {cardValue.cashbackLabel}
+              {cardValue.cashbackValue && (
+                <Text style={styles.cashback}>{cardValue.cashbackValue}</Text>
+              )}
             </Text>
           </View>
         </View>

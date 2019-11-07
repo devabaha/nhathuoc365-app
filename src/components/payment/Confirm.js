@@ -27,6 +27,7 @@ import { CheckBox } from 'react-native-elements';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import { USE_ONLINE } from 'app-packages/tickid-voucher';
+import { runFbAccountKit } from '../../helper/fbAccountKit';
 
 @observer
 export default class Confirm extends Component {
@@ -1165,6 +1166,7 @@ export default class Confirm extends Component {
           {Object.keys(cart_data.cashback_view).map(index => {
             return (
               <View
+                key={index}
                 style={[
                   styles.rows,
                   styles.borderBottom,
@@ -1622,67 +1624,18 @@ export default class Confirm extends Component {
   }
 
   _onRegister() {
-    var name = this.state.name_register;
-    var tel = this.state.tel_register;
-    var pass = this.state.pass_register;
-
-    name = name.trim();
-    tel = tel.trim();
-    let password = pass.trim();
-
-    if (!name) {
-      return Alert.alert(
-        'Thông báo',
-        'Hãy điền tên của bạn',
-        [
-          {
-            text: 'Đồng ý',
-            onPress: () => {
-              this.refs_name_register.focus();
-            }
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-
-    if (!tel) {
-      return Alert.alert(
-        'Thông báo',
-        'Hãy điền Số điện thoại',
-        [
-          {
-            text: 'Đồng ý',
-            onPress: () => {
-              this.refs_tel_register.focus();
-            }
-          }
-        ],
-        { cancelable: false }
-      );
-    }
-
-    // if (!password) {
-    //   return Alert.alert(
-    //     'Thông báo',
-    //     'Hãy điền Mật khẩu',
-    //     [
-    //       {text: 'Đồng ý', onPress: () => {
-    //         this.refs_pass_register.focus();
-    //       }},
-    //     ],
-    //     { cancelable: false }
-    //   );
-    // }
-
-    Keyboard.dismiss();
-
-    // go register screen
-    Actions.register({
-      name_props: name,
-      tel_props: tel,
-      password_props: password,
-      registerNow: true
+    runFbAccountKit({
+      onSuccess: response => {
+        if (response.data.fill_info_user) {
+          // hien thi chon site
+          Actions.op_register({
+            title: 'Đăng ký thông tin',
+            name_props: response.data.name
+          });
+        }
+      },
+      onFailure: () => {},
+      initialPhoneNumber: this.state.tel_register
     });
   }
 

@@ -21,7 +21,7 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.tickidRadaServiceDetail,
     appConfig.routes.tickidRadaBooking
   ];
-  console.log(action);
+
   switch (action.type) {
     case 'Navigation/PUSH':
     case 'Navigation/BACK':
