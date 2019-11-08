@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import './lib/Constant';
 import './lib/Helper';
-import { Provider } from 'react-redux';
 import appConfig from './config';
 import store from 'app-store';
-import reduxStore from './reduxStore';
 import { StyleSheet, Platform } from 'react-native';
 import {
   Scene,
@@ -29,11 +27,6 @@ import handleBackAndroid from './helper/handleBackAndroid';
 import HomeContainer from './containers/Home';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
-import VoucherContainer from './containers/Voucher';
-import MyVoucherContainer from './containers/MyVoucher';
-import VoucherDetailContainer from './containers/VoucherDetail';
-import VoucherScanScreenContainer from './containers/VoucherScanScreen';
-import VoucherShowBarcodeContainer from './containers/VoucherShowBarcode';
 import AddStore from './components/Home/AddStore';
 import AddRef from './components/Home/AddRef';
 import Notify from './components/notify/Notify';
@@ -75,7 +68,7 @@ import Affiliate from './components/account/Affiliate/Affiliate';
 import ProfileDetail from './components/account/ProfileDetail';
 import EditProfile from './components/account/EditProfile';
 import DetailHistoryPayment from './components/account/DetailHistoryPayment';
-import PhoneCard, {
+import PhoneCardContainer, {
   config as phoneCardConfig,
   initialize as initializePhoneCardModule,
   Contact as PhoneCardContactContainer,
@@ -96,11 +89,17 @@ import {
   initialize as initializeVoucherModule,
   SelectProvince as VoucherSelectProvinceContainer,
   AlreadyVoucher as AlreadyVoucherContainer,
-  EnterCodeManual as VoucherEnterCodeManualContainer
+  EnterCodeManual as VoucherEnterCodeManualContainer,
+  ShowBarcode as VoucherShowBarcodeContainer,
+  MyVoucher as MyVoucherContainer,
+  Voucher as VoucherContainer,
+  VoucherDetail as VoucherDetailContainer,
+  ScanScreen as VoucherScanScreenContainer
 } from './packages/tickid-voucher';
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
+import { addJob } from './helper/jobsOnReset';
 
 /**
  * Initializes config for Phone Card module
@@ -115,9 +114,7 @@ initializePhoneCardModule({
     store: ''
   },
   route: {
-    push: (path, props) => {
-      Actions.push(path, props);
-    },
+    push: Actions.push,
     pop: Actions.pop,
     pushToMain: () => {
       Actions.reset(appConfig.routes.sceneWrapper);
@@ -143,6 +140,29 @@ initializeVoucherModule({
   },
   rest: {
     endpoint: () => MY_FOOD_API
+  },
+  route: {
+    push: Actions.push,
+    pop: Actions.pop,
+    backToMainAndOpenShop: siteData => {
+      addJob(() => {
+        action(() => {
+          store.setStoreData(siteData);
+          Actions.push(appConfig.routes.store, {
+            title: siteData.name
+          });
+        })();
+      });
+      Actions.reset(appConfig.routes.sceneWrapper);
+    },
+    pushToStoreBySiteData: siteData => {
+      action(() => {
+        store.setStoreData(siteData);
+        Actions.push(appConfig.routes.store, {
+          title: siteData.name
+        });
+      })();
+    }
   }
 });
 
@@ -281,707 +301,696 @@ class App extends Component {
 
   render() {
     return (
-      <Provider store={reduxStore}>
-        <Router
-          store={store}
-          backAndroidHandler={handleBackAndroid}
-          onStateChange={(prevState, newState, action) => {
-            handleStatusBarStyle(prevState, newState, action);
-          }}
-        >
-          <Overlay key="overlay">
-            <Modal
-              key="modal"
-              hideNavBar
-              transitionConfig={getTransitionConfig}
-            >
-              <Lightbox key={appConfig.routes.sceneWrapper}>
+      <Router
+        store={store}
+        backAndroidHandler={handleBackAndroid}
+        onStateChange={(prevState, newState, action) => {
+          handleStatusBarStyle(prevState, newState, action);
+        }}
+      >
+        <Overlay key="overlay">
+          <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
+            <Lightbox key={appConfig.routes.sceneWrapper}>
+              <Scene
+                key="root"
+                titleStyle={{ alignSelf: 'center' }}
+                headerLayoutPreset="center"
+                hideNavBar
+              >
                 <Scene
-                  key="root"
-                  titleStyle={{ alignSelf: 'center' }}
-                  headerLayoutPreset="center"
-                  hideNavBar
+                  key={appConfig.routes.launch}
+                  component={LaunchContainer}
+                  initial
+                />
+                <Tabs
+                  showLabel={false}
+                  key={appConfig.routes.primaryTabbar}
+                  tabBarStyle={styles.tabBarStyle}
+                  activeBackgroundColor="white"
+                  inactiveBackgroundColor="white"
+                  tabBarOnPress={handleTabBarOnPress}
+                  {...navBarConfig}
                 >
-                  <Scene
-                    key={appConfig.routes.launch}
-                    component={LaunchContainer}
-                    initial
-                  />
-                  <Tabs
-                    showLabel={false}
-                    key={appConfig.routes.primaryTabbar}
-                    tabBarStyle={styles.tabBarStyle}
-                    activeBackgroundColor="white"
-                    inactiveBackgroundColor="white"
-                    tabBarOnPress={handleTabBarOnPress}
-                    {...navBarConfig}
+                  {/* ================ HOME TAB ================ */}
+                  <Stack
+                    key={appConfig.routes.homeTab}
+                    icon={TabIcon}
+                    iconLabel="Trang chủ"
+                    iconName="store"
+                    iconSize={24}
                   >
-                    {/* ================ HOME TAB ================ */}
-                    <Stack
-                      key={appConfig.routes.homeTab}
-                      icon={TabIcon}
-                      iconLabel="Trang chủ"
-                      iconName="store"
-                      iconSize={24}
-                    >
-                      <Scene
-                        key={`${appConfig.routes.homeTab}_1`}
-                        title="FoodHub"
-                        component={HomeContainer}
-                        hideNavBar
-                      />
-                    </Stack>
-
-                    {/**
-                     ************************ Tab 2 ************************
-                     */}
-                    <Stack
-                      key={appConfig.routes.newsTab}
-                      icon={TabIcon}
-                      iconLabel="Tin tức"
-                      iconName="notifications"
-                      iconSize={24}
-                      notifyKey="new_totals"
-                    >
-                      <Scene
-                        key={`${appConfig.routes.newsTab}_1`}
-                        title="Tin tức"
-                        component={Notify}
-                      />
-                    </Stack>
-
-                    {/* ================ SCAN QR TAB ================ */}
-                    <Stack
-                      key={appConfig.routes.scanQrCodeTab}
-                      icon={FoodHubCartButton}
-                      primaryColor={appConfig.colors.primary}
-                    >
-                      <Scene component={() => null} />
-                    </Stack>
-
-                    {/**
-                     ************************ Tab 3 ************************
-                     */}
-                    <Stack
-                      key={appConfig.routes.ordersTab}
-                      icon={TabIcon}
-                      iconSize={24}
-                      iconLabel="Đơn hàng"
-                      iconName="shopping-cart"
-                      notifyKey="notify_cart"
-                    >
-                      <Scene
-                        key={`${appConfig.routes.ordersTab}_1`}
-                        title="Đơn hàng"
-                        component={Orders}
-                      />
-                    </Stack>
-
-                    {/**
-                     ************************ Tab 4 ************************
-                     */}
-                    <Stack
-                      key="myTab5"
-                      icon={TabIcon}
-                      iconLabel="Tài khoản"
-                      iconName="account-circle"
-                      notifyKey="notify_account"
-                      iconSize={24}
-                    >
-                      <Scene
-                        hideNavBar
-                        key="_account"
-                        title="Tài khoản"
-                        component={Account}
-                      />
-                    </Stack>
-                  </Tabs>
-
-                  {/* ================ MAIN VOUCHER ================ */}
-                  <Stack key={appConfig.routes.mainVoucher}>
                     <Scene
-                      key={`${appConfig.routes.mainVoucher}_1`}
-                      title="FoodHub Voucher"
-                      component={VoucherContainer}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  {/* ================ VOUCHER DETAIL ================ */}
-                  <Stack key={appConfig.routes.voucherDetail}>
-                    <Scene
-                      key={`${appConfig.routes.voucherDetail}_1`}
-                      component={VoucherDetailContainer}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  {/* ================ MY VOUCHER ================ */}
-                  <Stack key={appConfig.routes.myVoucher}>
-                    <Scene
-                      key={`${appConfig.routes.myVoucher}_1`}
-                      title="Voucher của tôi"
-                      component={MyVoucherContainer}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  {/* ================ VOUCHER DETAIL ================ */}
-                  <Stack key={appConfig.routes.voucherDetail}>
-                    <Scene
-                      key={`${appConfig.routes.voucherDetail}_1`}
-                      component={VoucherDetailContainer}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={appConfig.routes.myAddress}>
-                    <Scene
-                      key={`${appConfig.routes.myAddress}_1`}
-                      title="Địa chỉ"
-                      component={Address}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="coin_wallet">
-                    <Scene
-                      key="coin_wallet_1"
-                      title="Tài khoản xu"
-                      component={CoinWallet}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={appConfig.routes.paymentConfirm}>
-                    <Scene
-                      key={`${appConfig.routes.paymentConfirm}_1`}
-                      title="Xác nhận"
-                      component={Confirm}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="create_address">
-                    <Scene
-                      key="create_address_1"
-                      title="Thêm địa chỉ"
-                      component={CreateAddress}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="register">
-                    <Scene
-                      key="register_1"
-                      title="Đăng ký"
-                      component={Register}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="login">
-                    <Scene
-                      key="login_1"
+                      key={`${appConfig.routes.homeTab}_1`}
+                      title="FoodHub"
+                      component={HomeContainer}
                       hideNavBar
-                      component={Login}
-                      {...navBarConfig}
                     />
                   </Stack>
 
-                  <Stack key="op_login">
+                  {/**
+                   ************************ Tab 2 ************************
+                   */}
+                  <Stack
+                    key={appConfig.routes.newsTab}
+                    icon={TabIcon}
+                    iconLabel="Tin tức"
+                    iconName="notifications"
+                    iconSize={24}
+                    notifyKey="new_totals"
+                  >
                     <Scene
-                      key="op_login_1"
-                      title="Đăng ký"
-                      component={OpLogin}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="op_register">
-                    <Scene
-                      key="op_register_1"
-                      title="Đăng ký"
-                      component={OpRegister}
-                      {...navBarConfig}
-                    />
-                  </Stack>
-
-                  <Stack key="forget_verify">
-                    <Scene
-                      key="forget_verify_1"
-                      title="Lấy lại mật khẩu"
-                      component={ForgetVerify}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="forget_active">
-                    <Scene
-                      key="forget_active_1"
-                      title="Kích hoạt tài khoản"
-                      component={ForgetActive}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="new_pass">
-                    <Scene
-                      key="new_pass_1"
-                      title="Tạo mật khẩu mới"
-                      component={NewPass}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="cart">
-                    <Scene
-                      key="cart_1"
-                      title="Giỏ hàng"
-                      component={Cart}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={appConfig.routes.store}>
-                    <Scene
-                      key={`${appConfig.routes.store}_1`}
-                      component={StoreContainer}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="stores_list">
-                    <Scene
-                      key="stores_list_1"
-                      title="Cửa hàng"
-                      component={StoresList}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={appConfig.routes.searchStore}>
-                    <Scene
-                      key={`${appConfig.routes.searchStore}_1`}
-                      title="Tìm kiếm"
-                      component={SearchStoreContainer}
-                      navBar={SearchNavBarContainer}
-                      {...navBarConfig}
-                    />
-                  </Stack>
-
-                  <Stack key="item">
-                    <Scene
-                      key="item_1"
-                      title="Chi tiết sản phẩm"
-                      component={Item}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="item_image_viewer">
-                    <Scene
-                      key="item_image_viewer_1"
-                      direction="vertical"
-                      hideNavBar
-                      component={ItemImageViewer}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="rating">
-                    <Scene
-                      key="rating_1"
-                      title="Cảm ơn quý khách!"
-                      component={Rating}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="orders_item">
-                    <Scene
-                      key="orders_item_1"
-                      title="Chi tiết đơn hàng"
-                      component={OrdersItem}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="view_orders_item">
-                    <Scene
-                      key="view_orders_item_1"
-                      title="Thông tin đơn hàng"
-                      component={ViewOrdersItem}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={appConfig.routes.notifies}>
-                    <Scene
-                      key={`${appConfig.routes.notifies}_1`}
+                      key={`${appConfig.routes.newsTab}_1`}
                       title="Tin tức"
                       component={Notify}
-                      {...navBarConfig}
-                      back
                     />
                   </Stack>
 
-                  <Stack key="notifies_time">
-                    <Scene
-                      key="notifies_time_1"
-                      title="Lịch hàng hóa"
-                      component={Notify}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="notifies_farm">
-                    <Scene
-                      key="notifies_farm_1"
-                      title="Trang trại"
-                      component={Notify}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="notify_item">
-                    <Scene
-                      key="notify_item_1"
-                      title="Chi tiết"
-                      component={NotifyItem}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="search_store">
-                    <Scene
-                      key="search_store_1"
-                      title="Tìm cửa hàng"
-                      component={SearchStore}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={appConfig.routes.scanQrCode}>
-                    <Scene
-                      key={`${appConfig.routes.scanQrCode}_1`}
-                      title="Quét mã"
-                      component={ScanQRCode}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="list_store">
-                    <Scene
-                      key="list_store_1"
-                      title="Cửa hàng"
-                      component={ListStore}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="add_store">
-                    <Scene
-                      key="add_store_1"
-                      title="Thêm cửa hàng"
-                      component={AddStore}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="store_orders">
-                    <Scene
-                      key="store_orders_1"
-                      component={StoreOrders}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="chat">
-                    <Scene
-                      key="chat_1"
-                      component={Chat}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="webview">
-                    <Scene
-                      key="webview_1"
-                      component={WebView}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="_add_ref">
-                    <Scene
-                      key="_add_ref_1"
-                      component={AddRef}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="choose_location">
-                    <Scene
-                      key="choose_location_1"
-                      component={ChooseLocation}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="vnd_wallet">
-                    <Scene
-                      key="vnd_wallet_1"
-                      component={VndWallet}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="pay_wallet">
-                    <Scene
-                      key="pay_wallet_1"
-                      component={PayWallet}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="pay_account">
-                    <Scene
-                      key="pay_account_1"
-                      component={PayAccount}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="affiliate">
-                    <Scene
-                      key="affiliate_1"
-                      component={Affiliate}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="profile_detail">
-                    <Scene
-                      key="profile_detail_1"
-                      title="Tài khoản của tôi"
-                      component={ProfileDetail}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="edit_profile">
-                    <Scene
-                      key="edit_profile_1"
-                      title="Tài khoản của tôi"
-                      component={EditProfile}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key="detail_history_payment">
-                    <Scene
-                      key="detail_history_payment_1"
-                      title="Tích điểm"
-                      component={DetailHistoryPayment}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={appConfig.routes.upToPhone}>
-                    <Scene
-                      key={`${appConfig.routes.upToPhone}_1`}
-                      title="Nạp tiền điện thoại"
-                      component={PhoneCard}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
-                  <Stack key={phoneCardConfig.routes.contact}>
-                    <Scene
-                      key={`${phoneCardConfig.routes.contact}_1`}
-                      title="Danh bạ"
-                      component={PhoneCardContactContainer}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
-
+                  {/* ================ SCAN QR TAB ================ */}
                   <Stack
-                    key={phoneCardConfig.routes.buyCardSuccess}
-                    panHandlers={null}
+                    key={appConfig.routes.scanQrCodeTab}
+                    icon={FoodHubCartButton}
+                    primaryColor={appConfig.colors.primary}
+                  >
+                    <Scene component={() => null} />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 3 ************************
+                   */}
+                  <Stack
+                    key={appConfig.routes.ordersTab}
+                    icon={TabIcon}
+                    iconSize={24}
+                    iconLabel="Đơn hàng"
+                    iconName="shopping-cart"
+                    notifyKey="notify_cart"
                   >
                     <Scene
-                      key={`${phoneCardConfig.routes.buyCardSuccess}_1`}
-                      component={PhoneCardBuyCardSuccessContainer}
+                      key={`${appConfig.routes.ordersTab}_1`}
+                      title="Đơn hàng"
+                      component={Orders}
+                    />
+                  </Stack>
+
+                  {/**
+                   ************************ Tab 4 ************************
+                   */}
+                  <Stack
+                    key="myTab5"
+                    icon={TabIcon}
+                    iconLabel="Tài khoản"
+                    iconName="account-circle"
+                    notifyKey="notify_account"
+                    iconSize={24}
+                  >
+                    <Scene
                       hideNavBar
+                      key="_account"
+                      title="Tài khoản"
+                      component={Account}
                     />
                   </Stack>
+                </Tabs>
 
-                  <Stack key={phoneCardConfig.routes.cardHistory}>
-                    <Scene
-                      key={`${phoneCardConfig.routes.cardHistory}_1`}
-                      title="Mua gần đây"
-                      component={PhoneCardCardHistoryContainer}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
+                {/* ================ MAIN VOUCHER ================ */}
+                <Stack key={appConfig.routes.mainVoucher}>
+                  <Scene
+                    key={`${appConfig.routes.mainVoucher}_1`}
+                    title="FoodHub Voucher"
+                    component={VoucherContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
-                  <Stack key={phoneCardConfig.routes.buyCardConfirm}>
-                    <Scene
-                      key={`${phoneCardConfig.routes.buyCardConfirm}_1`}
-                      title="Thanh toán an toàn"
-                      component={PhoneCardBuyCardConfirmContainer}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
+                {/* ================ VOUCHER DETAIL ================ */}
+                <Stack key={appConfig.routes.voucherDetail}>
+                  <Scene
+                    key={`${appConfig.routes.voucherDetail}_1`}
+                    component={VoucherDetailContainer}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
-                  <Stack key={appConfig.routes.tickidRada}>
-                    <Scene
-                      key="tickidRada1"
-                      component={Category}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
+                {/* ================ MY VOUCHER ================ */}
+                <Stack key={appConfig.routes.myVoucher}>
+                  <Scene
+                    key={`${appConfig.routes.myVoucher}_1`}
+                    title="Voucher của tôi"
+                    component={MyVoucherContainer}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
-                  <Stack key={appConfig.routes.tickidRadaListService}>
-                    <Scene
-                      key="tickidRadaListService1"
-                      component={ListService}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
+                {/* ================ VOUCHER DETAIL ================ */}
+                <Stack key={appConfig.routes.voucherDetail}>
+                  <Scene
+                    key={`${appConfig.routes.voucherDetail}_1`}
+                    component={VoucherDetailContainer}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
-                  <Stack key={appConfig.routes.tickidRadaServiceDetail}>
-                    <Scene
-                      key="tickidRadaServiceDetail1"
-                      component={ServiceDetail}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
+                <Stack key={appConfig.routes.myAddress}>
+                  <Scene
+                    key={`${appConfig.routes.myAddress}_1`}
+                    title="Địa chỉ"
+                    component={Address}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
-                  <Stack key={appConfig.routes.tickidRadaBooking}>
-                    <Scene
-                      key="tickidRadaBooking1"
-                      component={Booking}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
+                <Stack key="coin_wallet">
+                  <Scene
+                    key="coin_wallet_1"
+                    title="Tài khoản xu"
+                    component={CoinWallet}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
-                  <Stack key="md_card_confirm">
-                    <Scene
-                      key="md_card_confirm_1"
-                      title="Xác nhận"
-                      component={MdCardConfirm}
-                      {...navBarConfig}
-                      back
-                    />
-                  </Stack>
+                <Stack key={appConfig.routes.paymentConfirm}>
+                  <Scene
+                    key={`${appConfig.routes.paymentConfirm}_1`}
+                    title="Xác nhận"
+                    component={Confirm}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
-                  {/* ================ SCENE VOUCHER SCAN ================ */}
-                  <Stack key={appConfig.routes.voucherScanner}>
-                    <Scene
-                      key={`${appConfig.routes.voucherScanner}_1`}
-                      title="Quét mã QR"
-                      component={VoucherScanScreenContainer}
-                      {...whiteNavBarConfig}
-                      back
-                    />
-                  </Stack>
-                </Scene>
+                <Stack key="create_address">
+                  <Scene
+                    key="create_address_1"
+                    title="Thêm địa chỉ"
+                    component={CreateAddress}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
-                {/* ================ LIGHT BOX SELECT PROVINCE ================ */}
+                <Stack key="register">
+                  <Scene
+                    key="register_1"
+                    title="Đăng ký"
+                    component={Register}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="login">
+                  <Scene
+                    key="login_1"
+                    hideNavBar
+                    component={Login}
+                    {...navBarConfig}
+                  />
+                </Stack>
+
+                <Stack key="op_login">
+                  <Scene
+                    key="op_login_1"
+                    title="Đăng ký"
+                    component={OpLogin}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="op_register">
+                  <Scene
+                    key="op_register_1"
+                    title="Đăng ký"
+                    component={OpRegister}
+                    {...navBarConfig}
+                  />
+                </Stack>
+
+                <Stack key="forget_verify">
+                  <Scene
+                    key="forget_verify_1"
+                    title="Lấy lại mật khẩu"
+                    component={ForgetVerify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="forget_active">
+                  <Scene
+                    key="forget_active_1"
+                    title="Kích hoạt tài khoản"
+                    component={ForgetActive}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="new_pass">
+                  <Scene
+                    key="new_pass_1"
+                    title="Tạo mật khẩu mới"
+                    component={NewPass}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="cart">
+                  <Scene
+                    key="cart_1"
+                    title="Giỏ hàng"
+                    component={Cart}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.store}>
+                  <Scene
+                    key={`${appConfig.routes.store}_1`}
+                    component={StoreContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="stores_list">
+                  <Scene
+                    key="stores_list_1"
+                    title="Cửa hàng"
+                    component={StoresList}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.searchStore}>
+                  <Scene
+                    key={`${appConfig.routes.searchStore}_1`}
+                    title="Tìm kiếm"
+                    component={SearchStoreContainer}
+                    navBar={SearchNavBarContainer}
+                    {...navBarConfig}
+                  />
+                </Stack>
+
+                <Stack key="item">
+                  <Scene
+                    key="item_1"
+                    title="Chi tiết sản phẩm"
+                    component={Item}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="item_image_viewer">
+                  <Scene
+                    key="item_image_viewer_1"
+                    direction="vertical"
+                    hideNavBar
+                    component={ItemImageViewer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="rating">
+                  <Scene
+                    key="rating_1"
+                    title="Cảm ơn quý khách!"
+                    component={Rating}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="orders_item">
+                  <Scene
+                    key="orders_item_1"
+                    title="Chi tiết đơn hàng"
+                    component={OrdersItem}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="view_orders_item">
+                  <Scene
+                    key="view_orders_item_1"
+                    title="Thông tin đơn hàng"
+                    component={ViewOrdersItem}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.notifies}>
+                  <Scene
+                    key={`${appConfig.routes.notifies}_1`}
+                    title="Tin tức"
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="notifies_time">
+                  <Scene
+                    key="notifies_time_1"
+                    title="Lịch hàng hóa"
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="notifies_farm">
+                  <Scene
+                    key="notifies_farm_1"
+                    title="Trang trại"
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="notify_item">
+                  <Scene
+                    key="notify_item_1"
+                    title="Chi tiết"
+                    component={NotifyItem}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="search_store">
+                  <Scene
+                    key="search_store_1"
+                    title="Tìm cửa hàng"
+                    component={SearchStore}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.scanQrCode}>
+                  <Scene
+                    key={`${appConfig.routes.scanQrCode}_1`}
+                    title="Quét mã"
+                    component={ScanQRCode}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="list_store">
+                  <Scene
+                    key="list_store_1"
+                    title="Cửa hàng"
+                    component={ListStore}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="add_store">
+                  <Scene
+                    key="add_store_1"
+                    title="Thêm cửa hàng"
+                    component={AddStore}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="store_orders">
+                  <Scene
+                    key="store_orders_1"
+                    component={StoreOrders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="chat">
+                  <Scene key="chat_1" component={Chat} {...navBarConfig} back />
+                </Stack>
+
+                <Stack key="webview">
+                  <Scene
+                    key="webview_1"
+                    component={WebView}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="_add_ref">
+                  <Scene
+                    key="_add_ref_1"
+                    component={AddRef}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="choose_location">
+                  <Scene
+                    key="choose_location_1"
+                    component={ChooseLocation}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="vnd_wallet">
+                  <Scene
+                    key="vnd_wallet_1"
+                    component={VndWallet}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="pay_wallet">
+                  <Scene
+                    key="pay_wallet_1"
+                    component={PayWallet}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="pay_account">
+                  <Scene
+                    key="pay_account_1"
+                    component={PayAccount}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="affiliate">
+                  <Scene
+                    key="affiliate_1"
+                    component={Affiliate}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="profile_detail">
+                  <Scene
+                    key="profile_detail_1"
+                    title="Tài khoản của tôi"
+                    component={ProfileDetail}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="edit_profile">
+                  <Scene
+                    key="edit_profile_1"
+                    title="Tài khoản của tôi"
+                    component={EditProfile}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="detail_history_payment">
+                  <Scene
+                    key="detail_history_payment_1"
+                    title="Tích điểm"
+                    component={DetailHistoryPayment}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.upToPhone}>
+                  <Scene
+                    key={`${appConfig.routes.upToPhone}_1`}
+                    title="Nạp tiền điện thoại"
+                    component={PhoneCardContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={phoneCardConfig.routes.contact}>
+                  <Scene
+                    key={`${phoneCardConfig.routes.contact}_1`}
+                    title="Danh bạ"
+                    component={PhoneCardContactContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 <Stack
-                  key={appConfig.routes.voucherSelectProvince}
-                  component={VoucherSelectProvinceContainer}
-                />
+                  key={phoneCardConfig.routes.buyCardSuccess}
+                  panHandlers={null}
+                >
+                  <Scene
+                    key={`${phoneCardConfig.routes.buyCardSuccess}_1`}
+                    component={PhoneCardBuyCardSuccessContainer}
+                    hideNavBar
+                  />
+                </Stack>
 
-                {/* ================ LIGHT BOX ALREADY VOUCHER ================ */}
-                <Stack
-                  key={appConfig.routes.alreadyVoucher}
-                  component={AlreadyVoucherContainer}
-                />
+                <Stack key={phoneCardConfig.routes.cardHistory}>
+                  <Scene
+                    key={`${phoneCardConfig.routes.cardHistory}_1`}
+                    title="Mua gần đây"
+                    component={PhoneCardCardHistoryContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
-                {/* ================ LIGHT BOX ENTER CODE MANUAL ================ */}
-                <Stack
-                  key={appConfig.routes.voucherEnterCodeManual}
-                  component={VoucherEnterCodeManualContainer}
-                />
-              </Lightbox>
+                <Stack key={phoneCardConfig.routes.buyCardConfirm}>
+                  <Scene
+                    key={`${phoneCardConfig.routes.buyCardConfirm}_1`}
+                    title="Thanh toán an toàn"
+                    component={PhoneCardBuyCardConfirmContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
-              {/* ================ MODAL SHOW QR/BAR CODE ================ */}
-              <Stack key={appConfig.routes.qrBarCode}>
-                <Scene
-                  key={`${appConfig.routes.qrBarCode}_1`}
-                  component={QRBarCode}
-                  renderBackButton={CloseButton}
-                  back
-                />
-              </Stack>
+                <Stack key={appConfig.routes.tickidRada}>
+                  <Scene
+                    key="tickidRada1"
+                    component={Category}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
-              {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
-              <Stack key={appConfig.routes.voucherShowBarcode}>
-                <Scene
-                  key={`${appConfig.routes.voucherShowBarcode}_1`}
-                  title="Mã voucher"
-                  component={VoucherShowBarcodeContainer}
-                  renderBackButton={CloseButton}
-                  back
-                />
-              </Stack>
-            </Modal>
+                <Stack key={appConfig.routes.tickidRadaListService}>
+                  <Scene
+                    key="tickidRadaListService1"
+                    component={ListService}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
-            <Scene component={FlashMessage} />
-          </Overlay>
-        </Router>
-      </Provider>
+                <Stack key={appConfig.routes.tickidRadaServiceDetail}>
+                  <Scene
+                    key="tickidRadaServiceDetail1"
+                    component={ServiceDetail}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.tickidRadaBooking}>
+                  <Scene
+                    key="tickidRadaBooking1"
+                    component={Booking}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="md_card_confirm">
+                  <Scene
+                    key="md_card_confirm_1"
+                    title="Xác nhận"
+                    component={MdCardConfirm}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SCENE VOUCHER SCAN ================ */}
+                <Stack key={appConfig.routes.voucherScanner}>
+                  <Scene
+                    key={`${appConfig.routes.voucherScanner}_1`}
+                    title="Quét mã QR"
+                    component={VoucherScanScreenContainer}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+              </Scene>
+
+              {/* ================ LIGHT BOX SELECT PROVINCE ================ */}
+              <Stack
+                key={appConfig.routes.voucherSelectProvince}
+                component={VoucherSelectProvinceContainer}
+              />
+
+              {/* ================ LIGHT BOX ALREADY VOUCHER ================ */}
+              <Stack
+                key={appConfig.routes.alreadyVoucher}
+                component={AlreadyVoucherContainer}
+              />
+
+              {/* ================ LIGHT BOX ENTER CODE MANUAL ================ */}
+              <Stack
+                key={appConfig.routes.voucherEnterCodeManual}
+                component={VoucherEnterCodeManualContainer}
+              />
+            </Lightbox>
+
+            {/* ================ MODAL SHOW QR/BAR CODE ================ */}
+            <Stack key={appConfig.routes.qrBarCode}>
+              <Scene
+                key={`${appConfig.routes.qrBarCode}_1`}
+                component={QRBarCode}
+                renderBackButton={CloseButton}
+                back
+              />
+            </Stack>
+
+            {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
+            <Stack key={appConfig.routes.voucherShowBarcode}>
+              <Scene
+                key={`${appConfig.routes.voucherShowBarcode}_1`}
+                title="Mã voucher"
+                component={VoucherShowBarcodeContainer}
+                renderBackButton={CloseButton}
+                back
+              />
+            </Stack>
+          </Modal>
+
+          <Scene component={FlashMessage} />
+        </Overlay>
+      </Router>
     );
   }
 }

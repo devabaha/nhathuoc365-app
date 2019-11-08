@@ -23,6 +23,22 @@ const config = {
     statusBarHeight: getStatusBarHeight(),
     bottomSpace: getBottomSpace()
   },
+  route: {
+    push: () => {},
+    pop: () => {},
+    backToMainAndOpenShop: () => {},
+    pushToStoreBySiteData: () => {}
+  },
+  routes: {
+    mainVoucher: 'mainVoucher',
+    myVoucher: 'myVoucher',
+    voucherDetail: 'voucherDetail',
+    voucherSelectProvince: 'voucherSelectProvince',
+    voucherScanner: 'voucherScanner',
+    alreadyVoucher: 'alreadyVoucher',
+    voucherEnterCodeManual: 'voucherEnterCodeManual',
+    voucherShowBarcode: 'voucherShowBarcode'
+  },
   rest: {
     endpoint: () => 'https://apiapp.tickid.vn',
     listCampaigns: () => '/apiVoucher/list_campaign',
@@ -37,7 +53,8 @@ const config = {
       `/apiSite/use_voucher/${siteId}/${userVoucherId}`,
     removeVoucherOnline: (siteId, userVoucherId) =>
       `/apiSite/remove_voucher/${siteId}/${userVoucherId}`,
-    saveVoucher: code => `/apiVoucher/save_voucher/${code}`
+    saveVoucher: code => `/apiVoucher/save_voucher/${code}`,
+    buyCampaign: campaignId => `apiVoucher/buy_campaign/${campaignId}`
   },
   httpCode: {
     success: 200

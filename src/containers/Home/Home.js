@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { View, Alert, StyleSheet } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import store from 'app-store';
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import Communications from 'react-native-communications';
 import HomeComponent from '../../components/Home';
+import { executeJobs } from '../../helper/jobsOnReset';
 
 @observer
 class Home extends Component {
@@ -63,10 +64,13 @@ class Home extends Component {
     } catch (error) {
       console.log(error);
     } finally {
-      this.setState({
-        refreshing: false,
-        apiFetching: false
-      });
+      this.setState(
+        {
+          refreshing: false,
+          apiFetching: false
+        },
+        executeJobs
+      );
     }
   };
 
@@ -231,37 +235,6 @@ class Home extends Component {
 
   handleShowAllVouchers = () => {};
 
-  handlePressAction = action => {
-    switch (action.type) {
-      case 'ACCUMULATE_POINTS_TYPE':
-        Actions.push(appConfig.routes.qrBarCode, {
-          title: 'Mã tài khoản'
-        });
-        break;
-      case 'MY_VOUCHER_TYPE':
-        Actions.push(appConfig.routes.myVoucher, {
-          title: 'Voucher của tôi'
-        });
-        break;
-      case 'TRANSACTION_TYPE':
-        Actions.vnd_wallet({
-          title: store.user_info.default_wallet.name,
-          wallet: store.user_info.default_wallet
-        });
-        break;
-      case 'ORDERS_TYPE':
-        Actions.jump(appConfig.routes.ordersTab);
-        break;
-      case 'QRCODE_SCAN_TYPE':
-        Actions.push(appConfig.routes.qrBarCode, {
-          index: 1,
-          title: 'Quét QR Code',
-          wallet: store.user_info.default_wallet
-        });
-        break;
-    }
-  };
-
   shopOpening;
 
   handlePressService = service => {
@@ -272,8 +245,10 @@ class Home extends Component {
         });
         break;
       case 'MY_VOUCHER_TYPE':
+      case 'my_voucher':
         Actions.push(appConfig.routes.myVoucher, {
-          title: 'Voucher của tôi'
+          title: 'Voucher của tôi',
+          from: 'home'
         });
         break;
       case 'TRANSACTION_TYPE':
@@ -286,12 +261,6 @@ class Home extends Component {
         Actions.jump(appConfig.routes.ordersTab);
         break;
       case 'QRCODE_SCAN_TYPE':
-        Actions.push(appConfig.routes.qrBarCode, {
-          index: 1,
-          title: 'Quét QR Code',
-          wallet: store.user_info.default_wallet
-        });
-        break;
       case 'qrscan':
         Actions.push(appConfig.routes.qrBarCode, {
           index: 1,
@@ -306,7 +275,9 @@ class Home extends Component {
         });
         break;
       case 'list_voucher':
-        Actions.push(appConfig.routes.mainVoucher);
+        Actions.push(appConfig.routes.mainVoucher, {
+          from: 'home'
+        });
         break;
       case 'rada_service':
         Actions.push('tickidRada', {
@@ -324,9 +295,6 @@ class Home extends Component {
           'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
           [{ text: 'Đồng ý' }]
         );
-        break;
-      case 'my_voucher':
-        Actions.push(appConfig.routes.myVoucher);
         break;
       case 'my_address':
         Actions.push(appConfig.routes.myAddress, {
@@ -386,7 +354,9 @@ class Home extends Component {
   handleShowAllSites = () => {};
 
   handleShowAllCampaigns = () => {
-    Actions.push(appConfig.routes.mainVoucher);
+    Actions.push(appConfig.routes.mainVoucher, {
+      from: 'home'
+    });
   };
 
   handleShowAllNews = () => {
@@ -406,7 +376,8 @@ class Home extends Component {
   handlePressCampaignItem = campaign => {
     Actions.push(appConfig.routes.voucherDetail, {
       title: campaign.title,
-      campaignId: campaign.id
+      campaignId: campaign.id,
+      from: 'home'
     });
   };
 
