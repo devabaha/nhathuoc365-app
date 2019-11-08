@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import config from '../../config';
-import { VIETTEL_TYPE, CARD_10K } from '../../constants';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import SelectNetworkComponent from '../../component/SelectNetwork';
 import SelectCardValueComponent from '../../component/SelectCardValue';
@@ -9,17 +9,50 @@ import ChooseQuantityComponent from '../../component/ChooseQuantity';
 import SubmitButton from '../../component/SubmitButton';
 
 class BuyCard extends Component {
+  static propTypes = {
+    routeKey: PropTypes.string.isRequired,
+    services: PropTypes.object,
+    listServices: PropTypes.array,
+    networksOfService: PropTypes.object,
+    cardsOfNetwork: PropTypes.object
+  };
+
+  static defaultProps = {
+    services: {},
+    listServices: [],
+    networksOfService: {},
+    cardsOfNetwork: {}
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
       cardQuantity: 1,
-      cardValueType: CARD_10K,
+      cardValueType: '',
       contactName: 'Đặng Ngọc Sơn',
       contactPhone: '035 353 8222',
-      visibleNetwork: false,
-      networkType: VIETTEL_TYPE
+      networkType: this.currentNetworks[0].type
     };
+  }
+
+  get currentService() {
+    const { services, routeKey } = this.props;
+    return services[routeKey];
+  }
+
+  get currentNetworks() {
+    return this.props.networksOfService[this.currentService.id];
+  }
+
+  get currentCards() {
+    return this.props.cardsOfNetwork[this.state.networkType];
+  }
+
+  componentDidMount() {
+    this.setState({
+      cardValueType: this.currentCards[0].type
+    });
   }
 
   handleOpenContact = () => {
@@ -36,12 +69,6 @@ class BuyCard extends Component {
     });
   };
 
-  handlePressSelectNetwork = () => {
-    this.setState({
-      visibleNetwork: true
-    });
-  };
-
   handleSelectCardValue = cardValue => {
     this.setState({
       cardValueType: cardValue.type
@@ -49,9 +76,22 @@ class BuyCard extends Component {
   };
 
   handleSelectNetwork = network => {
-    this.setState({
-      networkType: network.type
-    });
+    this.setState(
+      {
+        networkType: network.type
+      },
+      () => {
+        const alsoHasType = this.currentCards.some(
+          card => card.type === this.state.cardValueType
+        );
+        // if not exist card type, reset default card type to first
+        if (!alsoHasType) {
+          this.setState({
+            cardValueType: this.currentCards[0].type
+          });
+        }
+      }
+    );
   };
 
   handleChangeQuantity = quantity => {
@@ -92,11 +132,13 @@ class BuyCard extends Component {
           />
 
           <SelectNetworkComponent
+            data={this.currentNetworks}
             networkType={this.state.networkType}
             onSelectNetwork={this.handleSelectNetwork}
           />
 
           <SelectCardValueComponent
+            data={this.currentCards}
             cardValueType={this.state.cardValueType}
             onSelectCardValue={this.handleSelectCardValue}
           />
