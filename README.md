@@ -1,5 +1,5 @@
 Build:
-1. Onesignal
+1. Onesignal: TickID e2e80243-08c0-405a-9a36-5d060ba0af12
 2. GA
 3. Firebase
 4. CodePush
@@ -13,6 +13,11 @@ keytool -genkey -v -keystore id.tick.keystore -alias id.tick -keyalg RSA -keysiz
 Build: cần xóa trống trong thư mục app/build trước 
 ./gradlew clean
 ./gradlew assembleRelease
+./gradlew bundleRelease
+
+java -jar ../pepk.jar --keystore=android/app/id.tick.keystore --alias=id.tick --output=android/app/id.ti
+ck.pem --encryptionkey=eb10fe8f7c7c9df715022017b00c6471f8ba8170b13049a11e6c09ffe3056a104a3bbe4ac5a955f4ba4fe93fc8cef27558a3eb9d2a529a209
+2761fb833b656cd48b9de6a
 
 Các bước cho Android:
 yarn install
@@ -28,7 +33,7 @@ react-native run-android
 và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
 
 4. Lỗi AndroidX: Chạy lệnh: 
-   npx jetify 
+   npx jetify
 
 5. Sinh anh splash va logo
 https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets

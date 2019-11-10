@@ -117,10 +117,11 @@ android {
         applicationId "id.tick"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 9
+        versionCode 10
         versionName "1.0.6"
         multiDexEnabled true
-        missingDimensionStrategy 'react-native-camera', 'general' 
+        missingDimensionStrategy 'react-native-camera', 'general'
+        resConfigs "en", "vi"
     }
     signingConfigs {
         release {
@@ -142,7 +143,7 @@ android {
     }
     buildTypes {
         release {
-            // shrinkResources true
+            shrinkResources true
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release

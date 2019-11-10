@@ -351,17 +351,17 @@ class App extends Component {
                    ************************ Tab 2 ************************
                    */}
                   <Stack
-                    key={appConfig.routes.newsTab}
+                    key={appConfig.routes.mainVoucher}
                     icon={TabIcon}
-                    iconLabel="Tin tức"
-                    iconName="notifications"
+                    iconLabel="Voucher"
+                    iconName="ticket"
                     iconSize={24}
                     notifyKey="new_totals"
                   >
                     <Scene
-                      key={`${appConfig.routes.newsTab}_1`}
-                      title="Tin tức"
-                      component={Notify}
+                      key={`${appConfig.routes.mainVoucher}_1`}
+                      title="Voucher - Mã giảm giá"
+                      component={VoucherContainer}
                     />
                   </Stack>
 
@@ -382,7 +382,7 @@ class App extends Component {
                     icon={TabIcon}
                     iconSize={24}
                     iconLabel="Đơn hàng"
-                    iconName="shopping-cart"
+                    iconName="cart"
                     notifyKey="notify_cart"
                   >
                     <Scene
@@ -453,7 +453,15 @@ class App extends Component {
                     back
                   />
                 </Stack>
-
+                <Stack key={appConfig.routes.newsTab}>
+                  <Scene
+                    key={`${appConfig.routes.newsTab}_1`}
+                    title="Tin tức"
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
                 <Stack key={appConfig.routes.myAddress}>
                   <Scene
                     key={`${appConfig.routes.myAddress}_1`}
