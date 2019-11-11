@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.microsoft.codepush.react.CodePush;
@@ -43,6 +44,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new RNFirebasePackage(),
+            new RNFirebaseAnalyticsPackage(),
             new RNCameraPackage(),
             new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
