@@ -58,7 +58,6 @@ class Login extends Component {
             store.resetCartData();
             const userId = getTickUniqueID();
             EventTracker.setUserId(userId);
-            EventTracker.logEvent('LOGIN_SUCCESS');
             store.setRefreshHomeChange(store.refresh_home_change + 1);
             if (response.data.fill_info_user) {
               //hien thi chon site
