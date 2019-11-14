@@ -7,7 +7,7 @@ const defaultListener = () => {};
 export const runFbAccountKit = ({
   onSuccess = defaultListener,
   onFailure = defaultListener,
-  initialPhoneNumber = undefined
+  initialPhoneNumber = null
 }) => {
   RNAccountKit.configure({
     responseType: 'token',
