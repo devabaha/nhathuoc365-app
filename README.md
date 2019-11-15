@@ -1,10 +1,10 @@
 Build:
-1. Onesignal
-2. GA
-3. Firebase
-4. CodePush
-5. FBAK
-6. API Key và tên
+1. Onesignal: c437636c-1e52-489c-b3bd-e64616fe2735
+2. GA: UA-106153171-1
+3. Firebase: 
+4. CodePush: 
+5. FBAK: 2175231729436595
+6. API Key: mydinhhubkey / 0406mydinhhubjfsdfd1414h52
 7. Chuẩn bị Logo
 8. 
 Build Release
@@ -13,6 +13,8 @@ keytool -genkey -v -keystore vn.foodhub.keystore -alias vn.foodhub -keyalg RSA -
 Build: cần xóa trống trong thư mục app/build trước 
 ./gradlew clean
 ./gradlew assembleRelease
+./gradlew bundleRelease
+
 
 Các bước cho Android:
 yarn install
@@ -61,3 +63,6 @@ code-push release-react tick-foodhub-ios ios -d "Production" -m --description "N
 code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 08 11 2019"
 
 appcenter codepush release-react -a thuc.lehuy-gmail.com/tick-foodhub-ios -d Production
+
+
+java -jar pepk.jar --keystore=foo.keystore --alias=foo --output=encrypted_private_key_path --encryptionkey=eb10fe8f7c7c9df715022017b00c6471f8ba8170b13049a11e6c09ffe3056a104a3bbe4ac5a955f4ba4fe93fc8cef27558a3eb9d2a529a2092761fb833b656cd48b9de6a
