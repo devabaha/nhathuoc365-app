@@ -120,7 +120,8 @@ android {
         versionCode 305
         versionName "3.0.4"
         multiDexEnabled true
-        missingDimensionStrategy 'react-native-camera', 'general' 
+        missingDimensionStrategy 'react-native-camera', 'general'
+        resConfigs "en", "vi"
     }
     signingConfigs {
         release {
