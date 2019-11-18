@@ -7,14 +7,13 @@ const defaultListener = () => {};
 export const runFbAccountKit = ({
   onSuccess = defaultListener,
   onFailure = defaultListener,
-  initialPhoneNumber = null
+  initialPhoneNumber
 }) => {
-  RNAccountKit.configure({
+  const configure = {
     responseType: 'token',
     titleType: 'login',
     initialAuthState: '',
     initialPhoneCountryPrefix: '+84',
-    initialPhoneNumber,
     facebookNotificationsEnabled: true,
     countryBlacklist: [],
     defaultCountry: 'VN',
@@ -24,7 +23,13 @@ export const runFbAccountKit = ({
     viewControllerMode: 'show',
     getACallEnabled: true,
     setEnableInitialSmsButton: false
-  });
+  };
+
+  if (initialPhoneNumber) {
+    configure.initialPhoneNumber = initialPhoneNumber;
+  }
+
+  RNAccountKit.configure(configure);
 
   // Shows the Facebook Account Kit view for login via SMS
   RNAccountKit.loginWithPhone().then(token => {
