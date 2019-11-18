@@ -117,10 +117,11 @@ android {
         applicationId "vn.foodhub"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 304
-        versionName "3.0.3"
+        versionCode 306
+        versionName "3.0.4"
         multiDexEnabled true
-        missingDimensionStrategy 'react-native-camera', 'general' 
+        missingDimensionStrategy 'react-native-camera', 'general'
+        resConfigs "en", "vi"
     }
     signingConfigs {
         release {
