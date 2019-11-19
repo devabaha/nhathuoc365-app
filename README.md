@@ -1,101 +1,71 @@
-# README #
-TickID App: Ứng dụng CSKH và Tích điểm cho cửa hàng
-yarn install
-react-native run-ios
-Cau hinh FBSDK: Account Kit va Analytics
-Run
-adb reverse tcp:8081 tcp:8081
+Steps:
+1. Tạo App và API Key: tạo bằng cơm
+2. Tạo App trên Appstore và Google Play
+3. Tạo Onesignal
+4. Tạo Google Analytic: lấy key của tạo web
+5. CodePush: Tạo Code Push và thay thế
+6. FBAK: sử dụng tạm đang có của TickID. Sẽ thay thế bằng Firebase. 
+7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+8. Build App iOS
+9. 9.Build App Android
 
+Chi tiết
+1. Tạo App trong trang admin.tickid.vn, tạo API Key bằng tay trong DB
+2. Vào Appstore và Google Play, khởi tạo ứng dụng. Tài khoản sẽ tùy theo từng dự án.
+3. Tạo App trên Onesignal
+	3.1. Firebase: Đăng ký Cloud Message cho Android
+	3.2. Appstore Connect: Tạo Key theo hướng dẫn 
+4. Tạo Google Analytic: Tạo GA cho web
+5. Code Push: chạy các lệnh sau, thay thế bằng 
+code-push app add tick-tickid-ios ios react-native
+┌────────────┬──────────────────────────────────────────────────────────────────┐
+│ Name       │ Deployment Key                                                   │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Production │  │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Staging    │  │
+└────────────┴──────────────────────────────────────────────────────────────────┘
 
+code-push app add tick-tickid-android android react-native
+┌────────────┬──────────────────────────────────────────────────────────────────┐
+│ Name       │ Deployment Key                                                   │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Production │  │
+├────────────┼──────────────────────────────────────────────────────────────────┤
+│ Staging    │  │
+└────────────┴──────────────────────────────────────────────────────────────────┘
 
-Android: 
-Build Release
-https://facebook.github.io/react-native/docs/signed-apk-android.html
-keytool -genkey -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Sua loi crash app khi login"
+code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 08 11 2019"
 
+6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
+7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
+yo rn-toolbox:assets --icon icon.png --splash splash.png --store
+yo rn-toolbox:assets --icon icon-android.png --android
+yo rn-toolbox:assets --android-notification-icon icon-android.png
 
-
-./gradlew clean
-./gradlew assembleRelease
-
-Build:
-1. Onesignal
-2. GA
-3. Firebase
-4. CodePush
-5. FBAK
-6. API Key và tên
-# README # Vlink
-1. Chuẩn bị Logo
-2. 
-Build Release
-https://facebook.github.io/react-native/docs/signed-apk-android.html
-keytool -genkey -v -keystore id.tick.keystore -alias id.tick -keyalg RSA -keysize 2048 -validity 10000
-
-file gradle.properties
-MYAPP_RELEASE_STORE_FILE=vlink.keystore
-MYAPP_RELEASE_KEY_ALIAS=vn.vlink
-MYAPP_RELEASE_STORE_PASSWORD=123456
-MYAPP_RELEASE_KEY_PASSWORD=123456
-
-app/build.gradle
-				storeFile file(MYAPP_RELEASE_STORE_FILE)
-                storePassword MYAPP_RELEASE_STORE_PASSWORD
-                keyAlias MYAPP_RELEASE_KEY_ALIAS
-                keyPassword MYAPP_RELEASE_KEY_PASSWORD
-
-Build: cần xóa trống trong thư mục app/build trước 
-./gradlew clean
-./gradlew assembleRelease
-
-
-# README #
-yarn install
-react-native run-ios
-Run
-adb reverse tcp:8081 tcp:8081
-
-
-
-Android: 
-Build Release
-https://facebook.github.io/react-native/docs/signed-apk-android.html
-keytool -genkey -v -keystore com.phongvenhanvan.keystore -alias com.phongvenhanvan -keyalg RSA -keysize 2048 -validity 10000
-
-
-
-
-./gradlew clean
-./gradlew assembleRelease
-
-Build:
-1. Onesignal
-2. GA
-3. Firebase
-
-Các bước cho Android:
-yarn install
-react-native run-android
-1. File local.properties: sdk.dir=/Users/thuclh/Library/Android/sdk
-2. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker
-    compileSdkVersion 28
+8. Build App iOS
+Chạy Xcode, sửa lại version và version code cho App và Onesignal
+9.Build App Android
+	- Chạy lệnh tạo keystore trong thư mục android/app:
+	keytool -genkey -v -keystore vn.tickid.keystore -alias vn.tickid -keyalg RSA -keysize 2048 -validity 10000
+	- Sửa lại compile version
+	compileSdkVersion 28
     buildToolsVersion "28.0.3"
-3. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker,
-   Thay Configuration'compile' is obsolete and has been replaced with 'implementation' and 'api'.
-và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
-
-4. Lỗi AndroidX: Chạy lệnh: 
-   npx jetify 
-5. ở thư mục source
-
-Gen khóa phat hanh
-keytool -exportcert -alias com.phongvenhanvan -keystore android/app/com.phongvenhanvan.keystore | openssl sha1 -binary | openssl base64
-
-1. Sinh anh splash va logo
-https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
-yo rn-toolbox:assets --icon icon.jpg --splash splash.png --store
-yo rn-toolbox:assets --icon icon.png --android
-yo rn-toolbox:assets --android-notification-icon icon.png
-1. Onesignal: thay onesignal id vao app.js
-2. 
+	- Lỗi AndroidX: Chạy lệnh: 
+   	npx jetify 
+   	- Sửa tên App
+	- 
+	- Các lệnh build trong Android
+	./gradlew clean
+	./gradlew assembleRelease	-> tạo ra file Apk
+	./gradlew bundleRelease		-> tạo file aab, nên dùng
+	- Đăng ký App Signing để tạo file aab
+	Chạy lệnh tạo file pem
+	java -jar ../pepk.jar --keystore=android/app/vn.tickid.keystore --alias=vn.tickid --output=android/app/vn.tickid.pem --encryptionkey=xxx
+	Sửa cấu hình:
+	defaultConfig
+        resConfigs "en", "vi"
+ 
