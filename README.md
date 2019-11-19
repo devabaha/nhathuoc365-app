@@ -59,7 +59,7 @@ code-push app add tick-foodhub-android android react-native
 │ Staging    │ Ysxk9PCgfA9owCJfVg2m2AT4C4GDf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Nang cap 08 11 2019"
+code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Sua loi crash app khi login"
 code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 08 11 2019"
 
 appcenter codepush release-react -a thuc.lehuy-gmail.com/tick-foodhub-ios -d Production
