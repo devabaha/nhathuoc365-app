@@ -1,3 +1,5 @@
+Tạo nhánh mới tick/vn.tickid từ tick/tickid
+
 Steps:
 1. Tạo App và API Key: tạo bằng cơm
 2. Tạo App trên Appstore và Google Play
