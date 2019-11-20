@@ -43,7 +43,7 @@ class Launch extends Component {
         });
         break;
       case STATUS_UNDEFINE_USER:
-        Actions.replace('login');
+        Actions.replace('op_login');
         break;
       default:
         showMessage({
