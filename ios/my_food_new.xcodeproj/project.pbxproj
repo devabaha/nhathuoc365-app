@@ -54,11 +54,9 @@
 		BE093D5928F94F5A88F37BD2 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 463EE80D934E40BB9BB6E7D7 /* libRNFetchBlob.a */; };
 		BE7D83E7160C4682A454DDDE /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 783A802B842147D785DC3726 /* libRNImagePicker.a */; };
 		C2404FCA332B47229BF1A493 /* libRNAccountKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5E3AA64E1D4DE28430E541 /* libRNAccountKit.a */; };
-		C717987C23644F8B00030D6D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C717983F23644F8B00030D6D /* GoogleService-Info.plist */; };
-		C717987D23644F8B00030D6D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C717983F23644F8B00030D6D /* GoogleService-Info.plist */; };
-		C717987E23644F8B00030D6D /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C717983F23644F8B00030D6D /* GoogleService-Info.plist */; };
 		C79F842D22FCCFCB0065AD0B /* AccountKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C79F842B22FCCFCB0065AD0B /* AccountKit.framework */; };
 		C79F842E22FCCFCB0065AD0B /* AccountKitStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C79F842C22FCCFCB0065AD0B /* AccountKitStrings.bundle */; };
+		C7B77A932383950600F64A76 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C7B77A562383950600F64A76 /* GoogleService-Info.plist */; };
 		CA5578E1BB6144D78B20560E /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 97890CB30B8343E4A9B3648B /* Foundation.ttf */; };
 		CC635C38B76E402782997D82 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 067B57B1BCC24709A992FAE2 /* libRNCWebView.a */; };
 		CCCAE5EDF74D40E492349AFA /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CF25897D0CC649789FF18C10 /* Octicons.ttf */; };
@@ -602,9 +600,9 @@
 		BB39D3D9DDE54C189E9BD994 /* libRNCNetInfo-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNCNetInfo-tvOS.a"; sourceTree = "<group>"; };
 		BE11B8925FA443D2977B6235 /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
 		C1043677557803A19B041727 /* Pods_my_food_new.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_my_food_new.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		C717983F23644F8B00030D6D /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C79F842B22FCCFCB0065AD0B /* AccountKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AccountKit.framework; path = "../node_modules/react-native-facebook-account-kit/ios/AccountKit.framework"; sourceTree = "<group>"; };
 		C79F842C22FCCFCB0065AD0B /* AccountKitStrings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AccountKitStrings.bundle; path = "../node_modules/react-native-facebook-account-kit/ios/AccountKitStrings.bundle"; sourceTree = "<group>"; };
+		C7B77A562383950600F64A76 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C991D47D371D494286815C69 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCAsyncStorage.a; sourceTree = "<group>"; };
 		CB8C35FB5B854D92BFF61337 /* libLRDRCTSimpleToast.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libLRDRCTSimpleToast.a; sourceTree = "<group>"; };
 		CBBE6C829AC249BF840F199D /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
@@ -764,7 +762,7 @@
 		13B07FAE1A68108700A75B9A /* my_food_new */ = {
 			isa = PBXGroup;
 			children = (
-				C717983F23644F8B00030D6D /* GoogleService-Info.plist */,
+				C7B77A562383950600F64A76 /* GoogleService-Info.plist */,
 				1C2070AA22F54EFC00CF6BEA /* push_1.mp3 */,
 				1C2070A722F54D6E00CF6BEA /* push2.wav */,
 				1C206E0D22F1A71100CF6BEA /* my_food_new.entitlements */,
