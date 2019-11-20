@@ -1,27 +1,32 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from '../../config';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { internalFetch } from '../../helper/apiFetch';
+import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
 import SelectNetworkComponent from '../../component/SelectNetwork';
 import SelectCardValueComponent from '../../component/SelectCardValue';
 import SelectCardHistoryComponent from '../../component/SelectCardHistory';
-import ChooseQuantityComponent from '../../component/ChooseQuantity';
+// import ChooseQuantityComponent from '../../component/ChooseQuantity';
 import SubmitButton from '../../component/SubmitButton';
 
 class BuyCard extends Component {
   static propTypes = {
+    refreshing: PropTypes.bool,
     routeKey: PropTypes.string.isRequired,
     services: PropTypes.object,
     listServices: PropTypes.array,
     networksOfService: PropTypes.object,
-    cardsOfNetwork: PropTypes.object
+    cardsOfNetwork: PropTypes.object,
+    onRefresh: PropTypes.func
   };
 
   static defaultProps = {
+    refreshing: false,
     services: {},
     listServices: [],
     networksOfService: {},
-    cardsOfNetwork: {}
+    cardsOfNetwork: {},
+    onRefresh: () => {}
   };
 
   constructor(props) {
@@ -30,10 +35,13 @@ class BuyCard extends Component {
     this.state = {
       cardQuantity: 1,
       cardValueType: '',
-      contactName: 'Đặng Ngọc Sơn',
-      contactPhone: '035 353 8222',
-      networkType: this.currentNetworks[0].type
+      networkType: this.currentNetworks[0].type,
+      orders: []
     };
+  }
+
+  get hasOrders() {
+    return Array.isArray(this.state.orders) && this.state.orders.length > 0;
   }
 
   get currentService() {
@@ -45,29 +53,47 @@ class BuyCard extends Component {
     return this.props.networksOfService[this.currentService.id];
   }
 
+  get selectedNetwork() {
+    return this.currentNetworks.find(
+      network => network.type === this.state.networkType
+    );
+  }
+
   get currentCards() {
     return this.props.cardsOfNetwork[this.state.networkType];
+  }
+
+  get selectedCard() {
+    if (!this.state.cardValueType) return {};
+    return this.currentCards.find(
+      card => card.type === this.state.cardValueType
+    );
   }
 
   componentDidMount() {
     this.setState({
       cardValueType: this.currentCards[0].type
     });
+
+    this.getOrders(this.currentService.id);
   }
 
-  handleOpenContact = () => {
-    config.route.push(config.routes.contact, {
-      onPressContact: this.handlePressContact
+  getOrders = serviceId => {
+    internalFetch(config.rest.orders(serviceId)).then(response => {
+      this.setState({
+        orders: response.data
+      });
     });
   };
 
-  handlePressContact = contact => {
-    config.route.pop();
-    this.setState({
-      contactName: contact.name,
-      contactPhone: contact.displayPhone
-    });
-  };
+  getNetworkByType(type) {
+    return this.currentNetworks.find(network => network.type === type);
+  }
+
+  getCardByTypeAndPrice(type, price) {
+    const cardsOfType = this.props.cardsOfNetwork[type];
+    return cardsOfType.find(card => card.price === price);
+  }
 
   handleSelectCardValue = cardValue => {
     this.setState({
@@ -101,35 +127,59 @@ class BuyCard extends Component {
   };
 
   handleShowHistory = () => {
-    config.route.push(config.routes.cardHistory);
+    config.route.push(config.routes.cardHistory, {
+      title: this.currentService.history_title,
+      serviceId: this.currentService.id
+    });
   };
 
   handleContinue = () => {
-    config.route.push(config.routes.buyCardConfirm);
+    config.route.push(config.routes.buyCardConfirm, {
+      type: 'Mua mã thẻ',
+      isBuyCard: true,
+      quantity: this.state.cardQuantity,
+      card: this.selectedCard,
+      wallet: this.props.wallet,
+      hasPass: this.props.hasPass,
+      network: this.selectedNetwork,
+      serviceId: this.currentService.id,
+      historyTitle: this.currentService.history_title
+    });
+  };
+
+  handleSelectCardHistory = card => {
+    config.route.push(config.routes.buyCardConfirm, {
+      type: 'Mua mã thẻ',
+      isBuyCard: true,
+      quantity: this.state.cardQuantity,
+      card: this.getCardByTypeAndPrice(card.type, card.price),
+      wallet: this.props.wallet,
+      hasPass: this.props.hasPass,
+      network: this.getNetworkByType(card.type),
+      serviceId: this.currentService.id,
+      historyTitle: this.currentService.history_title
+    });
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView>
-          <SelectCardHistoryComponent
-            data={[
-              {
-                name: 'Viettel',
-                type: 'viettel',
-                buyTime: '29/09/2019 - 11:54',
-                price: '100.000đ'
-              },
-              {
-                name: 'Viettel',
-                type: 'viettel',
-                buyTime: '29/09/2019 - 11:54',
-                price: '200.000đ'
-              }
-            ]}
-            onShowHistory={this.handleShowHistory}
-            onSelectCardHistory={card => alert(card.name)}
-          />
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.props.refreshing}
+              onRefresh={this.props.onRefresh}
+            />
+          }
+        >
+          {this.hasOrders && (
+            <SelectCardHistoryComponent
+              heading="Mua thẻ nhanh"
+              data={this.state.orders}
+              onShowHistory={this.handleShowHistory}
+              onSelectCardHistory={this.handleSelectCardHistory}
+            />
+          )}
 
           <SelectNetworkComponent
             data={this.currentNetworks}
@@ -143,10 +193,10 @@ class BuyCard extends Component {
             onSelectCardValue={this.handleSelectCardValue}
           />
 
-          <ChooseQuantityComponent
+          {/* <ChooseQuantityComponent
             initQuantity={this.state.cardQuantity}
             onChangeQuantity={this.handleChangeQuantity}
-          />
+          /> */}
 
           <View style={styles.bottomSpace} />
         </ScrollView>

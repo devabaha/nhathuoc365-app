@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput } from 'react-native';
 import phoneBookImage from '../../assets/images/phone-book.png';
 import config from '../../config';
 import Button from 'react-native-button';
@@ -10,22 +10,36 @@ const defaultListener = () => {};
 class EnterPhone extends Component {
   static propTypes = {
     data: PropTypes.array,
+    editable: PropTypes.bool,
+    showHistory: PropTypes.bool,
     hideChangeNetwork: PropTypes.bool,
     contactName: PropTypes.string,
     contactPhone: PropTypes.string,
     onOpenContact: PropTypes.func,
+    onShowHistory: PropTypes.func,
+    onBlur: PropTypes.func,
     onPressSelectNetwork: PropTypes.func,
-    networkType: PropTypes.string
+    onChangeText: PropTypes.func,
+    networkType: PropTypes.string,
+    keyboardType: PropTypes.string,
+    errorMessage: PropTypes.string
   };
 
   static defaultProps = {
     data: [],
+    editable: false,
+    showHistory: true,
     hideChangeNetwork: false,
-    contactName: 'Đặng Ngọc Sơn',
-    contactPhone: '035 353 8222',
+    contactName: '',
+    contactPhone: '',
     onOpenContact: defaultListener,
+    onShowHistory: defaultListener,
+    onBlur: defaultListener,
     onPressSelectNetwork: defaultListener,
-    networkType: ''
+    onChangeText: defaultListener,
+    networkType: '',
+    keyboardType: 'phone-pad',
+    errorMessage: ''
   };
 
   get currentNetworkType() {
@@ -34,20 +48,46 @@ class EnterPhone extends Component {
     );
   }
 
+  get hasError() {
+    return !!this.props.errorMessage;
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>Nạp đến</Text>
-        <Text style={styles.contactName}>{this.props.contactName}</Text>
+        <View style={styles.headingWrapper}>
+          <Text style={styles.label}>Nạp đến</Text>
+
+          {this.props.showHistory && (
+            <Button onPress={this.props.onShowHistory}>
+              <Text style={styles.viewHistoryText}>Xem lịch sử</Text>
+            </Button>
+          )}
+        </View>
+        {!!this.props.contactName && (
+          <Text style={styles.contactName}>{this.props.contactName}</Text>
+        )}
 
         <View style={styles.enterContact}>
-          <View style={styles.inputBtn}>
-            <Button
-              containerStyle={styles.phoneBtn}
-              onPress={this.props.onOpenContact}
-            >
-              <Text style={styles.input}>{this.props.contactPhone}</Text>
-            </Button>
+          <View style={[styles.inputBtn, this.hasError && styles.hasError]}>
+            {this.props.editable ? (
+              <View style={styles.phoneBtn}>
+                <TextInput
+                  style={styles.input}
+                  value={this.props.contactPhone}
+                  onBlur={this.props.onBlur}
+                  onChangeText={this.props.onChangeText}
+                  keyboardType={this.props.keyboardType}
+                />
+              </View>
+            ) : (
+              <Button
+                containerStyle={styles.phoneBtn}
+                onPress={this.props.onOpenContact}
+              >
+                <Text style={styles.input}>{this.props.contactPhone}</Text>
+              </Button>
+            )}
             <Button
               containerStyle={styles.contactBtn}
               onPress={this.props.onOpenContact}
@@ -68,6 +108,9 @@ class EnterPhone extends Component {
             </Button>
           )}
         </View>
+        {this.hasError && (
+          <Text style={styles.errorMessage}>{this.props.errorMessage}</Text>
+        )}
       </View>
     );
   }
@@ -78,6 +121,16 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 10,
     paddingHorizontal: 16
+  },
+  headingWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  viewHistoryText: {
+    fontSize: 15,
+    fontWeight: '400',
+    color: '#0084ff'
   },
   label: {
     fontWeight: 'bold',
@@ -103,8 +156,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
+  hasError: {
+    borderColor: config.colors.red
+  },
+  errorMessage: {
+    fontSize: 16,
+    color: config.colors.red,
+    fontWeight: '400',
+    marginTop: 8
+  },
   input: {
     fontSize: 24,
+    fontWeight: '400',
     color: '#333',
     textAlign: 'left'
   },

@@ -6,6 +6,8 @@ import * as networksOfService from './networksOfService';
 
 export function normalize(data) {
   return {
+    wallet: data.wallet,
+    hasPass: !!data.has_pass,
     routes: routes.normalize(data),
     services: services.normalize(data),
     listServices: listServices.normalize(data),

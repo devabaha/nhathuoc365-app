@@ -6,6 +6,9 @@ import {
 } from 'react-native-iphone-x-helper';
 
 const config = {
+  appName: '',
+  defaultContactName: '',
+  defaultContactPhone: '',
   private: {
     appKey: '',
     secretKey: ''
@@ -25,7 +28,11 @@ const config = {
   },
   rest: {
     endpoint: () => 'https://apiapp.tickid.vn',
-    phoneCardService: () => '/apiService/info/100'
+    phoneCardService: () => '/apiService/info/100',
+    book: () => '/apiService/book',
+    password: () => '/apiUser/change_pass',
+    orders: serviceId => `/apiService/orders/${serviceId}`,
+    changeOrder: id => `/apiService/change_order_status/${id}`
   },
   route: {
     push: () => {},
