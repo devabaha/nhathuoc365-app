@@ -6,13 +6,15 @@ import { View, Text, StyleSheet } from 'react-native';
 function Header(props) {
   return (
     <View style={styles.header}>
-      <Button
-        onPress={props.onClose}
-        containerStyle={styles.btnClose}
-        style={styles.closeTitle}
-      >
-        {props.closeTitle}
-      </Button>
+      {!props.hideClose && (
+        <Button
+          onPress={props.onClose}
+          containerStyle={styles.btnClose}
+          style={styles.closeTitle}
+        >
+          {props.closeTitle}
+        </Button>
+      )}
       <Text style={styles.headerTitle}>{props.title}</Text>
     </View>
   );
@@ -21,13 +23,15 @@ function Header(props) {
 Header.propTypes = {
   title: PropTypes.string,
   closeTitle: PropTypes.string,
-  onClose: PropTypes.func
+  onClose: PropTypes.func,
+  hideClose: PropTypes.bool
 };
 
 Header.defaultProps = {
   title: 'Chưa có tiêu đề',
   closeTitle: 'Đóng',
-  onClose: () => {}
+  onClose: () => {},
+  hideClose: false
 };
 
 const styles = StyleSheet.create({
