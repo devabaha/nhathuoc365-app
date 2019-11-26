@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 FieldItem.propTypes = {
   boldValue: PropTypes.bool,
   label: PropTypes.string,
-  value: PropTypes.string
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
 };
 
 FieldItem.defaultProps = {

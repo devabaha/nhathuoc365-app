@@ -1,45 +1,24 @@
-Build:
-1. Onesignal: c437636c-1e52-489c-b3bd-e64616fe2735
-2. GA: UA-106153171-1
-3. Firebase: 
-4. CodePush: 
-5. FBAK: 2175231729436595
-6. API Key: mydinhhubkey / 0406mydinhhubjfsdfd1414h52
-7. Chuẩn bị Logo
-8. 
-Build Release
-https://facebook.github.io/react-native/docs/signed-apk-android.html
-keytool -genkey -v -keystore vn.foodhub.keystore -alias vn.foodhub -keyalg RSA -keysize 2048 -validity 10000
-Build: cần xóa trống trong thư mục app/build trước 
-./gradlew clean
-./gradlew assembleRelease
-./gradlew bundleRelease
+Tạo nhánh mới tick/vn.tickid từ tick/tickid
 
+Steps:
+1. Tạo App và API Key: mydinhhubkey / 0406mydinhhubjfsdfd1414h52
+2. Tạo App trên Appstore và Google Play
+3. Tạo Onesignal: c437636c-1e52-489c-b3bd-e64616fe2735
+4. Tạo Google Analytic: lấy key của tạo web
+5. CodePush: Tạo Code Push và thay thế
+6. FBAK: sử dụng tạm đang có của TickID. Sẽ thay thế bằng Firebase. 2175231729436595
+7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+8. Build App iOS
+9. 9.Build App Android
 
-Các bước cho Android:
-yarn install
-react-native run-android
-1. File local.properties: sdk.dir=/Users/thuclh/Library/Android/sdk
-
-2. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
-
-3. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker,
-   Thay Configuration'compile' is obsolete and has been replaced with 'implementation' and 'api'.
-và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
-
-4. Lỗi AndroidX: Chạy lệnh: 
-   npx jetify 
-
-5. Sinh anh splash va logo
-https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
-yo rn-toolbox:assets --icon icon.png --splash splash.png --store
-yo rn-toolbox:assets --icon icon-android.png --android
-yo rn-toolbox:assets --android-notification-icon icon-android.png
-
-
-Code Push:
+Chi tiết
+1. Tạo App trong trang admin.tickid.vn, tạo API Key bằng tay trong DB
+2. Vào Appstore và Google Play, khởi tạo ứng dụng. Tài khoản sẽ tùy theo từng dự án.
+3. Tạo App trên Onesignal
+	3.1. Firebase: Đăng ký Cloud Message cho Android
+	3.2. Appstore Connect: Tạo Key theo hướng dẫn 
+4. Tạo Google Analytic: Tạo GA cho web
+5. Code Push: chạy các lệnh sau, thay thế bằng 
 code-push app add tick-foodhub-ios ios react-native
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
@@ -62,7 +41,33 @@ code-push app add tick-foodhub-android android react-native
 code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Sua loi crash app khi login"
 code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 08 11 2019"
 
-appcenter codepush release-react -a thuc.lehuy-gmail.com/tick-foodhub-ios -d Production
+6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
+7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
+yo rn-toolbox:assets --icon icon.png --splash splash.png --store
+yo rn-toolbox:assets --icon icon-android.png --android
+yo rn-toolbox:assets --android-notification-icon icon-android.png
 
-java -jar ../pepk.jar --keystore=android/app/vn.foodhub.keystore --alias=vn.foodhub --output=android/app/vn.foodhub.pem --encryptionkey=eb10fe8f7c7c9df715022017b00c6471f8ba8170b13049a11e6c09ffe3056a104a3bbe4ac5a955f4ba4fe93fc8cef27558a3eb9d2a529a2092761fb833b656cd48b9de6a
+8. Build App iOS
+Chạy Xcode, sửa lại version và version code cho App và Onesignal
+9.Build App Android
+	- Chạy lệnh tạo keystore trong thư mục android/app:
+	keytool -genkey -v -keystore vn.tickid.keystore -alias vn.tickid -keyalg RSA -keysize 2048 -validity 10000
+	- Sửa lại compile version
+	compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+	- Lỗi AndroidX: Chạy lệnh: 
+   	npx jetify 
+   	- Sửa tên App
+	- 
+	- Các lệnh build trong Android
+	./gradlew clean
+	./gradlew assembleRelease	-> tạo ra file Apk
+	./gradlew bundleRelease		-> tạo file aab, nên dùng
+	- Đăng ký App Signing để tạo file aab
+	Chạy lệnh tạo file pem
+	java -jar ../pepk.jar --keystore=android/app/vn.tickid.keystore --alias=vn.tickid --output=android/app/vn.tickid.pem --encryptionkey=xxx
+	Sửa cấu hình:
+	defaultConfig
+        resConfigs "en", "vi"
