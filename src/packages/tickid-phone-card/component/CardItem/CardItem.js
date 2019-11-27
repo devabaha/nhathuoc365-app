@@ -13,10 +13,15 @@ class CardItem extends Component {
     cardId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     networkType: PropTypes.string,
     networkName: PropTypes.string,
+    statusView: PropTypes.string,
     price: PropTypes.string,
     buyTime: PropTypes.string,
     cardCode: PropTypes.string,
     cardSeri: PropTypes.string,
+    isPay: PropTypes.bool,
+    isUsed: PropTypes.bool,
+    showMoreMenu: PropTypes.bool,
+    isBuyCard: PropTypes.bool,
     onOpenMoreMenu: PropTypes.func,
     onCopyCardCode: PropTypes.func,
     onSendCard: PropTypes.func,
@@ -27,10 +32,15 @@ class CardItem extends Component {
     cardId: '',
     networkType: '',
     networkName: '',
+    statusView: '',
     price: '',
     buyTime: '',
     cardCode: '',
     cardSeri: '',
+    isPay: false,
+    isUsed: false,
+    showMoreMenu: true,
+    isBuyCard: false,
     onOpenMoreMenu: defaultListener,
     onCopyCardCode: defaultListener,
     onSendCard: defaultListener,
@@ -39,7 +49,13 @@ class CardItem extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          this.props.isUsed && styles.isUsed,
+          this.props.isPay && styles.isPay
+        ]}
+      >
         <View style={styles.cardInfoWrapper}>
           <Image
             style={styles.cardImage}
@@ -52,44 +68,68 @@ class CardItem extends Component {
           </View>
         </View>
 
-        <View style={styles.codeBox}>
-          <Text style={styles.cardCode}>{this.props.cardCode}</Text>
+        {!!this.props.cardCode && (
+          <View style={styles.codeBox}>
+            <Text style={styles.cardCode}>{this.props.cardCode}</Text>
+            <Button
+              style={styles.copyText}
+              containerStyle={styles.copyBtn}
+              onPress={() => this.props.onCopyCardCode(this.props.cardId)}
+            >
+              SAO CHÉP
+            </Button>
+          </View>
+        )}
+
+        {!!this.props.cardSeri && (
+          <Text style={styles.cardSeri}>Số seri: {this.props.cardSeri}</Text>
+        )}
+
+        {!this.props.isBuyCard && (
+          <Text style={styles.statusView}>
+            {this.props.isPay ? 'Thẻ đã thanh toán' : this.props.statusView}
+          </Text>
+        )}
+
+        {this.props.isBuyCard && (
+          <View style={styles.buttonBox}>
+            {!this.props.isUsed && !this.props.isPay && (
+              <Button
+                style={styles.sendCardText}
+                containerStyle={styles.sendCardBtn}
+                onPress={() => this.props.onSendCard(this.props.cardId)}
+              >
+                Gửi thẻ nạp
+              </Button>
+            )}
+
+            <Button
+              style={styles.useNowText}
+              containerStyle={styles.useNowBtn}
+              onPress={() => this.props.onUseNow(this.props.cardId)}
+            >
+              {this.props.isPay
+                ? 'Thẻ đã thanh toán'
+                : this.props.isUsed
+                ? 'Thẻ đã sử dụng'
+                : 'Nạp ngay'}
+            </Button>
+          </View>
+        )}
+
+        {this.props.showMoreMenu && (
           <Button
-            style={styles.copyText}
-            containerStyle={styles.copyBtn}
-            onPress={() => this.props.onCopyCardCode(this.props.cardId)}
+            style={styles.moreText}
+            containerStyle={styles.moreBtn}
+            onPress={this.props.onOpenMoreMenu}
           >
-            SAO CHÉP
+            <Image style={styles.moreImage} source={moreImage} />
           </Button>
-        </View>
+        )}
 
-        <Text style={styles.cardSeri}>Số seri: {this.props.cardSeri}</Text>
-
-        <View style={styles.buttonBox}>
-          <Button
-            style={styles.sendCardText}
-            containerStyle={styles.sendCardBtn}
-            onPress={() => this.props.onSendCard(this.props.cardId)}
-          >
-            Gửi thẻ nạp
-          </Button>
-
-          <Button
-            style={styles.useNowText}
-            containerStyle={styles.useNowBtn}
-            onPress={() => this.props.onUseNow(this.props.cardId)}
-          >
-            Nạp ngay
-          </Button>
-        </View>
-
-        <Button
-          style={styles.moreText}
-          containerStyle={styles.moreBtn}
-          onPress={this.props.onOpenMoreMenu}
-        >
-          <Image style={styles.moreImage} source={moreImage} />
-        </Button>
+        {(this.props.isUsed || this.props.isPay) && (
+          <View style={styles.usedOverlay} />
+        )}
       </View>
     );
   }
@@ -107,6 +147,17 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     paddingTop: 10,
     paddingHorizontal: 8
+  },
+  isUsed: {
+    borderColor: '#f1f1f1'
+  },
+  isPay: {
+    borderColor: '#f1f1f1'
+  },
+  usedOverlay: {
+    position: 'absolute',
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    ...StyleSheet.absoluteFill
   },
   cardInfoWrapper: {
     flexDirection: 'row',
@@ -197,7 +248,16 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: 0,
-    padding: 12
+    padding: 12,
+    zIndex: 1
+  },
+  statusView: {
+    fontSize: 13,
+    fontWeight: '400',
+    position: 'absolute',
+    bottom: 8,
+    right: 10,
+    color: config.colors.primary
   }
 });
 

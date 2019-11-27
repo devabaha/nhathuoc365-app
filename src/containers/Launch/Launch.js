@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { config as phoneCardConfig } from '../../packages/tickid-phone-card';
 import appConfig from '../../config';
 import store from '../../store';
 
@@ -29,16 +29,21 @@ class Launch extends Component {
   };
 
   handleAuthWithResponse = response => {
+    const user = response.data;
+    // @NOTE: set default name and phone for phone card package
+    phoneCardConfig.defaultContactName = user.name;
+    phoneCardConfig.defaultContactPhone = user.tel;
+
     switch (response.status) {
       case STATUS_SUCCESS:
-        store.setUserInfo(response.data);
+        store.setUserInfo(user);
         Actions.replace(appConfig.routes.primaryTabbar);
         break;
       case STATUS_FILL_INFO_USER:
-        store.setUserInfo(response.data);
+        store.setUserInfo(user);
         Actions.replace('op_register', {
           title: 'Đăng ký thông tin',
-          name_props: response.data.name,
+          name_props: user.name,
           hideBackImage: true
         });
         break;
