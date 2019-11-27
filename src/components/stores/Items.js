@@ -279,7 +279,9 @@ export default class Items extends Component {
                 </Text>
               </View>
             </View>
-            <Text style={styles.item_info_name}>{item.name}</Text>
+            <Text style={styles.item_info_name} numberOfLines={2}>
+              {item.name}
+            </Text>
             <View style={styles.price_box}>
               {item.discount_percent > 0 && (
                 <Text style={styles.item_safe_off_price}>
