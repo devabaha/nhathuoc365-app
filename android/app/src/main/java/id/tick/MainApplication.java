@@ -7,6 +7,8 @@ import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.microsoft.codepush.react.CodePush;
@@ -49,6 +51,8 @@ public class MainApplication extends Application implements ReactApplication {
             new ReactNativeContacts(),
             new RNGestureHandlerPackage(),
             new ReanimatedPackage(),
+            new RNFirebasePackage(),
+            new RNFirebaseAnalyticsPackage(),
             new RNCameraPackage(),
             new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),

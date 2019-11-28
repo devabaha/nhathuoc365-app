@@ -804,7 +804,7 @@ export default class Account extends Component {
       const response = await APIHandler.user_logout();
       if (response && response.status == STATUS_SUCCESS) {
         await RNAccountKit.logout();
-
+        EventTracker.removeUserId();
         showMessage({
           message: 'Đăng xuất thành công',
           type: 'info'

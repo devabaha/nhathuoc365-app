@@ -12,6 +12,7 @@ import store from '../../store/Store';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import appConfig from 'app-config';
 import { showMessage } from 'react-native-flash-message';
+import getTickUniqueID from '../../util/getTickUniqueID';
 
 class Login extends Component {
   componentDidMount() {
@@ -54,9 +55,9 @@ class Login extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setUserInfo(response.data);
-
             store.resetCartData();
-
+            const userId = getTickUniqueID();
+            EventTracker.setUserId(userId);
             store.setRefreshHomeChange(store.refresh_home_change + 1);
             if (response.data.fill_info_user) {
               //hien thi chon site
