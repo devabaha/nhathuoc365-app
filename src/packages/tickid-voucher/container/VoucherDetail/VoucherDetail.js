@@ -409,7 +409,6 @@ class VoucherDetail extends BaseContainer {
           type: 'success',
           message: response.message
         });
-
         this.setState({
           campaign: new CampaignEntity(response.data.campaign),
           canUseNow: true
