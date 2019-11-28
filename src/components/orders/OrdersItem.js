@@ -1,16 +1,22 @@
-/* @flow */
-
 import React, { Component } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-
-// librarys
-import { Actions, ActionConst } from 'react-native-router-flux';
-
-// components
+import { View, StyleSheet } from 'react-native';
 import Confirm from '../payment/Confirm';
 import store from '../../store/Store';
+import { Actions } from 'react-native-router-flux';
 
-export default class OrdersItem extends Component {
+class OrdersItem extends Component {
+  static onEnter = () => {
+    Actions.refresh({
+      onBack: this.props.onBack
+    });
+  };
+
+  componentWillUnmount() {
+    if (this.props.resetCardData) {
+      store.resetCartData();
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -31,3 +37,5 @@ const styles = StyleSheet.create({
     marginBottom: 0
   }
 });
+
+export default OrdersItem;
