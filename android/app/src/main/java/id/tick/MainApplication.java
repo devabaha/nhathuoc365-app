@@ -3,6 +3,7 @@ package id.tick;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -45,6 +46,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AndroidOpenSettingsPackage(),
             new ReactNativeFingerprintScannerPackage(),
             new ReactNativeContacts(),
             new RNGestureHandlerPackage(),
