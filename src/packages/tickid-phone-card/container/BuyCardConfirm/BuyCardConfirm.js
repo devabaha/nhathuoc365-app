@@ -251,7 +251,24 @@ class BuyCardConfirm extends Component {
       });
       this.saveNewPasswordToStorage(newPasswordValue);
       this.saveNewPasswordToDb(newPasswordValue).then(response => {
-        console.log(response);
+        if (response.status === config.httpCode.success) {
+          this.setState({ showRepeatPasswordKeyboard: false });
+          this.handleBuyCard(newPasswordValue);
+        } else {
+          showMessage({
+            type: 'danger',
+            message: response.message
+          });
+          this.setState({
+            showRepeatPasswordKeyboard: false,
+            newPasswordValue: [],
+            repeatPasswordValue: []
+          });
+
+          setTimeout(() => {
+            this.setState({ showNewPasswordKeyboard: true });
+          }, 2000);
+        }
       });
     } else {
       this.handleTryCreatePassword();
@@ -486,6 +503,7 @@ class BuyCardConfirm extends Component {
         <AuthenKeyboardModal
           hideClose
           headerTitle="Tạo mật khẩu mới"
+          description="Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch"
           visible={this.state.showNewPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}
@@ -499,6 +517,7 @@ class BuyCardConfirm extends Component {
         <AuthenKeyboardModal
           hideClose
           headerTitle="Nhập lại mật khẩu"
+          description="Nhập lại mật khẩu để xác nhận"
           visible={this.state.showRepeatPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}
