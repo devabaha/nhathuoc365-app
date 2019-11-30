@@ -60,8 +60,8 @@ class PhoneCard extends BaseContainer {
   };
 
   renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'phone_prepaid':
+    switch (route.keyView) {
+      case 'phone_paid':
         return (
           <PrepayContainer
             prefix="trước"
@@ -74,16 +74,6 @@ class PhoneCard extends BaseContainer {
       case 'phone_card':
         return (
           <BuyCardContainer
-            routeKey={route.key}
-            refreshing={this.state.refreshing}
-            onRefresh={this.handleRefresh}
-            {...this.state.cardServiceData}
-          />
-        );
-      case 'phone_postpaid':
-        return (
-          <PrepayContainer
-            prefix="sau"
             routeKey={route.key}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}

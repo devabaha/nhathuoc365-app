@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Actions } from 'react-native-router-flux';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
-import { config as phoneCardConfig } from '../../packages/tickid-phone-card';
+// import { config as phoneCardConfig } from '../../packages/tickid-phone-card';
 import appConfig from '../../config';
 import store from '../../store';
 
@@ -31,8 +31,8 @@ class Launch extends Component {
   handleAuthWithResponse = response => {
     const user = response.data;
     // @NOTE: set default name and phone for phone card package
-    phoneCardConfig.defaultContactName = user.name;
-    phoneCardConfig.defaultContactPhone = user.tel;
+    // phoneCardConfig.defaultContactName = user.name;
+    // phoneCardConfig.defaultContactPhone = user.tel;
 
     switch (response.status) {
       case STATUS_SUCCESS:

@@ -22,7 +22,8 @@ class EnterPhone extends Component {
     onChangeText: PropTypes.func,
     networkType: PropTypes.string,
     keyboardType: PropTypes.string,
-    errorMessage: PropTypes.string
+    errorMessage: PropTypes.string,
+    placeholder: PropTypes.string
   };
 
   static defaultProps = {
@@ -39,7 +40,8 @@ class EnterPhone extends Component {
     onChangeText: defaultListener,
     networkType: '',
     keyboardType: 'phone-pad',
-    errorMessage: ''
+    errorMessage: '',
+    placeholder: 'Nhập số điện thoại'
   };
 
   get currentNetworkType() {
@@ -78,6 +80,7 @@ class EnterPhone extends Component {
                   onBlur={this.props.onBlur}
                   onChangeText={this.props.onChangeText}
                   keyboardType={this.props.keyboardType}
+                  placeholder={this.props.placeholder}
                 />
               </View>
             ) : (
