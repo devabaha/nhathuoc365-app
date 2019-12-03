@@ -1,65 +1,73 @@
-Build:
-1. Onesignal: TickID e2e80243-08c0-405a-9a36-5d060ba0af12
-2. GA
-3. Firebase
-4. CodePush
-5. FBAK
-6. API Key và tên
-7. Chuẩn bị Logo
-8. 
-Build Release
-https://facebook.github.io/react-native/docs/signed-apk-android.html
-keytool -genkey -v -keystore id.tick.keystore -alias id.tick -keyalg RSA -keysize 2048 -validity 10000
-Build: cần xóa trống trong thư mục app/build trước 
-./gradlew clean
-./gradlew assembleRelease
-./gradlew bundleRelease
+Tạo nhánh mới tick/vn.tickid từ tick/tickid
 
-java -jar ../pepk.jar --keystore=android/app/id.tick.keystore --alias=id.tick --output=android/app/id.ti
-ck.pem --encryptionkey=eb10fe8f7c7c9df715022017b00c6471f8ba8170b13049a11e6c09ffe3056a104a3bbe4ac5a955f4ba4fe93fc8cef27558a3eb9d2a529a209
-2761fb833b656cd48b9de6a
+Steps:
+1. Tạo App và API Key: tạo bằng cơm
+2. Tạo App trên Appstore và Google Play
+3. Tạo Onesignal
+4. Tạo Google Analytic: lấy key của tạo web
+5. CodePush: Tạo Code Push và thay thế
+6. FBAK: sử dụng tạm đang có của TickID. Sẽ thay thế bằng Firebase. 
+7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+8. Build App iOS
+9. 9.Build App Android
 
-Các bước cho Android:
-yarn install
-react-native run-android
-1. File local.properties: sdk.dir=/Users/thuclh/Library/Android/sdk
-
-2. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
-
-3. Vào sửa các file build.gradle trong các module: react-native-device-info, react-native-camera, react-native-image-picker,
-   Thay Configuration'compile' is obsolete and has been replaced with 'implementation' and 'api'.
-và Configuration 'testCompile' is obsolete and has been replaced with 'testImplementation'.
-
-4. Lỗi AndroidX: Chạy lệnh: 
-   npx jetify
-
-5. Sinh anh splash va logo
-https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
-yo rn-toolbox:assets --icon icon.png --splash splash.png --store
-yo rn-toolbox:assets --icon icon-android.png --android
-yo rn-toolbox:assets --android-notification-icon icon-android.png
-
-
-Code Push:
+Chi tiết
+1. Tạo App trong trang admin.tickid.vn, tạo API Key bằng tay trong DB
+2. Vào Appstore và Google Play, khởi tạo ứng dụng. Tài khoản sẽ tùy theo từng dự án.
+3. Tạo App trên Onesignal
+	3.1. Firebase: Đăng ký Cloud Message cho Android
+	3.2. Appstore Connect: Tạo Key theo hướng dẫn 
+4. Tạo Google Analytic: Tạo GA cho web
+5. Code Push: chạy các lệnh sau, thay thế bằng 
 code-push app add tick-tickid-ios ios react-native
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │ zNRC9fLTHDCBngHiUamHbfziyRM7f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
+│ Production │  │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Staging    │ HBdrFNUZM3iGduYjVK_KfJMZu0Dof87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
+│ Staging    │  │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
 code-push app add tick-tickid-android android react-native
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │ 64zepyz9oRV-xfXlJdrsyNKcRTJzf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
+│ Production │  │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Staging    │ HzM0ZE3HI9MC09-70ljG7aUktD1zf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
+│ Staging    │  │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-tickid-ios ios -d "Production" -m --description "Them dung ma voucher trong don hang"
-code-push release-react tick-tickid-android android -d "Production" -m --description "Them dung ma voucher trong don hang"
+code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Sua loi crash app khi login"
+code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 08 11 2019"
+
+6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
+
+7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
+yo rn-toolbox:assets --icon icon.png --splash splash.png --store
+yo rn-toolbox:assets --icon icon-android.png --android
+yo rn-toolbox:assets --android-notification-icon icon-android.png
+
+8. Build App iOS
+Chạy Xcode, sửa lại version và version code cho App và Onesignal
+9.Build App Android
+	- Chạy lệnh tạo keystore trong thư mục android/app:
+	keytool -genkey -v -keystore vn.tickid.keystore -alias vn.tickid -keyalg RSA -keysize 2048 -validity 10000
+	- Sửa lại compile version
+	compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+	- Lỗi AndroidX: Chạy lệnh: 
+   	npx jetify 
+   	- Sửa tên App
+	- 
+	- Các lệnh build trong Android
+	./gradlew clean
+	./gradlew assembleRelease	-> tạo ra file Apk
+	./gradlew bundleRelease		-> tạo file aab, nên dùng
+	- Đăng ký App Signing để tạo file aab
+	Chạy lệnh tạo file pem
+	java -jar ../pepk.jar --keystore=android/app/vn.tickid.keystore --alias=vn.tickid --output=android/app/vn.tickid.pem --encryptionkey=xxx
+	Sửa cấu hình:
+	defaultConfig
+        resConfigs "en", "vi"
+ 

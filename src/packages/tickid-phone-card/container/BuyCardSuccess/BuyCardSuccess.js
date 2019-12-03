@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   TouchableOpacity,
   ScrollView,
@@ -11,18 +12,29 @@ import BgrStatusBar, {
   showBgrStatusIfOffsetTop
 } from 'app-packages/tickid-bgr-status-bar';
 import successImage from '../../assets/images/success.png';
-import CardItemComponent from '../../component/CardItem';
 import SubmitButton from '../../component/SubmitButton';
 import { FieldItemWrapper, FieldItem } from '../../component/FieldItem';
+import CardItem from '../CardItem';
 import config from '../../config';
 
-BuyCardSuccess.propTypes = {};
+BuyCardSuccess.propTypes = {
+  isBuyCard: PropTypes.bool,
+  bookResponse: PropTypes.object,
+  serviceId: PropTypes.string,
+  historyTitle: PropTypes.string
+};
 
-BuyCardSuccess.defaultProps = {};
-
-function BuyCardSuccess(props) {
+function BuyCardSuccess({
+  isBuyCard = false,
+  bookResponse = undefined,
+  historyTitle = 'Lịch sử nạp',
+  serviceId = undefined
+}) {
   const pushToCardBuyed = () => {
-    config.route.push(config.routes.cardHistory);
+    config.route.push(config.routes.cardHistory, {
+      serviceId,
+      title: historyTitle
+    });
   };
 
   const comeBackHome = () => {
@@ -34,9 +46,12 @@ function BuyCardSuccess(props) {
     140
   );
 
+  const item = bookResponse.data;
+
   return (
     <View style={styles.container}>
       <ScrollView
+        bounces={false}
         scrollEventThrottle={16}
         onScroll={handleShowBgrStatusIfOffsetTop}
       >
@@ -46,59 +61,46 @@ function BuyCardSuccess(props) {
         </View>
 
         <View style={styles.messageWrapper}>
-          <Text style={styles.successMessage}>
-            Quý khách đã mua thành công 1 mã thẻ điện thoại Viettel mệnh giá
-            10.000đ
-          </Text>
+          <Text style={styles.successMessage}>{bookResponse.message}</Text>
         </View>
 
         <View style={styles.listCards}>
           <View style={styles.listCardHeadingBox}>
-            <Text style={styles.heading}>Thẻ đã mua</Text>
+            <Text style={styles.heading}>
+              {isBuyCard ? 'Thẻ đã mua' : 'Thông tin nạp'}
+            </Text>
 
             <TouchableOpacity
               style={styles.viewCardBuyedBtn}
               onPress={pushToCardBuyed}
             >
-              <Text style={styles.viewCardBuyedText}>Xem tất cả</Text>
+              <Text style={styles.viewCardBuyedText}>Xem lịch sử</Text>
             </TouchableOpacity>
           </View>
 
-          <CardItemComponent
-            cardId="001"
-            networkType="viettel"
-            networkName="Viettel"
-            price="200.000đ"
-            buyTime="29/09/2019 - 11:54"
-            cardCode="4757865826328"
-            cardSeri="1000348293472"
-            onUseNow={this.handleShowUseNowModal}
-            onSendCard={this.handleShowSendCardModal}
-            onOpenMoreMenu={this.handleOnOpenMoreMenu}
-            onCopyCardCode={this.handleShowCopyCardCodeModal}
-          />
-
-          <CardItemComponent
-            cardId="002"
-            networkType="viettel"
-            networkName="Viettel"
-            price="200.000đ"
-            buyTime="29/09/2019 - 11:54"
-            cardCode="4757865826328"
-            cardSeri="1000348293472"
-            onUseNow={this.handleShowUseNowModal}
-            onSendCard={this.handleShowSendCardModal}
-            onOpenMoreMenu={this.handleOnOpenMoreMenu}
-            onCopyCardCode={this.handleShowCopyCardCodeModal}
+          <CardItem
+            cardId={item.id}
+            networkType={item.type}
+            networkName={item.name}
+            price={item.price_label}
+            isPay={!!item.is_pay}
+            isUsed={!!item.is_used}
+            buyTime={item.created}
+            showMoreMenu={false}
+            statusView={item.status_view}
+            syntaxPrepaid={item.syntax_prepaid}
+            syntaxPostpaid={item.syntax_postpaid}
+            cardCode={item.data && item.data.code}
+            cardSeri={item.data && item.data.serial}
           />
         </View>
 
         <View style={styles.orderInfoWraper}>
           <FieldItemWrapper separate>
-            <FieldItem label="Số dư trong ví" value="100.000đ" />
+            <FieldItem label="Trạng thái giao dịch" value={item.status_view} />
           </FieldItemWrapper>
           <FieldItemWrapper>
-            <FieldItem label="Mã giao dịch" value="287346823" />
+            <FieldItem label="Mã giao dịch" value={item.service_code} />
           </FieldItemWrapper>
         </View>
       </ScrollView>

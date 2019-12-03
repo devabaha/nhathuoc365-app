@@ -11,14 +11,16 @@ class SelectCardHistory extends Component {
     data: PropTypes.array,
     onSelectCardHistory: PropTypes.func,
     onShowHistory: PropTypes.func,
-    showHistory: PropTypes.bool
+    showHistory: PropTypes.bool,
+    heading: PropTypes.string
   };
 
   static defaultProps = {
     data: [],
     onSelectCardHistory: () => {},
     onShowHistory: () => {},
-    showHistory: true
+    showHistory: true,
+    heading: ''
   };
 
   renderCardValues() {
@@ -57,12 +59,12 @@ class SelectCardHistory extends Component {
             />
             <View>
               <Text style={styles.cardName}>{card.name}</Text>
-              <Text style={styles.cardBuyTime}>{card.buyTime}</Text>
+              <Text style={styles.cardBuyTime}>{card.created}</Text>
             </View>
           </View>
           <View style={styles.descriptionWrapper}>
             <Text style={styles.description}>
-              Giá: <Text style={styles.cashback}>{card.price}</Text>
+              Giá: <Text style={styles.cashback}>{card.price_label}</Text>
             </Text>
           </View>
         </View>
@@ -74,11 +76,11 @@ class SelectCardHistory extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.label}>Mua thẻ nhanh</Text>
+          <Text style={styles.label}>{this.props.heading}</Text>
 
           {this.props.showHistory && (
             <Button onPress={this.props.onShowHistory}>
-              <Text style={styles.viewHistoryText}>Xem lịch sử (20)</Text>
+              <Text style={styles.viewHistoryText}>Xem lịch sử</Text>
             </Button>
           )}
         </View>

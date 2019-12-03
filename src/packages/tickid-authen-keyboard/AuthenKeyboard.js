@@ -30,12 +30,16 @@ class AuthenKeyboard extends Component {
     onClearPassword: PropTypes.func,
     onForgotPress: PropTypes.func,
     onOpenFingerprint: PropTypes.func,
+    description: PropTypes.string,
     passwordValue: PropTypes.string,
     headerTitle: PropTypes.string,
     forgotText: PropTypes.string,
+    errorMessage: PropTypes.string,
     fingerprintLabel: PropTypes.string,
     visible: PropTypes.bool,
-    showFingerprint: PropTypes.bool
+    hideClose: PropTypes.bool,
+    showFingerprint: PropTypes.bool,
+    showForgotPassword: PropTypes.bool
   };
 
   static defaultProps = {
@@ -44,12 +48,16 @@ class AuthenKeyboard extends Component {
     onClearPassword: defaultListener,
     onForgotPress: defaultListener,
     onOpenFingerprint: defaultListener,
+    description: '',
     passwordValue: '',
     headerTitle: 'Nhập mật khẩu',
     forgotText: 'Quên mật khẩu?',
+    errorMessage: '',
     fingerprintLabel: undefined,
     visible: false,
-    showFingerprint: true
+    hideClose: false,
+    showFingerprint: true,
+    showForgotPassword: true
   };
 
   constructor(props) {
@@ -125,7 +133,12 @@ class AuthenKeyboard extends Component {
             <Header
               title={this.props.headerTitle}
               onClose={this.props.onClose}
+              hideClose={this.props.hideClose}
             />
+
+            {!!this.props.description && (
+              <Text style={styles.description}>{this.props.description}</Text>
+            )}
 
             <PasswordInput value={this.props.passwordValue} />
 
@@ -135,12 +148,22 @@ class AuthenKeyboard extends Component {
               visible={this.props.showFingerprint}
             />
 
-            <TouchableOpacity
-              style={styles.forgotBtn}
-              onPress={this.props.onForgotPress}
-            >
-              <Text style={styles.forgotText}>{this.props.forgotText}</Text>
-            </TouchableOpacity>
+            {this.props.showForgotPassword && (
+              <TouchableOpacity
+                style={styles.forgotBtn}
+                onPress={this.props.onForgotPress}
+              >
+                <Text style={styles.forgotText}>{this.props.forgotText}</Text>
+              </TouchableOpacity>
+            )}
+
+            {!!this.props.errorMessage && (
+              <View style={styles.errorMessageWrap}>
+                <Text style={styles.errorMessage}>
+                  {this.props.errorMessage}
+                </Text>
+              </View>
+            )}
 
             <Keyboard
               onPress={this.props.onPressKeyboard}
@@ -178,6 +201,22 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: '#0084ff',
     textAlign: 'center'
+  },
+  errorMessageWrap: {
+    marginBottom: 16
+  },
+  errorMessage: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: 'red',
+    textAlign: 'center'
+  },
+  description: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#333',
+    textAlign: 'center',
+    marginTop: 12
   }
 });
 

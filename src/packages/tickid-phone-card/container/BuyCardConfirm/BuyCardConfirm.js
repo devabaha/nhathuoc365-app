@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   View,
+  Alert,
   SafeAreaView,
   Text,
   StyleSheet,
@@ -12,21 +14,72 @@ import SubmitButton from '../../component/SubmitButton';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import AuthenKeyboardModal from 'app-packages/tickid-authen-keyboard';
 import { FieldItemWrapper, FieldItem } from '../../component/FieldItem';
+import AsyncStorage from '@react-native-community/async-storage';
+import { showMessage } from 'react-native-flash-message';
+import { internalFetch } from '../../helper/apiFetch';
+import Loading from '@tickid/tickid-rn-loading';
 import config from '../../config';
 
+const PASSWORD_STORAGE_KEY = 'PASSWORD_STORAGE_KEY';
+const PASSWORD_LENGTH = 6;
+
 class BuyCardConfirm extends Component {
+  static propTypes = {
+    isBuyCard: PropTypes.bool,
+    hasPass: PropTypes.bool,
+    card: PropTypes.object,
+    network: PropTypes.object,
+    type: PropTypes.string,
+    contactName: PropTypes.string,
+    contactPhone: PropTypes.string,
+    serviceId: PropTypes.string,
+    historyTitle: PropTypes.string,
+    quantity: PropTypes.number
+  };
+
+  static defaultProps = {
+    isBuyCard: false,
+    hasPass: false,
+    card: undefined,
+    network: undefined,
+    type: '',
+    contactName: '',
+    contactPhone: '',
+    serviceId: undefined,
+    historyTitle: '',
+    quantity: 0
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
+      authenPasswordStored: null,
       passwordValue: [],
+      newPasswordValue: [],
+      repeatPasswordValue: [],
       showAuthenKeyboard: false,
-      isSensorAvailable: false
+      showNewPasswordKeyboard: false,
+      showRepeatPasswordKeyboard: false,
+      isSensorAvailable: false,
+      showLoading: false
     };
   }
 
   get passwordValue() {
     return this.state.passwordValue.join('');
+  }
+
+  get newPasswordValue() {
+    return this.state.newPasswordValue.join('');
+  }
+
+  get repeatPasswordValue() {
+    return this.state.repeatPasswordValue.join('');
+  }
+
+  get isBuyCard() {
+    return !!this.props.isBuyCard;
   }
 
   componentDidMount() {
@@ -38,29 +91,63 @@ class BuyCardConfirm extends Component {
         });
       })
       .catch(error => this.setState({ errorMessage: error.message }));
+
+    this.loadStoredPassword();
   }
 
+  loadStoredPassword = async () => {
+    try {
+      const authenPasswordStored = await AsyncStorage.getItem(
+        PASSWORD_STORAGE_KEY
+      );
+      if (authenPasswordStored !== null) {
+        this.setState({ authenPasswordStored });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   handleConfirm = () => {
-    this.setState({
-      showAuthenKeyboard: true
-    });
+    if (!this.props.hasPass) {
+      this.setState({
+        showNewPasswordKeyboard: true
+      });
+    } else {
+      this.setState(
+        {
+          showAuthenKeyboard: true
+        },
+        () => {
+          if (this.state.isSensorAvailable && this.state.authenPasswordStored) {
+            this.handleOpenFingerprint();
+          }
+        }
+      );
+    }
   };
 
   handleCloseAuthenKeyboard = () => {
     this.setState({
-      passwordValue: [],
       showAuthenKeyboard: false
     });
+
+    setTimeout(() => {
+      this.setState({
+        passwordValue: []
+      });
+    }, 500);
   };
 
   handlePressKeyboard = buttonValue => {
+    if (this.state.passwordValue.length >= PASSWORD_LENGTH) return;
     this.setState(
       prevState => ({
         passwordValue: [...prevState.passwordValue, buttonValue]
       }),
       () => {
-        if (this.state.passwordValue.length >= 6) {
-          this.handleBuyCard();
+        if (this.state.passwordValue.length >= PASSWORD_LENGTH) {
+          this.handleBuyCard(this.passwordValue);
         }
       }
     );
@@ -71,6 +158,147 @@ class BuyCardConfirm extends Component {
     if (passwordValue.length > 0) {
       passwordValue.pop();
       this.setState({ passwordValue });
+    }
+  };
+
+  handleCloseNewPasswordKeyboard = () => {
+    this.setState({
+      newPasswordValue: [],
+      showNewPasswordKeyboard: false
+    });
+  };
+
+  handlePressNewPasswordKeyboard = buttonValue => {
+    if (this.state.newPasswordValue.length >= PASSWORD_LENGTH) return;
+
+    this.setState(
+      prevState => ({
+        newPasswordValue: [...prevState.newPasswordValue, buttonValue]
+      }),
+      () => {
+        if (this.state.newPasswordValue.length >= PASSWORD_LENGTH) {
+          this.setState(
+            {
+              showNewPasswordKeyboard: false
+            },
+            () => {
+              setTimeout(() => {
+                this.setState({
+                  showRepeatPasswordKeyboard: true
+                });
+              }, 500);
+            }
+          );
+        }
+      }
+    );
+  };
+
+  handleClearNewPasswordPassword = () => {
+    const newPasswordValue = [...this.state.newPasswordValue];
+    if (newPasswordValue.length > 0) {
+      newPasswordValue.pop();
+      this.setState({ newPasswordValue });
+    }
+  };
+
+  handleCloseRepeatPasswordKeyboard = () => {
+    this.setState({
+      newPasswordValue: [],
+      repeatPasswordValue: [],
+      showRepeatPasswordKeyboard: false
+    });
+  };
+
+  handlePressRepeatPasswordKeyboard = buttonValue => {
+    if (this.state.repeatPasswordValue.length >= PASSWORD_LENGTH) return;
+
+    this.setState(
+      prevState => ({
+        repeatPasswordValue: [...prevState.repeatPasswordValue, buttonValue]
+      }),
+      () => {
+        if (this.state.repeatPasswordValue.length >= PASSWORD_LENGTH) {
+          this.handleMatchCreatPassword();
+        }
+      }
+    );
+  };
+
+  saveNewPasswordToStorage = async newPasswordValue => {
+    try {
+      await AsyncStorage.setItem(PASSWORD_STORAGE_KEY, newPasswordValue);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  saveNewPasswordToDb = newPasswordValue => {
+    const options = {
+      method: 'POST',
+      body: {
+        pw4n: newPasswordValue
+      }
+    };
+    return internalFetch(config.rest.password(), options);
+  };
+
+  handleMatchCreatPassword = () => {
+    const { newPasswordValue, repeatPasswordValue } = this;
+    if (newPasswordValue === repeatPasswordValue) {
+      this.setState({
+        authenPasswordStored: newPasswordValue
+      });
+      this.saveNewPasswordToStorage(newPasswordValue);
+      this.saveNewPasswordToDb(newPasswordValue).then(response => {
+        if (response.status === config.httpCode.success) {
+          this.setState({ showRepeatPasswordKeyboard: false });
+          this.handleBuyCard(newPasswordValue);
+        } else {
+          showMessage({
+            type: 'danger',
+            message: response.message
+          });
+          this.setState({
+            showRepeatPasswordKeyboard: false,
+            newPasswordValue: [],
+            repeatPasswordValue: []
+          });
+
+          setTimeout(() => {
+            this.setState({ showNewPasswordKeyboard: true });
+          }, 2000);
+        }
+      });
+    } else {
+      this.handleTryCreatePassword();
+    }
+  };
+
+  handleTryCreatePassword = () => {
+    this.setState({
+      showRepeatPasswordKeyboard: false,
+      newPasswordValue: [],
+      repeatPasswordValue: []
+    });
+    const title = 'Mật khẩu không khớp';
+    const message = 'Vui lòng thử lại';
+
+    setTimeout(() => {
+      Alert.alert(title, message, [
+        {
+          text: 'Thử lại',
+          onPress: () => this.setState({ showNewPasswordKeyboard: true })
+        }
+      ]);
+    }, 500);
+  };
+
+  handleClearRepeatPasswordPassword = () => {
+    const repeatPasswordValue = [...this.state.repeatPasswordValue];
+    if (repeatPasswordValue.length > 0) {
+      repeatPasswordValue.pop();
+      this.setState({ repeatPasswordValue });
     }
   };
 
@@ -85,17 +313,104 @@ class BuyCardConfirm extends Component {
     FingerprintScanner.authenticate({
       description: 'Sử dụng Touch ID để mở khóa và xác nhận'
     })
-      .then(this.handleBuyCard)
+      .then(() => {
+        this.setState({
+          passwordValue: this.state.authenPasswordStored.split('')
+        });
+
+        setTimeout(() => {
+          this.handleBuyCard(this.state.authenPasswordStored);
+        }, 250);
+      })
       .finally(() => {
         this.printScanning = false;
       });
   };
 
-  handleBuyCard = () => {
+  handleBuyCard = authenPasswordStored => {
     this.handleCloseAuthenKeyboard();
-    setTimeout(() => {
-      config.route.push(config.routes.buyCardSuccess);
-    }, 250);
+
+    this.setState({
+      showLoading: true
+    });
+
+    const options = {
+      method: 'POST',
+      body: {
+        quantity: this.props.quantity,
+        code: this.props.contactPhone,
+        price: this.props.card.price,
+        service_id: this.props.network.id,
+        zone_code: this.props.wallet.zone_code,
+        pw4n: authenPasswordStored
+      }
+    };
+
+    internalFetch(config.rest.book(), options)
+      .then(response => {
+        if (response.status === config.httpCode.success) {
+          if (!this.state.authenPasswordStored) {
+            this.saveNewPasswordToStorage(authenPasswordStored);
+          }
+          setTimeout(() => {
+            config.route.push(config.routes.buyCardSuccess, {
+              isBuyCard: this.isBuyCard,
+              bookResponse: response,
+              serviceId: this.props.serviceId,
+              historyTitle: this.props.historyTitle
+            });
+          }, 250);
+        } else {
+          showMessage({
+            type: 'danger',
+            message: response.message
+          });
+
+          setTimeout(() => {
+            if (!this.state.showAuthenKeyboard) {
+              this.setState({
+                passwordValue: [],
+                showAuthenKeyboard: true
+              });
+            }
+          }, 2000);
+        }
+      })
+      .catch(() => {
+        showMessage({
+          type: 'danger',
+          message: 'Kết nối mạng có lỗi, vui lòng thử lại'
+        });
+      })
+      .finally(() => {
+        this.setState({
+          showLoading: false
+        });
+      });
+  };
+
+  renderWallet = () => {
+    if (!this.props.wallet) return null;
+    return (
+      <View style={styles.row}>
+        <Text style={styles.heading}>Nguồn tiền</Text>
+
+        <View style={styles.walletWrapper}>
+          {this.props.wallet.image && (
+            <Image
+              style={styles.walletImage}
+              source={this.props.wallet.image}
+            />
+          )}
+          <View style={styles.walletInfo}>
+            <Text style={styles.walletName}>{this.props.wallet.name}</Text>
+            <Text style={styles.walletCost}>
+              {this.props.wallet.balance_view}
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
   };
 
   render() {
@@ -103,17 +418,7 @@ class BuyCardConfirm extends Component {
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <View>
-            <View style={styles.row}>
-              <Text style={styles.heading}>Nguồn tiền</Text>
-
-              <View style={styles.walletWrapper}>
-                <Image style={styles.walletImage} source={null} />
-                <View style={styles.walletInfo}>
-                  <Text style={styles.walletName}>Ví TickID</Text>
-                  <Text style={styles.walletCost}>1.000.000đ</Text>
-                </View>
-              </View>
-            </View>
+            {this.renderWallet()}
 
             <View style={[styles.row, { marginTop: 8 }]}>
               <Text style={styles.heading}>Chi tiết giao dịch</Text>
@@ -121,10 +426,28 @@ class BuyCardConfirm extends Component {
               <View style={styles.cardInfoWrapper}>
                 <View style={styles.fieldWrapper}>
                   <FieldItemWrapper separate>
-                    <FieldItem label="Nhà mạng" value="Viettel" />
-                    <FieldItem label="Mệnh giá" value="20.000" />
-                    <FieldItem label="Số lượng" value="5" />
-                    <FieldItem label="Hoàn lại" value="400đ" />
+                    <FieldItem label="Loại giao dịch" value={this.props.type} />
+                    {!!this.props.contactName && (
+                      <FieldItem
+                        label="Nạp cho"
+                        value={this.props.contactName}
+                      />
+                    )}
+                    {!!this.props.contactPhone && (
+                      <FieldItem
+                        label="Số điện thoại"
+                        value={this.props.contactPhone}
+                      />
+                    )}
+                    <FieldItem
+                      label="Nhà mạng"
+                      value={this.props.network.name}
+                    />
+                    <FieldItem label="Mệnh giá" value={this.props.card.label} />
+                    {this.props.quantity > 0 && (
+                      <FieldItem label="Số lượng" value={this.props.quantity} />
+                    )}
+                    <FieldItem label="" value={this.props.card.cashbackValue} />
                   </FieldItemWrapper>
 
                   <FieldItemWrapper separate>
@@ -132,7 +455,11 @@ class BuyCardConfirm extends Component {
                   </FieldItemWrapper>
 
                   <FieldItemWrapper>
-                    <FieldItem label="Tổng tiền" value="20.000đ" boldValue />
+                    <FieldItem
+                      label="Tổng tiền"
+                      value={this.props.card.total_price}
+                      boldValue
+                    />
                   </FieldItemWrapper>
                 </View>
               </View>
@@ -153,9 +480,14 @@ class BuyCardConfirm extends Component {
           onPress={this.handleConfirm}
         />
 
+        {/* Authen key board */}
         <AuthenKeyboardModal
+          hideClose
+          showForgotPassword={false}
           visible={this.state.showAuthenKeyboard}
-          showFingerprint={this.state.isSensorAvailable}
+          showFingerprint={
+            !!(this.state.isSensorAvailable && this.state.authenPasswordStored)
+          }
           passwordValue={this.passwordValue}
           onClose={this.handleCloseAuthenKeyboard}
           onPressKeyboard={this.handlePressKeyboard}
@@ -163,6 +495,36 @@ class BuyCardConfirm extends Component {
           onForgotPress={this.handleForgotPress}
           onOpenFingerprint={this.handleOpenFingerprint}
         />
+
+        {/* New password keyboard */}
+        <AuthenKeyboardModal
+          hideClose
+          headerTitle="Tạo mật khẩu mới"
+          description="Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch"
+          visible={this.state.showNewPasswordKeyboard}
+          showFingerprint={false}
+          showForgotPassword={false}
+          passwordValue={this.newPasswordValue}
+          onClose={this.handleCloseNewPasswordKeyboard}
+          onPressKeyboard={this.handlePressNewPasswordKeyboard}
+          onClearPassword={this.handleClearNewPasswordPassword}
+        />
+
+        {/* Repeast password keyboard */}
+        <AuthenKeyboardModal
+          hideClose
+          headerTitle="Nhập lại mật khẩu"
+          description="Nhập lại mật khẩu để xác nhận"
+          visible={this.state.showRepeatPasswordKeyboard}
+          showFingerprint={false}
+          showForgotPassword={false}
+          passwordValue={this.repeatPasswordValue}
+          onClose={this.handleCloseRepeatPasswordKeyboard}
+          onPressKeyboard={this.handlePressRepeatPasswordKeyboard}
+          onClearPassword={this.handleClearRepeatPasswordPassword}
+        />
+
+        {this.state.showLoading && <Loading loading />}
       </SafeAreaView>
     );
   }
@@ -173,7 +535,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   row: {
-    paddingTop: 16,
+    paddingTop: 6,
     paddingBottom: 10,
     paddingHorizontal: 16,
     backgroundColor: config.colors.white
@@ -181,7 +543,8 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 18,
     color: config.colors.black,
-    fontWeight: '600'
+    fontWeight: '600',
+    marginTop: 8
   },
   walletWrapper: {
     flexDirection: 'row',
@@ -191,14 +554,13 @@ const styles = StyleSheet.create({
   walletImage: {
     width: 60,
     height: 46,
+    marginRight: 12,
     borderRadius: 8,
     borderColor: '#ccc',
     resizeMode: 'contain',
     borderWidth: StyleSheet.hairlineWidth
   },
-  walletInfo: {
-    marginLeft: 12
-  },
+  walletInfo: {},
   walletName: {
     fontSize: 16,
     fontWeight: '600',

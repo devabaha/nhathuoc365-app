@@ -105,6 +105,11 @@ import { addJob } from './helper/jobsOnReset';
  * Initializes config for Phone Card module
  */
 initializePhoneCardModule({
+  appName: APP_NAME_SHOW,
+  private: {
+    appKey: appConfig.voucherModule.appKey,
+    secretKey: appConfig.voucherModule.secretKey
+  },
   device: {
     appVersion: DeviceInfo.getVersion(),
     deviceId: getTickUniqueID(),
@@ -880,7 +885,6 @@ class App extends Component {
                 <Stack key={phoneCardConfig.routes.cardHistory}>
                   <Scene
                     key={`${phoneCardConfig.routes.cardHistory}_1`}
-                    title="Mua gần đây"
                     component={PhoneCardCardHistoryContainer}
                     {...navBarConfig}
                     back
