@@ -189,7 +189,10 @@ export default class Account extends Component {
     ImagePicker.showImagePicker(options, response => {
       if (response.error) {
         console.log(response.error);
+      } else if (response.didCancel) {
+        console.log(response);
       } else {
+        // console.log(response);
         this.uploadAvatar(response);
       }
     });
