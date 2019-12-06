@@ -117,7 +117,7 @@ class CardItem extends Component {
           </View>
         )}
 
-        {this.props.showMoreMenu && (
+        {false && ( //this.props.showMoreMenu
           <Button
             style={styles.moreText}
             containerStyle={styles.moreBtn}
