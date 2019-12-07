@@ -76,6 +76,7 @@ class CardHistory extends Component {
           cardId={item.id}
           networkType={item.type}
           networkName={item.name}
+          code={item.code}
           price={item.price_label}
           isPay={!!item.is_pay}
           isUsed={!!item.is_used}

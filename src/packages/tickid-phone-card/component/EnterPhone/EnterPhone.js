@@ -41,7 +41,7 @@ class EnterPhone extends Component {
     networkType: '',
     keyboardType: 'phone-pad',
     errorMessage: '',
-    placeholder: 'Nhập số điện thoại'
+    placeholder: 'Nhập số'
   };
 
   get currentNetworkType() {

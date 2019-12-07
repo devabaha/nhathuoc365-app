@@ -272,7 +272,9 @@ class Home extends Component {
       case 'up_to_phone':
         Actions.push(appConfig.routes.upToPhone, {
           service_type: service.type,
-          service_id: service.id
+          service_id: service.id,
+          title: service.name,
+          serviceId: service.serviceId ? service.serviceId : 100
         });
         break;
       case 'list_voucher':

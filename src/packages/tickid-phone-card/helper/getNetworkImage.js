@@ -3,6 +3,7 @@ import mobifoneImage from '../assets/images/mobifone.png';
 import vinaphoneImage from '../assets/images/vinaphone.png';
 import vietnamobileImage from '../assets/images/vietnamobile.png';
 import gmobileImage from '../assets/images/gmobile.png';
+import kplusImage from '../assets/images/kplus.jpg';
 
 export default function getNetworkImage(type) {
   switch (type) {
@@ -10,6 +11,7 @@ export default function getNetworkImage(type) {
     case 'phone_prepaid_viettel':
     case 'phone_postpaid_viettel':
     case 'phone_card_prepaid_viettel':
+    case 'internet_paid_viettel':
       return viettelImage;
     case 'phone_card_mobifone':
     case 'phone_prepaid_mobifone':
@@ -31,5 +33,7 @@ export default function getNetworkImage(type) {
     case 'phone_postpaid_gtel':
     case 'phone_card_prepaid_gtel':
       return gmobileImage;
+    case 'kplus_prepaid':
+      return kplusImage;
   }
 }
