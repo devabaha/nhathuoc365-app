@@ -424,22 +424,18 @@ export default class Confirm extends Component {
 
     clearTimeout(this._delayViewOrders);
     this._delayViewOrders = setTimeout(() => {
-      // define custom onback
-      const onBack = action(() => {
-        store.resetCartData();
-        Actions.pop();
-      });
-
-      // onback
       Actions.orders_item({
         title: `#${store.cart_data.cart_code}`,
         data: store.cart_data,
         tel: store.store_data.tel,
-        onBack
+        resetCardData: true
       });
 
       // add stack unmount
-      store.setStoreUnMount('confirm', onBack);
+      store.setStoreUnMount('confirm', () => {
+        store.resetCartData();
+        Actions.pop();
+      });
     }, 500);
   }
 

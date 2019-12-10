@@ -27,8 +27,9 @@ class PhoneCard extends BaseContainer {
   }
 
   getPhoneCardServices = () => {
-    internalFetch(config.rest.phoneCardService())
+    internalFetch(config.rest.phoneCardService() + this.props.serviceId)
       .then(response => {
+        console.log(response.data);
         const { routes, ...normalizeData } = normalize(response.data);
         this.setState({
           routes,
@@ -60,8 +61,8 @@ class PhoneCard extends BaseContainer {
   };
 
   renderScene = ({ route }) => {
-    switch (route.key) {
-      case 'phone_prepaid':
+    switch (route.keyView) {
+      case 'phone_paid':
         return (
           <PrepayContainer
             prefix="trước"
@@ -74,16 +75,6 @@ class PhoneCard extends BaseContainer {
       case 'phone_card':
         return (
           <BuyCardContainer
-            routeKey={route.key}
-            refreshing={this.state.refreshing}
-            onRefresh={this.handleRefresh}
-            {...this.state.cardServiceData}
-          />
-        );
-      case 'phone_postpaid':
-        return (
-          <PrepayContainer
-            prefix="sau"
             routeKey={route.key}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}

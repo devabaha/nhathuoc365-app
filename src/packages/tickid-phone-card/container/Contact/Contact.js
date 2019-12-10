@@ -8,7 +8,8 @@ import {
   RefreshControl,
   Linking,
   View,
-  Text
+  Text,
+  PermissionsAndroid
 } from 'react-native';
 import config from '../../config';
 import update from 'immutability-helper';
@@ -21,6 +22,7 @@ import LoadingComponent from '@tickid/tickid-rn-loading';
 import ContactItemComponent from '../../component/ContactItem';
 import AsyncStorage from '@react-native-community/async-storage';
 import ModalAllowPermisson from '../../component/ModalAllowPermisson';
+import AndroidOpenSettings from 'react-native-android-open-settings';
 
 const INIT_PAGE = 1;
 const CONTACTS_PER_PAGE = 20;
@@ -56,14 +58,48 @@ class Contact extends Component {
   }
 
   componentDidMount() {
-    Contacts.checkPermission(async (err, permission) => {
-      if (err) throw err;
+    if (Platform.OS === 'ios') {
+      Contacts.checkPermission(async (err, permission) => {
+        if (err) throw err;
 
-      this.handleCheckPermisson(permission);
-    });
+        this.handleCheckPermissonIOS(permission);
+      });
+    } else {
+      this.handleCheckPermissonAndroid();
+    }
   }
 
-  handleCheckPermisson = async permission => {
+  handleCheckPermissonAndroid = () => {
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
+      title: 'Danh bạ',
+      message:
+        'Cho phép truy cập danh bạ sẽ giúp bạn chọn nhanh và chính xác thông tin'
+    }).then(async error => {
+      switch (error) {
+        case 'never_ask_again':
+          this.setState({
+            showAllowContactPermission: true,
+            isNotAccessToContact: true,
+            nerverAskAgain: true
+          });
+          break;
+        case 'denied':
+          this.setState({
+            showAllowContactPermission: true,
+            isNotAccessToContact: true
+          });
+          break;
+        default:
+          this.getListContacts();
+          this.setState({
+            showAllowContactPermission: false,
+            isNotAccessToContact: false
+          });
+      }
+    });
+  };
+
+  handleCheckPermissonIOS = async permission => {
     switch (permission) {
       case 'authorized':
         const result = await this.loadStoredContacts();
@@ -73,7 +109,7 @@ class Contact extends Component {
         break;
       case 'undefined':
         Contacts.requestPermission((err, permission) =>
-          this.handleCheckPermisson(permission)
+          this.handleCheckPermissonIOS(permission)
         );
         break;
       case 'denied':
@@ -86,15 +122,19 @@ class Contact extends Component {
   };
 
   handleOpenAllowContactPermission = () => {
-    Linking.canOpenURL('app-settings:')
-      .then(supported => {
-        if (!supported) {
-          console.log("Can't handle settings url");
-        } else {
-          return Linking.openURL('app-settings:');
-        }
-      })
-      .catch(err => console.error('An error occurred', err));
+    if (Platform.OS === 'android') {
+      AndroidOpenSettings.appDetailsSettings();
+    } else {
+      Linking.canOpenURL('app-settings:')
+        .then(supported => {
+          if (!supported) {
+            console.log("Can't handle settings url");
+          } else {
+            return Linking.openURL('app-settings:');
+          }
+        })
+        .catch(err => console.error('An error occurred', err));
+    }
   };
 
   loadStoredContacts = async () => {

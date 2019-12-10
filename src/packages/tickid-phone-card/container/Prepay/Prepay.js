@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from '../../config';
 import {
+  Text,
   View,
   ScrollView,
   StyleSheet,
@@ -228,6 +229,10 @@ class Prepay extends Component {
             onClose={() => this.setState({ visibleNetwork: false })}
           />
 
+          {!!this.currentService.content && (
+            <Text style={styles.content}>{this.currentService.content}</Text>
+          )}
+
           <View style={styles.bottomSpace} />
         </ScrollView>
 
@@ -243,6 +248,13 @@ const styles = StyleSheet.create({
   },
   bottomSpace: {
     marginBottom: 16
+  },
+  content: {
+    fontSize: 12,
+    color: '#333',
+    fontWeight: '400',
+    marginLeft: 16,
+    marginTop: 24
   }
 });
 

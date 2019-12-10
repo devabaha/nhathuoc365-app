@@ -14,7 +14,7 @@ function PasswordInput(props) {
   const renderPasswordDots = () => {
     const dots = [];
     const passwordLength = `${props.value}`.length;
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 4; i++) {
       const isActive = i < passwordLength;
       dots.push(
         <View style={[styles.dot, isActive && styles.active]} key={i} />

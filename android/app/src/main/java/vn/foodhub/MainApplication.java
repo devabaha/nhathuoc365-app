@@ -3,6 +3,8 @@ package vn.foodhub;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
+import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -45,6 +47,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNPermissionsPackage(),
+            new AndroidOpenSettingsPackage(),
             new ReactNativeFingerprintScannerPackage(),
             new ReactNativeContacts(),
             new RNGestureHandlerPackage(),

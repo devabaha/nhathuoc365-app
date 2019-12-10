@@ -63,7 +63,10 @@ class CardItem extends Component {
           />
           <View style={styles.cardInfoBox}>
             <Text style={styles.networkName}>{this.props.networkName}</Text>
-            <Text style={styles.cardValue}>{this.props.price}</Text>
+            <Text style={styles.cardValue}>
+              {this.props.code ? this.props.code + ' - ' : ''}
+              {this.props.price}
+            </Text>
             <Text style={styles.cardBuyTime}>{this.props.buyTime}</Text>
           </View>
         </View>
@@ -117,7 +120,7 @@ class CardItem extends Component {
           </View>
         )}
 
-        {this.props.showMoreMenu && (
+        {false && ( //this.props.showMoreMenu
           <Button
             style={styles.moreText}
             containerStyle={styles.moreBtn}
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
   },
   cardValue: {
     color: config.colors.primary,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: 'bold',
     marginTop: 2
   },

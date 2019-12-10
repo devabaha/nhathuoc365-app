@@ -237,7 +237,10 @@ class VoucherDetail extends BaseContainer {
           message: 'Bạn đã nhận thành công voucher này.',
           type: 'success'
         });
-        this.setState({ canUseNow: true });
+        this.setState({
+          campaign: new CampaignEntity(response.data.campaign),
+          canUseNow: true
+        });
 
         /**
          * @NOTE: 201 means the user has this voucher
@@ -409,7 +412,6 @@ class VoucherDetail extends BaseContainer {
           type: 'success',
           message: response.message
         });
-
         this.setState({
           campaign: new CampaignEntity(response.data.campaign),
           canUseNow: true

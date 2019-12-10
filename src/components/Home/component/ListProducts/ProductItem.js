@@ -35,7 +35,9 @@ class ProductItem extends Component {
         <View style={styles.container}>
           <Image style={styles.image} source={{ uri: this.props.image }} />
           <View style={styles.infoWrapper}>
-            <Text style={styles.name}>{this.props.name}</Text>
+            <Text style={styles.name} numberOfLines={2}>
+              {this.props.name}
+            </Text>
 
             <View style={styles.priceWrapper}>
               {this.props.discount_percent > 0 && (
@@ -73,9 +75,8 @@ const styles = StyleSheet.create({
   },
   priceWrapper: {
     width: '100%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'flex-start',
+    marginTop: 4
   },
   discount: {
     color: '#404040',

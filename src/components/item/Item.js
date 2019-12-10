@@ -479,11 +479,7 @@ export default class Item extends Component {
                     ) : item.book_flag == 1 ? (
                       <Icon name="cart-arrow-down" size={24} color="#ffffff" />
                     ) : (
-                      <Icon
-                        name="cart-plus"
-                        size={24}
-                        color={DEFAULT_COLOR_RED}
-                      />
+                      <Icon name="cart-plus" size={24} color="#ffffff" />
                     )}
                   </View>
                   {item.book_flag == 1 ? (
@@ -894,7 +890,7 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
   item_actions_title_add_cart: {
-    color: DEFAULT_COLOR_RED
+    color: '#fff'
   },
   item_actions_title_book_cart: {
     color: '#ffffff'

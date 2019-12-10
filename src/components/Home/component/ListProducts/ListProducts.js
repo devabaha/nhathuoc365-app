@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     marginTop: 8,
-    paddingBottom: 16
+    paddingBottom: 18
   },
   headingWrapper: {
     marginTop: 16,
