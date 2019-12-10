@@ -27,8 +27,9 @@ class PhoneCard extends BaseContainer {
   }
 
   getPhoneCardServices = () => {
-    internalFetch(config.rest.phoneCardService())
+    internalFetch(config.rest.phoneCardService() + this.props.serviceId)
       .then(response => {
+        console.log(response.data);
         const { routes, ...normalizeData } = normalize(response.data);
         this.setState({
           routes,

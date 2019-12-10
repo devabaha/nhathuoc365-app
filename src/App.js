@@ -854,7 +854,7 @@ class App extends Component {
                 <Stack key={appConfig.routes.upToPhone}>
                   <Scene
                     key={`${appConfig.routes.upToPhone}_1`}
-                    title="Nạp tiền điện thoại"
+                    // title="Nạp tiền điện thoại"
                     component={PhoneCardContainer}
                     {...navBarConfig}
                     back

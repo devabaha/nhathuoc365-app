@@ -41,7 +41,7 @@ class EnterPhone extends Component {
     networkType: '',
     keyboardType: 'phone-pad',
     errorMessage: '',
-    placeholder: 'Nhập số điện thoại'
+    placeholder: 'Nhập số'
   };
 
   get currentNetworkType() {
@@ -169,6 +169,8 @@ const styles = StyleSheet.create({
     marginTop: 8
   },
   input: {
+    paddingTop: 0,
+    paddingBottom: 0,
     fontSize: 24,
     fontWeight: '400',
     color: '#333',

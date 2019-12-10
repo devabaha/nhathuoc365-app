@@ -21,7 +21,7 @@ import Loading from '@tickid/tickid-rn-loading';
 import config from '../../config';
 
 const PASSWORD_STORAGE_KEY = 'PASSWORD_STORAGE_KEY';
-const PASSWORD_LENGTH = 6;
+const PASSWORD_LENGTH = 4;
 
 class BuyCardConfirm extends Component {
   static propTypes = {
