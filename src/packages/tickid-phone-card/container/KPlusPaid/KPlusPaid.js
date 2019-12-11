@@ -15,7 +15,7 @@ import SelectCardValueComponent from '../../component/SelectCardValue';
 import SubmitButton from '../../component/SubmitButton';
 import replaceAll from '../../helper/replaceAll';
 
-class Prepay extends Component {
+class KPlusPaid extends Component {
   static propTypes = {
     refreshing: PropTypes.bool,
     routeKey: PropTypes.string.isRequired,
@@ -26,6 +26,7 @@ class Prepay extends Component {
     prefix: PropTypes.oneOf(['trước', 'sau']),
     onRefresh: PropTypes.func,
     hideContact: PropTypes.bool,
+    placeholder: PropTypes.string,
     errorEmptyMessage: PropTypes.string,
     errorLengthMessage: PropTypes.string,
     validLength: PropTypes.number
@@ -33,17 +34,17 @@ class Prepay extends Component {
 
   static defaultProps = {
     refreshing: false,
-    hideContact: false,
     services: {},
     listServices: [],
     networksOfService: {},
     cardsOfNetwork: {},
     prefix: 'trước',
     onRefresh: () => {},
+    placeholder: '',
     hideContact: false,
-    errorEmptyMessage: 'Vui lòng nhập số điện thoại',
-    errorLengthMessage: 'Số điện thoại không hợp lệ',
-    validLength: 10
+    validLength: 0,
+    errorLengthMessage: '',
+    errorEmptyMessage: ''
   };
 
   constructor(props) {
@@ -53,8 +54,13 @@ class Prepay extends Component {
       errorMessage: '',
       cardValueType: '',
       contactName: config.defaultContactName,
-      contactPhone: config.defaultContactPhone,
-      networkType: this.currentNetworks[0].type
+      cardNumber: config.defaultcardNumber,
+      networkType: this.currentNetworks[0].type,
+      options: [],
+      subCardValue: '',
+      currentCards: [],
+      kPlusData: [],
+      totalPrice: ''
     };
   }
 
@@ -79,19 +85,59 @@ class Prepay extends Component {
 
   get selectedCard() {
     if (!this.state.cardValueType) return {};
-    return this.currentCards.find(
+    return this.state.currentCards.find(
       card => card.type === this.state.cardValueType
     );
   }
 
-  get contactPhone() {
-    const contactPhone = replaceAll(`${this.state.contactPhone}`, ' ', '');
-    return contactPhone || '';
+  get cardNumber() {
+    const cardNumber = replaceAll(`${this.state.cardNumber}`, ' ', '');
+    return cardNumber || '';
+  }
+
+  get networksOfService() {
+    let networksOfService = [];
+    Object.keys(this.props.networksOfService).forEach(serviceKey => {
+      this.props.networksOfService[serviceKey].forEach(s => {
+        if (s.type_view === 'kplus_paid') {
+          networksOfService = this.props.networksOfService[serviceKey];
+        }
+      });
+    });
+
+    return networksOfService;
+  }
+
+  get kPlusData() {
+    const networksOfService = this.networksOfService;
+    if (networksOfService.length !== 0) {
+      return networksOfService[0].kPlus;
+    } else {
+      return [];
+    }
+  }
+
+  get options() {
+    const networksOfService = this.networksOfService;
+    if (networksOfService.length !== 0) {
+      return networksOfService[0].optionsData;
+    } else {
+      return [];
+    }
   }
 
   componentDidMount() {
+    const kPlusData = this.kPlusData;
+    const currentCards = kPlusData[0].data.discounts;
+    const options = this.options;
+    // console.log(options, currentCards, kPlusData)
     this.setState({
-      cardValueType: this.currentCards[0].type
+      cardValueType: currentCards[0].type,
+      currentCards: currentCards,
+      kPlusData,
+      options,
+      subCardValue: options[0].type,
+      totalPrice: currentCards[0].total_price
     });
   }
 
@@ -105,7 +151,7 @@ class Prepay extends Component {
     config.route.pop();
     this.setState({
       contactName: contact.name,
-      contactPhone: contact.displayPhone
+      cardNumber: contact.displayPhone
     });
   };
 
@@ -137,17 +183,37 @@ class Prepay extends Component {
 
   handleSelectCardValue = cardValue => {
     this.setState({
-      cardValueType: cardValue.type
+      cardValueType: cardValue.type,
+      totalPrice: cardValue.total_price
     });
   };
 
+  handleSelectSubCardValue = subCardValue => {
+    if (subCardValue.type !== this.state.subCardValue) {
+      const currentCards = this.state.kPlusData[subCardValue.label].data
+        .discounts;
+
+      this.setState(
+        {
+          subCardValue: subCardValue.type,
+          currentCards
+        },
+        () => {
+          this.setState({
+            totalPrice: this.selectedCard.total_price
+          });
+        }
+      );
+    }
+  };
+
   handleValidate = () => {
-    if (!this.contactPhone) {
+    if (!this.state.cardNumber) {
       this.setState({
         errorMessage: this.props.errorEmptyMessage
       });
       return false;
-    } else if (this.contactPhone.length < this.props.validLength) {
+    } else if (this.state.cardNumber.length < this.props.validLength) {
       this.setState({
         errorMessage: this.props.errorLengthMessage
       });
@@ -163,16 +229,25 @@ class Prepay extends Component {
   handleContinue = () => {
     const isValid = this.handleValidate();
     if (isValid) {
+      const selectedCard = this.selectedCard;
+      const option = Object.keys(
+        this.state.options.find(
+          option => option.type === this.state.subCardValue
+        )
+      )[0];
+
       config.route.push(config.routes.buyCardConfirm, {
         type: this.currentService.name,
-        card: this.selectedCard,
+        card: selectedCard,
         wallet: this.props.wallet,
         hasPass: this.props.hasPass,
         network: this.selectedNetwork,
         serviceId: this.currentService.id,
         historyTitle: this.currentService.history_title,
-        contactName: this.state.contactName,
-        contactPhone: this.contactPhone
+        subCard: this.state.subCardValue,
+        cardNumber: this.cardNumber,
+        times: selectedCard.times,
+        option
       });
     }
   };
@@ -186,7 +261,7 @@ class Prepay extends Component {
 
   handleChangePhoneNumber = text => {
     this.setState({
-      contactPhone: text,
+      cardNumber: text,
       contactName: '',
       errorMessage: ''
     });
@@ -198,7 +273,7 @@ class Prepay extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={styles.sceneContainer}>
         <ScrollView
           refreshControl={
             <RefreshControl
@@ -212,25 +287,39 @@ class Prepay extends Component {
         >
           <EnterPhoneComponent
             editable
-            data={this.currentNetworks}
+            hideContact={this.props.hideContact}
             placeholder={this.props.placeholder}
+            data={this.currentNetworks}
             errorMessage={this.state.errorMessage}
             contactName={this.state.contactName}
-            contactPhone={this.state.contactPhone}
+            contactPhone={this.state.cardNumber}
             onBlur={this.handleInputPhoneBlur}
             onChangeText={this.handleChangePhoneNumber}
-            onOpenContact={this.handleOpenContact}
             onShowHistory={this.handleShowHistory}
             networkType={this.state.networkType}
-            onPressSelectNetwork={this.handlePressSelectNetwork}
-            hideContact={this.props.hideContact}
           />
 
           <SelectCardValueComponent
-            data={this.currentCards}
+            title="Số tháng"
+            data={this.state.currentCards}
             cardValueType={this.state.cardValueType}
             onSelectCardValue={this.handleSelectCardValue}
           />
+
+          <SelectCardValueComponent
+            title="Số thẻ phụ"
+            data={this.state.options}
+            cardValueBtnStyle={{ height: 40 }}
+            cardValueType={this.state.subCardValue}
+            onSelectCardValue={this.handleSelectSubCardValue}
+          />
+
+          <View
+            style={[styles.container, { flexDirection: 'row', marginTop: 10 }]}
+          >
+            <Text style={[styles.label, { marginRight: 15 }]}>Tổng:</Text>
+            <Text style={styles.label}>{this.state.totalPrice}</Text>
+          </View>
 
           <ChangeNetworkModal
             data={this.currentNetworks}
@@ -255,6 +344,16 @@ class Prepay extends Component {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 16,
+    paddingTop: 10,
+    paddingHorizontal: 16
+  },
+  label: {
+    fontWeight: 'bold',
+    color: config.colors.black,
+    fontSize: 18
+  },
+  sceneContainer: {
     flex: 1
   },
   bottomSpace: {
@@ -269,4 +368,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Prepay;
+export default KPlusPaid;
