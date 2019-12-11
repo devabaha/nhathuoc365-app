@@ -3,6 +3,7 @@ import { Text, StyleSheet, SafeAreaView } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import PrepayContainer from '../Prepay';
 import BuyCardContainer from '../BuyCard';
+import KPlusPaidContainer from '../KPlusPaid';
 import BaseContainer from '../BaseContainer';
 import config from '../../config';
 import { internalFetch } from '../../helper/apiFetch';
@@ -10,11 +11,15 @@ import { normalize } from '../../helper/normalizer';
 import Loading from '@tickid/tickid-rn-loading';
 
 class PhoneCard extends BaseContainer {
+  static defaultProps = {
+    indexTab: 0
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
-      index: 0,
+      index: this.props.indexTab,
       routes: [],
       cardServiceData: {},
       isReady: false,
@@ -29,7 +34,6 @@ class PhoneCard extends BaseContainer {
   getPhoneCardServices = () => {
     internalFetch(config.rest.phoneCardService() + this.props.serviceId)
       .then(response => {
-        console.log(response.data);
         const { routes, ...normalizeData } = normalize(response.data);
         this.setState({
           routes,
@@ -61,8 +65,17 @@ class PhoneCard extends BaseContainer {
   };
 
   renderScene = ({ route }) => {
+    const extraProps = {};
+    extraProps.hideContact = true;
+    extraProps.placeholder = 'Nhập mã số thẻ';
+    extraProps.errorEmptyMessage = 'Vui lòng nhập mã số thẻ';
+
     switch (route.keyView) {
       case 'phone_paid':
+        if (route.key === 'internet_paid') {
+          extraProps.errorLengthMessage = 'Mã số thẻ cần ít nhất 9 số';
+          extraProps.validLength = 9;
+        }
         return (
           <PrepayContainer
             prefix="trước"
@@ -70,6 +83,7 @@ class PhoneCard extends BaseContainer {
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
             {...this.state.cardServiceData}
+            {...extraProps}
           />
         );
       case 'phone_card':
@@ -79,6 +93,18 @@ class PhoneCard extends BaseContainer {
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
             {...this.state.cardServiceData}
+          />
+        );
+      case 'kplus_paid':
+        extraProps.errorLengthMessage = 'Mã số thẻ cần ít nhất 12 số';
+        extraProps.validLength = 12;
+        return (
+          <KPlusPaidContainer
+            routeKey={route.key}
+            refreshing={this.state.refreshing}
+            onRefresh={this.handleRefresh}
+            {...this.state.cardServiceData}
+            {...extraProps}
           />
         );
       default:
@@ -92,14 +118,16 @@ class PhoneCard extends BaseContainer {
         {this.state.isReady ? (
           <TabView
             navigationState={this.state}
-            renderTabBar={props => (
-              <TabBar
-                {...props}
-                renderLabel={this.renderTabBarLabel}
-                indicatorStyle={styles.indicatorStyle}
-                style={styles.tabBarStyle}
-              />
-            )}
+            renderTabBar={props => {
+              return (
+                <TabBar
+                  {...props}
+                  renderLabel={this.renderTabBarLabel}
+                  indicatorStyle={styles.indicatorStyle}
+                  style={styles.tabBarStyle}
+                />
+              );
+            }}
             renderScene={this.renderScene}
             onIndexChange={index => this.setState({ index })}
             initialLayout={{ width: config.device.width }}

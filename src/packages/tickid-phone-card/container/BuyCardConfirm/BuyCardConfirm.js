@@ -345,6 +345,10 @@ class BuyCardConfirm extends Component {
         pw4n: authenPasswordStored
       }
     };
+    if (this.props.times) {
+      options.body.times = this.props.times;
+      options.body.option = this.props.option;
+    }
 
     internalFetch(config.rest.book(), options)
       .then(response => {
@@ -433,21 +437,38 @@ class BuyCardConfirm extends Component {
                         value={this.props.contactName}
                       />
                     )}
+
                     {!!this.props.contactPhone && (
                       <FieldItem
                         label="Số điện thoại"
                         value={this.props.contactPhone}
                       />
                     )}
+
                     <FieldItem
                       label="Nhà mạng"
                       value={this.props.network.name}
                     />
+                    {!!this.props.cardNumber && (
+                      <FieldItem label="Số thẻ" value={this.props.cardNumber} />
+                    )}
+                    {!!this.props.subCard && (
+                      <FieldItem label="Số phụ" value={this.props.subCard} />
+                    )}
+                    {!!this.props.totalMonth && (
+                      <FieldItem
+                        label="Số tháng"
+                        value={this.props.totalMonth}
+                      />
+                    )}
                     <FieldItem label="Mệnh giá" value={this.props.card.label} />
                     {this.props.quantity > 0 && (
                       <FieldItem label="Số lượng" value={this.props.quantity} />
                     )}
-                    <FieldItem label="" value={this.props.card.cashbackValue} />
+                    <FieldItem
+                      label="Giảm"
+                      value={this.props.card.cashbackValue}
+                    />
                   </FieldItemWrapper>
 
                   <FieldItemWrapper separate>
