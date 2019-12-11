@@ -64,25 +64,10 @@ class Stores extends Component {
 
     setTimeout(() => {
       Actions.refresh({
-        right: this.renderRightButton()
+        right: this._renderRightButton()
       });
     });
   }
-
-  renderRightButton = () => {
-    return (
-      <Button
-        containerStyle={{
-          paddingHorizontal: 12
-        }}
-        onPress={() => {
-          Actions.push(appConfig.routes.searchStore);
-        }}
-      >
-        <Icon size={30} color={appConfig.colors.white} name="ios-search" />
-      </Button>
-    );
-  };
 
   componentWillReceiveProps(nextProps) {
     if (this.props.title != nextProps.title) {
@@ -188,7 +173,7 @@ class Stores extends Component {
   _renderRightButton() {
     return (
       <View style={styles.right_btn_box}>
-        <RightButtonOrders tel={store.store_data.tel} />
+        {/* <RightButtonOrders tel={store.store_data.tel} /> */}
         <RightButtonChat tel={store.store_data.tel} />
       </View>
     );
