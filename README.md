@@ -37,8 +37,8 @@ code-push app add tick-tickid-android android react-native
 │ Staging    │  │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Sua loi crash app khi login"
-code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 08 11 2019"
+code-push release-react tick-tickid-ios ios -d "Production" -m --description "Update 12/12: Them Kplus"
+code-push release-react tick-tickid-android android -d "Production" -m --description "Update 12/12: Them Kplus"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
