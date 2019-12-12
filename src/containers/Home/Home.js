@@ -273,6 +273,7 @@ class Home extends Component {
         Actions.push(appConfig.routes.upToPhone, {
           service_type: service.type,
           service_id: service.id,
+          indexTab: service.tab,
           title: service.name,
           serviceId: service.serviceId ? service.serviceId : 100
         });

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Image, FlatList, StyleSheet } from 'react-native';
+import { View, Text, ViewPropTypes, FlatList, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import config from '../../config';
@@ -9,13 +9,17 @@ class SelectCardValue extends Component {
   static propTypes = {
     data: PropTypes.array,
     onSelectCardValue: PropTypes.func,
-    cardValueType: PropTypes.string
+    cardValueType: PropTypes.string,
+    title: PropTypes.string,
+    cardValueBtnStyle: ViewPropTypes.style
   };
 
   static defaultProps = {
     data: [],
     onSelectCardValue: () => {},
-    cardValueType: ''
+    cardValueType: '',
+    title: 'Mệnh giá nạp',
+    cardValueBtnStyle: {}
   };
 
   renderCardValues() {
@@ -37,6 +41,7 @@ class SelectCardValue extends Component {
         onPress={() => this.props.onSelectCardValue(cardValue)}
         containerStyle={[
           styles.cardValueBtn,
+          this.props.cardValueBtnStyle,
           isActive && styles.cardValueBtnActive
         ]}
       >
@@ -45,15 +50,20 @@ class SelectCardValue extends Component {
             <Text style={[styles.value, isActive && styles.valueActive]}>
               {cardValue.label}
             </Text>
+            {!!cardValue.subLabel && (
+              <Text style={[styles.subValue]}>{cardValue.subLabel}</Text>
+            )}
           </View>
-          <View style={styles.descriptionWrapper}>
-            <Text style={styles.description}>
-              {cardValue.cashbackLabel}
-              {cardValue.cashbackValue && (
-                <Text style={styles.cashback}>{cardValue.cashbackValue}</Text>
-              )}
-            </Text>
-          </View>
+          {cardValue.cashbackValue && (
+            <View style={styles.descriptionWrapper}>
+              <Text style={styles.description}>
+                {cardValue.cashbackLabel}
+                {cardValue.cashbackValue && (
+                  <Text style={styles.cashback}>{cardValue.cashbackValue}</Text>
+                )}
+              </Text>
+            </View>
+          )}
         </View>
       </Button>
     );
@@ -62,7 +72,7 @@ class SelectCardValue extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.label}>Mệnh giá nạp</Text>
+        <Text style={styles.label}>{this.props.title}</Text>
 
         {this.renderCardValues()}
       </View>
@@ -106,6 +116,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 16
+  },
+  subValue: {
+    textAlign: 'center',
+    fontSize: 12,
+    marginTop: 5
   },
   valueActive: {
     color: config.colors.primary
