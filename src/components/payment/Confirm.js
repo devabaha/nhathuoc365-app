@@ -65,6 +65,12 @@ export default class Confirm extends Component {
 
   componentDidMount() {
     this._initial(this.props);
+
+    setTimeout(() =>
+      Actions.refresh({
+        right: this._renderRightButton()
+      })
+    );
   }
 
   _initial(props) {
@@ -153,7 +159,7 @@ export default class Confirm extends Component {
 
     return (
       <View style={styles.right_btn_box}>
-        <RightButtonCall tel={this.props.tel || this.cart_tel} />
+        {/* <RightButtonCall tel={this.props.tel || this.cart_tel} /> */}
 
         <RightButtonChat
           store_id={cart_data.site_id || undefined}
