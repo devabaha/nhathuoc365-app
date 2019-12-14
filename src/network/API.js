@@ -110,3 +110,6 @@ exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';
 
 // Voucher
 exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + '/apiVoucher/my_voucher';
+
+//Login Firebase
+exports.LOGIN_FIREBASE_VERTIFY = MY_FOOD_API + '/apiUser/login_firebase_verify';

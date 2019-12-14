@@ -1,0 +1,25 @@
+# platform :ios, '9.0'
+
+target 'my_food_new' do
+  # Comment the next line if you don't want to use dynamic frameworks
+ 
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Auth',:modular_headers => true
+  pod 'GoogleSignIn'
+
+  # Pods for my_food_new
+
+  target 'my_food_newTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
+end
