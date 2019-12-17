@@ -15,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "709287585426-tjo86lh2bhoidn8uppfs4vfo8geqq5bd.apps.googleusercontent.com",
+          "client_id": "709287585426-n6ebm24sc62u992a2dk7a08aufr0gkna.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "id.tick",
-            "certificate_hash": "36d5a96332fee97d86f786f7f68074e275c554b5"
+            "certificate_hash": "a3af61f4edd293140ebe33ba09049891e6e34bfc"
           }
         },
         {
