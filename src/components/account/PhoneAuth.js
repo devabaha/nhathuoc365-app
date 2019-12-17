@@ -80,8 +80,7 @@ class PhoneAuth extends Component {
         .catch(error => {
           console.log('errr', error);
           this.setState({
-            // message: `Sign In With Phone Number Error: ${error.message}`,
-            message: `Số điện thoại nhập không đúng định dạng [+][country code][number phone]`,
+            message: 'Lỗi xác thực, vui lòng thử lại.',
             isShowIndicator: false
           });
         });
