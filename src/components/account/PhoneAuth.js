@@ -8,26 +8,40 @@ import {
   Text,
   TextInput,
   Keyboard,
-  TouchableOpacity
+  TouchableOpacity,
+  Image,
+  TouchableWithoutFeedback,
+  Platform,
+  Modal,
+  FlatList,
+  SafeAreaView,
+  Dimensions
 } from 'react-native';
 import PhoneInput from 'react-native-phone-input';
 import { Actions } from 'react-native-router-flux';
 import { showMessage } from 'react-native-flash-message';
 import firebase from 'react-native-firebase';
 import config from '../../config';
+import countries from 'world-countries';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 class PhoneAuth extends Component {
   constructor(props) {
     super(props);
     this.unsubscribe = null;
+    console.log(countries);
+
     this.state = {
       user: null,
       message: '',
       codeInput: '',
-      phoneNumber: '+84988888889',
+      phoneNumber: '988888889',
       confirmResult: null,
-      isShowIndicator: false
+      isShowIndicator: false,
+      modalVisible: false,
+      currentCountry: countries.filter(country => country.cca2 == 'VN')
     };
+    console.log(countries.filter(country => country.cca2 == 'VN'));
   }
 
   componentDidMount() {
@@ -63,13 +77,26 @@ class PhoneAuth extends Component {
   }
 
   signIn = () => {
-    const { phoneNumber } = this.state;
     Keyboard.dismiss();
+    const { phoneNumber, currentCountry } = this.state;
+    var countryCode = '';
+    if (currentCountry[0].idd.root) {
+      countryCode += currentCountry[0].idd.root.replace('+', '');
+      if (currentCountry[0].idd.suffixes[0]) {
+        countryCode += currentCountry[0].idd.suffixes[0];
+      }
+    }
+    var phoneAuth = phoneNumber;
+    if (phoneAuth.substring(0, 2) === '84') {
+      phoneAuth = phoneAuth.substr(2);
+    } else if (phoneAuth.substring(0, 1) === '0') {
+      phoneAuth = phoneAuth.substr(1);
+    }
     setTimeout(() => {
       this.setState({ isShowIndicator: true });
       firebase
         .auth()
-        .signInWithPhoneNumber(phoneNumber)
+        .signInWithPhoneNumber(countryCode + phoneAuth)
         .then(confirmResult =>
           this.setState({
             confirmResult,
@@ -132,13 +159,104 @@ class PhoneAuth extends Component {
     }
   };
 
-  _onChangePhoneNumber(phoneNumber) {
-    if (phoneNumber.substring(0, 3) !== '+84') return;
-    this.setState({ phoneNumber });
+  _onPressPickCountry() {
+    this.setState({ modalVisible: !this.state.modalVisible });
+  }
+
+  _onPressChooseCountry(item) {
+    this.setState({
+      modalVisible: !this.state.modalVisible,
+      currentCountry: [item]
+    });
+  }
+
+  _onPressCloseCountryPicker() {
+    this.setState({ modalVisible: !this.state.modalVisible });
+  }
+
+  _renderItem = ({ item }) => {
+    return (
+      <TouchableWithoutFeedback
+        onPress={this._onPressChooseCountry.bind(this, item)}
+      >
+        <View
+          style={{
+            flexDirection: 'row',
+            borderBottomWidth: 0.5,
+            borderBottomColor: 'lightgray',
+            alignItems: 'center'
+          }}
+        >
+          <Text style={{ fontSize: 25, marginHorizontal: 10 }}>
+            {item.flag || ''}
+          </Text>
+          <Text
+            style={{
+              fontSize: 16,
+              marginLeft: 10,
+              marginRight: 10,
+              marginVertical: 10
+            }}
+          >
+            {item.name.common || ''}
+          </Text>
+        </View>
+      </TouchableWithoutFeedback>
+    );
+  };
+
+  renderCountryPicker() {
+    headerHeight = Platform.select({
+      ios: {
+        height: 44
+      },
+      android: {
+        height: 54
+      },
+      windows: {
+        height: 54
+      }
+    });
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.modalVisible}
+      >
+        <SafeAreaView
+          style={{ backgroundColor: DEFAULT_COLOR, paddingBottom: 30 }}
+        >
+          <View
+            style={{
+              width: '100%',
+              height: headerHeight.height,
+              backgroundColor: 'transparent'
+            }}
+          >
+            <View style={{ flex: 1 }} />
+            <View style={{ marginLeft: 10, marginBottom: 10 }}>
+              <TouchableWithoutFeedback
+                onPress={this._onPressCloseCountryPicker.bind(this)}
+              >
+                <Icon name="close" size={30} color="#ffffff" />
+              </TouchableWithoutFeedback>
+            </View>
+          </View>
+          <View
+            style={{
+              backgroundColor: 'white',
+              height: deviceHeight - headerHeight.height - 70
+            }}
+          >
+            <FlatList data={countries} renderItem={this._renderItem} />
+          </View>
+        </SafeAreaView>
+      </Modal>
+    );
   }
 
   renderPhoneNumberInput() {
-    const { phoneNumber, isShowIndicator } = this.state;
+    const { phoneNumber, isShowIndicator, currentCountry } = this.state;
     const textProps = {
       placeholder: '87654321',
       keyboardType: 'phone-pad',
@@ -148,19 +266,54 @@ class PhoneAuth extends Component {
       <View style={{ paddingHorizontal: 16 }}>
         <Text style={styles.welcomeText}>Xin chào!</Text>
         <Text style={styles.desText}>Nhập số điện thoại của để tiếp tục</Text>
-        <PhoneInput
-          initialCountry="vn"
-          textStyle={styles.phoneTextInput}
-          flagStyle={styles.flagStyle}
-          textProps={textProps}
-          cancelText="Huỷ bỏ"
-          confirmText="Xác nhận"
-          autoFormat
-          allowZeroAfterCountryCode={false}
-          onChangePhoneNumber={phone => this._onChangePhoneNumber(phone)}
-          // onPressFlag={this._onPressFlag}
-          // value={this.state.phoneNumber}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <TouchableWithoutFeedback
+            onPress={this._onPressPickCountry.bind(this)}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                borderRadius: 5,
+                paddingTop: 5,
+                backgroundColor: 'white',
+                alighItems: 'center'
+              }}
+            >
+              <Text style={{ fontSize: 25, marginHorizontal: 5 }}>
+                {currentCountry ? currentCountry[0].flag : ''}
+              </Text>
+              <Text
+                style={{ marginRight: 10, fontSize: 15, marginVertical: 5 }}
+              >
+                {currentCountry
+                  ? (currentCountry[0].idd.root
+                      ? currentCountry[0].idd.root
+                      : '') +
+                    (currentCountry[0].idd.suffixes[0]
+                      ? currentCountry[0].idd.suffixes[0]
+                      : '')
+                  : ''}
+              </Text>
+            </View>
+          </TouchableWithoutFeedback>
+          <TextInput
+            style={{
+              flex: 1,
+              borderRadius: 5,
+              backgroundColor: 'white',
+              fontSize: 25,
+              padding: 5,
+              marginLeft: 10,
+              fontWeight: 'bold'
+            }}
+            value={this.state.phoneNumber}
+            keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+            placeholder="8765 4321"
+            onChangeText={text => {
+              if (text.length <= 13) this.setState({ phoneNumber: text });
+            }}
+          />
+        </View>
         <TouchableOpacity
           activeOpacity={0.5}
           onPress={this.signIn}
@@ -216,10 +369,11 @@ class PhoneAuth extends Component {
   }
 
   render() {
-    const { user, confirmResult, message } = this.state;
+    const { user, confirmResult, message, modalVisible } = this.state;
     console.log('user', user);
     return (
       <View style={styles.container}>
+        {modalVisible && this.renderCountryPicker()}
         {!user && !confirmResult && this.renderPhoneNumberInput()}
         {!user && confirmResult && this.renderVerificationCodeInput()}
         {message != '' && <Text style={styles.txtNote}>{message}</Text>}
@@ -227,6 +381,8 @@ class PhoneAuth extends Component {
     );
   }
 }
+
+const deviceHeight = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
   container: {
@@ -237,14 +393,14 @@ const styles = StyleSheet.create({
   welcomeText: {
     color: 'white',
     fontSize: 26,
-    fontWeight: '600'
+    fontWeight: '800'
   },
   desText: {
     color: 'white',
     fontSize: 18,
     marginTop: 8,
-    marginBottom: 10,
-    fontWeight: '200'
+    marginBottom: 22,
+    fontWeight: '300'
   },
   phoneTextInput: {
     backgroundColor: 'white',

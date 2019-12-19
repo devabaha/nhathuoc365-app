@@ -79,7 +79,8 @@
     "redux-actions": "^2.6.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "rn-fetch-blob": "^0.10.15"
+    "rn-fetch-blob": "^0.10.15",
+    "world-countries": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
