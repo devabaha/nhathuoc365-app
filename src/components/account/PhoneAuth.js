@@ -17,19 +17,17 @@ import {
   SafeAreaView,
   Dimensions
 } from 'react-native';
-import PhoneInput from 'react-native-phone-input';
 import { Actions } from 'react-native-router-flux';
-import { showMessage } from 'react-native-flash-message';
 import firebase from 'react-native-firebase';
 import config from '../../config';
 import countries from 'world-countries';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+const timer = require('react-timer-mixin');
 
 class PhoneAuth extends Component {
   constructor(props) {
     super(props);
     this.unsubscribe = null;
-    console.log(countries);
 
     this.state = {
       user: null,
@@ -39,9 +37,9 @@ class PhoneAuth extends Component {
       confirmResult: null,
       isShowIndicator: false,
       modalVisible: false,
-      currentCountry: countries.filter(country => country.cca2 == 'VN')
+      currentCountry: countries.filter(country => country.cca2 == 'VN'),
+      requestNewOtpCounter: requestSeconds
     };
-    console.log(countries.filter(country => country.cca2 == 'VN'));
   }
 
   componentDidMount() {
@@ -70,6 +68,7 @@ class PhoneAuth extends Component {
     //         });
     //     }
     // });
+    this.startCountDown();
   }
 
   componentWillUnmount() {
@@ -101,7 +100,8 @@ class PhoneAuth extends Component {
           this.setState({
             confirmResult,
             message: '',
-            isShowIndicator: false
+            isShowIndicator: false,
+            requestNewOtpCounter: requestSeconds
           })
         )
         .catch(error => {
@@ -117,7 +117,6 @@ class PhoneAuth extends Component {
   confirmCode = () => {
     const { codeInput, confirmResult } = this.state;
     Keyboard.dismiss();
-
     if (confirmResult && codeInput.length) {
       this.setState({ isShowIndicator: true });
       confirmResult
@@ -206,17 +205,6 @@ class PhoneAuth extends Component {
   };
 
   renderCountryPicker() {
-    headerHeight = Platform.select({
-      ios: {
-        height: 44
-      },
-      android: {
-        height: 54
-      },
-      windows: {
-        height: 54
-      }
-    });
     return (
       <Modal
         animationType="slide"
@@ -245,7 +233,7 @@ class PhoneAuth extends Component {
           <View
             style={{
               backgroundColor: 'white',
-              height: deviceHeight - headerHeight.height - 70
+              height: deviceHeight - headerHeight.height - (isIPhoneX ? 70 : 20)
             }}
           >
             <FlatList data={countries} renderItem={this._renderItem} />
@@ -256,16 +244,21 @@ class PhoneAuth extends Component {
   }
 
   renderPhoneNumberInput() {
-    const { phoneNumber, isShowIndicator, currentCountry } = this.state;
+    const {
+      phoneNumber,
+      isShowIndicator,
+      currentCountry,
+      message
+    } = this.state;
     const textProps = {
       placeholder: '87654321',
       keyboardType: 'phone-pad',
       maxLength: 15
     };
     return (
-      <View style={{ paddingHorizontal: 16 }}>
+      <View style={{ paddingHorizontal: 16, top: 200 }}>
         <Text style={styles.welcomeText}>Xin chào!</Text>
-        <Text style={styles.desText}>Nhập số điện thoại của để tiếp tục</Text>
+        <Text style={styles.desText}>Nhập số điện thoại để tiếp tục</Text>
         <View style={{ flexDirection: 'row' }}>
           <TouchableWithoutFeedback
             onPress={this._onPressPickCountry.bind(this)}
@@ -328,67 +321,187 @@ class PhoneAuth extends Component {
             Tiếp tục
           </Text>
         </TouchableOpacity>
-        {isShowIndicator && <Indicator color="#fff" />}
+        {message != '' && <Text style={styles.txtNote}>{message}</Text>}
+        {isShowIndicator && <Indicator color="#fff" style={{ marginTop: 0 }} />}
       </View>
     );
   }
 
-  renderVerificationCodeInput() {
-    const { codeInput, isShowIndicator } = this.state;
+  _onPressRequestNewOtp() {
+    this.setState({ requestNewOtpCounter: requestSeconds });
+  }
 
+  _onPressBackToPhoneInput() {
+    this.setState({ confirmResult: null });
+  }
+
+  startCountDown() {
+    timer.setInterval(() => {
+      const { requestNewOtpCounter, confirmResult } = this.state;
+      if (requestNewOtpCounter > 0 && confirmResult) {
+        this.setState({ requestNewOtpCounter: requestNewOtpCounter - 1 });
+      }
+    }, 1000);
+  }
+
+  convertSecondToMinute(time) {
+    let minute = (time / 60) % 60;
+    let second = time % 60;
+    return `${
+      parseInt(minute) < 10 ? '0' + parseInt(minute) : parseInt(minute)
+    } : ${parseInt(second) < 10 ? '0' + parseInt(second) : parseInt(second)}`;
+  }
+
+  renderVerificationCodeInput() {
+    const {
+      codeInput,
+      isShowIndicator,
+      phoneNumber,
+      currentCountry,
+      requestNewOtpCounter,
+      message
+    } = this.state;
+    var countryCode = '';
+    if (currentCountry[0].idd.root) {
+      countryCode += currentCountry[0].idd.root;
+      if (currentCountry[0].idd.suffixes[0]) {
+        countryCode += currentCountry[0].idd.suffixes[0];
+      }
+    }
+    var phoneAuth = phoneNumber;
+    if (phoneAuth.substring(0, 2) === '84') {
+      phoneAuth = phoneAuth.substr(2);
+    } else if (phoneAuth.substring(0, 1) === '0') {
+      phoneAuth = phoneAuth.substr(1);
+    }
     return (
-      <View style={{ paddingHorizontal: 16 }}>
-        <Text style={styles.desText}>Nhập mã code:</Text>
-        <View style={{ backgroundColor: '#fff', borderRadius: 5 }}>
-          <TextInput
-            autoFocus
-            onChangeText={value => this.setState({ codeInput: value })}
-            placeholder={'Nhập mã code ...'}
-            value={codeInput}
-            keyboardType={'numeric'}
-            style={styles.txtCode}
-          />
-        </View>
-        <TouchableOpacity
-          activeOpacity={0.5}
-          onPress={this.confirmCode}
-          disabled={empty(codeInput)}
+      <View>
+        <View
+          style={{
+            width: '100%',
+            height: headerHeight.height + (isIPhoneX ? 40 : 20),
+            backgroundColor: 'transparent'
+          }}
         >
+          <View style={{ flex: 1 }} />
+          <View style={{ marginLeft: 10, marginBottom: 10 }}>
+            <TouchableWithoutFeedback
+              onPress={this._onPressBackToPhoneInput.bind(this)}
+            >
+              <Icon name="chevron-left" size={30} color="white" />
+            </TouchableWithoutFeedback>
+          </View>
+        </View>
+        <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
+          <Text style={[styles.desText, { marginBottom: 10, fontSize: 15 }]}>
+            Nhập mã code được gửi tới:
+          </Text>
           <Text
             style={[
-              styles.continueText,
-              { color: !empty(codeInput) ? 'white' : 'lightgray' }
+              styles.desText,
+              {
+                fontSize: 17,
+                fontWeight: '500',
+                marginTop: 0,
+                marginBottom: 20
+              }
             ]}
           >
-            Tiếp tục
+            {countryCode + phoneAuth}
           </Text>
-        </TouchableOpacity>
-        {isShowIndicator && <Indicator color="#fff" />}
+          <View style={{ backgroundColor: '#fff', borderRadius: 5 }}>
+            <TextInput
+              autoFocus
+              onChangeText={value => this.setState({ codeInput: value })}
+              placeholder="Nhập mã code..."
+              value={codeInput}
+              keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
+              style={styles.txtCode}
+            />
+          </View>
+          <TouchableOpacity
+            activeOpacity={0.5}
+            onPress={this.confirmCode}
+            disabled={empty(codeInput)}
+          >
+            <Text
+              style={[
+                styles.continueText,
+                { color: !empty(codeInput) ? 'white' : 'lightgray' }
+              ]}
+            >
+              Tiếp tục
+            </Text>
+          </TouchableOpacity>
+          {message != '' && <Text style={styles.txtNote}>{message}</Text>}
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: 200,
+              color: 'white',
+              marginTop: 20
+            }}
+          >
+            Không nhận được mã?
+          </Text>
+          <TouchableOpacity
+            onPress={this._onPressRequestNewOtp.bind(this)}
+            disabled={requestNewOtpCounter > 0}
+          >
+            <Text
+              style={{
+                fontSize: 17,
+                color: '#528BC5',
+                fontWeight: '700',
+                marginTop: 8
+              }}
+            >
+              {requestNewOtpCounter > 0
+                ? `Yêu cầu mã mới sau ${this.convertSecondToMinute(
+                    requestNewOtpCounter
+                  )}`
+                : 'Yêu cầu mã mới'}
+            </Text>
+          </TouchableOpacity>
+          {isShowIndicator && (
+            <Indicator color="#fff" style={{ paddingTop: 50 }} />
+          )}
+        </View>
       </View>
     );
   }
 
   render() {
-    const { user, confirmResult, message, modalVisible } = this.state;
+    const { user, confirmResult, modalVisible } = this.state;
     console.log('user', user);
     return (
       <View style={styles.container}>
         {modalVisible && this.renderCountryPicker()}
         {!user && !confirmResult && this.renderPhoneNumberInput()}
         {!user && confirmResult && this.renderVerificationCodeInput()}
-        {message != '' && <Text style={styles.txtNote}>{message}</Text>}
       </View>
     );
   }
 }
 
+const requestSeconds = 30;
 const deviceHeight = Dimensions.get('window').height;
+const headerHeight = Platform.select({
+  ios: {
+    height: 44
+  },
+  android: {
+    height: 54
+  },
+  windows: {
+    height: 54
+  }
+});
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DEFAULT_COLOR,
-    justifyContent: 'center'
+    backgroundColor: DEFAULT_COLOR
   },
   welcomeText: {
     color: 'white',
@@ -424,13 +537,13 @@ const styles = StyleSheet.create({
     marginTop: 20
   },
   txtNote: {
-    color: '#fff',
-    marginTop: 10,
-    paddingHorizontal: 20
+    color: 'red',
+    marginTop: 20
   },
   txtCode: {
     fontWeight: '800',
-    fontSize: 20
+    fontSize: 20,
+    padding: 10
   }
 });
 
