@@ -21,7 +21,7 @@ const _CHAT_KEY = 'ChatKeysStorage';
 @observer
 class Chat extends Component {
   static propTypes = {
-    store_id: PropTypes.string.isRequired
+    store_id: PropTypes.string
   };
 
   constructor(props) {
@@ -55,31 +55,31 @@ class Chat extends Component {
     store.updateNotifyFlag = true;
   }
 
-  _renderRightButton() {
-    if (this.state.tel == null) {
-      return null;
-    }
+  _renderRightButton = () => {
+    // if (!this.state.tel) {
+    //   return null;
+    // }
 
     return (
       <View style={styles.right_btn_box}>
         <RightButtonCall tel={this.state.tel} />
       </View>
     );
-  }
+  };
 
   componentDidMount() {
     store.updateNotifyFlag = false;
-
     store.setStoreUnMount('chat', this._unMount.bind(this));
 
-    Actions.refresh({
-      title: this.props.title || store.store_data.name,
-      renderRightButton: this._renderRightButton.bind(this),
-      onBack: () => {
-        this._unMount();
-
-        Actions.pop();
-      }
+    setTimeout(() => {
+      Actions.refresh({
+        title: this.props.title || store.store_data.name,
+        right: this._renderRightButton(),
+        onBack: () => {
+          this._unMount();
+          Actions.pop();
+        }
+      });
     });
 
     var chat_key = _CHAT_KEY + this.state.store_id + store.user_info.id;
@@ -530,7 +530,8 @@ const styles = StyleSheet.create({
   },
 
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingRight: 6
   }
 });
 

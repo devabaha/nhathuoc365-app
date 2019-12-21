@@ -10,6 +10,9 @@ import store from '../store/Store';
 
 @observer
 export default class RightButtonChat extends Component {
+  static defaultProps = {
+    iconSize: 26
+  };
   render() {
     var store_id = this.props.store_id || store.store_id;
     var count_chat = parseInt(store.notify_chat[store_id]);
@@ -26,7 +29,7 @@ export default class RightButtonChat extends Component {
         }}
       >
         <View style={styles.right_btn_add_store}>
-          <Icon name="commenting" size={20} color="#ffffff" />
+          <Icon name="comments" size={this.props.iconSize} color="#ffffff" />
           {count_chat > 0 && (
             <View style={styles.stores_info_action_notify}>
               <Text style={styles.stores_info_action_notify_value}>
@@ -43,7 +46,7 @@ export default class RightButtonChat extends Component {
 const styles = StyleSheet.create({
   right_btn_add_store: {
     paddingVertical: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: 15,
     paddingTop: isAndroid ? 4 : 0
   },
   right_btn_box: {
