@@ -76,6 +76,13 @@ import PhoneCardContainer, {
   BuyCardConfirm as PhoneCardBuyCardConfirmContainer,
   BuyCardSuccess as PhoneCardBuyCardSuccessContainer
 } from 'app-packages/tickid-phone-card';
+import {
+  default as AmazingChat,
+  ListChat,
+  ListChatNavBar,
+  SearchChat,
+  SearchChatNavBar
+} from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
 import TabIcon from './components/TabIcon';
 import {
@@ -878,6 +885,32 @@ class App extends Component {
                   <Scene
                     key={`${phoneCardConfig.routes.cardHistory}_1`}
                     component={PhoneCardCardHistoryContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key="list_chat">
+                  <Scene
+                    hideNavBar={false}
+                    key="list_chat_1"
+                    title="Danh sách Chat"
+                    component={ListChat}
+                    {...navBarConfig}
+                    back
+                  />
+                  <Scene
+                    hideNavBar={false}
+                    key="amazing_chat"
+                    component={AmazingChat}
+                    {...navBarConfig}
+                    back
+                  />
+                  <Scene
+                    hideNavBar={false}
+                    key="search_chat"
+                    component={SearchChat}
+                    navBar={SearchChatNavBar}
                     {...navBarConfig}
                     back
                   />

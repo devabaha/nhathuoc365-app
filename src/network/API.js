@@ -70,6 +70,10 @@ exports.SITE_SEND_CHAT = MY_FOOD_API + 'apiSite/send_chat';
 exports.SITE_LOAD_CHAT = MY_FOOD_API + 'apiSite/load_chat';
 exports.SITE_NOTIFY_CHAT = MY_FOOD_API + 'apiSite/notify_chat';
 exports.USER_NOTIFY_CHAT = MY_FOOD_API + 'apiUser/notify_chat';
+exports.SITE_CONVERSATIONS = MY_FOOD_API + 'apiChat/conversations';
+exports.SITE_CONVERSATION = MY_FOOD_API + 'apiChat/conversation';
+exports.SITE_SEND_MESSAGE = MY_FOOD_API + 'apiChat/send';
+exports.SITE_SEARCH_CONVERSATIONS = MY_FOOD_API + 'apiChat/search';
 
 // News
 exports.USER_NEWS_LIST = MY_FOOD_API + 'apiUser/news_list';
@@ -95,6 +99,7 @@ exports.LOGIN_SMS_VERIFY = MY_FOOD_API + 'apiUser/login_sms_verify';
 exports.LOGIN_FBAK_VERIFY = MY_FOOD_API + 'apiUser/login_fbak_verify';
 exports.USER_LOGOUT = MY_FOOD_API + 'apiUser/logout';
 exports.USER_ADD_AVATAR = PHOTO_MY_FOOD_API + 'apiUser/add_avatar';
+exports.UPLOAD_IMAGE = PHOTO_MY_FOOD_API + 'photos/upload_image';
 exports.USER_FORGET_PASSWORD = MY_FOOD_API + 'apiUser/forget_password';
 exports.USER_FORGET_PASSWORD_VERIFY =
   MY_FOOD_API + 'apiUser/forget_password_verify';

@@ -396,11 +396,13 @@ class Home extends Component {
     action(() => {
       store.setStoreData(this.state.site);
     })();
-
-    Actions.chat({
-      tel: this.state.site.tel,
-      title: this.state.site.name
+    Actions.list_chat({
+      titleStyle: { width: 220 }
     });
+    // Actions.chat({
+    //   tel: this.state.site.tel,
+    //   title: this.state.site.name
+    // });
   };
 
   productOpening;
