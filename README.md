@@ -38,8 +38,8 @@ code-push app add tick-foodhub-android android react-native
 │ Staging    │ Ysxk9PCgfA9owCJfVg2m2AT4C4GDf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Nang cap 1212: them chat"
-code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 1212: them chat"
+code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Mo lai tim kiem"
+code-push release-react tick-foodhub-android android -d "Production" -m --description "Mo lai tim kiem"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
