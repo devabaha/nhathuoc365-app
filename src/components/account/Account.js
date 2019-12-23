@@ -15,7 +15,6 @@ import ImagePicker from 'react-native-image-picker';
 import { showMessage } from 'react-native-flash-message';
 import Communications from 'react-native-communications';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RNAccountKit from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
 import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';

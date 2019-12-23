@@ -33,7 +33,7 @@ class PhoneAuth extends Component {
       user: null,
       message: '',
       codeInput: '',
-      phoneNumber: '988888889',
+      phoneNumber: '',
       confirmResult: null,
       isShowIndicator: false,
       modalVisible: false,
@@ -43,50 +43,23 @@ class PhoneAuth extends Component {
   }
 
   componentDidMount() {
-    // this.unsubscribe = firebase.auth().onAuthStateChanged(user => {
-    //     if (user) {
-    //         this.setState({user: user.toJSON()});
-    //         user.getIdToken(true).then(async (idToken) => {
-    //             const response = await APIHandler.login_firebase_vertify({token: idToken});
-    //             console.log("res", response, idToken);
-    //             if (response.data) {
-    //                 Actions.replace(config.routes.primaryTabbar);
-    //             } else {
-    //                 firebase.auth().signOut();
-    //             }
-    //         }).catch((error) => {
-    //         })
-    //     } else {
-    //         // User has been signed out, reset the state
-    //         this.setState({
-    //             user: null,
-    //             message: '',
-    //             codeInput: '',
-    //             phoneNumber: '+84',
-    //             confirmResult: null,
-    //             isShowIndicator: false
-    //         });
-    //     }
-    // });
     this.startCountDown();
   }
 
-  componentWillUnmount() {
-    // if (this.unsubscribe) this.unsubscribe();
-  }
+  componentWillUnmount() {}
 
   signIn = () => {
     Keyboard.dismiss();
     const { phoneNumber, currentCountry } = this.state;
     var countryCode = '';
     if (currentCountry[0].idd.root) {
-      countryCode += currentCountry[0].idd.root.replace('+', '');
+      countryCode += currentCountry[0].idd.root;
       if (currentCountry[0].idd.suffixes[0]) {
         countryCode += currentCountry[0].idd.suffixes[0];
       }
     }
     var phoneAuth = phoneNumber;
-    if (phoneAuth.substring(0, 2) === '84') {
+    if (phoneAuth.substring(0, 2) === countryCode.replace('+', '')) {
       phoneAuth = phoneAuth.substr(2);
     } else if (phoneAuth.substring(0, 1) === '0') {
       phoneAuth = phoneAuth.substr(1);
@@ -417,6 +390,7 @@ class PhoneAuth extends Component {
               value={codeInput}
               keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
               style={styles.txtCode}
+              maxLength={6}
             />
           </View>
           <TouchableOpacity
