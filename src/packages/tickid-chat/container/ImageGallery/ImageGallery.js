@@ -12,8 +12,10 @@ import {
   PanResponder,
   PermissionsAndroid,
   ViewPropTypes,
-  Platform
+  Platform,
+  ActivityIndicator
 } from 'react-native';
+import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
 import CameraRoll from '@react-native-community/cameraroll';
 import ImagePicker from 'react-native-image-picker';
 import PropTypes from 'prop-types';
@@ -29,7 +31,7 @@ const ANDROID_STATUS_BAR = StatusBar.currentHeight;
 const HIT_SLOP = { right: 15, top: 15, left: 15, bottom: 15 };
 const ITEMS_PER_ROW = 3;
 const ITEMS_HEIGHT = 150;
-const HEADER_HEIGHT = isIos ? 64 : 50;
+const HEADER_HEIGHT = isIos ? (isIphoneX ? getStatusBarHeight() + 64 : 64) : 56;
 const BASE_VIEW_HEIGHT = HEIGHT / 2.5;
 const DURATION_SHOW_ALBUM = 200;
 const DURATION_SHOW_GALLERY = 300;
@@ -61,6 +63,7 @@ class ImageGallery extends Component {
     onExpandedBodyContent: PropTypes.func,
     onCollapsedBodyContent: PropTypes.func,
     onSendImage: PropTypes.func,
+    setHeader: PropTypes.func,
     onToggleImage: PropTypes.func
   };
 
@@ -83,6 +86,7 @@ class ImageGallery extends Component {
     onExpandedBodyContent: defaultListener,
     onCollapsedBodyContent: defaultListener,
     onSendImage: defaultListener,
+    setHeader: defaultListener,
     onToggleImage: defaultListener
   };
 
@@ -304,6 +308,9 @@ class ImageGallery extends Component {
   }
 
   getAlbum() {
+    if (this.state.photos.length === 0) {
+      this.setState({ loading: true });
+    }
     clearTimeout(this.timerGetAlbum);
     if (isIos) {
       CameraRoll.getPhotos({
@@ -319,10 +326,10 @@ class ImageGallery extends Component {
             groupTypes: 'Album'
           })
             .then(async r => {
-              this.timerGetAlbum = setTimeout(
-                () => this.getAlbum(),
-                DELAY_GET_ALBUM
-              );
+              // this.timerGetAlbum = setTimeout(
+              //   () => this.getAlbum(),
+              //   DELAY_GET_ALBUM
+              // );
               rawPhotoData = rawPhotoData.concat(r.edges);
               const { albums, photos } = await this.filterPhoto(rawPhotoData);
               const chosenAlbumTitle =
@@ -330,17 +337,20 @@ class ImageGallery extends Component {
               setStater(this, this.unmounted, {
                 albums,
                 photos,
-                chosenAlbumTitle: chosenAlbumTitle
+                chosenAlbumTitle: chosenAlbumTitle,
+                loading: false
               });
             })
             .catch(err => {
               //Error Loading Images
+              setStater(this, this.unmounted, { loading: false });
               console.log('get other album', err);
             });
         })
         .catch(err => {
           //Error Loading Images
           console.log('get recent photo album', err);
+          setStater(this, this.unmounted, { loading: false });
         });
     } else {
       CameraRoll.getPhotos({
@@ -359,11 +369,13 @@ class ImageGallery extends Component {
           setStater(this, this.unmounted, {
             albums,
             photos,
-            chosenAlbumTitle: chosenAlbumTitle
+            chosenAlbumTitle: chosenAlbumTitle,
+            loading: false
           });
         })
         .catch(err => {
           //Error Loading Images
+          setStater(this, this.unmounted, { loading: false });
           console.log('get album', err);
         });
     }
@@ -598,13 +610,13 @@ class ImageGallery extends Component {
   }
 
   handleExpandedGallery() {
-    this.setState({ openPanel: true });
     this.props.onExpandedBodyContent();
+    this.setState({ openPanel: true });
   }
 
   handleCollapsedGallery() {
-    this.setState({ openPanel: false });
     this.props.onCollapsedBodyContent();
+    this.setState({ openPanel: false });
   }
 
   render() {
@@ -625,7 +637,7 @@ class ImageGallery extends Component {
 
     const translateY = this.state.animatedAlbumHeight.interpolate({
       inputRange: [0, HEIGHT],
-      outputRange: [-HEIGHT - this.props.headerHeight, this.props.headerHeight]
+      outputRange: [-HEIGHT, 0]
     });
     const wrapperItemStyle = {
       height: this.props.itemHeight,
@@ -842,6 +854,8 @@ class ImageGallery extends Component {
       //   </Animated.View>
       // </>
       <GestureWrapper
+        setHeader={this.props.setHeader}
+        openHeader={this.state.openAlbum}
         visible={this.props.visible}
         isActivePanResponder={!this.state.openLightBox}
         startExpandingBodyContent={this.handleExpandedGallery.bind(this)}
@@ -849,6 +863,7 @@ class ImageGallery extends Component {
         bodyData={this.state.photos}
         collapsedBodyHeight={this.props.baseViewHeight}
         defaultStatusBarColor={this.props.defaultStatusBarColor}
+        contentScrollEnabled={this.state.openPanel && !this.state.openLightBox}
         contentFlatListProps={{
           initialNumToRender: 30,
           numColumns: 3,
@@ -857,7 +872,18 @@ class ImageGallery extends Component {
           //     this.setState({ scrollable: this.scrollable() });
           //   }
           // },
-          scrollEnabled: this.state.openPanel && !this.state.openLightBox,
+          ListHeaderComponent: this.state.loading && (
+            <View
+              style={{
+                flex: 1,
+                height: this.props.baseViewHeight,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <ActivityIndicator size="large" />
+            </View>
+          ),
           getItemLayout: (data, index) => ({
             length: this.props.itemHeight,
             offset: this.props.itemHeight * index,
@@ -943,7 +969,7 @@ class ImageGallery extends Component {
               styles.center,
               styles.albumContainer,
               {
-                height: this.actualScrollViewHeight,
+                height: '100%',
                 transform: [{ translateY }]
               }
             ]}

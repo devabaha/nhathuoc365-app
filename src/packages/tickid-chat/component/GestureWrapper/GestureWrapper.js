@@ -14,6 +14,7 @@ import {
   Platform
 } from 'react-native';
 import PropTypes from 'prop-types';
+import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
 
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
@@ -22,7 +23,11 @@ const ANDROID_STATUS_BAR = StatusBar.currentHeight;
 const HIT_SLOP = { right: 15, top: 15, left: 15, bottom: 15 };
 const BODY_ITEMS_PER_ROW = 3;
 const BODY_ITEM_HEIGHT = 150;
-const HEADER_HEIGHT = isIos ? 64 : 50;
+const HEADER_HEIGHT = isIos
+  ? isIphoneX()
+    ? getStatusBarHeight() + 60
+    : 64
+  : 56;
 const COLLAPSE_BODY_HEIGHT = HEIGHT / 2.5;
 const DURATION_SHOW_HEADER_CONTENT = 200;
 const DURATION_SHOW_BODY_CONTENT = 300;
@@ -35,7 +40,9 @@ const defaultBtnCloseAlbum = <Text style={{ color: 'white' }}>x</Text>;
 class GestureWrapper extends Component {
   static propTypes = {
     visible: PropTypes.bool,
+    contentScrollEnabled: PropTypes.bool,
     isActivePanResponder: PropTypes.bool,
+    openHeader: PropTypes.bool,
     header: PropTypes.oneOfType([PropTypes.node, PropTypes.element]),
     bodyItemPerRow: PropTypes.number,
     bodyItemHeight: PropTypes.number,
@@ -46,6 +53,7 @@ class GestureWrapper extends Component {
     defaultStatusBarColor: PropTypes.string,
     onExpandedBodyContent: PropTypes.func,
     onCollapsedBodyContent: PropTypes.func,
+    setHeader: PropTypes.func,
     onHeaderClosePress: PropTypes.func,
     bodyData: PropTypes.array,
     btnCloseHeaderStyle: ViewPropTypes.style,
@@ -60,7 +68,9 @@ class GestureWrapper extends Component {
 
   static defaultProps = {
     visible: false,
+    contentScrollEnabled: true,
     isActivePanResponder: true,
+    openHeader: false,
     header: null,
     extraBodyContent: null,
     headerContent: null,
@@ -77,6 +87,7 @@ class GestureWrapper extends Component {
     onHeaderClosePress: defaultListener,
     startExpandingBodyContent: defaultListener,
     startCollapsingBodyContent: defaultListener,
+    setHeader: defaultListener,
     bodyData: [],
     contentFlatListProps: {}
   };
@@ -85,26 +96,25 @@ class GestureWrapper extends Component {
     scrollable: false,
     expandContent: false,
     animatedAlbumHeight: new Animated.Value(0),
-    openPanel: false
+    animatedTranslateYScrollView: new Animated.Value(HEIGHT),
+    expandContent: false
   };
 
-  animatedTranslateYScrollView = new Animated.Value(
-    -this.props.collapsedBodyHeight
-  );
   animatedShowUpValue = new Animated.Value(0);
 
   offset = 0;
   animatedTranslateYScrollViewValue = 0;
   momentActive = false;
+  isFinishOpenAnimation = false;
   isAnimating = false;
   isScrolling = false;
   refScrollView = null;
   actualScrollViewHeight = 0;
   panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => false,
+    onStartShouldSetPanResponder: () => true,
     onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
-    onMoveShouldSetResponder: () => true,
-    onMoveShouldSetResponderCapture: () => true,
+    // onShouldBlockNativeResponder: () => {console.warn('a'); return !this.state.expandContent},
+    // onPanResponderTerminate: () => {console.warn('b'); return this.state.expandContent},
     onMoveShouldSetPanResponder: (evt, gestureState) => {
       const { dx, dy } = gestureState;
       return dx > 2 || dx < -2 || dy > 2 || dy < -2;
@@ -117,52 +127,111 @@ class GestureWrapper extends Component {
         return false;
       }
 
-      if (
-        ges.dy < 0 &&
-        this.offset <= 0 &&
-        this.state.openPanel &&
-        this.scrollable()
-      ) {
-        // console.log('can scroll');
-        this.setState({ scrollable: true });
-      }
-      if (ges.dy < 0 && !this.state.openPanel && !this.isAnimating) {
-        this.isAnimating = true;
-        this.props.startExpandingBodyContent();
-
-        Animated.spring(this.animatedTranslateYScrollView, {
-          toValue: this.actualScrollViewHeight,
-          duration: this.props.durationShowBodyContent,
-          useNativeDriver: true
-        }).start(res => {
-          this.isAnimating = false;
-          // console.log('expanded');
-          this.setState({
-            openPanel: true
-          });
-        });
-      }
-      if (ges.dy > 0 && this.state.openPanel && !this.isAnimating) {
-        this.isAnimating = false;
-        // console.log('collapsing');
-        this.setState({
-          openPanel: false,
-          scrollable: false
-        });
-      }
-    }
+      return Animated.event([
+        null,
+        {
+          dy: this.state.animatedTranslateYScrollView
+        }
+      ])(evt, ges);
+    },
 
     // Animated.,
 
     // onPanResponderTerminationRequest: (evt, gestureState) => true,
-    // onPanResponderGrant: (e) => {
-    //   this.animatedTranslateYScrollView.setOffset({
-    //     y: this._y
-    //   })
-    // },
+    onPanResponderGrant: (e, ges) => {
+      this.state.animatedTranslateYScrollView.extractOffset();
+    },
     // onPanResponderTerminate: evt => true,
-    // onPanResponderRelease: evt => this.handlePanResponderEnd(evt.nativeEvent),
+    onPanResponderRelease: (evt, { dy, vy }) => {
+      this.isAnimating = true;
+      const breakPointTop = this.middlePositionAnimatableArea / 2;
+      const breakPointBottom = this.middlePositionAnimatableArea * 2;
+      const breakVelocity = 0.5;
+      this.state.animatedTranslateYScrollView.flattenOffset();
+      vy = Math.abs(vy);
+      // move down
+      if (
+        dy >= 0 &&
+        this.animatedTranslateYScrollViewValue < this.animatableArea
+      ) {
+        if (
+          vy >= breakVelocity ||
+          this.animatedTranslateYScrollViewValue >= breakPointTop
+        ) {
+          // go to bottom
+          Animated.spring(this.state.animatedTranslateYScrollView, {
+            toValue: this.animatableArea,
+            duration: this.props.durationShowBodyContent,
+            useNativeDriver: true,
+            overshootClamping: true
+          }).start(() => {
+            this.isAnimating = false;
+            this.setState({ expandContent: false });
+          });
+        } else {
+          // back to top
+          Animated.spring(this.state.animatedTranslateYScrollView, {
+            toValue: 0,
+            duration: this.props.durationShowBodyContent,
+            useNativeDriver: true,
+            overshootClamping: true
+          }).start(() => (this.isAnimating = false));
+        }
+      }
+
+      //move up
+      if (dy < 0 && this.animatedTranslateYScrollViewValue > 0) {
+        if (
+          vy >= breakVelocity ||
+          this.animatedTranslateYScrollViewValue <= breakPointBottom
+        ) {
+          // go to top
+          this.props.startExpandingBodyContent();
+
+          Animated.spring(this.state.animatedTranslateYScrollView, {
+            toValue: 0,
+            duration: this.props.durationShowBodyContent,
+            useNativeDriver: true,
+            overshootClamping: true
+          }).start(() => {
+            this.isAnimating = false;
+            this.setState({ expandContent: true });
+          });
+        } else {
+          // back to bottom
+          Animated.spring(this.state.animatedTranslateYScrollView, {
+            toValue: this.animatableArea,
+            duration: this.props.durationShowBodyContent,
+            useNativeDriver: true,
+            overshootClamping: true
+          }).start(() => (this.isAnimating = false));
+        }
+      }
+    }
   });
+
+  get animatableArea() {
+    return (
+      HEIGHT -
+      this.props.collapsedBodyHeight -
+      this.props.headerHeight -
+      (isAndroid ? ANDROID_STATUS_BAR : 0) -
+      (isIphoneX() ? getStatusBarHeight() + 2 : 0)
+    );
+  }
+
+  get middlePositionAnimatableArea() {
+    const animatableArea = this.animatableArea;
+    return animatableArea / 2;
+  }
+
+  getDurationGestureAnimation(targetPosition) {
+    return (
+      (Math.abs(targetPosition - this.animatedTranslateYScrollViewValue) *
+        this.props.durationShowBodyContent) /
+      this.animatableArea
+    );
+  }
 
   updateActualScrollViewHeight(otherHeight = this.props.headerHeight) {
     this.actualScrollViewHeight =
@@ -171,16 +240,17 @@ class GestureWrapper extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
-      if (nextState.openPanel !== this.state.openPanel) {
-        if (!nextState.openPanel) {
+      if (nextState.expandContent !== this.state.expandContent) {
+        if (!nextState.expandContent) {
           this.refScrollView &&
             this.refScrollView.scrollToOffset({ animated: false, offset: 0 });
           this.props.startCollapsingBodyContent();
 
-          Animated.spring(this.animatedTranslateYScrollView, {
-            toValue: 0,
+          Animated.spring(this.state.animatedTranslateYScrollView, {
+            toValue: this.animatableArea,
             duration: this.props.durationShowBodyContent,
-            useNativeDriver: true
+            useNativeDriver: true,
+            overshootClamping: true
           }).start(() => {
             this.props.onCollapsedBodyContent();
           });
@@ -201,7 +271,8 @@ class GestureWrapper extends Component {
       nextProps.btnCloseHeaderStyle !== this.props.btnCloseHeaderStyle ||
       nextProps.contentFlatListProps !== this.props.contentFlatListProps ||
       nextProps.headerContent !== this.props.headerContent ||
-      nextProps.extraBodyContent !== this.props.extraBodyContent
+      nextProps.extraBodyContent !== this.props.extraBodyContent ||
+      nextProps.openHeader !== this.props.openHeader
     ) {
       if (nextProps.headerHeight !== this.props.headerHeight) {
         this.updateActualScrollViewHeight();
@@ -211,20 +282,23 @@ class GestureWrapper extends Component {
           this.refScrollView &&
             this.refScrollView.scrollToOffset({ animated: false, offset: 0 });
         }
-
+        this.isAnimating = true;
         Animated.parallel([
           Animated.timing(this.animatedShowUpValue, {
             toValue: nextProps.visible ? nextProps.collapsedBodyHeight : 0,
             duration: this.props.durationShowBodyContent,
             easing: Easing.in
           }),
-          Animated.timing(this.animatedTranslateYScrollView, {
-            toValue: nextProps.visible ? 0 : -nextProps.collapsedBodyHeight,
+          Animated.timing(this.state.animatedTranslateYScrollView, {
+            toValue: nextProps.visible ? this.animatableArea : HEIGHT,
             duration: this.props.durationShowBodyContent,
             easing: Easing.in,
             useNativeDriver: true
           })
-        ]).start();
+        ]).start(() => {
+          this.isAnimating = false;
+          this.isFinishOpenAnimation = nextProps.visible;
+        });
       }
 
       return true;
@@ -235,35 +309,56 @@ class GestureWrapper extends Component {
 
   componentDidMount() {
     this.updateActualScrollViewHeight();
-    this.animatedTranslateYScrollView.addListener(
+    this.state.animatedTranslateYScrollView.addListener(
       this.onAnimatedValueChange.bind(this)
     );
   }
 
   componentWillUnmount() {
-    this.animatedTranslateYScrollView.removeListener(
+    this.state.animatedTranslateYScrollView.removeListener(
       this.onAnimatedValueChange.bind(this)
+    );
+    this.props.setHeader(null);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const opacity = this.state.animatedTranslateYScrollView.interpolate({
+      inputRange: [this.props.headerHeight, this.props.headerHeight * 2],
+      outputRange: [1, 0]
+    });
+    this.props.setHeader(
+      <Header
+        headerHeight={this.props.headerHeight}
+        handleCloseModal={this.handleCloseModal.bind(this)}
+        opacity={opacity}
+        btnHeaderClose={this.props.btnHeaderClose}
+        btnHeaderCloseStyle={this.props.btnHeaderClose}
+        header={this.props.header}
+        pointerEvents={this.state.expandContent ? 'auto' : 'none'}
+      />
     );
   }
 
   onAnimatedValueChange({ value }) {
-    const bottom = 0;
-    if (value === this.actualScrollViewHeight && !this.state.openPanel) {
+    const bottom = this.animatableArea;
+    if (value === 0 && !this.state.expandContent) {
       if (isAndroid) {
         StatusBar.setBackgroundColor('black', true);
       }
       // console.log('top');
+      this.setState({ scrollable: this.scrollable() });
+
       this.props.onExpandedBodyContent();
     }
 
-    if (value === bottom || (value <= bottom && this.state.openPanel)) {
+    if (value === bottom || (value <= bottom && this.state.expandContent)) {
       if (this.animatedTranslateYScrollViewValue !== bottom && isAndroid) {
         StatusBar.setBackgroundColor(this.props.defaultStatusBarColor, true);
       }
 
       this.offset = 0;
       // console.log('bottom');
-      this.setState({ scrollable: false, openPanel: false });
+      this.setState({ scrollable: false });
     }
     this.animatedTranslateYScrollViewValue = value;
   }
@@ -272,13 +367,13 @@ class GestureWrapper extends Component {
     return (
       Math.ceil(data.length / this.props.bodyItemPerRow) *
         this.props.bodyItemHeight >
-      HEIGHT
+      this.actualScrollViewHeight
     );
   }
 
   //START - handle everything about gallery scroll event
   handleScrollBeginDrag(e) {
-    console.log('dragBegin', this.offset);
+    // console.log('dragBegin', this.offset);
     this.offset = e.nativeEvent.contentOffset.y;
     this.isScrolling = false;
     this.momentActive = this.offset > 0;
@@ -286,17 +381,17 @@ class GestureWrapper extends Component {
   handleMomentumScrollBegin(e) {
     this.offset = e.nativeEvent.contentOffset.y;
     this.momentActive = true;
-    console.log('momentBegin', this.offset);
+    // console.log('momentBegin', this.offset);
   }
   handleScroll(e) {
     let y = e.nativeEvent.contentOffset.y;
-    console.log('scrolling', y);
+    // console.log('scrolling', y);
     this.isScrolling = true;
-    this.offset = y;
     if (!this.momentActive) {
+      this.offset = y;
       if (this.offset <= 0) {
         this.setState({
-          openPanel: false,
+          expandContent: false,
           scrollable: false
         });
       }
@@ -304,16 +399,16 @@ class GestureWrapper extends Component {
   }
   handleScrollEndDrag(e) {
     this.offset = e.nativeEvent.contentOffset.y;
-    console.log('endDrag', this.offset);
+    // console.log('endDrag', this.offset);
   }
   handleMomentumScrollEnd(e) {
     this.isScrolling = false;
-    console.log('momentEnd', this.offset);
+    // console.log('momentEnd', this.offset);
     this.momentActive = false;
 
     if (this.offset <= 0) {
       this.setState({
-        openPanel: false,
+        expandContent: false,
         scrollable: false
       });
     }
@@ -323,66 +418,36 @@ class GestureWrapper extends Component {
   //END - handle everything about gallery scroll event
 
   handleCloseModal() {
-    if (this.state.expandContent) {
-      this.props.onHeaderClosePress();
-    } else {
+    if (this.state.expandContent && !this.props.openHeader) {
       this.isAnimating = true;
       this.offset = 0;
       this.setState({
-        openPanel: false,
+        expandContent: false,
         scrollable: false
       });
-
-      setTimeout(() => {
-        Animated.timing(this.animatedTranslateYScrollView, {
-          toValue: 0,
-          duration: this.props.durationShowBodyContent,
-          easing: Easing.in,
-          useNativeDriver: true
-        }).start(() => {
-          this.isAnimating = false;
-        });
-      });
+    } else {
+      this.props.onHeaderClosePress();
     }
   }
 
   render() {
-    // console.log(this.state.openPanel, 'scrollable');
+    // console.log(this.state.scrollable, 'scrollable');
     const scrollPan = !this.state.scrollable &&
       this.props.isActivePanResponder && {
         ...this.panResponder.panHandlers
       };
-    const opacity = this.animatedTranslateYScrollView.interpolate({
-      inputRange: [0, this.actualScrollViewHeight],
-      outputRange: [0, 1]
-    });
+    const translateY =
+      this.props.visible && this.isFinishOpenAnimation
+        ? this.state.animatedTranslateYScrollView.interpolate({
+            inputRange: [0, this.animatableArea],
+            outputRange: [0, this.animatableArea],
+            extrapolate: 'clamp'
+          })
+        : this.state.animatedTranslateYScrollView;
+
     return (
       <>
-        {!!this.props.header && (
-          <>
-            <Animated.View
-              style={[
-                styles.center,
-                styles.header,
-                {
-                  opacity,
-                  height: this.props.headerHeight
-                }
-              ]}
-              pointerEvents={this.state.openPanel ? 'auto' : 'none'}
-            >
-              <TouchableOpacity
-                hitSlop={HIT_SLOP}
-                style={[styles.btnCloseHeader, this.props.btnCloseHeaderStyle]}
-                onPress={this.handleCloseModal.bind(this)}
-              >
-                {this.props.btnHeaderClose}
-              </TouchableOpacity>
-              {this.props.header}
-            </Animated.View>
-            {this.props.headerContent}
-          </>
-        )}
+        {!!this.props.header && <>{this.props.headerContent}</>}
 
         <Animated.View
           style={{
@@ -413,23 +478,24 @@ class GestureWrapper extends Component {
               borderColor: '#d9d9d9',
               transform: [
                 {
-                  translateY: this.animatedTranslateYScrollView.interpolate({
-                    inputRange: [
-                      -this.props.collapsedBodyHeight,
-                      0,
-                      this.actualScrollViewHeight
-                    ],
-                    outputRange: [
-                      HEIGHT,
-                      HEIGHT -
-                        this.props.headerHeight -
-                        (isAndroid ? ANDROID_STATUS_BAR + 8 : 0) -
-                        (this.props.visible
-                          ? this.props.collapsedBodyHeight
-                          : 0),
-                      this.props.headerHeight
-                    ]
-                  })
+                  translateY
+                  // : this.state.animatedTranslateYScrollView.interpolate({
+                  //   inputRange: [
+                  //     -this.props.collapsedBodyHeight,
+                  //     0,
+                  //     this.actualScrollViewHeight
+                  //   ],
+                  //   outputRange: [
+                  //     HEIGHT,
+                  //     HEIGHT -
+                  //     this.props.headerHeight -
+                  //     (isAndroid ? ANDROID_STATUS_BAR + 8 : 0) -
+                  //     (this.props.visible
+                  //       ? this.props.collapsedBodyHeight
+                  //       : 0),
+                  //     this.props.headerHeight
+                  //   ]
+                  // })
                 }
               ]
             }
@@ -456,6 +522,9 @@ class GestureWrapper extends Component {
             onMomentumScrollEnd={this.handleMomentumScrollEnd.bind(this)}
             onScrollEndDrag={this.handleScrollEndDrag.bind(this)}
             style={[styles.scrollViewStyle]}
+            scrollEnabled={
+              this.state.scrollable && this.props.contentScrollEnabled
+            }
             {...this.props.contentFlatListProps}
           />
           {/* </View> */}
@@ -474,6 +543,7 @@ const styles = StyleSheet.create({
   },
   header: {
     zIndex: 999,
+    flex: 1,
     width: WIDTH,
     paddingTop: isIos ? 20 : 0,
     top: 0,
@@ -520,3 +590,31 @@ const styles = StyleSheet.create({
 });
 
 export default GestureWrapper;
+
+class Header extends Component {
+  state = {};
+  render() {
+    return (
+      <Animated.View
+        style={[
+          styles.center,
+          styles.header,
+          {
+            opacity: this.props.opacity,
+            height: this.props.headerHeight
+          }
+        ]}
+        pointerEvents={this.props.pointerEvents}
+      >
+        <TouchableOpacity
+          hitSlop={HIT_SLOP}
+          style={[styles.btnCloseHeader, this.props.btnCloseHeaderStyle]}
+          onPress={this.props.handleCloseModal}
+        >
+          {this.props.btnHeaderClose}
+        </TouchableOpacity>
+        {this.props.header}
+      </Animated.View>
+    );
+  }
+}

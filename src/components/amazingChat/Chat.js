@@ -39,7 +39,9 @@ export default class Chat extends Component {
       showBackBtn: false,
       selectedImages: [],
       uploadImages: [],
-      user: this.user
+      user: this.user,
+      phoneNumber: '',
+      guestName: ''
     };
 
     this._lastID = 0;
@@ -82,15 +84,9 @@ export default class Chat extends Component {
   componentDidMount() {
     this._getData();
 
-    // this._intervalLoads();
-
     setTimeout(() => {
       Actions.refresh({
-        right: () => (
-          <View style={{ flexDirection: 'row', marginRight: 5 }}>
-            <RightButtonCall tel={this.props.phoneNumber} />
-          </View>
-        ),
+        right: this.renderRight.bind(this),
         left: () => (
           <TouchableOpacity
             style={{ flex: 1 }}
@@ -110,6 +106,17 @@ export default class Chat extends Component {
         )
       });
     });
+  }
+
+  renderRight() {
+    return (
+      <View style={{ flexDirection: 'row', marginRight: 5 }}>
+        <RightButtonCall
+          userName={this.state.guestName}
+          tel={this.state.phoneNumber}
+        />
+      </View>
+    );
   }
 
   onBack() {
@@ -133,7 +140,7 @@ export default class Chat extends Component {
 
       // specify for tick/tickid
       const main_user = user_id;
-      user_id = '';
+      user_id = 0;
       // end specification
 
       try {
@@ -143,29 +150,34 @@ export default class Chat extends Component {
           this._lastID
         );
         this.source = source;
-        // console.log('reload');
         const response = await callable();
-        // console.log(response.data);
+
         if (!this.unmounted) {
           if (response && response.status == STATUS_SUCCESS && response.data) {
-            // response.data.forEach(mess => {
-            //   const [time, date] = mess.createdAt.split(' ');
-            //   const [mm, dd, yyyy] = date.split('/');
-            //   mess.createdAt = `${yyyy}-${mm}-${dd}T${time}`;
-            // })
-            if (this.state.messages) {
-              this._appendMessages(response.data, this._calculatorLastID);
-              // if (response.data.length !== 0) {
-              //   this.loadMore = false;
-              // }
-            } else {
-              this.setState(
-                {
-                  messages: response.data,
-                  user_id: main_user
-                },
-                this._calculatorLastID
-              );
+            if (response.data.receiver) {
+              this.setState({
+                phoneNumber: response.data.receiver.phone,
+                guestName: response.data.receiver.name
+              });
+              Actions.refresh({
+                right: this.renderRight.bind(this)
+              });
+            }
+            if (response.data.list) {
+              if (this.state.messages) {
+                this._appendMessages(
+                  response.data.list,
+                  this._calculatorLastID
+                );
+              } else {
+                this.setState(
+                  {
+                    messages: response.data.list,
+                    user_id: main_user
+                  },
+                  this._calculatorLastID
+                );
+              }
             }
           } else if (this.isLoadFirstTime) {
             this.setState({
@@ -193,7 +205,7 @@ export default class Chat extends Component {
     const newMessages = [...this.state.messages];
     messages.forEach(message => {
       if (message.user._id !== this.state.user_id || isAppendDirectly) {
-        newMessages.push(message);
+        newMessages.unshift(message);
       }
     });
     if (newMessages !== this.state.messages) {
@@ -216,7 +228,7 @@ export default class Chat extends Component {
     const { messages } = this.state;
 
     if (messages && messages.length) {
-      const lastObject = messages[messages.length - 1];
+      const lastObject = messages[0];
       this._lastID = lastObject._id;
     }
   };
@@ -286,6 +298,7 @@ export default class Chat extends Component {
 
     return messages !== null ? (
       <TickidChat
+        setHeader={this.props.setHeader}
         ref={inst => (this.refTickidChat = inst)}
         refGiftedChat={inst => (this.refGiftedChat = inst)}
         refListMessages={inst => (this.refListMessages = inst)}
@@ -294,18 +307,14 @@ export default class Chat extends Component {
         defaultStatusBarColor={appConfig.colors.primary}
         onSendText={this.handleSendText.bind(this)}
         onUploadedImage={this.handleSendImage.bind(this)}
-        expandedGallery={() => Actions.refresh({ hideNavBar: true })}
-        collapsedGallery={() => Actions.refresh({ hideNavBar: false })}
+        // expandedGallery={() => Actions.refresh({ hideNavBar: true })}
+        // collapsedGallery={() => Actions.refresh({ hideNavBar: false })}
         // onScrollOffsetTop={this.handleLoadEarlierMessages.bind(this)} -- error, still bug because of scrollToBottom GiftedChat
         defaultStatusBarColor={appConfig.colors.primary}
         giftedChatProps={{
           user: {
             _id: user_id
           }
-          // inverted: false,
-          // listViewProps: {
-          //   initialNumToRender: 50
-          // }
         }}
       />
     ) : (

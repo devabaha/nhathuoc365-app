@@ -4,7 +4,9 @@ import {
   FlatList,
   RefreshControl,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator,
+  SafeAreaView
 } from 'react-native';
 import store from '../../store/Store';
 import Indicator from '../Indicator';
@@ -13,6 +15,7 @@ import ChatRow from './ChatRow';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { setStater } from '../../packages/tickid-chat/helper';
 
 @observer
 class List extends Component {
@@ -89,15 +92,15 @@ class List extends Component {
       let site_id = store.store_data.id;
       //specify for tick/tickid
       site_id = '';
+
+      clearTimeout(this.timeoutGetListCustomer);
+      if (this.source) {
+        this.source.cancel();
+      }
+
       const [source, callable] = APIHandler.site_load_conversations(site_id, {
         ...data
       });
-      if (this.isLoadMore) {
-        clearTimeout(this.timeoutGetListCustomer);
-        if (this.source && this.isLoadMore) {
-          this.source.cancel();
-        }
-      }
       this.source = source;
       const response = await callable();
 
@@ -121,16 +124,19 @@ class List extends Component {
       }
     } catch (e) {
       console.log(e + ' get_list_chat');
-      store.addApiQueue(
-        'get_list_chat',
-        this.getListCustomer.bind(this, delay)
-      );
+      store.addApiQueue('get_list_chat', this.getListCustomer.bind(this));
     } finally {
       if (!this.unmounted) {
         this.setState({
-          loading: false,
           refreshing: false
         });
+        setTimeout(
+          () =>
+            setStater(this, this.unmounted, {
+              loading: false
+            }),
+          1000
+        );
       }
     }
   }
@@ -143,30 +149,28 @@ class List extends Component {
   }
 
   onLoadMore() {
-    this.offset += this.limit;
-    this.isLoadMore = true;
-    this.setState({ loading: true });
-    this.getListCustomer();
+    if (!this.isLoadMore) {
+      this.offset += this.limit;
+      this.isLoadMore = true;
+      this.setState({ loading: true });
+      this.getListCustomer();
+    }
   }
 
   handlePressCustomer(item) {
     Actions.amazing_chat({
       site_id: item.site_id,
       user_id: item.user_id,
-      hiddenChatIcon: true,
       phoneNumber: item.tel,
       title: item.name
     });
   }
 
   render() {
+    const customers = [...this.state.customers];
+    customers.push({ id: 'chat' });
     return (
-      <>
-        {this.state.loading && (
-          <View style={styles.loadingWrapper}>
-            <Indicator fullScreen />
-          </View>
-        )}
+      <SafeAreaView style={{ flex: 1 }}>
         {this.state.customers.length === 0 ? (
           !!!this.state.loading && (
             <NoResult
@@ -182,10 +186,20 @@ class List extends Component {
                 onRefresh={this._onRefresh.bind(this)}
               />
             }
+            ListFooterComponent={
+              this.state.loading ? (
+                <View
+                  style={{
+                    height: 45,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <ActivityIndicator animating />
+                </View>
+              ) : null
+            }
             style={styles.list}
-            ItemSeparatorComponent={() => (
-              <View style={{ border: 'none', height: 0 }}></View>
-            )}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             data={this.state.customers}
@@ -219,7 +233,7 @@ class List extends Component {
             }}
           />
         )}
-      </>
+      </SafeAreaView>
     );
   }
 }

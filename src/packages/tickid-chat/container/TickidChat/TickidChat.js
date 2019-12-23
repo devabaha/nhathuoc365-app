@@ -9,7 +9,8 @@ import {
   Dimensions,
   Easing,
   Keyboard,
-  Text
+  Text,
+  SafeAreaView
 } from 'react-native';
 import { GiftedChat, Send, Message, Day } from 'react-native-gifted-chat';
 import ImageGallery from '../ImageGallery';
@@ -28,9 +29,10 @@ const SCROLL_OFFSET_TOP = 100;
 const BOTTOM_OFFFSET_GALLERY = HEIGHT - HEIGHT / 1.5;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
-
+const defaultListener = () => {};
 class TickidChat extends Component {
   static propTypes = {
+    setHeader: PropTypes.func,
     expandedGallery: PropTypes.func,
     collapsedGallery: PropTypes.func,
     onSendText: PropTypes.func,
@@ -51,14 +53,15 @@ class TickidChat extends Component {
   };
 
   static defaultProps = {
-    expandedGallery: () => {},
-    collapsedGallery: () => {},
-    onSendText: () => {},
-    onSendImage: () => {},
-    onUploadedImage: () => {},
-    refListMessages: () => {},
-    onScrollOffsetTop: () => {},
-    refGiftedChat: () => {},
+    setHeader: defaultListener,
+    expandedGallery: defaultListener,
+    collapsedGallery: defaultListener,
+    onSendText: defaultListener,
+    onSendImage: defaultListener,
+    onUploadedImage: defaultListener,
+    refListMessages: defaultListener,
+    onScrollOffsetTop: defaultListener,
+    refGiftedChat: defaultListener,
     containerStyle: {},
     durationShowGallery: DURATION_SHOW_GALLERY,
     bottomOffsetGallery: BOTTOM_OFFFSET_GALLERY,
@@ -491,7 +494,7 @@ class TickidChat extends Component {
 
   render() {
     return (
-      <View style={[styles.container, this.props.containerStyle]}>
+      <SafeAreaView style={[styles.container, this.props.containerStyle]}>
         <TouchableWithoutFeedback
           style={styles.touchWrapper}
           onPress={this.onListViewPress.bind(this)}
@@ -530,6 +533,7 @@ class TickidChat extends Component {
         </TouchableWithoutFeedback>
         <ImageGallery
           ref={this.refImageGallery}
+          setHeader={this.props.setHeader}
           visible={this.state.showImageGallery}
           defaultStatusBarColor={this.props.defaultStatusBarColor}
           baseViewHeight={BOTTOM_OFFFSET_GALLERY}
@@ -572,7 +576,7 @@ class TickidChat extends Component {
             </View>
           }
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }

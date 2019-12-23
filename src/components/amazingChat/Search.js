@@ -5,7 +5,8 @@ import {
   FlatList,
   Dimensions,
   Keyboard,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  SafeAreaView
 } from 'react-native';
 import NoResult from '../NoResult';
 import { Actions } from 'react-native-router-flux';
@@ -38,7 +39,7 @@ class Search extends Component {
     this.unmounted = true;
   }
 
-  searchCustomer = debounce(async search => {
+  searchCustomer = debounce(async (search = '') => {
     const { store_id } = store;
     if (!this.unmounted) {
       this.setState({ loading: true });
@@ -81,7 +82,7 @@ class Search extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {this.state.loading && (
           <View style={{ position: 'absolute', width: '100%', height: '100%' }}>
             <Indicator fullScreen />
@@ -129,7 +130,7 @@ class Search extends Component {
           }
           keyExtractor={(item, index) => String(item.id)}
         />
-      </View>
+      </SafeAreaView>
     );
   }
 }
