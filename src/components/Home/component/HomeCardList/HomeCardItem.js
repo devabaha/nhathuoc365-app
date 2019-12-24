@@ -21,6 +21,14 @@ function HomeCardItem(props) {
           <Text style={styles.title}>
             {stringHelper.shorten(props.title, 48)}
           </Text>
+          {!!props.isShowSubTitle && (
+            <Text style={styles.subTitle}>
+              <Text style={styles.specialSubTitle}>
+                {props.specialSubTitle}
+              </Text>
+              {props.subTitle}
+            </Text>
+          )}
         </View>
       </View>
     </Button>
@@ -41,11 +49,19 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   titleWrapper: {
-    marginTop: 6
+    marginTop: 10
   },
   title: {
     fontSize: 14,
     fontWeight: '500'
+  },
+  specialSubTitle: {
+    fontWeight: '600',
+    color: '#00b140'
+  },
+  subTitle: {
+    fontSize: 14,
+    marginTop: 3
   }
 });
 

@@ -198,14 +198,19 @@ class Home extends Component {
                 data={this.props.campaigns}
                 title="Tick Voucher"
               >
-                {({ item, index }) => (
-                  <HomeCardItem
-                    title={item.title}
-                    imageUrl={item.image_url}
-                    onPress={() => this.props.onPressCampaignItem(item)}
-                    last={this.props.campaigns.length - 1 === index}
-                  />
-                )}
+                {({ item, index }) => {
+                  return (
+                    <HomeCardItem
+                      title={item.title}
+                      isShowSubTitle={item.point !== '0'}
+                      specialSubTitle={item.point + ' '}
+                      subTitle={item.point_currency}
+                      imageUrl={item.image_url}
+                      onPress={() => this.props.onPressCampaignItem(item)}
+                      last={this.props.campaigns.length - 1 === index}
+                    />
+                  );
+                }}
               </HomeCardList>
             )}
 
