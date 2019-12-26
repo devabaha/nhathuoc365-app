@@ -49,7 +49,8 @@ class Home extends Component {
     onPressProduct: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
-    onPressNewItem: PropTypes.func
+    onPressNewItem: PropTypes.func,
+    onPressNoti: PropTypes.func
   };
 
   static defaultProps = {
@@ -79,7 +80,8 @@ class Home extends Component {
     onPressProduct: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
-    onPressNewItem: defaultListener
+    onPressNewItem: defaultListener,
+    onPressNoti: defaultListener
   };
 
   get hasPromotion() {
@@ -139,7 +141,7 @@ class Home extends Component {
           <Header
             notify={this.props.notify}
             name={this.props.userInfo ? this.props.userInfo.name : 'Tk Khách'}
-            onPressButtonChat={this.props.onPressButtonChat}
+            onPressNoti={this.props.onPressNoti}
           />
 
           <View style={styles.primaryActionsWrapper}>

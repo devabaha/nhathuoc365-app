@@ -10,6 +10,7 @@ buildscript {
         googlePlayServicesVisionVersion = "17.0.2"
         googlePlayServicesVersion = "16.+"
         firebaseVersion = "17.3.4"
+        excludeAppGlideModule = true
     }
     repositories {
         google()

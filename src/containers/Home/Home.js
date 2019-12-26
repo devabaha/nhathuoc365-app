@@ -48,7 +48,9 @@ class Home extends Component {
             cart_data: response.data.vote_cart
           });
         }
-
+        action(() => {
+          store.setStoreData(response.data.site);
+        })();
         this.setState({
           site: response.data.site,
           sites: response.data.sites,
@@ -312,7 +314,9 @@ class Home extends Component {
         Actions.jump(appConfig.routes.ordersTab);
         break;
       case 'chat':
-        this.handlePressButtonChat(this.state.site);
+        Actions.list_amazing_chat({
+          titleStyle: { width: 220 }
+        });
         break;
       case 'open_shop':
         if (this.shopOpening) return;
@@ -393,13 +397,12 @@ class Home extends Component {
   };
 
   handlePressButtonChat = () => {
-    action(() => {
-      store.setStoreData(this.state.site);
-    })();
-
-    Actions.chat({
-      tel: this.state.site.tel,
-      title: this.state.site.name
+    Actions.amazing_chat({
+      titleStyle: { width: 220 },
+      phoneNumber: this.state.site.tel,
+      title: this.state.site.name,
+      site_id: this.state.site.id,
+      user_id: store.user_info.id
     });
   };
 
@@ -463,7 +466,7 @@ class Home extends Component {
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
-        onPressButtonChat={this.handlePressButtonChat}
+        onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
       />
     );

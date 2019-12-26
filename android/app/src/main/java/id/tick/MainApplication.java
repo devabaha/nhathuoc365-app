@@ -3,6 +3,9 @@ package id.tick;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnfs.RNFSPackage;
+import com.dylanvann.fastimage.FastImageViewPackage;
+import com.reactnativecommunity.cameraroll.CameraRollPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
@@ -47,6 +50,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFSPackage(),
+            new FastImageViewPackage(),
+            new CameraRollPackage(),
             new RNPermissionsPackage(),
             new AndroidOpenSettingsPackage(),
             new ReactNativeFingerprintScannerPackage(),
