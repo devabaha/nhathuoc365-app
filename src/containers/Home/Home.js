@@ -25,7 +25,8 @@ class Home extends Component {
       services: [],
       products: [],
       listService: [],
-      primaryActions: []
+      primaryActions: [],
+      product_groups: {}
     };
   }
 
@@ -48,7 +49,7 @@ class Home extends Component {
             cart_data: response.data.vote_cart
           });
         }
-
+        console.log('res', response.data);
         this.setState({
           site: response.data.site,
           sites: response.data.sites,
@@ -59,7 +60,8 @@ class Home extends Component {
           products: response.data.products,
           promotions: response.data.promotions,
           listService: response.data.list_service,
-          primaryActions: response.data.primary_actions
+          primaryActions: response.data.primary_actions,
+          product_groups: response.data.product_groups
         });
       }
     } catch (error) {
@@ -465,6 +467,7 @@ class Home extends Component {
         onPressNewItem={this.handlePressNewItem}
         onPressButtonChat={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
+        product_groups={this.state.product_groups}
       />
     );
   }

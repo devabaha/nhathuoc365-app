@@ -49,7 +49,8 @@ class Home extends Component {
     onPressProduct: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
-    onPressNewItem: PropTypes.func
+    onPressNewItem: PropTypes.func,
+    product_groups: PropTypes.object
   };
 
   static defaultProps = {
@@ -79,7 +80,8 @@ class Home extends Component {
     onPressProduct: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
-    onPressNewItem: defaultListener
+    onPressNewItem: defaultListener,
+    product_groups: {}
   };
 
   get hasPromotion() {
@@ -105,7 +107,12 @@ class Home extends Component {
   get hasProducts() {
     return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
-
+  get hasProduct_groups() {
+    let array_product_groups = Object.keys(this.props.product_groups);
+    return (
+      Array.isArray(array_product_groups) && array_product_groups.length > 0
+    );
+  }
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
     `${appConfig.routes.homeTab}_1`,
     68
@@ -213,7 +220,25 @@ class Home extends Component {
                 }}
               </HomeCardList>
             )}
-
+            {this.hasProduct_groups &&
+              Object.keys(this.props.product_groups).map((key, index) => {
+                let { products, title } = this.props.product_groups[key];
+                return (
+                  <ListProducts data={products} title={title} key={index}>
+                    {({ item: product, index }) => (
+                      <ProductItem
+                        name={product.name}
+                        image={product.image}
+                        discount_view={product.discount_view}
+                        discount_percent={product.discount_percent}
+                        price_view={product.price_view}
+                        onPress={() => this.props.onPressProduct(product)}
+                        last={this.props.products.length - 1 === index}
+                      />
+                    )}
+                  </ListProducts>
+                );
+              })}
             {this.hasNews && (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
@@ -229,22 +254,6 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
-            )}
-
-            {this.hasProducts && (
-              <ListProducts data={this.props.products}>
-                {({ item: product, index }) => (
-                  <ProductItem
-                    name={product.name}
-                    image={product.image}
-                    discount_view={product.discount_view}
-                    discount_percent={product.discount_percent}
-                    price_view={product.price_view}
-                    onPress={() => this.props.onPressProduct(product)}
-                    last={this.props.products.length - 1 === index}
-                  />
-                )}
-              </ListProducts>
             )}
           </View>
         </ScrollView>
