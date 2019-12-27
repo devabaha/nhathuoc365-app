@@ -7,8 +7,12 @@ import axios from 'axios';
 import store from '../store/Store';
 
 var HTTP_SUCCESS = 200;
+const CancelToken = axios.CancelToken;
 
 class APIHandler {
+  getCancelInstance() {
+    return CancelToken.source();
+  }
   /**
    * Login khi mở app
    */
@@ -336,11 +340,67 @@ class APIHandler {
   }
 
   /**
+   * Gửi chat - new
+   */
+  async site_send_message(store_id, user_id, data) {
+    var api = url_for(API.SITE_SEND_MESSAGE + '/' + store_id + '/' + user_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
    * Load chat
    */
   async site_load_chat(store_id, chat_id) {
     var api = url_for(API.SITE_LOAD_CHAT + '/' + store_id + '/' + chat_id);
     return await this.getAPI(api);
+  }
+
+  /**
+   * Load conversations
+   */
+  site_load_conversations(store_id, data = {}) {
+    const cancelInstance = this.getCancelInstance();
+
+    var api = url_for(API.SITE_CONVERSATIONS + '/' + store_id);
+    return [
+      cancelInstance,
+      () =>
+        this.postAPI(api, data, {
+          cancelToken: cancelInstance.token
+        })
+    ];
+  }
+
+  /**
+   * Load chat - new
+   */
+  site_load_conversation(store_id, user_id, last_mesage_id) {
+    const cancelInstance = this.getCancelInstance();
+
+    var api = url_for(
+      API.SITE_CONVERSATION +
+        '/' +
+        store_id +
+        '/' +
+        user_id +
+        '/' +
+        last_mesage_id
+    );
+    return [
+      cancelInstance,
+      () =>
+        this.getAPI(api, {
+          cancelToken: cancelInstance.token
+        })
+    ];
+  }
+
+  /**
+   * Search chat
+   */
+  async site_search_conversations(store_id, data = {}) {
+    var api = url_for(API.SITE_SEARCH_CONVERSATIONS + '/' + store_id);
+    return await this.postAPI(api, data);
   }
 
   /**
@@ -433,6 +493,10 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async login_firebase_vertify(data) {
+    var api = url_for(API.LOGIN_FIREBASE_VERTIFY);
+    return await this.postAPI(api, data);
+  }
   /**
    * Đăng xuất
    */
@@ -446,6 +510,13 @@ class APIHandler {
    */
   url_user_add_avatar() {
     return url_for(API.USER_ADD_AVATAR);
+  }
+
+  /**
+   * URL upload avatar
+   */
+  url_user_upload_image() {
+    return url_for(API.UPLOAD_IMAGE);
   }
 
   /**

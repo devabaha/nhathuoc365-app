@@ -15,7 +15,6 @@ import ImagePicker from 'react-native-image-picker';
 import { showMessage } from 'react-native-flash-message';
 import Communications from 'react-native-communications';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import RNAccountKit from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
 import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';
@@ -23,6 +22,7 @@ import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
 import { runFbAccountKit } from '../../helper/fbAccountKit';
+import firebase from 'react-native-firebase';
 
 @observer
 export default class Account extends Component {
@@ -806,8 +806,8 @@ export default class Account extends Component {
     try {
       const response = await APIHandler.user_logout();
       if (response && response.status == STATUS_SUCCESS) {
-        await RNAccountKit.logout();
-
+        // await RNAccountKit.logout();
+        await firebase.auth().signOut();
         showMessage({
           message: 'Đăng xuất thành công',
           type: 'info'

@@ -21,7 +21,7 @@ import RightButtonChat from '../RightButtonChat';
 import RightButtonOrders from '../RightButtonOrders';
 import Button from 'react-native-button';
 import appConfig from '../../config';
-import Icon from 'react-native-vector-icons/Ionicons';
+import IconFeather from 'react-native-vector-icons/Feather';
 
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const CATE_AUTO_LOAD = 'CateAutoLoad';
@@ -172,8 +172,15 @@ class Stores extends Component {
 
   _renderRightButton() {
     return (
-      <View style={styles.right_btn_box}>
+      <View style={[styles.right_btn_box]}>
         {/* <RightButtonOrders tel={store.store_data.tel} /> */}
+        <Button
+          onPress={() => {
+            Actions.push(appConfig.routes.searchStore);
+          }}
+        >
+          <IconFeather size={26} color={appConfig.colors.white} name="search" />
+        </Button>
         <RightButtonChat tel={store.store_data.tel} />
       </View>
     );

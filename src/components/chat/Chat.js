@@ -530,7 +530,8 @@ const styles = StyleSheet.create({
   },
 
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    paddingRight: 6
   }
 });
 
