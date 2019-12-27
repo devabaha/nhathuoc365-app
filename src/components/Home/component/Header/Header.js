@@ -18,7 +18,7 @@ function Header(props) {
       <View style={styles.notificationWrapper}>
         <Button
           containerStyle={styles.notificationBtn}
-          onPress={props.onPressButtonChat}
+          onPress={props.onPressNoti}
         >
           <Icon
             style={styles.iconNotication}

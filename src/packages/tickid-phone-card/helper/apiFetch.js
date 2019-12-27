@@ -40,7 +40,7 @@ export function internalFetch(url = '', options = {}) {
  * @param {*} options
  */
 export function externalFetch(url = '', options = {}) {
-  console.log(url);
+  // console.log(url);
   const newOptions = prepareBody(options);
   var param = merge(defaultOptions, newOptions);
   param.url = url;

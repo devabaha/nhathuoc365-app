@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/' } // Gradle Plugin Portal 
+        maven { url 'https://plugins.gradle.org/m2/' } // Gradle Plugin Portal
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.1, 0.99.99]'
@@ -120,7 +120,7 @@ android {
         versionCode 4
         versionName "1.0.3"
         multiDexEnabled true
-        missingDimensionStrategy 'react-native-camera', 'general' 
+        missingDimensionStrategy 'react-native-camera', 'general'
     }
     signingConfigs {
         release {
@@ -167,6 +167,13 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-fs')
+    implementation project(':react-native-fast-image')
+    implementation project(':@react-native-community_cameraroll')
+    implementation project(':react-native-firebase')
+    implementation "com.google.firebase:firebase-auth:17.0.0"
+    implementation "com.google.android.gms:play-services-base:16.1.0"
+    implementation "com.google.firebase:firebase-core:16.0.9"
     implementation project(':react-native-permissions')
     implementation project(':react-native-android-open-settings')
     implementation project(':react-native-fingerprint-scanner')
@@ -207,3 +214,5 @@ allprojects {
         }
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

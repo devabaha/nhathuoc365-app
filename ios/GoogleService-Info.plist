@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>709287585426-en2jqmlap5400nv5o6avjs5apck7eghl.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDxVo3t3WIC4x-c7LwDAhLf6y1PPPXY1K8</string>
+	<key>GCM_SENDER_ID</key>
+	<string>709287585426</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>id.tick</string>
+	<key>PROJECT_ID</key>
+	<string>tickid</string>
+	<key>STORAGE_BUCKET</key>
+	<string>tickid.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:709287585426:ios:2d4e9621fc6526c8cd284b</string>
+	<key>DATABASE_URL</key>
+	<string>https://tickid.firebaseio.com</string>
+</dict>
+</plist>
