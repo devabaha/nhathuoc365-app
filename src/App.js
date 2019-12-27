@@ -35,6 +35,8 @@ import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
 import Login from './components/account/Login';
+import PhoneAuth from './components/account/PhoneAuth';
+import CodeAuth from './components/account/CodeAuth';
 import OpLogin from './components/account/OpLogin';
 import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
@@ -678,7 +680,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-
                 <Stack key="create_address">
                   <Scene
                     key="create_address_1"
@@ -705,6 +706,24 @@ class RootRouter extends Component {
                     hideNavBar
                     component={Login}
                     {...navBarConfig}
+                  />
+                </Stack>
+
+                <Stack key="phone_auth">
+                  <Scene
+                    key="phone_auth_1"
+                    hideNavBar
+                    component={PhoneAuth}
+                    {...navBarConfig}
+                  />
+                </Stack>
+
+                <Stack key="auth_code">
+                  <Scene
+                    back
+                    key="auth_code_1"
+                    component={CodeAuth}
+                    {...whiteNavBarConfig}
                   />
                 </Stack>
 

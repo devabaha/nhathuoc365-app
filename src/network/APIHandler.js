@@ -493,6 +493,10 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async login_firebase_vertify(data) {
+    var api = url_for(API.LOGIN_FIREBASE_VERTIFY);
+    return await this.postAPI(api, data);
+  }
   /**
    * Đăng xuất
    */

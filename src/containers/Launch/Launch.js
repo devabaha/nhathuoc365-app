@@ -48,7 +48,7 @@ class Launch extends Component {
         });
         break;
       case STATUS_UNDEFINE_USER:
-        Actions.replace('login');
+        Actions.replace('phone_auth');
         break;
       default:
         setTimeout(this.handleAuthorization, 1000);
