@@ -4,18 +4,20 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 
 class ListProducts extends Component {
   static propTypes = {
-    data: PropTypes.array
+    data: PropTypes.array,
+    title: PropTypes.string
   };
 
   static defaultProps = {
-    data: []
+    data: [],
+    title: ''
   };
 
   render() {
     return (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.heading}>Sản phẩm nổi bật</Text>
+          <Text style={styles.heading}>{this.props.title}</Text>
         </View>
         <FlatList
           horizontal
