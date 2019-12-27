@@ -25,7 +25,8 @@ class Home extends Component {
       services: [],
       products: [],
       listService: [],
-      primaryActions: []
+      primaryActions: [],
+      product_groups: {}
     };
   }
 
@@ -61,7 +62,8 @@ class Home extends Component {
           products: response.data.products,
           promotions: response.data.promotions,
           listService: response.data.list_service,
-          primaryActions: response.data.primary_actions
+          primaryActions: response.data.primary_actions,
+          product_groups: response.data.product_groups
         });
       }
     } catch (error) {
@@ -468,6 +470,7 @@ class Home extends Component {
         onPressNewItem={this.handlePressNewItem}
         onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
+        product_groups={this.state.product_groups}
       />
     );
   }
