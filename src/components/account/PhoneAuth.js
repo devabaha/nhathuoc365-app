@@ -236,7 +236,9 @@ class PhoneAuth extends Component {
           source={require('../../images/logo-640x410.jpg')}
         />
         <Text style={styles.welcomeText}>Xin chào!</Text>
-        <Text style={styles.desText}>Nhập số điện thoại để tiếp tục</Text>
+        <Text style={styles.desText}>
+          Nhập số điện thoại của bạn để tiếp tục
+        </Text>
         <View style={{ flexDirection: 'row' }}>
           <TouchableWithoutFeedback
             onPress={this._onPressPickCountry.bind(this)}
@@ -245,17 +247,16 @@ class PhoneAuth extends Component {
               style={{
                 flexDirection: 'row',
                 borderRadius: 5,
-                paddingTop: 5,
                 backgroundColor: '#dddddd',
-                alighItems: 'center'
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 8
               }}
             >
-              <Text style={{ fontSize: 25, marginHorizontal: 5 }}>
+              <Text style={{ fontSize: 25 }}>
                 {currentCountry ? currentCountry[0].flag : ''}
               </Text>
-              <Text
-                style={{ marginRight: 10, fontSize: 15, marginVertical: 5 }}
-              >
+              <Text style={{ fontSize: 15 }}>
                 {currentCountry
                   ? (currentCountry[0].idd.root
                       ? currentCountry[0].idd.root
@@ -306,6 +307,7 @@ class PhoneAuth extends Component {
   }
 
   _onPressRequestNewOtp() {
+    this.signIn();
     this.setState({ requestNewOtpCounter: requestSeconds });
   }
 
