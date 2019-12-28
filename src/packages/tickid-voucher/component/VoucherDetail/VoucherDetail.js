@@ -233,7 +233,7 @@ class VoucherDetail extends Component {
                         <Text style={styles.fieldPoint}>
                           {this.props.campaignPoint}
                         </Text>
-                        {' điểm'}
+                        {` ${this.props.campaignCurrency}`}
                       </Text>
                     </View>
                     <View style={[styles.voucherField, styles.rightField]}>

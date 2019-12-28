@@ -13,11 +13,15 @@ const MAX_CARD_BUY_AT_ONCE = 5;
 class ChooseQuantity extends Component {
   static propTypes = {
     initQuantity: PropTypes.number,
+    minValue: PropTypes.number,
+    maxValue: PropTypes.number,
     onChangeQuantity: PropTypes.func
   };
 
   static defaultProps = {
     initQuantity: 1,
+    minValue: 1,
+    maxValue: MAX_CARD_BUY_AT_ONCE,
     onChangeQuantity: () => {}
   };
 
@@ -30,11 +34,11 @@ class ChooseQuantity extends Component {
   }
 
   get canIncrease() {
-    return this.state.quantity < MAX_CARD_BUY_AT_ONCE;
+    return this.state.quantity < this.props.maxValue;
   }
 
   get canDecrease() {
-    return this.state.quantity > 1;
+    return this.state.quantity > this.props.minValue;
   }
 
   decrease = () => {

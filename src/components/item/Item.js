@@ -45,6 +45,11 @@ export default class Item extends Component {
 
   componentDidMount() {
     this._initial(this.props);
+    setTimeout(() =>
+      Actions.refresh({
+        right: this._renderRightButton()
+      })
+    );
   }
 
   componentWillReceiveProps(nextProps) {
@@ -218,7 +223,7 @@ export default class Item extends Component {
   _renderRightButton() {
     return (
       <View style={styles.right_btn_box}>
-        <RightButtonOrders />
+        {/* <RightButtonOrders /> */}
         <RightButtonChat tel={store.store_data.tel} />
       </View>
     );

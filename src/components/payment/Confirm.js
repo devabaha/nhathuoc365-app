@@ -65,6 +65,12 @@ export default class Confirm extends Component {
 
   componentDidMount() {
     this._initial(this.props);
+
+    setTimeout(() =>
+      Actions.refresh({
+        right: this._renderRightButton()
+      })
+    );
   }
 
   _initial(props) {
@@ -153,7 +159,7 @@ export default class Confirm extends Component {
 
     return (
       <View style={styles.right_btn_box}>
-        <RightButtonCall tel={this.props.tel || this.cart_tel} />
+        {/* <RightButtonCall tel={this.props.tel || this.cart_tel} /> */}
 
         <RightButtonChat
           store_id={cart_data.site_id || undefined}
@@ -424,22 +430,18 @@ export default class Confirm extends Component {
 
     clearTimeout(this._delayViewOrders);
     this._delayViewOrders = setTimeout(() => {
-      // define custom onback
-      const onBack = action(() => {
-        store.resetCartData();
-        Actions.pop();
-      });
-
-      // onback
       Actions.orders_item({
         title: `#${store.cart_data.cart_code}`,
         data: store.cart_data,
         tel: store.store_data.tel,
-        onBack
+        resetCardData: true
       });
 
       // add stack unmount
-      store.setStoreUnMount('confirm', onBack);
+      store.setStoreUnMount('confirm', () => {
+        store.resetCartData();
+        Actions.pop();
+      });
     }, 500);
   }
 

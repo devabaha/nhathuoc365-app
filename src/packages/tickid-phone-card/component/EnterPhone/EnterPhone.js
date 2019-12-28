@@ -13,6 +13,7 @@ class EnterPhone extends Component {
     editable: PropTypes.bool,
     showHistory: PropTypes.bool,
     hideChangeNetwork: PropTypes.bool,
+    hideContact: PropTypes.bool,
     contactName: PropTypes.string,
     contactPhone: PropTypes.string,
     onOpenContact: PropTypes.func,
@@ -22,7 +23,9 @@ class EnterPhone extends Component {
     onChangeText: PropTypes.func,
     networkType: PropTypes.string,
     keyboardType: PropTypes.string,
-    errorMessage: PropTypes.string
+    errorMessage: PropTypes.string,
+    placeholder: PropTypes.string,
+    title: PropTypes.string
   };
 
   static defaultProps = {
@@ -30,6 +33,7 @@ class EnterPhone extends Component {
     editable: false,
     showHistory: true,
     hideChangeNetwork: false,
+    hideContact: false,
     contactName: '',
     contactPhone: '',
     onOpenContact: defaultListener,
@@ -39,7 +43,9 @@ class EnterPhone extends Component {
     onChangeText: defaultListener,
     networkType: '',
     keyboardType: 'phone-pad',
-    errorMessage: ''
+    errorMessage: '',
+    placeholder: 'Nhập số',
+    title: 'Nạp đến'
   };
 
   get currentNetworkType() {
@@ -56,7 +62,7 @@ class EnterPhone extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.label}>Nạp đến</Text>
+          <Text style={styles.label}>{this.props.title}</Text>
 
           {this.props.showHistory && (
             <Button onPress={this.props.onShowHistory}>
@@ -78,6 +84,7 @@ class EnterPhone extends Component {
                   onBlur={this.props.onBlur}
                   onChangeText={this.props.onChangeText}
                   keyboardType={this.props.keyboardType}
+                  placeholder={this.props.placeholder}
                 />
               </View>
             ) : (
@@ -88,12 +95,14 @@ class EnterPhone extends Component {
                 <Text style={styles.input}>{this.props.contactPhone}</Text>
               </Button>
             )}
-            <Button
-              containerStyle={styles.contactBtn}
-              onPress={this.props.onOpenContact}
-            >
-              <Image style={styles.phoneBook} source={phoneBookImage} />
-            </Button>
+            {!this.props.hideContact && (
+              <Button
+                containerStyle={styles.contactBtn}
+                onPress={this.props.onOpenContact}
+              >
+                <Image style={styles.phoneBook} source={phoneBookImage} />
+              </Button>
+            )}
           </View>
 
           {!this.props.hideChangeNetwork && (
@@ -166,6 +175,8 @@ const styles = StyleSheet.create({
     marginTop: 8
   },
   input: {
+    paddingTop: 0,
+    paddingBottom: 0,
     fontSize: 24,
     fontWeight: '400',
     color: '#333',

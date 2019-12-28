@@ -30,6 +30,7 @@ class AuthenKeyboard extends Component {
     onClearPassword: PropTypes.func,
     onForgotPress: PropTypes.func,
     onOpenFingerprint: PropTypes.func,
+    description: PropTypes.string,
     passwordValue: PropTypes.string,
     headerTitle: PropTypes.string,
     forgotText: PropTypes.string,
@@ -47,6 +48,7 @@ class AuthenKeyboard extends Component {
     onClearPassword: defaultListener,
     onForgotPress: defaultListener,
     onOpenFingerprint: defaultListener,
+    description: '',
     passwordValue: '',
     headerTitle: 'Nhập mật khẩu',
     forgotText: 'Quên mật khẩu?',
@@ -134,6 +136,10 @@ class AuthenKeyboard extends Component {
               hideClose={this.props.hideClose}
             />
 
+            {!!this.props.description && (
+              <Text style={styles.description}>{this.props.description}</Text>
+            )}
+
             <PasswordInput value={this.props.passwordValue} />
 
             <FingerprintButton
@@ -204,6 +210,13 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     color: 'red',
     textAlign: 'center'
+  },
+  description: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: '#333',
+    textAlign: 'center',
+    marginTop: 12
   }
 });
 

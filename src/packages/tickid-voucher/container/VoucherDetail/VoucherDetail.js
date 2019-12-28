@@ -86,6 +86,11 @@ class VoucherDetail extends BaseContainer {
     return this.state.campaign.point;
   }
 
+  get campaignCurrency() {
+    if (!this.state.campaign) return '';
+    return this.state.campaign.data.point_currency;
+  }
+
   get canBuyCampaign() {
     return this.campaignPoint > 0 && this.isCampaign;
   }
@@ -237,7 +242,10 @@ class VoucherDetail extends BaseContainer {
           message: 'Bạn đã nhận thành công voucher này.',
           type: 'success'
         });
-        this.setState({ canUseNow: true });
+        this.setState({
+          campaign: new CampaignEntity(response.data.campaign),
+          canUseNow: true
+        });
 
         /**
          * @NOTE: 201 means the user has this voucher
@@ -409,7 +417,6 @@ class VoucherDetail extends BaseContainer {
           type: 'success',
           message: response.message
         });
-
         this.setState({
           campaign: new CampaignEntity(response.data.campaign),
           canUseNow: true
@@ -437,6 +444,7 @@ class VoucherDetail extends BaseContainer {
           canUseNow={this.state.canUseNow || this.isFromMyVoucher}
           canBuyCampaign={this.canBuyCampaign}
           campaignPoint={this.campaignPoint}
+          campaignCurrency={this.campaignCurrency}
           site={this.state.site}
           campaign={this.state.campaign}
           addresses={this.state.addresses}

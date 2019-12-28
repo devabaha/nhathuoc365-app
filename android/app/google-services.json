@@ -1,49 +1,50 @@
 {
   "project_info": {
-    "project_number": "19772576974",
-    "firebase_url": "https://tickidtest.firebaseio.com",
-    "project_id": "tickidtest",
-    "storage_bucket": "tickidtest.appspot.com"
+    "project_number": "709287585426",
+    "firebase_url": "https://tickid.firebaseio.com",
+    "project_id": "tickid",
+    "storage_bucket": "tickid.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:19772576974:android:800c13c85466e77cc06c9f",
+        "mobilesdk_app_id": "1:709287585426:android:5e75f8110529ab3ecd284b",
         "android_client_info": {
           "package_name": "id.tick"
         }
       },
       "oauth_client": [
         {
-          "client_id": "19772576974-8jfpsh6i6focbihqqb4ld4uev4etc3g8.apps.googleusercontent.com",
+          "client_id": "709287585426-en2jqmlap5400nv5o6avjs5apck7eghl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "id.tick",
-            "certificate_hash": "60c4ced725aa94e9139b7743c0470b4f063c81fd"
+            "certificate_hash": "e25812d29b0d7f57c81d9ac832f8d6e310c43266"
           }
         },
         {
-          "client_id": "19772576974-og853ioba3drfa709fnmm1rd3rikonoc.apps.googleusercontent.com",
+          "client_id": "709287585426-9m45pktd2ckvc9dnj6gfs5qe27gj9bju.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDVndDyvyIqnAysswwMOOArye_Fgwr_eP4"
+          "current_key": "AIzaSyDlmzup0Enf53B2LtlI49byZwgtAJ5lrBE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "19772576974-og853ioba3drfa709fnmm1rd3rikonoc.apps.googleusercontent.com",
+              "client_id": "709287585426-9m45pktd2ckvc9dnj6gfs5qe27gj9bju.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "19772576974-bb2sto40s4hjlpgr95qlnpmgrbdjgjec.apps.googleusercontent.com",
+              "client_id": "709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "id.tick"
+                "bundle_id": "id.tick",
+                "app_store_id": "1482102655"
               }
             }
           ]

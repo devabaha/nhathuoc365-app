@@ -27,8 +27,8 @@ const config = {
     bottomSpace: getBottomSpace()
   },
   rest: {
-    endpoint: () => 'https://apiapp.tickid.vn',
-    phoneCardService: () => '/apiService/info/100',
+    endpoint: () => 'https://apiapp.tickid.vn', //http://localhost:8000/
+    phoneCardService: () => '/apiService/info/',
     book: () => '/apiService/book',
     password: () => '/apiUser/change_pass',
     orders: serviceId => `/apiService/orders/${serviceId}`,

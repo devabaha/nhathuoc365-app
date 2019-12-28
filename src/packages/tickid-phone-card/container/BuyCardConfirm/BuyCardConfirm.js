@@ -21,7 +21,7 @@ import Loading from '@tickid/tickid-rn-loading';
 import config from '../../config';
 
 const PASSWORD_STORAGE_KEY = 'PASSWORD_STORAGE_KEY';
-const PASSWORD_LENGTH = 6;
+const PASSWORD_LENGTH = 4;
 
 class BuyCardConfirm extends Component {
   static propTypes = {
@@ -47,7 +47,7 @@ class BuyCardConfirm extends Component {
     contactPhone: '',
     serviceId: undefined,
     historyTitle: '',
-    quantity: 1
+    quantity: 0
   };
 
   constructor(props) {
@@ -251,7 +251,24 @@ class BuyCardConfirm extends Component {
       });
       this.saveNewPasswordToStorage(newPasswordValue);
       this.saveNewPasswordToDb(newPasswordValue).then(response => {
-        console.log(response);
+        if (response.status === config.httpCode.success) {
+          this.setState({ showRepeatPasswordKeyboard: false });
+          this.handleBuyCard(newPasswordValue);
+        } else {
+          showMessage({
+            type: 'danger',
+            message: response.message
+          });
+          this.setState({
+            showRepeatPasswordKeyboard: false,
+            newPasswordValue: [],
+            repeatPasswordValue: []
+          });
+
+          setTimeout(() => {
+            this.setState({ showNewPasswordKeyboard: true });
+          }, 2000);
+        }
       });
     } else {
       this.handleTryCreatePassword();
@@ -328,6 +345,10 @@ class BuyCardConfirm extends Component {
         pw4n: authenPasswordStored
       }
     };
+    if (this.props.times) {
+      options.body.times = this.props.times;
+      options.body.option = this.props.option;
+    }
 
     internalFetch(config.rest.book(), options)
       .then(response => {
@@ -416,22 +437,36 @@ class BuyCardConfirm extends Component {
                         value={this.props.contactName}
                       />
                     )}
+
                     {!!this.props.contactPhone && (
                       <FieldItem
                         label="Số điện thoại"
                         value={this.props.contactPhone}
                       />
                     )}
+
                     <FieldItem
                       label="Nhà mạng"
                       value={this.props.network.name}
                     />
+                    {!!this.props.cardNumber && (
+                      <FieldItem label="Số thẻ" value={this.props.cardNumber} />
+                    )}
+                    {!!this.props.subCard && (
+                      <FieldItem label="Số phụ" value={this.props.subCard} />
+                    )}
+                    {!!this.props.totalMonth && (
+                      <FieldItem
+                        label="Số tháng"
+                        value={this.props.totalMonth}
+                      />
+                    )}
                     <FieldItem label="Mệnh giá" value={this.props.card.label} />
-                    {this.props.quantity && (
+                    {this.props.quantity > 0 && (
                       <FieldItem label="Số lượng" value={this.props.quantity} />
                     )}
                     <FieldItem
-                      label="Hoàn lại"
+                      label="Giảm"
                       value={this.props.card.cashbackValue}
                     />
                   </FieldItemWrapper>
@@ -486,6 +521,7 @@ class BuyCardConfirm extends Component {
         <AuthenKeyboardModal
           hideClose
           headerTitle="Tạo mật khẩu mới"
+          description="Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch"
           visible={this.state.showNewPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}
@@ -499,6 +535,7 @@ class BuyCardConfirm extends Component {
         <AuthenKeyboardModal
           hideClose
           headerTitle="Nhập lại mật khẩu"
+          description="Nhập lại mật khẩu để xác nhận"
           visible={this.state.showRepeatPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}

@@ -25,6 +25,16 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>ak2794644853896597</string>
@@ -52,20 +62,20 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
 	<key>NSAppleMusicUsageDescription</key>
 	<string>Cho phép sử dụng Apple Music</string>
-	<key>NSContactsUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Danh bạ</string>
-	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>Cho phép sử dụng Bluetooth</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Cho phép luôn luôn sử dụng Bluetooth</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>Cho phép sử dụng Bluetooth</string>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Cho phép sử dụng Calendar</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Cho phép ứng dụng sử dụng dụng Camera quét mã Vạch và mã QR</string>
+	<key>NSContactsUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Danh bạ</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -95,6 +105,7 @@
 		<string>FontAwesome5_Brands.ttf</string>
 		<string>FontAwesome5_Regular.ttf</string>
 		<string>FontAwesome5_Solid.ttf</string>
+		<string>Fontisto.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

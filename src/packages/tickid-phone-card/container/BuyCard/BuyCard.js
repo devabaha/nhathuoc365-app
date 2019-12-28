@@ -2,7 +2,13 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from '../../config';
 import { internalFetch } from '../../helper/apiFetch';
-import { View, ScrollView, StyleSheet, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  RefreshControl
+} from 'react-native';
 import SelectNetworkComponent from '../../component/SelectNetwork';
 import SelectCardValueComponent from '../../component/SelectCardValue';
 import SelectCardHistoryComponent from '../../component/SelectCardHistory';
@@ -198,6 +204,10 @@ class BuyCard extends Component {
             onChangeQuantity={this.handleChangeQuantity}
           /> */}
 
+          {!!this.currentService.content && (
+            <Text style={styles.content}>{this.currentService.content}</Text>
+          )}
+
           <View style={styles.bottomSpace} />
         </ScrollView>
 
@@ -213,6 +223,13 @@ const styles = StyleSheet.create({
   },
   bottomSpace: {
     marginBottom: 16
+  },
+  content: {
+    fontSize: 12,
+    color: '#333',
+    fontWeight: '400',
+    marginLeft: 16,
+    marginTop: 24
   }
 });
 

@@ -382,6 +382,7 @@ class CardItem extends Component {
           cardId={this.props.cardId}
           networkType={this.props.networkType}
           networkName={this.props.networkName}
+          code={this.props.code}
           price={this.props.price}
           isBuyCard={this.isBuyCard}
           buyTime={this.props.buyTime}

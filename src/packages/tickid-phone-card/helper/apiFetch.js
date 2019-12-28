@@ -1,6 +1,7 @@
 import config from '../config';
 import urlFor from '../helper/urlFor';
 import { merge } from '../helper/configure';
+import axios from 'axios';
 
 /**
  * Default options for fetch request
@@ -21,7 +22,7 @@ function prepareBody(options) {
     body.append(field, options.body[field]);
   }
 
-  return { ...options, body };
+  return { ...options, data: body };
 }
 
 /**
@@ -39,6 +40,14 @@ export function internalFetch(url = '', options = {}) {
  * @param {*} options
  */
 export function externalFetch(url = '', options = {}) {
+  // console.log(url);
   const newOptions = prepareBody(options);
-  return fetch(url, merge(defaultOptions, newOptions)).then(res => res.json());
+  var param = merge(defaultOptions, newOptions);
+  param.url = url;
+  return new Promise((resolve, reject) => {
+    axios
+      .request(param)
+      .then(response => resolve(response.data))
+      .catch(reject);
+  });
 }

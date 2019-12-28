@@ -1,12 +1,37 @@
-# Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
 target 'my_food_new' do
   # Comment the next line if you don't want to use dynamic frameworks
-    # use_frameworks!
-	# Required by RNFirebase
-	pod 'Firebase/Core'
-	pod 'Firebase/Analytics'
+
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Analytics'
+  pod 'GoogleSignIn'
+
   # Pods for my_food_new
 
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+    'Core',
+    'RCTImage' # <- Add this line
+  ]
+  pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
+  pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
+
+  pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
+
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
+  target 'my_food_newTests' do
+    inherit! :search_paths
+    # Pods for testing
+  end
+
+end
+
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    if target.name == "React"
+      target.remove_from_project
+    end
+  end
 end

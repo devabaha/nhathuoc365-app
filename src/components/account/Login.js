@@ -91,12 +91,12 @@ class Login extends Component {
             message: response.message,
             type: 'info'
           });
-        } else if (response) {
+        } else {
           setTimeout(() => {
             this.setState({ spinner: false });
           }, 2000);
           showMessage({
-            message: response.message,
+            message: 'Lỗi xác thực, vui lòng thử lại.',
             type: 'info'
           });
         }
@@ -104,8 +104,7 @@ class Login extends Component {
         setTimeout(() => {
           this.setState({ spinner: false });
         }, 2000);
-        console.log(e + ' login_fbak_verify');
-        store.addApiQueue('login_fbak_verify', this._verifyFBAK);
+        store.addApiQueue('login_fbak_verify', this._verifyFBAK(fbres));
       }
     });
   };

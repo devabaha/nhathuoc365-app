@@ -11,7 +11,8 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import <Firebase.h>
+@import UIKit;
+@import Firebase;
 
 @implementation AppDelegate
 
@@ -31,6 +32,24 @@
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
   return YES;
+}
+
+- (void)application:(UIApplication *)application
+    didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
+  // Pass device token to auth.
+  [[FIRAuth auth] setAPNSToken:deviceToken type:FIRAuthAPNSTokenTypeUnknown];
+  // Further handling of the device token if needed by the app.
+}
+
+- (void)application:(UIApplication *)application
+    didReceiveRemoteNotification:(NSDictionary *)notification
+          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
+  // Pass notification to auth and check if they can handle it.
+  if ([[FIRAuth auth] canHandleNotification:notification]) {
+    completionHandler(UIBackgroundFetchResultNoData);
+    return;
+  }
+  // This notification is not auth related, developer should handle it.
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

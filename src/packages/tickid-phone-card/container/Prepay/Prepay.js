@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import config from '../../config';
 import {
+  Text,
   View,
   ScrollView,
   StyleSheet,
@@ -23,17 +24,26 @@ class Prepay extends Component {
     networksOfService: PropTypes.object,
     cardsOfNetwork: PropTypes.object,
     prefix: PropTypes.oneOf(['trước', 'sau']),
-    onRefresh: PropTypes.func
+    onRefresh: PropTypes.func,
+    hideContact: PropTypes.bool,
+    errorEmptyMessage: PropTypes.string,
+    errorLengthMessage: PropTypes.string,
+    validLength: PropTypes.number
   };
 
   static defaultProps = {
     refreshing: false,
+    hideContact: false,
     services: {},
     listServices: [],
     networksOfService: {},
     cardsOfNetwork: {},
     prefix: 'trước',
-    onRefresh: () => {}
+    onRefresh: () => {},
+    hideContact: false,
+    errorEmptyMessage: 'Vui lòng nhập số điện thoại',
+    errorLengthMessage: 'Số điện thoại không hợp lệ',
+    validLength: 10
   };
 
   constructor(props) {
@@ -134,12 +144,12 @@ class Prepay extends Component {
   handleValidate = () => {
     if (!this.contactPhone) {
       this.setState({
-        errorMessage: 'Vui lòng nhập số điện thoại'
+        errorMessage: this.props.errorEmptyMessage
       });
       return false;
-    } else if (this.contactPhone.length < 10) {
+    } else if (this.contactPhone.length < this.props.validLength) {
       this.setState({
-        errorMessage: 'Số điện thoại không hợp lệ'
+        errorMessage: this.props.errorLengthMessage
       });
       return false;
     } else {
@@ -203,6 +213,7 @@ class Prepay extends Component {
           <EnterPhoneComponent
             editable
             data={this.currentNetworks}
+            placeholder={this.props.placeholder}
             errorMessage={this.state.errorMessage}
             contactName={this.state.contactName}
             contactPhone={this.state.contactPhone}
@@ -212,6 +223,7 @@ class Prepay extends Component {
             onShowHistory={this.handleShowHistory}
             networkType={this.state.networkType}
             onPressSelectNetwork={this.handlePressSelectNetwork}
+            hideContact={this.props.hideContact}
           />
 
           <SelectCardValueComponent
@@ -228,6 +240,10 @@ class Prepay extends Component {
             onClose={() => this.setState({ visibleNetwork: false })}
           />
 
+          {!!this.currentService.content && (
+            <Text style={styles.content}>{this.currentService.content}</Text>
+          )}
+
           <View style={styles.bottomSpace} />
         </ScrollView>
 
@@ -243,6 +259,13 @@ const styles = StyleSheet.create({
   },
   bottomSpace: {
     marginBottom: 16
+  },
+  content: {
+    fontSize: 12,
+    color: '#333',
+    fontWeight: '400',
+    marginLeft: 16,
+    marginTop: 24
   }
 });
 
