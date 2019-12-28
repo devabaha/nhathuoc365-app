@@ -12,8 +12,6 @@ import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
 import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
-import io.invertase.firebase.RNFirebasePackage;
-import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.microsoft.codepush.react.CodePush;
@@ -29,6 +27,7 @@ import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
+import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -63,8 +62,6 @@ public class MainApplication extends Application implements ReactApplication {
             new ReactNativeContacts(),
             new RNGestureHandlerPackage(),
             new ReanimatedPackage(),
-            new RNFirebasePackage(),
-            new RNFirebaseAnalyticsPackage(),
             new RNCameraPackage(),
             new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
@@ -79,7 +76,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new RNFetchBlobPackage(),
             new RNFirebasePackage(),
-            new RNFirebaseAuthPackage()
+            new RNFirebaseAuthPackage(),
+            new RNFirebaseAnalyticsPackage(),
       );
     }
 
