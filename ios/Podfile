@@ -4,7 +4,7 @@ target 'my_food_new' do
   # Comment the next line if you don't want to use dynamic frameworks
  
   pod 'Firebase/Analytics'
-  pod 'Firebase/Auth',:modular_headers => true
+  pod 'Firebase/Auth'
   pod 'GoogleSignIn'
 
   # Pods for my_food_new
