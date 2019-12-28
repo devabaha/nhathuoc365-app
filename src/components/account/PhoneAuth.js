@@ -229,9 +229,16 @@ class PhoneAuth extends Component {
       maxLength: 15
     };
     return (
-      <View style={{ paddingHorizontal: 16, top: 200 }}>
+      <View style={{ paddingHorizontal: 16, top: 115 }}>
+        <Image
+          resizeMode="contain"
+          style={styles.image}
+          source={require('../../images/logo-640x410.jpg')}
+        />
         <Text style={styles.welcomeText}>Xin chào!</Text>
-        <Text style={styles.desText}>Nhập số điện thoại để tiếp tục</Text>
+        <Text style={styles.desText}>
+          Nhập số điện thoại của bạn để tiếp tục
+        </Text>
         <View style={{ flexDirection: 'row' }}>
           <TouchableWithoutFeedback
             onPress={this._onPressPickCountry.bind(this)}
@@ -240,17 +247,16 @@ class PhoneAuth extends Component {
               style={{
                 flexDirection: 'row',
                 borderRadius: 5,
-                paddingTop: 5,
-                backgroundColor: 'white',
-                alighItems: 'center'
+                backgroundColor: '#dddddd',
+                justifyContent: 'center',
+                alignItems: 'center',
+                padding: 8
               }}
             >
-              <Text style={{ fontSize: 25, marginHorizontal: 5 }}>
+              <Text style={{ fontSize: 25 }}>
                 {currentCountry ? currentCountry[0].flag : ''}
               </Text>
-              <Text
-                style={{ marginRight: 10, fontSize: 15, marginVertical: 5 }}
-              >
+              <Text style={{ fontSize: 15 }}>
                 {currentCountry
                   ? (currentCountry[0].idd.root
                       ? currentCountry[0].idd.root
@@ -266,7 +272,7 @@ class PhoneAuth extends Component {
             style={{
               flex: 1,
               borderRadius: 5,
-              backgroundColor: 'white',
+              backgroundColor: '#dddddd',
               fontSize: 25,
               padding: 5,
               marginLeft: 10,
@@ -288,7 +294,7 @@ class PhoneAuth extends Component {
           <Text
             style={[
               styles.continueText,
-              { color: !empty(phoneNumber) ? 'white' : 'lightgray' }
+              { color: !empty(phoneNumber) ? 'black' : 'lightgray' }
             ]}
           >
             Tiếp tục
@@ -301,6 +307,7 @@ class PhoneAuth extends Component {
   }
 
   _onPressRequestNewOtp() {
+    this.signIn();
     this.setState({ requestNewOtpCounter: requestSeconds });
   }
 
@@ -361,7 +368,7 @@ class PhoneAuth extends Component {
             <TouchableWithoutFeedback
               onPress={this._onPressBackToPhoneInput.bind(this)}
             >
-              <Icon name="chevron-left" size={30} color="white" />
+              <Icon name="chevron-left" size={30} color="black" />
             </TouchableWithoutFeedback>
           </View>
         </View>
@@ -401,7 +408,7 @@ class PhoneAuth extends Component {
             <Text
               style={[
                 styles.continueText,
-                { color: !empty(codeInput) ? 'white' : 'lightgray' }
+                { color: !empty(codeInput) ? 'black' : 'lightgray' }
               ]}
             >
               Tiếp tục
@@ -411,8 +418,8 @@ class PhoneAuth extends Component {
           <Text
             style={{
               fontSize: 17,
-              fontWeight: '200',
-              color: 'white',
+              fontWeight: 200,
+              color: 'black',
               marginTop: 20
             }}
           >
@@ -475,22 +482,27 @@ const headerHeight = Platform.select({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: 'white'
+  },
+  image: {
+    width: 128,
+    height: 82,
+    top: -30
   },
   welcomeText: {
-    color: 'white',
+    color: 'black',
     fontSize: 26,
     fontWeight: '800'
   },
   desText: {
-    color: 'white',
+    color: 'black',
     fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
     fontWeight: '300'
   },
   phoneTextInput: {
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     fontWeight: '800',
     fontSize: 20,
     borderRadius: 5,
@@ -504,7 +516,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   continueText: {
-    color: 'white',
+    color: 'black',
     fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',

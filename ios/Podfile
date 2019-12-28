@@ -5,7 +5,6 @@ target 'my_food_new' do
 
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
-  pod 'Firebase/Analytics'
   pod 'GoogleSignIn'
 
   # Pods for my_food_new
