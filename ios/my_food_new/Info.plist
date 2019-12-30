@@ -85,7 +85,7 @@
 	<key>NSMotionUsageDescription</key>
 	<string>Cho phép sử dụng nhận dạng chuyển động</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Thư viện ảnh làm ảnh đại diện</string>
+	<string>Cho phép ứng dụng truy cập Thư viện ảnh</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Cho phép sử dụng nhận biết lời nói</string>
 	<key>UIAppFonts</key>

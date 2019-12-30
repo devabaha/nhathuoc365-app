@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import {
   View,
   TouchableWithoutFeedback,
@@ -22,7 +22,9 @@ import {
 import PropTypes from 'prop-types';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import { willUpdateState, logger } from '../../helper';
 
+const tickidChatLogger = logger('tickidChat');
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
 const DURATION_SHOW_GALLERY = 300;
 const SCROLL_OFFSET_TOP = 100;
@@ -72,19 +74,6 @@ class TickidChat extends Component {
   };
 
   state = {
-    // messages: [
-    //   {
-    //     _id: 1,
-    //     text: 'Hello developer',
-    //     createdAt: new Date(),
-    //     user: {
-    //       _id: 2,
-    //       name: 'React Native',
-    //       avatar: 'https://placeimg.com/140/140/any'
-    //     },
-    //     image: 'https://placeimg.com/140/140/any'
-    //   }
-    // ],
     showImageGallery: false,
     editable: false,
     showImageBtn: true,
@@ -92,38 +81,31 @@ class TickidChat extends Component {
     showBackBtn: false,
     selectedImages: [],
     uploadImages: [],
-    text: ''
+    text: '',
+    animatedBtnImageValue: new Animated.Value(BTN_IMAGE_WIDTH),
+    animatedBtnSendValue: new Animated.Value(0),
+    animatedBtnBackValue: new Animated.Value(0),
+    paddingTop: 0
   };
 
-  animatedBtnImageValue = new Animated.Value(BTN_IMAGE_WIDTH);
-  animatedBtnSendValue = new Animated.Value(0);
-  animatedBtnBackValue = new Animated.Value(0);
   refImageGallery = React.createRef();
   refInput = React.createRef();
   unmounted = false;
+  test = 0;
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (
-      nextState.showImageGallery !== this.state.showImageGallery ||
-      nextState.editable !== this.state.editable ||
-      nextState.showImageBtn !== this.state.showImageBtn ||
-      nextState.showSendBtn !== this.state.showSendBtn ||
-      nextState.showBackBtn !== this.state.showBackBtn ||
-      nextState.selectedImages !== this.state.selectedImages ||
-      nextState.uploadImages !== this.state.uploadImages ||
-      nextState.text !== this.state.text
-    ) {
+    if (nextState !== this.state) {
       if (nextState.showImageBtn !== this.state.showImageBtn) {
         Animated.parallel([
-          Animated.timing(this.animatedBtnImageValue, {
+          Animated.spring(this.state.animatedBtnImageValue, {
             toValue: nextState.showImageBtn ? BTN_IMAGE_WIDTH : 0,
-            easing: nextProps.animatedTypeComposerBtn,
+            // easing: nextProps.animatedTypeComposerBtn,
             duration: nextProps.durationShowGallery,
             useNativeDriver: true
           }),
-          Animated.timing(this.animatedBtnSendValue, {
+          Animated.spring(this.state.animatedBtnSendValue, {
             toValue: nextState.showImageBtn ? 0 : BTN_IMAGE_WIDTH,
-            easing: nextProps.animatedTypeComposerBtn,
+            // easing: nextProps.animatedTypeComposerBtn,
             duration: nextProps.durationShowGallery,
             useNativeDriver: true
           })
@@ -164,12 +146,11 @@ class TickidChat extends Component {
     }
   }
 
-  animate(target, duration, toValue, easing, useNativeDriver = false) {
-    return Animated.timing(target, {
-      useNativeDriver,
-      duration,
+  animateBtnBack(toValue) {
+    return Animated.spring(this.state.animatedBtnBackValue, {
       toValue,
-      easing
+      duration: this.props.durationShowGallery,
+      useNativeDriver: true
     });
   }
 
@@ -210,23 +191,18 @@ class TickidChat extends Component {
       this.refInput.blur();
     }
     setTimeout(() => {
-      if (!this.unmounted) {
+      willUpdateState(this.unmounted, () => {
         const state = { ...this.state };
         if (!state.showImageGallery && state.selectedImages.length !== 0) {
           state.showImageBtn = false;
           state.showBackBtn = true;
           state.showSendBtn = true;
-          Animated.timing(this.animatedBtnBackValue, {
-            toValue: 1,
-            duration: this.props.durationShowGallery,
-            useNativeDriver: true,
-            easing: this.props.animatedTypeComposerBtn
-          }).start();
+          this.animateBtnBack(1).start();
         }
         state.showImageGallery = !state.showImageGallery;
         state.editable = false;
         this.setState({ ...state });
-      }
+      });
     }, this.props.durationShowGallery / 2);
   }
 
@@ -242,24 +218,14 @@ class TickidChat extends Component {
     if (selectedImages.length === 1 && this.state.selectedImages.length === 0) {
       state.showImageBtn = false;
       state.showBackBtn = true;
-      Animated.timing(this.animatedBtnBackValue, {
-        toValue: 1,
-        duration: this.props.durationShowGallery,
-        useNativeDriver: true,
-        easing: this.props.animatedTypeComposerBtn
-      }).start();
+      this.animateBtnBack(1).start();
     } else if (
       selectedImages.length === 0 &&
       this.state.selectedImages.length === 1
     ) {
       state.showBackBtn = false;
       state.showImageBtn = true;
-      Animated.timing(this.animatedBtnBackValue, {
-        toValue: 0,
-        duration: this.props.durationShowGallery,
-        useNativeDriver: true,
-        easing: this.props.animatedTypeComposerBtn
-      }).start();
+      this.animateBtnBack(0).start();
     }
 
     state.selectedImages = selectedImages;
@@ -274,7 +240,7 @@ class TickidChat extends Component {
       state.selectedImages = [];
     }
 
-    state.uploadImages = images;
+    // state.uploadImages = images;
     state.showBackBtn = false;
     state.showImageBtn = true;
 
@@ -298,6 +264,16 @@ class TickidChat extends Component {
     } else if (this.state.selectedImages.length !== 0) {
       this.handleSendImage();
     }
+  }
+
+  handleExpandedGallery() {
+    this.props.expandedGallery();
+    this.setState({ expandedGallery: true });
+  }
+
+  handleCollapsedGallery() {
+    this.props.collapsedGallery();
+    this.setState({ expandedGallery: false });
   }
 
   onListViewPress = e => {
@@ -335,7 +311,7 @@ class TickidChat extends Component {
         editable={this.state.editable}
         onTyping={this.onTyping.bind(this)}
         onBlurInput={this.handleBlur.bind(this)}
-        animatedBtnBackValue={this.animatedBtnBackValue}
+        animatedBtnBackValue={this.state.animatedBtnBackValue}
         onBackPress={this.handleBackPress.bind(this)}
         btnWidth={BTN_IMAGE_WIDTH}
         placeholder="Nhập nội dung chat..."
@@ -346,17 +322,7 @@ class TickidChat extends Component {
 
   renderFooter() {
     return this.state.uploadImages.length !== 0 ? (
-      <View
-        style={{
-          width: WIDTH,
-          height: 100,
-          flexDirection: 'row',
-          marginTop: 15,
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          backgroundColor: 'rgba(0,0,0,0)'
-        }}
-      >
+      <View style={styles.footerStyle}>
         {this.state.uploadImages.map(image => (
           <ImageUploading
             key={image.id}
@@ -381,38 +347,34 @@ class TickidChat extends Component {
   }
 
   renderSend(props) {
+    const dimensions = {
+      height: '100%',
+      width: BTN_IMAGE_WIDTH
+    };
     return (
-      <View
-        style={{
-          height: 44,
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          flexDirection: 'row',
-          marginRight: 5
-        }}
-      >
+      <View style={styles.sendWrapper}>
         <Send {...props}>
           <TouchableOpacity onPress={this.handleSendMessage.bind(this)}>
             <Animated.View
               pointerEvents={this.state.showImageBtn ? 'auto' : 'none'}
-              style={{
-                width: BTN_IMAGE_WIDTH,
-                opacity: this.animatedBtnSendValue.interpolate({
-                  inputRange: [0, BTN_IMAGE_WIDTH],
-                  outputRange: [0, 1]
-                }),
-                transform: [
-                  {
-                    scale: this.animatedBtnSendValue.interpolate({
-                      inputRange: [0, BTN_IMAGE_WIDTH],
-                      outputRange: [0, 1]
-                    })
-                  }
-                ],
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
+              style={[
+                styles.center,
+                {
+                  ...dimensions,
+                  opacity: this.state.animatedBtnSendValue.interpolate({
+                    inputRange: [0, BTN_IMAGE_WIDTH],
+                    outputRange: [0, 1]
+                  }),
+                  transform: [
+                    {
+                      scale: this.state.animatedBtnSendValue.interpolate({
+                        inputRange: [0, BTN_IMAGE_WIDTH],
+                        outputRange: [0, 1]
+                      })
+                    }
+                  ]
+                }
+              ]}
             >
               <IconFontAwesome size={20} name="paper-plane" color={'blue'} />
             </Animated.View>
@@ -421,34 +383,29 @@ class TickidChat extends Component {
 
         <Animated.View
           pointerEvents={this.state.showImageBtn ? 'auto' : 'none'}
-          style={{
-            position: 'absolute',
-            width: BTN_IMAGE_WIDTH,
-            opacity: this.animatedBtnImageValue.interpolate({
-              inputRange: [0, BTN_IMAGE_WIDTH],
-              outputRange: [0, 1]
-            }),
-            transform: [
-              {
-                scale: this.animatedBtnImageValue.interpolate({
-                  inputRange: [0, BTN_IMAGE_WIDTH],
-                  outputRange: [2, 1]
-                })
-              }
-            ],
-            height: '100%',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
+          style={[
+            styles.center,
+            {
+              ...dimensions,
+              position: 'absolute',
+              opacity: this.state.animatedBtnImageValue.interpolate({
+                inputRange: [0, BTN_IMAGE_WIDTH],
+                outputRange: [0, 1]
+              }),
+              transform: [
+                {
+                  scale: this.state.animatedBtnImageValue.interpolate({
+                    inputRange: [0, BTN_IMAGE_WIDTH],
+                    outputRange: [2, 1]
+                  })
+                }
+              ]
+            }
+          ]}
         >
           <TouchableOpacity
             onPress={this.handlePressGallery.bind(this)}
-            style={{
-              width: '100%',
-              height: '100%',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
+            style={styles.fullCenter}
           >
             <IconFontAwesome size={25} name="image" color={'blue'} />
           </TouchableOpacity>
@@ -468,7 +425,7 @@ class TickidChat extends Component {
       props.currentMessage._id ===
         this.props.messages[this.props.messages.length - 1]._id
     ) {
-      style = { marginBottom: 10 };
+      style = styles.messageStyle;
     }
 
     return (
@@ -486,7 +443,7 @@ class TickidChat extends Component {
 
   renderDay(props) {
     return (
-      <View style={{ marginTop: 10 }}>
+      <View style={styles.dayStyle}>
         <Day {...props} />
       </View>
     );
@@ -499,7 +456,26 @@ class TickidChat extends Component {
           style={styles.touchWrapper}
           onPress={this.onListViewPress.bind(this)}
         >
-          <View style={{ flex: 1 }}>
+          <Animated.View
+            style={[
+              styles.flex,
+              {
+                paddingTop: this.refGestureWrapper
+                  ? this.refGestureWrapper.animatedShowUpFake
+                  : 0,
+                transform: [
+                  {
+                    translateY: this.refGestureWrapper
+                      ? this.refGestureWrapper.animatedShowUpValue.interpolate({
+                          inputRange: [0, BOTTOM_OFFFSET_GALLERY],
+                          outputRange: [0, -BOTTOM_OFFFSET_GALLERY]
+                        })
+                      : 0
+                  }
+                ]
+              }
+            ]}
+          >
             <GiftedChat
               renderDay={this.renderDay.bind(this)}
               renderMessage={this.renderMessage.bind(this)}
@@ -512,16 +488,8 @@ class TickidChat extends Component {
               onSend={this.handleSendMessage.bind(this)}
               alwaysShowSend={true}
               listViewProps={{
-                contentContainerStyle: {
-                  paddingBottom: 15,
-                  flexGrow: 1
-                },
-                style: {
-                  flex: 1
-                }
-                // onScroll:
-                //     (event) =>
-                //         this.onContentOffsetChanged(event.nativeEvent.contentOffset.y)
+                contentContainerStyle: styles.giftedChatContainer,
+                style: styles.flex
               }}
               scrollToBottom
               scrollToBottomComponent={this.renderScrollBottomComponent.bind(
@@ -529,52 +497,25 @@ class TickidChat extends Component {
               )}
               {...this.props.giftedChatProps}
             />
-          </View>
+          </Animated.View>
         </TouchableWithoutFeedback>
         <ImageGallery
           ref={this.refImageGallery}
+          refGestureWrapper={inst => (this.refGestureWrapper = inst)}
           setHeader={this.props.setHeader}
           visible={this.state.showImageGallery}
           defaultStatusBarColor={this.props.defaultStatusBarColor}
           baseViewHeight={BOTTOM_OFFFSET_GALLERY}
           durattionShowGallery={DURATION_SHOW_GALLERY}
-          onExpandedBodyContent={this.props.expandedGallery}
+          onExpandedBodyContent={this.handleExpandedGallery.bind(this)}
           onCollapsedBodyContent={this.props.collapsedGallery}
           onSendImage={this.handleSendImage.bind(this)}
           onToggleImage={this.handleToggleImage.bind(this)}
-          btnCloseAlbum={
-            <CenterIcon
-              iconType="IconAntDesign"
-              name="close"
-              size={18}
-              color="white"
-            />
-          }
-          iconToggleAlbum={
-            <CenterIcon
-              iconType="IconAntDesign"
-              name="down"
-              size={18}
-              color="white"
-            />
-          }
-          iconSelectedAlbum={<CenterIcon name="check" size={20} color="blue" />}
-          iconSendImage={
-            <CenterIcon name="paper-plane" size={20} color="blue" />
-          }
-          iconCameraPicker={
-            <View
-              style={{
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <CenterIcon name="camera" size={28} color="black" />
-              <Text style={{ color: 'black', marginTop: 15 }}>Chụp ảnh</Text>
-            </View>
-          }
+          btnCloseAlbum={BTN_CLOSE_ALBUM}
+          iconToggleAlbum={ICON_TOGGLE_ALBUM}
+          iconSelectedAlbum={ICON_SELECTED_ALBUM}
+          iconSendImage={ICON_SEND_IMAGE}
+          iconCameraPicker={ICON_CAMERA_PICKER}
         />
       </SafeAreaView>
     );
@@ -585,10 +526,53 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
+  sendWrapper: {
+    height: 44,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    marginRight: 5
+  },
+  dayStyle: {
+    marginTop: 10
+  },
+  messageStyle: {
+    marginBottom: 10
+  },
+  footerStyle: {
+    width: WIDTH,
+    height: 100,
+    flexDirection: 'row',
+    marginTop: 15,
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0)'
+  },
+  giftedChatContainer: {
+    paddingBottom: 15,
+    flexGrow: 1
+  },
+  flex: {
+    flex: 1
+  },
   touchWrapper: {
     flex: 1,
     width: WIDTH,
     height: HEIGHT
+  },
+  fullCenter: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  center: {
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  captureText: {
+    color: 'black',
+    marginTop: 15
   }
 });
 
@@ -601,9 +585,25 @@ const CenterIcon = props => {
     ) : (
       <IconFontAwesome {...props} />
     );
-  return (
-    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-      {iconComponent}
-    </View>
-  );
+
+  return <View style={styles.center}>{iconComponent}</View>;
 };
+
+//-----
+const ICON_CAMERA_PICKER = (
+  <View style={styles.fullCenter}>
+    <CenterIcon name="camera" size={28} color="black" />
+    <Text style={styles.captureText}>Chụp ảnh</Text>
+  </View>
+);
+const ICON_SEND_IMAGE = (
+  <CenterIcon name="paper-plane" size={20} color="blue" />
+);
+const ICON_SELECTED_ALBUM = <CenterIcon name="check" size={20} color="blue" />;
+const ICON_TOGGLE_ALBUM = (
+  <CenterIcon iconType="IconAntDesign" name="down" size={18} color="white" />
+);
+const BTN_CLOSE_ALBUM = (
+  <CenterIcon iconType="IconAntDesign" name="close" size={18} color="white" />
+);
+//-----
