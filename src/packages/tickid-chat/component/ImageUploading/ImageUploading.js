@@ -54,6 +54,8 @@ class ImageUploading extends Component {
   }
 
   async uploadImage() {
+    console.log(this.props, 'abc');
+
     let base64 = this.props.image.uploadPath;
     if (!this.props.image.isBase64) {
       base64 = await getBase64Image(this.props.image.path);
@@ -90,20 +92,18 @@ class ImageUploading extends Component {
       })
       .then(response => {
         console.log(response);
-        Animated.timing(this.state.fade, {
+        Animated.spring(this.state.fade, {
           toValue: 1,
           duration: 300,
-          easing: Easing.in,
           useNativeDriver: true,
           delay: 300
         }).start(() => this.props.onUploadedSuccess(JSON.parse(response.data)));
       })
       .catch(error => {
         console.log(error);
-        Animated.timing(this.state.fade, {
+        Animated.spring(this.state.fade, {
           toValue: 1,
           duration: 300,
-          easing: Easing.in,
           useNativeDriver: true,
           delay: 300
         }).start(() => this.props.onUploadedFail());

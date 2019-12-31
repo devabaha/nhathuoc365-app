@@ -69,18 +69,21 @@ export default class VndWallet extends Component {
     // Divide the horizontal offset by the width of the view to see which page is visible
     let pageNum = Math.floor(contentOffset.x / viewSize.width);
 
+    pageNum < 0 && (pageNum = 0);
     this.changeActiveTab(pageNum);
   }
 
   changeActiveTab = activeTab => {
-    if (this.flatlist) {
-      this.flatlist.scrollToIndex({ index: activeTab, animated: true });
-    }
     if (activeTab !== this.state.activeTab) {
-      let state = this.state;
-      state.loading[activeTab] = true;
-      state.activeTab = activeTab;
-      this.setState({ ...state });
+      if (this.flatlist) {
+        this.flatlist.scrollToIndex({ index: activeTab, animated: true });
+      }
+      if (activeTab !== this.state.activeTab) {
+        let state = this.state;
+        state.loading[activeTab] = true;
+        state.activeTab = activeTab;
+        this.setState({ ...state });
+      }
     }
   };
 
@@ -218,7 +221,7 @@ export default class VndWallet extends Component {
           ,
           { paddingVertical: 15 }
         ]}
-        onPress={this.changeActiveTab.bind(this, d.key)}
+        onPress={() => this.changeActiveTab(d.key)}
       >
         <View
           style={[
