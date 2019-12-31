@@ -21,6 +21,7 @@ import {
 } from '../../component';
 import PropTypes from 'prop-types';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { willUpdateState, logger } from '../../helper';
 
@@ -99,13 +100,11 @@ class TickidChat extends Component {
         Animated.parallel([
           Animated.spring(this.state.animatedBtnImageValue, {
             toValue: nextState.showImageBtn ? BTN_IMAGE_WIDTH : 0,
-            // easing: nextProps.animatedTypeComposerBtn,
             duration: nextProps.durationShowGallery,
             useNativeDriver: true
           }),
           Animated.spring(this.state.animatedBtnSendValue, {
             toValue: nextState.showImageBtn ? 0 : BTN_IMAGE_WIDTH,
-            // easing: nextProps.animatedTypeComposerBtn,
             duration: nextProps.durationShowGallery,
             useNativeDriver: true
           })
@@ -247,6 +246,7 @@ class TickidChat extends Component {
     this.clearSelectedPhotos();
     this.handlePressGallery();
     this.setState({ ...state });
+    this.props.onSendImage(images);
   }
 
   handleSendText() {
@@ -320,31 +320,31 @@ class TickidChat extends Component {
     );
   }
 
-  renderFooter() {
-    return this.state.uploadImages.length !== 0 ? (
-      <View style={styles.footerStyle}>
-        {this.state.uploadImages.map(image => (
-          <ImageUploading
-            key={image.id}
-            image={image}
-            uploadURL={this.props.uploadURL}
-            onUploadedSuccess={response => {
-              this.props.onUploadedImage(response);
-              let uploadImages = [...this.state.uploadImages];
-              uploadImages.splice(
-                uploadImages.findIndex(img => img.id === image.id),
-                1
-              );
-              this.setState({ uploadImages });
-            }}
-            onUploadedFail={err => {
-              console.log(err);
-            }}
-          />
-        ))}
-      </View>
-    ) : null;
-  }
+  // renderFooter() {
+  //   return this.state.uploadImages.length !== 0 ? (
+  //     <View style={styles.footerStyle}>
+  //       {this.state.uploadImages.map(image => (
+  //         <ImageUploading
+  //           key={image.id}
+  //           image={image}
+  //           uploadURL={this.props.uploadURL}
+  //           onUploadedSuccess={response => {
+  //             this.props.onUploadedImage(response);
+  //             let uploadImages = [...this.state.uploadImages];
+  //             uploadImages.splice(
+  //               uploadImages.findIndex(img => img.id === image.id),
+  //               1
+  //             );
+  //             this.setState({ uploadImages });
+  //           }}
+  //           onUploadedFail={err => {
+  //             console.log(err);
+  //           }}
+  //         />
+  //       ))}
+  //     </View>
+  //   ) : null;
+  // }
 
   renderSend(props) {
     const dimensions = {
@@ -415,7 +415,22 @@ class TickidChat extends Component {
   }
 
   renderMessageImage(props) {
-    return <ImageMessageChat lowQualityUri={props.currentMessage.image} />;
+    return (
+      <ImageMessageChat
+        uploadURL={this.props.uploadURL}
+        isUploadData={props.currentMessage.isUploadData}
+        image={props.currentMessage.rawImage}
+        lowQualityUri={props.currentMessage.image}
+        onUploadedSuccess={(response, isReUp) => {
+          if (!isReUp) {
+            this.props.onUploadedImage(response);
+          }
+        }}
+        onUploadedFail={err => {
+          console.log(err);
+        }}
+      />
+    );
   }
 
   renderMessage(props) {
@@ -482,7 +497,7 @@ class TickidChat extends Component {
               renderMessageImage={this.renderMessageImage.bind(this)}
               renderSend={this.renderSend.bind(this)}
               renderComposer={this.renderComposer.bind(this)}
-              renderChatFooter={this.renderFooter.bind(this)}
+              // renderChatFooter={this.renderFooter.bind(this)}
               keyboardShouldPersistTaps={'never'}
               messages={this.props.messages}
               onSend={this.handleSendMessage.bind(this)}
@@ -516,6 +531,7 @@ class TickidChat extends Component {
           iconSelectedAlbum={ICON_SELECTED_ALBUM}
           iconSendImage={ICON_SEND_IMAGE}
           iconCameraPicker={ICON_CAMERA_PICKER}
+          iconCameraOff={ICON_CAMERA_OFF}
         />
       </SafeAreaView>
     );
@@ -569,41 +585,56 @@ const styles = StyleSheet.create({
   center: {
     alignItems: 'center',
     justifyContent: 'center'
-  },
-  captureText: {
-    color: 'black',
-    marginTop: 15
   }
 });
 
 export default TickidChat;
 
 const CenterIcon = props => {
-  const iconComponent =
-    props.iconType === 'IconAntDesign' ? (
-      <IconAntDesign {...props} />
-    ) : (
-      <IconFontAwesome {...props} />
-    );
+  const IconComponent = props.iconComponent || IconFontAwesome;
 
-  return <View style={styles.center}>{iconComponent}</View>;
+  return (
+    <View style={styles.center}>
+      <IconComponent {...props} />
+    </View>
+  );
 };
 
 //-----
 const ICON_CAMERA_PICKER = (
-  <View style={styles.fullCenter}>
-    <CenterIcon name="camera" size={28} color="black" />
-    <Text style={styles.captureText}>Chụp ảnh</Text>
-  </View>
+  <CenterIcon
+    iconComponent={IconMaterialCommunity}
+    name="camera"
+    size={28}
+    color="black"
+  />
+);
+const ICON_CAMERA_OFF = (
+  <CenterIcon
+    iconComponent={IconMaterialCommunity}
+    name="camera-off"
+    size={28}
+    color="black"
+  />
 );
 const ICON_SEND_IMAGE = (
   <CenterIcon name="paper-plane" size={20} color="blue" />
 );
 const ICON_SELECTED_ALBUM = <CenterIcon name="check" size={20} color="blue" />;
 const ICON_TOGGLE_ALBUM = (
-  <CenterIcon iconType="IconAntDesign" name="down" size={18} color="white" />
+  <CenterIcon
+    iconComponent={IconAntDesign}
+    name="down"
+    size={18}
+    color="white"
+  />
 );
 const BTN_CLOSE_ALBUM = (
-  <CenterIcon iconType="IconAntDesign" name="close" size={18} color="white" />
+  <CenterIcon
+    iconComponent={IconAntDesign}
+    name="close"
+    size={18}
+    color="white"
+  />
 );
 //-----

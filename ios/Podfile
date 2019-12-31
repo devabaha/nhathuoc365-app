@@ -23,6 +23,8 @@ target 'my_food_new' do
   pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
   
+  pod 'react-native-screen-brightness', :path => '../node_modules/react-native-screen-brightness'
+
   target 'my_food_newTests' do
     inherit! :search_paths
     # Pods for testing

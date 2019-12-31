@@ -9,7 +9,6 @@ import {
   Animated,
   FlatList,
   TouchableOpacity,
-  PermissionsAndroid,
   ViewPropTypes,
   Platform,
   ActivityIndicator,
@@ -19,22 +18,33 @@ import {
 import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
 import {
   request,
+  check,
   PERMISSIONS,
   RESULTS,
   openSettings
 } from 'react-native-permissions';
-// import Permissions from 'react-native-permissions';
-import AndroidOpenSettings from 'react-native-android-open-settings';
 import CameraRoll from '@react-native-community/cameraroll';
 import ImagePicker from 'react-native-image-picker';
 import PropTypes from 'prop-types';
 import ImageItem from '../../component/ImageItem';
 import AlbumItem from '../../component/AlbumItem';
 import GestureWrapper from '../../component/GestureWrapper';
-import { setStater } from '../../helper';
+import { setStater, willUpdateState } from '../../helper';
 import Button from 'react-native-button';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const PERMISSIONS_TYPE = {
+  CAMERA: 'camera-permission',
+  LIBRARY: 'library-permission'
+};
+const CAMERA_PERMISSIONS_TYPE = {
+  CHECK: 'check-camera-permission',
+  REQUEST: 'request-camera-permission'
+};
+const LIBRARY_PERMISSIONS_TYPE = {
+  CHECK: 'check-library-permission',
+  REQUEST: 'request-library-permission'
+};
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
@@ -53,6 +63,8 @@ const defaultIconSendImage = <Text style={{ color: 'blue' }}>></Text>;
 const defaultIconSelectedAlbum = <Text style={{ color: 'black' }}>/</Text>;
 const defaultIconToggleAlbum = <Text style={{ color: 'white' }}>\/</Text>;
 const defaultBtnCloseAlbum = <Text style={{ color: 'white' }}>x</Text>;
+const defaultIconCameraPicker = null;
+const defaultIconCameraOff = null;
 
 class ImageGallery extends Component {
   static propTypes = {
@@ -72,6 +84,7 @@ class ImageGallery extends Component {
     iconToggleAlbum: PropTypes.node,
     iconSendImage: PropTypes.node,
     iconCameraPicker: PropTypes.node,
+    iconCameraOff: PropTypes.node,
     onExpandedBodyContent: PropTypes.func,
     onCollapsedBodyContent: PropTypes.func,
     onSendImage: PropTypes.func,
@@ -94,6 +107,8 @@ class ImageGallery extends Component {
     iconToggleAlbum: defaultIconToggleAlbum,
     iconSelectedAlbum: defaultIconSelectedAlbum,
     iconSendImage: defaultIconSendImage,
+    iconCameraPicker: defaultIconCameraPicker,
+    iconCameraOff: defaultIconCameraOff,
     defaultStatusBarColor: '#fff',
     onExpandedBodyContent: defaultListener,
     onCollapsedBodyContent: defaultListener,
@@ -131,9 +146,21 @@ class ImageGallery extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.visible && !this.didVisible) {
+    if (
+      nextProps.visible &&
+      !this.didVisible &&
+      !this.state.permissionLibraryGranted
+    ) {
       this.didVisible = true;
-      this.requestLibraryPermissions();
+      this.callPermissions(
+        PERMISSIONS_TYPE.LIBRARY,
+        LIBRARY_PERMISSIONS_TYPE.REQUEST,
+        permissionGranted => {
+          if (permissionGranted) {
+            this.getAlbum();
+          }
+        }
+      );
     }
 
     if (nextState !== this.state) {
@@ -148,6 +175,7 @@ class ImageGallery extends Component {
       nextProps.btnCloseAlbum !== this.props.btnCloseAlbum ||
       nextProps.iconSendImage !== this.props.iconSendImage ||
       nextProps.iconCameraPicker !== this.props.iconCameraPicker ||
+      nextProps.iconCameraOff !== this.props.iconCameraOff ||
       nextProps.btnCloseAlbumStyle !== this.props.btnCloseAlbumStyle ||
       nextProps.albumTitleStyle !== this.props.albumTitleStyle ||
       nextProps.iconToggleAlbum !== this.props.iconToggleAlbum ||
@@ -163,7 +191,19 @@ class ImageGallery extends Component {
   }
 
   componentDidMount() {
-    this.requestCameraPermission();
+    this.callPermissions(
+      PERMISSIONS_TYPE.LIBRARY,
+      LIBRARY_PERMISSIONS_TYPE.CHECK,
+      permissionGranted => {
+        if (permissionGranted) {
+          this.getAlbum();
+        }
+      }
+    );
+    this.callPermissions(
+      PERMISSIONS_TYPE.CAMERA,
+      CAMERA_PERMISSIONS_TYPE.CHECK
+    );
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
@@ -177,12 +217,66 @@ class ImageGallery extends Component {
       this.appState.match(/inactive|background/) &&
       nextAppState === 'active'
     ) {
-      this.getAlbum();
+      if (this.state.permissionLibraryGranted) {
+        this.getAlbum();
+      } else {
+        this.callPermissions(
+          PERMISSIONS_TYPE.LIBRARY,
+          LIBRARY_PERMISSIONS_TYPE.CHECK,
+          permissionGranted => {
+            if (this.state.permissionLibraryGranted !== permissionGranted) {
+              this.setState({
+                permissionLibraryGranted: permissionGranted
+              });
+            }
+            if (permissionGranted) {
+              this.getAlbum();
+            }
+          }
+        );
+      }
+      if (
+        this.state.permissionCameraGranted === RESULTS.DENIED ||
+        this.state.permissionCameraGranted === RESULTS.BLOCKED
+      ) {
+        this.callPermissions(
+          PERMISSIONS_TYPE.CAMERA,
+          CAMERA_PERMISSIONS_TYPE.CHECK
+        );
+      }
     }
     this.appState = nextAppState;
   };
 
-  requestLibraryPermissions = () => {
+  callPermissions = async (
+    generalType,
+    specificType,
+    callBack = defaultListener
+  ) => {
+    let permissionGranted = null;
+    switch (generalType) {
+      case PERMISSIONS_TYPE.LIBRARY:
+        permissionGranted = await this.handleLibraryPermission(specificType);
+        if (permissionGranted !== this.state.permissionLibraryGranted) {
+          setStater(this, this.unmounted, {
+            permissionLibraryGranted: permissionGranted
+          });
+        }
+        callBack(permissionGranted);
+        break;
+      case PERMISSIONS_TYPE.CAMERA:
+        permissionGranted = await this.handleCameraPermission(specificType);
+        if (permissionGranted !== this.state.permissionCameraGranted) {
+          setStater(this, this.unmounted, {
+            permissionCameraGranted: permissionGranted
+          });
+        }
+        callBack(permissionGranted);
+        break;
+    }
+  };
+
+  handleLibraryPermission = async type => {
     if (!isAndroid && !isIos) {
       Alert.alert('Nền tảng không hỗ trợ truy cập thư viện');
       return;
@@ -192,110 +286,96 @@ class ImageGallery extends Component {
       ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
       : PERMISSIONS.IOS.PHOTO_LIBRARY;
 
-    request(permissonLibraryRequest)
-      .then(result => {
-        switch (result) {
-          case RESULTS.UNAVAILABLE:
-            Alert.alert('Quyền truy cập thư viện không khả dụng');
-            console.log(
-              'This feature is not available (on this device / in this context)'
-            );
-            break;
-          case RESULTS.DENIED:
-            this.setState({ permissionLibraryGranted: false });
-            console.log(
-              'The permission has not been requested / is denied but requestable'
-            );
-            break;
-          case RESULTS.GRANTED:
-            this.setState({ permissionLibraryGranted: true });
-            this.getAlbum();
-            console.log('The permission is granted');
-            break;
-          case RESULTS.BLOCKED:
-            this.setState({ permissionLibraryGranted: false });
-            console.log('The permission is denied and not requestable anymore');
-            break;
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        Alert.alert('Lỗi yêu cầu quyền truy cập thư viện');
-      });
+    let permissionHandler = null;
+    switch (type) {
+      case LIBRARY_PERMISSIONS_TYPE.CHECK:
+        permissionHandler = check;
+        break;
+      case LIBRARY_PERMISSIONS_TYPE.REQUEST:
+        permissionHandler = request;
+        break;
+    }
+
+    try {
+      const result = await permissionHandler(permissonLibraryRequest);
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          Alert.alert('Quyền truy cập Thư viện không khả dụng');
+          console.log(
+            'This feature is not available (on this device / in this context)'
+          );
+          return false;
+        case RESULTS.DENIED:
+          console.log(
+            'The permission has not been requested / is denied but requestable'
+          );
+          return false;
+        case RESULTS.GRANTED:
+          console.log('The library permission is granted');
+          return true;
+        case RESULTS.BLOCKED:
+          console.log('The permission is denied and not requestable anymore');
+          return false;
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Lỗi yêu cầu quyền truy cập Thư viện');
+      return false;
+    }
   };
 
-  requestCameraPermission = async () => {
+  handleCameraPermission = async type => {
     if (!isAndroid && !isIos) {
-      Alert.alert('Nền tảng không hỗ trợ truy cập máy ảnh');
-      return;
+      Alert.alert('Nền tảng không hỗ trợ truy cập Camera');
+      return false;
     }
 
     const permissonCameraRequest = isAndroid
       ? PERMISSIONS.ANDROID.CAMERA
       : PERMISSIONS.IOS.CAMERA;
 
-    return await request(permissonCameraRequest)
-      .then(result => {
-        switch (result) {
-          case RESULTS.UNAVAILABLE:
-            Alert.alert('Quyền truy cập máy ảnh không khả dụng');
-            console.log(
-              'This feature is not available (on this device / in this context)'
-            );
-            return false;
-          case RESULTS.DENIED:
-            this.setState({ permissionCameraGranted: false });
-            console.log(
-              'The permission has not been requested / is denied but requestable'
-            );
-            return false;
-          case RESULTS.GRANTED:
-            this.setState({ permissionCameraGranted: true });
-            return true;
-          case RESULTS.BLOCKED:
-            this.setState({ permissionCameraGranted: false });
-            console.log('The permission is denied and not requestable anymore');
-            return false;
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        Alert.alert('Lỗi yêu cầu quyền truy cập máy ảnh');
-        return false;
-      });
+    let permissionHandler = null;
+    switch (type) {
+      case CAMERA_PERMISSIONS_TYPE.CHECK:
+        permissionHandler = check;
+        break;
+      case CAMERA_PERMISSIONS_TYPE.REQUEST:
+        permissionHandler = request;
+        break;
+    }
+
+    try {
+      const result = await permissionHandler(permissonCameraRequest);
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          Alert.alert('Quyền truy cập Camera không khả dụng');
+          console.log(
+            'This feature is not available (on this device / in this context)'
+          );
+          return RESULTS.UNAVAILABLE;
+        case RESULTS.DENIED:
+          console.log(
+            'The permission has not been requested / is denied but requestable'
+          );
+          return RESULTS.DENIED;
+        case RESULTS.GRANTED:
+          console.log('The camera permission is granted');
+          return RESULTS.GRANTED;
+        case RESULTS.BLOCKED:
+          console.log('The permission is denied and not requestable anymore');
+          return RESULTS.BLOCKED;
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Lỗi yêu cầu quyền truy cập Camera');
+      return RESULTS.DENIED;
+    }
   };
 
-  // async requestExternalStoreageRead() {
-  //   try {
-  //     let granted = await PermissionsAndroid.request(
-  //       PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE
-  //     );
-  //     granted = granted === PermissionsAndroid.RESULTS.GRANTED;
-  //     if (granted) {
-  //       setStater(this, this.unmounted, {
-  //         permissionLibraryGranted: true
-  //       })
-  //     }
-  //     return granted;
-  //   } catch (err) {
-  //     //Handle this error
-  //     console.log(err);
-  //     setStater(this, this.unmounted, {
-  //       permissionLibraryGranted: false,
-  //       loading: false
-  //     })
-  //     return false;
-  //   }
-  // }
-
-  handleOpenAllowContactPermission = () => {
-    if (isAndroid) {
-      AndroidOpenSettings.appDetailsSettings();
-    } else if (isIos) {
-      openSettings().catch(() =>
-        Alert.alert('Ứng dụng không thể truy cập vào Cài đặt!')
-      );
-    }
+  handleOpenAllowPermission = () => {
+    openSettings().catch(() =>
+      Alert.alert('Ứng dụng không thể truy cập vào Cài đặt!')
+    );
   };
 
   getAlbum() {
@@ -467,33 +547,47 @@ class ImageGallery extends Component {
     this.props.onToggleImage(selectedPhotos);
   }
 
-  captureImage() {
-    console.log(this.requestCameraPermission());
+  async captureImage() {
+    const permissionCameraGranted = await this.handleCameraPermission(
+      CAMERA_PERMISSIONS_TYPE.REQUEST
+    );
 
-    const options = {
-      quality: 1,
-      storageOptions: {
-        cameraRoll: isIos,
-        skipBackup: true,
-        path: 'images'
-      }
-    };
-
-    ImagePicker.launchCamera(options, response => {
-      if (response.data) {
-        const id = new Date().getTime();
-        const formattedImage = {
-          path: 'data:image/png;base64,' + response.data,
-          uploadPath: response.data,
-          id,
-          fileName: `image-picker-${id}`,
-          isBase64: true
+    willUpdateState(this.unmounted, () => {
+      if (permissionCameraGranted === RESULTS.GRANTED) {
+        const options = {
+          quality: 1,
+          storageOptions: {
+            cameraRoll: isIos,
+            skipBackup: true,
+            path: 'images'
+          }
         };
 
-        setTimeout(() => {
-          this.props.onSendImage([formattedImage]);
-          this.getAlbum(this.state.chosenAlbumTitle);
+        ImagePicker.launchCamera(options, response => {
+          if (response.data) {
+            const id = new Date().getTime();
+            const formattedImage = {
+              path: 'data:image/png;base64,' + response.data,
+              uploadPath: response.data,
+              id,
+              fileName: `image-picker-${id}`,
+              isBase64: true
+            };
+
+            setTimeout(() => {
+              this.props.onSendImage([formattedImage]);
+              this.getAlbum(this.state.chosenAlbumTitle);
+            });
+          }
         });
+      }
+
+      if (this.state.permissionCameraGranted === RESULTS.BLOCKED) {
+        this.handleOpenAllowPermission();
+      }
+
+      if (permissionCameraGranted !== this.state.permissionCameraGranted) {
+        this.setState({ permissionCameraGranted });
       }
     });
   }
@@ -580,11 +674,13 @@ class ImageGallery extends Component {
                 photo={photo}
                 selectedPhotos={this.state.selectedPhotos}
                 iconCameraPicker={this.props.iconCameraPicker}
+                iconCameraOff={this.props.iconCameraOff}
                 wrapperItemStyle={wrapperItemStyle}
                 onOpenLightBox={() => this.setState({ openLightBox: true })}
                 onCloseLightBox={() => this.setState({ openLightBox: false })}
                 captureImage={this.captureImage.bind(this)}
                 onTogglePhoto={this.onTogglePhoto.bind(this)}
+                permissionCameraGranted={this.state.permissionCameraGranted}
               />
             );
           },
@@ -611,9 +707,9 @@ class ImageGallery extends Component {
         }
         extraBodyContent={
           this.state.permissionLibraryGranted === false ? (
-            <PermissonNotGranted
+            <PermissonLibraryNotGranted
               height={this.props.baseViewHeight}
-              onPress={this.handleOpenAllowContactPermission.bind(this)}
+              onPress={this.handleOpenAllowPermission.bind(this)}
             />
           ) : this.state.openPanel && !this.state.openAlbum ? (
             <SendImage
@@ -716,11 +812,13 @@ const styles = StyleSheet.create({
   iconSend: {
     bottom: 0,
     right: 0,
+    borderRadius: 30
+  },
+  fullCenter: {
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30
+    justifyContent: 'center'
   },
   selectedMessage: {
     color: 'white',
@@ -755,6 +853,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  captureText: {
+    textAlign: 'center',
+    color: 'black',
+    paddingHorizontal: 5,
+    marginTop: 15
   }
 });
 
@@ -780,9 +884,10 @@ class ImageItemContainer extends Component {
     if (
       nextProps.selectedPhotos !== this.props.selectedPhotos ||
       nextProps.photo !== this.props.photo ||
-      nextProps.wrapperItemStyle ||
-      this.props.wrapperItemStyle ||
-      nextProps.iconCameraPicker !== this.props.iconCameraPicker
+      nextProps.wrapperItemStyle !== this.props.wrapperItemStyle ||
+      nextProps.iconCameraPicker !== this.props.iconCameraPicker ||
+      nextProps.iconCameraOff !== this.props.iconCameraOff ||
+      nextProps.permissionCameraGranted !== this.props.permissionCameraGranted
     ) {
       return true;
     }
@@ -802,7 +907,11 @@ class ImageItemContainer extends Component {
       >
         <View style={{ flex: 1, width: '100%', height: '100%' }}>
           {photo.path === 'camera' ? (
-            this.props.iconCameraPicker
+            <CameraPicker
+              iconCameraPicker={this.props.iconCameraPicker}
+              iconCameraOff={this.props.iconCameraOff}
+              permissionGranted={this.props.permissionCameraGranted}
+            />
           ) : (
             <ImageItem
               onOpenLightBox={this.props.onOpenLightBox}
@@ -824,7 +933,7 @@ class ImageItemContainer extends Component {
   }
 }
 
-const PermissonNotGranted = props => (
+const PermissonLibraryNotGranted = props => (
   <View
     style={[
       styles.permissionNotGranted,
@@ -833,7 +942,7 @@ const PermissonNotGranted = props => (
       }
     ]}
   >
-    <Icon name="settings" size={40} />
+    <Icon name="folder-multiple-image" size={40} />
     <Text style={styles.permissionNotGrantedMess}>
       Ứng dụng cần quyền truy cập vào thư viện.
     </Text>
@@ -902,7 +1011,7 @@ const SendImage = props => (
   <View style={[styles.btnSend]}>
     <TouchableOpacity
       onPress={props.handleSendImage}
-      style={[styles.iconSend]}
+      style={[styles.iconSend, styles.fullCenter]}
       disabled={props.selectedPhotos.length === 0}
     >
       {props.iconSendImage}
@@ -914,5 +1023,19 @@ const SendImage = props => (
         </Text>
       </View>
     )}
+  </View>
+);
+
+const CameraPicker = props => (
+  <View style={styles.fullCenter}>
+    {props.permissionGranted === RESULTS.GRANTED
+      ? props.iconCameraPicker
+      : props.iconCameraOff}
+
+    <Text style={styles.captureText}>
+      {props.permissionGranted === RESULTS.GRANTED
+        ? 'Chụp ảnh'
+        : 'Ứng dụng cần quyền truy cập Camera'}
+    </Text>
   </View>
 );

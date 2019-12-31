@@ -54,6 +54,8 @@ class ImageUploading extends Component {
   }
 
   async uploadImage() {
+    console.log(this.props, 'abc');
+
     let base64 = this.props.image.uploadPath;
     if (!this.props.image.isBase64) {
       base64 = await getBase64Image(this.props.image.path);

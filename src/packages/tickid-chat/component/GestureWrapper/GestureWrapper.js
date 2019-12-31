@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
-  Easing,
   StatusBar,
   Dimensions,
   Animated,
@@ -14,9 +13,7 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
-import { logger, setStater } from '../../helper';
 
-const gestureLogger = logger('gesture');
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
@@ -33,9 +30,6 @@ const COLLAPSE_BODY_HEIGHT = HEIGHT / 2.5;
 const DURATION_SHOW_HEADER_CONTENT = 200;
 const DURATION_SHOW_BODY_CONTENT = 300;
 const defaultListener = () => {};
-const defaultIconSendImage = <Text style={{ color: 'blue' }}>></Text>;
-const defaultIconSelectedAlbum = <Text style={{ color: 'black' }}>/</Text>;
-const defaultIconToggleAlbum = <Text style={{ color: 'white' }}>\/</Text>;
 const defaultBtnCloseAlbum = <Text style={{ color: 'white' }}>x</Text>;
 
 class GestureWrapper extends Component {
@@ -146,10 +140,7 @@ class GestureWrapper extends Component {
       this.state.animatedTranslateYScrollView.flattenOffset();
       vy = Math.abs(vy);
       // move down
-      if (
-        dy >= 0 &&
-        this.animatedTranslateYScrollViewValue < this.state.animatableArea
-      ) {
+      if (dy >= 0) {
         if (
           vy >= breakVelocity ||
           this.animatedTranslateYScrollViewValue >= breakPointTop
@@ -166,7 +157,7 @@ class GestureWrapper extends Component {
       }
 
       //move up
-      if (dy < 0 && this.animatedTranslateYScrollViewValue > 0) {
+      if (dy < 0) {
         if (
           vy >= breakVelocity ||
           this.animatedTranslateYScrollViewValue <= breakPointBottom
@@ -176,7 +167,10 @@ class GestureWrapper extends Component {
 
           this.animateScrollView(0).start(() => {
             this.isAnimating = false;
-            this.setState({ expandContent: true });
+            this.setState({
+              scrollable: this.scrollable(),
+              expandContent: true
+            });
           });
         } else {
           // back to bottom
@@ -354,12 +348,14 @@ class GestureWrapper extends Component {
 
   onAnimatedValueChange({ value }) {
     const bottom = this.state.animatableArea;
-    if (value <= 0 && !this.state.expandContent) {
+    const top = 0;
+
+    if (value <= top && !this.state.expandContent) {
       if (isAndroid) {
         StatusBar.setBackgroundColor('black', true);
       }
       // console.log('top');
-      this.setState({ scrollable: this.scrollable(), expandContent: true });
+      // this.setState({ expandContent: true });
       this.props.onExpandedBodyContent();
     }
 
