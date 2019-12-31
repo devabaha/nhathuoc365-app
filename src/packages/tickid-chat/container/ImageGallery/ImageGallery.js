@@ -9,21 +9,42 @@ import {
   Animated,
   FlatList,
   TouchableOpacity,
-  PanResponder,
-  PermissionsAndroid,
   ViewPropTypes,
   Platform,
-  ActivityIndicator
+  ActivityIndicator,
+  AppState,
+  Alert
 } from 'react-native';
 import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
+import {
+  request,
+  check,
+  PERMISSIONS,
+  RESULTS,
+  openSettings
+} from 'react-native-permissions';
 import CameraRoll from '@react-native-community/cameraroll';
 import ImagePicker from 'react-native-image-picker';
 import PropTypes from 'prop-types';
 import ImageItem from '../../component/ImageItem';
 import AlbumItem from '../../component/AlbumItem';
 import GestureWrapper from '../../component/GestureWrapper';
-import { willUpdateState, setStater } from '../../helper';
+import { setStater, willUpdateState } from '../../helper';
+import Button from 'react-native-button';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const PERMISSIONS_TYPE = {
+  CAMERA: 'camera-permission',
+  LIBRARY: 'library-permission'
+};
+const CAMERA_PERMISSIONS_TYPE = {
+  CHECK: 'check-camera-permission',
+  REQUEST: 'request-camera-permission'
+};
+const LIBRARY_PERMISSIONS_TYPE = {
+  CHECK: 'check-library-permission',
+  REQUEST: 'request-library-permission'
+};
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
@@ -42,6 +63,8 @@ const defaultIconSendImage = <Text style={{ color: 'blue' }}>></Text>;
 const defaultIconSelectedAlbum = <Text style={{ color: 'black' }}>/</Text>;
 const defaultIconToggleAlbum = <Text style={{ color: 'white' }}>\/</Text>;
 const defaultBtnCloseAlbum = <Text style={{ color: 'white' }}>x</Text>;
+const defaultIconCameraPicker = null;
+const defaultIconCameraOff = null;
 
 class ImageGallery extends Component {
   static propTypes = {
@@ -60,6 +83,8 @@ class ImageGallery extends Component {
     btnCloseAlbum: PropTypes.node,
     iconToggleAlbum: PropTypes.node,
     iconSendImage: PropTypes.node,
+    iconCameraPicker: PropTypes.node,
+    iconCameraOff: PropTypes.node,
     onExpandedBodyContent: PropTypes.func,
     onCollapsedBodyContent: PropTypes.func,
     onSendImage: PropTypes.func,
@@ -82,6 +107,8 @@ class ImageGallery extends Component {
     iconToggleAlbum: defaultIconToggleAlbum,
     iconSelectedAlbum: defaultIconSelectedAlbum,
     iconSendImage: defaultIconSendImage,
+    iconCameraPicker: defaultIconCameraPicker,
+    iconCameraOff: defaultIconCameraOff,
     defaultStatusBarColor: '#fff',
     onExpandedBodyContent: defaultListener,
     onCollapsedBodyContent: defaultListener,
@@ -92,105 +119,26 @@ class ImageGallery extends Component {
 
   state = {
     photos: [],
-    scrollable: false,
-    showAlbumPicker: false,
     chosenAlbumTitle: '',
     albums: [],
     selectedPhotos: [],
     openAlbum: false,
+    loading: false,
     animatedAlbumHeight: new Animated.Value(0),
+    rotateValue: new Animated.Value(0),
+    animatedShowUpValue: new Animated.Value(0),
     openLightBox: false,
-    openPanel: false
+    openPanel: false,
+    permissionLibraryGranted: undefined,
+    permissionCameraGranted: undefined
   };
 
-  animatedTranslateYScrollView = new Animated.Value(-this.props.baseViewHeight);
-  rotateValue = new Animated.Value(0);
-  animatedShowUpValue = new Animated.Value(0);
-
+  didVisible = false;
   unmounted = false;
-  timerGetAlbum = null;
-  offset = 0;
-  aninmatedValue = 0;
-  isAnimating = false;
-  isScrolling = false;
-  direction = 'down';
-  refScrollView = null;
-  actualScrollViewHeight = 0;
-  panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => false,
-    onStartShouldSetPanResponderCapture: (evt, gestureState) => false,
-    onMoveShouldSetResponder: () => true,
-    onMoveShouldSetResponderCapture: () => true,
-    onMoveShouldSetPanResponder: (evt, gestureState) => {
-      const { dx, dy } = gestureState;
-      return dx > 2 || dx < -2 || dy > 2 || dy < -2;
-    },
-    onPanResponderMove: (evt, ges) => {
-      if (this.state.scrollable) {
-        if (!this.isScrolling) {
-          // console.log('M.O.V.E', this.offset);
-        }
-        return false;
-      }
-
-      if (
-        ges.dy < 0 &&
-        this.offset <= 0 &&
-        this.state.openPanel &&
-        this.scrollable()
-      ) {
-        // console.log('can scroll');
-        this.setState({ scrollable: true });
-      }
-      if (ges.dy < 0 && !this.state.openPanel && !this.isAnimating) {
-        this.isAnimating = true;
-
-        Animated.timing(this.animatedTranslateYScrollView, {
-          toValue: this.actualScrollViewHeight,
-          duration: this.props.durationShowGallery,
-          easing: Easing.in,
-          useNativeDriver: true
-        }).start(res => {
-          this.isAnimating = false;
-          // console.log('expanded');
-          setStater(this, this.unmounted, {
-            openPanel: true
-          });
-        });
-      }
-      if (ges.dy > 0 && this.state.openPanel && !this.isAnimating) {
-        this.isAnimating = false;
-        // console.log('collapsing');
-
-        this.setState(
-          {
-            openPanel: false,
-            scrollable: false
-          },
-          () => {
-            Animated.timing(this.animatedTranslateYScrollView, {
-              toValue: 0,
-              duration: this.props.durationShowGallery,
-              easing: Easing.in,
-              useNativeDriver: true
-            }).start();
-          }
-        );
-      }
-    }
-    // onPanResponderTerminationRequest: (evt, gestureState) => true,
-    // onPanResponderGrant: (e) => { this.offset = e.nativeEvent.locationY },
-    // onPanResponderTerminate: evt => true,
-    // onPanResponderRelease: evt => this.handlePanResponderEnd(evt.nativeEvent),
-  });
+  appState = '';
 
   get selectedPhotos() {
     return this.state.selectedPhotos;
-  }
-
-  updateActualScrollViewHeight(otherHeight = this.props.headerHeight) {
-    this.actualScrollViewHeight =
-      HEIGHT - otherHeight - (isAndroid ? ANDROID_STATUS_BAR : 0);
   }
 
   clearSelectedPhotos() {
@@ -198,7 +146,25 @@ class ImageGallery extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.visible &&
+      !this.didVisible &&
+      !this.state.permissionLibraryGranted
+    ) {
+      this.didVisible = true;
+      this.callPermissions(
+        PERMISSIONS_TYPE.LIBRARY,
+        LIBRARY_PERMISSIONS_TYPE.REQUEST,
+        permissionGranted => {
+          if (permissionGranted) {
+            this.getAlbum();
+          }
+        }
+      );
+    }
+
     if (nextState !== this.state) {
+      // galleryLogger('state change');
       return true;
     }
 
@@ -207,33 +173,17 @@ class ImageGallery extends Component {
       nextProps.itemHeight !== this.props.itemHeight ||
       nextProps.headerHeight !== this.props.headerHeight ||
       nextProps.btnCloseAlbum !== this.props.btnCloseAlbum ||
+      nextProps.iconSendImage !== this.props.iconSendImage ||
+      nextProps.iconCameraPicker !== this.props.iconCameraPicker ||
+      nextProps.iconCameraOff !== this.props.iconCameraOff ||
       nextProps.btnCloseAlbumStyle !== this.props.btnCloseAlbumStyle ||
-      nextProps.albumTitleStyle !== this.props.albumTitle ||
+      nextProps.albumTitleStyle !== this.props.albumTitleStyle ||
       nextProps.iconToggleAlbum !== this.props.iconToggleAlbum ||
       nextProps.iconSelectedAlbum !== this.props.iconSelectedAlbum ||
       nextProps.baseViewHeight !== this.props.baseViewHeight ||
       nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor ||
       nextProps.visible !== this.props.visible
     ) {
-      if (nextProps.headerHeight !== this.props.headerHeight) {
-        this.updateActualScrollViewHeight();
-      }
-      if (nextProps.visible !== this.props.visible) {
-        Animated.parallel([
-          Animated.timing(this.animatedShowUpValue, {
-            toValue: nextProps.visible ? nextProps.baseViewHeight : 0,
-            duration: this.props.durationShowGallery,
-            easing: Easing.in
-          }),
-          Animated.timing(this.animatedTranslateYScrollView, {
-            toValue: nextProps.visible ? 0 : -nextProps.baseViewHeight,
-            duration: this.props.durationShowGallery,
-            easing: Easing.in,
-            useNativeDriver: true
-          })
-        ]).start();
-      }
-
       return true;
     }
 
@@ -241,77 +191,197 @@ class ImageGallery extends Component {
   }
 
   componentDidMount() {
-    this.updateActualScrollViewHeight();
-    this.animatedTranslateYScrollView.addListener(
-      this.onAnimatedValueChange.bind(this)
+    this.callPermissions(
+      PERMISSIONS_TYPE.LIBRARY,
+      LIBRARY_PERMISSIONS_TYPE.CHECK,
+      permissionGranted => {
+        if (permissionGranted) {
+          this.getAlbum();
+        }
+      }
     );
-    this.requestPermissions();
+    this.callPermissions(
+      PERMISSIONS_TYPE.CAMERA,
+      CAMERA_PERMISSIONS_TYPE.CHECK
+    );
+    AppState.addEventListener('change', this._handleAppStateChange);
   }
 
   componentWillUnmount() {
     this.unmounted = true;
-    this.animatedTranslateYScrollView.removeListener(
-      this.onAnimatedValueChange.bind(this)
-    );
-    clearTimeout(this.timerGetAlbum);
+    AppState.removeEventListener('change', this._handleAppStateChange);
   }
 
-  requestPermissions = async () => {
-    let permission = true;
-    if (isAndroid) {
-      permission = await this.requestExternalStoreageRead();
+  _handleAppStateChange = nextAppState => {
+    if (
+      this.appState.match(/inactive|background/) &&
+      nextAppState === 'active'
+    ) {
+      if (this.state.permissionLibraryGranted) {
+        this.getAlbum();
+      } else {
+        this.callPermissions(
+          PERMISSIONS_TYPE.LIBRARY,
+          LIBRARY_PERMISSIONS_TYPE.CHECK,
+          permissionGranted => {
+            if (this.state.permissionLibraryGranted !== permissionGranted) {
+              this.setState({
+                permissionLibraryGranted: permissionGranted
+              });
+            }
+            if (permissionGranted) {
+              this.getAlbum();
+            }
+          }
+        );
+      }
+      if (
+        this.state.permissionCameraGranted === RESULTS.DENIED ||
+        this.state.permissionCameraGranted === RESULTS.BLOCKED
+      ) {
+        this.callPermissions(
+          PERMISSIONS_TYPE.CAMERA,
+          CAMERA_PERMISSIONS_TYPE.CHECK
+        );
+      }
     }
-    if (permission) {
-      this.getAlbum();
+    this.appState = nextAppState;
+  };
+
+  callPermissions = async (
+    generalType,
+    specificType,
+    callBack = defaultListener
+  ) => {
+    let permissionGranted = null;
+    switch (generalType) {
+      case PERMISSIONS_TYPE.LIBRARY:
+        permissionGranted = await this.handleLibraryPermission(specificType);
+        if (permissionGranted !== this.state.permissionLibraryGranted) {
+          setStater(this, this.unmounted, {
+            permissionLibraryGranted: permissionGranted
+          });
+        }
+        callBack(permissionGranted);
+        break;
+      case PERMISSIONS_TYPE.CAMERA:
+        permissionGranted = await this.handleCameraPermission(specificType);
+        if (permissionGranted !== this.state.permissionCameraGranted) {
+          setStater(this, this.unmounted, {
+            permissionCameraGranted: permissionGranted
+          });
+        }
+        callBack(permissionGranted);
+        break;
     }
   };
 
-  async requestExternalStoreageRead() {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-        {
-          title: 'Cool App ...',
-          message: 'App needs access to external storage'
-        }
-      );
+  handleLibraryPermission = async type => {
+    if (!isAndroid && !isIos) {
+      Alert.alert('Nền tảng không hỗ trợ truy cập thư viện');
+      return;
+    }
 
-      return granted == PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      //Handle this error
-      console.log(err);
+    const permissonLibraryRequest = isAndroid
+      ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
+      : PERMISSIONS.IOS.PHOTO_LIBRARY;
+
+    let permissionHandler = null;
+    switch (type) {
+      case LIBRARY_PERMISSIONS_TYPE.CHECK:
+        permissionHandler = check;
+        break;
+      case LIBRARY_PERMISSIONS_TYPE.REQUEST:
+        permissionHandler = request;
+        break;
+    }
+
+    try {
+      const result = await permissionHandler(permissonLibraryRequest);
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          Alert.alert('Quyền truy cập Thư viện không khả dụng');
+          console.log(
+            'This feature is not available (on this device / in this context)'
+          );
+          return false;
+        case RESULTS.DENIED:
+          console.log(
+            'The permission has not been requested / is denied but requestable'
+          );
+          return false;
+        case RESULTS.GRANTED:
+          console.log('The library permission is granted');
+          return true;
+        case RESULTS.BLOCKED:
+          console.log('The permission is denied and not requestable anymore');
+          return false;
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Lỗi yêu cầu quyền truy cập Thư viện');
       return false;
     }
-  }
+  };
 
-  onAnimatedValueChange({ value }) {
-    const bottom = 0;
-    if (value === this.actualScrollViewHeight) {
-      if (isAndroid) {
-        StatusBar.setBackgroundColor('black', true);
-      }
-      // console.log('top');
-      this.props.onExpandedBodyContent();
+  handleCameraPermission = async type => {
+    if (!isAndroid && !isIos) {
+      Alert.alert('Nền tảng không hỗ trợ truy cập Camera');
+      return false;
     }
 
-    if (value === bottom) {
-      if (this.aninmatedValue !== bottom && isAndroid) {
-        StatusBar.setBackgroundColor(this.props.defaultStatusBarColor, true);
-      }
-      this.props.onCollapsedBodyContent();
+    const permissonCameraRequest = isAndroid
+      ? PERMISSIONS.ANDROID.CAMERA
+      : PERMISSIONS.IOS.CAMERA;
 
-      this.offset = 0;
-      // console.log('bottom');
-      this.setState({ scrollable: false, openPanel: false });
+    let permissionHandler = null;
+    switch (type) {
+      case CAMERA_PERMISSIONS_TYPE.CHECK:
+        permissionHandler = check;
+        break;
+      case CAMERA_PERMISSIONS_TYPE.REQUEST:
+        permissionHandler = request;
+        break;
     }
-    this.aninmatedValue = value;
-  }
+
+    try {
+      const result = await permissionHandler(permissonCameraRequest);
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          Alert.alert('Quyền truy cập Camera không khả dụng');
+          console.log(
+            'This feature is not available (on this device / in this context)'
+          );
+          return RESULTS.UNAVAILABLE;
+        case RESULTS.DENIED:
+          console.log(
+            'The permission has not been requested / is denied but requestable'
+          );
+          return RESULTS.DENIED;
+        case RESULTS.GRANTED:
+          console.log('The camera permission is granted');
+          return RESULTS.GRANTED;
+        case RESULTS.BLOCKED:
+          console.log('The permission is denied and not requestable anymore');
+          return RESULTS.BLOCKED;
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Lỗi yêu cầu quyền truy cập Camera');
+      return RESULTS.DENIED;
+    }
+  };
+
+  handleOpenAllowPermission = () => {
+    openSettings().catch(() =>
+      Alert.alert('Ứng dụng không thể truy cập vào Cài đặt!')
+    );
+  };
 
   getAlbum() {
     if (this.state.photos.length === 0) {
       this.setState({ loading: true });
     }
-    clearTimeout(this.timerGetAlbum);
     if (isIos) {
       CameraRoll.getPhotos({
         first: 9999,
@@ -325,32 +395,35 @@ class ImageGallery extends Component {
             assetType: 'Photos',
             groupTypes: 'Album'
           })
-            .then(async r => {
-              // this.timerGetAlbum = setTimeout(
-              //   () => this.getAlbum(),
-              //   DELAY_GET_ALBUM
-              // );
+            .then(r => {
               rawPhotoData = rawPhotoData.concat(r.edges);
-              const { albums, photos } = await this.filterPhoto(rawPhotoData);
+              const { albums, photos } = this.filterPhoto(rawPhotoData);
               const chosenAlbumTitle =
                 this.state.chosenAlbumTitle || albums[0].name;
               setStater(this, this.unmounted, {
                 albums,
                 photos,
                 chosenAlbumTitle: chosenAlbumTitle,
-                loading: false
+                loading: false,
+                permissionLibraryGranted: true
               });
             })
             .catch(err => {
               //Error Loading Images
-              setStater(this, this.unmounted, { loading: false });
+              setStater(this, this.unmounted, {
+                loading: false,
+                permissionLibraryGranted: false
+              });
               console.log('get other album', err);
             });
         })
         .catch(err => {
           //Error Loading Images
-          console.log('get recent photo album', err);
-          setStater(this, this.unmounted, { loading: false });
+          console.log('get recent photo album', err.message);
+          setStater(this, this.unmounted, {
+            loading: false,
+            permissionLibraryGranted: false
+          });
         });
     } else {
       CameraRoll.getPhotos({
@@ -358,30 +431,33 @@ class ImageGallery extends Component {
         assetType: 'Photos',
         groupTypes: 'All'
       })
-        .then(async r => {
-          // this.timerGetAlbum = setTimeout(
-          //   () => this.getAlbum(),
-          //   DELAY_GET_ALBUM
-          // );
-          const { albums, photos } = await this.filterPhoto(r.edges);
+        .then(r => {
+          const { albums, photos } = this.filterPhoto(r.edges);
+          if (albums.length === 0) {
+            albums.push({ name: '' });
+          }
           const chosenAlbumTitle =
             this.state.chosenAlbumTitle || albums[0].name;
           setStater(this, this.unmounted, {
             albums,
             photos,
             chosenAlbumTitle: chosenAlbumTitle,
-            loading: false
+            loading: false,
+            permissionLibraryGranted: true
           });
         })
         .catch(err => {
           //Error Loading Images
-          setStater(this, this.unmounted, { loading: false });
+          setStater(this, this.unmounted, {
+            loading: false,
+            permissionLibraryGranted: false
+          });
           console.log('get album', err);
         });
     }
   }
 
-  async filterPhoto(edges) {
+  filterPhoto(edges) {
     let albums = [],
       photos = [],
       chosenAlbumTitle = this.state.chosenAlbumTitle;
@@ -431,15 +507,9 @@ class ImageGallery extends Component {
     return { albums, photos };
   }
 
-  showAlbumPicker() {
-    this.setState({ showAlbumPicker: true });
-  }
-  hideAlbumPicker() {
-    this.setState({ showAlbumPicker: false });
-  }
   toggleAlbum() {
     Animated.parallel([
-      Animated.timing(this.rotateValue, {
+      Animated.timing(this.state.rotateValue, {
         toValue: !this.state.openAlbum ? 1 : 0,
         duration: this.props.durationShowAlbum,
         easing: Easing.in,
@@ -477,89 +547,50 @@ class ImageGallery extends Component {
     this.props.onToggleImage(selectedPhotos);
   }
 
-  scrollable(data = this.state.photos) {
-    return (
-      Math.ceil(data.length / this.props.itemPerRow) * this.props.itemHeight >
-      HEIGHT
+  async captureImage() {
+    const permissionCameraGranted = await this.handleCameraPermission(
+      CAMERA_PERMISSIONS_TYPE.REQUEST
     );
-  }
 
-  captureImage() {
-    const options = {
-      storageOptions: {
-        cameraRoll: isIos,
-        skipBackup: true,
-        path: 'images'
-      }
-    };
-
-    ImagePicker.launchCamera(options, response => {
-      if (response.data) {
-        const id = new Date().getTime();
-        const formattedImage = {
-          path: 'data:image/png;base64,' + response.data,
-          uploadPath: response.data,
-          id,
-          fileName: `image-picker-${id}`,
-          isBase64: true
+    willUpdateState(this.unmounted, () => {
+      if (permissionCameraGranted === RESULTS.GRANTED) {
+        const options = {
+          quality: 1,
+          storageOptions: {
+            cameraRoll: isIos,
+            skipBackup: true,
+            path: 'images'
+          }
         };
 
-        setTimeout(() => {
-          this.props.onSendImage([formattedImage]);
-          this.getAlbum(this.state.chosenAlbumTitle);
+        ImagePicker.launchCamera(options, response => {
+          if (response.data) {
+            const id = new Date().getTime();
+            const formattedImage = {
+              path: 'data:image/png;base64,' + response.data,
+              uploadPath: response.data,
+              id,
+              fileName: `image-picker-${id}`,
+              isBase64: true
+            };
+
+            setTimeout(() => {
+              this.props.onSendImage([formattedImage]);
+              this.getAlbum(this.state.chosenAlbumTitle);
+            });
+          }
         });
+      }
+
+      if (this.state.permissionCameraGranted === RESULTS.BLOCKED) {
+        this.handleOpenAllowPermission();
+      }
+
+      if (permissionCameraGranted !== this.state.permissionCameraGranted) {
+        this.setState({ permissionCameraGranted });
       }
     });
   }
-
-  //START - handle everything about gallery scroll event
-  handleScrollBeginDrag(e) {
-    // console.log('dragBegin', this.offset);
-    this.offset = e.nativeEvent.contentOffset.y;
-    this.isScrolling = false;
-  }
-  handleMomentumScrollBegin(e) {
-    this.offset = e.nativeEvent.contentOffset.y;
-    // console.log('momentBegin', this.offset);
-  }
-  handleScroll(e) {
-    let y = e.nativeEvent.contentOffset.y;
-    // console.log('scrolling', y);
-    this.isScrolling = true;
-    this.offset = e.nativeEvent.contentOffset.y;
-  }
-  handleScrollEndDrag(e) {
-    this.offset = e.nativeEvent.contentOffset.y;
-    // console.log('endDrag', this.offset);
-  }
-  handleMomentumScrollEnd(e) {
-    this.isScrolling = false;
-    this.offset = e.nativeEvent.contentOffset.y;
-    console.log('momentEnd', this.offset, this.isScrolling);
-    if (this.offset <= 0 && !this.isScrolling) {
-      // this.refScrollView && this.refScrollView.scrollTo({ x: 0, y: 0 });
-      this.refScrollView && this.refScrollView.scrollToOffset(0);
-      setTimeout(() => {
-        willUpdateState(this.unmounted, () =>
-          this.setState(
-            {
-              openPanel: false,
-              scrollable: false
-            },
-            () => {
-              Animated.timing(this.animatedTranslateYScrollView, {
-                toValue: 0,
-                duration: this.props.durationShowGallery,
-                easing: Easing.in,
-                useNativeDriver: true
-              }).start();
-            }
-          )
-        );
-      });
-    }
-  }
-  //END - handle everything about gallery scroll event
 
   handleCloseModal() {
     if (this.state.openAlbum) {
@@ -568,45 +599,19 @@ class ImageGallery extends Component {
       this.isAnimating = true;
       this.offset = 0;
       this.setState({
-        openPanel: false,
-        scrollable: false
-      });
-
-      setTimeout(() => {
-        Animated.timing(this.animatedTranslateYScrollView, {
-          toValue: 0,
-          duration: this.props.durationShowGallery,
-          easing: Easing.in,
-          useNativeDriver: true
-        }).start(() => {
-          this.isAnimating = false;
-        });
+        openPanel: false
       });
     }
   }
 
   handleSendImage() {
-    // this.isAnimating = true;
     this.offset = 0;
     this.setState(
       {
-        openPanel: false,
-        scrollable: false
+        openPanel: false
       },
       () => this.props.onSendImage(this.state.selectedPhotos)
     );
-
-    // setTimeout(() => {
-    //   Animated.timing(this.animatedTranslateYScrollView, {
-    //     toValue: 0,
-    //     duration: this.props.durationShowGallery,
-    //     easing: Easing.in,
-    //     useNativeDriver: true
-    //   }).start(() => {
-    //     this.isAnimating = false;
-    //   });
-    //   this.props.onSendImage(this.state.selectedPhotos);
-    // })
   }
 
   handleExpandedGallery() {
@@ -620,17 +625,8 @@ class ImageGallery extends Component {
   }
 
   render() {
-    // console.log(this.state.openPanel, 'scrollable');
-    // const opacity = this.animatedTranslateYScrollView.interpolate({
-    //   inputRange: [0, this.actualScrollViewHeight],
-    //   outputRange: [0, 1]
-    // });
-    // const scrollPan = !this.state.scrollable &&
-    //   !this.state.openLightBox && {
-    //     ...this.panResponder.panHandlers
-    //   };
-
-    const rotate = this.rotateValue.interpolate({
+    console.log('render gallery');
+    const rotate = this.state.rotateValue.interpolate({
       inputRange: [0, 1],
       outputRange: [this.state.openAlbum ? '0deg' : '360deg', '180deg']
     });
@@ -647,217 +643,14 @@ class ImageGallery extends Component {
     };
 
     return (
-      // <>
-      //   <Animated.View
-      //     style={[
-      //       styles.center,
-      //       styles.header,
-      //       {
-      //         opacity,
-      //         height: this.props.headerHeight
-      //       }
-      //     ]}
-      //     pointerEvents={this.state.openPanel ? 'auto' : 'none'}
-      //   >
-      //     <TouchableOpacity
-      //       hitSlop={HIT_SLOP}
-      //       style={[styles.btnCloseAlbum, this.props.btnCloseAlbumStyle]}
-      //       onPress={this.handleCloseModal.bind(this)}
-      //     >
-      //       {this.props.btnCloseAlbum}
-      //     </TouchableOpacity>
-      //     <TouchableOpacity
-      //       hitSlop={HIT_SLOP}
-      //       onPress={this.toggleAlbum.bind(this)}
-      //     >
-      //       <View style={[styles.albumHeader]}>
-      //         <Text
-      //           style={[
-      //             styles.center,
-      //             styles.albumTitle,
-      //             this.props.albumTitleStyle
-      //           ]}
-      //         >
-      //           {this.state.chosenAlbumTitle}
-      //         </Text>
-      //         <Animated.View
-      //           style={[
-      //             styles.center,
-      //             styles.iconToggleAlbum,
-      //             { transform: [{ rotate }] }
-      //           ]}
-      //         >
-      //           {this.props.iconToggleAlbum}
-      //         </Animated.View>
-      //       </View>
-      //     </TouchableOpacity>
-      //   </Animated.View>
-
-      //   <Animated.View
-      //     style={[
-      //       styles.center,
-      //       styles.albumContainer,
-      //       {
-      //         height: this.actualScrollViewHeight,
-      //         transform: [{ translateY }]
-      //       }
-      //     ]}
-      //   >
-      //     <FlatList
-      //       data={this.state.albums}
-      //       ItemSeparatorComponent={() => (
-      //         <View style={{ border: 'none', height: 0 }}></View>
-      //       )}
-      //       renderItem={({ item, index }) => (
-      //         <AlbumItem
-      //           title={item.name}
-      //           coverSource={{ uri: item.cover }}
-      //           subTitle={item.count}
-      //           onPress={() => this.onSelectAlbum(item)}
-      //           leftStyle={{ width: WIDTH / 6 }}
-      //           rightComponent={
-      //             item.name === this.state.chosenAlbumTitle &&
-      //             this.props.iconSelectedAlbum
-      //           }
-      //         />
-      //       )}
-
-      //       keyExtractor={(item, index) => String(item.date)}
-      //     />
-      //   </Animated.View>
-
-      //   <Animated.View
-      //     style={{
-      //       width: WIDTH,
-      //       backgroundColor: 'rgba(0,0,0,0)',
-      //       height: this.animatedShowUpValue
-      //     }}
-      //   />
-
-      //   <Animated.View
-      //     style={[
-      //       styles.container,
-      //       {
-      //         zIndex: 1,
-      //         position: 'absolute',
-      //         top: 0,
-      //         width: '100%',
-      //         height: this.actualScrollViewHeight,
-      //         borderTopWidth: 0.5,
-      //         borderColor: '#d9d9d9',
-      //         transform: [
-      //           {
-      //             translateY: this.animatedTranslateYScrollView.interpolate({
-      //               inputRange: [
-      //                 -this.props.baseViewHeight,
-      //                 0,
-      //                 this.actualScrollViewHeight
-      //               ],
-      //               outputRange: [
-      //                 HEIGHT,
-      //                 HEIGHT - (isAndroid ? 24 : 0) -
-      //                 (this.props.visible ? this.props.baseViewHeight : 0),
-      //                 this.props.headerHeight
-      //               ]
-      //             })
-      //           }
-      //         ]
-      //       }
-      //     ]}
-      //   >
-      //     <View
-      //       style={[
-      //         styles.container,
-      //         {
-      //           flexDirection: 'column'
-      //         }
-      //       ]}
-      //       {...scrollPan}
-      //     >
-      //       <FlatList
-      //         contentContainerStyle={{ flexGrow: 1 }}
-      //         data={this.state.photos}
-      //         // extraData={this.state.photos}
-      //         initialNumToRender={50}
-      //         numColumns={3}
-      //         ref={inst => (this.refScrollView = inst)}
-      //         onContentSizeChange={() => {
-      //           if (this.state.openAlbum) {
-      //             if (this.scrollable()) {
-      //               // console.log('b1');
-      //               this.setState({ scrollable: true });
-      //             } else {
-      //               this.setState({ scrollable: false });
-      //             }
-      //           }
-      //         }}
-      //         onScrollBeginDrag={this.handleScrollBeginDrag.bind(this)}
-      //         onMomentumScrollBegin={this.handleMomentumScrollBegin.bind(this)}
-      //         onScroll={this.handleScroll.bind(this)}
-      //         onMomentumScrollEnd={this.handleMomentumScrollEnd.bind(this)}
-      //         onScrollEndDrag={this.handleScrollEndDrag.bind(this)}
-      //         scrollEnabled={this.state.openPanel && !this.state.openLightBox}
-      //         style={[styles.scrollViewStyle]}
-      //         renderItem={({ item: photo, index }) => {
-      //           let selectedIndex = this.state.selectedPhotos.findIndex(
-      //             p => p.id === photo.id
-      //           );
-
-      //           return <TouchableOpacity
-      //             style={[styles.center, wrapperItemStyle, { zIndex: 1 }]}
-      //             onPress={() => {
-      //               photo.path === 'camera' && this.captureImage();
-      //             }}
-      //           >
-      //             <View style={{ flex: 1, width: '100%', height: '100%' }} {...this.testPanResponder}>
-      //               {photo.path === 'camera' ? (
-      //                 this.props.iconCameraPicker
-      //               ) : (
-      //                   <ImageItem
-      //                     onOpenLightBox={() => this.setState({ openLightBox: true })}
-      //                     onCloseLightBox={() => this.setState({ openLightBox: false })}
-      //                     source={{
-      //                       uri: photo.path
-      //                     }}
-      //                     onToggleItem={() => this.onTogglePhoto(photo, selectedIndex)}
-      //                     isSelected={selectedIndex !== -1}
-      //                     selectedMessage={selectedIndex !== -1 ? selectedIndex + 1 : 0}
-      //                     containerStyle={{
-      //                       width: '100%',
-      //                       height: '100%'
-      //                     }}
-      //                   />
-      //                 )}
-      //             </View>
-      //           </TouchableOpacity>
-      //         }}
-      //         keyExtractor={(item) => String(item.id)}
-      //       />
-      //     </View>
-      //     {this.state.openPanel && !this.state.openAlbum && (
-      //       <View style={styles.btnSend}>
-      //         <TouchableOpacity
-      //           onPress={this.handleSendImage.bind(this)}
-      //           style={[styles.iconSend]}
-      //         >
-      //           {this.props.iconSendImage}
-      //         </TouchableOpacity>
-      //         {this.state.selectedPhotos.length !== 0 && (
-      //           <View style={styles.totalSeletedPhotos}>
-      //             <Text style={styles.selectedMessage}>
-      //               {this.state.selectedPhotos.length}
-      //             </Text>
-      //           </View>
-      //         )}
-      //       </View>
-      //     )}
-      //   </Animated.View>
-      // </>
       <GestureWrapper
+        ref={this.props.refGestureWrapper}
         setHeader={this.props.setHeader}
         openHeader={this.state.openAlbum}
         visible={this.props.visible}
-        isActivePanResponder={!this.state.openLightBox}
+        isActivePanResponder={
+          !this.state.openLightBox && this.state.photos.length !== 0
+        }
         startExpandingBodyContent={this.handleExpandedGallery.bind(this)}
         startCollapsingBodyContent={this.handleCollapsedGallery.bind(this)}
         bodyData={this.state.photos}
@@ -867,69 +660,28 @@ class ImageGallery extends Component {
         contentFlatListProps={{
           initialNumToRender: 30,
           numColumns: 3,
-          // onContentSizeChange: () => {
-          //   if (this.state.openAlbum) {
-          //     this.setState({ scrollable: this.scrollable() });
-          //   }
-          // },
           ListHeaderComponent: this.state.loading && (
-            <View
-              style={{
-                flex: 1,
-                height: this.props.baseViewHeight,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              <ActivityIndicator size="large" />
-            </View>
+            <Loading height={this.props.baseViewHeight} />
           ),
           getItemLayout: (data, index) => ({
             length: this.props.itemHeight,
             offset: this.props.itemHeight * index,
             index
           }),
-          renderItem: ({ item: photo, index }) => {
-            let selectedIndex = this.state.selectedPhotos.findIndex(
-              p => p.id === photo.id
-            );
-
+          renderItem: ({ item: photo }) => {
             return (
-              <TouchableOpacity
-                style={[styles.center, wrapperItemStyle, { zIndex: 1 }]}
-                onPress={() => {
-                  photo.path === 'camera' && this.captureImage();
-                }}
-              >
-                <View style={{ flex: 1, width: '100%', height: '100%' }}>
-                  {photo.path === 'camera' ? (
-                    this.props.iconCameraPicker
-                  ) : (
-                    <ImageItem
-                      onOpenLightBox={() =>
-                        this.setState({ openLightBox: true })
-                      }
-                      onCloseLightBox={() =>
-                        this.setState({ openLightBox: false })
-                      }
-                      source={{
-                        uri: photo.path
-                      }}
-                      onToggleItem={() =>
-                        this.onTogglePhoto(photo, selectedIndex)
-                      }
-                      isSelected={selectedIndex !== -1}
-                      selectedMessage={
-                        selectedIndex !== -1 ? selectedIndex + 1 : 0
-                      }
-                      containerStyle={{
-                        width: '100%',
-                        height: '100%'
-                      }}
-                    />
-                  )}
-                </View>
-              </TouchableOpacity>
+              <ImageItemContainer
+                photo={photo}
+                selectedPhotos={this.state.selectedPhotos}
+                iconCameraPicker={this.props.iconCameraPicker}
+                iconCameraOff={this.props.iconCameraOff}
+                wrapperItemStyle={wrapperItemStyle}
+                onOpenLightBox={() => this.setState({ openLightBox: true })}
+                onCloseLightBox={() => this.setState({ openLightBox: false })}
+                captureImage={this.captureImage.bind(this)}
+                onTogglePhoto={this.onTogglePhoto.bind(this)}
+                permissionCameraGranted={this.state.permissionCameraGranted}
+              />
             );
           },
           keyExtractor: (item, index) => String(index)
@@ -937,83 +689,34 @@ class ImageGallery extends Component {
         onHeaderClosePress={this.handleCloseModal.bind(this)}
         btnHeaderClose={this.props.btnCloseAlbum}
         header={
-          <TouchableOpacity
-            hitSlop={HIT_SLOP}
-            onPress={this.toggleAlbum.bind(this)}
-          >
-            <View style={[styles.albumHeader]}>
-              <Text
-                style={[
-                  styles.center,
-                  styles.albumTitle,
-                  this.props.albumTitleStyle
-                ]}
-              >
-                {this.state.chosenAlbumTitle}
-              </Text>
-              <Animated.View
-                style={[
-                  styles.center,
-                  styles.iconToggleAlbum,
-                  { transform: [{ rotate }] }
-                ]}
-              >
-                {this.props.iconToggleAlbum}
-              </Animated.View>
-            </View>
-          </TouchableOpacity>
+          <Header
+            toggleAlbum={this.toggleAlbum.bind(this)}
+            albumTitleStyle={this.props.albumTitleStyle}
+            chosenAlbumTitle={this.state.chosenAlbumTitle}
+            iconToggleAlbum={this.props.iconToggleAlbum}
+            rotate={rotate}
+          />
         }
         headerContent={
-          <Animated.View
-            style={[
-              styles.center,
-              styles.albumContainer,
-              {
-                height: '100%',
-                transform: [{ translateY }]
-              }
-            ]}
-          >
-            <FlatList
-              data={this.state.albums}
-              ItemSeparatorComponent={() => (
-                <View style={{ border: 'none', height: 0 }}></View>
-              )}
-              renderItem={({ item, index }) => (
-                <AlbumItem
-                  title={item.name}
-                  coverSource={{ uri: item.cover }}
-                  subTitle={item.count}
-                  onPress={() => this.onSelectAlbum(item)}
-                  leftStyle={{ width: WIDTH / 6 }}
-                  rightComponent={
-                    item.name === this.state.chosenAlbumTitle &&
-                    this.props.iconSelectedAlbum
-                  }
-                />
-              )}
-              keyExtractor={(item, index) => String(item.date)}
-            />
-          </Animated.View>
+          <HeaderContent
+            translateY={translateY}
+            albums={this.state.albums}
+            onSelectAlbum={item => this.onSelectAlbum(item)}
+            iconSelectedAlbum={this.props.iconSelectedAlbum}
+          />
         }
         extraBodyContent={
-          this.state.openPanel && !this.state.openAlbum ? (
-            <View style={[styles.btnSend]}>
-              <TouchableOpacity
-                onPress={this.handleSendImage.bind(this)}
-                style={[styles.iconSend]}
-                disabled={this.state.selectedPhotos.length === 0}
-              >
-                {this.props.iconSendImage}
-              </TouchableOpacity>
-              {this.state.selectedPhotos.length !== 0 && (
-                <View style={styles.totalSeletedPhotos}>
-                  <Text style={styles.selectedMessage}>
-                    {this.state.selectedPhotos.length}
-                  </Text>
-                </View>
-              )}
-            </View>
+          this.state.permissionLibraryGranted === false ? (
+            <PermissonLibraryNotGranted
+              height={this.props.baseViewHeight}
+              onPress={this.handleOpenAllowPermission.bind(this)}
+            />
+          ) : this.state.openPanel && !this.state.openAlbum ? (
+            <SendImage
+              selectedPhotos={this.state.selectedPhotos}
+              iconSendImage={this.props.iconSendImage}
+              handleSendImage={this.handleSendImage.bind(this)}
+            />
           ) : null
         }
       />
@@ -1102,24 +805,237 @@ const styles = StyleSheet.create({
   albumContainer: {
     zIndex: 990,
     width: WIDTH,
+    height: '100%',
     backgroundColor: 'white',
     position: 'absolute'
   },
   iconSend: {
     bottom: 0,
     right: 0,
+    borderRadius: 30
+  },
+  fullCenter: {
     width: '100%',
     height: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 30
+    justifyContent: 'center'
   },
   selectedMessage: {
     color: 'white',
     fontSize: 14,
     lineHeight: 15,
     fontWeight: '600'
+  },
+  permissionNotGranted: {
+    position: 'absolute',
+    width: WIDTH,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  permissionNotGrantedBtn: {
+    backgroundColor: '#d9d9d9',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5
+  },
+  permissionNotGrantedSetting: {
+    fontSize: 14,
+    color: '#404040'
+  },
+  permissionNotGrantedMess: {
+    color: '#404040',
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: 10,
+    marginTop: 15
+  },
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  captureText: {
+    textAlign: 'center',
+    color: 'black',
+    paddingHorizontal: 5,
+    marginTop: 15
   }
 });
 
 export default ImageGallery;
+
+const Loading = props => (
+  <View
+    style={[
+      styles.loading,
+      {
+        height: props.height
+      }
+    ]}
+  >
+    <ActivityIndicator size="large" />
+  </View>
+);
+
+class ImageItemContainer extends Component {
+  state = {};
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.selectedPhotos !== this.props.selectedPhotos ||
+      nextProps.photo !== this.props.photo ||
+      nextProps.wrapperItemStyle !== this.props.wrapperItemStyle ||
+      nextProps.iconCameraPicker !== this.props.iconCameraPicker ||
+      nextProps.iconCameraOff !== this.props.iconCameraOff ||
+      nextProps.permissionCameraGranted !== this.props.permissionCameraGranted
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  render() {
+    const { photo, selectedPhotos } = this.props;
+    let selectedIndex = selectedPhotos.findIndex(p => p.id === photo.id);
+    return (
+      <TouchableOpacity
+        style={[styles.center, this.props.wrapperItemStyle]}
+        onPress={() => {
+          photo.path === 'camera' && this.props.captureImage();
+        }}
+      >
+        <View style={{ flex: 1, width: '100%', height: '100%' }}>
+          {photo.path === 'camera' ? (
+            <CameraPicker
+              iconCameraPicker={this.props.iconCameraPicker}
+              iconCameraOff={this.props.iconCameraOff}
+              permissionGranted={this.props.permissionCameraGranted}
+            />
+          ) : (
+            <ImageItem
+              onOpenLightBox={this.props.onOpenLightBox}
+              onCloseLightBox={this.props.onCloseLightBox}
+              source={{
+                uri: photo.path
+              }}
+              onToggleItem={() =>
+                this.props.onTogglePhoto(photo, selectedIndex)
+              }
+              isSelected={selectedIndex !== -1}
+              selectedMessage={selectedIndex !== -1 ? selectedIndex + 1 : 0}
+              containerStyle={styles.imageItem}
+            />
+          )}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}
+
+const PermissonLibraryNotGranted = props => (
+  <View
+    style={[
+      styles.permissionNotGranted,
+      {
+        height: props.height || '100%'
+      }
+    ]}
+  >
+    <Icon name="folder-multiple-image" size={40} />
+    <Text style={styles.permissionNotGrantedMess}>
+      Ứng dụng cần quyền truy cập vào thư viện.
+    </Text>
+    <Button
+      containerStyle={styles.permissionNotGrantedBtn}
+      style={styles.permissionNotGrantedSetting}
+      onPress={props.onPress}
+    >
+      Cài đặt
+    </Button>
+  </View>
+);
+
+const Header = props => (
+  <TouchableOpacity hitSlop={HIT_SLOP} onPress={props.toggleAlbum}>
+    <View style={[styles.albumHeader]}>
+      <Text style={[styles.center, styles.albumTitle, props.albumTitleStyle]}>
+        {props.chosenAlbumTitle}
+      </Text>
+      <Animated.View
+        style={[
+          styles.center,
+          styles.iconToggleAlbum,
+          { transform: [{ rotate: props.rotate }] }
+        ]}
+      >
+        {props.iconToggleAlbum}
+      </Animated.View>
+    </View>
+  </TouchableOpacity>
+);
+
+const HeaderContent = props => (
+  <Animated.View
+    style={[
+      styles.center,
+      styles.albumContainer,
+      {
+        transform: [{ translateY: props.translateY }]
+      }
+    ]}
+  >
+    <FlatList
+      data={props.albums}
+      ItemSeparatorComponent={() => (
+        <View style={{ border: 'none', height: 0 }}></View>
+      )}
+      renderItem={({ item, index }) => (
+        <AlbumItem
+          title={item.name}
+          coverSource={{ uri: item.cover }}
+          subTitle={item.count}
+          onPress={() => props.onSelectAlbum(item)}
+          leftStyle={{ width: WIDTH / 6 }}
+          rightComponent={
+            item.name === props.chosenAlbumTitle && props.iconSelectedAlbum
+          }
+        />
+      )}
+      keyExtractor={(item, index) => String(item.date)}
+    />
+  </Animated.View>
+);
+
+const SendImage = props => (
+  <View style={[styles.btnSend]}>
+    <TouchableOpacity
+      onPress={props.handleSendImage}
+      style={[styles.iconSend, styles.fullCenter]}
+      disabled={props.selectedPhotos.length === 0}
+    >
+      {props.iconSendImage}
+    </TouchableOpacity>
+    {props.selectedPhotos.length !== 0 && (
+      <View style={styles.totalSeletedPhotos}>
+        <Text style={styles.selectedMessage}>
+          {props.selectedPhotos.length}
+        </Text>
+      </View>
+    )}
+  </View>
+);
+
+const CameraPicker = props => (
+  <View style={styles.fullCenter}>
+    {props.permissionGranted === RESULTS.GRANTED
+      ? props.iconCameraPicker
+      : props.iconCameraOff}
+
+    <Text style={styles.captureText}>
+      {props.permissionGranted === RESULTS.GRANTED
+        ? 'Chụp ảnh'
+        : 'Ứng dụng cần quyền truy cập Camera'}
+    </Text>
+  </View>
+);

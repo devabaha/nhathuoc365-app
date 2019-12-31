@@ -101,6 +101,10 @@ PODS:
     - nanopb/encode (= 0.3.9011)
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
+  - Permission-Camera (2.0.6):
+    - RNPermissions
+  - Permission-PhotoLibrary (2.0.6):
+    - RNPermissions
   - React (0.59.9):
     - React/Core (= 0.59.9)
   - react-native-cameraroll (1.3.0):
@@ -111,6 +115,8 @@ PODS:
     - SDWebImage/Core (~> 4)
     - SDWebImage/GIF (~> 4)
     - SDWebImage/WebP (~> 4)
+  - react-native-screen-brightness (1.0.1):
+    - React
   - React/Core (0.59.9):
     - yoga (= 0.59.9.React)
   - React/RCTImage (0.59.9):
@@ -119,6 +125,8 @@ PODS:
   - React/RCTNetwork (0.59.9):
     - React/Core
   - RNFS (2.15.2):
+    - React
+  - RNPermissions (2.0.6):
     - React
   - SDWebImage/Core (4.4.7)
   - SDWebImage/GIF (4.4.7):
@@ -133,11 +141,14 @@ DEPENDENCIES:
   - Firebase/Analytics
   - Firebase/Auth
   - GoogleSignIn
+  - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
+  - Permission-PhotoLibrary (from `../node_modules/react-native-permissions/ios/PhotoLibrary.podspec`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
-  - React/Core (from `../node_modules/react-native`)
+  - react-native-screen-brightness (from `../node_modules/react-native-screen-brightness`)
   - React/RCTImage (from `../node_modules/react-native`)
   - RNFS (from `../node_modules/react-native-fs`)
+  - RNPermissions (from `../node_modules/react-native-permissions`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -164,14 +175,22 @@ SPEC REPOS:
     - SDWebImage
 
 EXTERNAL SOURCES:
+  Permission-Camera:
+    :path: "../node_modules/react-native-permissions/ios/Camera.podspec"
+  Permission-PhotoLibrary:
+    :path: "../node_modules/react-native-permissions/ios/PhotoLibrary.podspec"
   React:
     :path: "../node_modules/react-native"
   react-native-cameraroll:
     :path: "../node_modules/@react-native-community/cameraroll"
   react-native-fast-image:
     :path: "../node_modules/react-native-fast-image"
+  react-native-screen-brightness:
+    :path: "../node_modules/react-native-screen-brightness"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  RNPermissions:
+    :path: "../node_modules/react-native-permissions"
   yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -195,13 +214,17 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 43b8b64263023d4f32caa0b40f4c8bfa3c5f36d8
   libwebp: 057912d6d0abfb6357d8bb05c0ea470301f5d61e
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
+  Permission-Camera: 3845424e82e98fae9e9086bb1397e9602d0cb10a
+  Permission-PhotoLibrary: 5ec33ed00660cfe4ef79b88a1ed7ebe230d7a752
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
   react-native-fast-image: 7278563726f2455ed3ba6e04dea472345173278c
+  react-native-screen-brightness: 07a615629827593d3ac8bb0a3498088416cadd32
   RNFS: 54da03c2b7d862c42ea3ca8c7f86f892760a535a
+  RNPermissions: 4fa81b28a6e07b31ed9068fa7dab24e2b8a3902b
   SDWebImage: c10d14a8883ebd89664f02a422006f66a85c0c5d
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 3927f11f1690aa2667d821bd2106fd294213d3a1
+PODFILE CHECKSUM: 0f2666db6f22d0e43ae652bb08b0cb46a415d7f4
 
 COCOAPODS: 1.8.4

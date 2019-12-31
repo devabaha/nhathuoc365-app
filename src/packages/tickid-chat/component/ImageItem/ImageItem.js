@@ -12,7 +12,7 @@ import {
 import Lightbox from 'react-native-lightbox';
 import FastImage from 'react-native-fast-image';
 
-const isAndroid = Platform.OS === 'android';
+const isIos = Platform.OS === 'ios';
 const defaultListener = () => {};
 
 class ImageItem extends Component {
@@ -69,6 +69,8 @@ class ImageItem extends Component {
       selectedMessage
     } = this.props;
 
+    const ImageComponent = isIos ? Image : FastImage;
+
     return (
       <View style={[styles.imageItemContainer, { ...containerStyle }]}>
         <Lightbox
@@ -78,25 +80,17 @@ class ImageItem extends Component {
           onClose={onCloseLightBox}
           activeProps={{ resizeMode: 'contain' }}
         >
-          {isAndroid ? (
-            <FastImage
-              source={source}
-              style={[styles.fastImage]}
-              resizeMode={resizeMode}
-            />
-          ) : (
-            <Image
-              source={source}
-              style={[styles.fastImage]}
-              resizeMode={resizeMode}
-            />
-          )}
+          <ImageComponent
+            source={source}
+            style={[styles.fastImage]}
+            resizeMode={resizeMode}
+          />
         </Lightbox>
         {isSelected && (
           <View pointerEvents="none" style={[styles.selectedMask]}></View>
         )}
         <TouchableOpacity
-          style={[styles.imageTouchable, styles.outerStyle]}
+          style={[styles.imageTouchable]}
           onPress={this.onSelectItem.bind(this)}
         >
           {isSelected && (
@@ -105,11 +99,13 @@ class ImageItem extends Component {
           <View
             style={[
               styles.selectTouchable,
+              styles.outerStyle,
               {
-                backgroundColor: isSelected ? 'blue' : 'rgba(0,0,0,.1)'
+                backgroundColor: isSelected ? 'blue' : 'rgba(0,0,0,0)'
               }
             ]}
           />
+          <View pointerEvents="none" style={styles.shadow} />
         </TouchableOpacity>
       </View>
     );
@@ -118,12 +114,10 @@ class ImageItem extends Component {
 
 const styles = StyleSheet.create({
   imageItemContainer: {
-    flex: 1,
-    position: 'relative'
+    flex: 1
   },
   lightboxContainer: {
     width: '100%'
-    // height: '100%'
   },
   fastImage: {
     width: '100%',
@@ -147,24 +141,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: 'black',
-    backgroundColor: 'rgba(0,0,0,0)',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    elevation: 1,
-    overflow: 'hidden'
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   selectedMessage: {
     position: 'absolute',
     color: 'white',
     fontWeight: '600',
-    zIndex: 1
+    zIndex: 2
+  },
+  shadow: {
+    borderRadius: 50,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    width: '110%',
+    height: '110%',
+    position: 'absolute'
   },
   selectTouchable: {
+    borderRadius: 50,
     width: '100%',
     height: '100%'
   },
   outerStyle: {
+    zIndex: 1,
     borderWidth: 2,
     borderColor: 'white'
   }
