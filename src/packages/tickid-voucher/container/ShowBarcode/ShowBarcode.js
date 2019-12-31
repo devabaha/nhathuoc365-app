@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import DeviceBrightness from 'react-native-device-brightness';
+import ScreenBrightness from 'react-native-screen-brightness';
 import ShowBarcodeComponent from '../../component/ShowBarcode';
 import CampaignEntity from '../../entity/CampaignEntity';
 
-const MAXIMUM_LUMINOUS = 1;
+const MAXIMUM_LUMINOUS = 0.7;
+const MIN_LUMINOUS = 0.5;
 
 class ShowBarcode extends Component {
   static propTypes = {
@@ -21,23 +22,25 @@ class ShowBarcode extends Component {
     super(props);
 
     this.state = {
-      originLuminous: 0.5
+      originLuminous: MIN_LUMINOUS
     };
   }
 
   componentDidMount() {
-    this.handleBrightnessLevel();
+    this.handleBrightness();
   }
 
   componentWillUnmount() {
-    DeviceBrightness.setBrightnessLevel(this.state.originLuminous);
+    ScreenBrightness.setBrightness(this.state.originLuminous);
   }
 
-  handleBrightnessLevel = () => {
-    DeviceBrightness.getBrightnessLevel().then(originLuminous => {
-      this.setState({ originLuminous }, () =>
-        DeviceBrightness.setBrightnessLevel(MAXIMUM_LUMINOUS)
-      );
+  handleBrightness = () => {
+    ScreenBrightness.getBrightness().then(originLuminous => {
+      if (originLuminous < MIN_LUMINOUS) {
+        this.setState({ originLuminous }, () =>
+          ScreenBrightness.setBrightness(MAXIMUM_LUMINOUS)
+        );
+      }
     });
   };
 
