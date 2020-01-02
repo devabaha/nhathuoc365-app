@@ -45,7 +45,7 @@ class Search extends Component {
       this.setState({ loading: true });
     }
     try {
-      var response = await APIHandler.site_search_conversations(store_id, {
+      var response = await APIHandler.site_search_conversations(0, {
         search
       });
       if (!this.unmounted) {
