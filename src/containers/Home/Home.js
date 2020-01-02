@@ -316,6 +316,9 @@ class Home extends Component {
         Actions.jump(appConfig.routes.ordersTab);
         break;
       case 'chat':
+        this.handlePressButtonChat(this.state.site);
+        break;
+      case 'list_chat':
         Actions.list_amazing_chat({
           titleStyle: { width: 220 }
         });
