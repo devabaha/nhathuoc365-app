@@ -76,7 +76,8 @@ class Search extends Component {
       user_id: item.id,
       hiddenChatIcon: true,
       phoneNumber: item.tel,
-      title: item.name
+      title: item.name,
+      fromSearchScene: true
     });
   }
 

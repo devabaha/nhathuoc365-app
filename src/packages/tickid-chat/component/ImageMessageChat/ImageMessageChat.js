@@ -7,16 +7,16 @@ import {
   Image,
   Easing,
   TouchableOpacity,
-  Platform,
-  Text
+  Text,
+  ViewPropTypes
 } from 'react-native';
 import Lightbox from 'react-native-lightbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
 import { getBase64Image } from '../../helper';
 import FastImage from 'react-native-fast-image';
+import { isIos } from '../../constants';
 
-const isIos = Platform.OS === 'ios';
 const CONTAINER_WIDTH = 150;
 const CONTAINER_HEIGHT = 100;
 const UPLOAD_STATUS_TYPE = {
@@ -32,11 +32,13 @@ class ImageMessageChat extends Component {
     highQualityUri: PropTypes.string,
     uploadURL: PropTypes.string,
     isUploadData: PropTypes.bool,
-    image: PropTypes.any
+    image: PropTypes.any,
+    containerStyle: ViewPropTypes.style
   };
   static defaultProps = {
     highQualityUri: '',
-    isUploadData: false
+    isUploadData: false,
+    containerStyle: {}
   };
   state = {
     isOpenLightBox: false,
@@ -53,7 +55,8 @@ class ImageMessageChat extends Component {
     if (
       nextProps.lowQualityUri !== this.props.lowQualityUri ||
       nextProps.highQualityUri !== this.props.highQualityUri ||
-      nextProps.isUploadData !== this.props.isUploadData
+      nextProps.isUploadData !== this.props.isUploadData ||
+      nextProps.containerStyle !== this.props.containerStyle
     ) {
       return true;
     }
@@ -161,7 +164,7 @@ class ImageMessageChat extends Component {
     const ImageComponent = isIos ? Image : FastImage;
 
     return (
-      <View style={styles.image}>
+      <View style={[styles.image, this.props.containerStyle]}>
         <Lightbox
           springConfig={{ overshootClamping: true }}
           onOpen={this.handleOpen.bind(this)}

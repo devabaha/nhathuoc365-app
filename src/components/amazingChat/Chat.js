@@ -8,8 +8,6 @@ import appConfig from 'app-config';
 import APIHandler from '../../network/APIHandler';
 import TickidChat from '../../packages/tickid-chat/container/TickidChat/TickidChat';
 import RightButtonCall from '../RightButtonCall';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -85,23 +83,7 @@ export default class Chat extends Component {
     setTimeout(() => {
       Actions.refresh({
         right: this.renderRight.bind(this),
-        left: () => (
-          <TouchableOpacity
-            style={{ flex: 1 }}
-            onPress={this.onBack.bind(this)}
-          >
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginLeft: 10
-              }}
-            >
-              <Icon name="ios-arrow-back" size={24} color="#fff" />
-            </View>
-          </TouchableOpacity>
-        )
+        onBack: this.onBack.bind(this)
       });
     }, 100);
 
@@ -120,9 +102,11 @@ export default class Chat extends Component {
   }
 
   onBack() {
-    setTimeout(() => {
+    if (this.props.fromSearchScene) {
+      Actions.replace('list_amazing_chat_1');
+    } else {
       Actions.pop();
-    });
+    }
   }
 
   componentWillUnmount() {
@@ -327,9 +311,6 @@ export default class Chat extends Component {
         onUploadedImage={response =>
           this._onSend({ image: response.data.name })
         }
-        // expandedGallery={() => Actions.refresh({ hideNavBar: true })}
-        // collapsedGallery={() => Actions.refresh({ hideNavBar: false })}
-        // onScrollOffsetTop={this.handleLoadEarlierMessages.bind(this)} -- error, still bug because of scrollToBottom GiftedChat
         defaultStatusBarColor={appConfig.colors.primary}
         giftedChatProps={{
           user: {

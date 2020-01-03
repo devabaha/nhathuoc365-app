@@ -315,7 +315,7 @@ class Home extends Component {
       case 'orders':
         Actions.jump(appConfig.routes.ordersTab);
         break;
-      case 'chat':
+      case 'list_chat':
         Actions.list_amazing_chat({
           titleStyle: { width: 220 }
         });

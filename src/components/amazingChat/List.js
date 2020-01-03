@@ -32,26 +32,26 @@ class List extends Component {
   source = null;
 
   componentDidMount() {
-    setTimeout(() => {
-      Actions.refresh({
-        right: () => (
-          <TouchableOpacity onPress={this.handleSearch.bind(this)}>
-            <View style={styles.iconWrapper}>
-              <Icon
-                name="ios-search"
-                style={[
-                  styles.icon,
-                  {
-                    color: '#fff',
-                    fontSize: 26
-                  }
-                ]}
-              />
-            </View>
-          </TouchableOpacity>
-        )
-      });
-    });
+    // setTimeout(() => {
+    //   Actions.refresh({
+    //     right: () => (
+    //       <TouchableOpacity onPress={this.handleSearch.bind(this)}>
+    //         <View style={styles.iconWrapper}>
+    //           <Icon
+    //             name="ios-search"
+    //             style={[
+    //               styles.icon,
+    //               {
+    //                 color: '#fff',
+    //                 fontSize: 26
+    //               }
+    //             ]}
+    //           />
+    //         </View>
+    //       </TouchableOpacity>
+    //     )
+    //   });
+    // });
     this.setState({
       loading: true
     });
