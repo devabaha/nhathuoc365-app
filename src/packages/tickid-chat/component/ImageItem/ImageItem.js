@@ -6,13 +6,12 @@ import {
   Text,
   ViewPropTypes,
   StyleSheet,
-  Image,
-  Platform
+  Image
 } from 'react-native';
 import Lightbox from 'react-native-lightbox';
 import FastImage from 'react-native-fast-image';
+import { isIos, config } from '../../constants';
 
-const isIos = Platform.OS === 'ios';
 const defaultListener = () => {};
 
 class ImageItem extends Component {
@@ -101,7 +100,9 @@ class ImageItem extends Component {
               styles.selectTouchable,
               styles.outerStyle,
               {
-                backgroundColor: isSelected ? 'blue' : 'rgba(0,0,0,0)'
+                backgroundColor: isSelected
+                  ? config.focusColor
+                  : 'rgba(0,0,0,0)'
               }
             ]}
           />

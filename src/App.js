@@ -1098,6 +1098,7 @@ class RootRouter extends Component {
                     key="list_amazing_chat_1"
                     title="Danh sách Chat"
                     component={ListChat}
+                    navBar={ListChatNavBar}
                     {...navBarConfig}
                     back
                   />

@@ -71,12 +71,14 @@ class Search extends Component {
   }
 
   onPressCustomer(item) {
+    console.log(item);
     Actions.amazing_chat({
-      site_id: store.store_id,
-      user_id: item.id,
+      site_id: item.site_id,
+      user_id: item.user_id,
       hiddenChatIcon: true,
       phoneNumber: item.tel,
-      title: item.name
+      title: item.name,
+      fromSearchScene: true
     });
   }
 
