@@ -3,7 +3,13 @@ import './lib/Constant';
 import './lib/Helper';
 import appConfig from './config';
 import store from 'app-store';
-import { StyleSheet, Platform, View, TouchableOpacity } from 'react-native';
+import {
+  StyleSheet,
+  Platform,
+  View,
+  TouchableOpacity,
+  Alert
+} from 'react-native';
 import {
   Scene,
   Router,
@@ -15,6 +21,11 @@ import {
   Modal,
   Lightbox
 } from 'react-native-router-flux';
+import firebaseConfig from 'react-native-firebase';
+import {
+  setJSExceptionHandler,
+  setNativeExceptionHandler
+} from 'react-native-exception-handler';
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
@@ -189,6 +200,36 @@ initializeRadaModule({
     webhookUrl: null,
     defaultLocation: '37.33233141,-122.0312186'
   }
+});
+
+//-----react-native-exception-handler------
+const errorHandler = (error, isFatal) => {
+  if (isFatal) {
+    const messageLog = `Error: ${isFatal ? 'Fatal:' : ''} ${
+      error.name
+    } ${JSON.stringify(error.message)}`;
+    Alert.alert('Thông báo', `Tác vụ chưa được thực hiện. Vui lòng thử lại!`, [
+      {
+        text: 'Đồng ý'
+      }
+    ]);
+    console.log(error, isFatal);
+    firebaseConfig.crashlytics().log(messageLog);
+    firebaseConfig.crashlytics().recordError(101, messageLog);
+  } else {
+    console.log(error); // So that we can see it in the ADB logs in case of Android if needed
+  }
+};
+
+setJSExceptionHandler((error, isFatal) => {
+  errorHandler(error, isFatal);
+}, true);
+
+setNativeExceptionHandler(exceptionString => {
+  console.log(error);
+  const messageLog = `Error native: ${exceptionString}`;
+  firebaseConfig.crashlytics().log(messageLog);
+  firebaseConfig.crashlytics().recordError(102, messageLog);
 });
 
 class App extends Component {

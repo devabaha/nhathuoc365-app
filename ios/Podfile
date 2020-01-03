@@ -6,6 +6,8 @@ target 'my_food_new' do
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
   pod 'GoogleSignIn'
+  pod 'Fabric', '~> 1.10.2'
+  pod 'Crashlytics', '~> 3.14.0'
 
   # Pods for my_food_new
 
@@ -19,6 +21,11 @@ target 'my_food_new' do
   pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
+  
+  pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
+  pod 'RNFirebase/Crashlytics', :path => '../node_modules/react-native-firebase/ios'
+  
+  pod 'ReactNativeExceptionHandler', :podspec => '../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec'
 
   target 'my_food_newTests' do
     inherit! :search_paths
