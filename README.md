@@ -37,12 +37,12 @@ code-push app add tick-tickid-android android react-native
 │ Staging    │  │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-tickid-ios ios -d "Production" -m --description "Update 12/12: Them Kplus"
-code-push release-react tick-tickid-android android -d "Production" -m --description "Update 12/12: Them Kplus"
+code-push release-react tick-tickid-ios ios -d "Production" -m --description "Upgrade chat v2"
+code-push release-react tick-tickid-android android -d "Production" -m --description "Upgrade chat v2"
 
-6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
+1. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
-7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+2. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
 Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
 yo rn-toolbox:assets --icon icon.png --splash splash.png --store
 yo rn-toolbox:assets --icon icon-android.png --android
