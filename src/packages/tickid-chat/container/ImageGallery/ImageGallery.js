@@ -4,18 +4,14 @@ import {
   View,
   Text,
   Easing,
-  StatusBar,
-  Dimensions,
   Animated,
   FlatList,
   TouchableOpacity,
   ViewPropTypes,
-  Platform,
   ActivityIndicator,
   AppState,
   Alert
 } from 'react-native';
-import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
 import {
   request,
   check,
@@ -31,7 +27,18 @@ import AlbumItem from '../../component/AlbumItem';
 import GestureWrapper from '../../component/GestureWrapper';
 import { setStater, willUpdateState } from '../../helper';
 import Button from 'react-native-button';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
+import {
+  WIDTH,
+  HEIGHT,
+  HIT_SLOP,
+  HEADER_HEIGHT,
+  isAndroid,
+  isIos,
+  config
+} from '../../constants';
 
 const PERMISSIONS_TYPE = {
   CAMERA: 'camera-permission',
@@ -45,26 +52,71 @@ const LIBRARY_PERMISSIONS_TYPE = {
   CHECK: 'check-library-permission',
   REQUEST: 'request-library-permission'
 };
-const isAndroid = Platform.OS === 'android';
-const isIos = Platform.OS === 'ios';
-const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
-const ANDROID_STATUS_BAR = StatusBar.currentHeight;
-const HIT_SLOP = { right: 15, top: 15, left: 15, bottom: 15 };
+
+//-----
+const CenterIcon = props => {
+  const IconComponent = props.iconComponent || IconFontAwesome;
+
+  return (
+    <View style={styles.center}>
+      <IconComponent {...props} />
+    </View>
+  );
+};
+
+const ICON_CAMERA_PICKER = (
+  <CenterIcon
+    iconComponent={IconMaterialCommunity}
+    name="camera"
+    size={28}
+    color="black"
+  />
+);
+const ICON_CAMERA_OFF = (
+  <CenterIcon
+    iconComponent={IconMaterialCommunity}
+    name="camera-off"
+    size={28}
+    color="black"
+  />
+);
+const ICON_SEND_IMAGE = (
+  <CenterIcon name="paper-plane" size={20} color={config.focusColor} />
+);
+const ICON_SELECTED_ALBUM = (
+  <CenterIcon name="check" size={20} color={config.focusColor} />
+);
+const ICON_TOGGLE_ALBUM = (
+  <CenterIcon
+    iconComponent={IconAntDesign}
+    name="down"
+    size={18}
+    color="white"
+  />
+);
+const BTN_CLOSE_ALBUM = (
+  <CenterIcon
+    iconComponent={IconAntDesign}
+    name="close"
+    size={18}
+    color="white"
+  />
+);
+//-----
 const ITEMS_PER_ROW = 3;
 const ITEMS_HEIGHT = 150;
-const HEADER_HEIGHT = isIos ? (isIphoneX ? getStatusBarHeight() + 64 : 64) : 56;
 const BASE_VIEW_HEIGHT = HEIGHT / 2.5;
 const DURATION_SHOW_ALBUM = 200;
 const DURATION_SHOW_GALLERY = 300;
 const DELAY_GET_ALBUM = 3000;
 const OFFSET_TOP = 0;
 const defaultListener = () => {};
-const defaultIconSendImage = <Text style={{ color: 'blue' }}>></Text>;
-const defaultIconSelectedAlbum = <Text style={{ color: 'black' }}>/</Text>;
-const defaultIconToggleAlbum = <Text style={{ color: 'white' }}>\/</Text>;
-const defaultBtnCloseAlbum = <Text style={{ color: 'white' }}>x</Text>;
-const defaultIconCameraPicker = null;
-const defaultIconCameraOff = null;
+const defaultIconSendImage = ICON_SEND_IMAGE;
+const defaultIconSelectedAlbum = ICON_SELECTED_ALBUM;
+const defaultIconToggleAlbum = ICON_TOGGLE_ALBUM;
+const defaultBtnCloseAlbum = BTN_CLOSE_ALBUM;
+const defaultIconCameraPicker = ICON_CAMERA_PICKER;
+const defaultIconCameraOff = ICON_CAMERA_OFF;
 
 class ImageGallery extends Component {
   static propTypes = {
@@ -86,7 +138,9 @@ class ImageGallery extends Component {
     iconCameraPicker: PropTypes.node,
     iconCameraOff: PropTypes.node,
     onExpandedBodyContent: PropTypes.func,
+    onExpandingBodyContent: PropTypes.func,
     onCollapsedBodyContent: PropTypes.func,
+    onCollapsingBodyContent: PropTypes.func,
     onSendImage: PropTypes.func,
     setHeader: PropTypes.func,
     onToggleImage: PropTypes.func
@@ -111,24 +165,28 @@ class ImageGallery extends Component {
     iconCameraOff: defaultIconCameraOff,
     defaultStatusBarColor: '#fff',
     onExpandedBodyContent: defaultListener,
+    onExpandingBodyContent: defaultListener,
     onCollapsedBodyContent: defaultListener,
+    onCollapsingBodyContent: defaultListener,
     onSendImage: defaultListener,
     setHeader: defaultListener,
     onToggleImage: defaultListener
   };
 
   state = {
-    photos: [],
     chosenAlbumTitle: '',
+    photos: [],
     albums: [],
     selectedPhotos: [],
     openAlbum: false,
     loading: false,
+    openLightBox: false,
+    openPanel: false,
+    expandContent: false,
+    scrollable: false,
     animatedAlbumHeight: new Animated.Value(0),
     rotateValue: new Animated.Value(0),
     animatedShowUpValue: new Animated.Value(0),
-    openLightBox: false,
-    openPanel: false,
     permissionLibraryGranted: undefined,
     permissionCameraGranted: undefined
   };
@@ -136,6 +194,13 @@ class ImageGallery extends Component {
   didVisible = false;
   unmounted = false;
   appState = '';
+  offset = 0;
+  momentActive = false;
+  isAnimating = false;
+  isScrolling = false;
+
+  refGestureWrapper = React.createRef();
+  refPhotosView = React.createRef();
 
   get selectedPhotos() {
     return this.state.selectedPhotos;
@@ -161,6 +226,31 @@ class ImageGallery extends Component {
           }
         }
       );
+    }
+
+    if (nextProps.visible !== this.props.visible) {
+      if (!nextProps.visible) {
+        this.refPhotosView.current &&
+          this.refPhotosView.current.scrollToOffset({
+            animated: false,
+            offset: 0
+          });
+        if (nextState.expandContent) {
+          this.setState({
+            expandContent: false
+          });
+        }
+      }
+    }
+
+    if (nextState.expandContent !== this.state.expandContent) {
+      if (!nextState.expandContent) {
+        this.refPhotosView.current &&
+          this.refPhotosView.current.scrollToOffset({
+            animated: false,
+            offset: 0
+          });
+      }
     }
 
     if (nextState !== this.state) {
@@ -207,9 +297,42 @@ class ImageGallery extends Component {
     AppState.addEventListener('change', this._handleAppStateChange);
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    let opacity = 0;
+    if (this.refGestureWrapper.current) {
+      opacity = this.refGestureWrapper.current.animatedTranslateYScrollView.interpolate(
+        {
+          inputRange: [this.props.headerHeight, this.props.headerHeight * 2],
+          outputRange: [1, 0]
+        }
+      );
+    }
+
+    const rotate = this.state.rotateValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [this.state.openAlbum ? '0deg' : '360deg', '180deg']
+    });
+    this.props.setHeader(
+      <HeaderLayout
+        opacity={opacity}
+        rotate={rotate}
+        headerHeight={this.props.headerHeight}
+        handleCloseModal={this.handleCloseModal}
+        btnHeaderClose={this.props.btnCloseAlbum}
+        btnHeaderCloseStyle={this.props.btnCloseAlbumStyle}
+        toggleAlbum={this.toggleAlbum}
+        albumTitleStyle={this.props.albumTitleStyle}
+        chosenAlbumTitle={this.state.chosenAlbumTitle}
+        iconToggleAlbum={this.props.iconToggleAlbum}
+        pointerEvents={this.state.expandContent ? 'auto' : 'none'}
+      />
+    );
+  }
+
   componentWillUnmount() {
     this.unmounted = true;
     AppState.removeEventListener('change', this._handleAppStateChange);
+    this.props.setHeader(null);
   }
 
   _handleAppStateChange = nextAppState => {
@@ -507,7 +630,7 @@ class ImageGallery extends Component {
     return { albums, photos };
   }
 
-  toggleAlbum() {
+  toggleAlbum = () => {
     Animated.parallel([
       Animated.timing(this.state.rotateValue, {
         toValue: !this.state.openAlbum ? 1 : 0,
@@ -523,19 +646,17 @@ class ImageGallery extends Component {
       })
     ]).start();
     this.setState({ openAlbum: !this.state.openAlbum });
-  }
+  };
 
-  onSelectAlbum(album) {
+  onSelectAlbum = album => {
     this.toggleAlbum();
-    setTimeout(() =>
-      this.setState({
-        chosenAlbumTitle: album.name,
-        photos: album.photos
-      })
-    );
-  }
+    this.setState({
+      chosenAlbumTitle: album.name,
+      photos: album.photos
+    });
+  };
 
-  onTogglePhoto(photo, selectedIndex) {
+  onTogglePhoto = (photo, selectedIndex) => {
     const selectedPhotos = [...this.state.selectedPhotos];
 
     if (selectedIndex !== -1) {
@@ -545,9 +666,9 @@ class ImageGallery extends Component {
     }
     this.setState({ selectedPhotos });
     this.props.onToggleImage(selectedPhotos);
-  }
+  };
 
-  async captureImage() {
+  captureImage = async () => {
     const permissionCameraGranted = await this.handleCameraPermission(
       CAMERA_PERMISSIONS_TYPE.REQUEST
     );
@@ -590,50 +711,127 @@ class ImageGallery extends Component {
         this.setState({ permissionCameraGranted });
       }
     });
-  }
+  };
 
-  handleCloseModal() {
+  handleCloseModal = () => {
     if (this.state.openAlbum) {
       this.toggleAlbum();
     } else {
       this.isAnimating = true;
       this.offset = 0;
       this.setState({
-        openPanel: false
+        openPanel: false,
+        expandContent: false
       });
     }
-  }
+  };
 
-  handleSendImage() {
+  handleSendImage = () => {
     this.offset = 0;
-    this.setState(
-      {
-        openPanel: false
-      },
-      () => this.props.onSendImage(this.state.selectedPhotos)
-    );
-  }
+    this.props.onSendImage(this.state.selectedPhotos);
+    this.setState({
+      expandContent: false
+    });
+  };
 
-  handleExpandedGallery() {
+  handleExpandingGallery = () => {
+    this.props.onExpandingBodyContent();
+    this.setState({
+      openPanel: true,
+      expandContent: true
+    });
+  };
+
+  handleExpandedGallery = () => {
     this.props.onExpandedBodyContent();
-    this.setState({ openPanel: true });
-  }
+    // this.setState({
+    //   expandContent: true
+    // });
+  };
 
-  handleCollapsedGallery() {
+  handleCollapsingGallery = (extraDatas = {}) => {
+    this.refPhotosView.current &&
+      this.refPhotosView.current.scrollToOffset({ animated: false, offset: 0 });
+    this.setState({
+      expandContent: false,
+      ...extraDatas
+    });
+    this.props.onCollapsingBodyContent();
+  };
+
+  handleCollapsedGallery = () => {
     this.props.onCollapsedBodyContent();
-    this.setState({ openPanel: false });
+    // this.setState({
+    //   openPanel: false
+    // })
+  };
+
+  //START - handle everything about gallery scroll event
+  handleScrollBeginDrag = e => {
+    // console.log('dragBegin', this.offset);
+    this.offset = e.nativeEvent.contentOffset.y;
+    this.isScrolling = false;
+    this.momentActive = this.offset > 0;
+  };
+  handleMomentumScrollBegin = e => {
+    this.offset = e.nativeEvent.contentOffset.y;
+    this.momentActive = true;
+    // console.log('momentBegin', this.offset);
+  };
+  handleScroll = e => {
+    let y = e.nativeEvent.contentOffset.y;
+    // console.log('scrolling', y);
+    this.isScrolling = true;
+    if (!this.momentActive) {
+      this.offset = y;
+      if (this.offset <= 0 && this.state.expandContent) {
+        this.handleCollapsingGallery({ openPanel: false });
+
+        // this.setState({
+        //   expandContent: false,
+        //   openPanel: false
+        // });
+      }
+    }
+  };
+  handleScrollEndDrag = e => {
+    this.offset = e.nativeEvent.contentOffset.y;
+    // console.log('endDrag', this.offset);
+  };
+  handleMomentumScrollEnd = e => {
+    this.isScrolling = false;
+    // console.log('momentEnd', this.offset);
+    this.momentActive = false;
+
+    if (this.offset <= 0 && this.state.expandContent) {
+      this.handleCollapsingGallery({ openPanel: false });
+      // this.setState({
+      //   expandContent: false,
+      //   openPanel: false
+      // });
+    }
+  };
+  //END - handle everything about gallery scroll event
+
+  scrollable(data = this.state.photos) {
+    let actualScrollViewHeight = 0;
+    if (this.refGestureWrapper.current) {
+      actualScrollViewHeight = this.refGestureWrapper.current
+        .actualScrollViewHeightValue;
+    }
+
+    return (
+      Math.ceil(data.length / ITEMS_PER_ROW) * ITEMS_HEIGHT >
+      actualScrollViewHeight
+    );
   }
 
   render() {
     console.log('render gallery');
-    const rotate = this.state.rotateValue.interpolate({
-      inputRange: [0, 1],
-      outputRange: [this.state.openAlbum ? '0deg' : '360deg', '180deg']
-    });
 
     const translateY = this.state.animatedAlbumHeight.interpolate({
       inputRange: [0, HEIGHT],
-      outputRange: [-HEIGHT, 0]
+      outputRange: [-HEIGHT * 2, 0]
     });
     const wrapperItemStyle = {
       height: this.props.itemHeight,
@@ -641,85 +839,114 @@ class ImageGallery extends Component {
       borderWidth: 2,
       borderColor: 'white'
     };
+    const extraDatas =
+      this.state.chosenAlbumTitle + '**' + this.state.selectedPhotos.length;
 
     return (
-      <GestureWrapper
-        ref={this.props.refGestureWrapper}
-        setHeader={this.props.setHeader}
-        openHeader={this.state.openAlbum}
-        visible={this.props.visible}
-        isActivePanResponder={
-          !this.state.openLightBox && this.state.photos.length !== 0
-        }
-        startExpandingBodyContent={this.handleExpandedGallery.bind(this)}
-        startCollapsingBodyContent={this.handleCollapsedGallery.bind(this)}
-        bodyData={this.state.photos}
-        collapsedBodyHeight={this.props.baseViewHeight}
-        defaultStatusBarColor={this.props.defaultStatusBarColor}
-        contentScrollEnabled={this.state.openPanel && !this.state.openLightBox}
-        contentFlatListProps={{
-          initialNumToRender: 30,
-          numColumns: 3,
-          ListHeaderComponent: this.state.loading && (
-            <Loading height={this.props.baseViewHeight} />
-          ),
-          getItemLayout: (data, index) => ({
-            length: this.props.itemHeight,
-            offset: this.props.itemHeight * index,
-            index
-          }),
-          renderItem: ({ item: photo }) => {
-            return (
-              <ImageItemContainer
-                photo={photo}
-                selectedPhotos={this.state.selectedPhotos}
-                iconCameraPicker={this.props.iconCameraPicker}
-                iconCameraOff={this.props.iconCameraOff}
-                wrapperItemStyle={wrapperItemStyle}
-                onOpenLightBox={() => this.setState({ openLightBox: true })}
-                onCloseLightBox={() => this.setState({ openLightBox: false })}
-                captureImage={this.captureImage.bind(this)}
-                onTogglePhoto={this.onTogglePhoto.bind(this)}
-                permissionCameraGranted={this.state.permissionCameraGranted}
-              />
-            );
-          },
-          keyExtractor: (item, index) => String(index)
-        }}
-        onHeaderClosePress={this.handleCloseModal.bind(this)}
-        btnHeaderClose={this.props.btnCloseAlbum}
-        header={
-          <Header
-            toggleAlbum={this.toggleAlbum.bind(this)}
-            albumTitleStyle={this.props.albumTitleStyle}
-            chosenAlbumTitle={this.state.chosenAlbumTitle}
-            iconToggleAlbum={this.props.iconToggleAlbum}
-            rotate={rotate}
-          />
-        }
-        headerContent={
+      <>
+        <GestureWrapper
+          ref={inst => {
+            this.refGestureWrapper.current = inst;
+            this.props.refGestureWrapper(inst);
+          }}
+          visible={this.props.visible}
+          expandContent={this.state.expandContent}
+          isActivePanResponder={
+            !this.state.openLightBox &&
+            this.state.photos.length !== 0 &&
+            (!this.state.scrollable || !this.state.expandContent)
+          }
+          onExpandedBodyContent={this.handleExpandedGallery}
+          onCollapsedBodyContent={this.handleCollapsedGallery}
+          onExpandingBodyContent={this.handleExpandingGallery}
+          // onCollapsingBodyContent={this.handleCollapsingGallery}
+          collapsedBodyHeight={this.props.baseViewHeight}
+          defaultStatusBarColor={this.props.defaultStatusBarColor}
+          extraDatas={extraDatas}
+          // renderBefore={
+          //   <HeaderContent
+          //     translateY={translateY}
+          //     albums={this.state.albums}
+          //     onSelectAlbum={this.onSelectAlbum}
+          //     iconSelectedAlbum={this.props.iconSelectedAlbum}
+          //     chosenAlbumTitle={this.state.chosenAlbumTitle}
+          //   />
+          // }
+        >
           <HeaderContent
             translateY={translateY}
             albums={this.state.albums}
-            onSelectAlbum={item => this.onSelectAlbum(item)}
+            onSelectAlbum={this.onSelectAlbum}
             iconSelectedAlbum={this.props.iconSelectedAlbum}
+            chosenAlbumTitle={this.state.chosenAlbumTitle}
           />
-        }
-        extraBodyContent={
-          this.state.permissionLibraryGranted === false ? (
+          <FlatList
+            contentContainerStyle={styles.contentContainerStyle}
+            data={this.state.photos}
+            ref={this.refPhotosView}
+            onScrollBeginDrag={this.handleScrollBeginDrag}
+            onMomentumScrollBegin={this.handleMomentumScrollBegin}
+            onScroll={this.handleScroll}
+            onMomentumScrollEnd={this.handleMomentumScrollEnd}
+            onScrollEndDrag={this.handleScrollEndDrag}
+            style={[styles.scrollViewStyle]}
+            onContentSizeChange={() => {
+              const scrollable = this.scrollable();
+              if (scrollable !== this.state.scrollable) {
+                this.setState({
+                  scrollable: this.scrollable()
+                });
+              }
+            }}
+            scrollEnabled={
+              this.state.scrollable &&
+              this.state.openPanel &&
+              !this.state.openLightBox
+            }
+            initialNumToRender={30}
+            numColumns={ITEMS_PER_ROW}
+            ListHeaderComponent={
+              this.state.loading && (
+                <Loading height={this.props.baseViewHeight} />
+              )
+            }
+            getItemLayout={(data, index) => ({
+              length: this.props.itemHeight,
+              offset: this.props.itemHeight * index,
+              index
+            })}
+            renderItem={({ item: photo }) => {
+              return (
+                <ImageItemContainer
+                  photo={photo}
+                  selectedPhotos={this.state.selectedPhotos}
+                  iconCameraPicker={this.props.iconCameraPicker}
+                  iconCameraOff={this.props.iconCameraOff}
+                  wrapperItemStyle={wrapperItemStyle}
+                  onOpenLightBox={() => this.setState({ openLightBox: true })}
+                  onCloseLightBox={() => this.setState({ openLightBox: false })}
+                  captureImage={this.captureImage}
+                  onTogglePhoto={this.onTogglePhoto}
+                  permissionCameraGranted={this.state.permissionCameraGranted}
+                />
+              );
+            }}
+            keyExtractor={(item, index) => String(index)}
+          />
+          {this.state.permissionLibraryGranted === false ? (
             <PermissonLibraryNotGranted
               height={this.props.baseViewHeight}
-              onPress={this.handleOpenAllowPermission.bind(this)}
+              onPress={this.handleOpenAllowPermission}
             />
           ) : this.state.openPanel && !this.state.openAlbum ? (
             <SendImage
               selectedPhotos={this.state.selectedPhotos}
               iconSendImage={this.props.iconSendImage}
-              handleSendImage={this.handleSendImage.bind(this)}
+              handleSendImage={this.handleSendImage}
             />
-          ) : null
-        }
-      />
+          ) : null}
+        </GestureWrapper>
+      </>
     );
   }
 }
@@ -788,7 +1015,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 22,
     borderRadius: 8,
-    backgroundColor: 'blue',
+    backgroundColor: config.focusColor,
     justifyContent: 'center',
     alignItems: 'center'
   },
@@ -859,6 +1086,24 @@ const styles = StyleSheet.create({
     color: 'black',
     paddingHorizontal: 5,
     marginTop: 15
+  },
+  contentContainerStyle: {
+    flexGrow: 1
+  },
+  headerLayout: {
+    zIndex: 999,
+    flex: 1,
+    width: WIDTH,
+    paddingTop: isIos ? 20 : 0,
+    top: 0,
+    left: 0,
+    backgroundColor: 'black',
+    position: 'absolute'
+  },
+  btnCloseHeader: {
+    position: 'absolute',
+    paddingTop: isIos ? 20 : 0,
+    left: 15
   }
 });
 
@@ -877,12 +1122,51 @@ const Loading = props => (
   </View>
 );
 
+const HeaderLayout = props => (
+  <Animated.View
+    style={[
+      styles.center,
+      styles.headerLayout,
+      {
+        opacity: props.opacity,
+        height: props.headerHeight
+      }
+    ]}
+    pointerEvents={props.pointerEvents}
+  >
+    <TouchableOpacity
+      hitSlop={HIT_SLOP}
+      style={[styles.btnCloseHeader, props.btnCloseHeaderStyle]}
+      onPress={props.handleCloseModal}
+    >
+      {props.btnHeaderClose}
+    </TouchableOpacity>
+
+    <TouchableOpacity hitSlop={HIT_SLOP} onPress={props.toggleAlbum}>
+      <View style={[styles.albumHeader]}>
+        <Text style={[styles.center, styles.albumTitle, props.albumTitleStyle]}>
+          {props.chosenAlbumTitle}
+        </Text>
+        <Animated.View
+          style={[
+            styles.center,
+            styles.iconToggleAlbum,
+            { transform: [{ rotate: props.rotate }] }
+          ]}
+        >
+          {props.iconToggleAlbum}
+        </Animated.View>
+      </View>
+    </TouchableOpacity>
+  </Animated.View>
+);
+
 class ImageItemContainer extends Component {
   state = {};
 
   shouldComponentUpdate(nextProps, nextState) {
     if (
-      nextProps.selectedPhotos !== this.props.selectedPhotos ||
+      nextProps.selectedPhotos.length !== this.props.selectedPhotos.length ||
       nextProps.photo !== this.props.photo ||
       nextProps.wrapperItemStyle !== this.props.wrapperItemStyle ||
       nextProps.iconCameraPicker !== this.props.iconCameraPicker ||
@@ -897,7 +1181,7 @@ class ImageItemContainer extends Component {
 
   render() {
     const { photo, selectedPhotos } = this.props;
-    let selectedIndex = selectedPhotos.findIndex(p => p.id === photo.id);
+    const selectedIndex = selectedPhotos.findIndex(p => p.id === photo.id);
     return (
       <TouchableOpacity
         style={[styles.center, this.props.wrapperItemStyle]}
@@ -942,7 +1226,7 @@ const PermissonLibraryNotGranted = props => (
       }
     ]}
   >
-    <Icon name="folder-multiple-image" size={40} />
+    <IconMaterialCommunity name="folder-multiple-image" size={40} />
     <Text style={styles.permissionNotGrantedMess}>
       Ứng dụng cần quyền truy cập vào thư viện.
     </Text>
@@ -954,25 +1238,6 @@ const PermissonLibraryNotGranted = props => (
       Cài đặt
     </Button>
   </View>
-);
-
-const Header = props => (
-  <TouchableOpacity hitSlop={HIT_SLOP} onPress={props.toggleAlbum}>
-    <View style={[styles.albumHeader]}>
-      <Text style={[styles.center, styles.albumTitle, props.albumTitleStyle]}>
-        {props.chosenAlbumTitle}
-      </Text>
-      <Animated.View
-        style={[
-          styles.center,
-          styles.iconToggleAlbum,
-          { transform: [{ rotate: props.rotate }] }
-        ]}
-      >
-        {props.iconToggleAlbum}
-      </Animated.View>
-    </View>
-  </TouchableOpacity>
 );
 
 const HeaderContent = props => (
