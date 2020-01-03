@@ -418,7 +418,7 @@ class PhoneAuth extends Component {
           <Text
             style={{
               fontSize: 17,
-              fontWeight: 200,
+              fontWeight: '200',
               color: 'black',
               marginTop: 20
             }}
