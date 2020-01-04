@@ -21,7 +21,6 @@ import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
-import { runFbAccountKit } from '../../helper/fbAccountKit';
 import firebase from 'react-native-firebase';
 
 @observer
@@ -279,20 +278,7 @@ export default class Account extends Component {
     });
   };
 
-  handleLogin = () => {
-    runFbAccountKit({
-      onSuccess: response => {
-        if (response.data.fill_info_user) {
-          // hien thi chon site
-          Actions.op_register({
-            title: 'Đăng ký thông tin',
-            name_props: response.data.name
-          });
-        }
-      },
-      onFailure: () => {}
-    });
-  };
+  handleLogin = () => {};
 
   render() {
     const { user_info } = store;
@@ -806,7 +792,6 @@ export default class Account extends Component {
     try {
       const response = await APIHandler.user_logout();
       if (response && response.status == STATUS_SUCCESS) {
-        // await RNAccountKit.logout();
         await firebase.auth().signOut();
         showMessage({
           message: 'Đăng xuất thành công',
