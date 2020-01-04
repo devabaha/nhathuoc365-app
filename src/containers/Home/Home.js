@@ -316,6 +316,9 @@ class Home extends Component {
         Actions.jump(appConfig.routes.ordersTab);
         break;
       case 'chat':
+        this.handlePressButtonChat(this.state.site);
+        break;
+      case 'list_chat':
         Actions.list_amazing_chat({
           titleStyle: { width: 220 }
         });
@@ -399,13 +402,15 @@ class Home extends Component {
   };
 
   handlePressButtonChat = () => {
-    Actions.amazing_chat({
-      titleStyle: { width: 220 },
-      phoneNumber: this.state.site.tel,
-      title: this.state.site.name,
-      site_id: this.state.site.id,
-      user_id: store.user_info.id
-    });
+    if (store.user_info && this.state.site) {
+      Actions.amazing_chat({
+        titleStyle: { width: 220 },
+        phoneNumber: this.state.site.tel,
+        title: this.state.site.name,
+        site_id: this.state.site.id,
+        user_id: store.user_info.id
+      });
+    }
   };
 
   productOpening;

@@ -8,8 +8,6 @@ import appConfig from 'app-config';
 import APIHandler from '../../network/APIHandler';
 import TickidChat from '../../packages/tickid-chat/container/TickidChat/TickidChat';
 import RightButtonCall from '../RightButtonCall';
-import Icon from 'react-native-vector-icons/Ionicons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -82,30 +80,14 @@ export default class Chat extends Component {
   }
 
   componentDidMount() {
-    this._getData();
-
     setTimeout(() => {
       Actions.refresh({
         right: this.renderRight.bind(this),
-        left: () => (
-          <TouchableOpacity
-            style={{ flex: 1 }}
-            onPress={this.onBack.bind(this)}
-          >
-            <View
-              style={{
-                flex: 1,
-                alignItems: 'center',
-                justifyContent: 'center',
-                marginLeft: 10
-              }}
-            >
-              <Icon name="ios-arrow-back" size={24} color="#fff" />
-            </View>
-          </TouchableOpacity>
-        )
+        onBack: this.onBack.bind(this)
       });
-    });
+    }, 100);
+
+    this._getData();
   }
 
   renderRight() {
@@ -120,9 +102,11 @@ export default class Chat extends Component {
   }
 
   onBack() {
-    setTimeout(() => {
+    if (this.props.fromSearchScene) {
+      Actions.replace('list_amazing_chat_1');
+    } else {
       Actions.pop();
-    });
+    }
   }
 
   componentWillUnmount() {
@@ -215,10 +199,6 @@ export default class Chat extends Component {
         },
         () => {
           callback();
-          // console.log(this.refListMessages)
-          // if (this.refListMessages && this.loadMore) {
-          //   this.refListMessages.scrollToIndex(30, { animation: false });
-          // }
         }
       );
     }
@@ -233,17 +213,37 @@ export default class Chat extends Component {
     }
   };
 
-  handleSendImage(response) {
-    if (this.refTickidChat) {
-      this.refTickidChat.clearSelectedPhotos();
-    }
-    if (response.status === STATUS_SUCCESS && response.data) {
+  // handleSendImage(response) {
+  //   if (this.refTickidChat) {
+  //     this.refTickidChat.clearSelectedPhotos();
+  //   }
+  //   if (response.status === STATUS_SUCCESS && response.data) {
+  //     this._appendMessages(
+  //       this.getFormattedMessage(MESSAGE_TYPE_IMAGE, response.data.url),
+  //       () => {},
+  //       true
+  //     );
+  //     this._onSend({ image: response.data.name });
+  //   }
+  // }
+
+  handleSendImage(images) {
+    if (Array.isArray(images) && images.length !== 0) {
+      const message = this.getFormattedMessage(
+        MESSAGE_TYPE_IMAGE,
+        images[0].path
+      );
+      message[0].rawImage = images[0];
       this._appendMessages(
-        this.getFormattedMessage(MESSAGE_TYPE_IMAGE, response.data.url),
-        () => {},
+        message,
+        () => {
+          const restImages = images.slice(1);
+          if (Array.isArray(restImages) && restImages.length !== 0) {
+            this.handleSendImage(restImages);
+          }
+        },
         true
       );
-      this._onSend({ image: response.data.name });
     }
   }
 
@@ -268,6 +268,7 @@ export default class Chat extends Component {
         break;
       case MESSAGE_TYPE_IMAGE:
         formattedMessage.image = message;
+        formattedMessage.isUploadData = true;
         break;
     }
     return [formattedMessage];
@@ -306,10 +307,10 @@ export default class Chat extends Component {
         messages={this.state.messages}
         defaultStatusBarColor={appConfig.colors.primary}
         onSendText={this.handleSendText.bind(this)}
-        onUploadedImage={this.handleSendImage.bind(this)}
-        // expandedGallery={() => Actions.refresh({ hideNavBar: true })}
-        // collapsedGallery={() => Actions.refresh({ hideNavBar: false })}
-        // onScrollOffsetTop={this.handleLoadEarlierMessages.bind(this)} -- error, still bug because of scrollToBottom GiftedChat
+        onSendImage={this.handleSendImage.bind(this)}
+        onUploadedImage={response =>
+          this._onSend({ image: response.data.name })
+        }
         defaultStatusBarColor={appConfig.colors.primary}
         giftedChatProps={{
           user: {

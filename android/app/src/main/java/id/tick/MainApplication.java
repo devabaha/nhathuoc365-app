@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.masteratul.exceptionhandler.ReactNativeExceptionHandlerPackage;
+import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.rnfs.RNFSPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
 import com.reactnativecommunity.cameraroll.CameraRollPackage;
@@ -14,7 +15,6 @@ import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import org.reactnative.camera.RNCameraPackage;
-import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.microsoft.codepush.react.CodePush;
 import io.underscope.react.fbak.RNAccountKitPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
@@ -55,6 +55,7 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new ReactNativeExceptionHandlerPackage(),
+            new ScreenBrightnessPackage(1234),
             new RNFSPackage(),
             new FastImageViewPackage(),
             new CameraRollPackage(),
@@ -65,7 +66,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNGestureHandlerPackage(),
             new ReanimatedPackage(),
             new RNCameraPackage(),
-            new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new RNAccountKitPackage(),
             new ReactNativeOneSignalPackage(),
