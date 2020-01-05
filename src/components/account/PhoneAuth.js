@@ -34,7 +34,9 @@ class PhoneAuth extends Component {
   constructor(props) {
     super(props);
     this.unsubscribe = null;
-    this.loginMode = loginMode.FIREBASE;
+    this.loginMode = props.loginMode
+      ? props.loginMode
+      : loginMode.SMS_BRAND_NAME;
     this.state = {
       user: null,
       message: '',
@@ -82,9 +84,33 @@ class PhoneAuth extends Component {
 
   smsBrandNameSendCode = async phoneNumber => {
     try {
-      const formData = {
-        username: phoneNumber
-      };
+      var formData;
+      if (typeof phoneNumber == 'object') {
+        var { phoneNumber, currentCountry } = this.state;
+        var countryCode = '';
+        if (currentCountry[0].idd.root) {
+          countryCode += currentCountry[0].idd.root;
+          if (currentCountry[0].idd.suffixes[0]) {
+            countryCode += currentCountry[0].idd.suffixes[0];
+          }
+        }
+        var phoneAuth = phoneNumber;
+        console.log(phoneAuth);
+        if (phoneAuth.substring(0, 2) === countryCode.replace('+', '')) {
+          phoneAuth = phoneAuth.substr(2);
+        } else if (phoneAuth.substring(0, 1) === '0') {
+          phoneAuth = phoneAuth.substr(1);
+        }
+        phoneNumber = countryCode + phoneAuth;
+        formData = {
+          username: phoneNumber
+        };
+      } else {
+        formData = {
+          username: phoneNumber
+        };
+      }
+      console.log(formData);
       const response = await APIHandler.user_login_sms(formData);
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({
@@ -94,6 +120,7 @@ class PhoneAuth extends Component {
           requestNewOtpCounter: requestSeconds
         });
       } else {
+        console.log('errr', error);
         this.setState({
           message: 'Lỗi xác thực, vui lòng thử lại.',
           isShowIndicator: false
