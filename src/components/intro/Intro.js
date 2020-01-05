@@ -13,7 +13,6 @@ import {
 
 // library
 import { Actions, ActionConst } from 'react-native-router-flux';
-import RNAccountKit, { Color } from 'react-native-facebook-account-kit';
 import store from '../../store/Store';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -29,97 +28,8 @@ export default class Intro extends Component {
   }
 
   componentDidMount() {
-    this._run_fbak();
     //GoogleAnalytic('intro');
   }
-
-  _run_fbak() {
-    // Configures the account kit SDK
-    RNAccountKit.configure({
-      responseType: 'token',
-      titleType: 'login',
-      initialAuthState: '',
-      initialPhoneCountryPrefix: '+84',
-      facebookNotificationsEnabled: true,
-      countryBlacklist: [],
-      defaultCountry: 'VN',
-      theme: {
-        // for iOS only
-        // hide title by setting this stuff
-        titleColor: Color.hex('#fff')
-      },
-      viewControllerMode: 'show', // for iOS only, 'present' by default
-      getACallEnabled: true,
-      setEnableInitialSmsButton: false // true by default
-    });
-    // Shows the Facebook Account Kit view for login via SMS
-    RNAccountKit.loginWithPhone().then(res => {
-      if (res) {
-        this._verifyFBAK(res);
-      }
-    });
-  }
-
-  // verify facebook account kit token
-  _verifyFBAK = fbres => {
-    this.setState({ spinner: true }, async () => {
-      try {
-        var response = await APIHandler.login_fbak_verify(fbres);
-
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setUserInfo(response.data);
-
-            store.resetCartData();
-
-            store.setRefreshHomeChange(store.refresh_home_change + 1);
-            if (response.data.fill_info_user) {
-              //hien thi chon site
-              action(() => {
-                this.setState(
-                  {
-                    finish: true
-                  },
-                  () => {
-                    Actions.op_register({
-                      type: ActionConst.RESET,
-                      title: 'Đăng ký thông tin',
-                      name_props: response.data.name
-                    });
-                  }
-                );
-              })();
-            } else {
-              action(() => {
-                this.setState(
-                  {
-                    finish: true
-                  },
-                  () => {
-                    Actions.primaryTabbar({
-                      type: ActionConst.RESET
-                    });
-                  }
-                );
-              })();
-            }
-          })();
-          Toast.show(response.message, Toast.SHORT);
-        } else if (response) {
-          setTimeout(() => {
-            this.setState({ spinner: false });
-          }, 2000);
-          Toast.show(response.message, Toast.SHORT);
-        }
-      } catch (err) {
-        setTimeout(() => {
-          this.setState({ spinner: false });
-        }, 2000);
-        console.log(e + ' login_fbak_verify');
-        store.addApiQueue('login_fbak_verify', this._verifyFBAK);
-      }
-    });
-  };
 
   _renderImage({ item, index }) {
     return (

@@ -21,7 +21,6 @@ import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
-import { runFbAccountKit } from '../../helper/fbAccountKit';
 import firebase from 'react-native-firebase';
 
 @observer
@@ -280,18 +279,7 @@ export default class Account extends Component {
   };
 
   handleLogin = () => {
-    runFbAccountKit({
-      onSuccess: response => {
-        if (response.data.fill_info_user) {
-          // hien thi chon site
-          Actions.op_register({
-            title: 'Đăng ký thông tin',
-            name_props: response.data.name
-          });
-        }
-      },
-      onFailure: () => {}
-    });
+    Actions.push('phone_auth');
   };
 
   render() {
@@ -321,7 +309,7 @@ export default class Account extends Component {
                   <CachedImage
                     mutable
                     style={styles.profile_avatar}
-                    source={{ uri: store.user_info.img }}
+                    source={{ uri: store.user_info ? store.user_info.img : '' }}
                   />
                 </View>
               )}
@@ -805,22 +793,23 @@ export default class Account extends Component {
     });
     try {
       const response = await APIHandler.user_logout();
-      if (response && response.status == STATUS_SUCCESS) {
-        // await RNAccountKit.logout();
-        await firebase.auth().signOut();
-        showMessage({
-          message: 'Đăng xuất thành công',
-          type: 'info'
-        });
-
-        action(() => {
+      switch (response.status) {
+        case STATUS_SUCCESS:
+          await firebase.auth().signOut();
+          showMessage({
+            message: 'Đăng xuất thành công',
+            type: 'info'
+          });
           store.setUserInfo(response.data);
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
-
+          break;
+        case STATUS_UNDEFINE_USER:
           Actions.reset(appConfig.routes.sceneWrapper);
-        })();
+          break;
+        default:
+          console.log('default');
       }
     } catch (error) {
       console.log(error);
