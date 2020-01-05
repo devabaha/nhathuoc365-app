@@ -278,7 +278,9 @@ export default class Account extends Component {
     });
   };
 
-  handleLogin = () => {};
+  handleLogin = () => {
+    Actions.push('phone_auth');
+  };
 
   render() {
     const { user_info } = store;
@@ -307,7 +309,7 @@ export default class Account extends Component {
                   <CachedImage
                     mutable
                     style={styles.profile_avatar}
-                    source={{ uri: store.user_info.img }}
+                    source={{ uri: store.user_info ? store.user_info.img : '' }}
                   />
                 </View>
               )}
@@ -791,21 +793,23 @@ export default class Account extends Component {
     });
     try {
       const response = await APIHandler.user_logout();
-      if (response && response.status == STATUS_SUCCESS) {
-        await firebase.auth().signOut();
-        showMessage({
-          message: 'Đăng xuất thành công',
-          type: 'info'
-        });
-
-        action(() => {
+      switch (response.status) {
+        case STATUS_SUCCESS:
+          await firebase.auth().signOut();
+          showMessage({
+            message: 'Đăng xuất thành công',
+            type: 'info'
+          });
           store.setUserInfo(response.data);
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
-
+          break;
+        case STATUS_UNDEFINE_USER:
           Actions.reset(appConfig.routes.sceneWrapper);
-        })();
+          break;
+        default:
+          console.log('default');
       }
     } catch (error) {
       console.log(error);

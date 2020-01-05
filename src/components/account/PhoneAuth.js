@@ -396,9 +396,9 @@ class PhoneAuth extends Component {
     );
   }
 
-  _onPressRequestNewOtp() {
+  _onPressRequestNewOtp(username) {
     this.loginMode = loginMode.SMS_BRAND_NAME;
-    this.signIn();
+    this.signIn(username);
     this.setState({ requestNewOtpCounter: requestSeconds });
   }
 
@@ -518,7 +518,10 @@ class PhoneAuth extends Component {
             Không nhận được mã?
           </Text>
           <TouchableOpacity
-            onPress={this._onPressRequestNewOtp.bind(this)}
+            onPress={this._onPressRequestNewOtp.bind(
+              this,
+              countryCode + phoneAuth
+            )}
             disabled={requestNewOtpCounter > 0}
           >
             <Text
