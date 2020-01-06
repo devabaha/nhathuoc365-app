@@ -282,7 +282,7 @@ export default class Account extends Component {
     Actions.push('phone_auth', {
       loginMode: store.store_data.loginMode
         ? store.store_data.loginMode
-        : 'SMS_BRAND_NAME' //FIREBASE / SMS_BRAND_NAME
+        : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
     });
   };
 
