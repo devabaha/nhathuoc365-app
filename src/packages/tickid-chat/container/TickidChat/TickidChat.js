@@ -27,7 +27,7 @@ import { willUpdateState, logger } from '../../helper';
 import { WIDTH, HEIGHT, HIT_SLOP, config } from '../../constants';
 
 const tickidChatLogger = logger('tickidChat');
-const DURATION_SHOW_GALLERY = 200;
+const DURATION_SHOW_GALLERY = 300;
 const SCROLL_OFFSET_TOP = 100;
 const BOTTOM_OFFFSET_GALLERY = HEIGHT - HEIGHT / 1.5;
 const BTN_IMAGE_WIDTH = 35;
