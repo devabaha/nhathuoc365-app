@@ -49,7 +49,7 @@ class Launch extends Component {
         break;
       case STATUS_UNDEFINE_USER:
         Actions.replace('phone_auth', {
-          loginMode: user.loginMode ? user.loginMode : 'SMS_BRAND_NAME' //FIREBASE / SMS_BRAND_NAME
+          loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
         });
         break;
       default:
