@@ -57,8 +57,10 @@ export default class Chat extends Component {
   get user() {
     let _id = store.store_id;
 
+    //specify for tick/quan_ly_cua_hang
+    // _id = this.props.site_id;
     //specify for tick/tickid
-    _id = store.user_info.id;
+    _id = this.props.user_id;
 
     return {
       _id,
@@ -122,10 +124,10 @@ export default class Chat extends Component {
       this._loaded = false;
       let { site_id, user_id } = this.props;
 
-      // specify for tick/tickid
+      //specify for tick/quan_ly_cua_hang
+      // const main_user = site_id;
+      //specify for tick/tickid
       const main_user = user_id;
-      user_id = 0;
-      // end specification
 
       try {
         const [source, callable] = APIHandler.site_load_conversation(
@@ -149,19 +151,14 @@ export default class Chat extends Component {
             }
             if (response.data.list) {
               if (this.state.messages) {
-                this._appendMessages(
-                  response.data.list,
-                  this._calculatorLastID
-                );
+                this._appendMessages(response.data.list);
               } else {
-                this.setState(
-                  {
-                    messages: response.data.list,
-                    user_id: main_user
-                  },
-                  this._calculatorLastID
-                );
+                this.setState({
+                  messages: response.data.list,
+                  user_id: main_user
+                });
               }
+              this._calculatorLastID(response.data.list);
             }
           } else if (this.isLoadFirstTime) {
             this.setState({
@@ -185,7 +182,7 @@ export default class Chat extends Component {
     }
   };
 
-  _appendMessages(messages, callback, isAppendDirectly = false) {
+  _appendMessages(messages, isAppendDirectly = false) {
     const newMessages = [...this.state.messages];
     messages.forEach(message => {
       if (message.user._id !== this.state.user_id || isAppendDirectly) {
@@ -193,20 +190,13 @@ export default class Chat extends Component {
       }
     });
     if (newMessages !== this.state.messages) {
-      this.setState(
-        {
-          messages: newMessages
-        },
-        () => {
-          callback();
-        }
-      );
+      this.setState({
+        messages: newMessages
+      });
     }
   }
 
-  _calculatorLastID = () => {
-    const { messages } = this.state;
-
+  _calculatorLastID = messages => {
     if (messages && messages.length) {
       const lastObject = messages[0];
       this._lastID = lastObject._id;
@@ -277,6 +267,7 @@ export default class Chat extends Component {
   async _onSend(message) {
     let { site_id, user_id } = this.props;
 
+    //specify for tick/quan_ly_cua_hang  -> comment dong user_id = '';
     // specify for tick/tickid
     user_id = '';
 
