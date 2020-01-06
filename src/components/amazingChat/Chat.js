@@ -128,6 +128,7 @@ export default class Chat extends Component {
       // const main_user = site_id;
       //specify for tick/tickid
       const main_user = user_id;
+      user_id = 0;
 
       try {
         const [source, callable] = APIHandler.site_load_conversation(
