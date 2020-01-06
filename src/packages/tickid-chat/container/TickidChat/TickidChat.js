@@ -149,18 +149,21 @@ class TickidChat extends Component {
   }
 
   handleFocus = () => {
-    this.setState({
-      showImageGallery: this.refInput ? false : true,
-      editable: this.refInput ? true : false
-    });
-    // this.handlePressGallery()
-    if (this.refInput) {
-      setTimeout(() => {
-        if (this.refInput && !this.unmounted) {
-          this.refInput.focus();
+    this.setState(
+      {
+        showImageGallery: this.refInput ? false : true,
+        editable: this.refInput ? true : false
+      },
+      () => {
+        if (this.refInput) {
+          setTimeout(() => {
+            if (this.refInput && !this.unmounted) {
+              this.refInput.focus();
+            }
+          }, this.props.durationShowGallery);
         }
-      }, this.props.durationShowGallery);
-    }
+      }
+    );
   };
 
   handleBlur = () => {
