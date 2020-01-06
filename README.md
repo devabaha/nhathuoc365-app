@@ -37,8 +37,8 @@ code-push app add tick-tickid-android android react-native
 │ Staging    │  │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-tickid-ios ios -d "Production" -m --description "Upgrade chat v2"
-code-push release-react tick-tickid-android android -d "Production" -m --description "Upgrade chat v2"
+code-push release-react tick-tickid-ios ios -d "Production" -m --description "Upgrade login firebase"
+code-push release-react tick-tickid-android android -d "Production" -m --description "Upgrade login firebase"
 
 1. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
