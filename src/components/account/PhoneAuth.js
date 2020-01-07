@@ -149,9 +149,7 @@ class PhoneAuth extends Component {
             message: ``,
             isShowIndicator: false
           },
-          () => {
-            Actions.replace(config.routes.primaryTabbar);
-          }
+          () => this._verifyResponse(response)
         );
       } else {
         this.setState({
@@ -224,9 +222,8 @@ class PhoneAuth extends Component {
                 const response = await APIHandler.login_firebase_vertify({
                   token: idToken
                 });
-                console.log('res', response, idToken);
-                if (response.data) {
-                  Actions.replace(config.routes.primaryTabbar);
+                if (response && response.status == STATUS_SUCCESS) {
+                  this._verifyResponse(response);
                 } else {
                   firebase.auth().signOut();
                   this.setState({
@@ -246,6 +243,27 @@ class PhoneAuth extends Component {
           });
         });
     }
+  };
+
+  _verifyResponse = response => {
+    action(() => {
+      store.setUserInfo(response.data);
+      store.resetCartData();
+      store.setRefreshHomeChange(store.refresh_home_change + 1);
+      if (response.data && response.data.fill_info_user) {
+        //hien thi chon site
+        action(() => {
+          Actions.replace('op_register', {
+            title: 'Đăng ký thông tin',
+            name_props: response.data.name
+          });
+        })();
+      } else {
+        action(() => {
+          Actions.replace(config.routes.primaryTabbar);
+        })();
+      }
+    })();
   };
 
   _onPressPickCountry() {
