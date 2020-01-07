@@ -21,7 +21,6 @@ import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
-import { runFbAccountKit } from '../../helper/fbAccountKit';
 import firebase from 'react-native-firebase';
 
 @observer
@@ -280,17 +279,10 @@ export default class Account extends Component {
   };
 
   handleLogin = () => {
-    runFbAccountKit({
-      onSuccess: response => {
-        if (response.data.fill_info_user) {
-          // hien thi chon site
-          Actions.op_register({
-            title: 'Đăng ký thông tin',
-            name_props: response.data.name
-          });
-        }
-      },
-      onFailure: () => {}
+    Actions.push('phone_auth', {
+      loginMode: store.store_data.loginMode
+        ? store.store_data.loginMode
+        : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
     });
   };
 
@@ -321,7 +313,7 @@ export default class Account extends Component {
                   <CachedImage
                     mutable
                     style={styles.profile_avatar}
-                    source={{ uri: store.user_info.img }}
+                    source={{ uri: store.user_info ? store.user_info.img : '' }}
                   />
                 </View>
               )}

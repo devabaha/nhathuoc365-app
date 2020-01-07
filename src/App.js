@@ -34,10 +34,8 @@ import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
-import Login from './components/account/Login';
 import PhoneAuth from './components/account/PhoneAuth';
 import CodeAuth from './components/account/CodeAuth';
-import OpLogin from './components/account/OpLogin';
 import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
@@ -700,15 +698,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="login">
-                  <Scene
-                    key="login_1"
-                    hideNavBar
-                    component={Login}
-                    {...navBarConfig}
-                  />
-                </Stack>
-
                 <Stack key="phone_auth">
                   <Scene
                     key="phone_auth_1"
@@ -724,16 +713,6 @@ class RootRouter extends Component {
                     key="auth_code_1"
                     component={CodeAuth}
                     {...whiteNavBarConfig}
-                  />
-                </Stack>
-
-                <Stack key="op_login">
-                  <Scene
-                    key="op_login_1"
-                    title="Đăng ký"
-                    component={OpLogin}
-                    {...navBarConfig}
-                    back
                   />
                 </Stack>
 
@@ -1098,6 +1077,7 @@ class RootRouter extends Component {
                     key="list_amazing_chat_1"
                     title="Danh sách Chat"
                     component={ListChat}
+                    navBar={ListChatNavBar}
                     {...navBarConfig}
                     back
                   />
