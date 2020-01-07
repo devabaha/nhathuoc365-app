@@ -17,18 +17,26 @@ import {
   SafeAreaView,
   Dimensions
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import { ActionConst, Actions } from 'react-native-router-flux';
 import firebase from 'react-native-firebase';
 import config from '../../config';
 import countries from 'world-countries';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import store from '../../store/Store';
 const timer = require('react-timer-mixin');
+
+const loginMode = {
+  FIREBASE: 'FIREBASE',
+  SMS_BRAND_NAME: 'SMS_BRAND_NAME'
+};
 
 class PhoneAuth extends Component {
   constructor(props) {
     super(props);
     this.unsubscribe = null;
-
+    this.loginMode = props.loginMode
+      ? props.loginMode
+      : loginMode.SMS_BRAND_NAME;
     this.state = {
       user: null,
       message: '',
@@ -48,7 +56,119 @@ class PhoneAuth extends Component {
 
   componentWillUnmount() {}
 
-  signIn = () => {
+  signIn = phoneNumber => {
+    switch (this.loginMode) {
+      case loginMode.FIREBASE:
+        this.firebaseSignIn();
+        break;
+      case loginMode.SMS_BRAND_NAME:
+        this.smsBrandNameSendCode(phoneNumber);
+        break;
+      default:
+        break;
+    }
+  };
+
+  confirmCode = () => {
+    switch (this.loginMode) {
+      case loginMode.FIREBASE:
+        this.firebaseConfirmCode();
+        break;
+      case loginMode.SMS_BRAND_NAME:
+        this.smsBrandNameVerify();
+        break;
+      default:
+        break;
+    }
+  };
+
+  smsBrandNameSendCode = async phoneNumber => {
+    try {
+      var formData;
+      if (typeof phoneNumber == 'object') {
+        var { phoneNumber, currentCountry } = this.state;
+        var countryCode = '';
+        if (currentCountry[0].idd.root) {
+          countryCode += currentCountry[0].idd.root;
+          if (currentCountry[0].idd.suffixes[0]) {
+            countryCode += currentCountry[0].idd.suffixes[0];
+          }
+        }
+        var phoneAuth = phoneNumber;
+        console.log(phoneAuth);
+        if (phoneAuth.substring(0, 2) === countryCode.replace('+', '')) {
+          phoneAuth = phoneAuth.substr(2);
+        } else if (phoneAuth.substring(0, 1) === '0') {
+          phoneAuth = phoneAuth.substr(1);
+        }
+        phoneNumber = countryCode + phoneAuth;
+        formData = {
+          username: phoneNumber
+        };
+      } else {
+        formData = {
+          username: phoneNumber
+        };
+      }
+      console.log(formData);
+      const response = await APIHandler.user_login_sms(formData);
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState({
+          confirmResult: phoneNumber,
+          message: '',
+          isShowIndicator: false,
+          requestNewOtpCounter: requestSeconds
+        });
+      } else {
+        console.log('errr', error);
+        this.setState({
+          message: 'Lỗi xác thực, vui lòng thử lại.',
+          isShowIndicator: false
+        });
+      }
+    } catch (error) {
+      console.log('errr', error);
+      this.setState({
+        message: 'Lỗi xác thực, vui lòng thử lại.',
+        isShowIndicator: false
+      });
+    }
+  };
+
+  smsBrandNameVerify = async () => {
+    try {
+      const { codeInput, confirmResult } = this.state;
+      const formData = {
+        username: confirmResult,
+        otp: codeInput
+      };
+      const response = await APIHandler.login_sms_verify(formData);
+      if (response && response.status == STATUS_SUCCESS) {
+        this.setState(
+          {
+            message: ``,
+            isShowIndicator: false
+          },
+          () => {
+            Actions.replace(config.routes.primaryTabbar);
+          }
+        );
+      } else {
+        this.setState({
+          message: response.message,
+          confirmResult: null
+        });
+      }
+    } catch (err) {
+      console.log('error', error);
+      this.setState({
+        message: `Mã xác minh không hợp lệ. Vui lòng thử lại`,
+        isShowIndicator: false
+      });
+    }
+  };
+
+  firebaseSignIn = () => {
     Keyboard.dismiss();
     const { phoneNumber, currentCountry } = this.state;
     var countryCode = '';
@@ -78,16 +198,13 @@ class PhoneAuth extends Component {
           })
         )
         .catch(error => {
-          console.log('errr', error);
-          this.setState({
-            message: 'Lỗi xác thực, vui lòng thử lại.',
-            isShowIndicator: false
-          });
+          this.loginMode = loginMode.SMS_BRAND_NAME;
+          this.signIn(countryCode + phoneAuth);
         });
     }, 300);
   };
 
-  confirmCode = () => {
+  firebaseConfirmCode = () => {
     const { codeInput, confirmResult } = this.state;
     Keyboard.dismiss();
     if (confirmResult && codeInput.length) {
@@ -306,12 +423,14 @@ class PhoneAuth extends Component {
     );
   }
 
-  _onPressRequestNewOtp() {
-    this.signIn();
+  _onPressRequestNewOtp(username) {
+    this.loginMode = loginMode.SMS_BRAND_NAME;
+    this.signIn(username);
     this.setState({ requestNewOtpCounter: requestSeconds });
   }
 
   _onPressBackToPhoneInput() {
+    this.loginMode = loginMode.FIREBASE;
     this.setState({ confirmResult: null });
   }
 
@@ -426,7 +545,10 @@ class PhoneAuth extends Component {
             Không nhận được mã?
           </Text>
           <TouchableOpacity
-            onPress={this._onPressRequestNewOtp.bind(this)}
+            onPress={this._onPressRequestNewOtp.bind(
+              this,
+              countryCode + phoneAuth
+            )}
             disabled={requestNewOtpCounter > 0}
           >
             <Text

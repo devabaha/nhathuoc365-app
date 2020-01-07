@@ -60,9 +60,6 @@
 		BC141530788E460CAE827483 /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FE58DDF2DC84ED3B168C409 /* AntDesign.ttf */; };
 		BE093D5928F94F5A88F37BD2 /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 463EE80D934E40BB9BB6E7D7 /* libRNFetchBlob.a */; };
 		BE7D83E7160C4682A454DDDE /* libRNImagePicker.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 783A802B842147D785DC3726 /* libRNImagePicker.a */; };
-		C2404FCA332B47229BF1A493 /* libRNAccountKit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D5E3AA64E1D4DE28430E541 /* libRNAccountKit.a */; };
-		C79F842D22FCCFCB0065AD0B /* AccountKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C79F842B22FCCFCB0065AD0B /* AccountKit.framework */; };
-		C79F842E22FCCFCB0065AD0B /* AccountKitStrings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = C79F842C22FCCFCB0065AD0B /* AccountKitStrings.bundle */; };
 		CA5578E1BB6144D78B20560E /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 97890CB30B8343E4A9B3648B /* Foundation.ttf */; };
 		CC635C38B76E402782997D82 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 067B57B1BCC24709A992FAE2 /* libRNCWebView.a */; };
 		CCCAE5EDF74D40E492349AFA /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CF25897D0CC649789FF18C10 /* Octicons.ttf */; };
@@ -669,8 +666,6 @@
 		ACA5EE5FDDDFEF7D63DDD877 /* Pods-my_food_new.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-my_food_new.release.xcconfig"; path = "Target Support Files/Pods-my_food_new/Pods-my_food_new.release.xcconfig"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		BB39D3D9DDE54C189E9BD994 /* libRNCNetInfo-tvOS.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = "libRNCNetInfo-tvOS.a"; sourceTree = "<group>"; };
-		C79F842B22FCCFCB0065AD0B /* AccountKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AccountKit.framework; path = "../node_modules/react-native-facebook-account-kit/ios/AccountKit.framework"; sourceTree = "<group>"; };
-		C79F842C22FCCFCB0065AD0B /* AccountKitStrings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = AccountKitStrings.bundle; path = "../node_modules/react-native-facebook-account-kit/ios/AccountKitStrings.bundle"; sourceTree = "<group>"; };
 		C991D47D371D494286815C69 /* libRNCAsyncStorage.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCAsyncStorage.a; sourceTree = "<group>"; };
 		CB8C35FB5B854D92BFF61337 /* libLRDRCTSimpleToast.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libLRDRCTSimpleToast.a; sourceTree = "<group>"; };
 		CBBE6C829AC249BF840F199D /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
@@ -712,7 +707,6 @@
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
-				C79F842D22FCCFCB0065AD0B /* AccountKit.framework in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
@@ -728,7 +722,6 @@
 				60D8CF4A915040DBBB9363C2 /* libRNCAsyncStorage.a in Frameworks */,
 				BE7D83E7160C4682A454DDDE /* libRNImagePicker.a in Frameworks */,
 				DE64931BEBBF45C6869B6174 /* libRCTOneSignal.a in Frameworks */,
-				C2404FCA332B47229BF1A493 /* libRNAccountKit.a in Frameworks */,
 				471ABEE51E754FD49DB80A02 /* libCodePush.a in Frameworks */,
 				050EADCA2BB546CAB2015BB7 /* libz.tbd in Frameworks */,
 				3D84A85626634AABBFE313C1 /* libRNCamera.a in Frameworks */,
@@ -922,8 +915,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				C79F842B22FCCFCB0065AD0B /* AccountKit.framework */,
-				C79F842C22FCCFCB0065AD0B /* AccountKitStrings.bundle */,
 				1C206E2022F1A8F000CF6BEA /* SystemConfiguration.framework */,
 				1C206E1E22F1A8E200CF6BEA /* UIKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
@@ -2010,7 +2001,6 @@
 				1C2070A922F54D6E00CF6BEA /* push2.wav in Resources */,
 				B492E240D38B4CD5A280045F /* Ionicons.ttf in Resources */,
 				FC36BD30A4FE49A49EEC07E8 /* MaterialCommunityIcons.ttf in Resources */,
-				C79F842E22FCCFCB0065AD0B /* AccountKitStrings.bundle in Resources */,
 				8F7C22401BE74A7CBE52B040 /* MaterialIcons.ttf in Resources */,
 				88EE2B8B23A341FA0073E518 /* GoogleService-Info.plist in Resources */,
 				CCCAE5EDF74D40E492349AFA /* Octicons.ttf in Resources */,

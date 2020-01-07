@@ -27,7 +27,6 @@ import { CheckBox } from 'react-native-elements';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import { USE_ONLINE } from 'app-packages/tickid-voucher';
-import { runFbAccountKit } from '../../helper/fbAccountKit';
 
 @observer
 export default class Confirm extends Component {
@@ -1625,21 +1624,7 @@ export default class Confirm extends Component {
     }
   }
 
-  _onRegister() {
-    runFbAccountKit({
-      onSuccess: response => {
-        if (response.data.fill_info_user) {
-          // hien thi chon site
-          Actions.op_register({
-            title: 'Đăng ký thông tin',
-            name_props: response.data.name
-          });
-        }
-      },
-      onFailure: () => {},
-      initialPhoneNumber: this.state.tel_register
-    });
-  }
+  _onRegister() {}
 
   async _coppyCart() {
     if (this.item_coppy) {

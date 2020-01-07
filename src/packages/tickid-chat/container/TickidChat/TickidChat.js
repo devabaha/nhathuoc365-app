@@ -27,7 +27,7 @@ import { willUpdateState, logger } from '../../helper';
 import { WIDTH, HEIGHT, HIT_SLOP, config } from '../../constants';
 
 const tickidChatLogger = logger('tickidChat');
-const DURATION_SHOW_GALLERY = 200;
+const DURATION_SHOW_GALLERY = 300;
 const SCROLL_OFFSET_TOP = 100;
 const BOTTOM_OFFFSET_GALLERY = HEIGHT - HEIGHT / 1.5;
 const BTN_IMAGE_WIDTH = 35;
@@ -149,18 +149,21 @@ class TickidChat extends Component {
   }
 
   handleFocus = () => {
-    this.setState({
-      showImageGallery: this.refInput ? false : true,
-      editable: this.refInput ? true : false
-    });
-    // this.handlePressGallery()
-    if (this.refInput) {
-      setTimeout(() => {
-        if (this.refInput && !this.unmounted) {
-          this.refInput.focus();
+    this.setState(
+      {
+        showImageGallery: this.refInput ? false : true,
+        editable: this.refInput ? true : false
+      },
+      () => {
+        if (this.refInput) {
+          setTimeout(() => {
+            if (this.refInput && !this.unmounted) {
+              this.refInput.focus();
+            }
+          }, this.props.durationShowGallery);
         }
-      }, this.props.durationShowGallery);
-    }
+      }
+    );
   };
 
   handleBlur = () => {
