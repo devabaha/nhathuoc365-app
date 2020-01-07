@@ -799,18 +799,16 @@ export default class Account extends Component {
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
-          await firebase.auth().signOut();
-          showMessage({
-            message: 'Đăng xuất thành công',
-            type: 'info'
-          });
           store.setUserInfo(response.data);
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
-          break;
-        case STATUS_UNDEFINE_USER:
+          showMessage({
+            message: 'Đăng xuất thành công',
+            type: 'info'
+          });
           Actions.reset(appConfig.routes.sceneWrapper);
+          await firebase.auth().signOut();
           break;
         default:
           console.log('default');
