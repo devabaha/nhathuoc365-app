@@ -206,7 +206,7 @@ class PhoneAuth extends Component {
     const { codeInput, confirmResult } = this.state;
     Keyboard.dismiss();
     if (confirmResult && codeInput.length) {
-      this.setState({ isShowIndicator: true });
+      // this.setState({ isShowIndicator: true });
       confirmResult
         .confirm(codeInput)
         .then(user => {
