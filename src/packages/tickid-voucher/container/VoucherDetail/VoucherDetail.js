@@ -86,6 +86,11 @@ class VoucherDetail extends BaseContainer {
     return this.state.campaign.point;
   }
 
+  get campaignCurrency() {
+    if (!this.state.campaign) return '';
+    return this.state.campaign.data.point_currency;
+  }
+
   get canBuyCampaign() {
     return this.campaignPoint > 0 && this.isCampaign;
   }
@@ -439,6 +444,7 @@ class VoucherDetail extends BaseContainer {
           canUseNow={this.state.canUseNow || this.isFromMyVoucher}
           canBuyCampaign={this.canBuyCampaign}
           campaignPoint={this.campaignPoint}
+          campaignCurrency={this.campaignCurrency}
           site={this.state.site}
           campaign={this.state.campaign}
           addresses={this.state.addresses}

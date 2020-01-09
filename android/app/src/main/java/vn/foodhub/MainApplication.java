@@ -3,6 +3,10 @@ package vn.foodhub;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
+import com.rnfs.RNFSPackage;
+import com.dylanvann.fastimage.FastImageViewPackage;
+import com.reactnativecommunity.cameraroll.CameraRollPackage;
 import com.reactnativecommunity.rnpermissions.RNPermissionsPackage;
 import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.hieuvp.fingerprint.ReactNativeFingerprintScannerPackage;
@@ -10,7 +14,6 @@ import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import org.reactnative.camera.RNCameraPackage;
-import org.capslock.RNDeviceBrightness.RNDeviceBrightness;
 import com.microsoft.codepush.react.CodePush;
 import io.underscope.react.fbak.RNAccountKitPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
@@ -22,6 +25,8 @@ import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.RNFetchBlob.RNFetchBlobPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -47,6 +52,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ScreenBrightnessPackage(1234),
+            new RNFSPackage(),
+            new FastImageViewPackage(),
+            new CameraRollPackage(),
             new RNPermissionsPackage(),
             new AndroidOpenSettingsPackage(),
             new ReactNativeFingerprintScannerPackage(),
@@ -54,7 +63,6 @@ public class MainApplication extends Application implements ReactApplication {
             new RNGestureHandlerPackage(),
             new ReanimatedPackage(),
             new RNCameraPackage(),
-            new RNDeviceBrightness(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
             new RNAccountKitPackage(),
             new ReactNativeOneSignalPackage(),
@@ -65,7 +73,9 @@ public class MainApplication extends Application implements ReactApplication {
             new VectorIconsPackage(),
             new RNCWebViewPackage(),
             new RNDeviceInfo(),
-            new RNFetchBlobPackage()
+            new RNFetchBlobPackage(),
+            new RNFirebasePackage(),
+            new RNFirebaseAuthPackage()
       );
     }
 

@@ -34,6 +34,11 @@ function renderService({ item, data, app, notify, onPress }) {
             <Text style={styles.notify}>{notify.notify_chat}</Text>
           </View>
         )}
+        {notify.notify_list_chat > 0 && item.type === 'list_chat' && (
+          <View style={styles.notifyWrapper}>
+            <Text style={styles.notify}>{notify.notify_list_chat}</Text>
+          </View>
+        )}
       </View>
     </Button>
   );

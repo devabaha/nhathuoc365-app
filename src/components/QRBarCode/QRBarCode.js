@@ -5,9 +5,16 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  Platform
 } from 'react-native';
-import DeviceBrightness from 'react-native-device-brightness';
+import ScreenBrightness from 'react-native-screen-brightness';
+import {
+  check,
+  PERMISSIONS,
+  RESULTS,
+  openSettings
+} from 'react-native-permissions';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
@@ -15,8 +22,12 @@ import QRCode from 'react-native-qrcode-svg';
 import Barcode from 'react-native-barcode-builder';
 import appConfig from 'app-config';
 import timer from 'react-native-timer';
+import Button from 'react-native-button';
 
-const MAXIMUM_LUMINOUS = 1;
+const MAXIMUM_LUMINOUS = 0.7;
+const MIN_LUMINOUS = 0.5;
+const isAndroid = Platform.OS === 'android';
+const isIos = Platform.OS === 'ios';
 
 class QRBarCode extends Component {
   static propTypes = {
@@ -35,7 +46,8 @@ class QRBarCode extends Component {
       content: props.content
         ? props.content
         : 'Dùng QRCode địa chỉ Ví để nhận chuyển khoản',
-      originLuminous: 0.5
+      originLuminous: MIN_LUMINOUS,
+      permissionCameraGranted: undefined
     };
   }
 
@@ -45,19 +57,70 @@ class QRBarCode extends Component {
       this.setTimmer();
     }
 
-    this.handleBrightnessLevel();
+    this.handleBrightness();
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.checkPermissions();
   }
 
   componentWillUnmount() {
     timer.clearTimeout(this, 'barcodeupdate');
-    DeviceBrightness.setBrightnessLevel(this.state.originLuminous);
+    ScreenBrightness.setBrightness(this.state.originLuminous);
   }
 
-  handleBrightnessLevel = () => {
-    DeviceBrightness.getBrightnessLevel().then(originLuminous => {
-      this.setState({ originLuminous }, () =>
-        DeviceBrightness.setBrightnessLevel(MAXIMUM_LUMINOUS)
-      );
+  async checkPermissions() {
+    const permissionCameraGranted = await this.checkCameraPermission();
+    if (permissionCameraGranted !== this.state.permissionCameraGranted) {
+      this.setState({ permissionCameraGranted });
+    }
+  }
+
+  checkCameraPermission = async () => {
+    if (!isAndroid && !isIos) {
+      Alert.alert('Nền tảng không hỗ trợ truy cập Camera');
+      return false;
+    }
+
+    const permissonCameraRequest = isAndroid
+      ? PERMISSIONS.ANDROID.CAMERA
+      : PERMISSIONS.IOS.CAMERA;
+
+    try {
+      const result = await check(permissonCameraRequest);
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          Alert.alert('Quyền truy cập Camera không khả dụng');
+          console.log(
+            'This feature is not available (on this device / in this context)'
+          );
+          return false;
+        case RESULTS.DENIED:
+          console.log(
+            'The permission has not been requested / is denied but requestable'
+          );
+          return false;
+        case RESULTS.GRANTED:
+          console.log('The library permission is granted');
+          return true;
+        case RESULTS.BLOCKED:
+          console.log('The permission is denied and not requestable anymore');
+          return false;
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Lỗi yêu cầu quyền truy cập Camera');
+      return false;
+    }
+  };
+
+  handleBrightness = () => {
+    ScreenBrightness.getBrightness().then(originLuminous => {
+      if (originLuminous < MIN_LUMINOUS) {
+        this.setState({ originLuminous }, () =>
+          ScreenBrightness.setBrightness(MAXIMUM_LUMINOUS)
+        );
+      }
     });
   };
 
@@ -470,6 +533,12 @@ class QRBarCode extends Component {
     }
   }
 
+  goToSetting() {
+    openSettings().catch(() =>
+      Alert.alert('Ứng dụng không thể truy cập vào Cài đặt!')
+    );
+  }
+
   renderQRCodeScanner(text_result) {
     return (
       <QRCodeScanner
@@ -479,12 +548,28 @@ class QRBarCode extends Component {
           this._proccessQRCodeResult(e.data);
         }}
         topContent={
-          <View style={styles.topContent}>
-            <Text style={styles.centerText}>
-              <Icon name="camera-party-mode" size={16} color="#404040" />
-              {' Hướng máy ảnh của bạn về phía mã QR Code để khám phá'}
-            </Text>
-          </View>
+          this.state.permissionCameraGranted === false ? (
+            <View style={[styles.topContent]}>
+              <Text style={styles.centerText}>
+                <Icon name="camera-party-mode" size={16} color="#404040" />
+                {' Ứng dụng cần quyền truy cập Camera'}
+              </Text>
+              <Button
+                containerStyle={styles.permissionNotGrantedBtn}
+                style={styles.permissionNotGrantedSetting}
+                onPress={this.goToSetting.bind(this)}
+              >
+                Cài đặt
+              </Button>
+            </View>
+          ) : (
+            <View style={styles.topContent}>
+              <Text style={styles.centerText}>
+                <Icon name="camera-party-mode" size={16} color="#404040" />
+                {' Hướng máy ảnh của bạn về phía mã QR Code để khám phá'}
+              </Text>
+            </View>
+          )
         }
       />
     );
@@ -557,6 +642,7 @@ class QRBarCode extends Component {
   }
 
   render() {
+    console.log('render qr');
     const { index, title } = this.state;
     return (
       <View style={styles.container}>
@@ -622,7 +708,8 @@ const styles = StyleSheet.create({
   },
   topContent: {
     width: appConfig.device.width,
-    paddingVertical: 16
+    paddingVertical: 16,
+    alignItems: 'center'
   },
   centerText: {
     lineHeight: 20,
@@ -712,6 +799,17 @@ const styles = StyleSheet.create({
     width: appConfig.device.width / 1.5,
     height: appConfig.device.width / 1.5,
     alignSelf: 'center'
+  },
+  permissionNotGrantedBtn: {
+    marginTop: 15,
+    backgroundColor: '#d9d9d9',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 5
+  },
+  permissionNotGrantedSetting: {
+    fontSize: 14,
+    color: '#404040'
   }
 });
 

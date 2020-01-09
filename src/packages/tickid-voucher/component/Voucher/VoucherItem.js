@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import Button from 'react-native-button';
+import appConfig from 'app-config';
 
 function VoucherItem(props) {
   return (
@@ -17,6 +18,13 @@ function VoucherItem(props) {
         <Image source={{ uri: props.image }} style={styles.thumbnail} />
         <View style={styles.infoWrapper}>
           <Text style={styles.title}>{props.title}</Text>
+
+          {!!props.point && props.point !== '0' && (
+            <Text style={styles.pointWrapper}>
+              <Text style={styles.point}>{props.point}</Text>
+              {` ${props.pointCurrency}`}
+            </Text>
+          )}
         </View>
         <Image source={{ uri: props.logoImage }} style={styles.avatar} />
 
@@ -81,6 +89,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
     marginBottom: 20
+  },
+  pointWrapper: {
+    marginTop: 5
+  },
+  point: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#00b140'
   }
 });
 

@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        maven { url 'https://plugins.gradle.org/m2/' } // Gradle Plugin Portal 
+        maven { url 'https://plugins.gradle.org/m2/' } // Gradle Plugin Portal
     }
     dependencies {
         classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.1, 0.99.99]'
@@ -168,6 +168,14 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-screen-brightness')
+    implementation project(':react-native-fs')
+    implementation project(':react-native-fast-image')
+    implementation project(':@react-native-community_cameraroll')
+    implementation project(':react-native-firebase')
+    implementation "com.google.firebase:firebase-auth:17.0.0"
+    implementation "com.google.android.gms:play-services-base:16.1.0"
+    implementation "com.google.firebase:firebase-core:16.0.9"
     implementation project(':react-native-permissions')
     implementation project(':react-native-android-open-settings')
     implementation project(':react-native-fingerprint-scanner')
@@ -175,7 +183,6 @@ dependencies {
     implementation project(':react-native-gesture-handler')
     implementation project(':react-native-reanimated')
     implementation project(':react-native-camera')
-    implementation project(':react-native-device-brightness')
     implementation project(':react-native-code-push')
     implementation project(':react-native-facebook-account-kit')
     implementation project(':react-native-onesignal')
@@ -208,3 +215,5 @@ allprojects {
         }
     }
 }
+
+apply plugin: 'com.google.gms.google-services'

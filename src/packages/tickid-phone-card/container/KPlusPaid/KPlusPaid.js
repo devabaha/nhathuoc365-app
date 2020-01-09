@@ -79,10 +79,6 @@ class KPlusPaid extends Component {
     );
   }
 
-  get currentCards() {
-    return this.props.cardsOfNetwork[this.state.networkType];
-  }
-
   get selectedCard() {
     if (!this.state.cardValueType) return {};
     return this.state.currentCards.find(
@@ -168,13 +164,13 @@ class KPlusPaid extends Component {
         visibleNetwork: false
       },
       () => {
-        const alsoHasType = this.currentCards.some(
+        const alsoHasType = this.state.currentCards.some(
           card => card.type === this.state.cardValueType
         );
         // if not exist card type, reset default card type to first
         if (!alsoHasType) {
           this.setState({
-            cardValueType: this.currentCards[0].type
+            cardValueType: this.state.currentCards[0].type
           });
         }
       }
@@ -296,6 +292,7 @@ class KPlusPaid extends Component {
             onBlur={this.handleInputPhoneBlur}
             onChangeText={this.handleChangePhoneNumber}
             onShowHistory={this.handleShowHistory}
+            onPressSelectNetwork={this.handlePressSelectNetwork}
             networkType={this.state.networkType}
           />
 

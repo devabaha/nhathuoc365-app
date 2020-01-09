@@ -25,7 +25,8 @@ class Home extends Component {
       services: [],
       products: [],
       listService: [],
-      primaryActions: []
+      primaryActions: [],
+      product_groups: {}
     };
   }
 
@@ -48,6 +49,9 @@ class Home extends Component {
             cart_data: response.data.vote_cart
           });
         }
+        action(() => {
+          store.setStoreData(response.data.site);
+        })();
         this.setState({
           site: response.data.site,
           sites: response.data.sites,
@@ -58,7 +62,8 @@ class Home extends Component {
           products: response.data.products,
           promotions: response.data.promotions,
           listService: response.data.list_service,
-          primaryActions: response.data.primary_actions
+          primaryActions: response.data.primary_actions,
+          product_groups: response.data.product_groups
         });
       }
     } catch (error) {
@@ -313,6 +318,11 @@ class Home extends Component {
       case 'chat':
         this.handlePressButtonChat(this.state.site);
         break;
+      case 'list_chat':
+        Actions.list_amazing_chat({
+          titleStyle: { width: 220 }
+        });
+        break;
       case 'open_shop':
         if (this.shopOpening) return;
         this.setState({
@@ -392,14 +402,15 @@ class Home extends Component {
   };
 
   handlePressButtonChat = () => {
-    action(() => {
-      store.setStoreData(this.state.site);
-    })();
-
-    Actions.chat({
-      tel: this.state.site.tel,
-      title: this.state.site.name
-    });
+    if (store.user_info && this.state.site) {
+      Actions.amazing_chat({
+        titleStyle: { width: 220 },
+        phoneNumber: this.state.site.tel,
+        title: this.state.site.name,
+        site_id: this.state.site.id,
+        user_id: store.user_info.id
+      });
+    }
   };
 
   productOpening;
@@ -462,8 +473,9 @@ class Home extends Component {
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
-        onPressButtonChat={this.handlePressButtonChat}
+        onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
+        product_groups={this.state.product_groups}
       />
     );
   }
