@@ -21,7 +21,6 @@ import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
-import firebase from 'react-native-firebase';
 
 @observer
 export default class Account extends Component {
@@ -808,7 +807,6 @@ export default class Account extends Component {
             type: 'info'
           });
           Actions.reset(appConfig.routes.sceneWrapper);
-          await firebase.auth().signOut();
           break;
         default:
           console.log('default');
