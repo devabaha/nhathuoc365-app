@@ -137,6 +137,7 @@ class PhoneAuth extends Component {
 
   smsBrandNameVerify = async () => {
     try {
+      this.setState({ isShowIndicator: true });
       const { codeInput, confirmResult } = this.state;
       const formData = {
         username: confirmResult,
@@ -206,7 +207,7 @@ class PhoneAuth extends Component {
     const { codeInput, confirmResult } = this.state;
     Keyboard.dismiss();
     if (confirmResult && codeInput.length) {
-      // this.setState({ isShowIndicator: true });
+      this.setState({ isShowIndicator: true });
       confirmResult
         .confirm(codeInput)
         .then(user => {
@@ -223,6 +224,10 @@ class PhoneAuth extends Component {
                   token: idToken
                 });
                 if (response && response.status == STATUS_SUCCESS) {
+                  this.setState({
+                    message: response.message,
+                    isShowIndicator: false
+                  });
                   this._verifyResponse(response);
                 } else {
                   this.setState({
