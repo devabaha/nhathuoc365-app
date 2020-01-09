@@ -21,10 +21,12 @@ export default class RightButtonChat extends Component {
       <TouchableHighlight
         underlayColor="transparent"
         onPress={() => {
-          Actions.chat({
-            store_id: this.props.store_id || undefined,
-            title: this.props.title || undefined,
-            tel: this.props.tel || undefined
+          Actions.amazing_chat({
+            titleStyle: { width: 220 },
+            phoneNumber: store.store_data.tel,
+            title: store.store_data.name,
+            site_id: store_id,
+            user_id: store.user_info.id
           });
         }}
       >

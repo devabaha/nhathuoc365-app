@@ -99,7 +99,13 @@ export default class Cart extends Component {
         <TouchableHighlight
           underlayColor="transparent"
           onPress={() => {
-            Actions.chat();
+            Actions.amazing_chat({
+              titleStyle: { width: 220 },
+              phoneNumber: store.store_data.tel,
+              title: store.store_data.name,
+              site_id: store.store_id,
+              user_id: store.user_info.id
+            });
           }}
         >
           <View style={styles.right_btn_add_store}>
