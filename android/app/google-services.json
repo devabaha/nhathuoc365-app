@@ -1,50 +1,50 @@
 {
   "project_info": {
-    "project_number": "709287585426",
-    "firebase_url": "https://tickid.firebaseio.com",
-    "project_id": "tickid",
-    "storage_bucket": "tickid.appspot.com"
+    "project_number": "1006062787830",
+    "firebase_url": "https://foodhub-e9a20.firebaseio.com",
+    "project_id": "foodhub-e9a20",
+    "storage_bucket": "foodhub-e9a20.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:709287585426:android:5e75f8110529ab3ecd284b",
+        "mobilesdk_app_id": "1:1006062787830:android:0a08b958df2f48aa9820d7",
         "android_client_info": {
-          "package_name": "id.tick"
+          "package_name": "vn.foodhub"
         }
       },
       "oauth_client": [
         {
-          "client_id": "709287585426-en2jqmlap5400nv5o6avjs5apck7eghl.apps.googleusercontent.com",
+          "client_id": "1006062787830-0o8u2ijb58ioncupa602fbsekmh7npu1.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "id.tick",
-            "certificate_hash": "e25812d29b0d7f57c81d9ac832f8d6e310c43266"
+            "package_name": "vn.foodhub",
+            "certificate_hash": "500610543b83f876e505cc90767d228602a01a58"
           }
         },
         {
-          "client_id": "709287585426-9m45pktd2ckvc9dnj6gfs5qe27gj9bju.apps.googleusercontent.com",
+          "client_id": "1006062787830-qddvdk3mecs7seqdo1n5s41hikr5udt8.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDlmzup0Enf53B2LtlI49byZwgtAJ5lrBE"
+          "current_key": "AIzaSyBQIg3us9zPRKVCOUUArFnwg2KIZGYTDrk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "709287585426-9m45pktd2ckvc9dnj6gfs5qe27gj9bju.apps.googleusercontent.com",
+              "client_id": "1006062787830-qddvdk3mecs7seqdo1n5s41hikr5udt8.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd.apps.googleusercontent.com",
+              "client_id": "1006062787830-l8jen6dbohotijhbi0j585sdhkihhvmj.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "id.tick",
-                "app_store_id": "1482102655"
+                "bundle_id": "vn.foodhub",
+                "app_store_id": "1395643569"
               }
             }
           ]

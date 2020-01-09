@@ -3,23 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd.apps.googleusercontent.com</string>
+	<string>1006062787830-l8jen6dbohotijhbi0j585sdhkihhvmj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd</string>
-	<key>ANDROID_CLIENT_ID</key>
-	<string>709287585426-en2jqmlap5400nv5o6avjs5apck7eghl.apps.googleusercontent.com</string>
+	<string>com.googleusercontent.apps.1006062787830-l8jen6dbohotijhbi0j585sdhkihhvmj</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDxVo3t3WIC4x-c7LwDAhLf6y1PPPXY1K8</string>
+	<string>AIzaSyBNpSF-lkBKG5HPqhKRCw-0erPzx2MLWig</string>
 	<key>GCM_SENDER_ID</key>
-	<string>709287585426</string>
+	<string>1006062787830</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>id.tick</string>
+	<string>vn.foodhub</string>
 	<key>PROJECT_ID</key>
-	<string>tickid</string>
+	<string>foodhub-e9a20</string>
 	<key>STORAGE_BUCKET</key>
-	<string>tickid.appspot.com</string>
+	<string>foodhub-e9a20.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:709287585426:ios:2d4e9621fc6526c8cd284b</string>
+	<string>1:1006062787830:ios:8fadf42e8a0b77729820d7</string>
 	<key>DATABASE_URL</key>
-	<string>https://tickid.firebaseio.com</string>
+	<string>https://foodhub-e9a20.firebaseio.com</string>
 </dict>
 </plist>
