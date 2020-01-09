@@ -137,6 +137,7 @@ class PhoneAuth extends Component {
 
   smsBrandNameVerify = async () => {
     try {
+      this.setState({ isShowIndicator: true });
       const { codeInput, confirmResult } = this.state;
       const formData = {
         username: confirmResult,
@@ -154,13 +155,13 @@ class PhoneAuth extends Component {
       } else {
         this.setState({
           message: response.message,
-          confirmResult: null
+          isShowIndicator: false
         });
       }
     } catch (err) {
       console.log('error', error);
       this.setState({
-        message: `Mã xác minh không hợp lệ. Vui lòng thử lại`,
+        message: `03: Mã xác minh không hợp lệ. Vui lòng thử lại`,
         isShowIndicator: false
       });
     }
@@ -223,22 +224,30 @@ class PhoneAuth extends Component {
                   token: idToken
                 });
                 if (response && response.status == STATUS_SUCCESS) {
-                  this._verifyResponse(response);
-                } else {
-                  firebase.auth().signOut();
                   this.setState({
                     message: response.message,
-                    confirmResult: null
+                    isShowIndicator: false
+                  });
+                  this._verifyResponse(response);
+                } else {
+                  this.setState({
+                    message: response.message,
+                    isShowIndicator: false
                   });
                 }
               })
-              .catch(error => {});
+              .catch(error => {
+                this.setState({
+                  message: `01: Mã xác minh không hợp lệ. Vui lòng thử lại`,
+                  isShowIndicator: false
+                });
+              });
           }
         })
         .catch(error => {
           console.log('error', error);
           this.setState({
-            message: `Mã xác minh không hợp lệ. Vui lòng thử lại`,
+            message: `02: Mã xác minh không hợp lệ. Vui lòng thử lại`,
             isShowIndicator: false
           });
         });
