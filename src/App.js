@@ -925,9 +925,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="store_orders">
+                <Stack key={`${appConfig.routes.storeOrders}`}>
                   <Scene
-                    key="store_orders_1"
+                    key={`${appConfig.routes.storeOrders}_1`}
                     component={StoreOrders}
                     {...navBarConfig}
                     back

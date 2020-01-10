@@ -41,6 +41,7 @@ const tickidChatLogger = logger('tickidChat');
 const SCROLL_OFFSET_TOP = 100;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
+const MAX_PIN = 9;
 const defaultListener = () => {};
 class TickidChat extends Component {
   static propTypes = {
@@ -51,6 +52,7 @@ class TickidChat extends Component {
     collapsingGallery: PropTypes.func,
     onSendText: PropTypes.func,
     onSendImage: PropTypes.func,
+    onPinPress: PropTypes.func,
     refGiftedChat: PropTypes.func,
     refListMessages: PropTypes.func,
     onUploadedImage: PropTypes.func,
@@ -63,6 +65,8 @@ class TickidChat extends Component {
     uploadURL: PropTypes.string,
     messages: PropTypes.array,
     pinList: PropTypes.array,
+    pinNotify: PropTypes.number,
+    pinListNotify: PropTypes.object,
     giftedChatProps: PropTypes.any,
     defaultStatusBarColor: PropTypes.string,
     extraData: PropTypes.any
@@ -76,6 +80,7 @@ class TickidChat extends Component {
     collapsingGallery: defaultListener,
     onSendText: defaultListener,
     onSendImage: defaultListener,
+    onPinPress: defaultListener,
     onUploadedImage: defaultListener,
     refListMessages: defaultListener,
     onScrollOffsetTop: defaultListener,
@@ -88,6 +93,8 @@ class TickidChat extends Component {
     uploadURL: '',
     messages: [],
     pinList: [],
+    pinNotify: 0,
+    pinListNotify: {},
     extraData: null
   };
 
@@ -129,6 +136,8 @@ class TickidChat extends Component {
     if (
       nextProps.messages.length !== this.props.messages.length ||
       nextProps.pinList !== this.props.pinList ||
+      nextProps.pinNotify !== this.props.pinNotify ||
+      nextProps.pinListNotify !== this.props.pinListNotify ||
       nextProps.containerStyle !== this.props.containerStyle ||
       nextProps.durationShowGallery !== this.props.durationShowGallery ||
       nextProps.bottomOffsetGallery !== this.props.bottomOffsetGallery ||
@@ -139,8 +148,6 @@ class TickidChat extends Component {
       nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor ||
       nextProps.extraData !== this.props.extraData
     ) {
-      console.log(nextProps.messages.length, '1');
-
       return true;
     }
 
@@ -497,6 +504,15 @@ class TickidChat extends Component {
                     : config.blurColor
                 }
               />
+              {!!this.props.pinNotify && (
+                <View style={styles.badge}>
+                  <Text style={styles.badgeText}>
+                    {this.props.pinNotify > MAX_PIN
+                      ? `${this.props.pinNotify}+`
+                      : this.props.pinNotify}
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           </Animated.View>
 
@@ -630,8 +646,6 @@ class TickidChat extends Component {
 
   render() {
     console.log('@_@ renderTickidChat');
-    const extraData = this.props.pinList ? this.props.pinList.length : null;
-
     return (
       <SafeAreaView style={[styles.container, this.props.containerStyle]}>
         <TouchableWithoutFeedback
@@ -697,10 +711,11 @@ class TickidChat extends Component {
             onToggleImage: this.handleToggleImage,
             onSendImage: this.handleSendImage
           }}
-          extraData={extraData}
           pinListProps={{
             pinList: this.props.pinList,
-            itemsPerRow: 4
+            pinListNotify: this.props.pinListNotify,
+            itemsPerRow: 4,
+            onPinPress: this.props.onPinPress
           }}
           visible={this.state.showToolBar}
           baseViewHeight={BOTTOM_OFFSET_GALLERY}
@@ -772,6 +787,24 @@ const styles = StyleSheet.create({
     marginTop: 30,
     fontSize: 20,
     fontWeight: '500'
+  },
+  badge: {
+    position: 'absolute',
+    width: 20,
+    height: 20,
+    top: -10,
+    right: -8,
+    backgroundColor: 'red',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    borderRadius: 10,
+    overflow: 'hidden'
+  },
+  badgeText: {
+    fontSize: 10,
+    color: '#fff',
+    fontWeight: 'bold'
   }
 });
 

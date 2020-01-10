@@ -3,11 +3,13 @@ import { StyleSheet, StatusBar, Animated, PanResponder } from 'react-native';
 import PropTypes from 'prop-types';
 import {
   isAndroid,
+  isIphoneX,
   isIos,
   WIDTH,
   HEIGHT,
   HEADER_HEIGHT,
   MIN_HEIGHT_COMPOSER,
+  BOTTOM_SPACE_IPHONE_X,
   isAndroidEmulator
 } from '../../constants';
 
@@ -161,7 +163,8 @@ class GestureWrapper extends Component {
       HEIGHT -
       (this.props.collapsedBodyHeight +
         this.props.headerHeight +
-        (isAndroidEmulator ? MIN_HEIGHT_COMPOSER : 0))
+        (isAndroidEmulator ? MIN_HEIGHT_COMPOSER : 0) +
+        (isIphoneX ? BOTTOM_SPACE_IPHONE_X : 0))
     );
   }
 

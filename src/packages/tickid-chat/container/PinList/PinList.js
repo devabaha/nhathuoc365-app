@@ -14,13 +14,15 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { IMAGE_ICON_TYPE } from '../../constants';
 
+const MAX_PIN = 9;
+
 class PinList extends Component {
   static propTypes = {
     data: PropTypes.array,
     services: PropTypes.array,
     pinList: PropTypes.array,
-    notify: PropTypes.object,
-    onItemPress: PropTypes.func,
+    pinListNotify: PropTypes.object,
+    onPinPress: PropTypes.func,
     containerStyle: ViewPropTypes.style,
     visible: PropTypes.bool,
     baseViewHeight: PropTypes.number,
@@ -34,9 +36,9 @@ class PinList extends Component {
     data: [],
     services: [],
     pinList: [],
-    notify: {},
+    pinListNotify: {},
     containerStyle: {},
-    onItemPress: () => {
+    onPinPress: () => {
       Alert.alert('Coming soon!', 'Chức năng đang được phát triển');
     }
   };
@@ -58,6 +60,7 @@ class PinList extends Component {
     if (
       nextProps.visible !== this.props.visible ||
       nextProps.pinList !== this.props.pinList ||
+      nextProps.pinListNotify !== this.props.pinListNotify ||
       nextProps.itemsPerRow !== this.props.itemsPerRow ||
       nextProps.baseViewHeight !== this.props.baseViewHeight ||
       nextProps.containerStyle !== this.props.containerStyle
@@ -98,9 +101,11 @@ class PinList extends Component {
           </View>
           <Text style={styles.title}>{pin.title}</Text>
 
-          {notify.notify_chat > 0 && pin.type === 'chat' && (
+          {!!notify && (
             <View style={styles.notifyWrapper}>
-              <Text style={styles.notify}>{notify.notify_chat}</Text>
+              <Text style={styles.notify}>
+                {notify > MAX_PIN ? `${notify}+` : notify}
+              </Text>
             </View>
           )}
         </View>
@@ -127,13 +132,18 @@ class PinList extends Component {
           contentContainerStyle={{ flexGrow: 1 }}
           data={this.props.pinList}
           extraData={this.props.notify}
-          renderItem={({ item: pin }) =>
-            this.renderPin({
+          renderItem={({ item: pin }) => {
+            let notify = Object.keys(this.props.pinListNotify).find(
+              type => pin.type === type
+            );
+            notify = notify ? this.props.pinListNotify[notify] : 0;
+
+            return this.renderPin({
               pin,
-              onPress: this.props.onItemPress,
-              notify: this.props.notify
-            })
-          }
+              notify,
+              onPress: this.props.onPinPress
+            });
+          }}
           keyExtractor={item => item.type}
           numColumns={this.props.itemsPerRow}
         />
@@ -180,21 +190,20 @@ const styles = StyleSheet.create({
   },
   notifyWrapper: {
     position: 'absolute',
-    minWidth: 16,
-    paddingHorizontal: 2,
-    height: 16,
+    width: 22,
+    height: 22,
     backgroundColor: 'red',
-    top: 0,
-    right: 14,
+    top: -10,
+    right: 0,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 10
   },
   notify: {
-    fontSize: 10,
-    color: '#ffffff',
-    fontWeight: '600'
+    fontSize: 11,
+    color: '#fff',
+    fontWeight: 'bold'
   }
 });
 

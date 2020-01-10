@@ -1,5 +1,9 @@
 import { Dimensions, Platform, StatusBar } from 'react-native';
-import { getStatusBarHeight, isIphoneX } from 'react-native-iphone-x-helper';
+import {
+  getStatusBarHeight,
+  isIphoneX as isIphoneXHelper,
+  getBottomSpace
+} from 'react-native-iphone-x-helper';
 import DeviceInfo from 'react-native-device-info';
 
 export const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
@@ -7,6 +11,7 @@ export const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
 export const isAndroid = Platform.OS === 'android';
 export const isAndroidEmulator = isAndroid && DeviceInfo.isEmulator();
 export const isIos = Platform.OS === 'ios';
+export const isIphoneX = isIphoneXHelper();
 
 export const HIT_SLOP = { right: 10, top: 10, left: 10, bottom: 10 };
 
@@ -29,9 +34,10 @@ export const EXTRA_DIMENSIONS_HEIGHT =
   ANDROID_EXTRA_DIMENSIONS_HEIGHT !== 0
     ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
     : ANDROID_STATUS_BAR_HEIGHT;
+export const BOTTOM_SPACE_IPHONE_X = getBottomSpace();
 
 export const HEADER_HEIGHT = isIos
-  ? isIphoneX()
+  ? isIphoneX
     ? getStatusBarHeight() + 60
     : 64
   : 56 + EXTRA_DIMENSIONS_HEIGHT;

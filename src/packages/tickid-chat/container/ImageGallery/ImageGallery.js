@@ -518,7 +518,6 @@ class ImageGallery extends Component {
 
     const extraOpt = after ? { after } : {};
 
-    // if (isIos) {
     CameraRoll.getPhotos({
       first,
       assetType: 'Photos',
@@ -527,10 +526,9 @@ class ImageGallery extends Component {
     })
       .then(r => {
         let page_info = r.page_info;
-        let rawPhotoData = r.edges;
 
         let { albums, photos, chosenAlbumTitle } = this.filterPhoto(
-          rawPhotoData,
+          r.edges,
           isUpdate
         );
 
@@ -581,7 +579,7 @@ class ImageGallery extends Component {
 
   filterPhoto(edges, isUpdate) {
     let albums = this.state.albums,
-      photos = [],
+      photos = this.state.photos,
       chosenAlbumTitle = this.state.chosenAlbumTitle;
 
     edges.forEach(edge => {
@@ -602,7 +600,6 @@ class ImageGallery extends Component {
       }
 
       albums.forEach((album, index) => {
-        // album.date = index;
         if (!album.photos) {
           album.photos = [{ id: '-1', path: 'camera' }];
           album.count = 0;
