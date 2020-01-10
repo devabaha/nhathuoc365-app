@@ -3,17 +3,17 @@ import { StyleSheet, StatusBar, Animated, PanResponder } from 'react-native';
 import PropTypes from 'prop-types';
 import {
   isAndroid,
-  isIphoneX,
   isIos,
   WIDTH,
   HEIGHT,
   HEADER_HEIGHT,
   MIN_HEIGHT_COMPOSER,
   BOTTOM_SPACE_IPHONE_X,
-  isAndroidEmulator
+  BOTTOM_OFFSET_GALLERY,
+  isAndroidEmulator,
+  ANDROID_STATUS_BAR_HEIGHT
 } from '../../constants';
 
-const COLLAPSE_BODY_HEIGHT = HEIGHT / 2.5;
 const DURATION_SHOW_BODY_CONTENT = 300;
 const defaultListener = () => {};
 
@@ -42,7 +42,7 @@ class GestureWrapper extends Component {
     contentScrollEnabled: true,
     isActivePanResponder: true,
     headerHeight: HEADER_HEIGHT,
-    collapsedBodyHeight: COLLAPSE_BODY_HEIGHT,
+    collapsedBodyHeight: BOTTOM_OFFSET_GALLERY,
     durationShowBodyContent: DURATION_SHOW_BODY_CONTENT,
     defaultStatusBarColor: '#000',
     onStartVisibleAnimation: defaultListener,
@@ -163,8 +163,10 @@ class GestureWrapper extends Component {
       HEIGHT -
       (this.props.collapsedBodyHeight +
         this.props.headerHeight +
-        (isAndroidEmulator ? MIN_HEIGHT_COMPOSER : 0) +
-        (isIphoneX ? BOTTOM_SPACE_IPHONE_X : 0))
+        (isAndroidEmulator
+          ? MIN_HEIGHT_COMPOSER - ANDROID_STATUS_BAR_HEIGHT
+          : 0) +
+        BOTTOM_SPACE_IPHONE_X)
     );
   }
 

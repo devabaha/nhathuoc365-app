@@ -12,7 +12,7 @@ import {
   Alert
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { IMAGE_ICON_TYPE } from '../../constants';
+import { IMAGE_ICON_TYPE, BOTTOM_SPACE_IPHONE_X } from '../../constants';
 
 const MAX_PIN = 9;
 
@@ -102,11 +102,11 @@ class PinList extends Component {
           <Text style={styles.title}>{pin.title}</Text>
 
           {!!notify && (
-            <View style={styles.notifyWrapper}>
+            <Animated.View style={[styles.notifyWrapper]}>
               <Text style={styles.notify}>
-                {notify > MAX_PIN ? `${notify}+` : notify}
+                {notify > MAX_PIN ? `${MAX_PIN}+` : notify}
               </Text>
-            </View>
+            </Animated.View>
           )}
         </View>
       </TouchableOpacity>
@@ -117,7 +117,8 @@ class PinList extends Component {
     console.log('^^^^^^^ render pinlist');
     const extraProps = {
       zIndex: this.props.visible ? 1 : 0,
-      height: this.props.baseViewHeight
+      paddingBottom: BOTTOM_SPACE_IPHONE_X,
+      height: this.props.baseViewHeight + BOTTOM_SPACE_IPHONE_X
     };
 
     return (
@@ -131,18 +132,21 @@ class PinList extends Component {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ flexGrow: 1 }}
           data={this.props.pinList}
-          extraData={this.props.notify}
+          extraData={this.props.pinListNotify}
           renderItem={({ item: pin }) => {
             let notify = Object.keys(this.props.pinListNotify).find(
               type => pin.type === type
             );
             notify = notify ? this.props.pinListNotify[notify] : 0;
 
-            return this.renderPin({
-              pin,
-              notify,
-              onPress: this.props.onPinPress
-            });
+            return (
+              <Pin
+                pin={pin}
+                notify={notify}
+                onPress={() => this.props.onPinPress(pin)}
+                itemsPerRow={this.props.itemsPerRow}
+              />
+            );
           }}
           keyExtractor={item => item.type}
           numColumns={this.props.itemsPerRow}
@@ -166,6 +170,7 @@ const styles = StyleSheet.create({
     marginTop: 16
   },
   itemWrapper: {
+    flex: 1,
     alignItems: 'center'
   },
   iconWrapper: {
@@ -208,3 +213,82 @@ const styles = StyleSheet.create({
 });
 
 export default PinList;
+
+class Pin extends Component {
+  state = {
+    animatedShowUpValue: new Animated.Value(0)
+  };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.notify !== this.props.notify) {
+      if (nextProps.notify > 0) {
+        this.state.animatedShowUpValue.setValue(
+          this.props.notify === 0 ? 0 : 0.7
+        );
+      }
+      const isHidden = this.props.notify > 0 && nextProps.notify === 0;
+      Animated.spring(this.state.animatedShowUpValue, {
+        toValue: isHidden ? 0 : 1,
+        useNativeDriver: true,
+        friction: 5,
+        overshootClamping: isHidden
+      }).start();
+    }
+
+    if (nextState !== this.state) {
+      return true;
+    }
+
+    if (nextProps !== this.props) {
+      return true;
+    }
+
+    return false;
+  }
+
+  render() {
+    const { pin, notify, onPress, itemsPerRow } = this.props;
+    const extraStyle = {
+      width: `${100 / itemsPerRow}%`
+    };
+
+    let animatedStyle = {
+      opacity: this.state.animatedShowUpValue.interpolate({
+        inputRange: [0, 0.7, 1],
+        outputRange: [0, 1, 1]
+      }),
+      transform: [{ scale: this.state.animatedShowUpValue }]
+    };
+
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        style={[styles.buttonWrapper, extraStyle]}
+      >
+        <View style={styles.itemWrapper}>
+          <View
+            style={[
+              styles.iconWrapper,
+              {
+                backgroundColor: pin.bgrColor
+              }
+            ]}
+          >
+            {pin.iconType === IMAGE_ICON_TYPE ? (
+              <Image style={styles.icon} source={{ uri: pin.icon }} />
+            ) : (
+              <MaterialCommunityIcons name={pin.icon} color="#fff" size={32} />
+            )}
+          </View>
+          <Text style={styles.title}>{pin.title}</Text>
+
+          <Animated.View style={[styles.notifyWrapper, animatedStyle]}>
+            <Text style={styles.notify}>
+              {notify > MAX_PIN ? `${MAX_PIN}+` : notify}
+            </Text>
+          </Animated.View>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}

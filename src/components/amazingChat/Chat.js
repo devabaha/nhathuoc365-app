@@ -85,7 +85,7 @@ export default class Chat extends Component {
 
     return false;
   }
-
+  i = 0;
   componentDidMount() {
     setTimeout(() => {
       Actions.refresh({
@@ -93,7 +93,15 @@ export default class Chat extends Component {
         onBack: this.onBack.bind(this)
       });
     });
-
+    // setInterval(() => {
+    //   this.i++;
+    //   this.setState({
+    //     pinNotify: this.i % 2 ===0 ? 1 : 0,
+    //     pinListNotify: {
+    //       ORDERS_TYPE: this.i % 2 ===0 ? 1 : 0,
+    //     }
+    //   })
+    // }, 3000)
     this._getMessages();
     this._getPinList();
   }
@@ -201,8 +209,8 @@ export default class Chat extends Component {
             }
             if (response.data.pin_list_notify) {
               const condition =
-                Object.keys(response.data.pin_list_notify).length !==
-                Object.keys(this.state.pinListNotify).length;
+                JSON.stringify(response.data.pin_list_notify) !==
+                JSON.stringify(this.state.pinListNotify);
 
               if (condition) {
                 this.setState({
