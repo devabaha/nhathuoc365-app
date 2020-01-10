@@ -10,7 +10,6 @@ import {
 import ImageGallery from '../ImageGallery';
 import PropTypes from 'prop-types';
 import PinList from '../PinList';
-import { setStater } from '../../helper';
 
 const defaultListener = () => {};
 const ITEMS_PER_ROW = 4;
@@ -32,7 +31,9 @@ class MasterToolBar extends Component {
     }),
     pinListProps: PropTypes.exact({
       pinList: PropTypes.array,
-      itemsPerRow: PropTypes.number
+      itemsPerRow: PropTypes.number,
+      onPinPress: PropTypes.func,
+      pinListNotify: PropTypes.object
     }),
     extraData: PropTypes.any
   };
@@ -52,7 +53,9 @@ class MasterToolBar extends Component {
     },
     pinListProps: {
       pinList: [],
-      itemsPerRow: ITEMS_PER_ROW
+      itemsPerRow: ITEMS_PER_ROW,
+      onPinPress: defaultListener,
+      pinListNotify: {}
     },
     extraData: null
   };
@@ -189,9 +192,13 @@ class MasterToolBar extends Component {
     this.props.galleryProps.onSendImage(images);
   };
 
+  handlePinPress = pin => {
+    this.props.pinListProps.onPinPress(pin);
+  };
+
   render() {
     const { galleryProps, pinListProps } = this.props;
-    console.log('* render master', this.state.expandContent);
+    console.log('* render master');
     return (
       <GestureWrapper
         ref={this.refGestureWrapper}
@@ -232,6 +239,8 @@ class MasterToolBar extends Component {
           pinList={pinListProps.pinList}
           itemsPerRow={pinListProps.itemsPerRow}
           containerStyle={this.containerStyle(COMPONENT_TYPE.PIN)}
+          onPinPress={this.handlePinPress}
+          pinListNotify={pinListProps.pinListNotify}
         />
       </GestureWrapper>
     );

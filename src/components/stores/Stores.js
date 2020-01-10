@@ -46,6 +46,8 @@ class Stores extends Component {
       categories_data: null
     };
 
+    this.unmounted = false;
+
     action(() => {
       store.setStoresFinish(false);
     })();
@@ -67,6 +69,10 @@ class Stores extends Component {
         right: this._renderRightButton()
       });
     });
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -137,38 +143,36 @@ class Stores extends Component {
     if (!this.props.categoryId) {
       response.data.categories.unshift({ id: 0, name: 'Cửa hàng' });
     }
-    this.setState({
-      categories_data: response.data.categories,
-      promotions: response.data.promotions
-    });
-    setTimeout(() => {
-      this.state.categories_data.map((item, index) => {
-        if (!this.props.goCategory) return;
-        if (this.props.goCategory === item.id) {
-          this._changeCategory(item, index);
-        }
-      });
-    }, 1000);
+    this.setState(
+      {
+        categories_data: response.data.categories,
+        promotions: response.data.promotions
+      },
+      () =>
+        this.state.categories_data.map((item, index) => {
+          if (!this.props.goCategory) return;
+          if (this.props.goCategory === item.id) {
+            this._changeCategory(item, index);
+          }
+        })
+    );
   }
 
-  async _getCategoriesNavFromServer() {
+  _getCategoriesNavFromServer = async () => {
     try {
       var response = await APIHandler.site_info(
         store.store_id,
         this.props.categoryId
       );
-      if (response && response.status == STATUS_SUCCESS) {
+      if (response && response.status == STATUS_SUCCESS && this.unmounted) {
         setTimeout(() => this.parseDataCategories(response), this._delay());
       }
     } catch (e) {
       console.log(e + ' site_info');
 
-      store.addApiQueue(
-        'site_info',
-        this._getCategoriesNavFromServer.bind(this)
-      );
+      store.addApiQueue('site_info', this._getCategoriesNavFromServer);
     }
-  }
+  };
 
   _renderRightButton() {
     return (
