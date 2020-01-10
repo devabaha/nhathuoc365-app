@@ -3,7 +3,7 @@ import './lib/Constant';
 import './lib/Helper';
 import appConfig from './config';
 import store from 'app-store';
-import { StyleSheet, Platform, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Platform, View } from 'react-native';
 import {
   Scene,
   Router,
