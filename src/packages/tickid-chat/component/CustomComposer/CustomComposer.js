@@ -5,9 +5,14 @@ import {
   Animated,
   StyleSheet
 } from 'react-native';
+import { MIN_HEIGHT_COMPOSER, isIos } from '../../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const CustomComposer = props => {
+  const inputProps = isIos
+    ? { pointerEvents: props.editable ? 'auto' : 'none' }
+    : { editable: props.editable };
+
   return (
     <Animated.View
       style={[
@@ -30,13 +35,12 @@ const CustomComposer = props => {
           <TextInput
             style={[styles.input]}
             ref={props.refInput}
-            // editable={props.editable}
             placeholder={props.placeholder}
             onChange={props.onTyping}
             multiline
-            pointerEvents={props.editable ? 'auto' : 'none'}
             onBlur={props.onBlurInput}
             value={props.value}
+            {...inputProps}
           />
         </TouchableOpacity>
       ) : (
@@ -79,13 +83,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     flex: 1,
-    height: 44
+    height: MIN_HEIGHT_COMPOSER
   },
   containerInput: {
     width: '100%',
     height: '100%',
     flex: 1,
-    height: 44,
+    height: MIN_HEIGHT_COMPOSER,
     // zIndex: 1,
     alignItems: 'center',
     justifyContent: 'center'
@@ -102,7 +106,7 @@ const styles = StyleSheet.create({
   containerBack: {
     flex: 1,
     width: '100%',
-    height: 44,
+    height: MIN_HEIGHT_COMPOSER,
     alignItems: 'flex-start',
     justifyContent: 'center'
   },

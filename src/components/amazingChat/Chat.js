@@ -12,11 +12,7 @@ import RightButtonCall from '../RightButtonCall';
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
-
-const MESSAGE_TYPES = {
-  TEXT: MESSAGE_TYPE_TEXT,
-  IMAGE: MESSAGE_TYPE_IMAGE
-};
+const UPLOAD_URL = APIHandler.url_user_upload_image();
 
 @observer
 export default class Chat extends Component {
@@ -30,6 +26,7 @@ export default class Chat extends Component {
 
     this.state = {
       messages: null,
+      pinList: null,
       showImageGallery: false,
       editable: false,
       showImageBtn: true,
@@ -38,6 +35,7 @@ export default class Chat extends Component {
       selectedImages: [],
       uploadImages: [],
       user: this.user,
+      user_id: '',
       phoneNumber: '',
       guestName: ''
     };
@@ -52,6 +50,12 @@ export default class Chat extends Component {
     this.refTickidChat = null;
     this.source = null;
     this.isLoadFirstTime = true;
+    this.giftedChatExtraProps = {};
+  }
+
+  get giftedChatProps() {
+    this.giftedChatExtraProps.user = { _id: this.state.user_id };
+    return this.giftedChatExtraProps;
   }
 
   get user() {
@@ -87,7 +91,8 @@ export default class Chat extends Component {
       });
     }, 100);
 
-    this._getData();
+    this._getMessages();
+    this._getPinList();
   }
 
   renderRight() {
@@ -117,9 +122,39 @@ export default class Chat extends Component {
     clearTimeout(this.timerGetChat);
   }
 
-  _getData = async (delay = 0) => {
+  _getPinList = async (delay = 0) => {
     if (!this.unmounted) {
-      this._loaded = false;
+      let { site_id, user_id } = this.props;
+
+      try {
+        const response = await APIHandler.site_pin_list(site_id);
+        console.log(response);
+        if (!this.unmounted) {
+          if (
+            response &&
+            response.status == STATUS_SUCCESS &&
+            response.data &&
+            response.data.pin_list
+          ) {
+            this.setState({
+              pinList: response.data.pin_list
+            });
+          } else {
+            this.setState({
+              pinList: []
+            });
+          }
+        }
+      } catch (e) {
+        console.warn(e + ' site_pin_list');
+
+        store.addApiQueue('site_pin_list', this._getPinList);
+      }
+    }
+  };
+
+  _getMessages = async (delay = 0) => {
+    if (!this.unmounted) {
       let { site_id, user_id } = this.props;
 
       // specify for tick/tickid
@@ -170,17 +205,16 @@ export default class Chat extends Component {
             });
           }
           this.timerGetChat = setTimeout(
-            () => this._getData(),
+            () => this._getMessages(),
             DELAY_GET_CONVERSATION
           );
         }
       } catch (e) {
         console.warn(e + ' site_load_chat');
 
-        store.addApiQueue('site_load_chat', this._getData);
+        store.addApiQueue('site_load_chat', this._getMessages);
       } finally {
         this.isLoadFirstTime = false;
-        this._loaded = true;
       }
     }
   };
@@ -227,7 +261,7 @@ export default class Chat extends Component {
   //   }
   // }
 
-  handleSendImage(images) {
+  handleSendImage = images => {
     if (Array.isArray(images) && images.length !== 0) {
       const message = this.getFormattedMessage(
         MESSAGE_TYPE_IMAGE,
@@ -245,16 +279,16 @@ export default class Chat extends Component {
         true
       );
     }
-  }
+  };
 
-  handleSendText(message) {
+  handleSendText = message => {
     this._appendMessages(
       this.getFormattedMessage(MESSAGE_TYPE_TEXT, message),
       () => {},
       true
     );
     this._onSend({ message });
-  }
+  };
 
   getFormattedMessage(type, message) {
     const formattedMessage = {
@@ -295,28 +329,24 @@ export default class Chat extends Component {
   }
 
   render() {
-    const { messages, user_id } = this.state;
-
+    const { messages } = this.state;
     return messages !== null ? (
       <TickidChat
         setHeader={this.props.setHeader}
         ref={inst => (this.refTickidChat = inst)}
         refGiftedChat={inst => (this.refGiftedChat = inst)}
         refListMessages={inst => (this.refListMessages = inst)}
-        uploadURL={APIHandler.url_user_upload_image()}
+        uploadURL={UPLOAD_URL}
         messages={this.state.messages}
+        pinList={this.state.pinList}
         defaultStatusBarColor={appConfig.colors.primary}
-        onSendText={this.handleSendText.bind(this)}
-        onSendImage={this.handleSendImage.bind(this)}
+        onSendText={this.handleSendText}
+        onSendImage={this.handleSendImage}
         onUploadedImage={response =>
           this._onSend({ image: response.data.name })
         }
         defaultStatusBarColor={appConfig.colors.primary}
-        giftedChatProps={{
-          user: {
-            _id: user_id
-          }
-        }}
+        giftedChatProps={this.giftedChatProps}
       />
     ) : (
       <View style={styles.container}>

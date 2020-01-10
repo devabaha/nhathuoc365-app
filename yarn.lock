@@ -871,9 +871,9 @@
   integrity sha512-1WA28xfdhG+unkTEk/lXnqI2izv6belo0CYw7UdvaeHm8TIYT6eTmIIdGR7oiCa2xSKEnaPQqRMH6h7gyLNbww==
 
 "@react-native-community/async-storage@^1.6.1":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.6.2.tgz#a19ca7149c4dfe8216f2330e6b1ebfe2d075ef92"
-  integrity sha512-EJGsbrHubK1mGxPjWB74AaHAd5m9I+Gg2RRPZzMK6org7QOU9WOBnIMFqoeVto3hKOaEPlk8NV74H6G34/2pZQ==
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/async-storage/-/async-storage-1.7.1.tgz#ef2104d865de61ad91bba66613e57e689ff4e6a1"
+  integrity sha512-/oX/x+EU4xNaqIaC/epVKzO8XghzImPA7l8cLz3USEFmtFiXFjBbTeeIFjjEm/u4/cv38Wi1xMEa10PHIWygRg==
 
 "@react-native-community/cameraroll@^1.3.0":
   version "1.3.0"
@@ -2137,10 +2137,15 @@ core-js@^1.0.0:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-1.2.7.tgz#652294c14651db28fa93bd2d5ff2983a4f08c636"
   integrity sha1-ZSKUwUZR2yj6k70tX/KYOk8IxjY=
 
-core-js@^2.2.2, core-js@^2.4.0, core-js@^2.4.1:
+core-js@^2.2.2, core-js@^2.4.1:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.9.tgz#6b4b214620c834152e179323727fc19741b084f2"
   integrity sha512-HOpZf6eXmnl7la+cUdMnLvUxKNqLUzJvgIziQ0DiF3JwSImNphIqdGqzj6hIKyX04MmV0poclQ7+wjWvxQyR2A==
+
+core-js@^2.4.0:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.11.tgz#38831469f9922bded8ee21c9dc46985e0399308c"
+  integrity sha512-5wjnpaT/3dV+XB4borEsnAYQchn00XSgTAWKDkEqv+K8KevjbzmofK6hfJ9TZIlpj2N0xQpazy7PiRQiWHqzWg==
 
 core-js@^3.0.0:
   version "3.2.1"
@@ -6428,9 +6433,9 @@ react-is@^16.5.2, react-is@^16.7.0, react-is@^16.8.3, react-is@^16.8.4, react-is
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
 react-is@^16.8.1:
-  version "16.10.1"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.10.1.tgz#0612786bf19df406502d935494f0450b40b8294f"
-  integrity sha512-BXUMf9sIOPXXZWqr7+c5SeOKJykyVr2u0UDzEf4LNGc6taGkQe1A9DFD07umCIXz45RLr9oAAwZbAJ0Pkknfaw==
+  version "16.12.0"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.12.0.tgz#2cc0fe0fba742d97fd527c42a13bec4eeb06241c"
+  integrity sha512-rPCkf/mWBtKc97aLL9/txD8DZdemK0vkA3JMLShjlJB3Pj3s+lpf1KaBzMfQrAmhMQB0n1cU/SUGgKKBCe837Q==
 
 react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
@@ -6516,11 +6521,6 @@ react-native-deep-linking@^2.1.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/react-native-deep-linking/-/react-native-deep-linking-2.2.0.tgz#45451c4ebcbe7307e094b8df38979d0bd745bb54"
   integrity sha512-PKShbOsa/oxjSzZ/Bag98O/J+jaZOI6ic5YdanPirTpRAraAvKUzJWQUhE5Yy0Isl9yfIkSogOClE9BRfSyUbA==
-
-react-native-device-brightness@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-device-brightness/-/react-native-device-brightness-1.2.0.tgz#f6498ca5af4c6283212f74aa2f05d1cff0596af0"
-  integrity sha512-EWH4UOvsSiXrNpWSboPe/gHYoOxiZ0vp0JfY67Gjn+TJuAP+gWyvGobpC8mYV//ioirco000ZH9Zu9o5ezUzxg==
 
 react-native-device-info@^0.17.3:
   version "0.17.4"
@@ -6755,15 +6755,10 @@ react-native-open-maps@^0.3.3:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-permissions@^1.1.1:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-1.2.0.tgz#0deb616bf1565c17c91f1cb1f953809b2892c29e"
-  integrity sha512-+KrP1JZ30RI9p30wsGlGQx22qwiClDnznSQZPpvBMkOIZQ9kXOkLAFXS+vwiHRiiRu/pBMBXYHfI7ng6t2+LbQ==
-
-react-native-permissions@^2.0.6:
-  version "2.0.6"
-  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-2.0.6.tgz#4b4d5a18180a8c9325ca0f0d5be99a907799defc"
-  integrity sha512-oW4A6HU5B0dtiD5m4sI5UeJqnBhdZMU4bRp9L+cEoTl8giViGNfuhY4SJQjX6R9BSR3oSwul/8sNDlkhWtMWKQ==
+react-native-permissions@^2.0.2, react-native-permissions@^2.0.6:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/react-native-permissions/-/react-native-permissions-2.0.8.tgz#e6d20a7b6e3df5333a3d80cc83024686fa2f49e3"
+  integrity sha512-qK8Thp+9PTl/YjhKkRr8LPHfX5Evv5Zj/3CmAiqE45qCTB5UbWTKBWUfg3iqfMrjv9nE2rcS1PrIjZCDh6s/gQ==
 
 react-native-phone-input@^0.2.4:
   version "0.2.4"
@@ -6782,15 +6777,15 @@ react-native-progress@3.6.0:
     prop-types "^15.7.2"
 
 react-native-qrcode-scanner@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.2.3.tgz#1f3d12eb604914619458cbc996cd2e6f6a4fd759"
-  integrity sha512-YP2h95w1tXqzG9XlEHHmJujr1hRfvdDt090ofWY0v0mwvp2FLExp3tf1UybVTt4whmarjdk2BYkkyU863Ffung==
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-qrcode-scanner/-/react-native-qrcode-scanner-1.3.1.tgz#a90d09b60d993d0eb83c4ab27668f2f8618f33b7"
+  integrity sha512-oRqIfyUnFYrJi9tyrUxbJr0po3T4TxFSln0fKRlNwnpzcUSf7XCZ95BiDq+OEZFXWVH3T9jJjRywaOI4KzwqUw==
   dependencies:
     "@react-native-community/async-storage" "^1.6.1"
     opencollective "^1.0.3"
     opencollective-postinstall "^2.0.2"
     prop-types "^15.5.10"
-    react-native-permissions "^1.1.1"
+    react-native-permissions "^2.0.2"
 
 react-native-qrcode-svg@^5.1.2:
   version "5.2.0"
@@ -6832,6 +6827,11 @@ react-native-safe-area-view@0.11.0:
   integrity sha512-N3nElaahu1Me2ltnfc9acpgt1znm6pi8DSadKy79kvdzKwvVIzw0IXueA/Hjr51eCW1BsfNw7D1SgBT9U6qEkA==
   dependencies:
     hoist-non-react-statics "^2.3.1"
+
+react-native-screen-brightness@1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-screen-brightness/-/react-native-screen-brightness-1.0.1.tgz#bb8e0807f9b4ae967ad3b7e22c377ed46b167d2e"
+  integrity sha512-nG/BIiH1LJX4nw5ekr4klEYJhTXiuVM39He3ieMovVbJ/sLGWYvBqGwzpVFZGPr5hAcjVP+jb4kD9ZRGDVzJ1Q==
 
 react-native-screens@^1.0.0-alpha.11:
   version "1.0.0-alpha.23"

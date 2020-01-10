@@ -8,7 +8,8 @@ import {
   Animated,
   Easing,
   Keyboard,
-  SafeAreaView
+  SafeAreaView,
+  Text
 } from 'react-native';
 import {
   GiftedChat,
@@ -18,18 +19,26 @@ import {
   Bubble,
   Time
 } from 'react-native-gifted-chat';
-import ImageGallery from '../ImageGallery';
 import { ImageMessageChat, CustomComposer } from '../../component';
 import PropTypes from 'prop-types';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import { willUpdateState, logger } from '../../helper';
-import { WIDTH, HEIGHT, HIT_SLOP, config } from '../../constants';
+import IconFontisto from 'react-native-vector-icons/Fontisto';
+import { willUpdateState, logger, setStater } from '../../helper';
+import {
+  WIDTH,
+  HEIGHT,
+  HIT_SLOP,
+  config,
+  COMPONENT_TYPE,
+  BOTTOM_OFFSET_GALLERY,
+  DURATION_SHOW_GALLERY
+} from '../../constants';
+import MasterToolBar from '../MasterToolBar';
+import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 const tickidChatLogger = logger('tickidChat');
-const DURATION_SHOW_GALLERY = 200;
 const SCROLL_OFFSET_TOP = 100;
-const BOTTOM_OFFFSET_GALLERY = HEIGHT - HEIGHT / 1.5;
 const BTN_IMAGE_WIDTH = 35;
 const ANIMATED_TYPE_COMPOSER_BTN = Easing.in;
 const defaultListener = () => {};
@@ -53,8 +62,10 @@ class TickidChat extends Component {
     animatedTypeComposerBtn: PropTypes.any,
     uploadURL: PropTypes.string,
     messages: PropTypes.array,
+    pinList: PropTypes.array,
     giftedChatProps: PropTypes.any,
-    defaultStatusBarColor: PropTypes.string
+    defaultStatusBarColor: PropTypes.string,
+    extraData: PropTypes.any
   };
 
   static defaultProps = {
@@ -71,15 +82,17 @@ class TickidChat extends Component {
     refGiftedChat: defaultListener,
     containerStyle: {},
     durationShowGallery: DURATION_SHOW_GALLERY,
-    bottomOffsetGallery: BOTTOM_OFFFSET_GALLERY,
+    bottomOffsetGallery: BOTTOM_OFFSET_GALLERY,
     animatedTypeComposerBtn: ANIMATED_TYPE_COMPOSER_BTN,
     scrollOffsetTop: SCROLL_OFFSET_TOP,
     uploadURL: '',
-    messages: []
+    messages: [],
+    pinList: [],
+    extraData: null
   };
 
   state = {
-    showImageGallery: false,
+    showToolBar: false,
     editable: false,
     showSendBtn: false,
     showBackBtn: false,
@@ -88,29 +101,34 @@ class TickidChat extends Component {
     text: '',
     animatedBtnSendValue: new Animated.Value(0),
     animatedBtnBackValue: new Animated.Value(0),
-    paddingTop: 0
+    paddingTop: 0,
+    //merge with masterToolBar
+    selectedType: COMPONENT_TYPE._NONE
   };
 
+  refMasterToolBar = React.createRef();
   refImageGallery = React.createRef();
+  refGestureWrapper = React.createRef();
   refInput = React.createRef();
   unmounted = false;
   test = 0;
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextState !== this.state) {
-      if (nextState.showSendBtn !== this.state.showSendBtn) {
-        Animated.spring(this.state.animatedBtnSendValue, {
-          toValue: !nextState.showSendBtn ? 0 : BTN_IMAGE_WIDTH,
-          duration: nextProps.durationShowGallery,
-          useNativeDriver: true
-        }).start();
-      }
+    if (nextState.showSendBtn !== this.state.showSendBtn) {
+      Animated.spring(this.state.animatedBtnSendValue, {
+        toValue: !nextState.showSendBtn ? 0 : BTN_IMAGE_WIDTH,
+        duration: nextProps.durationShowGallery,
+        useNativeDriver: true
+      }).start();
+    }
 
+    if (nextState !== this.state) {
       return true;
     }
 
     if (
-      nextProps.messages !== this.props.messages ||
+      nextProps.messages.length !== this.props.messages.length ||
+      nextProps.pinList !== this.props.pinList ||
       nextProps.containerStyle !== this.props.containerStyle ||
       nextProps.durationShowGallery !== this.props.durationShowGallery ||
       nextProps.bottomOffsetGallery !== this.props.bottomOffsetGallery ||
@@ -118,8 +136,11 @@ class TickidChat extends Component {
         this.props.animatedTypeComposerBtn ||
       nextProps.uploadURL !== this.props.uploadURL ||
       nextProps.giftedChatProps !== this.props.giftedChatProps ||
-      nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor
+      nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor ||
+      nextProps.extraData !== this.props.extraData
     ) {
+      console.log(nextProps.messages.length, '1');
+
       return true;
     }
 
@@ -128,6 +149,16 @@ class TickidChat extends Component {
 
   componentDidMount() {
     this.props.refGiftedChat(GiftedChat);
+    //merge with masterToolBar
+    if (this.refMasterToolBar.current) {
+      const refsImageGallery = this.refMasterToolBar.current.getComponentRef(
+        COMPONENT_TYPE.GALLERY.id
+      );
+
+      this.refGestureWrapper = refsImageGallery.refGesture;
+      this.refImageGallery = refsImageGallery.refGallery;
+    }
+    //end merge
   }
 
   componentWillUnmount() {
@@ -149,18 +180,26 @@ class TickidChat extends Component {
   }
 
   handleFocus = () => {
-    this.setState({
-      showImageGallery: this.refInput ? false : true,
-      editable: this.refInput ? true : false
-    });
+    this.setState(
+      {
+        showToolBar: this.refInput.current ? false : true,
+        editable: this.refInput.current ? true : false
+      },
+      () => {
+        setTimeout(
+          () => {
+            willUpdateState(this.unmounted, () => {
+              if (this.refInput.current) {
+                this.refInput.current.focus();
+              }
+            });
+          },
+          this.state.editable ? this.props.durationShowGallery : 0
+        );
+      }
+    );
+
     // this.handlePressGallery()
-    if (this.refInput) {
-      setTimeout(() => {
-        if (this.refInput && !this.unmounted) {
-          this.refInput.focus();
-        }
-      }, this.props.durationShowGallery);
-    }
   };
 
   handleBlur = () => {
@@ -178,24 +217,51 @@ class TickidChat extends Component {
     });
   };
 
-  handlePressGallery = () => {
-    Keyboard.dismiss();
-    if (this.refInput) {
-      this.refInput.blur();
+  handlePressGallery = state => {
+    if (!state.showToolBar && state.selectedImages.length !== 0) {
+      this.animateBtnBack(1).start();
+      state.showBackBtn = true;
+      state.showSendBtn = true;
     }
-    setTimeout(() => {
-      willUpdateState(this.unmounted, () => {
-        const state = { ...this.state };
-        if (!state.showImageGallery && state.selectedImages.length !== 0) {
-          state.showBackBtn = true;
-          state.showSendBtn = true;
-          this.animateBtnBack(1).start();
-        }
-        state.showImageGallery = !state.showImageGallery;
-        state.editable = false;
-        this.setState({ ...state });
-      });
-    }, this.props.durationShowGallery / 2);
+  };
+
+  handlePressPin = state => {
+    if (state.showBackBtn) {
+      this.animateBtnBack(0).start();
+    }
+  };
+
+  handlePressComposerButton = componentType => {
+    const state = { ...this.state };
+    state.editable = false;
+
+    Keyboard.dismiss();
+    if (this.refInput.current) {
+      this.refInput.current.blur();
+    }
+    switch (componentType.id) {
+      case COMPONENT_TYPE.GALLERY.id:
+        this.handlePressGallery(state);
+        break;
+      case COMPONENT_TYPE.PIN.id:
+        this.handlePressPin(state);
+        break;
+    }
+
+    if (state.selectedType === componentType) {
+      state.selectedType = COMPONENT_TYPE._NONE;
+      state.showToolBar = false;
+    } else {
+      state.selectedType = componentType;
+      state.showToolBar = true;
+    }
+
+    setTimeout(
+      () => {
+        setStater(this, this.unmounted, { ...state });
+      },
+      this.state.editable ? this.props.durationShowGallery : 0
+    );
   };
 
   onTyping = e => {
@@ -224,30 +290,34 @@ class TickidChat extends Component {
     this.setState(state);
   };
 
-  handleSendImage = (images = null) => {
+  handleSendImage = images => {
     const state = { ...this.state };
-    if (!images) {
+
+    if (!Array.isArray(images)) {
       images = [...state.selectedImages];
     }
-
+    if (images.length !== 0) {
+      this.clearSelectedPhotos();
+    }
     state.selectedImages = [];
 
     // state.uploadImages = images;
     state.showBackBtn = false;
     state.showSendBtn = false;
 
-    this.clearSelectedPhotos();
     // this.handlePressGallery();
     this.setState({ ...state });
     this.props.onSendImage(images);
   };
 
   handleSendText() {
-    this.props.onSendText(this.state.text);
-    this.setState({
-      text: '',
-      showSendBtn: false
-    });
+    if (this.state.text) {
+      this.props.onSendText(this.state.text);
+      this.setState({
+        text: '',
+        showSendBtn: false
+      });
+    }
   }
 
   handleSendMessage = () => {
@@ -262,24 +332,31 @@ class TickidChat extends Component {
     this.props.expandedGallery();
   };
 
-  handleCollapsedGallery() {
-    this.props.collapsedGallery();
-  }
+  handleCollapsingGallery = () => {
+    this.props.collapsingGallery();
+  };
+
+  handleCollapsedGallery = () => {
+    this.setState({ selectedType: COMPONENT_TYPE._NONE });
+  };
 
   onListViewPress = e => {
-    this.collapseComposer();
+    if (this.state.selectedType !== COMPONENT_TYPE._NONE) {
+      this.collapseComposer();
+    }
   };
 
   collapseComposer() {
-    if (this.refInput) {
-      this.refInput.blur();
+    if (this.refInput.current) {
+      this.refInput.current.blur();
     }
 
     this.setState({
       editable: this.state.text ? true : false,
       showBackBtn: false,
       showSendBtn: this.state.text ? true : false,
-      showImageGallery: false
+      showToolBar: false,
+      selectedType: COMPONENT_TYPE._NONE
     });
   }
 
@@ -290,8 +367,8 @@ class TickidChat extends Component {
   };
 
   renderComposer = () => {
-    const animatedValue = this.refGestureWrapper
-      ? this.refGestureWrapper.animatedShowUpFake
+    const animatedValue = this.refGestureWrapper.current
+      ? this.refGestureWrapper.current.animatedShowUpFake
       : 0;
     return (
       <CustomComposer
@@ -299,7 +376,7 @@ class TickidChat extends Component {
           this.state.selectedImages.length === 0 || !this.state.showBackBtn
         }
         onFocusInput={this.handleFocus}
-        refInput={inst => (this.refInput = inst)}
+        refInput={this.refInput}
         animatedValue={animatedValue}
         editable={this.state.editable}
         onTyping={this.onTyping}
@@ -386,7 +463,7 @@ class TickidChat extends Component {
             flexDirection: 'row'
           }}
         >
-          {/* <Animated.View
+          <Animated.View
             style={[
               styles.center,
               {
@@ -406,15 +483,22 @@ class TickidChat extends Component {
               }
             ]}
           >
-
             <TouchableOpacity
-              onPress={() => console.warn('a')}
+              onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.PIN)}
               hitSlop={HIT_SLOP}
               style={[styles.fullCenter]}
             >
-              <IconAntDesign size={23} name="paperclip" color={config.blurColor} />
+              <IconAntDesign
+                size={23}
+                name="paperclip"
+                color={
+                  this.state.selectedType === COMPONENT_TYPE.PIN
+                    ? config.focusColor
+                    : config.blurColor
+                }
+              />
             </TouchableOpacity>
-          </Animated.View> */}
+          </Animated.View>
 
           <Animated.View
             style={[
@@ -438,14 +522,16 @@ class TickidChat extends Component {
           >
             <TouchableOpacity
               hitSlop={HIT_SLOP}
-              onPress={this.handlePressGallery}
+              onPress={() =>
+                this.handlePressComposerButton(COMPONENT_TYPE.GALLERY)
+              }
               style={[styles.fullCenter]}
             >
               <IconAntDesign
                 size={25}
                 name="picture"
                 color={
-                  this.state.showImageGallery
+                  this.state.selectedType === COMPONENT_TYPE.GALLERY
                     ? config.focusColor
                     : config.blurColor
                 }
@@ -543,6 +629,9 @@ class TickidChat extends Component {
   };
 
   render() {
+    console.log('@_@ renderTickidChat');
+    const extraData = this.props.pinList ? this.props.pinList.length : null;
+
     return (
       <SafeAreaView style={[styles.container, this.props.containerStyle]}>
         <TouchableWithoutFeedback
@@ -553,16 +642,18 @@ class TickidChat extends Component {
             style={[
               styles.flex,
               {
-                paddingTop: this.refGestureWrapper
-                  ? this.refGestureWrapper.animatedShowUpFake
+                paddingTop: this.refGestureWrapper.current
+                  ? this.refGestureWrapper.current.animatedShowUpFake
                   : 0,
                 transform: [
                   {
-                    translateY: this.refGestureWrapper
-                      ? this.refGestureWrapper.animatedShowUpValue.interpolate({
-                          inputRange: [0, BOTTOM_OFFFSET_GALLERY],
-                          outputRange: [0, -BOTTOM_OFFFSET_GALLERY]
-                        })
+                    translateY: this.refGestureWrapper.current
+                      ? this.refGestureWrapper.current.animatedShowUpValue.interpolate(
+                          {
+                            inputRange: [0, BOTTOM_OFFSET_GALLERY],
+                            outputRange: [0, -BOTTOM_OFFSET_GALLERY]
+                          }
+                        )
                       : 0
                   }
                 ]
@@ -585,7 +676,8 @@ class TickidChat extends Component {
               // isKeyboardInternallyHandled={false}
               listViewProps={{
                 contentContainerStyle: styles.giftedChatContainer,
-                style: styles.flex
+                style: styles.flex,
+                ListEmptyComponent: EmptyChat
               }}
               scrollToBottom
               scrollToBottomComponent={this.renderScrollBottomComponent}
@@ -593,18 +685,27 @@ class TickidChat extends Component {
             />
           </Animated.View>
         </TouchableWithoutFeedback>
-        <ImageGallery
-          ref={this.refImageGallery}
-          refGestureWrapper={inst => (this.refGestureWrapper = inst)}
-          setHeader={this.props.setHeader}
-          visible={this.state.showImageGallery}
-          defaultStatusBarColor={this.props.defaultStatusBarColor}
-          baseViewHeight={BOTTOM_OFFFSET_GALLERY}
-          durattionShowGallery={DURATION_SHOW_GALLERY}
-          onExpandedBodyContent={this.handleExpandedGallery}
-          onCollapsingBodyContent={this.props.collapsedGallery}
-          onSendImage={this.handleSendImage}
-          onToggleImage={this.handleToggleImage}
+        <MasterToolBar
+          ref={this.refMasterToolBar}
+          selectedType={this.state.selectedType}
+          galleryProps={{
+            setHeader: this.props.setHeader,
+            defaultStatusBarColor: this.props.defaultStatusBarColor,
+            onExpandedBodyContent: this.handleExpandedGallery,
+            onCollapsedBodyContent: this.handleCollapsedGallery,
+            onCollapsingBodyContent: this.handleCollapsingGallery,
+            onToggleImage: this.handleToggleImage,
+            onSendImage: this.handleSendImage
+          }}
+          extraData={extraData}
+          pinListProps={{
+            pinList: this.props.pinList,
+            itemsPerRow: 4
+          }}
+          visible={this.state.showToolBar}
+          baseViewHeight={BOTTOM_OFFSET_GALLERY}
+          durationShowGallery={DURATION_SHOW_GALLERY}
+          extraData={this.props.extraData}
         />
       </SafeAreaView>
     );
@@ -660,7 +761,25 @@ const styles = StyleSheet.create({
   center: {
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  emptyChatContainer: {
+    paddingBottom: 60,
+    transform: [{ rotateX: '180deg' }]
+  },
+  emptyChatText: {
+    color: '#909090',
+    textAlign: 'center',
+    marginTop: 30,
+    fontSize: 20,
+    fontWeight: '500'
   }
 });
 
 export default TickidChat;
+
+const EmptyChat = () => (
+  <View style={[styles.fullCenter, styles.emptyChatContainer]}>
+    <IconFontisto name="comments" color={'#909090'} size={60} />
+    <Text style={styles.emptyChatText}>Bắt đầu cuộc trò chuyện thôi!</Text>
+  </View>
+);
