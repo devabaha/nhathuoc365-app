@@ -144,6 +144,8 @@ class MasterToolBar extends Component {
     if (
       nextProps.visible !== this.props.visible ||
       nextProps.selectedType !== this.props.selectedType ||
+      nextProps.pinListProps.pinListNotify !==
+        this.props.pinListProps.pinListNotify ||
       nextProps.baseViewHeight !== this.props.baseViewHeight ||
       nextProps.extraData !== this.props.extraData ||
       nextProps.durationShowGallery !== this.props.durationShowGallery
@@ -197,13 +199,17 @@ class MasterToolBar extends Component {
   };
 
   render() {
-    const { galleryProps, pinListProps } = this.props;
     console.log('* render master');
+    const { galleryProps, pinListProps } = this.props;
+    const extraData =
+      this.state.selectedType.id +
+      '|' +
+      JSON.stringify(this.props.pinListProps.pinListNotify);
     return (
       <GestureWrapper
         ref={this.refGestureWrapper}
         visible={this.props.visible}
-        extraData={this.state.selectedType}
+        extraData={extraData}
         expandContent={this.state.expandContent}
         isActivePanResponder={
           this.state.isActivePanResponder &&

@@ -25,6 +25,7 @@ export const IMAGE_ICON_TYPE = 'image';
 export const BOTTOM_OFFSET_GALLERY = HEIGHT / 3.3;
 export const DURATION_SHOW_GALLERY = 300;
 
+export const BOTTOM_SPACE_IPHONE_X = isIphoneX ? getBottomSpace() : 0;
 export const MIN_HEIGHT_COMPOSER = 44;
 
 export const ANDROID_STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
@@ -34,7 +35,6 @@ export const EXTRA_DIMENSIONS_HEIGHT =
   ANDROID_EXTRA_DIMENSIONS_HEIGHT !== 0
     ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
     : ANDROID_STATUS_BAR_HEIGHT;
-export const BOTTOM_SPACE_IPHONE_X = getBottomSpace();
 
 export const HEADER_HEIGHT = isIos
   ? isIphoneX
