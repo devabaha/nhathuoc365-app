@@ -4,8 +4,8 @@ export const willUpdateState = (unmounted, callback) => {
   }
 };
 
-export const setStater = (context, isUnmounted, state) => {
+export const setStater = (context, isUnmounted, state, callback = () => {}) => {
   if (!isUnmounted) {
-    context.setState({ ...state });
+    context.setState({ ...state }, () => callback());
   }
 };

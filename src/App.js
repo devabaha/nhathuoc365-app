@@ -3,7 +3,7 @@ import './lib/Constant';
 import './lib/Helper';
 import appConfig from './config';
 import store from 'app-store';
-import { StyleSheet, Platform, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Platform, View } from 'react-native';
 import {
   Scene,
   Router,
@@ -933,9 +933,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="store_orders">
+                <Stack key={`${appConfig.routes.storeOrders}`}>
                   <Scene
-                    key="store_orders_1"
+                    key={`${appConfig.routes.storeOrders}_1`}
                     component={StoreOrders}
                     {...navBarConfig}
                     back
