@@ -122,6 +122,13 @@ class Home extends Component {
     });
   }
 
+  handleOrderHistoryPress(item) {
+    Actions.push('tickidRadaOrderHistory', {
+      category: item,
+      title: 'Quản lý đơn hàng'
+    });
+  }
+
   handleServicePress(item) {
     Actions.push('tickidRadaServiceDetail', {
       service: item,
@@ -294,6 +301,9 @@ class Home extends Component {
           title: 'Dịch vụ Rada',
           onPressItem: item => {
             this.handleCategoryPress(item);
+          },
+          onPressOrderHistory: item => {
+            this.handleOrderHistoryPress(item);
           }
         });
         break;

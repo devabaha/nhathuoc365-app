@@ -90,7 +90,8 @@ import {
   Category,
   ListService,
   ServiceDetail,
-  Booking
+  Booking,
+  OrderHistory
 } from '@tickid/tickid-rada';
 import {
   initialize as initializeVoucherModule,
@@ -185,7 +186,17 @@ initializeRadaModule({
   private: {
     partnerAuthorization: appConfig.radaModule.partnerAuthorization,
     webhookUrl: null,
-    defaultLocation: '37.33233141,-122.0312186'
+    defaultLocation: '37.33233141,-122.0312186',
+    appKey: appConfig.voucherModule.appKey,
+    secretKey: appConfig.voucherModule.secretKey
+  },
+  device: {
+    appVersion: DeviceInfo.getVersion(),
+    deviceId: getTickUniqueID(),
+    deviceType: DeviceInfo.getBrand(),
+    os: Platform.OS,
+    osVersion: DeviceInfo.getSystemVersion(),
+    store: ''
   }
 });
 
@@ -1143,6 +1154,15 @@ class RootRouter extends Component {
                   <Scene
                     key="tickidRadaBooking1"
                     component={Booking}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.tickidRadaOrderHistory}>
+                  <Scene
+                    key="tickidRadaOrderHistory1"
+                    component={OrderHistory}
                     {...whiteNavBarConfig}
                     back
                   />

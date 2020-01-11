@@ -61,6 +61,7 @@ const config = Object.freeze({
     tickidRadaListService: 'tickidRadaListService',
     tickidRadaServiceDetail: 'tickidRadaServiceDetail',
     tickidRadaBooking: 'tickidRadaBooking',
+    tickidRadaOrderHistory: 'tickidRadaOrderHistory',
     // end routes of Rada module **
 
     // ** Begin routes of Voucher module
