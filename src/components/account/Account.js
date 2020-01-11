@@ -21,7 +21,6 @@ import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
-import firebase from 'react-native-firebase';
 
 @observer
 export default class Account extends Component {
@@ -799,17 +798,14 @@ export default class Account extends Component {
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
-          await firebase.auth().signOut();
-          showMessage({
-            message: 'Đăng xuất thành công',
-            type: 'info'
-          });
           store.setUserInfo(response.data);
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
-          break;
-        case STATUS_UNDEFINE_USER:
+          showMessage({
+            message: 'Đăng xuất thành công',
+            type: 'info'
+          });
           Actions.reset(appConfig.routes.sceneWrapper);
           break;
         default:

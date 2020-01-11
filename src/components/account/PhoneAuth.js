@@ -137,6 +137,7 @@ class PhoneAuth extends Component {
 
   smsBrandNameVerify = async () => {
     try {
+      this.setState({ isShowIndicator: true });
       const { codeInput, confirmResult } = this.state;
       const formData = {
         username: confirmResult,
@@ -149,20 +150,18 @@ class PhoneAuth extends Component {
             message: ``,
             isShowIndicator: false
           },
-          () => {
-            Actions.replace(config.routes.primaryTabbar);
-          }
+          () => this._verifyResponse(response)
         );
       } else {
         this.setState({
           message: response.message,
-          confirmResult: null
+          isShowIndicator: false
         });
       }
     } catch (err) {
       console.log('error', error);
       this.setState({
-        message: `Mã xác minh không hợp lệ. Vui lòng thử lại`,
+        message: `03: Mã xác minh không hợp lệ. Vui lòng thử lại`,
         isShowIndicator: false
       });
     }
@@ -224,28 +223,56 @@ class PhoneAuth extends Component {
                 const response = await APIHandler.login_firebase_vertify({
                   token: idToken
                 });
-                console.log('res', response, idToken);
-                if (response.data) {
-                  Actions.replace(config.routes.primaryTabbar);
-                } else {
-                  firebase.auth().signOut();
+                if (response && response.status == STATUS_SUCCESS) {
                   this.setState({
                     message: response.message,
-                    confirmResult: null
+                    isShowIndicator: false
+                  });
+                  this._verifyResponse(response);
+                } else {
+                  this.setState({
+                    message: response.message,
+                    isShowIndicator: false
                   });
                 }
               })
-              .catch(error => {});
+              .catch(error => {
+                this.setState({
+                  message: `01: Mã xác minh không hợp lệ. Vui lòng thử lại`,
+                  isShowIndicator: false
+                });
+              });
           }
         })
         .catch(error => {
           console.log('error', error);
           this.setState({
-            message: `Mã xác minh không hợp lệ. Vui lòng thử lại`,
+            message: `02: Mã xác minh không hợp lệ. Vui lòng thử lại`,
             isShowIndicator: false
           });
         });
     }
+  };
+
+  _verifyResponse = response => {
+    action(() => {
+      store.setUserInfo(response.data);
+      store.resetCartData();
+      store.setRefreshHomeChange(store.refresh_home_change + 1);
+      if (response.data && response.data.fill_info_user) {
+        //hien thi chon site
+        action(() => {
+          Actions.replace('op_register', {
+            title: 'Đăng ký thông tin',
+            name_props: response.data.name
+          });
+        })();
+      } else {
+        action(() => {
+          Actions.replace(config.routes.primaryTabbar);
+        })();
+      }
+    })();
   };
 
   _onPressPickCountry() {

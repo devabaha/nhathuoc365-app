@@ -404,6 +404,14 @@ class APIHandler {
   }
 
   /**
+   * Get pin list
+   */
+  async site_pin_list(store_id) {
+    var api = url_for(API.SITE_PIN_LIST + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Tìm sản phẩm theo store_id
    */
   async search_product(store_id, data) {

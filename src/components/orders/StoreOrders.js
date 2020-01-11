@@ -373,6 +373,7 @@ const styles = StyleSheet.create({
   },
 
   empty_box: {
+    flex: 1,
     alignItems: 'center',
     marginTop: '50%'
   },
