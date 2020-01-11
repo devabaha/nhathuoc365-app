@@ -35,7 +35,6 @@ import {
   DURATION_SHOW_GALLERY
 } from '../../constants';
 import MasterToolBar from '../MasterToolBar';
-import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 const tickidChatLogger = logger('tickidChat');
 const SCROLL_OFFSET_TOP = 100;
@@ -108,11 +107,12 @@ class TickidChat extends Component {
     text: '',
     animatedBtnSendValue: new Animated.Value(0),
     animatedBtnBackValue: new Animated.Value(0),
+    animatedNotification: new Animated.Value(0),
     paddingTop: 0,
     //merge with masterToolBar
     selectedType: COMPONENT_TYPE._NONE
   };
-
+  otifica;
   refMasterToolBar = React.createRef();
   refImageGallery = React.createRef();
   refGestureWrapper = React.createRef();
@@ -121,6 +121,21 @@ class TickidChat extends Component {
   test = 0;
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.pinNotify !== this.props.pinNotify) {
+      if (nextProps.pinNotify > 0) {
+        this.state.animatedNotification.setValue(
+          this.props.pinNotify === 0 ? 0 : 0.7
+        );
+      }
+      const isHidden = this.props.pinNotify > 0 && nextProps.pinNotify === 0;
+      Animated.spring(this.state.animatedNotification, {
+        toValue: isHidden ? 0 : 1,
+        useNativeDriver: true,
+        friction: 5,
+        overshootClamping: isHidden
+      }).start();
+    }
+
     if (nextState.showSendBtn !== this.state.showSendBtn) {
       Animated.spring(this.state.animatedBtnSendValue, {
         toValue: !nextState.showSendBtn ? 0 : BTN_IMAGE_WIDTH,
@@ -493,7 +508,7 @@ class TickidChat extends Component {
             <TouchableOpacity
               onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.PIN)}
               hitSlop={HIT_SLOP}
-              style={[styles.fullCenter]}
+              style={[styles.fullCenter, { flex: 1 }]}
             >
               <IconAntDesign
                 size={23}
@@ -504,15 +519,24 @@ class TickidChat extends Component {
                     : config.blurColor
                 }
               />
-              {!!this.props.pinNotify && (
-                <View style={styles.badge}>
-                  <Text style={styles.badgeText}>
-                    {this.props.pinNotify > MAX_PIN
-                      ? `${this.props.pinNotify}+`
-                      : this.props.pinNotify}
-                  </Text>
-                </View>
-              )}
+              <Animated.View
+                style={[
+                  styles.badge,
+                  {
+                    opacity: this.state.animatedNotification.interpolate({
+                      inputRange: [0, 0.1, 1],
+                      outputRange: [0, 1, 1]
+                    }),
+                    transform: [{ scale: this.state.animatedNotification }]
+                  }
+                ]}
+              >
+                <Text style={styles.badgeText}>
+                  {this.props.pinNotify > MAX_PIN
+                    ? `${MAX_PIN}+`
+                    : this.props.pinNotify}
+                </Text>
+              </Animated.View>
             </TouchableOpacity>
           </Animated.View>
 
