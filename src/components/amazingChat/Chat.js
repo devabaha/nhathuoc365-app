@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Alert } from 'react-native';
 import PropTypes from 'prop-types';
 // librarys
 import { Actions } from 'react-native-router-flux';
@@ -12,11 +12,7 @@ import RightButtonCall from '../RightButtonCall';
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
-
-const MESSAGE_TYPES = {
-  TEXT: MESSAGE_TYPE_TEXT,
-  IMAGE: MESSAGE_TYPE_IMAGE
-};
+const UPLOAD_URL = APIHandler.url_user_upload_image();
 
 @observer
 export default class Chat extends Component {
@@ -30,6 +26,10 @@ export default class Chat extends Component {
 
     this.state = {
       messages: null,
+      site: {},
+      pinNotify: 0,
+      pinListNotify: {},
+      pinList: null,
       showImageGallery: false,
       editable: false,
       showImageBtn: true,
@@ -38,6 +38,7 @@ export default class Chat extends Component {
       selectedImages: [],
       uploadImages: [],
       user: this.user,
+      user_id: '',
       phoneNumber: '',
       guestName: ''
     };
@@ -52,6 +53,12 @@ export default class Chat extends Component {
     this.refTickidChat = null;
     this.source = null;
     this.isLoadFirstTime = true;
+    this.giftedChatExtraProps = {};
+  }
+
+  get giftedChatProps() {
+    this.giftedChatExtraProps.user = { _id: this.state.user_id };
+    return this.giftedChatExtraProps;
   }
 
   get user() {
@@ -80,16 +87,25 @@ export default class Chat extends Component {
 
     return false;
   }
-
+  i = 0;
   componentDidMount() {
     setTimeout(() => {
       Actions.refresh({
         right: this.renderRight.bind(this),
         onBack: this.onBack.bind(this)
       });
-    }, 100);
-
-    this._getData();
+    });
+    // setInterval(() => {
+    //   this.i++;
+    //   this.setState({
+    //     pinNotify: this.i % 2 ===0 ? 1 : 0,
+    //     pinListNotify: {
+    //       ORDERS_TYPE: this.i % 2 ===0 ? 1 : 0,
+    //     }
+    //   })
+    // }, 3000)
+    this._getMessages();
+    this._getPinList();
   }
 
   renderRight() {
@@ -119,9 +135,32 @@ export default class Chat extends Component {
     clearTimeout(this.timerGetChat);
   }
 
-  _getData = async (delay = 0) => {
+  _getPinList = async (delay = 0) => {
     if (!this.unmounted) {
-      this._loaded = false;
+      let { site_id, user_id } = this.props;
+
+      try {
+        const response = await APIHandler.site_pin_list(site_id);
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS && response.data) {
+            this.setState(prevState => ({
+              pinList: response.data.pin_list
+                ? response.data.pin_list
+                : prevState.pinList,
+              site: response.data.site ? response.data.site : prevState.site
+            }));
+          }
+        }
+      } catch (e) {
+        console.warn(e + ' site_pin_list');
+
+        store.addApiQueue('site_pin_list', this._getPinList);
+      }
+    }
+  };
+
+  _getMessages = async (delay = 0) => {
+    if (!this.unmounted) {
       let { site_id, user_id } = this.props;
 
       //specify for tick/quan_ly_cua_hang
@@ -161,6 +200,22 @@ export default class Chat extends Component {
               }
               this._calculatorLastID(response.data.list);
             }
+            if (response.data.pin_notify) {
+              this.setState({
+                pinNotify: response.data.pin_notify
+              });
+            }
+            if (response.data.pin_list_notify) {
+              const condition =
+                JSON.stringify(response.data.pin_list_notify) !==
+                JSON.stringify(this.state.pinListNotify);
+
+              if (condition) {
+                this.setState({
+                  pinListNotify: response.data.pin_list_notify
+                });
+              }
+            }
           } else if (this.isLoadFirstTime) {
             this.setState({
               messages: [],
@@ -168,17 +223,16 @@ export default class Chat extends Component {
             });
           }
           this.timerGetChat = setTimeout(
-            () => this._getData(),
+            () => this._getMessages(),
             DELAY_GET_CONVERSATION
           );
         }
       } catch (e) {
         console.warn(e + ' site_load_chat');
 
-        store.addApiQueue('site_load_chat', this._getData);
+        store.addApiQueue('site_load_chat', this._getMessages);
       } finally {
         this.isLoadFirstTime = false;
-        this._loaded = true;
       }
     }
   };
@@ -218,7 +272,7 @@ export default class Chat extends Component {
   //   }
   // }
 
-  handleSendImage(images) {
+  handleSendImage = images => {
     if (Array.isArray(images) && images.length !== 0) {
       const message = this.getFormattedMessage(
         MESSAGE_TYPE_IMAGE,
@@ -236,16 +290,16 @@ export default class Chat extends Component {
         true
       );
     }
-  }
+  };
 
-  handleSendText(message) {
+  handleSendText = message => {
     this._appendMessages(
       this.getFormattedMessage(MESSAGE_TYPE_TEXT, message),
       () => {},
       true
     );
     this._onSend({ message });
-  }
+  };
 
   getFormattedMessage(type, message) {
     const formattedMessage = {
@@ -286,29 +340,160 @@ export default class Chat extends Component {
     }
   }
 
+  handlePinPress = pin => {
+    switch (pin.type) {
+      case 'ACCUMULATE_POINTS_TYPE':
+        Actions.push(appConfig.routes.qrBarCode, {
+          title: 'Mã tài khoản'
+        });
+        break;
+      case 'MY_VOUCHER_TYPE':
+      case 'my_voucher':
+        Actions.push(appConfig.routes.myVoucher, {
+          title: 'Voucher của tôi',
+          from: 'home'
+        });
+        break;
+      case 'TRANSACTION_TYPE':
+        Actions.vnd_wallet({
+          title: store.user_info.default_wallet.name,
+          wallet: store.user_info.default_wallet
+        });
+        break;
+      case 'ORDERS_TYPE':
+        Actions.push(appConfig.routes.storeOrders, {
+          store_id: this.state.site.id,
+          title: this.state.site.name,
+          tel: this.state.site.tel
+        });
+        break;
+      case 'QRCODE_SCAN_TYPE':
+      case 'qrscan':
+        Actions.push(appConfig.routes.qrBarCode, {
+          index: 1,
+          title: 'Quét QR Code',
+          wallet: store.user_info.default_wallet
+        });
+        break;
+      case 'up_to_phone':
+        Actions.push(appConfig.routes.upToPhone, {
+          service_type: pin.type,
+          service_id: pin.id,
+          indexTab: pin.tab,
+          title: pin.name,
+          serviceId: pin.serviceId ? pin.serviceId : 100
+        });
+        break;
+      case 'list_voucher':
+        Actions.push(appConfig.routes.mainVoucher, {
+          from: 'home'
+        });
+        break;
+      case 'rada_service':
+        Actions.push('tickidRada', {
+          service_type: pin.type,
+          service_id: pin.id,
+          title: 'Dịch vụ Rada',
+          onPressItem: item => {
+            this.handleCategoryPress(item);
+          }
+        });
+        break;
+      case '30day_service':
+        Alert.alert(
+          'Thông báo',
+          'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
+          [{ text: 'Đồng ý' }]
+        );
+        break;
+      case 'my_address':
+        Actions.push(appConfig.routes.myAddress, {
+          from_page: 'account'
+        });
+        break;
+      case 'news':
+        Actions.jump(appConfig.routes.newsTab);
+        break;
+      case 'orders':
+        Actions.jump(appConfig.routes.ordersTab);
+        break;
+      case 'list_chat':
+        Actions.list_amazing_chat({
+          titleStyle: { width: 220 }
+        });
+        break;
+      case 'open_shop':
+        if (this.shopOpening) return;
+        this.setState({
+          showLoading: true
+        });
+        APIHandler.site_info(pin.siteId)
+          .then(response => {
+            if (
+              response &&
+              response.status == STATUS_SUCCESS &&
+              !this.unmounted
+            ) {
+              action(() => {
+                store.setStoreData(response.data);
+                Actions.push(appConfig.routes.store, {
+                  title: pin.name || response.data.name,
+                  categoryId: pin.categoryId || 0
+                });
+              })();
+            }
+          })
+          .finally(() => {
+            this.shopOpening = false;
+            this.setState({
+              showLoading: false
+            });
+          });
+        break;
+      case 'call':
+        Communications.phonecall(pin.tel, true);
+        break;
+      case 'news_category':
+        Actions.push(appConfig.routes.notifies, {
+          title: pin.title,
+          news_type: `/${pin.categoryId}`
+        });
+        break;
+      default:
+        Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
+          { text: 'Đồng ý' }
+        ]);
+        break;
+    }
+  };
+
   render() {
-    const { messages, user_id } = this.state;
+    const { messages } = this.state;
 
     return messages !== null ? (
       <TickidChat
+        // Root props
         setHeader={this.props.setHeader}
+        defaultStatusBarColor={appConfig.colors.primary}
+        // Refs
         ref={inst => (this.refTickidChat = inst)}
         refGiftedChat={inst => (this.refGiftedChat = inst)}
         refListMessages={inst => (this.refListMessages = inst)}
-        uploadURL={APIHandler.url_user_upload_image()}
+        // GiftedChat props
+        giftedChatProps={this.giftedChatProps}
         messages={this.state.messages}
-        defaultStatusBarColor={appConfig.colors.primary}
-        onSendText={this.handleSendText.bind(this)}
-        onSendImage={this.handleSendImage.bind(this)}
+        onSendText={this.handleSendText}
+        // Gallery props
+        uploadURL={UPLOAD_URL}
+        onSendImage={this.handleSendImage}
         onUploadedImage={response =>
           this._onSend({ image: response.data.name })
         }
-        defaultStatusBarColor={appConfig.colors.primary}
-        giftedChatProps={{
-          user: {
-            _id: user_id
-          }
-        }}
+        // Pin props
+        pinList={this.state.pinList}
+        onPinPress={this.handlePinPress}
+        pinNotify={this.state.pinNotify}
+        pinListNotify={this.state.pinListNotify}
       />
     ) : (
       <View style={styles.container}>

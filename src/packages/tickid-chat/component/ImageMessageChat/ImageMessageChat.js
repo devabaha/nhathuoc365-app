@@ -13,7 +13,7 @@ import {
 import Lightbox from 'react-native-lightbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
-import { getBase64Image } from '../../helper';
+import { getBase64Image, setStater } from '../../helper';
 import FastImage from 'react-native-fast-image';
 import { isIos } from '../../constants';
 
@@ -46,6 +46,7 @@ class ImageMessageChat extends Component {
     hide: new Animated.Value(0),
     uploadStatus: UPLOAD_STATUS_TYPE.DEFAULT
   };
+  unmounted = false;
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -68,6 +69,10 @@ class ImageMessageChat extends Component {
     if (this.props.isUploadData && this.props.image) {
       this.uploadImage();
     }
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   async uploadImage(reUp = false) {
@@ -116,7 +121,9 @@ class ImageMessageChat extends Component {
           useNativeDriver: true,
           delay: 300
         }).start(() => {
-          this.setState({ uploadStatus: UPLOAD_STATUS_TYPE.SUCCESS });
+          setStater(this, this.unmounted, {
+            uploadStatus: UPLOAD_STATUS_TYPE.SUCCESS
+          });
           this.props.onUploadedSuccess(JSON.parse(response.data), reUp);
         });
       })
@@ -128,7 +135,9 @@ class ImageMessageChat extends Component {
           useNativeDriver: true,
           delay: 300
         }).start(() => {
-          this.setState({ uploadStatus: UPLOAD_STATUS_TYPE.ERROR });
+          setStater(this, this.unmounted, {
+            uploadStatus: UPLOAD_STATUS_TYPE.ERROR
+          });
           this.props.onUploadedFail();
         });
       });
@@ -164,7 +173,14 @@ class ImageMessageChat extends Component {
     const ImageComponent = isIos ? Image : FastImage;
 
     return (
-      <View style={[styles.image, this.props.containerStyle]}>
+      <View
+        style={[styles.image, this.props.containerStyle]}
+        pointerEvents={
+          this.state.uploadStatus !== UPLOAD_STATUS_TYPE.UPLOADING
+            ? 'auto'
+            : 'none'
+        }
+      >
         <Lightbox
           springConfig={{ overshootClamping: true }}
           onOpen={this.handleOpen.bind(this)}

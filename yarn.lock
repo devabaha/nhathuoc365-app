@@ -6566,13 +6566,6 @@ react-native-elements@^0.19.0:
     opencollective "^1.0.3"
     prop-types "^15.5.8"
 
-react-native-facebook-account-kit@1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/react-native-facebook-account-kit/-/react-native-facebook-account-kit-1.1.0.tgz#39b0b09cb84dd2ceb2879ee498b5b6160a81a601"
-  integrity sha512-1FwFcJ5p3OM80ExIpHg7CUb1+RA5E/gaPmhZl2hB6gfqi4EezRpNuXCZiJ6IvZTw/I8xhXzUkmf7kJMQv30YqA==
-  dependencies:
-    prop-types "^15.5.10"
-
 react-native-fast-image@5.4.2:
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-5.4.2.tgz#d761cb9dddc0473b537544617e511a11c9e18413"
@@ -6685,6 +6678,11 @@ react-native-keyboard-aware-scroll-view@0.9.1, react-native-keyboard-aware-scrol
   dependencies:
     prop-types "^15.6.2"
     react-native-iphone-x-helper "^1.0.3"
+
+react-native-keyboard-spacer@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/react-native-keyboard-spacer/-/react-native-keyboard-spacer-0.4.1.tgz#46f18a320432098a25ea9fa89f5143dd254d332d"
+  integrity sha1-RvGKMgQyCYol6p+on1FD3SVNMy0=
 
 react-native-lightbox@^0.7.0:
   version "0.7.0"

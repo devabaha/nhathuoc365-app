@@ -71,7 +71,7 @@ class ImageItem extends Component {
     const ImageComponent = isIos ? Image : FastImage;
 
     return (
-      <View style={[styles.imageItemContainer, { ...containerStyle }]}>
+      <View style={[styles.imageItemContainer, containerStyle]}>
         <Lightbox
           springConfig={{ overshootClamping: true }}
           style={[styles.lightboxContainer]}
