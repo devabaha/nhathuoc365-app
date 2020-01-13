@@ -184,7 +184,6 @@ dependencies {
     implementation project(':react-native-reanimated')
     implementation project(':react-native-camera')
     implementation project(':react-native-code-push')
-    implementation project(':react-native-facebook-account-kit')
     implementation project(':react-native-onesignal')
     implementation project(':react-native-image-picker')
     implementation project(':@react-native-community_async-storage')
