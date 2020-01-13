@@ -164,7 +164,7 @@ class Stores extends Component {
         store.store_id,
         this.props.categoryId
       );
-      if (response && response.status == STATUS_SUCCESS && this.unmounted) {
+      if (response && response.status == STATUS_SUCCESS && !this.unmounted) {
         setTimeout(() => this.parseDataCategories(response), this._delay());
       }
     } catch (e) {
