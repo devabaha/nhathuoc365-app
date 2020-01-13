@@ -15,7 +15,6 @@ import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
 import com.swmansion.reanimated.ReanimatedPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.microsoft.codepush.react.CodePush;
-import io.underscope.react.fbak.RNAccountKitPackage;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -64,7 +63,6 @@ public class MainApplication extends Application implements ReactApplication {
             new ReanimatedPackage(),
             new RNCameraPackage(),
             new CodePush(getResources().getString(R.string.reactNativeCodePush_androidDeploymentKey), getApplicationContext(), BuildConfig.DEBUG),
-            new RNAccountKitPackage(),
             new ReactNativeOneSignalPackage(),
             new ImagePickerPackage(),
             new AsyncStoragePackage(),

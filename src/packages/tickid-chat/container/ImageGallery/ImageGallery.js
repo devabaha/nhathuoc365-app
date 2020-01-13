@@ -218,22 +218,24 @@ class ImageGallery extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (
-      nextProps.visible &&
-      !this.didVisible &&
-      !this.state.permissionLibraryGranted
-    ) {
-      this.didVisible = true;
-      this.callPermissions(
-        PERMISSIONS_TYPE.LIBRARY,
-        LIBRARY_PERMISSIONS_TYPE.REQUEST,
-        permissionGranted => {
-          if (permissionGranted) {
-            this.getAlbum(true);
-          }
-        }
-      );
-    }
+    //---- Check library permissions when visible gallery first time!!!!!!
+
+    // if (
+    //   nextProps.visible &&
+    //   !this.didVisible &&
+    //   !this.state.permissionLibraryGranted
+    // ) {
+    //   this.didVisible = true;
+    //   this.callPermissions(
+    //     PERMISSIONS_TYPE.LIBRARY,
+    //     LIBRARY_PERMISSIONS_TYPE.REQUEST,
+    //     permissionGranted => {
+    //       if (permissionGranted) {
+    //         this.getAlbum(true);
+    //       }
+    //     }
+    //   );
+    // }
 
     // merge with masterToolBar
     if (
@@ -291,9 +293,11 @@ class ImageGallery extends Component {
   componentDidMount() {
     this.callPermissions(
       PERMISSIONS_TYPE.LIBRARY,
-      LIBRARY_PERMISSIONS_TYPE.CHECK,
+      // LIBRARY_PERMISSIONS_TYPE.CHECK,
+      LIBRARY_PERMISSIONS_TYPE.REQUEST,
       permissionGranted => {
         if (permissionGranted) {
+          // this.getAlbum(false);
           this.getAlbum(false);
         }
       }
@@ -511,7 +515,7 @@ class ImageGallery extends Component {
     );
   };
 
-  getAlbum(isUpdate, first = 200, after = null, index = 0, groupTypes = 'All') {
+  getAlbum(isUpdate, first = 100, after = null, index = 0, groupTypes = 'All') {
     if (this.state.photos.length === 0) {
       this.setState({ loading: true });
     }
@@ -843,7 +847,7 @@ class ImageGallery extends Component {
             }
           }}
           scrollEnabled={scrollEnabled}
-          initialNumToRender={30}
+          initialNumToRender={20}
           numColumns={ITEMS_PER_ROW}
           ListHeaderComponent={
             this.state.loading && <Loading height={this.props.baseViewHeight} />
