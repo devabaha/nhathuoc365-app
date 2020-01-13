@@ -38,12 +38,12 @@ code-push app add tick-foodhub-android android react-native
 │ Staging    │ Ysxk9PCgfA9owCJfVg2m2AT4C4GDf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Mo lai tim kiem"
-code-push release-react tick-foodhub-android android -d "Production" -m --description "Mo lai tim kiem"
+code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Sua loi mo gian hang"
+code-push release-react tick-foodhub-android android -d "Production" -m --description "Sua loi mo gian hang"
 
-6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
+1. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
-7. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
+2. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
 Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
 yo rn-toolbox:assets --icon icon.png --splash splash.png --store
 yo rn-toolbox:assets --icon icon-android.png --android
