@@ -185,9 +185,11 @@ export default class Chat extends Component {
                 phoneNumber: response.data.receiver.phone,
                 guestName: response.data.receiver.name
               });
-              Actions.refresh({
-                right: this.renderRight.bind(this)
-              });
+              if (!this.state.phoneNumber) {
+                Actions.refresh({
+                  right: this.renderRight.bind(this)
+                });
+              }
             }
             if (response.data.list) {
               if (this.state.messages) {
