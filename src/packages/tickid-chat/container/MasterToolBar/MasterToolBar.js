@@ -72,14 +72,11 @@ class MasterToolBar extends Component {
   refImageGallery = React.createRef();
   refPin = React.createRef();
   refGestureWrapper = React.createRef();
-  animatedStyle = {};
+  animatedValue = 0;
 
-  containerStyle = type => {
-    const animatedValue = this.getAnimatedComponentValue(type);
-    const animatedStyle = {
-      transform: [{ translateY: animatedValue }]
-    };
-    return animatedStyle;
+  getAnimatedEffectValue = type => {
+    animatedValue = this.getAnimatedComponentValue(type);
+    return animatedValue;
   };
 
   getAnimatedComponentValue = type => {
@@ -117,20 +114,6 @@ class MasterToolBar extends Component {
         });
       });
       animateNextValue.setValue(0);
-    }
-
-    if (nextProps.visible !== this.props.visible) {
-      const animatePrevValue = this.getAnimatedComponentValue(
-        this.props.selectedType
-      );
-      this.setState(
-        {
-          selectedType: nextProps.selectedType
-        },
-        () => {
-          animatePrevValue.setValue(0);
-        }
-      );
     }
 
     if (
@@ -237,14 +220,16 @@ class MasterToolBar extends Component {
           //--const_primative
           baseViewHeight={this.props.baseViewHeight}
           durationShowGallery={this.props.durationShowGallery}
-          containerStyle={this.containerStyle(COMPONENT_TYPE.GALLERY)}
+          animatedEffectValue={this.getAnimatedEffectValue(
+            COMPONENT_TYPE.GALLERY
+          )}
         />
         <PinList
           baseViewHeight={this.props.baseViewHeight}
           visible={this.state.selectedType.id === COMPONENT_TYPE.PIN.id}
           pinList={pinListProps.pinList}
           itemsPerRow={pinListProps.itemsPerRow}
-          containerStyle={this.containerStyle(COMPONENT_TYPE.PIN)}
+          animatedEffectValue={this.getAnimatedEffectValue(COMPONENT_TYPE.PIN)}
           onPinPress={this.handlePinPress}
           pinListNotify={pinListProps.pinListNotify}
         />

@@ -7,6 +7,9 @@ import {
 import DeviceInfo from 'react-native-device-info';
 
 export const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
+export const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get(
+  'window'
+);
 
 export const isAndroid = Platform.OS === 'android';
 export const isAndroidEmulator = isAndroid && DeviceInfo.isEmulator();
@@ -29,8 +32,7 @@ export const BOTTOM_SPACE_IPHONE_X = isIphoneX ? getBottomSpace() : 0;
 export const MIN_HEIGHT_COMPOSER = 44;
 
 export const ANDROID_STATUS_BAR_HEIGHT = StatusBar.currentHeight || 0;
-export const ANDROID_EXTRA_DIMENSIONS_HEIGHT =
-  HEIGHT - Dimensions.get('window').height;
+export const ANDROID_EXTRA_DIMENSIONS_HEIGHT = HEIGHT - WINDOW_HEIGHT;
 export const EXTRA_DIMENSIONS_HEIGHT =
   ANDROID_EXTRA_DIMENSIONS_HEIGHT !== 0
     ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
