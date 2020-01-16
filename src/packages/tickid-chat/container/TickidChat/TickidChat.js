@@ -203,7 +203,7 @@ class TickidChat extends Component {
       this.handleShowKeyboard(e)
     );
     if (this.refGestureWrapper.current) {
-      this.refGestureWrapper.current.animatedShowUpFake.addListener(
+      this.refGestureWrapper.current.animatedShowUpValue.addListener(
         this.animatedShowUpListener
       );
     }
@@ -213,7 +213,7 @@ class TickidChat extends Component {
     this.unmounted = true;
     this.keyboardListener.remove();
     if (this.refGestureWrapper.current) {
-      this.refGestureWrapper.current.animatedShowUpFake.removeListener(
+      this.refGestureWrapper.current.animatedShowUpValue.removeListener(
         this.animatedShowUpListener
       );
     }
@@ -748,7 +748,7 @@ class TickidChat extends Component {
                 transform: [
                   {
                     translateY: this.refGestureWrapper.current
-                      ? this.refGestureWrapper.current.animatedShowUpFake.interpolate(
+                      ? this.refGestureWrapper.current.animatedShowUpValue.interpolate(
                           {
                             inputRange: [
                               0,

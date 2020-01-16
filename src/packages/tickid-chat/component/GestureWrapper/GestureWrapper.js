@@ -55,7 +55,6 @@ class GestureWrapper extends Component {
   };
 
   state = {
-    animatedShowUpFakeValue: new Animated.Value(0),
     animatedShowUpValue: new Animated.Value(0),
     animatedTranslateYScrollView: new Animated.Value(HEIGHT),
     expandContent: false,
@@ -184,10 +183,6 @@ class GestureWrapper extends Component {
     return this.state.animatedShowUpValue;
   }
 
-  get animatedShowUpFake() {
-    return this.state.animatedShowUpFakeValue;
-  }
-
   get animatedTranslateYScrollView() {
     return this.state.animatedTranslateYScrollView;
   }
@@ -210,8 +205,8 @@ class GestureWrapper extends Component {
     });
   }
 
-  animateShowUp(animated, toValue) {
-    return Animated.spring(animated, {
+  animateShowUp(toValue) {
+    return Animated.spring(this.state.animatedShowUpValue, {
       toValue,
       overshootClamping: true,
       duration: this.props.durationShowBodyContent,
@@ -226,11 +221,6 @@ class GestureWrapper extends Component {
 
       Animated.parallel([
         this.animateShowUp(
-          this.state.animatedShowUpFakeValue,
-          nextProps.visible ? nextProps.collapsedBodyHeight : 0
-        ),
-        this.animateShowUp(
-          this.state.animatedShowUpValue,
           nextProps.visible ? nextProps.collapsedBodyHeight : 0
         ),
         this.animateScrollView(
@@ -270,10 +260,6 @@ class GestureWrapper extends Component {
         () => {
           if (this.props.visible) {
             Animated.parallel([
-              this.animateShowUp(
-                this.state.animatedShowUpFakeValue,
-                this.props.collapsedBodyHeight
-              ),
               this.animateShowUp(
                 this.state.animatedShowUpValue,
                 this.props.collapsedBodyHeight
