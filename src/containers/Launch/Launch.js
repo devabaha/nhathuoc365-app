@@ -48,10 +48,9 @@ class Launch extends Component {
         });
         break;
       case STATUS_UNDEFINE_USER:
-        Actions.replace(appConfig.routes.primaryTabbar);
-        // Actions.replace('phone_auth', {
-        //   loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
-        // });
+        Actions.replace('phone_auth', {
+          loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
+        });
         break;
       default:
         setTimeout(this.handleAuthorization, 1000);
