@@ -260,10 +260,7 @@ class GestureWrapper extends Component {
         () => {
           if (this.props.visible) {
             Animated.parallel([
-              this.animateShowUp(
-                this.state.animatedShowUpValue,
-                this.props.collapsedBodyHeight
-              ),
+              this.animateShowUp(this.props.collapsedBodyHeight),
               this.animateScrollView(this.state.animatableArea)
             ]).start();
           }

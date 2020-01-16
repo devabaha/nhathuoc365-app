@@ -107,7 +107,8 @@ import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
 import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
 import { addJob } from './helper/jobsOnReset';
-
+import { Image } from 'react-native';
+import FastImage from 'react-native-fast-image';
 /**
  * Initializes config for Phone Card module
  */
@@ -188,6 +189,13 @@ initializeRadaModule({
     defaultLocation: '37.33233141,-122.0312186'
   }
 });
+
+const preloadImages = [require('./images/logo-640x410.jpg')];
+const uris = preloadImages.map(image => ({
+  uri: Image.resolveAssetSource(image).uri
+}));
+
+FastImage.preload(uris);
 
 class App extends Component {
   constructor(props) {

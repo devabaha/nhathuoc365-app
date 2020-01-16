@@ -11,6 +11,7 @@ import {
 import { CachedImage } from 'react-native-img-cache';
 import appConfig from '../../config';
 import store from '../../store';
+import FastImage from 'react-native-fast-image';
 
 class Launch extends Component {
   constructor(props) {
@@ -52,7 +53,7 @@ class Launch extends Component {
       const response = await APIHandler.user_login({
         fb_access_token: ''
       });
-      this.handleAuthWithResponse(response);
+      setTimeout(() => this.handleAuthWithResponse(response), 2000);
     } catch (error) {
       console.log(error);
       setTimeout(this.handleAuthorization, 1000);
@@ -60,7 +61,6 @@ class Launch extends Component {
   };
 
   handleAuthWithResponse = response => {
-    return;
     const user = response.data;
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
@@ -108,14 +108,14 @@ class Launch extends Component {
           Animated.timing(this.state.animatedSpreading, {
             toValue: 1,
             easing: Easing.in,
-            duration: 200,
+            duration: 400,
             useNativeDriver: true
           })
         ]),
         Animated.parallel([
           Animated.timing(this.state.animatedPressing, {
             toValue: 0,
-            easing: Easing.quad,
+            easing: Easing.in,
             duration: 200,
             useNativeDriver: true
           }),
@@ -127,9 +127,14 @@ class Launch extends Component {
           })
         ]),
         Animated.timing(this.state.animatedBouncing, {
-          toValue: 0,
+          toValue: 60,
           easing: Easing.in,
           duration: 500,
+          useNativeDriver: true
+        }),
+        Animated.timing(this.state.animatedBouncing, {
+          toValue: 0,
+          duration: 0,
           useNativeDriver: true
         })
       ])
@@ -139,21 +144,35 @@ class Launch extends Component {
   render() {
     return (
       <View style={styles.container}>
-        {/* <ActivityIndicator size="large" /> */}
         <View style={styles.logoContainer}>
-          <CachedImage
+          <FastImage
             source={require('../../images/logo-640x410.jpg')}
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.text}>Đang kết nối...</Text>
           <View style={styles.animateLoading}>
             <Animated.View
               style={[
+                styles.dot,
                 styles.bouncing,
                 {
+                  opacity: this.state.animatedBouncing.interpolate({
+                    inputRange: [0, 30, 60],
+                    outputRange: [0.6, 1, 0.6]
+                  }),
                   transform: [
-                    { translateY: this.state.animatedBouncing },
+                    {
+                      translateY: this.state.animatedBouncing.interpolate({
+                        inputRange: [0, 30, 60],
+                        outputRange: [0, 30, 0]
+                      })
+                    },
+                    {
+                      scale: this.state.animatedBouncing.interpolate({
+                        inputRange: [0, 30, 60],
+                        outputRange: [0.6, 1, 0.6]
+                      })
+                    },
                     {
                       scaleX: this.state.animatedPressing.interpolate({
                         inputRange: [0, 1],
@@ -169,13 +188,56 @@ class Launch extends Component {
                   ]
                 }
               ]}
-            />
+            >
+              <Animated.View
+                style={[
+                  styles.dot,
+                  {
+                    opacity: this.state.animatedBouncing.interpolate({
+                      inputRange: [0, 15, 30, 45, 60],
+                      outputRange: [0, 1, 1, 1, 0]
+                    }),
+                    transform: [
+                      {
+                        rotate: this.state.animatedBouncing.interpolate({
+                          inputRange: [0, 15, 30, 45, 60],
+                          outputRange: [
+                            '-360deg',
+                            '-180deg',
+                            '0deg',
+                            '180deg',
+                            '360deg'
+                          ]
+                        })
+                      }
+                    ]
+                  }
+                ]}
+              >
+                <Animated.View
+                  style={[
+                    styles.leftHalf,
+                    {
+                      transform: [
+                        {
+                          translateX: this.state.animatedBouncing.interpolate({
+                            inputRange: [0, 15, 30, 45, 60],
+                            outputRange: [0, 15, 0, 15, 0]
+                          })
+                        }
+                      ]
+                    }
+                  ]}
+                />
+              </Animated.View>
+            </Animated.View>
+
             <Animated.View
               style={[
-                styles.spreading,
+                styles.spreadingShadow,
                 {
                   opacity: this.state.animatedSpreading.interpolate({
-                    inputRange: [0, 0.3, 1],
+                    inputRange: [0, 0.5, 1],
                     outputRange: [0, 1, 0]
                   })
                 },
@@ -184,13 +246,32 @@ class Launch extends Component {
                     {
                       scaleX: this.state.animatedSpreading.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 4]
+                        outputRange: [0, 5]
                       })
                     },
                     {
                       scaleY: this.state.animatedSpreading.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 1]
+                        outputRange: [0, 1.5]
+                      })
+                    }
+                  ]
+                }
+              ]}
+            ></Animated.View>
+            <Animated.View
+              style={[
+                styles.spreading,
+                {
+                  opacity: this.state.animatedSpreading.interpolate({
+                    inputRange: [0, 0.5, 1],
+                    outputRange: [0, 1, 0]
+                  }),
+                  transform: [
+                    {
+                      scaleX: this.state.animatedSpreading.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 4]
                       })
                     }
                   ]
@@ -213,8 +294,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   logoContainer: {
-    // position: 'absolute',
-    // bottom: appConfig.device.height / 1.618,
+    position: 'absolute',
+    top: appConfig.device.height * 0.3,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   logo: {
     width: 200,
@@ -229,23 +312,49 @@ const styles = StyleSheet.create({
   },
   animateLoading: {
     marginTop: 40,
-    // flex: 1,
     alignItems: 'center',
     justifyContent: 'center'
-    // position: 'absolute'
+  },
+  leftHalf: {
+    borderTopColor: appConfig.colors.logo.sub,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 10,
+    borderLeftColor: 'transparent',
+    borderRightWidth: 10,
+    borderRightColor: 'transparent',
+    borderTopWidth: 10,
+    borderRadius: 5
+  },
+  dot: {
+    borderRadius: 10,
+    width: 20,
+    height: 20,
+    overflow: 'hidden'
   },
   bouncing: {
-    backgroundColor: 'yellow',
-    borderRadius: 20,
-    width: 40,
-    height: 40
+    backgroundColor: appConfig.colors.logo.main
   },
-  spreading: {
-    marginTop: 24,
-    backgroundColor: 'red',
+  spreadingShadow: {
+    top: 55,
+    backgroundColor: 'rgba(220,42,100,.2)',
     borderRadius: 7.5,
     width: 15,
     height: 15,
+    zIndex: -2,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  spreading: {
+    backgroundColor: appConfig.colors.logo.addition,
+    top: 55,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 5,
+    width: 10,
+    height: 10,
     zIndex: -1
   }
 });

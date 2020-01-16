@@ -31,6 +31,11 @@ const config = Object.freeze({
     bottomSpace: getBottomSpace()
   }),
   colors: {
+    logo: {
+      main: '#8d2d8c',
+      sub: '#f5bb4b',
+      addition: '#f18c21'
+    },
     primary: '#812384',
     white: '#fff',
     black: '#000',
