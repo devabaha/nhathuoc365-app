@@ -239,18 +239,19 @@ export default class Chat extends Component {
     }
   };
 
-  _appendMessages(messages, isAppendDirectly = false) {
+  _appendMessages(messages, callBack = () => {}, isAppendDirectly = false) {
     const newMessages = [...this.state.messages];
     messages.forEach(message => {
       if (message.user._id !== this.state.user_id || isAppendDirectly) {
         newMessages.unshift(message);
       }
     });
-    if (newMessages !== this.state.messages) {
-      this.setState({
+    this.setState(
+      {
         messages: newMessages
-      });
-    }
+      },
+      () => callBack()
+    );
   }
 
   _calculatorLastID = messages => {
@@ -259,20 +260,6 @@ export default class Chat extends Component {
       this._lastID = lastObject._id;
     }
   };
-
-  // handleSendImage(response) {
-  //   if (this.refTickidChat) {
-  //     this.refTickidChat.clearSelectedPhotos();
-  //   }
-  //   if (response.status === STATUS_SUCCESS && response.data) {
-  //     this._appendMessages(
-  //       this.getFormattedMessage(MESSAGE_TYPE_IMAGE, response.data.url),
-  //       () => {},
-  //       true
-  //     );
-  //     this._onSend({ image: response.data.name });
-  //   }
-  // }
 
   handleSendImage = images => {
     if (Array.isArray(images) && images.length !== 0) {

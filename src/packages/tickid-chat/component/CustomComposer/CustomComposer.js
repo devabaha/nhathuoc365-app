@@ -3,7 +3,8 @@ import {
   TouchableOpacity,
   TextInput,
   Animated,
-  StyleSheet
+  StyleSheet,
+  View
 } from 'react-native';
 import { MIN_HEIGHT_COMPOSER, isIos } from '../../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,18 +15,7 @@ const CustomComposer = props => {
     : { editable: props.editable };
 
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        {
-          // transform: [
-          //   {
-          //     translateY: props.animatedValue
-          //   }
-          // ]
-        }
-      ]}
-    >
+    <View style={styles.container}>
       {props.showInput ? (
         <TouchableOpacity
           activeOpacity={1}
@@ -74,7 +64,7 @@ const CustomComposer = props => {
           </TouchableOpacity>
         </Animated.View>
       )}
-    </Animated.View>
+    </View>
   );
 };
 
@@ -84,13 +74,13 @@ const styles = StyleSheet.create({
     height: '100%',
     flex: 1,
     height: MIN_HEIGHT_COMPOSER
+    // position: 'absolute'
   },
   containerInput: {
     width: '100%',
     height: '100%',
     flex: 1,
     height: MIN_HEIGHT_COMPOSER,
-    // zIndex: 1,
     alignItems: 'center',
     justifyContent: 'center'
   },

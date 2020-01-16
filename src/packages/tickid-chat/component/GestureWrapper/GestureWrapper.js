@@ -55,13 +55,12 @@ class GestureWrapper extends Component {
   };
 
   state = {
-    animatedShowUpFakeValue: new Animated.Value(0),
     animatedShowUpValue: new Animated.Value(0),
     animatedTranslateYScrollView: new Animated.Value(HEIGHT),
     expandContent: false,
     isFinishOpenAnimation: false,
-    animatableArea: this.animatableArea,
-    middlePositionAnimatableArea: this.middlePositionAnimatableArea
+    animatableArea: this.getAnimatableArea(),
+    middlePositionAnimatableArea: this.getMiddlePositionAnimatableArea()
   };
 
   unmounted = false;
@@ -104,12 +103,12 @@ class GestureWrapper extends Component {
       const breakPointBottom = this.state.middlePositionAnimatableArea * 1.5;
       const breakVelocity = 0.5;
       this.state.animatedTranslateYScrollView.flattenOffset();
-      vy = Math.abs(vy);
+      const abs_vy = Math.abs(vy);
 
       // move down
-      if (dy > 0) {
+      if (vy > 0) {
         if (
-          vy >= breakVelocity ||
+          abs_vy >= breakVelocity ||
           this.animatedTranslateYScrollViewValue >= breakPointTop
         ) {
           // go to bottom
@@ -131,9 +130,9 @@ class GestureWrapper extends Component {
       }
 
       //move up
-      else if (dy < 0) {
+      else if (vy < 0) {
         if (
-          vy >= breakVelocity ||
+          abs_vy >= breakVelocity ||
           this.animatedTranslateYScrollViewValue <= breakPointBottom
         ) {
           // go to top
@@ -158,11 +157,14 @@ class GestureWrapper extends Component {
     }
   });
 
-  get animatableArea() {
+  getAnimatableArea(
+    collapsedBodyHeight = this.props.collapsedBodyHeight,
+    headerHeight = this.props.headerHeight
+  ) {
     return (
       HEIGHT -
-      (this.props.collapsedBodyHeight +
-        this.props.headerHeight +
+      (collapsedBodyHeight +
+        headerHeight +
         (isAndroidEmulator
           ? MIN_HEIGHT_COMPOSER - ANDROID_STATUS_BAR_HEIGHT
           : 0) +
@@ -170,17 +172,15 @@ class GestureWrapper extends Component {
     );
   }
 
-  get middlePositionAnimatableArea() {
-    const animatableArea = this.animatableArea;
-    return animatableArea / 2;
+  getMiddlePositionAnimatableArea(
+    collapsedBodyHeight = this.props.collapsedBodyHeight,
+    headerHeight = this.props.headerHeight
+  ) {
+    return this.getAnimatableArea(collapsedBodyHeight, headerHeight) / 2;
   }
 
   get animatedShowUpValue() {
     return this.state.animatedShowUpValue;
-  }
-
-  get animatedShowUpFake() {
-    return this.state.animatedShowUpFakeValue;
   }
 
   get animatedTranslateYScrollView() {
@@ -201,7 +201,7 @@ class GestureWrapper extends Component {
       toValue,
       overshootClamping: true,
       duration: this.props.durationShowBodyContent,
-      useNativeDriver: isIos
+      useNativeDriver: true
     });
   }
 
@@ -209,8 +209,8 @@ class GestureWrapper extends Component {
     return Animated.spring(this.state.animatedShowUpValue, {
       toValue,
       overshootClamping: true,
-      duration: this.props.durationShowBodyContent
-      // useNativeDriver: true
+      duration: this.props.durationShowBodyContent,
+      useNativeDriver: true
     });
   }
 
@@ -220,11 +220,6 @@ class GestureWrapper extends Component {
       this.isAnimating = true;
 
       Animated.parallel([
-        Animated.spring(this.state.animatedShowUpFakeValue, {
-          toValue: nextProps.visible ? nextProps.collapsedBodyHeight : 0,
-          duration: nextProps.durationShowBodyContent,
-          overshootClamping: true
-        }),
         this.animateShowUp(
           nextProps.visible ? nextProps.collapsedBodyHeight : 0
         ),
@@ -244,6 +239,33 @@ class GestureWrapper extends Component {
       if (!nextProps.visible && nextState.expandContent) {
         this.setState({ expandContent: false });
       }
+    }
+
+    if (
+      nextProps.headerHeight !== this.props.headerHeight ||
+      nextProps.collapsedBodyHeight !== this.props.collapsedBodyHeight
+    ) {
+      this.updateActualScrollViewHeight(nextProps.headerHeight);
+      this.setState(
+        {
+          animatableArea: this.getAnimatableArea(
+            nextProps.collapsedBodyHeight,
+            nextProps.headerHeight
+          ),
+          middlePositionAnimatableArea: this.getMiddlePositionAnimatableArea(
+            nextProps.collapsedBodyHeight,
+            nextProps.headerHeight
+          )
+        },
+        () => {
+          if (this.props.visible) {
+            Animated.parallel([
+              this.animateShowUp(this.props.collapsedBodyHeight),
+              this.animateScrollView(this.state.animatableArea)
+            ]).start();
+          }
+        }
+      );
     }
 
     if (nextProps.expandContent !== this.props.expandContent) {
@@ -271,17 +293,6 @@ class GestureWrapper extends Component {
           }
         );
       }
-    }
-
-    if (
-      nextProps.headerHeight !== this.props.headerHeight ||
-      nextProps.collapsedBodyHeight !== this.props.collapsedBodyHeight
-    ) {
-      this.updateActualScrollViewHeight(nextProps.headerHeight);
-      this.setState({
-        animatableArea: this.animatableArea,
-        middlePositionAnimatableArea: this.middlePositionAnimatableArea
-      });
     }
 
     if (nextState !== this.state) {
