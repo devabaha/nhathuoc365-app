@@ -29,8 +29,7 @@ export default class RightButtonCall extends Component {
       Alert.alert(
         'Không thể liên lạc',
         userName + ' chưa đăng ký số điện thoại',
-        null,
-        'error'
+        [{ text: 'Đã hiểu' }]
       );
     }
   }

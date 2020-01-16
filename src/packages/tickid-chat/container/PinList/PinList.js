@@ -24,6 +24,7 @@ class PinList extends Component {
     pinListNotify: PropTypes.object,
     onPinPress: PropTypes.func,
     containerStyle: ViewPropTypes.style,
+    animatedEffectValue: PropTypes.any,
     visible: PropTypes.bool,
     baseViewHeight: PropTypes.number,
     itemsPerRow: PropTypes.number
@@ -37,6 +38,7 @@ class PinList extends Component {
     services: [],
     pinList: [],
     pinListNotify: {},
+    animatedEffectValue: 0,
     containerStyle: {},
     onPinPress: () => {
       Alert.alert('Coming soon!', 'Chức năng đang được phát triển');
@@ -118,7 +120,8 @@ class PinList extends Component {
     const extraProps = {
       zIndex: this.props.visible ? 1 : 0,
       paddingBottom: BOTTOM_SPACE_IPHONE_X,
-      height: this.props.baseViewHeight + BOTTOM_SPACE_IPHONE_X
+      height: this.props.baseViewHeight + BOTTOM_SPACE_IPHONE_X,
+      transform: [{ translateY: this.props.animatedEffectValue }]
     };
 
     return (
@@ -130,9 +133,11 @@ class PinList extends Component {
         <FlatList
           ref={this.refPinList}
           showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           data={this.props.pinList}
           extraData={this.props.pinListNotify}
+          ListFooterComponent={<View style={{ paddingTop: 45 }} />}
           renderItem={({ item: pin }) => {
             let notify = Object.keys(this.props.pinListNotify).find(
               type => pin.type === type
