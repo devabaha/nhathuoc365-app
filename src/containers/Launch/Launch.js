@@ -26,27 +26,8 @@ class Launch extends Component {
 
   componentDidMount() {
     this.handleAuthorization();
-    // this.state.animatedBouncing.addListener(
-    //   this.onAnimatedBouncingValueChange
-    // );
     this.animateLoading();
   }
-
-  onAnimatedBouncingValueChange = ({ value }) => {
-    if (value > 29) {
-      Animated.spring(this.state.animatedSpreading, {
-        toValue: 1,
-        useNativeDriver: true,
-        duration: 300
-      }).start(() =>
-        Animated.spring(this.state.animatedSpreading, {
-          toValue: 0,
-          useNativeDriver: true,
-          duration: 300
-        }).start()
-      );
-    }
-  };
 
   handleAuthorization = async () => {
     try {
@@ -98,38 +79,39 @@ class Launch extends Component {
           duration: 200,
           useNativeDriver: true
         }),
-        Animated.parallel([
-          Animated.timing(this.state.animatedPressing, {
-            toValue: 1,
-            easing: Easing.bounce,
-            duration: 200,
-            useNativeDriver: true
-          }),
-          Animated.timing(this.state.animatedSpreading, {
-            toValue: 1,
-            easing: Easing.in,
-            duration: 400,
-            useNativeDriver: true
-          })
-        ]),
-        Animated.parallel([
-          Animated.timing(this.state.animatedPressing, {
-            toValue: 0,
-            easing: Easing.in,
-            duration: 200,
-            useNativeDriver: true
-          }),
-          Animated.timing(this.state.animatedSpreading, {
-            toValue: 0,
-            easing: Easing.in,
-            duration: 0,
-            useNativeDriver: true
-          })
-        ]),
+        Animated.parallel(
+          [
+            Animated.timing(this.state.animatedPressing, {
+              toValue: 1,
+              easing: Easing.bounce,
+              duration: 200,
+              useNativeDriver: true
+            }),
+            Animated.timing(this.state.animatedSpreading, {
+              toValue: 1,
+              easing: Easing.in,
+              duration: 400,
+              useNativeDriver: true
+            })
+          ],
+          { stopTogether: false }
+        ),
+        Animated.timing(this.state.animatedPressing, {
+          toValue: 0,
+          easing: Easing.in,
+          duration: 200,
+          useNativeDriver: true
+        }),
+        Animated.timing(this.state.animatedSpreading, {
+          toValue: 0,
+          easing: Easing.in,
+          duration: 0,
+          useNativeDriver: true
+        }),
         Animated.timing(this.state.animatedBouncing, {
           toValue: 60,
           easing: Easing.in,
-          duration: 500,
+          duration: 600,
           useNativeDriver: true
         }),
         Animated.timing(this.state.animatedBouncing, {
