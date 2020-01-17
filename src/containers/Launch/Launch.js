@@ -20,7 +20,8 @@ class Launch extends Component {
     this.state = {
       animatedBouncing: new Animated.Value(0),
       animatedPressing: new Animated.Value(0),
-      animatedSpreading: new Animated.Value(0)
+      animatedSpreading: new Animated.Value(0),
+      animatedSpreadingShadow: new Animated.Value(0)
     };
   }
 
@@ -46,7 +47,6 @@ class Launch extends Component {
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
     // phoneCardConfig.defaultContactPhone = user.tel;
-
     switch (response.status) {
       case STATUS_SUCCESS:
         store.setUserInfo(user);
@@ -72,53 +72,66 @@ class Launch extends Component {
 
   animateLoading = () => {
     Animated.loop(
-      Animated.sequence([
-        Animated.timing(this.state.animatedBouncing, {
-          toValue: 30,
-          easing: Easing.circle,
-          duration: 200,
-          useNativeDriver: true
-        }),
-        Animated.parallel(
-          [
-            Animated.timing(this.state.animatedPressing, {
-              toValue: 1,
-              easing: Easing.bounce,
-              duration: 200,
-              useNativeDriver: true
-            }),
+      Animated.parallel([
+        Animated.sequence([
+          Animated.timing(this.state.animatedBouncing, {
+            toValue: 30,
+            easing: Easing.circle,
+            duration: 300,
+            useNativeDriver: true
+          }),
+          Animated.timing(this.state.animatedPressing, {
+            toValue: 1,
+            easing: Easing.bounce,
+            duration: 200,
+            useNativeDriver: true
+          }),
+          Animated.timing(this.state.animatedPressing, {
+            toValue: 0,
+            easing: Easing.in,
+            duration: 200,
+            useNativeDriver: true
+          }),
+          Animated.timing(this.state.animatedBouncing, {
+            toValue: 60,
+            easing: Easing.in,
+            duration: 600,
+            useNativeDriver: true
+          }),
+          Animated.timing(this.state.animatedBouncing, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true
+          })
+        ]),
+        Animated.sequence([
+          Animated.parallel([
             Animated.timing(this.state.animatedSpreading, {
               toValue: 1,
               easing: Easing.in,
-              duration: 400,
+              duration: 600,
+              delay: 400,
+              useNativeDriver: true
+            }),
+            Animated.timing(this.state.animatedSpreadingShadow, {
+              toValue: 1,
+              easing: Easing.in,
+              duration: 600,
+              delay: 500,
               useNativeDriver: true
             })
-          ],
-          { stopTogether: false }
-        ),
-        Animated.timing(this.state.animatedPressing, {
-          toValue: 0,
-          easing: Easing.in,
-          duration: 200,
-          useNativeDriver: true
-        }),
-        Animated.timing(this.state.animatedSpreading, {
-          toValue: 0,
-          easing: Easing.in,
-          duration: 0,
-          useNativeDriver: true
-        }),
-        Animated.timing(this.state.animatedBouncing, {
-          toValue: 60,
-          easing: Easing.in,
-          duration: 600,
-          useNativeDriver: true
-        }),
-        Animated.timing(this.state.animatedBouncing, {
-          toValue: 0,
-          duration: 0,
-          useNativeDriver: true
-        })
+          ]),
+          Animated.timing(this.state.animatedSpreading, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true
+          }),
+          Animated.timing(this.state.animatedSpreadingShadow, {
+            toValue: 0,
+            duration: 0,
+            useNativeDriver: true
+          })
+        ])
       ])
     ).start();
   };
@@ -158,7 +171,7 @@ class Launch extends Component {
                     {
                       scaleX: this.state.animatedPressing.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [1, 1.2]
+                        outputRange: [1, 1.3]
                       })
                     },
                     {
@@ -173,7 +186,7 @@ class Launch extends Component {
             >
               <Animated.View
                 style={[
-                  styles.dot,
+                  styles.leftHalf,
                   {
                     opacity: this.state.animatedBouncing.interpolate({
                       inputRange: [0, 15, 30, 45, 60],
@@ -195,30 +208,14 @@ class Launch extends Component {
                     ]
                   }
                 ]}
-              >
-                <Animated.View
-                  style={[
-                    styles.leftHalf,
-                    {
-                      transform: [
-                        {
-                          translateX: this.state.animatedBouncing.interpolate({
-                            inputRange: [0, 15, 30, 45, 60],
-                            outputRange: [0, 15, 0, 15, 0]
-                          })
-                        }
-                      ]
-                    }
-                  ]}
-                />
-              </Animated.View>
+              />
             </Animated.View>
 
             <Animated.View
               style={[
                 styles.spreadingShadow,
                 {
-                  opacity: this.state.animatedSpreading.interpolate({
+                  opacity: this.state.animatedSpreadingShadow.interpolate({
                     inputRange: [0, 0.5, 1],
                     outputRange: [0, 1, 0]
                   })
@@ -226,21 +223,21 @@ class Launch extends Component {
                 {
                   transform: [
                     {
-                      scaleX: this.state.animatedSpreading.interpolate({
+                      scaleX: this.state.animatedSpreadingShadow.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 5]
+                        outputRange: [0, 8]
                       })
                     },
                     {
-                      scaleY: this.state.animatedSpreading.interpolate({
+                      scaleY: this.state.animatedSpreadingShadow.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 1.5]
+                        outputRange: [0.6, 1.5]
                       })
                     }
                   ]
                 }
               ]}
-            ></Animated.View>
+            />
             <Animated.View
               style={[
                 styles.spreading,
@@ -253,7 +250,7 @@ class Launch extends Component {
                     {
                       scaleX: this.state.animatedSpreading.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 4]
+                        outputRange: [0, 5]
                       })
                     }
                   ]
@@ -298,7 +295,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   leftHalf: {
-    borderTopColor: appConfig.colors.logo.sub,
     width: 0,
     height: 0,
     borderLeftWidth: 10,
@@ -306,7 +302,10 @@ const styles = StyleSheet.create({
     borderRightWidth: 10,
     borderRightColor: 'transparent',
     borderTopWidth: 10,
-    borderRadius: 5
+    borderTopColor: appConfig.colors.logo.sub,
+    borderBottomWidth: 10,
+    borderBottomColor: 'transparent',
+    borderRadius: 10
   },
   dot: {
     borderRadius: 10,

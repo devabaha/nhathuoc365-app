@@ -81,7 +81,12 @@ class SearchNavBar extends Component {
     };
 
     return (
-      <Header style={[styles.container]} searchBar rounded>
+      <Header
+        iosBarStyle="light-content"
+        style={[styles.container]}
+        searchBar
+        rounded
+      >
         <Item style={[styles.searchInput]}>
           <Animated.View
             style={[

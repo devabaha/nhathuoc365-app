@@ -382,34 +382,38 @@ class ImageGallery extends Component {
   _handleAppStateChange = nextAppState => {
     if (
       this.appState.match(/inactive|background/) &&
-      nextAppState === 'active'
+      nextAppState === 'active' &&
+      !this.state.deepLoading &&
+      !this.state.loading
     ) {
       if (this.state.permissionLibraryGranted) {
         this.getAlbum(true);
       } else {
-        this.callPermissions(
-          PERMISSIONS_TYPE.LIBRARY,
-          LIBRARY_PERMISSIONS_TYPE.CHECK,
-          permissionGranted => {
-            if (this.state.permissionLibraryGranted !== permissionGranted) {
-              this.setState({
-                permissionLibraryGranted: permissionGranted
-              });
+        {
+          this.callPermissions(
+            PERMISSIONS_TYPE.LIBRARY,
+            LIBRARY_PERMISSIONS_TYPE.CHECK,
+            permissionGranted => {
+              if (this.state.permissionLibraryGranted !== permissionGranted) {
+                this.setState({
+                  permissionLibraryGranted: permissionGranted
+                });
+              }
+              if (permissionGranted) {
+                this.getAlbum(false);
+              }
             }
-            if (permissionGranted) {
-              this.getAlbum(false);
-            }
-          }
-        );
-      }
-      if (
-        this.state.permissionCameraGranted === RESULTS.DENIED ||
-        this.state.permissionCameraGranted === RESULTS.BLOCKED
-      ) {
-        this.callPermissions(
-          PERMISSIONS_TYPE.CAMERA,
-          CAMERA_PERMISSIONS_TYPE.CHECK
-        );
+          );
+        }
+        if (
+          this.state.permissionCameraGranted === RESULTS.DENIED ||
+          this.state.permissionCameraGranted === RESULTS.BLOCKED
+        ) {
+          this.callPermissions(
+            PERMISSIONS_TYPE.CAMERA,
+            CAMERA_PERMISSIONS_TYPE.CHECK
+          );
+        }
       }
     }
     this.appState = nextAppState;
@@ -891,6 +895,9 @@ class ImageGallery extends Component {
           ListHeaderComponent={
             this.state.loading && <Loading height={this.props.baseViewHeight} />
           }
+          ListFooterComponent={
+            <LoadMore bottom loading={this.state.deepLoading} />
+          }
           getItemLayout={(data, index) => ({
             length: this.props.itemHeight,
             offset: this.props.itemHeight * index,
@@ -1084,8 +1091,15 @@ const styles = StyleSheet.create({
     paddingTop: isIos ? 20 : 0,
     left: 15
   },
-  albumLoading: {
-    textAlign: 'center'
+  deepLoading: {
+    width: WIDTH,
+    textAlign: 'center',
+    backgroundColor: '#fff',
+    position: 'absolute',
+    color: '#404040',
+    fontSize: 13,
+    height: 25,
+    paddingVertical: 5
   }
 });
 
@@ -1226,24 +1240,26 @@ const PermissonLibraryNotGranted = props => (
 
 class HeaderContent extends Component {
   state = {
-    loadingTitleHeight: new Animated.Value(0)
+    animatedLoading: new Animated.Value(0)
   };
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.loading !== this.props.loading) {
-      Animated.timing(this.state.loadingTitleHeight, {
-        toValue: nextProps.loading ? 1 : 0,
-        easing: Easing.in,
-        duration: 300
+      Animated.spring(this.state.animatedLoading, {
+        toValue: nextProps.loading ? 25 : 0,
+        useNativeDriver: true
       }).start();
     }
-
     if (nextProps !== this.props) {
       return true;
     }
   }
 
   render() {
+    const flatListStyle = {
+      flex: 1,
+      transform: [{ translateY: this.state.animatedLoading }]
+    };
     return (
       <Animated.View
         style={[
@@ -1254,51 +1270,30 @@ class HeaderContent extends Component {
           }
         ]}
       >
-        <FlatList
-          onStartShouldSetPanResponderCapture={() => !this.props.visible}
-          data={this.props.albums}
-          ItemSeparatorComponent={() => (
-            <View style={{ border: 'none', height: 0 }}></View>
-          )}
-          ListHeaderComponent={() => (
-            <Animated.Text
-              style={[
-                styles.albumLoading,
-                {
-                  transform: [
-                    {
-                      translateY: this.state.loadingTitleHeight.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [-100, 15]
-                      })
-                    }
-                  ],
-                  height: this.state.loadingTitleHeight.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 30]
-                  }),
-                  opacity: this.state.loadingTitleHeight
+        <LoadMore top loading={this.props.loading} />
+        <Animated.View style={flatListStyle}>
+          <FlatList
+            onStartShouldSetPanResponderCapture={() => !this.props.visible}
+            data={this.props.albums}
+            ItemSeparatorComponent={() => (
+              <View style={{ border: 'none', height: 0 }}></View>
+            )}
+            renderItem={({ item, index }) => (
+              <AlbumItem
+                title={item.name}
+                coverSource={{ uri: item.cover }}
+                subTitle={item.count}
+                onPress={() => this.props.onSelectAlbum(item)}
+                leftStyle={{ width: WIDTH / 6 }}
+                rightComponent={
+                  item.name === this.props.chosenAlbumTitle &&
+                  this.props.iconSelectedAlbum
                 }
-              ]}
-            >
-              Đang tải thêm...
-            </Animated.Text>
-          )}
-          renderItem={({ item, index }) => (
-            <AlbumItem
-              title={item.name}
-              coverSource={{ uri: item.cover }}
-              subTitle={item.count}
-              onPress={() => this.props.onSelectAlbum(item)}
-              leftStyle={{ width: WIDTH / 6 }}
-              rightComponent={
-                item.name === this.props.chosenAlbumTitle &&
-                this.props.iconSelectedAlbum
-              }
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </Animated.View>
       </Animated.View>
     );
   }
@@ -1338,3 +1333,46 @@ const CameraPicker = props => (
     </Text>
   </View>
 );
+
+class LoadMore extends Component {
+  state = {
+    animatedLoading: new Animated.Value(0)
+  };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.loading !== this.props.loading) {
+      Animated.timing(this.state.animatedLoading, {
+        toValue: nextProps.loading ? 1 : 0,
+        easing: Easing.in,
+        useNativeDriver: true,
+        duration: 300
+      }).start();
+    }
+
+    if (nextProps !== this.props) {
+      return true;
+    }
+  }
+
+  render() {
+    const extraStyle = this.props.top
+      ? { top: 0 }
+      : this.props.bottom
+      ? { bottom: 0 }
+      : null;
+    return (
+      <Animated.Text
+        pointerEvents="none"
+        style={[
+          styles.deepLoading,
+          extraStyle,
+          {
+            opacity: this.state.animatedLoading
+          }
+        ]}
+      >
+        Đang tải thêm...
+      </Animated.Text>
+    );
+  }
+}
