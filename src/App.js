@@ -8,7 +8,6 @@ import {
   Scene,
   Router,
   Actions,
-  ActionConst,
   Overlay,
   Tabs,
   Stack,
@@ -221,20 +220,13 @@ class App extends Component {
 
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
     OneSignal.inFocusDisplaying(2);
   };
 
   handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
     OneSignal.removeEventListener('ids', this.handleAddPushToken);
   };
-
-  handleOpenningNotification(openResult) {
-    const data = openResult.notification.payload.additionalData;
-    servicesHandler(data);
-  }
 
   async handleAddPushToken(device) {
     if (_.isObject(device)) {

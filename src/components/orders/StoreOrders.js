@@ -28,7 +28,7 @@ export default class StoreOrders extends Component {
       loading: true,
       store_id: props.store_id || store.store_id,
       store_data: store.store_data,
-      tel: store.store_data.tel,
+      tel: props.tel || store.store_data.tel,
       title: props.title || store.store_data.name
     };
 
@@ -36,15 +36,17 @@ export default class StoreOrders extends Component {
   }
 
   componentDidMount() {
-    Actions.refresh({
-      title: this.state.title,
-      renderRightButton: this._renderRightButton.bind(this),
-      onBack: () => {
-        this._unMount();
+    setTimeout(() =>
+      Actions.refresh({
+        title: this.state.title,
+        right: this._renderRightButton.bind(this),
+        onBack: () => {
+          this._unMount();
 
-        Actions.pop();
-      }
-    });
+          Actions.pop();
+        }
+      })
+    );
 
     this.start_time = time();
 
@@ -363,7 +365,8 @@ const styles = StyleSheet.create({
     marginBottom: 0
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center'
   },
 
   separator: {

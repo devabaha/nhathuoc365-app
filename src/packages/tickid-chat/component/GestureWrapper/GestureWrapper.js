@@ -165,9 +165,7 @@ class GestureWrapper extends Component {
       HEIGHT -
       (collapsedBodyHeight +
         headerHeight +
-        (isAndroidEmulator
-          ? MIN_HEIGHT_COMPOSER - ANDROID_STATUS_BAR_HEIGHT
-          : 0) +
+        (isAndroidEmulator ? ANDROID_STATUS_BAR_HEIGHT : 0) +
         BOTTOM_SPACE_IPHONE_X)
     );
   }
@@ -393,10 +391,6 @@ class GestureWrapper extends Component {
 }
 
 const styles = StyleSheet.create({
-  fakeView: {
-    width: WIDTH,
-    backgroundColor: 'rgba(0,0,0,0)'
-  },
   panResponder: {
     zIndex: 1,
     position: 'absolute',
@@ -409,8 +403,7 @@ const styles = StyleSheet.create({
     flexGrow: 1
   },
   scrollViewStyle: {
-    flex: 1,
-    position: 'relative'
+    flex: 1
   },
   container: {
     flex: 1,

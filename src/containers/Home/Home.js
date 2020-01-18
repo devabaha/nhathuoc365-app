@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Alert, StyleSheet } from 'react-native';
+import OneSignal from 'react-native-onesignal';
+
 import store from 'app-store';
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
@@ -30,8 +32,27 @@ class Home extends Component {
     };
   }
 
+  homeDataLoaded = false;
+
   componentDidMount() {
     this.getHomeDataFromApi();
+  }
+
+  componentWillUnmount() {
+    this.homeDataLoaded && this.handleRemoveListenerOneSignal();
+  }
+
+  handleAddListenerOneSignal = () => {
+    OneSignal.addEventListener('opened', this.handleOpenningNotification);
+  };
+
+  handleRemoveListenerOneSignal = () => {
+    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
+  };
+
+  handleOpenningNotification(openResult) {
+    const data = openResult.notification.payload.additionalData;
+    servicesHandler(data);
   }
 
   getHomeDataFromApi = async (showLoading = true) => {
@@ -65,6 +86,11 @@ class Home extends Component {
           primaryActions: response.data.primary_actions,
           product_groups: response.data.product_groups
         });
+
+        if (!this.homeDataLoaded) {
+          this.homeDataLoaded = true;
+          this.handleAddListenerOneSignal();
+        }
       }
     } catch (error) {
       console.log(error);
