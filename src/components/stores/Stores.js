@@ -118,6 +118,9 @@ class Stores extends Component {
     // get categories navigator
     this._getCategoriesNavFromServer();
 
+    // update order information
+    this._getCart();
+
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
 
@@ -171,6 +174,25 @@ class Stores extends Component {
       console.log(e + ' site_info');
 
       store.addApiQueue('site_info', this._getCategoriesNavFromServer);
+    }
+  };
+
+  _getCart = async () => {
+    try {
+      var response = await APIHandler.site_cart(store.store_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        action(() => {
+          store.setCartData(response.data);
+        })();
+      } else {
+        action(() => {
+          store.resetCartData();
+        })();
+      }
+    } catch (e) {
+      console.log(e + ' site_cart');
+      store.addApiQueue('site_cart', this._getCart.bind(this));
     }
   };
 

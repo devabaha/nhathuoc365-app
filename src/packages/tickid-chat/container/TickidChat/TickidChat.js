@@ -729,7 +729,7 @@ class TickidChat extends Component {
   };
 
   render() {
-    console.log('@_@ renderTickidChat', this.state.keyboardInformation.height);
+    console.log('@_@ renderTickidChat');
     const extraChatViewStyle = {
       marginTop: this.state.chatViewMarginTop
     };
