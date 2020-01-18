@@ -1352,6 +1352,8 @@ class LoadMore extends Component {
     if (nextProps !== this.props) {
       return true;
     }
+
+    return false;
   }
 
   render() {
