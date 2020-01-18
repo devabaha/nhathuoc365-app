@@ -244,6 +244,7 @@ export default class Account extends Component {
       store.is_stay_account = true;
       store.parentTab = '_account';
     });
+    EventTracker.logEvent('Account');
   }
 
   login = async delay => {
