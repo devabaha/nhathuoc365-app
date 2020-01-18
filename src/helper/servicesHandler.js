@@ -26,10 +26,9 @@ export const servicesHandler = service => {
       break;
     case 'STORE_ORDERS_TYPE':
       Actions.push(appConfig.routes.storeOrders, {
-        phoneNumber: service.tel,
+        tel: service.tel,
         title: service.site_name,
-        site_id: service.site_id,
-        user_id: service.user_id
+        store_id: service.store_id
       });
       break;
     case 'ORDERS_TYPE':
