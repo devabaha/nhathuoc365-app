@@ -41,6 +41,8 @@
     "react-native-deep-linking": "^2.1.0",
     "react-native-device-info": "^0.17.3",
     "react-native-elements": "^0.19.0",
+    "react-native-exception-handler": "^2.10.8",
+    "react-native-facebook-account-kit": "1.1.0",
     "react-native-fast-image": "5.4.2",
     "react-native-fingerprint-scanner": "^3.0.2",
     "react-native-firebase": "~5.5.6",
