@@ -173,6 +173,7 @@ dependencies {
     implementation project(':@react-native-community_cameraroll')
     implementation project(':react-native-firebase')
     implementation "com.google.firebase:firebase-auth:17.0.0"
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation "com.google.android.gms:play-services-base:16.1.0"
     implementation "com.google.firebase:firebase-core:16.0.9"
     implementation project(':react-native-permissions')
@@ -214,4 +215,4 @@ allprojects {
     }
 }
 
-apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
