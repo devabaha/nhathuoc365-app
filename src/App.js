@@ -8,7 +8,6 @@ import {
   Scene,
   Router,
   Actions,
-  ActionConst,
   Overlay,
   Tabs,
   Stack,
@@ -110,6 +109,7 @@ import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import { servicesHandler } from './helper/servicesHandler';
 /**
  * Initializes config for Phone Card module
  */
@@ -310,94 +310,13 @@ class App extends Component {
 
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
     OneSignal.inFocusDisplaying(2);
   };
 
   handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
     OneSignal.removeEventListener('ids', this.handleAddPushToken);
   };
-
-  handleOpenningNotification(openResult) {
-    const data = openResult.notification.payload.additionalData;
-    if (data) {
-      const { page, site_id, page_id } = data;
-      if (page) {
-        switch (page) {
-          case 'store':
-            if (page_id) {
-              this.goToStoreScene(page_id);
-            }
-            break;
-          case 'new':
-            if (page_id) {
-              this.goToNewsScene(page_id);
-            }
-            break;
-          case 'order':
-            if (site_id && page_id) {
-              Actions.orders_item({
-                title: '#...',
-                passProps: {
-                  notice_data: {
-                    site_id,
-                    page_id
-                  }
-                }
-              });
-            }
-            break;
-        }
-      }
-    }
-  }
-
-  async goToStoreScene(page_id) {
-    try {
-      var response = await APIHandler.site_info(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setStoreData(response.data);
-
-          this._goStore(response);
-        })();
-      } else if (response && response.data) {
-        Actions.search_store({
-          site_code: response.data.site_code
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async goToNewsScene(page_id) {
-    try {
-      var response = await APIHandler.user_news(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        if (currentSceneName == 'notify_item') {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data,
-              type: ActionConst.REFRESH
-            });
-          }, 660);
-        } else {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data
-            });
-          }, 660);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async handleAddPushToken(device) {
     if (_.isObject(device)) {
@@ -500,124 +419,11 @@ class RootRouter extends Component {
 
     return true;
   }
-  componentDidMount() {
-    this.handleAddListenerOneSignal();
-  }
-
-  componentWillUnmount() {
-    this.handleRemoveListenerOneSignal();
-  }
 
   setHeader(header) {
     this.props.setHeader(header);
   }
 
-  handleAddListenerOneSignal = () => {
-    OneSignal.init(appConfig.oneSignal.appKey);
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
-    OneSignal.addEventListener('ids', this.handleAddPushToken);
-    OneSignal.inFocusDisplaying(2);
-  };
-
-  handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
-    OneSignal.removeEventListener('ids', this.handleAddPushToken);
-  };
-
-  handleOpenningNotification(openResult) {
-    const data = openResult.notification.payload.additionalData;
-    if (data) {
-      const { page, site_id, page_id } = data;
-      if (page) {
-        switch (page) {
-          case 'store':
-            if (page_id) {
-              this.goToStoreScene(page_id);
-            }
-            break;
-          case 'new':
-            if (page_id) {
-              this.goToNewsScene(page_id);
-            }
-            break;
-          case 'order':
-            if (site_id && page_id) {
-              Actions.orders_item({
-                title: '#...',
-                passProps: {
-                  notice_data: {
-                    site_id,
-                    page_id
-                  }
-                }
-              });
-            }
-            break;
-        }
-      }
-    }
-  }
-
-  async goToStoreScene(page_id) {
-    try {
-      var response = await APIHandler.site_info(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setStoreData(response.data);
-
-          this._goStore(response);
-        })();
-      } else if (response && response.data) {
-        Actions.search_store({
-          site_code: response.data.site_code
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async goToNewsScene(page_id) {
-    try {
-      var response = await APIHandler.user_news(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        if (currentSceneName == 'notify_item') {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data,
-              type: ActionConst.REFRESH
-            });
-          }, 660);
-        } else {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data
-            });
-          }, 660);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async handleAddPushToken(device) {
-    if (_.isObject(device)) {
-      const push_token = device.pushToken;
-      const player_id = device.userId;
-
-      try {
-        await APIHandler.add_push_token({
-          push_token,
-          player_id
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
   render() {
     return (
       <Router
