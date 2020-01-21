@@ -36,7 +36,8 @@ import {
   WINDOW_HEIGHT,
   HEADER_HEIGHT,
   ANDROID_EXTRA_DIMENSIONS_HEIGHT,
-  ANDROID_STATUS_BAR_HEIGHT
+  ANDROID_STATUS_BAR_HEIGHT,
+  isAndroidEmulator
 } from '../../constants';
 import MasterToolBar from '../MasterToolBar';
 
@@ -249,9 +250,7 @@ class TickidChat extends Component {
       e.endCoordinates.height !== this.state.keyboardInformation.height
     ) {
       state.keyboardInformation.height =
-        e.endCoordinates.height -
-        BOTTOM_SPACE_IPHONE_X +
-        (ANDROID_EXTRA_DIMENSIONS_HEIGHT !== 0 ? ANDROID_STATUS_BAR_HEIGHT : 0);
+        e.endCoordinates.height - BOTTOM_SPACE_IPHONE_X;
 
       isUpdate = true;
     }
@@ -280,19 +279,18 @@ class TickidChat extends Component {
     });
   }
 
-  handleFocus = (didShow = false) => {
+  handleFocus = () => {
     if (this.refInput.current) {
       this.refInput.current.focus();
     }
-    if (didShow) {
-      setTimeout(() =>
-        setStater(this, this.unmounted, {
-          editable: true,
-          showToolBar: true,
-          selectedType: COMPONENT_TYPE._NONE
-        })
-      );
-    }
+
+    setTimeout(() =>
+      setStater(this, this.unmounted, {
+        editable: true,
+        showToolBar: true,
+        selectedType: COMPONENT_TYPE._NONE
+      })
+    );
   };
 
   handleBlur = () => {
@@ -729,7 +727,7 @@ class TickidChat extends Component {
   };
 
   render() {
-    console.log('@_@ renderTickidChat', this.state.keyboardInformation.height);
+    console.log('@_@ renderTickidChat');
     const extraChatViewStyle = {
       marginTop: this.state.chatViewMarginTop
     };
@@ -826,9 +824,11 @@ const styles = StyleSheet.create({
     flex: 1,
     width: WIDTH,
     height:
-      WINDOW_HEIGHT -
+      (isAndroidEmulator ? HEIGHT : WINDOW_HEIGHT) -
       HEADER_HEIGHT +
-      ANDROID_EXTRA_DIMENSIONS_HEIGHT -
+      (isAndroidEmulator
+        ? -ANDROID_STATUS_BAR_HEIGHT
+        : ANDROID_EXTRA_DIMENSIONS_HEIGHT) -
       BOTTOM_SPACE_IPHONE_X,
     left: 0,
     right: 0

@@ -8,6 +8,7 @@ import appConfig from 'app-config';
 import APIHandler from '../../network/APIHandler';
 import TickidChat from '../../packages/tickid-chat/container/TickidChat/TickidChat';
 import RightButtonCall from '../RightButtonCall';
+import { servicesHandler } from '../../helper/servicesHandler';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -330,129 +331,14 @@ export default class Chat extends Component {
   }
 
   handlePinPress = pin => {
-    switch (pin.type) {
-      case 'ACCUMULATE_POINTS_TYPE':
-        Actions.push(appConfig.routes.qrBarCode, {
-          title: 'Mã tài khoản'
-        });
-        break;
-      case 'MY_VOUCHER_TYPE':
-      case 'my_voucher':
-        Actions.push(appConfig.routes.myVoucher, {
-          title: 'Voucher của tôi',
-          from: 'home'
-        });
-        break;
-      case 'TRANSACTION_TYPE':
-        Actions.vnd_wallet({
-          title: store.user_info.default_wallet.name,
-          wallet: store.user_info.default_wallet
-        });
-        break;
-      case 'ORDERS_TYPE':
-        Actions.push(appConfig.routes.storeOrders, {
-          store_id: this.state.site.id,
-          title: this.state.site.name,
-          tel: this.state.site.tel
-        });
-        break;
-      case 'QRCODE_SCAN_TYPE':
-      case 'qrscan':
-        Actions.push(appConfig.routes.qrBarCode, {
-          index: 1,
-          title: 'Quét QR Code',
-          wallet: store.user_info.default_wallet
-        });
-        break;
-      case 'up_to_phone':
-        Actions.push(appConfig.routes.upToPhone, {
-          service_type: pin.type,
-          service_id: pin.id,
-          indexTab: pin.tab,
-          title: pin.name,
-          serviceId: pin.serviceId ? pin.serviceId : 100
-        });
-        break;
-      case 'list_voucher':
-        Actions.push(appConfig.routes.mainVoucher, {
-          from: 'home'
-        });
-        break;
-      case 'rada_service':
-        Actions.push('tickidRada', {
-          service_type: pin.type,
-          service_id: pin.id,
-          title: 'Dịch vụ Rada',
-          onPressItem: item => {
-            this.handleCategoryPress(item);
-          }
-        });
-        break;
-      case '30day_service':
-        Alert.alert(
-          'Thông báo',
-          'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
-          [{ text: 'Đồng ý' }]
-        );
-        break;
-      case 'my_address':
-        Actions.push(appConfig.routes.myAddress, {
-          from_page: 'account'
-        });
-        break;
-      case 'news':
-        Actions.jump(appConfig.routes.newsTab);
-        break;
-      case 'orders':
-        Actions.jump(appConfig.routes.ordersTab);
-        break;
-      case 'list_chat':
-        Actions.list_amazing_chat({
-          titleStyle: { width: 220 }
-        });
-        break;
-      case 'open_shop':
-        if (this.shopOpening) return;
-        this.setState({
-          showLoading: true
-        });
-        APIHandler.site_info(pin.siteId)
-          .then(response => {
-            if (
-              response &&
-              response.status == STATUS_SUCCESS &&
-              !this.unmounted
-            ) {
-              action(() => {
-                store.setStoreData(response.data);
-                Actions.push(appConfig.routes.store, {
-                  title: pin.name || response.data.name,
-                  categoryId: pin.categoryId || 0
-                });
-              })();
-            }
-          })
-          .finally(() => {
-            this.shopOpening = false;
-            this.setState({
-              showLoading: false
-            });
-          });
-        break;
-      case 'call':
-        Communications.phonecall(pin.tel, true);
-        break;
-      case 'news_category':
-        Actions.push(appConfig.routes.notifies, {
-          title: pin.title,
-          news_type: `/${pin.categoryId}`
-        });
-        break;
-      default:
-        Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
-          { text: 'Đồng ý' }
-        ]);
-        break;
+    if (pin.type === 'STORE_ORDERS_TYPE') {
+      Actions.push(appConfig.routes.storeOrders, {
+        store_id: this.state.site.id,
+        title: this.state.site.name,
+        tel: this.state.site.tel
+      });
+    } else {
+      servicesHandler(pin);
     }
   };
 
