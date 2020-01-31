@@ -110,7 +110,11 @@ class Address extends Component {
               this.setState({
                 continue_loading: false
               });
-              Toast.show(response.message);
+
+              flashShowMessage({
+                type: 'success',
+                message: response.message
+              });
             })();
 
             this._goConfirm();

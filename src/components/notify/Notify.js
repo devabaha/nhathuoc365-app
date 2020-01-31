@@ -1,21 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableHighlight,
-  StyleSheet,
-  RefreshControl,
-  FlatList,
-  Alert,
-  TouchableOpacity
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, FlatList } from 'react-native';
 
 // library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import SelectionList from '../SelectionList';
 import { reaction } from 'mobx';
@@ -23,8 +12,7 @@ import { reaction } from 'mobx';
 // components
 import NewItemComponent from './NewItemComponent';
 
-@observer
-export default class Notify extends Component {
+class Notify extends Component {
   constructor(props) {
     super(props);
 
@@ -86,6 +74,22 @@ export default class Notify extends Component {
     try {
       var response = await APIHandler.user_news_list(this.state.news_type);
       if (response && response.status == STATUS_SUCCESS) {
+        if (store.deep_link_data) {
+          const news = response.data.find(
+            newsItem => newsItem.id === store.deep_link_data.id
+          );
+          if (news) {
+            Actions.notify_item({
+              title: news.title,
+              data: news
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: 'Tin tức không tồn tại hoặc đã bị xóa!'
+            });
+          }
+        }
         setTimeout(() => {
           this.setState({
             data: response.data,
@@ -99,6 +103,7 @@ export default class Notify extends Component {
 
       store.addApiQueue('user_news_list', this._getData.bind(this, delay));
     } finally {
+      store.setDeepLinkData(null);
     }
   }
 
@@ -177,3 +182,5 @@ const styles = StyleSheet.create({
     borderRadius: 15
   }
 });
+
+export default observer(Notify);

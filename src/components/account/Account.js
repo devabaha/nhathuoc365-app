@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
-import { showMessage } from 'react-native-flash-message';
 import Communications from 'react-native-communications';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
@@ -22,8 +21,7 @@ import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
 
-@observer
-export default class Account extends Component {
+class Account extends Component {
   constructor(props) {
     super(props);
 
@@ -802,7 +800,7 @@ export default class Account extends Component {
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
-          showMessage({
+          flashShowMessage({
             message: 'Đăng xuất thành công',
             type: 'info'
           });
@@ -1042,3 +1040,5 @@ const styles = StyleSheet.create({
     // marginRight: 8
   }
 });
+
+export default observer(Account);

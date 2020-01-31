@@ -15,9 +15,9 @@ import OrdersItemComponent from './OrdersItemComponent';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
 import appConfig from 'app-config';
+import { setStater } from '../../packages/tickid-chat/helper';
 
-@observer
-export default class StoreOrders extends Component {
+class StoreOrders extends Component {
   constructor(props) {
     super(props);
 
@@ -33,6 +33,7 @@ export default class StoreOrders extends Component {
     };
 
     this._getData = this._getData.bind(this);
+    this.unmounted = false;
   }
 
   componentDidMount() {
@@ -60,30 +61,33 @@ export default class StoreOrders extends Component {
     Events.on(RELOAD_STORE_ORDERS, RELOAD_STORE_ORDERS + 'ID', this._getData);
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   _unMount() {
     Events.removeAll(RELOAD_STORE_ORDERS);
   }
 
   async _getData(delay) {
     try {
-      var response = await APIHandler.site_cart_list(this.state.store_id);
+      const response = await APIHandler.site_cart_list(this.state.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
-          this.setState({
+          setStater(this, this.unmounted, {
             data: response.data,
             refreshing: false,
             loading: false
           });
         }, delay || this._delay());
       } else {
-        this.setState({
+        setStater(this, this.unmounted, {
           loading: false
         });
       }
     } catch (e) {
       console.log(e + ' site_cart_list');
-
       store.addApiQueue('site_cart_list', this._getData.bind(this, delay));
     } finally {
     }
@@ -255,7 +259,11 @@ export default class StoreOrders extends Component {
               store.setOrdersKeyChange(store.orders_key_change + 1);
             })();
           }, 450);
-          Toast.show(response.message);
+
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (e) {
         console.log(e + ' site_cart_cancel');
@@ -290,7 +298,10 @@ export default class StoreOrders extends Component {
 
           this._getData();
 
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (e) {
         console.log(e + ' site_cart_reorder');
@@ -320,14 +331,18 @@ export default class StoreOrders extends Component {
   async _editCart() {
     if (this.item_edit) {
       try {
-        var response = await APIHandler.site_cart_edit(
+        const response = await APIHandler.site_cart_edit(
           this.item_edit.site_id,
           this.item_edit.id
         );
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
-            Toast.show(response.message);
+
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           })();
 
           this._getData();
@@ -400,3 +415,5 @@ const styles = StyleSheet.create({
     color: '#ffffff'
   }
 });
+
+export default observer(StoreOrders);

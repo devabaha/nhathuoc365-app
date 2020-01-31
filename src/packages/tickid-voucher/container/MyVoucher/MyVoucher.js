@@ -1,12 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import config from '../../config';
-import { USE_ONLINE } from '../../constants';
+import { USE_ONLINE, showMessage } from '../../constants';
 import BaseContainer from '../BaseContainer';
 import { internalFetch } from '../../helper/apiFetch';
 import MyVoucherComponent from '../../component/MyVoucher';
 import CampaignEntity from '../../entity/CampaignEntity';
-import { showMessage } from 'react-native-flash-message';
+import store from 'app-store';
 
 const defaultFn = () => {};
 
@@ -86,11 +86,24 @@ class MyVoucher extends BaseContainer {
         : config.rest.myVouchers();
       const response = await internalFetch(url);
       if (response.status === config.httpCode.success) {
-        this.setState({
-          campaigns: response.data.campaigns.map(
-            campaign => new CampaignEntity(campaign)
-          )
-        });
+        const campaigns = response.data.campaigns.map(
+          campaign => new CampaignEntity(campaign)
+        );
+
+        if (store.deep_link_data) {
+          const campaign = campaigns.find(
+            campaign => campaign.data.id === store.deep_link_data.id
+          );
+          if (campaign) {
+            this.handlePressVoucher(campaign);
+          } else {
+            showMessage({
+              type: 'danger',
+              message: 'Không tìm thấy voucher!'
+            });
+          }
+        }
+        this.setState({ campaigns });
       }
     } catch (error) {
       console.log(error);
@@ -99,6 +112,8 @@ class MyVoucher extends BaseContainer {
         refreshing: false,
         apiFetching: false
       });
+
+      store.setDeepLinkData(null);
     }
   };
 
@@ -165,4 +180,4 @@ class MyVoucher extends BaseContainer {
   }
 }
 
-export default MyVoucher;
+export default observer(MyVoucher);

@@ -17,7 +17,6 @@ import {
 import OneSignal from 'react-native-onesignal';
 import codePush from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
-import FlashMessage from 'react-native-flash-message';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
@@ -108,7 +107,6 @@ import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
 import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import { servicesHandler } from './helper/servicesHandler';
 /**
  * Initializes config for Phone Card module
  */
@@ -249,6 +247,7 @@ class App extends Component {
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
         <RootRouter setHeader={this.setHeader.bind(this)} />
+        <FlashMessage icon={'auto'} />
       </View>
     );
   }
@@ -462,6 +461,30 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
+                {/* ================ DEEP LINK FOR TABS ================ */}
+
+                <Stack key={appConfig.routes.deepLinkOrdersTab}>
+                  <Scene
+                    key={`${appConfig.routes.deepLinkOrdersTab}_1`}
+                    title="Đơn hàng"
+                    component={Orders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.deepLinkNewsTab}>
+                  <Scene
+                    key={`${appConfig.routes.deepLinkNewsTab}_1`}
+                    title="Tin tức"
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ END DEEP LINK ================ */}
 
                 <Stack key={appConfig.routes.myAddress}>
                   <Scene
@@ -1024,8 +1047,6 @@ class RootRouter extends Component {
               />
             </Stack>
           </Modal>
-
-          <Scene component={FlashMessage} />
         </Overlay>
       </Router>
     );

@@ -6,8 +6,7 @@ import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 
-@observer
-export default class OrdersItemComponent extends Component {
+class OrdersItemComponent extends Component {
   async _getCart(callback) {
     try {
       var response = await APIHandler.site_cart(store.store_id);
@@ -42,14 +41,15 @@ export default class OrdersItemComponent extends Component {
     })();
 
     if (
-      (store.parentTab == '_home' && !this.props.goStore) ||
-      store.orderIsPop
+      store.parentTab == '_home' &&
+      !this.props.goStore
+      // || store.orderIsPop
     ) {
       Actions.pop();
     } else {
       Actions.push(appConfig.routes.store, {
-        title: item.shop_name,
-        orderIsPop: store.parentTab == '_orders' ? true : false
+        title: item.shop_name
+        // orderIsPop: store.parentTab == '_orders' ? true : false
       });
     }
   }
@@ -482,3 +482,5 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
+
+export default observer(OrdersItemComponent);

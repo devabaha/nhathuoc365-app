@@ -11,7 +11,6 @@ import HomeComponent from '../../components/Home';
 import { executeJobs } from '../../helper/jobsOnReset';
 import { servicesHandler } from '../../helper/servicesHandler';
 
-@observer
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -68,7 +67,7 @@ class Home extends Component {
       }
 
       try {
-        console.log(params);
+        console.log(params, this.props);
         if (params['+clicked_branch_link'] && params['+match_guaranteed']) {
           servicesHandler(params);
         }
@@ -423,4 +422,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Home;
+export default observer(Home);
