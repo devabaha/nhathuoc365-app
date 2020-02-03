@@ -949,10 +949,10 @@
     prop-types "^15.7.2"
     react-native-button "^2.4.0"
 
-"@tickid/tickid-rada@^2.0.8":
-  version "2.0.8"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.0.8.tgz#e24f571aa6a05a24e5d621ddb3b463223c6ff8d3"
-  integrity sha512-ssOBo3pixNLLyBzRtQq3MCF3P4eClmnSn7IviVuVnkTp7wmLSKIkpToEL7Yj7weGWQmCKNSCYCpjg/1JslvjIA==
+"@tickid/tickid-rada@^2.1.6":
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.1.6.tgz#891f6a5b3043209980871ee5ed49abb10d1cc8b4"
+  integrity sha512-Sbp0DelFu1XhTetOaFMw+f2nD9p9VFxxzgRAPL2mMDFY32e3iG8jNmo036dGR7oD8KIKq0ir9L1ZUHbwLOqN+g==
   dependencies:
     prop-types "^15.7.2"
     react-native-render-html "^4.1.2"
@@ -6461,6 +6461,13 @@ react-native-autoheight-webview@^1.1.3:
   dependencies:
     prop-types "^15.7.2"
 
+react-native-awesome-alerts@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-awesome-alerts/-/react-native-awesome-alerts-1.3.0.tgz#a4cc825471d295e8cfcd1e4ece06e549bc05e2af"
+  integrity sha512-yGFiho0/JjZI8walp+ZNj8MVAtefgpfrlsA0ToTVDDXm0/iy3wr2PQOhL6jfHNx5E8CyXV7zEUsGJzMFMEJG4g==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-native-barcode-builder@^1.0.5:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/react-native-barcode-builder/-/react-native-barcode-builder-1.0.5.tgz#dcc93b6afeec56148b8b3c4e5fb9136a532f7883"
@@ -6566,6 +6573,11 @@ react-native-elements@^0.19.0:
     opencollective "^1.0.3"
     prop-types "^15.5.8"
 
+react-native-exception-handler@^2.10.8:
+  version "2.10.8"
+  resolved "https://registry.yarnpkg.com/react-native-exception-handler/-/react-native-exception-handler-2.10.8.tgz#1a7f846592d888d23adaf797e31802585f1d9ff0"
+  integrity sha512-ZN+jwpADRkCUNdad/50k0mZdMoICGrGdtaxgvRU+pNcWRRBAXJhuo4+jY0eQaoVpx1ghycGE6tBu9ka8gL2NOQ==
+
 react-native-fast-image@5.4.2:
   version "5.4.2"
   resolved "https://registry.yarnpkg.com/react-native-fast-image/-/react-native-fast-image-5.4.2.tgz#d761cb9dddc0473b537544617e511a11c9e18413"
@@ -6576,10 +6588,10 @@ react-native-fingerprint-scanner@^3.0.2:
   resolved "https://registry.yarnpkg.com/react-native-fingerprint-scanner/-/react-native-fingerprint-scanner-3.0.2.tgz#ca9994de4b30dcf5ad2f5b420bfdd4d8775e8831"
   integrity sha512-e6EkSgThwHAI9y5y2G3HdEbuKBka2lu3gRzpWzQs8FQF3t2DIB7fRHdA3/fnd33T39P0vU6hSCc9xwSpDbSdyg==
 
-react-native-firebase@^5.5.6:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.6.0.tgz#6f6123f53cb73477915dd55c55f3e1de91db38d2"
-  integrity sha512-I+o3zNLdIz4pxWTCSZH70M1BcPl+SdqKQfurOT0sWcaMSL2ecDqVy0PCTmN7ORt7/Z879Er6PLgA/psjArQlmw==
+react-native-firebase@~5.5.6:
+  version "5.5.7"
+  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.5.7.tgz#d03d69c774af280c80c63bede59f65c5f7e8f26c"
+  integrity sha512-vWUdF6lE22iKSE1gh3bxzzfcA7OCoY1VLASF/XFAlXdGzw4/ksRrdcgdItkNSUnrYG3+pB46ah+OaTHPENPmuQ==
   dependencies:
     opencollective-postinstall "^2.0.0"
     prop-types "^15.7.2"

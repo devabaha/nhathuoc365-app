@@ -4,6 +4,9 @@ PODS:
     - AppAuth/ExternalUserAgent (= 1.3.0)
   - AppAuth/Core (1.3.0)
   - AppAuth/ExternalUserAgent (1.3.0)
+  - Crashlytics (3.14.0):
+    - Fabric (~> 1.10.2)
+  - Fabric (1.10.2)
   - Firebase/Analytics (6.13.0):
     - Firebase/Core
   - Firebase/Auth (6.13.0):
@@ -124,6 +127,17 @@ PODS:
     - React/RCTNetwork
   - React/RCTNetwork (0.59.9):
     - React/Core
+  - ReactNativeExceptionHandler (2.10.8):
+    - React
+  - RNFirebase (5.5.7):
+    - Firebase/Core
+    - React
+    - RNFirebase/Crashlytics (= 5.5.7)
+  - RNFirebase/Crashlytics (5.5.7):
+    - Crashlytics
+    - Fabric
+    - Firebase/Core
+    - React
   - RNFS (2.15.2):
     - React
   - RNPermissions (2.0.6):
@@ -138,6 +152,8 @@ PODS:
   - yoga (0.59.9.React)
 
 DEPENDENCIES:
+  - Crashlytics (~> 3.14.0)
+  - Fabric (~> 1.10.2)
   - Firebase/Analytics
   - Firebase/Auth
   - GoogleSignIn
@@ -147,6 +163,9 @@ DEPENDENCIES:
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-screen-brightness (from `../node_modules/react-native-screen-brightness`)
   - React/RCTImage (from `../node_modules/react-native`)
+  - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec`)
+  - RNFirebase (from `../node_modules/react-native-firebase/ios`)
+  - RNFirebase/Crashlytics (from `../node_modules/react-native-firebase/ios`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -154,6 +173,8 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppAuth
+    - Crashlytics
+    - Fabric
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -187,6 +208,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   react-native-screen-brightness:
     :path: "../node_modules/react-native-screen-brightness"
+  ReactNativeExceptionHandler:
+    :podspec: "../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec"
+  RNFirebase:
+    :path: "../node_modules/react-native-firebase/ios"
   RNFS:
     :path: "../node_modules/react-native-fs"
   RNPermissions:
@@ -196,6 +221,8 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
+  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
+  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
   Firebase: 458d109512200d1aca2e1b9b6cf7d68a869a4a46
   FirebaseAnalytics: 45f36d9c429fc91d206283900ab75390cd05ee8a
   FirebaseAuth: 7d0f84873926f6648bbd1391a318dfb1a26b5e4f
@@ -220,11 +247,13 @@ SPEC CHECKSUMS:
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
   react-native-fast-image: 7278563726f2455ed3ba6e04dea472345173278c
   react-native-screen-brightness: 07a615629827593d3ac8bb0a3498088416cadd32
+  ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
+  RNFirebase: 3c0d26909841ad3c72ca46d85aba333ef49903bc
   RNFS: 54da03c2b7d862c42ea3ca8c7f86f892760a535a
   RNPermissions: 4fa81b28a6e07b31ed9068fa7dab24e2b8a3902b
   SDWebImage: c10d14a8883ebd89664f02a422006f66a85c0c5d
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 404cbf3f402bd0464c23678fa5cfcc858f0d3ece
+PODFILE CHECKSUM: 283e523b0d2b4945ae6b9990788758ac7362cb36
 
 COCOAPODS: 1.8.4
