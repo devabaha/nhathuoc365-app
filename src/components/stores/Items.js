@@ -7,7 +7,6 @@ import {
   TouchableHighlight,
   StyleSheet
 } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 
@@ -92,9 +91,9 @@ export default class Items extends Component {
               this.setState({
                 buying: false
               });
-              showMessage({
-                type: 'success',
-                message: response.message
+              flashShowMessage({
+                message: response.message,
+                type: 'success'
               });
             })();
           }

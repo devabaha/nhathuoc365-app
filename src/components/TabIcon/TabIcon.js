@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import appConfig from 'app-config';
 import store from 'app-store';
 
-@observer
 class TabIcon extends Component {
   static propTypes = {
     focused: PropTypes.bool,
@@ -121,4 +120,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default TabIcon;
+export default observer(TabIcon);

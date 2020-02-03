@@ -3,6 +3,7 @@ import mobifoneImage from './assets/images/mobifone.png';
 import vinaphoneImage from './assets/images/vinaphone.png';
 import vietnamobileImage from './assets/images/vietnamobile.png';
 import gmobileImage from './assets/images/gmobile.png';
+import { showMessage as showMessageFM } from 'react-native-flash-message';
 
 export const INITIALIZED = 'init';
 
@@ -115,3 +116,5 @@ export const CARD_VALUES = {
     type: CARD_500K
   }
 };
+
+export const showMessage = global.flashShowMessage || showMessageFM;

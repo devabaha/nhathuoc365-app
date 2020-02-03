@@ -16,7 +16,6 @@ import { Actions } from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-@observer
 class Orders extends Component {
   constructor(props) {
     super(props);
@@ -92,6 +91,25 @@ class Orders extends Component {
       var response = await APIHandler.user_cart_list();
 
       if (response && response.status == STATUS_SUCCESS) {
+        if (store.deep_link_data) {
+          const item = response.data.find(
+            order => order.id === store.deep_link_data.id
+          );
+          if (item) {
+            store.setStoreData(item.site);
+            Actions.orders_item({
+              data: item,
+              title: `#${item.cart_code}`,
+              tel: item.tel
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: 'Không tìm thấy đơn hàng!'
+            });
+          }
+        }
+
         setTimeout(() => {
           this.setState({
             data: response.data,
@@ -122,6 +140,7 @@ class Orders extends Component {
       );
     } finally {
       store.getNoitify();
+      store.setDeepLinkData(null);
     }
   }
 
@@ -151,6 +170,7 @@ class Orders extends Component {
       <View style={styles.container}>
         {data != null ? (
           <ScrollView
+            scrollEventThrottle={16}
             onScroll={event => {
               this.setState({
                 scrollTop: event.nativeEvent.contentOffset.y
@@ -258,7 +278,10 @@ class Orders extends Component {
 
           this._getData();
 
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (error) {
         console.log(error);
@@ -279,7 +302,10 @@ class Orders extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
-            Toast.show(response.message);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           })();
 
           this._getData();
@@ -315,7 +341,10 @@ class Orders extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           this._getData(450, true);
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (error) {
         console.log(error);
@@ -413,4 +442,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Orders;
+export default observer(Orders);

@@ -112,7 +112,10 @@ export default class PayWallet extends Component {
           }
 
           if (response) {
-            Toast.show(response.message, Toast.SHORT);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           }
         } catch (e) {
           this.setState({

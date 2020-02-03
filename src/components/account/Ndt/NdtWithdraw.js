@@ -61,10 +61,16 @@ class NdtWithdraw extends Component {
           this.setState({ loading: false });
           if (response && response.status == STATUS_SUCCESS) {
             APIHandler.investor_sync_info();
-            Toast.show(response.message, Toast.SHORT);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
             Actions.pop();
           } else {
-            Toast.show(response.message, Toast.SHORT);
+            flashShowMessage({
+              type: 'danger',
+              message: response.message
+            });
           }
         } catch (err) {
           console.log(e + ' investor_withdraw');

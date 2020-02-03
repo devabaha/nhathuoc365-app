@@ -169,14 +169,20 @@ export default class Register extends Component {
                 }
               }
             );
+
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           } else {
             this.setState({
               finish_loading: false
             });
-          }
 
-          if (response) {
-            Toast.show(response.message, Toast.SHORT);
+            flashShowMessage({
+              type: 'danger',
+              message: response.message
+            });
           }
         } catch (e) {
           console.log(e + ' user_register');
@@ -425,7 +431,10 @@ export default class Register extends Component {
           }
 
           if (response) {
-            Toast.show(response.message, Toast.SHORT);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           }
         } catch (e) {
           console.log(e + ' user_verify_otp');

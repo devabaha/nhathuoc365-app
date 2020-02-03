@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Alert, Linking, View, StyleSheet } from 'react-native';
 import config from '../../config';
 import BaseContainer from '../BaseContainer';
-import { USE_ONLINE } from '../../constants';
+import { USE_ONLINE, showMessage } from '../../constants';
 import VoucherDetailComponent from '../../component/VoucherDetail';
 import ModalConfirm from '../../component/ModalConfirm';
 import CampaignEntity from '../../entity/CampaignEntity';
@@ -12,7 +12,6 @@ import SiteEntity from '../../entity/SiteEntity';
 import { internalFetch } from '../../helper/apiFetch';
 import { isLatitude, isLongitude } from '../../helper/validator';
 import openMap from 'react-native-open-maps';
-import { showMessage } from 'react-native-flash-message';
 
 const defaultFn = () => {};
 
@@ -22,7 +21,7 @@ class VoucherDetail extends BaseContainer {
    */
   static propTypes = {
     mode: PropTypes.string,
-    from: PropTypes.oneOf(['home']),
+    from: PropTypes.oneOf(['home', 'deeplink']),
     campaignId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     voucherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onRemoveVoucherSuccess: PropTypes.func,
@@ -202,7 +201,7 @@ class VoucherDetail extends BaseContainer {
     });
   };
 
-  showMessage(title, message) {
+  showNotification(title, message) {
     Alert.alert(title, message, [{ text: 'Đóng lại' }]);
   }
 
@@ -266,7 +265,7 @@ class VoucherDetail extends BaseContainer {
       } else {
         setTimeout(() => {
           this.getVoucherDisabled = false;
-          this.showMessage('Thông báo', response.message);
+          this.showNotification('Thông báo', response.message);
         }, 500);
       }
     } catch (error) {

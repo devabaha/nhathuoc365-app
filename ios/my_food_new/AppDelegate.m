@@ -11,6 +11,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
+#import <react-native-branch/RNBranch/RNBranch.h>
 @import UIKit;
 @import Firebase;
 
@@ -31,7 +32,22 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+
+  // Uncomment this line to use the test key instead of the live one.
+    // [RNBranch useTestInstance];
+    [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES]; // <-- add this
   return YES;
+}
+
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+    if (![RNBranch.branch application:app openURL:url options:options]) {
+        // do other deep link routing for the Facebook SDK, Pinterest SDK, etc
+    }
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *restorableObjects))restorationHandler {
+    return [RNBranch continueUserActivity:userActivity];
 }
 
 - (void)application:(UIApplication *)application

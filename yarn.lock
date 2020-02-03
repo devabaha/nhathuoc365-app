@@ -6475,6 +6475,11 @@ react-native-barcode-builder@^1.0.5:
   dependencies:
     jsbarcode "^3.8.0"
 
+react-native-branch@^4.2.1:
+  version "4.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-4.2.1.tgz#3ed1a071c053b420d11af8aa368142b19e2d5129"
+  integrity sha512-wwBCsj3VslS0zG8UAZjx+nNrWgd3CuA24r5muFDzS38oQ4S9oB0NJPafEcWcUT7TPxw/rfpdPLb+JccGvS2/Lg==
+
 react-native-button@^2.4.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/react-native-button/-/react-native-button-2.4.0.tgz#42b487073a7ce7c54ab503f77c6ced1ab95742bf"

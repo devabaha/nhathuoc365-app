@@ -4,5 +4,11 @@
 <dict>
 	<key>aps-environment</key>
 	<string>development</string>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:tickid.app.link</string>
+		<string>applinks:tickid-alternate.app.link</string>
+		<string>applinks:app.tickid.vn</string>
+	</array>
 </dict>
 </plist>

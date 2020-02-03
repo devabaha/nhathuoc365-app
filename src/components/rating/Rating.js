@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
-import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import OrdersItemComponent from '../orders/OrdersItemComponent';
 
@@ -143,9 +142,10 @@ class Rating extends Component {
         setTimeout(() => {
           Actions.pop();
         }, 1000);
-        showMessage({
-          type: 'success',
-          message: 'Góp ý của bạn đã được ghi nhận!'
+
+        flashShowMessage({
+          message: 'Góp ý của bạn đã được ghi nhận!',
+          type: 'success'
         });
       }
     } catch (error) {
