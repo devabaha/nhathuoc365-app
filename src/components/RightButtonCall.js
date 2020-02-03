@@ -29,8 +29,7 @@ export default class RightButtonCall extends Component {
       Alert.alert(
         'Không thể liên lạc',
         userName + ' chưa đăng ký số điện thoại',
-        null,
-        'error'
+        [{ text: 'Đã hiểu' }]
       );
     }
   }
@@ -42,7 +41,7 @@ export default class RightButtonCall extends Component {
         onPress={this.handleCall.bind(this)}
       >
         <View style={styles.right_btn_add_store}>
-          <Icon name="phone" size={20} color="#ffffff" />
+          <Icon name="phone" size={22} color="#ffffff" />
         </View>
       </TouchableHighlight>
     );
@@ -53,7 +52,7 @@ const styles = StyleSheet.create({
   right_btn_add_store: {
     paddingVertical: 1,
     paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0
+    paddingTop: isAndroid ? 8 : 4
   },
   right_btn_box: {
     flexDirection: 'row'

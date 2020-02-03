@@ -240,20 +240,20 @@ global.encodeQueryData = data => {
  * Use: url_for(my_url)
  */
 global.url_for = url => {
-  var string = url,
+  const string = url,
     substring = '?';
-  var existGet = string.includes(substring);
+  const existGet = string.includes(substring);
 
-  var secret_key = appConfig.voucherModule.secretKey;
-  var device_id = getTickUniqueID();
-  var app_key = appConfig.voucherModule.appKey;
-  var os = Platform.OS;
-  var os_version = DeviceInfo.getSystemVersion();
-  var store = '';
-  var device_type = DeviceInfo.getBrand();
-  var app_version = DeviceInfo.getVersion();
-  var timestamp = time();
-  var hash_token = md5(
+  const secret_key = appConfig.voucherModule.secretKey;
+  const device_id = getTickUniqueID();
+  const app_key = appConfig.voucherModule.appKey;
+  const os = Platform.OS;
+  const os_version = DeviceInfo.getSystemVersion();
+  const store = '';
+  const device_type = DeviceInfo.getBrand() + '-' + DeviceInfo.getDeviceId();
+  const app_version = DeviceInfo.getVersion();
+  const timestamp = time();
+  const hash_token = md5(
     secret_key +
       app_key +
       app_version +
@@ -265,7 +265,7 @@ global.url_for = url => {
       timestamp
   );
 
-  var data = {
+  const data = {
     device_id,
     app_key,
     os,
@@ -276,7 +276,7 @@ global.url_for = url => {
     timestamp,
     hash_token
   };
-  var queryUrl = encodeQueryData(data);
+  const queryUrl = encodeQueryData(data);
 
   return url + (existGet ? '&' : '?') + queryUrl;
 };

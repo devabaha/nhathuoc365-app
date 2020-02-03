@@ -38,6 +38,7 @@ import {
   isIos,
   config,
   DURATION_SHOW_GALLERY,
+  BOTTOM_OFFSET_GALLERY,
   EXTRA_DIMENSIONS_HEIGHT
 } from '../../constants';
 
@@ -106,7 +107,6 @@ const BTN_CLOSE_ALBUM = (
 //-----
 const ITEMS_PER_ROW = 3;
 const ITEMS_HEIGHT = 150;
-const BASE_VIEW_HEIGHT = HEIGHT / 3.3;
 const DURATION_SHOW_ALBUM = 200;
 const OFFSET_TOP = 0;
 const defaultListener = () => {};
@@ -120,6 +120,7 @@ const defaultIconCameraOff = ICON_CAMERA_OFF;
 class ImageGallery extends Component {
   static propTypes = {
     containerStyle: ViewPropTypes.style,
+    animatedEffectValue: PropTypes.any,
     refGestureWrapper: PropTypes.any,
     visible: PropTypes.bool,
     expandContent: PropTypes.bool,
@@ -149,14 +150,15 @@ class ImageGallery extends Component {
   };
 
   static defaultProps = {
-    conatainerStyle: {},
+    containerStyle: {},
+    animatedEffectValue: 0,
     refGestureWrapper: null,
     visible: false,
     expandContent: false,
     itemPerRow: ITEMS_PER_ROW,
     itemHeight: ITEMS_HEIGHT,
     headerHeight: HEADER_HEIGHT,
-    baseViewHeight: BASE_VIEW_HEIGHT,
+    baseViewHeight: BOTTOM_OFFSET_GALLERY,
     offsetTop: OFFSET_TOP,
     durationShowAlbum: DURATION_SHOW_ALBUM,
     durationShowGallery: DURATION_SHOW_GALLERY,
@@ -264,6 +266,17 @@ class ImageGallery extends Component {
       nextState.permissionCameraGranted !== this.state.permissionCameraGranted
     ) {
       // galleryLogger('state change');
+      // nextState.photos !== this.state.photos && console.log('photos', nextState.photos);
+      // nextState.albums !== this.state.albums && console.log('albums', nextState.albums);
+      // nextState.selectedPhotos !== this.state.selectedPhotos && console.log('selectedPhotos', nextState.selectedPhotos);
+      // nextState.openAlbum !== this.state.openAlbum && console.log('openAlbum', nextState.openAlbum);
+      // nextState.loading !== this.state.loading && console.log('loading', nextState.loading);
+      // nextState.deepLoading !== this.state.deepLoading && console.log('deepLoading', nextState.deepLoading);
+      // nextState.scrollable !== this.state.scrollable && console.log('scrollable', nextState.scrollable);
+      // nextState.openLightBox !== this.state.openLightBox && console.log('openLightBox', nextState.openLightBox);
+      // nextState.permissionLibraryGranted !== this.state.permissionLibraryGranted && console.log('permissionLibraryGranted', nextState.permissionLibraryGranted);
+      // nextState.permissionCameraGranted !== this.state.permissionCameraGranted && console.log('permissionCameraGranted', nextState.permissionCameraGranted);
+
       return true;
     }
 
@@ -282,8 +295,25 @@ class ImageGallery extends Component {
       nextProps.baseViewHeight !== this.props.baseViewHeight ||
       nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor ||
       nextProps.visible !== this.props.visible ||
-      nextProps.expandContent !== this.props.expandContent
+      nextProps.expandContent !== this.props.expandContent ||
+      nextProps.containerStyle !== this.props.containerStyle
     ) {
+      // nextProps.itemPerRow !== this.props.itemPerRow && console.log('itemPerRow', nextProps.itemPerRow);
+      // nextProps.itemHeight !== this.props.itemHeight && console.log('itemHeight', nextProps.itemHeight);
+      // nextProps.headerHeight !== this.props.headerHeight && console.log('headerHeight', nextProps.headerHeight);
+      // nextProps.btnCloseAlbum !== this.props.btnCloseAlbum && console.log('btnCloseAlbum', nextProps.btnCloseAlbum);
+      // nextProps.iconSendImage !== this.props.iconSendImage && console.log('iconSendImage', nextProps.iconSendImage);
+      // nextProps.iconCameraPicker !== this.props.iconCameraPicker && console.log('iconCameraPicker', nextProps.iconCameraPicker);
+      // nextProps.iconCameraOff !== this.props.iconCameraOff && console.log('iconCameraOff', nextProps.iconCameraOff);
+      // nextProps.btnCloseAlbumStyle !== this.props.btnCloseAlbumStyle && console.log('btnCloseAlbumStyle', nextProps.btnCloseAlbumStyle);
+      // nextProps.albumTitleStyle !== this.props.albumTitleStyle && console.log('albumTitleStyle', nextProps.albumTitleStyle);
+      // nextProps.iconToggleAlbum !== this.props.iconToggleAlbum && console.log('iconToggleAlbum', nextProps.iconToggleAlbum);
+      // nextProps.iconSelectedAlbum !== this.props.iconSelectedAlbum && console.log('iconSelectedAlbum', nextProps.iconSelectedAlbum);
+      // nextProps.baseViewHeight !== this.props.baseViewHeight && console.log('baseViewHeight', nextProps.baseViewHeight);
+      // nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor && console.log('defaultStatusBarColor', nextProps.defaultStatusBarColor);
+      // nextProps.visible !== this.props.visible && console.log('visible', nextProps.visible);
+      // nextProps.expandContent !== this.props.expandContent && console.log('expandContent', nextProps.expandContent);
+      // nextProps.containerStyle !== this.props.containerStyle && console.log('containerStyle', nextProps.containerStyle);
       return true;
     }
 
@@ -352,34 +382,38 @@ class ImageGallery extends Component {
   _handleAppStateChange = nextAppState => {
     if (
       this.appState.match(/inactive|background/) &&
-      nextAppState === 'active'
+      nextAppState === 'active' &&
+      !this.state.deepLoading &&
+      !this.state.loading
     ) {
       if (this.state.permissionLibraryGranted) {
         this.getAlbum(true);
       } else {
-        this.callPermissions(
-          PERMISSIONS_TYPE.LIBRARY,
-          LIBRARY_PERMISSIONS_TYPE.CHECK,
-          permissionGranted => {
-            if (this.state.permissionLibraryGranted !== permissionGranted) {
-              this.setState({
-                permissionLibraryGranted: permissionGranted
-              });
+        {
+          this.callPermissions(
+            PERMISSIONS_TYPE.LIBRARY,
+            LIBRARY_PERMISSIONS_TYPE.CHECK,
+            permissionGranted => {
+              if (this.state.permissionLibraryGranted !== permissionGranted) {
+                this.setState({
+                  permissionLibraryGranted: permissionGranted
+                });
+              }
+              if (permissionGranted) {
+                this.getAlbum(false);
+              }
             }
-            if (permissionGranted) {
-              this.getAlbum(false);
-            }
-          }
-        );
-      }
-      if (
-        this.state.permissionCameraGranted === RESULTS.DENIED ||
-        this.state.permissionCameraGranted === RESULTS.BLOCKED
-      ) {
-        this.callPermissions(
-          PERMISSIONS_TYPE.CAMERA,
-          CAMERA_PERMISSIONS_TYPE.CHECK
-        );
+          );
+        }
+        if (
+          this.state.permissionCameraGranted === RESULTS.DENIED ||
+          this.state.permissionCameraGranted === RESULTS.BLOCKED
+        ) {
+          this.callPermissions(
+            PERMISSIONS_TYPE.CAMERA,
+            CAMERA_PERMISSIONS_TYPE.CHECK
+          );
+        }
       }
     }
     this.appState = nextAppState;
@@ -516,69 +550,73 @@ class ImageGallery extends Component {
   };
 
   getAlbum(isUpdate, first = 100, after = null, index = 0, groupTypes = 'All') {
-    if (this.state.photos.length === 0) {
-      this.setState({ loading: true });
-    }
+    willUpdateState(this.unmounted, () => {
+      if (this.state.photos.length === 0) {
+        this.setState({ loading: true });
+      }
 
-    const extraOpt = after ? { after } : {};
+      const extraOpt = after ? { after } : {};
 
-    CameraRoll.getPhotos({
-      first,
-      assetType: 'Photos',
-      groupTypes,
-      ...extraOpt
-    })
-      .then(r => {
-        let page_info = r.page_info;
+      CameraRoll.getPhotos({
+        first,
+        assetType: 'Photos',
+        groupTypes,
+        ...extraOpt
+      })
+        .then(r => {
+          let page_info = r.page_info;
 
-        let { albums, photos, chosenAlbumTitle } = this.filterPhoto(
-          r.edges,
-          isUpdate
-        );
+          let { albums, photos, chosenAlbumTitle } = this.filterPhoto(
+            r.edges,
+            isUpdate
+          );
 
-        setStater(
-          this,
-          this.unmounted,
-          {
-            albums,
-            photos,
-            chosenAlbumTitle,
-            loading: false
-          },
-          () => {
-            if (page_info.has_next_page) {
-              index++;
-              this.getAlbum(isUpdate, 9999, r.page_info.end_cursor, index);
+          setStater(
+            this,
+            this.unmounted,
+            {
+              albums,
+              photos,
+              chosenAlbumTitle,
+              loading: false
+            },
+            () => {
+              willUpdateState(this.unmounted, () => {
+                if (page_info.has_next_page) {
+                  index++;
+                  this.getAlbum(isUpdate, 9999, r.page_info.end_cursor, index);
 
-              setStater(this, this.unmounted, {
-                deepLoading: true
-              });
-            } else {
-              if (isIos) {
-                if (groupTypes === 'Album') {
-                  setStater(this, this.unmounted, {
-                    deepLoading: false
+                  this.setState({
+                    deepLoading: true
                   });
                 } else {
-                  this.getAlbum(true, 9999, null, 0, 'Album');
+                  if (isIos) {
+                    if (groupTypes === 'Album') {
+                      this.setState({
+                        deepLoading: false
+                      });
+                    } else {
+                      this.getAlbum(true, 9999, null, 0, 'Album');
+                    }
+                  } else {
+                    this.setState({
+                      deepLoading: false
+                    });
+                  }
                 }
-              } else {
-                setStater(this, this.unmounted, {
-                  deepLoading: false
-                });
-              }
+              });
             }
-          }
-        );
-      })
-      .catch(err => {
-        //Error Loading Images
-        console.log('get recent photo album', err.message);
-        setStater(this, this.unmounted, {
-          loading: false,
-          deepLoading: false
+          );
+        })
+        .catch(err => {
+          //Error Loading Images
+          console.log('get recent photo album', err.message);
+          setStater(this, this.unmounted, {
+            loading: false,
+            deepLoading: false
+          });
         });
-      });
+    });
   }
 
   filterPhoto(edges, isUpdate) {
@@ -814,6 +852,10 @@ class ImageGallery extends Component {
       zIndex: this.props.visible ? 1 : 0
     };
 
+    const animatedTranslateY = {
+      transform: [{ translateY: this.props.animatedEffectValue }]
+    };
+
     return (
       <>
         <HeaderContent
@@ -828,6 +870,7 @@ class ImageGallery extends Component {
           style={[
             styles.scrollViewStyle,
             extraStyle,
+            animatedTranslateY,
             this.props.containerStyle
           ]}
           contentContainerStyle={styles.contentContainerStyle}
@@ -851,6 +894,9 @@ class ImageGallery extends Component {
           numColumns={ITEMS_PER_ROW}
           ListHeaderComponent={
             this.state.loading && <Loading height={this.props.baseViewHeight} />
+          }
+          ListFooterComponent={
+            <LoadMore bottom loading={this.state.deepLoading} />
           }
           getItemLayout={(data, index) => ({
             length: this.props.itemHeight,
@@ -877,7 +923,11 @@ class ImageGallery extends Component {
         />
         {this.state.permissionLibraryGranted === false ? (
           <PermissonLibraryNotGranted
-            containerStyle={[extraStyle, this.props.containerStyle]}
+            containerStyle={[
+              extraStyle,
+              animatedTranslateY,
+              this.props.containerStyle
+            ]}
             height={this.props.baseViewHeight}
             onPress={this.handleOpenAllowPermission}
           />
@@ -1041,8 +1091,15 @@ const styles = StyleSheet.create({
     paddingTop: isIos ? 20 : 0,
     left: 15
   },
-  albumLoading: {
-    textAlign: 'center'
+  deepLoading: {
+    width: WIDTH,
+    textAlign: 'center',
+    backgroundColor: '#fff',
+    position: 'absolute',
+    color: '#404040',
+    fontSize: 13,
+    height: 25,
+    paddingVertical: 5
   }
 });
 
@@ -1183,24 +1240,26 @@ const PermissonLibraryNotGranted = props => (
 
 class HeaderContent extends Component {
   state = {
-    loadingTitleHeight: new Animated.Value(0)
+    animatedLoading: new Animated.Value(0)
   };
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.loading !== this.props.loading) {
-      Animated.timing(this.state.loadingTitleHeight, {
-        toValue: nextProps.loading ? 1 : 0,
-        easing: Easing.in,
-        duration: 300
+      Animated.spring(this.state.animatedLoading, {
+        toValue: nextProps.loading ? 25 : 0,
+        useNativeDriver: true
       }).start();
     }
-
     if (nextProps !== this.props) {
       return true;
     }
   }
 
   render() {
+    const flatListStyle = {
+      flex: 1,
+      transform: [{ translateY: this.state.animatedLoading }]
+    };
     return (
       <Animated.View
         style={[
@@ -1211,51 +1270,30 @@ class HeaderContent extends Component {
           }
         ]}
       >
-        <FlatList
-          onStartShouldSetPanResponderCapture={() => !this.props.visible}
-          data={this.props.albums}
-          ItemSeparatorComponent={() => (
-            <View style={{ border: 'none', height: 0 }}></View>
-          )}
-          ListHeaderComponent={() => (
-            <Animated.Text
-              style={[
-                styles.albumLoading,
-                {
-                  transform: [
-                    {
-                      translateY: this.state.loadingTitleHeight.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [-100, 15]
-                      })
-                    }
-                  ],
-                  height: this.state.loadingTitleHeight.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, 30]
-                  }),
-                  opacity: this.state.loadingTitleHeight
+        <LoadMore top loading={this.props.loading} />
+        <Animated.View style={flatListStyle}>
+          <FlatList
+            onStartShouldSetPanResponderCapture={() => !this.props.visible}
+            data={this.props.albums}
+            ItemSeparatorComponent={() => (
+              <View style={{ border: 'none', height: 0 }}></View>
+            )}
+            renderItem={({ item, index }) => (
+              <AlbumItem
+                title={item.name}
+                coverSource={{ uri: item.cover }}
+                subTitle={item.count}
+                onPress={() => this.props.onSelectAlbum(item)}
+                leftStyle={{ width: WIDTH / 6 }}
+                rightComponent={
+                  item.name === this.props.chosenAlbumTitle &&
+                  this.props.iconSelectedAlbum
                 }
-              ]}
-            >
-              Đang tải thêm...
-            </Animated.Text>
-          )}
-          renderItem={({ item, index }) => (
-            <AlbumItem
-              title={item.name}
-              coverSource={{ uri: item.cover }}
-              subTitle={item.count}
-              onPress={() => this.props.onSelectAlbum(item)}
-              leftStyle={{ width: WIDTH / 6 }}
-              rightComponent={
-                item.name === this.props.chosenAlbumTitle &&
-                this.props.iconSelectedAlbum
-              }
-            />
-          )}
-          keyExtractor={(item, index) => index.toString()}
-        />
+              />
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </Animated.View>
       </Animated.View>
     );
   }
@@ -1295,3 +1333,48 @@ const CameraPicker = props => (
     </Text>
   </View>
 );
+
+class LoadMore extends Component {
+  state = {
+    animatedLoading: new Animated.Value(0)
+  };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.loading !== this.props.loading) {
+      Animated.timing(this.state.animatedLoading, {
+        toValue: nextProps.loading ? 1 : 0,
+        easing: Easing.in,
+        useNativeDriver: true,
+        duration: 300
+      }).start();
+    }
+
+    if (nextProps !== this.props) {
+      return true;
+    }
+
+    return false;
+  }
+
+  render() {
+    const extraStyle = this.props.top
+      ? { top: 0 }
+      : this.props.bottom
+      ? { bottom: 0 }
+      : null;
+    return (
+      <Animated.Text
+        pointerEvents="none"
+        style={[
+          styles.deepLoading,
+          extraStyle,
+          {
+            opacity: this.state.animatedLoading
+          }
+        ]}
+      >
+        Đang tải thêm...
+      </Animated.Text>
+    );
+  }
+}
