@@ -15,10 +15,10 @@ import FingerprintScanner from 'react-native-fingerprint-scanner';
 import AuthenKeyboardModal from 'app-packages/tickid-authen-keyboard';
 import { FieldItemWrapper, FieldItem } from '../../component/FieldItem';
 import AsyncStorage from '@react-native-community/async-storage';
-import { showMessage } from 'react-native-flash-message';
 import { internalFetch } from '../../helper/apiFetch';
 import Loading from '@tickid/tickid-rn-loading';
 import config from '../../config';
+import { showMessage } from '../../constants';
 
 const PASSWORD_STORAGE_KEY = 'PASSWORD_STORAGE_KEY';
 const PASSWORD_LENGTH = 4;

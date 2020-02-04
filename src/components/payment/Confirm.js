@@ -15,7 +15,6 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Material from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
 import _ from 'lodash';
 import ListHeader from '../stores/ListHeader';
@@ -28,8 +27,7 @@ import appConfig from 'app-config';
 import Button from 'react-native-button';
 import { USE_ONLINE } from 'app-packages/tickid-voucher';
 
-@observer
-export default class Confirm extends Component {
+class Confirm extends Component {
   constructor(props) {
     super(props);
 
@@ -138,7 +136,9 @@ export default class Confirm extends Component {
             this._siteInfo(site_id);
           }
         );
-        Toast.show(response.message);
+
+        // message: lấy thông tin thành công
+        // Toast.show(response.message);
       }
     } catch (e) {
       console.log(e + ' site_cart_by_id');
@@ -185,7 +185,9 @@ export default class Confirm extends Component {
             if (typeof callback == 'function') {
               callback();
             }
-            Toast.show(response.message);
+
+            // Nhập lưu ý thành công
+            // Toast.show(response.message);
           }
         } catch (e) {
           console.log(e + ' site_cart_node');
@@ -246,7 +248,10 @@ export default class Confirm extends Component {
                 store.setOrdersKeyChange(store.orders_key_change + 1);
               })();
             }
-            Toast.show(response.message);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           }
         } catch (e) {
           console.log(e + ' site_cart_orders');
@@ -379,9 +384,9 @@ export default class Confirm extends Component {
             }
           })();
         }, this._delay());
-        showMessage({
-          type: 'info',
-          message: response.message
+        flashShowMessage({
+          message: response.message,
+          type: 'info'
         });
       }
 
@@ -637,8 +642,9 @@ export default class Confirm extends Component {
         )}
 
         <ScrollView
+          scrollEventThrottle={16}
           onScroll={event => {
-            var scrollTop = event.nativeEvent.contentOffset.y;
+            const scrollTop = event.nativeEvent.contentOffset.y;
             this.setState({ scrollTop });
           }}
           //keyboardShouldPersistTaps="always"
@@ -660,13 +666,13 @@ export default class Confirm extends Component {
           >
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() =>
-                Actions.push(appConfig.routes.qrBarCode, {
-                  title: 'Mã đơn hàng',
-                  address: cart_data.cart_code,
-                  content: 'Dùng QRCode mã đơn hàng để xem thông tin'
-                })
-              }
+              // onPress={() =>
+              //   Actions.push(appConfig.routes.qrBarCode, {
+              //     title: 'Mã đơn hàng',
+              //     address: cart_data.cart_code,
+              //     content: 'Dùng QRCode mã đơn hàng để xem thông tin'
+              //   })
+              // }
             >
               <View style={styles.address_name_box}>
                 <View>
@@ -1598,7 +1604,10 @@ export default class Confirm extends Component {
             Events.trigger(RELOAD_STORE_ORDERS);
           })();
           this._getOrdersItem(this.item_cancel.site_id, this.item_cancel.id);
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (e) {
         console.log(e + ' site_cart_cancel');
@@ -1640,7 +1649,10 @@ export default class Confirm extends Component {
             Events.trigger(RELOAD_STORE_ORDERS);
           })();
 
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
 
           Actions.pop();
 
@@ -1679,7 +1691,10 @@ export default class Confirm extends Component {
           });
 
           this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (e) {
         console.log(e + ' site_cart_edit');
@@ -1756,9 +1771,9 @@ class ItemCartComponent extends Component {
             action(() => {
               store.setCartData(response.data);
             })();
-            showMessage({
-              type: 'info',
-              message: response.message
+            flashShowMessage({
+              message: response.message,
+              type: 'info'
             });
           }
         } catch (e) {
@@ -1807,9 +1822,9 @@ class ItemCartComponent extends Component {
             action(() => {
               store.setCartData(response.data);
             })();
-            showMessage({
-              type: 'info',
-              message: response.message
+            flashShowMessage({
+              message: response.message,
+              type: 'info'
             });
           }
         } catch (e) {
@@ -1843,9 +1858,9 @@ class ItemCartComponent extends Component {
               store.setCartData(response.data);
             })();
 
-            showMessage({
-              type: 'info',
-              message: response.message
+            flashShowMessage({
+              message: response.message,
+              type: 'info'
             });
           }
         } catch (e) {
@@ -2430,3 +2445,5 @@ const styles = StyleSheet.create({
     color: '#333'
   }
 });
+
+export default observer(Confirm);

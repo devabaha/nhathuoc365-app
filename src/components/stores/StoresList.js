@@ -170,6 +170,7 @@ export default class StoresList extends Component {
               scrollTop: event.nativeEvent.contentOffset.y
             });
           }}
+          scrollEventThrottle={16}
           ref={ref => (this.refs_home = ref)}
           refreshControl={
             <RefreshControl

@@ -5,11 +5,11 @@ import ActionSheet from 'react-native-actionsheet';
 import Communications from 'react-native-communications';
 import CardItemComponent from '../../component/CardItem';
 import ModalOverlay from '../../component/ModalOverlay';
-import { showMessage } from 'react-native-flash-message';
 import ListItem from '../../component/ListItem';
 import { internalFetch } from '../../helper/apiFetch';
 import rnShare from '../../helper/rnShare';
 import config from '../../config';
+import { showMessage } from '../../constants';
 
 const MARK_AS_USED_ACTION = 0;
 const MARK_AS_NO_USE_YET_ACTION = 0;

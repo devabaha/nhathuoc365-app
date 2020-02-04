@@ -4,34 +4,19 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
   ScrollView,
   FlatList,
-  TextInput,
   Clipboard,
-  Keyboard,
-  Alert,
   Animated
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import store from '../../store/Store';
-import _ from 'lodash';
+import { Actions } from 'react-native-router-flux';
 
-// components
-import ListHeader from '../stores/ListHeader';
-import PopupConfirm from '../PopupConfirm';
-import Sticker from '../Sticker';
-import RightButtonChat from '../RightButtonChat';
-import RightButtonCall from '../RightButtonCall';
-import { CheckBox } from 'react-native-elements';
-
-@observer
-export default class ViewOrdersItem extends Component {
+class ViewOrdersItem extends Component {
   constructor(props) {
     super(props);
 
@@ -135,6 +120,7 @@ export default class ViewOrdersItem extends Component {
             this.setState({ scrollTop });
           }}
           //keyboardShouldPersistTaps="always"
+          scrollEventThrottle={16}
           ref={ref => (this.refs_confirm_page = ref)}
           style={[
             styles.content,
@@ -964,3 +950,5 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+export default observer(ViewOrdersItem);

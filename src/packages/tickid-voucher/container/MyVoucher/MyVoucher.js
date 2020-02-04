@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import config from '../../config';
-import { USE_ONLINE } from '../../constants';
+import { USE_ONLINE, showMessage } from '../../constants';
 import BaseContainer from '../BaseContainer';
 import { internalFetch } from '../../helper/apiFetch';
 import MyVoucherComponent from '../../component/MyVoucher';
 import CampaignEntity from '../../entity/CampaignEntity';
-import { showMessage } from 'react-native-flash-message';
 
 const defaultFn = () => {};
 

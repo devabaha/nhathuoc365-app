@@ -93,7 +93,10 @@ class List extends Component {
               this.setState({ customers });
             } else {
               this.isLoadMore && (this.offset -= this.limit);
-              Toast.show('Không còn bản ghi nào!');
+              flashShowMessage({
+                type: 'danger',
+                message: 'Không còn bản ghi nào!'
+              });
             }
           }
         }

@@ -9,7 +9,6 @@ import HomeComponent from '../../components/Home';
 import { executeJobs } from '../../helper/jobsOnReset';
 import { servicesHandler } from '../../helper/servicesHandler';
 
-@observer
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -398,4 +397,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Home;
+export default observer(Home);
