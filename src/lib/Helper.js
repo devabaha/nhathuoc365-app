@@ -191,6 +191,55 @@ global.flashShowMessage = props => {
 global.flashHideMessage = hideMessage;
 
 /**
+ * Flash message
+ */
+import FlashMessage, {
+  showMessage,
+  hideMessage
+} from 'react-native-flash-message';
+global.FlashMessage = FlashMessage;
+
+global.flashMessageSuccessTheme = {
+  color: 'white',
+  backgroundColor: '#007E33'
+};
+global.flashMessageDangerTheme = {
+  color: 'white',
+  backgroundColor: '#CC0000'
+};
+global.flashMessageInfoTheme = {
+  color: 'white',
+  backgroundColor: '#0099CC'
+};
+global.flashMessageWarningTheme = {
+  color: 'white',
+  backgroundColor: '#FF8800'
+};
+
+global.flashShowMessage = props => {
+  let theme = {};
+  switch (props.type) {
+    case 'danger':
+      theme = flashMessageDangerTheme;
+      break;
+    case 'success':
+      theme = flashMessageSuccessTheme;
+      break;
+    case 'info':
+      theme = flashMessageInfoTheme;
+      break;
+    case 'warning':
+      theme = flashMessageWarningTheme;
+      break;
+    default:
+      break;
+  }
+  showMessage({ ...props, ...theme });
+};
+
+global.flashHideMessage = hideMessage;
+
+/**
  * Toast
  */
 import Toast from 'react-native-simple-toast';

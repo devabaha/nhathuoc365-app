@@ -105,6 +105,10 @@ export default class PayWallet extends Component {
                 () => {}
               );
             })();
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           } else {
             this.setState({
               loading: false
@@ -113,7 +117,7 @@ export default class PayWallet extends Component {
 
           if (response) {
             flashShowMessage({
-              type: 'success',
+              type: 'danger',
               message: response.message
             });
           }

@@ -807,7 +807,7 @@ class Account extends Component {
         });
         Actions.reset(appConfig.routes.sceneWrapper);
       } else {
-        showMessage({
+        flashShowMessage({
           message: 'Đăng xuất không thành công',
           type: 'info'
         });

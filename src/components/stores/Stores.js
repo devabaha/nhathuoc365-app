@@ -219,7 +219,6 @@ class Stores extends Component {
             this.refs_category_nav.scrollToIndex({ index, animated: true });
           }
 
-          // content
           if (this.refs_category_screen && !nav_only) {
             this.refs_category_screen.scrollToIndex({
               index: index,
