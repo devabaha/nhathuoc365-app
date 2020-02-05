@@ -46,10 +46,16 @@ export default class AddRef extends Component {
         if (response.status == STATUS_SUCCESS) {
           this._onFinish();
         } else {
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'danger',
+            message: response.message
+          });
         }
       } else {
-        Toast.show('Có lỗi xảy ra, vui lòng thử lại');
+        flashShowMessage({
+          type: 'danger',
+          message: 'Có lỗi xảy ra, vui lòng thử lại'
+        });
       }
     }
   }

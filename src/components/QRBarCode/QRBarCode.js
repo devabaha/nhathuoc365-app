@@ -236,7 +236,11 @@ class QRBarCode extends Component {
                     app: response.data.app,
                     type: ActionConst.REPLACE
                   });
-                  Toast.show(response.message, Toast.SHORT);
+
+                  flashShowMessage({
+                    type: 'success',
+                    message: response.message
+                  });
                 }
               );
             })();

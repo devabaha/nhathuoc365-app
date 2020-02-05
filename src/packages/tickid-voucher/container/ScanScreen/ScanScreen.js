@@ -4,7 +4,7 @@ import config from '../../config';
 import BaseContainer from '../BaseContainer';
 import ScanScreenComponent from '../../component/ScanScreen';
 import { internalFetch } from '../../helper/apiFetch';
-import { showMessage } from 'react-native-flash-message';
+import { showMessage } from '../../constants';
 
 class ScanScreen extends BaseContainer {
   static propTypes = {

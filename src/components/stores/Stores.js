@@ -10,7 +10,6 @@ import {
   ScrollView
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
 import Swiper from 'react-native-swiper';
 import Items from './Items';
@@ -22,12 +21,12 @@ import RightButtonOrders from '../RightButtonOrders';
 import Button from 'react-native-button';
 import appConfig from '../../config';
 import IconFeather from 'react-native-vector-icons/Feather';
+import { willUpdateState, setStater } from '../../packages/tickid-chat/helper';
 
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
-@observer
 class Stores extends Component {
   static propTypes = {
     categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
@@ -95,24 +94,6 @@ class Stores extends Component {
   }
 
   _initial(props) {
-    var title = props.title;
-
-    Actions.refresh({
-      showSearchBar: true,
-      smallSearch: true,
-      placeholder: store.store_data.name,
-      searchOnpress: () => {
-        return Actions.push(appConfig.routes.searchStore, {
-          title
-        });
-      },
-      renderRightButton: this._renderRightButton.bind(this),
-      onBack: () => {
-        this._unMount();
-        Actions.pop();
-      }
-    });
-
     this.start_time = time();
 
     // get categories navigator
@@ -124,16 +105,16 @@ class Stores extends Component {
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
 
-    if (props.orderIsPop) {
-      store.orderIsPop = true;
-    }
+    // if (props.orderIsPop) {
+    //   store.orderIsPop = true;
+    // }
   }
 
   _unMount() {
     Events.trigger(CATE_AUTO_LOAD);
     Events.removeAll(CATE_AUTO_LOAD);
 
-    store.orderIsPop = false;
+    // store.orderIsPop = false;
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -156,6 +137,7 @@ class Stores extends Component {
           if (!this.props.goCategory) return;
           if (this.props.goCategory === item.id) {
             this._changeCategory(item, index);
+            return;
           }
         })
     );
@@ -167,8 +149,14 @@ class Stores extends Component {
         store.store_id,
         this.props.categoryId
       );
-      if (response && response.status == STATUS_SUCCESS && !this.unmounted) {
-        setTimeout(() => this.parseDataCategories(response), this._delay());
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(
+          () =>
+            willUpdateState(this.unmounted, () =>
+              this.parseDataCategories(response)
+            ),
+          this._delay()
+        );
       }
     } catch (e) {
       console.log(e + ' site_info');
@@ -214,28 +202,31 @@ class Stores extends Component {
 
   _changeCategory(item, index, nav_only) {
     if (this.refs_category_nav) {
-      var categories_count = this.state.categories_data.length;
-      var end_of_list = categories_count - index - 1 >= 3;
+      const categories_count = this.state.categories_data.length;
+      const end_of_list = categories_count - index - 1 >= 3;
 
-      // nav
-      if (index > 0 && end_of_list) {
-        this.refs_category_nav.scrollToIndex({
-          index: index - 1,
-          animated: true
-        });
-      } else if (!end_of_list) {
-        this.refs_category_nav.scrollToEnd();
-      } else if (index == 0) {
-        this.refs_category_nav.scrollToIndex({ index, animated: true });
-      }
+      setTimeout(() =>
+        willUpdateState(this.unmounted, () => {
+          // nav
+          if (index > 0 && end_of_list) {
+            this.refs_category_nav.scrollToIndex({
+              index: index - 1,
+              animated: true
+            });
+          } else if (!end_of_list) {
+            this.refs_category_nav.scrollToEnd();
+          } else if (index == 0) {
+            this.refs_category_nav.scrollToIndex({ index, animated: true });
+          }
 
-      // content
-      if (this.refs_category_screen && !nav_only) {
-        this.refs_category_screen.scrollToIndex({
-          index: index,
-          animated: true
-        });
-      }
+          if (this.refs_category_screen && !nav_only) {
+            this.refs_category_screen.scrollToIndex({
+              index: index,
+              animated: true
+            });
+          }
+        })
+      );
 
       this.setState({
         category_nav_index: index
@@ -419,9 +410,10 @@ class Stores extends Component {
             }
           })();
         }, 450);
-        showMessage({
-          type: 'info',
-          message: response.message
+
+        flashShowMessage({
+          message: response.message,
+          type: 'info'
         });
       }
 
@@ -457,6 +449,8 @@ class CategoryScreen extends Component {
       isAll: item.id == 0,
       fetched: false
     };
+
+    this.unmounted = false;
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -498,6 +492,10 @@ class CategoryScreen extends Component {
       // get list products by category_id
       this._getItemByCateId(item.id);
     }
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   // tới màn hình chi tiết item
@@ -672,7 +670,7 @@ class CategoryScreen extends Component {
       );
     }
 
-    var { items_data, header_title, fetched } = this.state;
+    const { items_data, header_title, fetched } = this.state;
 
     if (items_data == null) {
       return (
@@ -686,6 +684,7 @@ class CategoryScreen extends Component {
       <View style={styles.containerScreen}>
         {items_data && (
           <ScrollView
+            scrollEventThrottle={16}
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
@@ -803,4 +802,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Stores;
+export default observer(Stores);

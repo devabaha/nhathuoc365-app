@@ -105,14 +105,18 @@ export default class PayWallet extends Component {
                 () => {}
               );
             })();
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           } else {
             this.setState({
               loading: false
             });
-          }
-
-          if (response) {
-            Toast.show(response.message, Toast.SHORT);
+            flashShowMessage({
+              type: 'danger',
+              message: response.message
+            });
           }
         } catch (e) {
           this.setState({
