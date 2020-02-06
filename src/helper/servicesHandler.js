@@ -120,10 +120,59 @@ export const servicesHandler = service => {
         news_type: `/${service.categoryId}`
       });
       break;
+
+    //---- detail ----
+    case 'order_detail':
+      store.setDeepLinkData({ id: service.id });
+      Actions.push(appConfig.routes.deepLinkOrdersTab);
+      break;
+    case 'voucher_detail':
+      store.setDeepLinkData({ id: service.id });
+      Actions.push(appConfig.routes.mainVoucher, {
+        from: 'deeplink'
+      });
+      break;
+    case 'news_detail':
+      store.setDeepLinkData({ id: service.id });
+      Actions.push(appConfig.routes.deepLinkNewsTab);
+      break;
+    case 'product_detail':
+      APIHandler.site_info(service.siteId).then(response => {
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setDeepLinkData({ id: service.productId });
+            store.setStoreData(response.data);
+            Actions.push(appConfig.routes.store, {
+              title: service.name || response.data.name,
+              goCategory: service.categoryId || 0
+            });
+          })();
+        }
+      });
+      break;
+    case 'my_voucher_detail':
+      store.setDeepLinkData({ id: service.id });
+      Actions.push(appConfig.routes.myVoucher, {
+        title: 'Voucher của tôi',
+        from: 'home',
+        onUseVoucherOnlineSuccess: handleUseVoucherOnlineSuccess,
+        onUseVoucherOnlineFailure: () => {}
+      });
+      break;
     default:
       Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
         { text: 'Đồng ý' }
       ]);
       break;
   }
+};
+
+handleUseVoucherOnlineSuccess = (cartData, fromDetailVoucher = false) => {
+  Actions.pop();
+  if (fromDetailVoucher) {
+    setTimeout(Actions.pop, 0);
+  }
+  action(() => {
+    store.setCartData(cartData);
+  })();
 };

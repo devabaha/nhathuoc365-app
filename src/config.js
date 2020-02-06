@@ -49,8 +49,10 @@ const config = Object.freeze({
 
     homeTab: 'homeTab',
     newsTab: 'newsTab',
+    deepLinkNewsTab: 'deepLinkNewsTab',
     scanQrCodeTab: 'scanQrCodeTab',
     ordersTab: 'ordersTab',
+    deepLinkOrdersTab: 'deepLinkOrdersTab',
 
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',

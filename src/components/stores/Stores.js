@@ -527,10 +527,10 @@ class CategoryScreen extends Component {
       {
         loading: this.state.items_data ? false : true
       },
-      () => {
-        // load
-        storage
-          .load({
+      async () => {
+        try {
+          // load
+          const data = await storage.load({
             key: store_category_key,
             autoSync: true,
             syncInBackground: true,
@@ -538,37 +538,44 @@ class CategoryScreen extends Component {
               extraFetchOptions: {},
               someFlag: true
             }
-          })
-          .then(data => {
-            // delay append data
-            setTimeout(() => {
-              if (this.props.index == 0) {
-                layoutAnimation();
-              }
-
-              this.setState({
-                items_data:
+          });
+          // delay append data
+          setTimeout(
+            () =>
+              willUpdateState(this.unmounted, () => {
+                if (this.props.index == 0) {
+                  layoutAnimation();
+                }
+                const items_data =
                   data.length > STORES_LOAD_MORE
                     ? [...data, { id: -1, type: 'loadmore' }]
-                    : data,
-                items_data_bak: data,
-                loading: false,
-                fetched: true,
-                refreshing: false,
-                page: 1
-              });
+                    : data;
 
-              action(() => {
-                store.setStoresFinish(true);
-              })();
+                this.deepLinkHandler(items_data);
 
-              // load next category
-              // this._loadNextCate();
-            }, this._delay());
-          })
-          .catch(err => {
-            this._getItemByCateIdFromServer(category_id);
-          });
+                this.setState({
+                  items_data,
+                  items_data_bak: data,
+                  loading: false,
+                  fetched: true,
+                  refreshing: false,
+                  page: 1
+                });
+
+                action(() => {
+                  store.setStoresFinish(true);
+                  store.setDeepLinkData(null);
+                })();
+
+                // load next category
+                // this._loadNextCate();
+              }),
+            this._delay()
+          );
+        } catch (err) {
+          store.setDeepLinkData(null);
+          this._getItemByCateIdFromServer(category_id);
+        }
       }
     );
   }
@@ -593,43 +600,52 @@ class CategoryScreen extends Component {
           }
 
           // delay append data
-          setTimeout(() => {
-            if (this.props.index == 0) {
-              layoutAnimation();
-            }
+          setTimeout(
+            () =>
+              willUpdateState(this.unmounted, () => {
+                if (this.props.index == 0) {
+                  layoutAnimation();
+                }
 
-            var items_data = loadmore
-              ? [...this.state.items_data_bak, ...response.data]
-              : response.data;
-            this.setState({
-              items_data:
-                response.data.length >= STORES_LOAD_MORE
-                  ? [...items_data, { id: -1, type: 'loadmore' }]
-                  : items_data,
-              items_data_bak: items_data,
-              loading: false,
-              refreshing: false,
-              page: this.state.page
-            });
+                const items_data = loadmore
+                  ? [...this.state.items_data_bak, ...response.data]
+                  : response.data;
 
-            action(() => {
-              store.setStoresFinish(true);
-            })();
+                this.deepLinkHandler(items_data);
 
-            // load next category
-            // this._loadNextCate();
+                this.setState({
+                  items_data:
+                    response.data.length >= STORES_LOAD_MORE
+                      ? [...items_data, { id: -1, type: 'loadmore' }]
+                      : items_data,
+                  items_data_bak: items_data,
+                  loading: false,
+                  refreshing: false,
+                  page: this.state.page
+                });
 
-            // cache in five minutes
-            if (response.data && !loadmore) {
-              storage.save({
-                key: store_category_key,
-                data: items_data,
-                expires: STORE_CATEGORY_CACHE
-              });
-            }
-          }, delay || this._delay());
+                action(() => {
+                  store.setStoresFinish(true);
+                })();
+
+                // load next category
+                // this._loadNextCate();
+
+                // cache in five minutes
+                if (response.data && !loadmore) {
+                  storage.save({
+                    key: store_category_key,
+                    data: items_data,
+                    expires: STORE_CATEGORY_CACHE
+                  });
+                }
+
+                store.setDeepLinkData(null);
+              }),
+            delay || this._delay()
+          );
         } else {
-          this.setState({
+          setStater(this, this.unmounted, {
             loading: false,
             refreshing: false,
             items_data: this.state.items_data_bak
@@ -641,6 +657,7 @@ class CategoryScreen extends Component {
       }
     } catch (e) {
       console.log(e + ' site_category_product');
+      store.setDeepLinkData(null);
 
       store.addApiQueue(
         'site_category_product',
@@ -658,6 +675,23 @@ class CategoryScreen extends Component {
 
   _loadMore() {
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
+  }
+
+  deepLinkHandler(products) {
+    if (store.deep_link_data) {
+      const product = products.find(
+        product => product.id === store.deep_link_data.id
+      );
+
+      if (product) {
+        this._goItem(product);
+      } else {
+        flashShowMessage({
+          message: 'Không tìm thấy sản phẩm!',
+          type: 'danger'
+        });
+      }
+    }
   }
 
   render() {

@@ -462,6 +462,30 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                {/* ================ DEEP LINK FOR TABS ================ */}
+
+                <Stack key={appConfig.routes.deepLinkOrdersTab}>
+                  <Scene
+                    key={`${appConfig.routes.deepLinkOrdersTab}_1`}
+                    title="Đơn hàng"
+                    component={Orders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.deepLinkNewsTab}>
+                  <Scene
+                    key={`${appConfig.routes.deepLinkNewsTab}_1`}
+                    title="Tin tức"
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ END DEEP LINK ================ */}
+
                 <Stack key={appConfig.routes.myAddress}>
                   <Scene
                     key={`${appConfig.routes.myAddress}_1`}
