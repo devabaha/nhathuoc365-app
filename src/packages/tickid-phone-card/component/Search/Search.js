@@ -30,6 +30,7 @@ class Search extends PureComponent {
         <TextInput
           style={styles.textInput}
           placeholder="Tìm theo tên hoặc số điện thoại"
+          placeholderTextColor="#c7c7cd"
           value={this.props.value}
           onChangeText={this.props.onChangeText}
         />

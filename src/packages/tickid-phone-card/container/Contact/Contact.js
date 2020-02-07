@@ -102,10 +102,8 @@ class Contact extends Component {
   handleCheckPermissonIOS = async permission => {
     switch (permission) {
       case 'authorized':
-        const result = await this.loadStoredContacts();
-        if (!result) {
-          this.getListContacts();
-        }
+        await this.loadStoredContacts();
+        this.getListContacts(false);
         break;
       case 'undefined':
         Contacts.requestPermission((err, permission) =>
@@ -263,6 +261,7 @@ class Contact extends Component {
         familyName={contact.data.familyName}
         givenName={contact.data.givenName}
         displayPhone={contact.displayPhone}
+        notInContact={contact.notInContact}
         onPress={() => this.props.onPressContact(contact)}
       />
     );
@@ -280,10 +279,25 @@ class Contact extends Component {
   };
 
   search = debounce(searchText => {
+    let searchResult = this.state.contacts.filter(({ isMatch }) =>
+      isMatch(searchText)
+    );
+
+    if (searchResult.length === 0) {
+      searchResult = [
+        {
+          data: {
+            familyName: 'Chưa có trong danh bạ'
+          },
+          displayPhone: searchText,
+          name: 'Chưa có trong danh bạ',
+          notInContact: true
+        }
+      ];
+    }
+
     this.setState({
-      searchResult: this.state.contacts.filter(({ isMatch }) =>
-        isMatch(searchText)
-      )
+      searchResult
     });
   }, 250);
 

@@ -1,6 +1,7 @@
 import { reaction, observable, action, toJS } from 'mobx';
 import autobind from 'autobind-decorator';
 import { Keyboard } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 
 @autobind
 class Store {
@@ -349,6 +350,13 @@ class Store {
     if (typeof func == 'function' && key) {
       this.apiQueue[key] = func;
     }
+  }
+
+  //-----reset asyncStorage-----
+  @action resetAsyncStorage() {
+    AsyncStorage.removeItem(PASSWORD_STORAGE_KEY, err =>
+      console.log('reset asyncStorage', err)
+    );
   }
 }
 

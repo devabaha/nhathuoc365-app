@@ -95,7 +95,7 @@ class CodeAuth extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: '#ffffff'
   },
   phoneText: {
     color: 'black',
