@@ -349,7 +349,7 @@ class PhoneAuth extends Component {
           </View>
           <View
             style={{
-              backgroundColor: 'white',
+              backgroundColor: '#ffffff',
               height: deviceHeight - headerHeight.height - (isIPhoneX ? 70 : 20)
             }}
           >
@@ -631,7 +631,7 @@ const headerHeight = Platform.select({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: '#ffffff'
   },
   image: {
     width: 128,

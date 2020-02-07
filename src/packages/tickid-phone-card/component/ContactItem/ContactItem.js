@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import config from '../../config';
 import Button from 'react-native-button';
 import { Image, View, Text, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/Entypo';
 
 const defaultListener = () => {};
 
@@ -13,7 +14,8 @@ class ContactItem extends Component {
     thumbnailPath: PropTypes.string,
     familyName: PropTypes.string,
     givenName: PropTypes.string,
-    displayPhone: PropTypes.string
+    displayPhone: PropTypes.string,
+    notInContact: PropTypes.bool
   };
 
   static defaultProps = {
@@ -22,7 +24,8 @@ class ContactItem extends Component {
     thumbnailPath: '',
     familyName: '',
     givenName: '',
-    displayPhone: ''
+    displayPhone: '',
+    notInContact: false
   };
 
   shouldComponentUpdate(nextProps) {
@@ -31,7 +34,8 @@ class ContactItem extends Component {
       nextProps.hasThumbnail !== this.props.hasThumbnail ||
       nextProps.thumbnailPath !== this.props.thumbnailPath ||
       nextProps.familyName !== this.props.familyName ||
-      nextProps.givenName !== this.props.givenName
+      nextProps.givenName !== this.props.givenName ||
+      nextProps.notInContact !== this.props.notInContact
     );
   }
 
@@ -50,7 +54,8 @@ class ContactItem extends Component {
       thumbnailPath,
       familyName,
       givenName,
-      displayPhone
+      displayPhone,
+      notInContact
     } = this.props;
     const name = `${familyName ? `${familyName} ` : ''}${givenName}`;
     return (
@@ -60,15 +65,30 @@ class ContactItem extends Component {
             <Image style={styles.thumbnail} source={{ uri: thumbnailPath }} />
           ) : (
             <View style={styles.thumbnail}>
-              <Text style={{ color: config.colors.primary }}>
-                {this.getAvatarFromName(name)}
-              </Text>
+              {notInContact ? (
+                <Icon
+                  name="user"
+                  color="#a5a5a5"
+                  size={40}
+                  style={styles.userIcon}
+                />
+              ) : (
+                <Text style={{ color: config.colors.primary }}>
+                  {this.getAvatarFromName(name)}
+                </Text>
+              )}
             </View>
           )}
           <View style={styles.infoWrapper}>
-            <Text style={styles.name}>{name}</Text>
-            <Text style={styles.phone}>{displayPhone}</Text>
+            <Text style={styles.name}>
+              {notInContact ? displayPhone : name}
+            </Text>
+            <Text style={styles.phone}>
+              {notInContact ? name : displayPhone}
+            </Text>
           </View>
+
+          {notInContact && <Text style={styles.select}>Chọn</Text>}
 
           <View style={styles.separate} />
         </View>
@@ -101,10 +121,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    overflow: 'hidden'
+  },
+  userIcon: {
+    position: 'absolute',
+    bottom: -5
   },
   infoWrapper: {
-    marginLeft: 10
+    marginLeft: 10,
+    flex: 1
   },
   name: {
     fontWeight: '500',
@@ -114,6 +140,11 @@ const styles = StyleSheet.create({
   phone: {
     fontSize: 15,
     color: '#666'
+  },
+  select: {
+    color: config.colors.primary,
+    fontSize: 18,
+    paddingRight: 15
   }
 });
 

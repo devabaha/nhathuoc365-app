@@ -44,11 +44,8 @@ export default class VndWallet extends Component {
     }
   }
 
-  _goScanQRCode() {
-    Actions.push(appConfig.routes.qrBarCode, {
-      title: 'Địa chỉ ví',
-      index: 1,
-      from: 'vndwallet',
+  _goTransfer() {
+    Actions.push(appConfig.routes.transfer, {
       wallet: this.state.wallet,
       address: this.state.wallet.address
     });
@@ -134,7 +131,7 @@ export default class VndWallet extends Component {
           </TouchableHighlight>
 
           <TouchableHighlight
-            onPress={this._goScanQRCode.bind(this)}
+            onPress={this._goTransfer.bind(this)}
             underlayColor="transparent"
             style={styles.add_store_action_btn}
           >

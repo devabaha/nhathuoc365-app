@@ -114,7 +114,7 @@ class Home extends Component {
   };
 
   handlePressedSurplusNext = () => {
-    Actions.vnd_wallet({
+    Actions.push(appConfig.routes.vndWallet, {
       title: store.user_info.default_wallet.name,
       wallet: store.user_info.default_wallet
     });

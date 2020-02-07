@@ -5,9 +5,9 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 // API URL
 // global.MY_FOOD_API = 'https://abaha.net/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
-global.MY_FOOD_API = 'https://apiapp.tickid.vn/';
+global.MY_FOOD_API = 'https://apiapp.tickid.top/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
-global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
+global.PHOTO_MY_FOOD_API = 'https://img.tickid.top/';
 global.HOTLINE = '+8490 345 1368';
 
 // codepush deployment keys (production)
@@ -121,6 +121,7 @@ global.STORAGE_REF_KEY = 'KeyRefIntro';
 global.STORES_LOAD_MORE = 30;
 global.STORE_DEMO_CODE = 'FH';
 global.KEY_EVENTS_STORE = 'KeyEventStore';
+global.PASSWORD_STORAGE_KEY = 'PASSWORD_STORAGE_KEY';
 
 // news_list
 global.NEWS_LIMIT_IN_PAGE = 10;

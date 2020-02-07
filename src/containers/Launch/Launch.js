@@ -269,7 +269,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: appConfig.device.bottomSpace,
     backgroundColor: '#fff'
   },
   logoContainer: {

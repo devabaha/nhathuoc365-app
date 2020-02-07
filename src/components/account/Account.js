@@ -440,7 +440,7 @@ class Account extends Component {
               <TouchableHighlight
                 underlayColor="transparent"
                 onPress={() =>
-                  Actions.vnd_wallet({
+                  Actions.push(appConfig.routes.vndWallet, {
                     title: user_info.default_wallet.name,
                     wallet: user_info.default_wallet
                   })
@@ -515,7 +515,7 @@ class Account extends Component {
                     onPress={
                       wallet.address
                         ? () =>
-                            Actions.vnd_wallet({
+                            Actions.push(appConfig.routes.vndWallet, {
                               title: wallet.name,
                               wallet: wallet
                             })
@@ -564,7 +564,7 @@ class Account extends Component {
                     onPress={
                       wallet.address
                         ? () =>
-                            Actions.vnd_wallet({
+                            Actions.push(appConfig.routes.vndWallet, {
                               title: wallet.name,
                               wallet: wallet
                             })
@@ -800,6 +800,7 @@ class Account extends Component {
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
+          store.resetAsyncStorage();
           flashShowMessage({
             message: 'Đăng xuất thành công',
             type: 'info'

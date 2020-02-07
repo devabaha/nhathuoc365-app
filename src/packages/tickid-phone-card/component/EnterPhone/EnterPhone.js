@@ -25,7 +25,13 @@ class EnterPhone extends Component {
     keyboardType: PropTypes.string,
     errorMessage: PropTypes.string,
     placeholder: PropTypes.string,
-    title: PropTypes.string
+    title: PropTypes.string,
+    customRightComponent: PropTypes.oneOfType([
+      PropTypes.element,
+      PropTypes.node
+    ]),
+    inputStyle: PropTypes.object,
+    inputContainerStyle: PropTypes.object
   };
 
   static defaultProps = {
@@ -45,7 +51,10 @@ class EnterPhone extends Component {
     keyboardType: 'phone-pad',
     errorMessage: '',
     placeholder: 'Nhập số',
-    title: 'Nạp đến'
+    title: 'Nạp đến',
+    customRightComponent: null,
+    inputStyle: {},
+    inputContainerStyle: {}
   };
 
   get currentNetworkType() {
@@ -75,24 +84,37 @@ class EnterPhone extends Component {
         )}
 
         <View style={styles.enterContact}>
-          <View style={[styles.inputBtn, this.hasError && styles.hasError]}>
+          <View
+            style={[
+              styles.inputBtn,
+              this.hasError && styles.hasError,
+              this.props.inputContainerStyle
+            ]}
+          >
             {this.props.editable ? (
               <View style={styles.phoneBtn}>
                 <TextInput
-                  style={styles.input}
+                  style={[styles.input, this.props.inputStyle]}
                   value={this.props.contactPhone}
                   onBlur={this.props.onBlur}
                   onChangeText={this.props.onChangeText}
                   keyboardType={this.props.keyboardType}
                   placeholder={this.props.placeholder}
+                  placeholderTextColor="#c7c7cd"
                 />
               </View>
             ) : (
               <Button
-                containerStyle={styles.phoneBtn}
+                containerStyle={[styles.phoneBtn, this.props.inputStyle]}
                 onPress={this.props.onOpenContact}
               >
-                <Text style={styles.input}>{this.props.contactPhone}</Text>
+                {this.props.contactPhone ? (
+                  <Text style={styles.input}>{this.props.contactPhone}</Text>
+                ) : (
+                  <Text style={styles.placeholder}>
+                    {this.props.placeholder}
+                  </Text>
+                )}
               </Button>
             )}
             {!this.props.hideContact && (
@@ -105,7 +127,7 @@ class EnterPhone extends Component {
             )}
           </View>
 
-          {!this.props.hideChangeNetwork && (
+          {!this.props.hideChangeNetwork && !!!this.props.customRightComponent && (
             <Button
               onPress={this.props.onPressSelectNetwork}
               containerStyle={styles.networkBtn}
@@ -116,6 +138,7 @@ class EnterPhone extends Component {
               />
             </Button>
           )}
+          {!!this.props.customRightComponent && this.props.customRightComponent}
         </View>
         {this.hasError && (
           <Text style={styles.errorMessage}>{this.props.errorMessage}</Text>
@@ -153,6 +176,10 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textTransform: 'uppercase'
   },
+  placeholder: {
+    fontSize: 18,
+    color: '#C7C7CD'
+  },
   inputBtn: {
     flex: 1,
     marginTop: 12,
@@ -177,7 +204,7 @@ const styles = StyleSheet.create({
   input: {
     paddingTop: 0,
     paddingBottom: 0,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: '400',
     color: '#333',
     textAlign: 'left'

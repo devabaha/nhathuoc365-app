@@ -132,7 +132,7 @@ export default class HorizontalInfoItem extends Component {
       <View
         style={[
           styles.container,
-          { backgroundColor: disable ? '#EAF0F6' : 'white' }
+          { backgroundColor: disable ? '#EAF0F6' : '#ffffff' }
         ]}
       >
         <Text style={styles.title}>{title}</Text>

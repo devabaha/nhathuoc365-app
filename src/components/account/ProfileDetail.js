@@ -131,6 +131,6 @@ const styles = StyleSheet.create({
 
   txtEdit: {
     fontSize: 14,
-    color: 'white'
+    color: '#ffffff'
   }
 });
