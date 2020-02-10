@@ -10,7 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import appConfig from 'app-config';
 import PropTypes from 'prop-types';
-import Button from '../Payment/Button';
+import Button from '../../../Button';
 
 const defaultListener = () => {};
 

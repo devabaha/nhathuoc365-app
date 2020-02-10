@@ -1,28 +1,28 @@
 import React, { Component } from 'react';
 import {
+  SafeAreaView,
   View,
   Text,
   StyleSheet,
   SectionList,
   TouchableHighlight,
-  Alert
+  Keyboard,
+  KeyboardAvoidingView
 } from 'react-native';
 
-import store from '../../store/Store';
-import { reaction } from 'mobx';
 import HorizontalInfoItem from './HorizontalInfoItem';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
-import lodash from 'lodash';
+import { isEmpty } from 'lodash';
 import Loading from '../Loading';
+import Button from '../Button';
+import appConfig from 'app-config';
+import store from 'app-store';
 
-@observer
-export default class EditProfile extends Component {
+class EditProfile extends Component {
   constructor(props) {
     super(props);
-
-    const { userInfo } = this.props;
 
     this.state = {
       loading: false,
@@ -33,13 +33,13 @@ export default class EditProfile extends Component {
             {
               id: 'ho_ten',
               title: 'Họ & tên',
-              value: userInfo.name,
+              value: store.user_info.name,
               input: true
             },
             {
               id: 'so_dien_thoai',
               title: 'Số điện thoại',
-              value: '0983 962 301',
+              value: store.user_info.tel,
               disable: true
             }
           ]
@@ -50,21 +50,21 @@ export default class EditProfile extends Component {
             {
               id: 'ngay_sinh',
               title: 'Ngày sinh',
-              value: userInfo.birth,
+              value: store.user_info.birth,
               defaultValue: 'Chọn ngày sinh',
               select: true
             },
             {
               id: 'gioi_tinh',
               title: 'Giới tính',
-              value: userInfo.gender,
+              value: store.user_info.gender,
               defaultValue: 'Chọn giới tính',
               select: true
             },
             {
               id: 'email',
               title: 'Email',
-              value: userInfo.email,
+              value: store.user_info.email,
               input: true
             }
           ]
@@ -75,7 +75,7 @@ export default class EditProfile extends Component {
             {
               id: 'dia_chi',
               title: 'Địa chỉ cụ thể',
-              value: 'PHÒNG 914',
+              value: store.user_info.address,
               input: true
             }
           ]
@@ -85,12 +85,13 @@ export default class EditProfile extends Component {
   }
 
   componentDidMount() {
-    Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this)
-    });
+    // setTimeout(() =>
+    //   Actions.refresh({
+    //     right: this._renderRightButton
+    //   }))
   }
 
-  _renderRightButton() {
+  _renderRightButton = () => {
     return (
       <TouchableHighlight
         style={styles.rightBtnEdit}
@@ -100,7 +101,7 @@ export default class EditProfile extends Component {
         <Text style={styles.txtEdit}>Lưu</Text>
       </TouchableHighlight>
     );
-  }
+  };
 
   _onSaveProfile = async () => {
     let name = '';
@@ -109,45 +110,60 @@ export default class EditProfile extends Component {
     let address = '';
     let gender = '';
     let errorMessage = '';
+    const { user_info: userInfo } = store;
 
     this.state.sections.forEach(element => {
       element.data.forEach(item => {
         if (item.id === 'ho_ten') {
           name = item.value;
         } else if (item.id === 'ngay_sinh') {
-          birth = item.value;
+          birth = item.value || '';
         } else if (item.id === 'gioi_tinh') {
           gender = item.value;
         } else if (item.id === 'email') {
-          email = item.value;
+          email = item.value || '';
         } else if (item.id === 'dia_chi') {
           address = item.value;
         }
       });
     });
 
-    if (lodash.isEmpty(name)) {
-      errorMessage = 'Hãy điền tên của bạn';
-    } else if (lodash.isEmpty(email)) {
-      errorMessage = 'Hãy điền email của bạn';
-    } else if (!this._is_email(email)) {
-      errorMessage = 'Email của bạn không đúng định dạng';
-    } else if (lodash.isEmpty(address)) {
-      errorMessage = 'Hãy điền địa chỉ của bạn';
+    // if (isEmpty(name)) {
+    //   errorMessage = 'Hãy điền tên của bạn';
+    // } else if (isEmpty(email)) {
+    //   errorMessage = 'Hãy điền email của bạn';
+    // } else if (!this._is_email(email)) {
+    //   errorMessage = 'Email của bạn không đúng định dạng';
+    // } else if (isEmpty(address)) {
+    //   errorMessage = 'Hãy điền địa chỉ của bạn';
+    // }
+
+    if (
+      name === userInfo.name &&
+      email === userInfo.email &&
+      address === userInfo.address &&
+      gender === userInfo.gender &&
+      birth === userInfo.birth
+    ) {
+      flashShowMessage({
+        type: 'info',
+        message: 'Không có thông tin nào được thay đổi'
+      });
+      return;
+    } else {
+      if (!isEmpty(email) && !this._is_email(email)) {
+        errorMessage = 'Email của bạn không đúng định dạng';
+      }
     }
 
-    if (!lodash.isEmpty(errorMessage)) {
-      return Alert.alert(
-        'Thông báo',
-        errorMessage,
-        [
-          {
-            text: 'Đồng ý'
-          }
-        ],
-        { cancelable: false }
-      );
+    if (!isEmpty(errorMessage)) {
+      flashShowMessage({
+        type: 'danger',
+        message: errorMessage
+      });
+      return;
     }
+    Keyboard.dismiss();
 
     const param = {
       name: name,
@@ -159,7 +175,7 @@ export default class EditProfile extends Component {
 
     this.setState({ loading: true }, async () => {
       try {
-        var response = await APIHandler.user_update_profile(param);
+        const response = await APIHandler.user_update_profile(param);
         this.setState({ loading: false });
 
         if (response && response.status == STATUS_SUCCESS) {
@@ -167,11 +183,14 @@ export default class EditProfile extends Component {
         }
 
         if (response) {
-          Toast.show(response.message, Toast.SHORT);
+          flashShowMessage({
+            type: response.status == STATUS_SUCCESS ? 'success' : 'danger',
+            message: response.message
+          });
         }
       } catch (e) {
         this.setState({ loading: false });
-        console.log(e + ' user_update_profile');
+        console.log('user_update_profile ' + e);
       }
     });
   };
@@ -239,29 +258,35 @@ export default class EditProfile extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <KeyboardAwareScrollView style={styles.mainScroll}>
-          <SectionList
-            style={{ flex: 1 }}
-            renderItem={this._renderItems}
-            SectionSeparatorComponent={this._renderSectionSeparator}
-            ItemSeparatorComponent={this._renderItemSeparator}
-            sections={this.state.sections}
-            keyExtractor={(item, index) => `${item.title}-${index}`}
+      <SafeAreaView style={{ flex: 1 }}>
+        <KeyboardAvoidingView
+          style={styles.container}
+          behavior={appConfig.device.isIOS ? 'padding' : null}
+        >
+          <KeyboardAwareScrollView style={styles.mainScroll}>
+            <SectionList
+              style={{ flex: 1 }}
+              renderItem={this._renderItems}
+              SectionSeparatorComponent={this._renderSectionSeparator}
+              ItemSeparatorComponent={this._renderItemSeparator}
+              sections={this.state.sections}
+              keyExtractor={(item, index) => `${item.title}-${index}`}
+            />
+          </KeyboardAwareScrollView>
+          <ActionSheet
+            ref={ref => (this.actionSheet = ref)}
+            options={['Nữ', 'Nam', 'Huỷ']}
+            cancelButtonIndex={2}
+            onPress={index => {
+              if (index !== 2) {
+                this._onChangeGender(index === 1 ? 'Nam' : 'Nữ');
+              }
+            }}
           />
-        </KeyboardAwareScrollView>
-        <ActionSheet
-          ref={ref => (this.actionSheet = ref)}
-          options={['Nữ', 'Nam', 'Huỷ']}
-          cancelButtonIndex={2}
-          onPress={index => {
-            if (index !== 2) {
-              this._onChangeGender(index === 1 ? 'Nam' : 'Nữ');
-            }
-          }}
-        />
-        {this.state.loading == true && <Loading center />}
-      </View>
+          {this.state.loading == true && <Loading center />}
+          <Button title="Lưu thay đổi" onPress={this._onSaveProfile} />
+        </KeyboardAvoidingView>
+      </SafeAreaView>
     );
   }
 }
@@ -304,3 +329,5 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
+
+export default observer(EditProfile);
