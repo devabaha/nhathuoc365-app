@@ -860,7 +860,7 @@ class RootRouter extends Component {
                 <Stack key="edit_profile">
                   <Scene
                     key="edit_profile_1"
-                    title="Tài khoản của tôi"
+                    title="Chỉnh sửa thông tin"
                     component={EditProfile}
                     {...navBarConfig}
                     back
