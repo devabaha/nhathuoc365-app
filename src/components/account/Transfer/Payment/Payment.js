@@ -12,7 +12,7 @@ import appConfig from 'app-config';
 import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import Input from './Input';
-import Button from './Button';
+import Button from '../../../Button';
 import { formatMoney } from './helper';
 
 const MAX_NOTE_LENGTH = 160;

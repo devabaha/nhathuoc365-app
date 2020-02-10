@@ -5,9 +5,16 @@ import appConfig from 'app-config';
 const Button = props => {
   return (
     <View style={[styles.container, props.containerStyle]}>
-      <TouchableOpacity style={styles.btn} onPress={props.onPress}>
+      <TouchableOpacity
+        style={[
+          styles.btn,
+          props.shadow && styles.shadow,
+          props.btnContainerStyle
+        ]}
+        onPress={props.onPress}
+      >
         {props.iconLeft}
-        <Text style={styles.text}>{props.title}</Text>
+        <Text style={[styles.text, props.titleStyle]}>{props.title}</Text>
         {props.iconRight}
       </TouchableOpacity>
     </View>
@@ -18,7 +25,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingHorizontal: 15,
-    paddingVertical: 7,
+    paddingVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'flex-end'
@@ -31,6 +38,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row'
+  },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5
   },
   text: {
     color: '#ffffff',

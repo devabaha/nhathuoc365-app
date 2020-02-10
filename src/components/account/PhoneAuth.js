@@ -17,12 +17,13 @@ import {
   SafeAreaView,
   Dimensions
 } from 'react-native';
-import { ActionConst, Actions } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import firebase from 'react-native-firebase';
 import config from '../../config';
 import countries from 'world-countries';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import store from '../../store/Store';
+import Loading from '../Loading';
 const timer = require('react-timer-mixin');
 
 const loginMode = {
@@ -345,6 +346,7 @@ class PhoneAuth extends Component {
               >
                 <Icon name="close" size={30} color="#ffffff" />
               </TouchableWithoutFeedback>
+              <Text style={[styles.title]}>Chọn quốc gia</Text>
             </View>
           </View>
           <View
@@ -445,7 +447,7 @@ class PhoneAuth extends Component {
           </Text>
         </TouchableOpacity>
         {message != '' && <Text style={styles.txtNote}>{message}</Text>}
-        {isShowIndicator && <Indicator color="#fff" style={{ marginTop: 0 }} />}
+        {isShowIndicator && <Loading center style={{ marginBottom: 64 }} />}
       </View>
     );
   }
@@ -593,9 +595,7 @@ class PhoneAuth extends Component {
                 : 'Yêu cầu mã mới'}
             </Text>
           </TouchableOpacity>
-          {isShowIndicator && (
-            <Indicator color="#fff" style={{ paddingTop: 50 }} />
-          )}
+          {isShowIndicator && <Loading center style={{ marginBottom: 64 }} />}
         </View>
       </View>
     );
@@ -679,6 +679,14 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 20,
     padding: 10
+  },
+  title: {
+    position: 'absolute',
+    alignSelf: 'center',
+    bottom: 0,
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold'
   }
 });
 
