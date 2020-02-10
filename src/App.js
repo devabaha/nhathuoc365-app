@@ -417,7 +417,6 @@ class RootRouter extends Component {
                     iconSize={24}
                   >
                     <Scene
-                      hideNavBar
                       key="_account"
                       title="Tài khoản"
                       component={Account}
