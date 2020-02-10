@@ -218,9 +218,7 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: '#EFEFF4'
   },
-
   rightBtnEdit: {
-    position: 'absolute',
     right: 10
   }
 });
