@@ -48,12 +48,14 @@ class TabIcon extends Component {
           name={this.props.iconName}
           size={this.props.iconSize}
         />
+        {this.renderNotifyCount()}
       </View>
     );
   }
 
   renderNotifyCount() {
     const notifyCount = store.notify[this.props.notifyKey];
+
     if (notifyCount) {
       return (
         <View style={styles.notifyWrapper}>
@@ -69,7 +71,6 @@ class TabIcon extends Component {
       <View style={styles.tabIcon}>
         {this.renderIcon()}
         {this.renderLabel()}
-        {this.renderNotifyCount()}
       </View>
     );
   }
@@ -106,8 +107,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
     height: 16,
     backgroundColor: 'red',
-    top: 4,
-    right: 4,
+    top: 0,
+    right: -7,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',

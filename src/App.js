@@ -23,6 +23,7 @@ import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
 import HomeContainer from './containers/Home';
+import CustomerCardWallet from './containers/CustomerCardWallet';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
 import AddStore from './components/Home/AddStore';
@@ -379,14 +380,27 @@ class RootRouter extends Component {
                   </Stack>
 
                   {/* ================ SCAN QR TAB ================ */}
-                  <Stack
+                  {/* <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={TickIdScaningButton}
                     primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
                   >
                     <Scene component={() => null} />
+                  </Stack> */}
+                  <Stack
+                    key={appConfig.routes.customerCardWallet}
+                    icon={TabIcon}
+                    iconLabel="Ví thẻ"
+                    iconName="credit-card"
+                    iconSize={24}
+                    notifyKey="customer_card_wallet"
+                  >
+                    <Scene
+                      key={`${appConfig.routes.customerCardWallet}_1`}
+                      title="Ví thẻ khách hàng"
+                      component={CustomerCardWallet}
+                    />
                   </Stack>
-
                   {/**
                    ************************ Tab 3 ************************
                    */}

@@ -3,9 +3,12 @@ import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet } from 'react-native';
 import Button from 'react-native-button';
 
-function VoucherItem(props) {
+const CustomerCardWallet = props => {
   return (
-    <Button onPress={props.onPress} containerStyle={styles.containerBtn}>
+    <Button
+      onPress={props.onPress}
+      containerStyle={[styles.containerBtn, props.style]}
+    >
       <View
         style={[
           styles.container,
@@ -15,7 +18,7 @@ function VoucherItem(props) {
         ]}
       >
         <Image source={{ uri: props.image }} style={styles.thumbnail} />
-        <View style={styles.infoWrapper}>
+        <View style={[styles.infoWrapper]}>
           <Text style={styles.title}>{props.title}</Text>
 
           {!!props.point && props.point !== '0' && (
@@ -25,8 +28,16 @@ function VoucherItem(props) {
             </Text>
           )}
         </View>
-        <Image source={{ uri: props.logoImage }} style={styles.avatar} />
-
+        <View style={[styles.avatar, styles.shadow]}>
+          <View style={styles.overflow}>
+            <Image
+              source={{ uri: props.logoImage }}
+              style={{
+                flex: 1
+              }}
+            />
+          </View>
+        </View>
         {!!props.discount && (
           <View style={styles.discountWrapper}>
             <Text style={styles.discount}>{props.discount}</Text>
@@ -35,7 +46,7 @@ function VoucherItem(props) {
       </View>
     </Button>
   );
-}
+};
 
 const styles = StyleSheet.create({
   containerBtn: {
@@ -54,7 +65,17 @@ const styles = StyleSheet.create({
     resizeMode: 'cover'
   },
   infoWrapper: {
-    padding: 16
+    padding: 16,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -5
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+
+    elevation: 4
   },
   title: {
     fontSize: 15,
@@ -68,9 +89,13 @@ const styles = StyleSheet.create({
     left: 16,
     width: 46,
     height: 46,
+    backgroundColor: '#fff',
+    borderRadius: 8
+  },
+  overflow: {
+    overflow: 'hidden',
     borderRadius: 8,
-    // borderWidth: 1,
-    borderColor: '#fff'
+    flex: 1
   },
   discountWrapper: {
     position: 'absolute',
@@ -96,27 +121,40 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#00b140'
+  },
+  shadow: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5
   }
 });
 
 const defaultListener = () => {};
 
-VoucherItem.propTypes = {
+CustomerCardWallet.propTypes = {
   image: PropTypes.string,
   title: PropTypes.string,
   discount: PropTypes.string,
   logoImage: PropTypes.string,
   last: PropTypes.bool,
-  onPress: PropTypes.func
+  onPress: PropTypes.func,
+  style: PropTypes.any
 };
 
-VoucherItem.defaultProps = {
+CustomerCardWallet.defaultProps = {
   image: '',
   title: '',
   discount: '',
   logoImage: '',
   last: false,
-  onPress: defaultListener
+  onPress: defaultListener,
+  style: {}
 };
 
-export default VoucherItem;
+export default CustomerCardWallet;

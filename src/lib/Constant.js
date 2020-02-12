@@ -138,6 +138,8 @@ global.EMAIL_SUPPORT = 'hi@tickid.vn';
 global.APP_FANPAGE = 'http://fanpage.tickid.vn';
 global.APP_INFO = 'http://tickid.vn';
 
+global.HIT_SLOP = { right: 10, left: 10, top: 10, bottom: 10 };
+
 const X_WIDTH = 375;
 const X_HEIGHT = 812;
 const XSMAX_WIDTH = 414;

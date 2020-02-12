@@ -196,12 +196,16 @@ const styles = StyleSheet.create({
   },
   headerBackground: {
     backgroundColor: config.colors.primary,
-    width: 1000,
+    width: '100%',
     height: 1000,
-    borderRadius: 480,
+    borderRadius: 500,
     position: 'absolute',
-    top: -860,
-    left: screenWidth / 2 - 500
+    transform: [
+      {
+        scaleX: 1.8
+      }
+    ],
+    top: -860
   },
   voucherX2Backgound: {
     ...getImageRatio(350, 255, 160),

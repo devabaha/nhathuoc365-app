@@ -370,3 +370,15 @@ const Center = ({ ref, style, children }) => (
   </View>
 );
 global.Center = Center;
+
+global.willUpdateState = (unmounted, callback) => {
+  if (!unmounted) {
+    callback();
+  }
+};
+
+global.setStater = (context, isUnmounted, state, callback = () => {}) => {
+  if (!isUnmounted) {
+    context.setState({ ...state }, () => callback());
+  }
+};

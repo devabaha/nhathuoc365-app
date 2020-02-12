@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Alert } from 'react-native';
-import PropTypes from 'prop-types';
+import { StyleSheet, View } from 'react-native';
 // librarys
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
-import APIHandler from '../../network/APIHandler';
 import TickidChat from '../../packages/tickid-chat/container/TickidChat/TickidChat';
 import RightButtonCall from '../RightButtonCall';
 import { servicesHandler } from '../../helper/servicesHandler';
@@ -15,8 +13,7 @@ const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
 const UPLOAD_URL = APIHandler.url_user_upload_image();
 
-@observer
-export default class Chat extends Component {
+class Chat extends Component {
   static propTypes = {};
   static defaultProps = {
     phoneNumber: null
@@ -383,3 +380,5 @@ const styles = StyleSheet.create({
     flex: 1
   }
 });
+
+export default observer(Chat);

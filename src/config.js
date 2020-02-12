@@ -51,6 +51,7 @@ const config = Object.freeze({
     homeTab: 'homeTab',
     newsTab: 'newsTab',
     scanQrCodeTab: 'scanQrCodeTab',
+    customerCardWallet: 'customer_card_wallet',
     ordersTab: 'ordersTab',
 
     vndWallet: 'vnd_wallet',

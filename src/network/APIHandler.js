@@ -436,6 +436,14 @@ class APIHandler {
   }
 
   /**
+   * Lấy dữ liệu ví thẻ khách hàng
+   */
+  async user_get_favor_sites() {
+    var api = url_for(API.USER_GET_FAVOR_SITES);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Load news list
    */
   async user_news_list(type = '') {
