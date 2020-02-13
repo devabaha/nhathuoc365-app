@@ -343,12 +343,17 @@ class ImageGallery extends Component {
   componentDidUpdate(prevProps, prevState) {
     let opacity = 0;
     if (this.props.refGestureWrapper) {
-      opacity = this.props.refGestureWrapper.current.animatedTranslateYScrollView.interpolate(
-        {
-          inputRange: [this.props.headerHeight, this.props.headerHeight * 2],
-          outputRange: [1, 0]
-        }
-      );
+      opacity = this.props.visible
+        ? this.props.refGestureWrapper.current.animatedTranslateYScrollView.interpolate(
+            {
+              inputRange: [
+                this.props.headerHeight,
+                this.props.headerHeight * 2
+              ],
+              outputRange: [1, 0]
+            }
+          )
+        : 0;
     }
 
     const rotate = this.state.rotateValue.interpolate({
