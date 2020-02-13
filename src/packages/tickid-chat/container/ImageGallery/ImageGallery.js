@@ -39,7 +39,8 @@ import {
   config,
   DURATION_SHOW_GALLERY,
   BOTTOM_OFFSET_GALLERY,
-  EXTRA_DIMENSIONS_HEIGHT
+  EXTRA_DIMENSIONS_HEIGHT,
+  ANDROID_STATUS_BAR_HEIGHT
 } from '../../constants';
 
 const PERMISSIONS_TYPE = {
@@ -342,12 +343,17 @@ class ImageGallery extends Component {
   componentDidUpdate(prevProps, prevState) {
     let opacity = 0;
     if (this.props.refGestureWrapper) {
-      opacity = this.props.refGestureWrapper.current.animatedTranslateYScrollView.interpolate(
-        {
-          inputRange: [this.props.headerHeight, this.props.headerHeight * 2],
-          outputRange: [1, 0]
-        }
-      );
+      opacity = this.props.visible
+        ? this.props.refGestureWrapper.current.animatedTranslateYScrollView.interpolate(
+            {
+              inputRange: [
+                this.props.headerHeight,
+                this.props.headerHeight * 2
+              ],
+              outputRange: [1, 0]
+            }
+          )
+        : 0;
     }
 
     const rotate = this.state.rotateValue.interpolate({
@@ -355,7 +361,7 @@ class ImageGallery extends Component {
       outputRange: [this.state.openAlbum ? '0deg' : '360deg', '180deg']
     });
 
-    const headerHeight = this.props.headerHeight - EXTRA_DIMENSIONS_HEIGHT;
+    const headerHeight = this.props.headerHeight - ANDROID_STATUS_BAR_HEIGHT;
     this.props.setHeader(
       <HeaderLayout
         opacity={opacity}

@@ -42,7 +42,7 @@ export const HEADER_HEIGHT = isIos
   ? isIphoneX
     ? getStatusBarHeight() + 60
     : 64
-  : 56 + EXTRA_DIMENSIONS_HEIGHT;
+  : 56 + ANDROID_STATUS_BAR_HEIGHT;
 
 export const COMPONENT_TYPE = {
   _NONE: {
