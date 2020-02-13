@@ -38,7 +38,8 @@ import {
   HEADER_HEIGHT,
   ANDROID_EXTRA_DIMENSIONS_HEIGHT,
   ANDROID_STATUS_BAR_HEIGHT,
-  isAndroidEmulator
+  isAndroidEmulator,
+  isAndroid
 } from '../../constants';
 import MasterToolBar from '../MasterToolBar';
 
@@ -790,7 +791,9 @@ class TickidChat extends Component {
                               ],
                               outputRange: [
                                 0,
-                                -this.state.keyboardInformation.height
+                                -this.state.keyboardInformation.height -
+                                  //hot_fix, will change later
+                                  (isAndroid ? 30 : 0)
                               ]
                             }
                           )
