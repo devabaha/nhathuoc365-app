@@ -9,7 +9,8 @@ import {
   Easing,
   Keyboard,
   SafeAreaView,
-  Text
+  Text,
+  Dimensions
 } from 'react-native';
 import {
   GiftedChat,
@@ -118,7 +119,8 @@ class TickidChat extends Component {
       duration: this.props.durationShowGallery
     },
     selectedType: COMPONENT_TYPE._NONE,
-    chatViewMarginTop: 0
+    chatViewMarginTop: 0,
+    animatedChatViewHeight: '100%'
   };
 
   refMasterToolBar = React.createRef();
@@ -133,7 +135,6 @@ class TickidChat extends Component {
     itemsPerRow: 4,
     onPinPress: this.props.onPinPress
   };
-  animatedChatViewHeight = '100%';
   getLayoutDidMount = false;
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -205,6 +206,8 @@ class TickidChat extends Component {
     this.keyboardListener = Keyboard.addListener('keyboardDidShow', e =>
       this.handleShowKeyboard(e)
     );
+    Dimensions.addEventListener('change', this.dimensionsListener);
+
     if (this.refGestureWrapper.current) {
       this.refGestureWrapper.current.animatedShowUpValue.addListener(
         this.animatedShowUpListener
@@ -220,7 +223,24 @@ class TickidChat extends Component {
         this.animatedShowUpListener
       );
     }
+    Dimensions.removeEventListener('change', this.dimensionsListener);
   }
+
+  dimensionsListener = ({ window, screen }) => {
+    const animatedChatViewHeight = window.height - HEADER_HEIGHT;
+    const extraBottom =
+      screen.height -
+      window.height -
+      ANDROID_STATUS_BAR_HEIGHT -
+      BOTTOM_SPACE_IPHONE_X;
+    this.setState(prevState => ({
+      animatedChatViewHeight,
+      keyboardInformation: {
+        ...prevState.keyboardInformation,
+        height: prevState.keyboardInformation.height + extraBottom
+      }
+    }));
+  };
 
   animatedShowUpListener = ({ value }) => {
     if (
@@ -455,7 +475,10 @@ class TickidChat extends Component {
 
   handleContainerLayout = e => {
     if (!this.getLayoutDidMount) {
-      this.animatedChatViewHeight = e.nativeEvent.layout.height;
+      this.setState({
+        animatedChatViewHeight:
+          e.nativeEvent.layout.height - BOTTOM_SPACE_IPHONE_X
+      });
       this.getLayoutDidMount = true;
     }
   };
@@ -755,7 +778,7 @@ class TickidChat extends Component {
                 styles.flex,
                 styles.animatedChatView,
                 {
-                  height: this.animatedChatViewHeight,
+                  height: this.state.animatedChatViewHeight,
                   transform: [
                     {
                       translateY: this.refGestureWrapper.current
