@@ -10,10 +10,6 @@ import { MIN_HEIGHT_COMPOSER, isIos } from '../../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const CustomComposer = props => {
-  const inputProps = isIos
-    ? { pointerEvents: props.editable ? 'auto' : 'none' }
-    : { editable: props.editable };
-
   return (
     <View style={styles.container}>
       {props.showInput ? (
@@ -22,16 +18,20 @@ const CustomComposer = props => {
           style={[styles.containerInput]}
           onPress={props.onFocusInput}
         >
-          <TextInput
-            style={[styles.input]}
-            ref={props.refInput}
-            placeholder={props.placeholder}
-            onChange={props.onTyping}
-            multiline
-            onBlur={props.onBlurInput}
-            value={props.value}
-            {...inputProps}
-          />
+          <View
+            pointerEvents={props.editable ? 'auto' : 'none'}
+            style={[styles.containerInput]}
+          >
+            <TextInput
+              style={[styles.input]}
+              ref={props.refInput}
+              placeholder={props.placeholder}
+              onChange={props.onTyping}
+              multiline
+              onBlur={props.onBlurInput}
+              value={props.value}
+            />
+          </View>
         </TouchableOpacity>
       ) : (
         <Animated.View

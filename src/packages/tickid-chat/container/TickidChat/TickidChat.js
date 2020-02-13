@@ -133,6 +133,8 @@ class TickidChat extends Component {
     itemsPerRow: 4,
     onPinPress: this.props.onPinPress
   };
+  animatedChatViewHeight = '100%';
+  getLayoutDidMount = false;
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.pinNotify !== this.props.pinNotify) {
@@ -251,6 +253,8 @@ class TickidChat extends Component {
     ) {
       state.keyboardInformation.height =
         e.endCoordinates.height - BOTTOM_SPACE_IPHONE_X;
+      // + ANDROID_STATUS_BAR_HEIGHT
+      // (Dimensions.get('screen').height - Dimensions.get('window').height + ANDROID_STATUS_BAR_HEIGHT);
 
       isUpdate = true;
     }
@@ -448,6 +452,13 @@ class TickidChat extends Component {
       }
     );
   }
+
+  handleContainerLayout = e => {
+    if (!this.getLayoutDidMount) {
+      this.animatedChatViewHeight = e.nativeEvent.layout.height;
+      this.getLayoutDidMount = true;
+    }
+  };
 
   renderComposer = () => {
     return (
@@ -734,81 +745,84 @@ class TickidChat extends Component {
 
     return (
       <SafeAreaView style={[styles.container, this.props.containerStyle]}>
-        <TouchableWithoutFeedback
-          style={styles.touchWrapper}
-          onPress={this.onListViewPress}
-        >
-          <Animated.View
-            style={[
-              styles.flex,
-              styles.animatedChatView,
-              {
-                transform: [
-                  {
-                    translateY: this.refGestureWrapper.current
-                      ? this.refGestureWrapper.current.animatedShowUpValue.interpolate(
-                          {
-                            inputRange: [
-                              0,
-                              this.state.keyboardInformation.height
-                            ],
-                            outputRange: [
-                              0,
-                              -this.state.keyboardInformation.height
-                            ]
-                          }
-                        )
-                      : 0
-                  }
-                ]
-              }
-            ]}
+        <View style={styles.container} onLayout={this.handleContainerLayout}>
+          <TouchableWithoutFeedback
+            style={styles.touchWrapper}
+            onPress={this.onListViewPress}
           >
-            <GiftedChat
-              renderDay={this.renderDay}
-              renderMessage={this.renderMessage}
-              renderMessageImage={this.renderMessageImage}
-              // renderSend={this.renderSend}
-              // renderComposer={this.renderComposer}
-              renderInputToolbar={this.renderInputToolbar}
-              renderBubble={this.renderBubble}
-              renderTime={this.renderTime}
-              // renderChatFooter={this.renderFooter.bind(this)}
-              keyboardShouldPersistTaps={'always'}
-              messages={this.props.messages}
-              // onSend={this.handleSendMessage}
-              // alwaysShowSend={true}
-              isKeyboardInternallyHandled={false}
-              listViewProps={{
-                contentContainerStyle: styles.giftedChatContainer,
-                style: [styles.flex, extraChatViewStyle],
-                ListEmptyComponent: EmptyChat
-              }}
-              scrollToBottom
-              scrollToBottomComponent={this.renderScrollBottomComponent}
-              {...this.props.giftedChatProps}
-            />
-          </Animated.View>
-        </TouchableWithoutFeedback>
+            <Animated.View
+              style={[
+                styles.flex,
+                styles.animatedChatView,
+                {
+                  height: this.animatedChatViewHeight,
+                  transform: [
+                    {
+                      translateY: this.refGestureWrapper.current
+                        ? this.refGestureWrapper.current.animatedShowUpValue.interpolate(
+                            {
+                              inputRange: [
+                                0,
+                                this.state.keyboardInformation.height
+                              ],
+                              outputRange: [
+                                0,
+                                -this.state.keyboardInformation.height
+                              ]
+                            }
+                          )
+                        : 0
+                    }
+                  ]
+                }
+              ]}
+            >
+              <GiftedChat
+                renderDay={this.renderDay}
+                renderMessage={this.renderMessage}
+                renderMessageImage={this.renderMessageImage}
+                // renderSend={this.renderSend}
+                // renderComposer={this.renderComposer}
+                renderInputToolbar={this.renderInputToolbar}
+                renderBubble={this.renderBubble}
+                renderTime={this.renderTime}
+                // renderChatFooter={this.renderFooter.bind(this)}
+                keyboardShouldPersistTaps={'always'}
+                messages={this.props.messages}
+                // onSend={this.handleSendMessage}
+                // alwaysShowSend={true}
+                isKeyboardInternallyHandled={false}
+                listViewProps={{
+                  contentContainerStyle: styles.giftedChatContainer,
+                  style: [styles.flex, extraChatViewStyle],
+                  ListEmptyComponent: EmptyChat
+                }}
+                scrollToBottom
+                scrollToBottomComponent={this.renderScrollBottomComponent}
+                {...this.props.giftedChatProps}
+              />
+            </Animated.View>
+          </TouchableWithoutFeedback>
 
-        <MasterToolBar
-          ref={this.refMasterToolBar}
-          selectedType={this.state.selectedType}
-          galleryProps={{
-            setHeader: this.props.setHeader,
-            defaultStatusBarColor: this.props.defaultStatusBarColor,
-            onExpandedBodyContent: this.handleExpandedGallery,
-            onCollapsedBodyContent: this.handleCollapsedGallery,
-            onCollapsingBodyContent: this.handleCollapsingGallery,
-            onToggleImage: this.handleToggleImage,
-            onSendImage: this.handleSendImage
-          }}
-          pinListProps={this.pinListProps}
-          visible={this.state.showToolBar}
-          baseViewHeight={this.state.keyboardInformation.height}
-          durationShowGallery={this.state.keyboardInformation.duration}
-          extraData={this.props.extraData}
-        />
+          <MasterToolBar
+            ref={this.refMasterToolBar}
+            selectedType={this.state.selectedType}
+            galleryProps={{
+              setHeader: this.props.setHeader,
+              defaultStatusBarColor: this.props.defaultStatusBarColor,
+              onExpandedBodyContent: this.handleExpandedGallery,
+              onCollapsedBodyContent: this.handleCollapsedGallery,
+              onCollapsingBodyContent: this.handleCollapsingGallery,
+              onToggleImage: this.handleToggleImage,
+              onSendImage: this.handleSendImage
+            }}
+            pinListProps={this.pinListProps}
+            visible={this.state.showToolBar}
+            baseViewHeight={this.state.keyboardInformation.height}
+            durationShowGallery={this.state.keyboardInformation.duration}
+            extraData={this.props.extraData}
+          />
+        </View>
       </SafeAreaView>
     );
   }
@@ -823,13 +837,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     flex: 1,
     width: WIDTH,
-    height:
-      (isAndroidEmulator ? HEIGHT : WINDOW_HEIGHT) -
-      HEADER_HEIGHT +
-      (isAndroidEmulator
-        ? -ANDROID_STATUS_BAR_HEIGHT
-        : ANDROID_EXTRA_DIMENSIONS_HEIGHT) -
-      BOTTOM_SPACE_IPHONE_X,
     left: 0,
     right: 0
   },
