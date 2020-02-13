@@ -6,7 +6,6 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  Image,
   ViewPropTypes,
   TouchableOpacity,
   Alert
@@ -96,7 +95,7 @@ class PinList extends Component {
             ]}
           >
             {pin.iconType === IMAGE_ICON_TYPE ? (
-              <Image style={styles.icon} source={{ uri: pin.icon }} />
+              <CachedImage style={styles.icon} source={{ uri: pin.icon }} />
             ) : (
               <MaterialCommunityIcons name={pin.icon} color="#fff" size={32} />
             )}
@@ -280,7 +279,7 @@ class Pin extends Component {
             ]}
           >
             {pin.iconType === IMAGE_ICON_TYPE ? (
-              <Image style={styles.icon} source={{ uri: pin.icon }} />
+              <CachedImage style={styles.icon} source={{ uri: pin.icon }} />
             ) : (
               <MaterialCommunityIcons name={pin.icon} color="#fff" size={32} />
             )}
