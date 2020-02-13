@@ -39,7 +39,8 @@ import {
   config,
   DURATION_SHOW_GALLERY,
   BOTTOM_OFFSET_GALLERY,
-  EXTRA_DIMENSIONS_HEIGHT
+  EXTRA_DIMENSIONS_HEIGHT,
+  ANDROID_STATUS_BAR_HEIGHT
 } from '../../constants';
 
 const PERMISSIONS_TYPE = {
@@ -355,7 +356,7 @@ class ImageGallery extends Component {
       outputRange: [this.state.openAlbum ? '0deg' : '360deg', '180deg']
     });
 
-    const headerHeight = this.props.headerHeight - EXTRA_DIMENSIONS_HEIGHT;
+    const headerHeight = this.props.headerHeight - ANDROID_STATUS_BAR_HEIGHT;
     this.props.setHeader(
       <HeaderLayout
         opacity={opacity}
