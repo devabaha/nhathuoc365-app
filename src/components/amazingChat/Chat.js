@@ -106,16 +106,13 @@ class Chat extends Component {
     this._getPinList();
   }
 
-  renderRight() {
+  renderRight = (tel = this.state.phoneNumber) => {
     return (
       <View style={{ flexDirection: 'row', marginRight: 5 }}>
-        <RightButtonCall
-          userName={this.state.guestName}
-          tel={this.state.phoneNumber}
-        />
+        <RightButtonCall userName={this.state.guestName} tel={tel} />
       </View>
     );
-  }
+  };
 
   onBack() {
     if (this.props.fromSearchScene) {
@@ -179,15 +176,15 @@ class Chat extends Component {
         if (!this.unmounted) {
           if (response && response.status == STATUS_SUCCESS && response.data) {
             if (response.data.receiver) {
+              if (this.state.phoneNumber !== response.data.receiver.phone) {
+                Actions.refresh({
+                  right: this.renderRight(response.data.receiver.phone)
+                });
+              }
               this.setState({
                 phoneNumber: response.data.receiver.phone,
                 guestName: response.data.receiver.name
               });
-              if (!this.state.phoneNumber) {
-                Actions.refresh({
-                  right: this.renderRight.bind(this)
-                });
-              }
             }
             if (response.data.list) {
               if (this.state.messages) {
