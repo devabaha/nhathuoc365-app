@@ -157,11 +157,11 @@ class CustomerCardWallet extends Component {
           secretComponent={<SearchInput ref={this.refSearchInput} />}
         />
         <View onLayout={this.onBodyLayout} style={styles.container}>
-          {/* <FlatList
-                        data={this.state.cards}
-                        renderItem={this.renderCard}
-                        keyExtractor={item => item.id}
-                    /> */}
+          <FlatList
+            data={this.state.cards}
+            renderItem={this.renderCard}
+            keyExtractor={item => item.id}
+          />
           <Animated.View
             style={[styles.searchModal, styles.modalShadow, modalStyle]}
           >
@@ -219,7 +219,8 @@ const styles = StyleSheet.create({
     width: '100%',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    zIndex: 0
+    zIndex: 0,
+    position: 'absolute'
   },
   modalShadow: {
     shadowColor: '#000',

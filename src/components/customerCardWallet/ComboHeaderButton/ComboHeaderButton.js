@@ -40,14 +40,14 @@ class ComboHeaderButton extends PureComponent {
           Animated.parallel([
             Animated.spring(this.state.smoothlyAnimated, {
               toValue: 1,
-              useNativeDriver: true
-              // friction: 8,
-              // tension: 10,
+              useNativeDriver: true,
+              friction: 13,
+              tension: 14
             }),
             Animated.spring(this.state.animated, {
-              toValue: 1
-              // friction: 8,
-              // tension: 10,
+              toValue: 1,
+              friction: 9,
+              tension: 14
             })
           ]).start(({ finished }) => finished && (this.animating = false))
       );
@@ -61,14 +61,14 @@ class ComboHeaderButton extends PureComponent {
     Animated.parallel([
       Animated.spring(this.state.smoothlyAnimated, {
         toValue: 0,
-        useNativeDriver: true
-        // friction: 6,
-        // tension: 14
+        useNativeDriver: true,
+        friction: 6,
+        tension: 14
       }),
       Animated.spring(this.state.animated, {
-        toValue: 0
-        // friction: 6,
-        // tension: 14
+        toValue: 0,
+        friction: 6,
+        tension: 14
       })
     ]).start(() => {
       this.setState(
