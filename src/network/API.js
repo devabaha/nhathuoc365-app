@@ -109,6 +109,10 @@ exports.USER_CHOOSE_LOCATION = MY_FOOD_API + 'apiUser/choose_site';
 exports.USER_COINS_WALLET = MY_FOOD_API + 'apiUser/point_history';
 exports.USER_TRANSFER_BALANCE = MY_FOOD_API + 'apiUser/transfer_balance';
 exports.USER_WALLET_HISTORY = MY_FOOD_API + 'apiUser/wallet_history';
+exports.USER_GET_INFO_BY_PHONE_NUMBER =
+  MY_FOOD_API + 'apiUser/get_info_user_by_phone';
+exports.USER_GET_INFO_BY_WALLET_ADDRESS =
+  MY_FOOD_API + 'apiUser/get_info_user_by_wallet_address';
 
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';

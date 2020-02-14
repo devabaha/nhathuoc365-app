@@ -69,7 +69,9 @@ class SelectionList extends Component {
                       styles.profile_list_icon_box_angle
                     ]}
                   >
-                    <Icon name="angle-right" size={16} color="#999999" />
+                    {item.rightIcon || (
+                      <Icon name="angle-right" size={16} color="#999999" />
+                    )}
                   </View>
                 )}
 

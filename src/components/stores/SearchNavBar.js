@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
         height: 88
       },
       {
-        paddingTop: 20,
+        paddingTop: Platform.OS === 'ios' ? 20 : 0,
         height: Platform.OS === 'ios' ? 64 : 54
       }
     )
@@ -137,13 +137,12 @@ const styles = StyleSheet.create({
         marginBottom: 8
       },
       {
-        marginVertical: 6
+        marginVertical: Platform.OS === 'ios' ? 6 : 8
       }
     )
   },
   searchInput: {
     flex: 1,
-    height: 28,
     paddingHorizontal: 8,
     color: appConfig.colors.white
   }

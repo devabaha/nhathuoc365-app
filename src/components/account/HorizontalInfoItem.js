@@ -2,13 +2,12 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TextInput,
   StyleSheet,
   TouchableOpacity
 } from 'react-native';
 
-import lodash from 'lodash';
+import { isEmpty, isFunction } from 'lodash';
 import DatePicker from 'react-native-datepicker';
 
 export default class HorizontalInfoItem extends Component {
@@ -47,10 +46,10 @@ export default class HorizontalInfoItem extends Component {
           <View style={styles.btnSelect}>
             <DatePicker
               style={{ flex: 1 }}
-              date={this.state.selectedDate}
+              date={value || this.state.selectedDate}
               mode="date"
               placeholder={defaultValue}
-              format="YYYY/MM/DD"
+              format="YYYY-MM-DD"
               confirmBtnText="Xong"
               cancelBtnText="Huỷ"
               showIcon={false}
@@ -73,7 +72,7 @@ export default class HorizontalInfoItem extends Component {
               }}
               onDateChange={date => {
                 this.setState({ selectedDate: date }, () => {
-                  if (lodash.isFunction(this.props.onSelectedDate)) {
+                  if (isFunction(this.props.onSelectedDate)) {
                     this.props.onSelectedDate(date);
                   }
                 });
@@ -90,10 +89,10 @@ export default class HorizontalInfoItem extends Component {
             <Text
               style={{
                 fontSize: 14,
-                color: lodash.isEmpty(value) ? '#989898' : 'black'
+                color: isEmpty(value) ? '#989898' : 'black'
               }}
             >
-              {lodash.isEmpty(value) ? defaultValue : value}
+              {isEmpty(value) ? defaultValue : value}
             </Text>
           </TouchableOpacity>
         );
@@ -104,13 +103,13 @@ export default class HorizontalInfoItem extends Component {
   };
 
   _onChangeInputValue = value => {
-    if (lodash.isFunction(this.props.onChangeInputValue)) {
+    if (isFunction(this.props.onChangeInputValue)) {
       this.props.onChangeInputValue(this.props.data, value);
     }
   };
 
   _onSelectValue = () => {
-    if (lodash.isFunction(this.props.onSelectedValue)) {
+    if (isFunction(this.props.onSelectedValue)) {
       this.props.onSelectedValue(this.props.data);
     }
   };
@@ -132,7 +131,7 @@ export default class HorizontalInfoItem extends Component {
       <View
         style={[
           styles.container,
-          { backgroundColor: disable ? '#EAF0F6' : 'white' }
+          { backgroundColor: disable ? '#EAF0F6' : '#ffffff' }
         ]}
       >
         <Text style={styles.title}>{title}</Text>

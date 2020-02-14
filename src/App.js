@@ -71,6 +71,11 @@ import Affiliate from './components/account/Affiliate/Affiliate';
 import ProfileDetail from './components/account/ProfileDetail';
 import EditProfile from './components/account/EditProfile';
 import DetailHistoryPayment from './components/account/DetailHistoryPayment';
+import Transfer, {
+  Payment as TransferPayment,
+  Confirm as TransferConfirm,
+  Result as TransferResult
+} from './components/account/Transfer';
 import PhoneCardContainer, {
   config as phoneCardConfig,
   initialize as initializePhoneCardModule,
@@ -423,7 +428,7 @@ const styles = StyleSheet.create({
   tabBarStyle: {
     borderTopWidth: Util.pixel,
     borderColor: '#cccccc',
-    backgroundColor: 'white',
+    backgroundColor: '#ffffff',
     opacity: 1,
     shadowColor: 'black',
     shadowOffset: {
@@ -496,8 +501,8 @@ class RootRouter extends Component {
                   showLabel={false}
                   key={appConfig.routes.primaryTabbar}
                   tabBarStyle={styles.tabBarStyle}
-                  activeBackgroundColor="white"
-                  inactiveBackgroundColor="white"
+                  activeBackgroundColor="#ffffff"
+                  inactiveBackgroundColor="#ffffff"
                   tabBarOnPress={handleTabBarOnPress}
                   {...navBarConfig}
                 >
@@ -574,7 +579,6 @@ class RootRouter extends Component {
                     iconSize={24}
                   >
                     <Scene
-                      hideNavBar
                       key="_account"
                       title="Tài khoản"
                       component={Account}
@@ -979,9 +983,38 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="pay_wallet">
+                <Stack key={appConfig.routes.transfer}>
                   <Scene
-                    key="pay_wallet_1"
+                    key={`${appConfig.routes.transfer}_1`}
+                    component={Transfer}
+                    title="Chuyển khoản"
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.transferPayment}>
+                  <Scene
+                    key={`${appConfig.routes.transferPayment}_1`}
+                    component={TransferPayment}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.transferConfirm}>
+                  <Scene
+                    key={`${appConfig.routes.transferConfirm}_1`}
+                    component={TransferConfirm}
+                    title="Thanh toán an toàn"
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.payWallet}>
+                  <Scene
+                    key={`${appConfig.routes.payWallet}_1`}
                     component={PayWallet}
                     {...navBarConfig}
                     back
@@ -1019,7 +1052,7 @@ class RootRouter extends Component {
                 <Stack key="edit_profile">
                   <Scene
                     key="edit_profile_1"
-                    title="Tài khoản của tôi"
+                    title="Chỉnh sửa thông tin"
                     component={EditProfile}
                     {...navBarConfig}
                     back

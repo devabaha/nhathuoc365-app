@@ -4,14 +4,8 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
-  TouchableWithoutFeedback,
   StyleSheet,
-  FlatList,
-  ImageBackground,
-  RefreshControl,
-  ScrollView,
   Alert,
   TextInput,
   Platform
@@ -19,14 +13,9 @@ import {
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { reaction } from 'mobx';
 import store from '../../store/Store';
 
-@observer
-export default class PayWallet extends Component {
+class PayWallet extends Component {
   constructor(props) {
     super(props);
 
@@ -91,7 +80,7 @@ export default class PayWallet extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.user_transfer_balance({
+          const response = await APIHandler.user_transfer_balance({
             zone_code: wallet.zone_code,
             receive_address: address,
             amount: amount
@@ -526,3 +515,5 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 });
+
+export default observer(PayWallet);
