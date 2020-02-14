@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import {
-  Text,
-  Animated,
-  StyleSheet,
-  Easing,
-  View,
-  ViewPropTypes
-} from 'react-native';
+import { Text, Animated, StyleSheet, Easing, View } from 'react-native';
 import { default as ButtonRN } from 'react-native-button';
 import PropTypes from 'prop-types';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -135,6 +128,7 @@ class Button extends Component {
         style={[
           styles.btnContainer,
           styles.btnWrapper,
+          styles.wrapper,
           this.props.containerStyle
         ]}
       >
@@ -142,7 +136,13 @@ class Button extends Component {
           onPress={this.handlePress}
           containerStyle={[styles.container]}
         >
-          <View style={[styles.btnWrapper, !this.props.first && extraStyle]}>
+          <View
+            style={[
+              styles.btnWrapper,
+              styles.btn,
+              !this.props.first && extraStyle
+            ]}
+          >
             <Animated.View
               onLayout={this.measureLayout}
               style={[styles.btnContainer, styles.btnWrapper, animatedStyle]}
@@ -181,12 +181,18 @@ Button.defaultProps = {
 };
 
 const styles = StyleSheet.create({
+  wrapper: {
+    paddingVertical: 0
+  },
   container: {
     flexDirection: 'row',
     maxWidth: 500,
     alignSelf: 'center',
-    justifyContent: 'center',
-    paddingVertical: 3
+    justifyContent: 'center'
+  },
+  btn: {
+    height: 54,
+    width: '100%'
   },
   btnContainer: {
     flex: 1,

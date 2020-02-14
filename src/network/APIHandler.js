@@ -444,6 +444,34 @@ class APIHandler {
   }
 
   /**
+   * Tìm kiếm dữ liệu ví thẻ khách hàng
+   */
+  async user_search_my_favor_sites(data) {
+    var api = url_for(API.USER_GET_FAVOR_SITES);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Tìm kiếm dữ liệu để thêm vào ví thẻ khách hàng
+   */
+  async user_search_favor_sites(data) {
+    var api = url_for(API.USER_SEARCH_FAVOR_SITES);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Cập nhật dữ liệu ví thẻ khách hàng
+   * updateKey: 1 - add, 2 - delete
+   */
+  async user_update_favor_site(store_id, updateKey) {
+    var api = url_for(
+      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey
+    );
+    console.log(api);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Load news list
    */
   async user_news_list(type = '') {

@@ -26,49 +26,51 @@ class ComboHeaderButton extends PureComponent {
   };
   animating = false;
 
-  handleOnPress = (btn, index, effectType) => {
-    if (index !== this.state.selectedIndex && !this.animating) {
-      this.props.onPress(btn);
-      this.animating = true;
-      this.setState(
-        {
-          selectedIndex: index,
-          selectedBtn: btn,
-          visibleInput: true
-        },
-        () =>
-          Animated.parallel([
-            Animated.spring(this.state.smoothlyAnimated, {
-              toValue: 1,
-              useNativeDriver: true,
-              friction: 13,
-              tension: 14
-            }),
-            Animated.spring(this.state.animated, {
-              toValue: 1,
-              friction: 9,
-              tension: 14
-            })
-          ]).start(({ finished }) => finished && (this.animating = false))
-      );
+  handleOnPress = (btn, index) => {
+    if (this.animating) {
+      this.state.animated.resetAnimation();
+      this.state.smoothlyAnimated.resetAnimation();
     }
+    this.props.onPress(btn);
+    this.animating = true;
+    this.setState(
+      {
+        selectedIndex: index,
+        selectedBtn: btn,
+        visibleInput: true
+      },
+      () =>
+        Animated.parallel([
+          Animated.spring(this.state.smoothlyAnimated, {
+            toValue: 1,
+            useNativeDriver: true,
+            friction: 13,
+            tension: 14
+          }),
+          Animated.spring(this.state.animated, {
+            toValue: 1,
+            friction: 13,
+            tension: 14
+          })
+        ]).start(({ finished }) => finished && (this.animating = false))
+    );
   };
 
-  handleClose = () => {
+  handleClose() {
     this.props.onCloseInput();
     Keyboard.dismiss();
     this.animating = true;
     Animated.parallel([
       Animated.spring(this.state.smoothlyAnimated, {
         toValue: 0,
-        useNativeDriver: true,
-        friction: 6,
-        tension: 14
+        useNativeDriver: true
+        // friction: 8,
+        // tension: 14
       }),
       Animated.spring(this.state.animated, {
-        toValue: 0,
-        friction: 6,
-        tension: 14
+        toValue: 0
+        // friction: 8,
+        // tension: 14
       })
     ]).start(() => {
       this.setState(
@@ -80,7 +82,7 @@ class ComboHeaderButton extends PureComponent {
         () => (this.animating = false)
       );
     });
-  };
+  }
 
   renderButton() {
     return this.props.data.map((btn, index) => {
@@ -113,7 +115,7 @@ class ComboHeaderButton extends PureComponent {
           iconName={btn.iconName}
           first={index === 0}
           effectType={btn.effectType}
-          onPress={() => this.handleOnPress(btn, index, btn.effectType)}
+          onPress={() => this.handleOnPress(btn, index)}
         />
       );
     });
@@ -146,7 +148,10 @@ class ComboHeaderButton extends PureComponent {
         >
           {this.props.secretComponent}
           {!!!this.props.rightSecretComponent && (
-            <TouchableOpacity onPress={this.handleClose} hitSlop={HIT_SLOP}>
+            <TouchableOpacity
+              onPress={this.handleClose.bind(this)}
+              hitSlop={HIT_SLOP}
+            >
               <Icon name="close" size={20} color="#a5a5a5" />
             </TouchableOpacity>
           )}

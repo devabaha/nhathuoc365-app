@@ -1,23 +1,57 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, KeyboardAvoidingView } from 'react-native';
-import Loading from '@tickid/tickid-rn-loading';
+import {
+  StyleSheet,
+  FlatList,
+  KeyboardAvoidingView,
+  View,
+  Text
+} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PropTypes from 'prop-types';
 import { CardWallet } from './';
 import appConfig from 'app-config';
 
 class Search extends Component {
+  static defaultProps = {
+    onPressData: () => {},
+    compareData: [],
+    data: []
+  };
   state = {};
 
-  handlePressCard = () => {};
+  handlePressCard = card => {
+    this.props.onPressData(card);
+  };
 
   renderCard = ({ item: card, index }) => {
+    const isExisted = this.props.compareData.find(item => item.id === card.id);
+    const extraStyle = {
+      backgroundColor: !isExisted ? appConfig.colors.primary : '#bababa'
+    };
+
     return (
       <CardWallet
-        style={styles.cardContainer}
+        rightTitleComponent={
+          <View style={[styles.funcBtn, extraStyle]}>
+            {isExisted ? (
+              <>
+                <Icon name="check" color="#fff" size={18} />
+                <Text style={styles.funcText}>Đã thêm</Text>
+              </>
+            ) : (
+              <>
+                <Icon name="plus" color="#fff" size={18} />
+                <Text style={styles.funcText}>Thêm thẻ</Text>
+              </>
+            )}
+          </View>
+        }
+        disabled={isExisted}
+        style={[styles.cardContainer, styles.shadow]}
         logoImage={card.logo_url}
         image={card.image_url}
         title={card.title}
-        onPress={this.handlePressCard}
+        onPress={() => this.handlePressCard(card)}
         last={index === this.props.data.length - 1}
       />
     );
@@ -29,14 +63,16 @@ class Search extends Component {
         style={styles.container}
         behavior={appConfig.device.isIOS ? 'padding' : null}
       >
-        {this.props.loading && <Loading loading />}
         <FlatList
           keyboardDismissMode="on-drag"
+          keyboardShouldPersistTaps="always"
           style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           data={this.props.data}
           renderItem={this.renderCard}
           keyExtractor={item => item.id}
+          ListEmptyComponent={this.props.listEmptyComponent}
+          ListHeaderComponent={this.props.listHeaderComponent}
         />
       </KeyboardAvoidingView>
     );
@@ -58,11 +94,31 @@ const styles = StyleSheet.create({
     flex: 1
   },
   cardContainer: {
-    borderBottomColor: '#f1f1f1',
-    borderBottomWidth: 1,
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
     marginBottom: 15
+  },
+  shadow: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 6
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+
+    elevation: 5
+  },
+  funcBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 7,
+    paddingVertical: 5,
+    borderRadius: 4
+  },
+  funcText: {
+    color: '#fff',
+    paddingLeft: 5,
+    fontWeight: '400'
   }
 });
 

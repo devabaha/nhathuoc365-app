@@ -8,11 +8,13 @@ const NoResult = props => {
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
-        <Icon
-          name={props.iconName || 'file-remove'}
-          size={72}
-          color={DEFAULT_COLOR}
-        />
+        {props.icon || (
+          <Icon
+            name={props.iconName || 'file-remove'}
+            size={72}
+            color={DEFAULT_COLOR}
+          />
+        )}
         <Text style={styles.text}>{props.message}</Text>
       </View>
     </View>

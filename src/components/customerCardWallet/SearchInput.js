@@ -4,7 +4,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import appConfig from 'app-config';
 
 class SearchInput extends PureComponent {
-  static defaultProps = {};
+  static defaultProps = {
+    onChangeText: () => {},
+    value: ''
+  };
 
   state = {};
   refTextInput = React.createRef();
@@ -22,6 +25,8 @@ class SearchInput extends PureComponent {
           numberOfLines={1}
           style={styles.input}
           placeholder="Nhập để tìm kiếm..."
+          onChangeText={this.props.onChangeText}
+          value={this.props.value}
         />
       </>
     );

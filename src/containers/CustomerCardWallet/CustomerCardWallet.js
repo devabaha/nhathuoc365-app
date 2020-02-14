@@ -1,7 +1,17 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, FlatList, Image, Animated } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  Image,
+  Animated,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Text,
+  RefreshControl
+} from 'react-native';
 import store from 'app-store';
-import Loading from '@tickid/tickid-rn-loading';
+import Loading from '../../components/Loading';
 import appConfig from 'app-config';
 import {
   CardWallet,
@@ -9,15 +19,25 @@ import {
   Search,
   SearchInput
 } from '../../components/customerCardWallet';
+import { debounce } from 'lodash';
+import NoResult from '../../components/NoResult';
 import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
+const MIN_CHARACTER = 3;
+const BUTTON_TYPE = {
+  SERVER: 'add',
+  LOCAL: 'local'
+};
 const BUTTONS = [
   {
+    type: BUTTON_TYPE.SERVER,
     showModal: true,
     title: 'Thêm thẻ',
     iconName: 'plus'
   },
   {
+    type: BUTTON_TYPE.LOCAL,
     title: 'Tìm kiếm thẻ',
     iconName: 'search'
   }
@@ -27,16 +47,24 @@ class CustomerCardWallet extends Component {
   state = {
     cards: [],
     searchCards: [],
+    searchMyCards: [],
     loading: false,
-    animatedModal: new Animated.Value(0)
+    isTyping: false,
+    refreshing: false,
+    searchValue: '',
+    selectedType: null,
+    animatedModal: new Animated.Value(0),
+    animatedScaling: new Animated.Value(0)
   };
   unmounted = false;
   btnHeaderLayout = { height: 0 };
   bodyLayout = { height: appConfig.device.height };
   modalHeight = appConfig.device.height;
   refSearchInput = React.createRef();
+  refComboHeaderButton = React.createRef();
 
   componentDidMount() {
+    this.setState({ loading: true });
     this.getFavors();
   }
 
@@ -44,10 +72,15 @@ class CustomerCardWallet extends Component {
     this.unmounted = true;
   }
 
-  getFavors = async () => {
-    this.setState({ loading: true });
+  handlePressShortcutSearch = () => {
+    if (this.refComboHeaderButton.current) {
+      this.refComboHeaderButton.current.handleOnPress(BUTTONS[0], 0);
+    }
+  };
+
+  getFavors = async (keyword = '') => {
     try {
-      const response = await APIHandler.user_get_favor_sites();
+      const response = await APIHandler.user_get_favor_sites(keyword);
       console.log(response);
       if (response.status === STATUS_SUCCESS && response.data) {
         setStater(this, this.unmounted, {
@@ -64,6 +97,153 @@ class CustomerCardWallet extends Component {
       store.addApiQueue('customer_card_wallet', this.getFavors);
     } finally {
       setStater(this, this.unmounted, {
+        loading: false,
+        refreshing: false
+      });
+    }
+  };
+
+  searchFavorsSite = debounce(async (keyword = '') => {
+    if (keyword.length >= MIN_CHARACTER) {
+      const data = { keyword };
+      setStater(this, this.unmounted, {
+        loading: true
+      });
+
+      try {
+        const response = await APIHandler.user_search_favor_sites(data);
+        console.log(response);
+        if (response.status === STATUS_SUCCESS && response.data) {
+          setStater(
+            this,
+            this.unmounted,
+            {
+              searchCards: response.data.sites
+            },
+            () =>
+              Animated.spring(this.state.animatedScaling, {
+                toValue: 1,
+                useNativeDriver: true
+              }).start()
+          );
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message
+          });
+        }
+      } catch (error) {
+        console.log('search_customer_card_wallet', error);
+        store.addApiQueue('search_customer_card_wallet', this.searchFavorsSite);
+      } finally {
+        setStater(this, this.unmounted, {
+          loading: false,
+          isTyping: false
+        });
+      }
+    } else {
+      setStater(this, this.unmounted, {
+        loading: false,
+        isTyping: false
+      });
+    }
+  }, 500);
+
+  searchMyFavors = debounce(async (keyword = '') => {
+    if (keyword) {
+      const data = { keyword };
+      setStater(this, this.unmounted, {
+        loading: true
+      });
+
+      try {
+        const response = await APIHandler.user_search_my_favor_sites(data);
+        console.log(response);
+        if (response.status === STATUS_SUCCESS && response.data) {
+          setStater(
+            this,
+            this.unmounted,
+            {
+              searchMyCards: response.data.sites
+            },
+            () =>
+              Animated.spring(this.state.animatedScaling, {
+                toValue: 1,
+                useNativeDriver: true
+              }).start()
+          );
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message
+          });
+        }
+      } catch (error) {
+        console.log('search_my_customer_card_wallet', error);
+        store.addApiQueue(
+          'search_my_customer_card_wallet',
+          this.searchMyFavors
+        );
+      } finally {
+        setStater(this, this.unmounted, {
+          loading: false,
+          isTyping: false
+        });
+      }
+    } else {
+      setStater(this, this.unmounted, {
+        loading: false,
+        isTyping: false
+      });
+    }
+  }, 500);
+
+  handleSearch = searchValue => {
+    this.setState({ searchValue, isTyping: true });
+
+    switch (this.state.selectedType) {
+      case BUTTON_TYPE.SERVER:
+        this.searchFavorsSite(searchValue);
+        break;
+      case BUTTON_TYPE.LOCAL:
+        this.searchMyFavors(searchValue);
+        break;
+    }
+
+    if (!searchValue) {
+      this.setState({ searchCards: [], searchMyCards: [] });
+    }
+  };
+
+  handleUpdateMyCard = async (card, type) => {
+    const siteId = card.id;
+    this.setState({ loading: true });
+
+    try {
+      const response = await APIHandler.user_update_favor_site(siteId, type);
+      console.log(response);
+      if (response.status === STATUS_SUCCESS) {
+        flashShowMessage({
+          type: 'success',
+          message: response.message
+        });
+        this.refComboHeaderButton.current &&
+          this.refComboHeaderButton.current.handleClose();
+        if (response.data) {
+          setStater(this, this.unmounted, {
+            cards: response.data.sites
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message
+        });
+      }
+    } catch (error) {
+      console.log('update_customer_card_wallet', error);
+    } finally {
+      setStater(this, this.unmounted, {
         loading: false
       });
     }
@@ -78,22 +258,33 @@ class CustomerCardWallet extends Component {
   };
 
   handleHeaderButtonPress = btn => {
+    this.setState({
+      selectedType: btn.type
+    });
+
     if (btn.showModal) {
       Animated.spring(this.state.animatedModal, {
+        useNativeDriver: true,
         toValue: 1
       }).start();
-    } else {
-      if (this.refSearchInput.current) {
-        this.refSearchInput.current.refInput &&
-          this.refSearchInput.current.refInput.focus();
-      }
     }
+
+    this.refSearchInput.current.refInput &&
+      this.refSearchInput.current.refInput.focus();
   };
 
   handleCloseModal = () => {
-    Animated.spring(this.state.animatedModal, {
-      toValue: 0
-    }).start();
+    this.setState({ searchValue: '', searchCards: [], searchMyCards: [] });
+    Animated.parallel([
+      Animated.spring(this.state.animatedScaling, {
+        toValue: 0,
+        useNativeDriver: true
+      }),
+      Animated.spring(this.state.animatedModal, {
+        useNativeDriver: true,
+        toValue: 0
+      })
+    ]).start();
   };
 
   onButtonHeaderLayout = e => {
@@ -110,15 +301,22 @@ class CustomerCardWallet extends Component {
     this.modalHeight = this.bodyLayout.height + this.btnHeaderLayout.height * 2;
   }
 
+  handleRefreshMyCards = () => {
+    this.setState({ refreshing: true });
+    this.getFavors();
+  };
+
   renderCard = ({ item: card, index }) => {
     return (
       <CardWallet
-        style={index === 0 ? styles.cardWallet : {}}
+        longPress
         logoImage={card.logo_url}
         image={card.image_url}
         title={card.title}
         onPress={() => this.handlePressCard(card)}
+        onDelete={() => this.handleUpdateMyCard(card, 0)}
         last={index === this.state.cards.length - 1}
+        first={index === 0}
       />
     );
   };
@@ -136,10 +334,43 @@ class CustomerCardWallet extends Component {
         }
       ]
     };
+    const resultStyle = {
+      marginBottom: 10,
+      position: 'absolute',
+      backgroundColor: 'rgba(255,255,255,.6)',
+      paddingHorizontal: 0,
+      marginLeft: 15,
+      paddingVertical: 5,
+      paddingHorizontal: 8,
+      borderRadius: 4,
+      zIndex: 9,
+      transform: [
+        {
+          scale: this.state.animatedScaling
+        }
+      ],
+      opacity: this.state.animatedScaling.interpolate({
+        inputRange: [0, 0.7, 1],
+        outputRange: [0, 0, 1]
+      })
+    };
+
+    const data =
+      this.state.selectedType === BUTTON_TYPE.LOCAL &&
+      this.state.searchMyCards.length !== 0
+        ? this.state.searchMyCards
+        : this.state.cards;
+
+    const count =
+      this.state.searchMyCards.length !== 0
+        ? this.state.searchMyCards.length
+        : this.state.searchCards.length !== 0
+        ? this.state.searchCards.length
+        : 0;
 
     return (
       <View style={styles.container}>
-        <Loading loading={this.state.loading} />
+        {this.state.loading && <Loading center style={styles.loading} />}
 
         <View style={styles.headerBackground}>
           <Image
@@ -149,23 +380,65 @@ class CustomerCardWallet extends Component {
         </View>
 
         <ComboHeaderButton
+          ref={this.refComboHeaderButton}
           containerStyle={styles.comboHeaderBtn}
           data={BUTTONS}
           onPress={this.handleHeaderButtonPress}
           onCloseInput={this.handleCloseModal}
           onContainerLayout={this.onButtonHeaderLayout}
-          secretComponent={<SearchInput ref={this.refSearchInput} />}
+          secretComponent={
+            <SearchInput
+              ref={this.refSearchInput}
+              value={this.state.searchValue}
+              onChangeText={this.handleSearch}
+            />
+          }
         />
         <View onLayout={this.onBodyLayout} style={styles.container}>
+          <Header text={count} style={[resultStyle]} />
           <FlatList
-            data={this.state.cards}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this.handleRefreshMyCards}
+              />
+            }
+            data={data}
+            contentContainerStyle={{ flex: data.length === 0 ? 1 : 0 }}
+            keyboardShouldPersistTaps="always"
+            keyboardDismissMode="on-drag"
             renderItem={this.renderCard}
             keyExtractor={item => item.id}
+            ListEmptyComponent={
+              !this.state.loading && (
+                <NoResult
+                  icon={
+                    <Icon
+                      name={'playlist-add'}
+                      size={72}
+                      color={DEFAULT_COLOR}
+                      onPress={this.handlePressShortcutSearch}
+                    />
+                  }
+                  message="Chưa có thẻ? Hãy thêm ngay"
+                />
+              )
+            }
           />
           <Animated.View
             style={[styles.searchModal, styles.modalShadow, modalStyle]}
           >
-            <Search data={this.state.cards} />
+            <Search
+              compareData={this.state.cards}
+              data={this.state.searchCards}
+              onPressData={card => this.handleUpdateMyCard(card, 1)}
+              listEmptyComponent={
+                <Empty
+                  isSearch={this.state.searchValue.length >= MIN_CHARACTER}
+                  isTyping={this.state.isTyping}
+                />
+              }
+            />
           </Animated.View>
         </View>
       </View>
@@ -211,9 +484,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
     zIndex: 1
   },
-  cardWallet: {
-    paddingTop: 20
-  },
   searchModal: {
     backgroundColor: '#fff',
     width: '100%',
@@ -232,7 +502,45 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
 
     elevation: 5
+  },
+  noResultContainer: {
+    flex: 1
+  },
+  loading: {
+    backgroundColor: 'rgba(0,0,0,.6)',
+    borderRadius: 4
   }
 });
 
 export default CustomerCardWallet;
+
+const Header = props => (
+  <Animated.View
+    style={[{ marginTop: 10, paddingHorizontal: 15 }, props.style]}
+  >
+    <Text>
+      Có{' '}
+      <Text style={[{ fontWeight: 'bold', color: appConfig.colors.primary }]}>
+        {props.text}
+      </Text>{' '}
+      kết quả
+    </Text>
+  </Animated.View>
+);
+
+const Empty = props => (
+  <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+    <View style={styles.noResultContainer}>
+      {!props.isSearch ? (
+        <NoResult
+          iconName="file-search"
+          message="Nhập ít nhất 3 ký tự để tìm kiếm..."
+        />
+      ) : (
+        !props.isTyping && (
+          <NoResult iconName="magnify-close" message="Không tìm thấy dữ liệu" />
+        )
+      )}
+    </View>
+  </TouchableWithoutFeedback>
+);
