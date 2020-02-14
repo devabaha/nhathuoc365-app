@@ -40,7 +40,7 @@ const config = {
     voucherShowBarcode: 'voucherShowBarcode'
   },
   rest: {
-    endpoint: () => 'https://apiapp.tickid.top',
+    endpoint: () => 'https://apiapp.tickid.vn',
     listCampaigns: () => '/apiVoucher/list_campaign',
     myVouchers: () => '/apiVoucher/my_voucher',
     myVouchersBySiteId: siteId => `/apiVoucher/my_voucher/${siteId}`,
