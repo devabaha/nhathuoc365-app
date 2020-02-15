@@ -382,3 +382,11 @@ global.setStater = (context, isUnmounted, state, callback = () => {}) => {
     context.setState({ ...state }, () => callback());
   }
 };
+
+global.elevationShadowStyle = (elevation, width = 0, height = 0) => ({
+  elevation,
+  shadowColor: 'black',
+  shadowOffset: { width: width, height: height || 0.5 * elevation },
+  shadowOpacity: 0.25,
+  shadowRadius: 0.8 * elevation
+});

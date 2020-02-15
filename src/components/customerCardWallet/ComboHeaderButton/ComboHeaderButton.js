@@ -4,10 +4,12 @@ import {
   StyleSheet,
   Keyboard,
   Animated,
-  TouchableOpacity
+  TouchableOpacity,
+  Easing
 } from 'react-native';
 import Button from './Button';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import appConfig from 'app-config';
 
 class ComboHeaderButton extends PureComponent {
   static defaultProps = {
@@ -47,16 +49,15 @@ class ComboHeaderButton extends PureComponent {
             friction: 13,
             tension: 14
           }),
-          Animated.spring(this.state.animated, {
+          Animated.timing(this.state.animated, {
             toValue: 1,
-            friction: 13,
-            tension: 14
+            easing: Easing.elastic()
           })
         ]).start(({ finished }) => finished && (this.animating = false))
     );
   };
 
-  handleClose() {
+  handleClose = () => {
     this.props.onCloseInput();
     Keyboard.dismiss();
     this.animating = true;
@@ -82,7 +83,7 @@ class ComboHeaderButton extends PureComponent {
         () => (this.animating = false)
       );
     });
-  }
+  };
 
   renderButton() {
     return this.props.data.map((btn, index) => {
@@ -139,7 +140,9 @@ class ComboHeaderButton extends PureComponent {
         onLayout={this.props.onContainerLayout}
         style={[styles.wrapper, this.props.containerStyle]}
       >
-        <View style={[styles.container, styles.shadow]}>
+        <View
+          style={[styles.container, appConfig.device.isIOS && styles.shadow]}
+        >
           {this.renderButton()}
         </View>
         <Animated.View
@@ -148,10 +151,7 @@ class ComboHeaderButton extends PureComponent {
         >
           {this.props.secretComponent}
           {!!!this.props.rightSecretComponent && (
-            <TouchableOpacity
-              onPress={this.handleClose.bind(this)}
-              hitSlop={HIT_SLOP}
-            >
+            <TouchableOpacity onPress={this.handleClose} hitSlop={HIT_SLOP}>
               <Icon name="close" size={20} color="#a5a5a5" />
             </TouchableOpacity>
           )}
@@ -180,21 +180,14 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
   shadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5
+    ...elevationShadowStyle(5)
   },
   secretContainer: {
     position: 'absolute',
     height: '100%',
     width: '100%',
     justifyContent: 'flex-start',
+    borderRadius: 10,
     alignItems: 'center',
     zIndex: 999,
     paddingHorizontal: 10,

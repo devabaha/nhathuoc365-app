@@ -1,0 +1,470 @@
+import React, { Component } from 'react';
+import { StyleSheet, View, Animated, Easing } from 'react-native';
+import Icon1 from 'react-native-vector-icons/FontAwesome';
+import Icon2 from 'react-native-vector-icons/Octicons';
+import Icon3 from 'react-native-vector-icons/Ionicons';
+import appConfig from 'app-config';
+
+const isIOS = appConfig.device.isIOS;
+const AnimatedIcon1 = Animated.createAnimatedComponent(Icon1);
+const AnimatedIcon2 = Animated.createAnimatedComponent(Icon2);
+const AnimatedIcon3 = Animated.createAnimatedComponent(Icon3);
+const MAIN_COLOR = appConfig.colors.primary;
+const SUB_COLOR = '#fff';
+
+class CreditCardTabButton extends Component {
+  state = {
+    animated: new Animated.Value(0),
+    animated1: new Animated.Value(0),
+    animated2: new Animated.Value(0),
+    animatedRotate: new Animated.Value(0),
+    animatedRotate1: new Animated.Value(0),
+    animatedScan: new Animated.Value(0),
+    animatedColor: new Animated.Value(0),
+    animatedFocused: new Animated.Value(0)
+  };
+
+  componentDidMount() {
+    this.startAnimation();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextState !== this.state) {
+      return true;
+    }
+
+    if (nextProps.focused !== this.props.focused) {
+      Animated.timing(this.state.animatedFocused, {
+        toValue: nextProps.focused ? 1 : 0,
+        easing: Easing.elastic(2),
+        useNativeDriver: true
+      }).start();
+    }
+
+    if (
+      nextProps.focused !== this.props.focused ||
+      nextProps.label !== this.props.label
+    ) {
+      return true;
+    }
+
+    return false;
+  }
+
+  startAnimation() {
+    Animated.loop(
+      Animated.sequence([
+        Animated.delay(1000),
+        Animated.timing(this.state.animated, {
+          toValue: 1,
+          useNativeDriver: true,
+          easing: Easing.bounce
+        }),
+        Animated.delay(1000),
+        Animated.parallel([
+          //unused if Android
+          Animated.timing(this.state.animatedColor, {
+            toValue: 1
+          }),
+          //---
+          Animated.timing(this.state.animatedScan, {
+            toValue: 1,
+            easing: Easing.elastic(1000),
+            useNativeDriver: true,
+            duration: 1000
+          }),
+          Animated.timing(this.state.animated, {
+            toValue: 0,
+            useNativeDriver: true,
+            easing: Easing.elastic()
+          }),
+          Animated.stagger(200, [
+            Animated.timing(this.state.animated1, {
+              toValue: 1,
+              useNativeDriver: true,
+              easing: Easing.elastic()
+            }),
+            Animated.timing(this.state.animated2, {
+              toValue: 1,
+              useNativeDriver: true,
+              easing: Easing.elastic()
+            })
+          ]),
+          Animated.timing(this.state.animatedRotate, {
+            toValue: 1,
+            useNativeDriver: true,
+            easing: Easing.elastic()
+          })
+        ]),
+        Animated.delay(1500),
+        Animated.parallel([
+          Animated.timing(this.state.animatedScan, {
+            toValue: 0,
+            easing: Easing.elastic(1000),
+            useNativeDriver: true,
+            duration: 1000
+          }),
+          Animated.timing(this.state.animatedRotate, {
+            toValue: 0,
+            useNativeDriver: true,
+            easing: Easing.elastic()
+          }),
+          Animated.timing(this.state.animated, {
+            toValue: 2,
+            useNativeDriver: true,
+            easing: Easing.bounce
+          }),
+          Animated.stagger(200, [
+            Animated.parallel([
+              Animated.timing(this.state.animated2, {
+                toValue: 2,
+                useNativeDriver: true,
+                easing: Easing.elastic()
+              }),
+              Animated.timing(this.state.animatedRotate1, {
+                toValue: 1,
+                useNativeDriver: true,
+                easing: Easing.elastic()
+              })
+            ]),
+            Animated.parallel([
+              Animated.timing(this.state.animated1, {
+                toValue: 2,
+                useNativeDriver: true,
+                easing: Easing.elastic()
+              }),
+              Animated.timing(this.state.animatedRotate1, {
+                toValue: 1,
+                useNativeDriver: true,
+                easing: Easing.elastic()
+              })
+            ])
+          ])
+        ]),
+        Animated.parallel([
+          Animated.timing(this.state.animatedRotate, {
+            toValue: 0,
+            useNativeDriver: true,
+            duration: 0
+          }),
+          Animated.timing(this.state.animatedRotate1, {
+            toValue: 0,
+            useNativeDriver: true,
+            duration: 0
+          }),
+          Animated.timing(this.state.animated2, {
+            toValue: 0,
+            useNativeDriver: true,
+            duration: 0
+          }),
+          Animated.timing(this.state.animated1, {
+            toValue: 0,
+            useNativeDriver: true,
+            duration: 0
+          })
+        ]),
+        Animated.delay(500),
+        Animated.parallel([
+          //unused if Android
+          Animated.timing(this.state.animatedColor, {
+            toValue: 0
+          }),
+          //---
+          Animated.timing(this.state.animated, {
+            toValue: 3,
+            useNativeDriver: true,
+            easing: Easing.bezier(0, -0.46, 0.39, 1.54)
+          })
+        ]),
+        Animated.timing(this.state.animated, {
+          toValue: 0,
+          useNativeDriver: true,
+          duration: 0
+        }),
+        Animated.delay(1000)
+      ])
+    ).start();
+  }
+
+  renderAnimated(data) {
+    const animatedStyle = {
+      transform: [
+        {
+          scale: this.state.animated.interpolate({
+            inputRange: [0, 1, 2, 3],
+            outputRange: [1, 1.1, 1.2, 1]
+          })
+        },
+        {
+          translateY: this.state.animatedRotate.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 5]
+          })
+        },
+        {
+          rotate: this.state.animatedRotate.interpolate({
+            inputRange: [0, 0.3, 1],
+            outputRange: ['0deg', '0deg', '-20deg']
+          })
+        },
+        {
+          translateY: this.state.animatedRotate.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, -10]
+          })
+        },
+        {
+          rotate: this.state.animated.interpolate({
+            inputRange: [0, 1, 1.5, 2, 3],
+            outputRange: ['0deg', '0deg', '0deg', '20deg', '360deg']
+          })
+        }
+      ]
+    };
+
+    return data.map((animated, index) => (
+      <Animated.View
+        key={index}
+        style={[styles.iconContainer, animatedStyle, animated.style]}
+      >
+        {animated.component}
+      </Animated.View>
+    ));
+  }
+
+  render() {
+    const animatedFocused = {
+      transform: [
+        {
+          translateY: this.state.animatedFocused.interpolate({
+            inputRange: [0, 1],
+            outputRange: [
+              appConfig.device.isAndroid ? -4 : -5,
+              appConfig.device.isAndroid ? -22 : -24
+            ]
+          })
+        }
+      ]
+    };
+
+    const animated1Style = {
+      transform: [
+        {
+          translateY: this.state.animated1.interpolate({
+            inputRange: [0, 1, 2],
+            outputRange: [-50, 0, 50]
+          })
+        },
+        {
+          rotate: this.state.animatedRotate.interpolate({
+            inputRange: [0, 0.8, 1],
+            outputRange: ['20deg', '20deg', '0deg']
+          })
+        },
+        {
+          translateX: this.state.animatedRotate1.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 50]
+          })
+        },
+        {
+          translateY: this.state.animatedRotate1.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, -50]
+          })
+        }
+      ]
+    };
+
+    const animated2Style = {
+      transform: [
+        {
+          translateY: this.state.animated2.interpolate({
+            inputRange: [0, 1, 2],
+            outputRange: [-50, 0, 50]
+          })
+        },
+        {
+          translateY: this.state.animatedRotate.interpolate({
+            inputRange: [0, 0.8, 1],
+            outputRange: [0, 0, 4]
+          })
+        },
+        {
+          rotate: this.state.animatedRotate.interpolate({
+            inputRange: [0, 0.8, 1],
+            outputRange: ['0deg', '0deg', '30deg']
+          })
+        },
+        {
+          translateX: this.state.animatedRotate1.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, -50]
+          })
+        },
+        {
+          translateY: this.state.animatedRotate1.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0, 50]
+          })
+        }
+      ]
+    };
+
+    const animatedScanStyle = {
+      transform: [
+        {
+          translateX: this.state.animatedScan.interpolate({
+            inputRange: [0, 1],
+            outputRange: [-5, 60]
+          })
+        }
+      ]
+    };
+
+    const animatedColorStyle = isIOS
+      ? {
+          color: this.state.animatedColor.interpolate({
+            inputRange: [0, 1],
+            outputRange: [SUB_COLOR, MAIN_COLOR]
+          })
+        }
+      : null;
+
+    const animatedBackgroundColorStyle = isIOS
+      ? {
+          backgroundColor: this.state.animatedColor.interpolate({
+            inputRange: [0, 1],
+            outputRange: [MAIN_COLOR, SUB_COLOR]
+          })
+        }
+      : null;
+
+    const animatedScanBackgroundColorStyle = isIOS
+      ? {
+          backgroundColor: this.state.animatedColor.interpolate({
+            inputRange: [0, 1],
+            outputRange: [SUB_COLOR, MAIN_COLOR]
+          })
+        }
+      : null;
+
+    const data = [
+      {
+        component: (
+          <AnimatedIcon3
+            style={[
+              styles.icon,
+              animatedBackgroundColorStyle,
+              animatedColorStyle
+            ]}
+            name="ios-card"
+            size={22}
+          />
+        ),
+        style: animated2Style
+      },
+      {
+        component: (
+          <AnimatedIcon2
+            style={[
+              styles.icon,
+              animatedBackgroundColorStyle,
+              animatedColorStyle
+            ]}
+            name="credit-card"
+            size={22}
+          />
+        ),
+        style: animated1Style
+      },
+      {
+        component: (
+          <AnimatedIcon1
+            style={[
+              styles.icon,
+              styles.bigIcon,
+              animatedBackgroundColorStyle,
+              animatedColorStyle
+            ]}
+            name="credit-card"
+            size={20}
+          />
+        )
+      }
+    ];
+
+    return (
+      <Animated.View style={[styles.container, animatedFocused]}>
+        <Animated.View
+          style={[styles.animatedContainer, animatedBackgroundColorStyle]}
+        >
+          <View
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+          >
+            {this.renderAnimated(data)}
+          </View>
+          <Animated.View style={[styles.scanContainer, animatedScanStyle]}>
+            <Animated.View
+              style={[styles.scan, animatedScanBackgroundColorStyle]}
+            />
+          </Animated.View>
+        </Animated.View>
+        {this.props.children}
+      </Animated.View>
+    );
+  }
+}
+
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    ...elevationShadowStyle(5, 0, 2),
+    borderRadius: 30,
+    zIndex: 1,
+    alignItems: 'center'
+  },
+  animatedContainer: {
+    zIndex: 1,
+    width: appConfig.device.isAndroid ? 48 : 50,
+    height: appConfig.device.isAndroid ? 48 : 50,
+    borderRadius: 20,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: MAIN_COLOR
+  },
+  iconContainer: {
+    position: 'absolute',
+    backgroundColor: MAIN_COLOR,
+    flex: 1
+  },
+  icon: {
+    textAlign: 'center',
+    color: SUB_COLOR,
+    height: 18
+  },
+  bigIcon: {
+    height: 19
+  },
+  scanContainer: {
+    left: 0,
+    height: '100%',
+    width: 0.5,
+    position: 'absolute'
+  },
+  scan: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: SUB_COLOR
+  },
+  labelContainer: {
+    zIndex: 0,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});
+
+export default CreditCardTabButton;

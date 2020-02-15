@@ -25,6 +25,7 @@ class SearchInput extends PureComponent {
           numberOfLines={1}
           style={styles.input}
           placeholder="Nhập để tìm kiếm..."
+          placeholderTextColor={appConfig.colors.placeholder}
           onChangeText={this.props.onChangeText}
           value={this.props.value}
         />

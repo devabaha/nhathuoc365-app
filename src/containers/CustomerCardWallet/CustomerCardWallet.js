@@ -57,11 +57,14 @@ class CustomerCardWallet extends Component {
     animatedScaling: new Animated.Value(0)
   };
   unmounted = false;
+  gotInfo = false;
   btnHeaderLayout = { height: 0 };
   bodyLayout = { height: appConfig.device.height };
   modalHeight = appConfig.device.height;
   refSearchInput = React.createRef();
   refComboHeaderButton = React.createRef();
+  refCards = [];
+  refShakingCards = [];
 
   componentDidMount() {
     this.setState({ loading: true });
@@ -81,10 +84,9 @@ class CustomerCardWallet extends Component {
   getFavors = async (keyword = '') => {
     try {
       const response = await APIHandler.user_get_favor_sites(keyword);
-      console.log(response);
       if (response.status === STATUS_SUCCESS && response.data) {
         setStater(this, this.unmounted, {
-          cards: response.data.sites
+          cards: response.data.sites || []
         });
       } else {
         flashShowMessage({
@@ -112,13 +114,12 @@ class CustomerCardWallet extends Component {
 
       try {
         const response = await APIHandler.user_search_favor_sites(data);
-        console.log(response);
         if (response.status === STATUS_SUCCESS && response.data) {
           setStater(
             this,
             this.unmounted,
             {
-              searchCards: response.data.sites
+              searchCards: response.data.sites || []
             },
             () =>
               Animated.spring(this.state.animatedScaling, {
@@ -158,13 +159,12 @@ class CustomerCardWallet extends Component {
 
       try {
         const response = await APIHandler.user_search_my_favor_sites(data);
-        console.log(response);
         if (response.status === STATUS_SUCCESS && response.data) {
           setStater(
             this,
             this.unmounted,
             {
-              searchMyCards: response.data.sites
+              searchMyCards: response.data.sites || []
             },
             () =>
               Animated.spring(this.state.animatedScaling, {
@@ -221,7 +221,6 @@ class CustomerCardWallet extends Component {
 
     try {
       const response = await APIHandler.user_update_favor_site(siteId, type);
-      console.log(response);
       if (response.status === STATUS_SUCCESS) {
         flashShowMessage({
           type: 'success',
@@ -231,7 +230,7 @@ class CustomerCardWallet extends Component {
           this.refComboHeaderButton.current.handleClose();
         if (response.data) {
           setStater(this, this.unmounted, {
-            cards: response.data.sites
+            cards: response.data.sites || []
           });
         }
       } else {
@@ -242,6 +241,10 @@ class CustomerCardWallet extends Component {
       }
     } catch (error) {
       console.log('update_customer_card_wallet', error);
+      store.addApiQueue(
+        'update_customer_card_wallet',
+        this.handleUpdateMyCard(card, type)
+      );
     } finally {
       setStater(this, this.unmounted, {
         loading: false
@@ -293,8 +296,11 @@ class CustomerCardWallet extends Component {
   };
 
   onBodyLayout = e => {
-    this.bodyLayout = e.nativeEvent.layout;
-    this.updateModalHeight();
+    if (!this.gotInfo) {
+      this.gotInfo = true;
+      this.bodyLayout = e.nativeEvent.layout;
+      this.updateModalHeight();
+    }
   };
 
   updateModalHeight() {
@@ -306,15 +312,50 @@ class CustomerCardWallet extends Component {
     this.getFavors();
   };
 
+  handleAddRefCards = (inst, card) => {
+    const refCard = this.refCards.find(ref => ref.id === card.id);
+    if (!refCard) {
+      this.refCards.push({ id: card.id, ref: inst });
+    }
+  };
+
+  handleLongPressCard = card => {
+    const refCard = this.refCards.find(ref => ref.id === card.id);
+    if (refCard) {
+      this.refShakingCards.push(refCard);
+    }
+  };
+
+  handleCancelLongPressCard = card => {
+    this.refShakingCards.forEach((refCard, index) => {
+      if (refCard.id === card.id) {
+        this.refShakingCards.splice(index, 1);
+      }
+    });
+  };
+
+  handleOnPressContainer = () => {
+    const refTemp = [...this.refShakingCards];
+    refTemp.forEach(refCard => {
+      refCard.ref.handleCancelLongPress(true);
+    });
+  };
+
   renderCard = ({ item: card, index }) => {
     return (
       <CardWallet
+        ref={inst => this.handleAddRefCards(inst, card)}
         longPress
         logoImage={card.logo_url}
         image={card.image_url}
         title={card.title}
+        onLongPress={() => this.handleLongPressCard(card)}
+        onCancelLongPress={() => this.handleCancelLongPressCard(card)}
         onPress={() => this.handlePressCard(card)}
-        onDelete={() => this.handleUpdateMyCard(card, 0)}
+        onDelete={() => {
+          this.handleUpdateMyCard(card, 0);
+          this.handleCancelLongPressCard(card);
+        }}
         last={index === this.state.cards.length - 1}
         first={index === 0}
       />
@@ -329,7 +370,7 @@ class CustomerCardWallet extends Component {
         {
           translateY: this.state.animatedModal.interpolate({
             inputRange: [0, 1],
-            outputRange: [this.modalHeight, -this.btnHeaderLayout.height]
+            outputRange: [this.modalHeight + 50, -this.btnHeaderLayout.height]
           })
         }
       ]
@@ -369,79 +410,86 @@ class CustomerCardWallet extends Component {
         : 0;
 
     return (
-      <View style={styles.container}>
-        {this.state.loading && <Loading center style={styles.loading} />}
+      <TouchableWithoutFeedback
+        onPress={this.handleOnPressContainer}
+        style={[styles.container]}
+      >
+        <View style={styles.container}>
+          {this.state.loading && (
+            <Loading center style={styles.loading} color={'#fff'} />
+          )}
 
-        <View style={styles.headerBackground}>
-          <Image
-            source={require('../../images/card-wallet.png')}
-            style={styles.image}
-          />
-        </View>
-
-        <ComboHeaderButton
-          ref={this.refComboHeaderButton}
-          containerStyle={styles.comboHeaderBtn}
-          data={BUTTONS}
-          onPress={this.handleHeaderButtonPress}
-          onCloseInput={this.handleCloseModal}
-          onContainerLayout={this.onButtonHeaderLayout}
-          secretComponent={
-            <SearchInput
-              ref={this.refSearchInput}
-              value={this.state.searchValue}
-              onChangeText={this.handleSearch}
+          <View style={styles.headerBackground}>
+            <Image
+              source={require('../../images/card-wallet.png')}
+              style={styles.image}
             />
-          }
-        />
-        <View onLayout={this.onBodyLayout} style={styles.container}>
-          <Header text={count} style={[resultStyle]} />
-          <FlatList
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this.handleRefreshMyCards}
+          </View>
+
+          <ComboHeaderButton
+            ref={this.refComboHeaderButton}
+            containerStyle={styles.comboHeaderBtn}
+            data={BUTTONS}
+            onPress={this.handleHeaderButtonPress}
+            onCloseInput={this.handleCloseModal}
+            onContainerLayout={this.onButtonHeaderLayout}
+            secretComponent={
+              <SearchInput
+                ref={this.refSearchInput}
+                value={this.state.searchValue}
+                onChangeText={this.handleSearch}
               />
             }
-            data={data}
-            contentContainerStyle={{ flex: data.length === 0 ? 1 : 0 }}
-            keyboardShouldPersistTaps="always"
-            keyboardDismissMode="on-drag"
-            renderItem={this.renderCard}
-            keyExtractor={item => item.id}
-            ListEmptyComponent={
-              !this.state.loading && (
-                <NoResult
-                  icon={
-                    <Icon
-                      name={'playlist-add'}
-                      size={72}
-                      color={DEFAULT_COLOR}
-                      onPress={this.handlePressShortcutSearch}
-                    />
-                  }
-                  message="Chưa có thẻ? Hãy thêm ngay"
-                />
-              )
-            }
           />
-          <Animated.View
-            style={[styles.searchModal, styles.modalShadow, modalStyle]}
-          >
-            <Search
-              compareData={this.state.cards}
-              data={this.state.searchCards}
-              onPressData={card => this.handleUpdateMyCard(card, 1)}
-              listEmptyComponent={
-                <Empty
-                  isSearch={this.state.searchValue.length >= MIN_CHARACTER}
-                  isTyping={this.state.isTyping}
+          <View onLayout={this.onBodyLayout} style={styles.container}>
+            <Header text={count} style={[resultStyle]} />
+            <FlatList
+              refreshControl={
+                <RefreshControl
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.handleRefreshMyCards}
                 />
               }
+              data={data}
+              contentContainerStyle={{ flex: data.length === 0 ? 1 : 0 }}
+              keyboardShouldPersistTaps="always"
+              keyboardDismissMode="on-drag"
+              renderItem={this.renderCard}
+              keyExtractor={item => item.id}
+              ListEmptyComponent={
+                !this.state.loading && (
+                  <NoResult
+                    icon={
+                      <Icon
+                        name={'playlist-add'}
+                        size={72}
+                        color={DEFAULT_COLOR}
+                        onPress={this.handlePressShortcutSearch}
+                      />
+                    }
+                    message="Chưa có thẻ? Hãy thêm ngay"
+                  />
+                )
+              }
             />
-          </Animated.View>
+            <Animated.View
+              style={[styles.searchModal, styles.modalShadow, modalStyle]}
+            >
+              <Search
+                compareData={this.state.cards}
+                data={this.state.searchCards}
+                onPressData={card => this.handleUpdateMyCard(card, 1)}
+                listEmptyComponent={
+                  <Empty
+                    isSearch={this.state.searchValue.length >= MIN_CHARACTER}
+                    isTyping={this.state.isTyping}
+                  />
+                }
+              />
+            </Animated.View>
+          </View>
         </View>
-      </View>
+      </TouchableWithoutFeedback>
     );
   }
 }
@@ -452,32 +500,27 @@ const styles = StyleSheet.create({
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
-    width: '100%',
+    width: 1100,
     height: 1000,
     borderRadius: 500,
     position: 'absolute',
-    transform: [
-      {
-        scaleX: 1.8
-      }
-    ],
+    alignSelf: 'center',
+    alignItems: 'center',
     top: -920,
     overflow: 'hidden'
   },
   image: {
     transform: [
       {
-        scaleX: 1 / 1.8
-      },
-      {
         rotate: '-25deg'
       }
     ],
     width: 60,
     maxHeight: 100,
+    borderRadius: 15,
     position: 'absolute',
     bottom: 0,
-    right: 95,
+    right: '35%',
     resizeMode: 'contain'
   },
   comboHeaderBtn: {
@@ -493,15 +536,7 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
   modalShadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -5
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5
+    ...elevationShadowStyle(8, 0, -5)
   },
   noResultContainer: {
     flex: 1

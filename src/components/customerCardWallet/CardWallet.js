@@ -7,11 +7,12 @@ import {
   StyleSheet,
   Animated,
   Easing,
-  Vibration
+  Vibration,
+  TouchableOpacity
 } from 'react-native';
 import Button from 'react-native-button';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/AntDesign';
+import appConfig from 'app-config';
 
 const LONG_PRESS_TIME_OUT = 300;
 const LOOP_DURATION = 3000;
@@ -32,6 +33,7 @@ class CardWallet extends PureComponent {
 
   handleLongPress = () => {
     if (!this.shaking && this.props.longPress) {
+      this.props.onLongPress();
       clearTimeout(this.longPressTimeout);
       clearTimeout(this.backgroundTimeout);
       this.longPressTimeout = setTimeout(() => {
@@ -82,6 +84,7 @@ class CardWallet extends PureComponent {
 
   handleCancelLongPress = (isCancel = !this.shaking, isPress = false) => {
     if (isCancel) {
+      this.props.onCancelLongPress();
       this.shaking = false;
       clearTimeout(this.longPressTimeout);
       clearTimeout(this.backgroundTimeout);
@@ -109,6 +112,7 @@ class CardWallet extends PureComponent {
 
     return (
       <Button
+        activeOpacity={appConfig.device.isAndroid ? 0.9 : 0.6}
         disabled={this.props.disabled}
         onPress={this.handlePress}
         onLongPress={this.handleLongPress}
@@ -211,7 +215,6 @@ class CardWallet extends PureComponent {
           )}
 
           <Animated.View
-            onStartShouldSetResponderCapture={() => true}
             style={[
               styles.delete,
               {
@@ -242,7 +245,7 @@ class CardWallet extends PureComponent {
 const styles = StyleSheet.create({
   containerBtn: {
     marginTop: 16,
-    marginHorizontal: 16,
+    marginHorizontal: 20,
     borderRadius: 8
   },
   container: {
@@ -362,6 +365,8 @@ CardWallet.propTypes = {
   logoImage: PropTypes.string,
   last: PropTypes.bool,
   longPress: PropTypes.bool,
+  onLongPress: PropTypes.func,
+  onCancelLongPress: PropTypes.func,
   onPress: PropTypes.func,
   onDelete: PropTypes.func,
   style: PropTypes.any
@@ -374,6 +379,8 @@ CardWallet.defaultProps = {
   logoImage: '',
   last: false,
   longPress: false,
+  onLongPress: defaultListener,
+  onCancelLongPress: defaultListener,
   onPress: defaultListener,
   onDelete: defaultListener,
   style: {}

@@ -390,6 +390,7 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.customerCardWallet}
                     icon={TabIcon}
+                    special
                     iconLabel="Ví thẻ"
                     iconName="credit-card"
                     iconSize={24}

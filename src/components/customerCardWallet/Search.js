@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   },
   funcText: {
     color: '#fff',
-    paddingLeft: 5,
+    paddingHorizontal: 5,
     fontWeight: '400'
   }
 });
