@@ -144,6 +144,7 @@ class Home extends Component {
               tintColor={appConfig.colors.white}
             />
           }
+          showsVerticalScrollIndicator={false}
         >
           <Header
             notify={this.props.notify}
@@ -277,14 +278,20 @@ const styles = StyleSheet.create({
     width: 1000,
     height: 1000,
     borderRadius: 480,
-    position: 'absolute',
-    top: -820,
-    left: appConfig.device.width / 2 - 500,
     alignItems: 'center',
+    position: 'absolute',
+    left: appConfig.device.width / 2 - 500,
+    // transform: [{
+    //   scaleX: 1.8
+    // }],
+    top: -830,
     overflow: 'hidden'
   },
   headerImage: {
     height: 180,
+    // transform: [{
+    //   scaleX: 1/1.8
+    // }],
     resizeMode: 'cover',
     width: appConfig.device.width,
     position: 'absolute',

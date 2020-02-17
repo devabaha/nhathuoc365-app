@@ -356,3 +356,23 @@ const Center = ({ ref, style, children }) => (
   </View>
 );
 global.Center = Center;
+
+global.willUpdateState = (unmounted, callback) => {
+  if (!unmounted) {
+    callback();
+  }
+};
+
+global.setStater = (context, isUnmounted, state, callback = () => {}) => {
+  if (!isUnmounted) {
+    context.setState({ ...state }, () => callback());
+  }
+};
+
+global.elevationShadowStyle = (elevation, width = 0, height = 0) => ({
+  elevation,
+  shadowColor: 'black',
+  shadowOffset: { width: width, height: height || 0.5 * elevation },
+  shadowOpacity: 0.25,
+  shadowRadius: 0.8 * elevation
+});

@@ -1,8 +1,9 @@
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
+import store from 'app-store';
 
 const touchedTabs = {};
-export default function handleTabBarOnPress(props) {
+const handleTabBarOnPress = props => {
   // const isTouched = () => touchedTabs[props.navigation.state.key];
   switch (props.navigation.state.key) {
     case appConfig.routes.scanQrCodeTab:
@@ -14,5 +15,8 @@ export default function handleTabBarOnPress(props) {
       props.defaultHandler();
   }
 
+  store.setSelectedTab(props.navigation.state.key);
   touchedTabs[props.navigation.state.key] = true;
-}
+};
+
+export default handleTabBarOnPress;

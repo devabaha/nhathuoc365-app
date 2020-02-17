@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     width: 58,
     height: 58,
     borderRadius: 5,
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: config.colors.white
   },
   headerWrapper: {

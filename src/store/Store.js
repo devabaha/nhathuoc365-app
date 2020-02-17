@@ -105,6 +105,12 @@ class Store {
     this.storeUnMount = {};
   }
 
+  @observable selectedTab = '';
+
+  @action setSelectedTab(name) {
+    this.selectedTab = name;
+  }
+
   @action setStoreUnMount(key, unMount) {
     this.storeUnMount[key] = unMount;
   }
@@ -131,6 +137,7 @@ class Store {
     new_site_news: 0,
     new_sys_news: 0,
     new_totals: 0,
+    customer_card_wallet: 0,
     updating_version: 0,
     new_version: '',
     url_update: ''

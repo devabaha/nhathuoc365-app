@@ -6,43 +6,41 @@ import store from 'app-store';
 
 export const servicesHandler = service => {
   switch (service.type) {
-    case 'ACCUMULATE_POINTS_TYPE':
+    case SERVICES_TYPE.ACCUMULATE_POINTS:
       Actions.push(appConfig.routes.qrBarCode, {
         title: 'Mã tài khoản'
       });
       break;
-    case 'MY_VOUCHER_TYPE':
-    case 'my_voucher':
+    case SERVICES_TYPE.MY_VOUCHER:
       Actions.push(appConfig.routes.myVoucher, {
         title: 'Voucher của tôi',
         from: 'home'
       });
       break;
-    case 'TRANSACTION_TYPE':
+    case SERVICES_TYPE.TRANSACTION:
       Actions.vnd_wallet({
         title: store.user_info.default_wallet.name,
         wallet: store.user_info.default_wallet
       });
       break;
-    case 'STORE_ORDERS_TYPE':
+    case SERVICES_TYPE.STORE_ORDERS:
       Actions.push(appConfig.routes.storeOrders, {
         tel: service.tel,
         title: service.site_name,
         store_id: service.store_id
       });
       break;
-    case 'ORDERS_TYPE':
+    case SERVICES_TYPE.ORDERS:
       Actions.jump(appConfig.routes.ordersTab);
       break;
-    case 'QRCODE_SCAN_TYPE':
-    case 'qrscan':
+    case SERVICES_TYPE.QRCODE_SCAN:
       Actions.push(appConfig.routes.qrBarCode, {
         index: 1,
         title: 'Quét QR Code',
         wallet: store.user_info.default_wallet
       });
       break;
-    case 'up_to_phone':
+    case SERVICES_TYPE.UP_TO_PHONE:
       Actions.push(appConfig.routes.upToPhone, {
         service_type: service.type,
         service_id: service.id,
@@ -51,30 +49,40 @@ export const servicesHandler = service => {
         serviceId: service.serviceId ? service.serviceId : 100
       });
       break;
-    case 'list_voucher':
+    case SERVICES_TYPE.LIST_VOUCHER:
       Actions.push(appConfig.routes.mainVoucher, {
         from: 'home'
       });
       break;
-    case '30day_service':
+    case SERVICES_TYPE.RADA_SERVICE:
+      Actions.push('tickidRada', {
+        service_type: service.type,
+        service_id: service.id,
+        title: 'Dịch vụ Rada',
+        onPressItem: item => {
+          this.handleCategoryPress(item);
+        }
+      });
+      break;
+    case SERVICES_TYPE._30DAY_SERVICE:
       Alert.alert(
         'Thông báo',
         'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
         [{ text: 'Đồng ý' }]
       );
       break;
-    case 'my_address':
+    case SERVICES_TYPE.MY_ADDRESS:
       Actions.push(appConfig.routes.myAddress, {
         from_page: 'account'
       });
       break;
-    case 'news':
+    case SERVICES_TYPE.NEWS:
       Actions.jump(appConfig.routes.newsTab);
       break;
-    case 'orders':
+    case SERVICES_TYPE.ORDERS_TAB:
       Actions.jump(appConfig.routes.ordersTab);
       break;
-    case 'chat_noti':
+    case SERVICES_TYPE.CHAT_NOTI:
       Actions.amazing_chat({
         titleStyle: { width: 220 },
         phoneNumber: service.tel,
@@ -83,12 +91,12 @@ export const servicesHandler = service => {
         user_id: service.user_id
       });
       break;
-    case 'list_chat':
+    case SERVICES_TYPE.LIST_CHAT:
       Actions.list_amazing_chat({
         titleStyle: { width: 220 }
       });
       break;
-    case 'open_shop':
+    case SERVICES_TYPE.OPEN_SHOP:
       APIHandler.site_info(service.siteId).then(response => {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
@@ -101,10 +109,10 @@ export const servicesHandler = service => {
         }
       });
       break;
-    case 'call':
+    case SERVICES_TYPE.CALL:
       Communications.phonecall(service.tel, true);
       break;
-    case 'news_category':
+    case SERVICES_TYPE.NEWS_CATEGORY:
       Actions.push(appConfig.routes.notifies, {
         title: service.title,
         news_type: `/${service.categoryId}`
@@ -165,4 +173,25 @@ handleUseVoucherOnlineSuccess = (cartData, fromDetailVoucher = false) => {
   action(() => {
     store.setCartData(cartData);
   })();
+};
+
+export const SERVICES_TYPE = {
+  ACCUMULATE_POINTS: 'ACCUMULATE_POINTS_TYPE',
+  MY_VOUCHER: 'my_voucher',
+  TRANSACTION: 'TRANSACTION_TYPE',
+  STORE_ORDERS: 'STORE_ORDERS_TYPE',
+  ORDERS: 'ORDERS_TYPE',
+  QRCODE_SCAN: 'qrscan',
+  UP_TO_PHONE: 'up_to_phone',
+  LIST_VOUCHER: 'list_voucher',
+  RADA_SERVICE: 'rada_service',
+  _30DAY_SERVICE: '30day_service',
+  MY_ADDRESS: 'my_address',
+  NEWS: 'news',
+  ORDERS_TAB: 'orders',
+  CHAT_NOTI: 'chat_noti',
+  LIST_CHAT: 'list_chat',
+  OPEN_SHOP: 'open_shop',
+  CALL: 'call',
+  NEWS_CATEGORY: 'news_category'
 };
