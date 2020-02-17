@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Animated, Easing } from 'react-native';
+import { StyleSheet, Animated, Easing } from 'react-native';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Octicons';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import appConfig from 'app-config';
 
-const isIOS = appConfig.device.isIOS;
 const AnimatedIcon1 = Animated.createAnimatedComponent(Icon1);
 const AnimatedIcon2 = Animated.createAnimatedComponent(Icon2);
 const AnimatedIcon3 = Animated.createAnimatedComponent(Icon3);
@@ -62,11 +61,10 @@ class CreditCardTabButton extends Component {
         }),
         Animated.delay(1000),
         Animated.parallel([
-          //unused if Android
           Animated.timing(this.state.animatedColor, {
-            toValue: 1
+            toValue: 1,
+            useNativeDriver: true
           }),
-          //---
           Animated.timing(this.state.animatedScan, {
             toValue: 1,
             easing: Easing.elastic(1000),
@@ -165,11 +163,10 @@ class CreditCardTabButton extends Component {
         ]),
         Animated.delay(500),
         Animated.parallel([
-          //unused if Android
           Animated.timing(this.state.animatedColor, {
-            toValue: 0
+            toValue: 0,
+            useNativeDriver: true
           }),
-          //---
           Animated.timing(this.state.animated, {
             toValue: 3,
             useNativeDriver: true,
@@ -192,7 +189,7 @@ class CreditCardTabButton extends Component {
         {
           scale: this.state.animated.interpolate({
             inputRange: [0, 1, 2, 3],
-            outputRange: [1, 1.1, 1.2, 1]
+            outputRange: [1, 1.2, 1.2, 1]
           })
         },
         {
@@ -218,8 +215,22 @@ class CreditCardTabButton extends Component {
             inputRange: [0, 1, 1.5, 2, 3],
             outputRange: ['0deg', '0deg', '0deg', '20deg', '360deg']
           })
+        },
+        {
+          scale: this.state.animated.interpolate({
+            inputRange: [0, 1, 2, 3],
+            outputRange: [1, 1, 1, 1]
+          })
         }
       ]
+    };
+
+    const animatedColorStyle = {
+      backgroundColor: MAIN_COLOR,
+      opacity: this.state.animatedColor.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0]
+      })
     };
 
     return data.map((animated, index) => (
@@ -227,7 +238,14 @@ class CreditCardTabButton extends Component {
         key={index}
         style={[styles.iconContainer, animatedStyle, animated.style]}
       >
-        {animated.component}
+        <Animated.View
+          style={[{ position: 'absolute', backgroundColor: SUB_COLOR }]}
+        >
+          {animated.subComponent}
+        </Animated.View>
+        <Animated.View style={[animatedColorStyle]}>
+          {animated.mainComponent}
+        </Animated.View>
       </Animated.View>
     ));
   }
@@ -239,7 +257,7 @@ class CreditCardTabButton extends Component {
           translateY: this.state.animatedFocused.interpolate({
             inputRange: [0, 1],
             outputRange: [
-              appConfig.device.isAndroid ? -4 : -5,
+              appConfig.device.isAndroid ? -3 : -5,
               appConfig.device.isAndroid ? -22 : -24
             ]
           })
@@ -322,42 +340,22 @@ class CreditCardTabButton extends Component {
       ]
     };
 
-    const animatedColorStyle = isIOS
-      ? {
-          color: this.state.animatedColor.interpolate({
-            inputRange: [0, 1],
-            outputRange: [SUB_COLOR, MAIN_COLOR]
-          })
-        }
-      : null;
+    const animatedBackgroundColorStyle = {
+      opacity: this.state.animatedColor
+    };
 
-    const animatedBackgroundColorStyle = isIOS
-      ? {
-          backgroundColor: this.state.animatedColor.interpolate({
-            inputRange: [0, 1],
-            outputRange: [MAIN_COLOR, SUB_COLOR]
-          })
-        }
-      : null;
-
-    const animatedScanBackgroundColorStyle = isIOS
-      ? {
-          backgroundColor: this.state.animatedColor.interpolate({
-            inputRange: [0, 1],
-            outputRange: [SUB_COLOR, MAIN_COLOR]
-          })
-        }
-      : null;
+    const animatedScanBackgroundColorStyle = {
+      opacity: this.state.animatedColor
+    };
 
     const data = [
       {
-        component: (
+        subComponent: (
+          <AnimatedIcon3 style={[styles.icon]} name="ios-card" size={22} />
+        ),
+        mainComponent: (
           <AnimatedIcon3
-            style={[
-              styles.icon,
-              animatedBackgroundColorStyle,
-              animatedColorStyle
-            ]}
+            style={[styles.icon, styles.mainIcon]}
             name="ios-card"
             size={22}
           />
@@ -365,13 +363,12 @@ class CreditCardTabButton extends Component {
         style: animated2Style
       },
       {
-        component: (
+        subComponent: (
+          <AnimatedIcon2 style={[styles.icon]} name="credit-card" size={22} />
+        ),
+        mainComponent: (
           <AnimatedIcon2
-            style={[
-              styles.icon,
-              animatedBackgroundColorStyle,
-              animatedColorStyle
-            ]}
+            style={[styles.icon, styles.mainIcon]}
             name="credit-card"
             size={22}
           />
@@ -379,14 +376,16 @@ class CreditCardTabButton extends Component {
         style: animated1Style
       },
       {
-        component: (
+        subComponent: (
           <AnimatedIcon1
-            style={[
-              styles.icon,
-              styles.bigIcon,
-              animatedBackgroundColorStyle,
-              animatedColorStyle
-            ]}
+            style={[styles.icon, styles.bigIcon]}
+            name="credit-card"
+            size={20}
+          />
+        ),
+        mainComponent: (
+          <AnimatedIcon1
+            style={[styles.icon, styles.bigIcon, styles.mainIcon]}
             name="credit-card"
             size={20}
           />
@@ -396,17 +395,20 @@ class CreditCardTabButton extends Component {
 
     return (
       <Animated.View style={[styles.container, animatedFocused]}>
-        <Animated.View
-          style={[styles.animatedContainer, animatedBackgroundColorStyle]}
-        >
-          <View
-            style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
-          >
-            {this.renderAnimated(data)}
-          </View>
-          <Animated.View style={[styles.scanContainer, animatedScanStyle]}>
+        <Animated.View style={[styles.animatedContainer]}>
+          <Animated.View style={[styles.animatedIconContainer]}>
             <Animated.View
-              style={[styles.scan, animatedScanBackgroundColorStyle]}
+              style={[
+                styles.animatedIconBackground,
+                animatedBackgroundColorStyle
+              ]}
+            />
+            {this.renderAnimated(data)}
+          </Animated.View>
+          <Animated.View style={[styles.scanContainer, animatedScanStyle]}>
+            <Animated.View style={[styles.scanLTR]} />
+            <Animated.View
+              style={[styles.scanRTL, animatedScanBackgroundColorStyle]}
             />
           </Animated.View>
         </Animated.View>
@@ -420,7 +422,7 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     ...elevationShadowStyle(5, 0, 2),
-    borderRadius: 30,
+    borderRadius: 20,
     zIndex: 1,
     alignItems: 'center'
   },
@@ -428,21 +430,41 @@ const styles = StyleSheet.create({
     zIndex: 1,
     width: appConfig.device.isAndroid ? 48 : 50,
     height: appConfig.device.isAndroid ? 48 : 50,
-    borderRadius: 20,
+    borderRadius: 18,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: SUB_COLOR
+  },
+  animatedIconContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100%',
     backgroundColor: MAIN_COLOR
+  },
+  animatedIconBackground: {
+    position: 'absolute',
+    flex: 1,
+    backgroundColor: SUB_COLOR,
+    width: '100%',
+    height: '100%'
   },
   iconContainer: {
     position: 'absolute',
     backgroundColor: MAIN_COLOR,
-    flex: 1
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   icon: {
     textAlign: 'center',
-    color: SUB_COLOR,
+    color: MAIN_COLOR,
     height: 18
+  },
+  mainIcon: {
+    color: SUB_COLOR
   },
   bigIcon: {
     height: 19
@@ -453,11 +475,18 @@ const styles = StyleSheet.create({
     width: 0.5,
     position: 'absolute'
   },
-  scan: {
+  scanLTR: {
     flex: 1,
     width: '100%',
     height: '100%',
     backgroundColor: SUB_COLOR
+  },
+  scanRTL: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    backgroundColor: MAIN_COLOR,
+    position: 'absolute'
   },
   labelContainer: {
     zIndex: 0,

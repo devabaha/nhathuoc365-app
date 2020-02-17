@@ -376,15 +376,7 @@ class CustomerCardWallet extends Component {
       ]
     };
     const resultStyle = {
-      marginBottom: 10,
-      position: 'absolute',
-      backgroundColor: 'rgba(255,255,255,.6)',
-      paddingHorizontal: 0,
-      marginLeft: 15,
-      paddingVertical: 5,
-      paddingHorizontal: 8,
-      borderRadius: 4,
-      zIndex: 9,
+      ...styles.resultStyle,
       transform: [
         {
           scale: this.state.animatedScaling
@@ -544,6 +536,17 @@ const styles = StyleSheet.create({
   loading: {
     backgroundColor: 'rgba(0,0,0,.6)',
     borderRadius: 4
+  },
+  resultStyle: {
+    marginBottom: 10,
+    position: 'absolute',
+    backgroundColor: 'rgba(255,255,255,.8)',
+    paddingHorizontal: 0,
+    marginLeft: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 4,
+    zIndex: 9
   }
 });
 
