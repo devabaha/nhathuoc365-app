@@ -496,7 +496,6 @@ class RootRouter extends Component {
                 <Scene
                   key={appConfig.routes.launch}
                   component={LaunchContainer}
-                  initial
                 />
                 <Tabs
                   showLabel={false}
@@ -557,6 +556,7 @@ class RootRouter extends Component {
                     iconName="credit-card"
                     iconSize={24}
                     notifyKey="customer_card_wallet"
+                    initial
                   >
                     <Scene
                       key={`${appConfig.routes.customerCardWallet}_1`}
@@ -1128,7 +1128,7 @@ class RootRouter extends Component {
                   <Scene
                     hideNavBar={false}
                     key="list_amazing_chat_1"
-                    title="Danh sách Chat"
+                    title="Cửa hàng trực tuyến"
                     component={ListChat}
                     navBar={ListChatNavBar}
                     {...navBarConfig}

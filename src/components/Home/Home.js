@@ -187,7 +187,7 @@ class Home extends Component {
 
             {this.hasSites && (
               <HomeCardList
-                onShowAll={false} //this.props.onShowAllSites
+                onShowAll={this.props.onShowAllSites}
                 data={this.props.sites}
                 title="Cửa hàng thân thiết"
               >

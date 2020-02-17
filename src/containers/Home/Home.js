@@ -318,7 +318,9 @@ class Home extends Component {
     }
   };
 
-  handleShowAllSites = () => {};
+  handleShowAllSites = () => {
+    Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
+  };
 
   handleShowAllCampaigns = () => {
     Actions.push(appConfig.routes.mainVoucher, {
