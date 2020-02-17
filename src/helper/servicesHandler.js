@@ -121,9 +121,9 @@ export const servicesHandler = service => {
       });
       break;
     default:
-      Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
-        { text: 'Đồng ý' }
-      ]);
+      // Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
+      //   { text: 'Đồng ý' }
+      // ]);
       break;
   }
 };
