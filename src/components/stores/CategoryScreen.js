@@ -4,6 +4,7 @@ import Swiper from 'react-native-swiper';
 import Items from './Items';
 import ListHeader from './ListHeader';
 import store from 'app-store';
+import { Actions } from 'react-native-router-flux';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
