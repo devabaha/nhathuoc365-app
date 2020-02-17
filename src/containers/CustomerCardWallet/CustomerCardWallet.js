@@ -96,7 +96,7 @@ class CustomerCardWallet extends Component {
       }
     } catch (error) {
       console.log('customer_card_wallet', error);
-      store.addApiQueue('customer_card_wallet', this.getFavors);
+      // store.addApiQueue('customer_card_wallet', this.getFavors);
     } finally {
       setStater(this, this.unmounted, {
         loading: false,
@@ -135,7 +135,7 @@ class CustomerCardWallet extends Component {
         }
       } catch (error) {
         console.log('search_customer_card_wallet', error);
-        store.addApiQueue('search_customer_card_wallet', this.searchFavorsSite);
+        // store.addApiQueue('search_customer_card_wallet', this.searchFavorsSite);
       } finally {
         setStater(this, this.unmounted, {
           loading: false,
@@ -180,10 +180,10 @@ class CustomerCardWallet extends Component {
         }
       } catch (error) {
         console.log('search_my_customer_card_wallet', error);
-        store.addApiQueue(
-          'search_my_customer_card_wallet',
-          this.searchMyFavors
-        );
+        // store.addApiQueue(
+        //   'search_my_customer_card_wallet',
+        //   this.searchMyFavors
+        // );
       } finally {
         setStater(this, this.unmounted, {
           loading: false,
@@ -241,10 +241,10 @@ class CustomerCardWallet extends Component {
       }
     } catch (error) {
       console.log('update_customer_card_wallet', error);
-      store.addApiQueue(
-        'update_customer_card_wallet',
-        this.handleUpdateMyCard(card, type)
-      );
+      // store.addApiQueue(
+      //   'update_customer_card_wallet',
+      //   this.handleUpdateMyCard(card, type)
+      // );
     } finally {
       setStater(this, this.unmounted, {
         loading: false
