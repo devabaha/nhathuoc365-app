@@ -165,16 +165,6 @@ export const servicesHandler = service => {
   }
 };
 
-handleUseVoucherOnlineSuccess = (cartData, fromDetailVoucher = false) => {
-  Actions.pop();
-  if (fromDetailVoucher) {
-    setTimeout(Actions.pop, 0);
-  }
-  action(() => {
-    store.setCartData(cartData);
-  })();
-};
-
 export const SERVICES_TYPE = {
   ACCUMULATE_POINTS: 'ACCUMULATE_POINTS_TYPE',
   MY_VOUCHER: 'my_voucher',
