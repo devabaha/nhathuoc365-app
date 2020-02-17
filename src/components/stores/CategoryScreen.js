@@ -173,7 +173,7 @@ class CategoryScreen extends Component {
           if (loadmore) {
             this.state.page += 1;
           } else {
-            this.state.page = 1;
+            this.state.page = 0;
           }
 
           // delay append data
