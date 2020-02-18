@@ -362,8 +362,11 @@ class Confirm extends Component {
                 type: 'success',
                 message: response.message
               });
-
-              this.setState({ showResultModal: true });
+              setTimeout(() => {
+                if (!this.unmounted) {
+                  this.setState({ showResultModal: true });
+                }
+              }, 200);
             } else {
               flashShowMessage({
                 type: 'danger',
