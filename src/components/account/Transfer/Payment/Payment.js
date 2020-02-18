@@ -59,7 +59,7 @@ class Payment extends Component {
         Actions.push(appConfig.routes.transferConfirm, {
           receiver: this.props.receiver,
           wallet: this.props.wallet,
-          originPrice: this.moneyInput.current.formattedText,
+          originPrice: this.moneyInput.current.inputText,
           price,
           originTotalPrice: this.moneyInput.current.formattedText,
           totalPrice: price
