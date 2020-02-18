@@ -349,8 +349,8 @@ class Confirm extends Component {
       async () => {
         const data = {
           zone_code: this.props.wallet.zone_code,
-          receive_address: this.props.wallet_address,
-          amount: this.props.total_price,
+          receive_address: this.props.receiver.walletAddress,
+          amount: this.props.originPrice,
           pw4n
         };
 
