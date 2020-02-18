@@ -178,13 +178,6 @@ class Home extends Component {
           />
 
           <View style={styles.contentWrapper}>
-            {this.hasPromotion && (
-              <Promotion
-                data={this.props.promotions}
-                onPress={this.props.onPromotionPressed}
-              />
-            )}
-
             {this.hasSites && (
               <HomeCardList
                 onShowAll={this.props.onShowAllSites}
@@ -200,6 +193,13 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
+            )}
+
+            {this.hasPromotion && (
+              <Promotion
+                data={this.props.promotions}
+                onPress={this.props.onPromotionPressed}
+              />
             )}
 
             {this.hasCampaigns && (

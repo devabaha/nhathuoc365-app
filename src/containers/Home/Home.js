@@ -319,6 +319,7 @@ class Home extends Component {
   };
 
   handleShowAllSites = () => {
+    store.setSelectedTab(appConfig.routes.customerCardWallet);
     Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
   };
 

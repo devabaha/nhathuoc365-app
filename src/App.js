@@ -513,6 +513,7 @@ class RootRouter extends Component {
                     iconLabel="TickID"
                     iconName="store"
                     iconSize={24}
+                    initial
                   >
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
@@ -556,7 +557,6 @@ class RootRouter extends Component {
                     iconName="credit-card"
                     iconSize={24}
                     notifyKey="customer_card_wallet"
-                    initial
                   >
                     <Scene
                       key={`${appConfig.routes.customerCardWallet}_1`}
