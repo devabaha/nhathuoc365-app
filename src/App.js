@@ -45,6 +45,7 @@ import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
 import NewPass from './components/account/NewPass';
 import StoreContainer from './components/stores/Stores';
+import StoreContainerNavBar from './components/stores/StoreNavBar';
 import SearchNavBarContainer from './components/stores/SearchNavBar';
 import StoresList from './components/stores/StoresList';
 import SearchStoreContainer from './components/stores/Search';
@@ -121,6 +122,7 @@ import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import { servicesHandler } from './helper/servicesHandler';
+import StoreNavBar from './components/stores/StoreNavBar';
 /**
  * Initializes config for Phone Card module
  */
@@ -789,12 +791,12 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.store}>
+                <Stack key={appConfig.routes.store} navTransparent>
                   <Scene
                     key={`${appConfig.routes.store}_1`}
                     component={StoreContainer}
                     {...navBarConfig}
-                    back
+                    back={appConfig.device.isIOS}
                   />
                 </Stack>
 

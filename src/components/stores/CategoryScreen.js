@@ -1,10 +1,18 @@
 import React, { Component } from 'react';
-import { StyleSheet, ScrollView, View, RefreshControl } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  RefreshControl
+} from 'react-native';
 import Swiper from 'react-native-swiper';
 import Items from './Items';
 import ListHeader from './ListHeader';
 import store from 'app-store';
 import { Actions } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import appConfig from 'app-config';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -24,7 +32,7 @@ class CategoryScreen extends Component {
     }
 
     this.state = {
-      loading: false,
+      loading: true,
       refreshing: false,
       header_title,
       items_data: null,
@@ -75,7 +83,7 @@ class CategoryScreen extends Component {
     ) {
       this.start_time = time();
       // get list products by category_id
-      this._getItemByCateId(item.id);
+      this._getItemByCateId(item.id, true);
     }
   }
 
@@ -104,58 +112,54 @@ class CategoryScreen extends Component {
   }
 
   // lấy d/s sản phẩm theo category_id
-  _getItemByCateId(category_id) {
+  _getItemByCateId(category_id, loading) {
     var store_category_key =
       STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
 
-    this.setState(
-      {
-        loading: this.state.items_data ? false : true
-      },
-      () => {
-        // load
-        storage
-          .load({
-            key: store_category_key,
-            autoSync: true,
-            syncInBackground: true,
-            syncParams: {
-              extraFetchOptions: {},
-              someFlag: true
+    this.setState({ loading }, () => {
+      // load
+      storage
+        .load({
+          key: store_category_key,
+          autoSync: true,
+          syncInBackground: true,
+          syncParams: {
+            extraFetchOptions: {},
+            someFlag: true
+          }
+        })
+        .then(data => {
+          // delay append data
+          // setTimeout(() => {
+          if (!this.unmounted) {
+            if (this.props.index == 0) {
+              layoutAnimation();
             }
-          })
-          .then(data => {
-            // delay append data
-            setTimeout(() => {
-              if (this.props.index == 0) {
-                layoutAnimation();
-              }
 
-              this.setState({
-                items_data:
-                  data.length > STORES_LOAD_MORE
-                    ? [...data, { id: -1, type: 'loadmore' }]
-                    : data,
-                items_data_bak: data,
-                loading: false,
-                fetched: true,
-                refreshing: false,
-                page: 1
-              });
+            this.setState({
+              items_data:
+                data.length > STORES_LOAD_MORE
+                  ? [...data, { id: -1, type: 'loadmore' }]
+                  : data,
+              items_data_bak: data,
+              loading: false,
+              fetched: true,
+              refreshing: false,
+              page: 1
+            });
+            action(() => {
+              store.setStoresFinish(true);
+            })();
+          }
 
-              action(() => {
-                store.setStoresFinish(true);
-              })();
-
-              // load next category
-              // this._loadNextCate();
-            }, this._delay());
-          })
-          .catch(err => {
-            this._getItemByCateIdFromServer(category_id);
-          });
-      }
-    );
+          // load next category
+          // this._loadNextCate();
+          // }, this._delay());
+        })
+        .catch(err => {
+          this._getItemByCateIdFromServer(category_id);
+        });
+    });
   }
 
   async _getItemByCateIdFromServer(category_id, delay, loadmore) {
@@ -169,7 +173,7 @@ class CategoryScreen extends Component {
         this.state.page
       );
 
-      if (response && response.status == STATUS_SUCCESS) {
+      if (response && response.status == STATUS_SUCCESS && !this.unmounted) {
         if (response.data) {
           if (loadmore) {
             this.state.page += 1;
@@ -178,41 +182,41 @@ class CategoryScreen extends Component {
           }
 
           // delay append data
-          setTimeout(() => {
-            if (this.props.index == 0) {
-              layoutAnimation();
-            }
+          // setTimeout(() => {
+          if (this.props.index == 0) {
+            layoutAnimation();
+          }
 
-            var items_data = loadmore
-              ? [...this.state.items_data_bak, ...response.data]
-              : response.data;
-            this.setState({
-              items_data:
-                response.data.length >= STORES_LOAD_MORE
-                  ? [...items_data, { id: -1, type: 'loadmore' }]
-                  : items_data,
-              items_data_bak: items_data,
-              loading: false,
-              refreshing: false,
-              page: this.state.page
+          var items_data = loadmore
+            ? [...this.state.items_data_bak, ...response.data]
+            : response.data;
+          this.setState({
+            items_data:
+              response.data.length >= STORES_LOAD_MORE
+                ? [...items_data, { id: -1, type: 'loadmore' }]
+                : items_data,
+            items_data_bak: items_data,
+            loading: false,
+            refreshing: false,
+            page: this.state.page
+          });
+
+          action(() => {
+            store.setStoresFinish(true);
+          })();
+
+          // load next category
+          // this._loadNextCate();
+
+          // cache in five minutes
+          if (response.data && !loadmore) {
+            storage.save({
+              key: store_category_key,
+              data: items_data,
+              expires: STORE_CATEGORY_CACHE
             });
-
-            action(() => {
-              store.setStoresFinish(true);
-            })();
-
-            // load next category
-            // this._loadNextCate();
-
-            // cache in five minutes
-            if (response.data && !loadmore) {
-              storage.save({
-                key: store_category_key,
-                data: items_data,
-                expires: STORE_CATEGORY_CACHE
-              });
-            }
-          }, delay || this._delay());
+          }
+          // }, delay || this._delay());
         } else {
           this.setState({
             loading: false,
@@ -224,9 +228,10 @@ class CategoryScreen extends Component {
           // this._loadNextCate();
         }
       }
+      this.props.onRefreshEnd();
     } catch (e) {
       console.log(e + ' site_category_product');
-
+      this.props.onRefreshEnd();
       store.addApiQueue(
         'site_category_product',
         this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore)
@@ -259,23 +264,33 @@ class CategoryScreen extends Component {
 
     if (items_data == null) {
       return (
-        <View style={styles.containerScreen}>
-          {fetched && <CenterText title="Chưa có mặt hàng nào :(" />}
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyWrapper}>
+            <Icon name="add-shopping-cart" style={styles.emptyIcon} />
+            <Text style={styles.emptyText}>Cửa hàng hiện chưa có sản phẩm</Text>
+          </View>
         </View>
       );
     }
 
     return (
-      <View style={styles.containerScreen}>
+      <ScrollView
+        style={styles.containerScreen}
+        contentContainerStyle={{ flexGrow: 1 }}
+        scrollEnabled={false}
+        refreshControl={
+          appConfig.device.isIOS && (
+            <RefreshControl
+              refreshing={this.props.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          )
+        }
+      >
         {items_data && (
-          <ScrollView
-            scrollEventThrottle={16}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
+          <View
+            style={{ minHeight: this.props.minHeight }}
+            onLayout={this.props.onLayout}
           >
             {this.state.isAll &&
               this.state.promotions &&
@@ -334,9 +349,9 @@ class CategoryScreen extends Component {
                 />
               ))}
             </View>
-          </ScrollView>
+          </View>
         )}
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -345,6 +360,28 @@ const styles = StyleSheet.create({
   containerScreen: {
     width: Util.size.width,
     flex: 1
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: '#888',
+    opacity: 0.8
+  },
+  emptyIcon: {
+    fontSize: 80,
+    color: DEFAULT_COLOR,
+    marginBottom: 15,
+    opacity: 0.7
+  },
+  emptyContainer: {
+    flex: 1,
+    width: Util.size.width,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  emptyWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 
