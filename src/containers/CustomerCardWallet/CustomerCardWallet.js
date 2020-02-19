@@ -412,10 +412,10 @@ class CustomerCardWallet extends Component {
           )}
 
           <View style={styles.headerBackground}>
-            <Image
+            {/* <Image
               source={require('../../images/card-wallet.png')}
               style={styles.image}
-            />
+            /> */}
           </View>
 
           <ComboHeaderButton
@@ -491,14 +491,19 @@ const styles = StyleSheet.create({
     flex: 1
   },
   headerBackground: {
+    transform: [
+      {
+        scaleX: 1.2
+      }
+    ],
     backgroundColor: appConfig.colors.primary,
-    width: 1100,
+    width: 1000,
     height: 1000,
     borderRadius: 500,
     position: 'absolute',
     alignSelf: 'center',
     alignItems: 'center',
-    top: -920,
+    top: -940,
     overflow: 'hidden'
   },
   image: {
@@ -516,7 +521,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   comboHeaderBtn: {
-    marginTop: 30,
+    marginTop: 15,
     zIndex: 1
   },
   searchModal: {
