@@ -36,6 +36,7 @@ class Search extends Component {
 
     this.onSearch = this.onSearch.bind(this);
     this.getHistory = this.getHistory.bind(this);
+    this.unmounted = false;
   }
 
   componentDidMount() {
@@ -80,6 +81,10 @@ class Search extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   getHistory() {
     storage
       .load({
@@ -92,9 +97,11 @@ class Search extends Component {
         }
       })
       .then(history => {
-        this.setState({
-          history
-        });
+        if (!this.unmounted) {
+          this.setState({
+            history
+          });
+        }
       })
       .catch(e => {});
   }
@@ -116,26 +123,24 @@ class Search extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.search_product(store.store_id, {
+          const response = await APIHandler.search_product(store.store_id, {
             search: keyword
           });
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
+              if (response.data) {
+                this.setState({
+                  search_data: response.data,
+                  finish: true
+                });
+              } else {
+                this.getHistory();
 
-          if (response && response.status == STATUS_SUCCESS) {
-            if (response.data) {
-              this.setState({
-                search_data: response.data,
-                loading: false,
-                finish: true,
-                header_title: `— Kết quả cho "${keyword}" —`
-              });
-            } else {
-              this.getHistory();
-
-              this.setState({
-                search_data: null,
-                loading: false,
-                finish: true
-              });
+                this.setState({
+                  search_data: null,
+                  finish: true
+                });
+              }
             }
           }
         } catch (e) {
@@ -144,6 +149,12 @@ class Search extends Component {
             'search_product',
             this.onSearch.bind(this, keyword)
           );
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              loading: false,
+              header_title: `— Kết quả cho "${keyword}" —`
+            });
         }
       }
     );

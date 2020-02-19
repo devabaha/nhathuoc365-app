@@ -113,6 +113,7 @@ exports.USER_GET_INFO_BY_PHONE_NUMBER =
   MY_FOOD_API + 'apiUser/get_info_user_by_phone';
 exports.USER_GET_INFO_BY_WALLET_ADDRESS =
   MY_FOOD_API + 'apiUser/get_info_user_by_wallet_address';
+exports.USER_UPDATE_FAVOR_SITE = MY_FOOD_API + 'apiUser/update_favor_site';
 
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';

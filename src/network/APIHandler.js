@@ -468,6 +468,17 @@ class APIHandler {
   }
 
   /**
+   * Cập nhật dữ liệu ví thẻ khách hàng
+   * updateKey: 1 - add, 2 - delete
+   */
+  async user_update_favor_site(store_id, updateKey) {
+    var api = url_for(
+      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
    * Đăng ký
    */
   async user_register(data) {
