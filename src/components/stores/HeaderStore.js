@@ -6,8 +6,7 @@ import {
   View,
   ImageBackground,
   Text,
-  TouchableHighlight,
-  ViewPropTypes
+  TouchableHighlight
 } from 'react-native';
 import { CachedImage, CustomCachedImage } from 'react-native-img-cache';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -41,9 +40,9 @@ class HeaderStore extends Component {
     infoContainerStyle: {},
     bannerUrl: '',
     avatarUrl: '',
-    title: 'trangtridep',
-    subTitle: 'Online 24h truoc',
-    description: 'Nguoi theo doi 39k',
+    title: '',
+    subTitle: '',
+    description: '',
     onFollowPress: defaultListener,
     onChatPress: defaultListener
   };
@@ -164,6 +163,13 @@ class HeaderStore extends Component {
                   <View style={[styles.btnInfo]}>
                     <Icon name="message1" style={styles.icon} />
                     <Text style={styles.btnText}>Chat</Text>
+                    {!!this.props.unreadChat && (
+                      <View style={[styles.badge]}>
+                        <Text style={styles.notiMess}>
+                          {this.props.unreadChat}
+                        </Text>
+                      </View>
+                    )}
                   </View>
                 </>
               </TouchableHighlight>
@@ -289,6 +295,20 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     marginRight: 5
+  },
+  badge: {
+    borderRadius: 13,
+    maxWidth: 30,
+    height: 19,
+    marginLeft: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'red',
+    paddingHorizontal: 7
+  },
+  notiMess: {
+    color: 'white',
+    fontSize: 10
   }
 });
 

@@ -570,6 +570,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+   * Lấy dữ liệu thông tin cửa hàng
+   */
+  async site_notify(store_id) {
+    var api = url_for(API.SITE_NOTIFY + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
   async user_notify_chat() {
     var api = url_for(API.USER_NOTIFY_CHAT);
     return await this.getAPI(api);

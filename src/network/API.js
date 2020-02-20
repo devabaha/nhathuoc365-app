@@ -75,6 +75,7 @@ exports.SITE_CONVERSATION = MY_FOOD_API + 'apiChat/conversation';
 exports.SITE_SEND_MESSAGE = MY_FOOD_API + 'apiChat/send';
 exports.SITE_SEARCH_CONVERSATIONS = MY_FOOD_API + 'apiChat/search';
 exports.SITE_PIN_LIST = MY_FOOD_API + 'apiSite/pin_list';
+exports.SITE_NOTIFY = MY_FOOD_API + 'apiSite/notify_site';
 
 // News
 exports.USER_NEWS_LIST = MY_FOOD_API + 'apiUser/news_list';
