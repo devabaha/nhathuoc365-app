@@ -3,6 +3,9 @@ package id.tick;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.BV.LinearGradient.LinearGradientPackage;
+import com.mkuczera.RNReactNativeHapticFeedbackPackage;
 import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.rnfs.RNFSPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
@@ -22,7 +25,6 @@ import com.horcrux.svg.SvgPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
@@ -51,6 +53,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNDeviceInfo(),
+            new LinearGradientPackage(),
+            new RNReactNativeHapticFeedbackPackage(),
             new ScreenBrightnessPackage(1234),
             new RNFSPackage(),
             new FastImageViewPackage(),
@@ -70,7 +75,6 @@ public class MainApplication extends Application implements ReactApplication {
             new NetInfoPackage(),
             new VectorIconsPackage(),
             new RNCWebViewPackage(),
-            new RNDeviceInfo(),
             new RNFetchBlobPackage(),
             new RNFirebasePackage(),
             new RNFirebaseAuthPackage()
