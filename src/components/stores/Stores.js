@@ -26,11 +26,17 @@ import HeaderStore from './HeaderStore';
 import StoreNavBar from './StoreNavBar';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
-const BANNER_ABSOLUTE_HEIGHT = appConfig.device.height / 3;
-const STATUS_BAR_HEIGHT = 20;
+const BANNER_ABSOLUTE_HEIGHT =
+  appConfig.device.height / 3 - appConfig.device.bottomSpace;
+const STATUS_BAR_HEIGHT = appConfig.device.isIOS
+  ? appConfig.device.isIphoneX
+    ? 50
+    : 20
+  : 0;
 const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
-const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT;
+const COLLAPSED_HEADER_VIEW =
+  BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT - STATUS_BAR_HEIGHT;
 
 class Stores extends Component {
   static propTypes = {
@@ -361,6 +367,12 @@ class Stores extends Component {
   };
 
   render() {
+    const unreadChat = !this.state.siteNotify.notify_chat
+      ? ''
+      : this.state.siteNotify.notify_chat > 9
+      ? '9+'
+      : this.state.siteNotify.notify_chat + '';
+
     const animated = {
       transform: [
         {
@@ -418,7 +430,7 @@ class Stores extends Component {
           title={store.store_data.name}
           subTitle={this.state.siteNotify.last_online}
           description={this.state.siteNotify.favor_count}
-          unreadChat={this.state.siteNotify.notify_chat}
+          unreadChat={unreadChat}
         />
 
         <Animated.View
@@ -429,12 +441,17 @@ class Stores extends Component {
               transform: [
                 {
                   translateY: this.state.scrollY.interpolate({
-                    inputRange: [0, 1, BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT],
+                    inputRange: [
+                      0,
+                      1,
+                      BANNER_ABSOLUTE_HEIGHT -
+                        NAV_BAR_HEIGHT -
+                        STATUS_BAR_HEIGHT
+                    ],
                     outputRange: [
                       BANNER_VIEW_HEIGHT,
                       BANNER_VIEW_HEIGHT,
-                      BANNER_VIEW_HEIGHT -
-                        (BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT)
+                      NAV_BAR_HEIGHT
                     ],
                     extrapolate: 'clamp'
                   })

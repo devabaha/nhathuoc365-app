@@ -59,11 +59,11 @@ class CategoryScreen extends Component {
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
 
     if (index == 0) {
-      this._getItemByCateId(item.id);
+      this._getItemByCateId(item.id, true);
     } else {
       Events.on(keyAutoLoad, keyAutoLoad, () => {
         if (this.state.items_data == null) {
-          this._getItemByCateId(item.id);
+          this._getItemByCateId(item.id, true);
         }
       });
     }
@@ -232,10 +232,10 @@ class CategoryScreen extends Component {
     } catch (e) {
       console.log(e + ' site_category_product');
       this.props.onRefreshEnd();
-      store.addApiQueue(
-        'site_category_product',
-        this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore)
-      );
+      // store.addApiQueue(
+      //   'site_category_product',
+      //   this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore)
+      // );
     }
   }
 
@@ -262,7 +262,7 @@ class CategoryScreen extends Component {
 
     const { items_data, header_title, fetched } = this.state;
 
-    if (items_data == null) {
+    if (!items_data) {
       return (
         <View style={styles.emptyContainer}>
           <View style={styles.emptyWrapper}>

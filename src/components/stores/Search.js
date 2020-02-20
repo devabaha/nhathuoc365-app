@@ -46,7 +46,7 @@ class Search extends Component {
     setTimeout(() => {
       Actions.refresh({
         searchValue: keyword || '',
-        placeholder: 'Tìm kiếm tại cửa hàng...',
+        placeholder: `Tìm kiếm trong ${store.store_data.name || 'cửa hàng'}...`,
         autoFocus: true,
         onSearch: text => {
           Actions.refresh({
