@@ -41,7 +41,7 @@ class Search extends Component {
             ) : (
               <>
                 <Icon name="plus" color="#fff" size={18} />
-                <Text style={styles.funcText}>Thêm thẻ</Text>
+                <Text style={styles.funcText}>Thêm Cửa hàng</Text>
               </>
             )}
           </View>

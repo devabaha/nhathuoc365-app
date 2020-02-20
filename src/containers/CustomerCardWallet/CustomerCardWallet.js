@@ -33,12 +33,12 @@ const BUTTONS = [
   {
     type: BUTTON_TYPE.SERVER,
     showModal: true,
-    title: 'Thêm thẻ',
+    title: 'Thêm cửa hàng',
     iconName: 'plus'
   },
   {
     type: BUTTON_TYPE.LOCAL,
-    title: 'Tìm kiếm thẻ',
+    title: 'Tìm kiếm',
     iconName: 'search'
   }
 ];
