@@ -23,3 +23,4 @@
 }
 
 -dontwarn io.branch.**
+-keep public class com.horcrux.svg.** {*;}

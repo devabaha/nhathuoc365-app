@@ -31,10 +31,19 @@ target 'my_food_new' do
   
   pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
+  pod 'Permission-LocationAlways', :path => "#{permissions_path}/LocationAlways.podspec"
+  pod 'Permission-LocationWhenInUse', :path => "#{permissions_path}/LocationWhenInUse.podspec"
   
   pod 'react-native-screen-brightness', :path => '../node_modules/react-native-screen-brightness'
 
   pod 'react-native-branch', :path => '../node_modules/react-native-branch'
+  pod 'RNReactNativeHapticFeedback', :path => '../node_modules/react-native-haptic-feedback'
+  
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
+  pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
+
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
 
   target 'my_food_newTests' do
     inherit! :search_paths

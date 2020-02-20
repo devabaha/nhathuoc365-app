@@ -12,7 +12,10 @@ export const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get(
 );
 
 export const isAndroid = Platform.OS === 'android';
-export const isAndroidEmulator = isAndroid && DeviceInfo.isEmulator();
+export let isAndroidEmulator = false;
+DeviceInfo.isEmulator().then(isEmulator => {
+  isAndroidEmulator = isAndroid && isEmulator;
+});
 export const isIos = Platform.OS === 'ios';
 export const isIphoneX = isIphoneXHelper();
 
