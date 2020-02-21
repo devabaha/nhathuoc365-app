@@ -45,7 +45,9 @@ class Search extends Component {
     setTimeout(() => {
       Actions.refresh({
         searchValue: keyword || '',
-        placeholder: 'Tìm kiếm tại cửa hàng...',
+        placeholder: `Tìm kiếm trong ${this.props.category_name &&
+          `${this.props.category_name} - `}${store.store_data.name ||
+          'cửa hàng'}...`,
         autoFocus: true,
         onSearch: text => {
           Actions.refresh({
@@ -117,7 +119,8 @@ class Search extends Component {
       async () => {
         try {
           var response = await APIHandler.search_product(store.store_id, {
-            search: keyword
+            search: keyword,
+            category_id: this.props.category_id
           });
 
           if (response && response.status == STATUS_SUCCESS) {
