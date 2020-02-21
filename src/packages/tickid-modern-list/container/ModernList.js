@@ -10,8 +10,10 @@ class ModernList extends Component {
     data: PropTypes.array,
     mainKey: PropTypes.string,
     type: PropTypes.oneOf([LIST_TYPE.NORMAL, LIST_TYPE.TAG]),
-    containerStyle: PropTypes.object,
-    headerWrapperStyle: PropTypes.object,
+    containerStyle: PropTypes.any,
+    headerWrapperStyle: PropTypes.any,
+    activeStyle: PropTypes.any,
+    activeTextStyle: PropTypes.any,
     headerComponent: PropTypes.node,
     headerLeftComponent: PropTypes.node,
     headerRightComponent: PropTypes.node,
@@ -27,6 +29,8 @@ class ModernList extends Component {
     type: LIST_TYPE.NORMAL,
     containerStyle: {},
     headerWrapperStyle: {},
+    activeStyle: {},
+    activeTextStyle: {},
     headerComponent: null,
     headerLeftComponent: null,
     headerRightComponent: null,
@@ -51,6 +55,8 @@ class ModernList extends Component {
         headerLeftComponent={this.props.headerLeftComponent}
         renderItem={this.props.renderItem}
         onPressItem={this.props.onPressItem}
+        activeStyle={this.props.activeStyle}
+        activeTextStyle={this.props.activeTextStyle}
       />
     );
   }

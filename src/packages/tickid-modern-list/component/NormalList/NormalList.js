@@ -43,6 +43,9 @@ class NormalList extends Component {
         data={this.props.data}
         renderItem={this.renderItem.bind(this)}
         scrollEnabled={this.props.scrollEnabled}
+        keyExtractor={item => item.id}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="always"
       />
     );
   }

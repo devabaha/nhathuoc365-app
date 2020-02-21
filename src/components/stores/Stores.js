@@ -186,6 +186,7 @@ class Stores extends Component {
         <Button
           onPress={() => {
             Actions.push(appConfig.routes.searchStore, {
+              categories: this.state.categories_data,
               category_id: this.state.selected_category.id,
               category_name:
                 this.state.selected_category.id !== 0
