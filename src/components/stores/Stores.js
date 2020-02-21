@@ -26,11 +26,17 @@ import HeaderStore from './HeaderStore';
 import StoreNavBar from './StoreNavBar';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
-const BANNER_ABSOLUTE_HEIGHT = appConfig.device.height / 3;
-const STATUS_BAR_HEIGHT = 20;
+const BANNER_ABSOLUTE_HEIGHT =
+  appConfig.device.height / 3 - appConfig.device.bottomSpace;
+const STATUS_BAR_HEIGHT = appConfig.device.isIOS
+  ? appConfig.device.isIphoneX
+    ? 50
+    : 20
+  : 0;
 const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
-const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT;
+const COLLAPSED_HEADER_VIEW =
+  BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT - STATUS_BAR_HEIGHT;
 
 class Stores extends Component {
   static propTypes = {
@@ -50,7 +56,10 @@ class Stores extends Component {
       category_nav_index: 0,
       categories_data: null,
       scrollY: new Animated.Value(0),
-      flatListHeight: undefined
+      flatListHeight: undefined,
+      siteNotify: {
+        favor_flag: 0
+      }
     };
 
     this.unmounted = false;
@@ -64,6 +73,7 @@ class Stores extends Component {
   }
 
   componentDidMount() {
+    this._getNotifySite();
     this._initial(this.props);
     this.state.scrollY.addListener(this.scrollListener);
 
@@ -279,33 +289,50 @@ class Stores extends Component {
 
   handlePressFollow = async () => {
     const siteId = store.store_data.id;
+    const active = this.state.siteNotify.favor_flag ? 0 : 1;
     this.setState({
-      loading: true,
-      active: !this.state.active
+      loading: true
     });
     try {
-      const response = await APIHandler.user_update_favor_site(
-        siteId,
-        this.state.active ? 0 : 1
-      );
-      if (response.status === STATUS_SUCCESS) {
-        flashShowMessage({
-          type: 'success',
-          message: response.message
-        });
-      } else {
-        flashShowMessage({
-          type: 'danger',
-          message: response.message
-        });
+      const response = await APIHandler.user_update_favor_site(siteId, active);
+      if (!this.unmounted) {
+        if (response.status === STATUS_SUCCESS) {
+          this.setState(prevState => ({
+            siteNotify: {
+              ...prevState.siteNotify,
+              favor_flag: active
+            }
+          }));
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message
+          });
+        }
       }
     } catch (error) {
       console.log('update_customer_card_wallet', error);
     } finally {
-      !this.unmounted &&
-        this.setState({
-          loading: false
-        });
+    }
+  };
+
+  _getNotifySite = async () => {
+    try {
+      var response = await APIHandler.site_notify(store.store_id);
+
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({
+            siteNotify: response.data
+          });
+        }
+      }
+    } catch (e) {
+      console.log(e + ' site_notify');
     }
   };
 
@@ -332,17 +359,6 @@ class Stores extends Component {
 
   _onRefreshCateEnd = () => {
     if (!this.unmounted) {
-      // this.refScrollView.current &&
-      // this.refScrollView.current.getNode().scrollTo({x: 0, y: 0, animated: true});
-      // this.state.scrollY.setValue(0);
-      //   if (appConfig.device.isAndroid) {
-      //   Animated.spring(this.state.scrollY, {
-      //     toValue: 0,
-      //     useNativeDriver: true
-      //   }).start(() => this.setState({
-      //     refreshingCate: false
-      //   }))
-      // } else
       appConfig.device.isAndroid &&
         this.setState({
           refreshingCate: false
@@ -351,6 +367,12 @@ class Stores extends Component {
   };
 
   render() {
+    const unreadChat = !this.state.siteNotify.notify_chat
+      ? ''
+      : this.state.siteNotify.notify_chat > 9
+      ? '9+'
+      : this.state.siteNotify.notify_chat + '';
+
     const animated = {
       transform: [
         {
@@ -394,7 +416,7 @@ class Stores extends Component {
         )}
 
         <HeaderStore
-          active={this.state.active}
+          active={this.state.siteNotify.favor_flag}
           avatarUrl={store.store_data.logo_url}
           bannerUrl={store.store_data.image_url}
           containerStyle={{
@@ -406,6 +428,9 @@ class Stores extends Component {
           onPressChat={this.handlePressChat}
           onPressFollow={this.handlePressFollow}
           title={store.store_data.name}
+          subTitle={this.state.siteNotify.last_online}
+          description={this.state.siteNotify.favor_count}
+          unreadChat={unreadChat}
         />
 
         <Animated.View
@@ -416,12 +441,17 @@ class Stores extends Component {
               transform: [
                 {
                   translateY: this.state.scrollY.interpolate({
-                    inputRange: [0, 1, BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT],
+                    inputRange: [
+                      0,
+                      1,
+                      BANNER_ABSOLUTE_HEIGHT -
+                        NAV_BAR_HEIGHT -
+                        STATUS_BAR_HEIGHT
+                    ],
                     outputRange: [
                       BANNER_VIEW_HEIGHT,
                       BANNER_VIEW_HEIGHT,
-                      BANNER_VIEW_HEIGHT -
-                        (BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT)
+                      NAV_BAR_HEIGHT
                     ],
                     extrapolate: 'clamp'
                   })
