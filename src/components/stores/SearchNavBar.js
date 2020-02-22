@@ -52,9 +52,11 @@ class SearchNavBar extends Component {
         <TextInput
           style={styles.searchInput}
           placeholder={this.props.placeholder}
+          placeH
           placeholderTextColor="#ccc"
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
+          numberOfLines={1}
           autoFocus
         />
 
@@ -111,8 +113,7 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   searchIcon: {
-    position: 'relative',
-    top: 2
+    // top: 2,
   },
   clearWrapper: {
     width: 20,

@@ -22,7 +22,9 @@ class MordernListComponent extends Component {
       data: this.props.data,
       mainKey: this.props.mainKey,
       scrollEnabled: this.props.scrollEnabled,
-      onPressItem: this.props.onPressItem
+      onPressItem: this.props.onPressItem,
+      activeStyle: this.props.activeStyle,
+      activeTextStyle: this.props.activeTextStyle
     };
     switch (this.props.type) {
       case LIST_TYPE.NORMAL:
@@ -63,7 +65,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
+    flex: 1,
     color: '#555'
   },
   body: {}

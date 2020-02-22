@@ -11,6 +11,9 @@ class TagList extends Component {
 
       return (
         <Tag
+          active={item.active}
+          activeStyle={this.props.activeStyle}
+          activeTextStyle={this.props.activeTextStyle}
           key={index}
           item={text}
           onPress={() => this.props.onPressItem(item)}
@@ -25,6 +28,8 @@ class TagList extends Component {
         scrollEnabled={this.props.scrollEnabled}
         scrollEventThrottle={16}
         contentContainerStyle={styles.contentContainerStyle}
+        keyboardDismissMode="on-drag"
+        keyboardShouldPersistTaps="always"
       >
         {this.renderItem()}
       </ScrollView>
@@ -36,6 +41,7 @@ const styles = StyleSheet.create({
   contentContainerStyle: {
     flexGrow: 1,
     paddingHorizontal: 5,
+    paddingVertical: 10,
     flexWrap: 'wrap',
     flexDirection: 'row'
   }
