@@ -4,10 +4,12 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
+  TouchableOpacity,
   FlatList,
   ScrollView,
   Keyboard,
-  Platform
+  Platform,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
@@ -16,6 +18,8 @@ import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
+import ModernList from 'app-packages/tickid-modern-list';
+import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
 
 const SEARCH_KEY = 'KeySearch';
 
@@ -31,7 +35,9 @@ class Search extends Component {
       search_data: null,
       history: null,
       buying_idx: [],
-      searchValue: ''
+      searchValue: '',
+      categories: this.categories,
+      selectedCategory: this.selectedCategory
     };
 
     this.onSearch = this.onSearch.bind(this);
@@ -39,14 +45,38 @@ class Search extends Component {
     this.unmounted = false;
   }
 
+  get categories() {
+    return this.props.categories.map((category, index) => ({
+      ...category,
+      active: category.id === this.props.category_id
+    }));
+  }
+
+  get selectedCategory() {
+    return (
+      this.props.categories.find(
+        category => category.id === this.props.category_id
+      ) || { id: 0 }
+    );
+  }
+
+  getPlaceholder(name = '') {
+    return `Tìm kiếm trong ${name && `${name} - `}${store.store_data.name ||
+      'cửa hàng'}...`;
+  }
+
   componentDidMount() {
     var keyword = this.props.qr_code;
     this.getHistory();
 
+    const placeholder = this.getPlaceholder(
+      this.props.category_id !== 0 ? this.props.category_name : ''
+    );
+
     setTimeout(() => {
       Actions.refresh({
         searchValue: keyword || '',
-        placeholder: `Tìm kiếm trong ${store.store_data.name || 'cửa hàng'}...`,
+        placeholder,
         autoFocus: true,
         onSearch: text => {
           Actions.refresh({
@@ -68,7 +98,12 @@ class Search extends Component {
         },
         onClearText: () => {
           Actions.refresh({
-            searchValue: ''
+            searchValue: '',
+            placeholder: this.getPlaceholder(
+              this.state.selectedCategory.id !== 0
+                ? this.state.selectedCategory.name
+                : ''
+            )
           });
 
           this.setState({
@@ -81,14 +116,10 @@ class Search extends Component {
     });
   }
 
-  componentWillUnmount() {
-    this.unmounted = true;
-  }
-
-  getHistory() {
+  getHistory(categoryId = this.state.selectedCategory.id) {
     storage
       .load({
-        key: SEARCH_KEY + store.user_info.id,
+        key: SEARCH_KEY + store.user_info.id + '/' + categoryId,
         autoSync: true,
         syncInBackground: true,
         syncParams: {
@@ -103,7 +134,10 @@ class Search extends Component {
           });
         }
       })
-      .catch(e => {});
+      .catch(e => {
+        console.log('load storage history', e);
+        this.setState({ history: null });
+      });
   }
 
   onSearch(keyword) {
@@ -113,6 +147,8 @@ class Search extends Component {
         loading: false,
         finish: true
       });
+
+      return;
     }
 
     keyword = keyword.trim();
@@ -123,8 +159,9 @@ class Search extends Component {
       },
       async () => {
         try {
-          const response = await APIHandler.search_product(store.store_id, {
-            search: keyword
+          var response = await APIHandler.search_product(store.store_id, {
+            search: keyword,
+            category_id: this.state.selectedCategory.id
           });
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
@@ -197,7 +234,7 @@ class Search extends Component {
   }
 
   _updateHistory(item) {
-    var item = {
+    item = {
       id: item.id,
       name: item.name
     };
@@ -205,7 +242,11 @@ class Search extends Component {
     // load
     storage
       .load({
-        key: SEARCH_KEY + store.user_info.id,
+        key:
+          SEARCH_KEY +
+          store.user_info.id +
+          '/' +
+          this.state.selectedCategory.id,
         autoSync: true,
         syncInBackground: true,
         syncParams: {
@@ -225,27 +266,59 @@ class Search extends Component {
   _saveHistorey(data) {
     // cache in five minutes
     storage.save({
-      key: SEARCH_KEY + store.user_info.id,
+      key:
+        SEARCH_KEY + store.user_info.id + '/' + this.state.selectedCategory.id,
       data,
       expires: null
     });
+
+    this.setState({ history: data });
   }
 
+  removeHistory = () => {
+    storage.remove({
+      key:
+        SEARCH_KEY + store.user_info.id + '/' + this.state.selectedCategory.id
+    });
+
+    this.setState({ history: null });
+  };
+
+  handlePressCategory = category => {
+    if (category.id !== this.state.selectedCategory.id) {
+      this.getHistory(category.id);
+
+      const categories = [...this.state.categories];
+      categories.forEach(cate => {
+        cate.active = cate.id === category.id;
+      });
+      const placeholder = this.getPlaceholder(
+        category.id !== 0 ? category.name : ''
+      );
+      Actions.refresh({
+        placeholder
+      });
+      this.setState({
+        categories,
+        selectedCategory: category
+      });
+    }
+  };
+
   render() {
-    var { loading, search_data, history, buying_idx } = this.state;
+    const { loading, search_data, history, buying_idx } = this.state;
+
     // show loading
     if (loading) {
       return <Indicator />;
     }
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {search_data != null ? (
           <FlatList
             keyboardShouldPersistTaps="handled"
-            keyboardDismissMode={
-              Platform.OS === 'ios' ? 'on-drag' : 'interactive'
-            }
+            keyboardDismissMode="on-drag"
             onEndReached={num => {}}
             onEndReachedThreshold={0}
             style={[styles.items_box]}
@@ -266,60 +339,90 @@ class Search extends Component {
             keyExtractor={item => item.id}
             numColumns={2}
           />
-        ) : history != null ? (
-          (() => {
-            let data = Object.assign([], history);
-            data = data.reverse();
-
-            return (
-              <ScrollView
-                style={[
-                  styles.items_box,
-                  {
-                    marginBottom: store.keyboardTop
-                  }
-                ]}
-                keyboardShouldPersistTaps="handled"
-                keyboardDismissMode={
-                  Platform.OS === 'ios' ? 'on-drag' : 'interactive'
-                }
-              >
-                <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
-
-                {data.map((item, index) => {
-                  return (
-                    <TouchableHighlight
-                      key={index}
-                      underlayColor="transparent"
-                      onPress={this._onTouchHistory.bind(this, item)}
-                      style={styles.seach_history}
-                    >
-                      <View style={styles.seach_history_box}>
-                        <View style={styles.seach_history_name_box}>
-                          <Text style={styles.seach_history_name}>
-                            {item.name}
-                          </Text>
-                        </View>
-
-                        <TouchableHighlight
-                          underlayColor="transparent"
-                          onPress={this._insertName.bind(this, item)}
-                          style={styles.seach_history_expand}
-                        >
-                          <Icon name="expand" size={14} color="#999999" />
-                        </TouchableHighlight>
-                      </View>
-                    </TouchableHighlight>
-                  );
-                })}
-              </ScrollView>
-            );
-          })()
         ) : (
-          <CenterText
-            title="Nhập tên sản phẩm để tìm"
-            marginTop={isIOS ? -(Util.size.height * 0.3) : undefined}
-          />
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="always"
+          >
+            <ModernList
+              containerStyle={{ marginBottom: 15 }}
+              headerTitle="Danh mục"
+              mainKey="name"
+              data={this.state.categories}
+              onPressItem={this.handlePressCategory}
+              activeStyle={{ backgroundColor: DEFAULT_COLOR }}
+              activeTextStyle={{ color: '#fff' }}
+              type="tag"
+            />
+            {history != null &&
+              (() => {
+                let data = Object.assign([], history);
+                data = data.reverse();
+
+                return (
+                  <ModernList
+                    headerTitle="Lịch sử tìm kiếm"
+                    mainKey="name"
+                    data={data}
+                    onPressItem={item => this._onTouchHistory(item)}
+                    headerRightComponent={
+                      <TouchableOpacity
+                        activeOpacity={0.6}
+                        onPress={this.removeHistory}
+                      >
+                        <Text
+                          style={{ color: DEFAULT_COLOR, fontWeight: '500' }}
+                        >
+                          Xóa
+                        </Text>
+                      </TouchableOpacity>
+                    }
+                  />
+                );
+                // return (
+                //   <ScrollView
+                //     style={[
+                //       styles.items_box,
+                //       {
+                //         marginBottom: store.keyboardTop
+                //       }
+                //     ]}
+                //     keyboardShouldPersistTaps="handled"
+                //     keyboardDismissMode="on-drag"
+                //   >
+                //     <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
+
+                //     {data.map((item, index) => {
+                //       return (
+                //         <TouchableHighlight
+                //           key={index}
+                //           underlayColor="transparent"
+                //           onPress={this._onTouchHistory.bind(this, item)}
+                //           style={styles.seach_history}
+                //         >
+                //           <View style={styles.seach_history_box}>
+                //             <View style={styles.seach_history_name_box}>
+                //               <Text style={styles.seach_history_name}>
+                //                 {item.name}
+                //               </Text>
+                //             </View>
+
+                //             <TouchableHighlight
+                //               underlayColor="transparent"
+                //               onPress={this._insertName.bind(this, item)}
+                //               style={styles.seach_history_expand}
+                //             >
+                //               <Icon name="expand" size={14} color="#999999" />
+                //             </TouchableHighlight>
+                //           </View>
+                //         </TouchableHighlight>
+                //       );
+                //     })}
+                //   </ScrollView>
+                // );
+              })()}
+          </ScrollView>
         )}
 
         {search_data != null && store.keyboardTop == 0 && (
@@ -374,7 +477,7 @@ class Search extends Component {
             )}
           </View>
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -457,7 +560,6 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-
     marginBottom: 0
   },
   right_btn_add_store: {

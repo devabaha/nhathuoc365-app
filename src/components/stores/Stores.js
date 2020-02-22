@@ -55,11 +55,7 @@ class Stores extends Component {
       refreshingCate: false,
       category_nav_index: 0,
       categories_data: null,
-      scrollY: new Animated.Value(0),
-      flatListHeight: undefined,
-      siteNotify: {
-        favor_flag: 0
-      }
+      selected_category: { id: 0, name: '' }
     };
 
     this.unmounted = false;
@@ -242,7 +238,14 @@ class Stores extends Component {
         {/* <RightButtonOrders tel={store.store_data.tel} /> */}
         <Button
           onPress={() => {
-            Actions.push(appConfig.routes.searchStore);
+            Actions.push(appConfig.routes.searchStore, {
+              categories: this.state.categories_data,
+              category_id: this.state.selected_category.id,
+              category_name:
+                this.state.selected_category.id !== 0
+                  ? this.state.selected_category.name
+                  : ''
+            });
           }}
         >
           <IconFeather size={26} color={appConfig.colors.white} name="search" />
@@ -281,9 +284,12 @@ class Stores extends Component {
         })
       );
 
-      this.setState({
-        category_nav_index: index
-      });
+      if (item) {
+        this.setState({
+          category_nav_index: index,
+          selected_category: item
+        });
+      }
     }
   }
 
