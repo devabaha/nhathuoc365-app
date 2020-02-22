@@ -14,11 +14,13 @@ class ModernList extends Component {
     headerWrapperStyle: PropTypes.any,
     activeStyle: PropTypes.any,
     activeTextStyle: PropTypes.any,
+    bodyWrapperStyle: PropTypes.any,
     headerComponent: PropTypes.node,
     headerLeftComponent: PropTypes.node,
     headerRightComponent: PropTypes.node,
     renderItem: PropTypes.func,
-    onPressItem: PropTypes.func
+    onPressItem: PropTypes.func,
+    onBodyLayout: PropTypes.func
   };
 
   static defaultProps = {
@@ -31,11 +33,13 @@ class ModernList extends Component {
     headerWrapperStyle: {},
     activeStyle: {},
     activeTextStyle: {},
+    bodyWrapperStyle: {},
     headerComponent: null,
     headerLeftComponent: null,
     headerRightComponent: null,
     renderItem: DEFAULT_LISTENER,
-    onPressItem: DEFAULT_LISTENER
+    onPressItem: DEFAULT_LISTENER,
+    onBodyLayout: DEFAULT_LISTENER
   };
 
   state = {};
@@ -55,8 +59,10 @@ class ModernList extends Component {
         headerLeftComponent={this.props.headerLeftComponent}
         renderItem={this.props.renderItem}
         onPressItem={this.props.onPressItem}
+        onBodyLayout={this.props.onBodyLayout}
         activeStyle={this.props.activeStyle}
         activeTextStyle={this.props.activeTextStyle}
+        bodyWrapperStyle={this.props.bodyWrapperStyle}
       />
     );
   }

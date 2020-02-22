@@ -3,12 +3,12 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableHighlight,
   TouchableOpacity,
   FlatList,
   ScrollView,
   Keyboard,
-  Platform,
+  // Animated,
+  // Easing,
   SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -20,28 +20,35 @@ import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import ModernList from 'app-packages/tickid-modern-list';
 import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
+import Animated, { Easing } from 'react-native-reanimated';
 
+const { concat, interpolate } = Animated;
+const START_DEG = new Animated.Value(0);
+const END_DEG = new Animated.Value(Math.PI);
 const SEARCH_KEY = 'KeySearch';
 
-@observer
 class Search extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loading: false,
-      finish: false,
+      noResult: false,
       header_title: '',
       search_data: null,
       history: null,
       buying_idx: [],
       searchValue: '',
       categories: this.categories,
-      selectedCategory: this.selectedCategory
+      selectedCategory: this.selectedCategory,
+      animatedCategories: new Animated.Value(0),
+      bodyCategoriesHeight: null
     };
 
     this.onSearch = this.onSearch.bind(this);
     this.getHistory = this.getHistory.bind(this);
+    this.unmounted = false;
+    this.categoriesCollapsed = false;
   }
 
   get categories() {
@@ -115,6 +122,10 @@ class Search extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   getHistory(categoryId = this.state.selectedCategory.id) {
     storage
       .load({
@@ -142,7 +153,7 @@ class Search extends Component {
       this.setState({
         search_data: null,
         loading: false,
-        finish: true
+        noResult: false
       });
 
       return;
@@ -156,7 +167,7 @@ class Search extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.search_product(store.store_id, {
+          const response = await APIHandler.search_product(store.store_id, {
             search: keyword,
             category_id: this.state.selectedCategory.id
           });
@@ -165,26 +176,29 @@ class Search extends Component {
             if (response.data) {
               this.setState({
                 search_data: response.data,
-                loading: false,
-                finish: true,
+                noResult: false,
                 header_title: `— Kết quả cho "${keyword}" —`
               });
-            } else {
-              this.getHistory();
-
-              this.setState({
-                search_data: null,
-                loading: false,
-                finish: true
-              });
             }
+          } else {
+            this.getHistory();
+
+            this.setState({
+              search_data: null,
+              noResult: true
+            });
           }
         } catch (e) {
           console.log(e + ' search_product');
-          store.addApiQueue(
-            'search_product',
-            this.onSearch.bind(this, keyword)
-          );
+          // store.addApiQueue(
+          //   'search_product',
+          //   this.onSearch.bind(this, keyword)
+          // );
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              loading: false
+            });
         }
       }
     );
@@ -298,9 +312,45 @@ class Search extends Component {
     }
   };
 
+  handleCategoriesLayout = e => {
+    if (!this.state.bodyCategoriesHeight) {
+      this.setState({ bodyCategoriesHeight: e.nativeEvent.layout.height });
+    }
+  };
+
+  collapseCategories = () => {
+    Animated.timing(this.state.animatedCategories, {
+      toValue: this.categoriesCollapsed ? 0 : 1,
+      easing: Easing.inOut(Easing.ease),
+      duration: 300
+    }).start();
+    this.categoriesCollapsed = !this.categoriesCollapsed;
+  };
+
   render() {
     const { loading, search_data, history, buying_idx } = this.state;
 
+    const MIN_HEIGHT_CATEGORIES = new Animated.Value(0);
+    const MAX_HEIGHT_CATEGORIES =
+      this.state.bodyCategoriesHeight &&
+      new Animated.Value(this.state.bodyCategoriesHeight);
+
+    const animatedIconStyle = {
+      transform: [
+        {
+          rotate: interpolate(this.state.animatedCategories, {
+            inputRange: [0, 1],
+            outputRange: [START_DEG, END_DEG]
+          })
+        }
+      ]
+    };
+    const animatedCategoriesStyle = this.state.bodyCategoriesHeight && {
+      height: interpolate(this.state.animatedCategories, {
+        inputRange: [0, 1],
+        outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES]
+      })
+    };
     // show loading
     if (loading) {
       return <Indicator />;
@@ -338,15 +388,26 @@ class Search extends Component {
             keyboardDismissMode="on-drag"
             keyboardShouldPersistTaps="always"
           >
+            {this.state.noResult && (
+              <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
+            )}
             <ModernList
               containerStyle={{ marginBottom: 15 }}
               headerTitle="Danh mục"
               mainKey="name"
               data={this.state.categories}
               onPressItem={this.handlePressCategory}
+              bodyWrapperStyle={animatedCategoriesStyle}
+              onBodyLayout={this.handleCategoriesLayout}
               activeStyle={{ backgroundColor: DEFAULT_COLOR }}
               activeTextStyle={{ color: '#fff' }}
-              type="tag"
+              type={LIST_TYPE.TAG}
+              headerRightComponent={
+                <CollapseIcon
+                  onPress={this.collapseCategories}
+                  style={animatedIconStyle}
+                />
+              }
             />
             {history != null &&
               (() => {
@@ -360,16 +421,7 @@ class Search extends Component {
                     data={data}
                     onPressItem={item => this._onTouchHistory(item)}
                     headerRightComponent={
-                      <TouchableOpacity
-                        activeOpacity={0.6}
-                        onPress={this.removeHistory}
-                      >
-                        <Text
-                          style={{ color: DEFAULT_COLOR, fontWeight: '500' }}
-                        >
-                          Xóa
-                        </Text>
-                      </TouchableOpacity>
+                      <RemoveBtn onPress={this.removeHistory} />
                     }
                   />
                 );
@@ -424,13 +476,6 @@ class Search extends Component {
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
           />
         )}
-
-        <View
-          style={{
-            height: 0,
-            width: '100%'
-          }}
-        ></View>
 
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
@@ -610,7 +655,42 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 3,
     backgroundColor: DEFAULT_COLOR
+  },
+  noResult: {
+    textAlign: 'center',
+    paddingVertical: 15,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#555'
+  },
+  collapseIcon: {
+    fontSize: 20,
+    color: '#555'
+  },
+  removeHistoryTxt: {
+    color: DEFAULT_COLOR,
+    fontWeight: '500'
   }
 });
 
-export default Search;
+export default observer(Search);
+
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+const CollapseIcon = props => (
+  <TouchableOpacity
+    hitSlop={HIT_SLOP}
+    activeOpacity={0.6}
+    onPress={props.onPress}
+  >
+    <AnimatedIcon
+      name="caret-down"
+      style={[styles.collapseIcon, props.style]}
+    />
+  </TouchableOpacity>
+);
+
+const RemoveBtn = props => (
+  <TouchableOpacity activeOpacity={0.6} onPress={props.onPress}>
+    <Text style={styles.removeHistoryTxt}>Xóa</Text>
+  </TouchableOpacity>
+);
