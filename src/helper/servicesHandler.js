@@ -11,6 +11,7 @@ export const servicesHandler = service => {
         title: 'Mã tài khoản'
       });
       break;
+    case 'MY_VOUCHER_TYPE':
     case SERVICES_TYPE.MY_VOUCHER:
       Actions.push(appConfig.routes.myVoucher, {
         title: 'Voucher của tôi',
@@ -33,6 +34,7 @@ export const servicesHandler = service => {
     case SERVICES_TYPE.ORDERS:
       Actions.jump(appConfig.routes.ordersTab);
       break;
+    case 'QRCODE_SCAN_TYPE':
     case SERVICES_TYPE.QRCODE_SCAN:
       Actions.push(appConfig.routes.qrBarCode, {
         index: 1,
