@@ -58,7 +58,8 @@ class Stores extends Component {
       scrollY: new Animated.Value(0),
       flatListHeight: undefined,
       siteNotify: {
-        favor_flag: 0
+        favor_flag: 0,
+        notify_chat: 0
       }
     };
 
