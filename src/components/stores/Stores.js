@@ -55,7 +55,13 @@ class Stores extends Component {
       refreshingCate: false,
       category_nav_index: 0,
       categories_data: null,
-      selected_category: { id: 0, name: '' }
+      selected_category: { id: 0, name: '' },
+      scrollY: new Animated.Value(0),
+      flatListHeight: undefined,
+      siteNotify: {
+        favor_flag: 0,
+        notify_chat: 0
+      }
     };
 
     this.unmounted = false;
