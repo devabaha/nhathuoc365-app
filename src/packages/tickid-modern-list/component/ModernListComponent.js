@@ -3,6 +3,7 @@ import { View, StyleSheet, Text } from 'react-native';
 import NormalList from './NormalList';
 import TagList from './TagList';
 import { LIST_TYPE } from '../constants';
+import Animated from 'react-native-reanimated';
 
 class MordernListComponent extends Component {
   state = {};
@@ -46,7 +47,12 @@ class MordernListComponent extends Component {
           {header}
         </View>
 
-        <View style={[styles.container, styles.body]}>{body}</View>
+        <Animated.View
+          style={[styles.container, styles.body, this.props.bodyWrapperStyle]}
+          onLayout={this.props.onBodyLayout}
+        >
+          {body}
+        </Animated.View>
       </View>
     );
   }
@@ -54,7 +60,8 @@ class MordernListComponent extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    flex: 0.00001
   },
   headerWrapper: {
     paddingVertical: 10,
