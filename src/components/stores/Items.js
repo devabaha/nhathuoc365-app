@@ -9,9 +9,9 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
+import { Actions } from 'react-native-router-flux';
 
-@observer
-export default class Items extends Component {
+class Items extends Component {
   constructor(props) {
     super(props);
 
@@ -23,6 +23,9 @@ export default class Items extends Component {
 
   // add item vào giỏ hàng
   _addCart(item) {
+    Actions.push('itemOptions');
+    return;
+
     if (this.props.buyPress) {
       this.props.buyPress(item);
     }
@@ -512,3 +515,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }
 });
+
+export default observer(Items);

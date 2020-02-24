@@ -12,6 +12,7 @@ class ModernList extends Component {
     type: PropTypes.oneOf([LIST_TYPE.NORMAL, LIST_TYPE.TAG]),
     containerStyle: PropTypes.any,
     headerWrapperStyle: PropTypes.any,
+    headerTitleStyle: PropTypes.any,
     activeStyle: PropTypes.any,
     activeTextStyle: PropTypes.any,
     bodyWrapperStyle: PropTypes.any,
@@ -31,6 +32,7 @@ class ModernList extends Component {
     type: LIST_TYPE.NORMAL,
     containerStyle: {},
     headerWrapperStyle: {},
+    headerTitleStyle: {},
     activeStyle: {},
     activeTextStyle: {},
     bodyWrapperStyle: {},
@@ -48,6 +50,7 @@ class ModernList extends Component {
     return (
       <ModernListComponent
         headerTitle={this.props.headerTitle}
+        headerTitleStyle={this.props.headerTitleStyle}
         scrollEnabled={this.props.listScrollable}
         data={this.props.data}
         mainKey={this.props.mainKey}

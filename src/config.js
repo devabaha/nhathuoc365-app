@@ -93,7 +93,9 @@ const config = Object.freeze({
     orders: 'Orders',
     paymentConfirm: 'paymentConfirm',
     //
-    upToPhone: 'upToPhone'
+    upToPhone: 'upToPhone',
+
+    itemOptions: 'itemOptions'
   }
 });
 

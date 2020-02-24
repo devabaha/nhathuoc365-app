@@ -12,7 +12,9 @@ class MordernListComponent extends Component {
     return (
       <View style={[styles.headerContent]}>
         {this.props.headerLeftComponent}
-        <Text style={styles.headerTitle}>{this.props.headerTitle}</Text>
+        <Text style={[styles.headerTitle, this.props.headerTitleStyle]}>
+          {this.props.headerTitle}
+        </Text>
         {this.props.headerRightComponent}
       </View>
     );
