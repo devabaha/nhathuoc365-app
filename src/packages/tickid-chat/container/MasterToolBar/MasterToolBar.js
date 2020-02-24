@@ -5,7 +5,9 @@ import GestureWrapper from '../../component/GestureWrapper';
 import {
   COMPONENT_TYPE,
   BOTTOM_OFFSET_GALLERY,
-  DURATION_SHOW_GALLERY
+  DURATION_SHOW_GALLERY,
+  HAS_NOTCH,
+  ANDROID_STATUS_BAR_HEIGHT
 } from '../../constants';
 import ImageGallery from '../ImageGallery';
 import PropTypes from 'prop-types';
@@ -103,7 +105,9 @@ class MasterToolBar extends Component {
       );
 
       Animated.spring(animatePrevValue, {
-        toValue: nextProps.baseViewHeight,
+        toValue:
+          nextProps.baseViewHeight +
+          (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0),
         overshootClamping: true,
         duration: 200,
         useNativeDriver: true

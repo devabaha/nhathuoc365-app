@@ -361,7 +361,8 @@ class ImageGallery extends Component {
       outputRange: [this.state.openAlbum ? '0deg' : '360deg', '180deg']
     });
 
-    const headerHeight = this.props.headerHeight - ANDROID_STATUS_BAR_HEIGHT;
+    const headerHeight =
+      this.props.headerHeight - ANDROID_STATUS_BAR_HEIGHT + (isAndroid ? 2 : 0);
     this.props.setHeader(
       <HeaderLayout
         opacity={opacity}
@@ -1088,8 +1089,7 @@ const styles = StyleSheet.create({
     width: WIDTH,
     paddingTop: isIos ? 20 : 0,
     top: 0,
-    left: 0,
-    backgroundColor: 'black',
+    backgroundColor: '#000',
     position: 'absolute'
   },
   btnCloseHeader: {

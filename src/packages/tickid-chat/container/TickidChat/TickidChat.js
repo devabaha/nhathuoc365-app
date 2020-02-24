@@ -39,7 +39,8 @@ import {
   ANDROID_EXTRA_DIMENSIONS_HEIGHT,
   ANDROID_STATUS_BAR_HEIGHT,
   isAndroidEmulator,
-  isAndroid
+  isAndroid,
+  HAS_NOTCH
 } from '../../constants';
 import MasterToolBar from '../MasterToolBar';
 
@@ -274,8 +275,6 @@ class TickidChat extends Component {
     ) {
       state.keyboardInformation.height =
         e.endCoordinates.height - BOTTOM_SPACE_IPHONE_X;
-      // + ANDROID_STATUS_BAR_HEIGHT
-      // (Dimensions.get('screen').height - Dimensions.get('window').height + ANDROID_STATUS_BAR_HEIGHT);
 
       isUpdate = true;
     }
@@ -321,6 +320,7 @@ class TickidChat extends Component {
   handleBlur = () => {
     if (this.refInput.current) {
       this.refInput.current.blur();
+      this.setState({ editable: false });
     }
   };
 
@@ -792,8 +792,7 @@ class TickidChat extends Component {
                               outputRange: [
                                 0,
                                 -this.state.keyboardInformation.height -
-                                  //hot_fix, will change later
-                                  (isAndroid ? 30 : 0)
+                                  (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0)
                               ]
                             }
                           )
@@ -871,6 +870,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'flex-end',
+    alignSelf: 'center',
     marginRight: 5
   },
   sendBtn: {
