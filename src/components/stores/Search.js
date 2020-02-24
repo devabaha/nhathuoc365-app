@@ -52,37 +52,19 @@ class Search extends Component {
   }
 
   get categories() {
-    return this.props.categories.map((category, index) => ({
+    const categories = this.props.categories || [];
+    return categories.map(category => ({
       ...category,
       active: category.id === this.props.category_id
     }));
   }
 
   get selectedCategory() {
+    const categories = this.props.categories || [];
     return (
-      this.props.categories.find(
-        category => category.id === this.props.category_id
-      ) || { id: 0 }
-    );
-  }
-
-  getPlaceholder(name = '') {
-    return `Tìm kiếm trong ${name && `${name} - `}${store.store_data.name ||
-      'cửa hàng'}...`;
-  }
-
-  get categories() {
-    return this.props.categories.map((category, index) => ({
-      ...category,
-      active: category.id === this.props.category_id
-    }));
-  }
-
-  get selectedCategory() {
-    return (
-      this.props.categories.find(
-        category => category.id === this.props.category_id
-      ) || { id: 0 }
+      categories.find(category => category.id === this.props.category_id) || {
+        id: 0
+      }
     );
   }
 
@@ -411,24 +393,26 @@ class Search extends Component {
             {this.state.noResult && (
               <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
             )}
-            <ModernList
-              containerStyle={{ marginBottom: 15 }}
-              headerTitle="Danh mục"
-              mainKey="name"
-              data={this.state.categories}
-              onPressItem={this.handlePressCategory}
-              bodyWrapperStyle={animatedCategoriesStyle}
-              onBodyLayout={this.handleCategoriesLayout}
-              activeStyle={{ backgroundColor: DEFAULT_COLOR }}
-              activeTextStyle={{ color: '#fff' }}
-              type={LIST_TYPE.TAG}
-              headerRightComponent={
-                <CollapseIcon
-                  onPress={this.collapseCategories}
-                  style={animatedIconStyle}
-                />
-              }
-            />
+            {this.state.categories.length !== 0 && (
+              <ModernList
+                containerStyle={{ marginBottom: 15 }}
+                headerTitle="Danh mục"
+                mainKey="name"
+                data={this.state.categories}
+                onPressItem={this.handlePressCategory}
+                bodyWrapperStyle={animatedCategoriesStyle}
+                onBodyLayout={this.handleCategoriesLayout}
+                activeStyle={{ backgroundColor: DEFAULT_COLOR }}
+                activeTextStyle={{ color: '#fff' }}
+                type={LIST_TYPE.TAG}
+                headerRightComponent={
+                  <CollapseIcon
+                    onPress={this.collapseCategories}
+                    style={animatedIconStyle}
+                  />
+                }
+              />
+            )}
             {history != null &&
               (() => {
                 let data = Object.assign([], history);
