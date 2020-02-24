@@ -1633,7 +1633,11 @@ class Confirm extends Component {
     }
   }
 
-  _onRegister() {}
+  _onRegister() {
+    Actions.push('phone_auth', {
+      tel: store.cart_data.address.tel
+    });
+  }
 
   async _coppyCart() {
     if (this.item_coppy) {
