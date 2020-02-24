@@ -42,7 +42,7 @@ class PhoneAuth extends Component {
       user: null,
       message: '',
       codeInput: '',
-      phoneNumber: '',
+      phoneNumber: this.props.tel || '',
       confirmResult: null,
       isShowIndicator: false,
       modalVisible: false,
