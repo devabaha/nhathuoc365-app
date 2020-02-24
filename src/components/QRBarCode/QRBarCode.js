@@ -23,6 +23,7 @@ import Barcode from 'react-native-barcode-builder';
 import appConfig from 'app-config';
 import timer from 'react-native-timer';
 import Button from 'react-native-button';
+import store from 'app-store';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
@@ -49,6 +50,8 @@ class QRBarCode extends Component {
       originLuminous: MIN_LUMINOUS,
       permissionCameraGranted: undefined
     };
+
+    this.unmounted = false;
   }
 
   componentDidMount() {
@@ -65,13 +68,17 @@ class QRBarCode extends Component {
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
     timer.clearTimeout(this, 'barcodeupdate');
     ScreenBrightness.setBrightness(this.state.originLuminous);
   }
 
   async checkPermissions() {
     const permissionCameraGranted = await this.checkCameraPermission();
-    if (permissionCameraGranted !== this.state.permissionCameraGranted) {
+    if (
+      permissionCameraGranted !== this.state.permissionCameraGranted &&
+      !this.unmounted
+    ) {
       this.setState({ permissionCameraGranted });
     }
   }
@@ -141,7 +148,7 @@ class QRBarCode extends Component {
     const response = await APIHandler.user_barcode(
       this.props.mobxStore.store_id
     );
-    if (response && response.status == STATUS_SUCCESS) {
+    if (response && response.status == STATUS_SUCCESS && !this.unmounted) {
       this.setState({ barcode: response.data.barcode });
     }
   }
@@ -164,21 +171,37 @@ class QRBarCode extends Component {
       async () => {
         try {
           var response = await APIHandler.getAPI(link);
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
-              this.setState(
-                {
-                  loading: false
-                },
-                () => {
-                  setTimeout(() => {
-                    this._proccessQRCodeResult(response.data.barcode);
-                  }, 450);
-                }
-              );
-            })();
-          } else {
-            action(() => {
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
+              action(() => {
+                this.setState(
+                  {
+                    loading: false
+                  },
+                  () => {
+                    setTimeout(() => {
+                      !this.unmounted &&
+                        this._proccessQRCodeResult(response.data.barcode);
+                    }, 450);
+                  }
+                );
+              })();
+            } else {
+              action(() => {
+                this.setState(
+                  {
+                    loading: false
+                  },
+                  () => {
+                    this._open_webview(link);
+                  }
+                );
+              })();
+            }
+          }
+        } catch (e) {
+          action(() => {
+            !this.unmounted &&
               this.setState(
                 {
                   loading: false
@@ -187,23 +210,12 @@ class QRBarCode extends Component {
                   this._open_webview(link);
                 }
               );
-            })();
-          }
-        } catch (e) {
-          action(() => {
-            this.setState(
-              {
-                loading: false
-              },
-              () => {
-                this._open_webview(link);
-              }
-            );
           })();
         } finally {
-          this.setState({
-            loading: false
-          });
+          !this.unmounted &&
+            this.setState({
+              loading: false
+            });
         }
       }
     );
@@ -221,36 +233,40 @@ class QRBarCode extends Component {
       async () => {
         try {
           var response = await APIHandler.user_from_barcode(barcode);
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
-              this.setState(
-                {
-                  loading: false
-                },
-                () => {
-                  Actions.pay_account({
-                    title: 'Thông tin tài khoản',
-                    barcode: barcode,
-                    wallet: response.data.account.default_wallet,
-                    account: response.data.account,
-                    app: response.data.app,
-                    type: ActionConst.REPLACE
-                  });
-                  Toast.show(response.message, Toast.SHORT);
-                }
-              );
-            })();
-          } else {
-            this._search_store(barcode);
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
+              action(() => {
+                this.setState(
+                  {
+                    loading: false
+                  },
+                  () => {
+                    Actions.pay_account({
+                      title: 'Thông tin tài khoản',
+                      barcode: barcode,
+                      wallet: response.data.account.default_wallet,
+                      account: response.data.account,
+                      app: response.data.app,
+                      type: ActionConst.REPLACE
+                    });
+
+                    flashShowMessage({
+                      type: 'success',
+                      message: response.message
+                    });
+                  }
+                );
+              })();
+            } else {
+              this._search_store(barcode);
+            }
           }
         } catch (e) {
-          this.setState({
-            loading: false
-          });
         } finally {
-          this.setState({
-            loading: false
-          });
+          !this.unmounted &&
+            this.setState({
+              loading: false
+            });
         }
       }
     );
@@ -280,12 +296,12 @@ class QRBarCode extends Component {
                   loading: false
                 },
                 () => {
-                  Actions.pay_wallet({
-                    title: 'Chuyển khoản',
-                    wallet: response.data.wallet,
-                    address: data[0],
-                    type: ActionConst.REPLACE
-                  });
+                  // Actions.push(appConfig.routes.payWallet, {
+                  //   title: 'Chuyển khoản',
+                  //   wallet: response.data.wallet,
+                  //   address: data[0],
+                  //   type: ActionConst.REPLACE
+                  // });
                   // Toast.show(response.message, Toast.SHORT);
                 }
               );
@@ -347,93 +363,97 @@ class QRBarCode extends Component {
       async () => {
         try {
           var response = await APIHandler.user_check_address(barcode);
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
-              this.setState(
-                {
-                  loading: false
-                },
-                () => {
-                  if (response.data.object.type == OBJECT_TYPE_KEY_USER) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      Actions.pay_wallet({
-                        title: 'Chuyển khoản',
-                        wallet: this.state.wallet,
-                        address: barcode
-                      });
-                    }, 0);
-                  } else if (
-                    response.data.object.type == OBJECT_TYPE_KEY_ADDRESS
-                  ) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      this._goStores(response.data.item);
-                    }, 0);
-                  } else if (
-                    response.data.object.type == OBJECT_TYPE_KEY_SITE
-                  ) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      this._goStores(response.data.item);
-                    }, 0);
-                  } else if (
-                    response.data.object.type ==
-                    OBJECT_TYPE_KEY_PRODUCT_CATEGORY
-                  ) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      this._goStores(
-                        response.data.item,
-                        response.data.item.site_product_category_id
-                      );
-                    }, 0);
-                  } else if (
-                    response.data.object.type == OBJECT_TYPE_KEY_PRODUCT
-                  ) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      this._goProduct(response.data.item);
-                    }, 0);
-                  } else if (
-                    response.data.object.type == OBJECT_TYPE_KEY_NEWS
-                  ) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      this._goNewsDetail(response.data.item);
-                    }, 0);
-                  } else if (
-                    response.data.object.type == OBJECT_TYPE_KEY_CART
-                  ) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      Actions.view_orders_item({
-                        data: response.data.item,
-                        title: '#' + response.data.item.cart_code
-                      });
-                    }, 0);
-                  } else if (
-                    response.data.object.type == OBJECT_TYPE_KEY_CAMPAIGN
-                  ) {
-                    Actions.pop();
-                    setTimeout(() => {
-                      Actions.push(appConfig.routes.voucherDetail, {
-                        title: response.data.item.title,
-                        campaignId: response.data.item.id
-                      });
-                    }, 0);
-                  } else {
-                    Actions.pop();
-                    setTimeout(() => {
-                      this._search_store(barcode);
-                    }, 0);
+
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
+              action(() => {
+                this.setState(
+                  {
+                    loading: false
+                  },
+                  () => {
+                    if (response.data.object.type == OBJECT_TYPE_KEY_USER) {
+                      Actions.pop();
+                      // setTimeout(() => {
+                      //   Actions.push(appConfig.routes.payWallet, {
+                      //     title: 'Chuyển khoản',
+                      //     wallet: this.state.wallet,
+                      //     address: barcode
+                      //   });
+                      // }, 0);
+                      this.goToPayment(barcode);
+                    } else if (
+                      response.data.object.type == OBJECT_TYPE_KEY_ADDRESS
+                    ) {
+                      Actions.pop();
+                      setTimeout(() => {
+                        this._goStores(response.data.item);
+                      }, 0);
+                    } else if (
+                      response.data.object.type == OBJECT_TYPE_KEY_SITE
+                    ) {
+                      Actions.pop();
+                      setTimeout(() => {
+                        this._goStores(response.data.item);
+                      }, 0);
+                    } else if (
+                      response.data.object.type ==
+                      OBJECT_TYPE_KEY_PRODUCT_CATEGORY
+                    ) {
+                      Actions.pop();
+                      setTimeout(() => {
+                        this._goStores(
+                          response.data.item,
+                          response.data.item.site_product_category_id
+                        );
+                      }, 0);
+                    } else if (
+                      response.data.object.type == OBJECT_TYPE_KEY_PRODUCT
+                    ) {
+                      Actions.pop();
+                      setTimeout(() => {
+                        this._goProduct(response.data.item);
+                      }, 0);
+                    } else if (
+                      response.data.object.type == OBJECT_TYPE_KEY_NEWS
+                    ) {
+                      Actions.pop();
+                      setTimeout(() => {
+                        this._goNewsDetail(response.data.item);
+                      }, 0);
+                    } else if (
+                      response.data.object.type == OBJECT_TYPE_KEY_CART
+                    ) {
+                      Actions.pop();
+                      setTimeout(() => {
+                        Actions.view_orders_item({
+                          data: response.data.item,
+                          title: '#' + response.data.item.cart_code
+                        });
+                      }, 0);
+                    } else if (
+                      response.data.object.type == OBJECT_TYPE_KEY_CAMPAIGN
+                    ) {
+                      Actions.pop();
+                      setTimeout(() => {
+                        Actions.push(appConfig.routes.voucherDetail, {
+                          title: response.data.item.title,
+                          campaignId: response.data.item.id
+                        });
+                      }, 0);
+                    } else {
+                      Actions.pop();
+                      setTimeout(() => {
+                        this._search_store(barcode);
+                      }, 0);
+                    }
+                    // Toast.show(response.message, Toast.SHORT);
                   }
-                  // Toast.show(response.message, Toast.SHORT);
-                }
-              );
-            })();
-          } else {
-            this._search_store(barcode);
+                );
+              })();
+            } else {
+              this._search_store(barcode);
+            }
           }
         } catch (e) {
           this._search_store(barcode);
@@ -505,15 +525,13 @@ class QRBarCode extends Component {
           this._open_webview(text_result);
         }
       } else if (isWalletAddress(text_result)) {
-        if (from == 'vndwallet') {
-          Actions.pop();
-          setTimeout(() => {
-            Actions.pay_wallet({
-              title: 'Chuyển khoản',
-              wallet: wallet,
-              address: text_result
-            });
-          }, 0);
+        if (from == appConfig.routes.transfer) {
+          // Actions.push(appConfig.routes.payWallet, {
+          //   title: 'Chuyển khoản',
+          //   wallet: wallet,
+          //   address: text_result
+          // });
+          this.goToPayment(text_result);
         } else {
           this._check_address(text_result);
         }
@@ -525,9 +543,11 @@ class QRBarCode extends Component {
         setTimeout(() => {
           this._getCartByCartcode(text_result);
         }, 450);
-      } else if (isWalletAddressWithZoneCode(text_result)) {
-        this._getWalletByAddressAndZoneCode(text_result);
-      } else {
+      }
+      // if (isWalletAddressWithZoneCode(text_result)) {
+      //   this._getWalletByAddressAndZoneCode(text_result);
+      // } else
+      else {
         this._search_store(text_result);
       }
     }
@@ -538,6 +558,56 @@ class QRBarCode extends Component {
       Alert.alert('Ứng dụng không thể truy cập vào Cài đặt!')
     );
   }
+
+  goToPayment = wallet_address => {
+    this.getUserInfo(wallet_address, receiverInfo => {
+      Actions.pop();
+      setTimeout(() => {
+        const wallet = this.props.wallet || store.user_info.default_wallet;
+        Actions.push(appConfig.routes.transferPayment, {
+          title: 'Chuyển tiền đến ' + wallet.name,
+          wallet,
+          receiver: {
+            id: receiverInfo.id,
+            walletAddress: receiverInfo.wallet_address,
+            name: receiverInfo.name,
+            walletName: receiverInfo.name,
+            tel: receiverInfo.tel,
+            originTel: receiverInfo.tel,
+            avatar: receiverInfo.avatar,
+            notInContact: true
+          }
+        });
+      });
+    });
+  };
+
+  getUserInfo = async (wallet_address, callBackSuccess) => {
+    const data = { wallet_address };
+    this.setState({ loading: true });
+
+    try {
+      const response = await APIHandler.user_get_info_by_wallet_address(data);
+      if (!this.unmounted) {
+        if (response.status === STATUS_SUCCESS && response.data) {
+          callBackSuccess({
+            id: response.data.id,
+            name: response.data.name,
+            wallet_address: response.data.wallet_address,
+            avatar: response.data.img,
+            tel: response.data.tel
+          });
+        } else {
+          Alert.alert(response.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      store.addApiQueue('user_get_info_by_phone_number', this.getUserInfo);
+    } finally {
+      !this.unmounted && this.setState({ loading: false });
+    }
+  };
 
   renderQRCodeScanner(text_result) {
     return (
@@ -642,7 +712,6 @@ class QRBarCode extends Component {
   }
 
   render() {
-    console.log('render qr');
     const { index, title } = this.state;
     return (
       <View style={styles.container}>

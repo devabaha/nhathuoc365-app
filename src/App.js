@@ -8,7 +8,6 @@ import {
   Scene,
   Router,
   Actions,
-  ActionConst,
   Overlay,
   Tabs,
   Stack,
@@ -68,6 +67,11 @@ import Affiliate from './components/account/Affiliate/Affiliate';
 import ProfileDetail from './components/account/ProfileDetail';
 import EditProfile from './components/account/EditProfile';
 import DetailHistoryPayment from './components/account/DetailHistoryPayment';
+import Transfer, {
+  Payment as TransferPayment,
+  Confirm as TransferConfirm,
+  Result as TransferResult
+} from './components/account/Transfer';
 import PhoneCardContainer, {
   config as phoneCardConfig,
   initialize as initializePhoneCardModule,
@@ -220,94 +224,13 @@ class App extends Component {
 
   handleAddListenerOneSignal = () => {
     OneSignal.init(appConfig.oneSignal.appKey);
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
     OneSignal.addEventListener('ids', this.handleAddPushToken);
     OneSignal.inFocusDisplaying(2);
   };
 
   handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
     OneSignal.removeEventListener('ids', this.handleAddPushToken);
   };
-
-  handleOpenningNotification(openResult) {
-    const data = openResult.notification.payload.additionalData;
-    if (data) {
-      const { page, site_id, page_id } = data;
-      if (page) {
-        switch (page) {
-          case 'store':
-            if (page_id) {
-              this.goToStoreScene(page_id);
-            }
-            break;
-          case 'new':
-            if (page_id) {
-              this.goToNewsScene(page_id);
-            }
-            break;
-          case 'order':
-            if (site_id && page_id) {
-              Actions.orders_item({
-                title: '#...',
-                passProps: {
-                  notice_data: {
-                    site_id,
-                    page_id
-                  }
-                }
-              });
-            }
-            break;
-        }
-      }
-    }
-  }
-
-  async goToStoreScene(page_id) {
-    try {
-      var response = await APIHandler.site_info(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setStoreData(response.data);
-
-          this._goStore(response);
-        })();
-      } else if (response && response.data) {
-        Actions.search_store({
-          site_code: response.data.site_code
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async goToNewsScene(page_id) {
-    try {
-      var response = await APIHandler.user_news(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        if (currentSceneName == 'notify_item') {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data,
-              type: ActionConst.REFRESH
-            });
-          }, 660);
-        } else {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data
-            });
-          }, 660);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   async handleAddPushToken(device) {
     if (_.isObject(device)) {
@@ -330,6 +253,7 @@ class App extends Component {
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
         <RootRouter setHeader={this.setHeader.bind(this)} />
+        <FlashMessage icon={'auto'} />
       </View>
     );
   }
@@ -343,7 +267,7 @@ const styles = StyleSheet.create({
   tabBarStyle: {
     borderTopWidth: Util.pixel,
     borderColor: '#cccccc',
-    backgroundColor: 'white',
+    backgroundColor: '#ffffff',
     opacity: 1,
     shadowColor: 'black',
     shadowOffset: {
@@ -384,124 +308,11 @@ class RootRouter extends Component {
 
     return true;
   }
-  componentDidMount() {
-    this.handleAddListenerOneSignal();
-  }
-
-  componentWillUnmount() {
-    this.handleRemoveListenerOneSignal();
-  }
 
   setHeader(header) {
     this.props.setHeader(header);
   }
 
-  handleAddListenerOneSignal = () => {
-    OneSignal.init(appConfig.oneSignal.appKey);
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
-    OneSignal.addEventListener('ids', this.handleAddPushToken);
-    OneSignal.inFocusDisplaying(2);
-  };
-
-  handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
-    OneSignal.removeEventListener('ids', this.handleAddPushToken);
-  };
-
-  handleOpenningNotification(openResult) {
-    const data = openResult.notification.payload.additionalData;
-    if (data) {
-      const { page, site_id, page_id } = data;
-      if (page) {
-        switch (page) {
-          case 'store':
-            if (page_id) {
-              this.goToStoreScene(page_id);
-            }
-            break;
-          case 'new':
-            if (page_id) {
-              this.goToNewsScene(page_id);
-            }
-            break;
-          case 'order':
-            if (site_id && page_id) {
-              Actions.orders_item({
-                title: '#...',
-                passProps: {
-                  notice_data: {
-                    site_id,
-                    page_id
-                  }
-                }
-              });
-            }
-            break;
-        }
-      }
-    }
-  }
-
-  async goToStoreScene(page_id) {
-    try {
-      var response = await APIHandler.site_info(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setStoreData(response.data);
-
-          this._goStore(response);
-        })();
-      } else if (response && response.data) {
-        Actions.search_store({
-          site_code: response.data.site_code
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async goToNewsScene(page_id) {
-    try {
-      var response = await APIHandler.user_news(page_id);
-      if (response && response.status == STATUS_SUCCESS) {
-        if (currentSceneName == 'notify_item') {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data,
-              type: ActionConst.REFRESH
-            });
-          }, 660);
-        } else {
-          setTimeout(() => {
-            Actions.notify_item({
-              title: response.data.title,
-              data: response.data
-            });
-          }, 660);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async handleAddPushToken(device) {
-    if (_.isObject(device)) {
-      const push_token = device.pushToken;
-      const player_id = device.userId;
-
-      try {
-        await APIHandler.add_push_token({
-          push_token,
-          player_id
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
   render() {
     return (
       <Router
@@ -529,8 +340,8 @@ class RootRouter extends Component {
                   showLabel={false}
                   key={appConfig.routes.primaryTabbar}
                   tabBarStyle={styles.tabBarStyle}
-                  activeBackgroundColor="white"
-                  inactiveBackgroundColor="white"
+                  activeBackgroundColor="#ffffff"
+                  inactiveBackgroundColor="#ffffff"
                   tabBarOnPress={handleTabBarOnPress}
                   {...navBarConfig}
                 >
@@ -607,7 +418,6 @@ class RootRouter extends Component {
                     iconSize={24}
                   >
                     <Scene
-                      hideNavBar
                       key="_account"
                       title="Tài khoản"
                       component={Account}
@@ -982,9 +792,38 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="pay_wallet">
+                <Stack key={appConfig.routes.transfer}>
                   <Scene
-                    key="pay_wallet_1"
+                    key={`${appConfig.routes.transfer}_1`}
+                    component={Transfer}
+                    title="Chuyển khoản"
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.transferPayment}>
+                  <Scene
+                    key={`${appConfig.routes.transferPayment}_1`}
+                    component={TransferPayment}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.transferConfirm}>
+                  <Scene
+                    key={`${appConfig.routes.transferConfirm}_1`}
+                    component={TransferConfirm}
+                    title="Thanh toán an toàn"
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.payWallet}>
+                  <Scene
+                    key={`${appConfig.routes.payWallet}_1`}
                     component={PayWallet}
                     {...navBarConfig}
                     back
@@ -1022,7 +861,7 @@ class RootRouter extends Component {
                 <Stack key="edit_profile">
                   <Scene
                     key="edit_profile_1"
-                    title="Tài khoản của tôi"
+                    title="Chỉnh sửa thông tin"
                     component={EditProfile}
                     {...navBarConfig}
                     back
@@ -1218,8 +1057,6 @@ class RootRouter extends Component {
               />
             </Stack>
           </Modal>
-
-          <Scene component={FlashMessage} />
         </Overlay>
       </Router>
     );

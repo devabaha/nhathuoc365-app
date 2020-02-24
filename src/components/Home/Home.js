@@ -136,6 +136,7 @@ class Home extends Component {
 
         <ScrollView
           onScroll={this.showBgrStatusIfOffsetTop}
+          showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl

@@ -1,5 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, StatusBar, Animated, PanResponder } from 'react-native';
+import {
+  StyleSheet,
+  StatusBar,
+  Animated,
+  PanResponder,
+  Dimensions
+} from 'react-native';
 import PropTypes from 'prop-types';
 import {
   isAndroid,
@@ -99,8 +105,8 @@ class GestureWrapper extends Component {
     // onPanResponderTerminate: evt => true,
     onPanResponderRelease: (evt, { dy, vy }) => {
       this.isAnimating = true;
-      const breakPointTop = this.state.middlePositionAnimatableArea / 2;
-      const breakPointBottom = this.state.middlePositionAnimatableArea * 1.5;
+      const breakPointTop = this.state.middlePositionAnimatableArea - 50;
+      const breakPointBottom = this.state.middlePositionAnimatableArea + 50;
       const breakVelocity = 0.5;
       this.state.animatedTranslateYScrollView.flattenOffset();
       const abs_vy = Math.abs(vy);
@@ -112,17 +118,7 @@ class GestureWrapper extends Component {
           this.animatedTranslateYScrollViewValue >= breakPointTop
         ) {
           // go to bottom
-          setTimeout(() => this.props.onCollapsingBodyContent());
-
-          this.animateScrollView(this.state.animatableArea).start(
-            ({ finished }) => {
-              if (finished) {
-                this.props.onCollapsedBodyContent();
-                this.isAnimating = false;
-                this.setState({ expandContent: false });
-              }
-            }
-          );
+          this.goToBottom();
         } else {
           // back to top
           this.animateScrollView(0).start(() => (this.isAnimating = false));
@@ -136,38 +132,59 @@ class GestureWrapper extends Component {
           this.animatedTranslateYScrollViewValue <= breakPointBottom
         ) {
           // go to top
-          setTimeout(() => this.props.onExpandingBodyContent());
-
-          this.animateScrollView(0).start(({ finished }) => {
-            if (finished) {
-              this.props.onExpandedBodyContent();
-              this.isAnimating = false;
-              this.setState({
-                expandContent: true
-              });
-            }
-          });
+          this.goToTop();
         } else {
           // back to bottom
           this.animateScrollView(this.state.animatableArea).start(
             () => (this.isAnimating = false)
           );
         }
+      } else {
+        if (this.animatedTranslateYScrollViewValue >= breakPointTop) {
+          this.goToBottom();
+        } else if (this.animatedTranslateYScrollViewValue <= breakPointBottom) {
+          this.goToTop();
+        }
       }
     }
   });
+
+  goToBottom = () => {
+    setTimeout(() => this.props.onCollapsingBodyContent());
+
+    this.animateScrollView(this.state.animatableArea).start(({ finished }) => {
+      if (finished) {
+        this.props.onCollapsedBodyContent();
+        this.isAnimating = false;
+        this.setState({ expandContent: false });
+      }
+    });
+  };
+
+  goToTop = () => {
+    setTimeout(() => this.props.onExpandingBodyContent());
+
+    this.animateScrollView(0).start(({ finished }) => {
+      if (finished) {
+        this.props.onExpandedBodyContent();
+        this.isAnimating = false;
+        this.setState({
+          expandContent: true
+        });
+      }
+    });
+  };
 
   getAnimatableArea(
     collapsedBodyHeight = this.props.collapsedBodyHeight,
     headerHeight = this.props.headerHeight
   ) {
     return (
-      HEIGHT -
+      Dimensions.get('window').height -
       (collapsedBodyHeight +
         headerHeight +
-        (isAndroidEmulator
-          ? MIN_HEIGHT_COMPOSER - ANDROID_STATUS_BAR_HEIGHT
-          : 0) +
+        //  - ANDROID_STATUS_BAR_HEIGHT
+        // (isAndroidEmulator ? ANDROID_STATUS_BAR_HEIGHT : 0) +
         BOTTOM_SPACE_IPHONE_X)
     );
   }
@@ -192,7 +209,8 @@ class GestureWrapper extends Component {
   }
 
   updateActualScrollViewHeight(otherHeight = this.props.headerHeight) {
-    this.actualScrollViewHeight = HEIGHT - otherHeight;
+    this.actualScrollViewHeight = Dimensions.get('window').height - otherHeight;
+    // + ANDROID_STATUS_BAR_HEIGHT;
   }
 
   animateScrollView(toValue) {
@@ -393,10 +411,6 @@ class GestureWrapper extends Component {
 }
 
 const styles = StyleSheet.create({
-  fakeView: {
-    width: WIDTH,
-    backgroundColor: 'rgba(0,0,0,0)'
-  },
   panResponder: {
     zIndex: 1,
     position: 'absolute',
@@ -409,8 +423,7 @@ const styles = StyleSheet.create({
     flexGrow: 1
   },
   scrollViewStyle: {
-    flex: 1,
-    position: 'relative'
+    flex: 1
   },
   container: {
     flex: 1,

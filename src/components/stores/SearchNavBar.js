@@ -52,9 +52,11 @@ class SearchNavBar extends Component {
         <TextInput
           style={styles.searchInput}
           placeholder={this.props.placeholder}
+          placeH
           placeholderTextColor="#ccc"
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
+          numberOfLines={1}
           autoFocus
         />
 
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
         height: 88
       },
       {
-        paddingTop: 20,
+        paddingTop: Platform.OS === 'ios' ? 20 : 0,
         height: Platform.OS === 'ios' ? 64 : 54
       }
     )
@@ -111,8 +113,7 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   searchIcon: {
-    position: 'relative',
-    top: 2
+    // top: 2,
   },
   clearWrapper: {
     width: 20,
@@ -137,13 +138,12 @@ const styles = StyleSheet.create({
         marginBottom: 8
       },
       {
-        marginVertical: 6
+        marginVertical: Platform.OS === 'ios' ? 6 : 8
       }
     )
   },
   searchInput: {
     flex: 1,
-    height: 28,
     paddingHorizontal: 8,
     color: appConfig.colors.white
   }

@@ -6,7 +6,6 @@ import {
   Text,
   StyleSheet,
   FlatList,
-  Image,
   ViewPropTypes,
   TouchableOpacity,
   Alert
@@ -96,7 +95,7 @@ class PinList extends Component {
             ]}
           >
             {pin.iconType === IMAGE_ICON_TYPE ? (
-              <Image style={styles.icon} source={{ uri: pin.icon }} />
+              <CachedImage style={styles.icon} source={{ uri: pin.icon }} />
             ) : (
               <MaterialCommunityIcons name={pin.icon} color="#fff" size={32} />
             )}
@@ -120,7 +119,8 @@ class PinList extends Component {
     const extraProps = {
       zIndex: this.props.visible ? 1 : 0,
       paddingBottom: BOTTOM_SPACE_IPHONE_X,
-      height: this.props.baseViewHeight + BOTTOM_SPACE_IPHONE_X,
+      height: '100%',
+      backgroundColor: '#fff',
       transform: [{ translateY: this.props.animatedEffectValue }]
     };
 
@@ -130,32 +130,35 @@ class PinList extends Component {
         onStartShouldSetPanResponderCapture={() => !this.props.visible}
         style={[styles.container, extraProps, this.props.containerStyle]}
       >
-        <FlatList
-          ref={this.refPinList}
-          showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
-          contentContainerStyle={{ flexGrow: 1 }}
-          data={this.props.pinList}
-          extraData={this.props.pinListNotify}
-          ListFooterComponent={<View style={{ paddingTop: 45 }} />}
-          renderItem={({ item: pin }) => {
-            let notify = Object.keys(this.props.pinListNotify).find(
-              type => pin.type === type
-            );
-            notify = notify ? this.props.pinListNotify[notify] : 0;
+        <View
+          style={{ height: this.props.baseViewHeight + BOTTOM_SPACE_IPHONE_X }}
+        >
+          <FlatList
+            ref={this.refPinList}
+            showsVerticalScrollIndicator={false}
+            style={{ flex: 1 }}
+            data={this.props.pinList}
+            extraData={this.props.pinListNotify}
+            ListFooterComponent={<View style={{ paddingTop: 45 }} />}
+            renderItem={({ item: pin }) => {
+              let notify = Object.keys(this.props.pinListNotify).find(
+                type => pin.type === type
+              );
+              notify = notify ? this.props.pinListNotify[notify] : 0;
 
-            return (
-              <Pin
-                pin={pin}
-                notify={notify}
-                onPress={() => this.props.onPinPress(pin)}
-                itemsPerRow={this.props.itemsPerRow}
-              />
-            );
-          }}
-          keyExtractor={item => item.type}
-          numColumns={this.props.itemsPerRow}
-        />
+              return (
+                <Pin
+                  pin={pin}
+                  notify={notify}
+                  onPress={() => this.props.onPinPress(pin)}
+                  itemsPerRow={this.props.itemsPerRow}
+                />
+              );
+            }}
+            keyExtractor={item => item.type}
+            numColumns={this.props.itemsPerRow}
+          />
+        </View>
       </Animated.View>
     );
   }
@@ -280,7 +283,7 @@ class Pin extends Component {
             ]}
           >
             {pin.iconType === IMAGE_ICON_TYPE ? (
-              <Image style={styles.icon} source={{ uri: pin.icon }} />
+              <CachedImage style={styles.icon} source={{ uri: pin.icon }} />
             ) : (
               <MaterialCommunityIcons name={pin.icon} color="#fff" size={32} />
             )}

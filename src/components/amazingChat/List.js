@@ -4,17 +4,14 @@ import {
   FlatList,
   RefreshControl,
   View,
-  TouchableOpacity,
   ActivityIndicator,
   SafeAreaView
 } from 'react-native';
 import store from '../../store/Store';
-import Indicator from '../Indicator';
 import NoResult from '../NoResult';
 import ChatRow from './ChatRow';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
-import Icon from 'react-native-vector-icons/Ionicons';
 import { setStater } from '../../packages/tickid-chat/helper';
 
 @observer
@@ -32,26 +29,6 @@ class List extends Component {
   source = null;
 
   componentDidMount() {
-    // setTimeout(() => {
-    //   Actions.refresh({
-    //     right: () => (
-    //       <TouchableOpacity onPress={this.handleSearch.bind(this)}>
-    //         <View style={styles.iconWrapper}>
-    //           <Icon
-    //             name="ios-search"
-    //             style={[
-    //               styles.icon,
-    //               {
-    //                 color: '#fff',
-    //                 fontSize: 26
-    //               }
-    //             ]}
-    //           />
-    //         </View>
-    //       </TouchableOpacity>
-    //     )
-    //   });
-    // });
     this.setState({
       loading: true
     });
@@ -116,7 +93,10 @@ class List extends Component {
               this.setState({ customers });
             } else {
               this.isLoadMore && (this.offset -= this.limit);
-              Toast.show('Không còn bản ghi nào!');
+              flashShowMessage({
+                type: 'danger',
+                message: 'Không còn bản ghi nào!'
+              });
             }
           }
         }

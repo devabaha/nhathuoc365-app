@@ -121,6 +121,7 @@ global.STORAGE_REF_KEY = 'KeyRefIntro';
 global.STORES_LOAD_MORE = 30;
 global.STORE_DEMO_CODE = 'FH';
 global.KEY_EVENTS_STORE = 'KeyEventStore';
+global.PASSWORD_STORAGE_KEY = 'PASSWORD_STORAGE_KEY';
 
 // news_list
 global.NEWS_LIMIT_IN_PAGE = 10;
@@ -144,6 +145,7 @@ const XSMAX_HEIGHT = 896;
 const PAD_WIDTH = 768;
 const PAD_HEIGHT = 1024;
 const { height: D_HEIGHT, width: D_WIDTH } = Dimensions.get('window');
+global.HIT_SLOP = { tight: 10, left: 10, top: 10, bottom: 10 };
 
 global.isIPhoneX = (() => {
   if (Platform.OS === 'web') return false;

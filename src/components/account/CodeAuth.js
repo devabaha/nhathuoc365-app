@@ -8,7 +8,6 @@ import {
   Keyboard,
   Platform
 } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 
@@ -37,7 +36,7 @@ class CodeAuth extends Component {
 
   _onAuthFail() {
     this.setState({ isShowIndicator: false }, () => {
-      showMessage({
+      flashShowMessage({
         message: 'Mã không đúng, vui lòng thử lại.',
         type: 'danger'
       });
@@ -96,7 +95,7 @@ class CodeAuth extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: '#ffffff'
   },
   phoneText: {
     color: 'black',

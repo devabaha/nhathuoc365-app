@@ -8,7 +8,6 @@ import {
   FlatList,
   Alert
 } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
@@ -102,7 +101,7 @@ export default class CartFooter extends Component {
               this.setState({
                 decrement_loading: false
               });
-              showMessage({
+              flashShowMessage({
                 type: 'info',
                 message: response.message
               });
@@ -135,7 +134,7 @@ export default class CartFooter extends Component {
               this.setState({
                 increment_loading: false
               });
-              showMessage({
+              flashShowMessage({
                 type: 'info',
                 message: response.message
               });

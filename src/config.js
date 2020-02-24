@@ -40,7 +40,8 @@ const config = Object.freeze({
     },
     white: '#fff',
     black: '#000',
-    text: '#333'
+    text: '#333',
+    placeholder: '#c7c7cd'
   },
   routes: {
     sceneWrapper: 'sceneWrapper',
@@ -53,7 +54,11 @@ const config = Object.freeze({
     scanQrCodeTab: 'scanQrCodeTab',
     ordersTab: 'ordersTab',
 
-    notifies: 'notifies',
+    vndWallet: 'vnd_wallet',
+    payWallet: 'pay_wallet',
+    transfer: 'transfer',
+    transferPayment: 'transfer_payment',
+    transferConfirm: 'transfer_confirm',
 
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',

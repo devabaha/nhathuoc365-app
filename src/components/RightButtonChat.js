@@ -47,9 +47,9 @@ export default class RightButtonChat extends Component {
 
 const styles = StyleSheet.create({
   right_btn_add_store: {
-    paddingVertical: 1,
-    paddingHorizontal: 15,
-    paddingTop: isAndroid ? 4 : 0
+    // paddingVertical: 1,
+    paddingHorizontal: 15
+    // paddingTop: isAndroid ? 4 : 0
   },
   right_btn_box: {
     flexDirection: 'row'

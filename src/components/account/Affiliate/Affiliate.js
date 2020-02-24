@@ -11,7 +11,6 @@ import {
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
 import store from '../../../store/Store';
 import Communications from 'react-native-communications';
 
@@ -19,8 +18,7 @@ import Communications from 'react-native-communications';
 import History from './History';
 import Info from './Info';
 
-@observer
-export default class Affiliate extends Component {
+class Affiliate extends Component {
   constructor(props) {
     super(props);
 
@@ -450,3 +448,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4
   }
 });
+
+export default observer(Affiliate);

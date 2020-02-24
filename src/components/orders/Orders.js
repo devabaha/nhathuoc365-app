@@ -16,7 +16,6 @@ import { Actions } from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-@observer
 class Orders extends Component {
   constructor(props) {
     super(props);
@@ -151,6 +150,7 @@ class Orders extends Component {
       <View style={styles.container}>
         {data != null ? (
           <ScrollView
+            scrollEventThrottle={16}
             onScroll={event => {
               this.setState({
                 scrollTop: event.nativeEvent.contentOffset.y
@@ -258,7 +258,10 @@ class Orders extends Component {
 
           this._getData();
 
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (error) {
         console.log(error);
@@ -279,7 +282,10 @@ class Orders extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setCartData(response.data);
-            Toast.show(response.message);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
           })();
 
           this._getData();
@@ -315,7 +321,10 @@ class Orders extends Component {
 
         if (response && response.status == STATUS_SUCCESS) {
           this._getData(450, true);
-          Toast.show(response.message);
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
         }
       } catch (error) {
         console.log(error);
@@ -413,4 +422,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Orders;
+export default observer(Orders);

@@ -27,7 +27,7 @@ const config = {
     bottomSpace: getBottomSpace()
   },
   rest: {
-    endpoint: () => 'https://apiapp.tickid.vn', //http://localhost:8000/
+    endpoint: () => 'https://api.foodhub.vn', //http://localhost:8000/
     phoneCardService: () => '/apiService/info/',
     book: () => '/apiService/book',
     password: () => '/apiUser/change_pass',

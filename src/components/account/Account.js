@@ -2,19 +2,17 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  ImageBackground,
   TouchableHighlight,
   StyleSheet,
   ScrollView,
   RefreshControl,
-  Alert,
-  TouchableOpacity
+  Alert
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
-import { showMessage } from 'react-native-flash-message';
 import Communications from 'react-native-communications';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import store from '../../store/Store';
 import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';
@@ -22,8 +20,7 @@ import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
 
-@observer
-export default class Account extends Component {
+class Account extends Component {
   constructor(props) {
     super(props);
 
@@ -51,6 +48,7 @@ export default class Account extends Component {
             icon: 'map-marker',
             label: 'Địa chỉ của tôi',
             desc: 'Quản lý địa chỉ nhận hàng',
+            rightIcon: <IconAngleRight />,
             onPress: () =>
               Actions.push(appConfig.routes.myAddress, {
                 from_page: 'account'
@@ -69,6 +67,7 @@ export default class Account extends Component {
             icon: 'facebook-square',
             label: 'Fanpage ' + APP_NAME_SHOW,
             desc: 'Facebook Fanpage chăm sóc khách hàng',
+            rightIcon: <IconAngleRight />,
             onPress: () => Communications.web(APP_FANPAGE),
             boxIconStyle: [
               styles.boxIconStyle,
@@ -85,6 +84,7 @@ export default class Account extends Component {
             icon: 'handshake-o',
             label: 'Về ' + APP_NAME_SHOW + ' - Điều khoản sử dụng',
             desc: 'Điều khoản sử dụng',
+            rightIcon: <IconAngleRight />,
             onPress: () =>
               Actions.webview({
                 title: 'Về ' + APP_NAME_SHOW,
@@ -109,6 +109,7 @@ export default class Account extends Component {
               APP_NAME_SHOW +
               ' - Phiên bản hiện tại: ' +
               DeviceInfo.getVersion(),
+            rightIcon: <IconAngleRight />,
             onPress: () => {},
             boxIconStyle: [
               styles.boxIconStyle,
@@ -127,6 +128,7 @@ export default class Account extends Component {
             label: 'Cập nhật ứng dụng',
             desc:
               'Cập nhật lên phiên bản ổn định ' + notify.new_version + ' ngay!',
+            rightIcon: <IconAngleRight />,
             onPress: () => {
               if (notify.url_update) {
                 Communications.web(notify.url_update);
@@ -293,131 +295,8 @@ export default class Account extends Component {
 
     return (
       <View style={styles.container}>
-        <View style={styles.profile_cover_box}>
-          <ImageBackground
-            style={styles.profile_cover}
-            source={require('../../images/profile_bgr.jpg')}
-          >
-            <TouchableHighlight
-              onPress={this.onTapAvatar.bind(this)}
-              style={styles.profile_avatar_box}
-              underlayColor="#cccccc"
-            >
-              {avatar_loading ? (
-                <View style={{ width: '100%', height: '100%' }}>
-                  <Indicator size="small" />
-                </View>
-              ) : (
-                <View>
-                  <CachedImage
-                    mutable
-                    style={styles.profile_avatar}
-                    source={{ uri: store.user_info ? store.user_info.img : '' }}
-                  />
-                </View>
-              )}
-            </TouchableHighlight>
-
-            {is_login ? (
-              <TouchableOpacity
-                style={{
-                  position: 'absolute',
-                  left: 120,
-                  bottom: 48,
-                  backgroundColor: 'transparent',
-                  flexDirection: 'row'
-                }}
-                activeOpacity={1}
-                onPress={this.handleShowProfileDetail}
-              >
-                <View style={{ maxWidth: 150 }}>
-                  <Text
-                    style={{
-                      color: '#ffffff',
-                      fontSize: 16
-                    }}
-                    numberOfLines={1}
-                  >
-                    {user_info.name}
-                  </Text>
-
-                  <Text
-                    style={{
-                      color: '#ffffff',
-                      fontSize: 12,
-                      marginTop: 4
-                    }}
-                  >
-                    {user_info.tel}
-                  </Text>
-                </View>
-
-                <Icon
-                  name="edit"
-                  size={14}
-                  color="#ffffff"
-                  style={{ marginTop: 5, marginLeft: 20 }}
-                />
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.profile_button_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={this.handleLogin}
-                >
-                  <View
-                    style={[
-                      styles.profile_button_login_box,
-                      {
-                        backgroundColor: DEFAULT_COLOR
-                      }
-                    ]}
-                  >
-                    <Icon name="sign-in" size={14} color="#ffffff" />
-                    <Text style={styles.profile_button_title}>
-                      Đăng nhập/đăng ký
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            )}
-
-            {is_login && (
-              <View
-                style={{
-                  position: 'absolute',
-                  bottom: 0,
-                  right: 0
-                }}
-              >
-                {logout_loading ? (
-                  <Indicator size="small" />
-                ) : (
-                  <TouchableHighlight
-                    style={{
-                      paddingVertical: 8,
-                      paddingHorizontal: 15
-                    }}
-                    underlayColor="transparent"
-                    onPress={this.handleLogout.bind(this)}
-                  >
-                    <Text
-                      style={{
-                        color: '#cccccc',
-                        fontSize: 12
-                      }}
-                    >
-                      <Icon name="sign-out" size={12} color="#cccccc" />
-                      {' Đăng xuất'}
-                    </Text>
-                  </TouchableHighlight>
-                )}
-              </View>
-            )}
-          </ImageBackground>
-        </View>
-
         <ScrollView
+          scrollEventThrottle={16}
           onScroll={event => {
             this.setState({
               scrollTop: event.nativeEvent.contentOffset.y
@@ -431,6 +310,132 @@ export default class Account extends Component {
             />
           }
         >
+          <>
+            {is_login ? (
+              <TouchableHighlight
+                onPress={this.handleShowProfileDetail}
+                style={[
+                  styles.profile_list_opt_btn,
+                  styles.profile_user_container,
+                  { flex: 1, flexDirection: 'row' }
+                ]}
+                underlayColor="rgba(255,255,255,.7)"
+              >
+                <>
+                  <TouchableHighlight
+                    onPress={this.onTapAvatar.bind(this)}
+                    style={styles.profile_avatar_box}
+                    underlayColor="transparent"
+                  >
+                    {avatar_loading ? (
+                      <View style={{ width: '100%', height: '100%' }}>
+                        <Indicator size="small" />
+                      </View>
+                    ) : (
+                      <View>
+                        <CachedImage
+                          mutable
+                          style={styles.profile_avatar}
+                          source={{
+                            uri: store.user_info ? store.user_info.img : ''
+                          }}
+                        />
+                      </View>
+                    )}
+                  </TouchableHighlight>
+
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      flex: 1,
+                      alignItems: 'center'
+                    }}
+                  >
+                    <View>
+                      <Text
+                        style={[
+                          styles.profile_list_label,
+                          {
+                            fontSize: 18
+                          }
+                        ]}
+                        numberOfLines={1}
+                      >
+                        {user_info.name}
+                      </Text>
+
+                      <Text
+                        style={[
+                          styles.profile_list_small_label,
+                          {
+                            fontSize: 14,
+                            marginTop: 5
+                          }
+                        ]}
+                      >
+                        {user_info.tel}
+                      </Text>
+                    </View>
+
+                    {
+                      <View
+                        style={[
+                          styles.profile_list_icon_box,
+                          styles.profile_list_icon_box_angle,
+                          { marginRight: 0 }
+                        ]}
+                      >
+                        <IconAngleRight />
+                      </View>
+                    }
+                  </View>
+                </>
+              </TouchableHighlight>
+            ) : (
+              <TouchableHighlight
+                style={[
+                  styles.profile_user_container,
+                  {
+                    flexDirection: 'row',
+                    backgroundColor: '#ffffff',
+                    paddingVertical: 10,
+                    paddingBottom: 0
+                  }
+                ]}
+                underlayColor="rgba(255,255,255,.7)"
+                onPress={this.handleLogin}
+              >
+                <View style={{ flex: 1, flexDirection: 'row' }}>
+                  <IconMaterialCommunity
+                    name="account-circle"
+                    size={55}
+                    color="#c7c7cd"
+                  />
+                  <View
+                    style={[
+                      styles.profile_button_login_box,
+                      {
+                        backgroundColor: 'transparent'
+                      }
+                    ]}
+                  >
+                    <Text style={[styles.profile_button_title]}>Đăng nhập</Text>
+                  </View>
+                  <IconMaterialCommunity
+                    name="login-variant"
+                    size={24}
+                    color="#242424"
+                    style={{
+                      position: 'absolute',
+                      right: 15,
+                      alignSelf: 'center'
+                    }}
+                  />
+                </View>
+              </TouchableHighlight>
+            )}
+          </>
+
           {user_info.default_wallet && ( //vnd_wallet
             <View
               style={{
@@ -442,7 +447,7 @@ export default class Account extends Component {
               <TouchableHighlight
                 underlayColor="transparent"
                 onPress={() =>
-                  Actions.vnd_wallet({
+                  Actions.push(appConfig.routes.vndWallet, {
                     title: user_info.default_wallet.name,
                     wallet: user_info.default_wallet
                   })
@@ -495,7 +500,7 @@ export default class Account extends Component {
                         styles.profile_list_icon_box_angle
                       ]}
                     >
-                      <Icon name="angle-right" size={16} color="#999999" />
+                      <IconAngleRight />
                     </View>
                   }
                 </View>
@@ -517,7 +522,7 @@ export default class Account extends Component {
                     onPress={
                       wallet.address
                         ? () =>
-                            Actions.vnd_wallet({
+                            Actions.push(appConfig.routes.vndWallet, {
                               title: wallet.name,
                               wallet: wallet
                             })
@@ -566,7 +571,7 @@ export default class Account extends Component {
                     onPress={
                       wallet.address
                         ? () =>
-                            Actions.vnd_wallet({
+                            Actions.push(appConfig.routes.vndWallet, {
                               title: wallet.name,
                               wallet: wallet
                             })
@@ -653,7 +658,7 @@ export default class Account extends Component {
                     styles.profile_list_icon_box_angle
                   ]}
                 >
-                  <Icon name="angle-right" size={16} color="#999999" />
+                  <IconAngleRight />
                 </View>
               </View>
             </TouchableHighlight>
@@ -701,7 +706,7 @@ export default class Account extends Component {
                     styles.profile_list_icon_box_angle
                   ]}
                 >
-                  <Icon name="angle-right" size={16} color="#999999" />
+                  <IconAngleRight />
                 </View>
               </View>
             </TouchableHighlight>
@@ -748,7 +753,7 @@ export default class Account extends Component {
                     styles.profile_list_icon_box_angle
                   ]}
                 >
-                  <Icon name="angle-right" size={16} color="#999999" />
+                  <IconAngleRight />
                 </View>
               </View>
             </TouchableHighlight>
@@ -802,7 +807,8 @@ export default class Account extends Component {
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
-          showMessage({
+          store.resetAsyncStorage();
+          flashShowMessage({
             message: 'Đăng xuất thành công',
             type: 'info'
           });
@@ -834,34 +840,30 @@ const styles = StyleSheet.create({
     marginLeft: 6,
     borderRadius: 15
   },
-
-  profile_cover_box: {
+  profile_user_container: {
     width: '100%',
-    backgroundColor: '#ccc',
-    height: 180
-  },
-  profile_cover: {
-    width: '100%',
-    height: '100%'
+    alignItems: 'center',
+    marginVertical: 7,
+    height: null,
+    paddingVertical: 15,
+    paddingLeft: 15
   },
   profile_avatar_box: {
-    position: 'absolute',
-    bottom: 20,
-    left: 24,
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     backgroundColor: '#cccccc',
     borderWidth: 2,
-    borderColor: '#ffffff',
-    borderRadius: 40,
+    borderColor: '#a9a9a9',
+    borderRadius: 30,
+    marginRight: 15,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden'
   },
   profile_avatar: {
-    width: 76,
-    height: 76,
-    borderRadius: 38
+    width: 56,
+    height: 56,
+    borderRadius: 28
     // resizeMode: 'cover'
   },
 
@@ -870,24 +872,23 @@ const styles = StyleSheet.create({
     height: 30
   },
   profile_button_box: {
-    position: 'absolute',
     bottom: 42,
     right: 0,
     flexDirection: 'row'
   },
   profile_button_login_box: {
-    backgroundColor: '#4267b2',
+    backgroundColor: appConfig.colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
     paddingHorizontal: 15,
-    borderRadius: 3,
+    borderRadius: 20,
     marginRight: 15
   },
   profile_button_title: {
-    fontSize: 14,
-    color: '#ffffff',
-    marginLeft: 4
+    fontSize: 16,
+    color: DEFAULT_COLOR,
+    fontWeight: 'bold'
   },
   profile_list_opt: {
     borderTopWidth: Util.pixel,
@@ -1042,3 +1043,9 @@ const styles = StyleSheet.create({
     // marginRight: 8
   }
 });
+
+export default observer(Account);
+
+const IconAngleRight = () => (
+  <Icon name="angle-right" size={26} color="#999999" />
+);

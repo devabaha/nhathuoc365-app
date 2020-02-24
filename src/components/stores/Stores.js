@@ -5,16 +5,10 @@ import {
   Text,
   StyleSheet,
   TouchableHighlight,
-  FlatList,
-  RefreshControl,
-  ScrollView
+  FlatList
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
-import Swiper from 'react-native-swiper';
-import Items from './Items';
-import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
@@ -22,12 +16,11 @@ import RightButtonOrders from '../RightButtonOrders';
 import Button from 'react-native-button';
 import appConfig from '../../config';
 import IconFeather from 'react-native-vector-icons/Feather';
+import { willUpdateState } from '../../packages/tickid-chat/helper';
+import CategoryScreen from './CategoryScreen';
 
-const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const CATE_AUTO_LOAD = 'CateAutoLoad';
-const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 
-@observer
 class Stores extends Component {
   static propTypes = {
     categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
@@ -43,7 +36,8 @@ class Stores extends Component {
     this.state = {
       loading: true,
       category_nav_index: 0,
-      categories_data: null
+      categories_data: null,
+      selected_category: { id: 0, name: '' }
     };
 
     this.unmounted = false;
@@ -95,24 +89,6 @@ class Stores extends Component {
   }
 
   _initial(props) {
-    var title = props.title;
-
-    Actions.refresh({
-      showSearchBar: true,
-      smallSearch: true,
-      placeholder: store.store_data.name,
-      searchOnpress: () => {
-        return Actions.push(appConfig.routes.searchStore, {
-          title
-        });
-      },
-      renderRightButton: this._renderRightButton.bind(this),
-      onBack: () => {
-        this._unMount();
-        Actions.pop();
-      }
-    });
-
     this.start_time = time();
 
     // get categories navigator
@@ -124,16 +100,16 @@ class Stores extends Component {
     // callback when unmount this sreen
     store.setStoreUnMount('stores', this._unMount.bind(this));
 
-    if (props.orderIsPop) {
-      store.orderIsPop = true;
-    }
+    // if (props.orderIsPop) {
+    //   store.orderIsPop = true;
+    // }
   }
 
   _unMount() {
     Events.trigger(CATE_AUTO_LOAD);
     Events.removeAll(CATE_AUTO_LOAD);
 
-    store.orderIsPop = false;
+    // store.orderIsPop = false;
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -156,6 +132,7 @@ class Stores extends Component {
           if (!this.props.goCategory) return;
           if (this.props.goCategory === item.id) {
             this._changeCategory(item, index);
+            return;
           }
         })
     );
@@ -167,8 +144,14 @@ class Stores extends Component {
         store.store_id,
         this.props.categoryId
       );
-      if (response && response.status == STATUS_SUCCESS && !this.unmounted) {
-        setTimeout(() => this.parseDataCategories(response), this._delay());
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(
+          () =>
+            willUpdateState(this.unmounted, () =>
+              this.parseDataCategories(response)
+            ),
+          this._delay()
+        );
       }
     } catch (e) {
       console.log(e + ' site_info');
@@ -202,7 +185,14 @@ class Stores extends Component {
         {/* <RightButtonOrders tel={store.store_data.tel} /> */}
         <Button
           onPress={() => {
-            Actions.push(appConfig.routes.searchStore);
+            Actions.push(appConfig.routes.searchStore, {
+              categories: this.state.categories_data,
+              category_id: this.state.selected_category.id,
+              category_name:
+                this.state.selected_category.id !== 0
+                  ? this.state.selected_category.name
+                  : ''
+            });
           }}
         >
           <IconFeather size={26} color={appConfig.colors.white} name="search" />
@@ -214,32 +204,38 @@ class Stores extends Component {
 
   _changeCategory(item, index, nav_only) {
     if (this.refs_category_nav) {
-      var categories_count = this.state.categories_data.length;
-      var end_of_list = categories_count - index - 1 >= 3;
+      const categories_count = this.state.categories_data.length;
+      const end_of_list = categories_count - index - 1 >= 3;
 
-      // nav
-      if (index > 0 && end_of_list) {
-        this.refs_category_nav.scrollToIndex({
-          index: index - 1,
-          animated: true
+      setTimeout(() =>
+        willUpdateState(this.unmounted, () => {
+          // nav
+          if (index > 0 && end_of_list) {
+            this.refs_category_nav.scrollToIndex({
+              index: index - 1,
+              animated: true
+            });
+          } else if (!end_of_list) {
+            this.refs_category_nav.scrollToEnd();
+          } else if (index == 0) {
+            this.refs_category_nav.scrollToIndex({ index, animated: true });
+          }
+
+          if (this.refs_category_screen && !nav_only) {
+            this.refs_category_screen.scrollToIndex({
+              index: index,
+              animated: true
+            });
+          }
+        })
+      );
+
+      if (item) {
+        this.setState({
+          category_nav_index: index,
+          selected_category: item
         });
-      } else if (!end_of_list) {
-        this.refs_category_nav.scrollToEnd();
-      } else if (index == 0) {
-        this.refs_category_nav.scrollToIndex({ index, animated: true });
       }
-
-      // content
-      if (this.refs_category_screen && !nav_only) {
-        this.refs_category_screen.scrollToIndex({
-          index: index,
-          animated: true
-        });
-      }
-
-      this.setState({
-        category_nav_index: index
-      });
     }
   }
 
@@ -419,9 +415,10 @@ class Stores extends Component {
             }
           })();
         }, 450);
-        showMessage({
-          type: 'info',
-          message: response.message
+
+        flashShowMessage({
+          message: response.message,
+          type: 'info'
         });
       }
 
@@ -433,335 +430,7 @@ class Stores extends Component {
   }
 }
 
-class CategoryScreen extends Component {
-  constructor(props) {
-    super(props);
-
-    const { item, that } = props;
-    let header_title;
-
-    if (item.id == 0) {
-      header_title = `— Cửa hàng —`;
-    } else {
-      header_title = `— Sản phẩm ${item.name} —`;
-    }
-
-    this.state = {
-      loading: false,
-      refreshing: false,
-      header_title,
-      items_data: null,
-      items_data_bak: null,
-      page: 0,
-      promotions: that.state.promotions,
-      isAll: item.id == 0,
-      fetched: false
-    };
-  }
-
-  // thời gian trễ khi chuyển màn hình
-  _delay() {
-    var delay = 400 - Math.abs(time() - this.start_time);
-    return delay;
-  }
-
-  componentDidMount() {
-    var { item, index } = this.props;
-    this.start_time = 0;
-
-    var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
-
-    if (index == 0) {
-      this._getItemByCateId(item.id);
-    } else {
-      Events.on(keyAutoLoad, keyAutoLoad, () => {
-        if (this.state.items_data == null) {
-          this._getItemByCateId(item.id);
-        }
-      });
-    }
-
-    Events.on(CATE_AUTO_LOAD, CATE_AUTO_LOAD + index, () => {
-      Events.removeAll(keyAutoLoad);
-    });
-  }
-
-  componentWillReceiveProps(nextProps) {
-    var { item, index, cate_index } = nextProps;
-
-    if (
-      index == cate_index &&
-      this.state.items_data == null &&
-      this.props != nextProps
-    ) {
-      this.start_time = time();
-      // get list products by category_id
-      this._getItemByCateId(item.id);
-    }
-  }
-
-  // tới màn hình chi tiết item
-  _goItem(item) {
-    Actions.item({
-      title: item.name,
-      item
-    });
-  }
-
-  _onRefresh() {
-    this.setState(
-      {
-        refreshing: true,
-        page: 0
-      },
-      () => {
-        this._getItemByCateIdFromServer(this.props.item.id, 1000);
-      }
-    );
-  }
-
-  // lấy d/s sản phẩm theo category_id
-  _getItemByCateId(category_id) {
-    var store_category_key =
-      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
-
-    this.setState(
-      {
-        loading: this.state.items_data ? false : true
-      },
-      () => {
-        // load
-        storage
-          .load({
-            key: store_category_key,
-            autoSync: true,
-            syncInBackground: true,
-            syncParams: {
-              extraFetchOptions: {},
-              someFlag: true
-            }
-          })
-          .then(data => {
-            // delay append data
-            setTimeout(() => {
-              if (this.props.index == 0) {
-                layoutAnimation();
-              }
-
-              this.setState({
-                items_data:
-                  data.length > STORES_LOAD_MORE
-                    ? [...data, { id: -1, type: 'loadmore' }]
-                    : data,
-                items_data_bak: data,
-                loading: false,
-                fetched: true,
-                refreshing: false,
-                page: 1
-              });
-
-              action(() => {
-                store.setStoresFinish(true);
-              })();
-
-              // load next category
-              // this._loadNextCate();
-            }, this._delay());
-          })
-          .catch(err => {
-            this._getItemByCateIdFromServer(category_id);
-          });
-      }
-    );
-  }
-
-  async _getItemByCateIdFromServer(category_id, delay, loadmore) {
-    var store_category_key =
-      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
-
-    try {
-      var response = await APIHandler.site_category_product(
-        store.store_id,
-        category_id,
-        this.state.page
-      );
-
-      if (response && response.status == STATUS_SUCCESS) {
-        if (response.data) {
-          if (loadmore) {
-            this.state.page += 1;
-          } else {
-            this.state.page = 0;
-          }
-
-          // delay append data
-          setTimeout(() => {
-            if (this.props.index == 0) {
-              layoutAnimation();
-            }
-
-            var items_data = loadmore
-              ? [...this.state.items_data_bak, ...response.data]
-              : response.data;
-            this.setState({
-              items_data:
-                response.data.length >= STORES_LOAD_MORE
-                  ? [...items_data, { id: -1, type: 'loadmore' }]
-                  : items_data,
-              items_data_bak: items_data,
-              loading: false,
-              refreshing: false,
-              page: this.state.page
-            });
-
-            action(() => {
-              store.setStoresFinish(true);
-            })();
-
-            // load next category
-            // this._loadNextCate();
-
-            // cache in five minutes
-            if (response.data && !loadmore) {
-              storage.save({
-                key: store_category_key,
-                data: items_data,
-                expires: STORE_CATEGORY_CACHE
-              });
-            }
-          }, delay || this._delay());
-        } else {
-          this.setState({
-            loading: false,
-            refreshing: false,
-            items_data: this.state.items_data_bak
-          });
-
-          // load next category
-          // this._loadNextCate();
-        }
-      }
-    } catch (e) {
-      console.log(e + ' site_category_product');
-
-      store.addApiQueue(
-        'site_category_product',
-        this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore)
-      );
-    }
-  }
-
-  _loadNextCate() {
-    // auto load next category
-    var keyAutoLoad = AUTO_LOAD_NEXT_CATE + (this.props.index + 1);
-    Events.trigger(keyAutoLoad);
-    Events.removeAll(keyAutoLoad);
-  }
-
-  _loadMore() {
-    this._getItemByCateIdFromServer(this.props.item.id, 0, true);
-  }
-
-  render() {
-    // show loading
-    if (this.state.loading) {
-      return (
-        <View style={styles.containerScreen}>
-          <Indicator />
-        </View>
-      );
-    }
-
-    var { items_data, header_title, fetched } = this.state;
-
-    if (items_data == null) {
-      return (
-        <View style={styles.containerScreen}>
-          {fetched && <CenterText title="Chưa có mặt hàng nào :(" />}
-        </View>
-      );
-    }
-
-    return (
-      <View style={styles.containerScreen}>
-        {items_data && (
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
-          >
-            {this.state.isAll &&
-              this.state.promotions &&
-              this.state.promotions.length > 0 && (
-                <Swiper
-                  style={{
-                    marginVertical: 8
-                  }}
-                  width={Util.size.width}
-                  height={Util.size.width * 0.96 * (50 / 320) + 16}
-                  autoplayTimeout={3}
-                  showsPagination={false}
-                  horizontal
-                  autoplay
-                >
-                  {this.state.promotions.map((banner, i) => {
-                    return (
-                      <View
-                        key={i}
-                        style={{
-                          width: Util.size.width,
-                          alignItems: 'center'
-                        }}
-                      >
-                        <CachedImage
-                          source={{ uri: banner.banner }}
-                          style={{
-                            width: Util.size.width * 0.96,
-                            height: Util.size.width * 0.96 * (50 / 320)
-                          }}
-                        />
-                      </View>
-                    );
-                  })}
-                </Swiper>
-              )}
-
-            <ListHeader title={header_title} />
-
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap'
-              }}
-            >
-              {items_data.map((item, index) => (
-                <Items
-                  key={index}
-                  item={item}
-                  index={index}
-                  onPress={
-                    item.type != 'loadmore'
-                      ? this._goItem.bind(this, item)
-                      : this._loadMore.bind(this)
-                  }
-                />
-              ))}
-            </View>
-          </ScrollView>
-        )}
-      </View>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
-  containerScreen: {
-    width: Util.size.width,
-    flex: 1
-  },
   container: {
     flex: 1,
     marginBottom: appConfig.device.bottomSpace
@@ -803,4 +472,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Stores;
+export default observer(Stores);

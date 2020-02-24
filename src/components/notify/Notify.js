@@ -1,21 +1,10 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableHighlight,
-  StyleSheet,
-  RefreshControl,
-  FlatList,
-  Alert,
-  TouchableOpacity
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, FlatList } from 'react-native';
 
 // library
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import SelectionList from '../SelectionList';
 import { reaction } from 'mobx';
@@ -23,8 +12,7 @@ import { reaction } from 'mobx';
 // components
 import NewItemComponent from './NewItemComponent';
 
-@observer
-export default class Notify extends Component {
+class Notify extends Component {
   constructor(props) {
     super(props);
 
@@ -177,3 +165,5 @@ const styles = StyleSheet.create({
     borderRadius: 15
   }
 });
+
+export default observer(Notify);

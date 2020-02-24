@@ -1,5 +1,5 @@
 import { Share } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
+import { showMessage } from '../constants';
 
 export default async function rnShare({ title, message, successMessage }) {
   try {

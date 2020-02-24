@@ -12,7 +12,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-import { showMessage } from 'react-native-flash-message';
 import store from '../../store/Store';
 import Items from '../stores/Items';
 import ListHeader from '../stores/ListHeader';
@@ -276,9 +275,9 @@ export default class Item extends Component {
             this.setState({
               buying: false
             });
-            showMessage({
-              type: 'success',
-              message: response.message
+            flashShowMessage({
+              message: response.message,
+              type: 'success'
             });
           }
         } catch (e) {
@@ -795,9 +794,9 @@ export default class Item extends Component {
               store.setCartItemIndex(index);
               Events.trigger(NEXT_PREV_CART, { index });
             }
-            showMessage({
-              type: 'info',
-              message: response.message
+            flashShowMessage({
+              message: response.message,
+              type: 'info'
             });
           })();
         }, 450);

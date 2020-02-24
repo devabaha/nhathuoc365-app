@@ -420,6 +420,22 @@ class APIHandler {
   }
 
   /**
+   * Lấy thông tin user theo số điện thoại
+   */
+  async user_get_info_by_phone_number(data) {
+    var api = url_for(API.USER_GET_INFO_BY_PHONE_NUMBER);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy thông tin user theo số địa chỉ ví
+   */
+  async user_get_info_by_wallet_address(data) {
+    var api = url_for(API.USER_GET_INFO_BY_WALLET_ADDRESS);
+    return await this.postAPI(api, data);
+  }
+
+  /**
    * Load news list
    */
   async user_news_list(type = '') {

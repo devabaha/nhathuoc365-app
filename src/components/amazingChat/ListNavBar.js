@@ -46,7 +46,12 @@ class ListNavBar extends Component {
       fontSize: 24
     };
     return (
-      <Header style={[styles.container]} searchBar rounded>
+      <Header
+        iosBarStyle="light-content"
+        style={[styles.container]}
+        searchBar
+        rounded
+      >
         <Item style={[styles.searchInput]}>
           <TouchableOpacity onPress={this.handleBack.bind(this)}>
             <View style={styles.iconWrapper}>

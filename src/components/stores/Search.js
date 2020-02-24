@@ -3,50 +3,106 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableHighlight,
+  TouchableOpacity,
   FlatList,
   ScrollView,
   Keyboard,
-  Platform
+  // Animated,
+  // Easing,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { showMessage } from 'react-native-flash-message';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
+import ModernList from 'app-packages/tickid-modern-list';
+import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
+import Animated, { Easing } from 'react-native-reanimated';
 
+const { concat, interpolate } = Animated;
+const START_DEG = new Animated.Value(0);
+const END_DEG = new Animated.Value(Math.PI);
 const SEARCH_KEY = 'KeySearch';
 
-@observer
 class Search extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
       loading: false,
-      finish: false,
+      noResult: false,
       header_title: '',
       search_data: null,
       history: null,
       buying_idx: [],
-      searchValue: ''
+      searchValue: '',
+      categories: this.categories,
+      selectedCategory: this.selectedCategory,
+      animatedCategories: new Animated.Value(0),
+      bodyCategoriesHeight: null
     };
 
     this.onSearch = this.onSearch.bind(this);
     this.getHistory = this.getHistory.bind(this);
+    this.unmounted = false;
+    this.categoriesCollapsed = false;
+  }
+
+  get categories() {
+    return this.props.categories.map((category, index) => ({
+      ...category,
+      active: category.id === this.props.category_id
+    }));
+  }
+
+  get selectedCategory() {
+    return (
+      this.props.categories.find(
+        category => category.id === this.props.category_id
+      ) || { id: 0 }
+    );
+  }
+
+  getPlaceholder(name = '') {
+    return `Tìm kiếm trong ${name && `${name} - `}${store.store_data.name ||
+      'cửa hàng'}...`;
+  }
+
+  get categories() {
+    return this.props.categories.map((category, index) => ({
+      ...category,
+      active: category.id === this.props.category_id
+    }));
+  }
+
+  get selectedCategory() {
+    return (
+      this.props.categories.find(
+        category => category.id === this.props.category_id
+      ) || { id: 0 }
+    );
+  }
+
+  getPlaceholder(name = '') {
+    return `Tìm kiếm trong ${name && `${name} - `}${store.store_data.name ||
+      'cửa hàng'}...`;
   }
 
   componentDidMount() {
     var keyword = this.props.qr_code;
     this.getHistory();
 
+    const placeholder = this.getPlaceholder(
+      this.props.category_id !== 0 ? this.props.category_name : ''
+    );
+
     setTimeout(() => {
       Actions.refresh({
         searchValue: keyword || '',
-        placeholder: 'Tìm kiếm tại cửa hàng...',
+        placeholder,
         autoFocus: true,
         onSearch: text => {
           Actions.refresh({
@@ -68,7 +124,12 @@ class Search extends Component {
         },
         onClearText: () => {
           Actions.refresh({
-            searchValue: ''
+            searchValue: '',
+            placeholder: this.getPlaceholder(
+              this.state.selectedCategory.id !== 0
+                ? this.state.selectedCategory.name
+                : ''
+            )
           });
 
           this.setState({
@@ -81,10 +142,14 @@ class Search extends Component {
     });
   }
 
-  getHistory() {
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
+  getHistory(categoryId = this.state.selectedCategory.id) {
     storage
       .load({
-        key: SEARCH_KEY + store.user_info.id,
+        key: SEARCH_KEY + store.user_info.id + '/' + categoryId,
         autoSync: true,
         syncInBackground: true,
         syncParams: {
@@ -97,7 +162,10 @@ class Search extends Component {
           history
         });
       })
-      .catch(e => {});
+      .catch(e => {
+        console.log('load storage history', e);
+        this.setState({ history: null });
+      });
   }
 
   onSearch(keyword) {
@@ -105,8 +173,10 @@ class Search extends Component {
       this.setState({
         search_data: null,
         loading: false,
-        finish: true
+        noResult: false
       });
+
+      return;
     }
 
     keyword = keyword.trim();
@@ -117,34 +187,38 @@ class Search extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.search_product(store.store_id, {
-            search: keyword
+          const response = await APIHandler.search_product(store.store_id, {
+            search: keyword,
+            category_id: this.state.selectedCategory.id
           });
 
           if (response && response.status == STATUS_SUCCESS) {
             if (response.data) {
               this.setState({
                 search_data: response.data,
-                loading: false,
-                finish: true,
+                noResult: false,
                 header_title: `— Kết quả cho "${keyword}" —`
               });
-            } else {
-              this.getHistory();
-
-              this.setState({
-                search_data: null,
-                loading: false,
-                finish: true
-              });
             }
+          } else {
+            this.getHistory();
+
+            this.setState({
+              search_data: null,
+              noResult: true
+            });
           }
         } catch (e) {
           console.log(e + ' search_product');
-          store.addApiQueue(
-            'search_product',
-            this.onSearch.bind(this, keyword)
-          );
+          // store.addApiQueue(
+          //   'search_product',
+          //   this.onSearch.bind(this, keyword)
+          // );
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              loading: false
+            });
         }
       }
     );
@@ -187,7 +261,7 @@ class Search extends Component {
   }
 
   _updateHistory(item) {
-    var item = {
+    item = {
       id: item.id,
       name: item.name
     };
@@ -195,7 +269,11 @@ class Search extends Component {
     // load
     storage
       .load({
-        key: SEARCH_KEY + store.user_info.id,
+        key:
+          SEARCH_KEY +
+          store.user_info.id +
+          '/' +
+          this.state.selectedCategory.id,
         autoSync: true,
         syncInBackground: true,
         syncParams: {
@@ -215,27 +293,95 @@ class Search extends Component {
   _saveHistorey(data) {
     // cache in five minutes
     storage.save({
-      key: SEARCH_KEY + store.user_info.id,
+      key:
+        SEARCH_KEY + store.user_info.id + '/' + this.state.selectedCategory.id,
       data,
       expires: null
     });
+
+    this.setState({ history: data });
   }
 
+  removeHistory = () => {
+    storage.remove({
+      key:
+        SEARCH_KEY + store.user_info.id + '/' + this.state.selectedCategory.id
+    });
+
+    this.setState({ history: null });
+  };
+
+  handlePressCategory = category => {
+    if (category.id !== this.state.selectedCategory.id) {
+      this.getHistory(category.id);
+
+      const categories = [...this.state.categories];
+      categories.forEach(cate => {
+        cate.active = cate.id === category.id;
+      });
+      const placeholder = this.getPlaceholder(
+        category.id !== 0 ? category.name : ''
+      );
+      Actions.refresh({
+        placeholder
+      });
+      this.setState({
+        categories,
+        selectedCategory: category
+      });
+    }
+  };
+
+  handleCategoriesLayout = e => {
+    if (!this.state.bodyCategoriesHeight) {
+      this.setState({ bodyCategoriesHeight: e.nativeEvent.layout.height });
+    }
+  };
+
+  collapseCategories = () => {
+    Animated.timing(this.state.animatedCategories, {
+      toValue: this.categoriesCollapsed ? 0 : 1,
+      easing: Easing.inOut(Easing.ease),
+      duration: 300
+    }).start();
+    this.categoriesCollapsed = !this.categoriesCollapsed;
+  };
+
   render() {
-    var { loading, search_data, history, buying_idx } = this.state;
+    const { loading, search_data, history, buying_idx } = this.state;
+
+    const MIN_HEIGHT_CATEGORIES = new Animated.Value(0);
+    const MAX_HEIGHT_CATEGORIES =
+      this.state.bodyCategoriesHeight &&
+      new Animated.Value(this.state.bodyCategoriesHeight);
+
+    const animatedIconStyle = {
+      transform: [
+        {
+          rotate: interpolate(this.state.animatedCategories, {
+            inputRange: [0, 1],
+            outputRange: [START_DEG, END_DEG]
+          })
+        }
+      ]
+    };
+    const animatedCategoriesStyle = this.state.bodyCategoriesHeight && {
+      height: interpolate(this.state.animatedCategories, {
+        inputRange: [0, 1],
+        outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES]
+      })
+    };
     // show loading
     if (loading) {
       return <Indicator />;
     }
 
     return (
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container}>
         {search_data != null ? (
           <FlatList
             keyboardShouldPersistTaps="handled"
-            keyboardDismissMode={
-              Platform.OS === 'ios' ? 'on-drag' : 'interactive'
-            }
+            keyboardDismissMode="on-drag"
             onEndReached={num => {}}
             onEndReachedThreshold={0}
             style={[styles.items_box]}
@@ -256,60 +402,92 @@ class Search extends Component {
             keyExtractor={item => item.id}
             numColumns={2}
           />
-        ) : history != null ? (
-          (() => {
-            let data = Object.assign([], history);
-            data = data.reverse();
-
-            return (
-              <ScrollView
-                style={[
-                  styles.items_box,
-                  {
-                    marginBottom: store.keyboardTop
-                  }
-                ]}
-                keyboardShouldPersistTaps="handled"
-                keyboardDismissMode={
-                  Platform.OS === 'ios' ? 'on-drag' : 'interactive'
-                }
-              >
-                <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
-
-                {data.map((item, index) => {
-                  return (
-                    <TouchableHighlight
-                      key={index}
-                      underlayColor="transparent"
-                      onPress={this._onTouchHistory.bind(this, item)}
-                      style={styles.seach_history}
-                    >
-                      <View style={styles.seach_history_box}>
-                        <View style={styles.seach_history_name_box}>
-                          <Text style={styles.seach_history_name}>
-                            {item.name}
-                          </Text>
-                        </View>
-
-                        <TouchableHighlight
-                          underlayColor="transparent"
-                          onPress={this._insertName.bind(this, item)}
-                          style={styles.seach_history_expand}
-                        >
-                          <Icon name="expand" size={14} color="#999999" />
-                        </TouchableHighlight>
-                      </View>
-                    </TouchableHighlight>
-                  );
-                })}
-              </ScrollView>
-            );
-          })()
         ) : (
-          <CenterText
-            title="Nhập tên sản phẩm để tìm"
-            marginTop={isIOS ? -(Util.size.height * 0.3) : undefined}
-          />
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="always"
+          >
+            {this.state.noResult && (
+              <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
+            )}
+            <ModernList
+              containerStyle={{ marginBottom: 15 }}
+              headerTitle="Danh mục"
+              mainKey="name"
+              data={this.state.categories}
+              onPressItem={this.handlePressCategory}
+              bodyWrapperStyle={animatedCategoriesStyle}
+              onBodyLayout={this.handleCategoriesLayout}
+              activeStyle={{ backgroundColor: DEFAULT_COLOR }}
+              activeTextStyle={{ color: '#fff' }}
+              type={LIST_TYPE.TAG}
+              headerRightComponent={
+                <CollapseIcon
+                  onPress={this.collapseCategories}
+                  style={animatedIconStyle}
+                />
+              }
+            />
+            {history != null &&
+              (() => {
+                let data = Object.assign([], history);
+                data = data.reverse();
+
+                return (
+                  <ModernList
+                    headerTitle="Lịch sử tìm kiếm"
+                    mainKey="name"
+                    data={data}
+                    onPressItem={item => this._onTouchHistory(item)}
+                    headerRightComponent={
+                      <RemoveBtn onPress={this.removeHistory} />
+                    }
+                  />
+                );
+                // return (
+                //   <ScrollView
+                //     style={[
+                //       styles.items_box,
+                //       {
+                //         marginBottom: store.keyboardTop
+                //       }
+                //     ]}
+                //     keyboardShouldPersistTaps="handled"
+                //     keyboardDismissMode="on-drag"
+                //   >
+                //     <ListHeader alignLeft title="Sản phẩm đã tìm kiếm" />
+
+                //     {data.map((item, index) => {
+                //       return (
+                //         <TouchableHighlight
+                //           key={index}
+                //           underlayColor="transparent"
+                //           onPress={this._onTouchHistory.bind(this, item)}
+                //           style={styles.seach_history}
+                //         >
+                //           <View style={styles.seach_history_box}>
+                //             <View style={styles.seach_history_name_box}>
+                //               <Text style={styles.seach_history_name}>
+                //                 {item.name}
+                //               </Text>
+                //             </View>
+
+                //             <TouchableHighlight
+                //               underlayColor="transparent"
+                //               onPress={this._insertName.bind(this, item)}
+                //               style={styles.seach_history_expand}
+                //             >
+                //               <Icon name="expand" size={14} color="#999999" />
+                //             </TouchableHighlight>
+                //           </View>
+                //         </TouchableHighlight>
+                //       );
+                //     })}
+                //   </ScrollView>
+                // );
+              })()}
+          </ScrollView>
         )}
 
         {search_data != null && store.keyboardTop == 0 && (
@@ -318,13 +496,6 @@ class Search extends Component {
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
           />
         )}
-
-        <View
-          style={{
-            height: 0,
-            width: '100%'
-          }}
-        ></View>
 
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
@@ -364,7 +535,7 @@ class Search extends Component {
             )}
           </View>
         )}
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -400,9 +571,10 @@ class Search extends Component {
             Events.trigger(NEXT_PREV_CART, { index });
           }
         })();
-        showMessage({
-          type: 'info',
-          message: response.message
+
+        flashShowMessage({
+          message: response.message,
+          type: 'info'
         });
       }
 
@@ -446,7 +618,6 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-
     marginBottom: 0
   },
   right_btn_add_store: {
@@ -504,7 +675,42 @@ const styles = StyleSheet.create({
     bottom: 0,
     height: 3,
     backgroundColor: DEFAULT_COLOR
+  },
+  noResult: {
+    textAlign: 'center',
+    paddingVertical: 15,
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#555'
+  },
+  collapseIcon: {
+    fontSize: 20,
+    color: '#555'
+  },
+  removeHistoryTxt: {
+    color: DEFAULT_COLOR,
+    fontWeight: '500'
   }
 });
 
-export default Search;
+export default observer(Search);
+
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+const CollapseIcon = props => (
+  <TouchableOpacity
+    hitSlop={HIT_SLOP}
+    activeOpacity={0.6}
+    onPress={props.onPress}
+  >
+    <AnimatedIcon
+      name="caret-down"
+      style={[styles.collapseIcon, props.style]}
+    />
+  </TouchableOpacity>
+);
+
+const RemoveBtn = props => (
+  <TouchableOpacity activeOpacity={0.6} onPress={props.onPress}>
+    <Text style={styles.removeHistoryTxt}>Xóa</Text>
+  </TouchableOpacity>
+);
