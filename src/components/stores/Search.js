@@ -21,8 +21,9 @@ import PopupConfirm from '../PopupConfirm';
 import ModernList from 'app-packages/tickid-modern-list';
 import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
 import Animated, { Easing } from 'react-native-reanimated';
+import { debounce } from 'lodash';
 
-const { concat, interpolate } = Animated;
+const { interpolate } = Animated;
 const START_DEG = new Animated.Value(0);
 const END_DEG = new Animated.Value(Math.PI);
 const STORE_SEARCH_KEY = 'STORE-SEARCH';
@@ -96,10 +97,7 @@ class Search extends Component {
           });
 
           // auto search on changed text
-          clearTimeout(this.onSearchTimer);
-          this.onSearchTimer = setTimeout(() => {
-            this.onSearch(text);
-          }, 400);
+          this.onSearch(text);
         },
         onCancel: () => {
           Keyboard.dismiss();
@@ -156,7 +154,7 @@ class Search extends Component {
       });
   }
 
-  onSearch(keyword) {
+  onSearch = debounce(keyword => {
     if (keyword == null || keyword == '') {
       this.setState({
         search_data: null,
@@ -210,7 +208,7 @@ class Search extends Component {
         }
       }
     );
-  }
+  }, 500);
 
   // tới màn hình chi tiết item
   _goItem(item) {
@@ -329,6 +327,7 @@ class Search extends Component {
         categories,
         selectedCategory: category
       });
+      this.onSearch(this.state.searchValue);
     }
   };
 
