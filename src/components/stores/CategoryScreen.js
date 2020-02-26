@@ -162,6 +162,11 @@ class CategoryScreen extends Component {
     var store_category_key =
       STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
 
+    if (loadmore) {
+      this.state.page += 1;
+    } else {
+      this.state.page = 0;
+    }
     try {
       var response = await APIHandler.site_category_product(
         store.store_id,
@@ -171,12 +176,6 @@ class CategoryScreen extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
-          if (loadmore) {
-            this.state.page += 1;
-          } else {
-            this.state.page = 0;
-          }
-
           // delay append data
           setTimeout(() => {
             if (this.props.index == 0) {
