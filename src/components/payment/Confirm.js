@@ -236,6 +236,7 @@ class Confirm extends Component {
               });
 
               Events.trigger(RELOAD_STORE_ORDERS);
+              EventTracker.logEvent('add_to_cart');
 
               // update cart data
               action(() => {
