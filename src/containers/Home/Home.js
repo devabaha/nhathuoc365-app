@@ -37,7 +37,7 @@ class Home extends Component {
 
   componentDidMount() {
     this.getHomeDataFromApi();
-    EventTracker.logEvent('Home');
+    EventTracker.logEvent('home_page');
   }
 
   componentWillUnmount() {

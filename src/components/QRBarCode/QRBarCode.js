@@ -61,6 +61,7 @@ class QRBarCode extends Component {
     }
 
     this.handleBrightness();
+    EventTracker.logEvent('qrbarcode_page');
   }
 
   componentDidUpdate(prevProps, prevState) {

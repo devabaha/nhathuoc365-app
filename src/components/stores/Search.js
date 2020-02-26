@@ -120,6 +120,7 @@ class Search extends Component {
         }
       });
     });
+    EventTracker.logEvent('store_search_page');
   }
 
   componentWillUnmount() {

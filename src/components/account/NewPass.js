@@ -44,6 +44,7 @@ class NewPass extends Component {
         this.refs_name.focus();
       }, 450);
     }
+    EventTracker.logEvent('new_pass_page');
   }
 
   _unMount() {

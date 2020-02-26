@@ -135,6 +135,7 @@ class KPlusPaid extends Component {
       subCardValue: options[0].type,
       totalPrice: currentCards[0].total_price
     });
+    EventTracker.logEvent('kplus_paid_page');
   }
 
   handleOpenContact = () => {

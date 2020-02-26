@@ -63,6 +63,7 @@ class Stores extends Component {
         right: this._renderRightButton()
       });
     });
+    EventTracker.logEvent('stores_page');
   }
 
   componentWillUnmount() {

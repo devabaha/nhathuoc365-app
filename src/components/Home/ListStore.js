@@ -44,6 +44,7 @@ export default class ListStore extends Component {
     this.start_time = time();
 
     this._getData();
+    EventTracker.logEvent('list_store_page');
   }
 
   // thời gian trễ khi chuyển màn hình

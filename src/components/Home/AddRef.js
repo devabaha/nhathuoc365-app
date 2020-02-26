@@ -28,7 +28,7 @@ export default class AddRef extends Component {
   }
 
   componentDidMount() {
-    //GoogleAnalytic('_add_ref');
+    EventTracker.logEvent('add_ref_page');
   }
 
   _onFinish() {

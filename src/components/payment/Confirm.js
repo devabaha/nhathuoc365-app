@@ -68,6 +68,7 @@ class Confirm extends Component {
         right: this._renderRightButton()
       })
     );
+    EventTracker.logEvent('payment_confirm_page');
   }
 
   _initial(props) {

@@ -48,6 +48,7 @@ class EnterCodeManual extends Component {
   componentDidMount() {
     this.startAnimation(this.state.opacity, 1, ANIMATION_TIME);
     this.startAnimation(this.state.bottom, 0, ANIMATION_TIME);
+    EventTracker.logEvent('voucher_enter_code_page');
   }
 
   componentWillMount() {

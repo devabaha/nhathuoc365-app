@@ -28,7 +28,7 @@ export default class Intro extends Component {
   }
 
   componentDidMount() {
-    //GoogleAnalytic('intro');
+    EventTracker.logEvent('intro_page');
   }
 
   _renderImage({ item, index }) {

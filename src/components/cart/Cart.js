@@ -51,6 +51,7 @@ export default class Cart extends Component {
         });
       }, this._delay());
     }
+    EventTracker.logEvent('cart_page');
   }
 
   // lấy thông tin giỏ hàng

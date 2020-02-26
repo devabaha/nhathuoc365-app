@@ -82,6 +82,7 @@ class BuyCard extends Component {
     });
 
     this.getOrders(this.currentService.id);
+    EventTracker.logEvent('buy_card_page');
   }
 
   getOrders = serviceId => {

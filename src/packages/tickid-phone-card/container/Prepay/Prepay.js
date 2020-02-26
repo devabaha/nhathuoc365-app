@@ -93,6 +93,7 @@ class Prepay extends Component {
     this.setState({
       cardValueType: this.currentCards[0].type
     });
+    EventTracker.logEvent('phone_card_prepay_page');
   }
 
   handleOpenContact = () => {

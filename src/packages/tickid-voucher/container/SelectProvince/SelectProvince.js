@@ -30,6 +30,7 @@ class SelectProvince extends BaseContainer {
 
   componentDidMount() {
     this.getListCities();
+    EventTracker.logEvent('voucher_select_province_page');
   }
 
   getListCities = async () => {
