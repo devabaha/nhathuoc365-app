@@ -3,7 +3,7 @@ import './lib/Constant';
 import './lib/Helper';
 import appConfig from './config';
 import store from 'app-store';
-import { StyleSheet, Platform, View } from 'react-native';
+import { StyleSheet, Platform, View, Alert } from 'react-native';
 import {
   Scene,
   Router,
@@ -14,8 +14,13 @@ import {
   Modal,
   Lightbox
 } from 'react-native-router-flux';
+import firebaseConfig from 'react-native-firebase';
+import {
+  setJSExceptionHandler,
+  setNativeExceptionHandler
+} from 'react-native-exception-handler';
 import OneSignal from 'react-native-onesignal';
-import codePush from 'react-native-code-push';
+import codePush, { LocalPackage } from 'react-native-code-push';
 import TickIdScaningButton from '@tickid/tickid-scaning-button';
 import { CloseButton } from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
@@ -93,7 +98,8 @@ import {
   Category,
   ListService,
   ServiceDetail,
-  Booking
+  Booking,
+  OrderHistory
 } from '@tickid/tickid-rada';
 import {
   initialize as initializeVoucherModule,
@@ -112,6 +118,8 @@ import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
 import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import AwesomeAlert from 'react-native-awesome-alerts';
+import { servicesHandler } from './helper/servicesHandler';
 /**
  * Initializes config for Phone Card module
  */
@@ -189,7 +197,17 @@ initializeRadaModule({
   private: {
     partnerAuthorization: appConfig.radaModule.partnerAuthorization,
     webhookUrl: null,
-    defaultLocation: '37.33233141,-122.0312186'
+    defaultLocation: '37.33233141,-122.0312186',
+    appKey: appConfig.voucherModule.appKey,
+    secretKey: appConfig.voucherModule.secretKey
+  },
+  device: {
+    appVersion: DeviceInfo.getVersion(),
+    deviceId: getTickUniqueID(),
+    deviceType: DeviceInfo.getBrand(),
+    os: Platform.OS,
+    osVersion: DeviceInfo.getSystemVersion(),
+    store: ''
   }
 });
 
@@ -199,22 +217,140 @@ const uris = preloadImages.map(image => ({
 }));
 
 FastImage.preload(uris);
+//-----react-native-exception-handler------
+const errorHandler = (error, isFatal) => {
+  if (isFatal) {
+    const messageLog = `Error: ${isFatal ? 'Fatal:' : ''} ${
+      error.name
+    } ${JSON.stringify(error.message)}`;
+    Alert.alert('Thông báo', `Tác vụ chưa được thực hiện. Vui lòng thử lại!`, [
+      {
+        text: 'Đồng ý'
+      }
+    ]);
+    console.log(error, isFatal);
+    firebaseConfig.crashlytics().log(messageLog);
+    firebaseConfig.crashlytics().recordError(101, messageLog);
+  } else {
+    console.log(error); // So that we can see it in the ADB logs in case of Android if needed
+  }
+};
+
+setJSExceptionHandler((error, isFatal) => {
+  errorHandler(error, isFatal);
+}, true);
+
+setNativeExceptionHandler(exceptionString => {
+  console.log(error);
+  const messageLog = `Error native: ${exceptionString}`;
+  firebaseConfig.crashlytics().log(messageLog);
+  firebaseConfig.crashlytics().recordError(102, messageLog);
+});
 
 class App extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      header: null
+      header: null,
+      restartAllowed: true
     };
   }
 
   componentDidMount() {
     this.handleAddListenerOneSignal();
+    this.syncImmediate();
+    this.toggleAllowRestart();
+    this.getUpdateMetadata();
   }
 
   componentWillUnmount() {
     this.handleRemoveListenerOneSignal();
+  }
+
+  codePushStatusDidChange(syncStatus) {
+    switch (syncStatus) {
+      case codePush.SyncStatus.CHECKING_FOR_UPDATE:
+        this.setState({ syncMessage: 'Kiểm tra cập nhât.' });
+        break;
+      case codePush.SyncStatus.DOWNLOADING_PACKAGE:
+        this.setState({ syncMessage: 'Đang tải...' });
+        break;
+      case codePush.SyncStatus.AWAITING_USER_ACTION:
+        this.setState({ syncMessage: 'Chờ người dùng cho phép.' });
+        break;
+      case codePush.SyncStatus.INSTALLING_UPDATE:
+        this.setState({ syncMessage: 'Đang cài đặt...' });
+        break;
+      case codePush.SyncStatus.UP_TO_DATE:
+        this.setState({ syncMessage: 'Cập nhật ứng dụng.', progress: false });
+        break;
+      case codePush.SyncStatus.UPDATE_IGNORED:
+        this.setState({ syncMessage: 'Bỏ qua cập nhật.', progress: false });
+        break;
+      case codePush.SyncStatus.UPDATE_INSTALLED:
+        this.setState({
+          syncMessage: 'Đã cài đặt\r\nMở lại ứng dụng để cập nhật',
+          progress: false
+        });
+        break;
+      case codePush.SyncStatus.UNKNOWN_ERROR:
+        this.setState({ syncMessage: 'Có lỗi xảy ra.', progress: false });
+        break;
+    }
+  }
+
+  codePushDownloadDidProgress(progress) {
+    this.setState({ progress });
+  }
+
+  toggleAllowRestart() {
+    this.state.restartAllowed
+      ? codePush.disallowRestart()
+      : codePush.allowRestart();
+
+    this.setState({ restartAllowed: !this.state.restartAllowed });
+  }
+
+  getUpdateMetadata() {
+    codePush.getUpdateMetadata(codePush.UpdateState.RUNNING).then(
+      (metadata: LocalPackage) => {
+        this.setState({
+          syncMessage: metadata ? JSON.stringify(metadata) : '...',
+          progress: false
+        });
+      },
+      (error: any) => {
+        this.setState({ syncMessage: 'Lỗi: ' + error, progress: false });
+      }
+    );
+  }
+
+  /** Update is downloaded silently, and applied on restart (recommended) */
+  sync() {
+    codePush.sync(
+      {},
+      this.codePushStatusDidChange.bind(this),
+      this.codePushDownloadDidProgress.bind(this)
+    );
+  }
+
+  /** Update pops a confirmation dialog, and then immediately reboots the app */
+  syncImmediate() {
+    codePush.sync(
+      {
+        installMode: codePush.InstallMode.IMMEDIATE,
+        updateDialog: {
+          optionalIgnoreButtonLabel: 'Bỏ qua',
+          optionalInstallButtonLabel: 'Cập nhật',
+          optionalUpdateMessage:
+            'Đã có bản cập nhât mới. Bạn có muốn cài đặt không?',
+          title: 'Cập nhật ứng dụng'
+        }
+      },
+      this.codePushStatusDidChange.bind(this),
+      this.codePushDownloadDidProgress.bind(this)
+    );
   }
 
   setHeader(header) {
@@ -248,11 +384,37 @@ class App extends Component {
   }
 
   render() {
+    let loadingPercent;
+    let title;
+
+    if (this.state.progress) {
+      loadingPercent = Math.round(
+        (this.state.progress.receivedBytes / this.state.progress.totalBytes) *
+          100
+      );
+      title = `${this.state.syncMessage} ${
+        loadingPercent < 100 ? loadingPercent + '%' : ''
+      }`;
+    }
+
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
         <RootRouter setHeader={this.setHeader.bind(this)} />
         <FlashMessage icon={'auto'} />
+        <AwesomeAlert
+          show={
+            this.state.progress?.receivedBytes > 0 &&
+            loadingPercent > 0 &&
+            loadingPercent < 100
+          }
+          showProgress={true}
+          title={title}
+          closeOnTouchOutside={false}
+          closeOnHardwareBackPress={false}
+          showCancelButton={false}
+          showConfirmButton={false}
+        />
       </View>
     );
   }
@@ -989,6 +1151,15 @@ class RootRouter extends Component {
                   <Scene
                     key="tickidRadaBooking1"
                     component={Booking}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.tickidRadaOrderHistory}>
+                  <Scene
+                    key="tickidRadaOrderHistory1"
+                    component={OrderHistory}
                     {...whiteNavBarConfig}
                     back
                   />

@@ -56,16 +56,6 @@ export const servicesHandler = service => {
         from: 'home'
       });
       break;
-    case 'rada_service':
-      Actions.push('tickidRada', {
-        service_type: service.type,
-        service_id: service.id,
-        title: 'Dịch vụ Rada',
-        onPressItem: item => {
-          this.handleCategoryPress(item);
-        }
-      });
-      break;
     case '30day_service':
       Alert.alert(
         'Thông báo',

@@ -35,6 +35,7 @@ class Home extends Component {
 
   componentDidMount() {
     this.getHomeDataFromApi();
+    EventTracker.logEvent('Home');
   }
 
   componentWillUnmount() {
@@ -144,6 +145,13 @@ class Home extends Component {
       onPressCartImage: item => {
         this.handleCartImagePress(item);
       }
+    });
+  }
+
+  handleOrderHistoryPress(item) {
+    Actions.push('tickidRadaOrderHistory', {
+      category: item,
+      title: 'Quản lý đơn hàng'
     });
   }
 
@@ -268,6 +276,18 @@ class Home extends Component {
   handlePressService = service => {
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
+    } else if (service.type === 'rada_service') {
+      Actions.push('tickidRada', {
+        service_type: service.type,
+        service_id: service.id,
+        title: 'Dịch vụ Rada',
+        onPressItem: item => {
+          this.handleCategoryPress(item);
+        },
+        onPressOrderHistory: item => {
+          this.handleOrderHistoryPress(item);
+        }
+      });
     } else {
       servicesHandler(service);
     }

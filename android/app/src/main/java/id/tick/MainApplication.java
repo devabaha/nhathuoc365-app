@@ -6,6 +6,7 @@ import com.facebook.react.ReactApplication;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.mkuczera.RNReactNativeHapticFeedbackPackage;
+import com.masteratul.exceptionhandler.ReactNativeExceptionHandlerPackage;
 import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.rnfs.RNFSPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
@@ -28,10 +29,12 @@ import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
 import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
+import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import io.invertase.firebase.fabric.crashlytics.RNFirebaseCrashlyticsPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,6 +59,7 @@ public class MainApplication extends Application implements ReactApplication {
             new RNDeviceInfo(),
             new LinearGradientPackage(),
             new RNReactNativeHapticFeedbackPackage(),
+            new ReactNativeExceptionHandlerPackage(),
             new ScreenBrightnessPackage(1234),
             new RNFSPackage(),
             new FastImageViewPackage(),
@@ -77,7 +81,9 @@ public class MainApplication extends Application implements ReactApplication {
             new RNCWebViewPackage(),
             new RNFetchBlobPackage(),
             new RNFirebasePackage(),
-            new RNFirebaseAuthPackage()
+            new RNFirebaseAuthPackage(),
+            new RNFirebaseAnalyticsPackage(),
+            new RNFirebaseCrashlyticsPackage()
       );
     }
 
