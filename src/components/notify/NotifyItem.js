@@ -32,6 +32,7 @@ export default class NotifyItem extends Component {
 
   componentDidMount() {
     this._getData();
+    EventTracker.logEvent('notify_item_page');
   }
 
   _onRefresh() {

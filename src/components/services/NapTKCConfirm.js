@@ -31,6 +31,7 @@ export default class NapTKCConfirm extends Component {
 
   componentDidMount() {
     console.log();
+    EventTracker.logEvent('naptkc_confirm_page');
   }
 
   _unMount() {}

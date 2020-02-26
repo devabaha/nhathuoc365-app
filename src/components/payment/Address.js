@@ -36,6 +36,7 @@ class Address extends Component {
     });
 
     this._getData();
+    EventTracker.logEvent('address_page');
   }
 
   // render button trên navbar

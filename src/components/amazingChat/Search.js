@@ -32,6 +32,7 @@ class Search extends Component {
         onChangeSearch: this.handleChangeSearch.bind(this)
       })
     );
+    EventTracker.logEvent('search_chat_page');
   }
 
   componentWillUnmount() {

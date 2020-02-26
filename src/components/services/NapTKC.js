@@ -35,6 +35,7 @@ export default class NapTKC extends Component {
 
   componentDidMount() {
     this._getData();
+    EventTracker.logEvent('naptkc_page');
   }
 
   async _getData(delay) {

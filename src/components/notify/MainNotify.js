@@ -89,6 +89,7 @@ class MainNotify extends Component {
     store.is_stay_main_notify = true;
 
     store.parentTab = '_main_notify';
+    EventTracker.logEvent('main_notify_page');
   }
 
   componentWillReceiveProps() {

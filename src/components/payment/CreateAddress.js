@@ -61,6 +61,7 @@ class CreateAddress extends Component {
         this.refs_name.focus();
       }, 450);
     }
+    EventTracker.logEvent('create_address_page');
   }
 
   _unMount() {

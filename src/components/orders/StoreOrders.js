@@ -59,6 +59,7 @@ class StoreOrders extends Component {
 
     // Listenner
     Events.on(RELOAD_STORE_ORDERS, RELOAD_STORE_ORDERS + 'ID', this._getData);
+    EventTracker.logEvent('store_order_page');
   }
 
   componentWillUnmount() {

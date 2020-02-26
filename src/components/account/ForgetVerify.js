@@ -44,6 +44,7 @@ export default class ForgetVerify extends Component {
     }
 
     this.registerMsgBar();
+    EventTracker.logEvent('forget_verify_page');
   }
 
   registerMsgBar = () => {

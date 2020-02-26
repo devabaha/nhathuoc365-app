@@ -62,7 +62,9 @@ export default class DetailHistoryPayment extends Component {
     };
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    EventTracker.logEvent('detail_payment_page');
+  }
 
   _renderSectionSeparator = () => {
     return <View style={styles.separatorSection} />;

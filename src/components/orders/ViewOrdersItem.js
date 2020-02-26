@@ -32,6 +32,10 @@ class ViewOrdersItem extends Component {
     };
   }
 
+  componentDidMount() {
+    EventTracker.logEvent('view_orders_item_page');
+  }
+
   _showSticker() {
     this.setState(
       {

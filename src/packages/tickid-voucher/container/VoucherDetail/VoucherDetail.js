@@ -100,6 +100,7 @@ class VoucherDetail extends BaseContainer {
     } else if (this.props.campaignId) {
       this.getCampaignById(this.props.campaignId);
     }
+    EventTracker.logEvent('voucher_detail_page');
   }
 
   handlePressCampaignProvider = store => {

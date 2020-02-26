@@ -48,6 +48,7 @@ class MyVoucher extends BaseContainer {
   componentDidMount() {
     const showLoading = true;
     this.getMyVouchers(showLoading, this.props.siteId);
+    EventTracker.logEvent('my_voucher_page');
   }
 
   handlePressVoucher = voucher => {

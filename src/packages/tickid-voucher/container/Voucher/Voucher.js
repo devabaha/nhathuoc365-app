@@ -35,6 +35,7 @@ class Voucher extends BaseContainer {
 
   componentDidMount() {
     this.getListCampaigns();
+    EventTracker.logEvent('vouchers_page');
   }
 
   handlePressVoucher = campaign => {

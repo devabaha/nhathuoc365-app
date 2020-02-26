@@ -65,6 +65,7 @@ class ProfileDetail extends Component {
         right: this._renderRightButton
       })
     );
+    EventTracker.logEvent('profile_page');
   }
 
   _renderRightButton = () => {

@@ -63,6 +63,7 @@ class CategoryScreen extends Component {
     Events.on(CATE_AUTO_LOAD, CATE_AUTO_LOAD + index, () => {
       Events.removeAll(keyAutoLoad);
     });
+    EventTracker.logEvent('category_screen_page');
   }
 
   componentWillReceiveProps(nextProps) {

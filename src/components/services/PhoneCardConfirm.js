@@ -31,6 +31,7 @@ export default class PhoneCardConfirm extends Component {
 
   componentDidMount() {
     console.log();
+    EventTracker.logEvent('phone_card_confirm_page');
   }
 
   _unMount() {}

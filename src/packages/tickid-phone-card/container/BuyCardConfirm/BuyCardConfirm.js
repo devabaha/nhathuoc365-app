@@ -93,6 +93,7 @@ class BuyCardConfirm extends Component {
       .catch(error => this.setState({ errorMessage: error.message }));
 
     this.loadStoredPassword();
+    EventTracker.logEvent('buy_card_confirm_page');
   }
 
   loadStoredPassword = async () => {

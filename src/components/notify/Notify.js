@@ -68,6 +68,7 @@ class Notify extends Component {
     this._getData();
 
     store.getNoitify();
+    EventTracker.logEvent('notify_page');
   }
 
   async _getData(delay) {

@@ -41,6 +41,7 @@ class Orders extends Component {
 
     store.is_stay_orders = true;
     store.parentTab = '_orders';
+    EventTracker.logEvent('orders_page');
   }
 
   componentWillReceiveProps() {
