@@ -5,10 +5,12 @@ import BaseContainer from '../BaseContainer';
 import VoucherComponent from '../../component/Voucher';
 import CampaignEntity from '../../entity/CampaignEntity';
 import { internalFetch } from '../../helper/apiFetch';
+import store from 'app-store';
+import { showMessage } from '../../constants';
 
 class Voucher extends BaseContainer {
   static propTypes = {
-    from: PropTypes.oneOf(['home'])
+    from: PropTypes.oneOf(['home', 'deeplink'])
   };
 
   static defaultProps = {
@@ -75,10 +77,26 @@ class Voucher extends BaseContainer {
         options
       );
       if (response.status === config.httpCode.success) {
+        const campaigns = response.data.campaigns.map(
+          campaign => new CampaignEntity(campaign)
+        );
+
+        if (store.deep_link_data) {
+          const campaign = campaigns.find(
+            campaign => campaign.data.id === store.deep_link_data.id
+          );
+          if (campaign) {
+            this.handlePressVoucher(campaign);
+          } else {
+            showMessage({
+              type: 'danger',
+              message: 'Không tìm thấy voucher!'
+            });
+          }
+        }
+
         this.setState({
-          campaigns: response.data.campaigns.map(
-            campaign => new CampaignEntity(campaign)
-          ),
+          campaigns,
           newVoucherNum: response.data.new_voucher_num,
           provinceSelected: response.data.city
         });
@@ -90,6 +108,7 @@ class Voucher extends BaseContainer {
         refreshing: false,
         apiFetching: false
       });
+      store.setDeepLinkData(null);
     }
   };
 
@@ -127,4 +146,4 @@ class Voucher extends BaseContainer {
   }
 }
 
-export default Voucher;
+export default observer(Voucher);

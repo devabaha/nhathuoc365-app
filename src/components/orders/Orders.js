@@ -91,6 +91,25 @@ class Orders extends Component {
       var response = await APIHandler.user_cart_list();
 
       if (response && response.status == STATUS_SUCCESS) {
+        if (store.deep_link_data) {
+          const item = response.data.find(
+            order => order.id === store.deep_link_data.id
+          );
+          if (item) {
+            store.setStoreData(item.site);
+            Actions.orders_item({
+              data: item,
+              title: `#${item.cart_code}`,
+              tel: item.tel
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: 'Không tìm thấy đơn hàng!'
+            });
+          }
+        }
+
         setTimeout(() => {
           this.setState({
             data: response.data,
@@ -121,6 +140,7 @@ class Orders extends Component {
       );
     } finally {
       store.getNoitify();
+      store.setDeepLinkData(null);
     }
   }
 

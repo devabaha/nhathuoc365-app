@@ -53,6 +53,7 @@ class PhoneAuth extends Component {
 
   componentDidMount() {
     this.startCountDown();
+    EventTracker.logEvent('PhoneAuth');
   }
 
   componentWillUnmount() {}
@@ -258,6 +259,7 @@ class PhoneAuth extends Component {
   _verifyResponse = response => {
     action(() => {
       store.setUserInfo(response.data);
+      EventTracker.setUserId(response.data.id);
       store.resetCartData();
       store.setRefreshHomeChange(store.refresh_home_change + 1);
       if (response.data && response.data.fill_info_user) {

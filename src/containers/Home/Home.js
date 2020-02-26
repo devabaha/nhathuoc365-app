@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Alert, StyleSheet } from 'react-native';
+
 import OneSignal from 'react-native-onesignal';
+import branch from 'react-native-branch';
 
 import store from 'app-store';
 import appConfig from 'app-config';
@@ -30,15 +32,19 @@ class Home extends Component {
       product_groups: {}
     };
   }
-
+  branchIOUnsubcribe = null;
   homeDataLoaded = false;
 
   componentDidMount() {
     this.getHomeDataFromApi();
+    EventTracker.logEvent('Home');
   }
 
   componentWillUnmount() {
     this.homeDataLoaded && this.handleRemoveListenerOneSignal();
+    if (this.branchIOUnsubcribe) {
+      this.branchIOUnsubcribe();
+    }
   }
 
   handleAddListenerOneSignal = () => {
@@ -53,6 +59,25 @@ class Home extends Component {
     const data = openResult.notification.payload.additionalData;
     servicesHandler(data);
   }
+
+  handleSubcribeBranchIO = () => {
+    this.branchIOUnsubcribe = branch.subscribe(({ error, params }) => {
+      if (error) {
+        console.error('Error from Branch: ' + error);
+        return;
+      }
+
+      try {
+        console.log(params, this.props);
+        if (params['+clicked_branch_link'] && params['+match_guaranteed']) {
+          servicesHandler(params);
+        }
+      } catch (err) {
+        console.log('branchIO', err);
+      }
+      // params will never be null if error is null
+    });
+  };
 
   getHomeDataFromApi = async (showLoading = true) => {
     if (showLoading) {
@@ -89,6 +114,7 @@ class Home extends Component {
         if (!this.homeDataLoaded) {
           this.homeDataLoaded = true;
           this.handleAddListenerOneSignal();
+          this.handleSubcribeBranchIO();
         }
       }
     } catch (error) {
@@ -144,6 +170,13 @@ class Home extends Component {
       onPressCartImage: item => {
         this.handleCartImagePress(item);
       }
+    });
+  }
+
+  handleOrderHistoryPress(item) {
+    Actions.push('tickidRadaOrderHistory', {
+      category: item,
+      title: 'Quản lý đơn hàng'
     });
   }
 
@@ -268,6 +301,18 @@ class Home extends Component {
   handlePressService = service => {
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
+    } else if (service.type === 'rada_service') {
+      Actions.push('tickidRada', {
+        service_type: service.type,
+        service_id: service.id,
+        title: 'Dịch vụ Rada',
+        onPressItem: item => {
+          this.handleCategoryPress(item);
+        },
+        onPressOrderHistory: item => {
+          this.handleOrderHistoryPress(item);
+        }
+      });
     } else {
       servicesHandler(service);
     }

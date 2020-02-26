@@ -42,6 +42,7 @@ class OpRegister extends Component {
         this._onSave();
       }, 500);
     }
+    EventTracker.logEvent('OpRegister');
   }
 
   _unMount() {

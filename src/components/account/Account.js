@@ -246,6 +246,7 @@ class Account extends Component {
       store.is_stay_account = true;
       store.parentTab = '_account';
     });
+    EventTracker.logEvent('Account');
   }
 
   login = async delay => {
@@ -803,6 +804,7 @@ class Account extends Component {
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
+          EventTracker.removeUserId();
           store.setUserInfo(response.data);
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
