@@ -43,6 +43,7 @@ target 'my_food_new' do
   pod 'BVLinearGradient', :path => '../node_modules/react-native-linear-gradient'
 
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+  pod 'react-native-branch', :path => '../node_modules/react-native-branch'
 
   target 'my_food_newTests' do
     inherit! :search_paths

@@ -21,7 +21,7 @@ class VoucherDetail extends BaseContainer {
    */
   static propTypes = {
     mode: PropTypes.string,
-    from: PropTypes.oneOf(['home']),
+    from: PropTypes.oneOf(['home', 'deeplink']),
     campaignId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     voucherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onRemoveVoucherSuccess: PropTypes.func,

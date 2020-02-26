@@ -74,6 +74,22 @@ class Notify extends Component {
     try {
       var response = await APIHandler.user_news_list(this.state.news_type);
       if (response && response.status == STATUS_SUCCESS) {
+        if (store.deep_link_data) {
+          const news = response.data.find(
+            newsItem => newsItem.id === store.deep_link_data.id
+          );
+          if (news) {
+            Actions.notify_item({
+              title: news.title,
+              data: news
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: 'Tin tức không tồn tại hoặc đã bị xóa!'
+            });
+          }
+        }
         setTimeout(() => {
           this.setState({
             data: response.data,
@@ -87,6 +103,7 @@ class Notify extends Component {
 
       store.addApiQueue('user_news_list', this._getData.bind(this, delay));
     } finally {
+      store.setDeepLinkData(null);
     }
   }
 

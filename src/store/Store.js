@@ -169,6 +169,7 @@ class Store {
   @observable user_info = null;
   @observable store_id = null;
   @observable store_data = null;
+  @observable deep_link_data = null;
   @observable stores_finish = false;
 
   @action setStoresFinish(flag) {
@@ -186,6 +187,10 @@ class Store {
   @action setStoreData(data) {
     this.store_data = data;
     this.store_id = data.id;
+  }
+
+  @action setDeepLinkData(data) {
+    this.deep_link_data = data;
   }
 
   /*********** home begin **********/
