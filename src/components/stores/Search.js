@@ -21,11 +21,12 @@ import PopupConfirm from '../PopupConfirm';
 import ModernList from 'app-packages/tickid-modern-list';
 import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
 import Animated, { Easing } from 'react-native-reanimated';
+import { debounce } from 'lodash';
 
-const { concat, interpolate } = Animated;
+const { interpolate } = Animated;
 const START_DEG = new Animated.Value(0);
 const END_DEG = new Animated.Value(Math.PI);
-const SEARCH_KEY = 'KeySearch';
+const STORE_SEARCH_KEY = 'STORE-SEARCH';
 
 class Search extends Component {
   constructor(props) {
@@ -96,10 +97,7 @@ class Search extends Component {
           });
 
           // auto search on changed text
-          clearTimeout(this.onSearchTimer);
-          this.onSearchTimer = setTimeout(() => {
-            this.onSearch(text);
-          }, 400);
+          this.onSearch(text);
         },
         onCancel: () => {
           Keyboard.dismiss();
@@ -131,7 +129,13 @@ class Search extends Component {
   getHistory(categoryId = this.state.selectedCategory.id) {
     storage
       .load({
-        key: SEARCH_KEY + store.user_info.id + '/' + categoryId,
+        key:
+          STORE_SEARCH_KEY +
+          store.user_info.id +
+          '/' +
+          store.store_id +
+          '/' +
+          categoryId,
         autoSync: true,
         syncInBackground: true,
         syncParams: {
@@ -150,7 +154,7 @@ class Search extends Component {
       });
   }
 
-  onSearch(keyword) {
+  onSearch = debounce(keyword => {
     if (keyword == null || keyword == '') {
       this.setState({
         search_data: null,
@@ -204,11 +208,11 @@ class Search extends Component {
         }
       }
     );
-  }
+  }, 500);
 
   // tới màn hình chi tiết item
   _goItem(item) {
-    //SEARCH_KEY
+    //STORE_SEARCH_KEY
 
     this._updateHistory(item);
 
@@ -252,8 +256,10 @@ class Search extends Component {
     storage
       .load({
         key:
-          SEARCH_KEY +
+          STORE_SEARCH_KEY +
           store.user_info.id +
+          '/' +
+          store.store_id +
           '/' +
           this.state.selectedCategory.id,
         autoSync: true,
@@ -276,7 +282,12 @@ class Search extends Component {
     // cache in five minutes
     storage.save({
       key:
-        SEARCH_KEY + store.user_info.id + '/' + this.state.selectedCategory.id,
+        STORE_SEARCH_KEY +
+        store.user_info.id +
+        '/' +
+        store.store_id +
+        '/' +
+        this.state.selectedCategory.id,
       data,
       expires: null
     });
@@ -287,7 +298,12 @@ class Search extends Component {
   removeHistory = () => {
     storage.remove({
       key:
-        SEARCH_KEY + store.user_info.id + '/' + this.state.selectedCategory.id
+        STORE_SEARCH_KEY +
+        store.user_info.id +
+        '/' +
+        store.store_id +
+        '/' +
+        this.state.selectedCategory.id
     });
 
     this.setState({ history: null });
@@ -311,6 +327,7 @@ class Search extends Component {
         categories,
         selectedCategory: category
       });
+      this.onSearch(this.state.searchValue);
     }
   };
 

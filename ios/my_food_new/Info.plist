@@ -64,6 +64,8 @@
 	<string>Cho phép ứng dụng truy cập Danh bạ</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

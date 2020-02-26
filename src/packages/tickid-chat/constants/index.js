@@ -12,7 +12,6 @@ export const { width: WINDOW_WIDTH, height: WINDOW_HEIGHT } = Dimensions.get(
 );
 
 export const isAndroid = Platform.OS === 'android';
-export const isAndroidEmulator = isAndroid && DeviceInfo.isEmulator();
 export const isIos = Platform.OS === 'ios';
 export const isIphoneX = isIphoneXHelper();
 
@@ -25,7 +24,9 @@ export const config = {
 
 export const IMAGE_ICON_TYPE = 'image';
 
-export const BOTTOM_OFFSET_GALLERY = HEIGHT / 3.3;
+const DEFAULT_OFFSET = HEIGHT / 3.3;
+export const BOTTOM_OFFSET_GALLERY =
+  DEFAULT_OFFSET > 200 ? 200 : DEFAULT_OFFSET;
 export const DURATION_SHOW_GALLERY = 300;
 
 export const BOTTOM_SPACE_IPHONE_X = isIphoneX ? getBottomSpace() : 0;
@@ -37,12 +38,13 @@ export const EXTRA_DIMENSIONS_HEIGHT =
   ANDROID_EXTRA_DIMENSIONS_HEIGHT !== 0
     ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
     : ANDROID_STATUS_BAR_HEIGHT;
+export const HAS_NOTCH = DeviceInfo.hasNotch();
 
 export const HEADER_HEIGHT = isIos
   ? isIphoneX
     ? getStatusBarHeight() + 60
     : 64
-  : 56 + ANDROID_STATUS_BAR_HEIGHT;
+  : 54 + ANDROID_STATUS_BAR_HEIGHT;
 
 export const COMPONENT_TYPE = {
   _NONE: {
