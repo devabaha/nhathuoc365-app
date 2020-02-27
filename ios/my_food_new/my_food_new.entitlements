@@ -6,8 +6,8 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:foodhub.app.link</string>
-		<string>applinks:tickid-alternate.app.link</string>
+		<string>applinks:foodhubvn.app.link</string>
+		<string>applinks:foodhubvn-alternate.app.link</string>
 	</array>
 </dict>
 </plist>
