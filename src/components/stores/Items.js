@@ -23,7 +23,9 @@ class Items extends Component {
 
   // add item vào giỏ hàng
   _addCart(item) {
-    Actions.push('itemOptions');
+    Actions.push('itemOptions', {
+      itemId: item.id
+    });
     return;
 
     if (this.props.buyPress) {

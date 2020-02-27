@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableHighlight } from 'react-native';
+import { StyleSheet, View, TextInput, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 
 const NumberSelection = props => {
@@ -18,6 +18,7 @@ const NumberSelection = props => {
       plusDisabled = true;
     }
   }
+
   return (
     <View style={[styles.container, props.containerStyle]}>
       <TouchableHighlight
@@ -30,7 +31,13 @@ const NumberSelection = props => {
         <Icon name="minus" style={[styles.icon, extraStyle]} />
       </TouchableHighlight>
       <View style={styles.textContainer}>
-        <Text style={[styles.text, extraStyle]}>{props.value}</Text>
+        <TextInput
+          editable={!props.disabled}
+          style={[styles.text, extraStyle]}
+          value={props.value.toString()}
+          keyboardType="number-pad"
+          onChangeText={props.onChangeText}
+        />
       </View>
       <TouchableHighlight
         disabled={plusDisabled}

@@ -14,6 +14,9 @@ class TagList extends Component {
           active={item.active}
           activeStyle={this.props.activeStyle}
           activeTextStyle={this.props.activeTextStyle}
+          disabled={item.disabled}
+          disabledStyle={this.props.disabledStyle}
+          disabledTextStyle={this.props.disabledTextStyle}
           key={index}
           item={text}
           onPress={() => this.props.onPressItem(item)}

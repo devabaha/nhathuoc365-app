@@ -36,6 +36,7 @@ exports.USER_UPDATE_PROFILE = MY_FOOD_API + 'apiUser/update';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';
+exports.SITE_PRODUCT_ATTRIBUTES = MY_FOOD_API + 'apiSite/product_attr';
 
 // Cart
 exports.SITE_CART_ADDING = MY_FOOD_API + 'apiSite/cartadding';

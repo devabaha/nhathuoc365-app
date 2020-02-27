@@ -565,11 +565,21 @@ class APIHandler {
   }
 
   /**
-   * line & unlike for products
+   * like & unlike for products
    */
   async site_like(store_id, product_id, flag) {
     var api = url_for(
       API.SITE_LIKE + '/' + store_id + '/' + product_id + '/' + flag
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
+   * get attrs for product
+   */
+  async site_product_attrs(store_id, product_id) {
+    var api = url_for(
+      API.SITE_PRODUCT_ATTRIBUTES + '/' + store_id + '/' + product_id
     );
     return await this.getAPI(api);
   }

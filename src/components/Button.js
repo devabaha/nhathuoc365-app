@@ -12,6 +12,7 @@ const Button = props => {
           props.btnContainerStyle
         ]}
         onPress={props.onPress}
+        disabled={props.disabled}
       >
         {props.iconLeft}
         <Text style={[styles.text, props.titleStyle]}>{props.title}</Text>

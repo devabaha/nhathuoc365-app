@@ -15,6 +15,8 @@ class ModernList extends Component {
     headerTitleStyle: PropTypes.any,
     activeStyle: PropTypes.any,
     activeTextStyle: PropTypes.any,
+    disabledStyle: PropTypes.any,
+    disabledTextStyle: PropTypes.any,
     bodyWrapperStyle: PropTypes.any,
     headerComponent: PropTypes.node,
     headerLeftComponent: PropTypes.node,
@@ -35,6 +37,8 @@ class ModernList extends Component {
     headerTitleStyle: {},
     activeStyle: {},
     activeTextStyle: {},
+    disabledStyle: {},
+    disabledTextStyle: {},
     bodyWrapperStyle: {},
     headerComponent: null,
     headerLeftComponent: null,
@@ -65,6 +69,8 @@ class ModernList extends Component {
         onBodyLayout={this.props.onBodyLayout}
         activeStyle={this.props.activeStyle}
         activeTextStyle={this.props.activeTextStyle}
+        disabledStyle={this.props.disabledStyle}
+        disabledTextStyle={this.props.disabledTextStyle}
         bodyWrapperStyle={this.props.bodyWrapperStyle}
       />
     );
