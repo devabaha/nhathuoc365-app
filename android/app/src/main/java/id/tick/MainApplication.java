@@ -3,15 +3,15 @@ package id.tick;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
+import com.BV.LinearGradient.LinearGradientPackage;
+import com.mkuczera.RNReactNativeHapticFeedbackPackage;
 import com.masteratul.exceptionhandler.ReactNativeExceptionHandlerPackage;
 
 // import Branch and RNBranch
 import io.branch.referral.Branch;
 import io.branch.rnbranch.RNBranchPackage;
 
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.BV.LinearGradient.LinearGradientPackage;
-import com.mkuczera.RNReactNativeHapticFeedbackPackage;
 import com.robinpowered.react.ScreenBrightness.ScreenBrightnessPackage;
 import com.rnfs.RNFSPackage;
 import com.dylanvann.fastimage.FastImageViewPackage;
@@ -61,11 +61,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ReactNativeExceptionHandlerPackage(),
-            new RNBranchPackage(),
             new RNDeviceInfo(),
             new LinearGradientPackage(),
             new RNReactNativeHapticFeedbackPackage(),
+            new ReactNativeExceptionHandlerPackage(),
+            new RNBranchPackage(),
             new ScreenBrightnessPackage(1234),
             new RNFSPackage(),
             new FastImageViewPackage(),

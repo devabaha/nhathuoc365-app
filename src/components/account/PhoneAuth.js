@@ -53,7 +53,7 @@ class PhoneAuth extends Component {
 
   componentDidMount() {
     this.startCountDown();
-    EventTracker.logEvent('PhoneAuth');
+    EventTracker.logEvent('phone_auth_page');
   }
 
   componentWillUnmount() {}

@@ -246,7 +246,7 @@ class Account extends Component {
       store.is_stay_account = true;
       store.parentTab = '_account';
     });
-    EventTracker.logEvent('Account');
+    EventTracker.logEvent('account_page');
   }
 
   login = async delay => {
@@ -802,22 +802,22 @@ class Account extends Component {
     });
     try {
       const response = await APIHandler.user_logout();
-      if (response && response.status == STATUS_SUCCESS) {
-        EventTracker.removeUserId();
-        store.setUserInfo(response.data);
-        store.resetCartData();
-        store.setRefreshHomeChange(store.refresh_home_change + 1);
-        store.setOrdersKeyChange(store.orders_key_change + 1);
-        flashShowMessage({
-          message: 'Đăng xuất thành công',
-          type: 'info'
-        });
-        Actions.reset(appConfig.routes.sceneWrapper);
-      } else {
-        flashShowMessage({
-          message: 'Đăng xuất không thành công',
-          type: 'info'
-        });
+      switch (response.status) {
+        case STATUS_SUCCESS:
+          EventTracker.removeUserId();
+          store.setUserInfo(response.data);
+          store.resetCartData();
+          store.setRefreshHomeChange(store.refresh_home_change + 1);
+          store.setOrdersKeyChange(store.orders_key_change + 1);
+          store.resetAsyncStorage();
+          flashShowMessage({
+            message: 'Đăng xuất thành công',
+            type: 'info'
+          });
+          Actions.reset(appConfig.routes.sceneWrapper);
+          break;
+        default:
+          console.log('default');
       }
     } catch (error) {
       console.log(error);

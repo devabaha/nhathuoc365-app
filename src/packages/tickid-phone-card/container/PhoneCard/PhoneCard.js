@@ -29,6 +29,7 @@ class PhoneCard extends BaseContainer {
 
   componentDidMount() {
     this.getPhoneCardServices();
+    EventTracker.logEvent('phone_card_page');
   }
 
   getPhoneCardServices = () => {

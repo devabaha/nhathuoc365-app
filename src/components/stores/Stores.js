@@ -105,6 +105,7 @@ class Stores extends Component {
             title: ''
           });
     });
+    EventTracker.logEvent('stores_page');
   }
 
   componentWillUnmount() {

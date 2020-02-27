@@ -55,6 +55,7 @@ export default class StoresList extends Component {
       KEY_EVENTS_STORE + 'ID',
       this._getData.bind(this)
     );
+    EventTracker.logEvent('store_list_page');
   }
 
   _unMount() {

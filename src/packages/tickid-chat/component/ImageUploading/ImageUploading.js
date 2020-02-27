@@ -47,6 +47,7 @@ class ImageUploading extends Component {
 
   componentDidMount() {
     setTimeout(() => !this.umounted && this.uploadImage(), 1000);
+    EventTracker.logEvent('image_uploading_page');
   }
 
   componentWillUnmount() {

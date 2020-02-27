@@ -169,11 +169,11 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-exception-handler')
-    implementation project(':react-native-branch')
     implementation project(':react-native-device-info')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-haptic-feedback')
+    implementation project(':react-native-exception-handler')
+    implementation project(':react-native-branch')
     implementation project(':react-native-screen-brightness')
     implementation project(':react-native-fs')
     implementation project(':react-native-fast-image')

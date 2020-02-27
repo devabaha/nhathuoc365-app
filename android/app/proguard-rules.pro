@@ -21,6 +21,6 @@
   **[] $VALUES;
   public *;
 }
+-keep public class com.horcrux.svg.** {*;}
 
 -dontwarn io.branch.**
--keep public class com.horcrux.svg.** {*;}

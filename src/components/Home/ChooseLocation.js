@@ -28,7 +28,7 @@ export default class ChooseLocation extends Component {
   }
 
   componentDidMount() {
-    //GoogleAnalytic('_choose_location');
+    EventTracker.logEvent('choose_location_page');
   }
 
   async onPressLocation(item) {

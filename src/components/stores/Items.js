@@ -21,6 +21,10 @@ export default class Items extends Component {
     };
   }
 
+  componentDidMount() {
+    EventTracker.logEvent('stores_items_page');
+  }
+
   // add item vào giỏ hàng
   _addCart(item) {
     if (this.props.buyPress) {

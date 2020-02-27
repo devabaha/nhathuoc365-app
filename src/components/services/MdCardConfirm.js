@@ -31,6 +31,7 @@ export default class MdCardConfirm extends Component {
 
   componentDidMount() {
     console.log();
+    EventTracker.logEvent('md_card_confirm_page');
   }
 
   _unMount() {}

@@ -11,7 +11,12 @@ import {
   Alert
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { IMAGE_ICON_TYPE, BOTTOM_SPACE_IPHONE_X } from '../../constants';
+import {
+  IMAGE_ICON_TYPE,
+  BOTTOM_SPACE_IPHONE_X,
+  HAS_NOTCH,
+  ANDROID_STATUS_BAR_HEIGHT
+} from '../../constants';
 
 const MAX_PIN = 9;
 
@@ -131,7 +136,12 @@ class PinList extends Component {
         style={[styles.container, extraProps, this.props.containerStyle]}
       >
         <View
-          style={{ height: this.props.baseViewHeight + BOTTOM_SPACE_IPHONE_X }}
+          style={{
+            height:
+              this.props.baseViewHeight +
+              BOTTOM_SPACE_IPHONE_X +
+              (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0)
+          }}
         >
           <FlatList
             ref={this.refPinList}

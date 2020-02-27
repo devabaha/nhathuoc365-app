@@ -85,10 +85,7 @@ class EditProfile extends Component {
   }
 
   componentDidMount() {
-    // setTimeout(() =>
-    //   Actions.refresh({
-    //     right: this._renderRightButton
-    //   }))
+    EventTracker.logEvent('edit_profile_page');
   }
 
   _renderRightButton = () => {

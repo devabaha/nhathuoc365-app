@@ -404,6 +404,7 @@ class App extends Component {
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
         <RootRouter setHeader={this.setHeader.bind(this)} />
+        <FlashMessage icon={'auto'} />
         <AwesomeAlert
           show={
             this.state.progress?.receivedBytes > 0 &&
@@ -417,7 +418,6 @@ class App extends Component {
           showCancelButton={false}
           showConfirmButton={false}
         />
-        <FlashMessage icon={'auto'} />
       </View>
     );
   }

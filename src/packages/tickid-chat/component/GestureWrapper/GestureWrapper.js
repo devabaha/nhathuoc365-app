@@ -17,7 +17,8 @@ import {
   BOTTOM_SPACE_IPHONE_X,
   BOTTOM_OFFSET_GALLERY,
   isAndroidEmulator,
-  ANDROID_STATUS_BAR_HEIGHT
+  ANDROID_STATUS_BAR_HEIGHT,
+  HAS_NOTCH
 } from '../../constants';
 
 const DURATION_SHOW_BODY_CONTENT = 300;
@@ -209,8 +210,10 @@ class GestureWrapper extends Component {
   }
 
   updateActualScrollViewHeight(otherHeight = this.props.headerHeight) {
-    this.actualScrollViewHeight = Dimensions.get('window').height - otherHeight;
-    // + ANDROID_STATUS_BAR_HEIGHT;
+    this.actualScrollViewHeight =
+      Dimensions.get('window').height -
+      otherHeight +
+      (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0);
   }
 
   animateScrollView(toValue) {
@@ -338,6 +341,7 @@ class GestureWrapper extends Component {
     this.state.animatedTranslateYScrollView.addListener(
       this.onAnimatedValueChange.bind(this)
     );
+    EventTracker.logEvent('gesture_page');
   }
 
   componentWillUnmount() {

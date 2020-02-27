@@ -35,6 +35,7 @@ export default class MdCard extends Component {
 
   componentDidMount() {
     this._getData();
+    EventTracker.logEvent('md_card_page');
   }
 
   async _getData(delay) {
