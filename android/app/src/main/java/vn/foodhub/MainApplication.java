@@ -3,6 +3,8 @@ package vn.foodhub;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import io.invertase.firebase.RNFirebasePackage;
+import com.horcrux.svg.SvgPackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.mkuczera.RNReactNativeHapticFeedbackPackage;
@@ -27,12 +29,10 @@ import com.microsoft.codepush.react.CodePush;
 import com.geektime.rnonesignalandroid.ReactNativeOneSignalPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-import com.horcrux.svg.SvgPackage;
 import com.reactnativecommunity.netinfo.NetInfoPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;
-import io.invertase.firebase.RNFirebasePackage;
 import io.invertase.firebase.auth.RNFirebaseAuthPackage;
 import io.invertase.firebase.analytics.RNFirebaseAnalyticsPackage;
 import com.facebook.react.ReactNativeHost;
@@ -61,6 +61,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFirebasePackage(),
+            new SvgPackage(),
             new RNDeviceInfo(),
             new LinearGradientPackage(),
             new RNReactNativeHapticFeedbackPackage(),
@@ -81,12 +83,10 @@ public class MainApplication extends Application implements ReactApplication {
             new ReactNativeOneSignalPackage(),
             new ImagePickerPackage(),
             new AsyncStoragePackage(),
-            new SvgPackage(),
             new NetInfoPackage(),
             new VectorIconsPackage(),
             new RNCWebViewPackage(),
             new RNFetchBlobPackage(),
-            new RNFirebasePackage(),
             new RNFirebaseAuthPackage(),
             new RNFirebaseAnalyticsPackage(),
             new RNFirebaseCrashlyticsPackage()

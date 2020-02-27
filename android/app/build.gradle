@@ -169,6 +169,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-firebase')
+    implementation project(':react-native-svg')
     implementation project(':react-native-device-info')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-haptic-feedback')
@@ -178,7 +180,6 @@ dependencies {
     implementation project(':react-native-fs')
     implementation project(':react-native-fast-image')
     implementation project(':@react-native-community_cameraroll')
-    implementation project(':react-native-firebase')
     implementation "com.google.firebase:firebase-auth:17.0.0"
     implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation "com.google.android.gms:play-services-base:16.1.0"
@@ -194,7 +195,6 @@ dependencies {
     implementation project(':react-native-onesignal')
     implementation project(':react-native-image-picker')
     implementation project(':@react-native-community_async-storage')
-    implementation project(':react-native-svg')
     implementation project(':@react-native-community_netinfo')
     implementation project(':react-native-vector-icons')
     implementation project(':react-native-webview')
