@@ -18,7 +18,6 @@
 		06C095C123D2C95900F81C1F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C0957E23D2C95900F81C1F /* CoreGraphics.framework */; };
 		06C095C323D2C98200F81C1F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C095C223D2C98200F81C1F /* WebKit.framework */; };
 		06C0967123D5613400F81C1F /* my_food_new.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = 1C206E0D22F1A71100CF6BEA /* my_food_new.entitlements */; };
-		06C63EF723FE3980004290DC /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C63EF023FE397A004290DC /* libRNReactNativeHapticFeedback.a */; };
 		0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD6E73A42137404B84C1637D /* libRNGestureHandler.a */; };
 		11664DB068BF4996A690450F /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2306C35B3D9446EF93D15C2A /* libRNVectorIcons.a */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
@@ -37,9 +36,8 @@
 		1C206E3422F1AD3B00CF6BEA /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C206E2022F1A8F000CF6BEA /* SystemConfiguration.framework */; };
 		1C206E3522F1AD4500CF6BEA /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A3D23C922C481D500B47B28 /* libRCTOneSignal.a */; };
 		1C2070A922F54D6E00CF6BEA /* push2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1C2070A722F54D6E00CF6BEA /* push2.wav */; };
-		1C3D035C23FEA0760045D6ED /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C3D035B23FEA0760045D6ED /* libRNDeviceInfo.a */; };
-		1C3D035E23FEA0860045D6ED /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C3D035D23FEA0860045D6ED /* libRNReactNativeHapticFeedback.a */; };
-		1CB5FFBF23FF668B009BD88D /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CB5FFBE23FF668B009BD88D /* libRNSVG.a */; };
+		1C9BEC112409774F00165B05 /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C9BEC102409774F00165B05 /* libRNReactNativeHapticFeedback.a */; };
+		1C9BEC132409775800165B05 /* libRNDeviceInfo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C9BEC122409775800165B05 /* libRNDeviceInfo.a */; };
 		1CF7B92823BB4FB0006028BC /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CF7B92723BB4F8A006028BC /* libReactNativePermissions.a */; };
 		2664C4A2E0804B65A40E7934 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F79089108AC545DAB0E37C6F /* FontAwesome5_Brands.ttf */; };
 		3D84A85626634AABBFE313C1 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D1EED20F556419BBFFFFA7C /* libRNCamera.a */; };
@@ -593,6 +591,8 @@
 		1C2070AA22F54EFC00CF6BEA /* push_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = push_1.mp3; path = /Users/thuclh/apps/tickapp/ios/push_1.mp3; sourceTree = "<absolute>"; };
 		1C3D035B23FEA0760045D6ED /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C3D035D23FEA0860045D6ED /* libRNReactNativeHapticFeedback.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNReactNativeHapticFeedback.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C9BEC102409774F00165B05 /* libRNReactNativeHapticFeedback.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNReactNativeHapticFeedback.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C9BEC122409775800165B05 /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CB5FFBE23FF668B009BD88D /* libRNSVG.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNSVG.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CF7B92223BB4F8A006028BC /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-qrcode-scanner/node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		1FE58DDF2DC84ED3B168C409 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
@@ -673,7 +673,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				06C63EF723FE3980004290DC /* libRNReactNativeHapticFeedback.a in Frameworks */,
+				1C9BEC132409775800165B05 /* libRNDeviceInfo.a in Frameworks */,
+				1C9BEC112409774F00165B05 /* libRNReactNativeHapticFeedback.a in Frameworks */,
 				1CF7B92823BB4FB0006028BC /* libReactNativePermissions.a in Frameworks */,
 				8A3FB2FF236160AF0076A3DA /* libRCTContacts.a in Frameworks */,
 				8A6A14AD22C3268B00377B1B /* libART.a in Frameworks */,
@@ -901,6 +902,8 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1C9BEC122409775800165B05 /* libRNDeviceInfo.a */,
+				1C9BEC102409774F00165B05 /* libRNReactNativeHapticFeedback.a */,
 				1CB5FFBE23FF668B009BD88D /* libRNSVG.a */,
 				1C3D035D23FEA0860045D6ED /* libRNReactNativeHapticFeedback.a */,
 				1C3D035B23FEA0760045D6ED /* libRNDeviceInfo.a */,

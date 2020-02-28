@@ -24,7 +24,6 @@ target 'my_food_new' do
 
   pod 'RNFS', :path => '../node_modules/react-native-fs'
   
-  pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
   pod 'RNFirebase/Crashlytics', :path => '../node_modules/react-native-firebase/ios'
   
   pod 'ReactNativeExceptionHandler', :podspec => '../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec'
