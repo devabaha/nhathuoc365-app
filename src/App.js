@@ -121,8 +121,6 @@ import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import { servicesHandler } from './helper/servicesHandler';
-import StoreNavBar from './components/stores/StoreNavBar';
 /**
  * Initializes config for Phone Card module
  */
@@ -256,7 +254,8 @@ class App extends Component {
 
     this.state = {
       header: null,
-      restartAllowed: true
+      restartAllowed: true,
+      progress: null
     };
   }
 
@@ -317,13 +316,13 @@ class App extends Component {
 
   getUpdateMetadata() {
     codePush.getUpdateMetadata(codePush.UpdateState.RUNNING).then(
-      (metadata: LocalPackage) => {
+      metadata => {
         this.setState({
           syncMessage: metadata ? JSON.stringify(metadata) : '...',
           progress: false
         });
       },
-      (error: any) => {
+      error => {
         this.setState({ syncMessage: 'Lỗi: ' + error, progress: false });
       }
     );
@@ -407,7 +406,8 @@ class App extends Component {
         <FlashMessage icon={'auto'} />
         <AwesomeAlert
           show={
-            this.state.progress?.receivedBytes > 0 &&
+            this.state.progress &&
+            this.state.progress.receivedBytes > 0 &&
             loadingPercent > 0 &&
             loadingPercent < 100
           }
