@@ -37,6 +37,7 @@ const NumberSelection = props => {
           value={props.value.toString()}
           keyboardType="number-pad"
           onChangeText={props.onChangeText}
+          onBlur={props.onBlur}
         />
       </View>
       <TouchableHighlight
@@ -58,19 +59,23 @@ const styles = StyleSheet.create({
     borderColor: '#d9d9d9',
     borderWidth: 1,
     flexDirection: 'row',
-    width: 100
+    width: 100,
+    height: 30
   },
   textContainer: {
     borderColor: '#d9d9d9',
     borderLeftWidth: 1,
     borderRightWidth: 1,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingVertical: 0,
+    marginVertical: 0,
     flex: 1
   },
   text: {
     color: DEFAULT_COLOR,
-    textAlign: 'center'
+    textAlign: 'center',
+    height: '100%',
+    padding: 0,
+    paddingHorizontal: 5
   },
   btn: {
     justifyContent: 'center',
@@ -82,7 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   disabled: {
-    opacity: 0.3
+    opacity: 0.5
   }
 });
 

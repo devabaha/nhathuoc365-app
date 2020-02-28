@@ -95,7 +95,7 @@ const config = Object.freeze({
     //
     upToPhone: 'upToPhone',
 
-    itemOptions: 'itemOptions'
+    itemAttribute: 'itemAttribute'
   }
 });
 

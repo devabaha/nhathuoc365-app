@@ -10,6 +10,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 import { Actions } from 'react-native-router-flux';
+import appConfig from 'app-config';
 
 class Items extends Component {
   constructor(props) {
@@ -21,13 +22,16 @@ class Items extends Component {
     };
   }
 
-  // add item vào giỏ hàng
-  _addCart(item) {
-    Actions.push('itemOptions', {
-      itemId: item.id
+  _selectItemAttrs(item) {
+    Actions.push(appConfig.routes.itemAttribute, {
+      itemId: item.id,
+      onSubmit: (quantity, modal_key) =>
+        this._addCart(item, quantity, modal_key)
     });
-    return;
+  }
 
+  // add item vào giỏ hàng
+  _addCart = (item, quantity, modal_key) => {
     if (this.props.buyPress) {
       this.props.buyPress(item);
     }
@@ -41,10 +45,15 @@ class Items extends Component {
         buying: true
       },
       async () => {
+        const data = {
+          quantity,
+          modal_key
+        };
         try {
-          var response = await APIHandler.site_cart_adding(
+          const response = await APIHandler.site_cart_adding(
             store.store_id,
-            item.id
+            item.id,
+            data
           );
 
           if (response && response.status == STATUS_SUCCESS) {
@@ -104,12 +113,14 @@ class Items extends Component {
           }
         } catch (e) {
           console.warn(e + ' site_cart_adding');
-
-          store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
         }
       }
     );
-  }
+  };
 
   _getMeasure(item) {
     action(() => {
@@ -309,7 +320,7 @@ class Items extends Component {
           <TouchableHighlight
             style={styles.item_add_cart_btn}
             underlayColor="transparent"
-            onPress={this._addCart.bind(this, item)}
+            onPress={this._selectItemAttrs.bind(this, item)}
           >
             <View
               style={{

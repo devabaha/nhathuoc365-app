@@ -211,11 +211,10 @@ export default class Item extends Component {
       }
     } catch (e) {
       console.log(e + ' site_product');
-
-      store.addApiQueue(
-        'site_product',
-        this._getDataFromServer.bind(this, delay)
-      );
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
+      });
     }
   }
 
@@ -234,17 +233,30 @@ export default class Item extends Component {
     this._getDataFromServer(1000);
   }
 
+  _selectItemAttrs(item) {
+    Actions.push(appConfig.routes.itemAttribute, {
+      itemId: item.id,
+      onSubmit: (quantity, modal_key) =>
+        this._addCart(item, quantity, modal_key)
+    });
+  }
+
   // add item vào giỏ hàng
-  _addCart(item) {
+  _addCart = (item, quantity, modal_key) => {
     this.setState(
       {
         buying: true
       },
       async () => {
+        const data = {
+          quantity,
+          modal_key
+        };
         try {
-          var response = await APIHandler.site_cart_adding(
+          const response = await APIHandler.site_cart_adding(
             store.store_id,
-            item.id
+            item.id,
+            data
           );
 
           if (response && response.status == STATUS_SUCCESS) {
@@ -282,12 +294,14 @@ export default class Item extends Component {
           }
         } catch (e) {
           console.log(e + ' site_cart_adding');
-
-          store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
         }
       }
     );
-  }
+  };
 
   _likeHandler(item) {
     this.setState(
@@ -326,8 +340,10 @@ export default class Item extends Component {
           }
         } catch (e) {
           console.log(e + ' site_like');
-
-          store.addApiQueue('site_like', this._likeHandler.bind(this, item));
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
         }
       }
     );
@@ -461,7 +477,10 @@ export default class Item extends Component {
               </TouchableHighlight>
 
               <TouchableHighlight
-                onPress={this._addCart.bind(this, item_data ? item_data : item)}
+                onPress={this._selectItemAttrs.bind(
+                  this,
+                  item_data ? item_data : item
+                )}
                 underlayColor="transparent"
               >
                 <View
@@ -805,8 +824,10 @@ export default class Item extends Component {
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.log(e + ' site_cart_remove');
-
-      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
+      });
     }
   }
 }

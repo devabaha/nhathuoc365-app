@@ -577,11 +577,11 @@ class APIHandler {
   /**
    * get attrs for product
    */
-  async site_product_attrs(store_id, product_id) {
+  async site_product_attrs(store_id, product_id, data) {
     var api = url_for(
       API.SITE_PRODUCT_ATTRIBUTES + '/' + store_id + '/' + product_id
     );
-    return await this.getAPI(api);
+    return await this.postAPI(api, data);
   }
 
   /**

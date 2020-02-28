@@ -7,7 +7,9 @@ import {
   Animated,
   Keyboard,
   TouchableWithoutFeedback,
-  ScrollView
+  ScrollView,
+  Easing,
+  SafeAreaView
 } from 'react-native';
 import PropTypes from 'prop-types';
 import store from 'app-store';
@@ -19,6 +21,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import NumberSelection from './NumberSelection';
 import Button from '../Button';
 import Loading from '@tickid/tickid-rn-loading';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -26,8 +29,9 @@ const LABEL_KEY = 'label';
 const VALUE_KEY = 'value';
 const ACTIVE_KEY = 'active';
 const DISABLE_KEY = 'disabled';
+const MIN_QUANTITY = 1;
 
-class ItemOptions extends PureComponent {
+class ItemAttribute extends PureComponent {
   static propTypes = {};
 
   static defaultProps = {};
@@ -40,41 +44,19 @@ class ItemOptions extends PureComponent {
     models: [],
     selectedAttrs: [],
     selectedModel: {},
-    quantity: 1
+    selectedModelKey: '',
+    quantity: MIN_QUANTITY
   };
   refModal = React.createRef();
   unmounted = false;
 
   componentDidMount() {
     this.getAttrs();
-    Keyboard.addListener('keyboardDidShow', this.keyboardShowListener);
-    Keyboard.addListener('keyboardDidHide', this.keyboardHideListener);
   }
 
   componentWillUnmount() {
     this.unmounted = true;
-    Keyboard.removeListener('keyboardDidShow', this.keyboardShowListener);
-    Keyboard.removeListener('keyboardDidHide', this.keyboardHideListener);
   }
-
-  keyboardShowListener = e => {
-    if (e.endCoordinates) {
-      Animated.timing(this.state.animateAvoidKeyboard, {
-        // toValue: e.endCoordinates.height,
-        toValue: 30,
-        useNativeDriver: true,
-        duration: 300
-      }).start();
-    }
-  };
-
-  keyboardHideListener = e => {
-    Animated.timing(this.state.animateAvoidKeyboard, {
-      toValue: 0,
-      useNativeDriver: true,
-      duration: 200
-    }).start();
-  };
 
   getAttrs = async () => {
     this.setState({ loading: true });
@@ -84,7 +66,7 @@ class ItemOptions extends PureComponent {
         store.store_data.id,
         this.props.itemId
       );
-      console.log(response);
+      // console.log(response);
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS && response.data) {
           if (response.data.product) {
@@ -92,7 +74,7 @@ class ItemOptions extends PureComponent {
           }
 
           if (response.data.models) {
-            console.log(response.data.models);
+            // console.log(response.data.models);
             this.setState({ models: response.data.models });
           }
 
@@ -145,6 +127,14 @@ class ItemOptions extends PureComponent {
     return { viewData, selectedAttrs };
   };
 
+  getSelectedAttrsViewData(numberSelectedAttrs) {
+    return this.state.selectedAttrs.map((sAttr, index) =>
+      sAttr.value
+        ? sAttr.value + (index < numberSelectedAttrs - 1 ? ' - ' : '')
+        : ''
+    );
+  }
+
   getNumberSelectedAttrs(selectedAttrs) {
     return selectedAttrs.filter(sAttr => sAttr[ATTR_KEY] !== '').length;
   }
@@ -177,10 +167,17 @@ class ItemOptions extends PureComponent {
     }
 
     if (numberSelectedAttrs <= selectedAttrs.length - 1) {
-      this.setState({ selectedModel: {} });
+      this.setState({
+        selectedModel: {},
+        selectedModelKey: ''
+      });
     }
 
-    this.setState({ viewData, selectedAttrs });
+    this.setState({
+      viewData,
+      selectedAttrs,
+      quantity: MIN_QUANTITY
+    });
   };
 
   getUpdatedSelectedAttrs = attr => {
@@ -214,8 +211,8 @@ class ItemOptions extends PureComponent {
     Object.keys(models).forEach(key => {
       let splitKey = key.split('-');
       let possible = true;
-      let unPressKey = '-1';
-      let unPressIndex = '-1';
+      let willDisabledAttrIndex = '-1';
+      let willDisabledAttrGroupIndex = '-1';
 
       splitKey.forEach((key, index) => {
         if (splitModelKey[index]) {
@@ -224,8 +221,8 @@ class ItemOptions extends PureComponent {
             return;
           }
         } else {
-          unPressKey = key;
-          unPressIndex = index.toString();
+          willDisabledAttrIndex = key;
+          willDisabledAttrGroupIndex = index.toString();
         }
       });
 
@@ -233,15 +230,15 @@ class ItemOptions extends PureComponent {
         if (!models[key].inventory) {
           let viewData = [...this.state.viewData];
           viewData.forEach((vData, index) => {
-            if (index.toString() === unPressIndex) {
+            if (index.toString() === willDisabledAttrGroupIndex) {
               vData.data.forEach(vAttr => {
-                if (vAttr[ATTR_KEY].toString() === unPressKey) {
+                if (vAttr[ATTR_KEY].toString() === willDisabledAttrIndex) {
                   vAttr[DISABLE_KEY] = true;
                 }
               });
             }
           });
-          console.log(viewData);
+          // console.log(viewData);
 
           this.setState({ viewData });
         }
@@ -250,7 +247,9 @@ class ItemOptions extends PureComponent {
 
     if (isFullChecked) {
       this.setState({
-        selectedModel: models[Object.keys(models).find(key => key === modelKey)]
+        selectedModel:
+          models[Object.keys(models).find(key => key === modelKey)],
+        selectedModelKey: modelKey
       });
       splitModelKey.forEach((spKey, index) => {
         const temp = [...selectedAttrs];
@@ -276,9 +275,14 @@ class ItemOptions extends PureComponent {
   };
 
   handleChangeQuantity = (quantity, min, max) => {
-    if (quantity >= min && quantity <= max) {
-      this.setState({ quantity });
+    if ((quantity >= min && quantity <= max) || !quantity) {
+      this.setState({ quantity: !quantity ? '' : Number(quantity) });
     }
+  };
+
+  handleSubmit = () => {
+    this.props.onSubmit(this.state.quantity, this.state.selectedModelKey);
+    this.handleClose();
   };
 
   renderOptions() {
@@ -304,19 +308,12 @@ class ItemOptions extends PureComponent {
   }
 
   render() {
-    const animateAvoidKeyboard = {
-      transform: [
-        {
-          translateY: Animated.multiply(this.state.animateAvoidKeyboard, -1)
-        }
-      ]
-    };
     const numberSelectedAttrs = this.getNumberSelectedAttrs(
       this.state.selectedAttrs
     );
     const disabled =
       numberSelectedAttrs === 0 ||
-      Object.keys(this.state.selectedModel).length !== numberSelectedAttrs;
+      Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 
     const btnProps = disabled && {
       btnContainerStyle: styles.containerDisabled,
@@ -324,7 +321,7 @@ class ItemOptions extends PureComponent {
       disabled
     };
 
-    const image = this.state.selectedModel.image
+    const imageUri = this.state.selectedModel.image
       ? this.state.selectedModel.image
       : this.state.product.image;
 
@@ -336,35 +333,62 @@ class ItemOptions extends PureComponent {
       ? this.state.selectedModel.inventory
       : this.state.product.total_inventory;
 
+    const title = this.state.product.name;
+    const subTitle =
+      numberSelectedAttrs === 0
+        ? '• Chưa chọn thuộc tính'
+        : this.getSelectedAttrsViewData(numberSelectedAttrs);
+
     return this.state.loading ? (
       <Loading loading />
     ) : (
       <Modal
         ref={this.refModal}
         isOpen
-        style={styles.container}
-        position={'bottom'}
+        position="top"
         onClosed={() => Actions.pop()}
         swipeToClose={false}
         style={[styles.modal]}
+        easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <Animated.View
-            style={[styles.optionListContainer, animateAvoidKeyboard]}
-          >
-            <View style={styles.header}>
-              <View style={styles.imgContainer}>
-                <CachedImage
-                  mutable
-                  source={{ uri: image }}
-                  style={styles.image}
-                />
-              </View>
-              <View style={styles.info}>
-                <Text style={styles.text}>{price}</Text>
-                <Text style={styles.subText}>
-                  Kho: <Text>{inventory}</Text>
-                </Text>
+          <SafeAreaView style={[styles.safeView]}>
+            <TouchableWithoutFeedback onPress={this.handleClose}>
+              <View style={{ flex: 1 }} />
+            </TouchableWithoutFeedback>
+
+            <Animated.View style={[styles.optionListContainer]}>
+              <View style={styles.header}>
+                <View
+                  style={[
+                    styles.imgContainer,
+                    imageUri || {
+                      backgroundColor: '#eee'
+                    }
+                  ]}
+                >
+                  <CachedImage
+                    mutable
+                    source={{ uri: imageUri }}
+                    style={styles.image}
+                  />
+                </View>
+                <View style={styles.info}>
+                  <View>
+                    <Text numberOfLines={2} style={styles.title}>
+                      {title}
+                    </Text>
+                    <Text numberOfLines={1} style={styles.note}>
+                      {subTitle}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text style={styles.highlight}>{price}</Text>
+                    <Text style={styles.note}>
+                      Kho: <Text>{inventory}</Text>
+                    </Text>
+                  </View>
+                </View>
               </View>
 
               <TouchableOpacity
@@ -374,46 +398,53 @@ class ItemOptions extends PureComponent {
               >
                 <Icon name="ios-close" style={styles.closeIcon} />
               </TouchableOpacity>
-            </View>
 
-            <ScrollView
-              style={{
-                maxHeight: appConfig.device.height * 0.5
-              }}
-              scrollEventThrottle={16}
-              keyboardShouldPersistTaps="always"
-            >
-              <View onStartShouldSetResponder={() => true}>
-                {this.renderOptions()}
+              <ScrollView
+                style={{
+                  maxHeight: appConfig.device.height * 0.5
+                }}
+                scrollEventThrottle={16}
+                keyboardShouldPersistTaps="always"
+                keyboardDismissMode="on-drag"
+              >
+                <View onStartShouldSetResponder={() => true}>
+                  {this.renderOptions()}
+                </View>
+              </ScrollView>
+
+              <View style={styles.quantity}>
+                <Text style={styles.label}>Số lượng</Text>
+                <NumberSelection
+                  value={this.state.quantity}
+                  min={MIN_QUANTITY}
+                  max={inventory}
+                  onChangeText={text =>
+                    this.handleChangeQuantity(text, MIN_QUANTITY, inventory)
+                  }
+                  onMinus={() => {
+                    this.setState({ quantity: this.state.quantity - 1 });
+                  }}
+                  onPlus={() => {
+                    this.setState({ quantity: this.state.quantity + 1 });
+                  }}
+                  onBlur={() => {
+                    if (!this.state.quantity) {
+                      this.setState({ quantity: MIN_QUANTITY });
+                    }
+                  }}
+                  disabled={disabled}
+                />
               </View>
-            </ScrollView>
 
-            <View style={styles.quantity}>
-              <Text style={styles.label}>Số lượng</Text>
-              <NumberSelection
-                value={this.state.quantity}
-                min={1}
-                max={inventory}
-                onChangeText={text =>
-                  this.handleChangeQuantity(text, 1, inventory)
-                }
-                onMinus={() => {
-                  this.setState({ quantity: this.state.quantity - 1 });
-                }}
-                onPlus={() => {
-                  this.setState({ quantity: this.state.quantity + 1 });
-                }}
-                disabled={disabled}
+              <Button
+                title="Thêm vào giỏ hàng"
+                onPress={this.handleSubmit}
+                {...btnProps}
               />
-            </View>
+            </Animated.View>
 
-            <Button
-              title="Thêm vào giỏ hàng"
-              onPress={() => {}}
-              containerStyle={{ marginBottom: 15 }}
-              {...btnProps}
-            />
-          </Animated.View>
+            {appConfig.device.isIOS && <KeyboardSpacer />}
+          </SafeAreaView>
         </TouchableWithoutFeedback>
       </Modal>
     );
@@ -421,27 +452,28 @@ class ItemOptions extends PureComponent {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0)'
-  },
   modal: {
-    maxHeight: appConfig.device.height * 0.8
+    backgroundColor: 'transparent'
+  },
+  safeView: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    justifyContent: 'flex-end'
   },
   optionListContainer: {
-    overflow: 'hidden',
+    paddingVertical: 15,
+    maxHeight: appConfig.device.height * 0.8,
     backgroundColor: '#fff',
-    width: '100%',
-    borderTopLeftRadius: 4,
-    borderTopRightRadius: 4
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    overflow: 'hidden'
   },
   header: {
     paddingVertical: 20,
     backgroundColor: '#fff',
     flexDirection: 'row',
     borderColor: '#eee',
-    borderBottomWidth: 1,
-    alignItems: 'center'
+    borderBottomWidth: 1
   },
   imgContainer: {
     width: 120,
@@ -449,7 +481,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 10,
-    backgroundColor: '#eee',
     borderRadius: 8,
     overflow: 'hidden'
   },
@@ -459,26 +490,39 @@ const styles = StyleSheet.create({
     resizeMode: 'contain'
   },
   info: {
-    alignSelf: 'flex-end',
-    marginLeft: 5
+    justifyContent: 'space-between',
+    marginLeft: 5,
+    marginRight: 35,
+    flex: 1
+  },
+  title: {
+    fontSize: 16,
+    marginBottom: appConfig.device.isIOS ? 3 : 0,
+    color: '#444',
+    fontWeight: '500'
+  },
+  subTitle: {
+    fontSize: 14,
+    color: '#999',
+    fontWeight: '400'
   },
   close: {
     position: 'absolute',
     right: 15,
-    top: 15
+    top: 7
   },
   closeIcon: {
     fontSize: 34,
     color: DEFAULT_COLOR
   },
-  text: {
+  highlight: {
     fontSize: 18,
     color: '#404040',
     fontWeight: 'bold',
-    marginBottom: 5
+    marginBottom: appConfig.device.isIOS ? 2 : -2
   },
-  subText: {
-    color: '#999',
+  note: {
+    color: '#888',
     fontSize: 14
   },
   separate: {
@@ -507,4 +551,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ItemOptions;
+export default ItemAttribute;

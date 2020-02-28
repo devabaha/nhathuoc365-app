@@ -112,7 +112,7 @@ import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
 import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
-import ItemOptions from './components/stores/ItemOptions';
+import ItemAttribute from './components/stores/ItemAttribute';
 /**
  * Initializes config for Phone Card module
  */
@@ -1037,8 +1037,8 @@ class RootRouter extends Component {
 
               {/* ================ LIGHT BOX SHOW PRODUCT's OPTIONS ================ */}
               <Stack
-                key={appConfig.routes.itemOptions}
-                component={ItemOptions}
+                key={appConfig.routes.itemAttribute}
+                component={ItemAttribute}
               />
             </Lightbox>
 
