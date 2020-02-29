@@ -48,7 +48,7 @@ class EnterPhone extends Component {
     onPressSelectNetwork: defaultListener,
     onChangeText: defaultListener,
     networkType: '',
-    keyboardType: 'phone-pad',
+    keyboardType: 'number-pad',
     errorMessage: '',
     placeholder: 'Nhập số',
     title: 'Nạp đến',
