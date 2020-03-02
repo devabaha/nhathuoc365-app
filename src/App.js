@@ -3,7 +3,14 @@ import './lib/Constant';
 import './lib/Helper';
 import appConfig from './config';
 import store from 'app-store';
-import { StyleSheet, Platform, View, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Platform,
+  View,
+  Alert,
+  Text,
+  TextInput
+} from 'react-native';
 import {
   Scene,
   Router,
@@ -120,6 +127,13 @@ import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
+/**
+ * Not allow font scaling
+ */
+if (Text.defaultProps == null) Text.defaultProps = {};
+Text.defaultProps.allowFontScaling = false;
+if (TextInput.defaultProps == null) TextInput.defaultProps = {};
+TextInput.defaultProps.allowFontScaling = false;
 /**
  * Initializes config for Phone Card module
  */

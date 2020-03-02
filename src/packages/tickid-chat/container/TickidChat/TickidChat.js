@@ -24,7 +24,6 @@ import PropTypes from 'prop-types';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
-import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import { setStater } from '../../helper';
 import {
   WIDTH,
@@ -801,7 +800,7 @@ class TickidChat extends Component {
 
     return (
       <SafeAreaView style={[styles.container, this.props.containerStyle]}>
-        {this.props.messages && this.props.messages.length === 0 && (
+        {!!this.props.messages && this.props.messages.length === 0 && (
           <EmptyChat onPress={this.onListViewPress} />
         )}
         <View style={styles.container} onLayout={this.handleContainerLayout}>
