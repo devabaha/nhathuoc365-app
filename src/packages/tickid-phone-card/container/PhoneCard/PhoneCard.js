@@ -71,7 +71,6 @@ class PhoneCard extends BaseContainer {
 
     switch (route.keyView) {
       case 'phone_paid':
-        extraProps.keyboardType = 'phone-pad';
         extraProps.errorEmptyMessage = 'Vui lòng nhập số điện thoại';
 
         return (
@@ -114,6 +113,7 @@ class PhoneCard extends BaseContainer {
         extraProps.errorEmptyMessage = 'Vui lòng nhập mã số tài khoản';
         extraProps.errorLengthMessage = 'Số tài khoản cần ít nhất 12 số';
         extraProps.validLength = 12;
+        extraProps.keyboardType = 'number-pad';
 
         return (
           <KPlusPaidContainer
