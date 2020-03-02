@@ -62,7 +62,9 @@ class Transfer extends Component {
     const { name, displayPhone, data, notInContact } = contact;
 
     if (displayPhone.trim()) {
-      const receiverTel = displayPhone.replace(/ /g, '');
+      let receiverTel = displayPhone.replace(/ /g, '');
+      receiverTel = receiverTel.split('+84').join('0');
+      receiverTel = receiverTel.split('84').join('0');
 
       if (receiverTel !== store.user_info.tel) {
         this.setState({
@@ -83,7 +85,7 @@ class Transfer extends Component {
                 name: notInContact ? receiverInfo.name : name.trim(),
                 walletName: receiverInfo.name,
                 tel: displayPhone,
-                originTel: receiverTel,
+                originTel: receiverInfo.tel,
                 avatar: receiverInfo.avatar || data.thumbnailPath,
                 notInContact
               }
@@ -129,7 +131,8 @@ class Transfer extends Component {
                 id: response.data.id,
                 name: response.data.name,
                 wallet_address: response.data.wallet_address,
-                avatar: response.data.img
+                avatar: response.data.img,
+                tel: response.data.tel
               });
             } else {
               callBackError();

@@ -24,7 +24,9 @@ class Contact {
   }
 
   get newPhone() {
-    return replaceAll(this.phone, '+84', '0');
+    let newNumber = replaceAll(this.phone, '+84', '0');
+    newNumber = replaceAll(newNumber, '84', '0');
+    return newNumber;
   }
 
   get displayPhone() {
