@@ -50,7 +50,7 @@ class EnterPhone extends Component {
     networkType: '',
     keyboardType: 'phone-pad',
     errorMessage: '',
-    placeholder: 'Nhập số',
+    placeholder: 'Nhập số điện thoại',
     title: 'Nạp đến',
     customRightComponent: null,
     inputStyle: {},

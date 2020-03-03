@@ -72,7 +72,6 @@
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		EE57C7A6C7C748A0BFD7DE6E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69B46151E9D14FFD83C1E303 /* SimpleLineIcons.ttf */; };
 		F5F09C3709B04EF79FBBC3C3 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A3037FFAF384E5CAF510AFD /* Feather.ttf */; };
-		F66E145E231A4AEEB881016B /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 222D0046E773438AAE58E1F0 /* libRNFirebase.a */; };
 		FC36BD30A4FE49A49EEC07E8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89363297F7DC4360872EAC59 /* MaterialCommunityIcons.ttf */; };
 /* End PBXBuildFile section */
 
@@ -335,13 +334,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
-		};
-		88EDC00B239F30CF008D4652 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = AA0E66933C7C4834A5EBA9ED /* RNFirebase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNFirebase;
 		};
 		8A0306D023683F65005AC604 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -639,7 +631,6 @@
 		97890CB30B8343E4A9B3648B /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		9940F2283C894EC0A01B84EF /* libRNSVG.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNSVG.a; sourceTree = "<group>"; };
 		9C7EC47A653A4A6484800387 /* RCTContacts.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTContacts.xcodeproj; path = "../node_modules/react-native-contacts/ios/RCTContacts.xcodeproj"; sourceTree = "<group>"; };
-		AA0E66933C7C4834A5EBA9ED /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
 		AA42326B273F475F83C28005 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		AABE044CF0D24C00A83BF395 /* RNGestureHandler.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNGestureHandler.xcodeproj; path = "../node_modules/react-native-gesture-handler/ios/RNGestureHandler.xcodeproj"; sourceTree = "<group>"; };
 		ACA5EE5FDDDFEF7D63DDD877 /* Pods-my_food_new.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-my_food_new.release.xcconfig"; path = "Target Support Files/Pods-my_food_new/Pods-my_food_new.release.xcconfig"; sourceTree = "<group>"; };
@@ -706,7 +697,6 @@
 				0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */,
 				B42DD41E63ED48F48B0B94C8 /* libRCTContacts.a in Frameworks */,
 				DA8018313E314B808FD728D2 /* libReactNativeFingerprintScanner.a in Frameworks */,
-				F66E145E231A4AEEB881016B /* libRNFirebase.a in Frameworks */,
 				85294031339D7C0E36487A95 /* libPods-my_food_new.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -995,7 +985,6 @@
 				AABE044CF0D24C00A83BF395 /* RNGestureHandler.xcodeproj */,
 				9C7EC47A653A4A6484800387 /* RCTContacts.xcodeproj */,
 				EF636B3E893D4E0680E0602F /* ReactNativeFingerprintScanner.xcodeproj */,
-				AA0E66933C7C4834A5EBA9ED /* RNFirebase.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1034,14 +1023,6 @@
 				13B07F961A680F5B00A75B9A /* my_food_new.app */,
 				00E356EE1AD99517003FC87E /* my_food_newTests.xctest */,
 				1C206E2722F1ACCE00CF6BEA /* OneSignalNotificationServiceExtension.appex */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		88EDC008239F30CE008D4652 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				88EDC00C239F30CF008D4652 /* libRNFirebase.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1426,10 +1407,6 @@
 					ProjectRef = 96B3A6FE23BA4A3C8F83F278 /* RNFetchBlob.xcodeproj */;
 				},
 				{
-					ProductGroup = 88EDC008239F30CE008D4652 /* Products */;
-					ProjectRef = AA0E66933C7C4834A5EBA9ED /* RNFirebase.xcodeproj */;
-				},
-				{
 					ProductGroup = 8A3FB28D23615CAB0076A3DA /* Products */;
 					ProjectRef = AABE044CF0D24C00A83BF395 /* RNGestureHandler.xcodeproj */;
 				},
@@ -1707,13 +1684,6 @@
 			fileType = archive.ar;
 			path = libRCTText.a;
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		88EDC00C239F30CF008D4652 /* libRNFirebase.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNFirebase.a;
-			remoteRef = 88EDC00B239F30CF008D4652 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8A0306D123683F65005AC604 /* libReactNativeFingerprintScanner.a */ = {

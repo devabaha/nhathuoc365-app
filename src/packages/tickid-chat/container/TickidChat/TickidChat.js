@@ -304,7 +304,7 @@ class TickidChat extends Component {
     });
   }
 
-  handleFocus = () => {
+  handleFocus = (selectedType = COMPONENT_TYPE._NONE) => {
     if (this.refInput.current) {
       this.refInput.current.focus();
     }
@@ -313,7 +313,7 @@ class TickidChat extends Component {
       setStater(this, this.unmounted, {
         editable: true,
         showToolBar: true,
-        selectedType: COMPONENT_TYPE._NONE
+        selectedType
       })
     );
   };
@@ -352,14 +352,24 @@ class TickidChat extends Component {
 
   handlePressComposerButton = componentType => {
     const state = { ...this.state };
-    state.editable = false;
 
     switch (componentType.id) {
+      case COMPONENT_TYPE.EMOJI.id:
+        if (!state.editable) {
+          state.editable = true;
+          this.handleFocus(componentType);
+        } else {
+          state.editable = false;
+          this.handleBlur();
+        }
+        break;
       case COMPONENT_TYPE.GALLERY.id:
+        state.editable = false;
         Keyboard.dismiss();
         this.handlePressGallery(state);
         break;
       case COMPONENT_TYPE.PIN.id:
+        state.editable = false;
         Keyboard.dismiss();
         this.handlePressPin(state);
         break;
@@ -485,13 +495,32 @@ class TickidChat extends Component {
     }
   };
 
+  renderLeftComposer = props => (
+    <TouchableOpacity
+      hitSlop={HIT_SLOP}
+      onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.EMOJI)}
+    >
+      <Animated.View style={[styles.center, styles.sendBtn, { marginLeft: 5 }]}>
+        <IconAntDesign
+          size={22}
+          name="message1"
+          color={
+            this.state.selectedType === COMPONENT_TYPE.EMOJI
+              ? config.focusColor
+              : config.blurColor
+          }
+        />
+      </Animated.View>
+    </TouchableOpacity>
+  );
+
   renderComposer = () => {
     return (
       <CustomComposer
         showInput={
           this.state.selectedImages.length === 0 || !this.state.showBackBtn
         }
-        onFocusInput={this.handleFocus}
+        onFocusInput={() => this.handleFocus(COMPONENT_TYPE.EMOJI)}
         refInput={this.refInput}
         editable={this.state.editable}
         onTyping={this.onTyping}
@@ -507,6 +536,7 @@ class TickidChat extends Component {
   renderInputToolbar = props => {
     return (
       <View style={styles.inputToolbar}>
+        {this.renderLeftComposer()}
         {this.renderComposer()}
         {this.renderSend()}
       </View>
@@ -701,15 +731,14 @@ class TickidChat extends Component {
     let style = {};
     if (
       this.props.messages.length !== 0 &&
-      props.currentMessage._id ===
-        this.props.messages[this.props.messages.length - 1]._id
+      props.currentMessage._id === this.props.messages[0]._id
     ) {
       style = styles.messageStyle;
     }
 
     return (
       <TouchableWithoutFeedback onPress={this.onListViewPress.bind(this)}>
-        <View style={{ ...style }}>
+        <View style={style}>
           <Message {...props} />
         </View>
       </TouchableWithoutFeedback>
@@ -720,6 +749,7 @@ class TickidChat extends Component {
     const isImage = !!props.currentMessage.image;
     const bgColor_left = isImage ? 'transparent' : '#e5e5ea';
     const bgColor_right = isImage ? 'transparent' : '#198bfe';
+
     return (
       <Bubble
         {...props}
@@ -770,6 +800,9 @@ class TickidChat extends Component {
 
     return (
       <SafeAreaView style={[styles.container, this.props.containerStyle]}>
+        {!!this.props.messages && this.props.messages.length === 0 && (
+          <EmptyChat onPress={this.onListViewPress} />
+        )}
         <View style={styles.container} onLayout={this.handleContainerLayout}>
           <TouchableWithoutFeedback
             style={styles.touchWrapper}
@@ -820,8 +853,8 @@ class TickidChat extends Component {
                 isKeyboardInternallyHandled={false}
                 listViewProps={{
                   contentContainerStyle: styles.giftedChatContainer,
-                  style: [styles.flex, extraChatViewStyle],
-                  ListEmptyComponent: EmptyChat
+                  style: [styles.flex, extraChatViewStyle]
+                  // ListEmptyComponent: EmptyChat
                 }}
                 scrollToBottom
                 scrollToBottomComponent={this.renderScrollBottomComponent}
@@ -930,8 +963,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   emptyChatContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'center',
+    top: '30%',
     paddingBottom: 60,
-    transform: [{ rotateX: '180deg' }]
+    position: 'absolute',
+    zIndex: 99
   },
   emptyChatText: {
     color: '#909090',
@@ -962,9 +1000,11 @@ const styles = StyleSheet.create({
 
 export default TickidChat;
 
-const EmptyChat = () => (
-  <View style={[styles.fullCenter, styles.emptyChatContainer]}>
-    <IconFontisto name="comments" color={'#909090'} size={60} />
-    <Text style={styles.emptyChatText}>Bắt đầu cuộc trò chuyện thôi!</Text>
-  </View>
+const EmptyChat = props => (
+  <TouchableWithoutFeedback onPress={props.onPress}>
+    <View style={[styles.emptyChatContainer]}>
+      <IconFontisto name="comments" color={'#909090'} size={60} />
+      <Text style={styles.emptyChatText}>Bắt đầu cuộc trò chuyện thôi!</Text>
+    </View>
+  </TouchableWithoutFeedback>
 );

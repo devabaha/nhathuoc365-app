@@ -68,10 +68,11 @@ class PhoneCard extends BaseContainer {
   renderScene = ({ route }) => {
     const extraProps = {};
     extraProps.hideContact = true;
-    extraProps.errorEmptyMessage = 'Vui lòng nhập mã số thẻ';
 
     switch (route.keyView) {
       case 'phone_paid':
+        extraProps.errorEmptyMessage = 'Vui lòng nhập số điện thoại';
+
         return (
           <PrepayContainer
             prefix="trước"
@@ -83,9 +84,10 @@ class PhoneCard extends BaseContainer {
           />
         );
       case 'internet_paid':
-        extraProps.placeholder = 'Nhập mã số thẻ';
-        extraProps.errorLengthMessage = 'Mã số thẻ cần ít nhất 9 số';
+        extraProps.placeholder = 'Nhập số tài khoản';
+        extraProps.errorLengthMessage = 'Số tài khoản cần ít nhất 9 ký tự';
         extraProps.validLength = 9;
+        extraProps.keyboardType = 'default';
 
         return (
           <PrepayContainer
@@ -107,9 +109,11 @@ class PhoneCard extends BaseContainer {
           />
         );
       case 'kplus_paid':
-        extraProps.placeholder = 'Nhập mã số thẻ';
-        extraProps.errorLengthMessage = 'Mã số thẻ cần ít nhất 12 số';
+        extraProps.placeholder = 'Nhập số tài khoản';
+        extraProps.errorEmptyMessage = 'Vui lòng nhập mã số tài khoản';
+        extraProps.errorLengthMessage = 'Số tài khoản cần ít nhất 12 số';
         extraProps.validLength = 12;
+        extraProps.keyboardType = 'number-pad';
 
         return (
           <KPlusPaidContainer
