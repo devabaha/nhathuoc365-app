@@ -4,12 +4,17 @@ import Icon1 from 'react-native-vector-icons/FontAwesome';
 import Icon2 from 'react-native-vector-icons/Octicons';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import appConfig from 'app-config';
+import Svg, { Rect } from 'react-native-svg';
+import interpolate from 'color-interpolate';
+import extractColor from 'react-native-svg/lib/module/lib/extract/extractColor';
 
 const AnimatedIcon1 = Animated.createAnimatedComponent(Icon1);
 const AnimatedIcon2 = Animated.createAnimatedComponent(Icon2);
 const AnimatedIcon3 = Animated.createAnimatedComponent(Icon3);
 const MAIN_COLOR = appConfig.colors.primary;
 const SUB_COLOR = '#fff';
+const SHAPE_DIMENSSION = appConfig.device.isAndroid ? 48 : 50;
+const colormap = interpolate([MAIN_COLOR, SUB_COLOR]);
 
 class CreditCardTabButton extends Component {
   state = {
@@ -22,10 +27,25 @@ class CreditCardTabButton extends Component {
     animatedColor: new Animated.Value(0),
     animatedFocused: new Animated.Value(0)
   };
+  refRect = React.createRef();
 
   componentDidMount() {
     this.startAnimation();
+    this.state.animatedColor.addListener(this.animatedColorListener);
   }
+
+  componentWillUnmount() {
+    this.state.animatedColor.removeListener(this.animatedColorListener);
+  }
+
+  animatedColorListener = ({ value }) => {
+    const color = colormap(value);
+    if (this.refRect.current) {
+      this.refRect.current.setNativeProps({
+        fill: extractColor(color)
+      });
+    }
+  };
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState !== this.state) {
@@ -257,7 +277,7 @@ class CreditCardTabButton extends Component {
           translateY: this.state.animatedFocused.interpolate({
             inputRange: [0, 1],
             outputRange: [
-              appConfig.device.isAndroid ? -3 : -5,
+              appConfig.device.isAndroid ? -3 : -4,
               appConfig.device.isAndroid ? -22 : -24
             ]
           })
@@ -340,10 +360,6 @@ class CreditCardTabButton extends Component {
       ]
     };
 
-    const animatedBackgroundColorStyle = {
-      opacity: this.state.animatedColor
-    };
-
     const animatedScanBackgroundColorStyle = {
       opacity: this.state.animatedColor
     };
@@ -397,19 +413,26 @@ class CreditCardTabButton extends Component {
       <Animated.View style={[styles.container, animatedFocused]}>
         <Animated.View style={[styles.animatedContainer]}>
           <Animated.View style={[styles.animatedIconContainer]}>
-            <Animated.View
-              style={[
-                styles.animatedIconBackground,
-                animatedBackgroundColorStyle
-              ]}
-            />
+            <Svg width="100%" height="100%">
+              <Rect
+                ref={this.refRect}
+                x="0"
+                y="0"
+                width="100%"
+                height="100%"
+                fill={MAIN_COLOR}
+                rx={18}
+              />
+            </Svg>
             {this.renderAnimated(data)}
           </Animated.View>
-          <Animated.View style={[styles.scanContainer, animatedScanStyle]}>
-            <Animated.View style={[styles.scanLTR]} />
-            <Animated.View
-              style={[styles.scanRTL, animatedScanBackgroundColorStyle]}
-            />
+          <Animated.View style={styles.scanContainer}>
+            <Animated.View style={[styles.scanWrapper, animatedScanStyle]}>
+              <Animated.View style={[styles.scanLTR]} />
+              <Animated.View
+                style={[styles.scanRTL, animatedScanBackgroundColorStyle]}
+              />
+            </Animated.View>
           </Animated.View>
         </Animated.View>
         {this.props.children}
@@ -422,27 +445,24 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     ...elevationShadowStyle(5, 0, 2),
-    borderRadius: 20,
+    borderRadius: 18,
     zIndex: 1,
     alignItems: 'center'
   },
   animatedContainer: {
     zIndex: 1,
-    width: appConfig.device.isAndroid ? 48 : 50,
-    height: appConfig.device.isAndroid ? 48 : 50,
-    borderRadius: 18,
+    width: SHAPE_DIMENSSION,
+    height: SHAPE_DIMENSSION,
     overflow: 'hidden',
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: SUB_COLOR
+    alignItems: 'center'
   },
   animatedIconContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    height: '100%',
-    backgroundColor: MAIN_COLOR
+    height: '100%'
   },
   animatedIconBackground: {
     position: 'absolute',
@@ -470,6 +490,13 @@ const styles = StyleSheet.create({
     height: 19
   },
   scanContainer: {
+    position: 'absolute',
+    borderRadius: 18,
+    height: SHAPE_DIMENSSION,
+    width: SHAPE_DIMENSSION,
+    overflow: 'hidden'
+  },
+  scanWrapper: {
     left: 0,
     height: '100%',
     width: 0.5,

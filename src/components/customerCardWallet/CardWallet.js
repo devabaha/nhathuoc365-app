@@ -4,15 +4,16 @@ import {
   View,
   Text,
   Image,
+  ImageBackground,
   StyleSheet,
   Animated,
   Easing,
-  Vibration,
   TouchableOpacity
 } from 'react-native';
 import Button from 'react-native-button';
 import Icon from 'react-native-vector-icons/AntDesign';
 import appConfig from 'app-config';
+import LinearGradient from 'react-native-linear-gradient';
 
 const LONG_PRESS_TIME_OUT = 300;
 const LOOP_DURATION = 3000;
@@ -47,7 +48,7 @@ class CardWallet extends PureComponent {
 
           if (finished) {
             this.shaking = true;
-            Vibration.vibrate(100);
+            HapticFeedBack('impactHeavy');
 
             this.backgroundTimeout = setTimeout(
               () => this.handleCancelLongPress(true),
@@ -109,6 +110,13 @@ class CardWallet extends PureComponent {
     const shakingAngle = '1deg';
     const shakingDistanceX = 2;
     const shakingDistanceY = 2.5;
+    const colorLocation = [0, 0.65, 0.85, 1];
+    const colorMap = [
+      'rgba(0,0,0, 0)',
+      'rgba(0,0,0, .05)',
+      'rgba(0,0,0, .1)',
+      'rgba(0,0,0, .13)'
+    ];
 
     return (
       <Button
@@ -184,7 +192,17 @@ class CardWallet extends PureComponent {
             }
           ]}
         >
-          <Image source={{ uri: this.props.image }} style={styles.thumbnail} />
+          <ImageBackground
+            source={{ uri: this.props.image }}
+            style={styles.thumbnail}
+          >
+            <LinearGradient
+              colors={colorMap}
+              locations={colorLocation}
+              style={styles.gradientShadow}
+            />
+          </ImageBackground>
+
           <View style={[styles.infoWrapper]}>
             <View style={styles.titleContainer}>
               <Text style={styles.title}>{this.props.title}</Text>
@@ -256,20 +274,12 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: '100%',
     height: 180,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
+    backgroundColor: '#fff'
   },
   infoWrapper: {
     padding: 16,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: -5
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-
-    elevation: 4
+    backgroundColor: '#fff'
   },
   titleContainer: {
     flexDirection: 'row',
@@ -322,15 +332,7 @@ const styles = StyleSheet.create({
     color: '#00b140'
   },
   shadow: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5
+    ...elevationShadowStyle(5, 0, 0)
   },
   delete: {
     position: 'absolute',
@@ -353,6 +355,13 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  gradientShadow: {
+    width: '100%',
+    height: 15,
+    position: 'absolute',
+    bottom: 0,
+    zIndex: 1
   }
 });
 

@@ -152,7 +152,7 @@ class ComboHeaderButton extends PureComponent {
           {this.props.secretComponent}
           {!!!this.props.rightSecretComponent && (
             <TouchableOpacity onPress={this.handleClose} hitSlop={HIT_SLOP}>
-              <Icon name="close" size={20} color="#a5a5a5" />
+              <Icon name="close" style={styles.closeIcon} />
             </TouchableOpacity>
           )}
         </Animated.View>
@@ -193,6 +193,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     backgroundColor: '#fff',
     flexDirection: 'row'
+  },
+  closeIcon: {
+    fontSize: appConfig.device.isIOS ? 20 : 16,
+    color: '#a5a5a5'
   }
 });
 

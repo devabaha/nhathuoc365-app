@@ -65,7 +65,7 @@ class Search extends Component {
       >
         <FlatList
           keyboardDismissMode="on-drag"
-          keyboardShouldPersistTaps="always"
+          keyboardShouldPersistTaps="handled"
           style={{ flex: 1 }}
           contentContainerStyle={{ flexGrow: 1 }}
           data={this.props.data}

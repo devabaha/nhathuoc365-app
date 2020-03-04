@@ -19,7 +19,7 @@ class SearchInput extends PureComponent {
   render() {
     return (
       <>
-        <Icon name="search" size={24} color={appConfig.colors.primary} />
+        <Icon name="search" style={styles.icon} />
         <TextInput
           ref={this.refTextInput}
           numberOfLines={1}
@@ -38,8 +38,12 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     marginHorizontal: 10,
-    fontSize: 18,
+    fontSize: appConfig.device.isIOS ? 18 : 16,
     paddingVertical: 10
+  },
+  icon: {
+    fontSize: appConfig.device.isIOS ? 24 : 20,
+    color: appConfig.colors.primary
   }
 });
 
