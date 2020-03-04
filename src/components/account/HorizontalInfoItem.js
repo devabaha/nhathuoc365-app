@@ -45,7 +45,7 @@ export default class HorizontalInfoItem extends Component {
         return (
           <View style={styles.btnSelect}>
             <DatePicker
-              style={{ flex: 1 }}
+              style={{ flex: 1, justifyContent: 'center' }}
               date={value || this.state.selectedDate}
               mode="date"
               placeholder={defaultValue}
@@ -152,9 +152,9 @@ const styles = StyleSheet.create({
   container: {
     minHeight: 50,
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 15,
-    paddingBottom: 15
+    alignItems: 'center'
+    // paddingTop: 15,
+    // paddingBottom: 15
   },
 
   title: {
