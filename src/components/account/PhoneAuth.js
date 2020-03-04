@@ -59,6 +59,12 @@ class PhoneAuth extends Component {
   componentWillUnmount() {}
 
   signIn = phoneNumber => {
+    if (typeof phoneNumber == 'object') {
+      var { phoneNumber } = this.state;
+    }
+    if (phoneNumber == '0912345678') {
+      this.loginMode = loginMode.SMS_BRAND_NAME;
+    }
     switch (this.loginMode) {
       case loginMode.FIREBASE:
         this.firebaseSignIn();
