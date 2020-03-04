@@ -376,3 +376,13 @@ global.elevationShadowStyle = (elevation, width = 0, height = 0) => ({
   shadowOpacity: 0.25,
   shadowRadius: 0.8 * elevation
 });
+
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: true
+};
+
+global.HapticFeedBack = (type, opt = options) => {
+  ReactNativeHapticFeedback.trigger(type, opt);
+};

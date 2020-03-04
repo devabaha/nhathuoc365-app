@@ -10,7 +10,6 @@ import {
   Text,
   RefreshControl
 } from 'react-native';
-import store from 'app-store';
 import Loading from '../../components/Loading';
 import appConfig from 'app-config';
 import {
@@ -23,6 +22,8 @@ import { debounce } from 'lodash';
 import NoResult from '../../components/NoResult';
 import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import LinearGradient from 'react-native-linear-gradient';
+import { Actions } from 'react-native-router-flux';
 
 const MIN_CHARACTER = 3;
 const BUTTON_TYPE = {
@@ -48,7 +49,7 @@ class CustomerCardWallet extends Component {
     cards: [],
     searchCards: [],
     searchMyCards: [],
-    loading: false,
+    loading: true,
     isTyping: false,
     refreshing: false,
     searchValue: '',
@@ -67,13 +68,32 @@ class CustomerCardWallet extends Component {
   refShakingCards = [];
 
   componentDidMount() {
-    this.setState({ loading: true });
     this.getFavors();
+    if (appConfig.device.isAndroid) {
+      Keyboard.addListener('keyboardDidShow', this.keyboardShowListener);
+      Keyboard.addListener('keyboardDidHide', this.keyboardHideListener);
+    }
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    if (appConfig.device.isAndroid) {
+      Keyboard.removeListener('keyboardDidShow', this.keyboardShowListener);
+      Keyboard.removeListener('keyboardDidHide', this.keyboardHideListener);
+    }
   }
+
+  keyboardShowListener = e => {
+    Actions.refresh({
+      hideTabBar: true
+    });
+  };
+
+  keyboardHideListener = e => {
+    Actions.refresh({
+      hideTabBar: false
+    });
+  };
 
   handlePressShortcutSearch = () => {
     if (this.refComboHeaderButton.current) {
@@ -228,10 +248,19 @@ class CustomerCardWallet extends Component {
         });
         this.refComboHeaderButton.current &&
           this.refComboHeaderButton.current.handleClose();
+
         if (response.data) {
-          setStater(this, this.unmounted, {
-            cards: response.data.sites || []
-          });
+          setStater(
+            this,
+            this.unmounted,
+            {
+              cards: response.data.sites || []
+            },
+            () => {
+              // delete refCard
+              type === 0 && this.handleUpdateRefCards(null, card, 'del');
+            }
+          );
         }
       } else {
         flashShowMessage({
@@ -312,15 +341,33 @@ class CustomerCardWallet extends Component {
     this.getFavors();
   };
 
-  handleAddRefCards = (inst, card) => {
-    const refCard = this.refCards.find(ref => ref.id === card.id);
-    if (!refCard) {
-      this.refCards.push({ id: card.id, ref: inst });
+  handleUpdateRefCards = (inst, card, type) => {
+    let refCard = null,
+      index = -1;
+    this.refCards.forEach((ref, indx) => {
+      if (ref.id === card.id) {
+        refCard = ref;
+        index = indx;
+      }
+    });
+
+    switch (type) {
+      case 'add':
+        if (!refCard) {
+          this.refCards.push({ id: card.id, ref: inst });
+        }
+        break;
+      case 'del':
+        if (refCard) {
+          this.refCards.splice(index, 1);
+        }
+        break;
     }
   };
 
   handleLongPressCard = card => {
     const refCard = this.refCards.find(ref => ref.id === card.id);
+
     if (refCard) {
       this.refShakingCards.push(refCard);
     }
@@ -344,7 +391,7 @@ class CustomerCardWallet extends Component {
   renderCard = ({ item: card, index }) => {
     return (
       <CardWallet
-        ref={inst => this.handleAddRefCards(inst, card)}
+        ref={inst => this.handleUpdateRefCards(inst, card, 'add')}
         longPress
         logoImage={card.logo_url}
         image={card.image_url}
@@ -401,11 +448,15 @@ class CustomerCardWallet extends Component {
         ? this.state.searchCards.length
         : 0;
 
+    const colorMap = [
+      'rgba(240,240,240, .65)',
+      'rgba(240,240,240, .25)',
+      'rgba(240,240,240, 0)'
+    ];
+    const colorLocation = [0, 0.6, 1];
+
     return (
-      <TouchableWithoutFeedback
-        onPress={this.handleOnPressContainer}
-        style={[styles.container]}
-      >
+      <TouchableWithoutFeedback onPress={this.handleOnPressContainer}>
         <View style={styles.container}>
           {this.state.loading && (
             <Loading center style={styles.loading} color={'#fff'} />
@@ -434,6 +485,11 @@ class CustomerCardWallet extends Component {
             }
           />
           <View onLayout={this.onBodyLayout} style={styles.container}>
+            <LinearGradient
+              colors={colorMap}
+              locations={colorLocation}
+              style={styles.gradientShadow}
+            />
             <Header text={count} style={[resultStyle]} />
             <FlatList
               refreshControl={
@@ -443,8 +499,10 @@ class CustomerCardWallet extends Component {
                 />
               }
               data={data}
-              contentContainerStyle={{ flex: data.length === 0 ? 1 : 0 }}
-              keyboardShouldPersistTaps="always"
+              contentContainerStyle={{
+                flex: data.length === 0 ? 1 : undefined
+              }}
+              keyboardShouldPersistTaps="handled"
               keyboardDismissMode="on-drag"
               renderItem={this.renderCard}
               keyExtractor={item => item.id}
@@ -467,6 +525,17 @@ class CustomerCardWallet extends Component {
             <Animated.View
               style={[styles.searchModal, styles.modalShadow, modalStyle]}
             >
+              {appConfig.device.isAndroid && (
+                <Header
+                  text={count}
+                  style={[
+                    resultStyle,
+                    {
+                      top: 60
+                    }
+                  ]}
+                />
+              )}
               <Search
                 compareData={this.state.cards}
                 data={this.state.searchCards}
@@ -488,7 +557,8 @@ class CustomerCardWallet extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: 'rgba(240,240,240,1)'
   },
   headerBackground: {
     transform: [
@@ -552,6 +622,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 4,
     zIndex: 9
+  },
+  gradientShadow: {
+    width: '100%',
+    height: 15,
+    position: 'absolute',
+    zIndex: 1
   }
 });
 
@@ -572,7 +648,7 @@ const Header = props => (
 );
 
 const Empty = props => (
-  <TouchableWithoutFeedback style={{ flex: 1 }} onPress={Keyboard.dismiss}>
+  <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
     <View style={styles.noResultContainer}>
       {!props.isSearch ? (
         <NoResult

@@ -134,7 +134,7 @@ class Button extends Component {
       >
         <ButtonRN
           onPress={this.handlePress}
-          containerStyle={[styles.container]}
+          containerStyle={[styles.container, { paddingVertical: 10 }]}
         >
           <View
             style={[
@@ -147,12 +147,7 @@ class Button extends Component {
               onLayout={this.measureLayout}
               style={[styles.btnContainer, styles.btnWrapper, animatedStyle]}
             >
-              <Icon
-                name={this.props.iconName}
-                color={appConfig.colors.primary}
-                size={24}
-                style={styles.icon}
-              />
+              <Icon name={this.props.iconName} style={styles.icon} />
               <Text numberOfLines={1} style={styles.title}>
                 {this.props.title}
               </Text>
@@ -191,7 +186,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   btn: {
-    height: 54,
+    height: appConfig.device.isIOS ? 38 : 33,
     width: '100%'
   },
   btnContainer: {
@@ -212,7 +207,9 @@ const styles = StyleSheet.create({
     flex: 1
   },
   icon: {
-    marginHorizontal: 15
+    marginHorizontal: 15,
+    color: appConfig.colors.primary,
+    fontSize: appConfig.device.isIOS ? 24 : 20
   }
 });
 
