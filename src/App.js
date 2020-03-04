@@ -99,6 +99,7 @@ import {
   SearchChatNavBar
 } from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
+import { default as ServiceOrders } from './components/services/Orders';
 import TabIcon from './components/TabIcon';
 import {
   initialize as initializeRadaModule,
@@ -1210,6 +1211,16 @@ class RootRouter extends Component {
                     key="md_card_confirm_1"
                     title="Xác nhận"
                     component={MdCardConfirm}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.serviceOrders}>
+                  <Scene
+                    key={`${appConfig.routes.serviceOrders}_1`}
+                    title="Đơn dịch vụ"
+                    component={ServiceOrders}
                     {...navBarConfig}
                     back
                   />
