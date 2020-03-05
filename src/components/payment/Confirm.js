@@ -486,7 +486,9 @@ class Confirm extends Component {
   openMyVoucher = () => {
     Actions.push(appConfig.routes.myVoucher, {
       mode: USE_ONLINE,
-      siteId: this.props.store.cart_store_id,
+      siteId: this.props.store
+        ? this.props.store.cart_store_id
+        : store.cart_store_id,
       onUseVoucherOnlineSuccess: this.handleUseVoucherOnlineSuccess,
       onUseVoucherOnlineFailure: this.handleUseOnlineFailure
     });
