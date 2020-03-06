@@ -34,6 +34,7 @@ class List extends Component {
     });
 
     this.getListCustomer();
+    EventTracker.logEvent('list_chat_page');
   }
 
   componentWillUnmount() {

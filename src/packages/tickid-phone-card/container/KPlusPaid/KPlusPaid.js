@@ -29,7 +29,8 @@ class KPlusPaid extends Component {
     placeholder: PropTypes.string,
     errorEmptyMessage: PropTypes.string,
     errorLengthMessage: PropTypes.string,
-    validLength: PropTypes.number
+    validLength: PropTypes.number,
+    keyboardType: PropTypes.string
   };
 
   static defaultProps = {
@@ -44,7 +45,8 @@ class KPlusPaid extends Component {
     hideContact: false,
     validLength: 0,
     errorLengthMessage: '',
-    errorEmptyMessage: ''
+    errorEmptyMessage: '',
+    keyboardType: undefined
   };
 
   constructor(props) {
@@ -135,6 +137,7 @@ class KPlusPaid extends Component {
       subCardValue: options[0].type,
       totalPrice: currentCards[0].total_price
     });
+    EventTracker.logEvent('kplus_paid_page');
   }
 
   handleOpenContact = () => {
@@ -294,6 +297,7 @@ class KPlusPaid extends Component {
             onShowHistory={this.handleShowHistory}
             onPressSelectNetwork={this.handlePressSelectNetwork}
             networkType={this.state.networkType}
+            keyboardType={this.props.keyboardType}
           />
 
           <SelectCardValueComponent

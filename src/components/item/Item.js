@@ -49,6 +49,7 @@ export default class Item extends Component {
         right: this._renderRightButton()
       })
     );
+    EventTracker.logEvent('item_page');
   }
 
   componentWillReceiveProps(nextProps) {

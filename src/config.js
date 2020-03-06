@@ -50,8 +50,10 @@ const config = Object.freeze({
 
     homeTab: 'homeTab',
     newsTab: 'newsTab',
+    deepLinkNewsTab: 'deepLinkNewsTab',
     scanQrCodeTab: 'scanQrCodeTab',
     ordersTab: 'ordersTab',
+    deepLinkOrdersTab: 'deepLinkOrdersTab',
 
     vndWallet: 'vnd_wallet',
     payWallet: 'pay_wallet',
@@ -76,6 +78,7 @@ const config = Object.freeze({
     tickidRadaListService: 'tickidRadaListService',
     tickidRadaServiceDetail: 'tickidRadaServiceDetail',
     tickidRadaBooking: 'tickidRadaBooking',
+    tickidRadaOrderHistory: 'tickidRadaOrderHistory',
     // end routes of Rada module **
 
     // ** Begin routes of Voucher module
@@ -95,7 +98,8 @@ const config = Object.freeze({
     //
     upToPhone: 'upToPhone',
 
-    itemAttribute: 'itemAttribute'
+    itemAttribute: 'itemAttribute',
+    serviceOrders: 'serviceOrders'
   }
 });
 

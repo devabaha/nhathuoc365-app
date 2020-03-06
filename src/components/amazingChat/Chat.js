@@ -104,6 +104,7 @@ class Chat extends Component {
     // }, 3000)
     this._getMessages();
     this._getPinList();
+    EventTracker.logEvent('chat_page');
   }
 
   renderRight = (tel = this.state.phoneNumber) => {

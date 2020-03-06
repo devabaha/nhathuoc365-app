@@ -101,6 +101,7 @@ class Confirm extends Component {
       .catch(error => this.setState({ errorMessage: error.message }));
 
     this.loadStoredPassword();
+    EventTracker.logEvent('transfer_confirm_page');
   }
 
   componentWillUnmount() {

@@ -34,6 +34,7 @@ class Rating extends Component {
 
   componentDidMount() {
     this.getSiteDetailData();
+    EventTracker.logEvent('rating_page');
   }
 
   componentWillMount() {

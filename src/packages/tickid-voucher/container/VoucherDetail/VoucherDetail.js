@@ -21,7 +21,7 @@ class VoucherDetail extends BaseContainer {
    */
   static propTypes = {
     mode: PropTypes.string,
-    from: PropTypes.oneOf(['home']),
+    from: PropTypes.oneOf(['home', 'deeplink']),
     campaignId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     voucherId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     onRemoveVoucherSuccess: PropTypes.func,
@@ -100,6 +100,7 @@ class VoucherDetail extends BaseContainer {
     } else if (this.props.campaignId) {
       this.getCampaignById(this.props.campaignId);
     }
+    EventTracker.logEvent('voucher_detail_page');
   }
 
   handlePressCampaignProvider = store => {

@@ -68,6 +68,7 @@ class Confirm extends Component {
         right: this._renderRightButton()
       })
     );
+    EventTracker.logEvent('payment_confirm_page');
   }
 
   _initial(props) {
@@ -235,6 +236,7 @@ class Confirm extends Component {
               });
 
               Events.trigger(RELOAD_STORE_ORDERS);
+              EventTracker.logEvent('add_to_cart');
 
               // update cart data
               action(() => {
@@ -484,7 +486,9 @@ class Confirm extends Component {
   openMyVoucher = () => {
     Actions.push(appConfig.routes.myVoucher, {
       mode: USE_ONLINE,
-      siteId: this.props.store.cart_store_id,
+      siteId: this.props.store
+        ? this.props.store.cart_store_id
+        : store.cart_store_id,
       onUseVoucherOnlineSuccess: this.handleUseVoucherOnlineSuccess,
       onUseVoucherOnlineFailure: this.handleUseOnlineFailure
     });

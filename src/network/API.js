@@ -118,6 +118,7 @@ exports.USER_GET_INFO_BY_WALLET_ADDRESS =
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';
 exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';
+exports.SERVICE_ORDERS = MY_FOOD_API + 'apiService/orders';
 
 // Voucher
 exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + '/apiVoucher/my_voucher';

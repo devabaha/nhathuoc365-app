@@ -67,6 +67,7 @@ class Contact extends Component {
     } else {
       this.handleCheckPermissonAndroid();
     }
+    EventTracker.logEvent('contact_page');
   }
 
   handleCheckPermissonAndroid = () => {

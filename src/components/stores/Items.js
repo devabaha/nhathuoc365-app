@@ -22,6 +22,10 @@ class Items extends Component {
     };
   }
 
+  componentDidMount() {
+    EventTracker.logEvent('stores_items_page');
+  }
+
   _selectItemAttrs(item) {
     Actions.push(appConfig.routes.itemAttribute, {
       itemId: item.id,

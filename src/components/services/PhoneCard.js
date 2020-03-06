@@ -34,6 +34,7 @@ export default class PhoneCard extends Component {
 
   componentDidMount() {
     this._getData();
+    EventTracker.logEvent('phone_cart_page');
   }
 
   async _getData(delay) {

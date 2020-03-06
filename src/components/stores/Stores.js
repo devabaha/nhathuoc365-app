@@ -63,6 +63,7 @@ class Stores extends Component {
         right: this._renderRightButton()
       });
     });
+    EventTracker.logEvent('stores_page');
   }
 
   componentWillUnmount() {
@@ -230,7 +231,7 @@ class Stores extends Component {
         })
       );
 
-      if (item) {
+      if (item || nav_only) {
         this.setState({
           category_nav_index: index,
           selected_category: item

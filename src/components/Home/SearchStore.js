@@ -107,6 +107,7 @@ export default class SearchStore extends Component {
         }
       );
     }
+    EventTracker.logEvent('search_store_page');
   }
 
   // onchange text value for typing

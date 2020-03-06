@@ -14,7 +14,6 @@ import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 
-@observer
 class OpRegister extends Component {
   constructor(props) {
     super(props);
@@ -42,6 +41,7 @@ class OpRegister extends Component {
         this._onSave();
       }, 500);
     }
+    EventTracker.logEvent('register_page');
   }
 
   _unMount() {
@@ -91,16 +91,14 @@ class OpRegister extends Component {
           });
           if (response && response.status == STATUS_SUCCESS) {
             store.setUserInfo(response.data);
-            action(() => {
-              this.setState(
-                {
-                  loading: false
-                },
-                () => {
-                  Actions.reset(appConfig.routes.sceneWrapper);
-                }
-              );
-            })();
+            this.setState(
+              {
+                loading: false
+              },
+              () => {
+                Actions.reset(appConfig.routes.sceneWrapper);
+              }
+            );
           } else {
             this.setState({
               loading: false
@@ -359,4 +357,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default OpRegister;
+export default observer(OpRegister);

@@ -30,6 +30,7 @@ class CardHistory extends Component {
 
   componentDidMount() {
     this.getOrders(this.props.serviceId);
+    EventTracker.logEvent('card_history_page');
   }
 
   onRefresh = () => {

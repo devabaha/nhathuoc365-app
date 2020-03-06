@@ -46,6 +46,7 @@ export default class ForgetActive extends Component {
     }
 
     this.registerMsgBar();
+    EventTracker.logEvent('forget_active_page');
   }
 
   registerMsgBar = () => {};

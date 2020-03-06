@@ -28,6 +28,7 @@ class ShowBarcode extends Component {
 
   componentDidMount() {
     this.handleBrightness();
+    EventTracker.logEvent('voucher_show_barcode_page');
   }
 
   componentWillUnmount() {
