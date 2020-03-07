@@ -27,11 +27,15 @@ class Items extends Component {
   }
 
   _selectItemAttrs(item) {
-    Actions.push(appConfig.routes.itemAttribute, {
-      itemId: item.id,
-      onSubmit: (quantity, modal_key) =>
-        this._addCart(item, quantity, modal_key)
-    });
+    if (item.has_attr) {
+      Actions.push(appConfig.routes.itemAttribute, {
+        itemId: item.id,
+        onSubmit: (quantity, modal_key) =>
+          this._addCart(item, quantity, modal_key)
+      });
+    } else {
+      this._addCart(item);
+    }
   }
 
   // add item vào giỏ hàng
@@ -49,10 +53,13 @@ class Items extends Component {
         buying: true
       },
       async () => {
-        const data = {
-          quantity,
-          modal_key
-        };
+        const data = quantity
+          ? {
+              quantity,
+              modal_key
+            }
+          : null;
+
         try {
           const response = await APIHandler.site_cart_adding(
             store.store_id,
