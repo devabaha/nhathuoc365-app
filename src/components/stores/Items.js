@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
+import { Actions } from 'react-native-router-flux';
+import appConfig from 'app-config';
 
-@observer
-export default class Items extends Component {
+class Items extends Component {
   constructor(props) {
     super(props);
 
@@ -20,13 +21,30 @@ export default class Items extends Component {
       loadmore: false
     };
   }
+  unmounted = false;
 
   componentDidMount() {
     EventTracker.logEvent('stores_items_page');
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
+  _selectItemAttrs(item) {
+    if (item.has_attr) {
+      Actions.push(appConfig.routes.itemAttribute, {
+        itemId: item.id,
+        onSubmit: (quantity, modal_key) =>
+          this._addCart(item, quantity, modal_key)
+      });
+    } else {
+      this._addCart(item);
+    }
+  }
+
   // add item vào giỏ hàng
-  _addCart(item) {
+  _addCart = (item, quantity = 1, model = '') => {
     if (this.props.buyPress) {
       this.props.buyPress(item);
     }
@@ -40,14 +58,20 @@ export default class Items extends Component {
         buying: true
       },
       async () => {
-        try {
-          var response = await APIHandler.site_cart_adding(
-            store.store_id,
-            item.id
-          );
+        const data = {
+          quantity,
+          model
+        };
 
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+        try {
+          const response = await APIHandler.site_cart_plus(
+            store.store_id,
+            item.id,
+            data
+          );
+          console.log(response);
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               // if (isIOS) {
               //   store.setCartFlyShow(true);
               // }
@@ -84,31 +108,39 @@ export default class Items extends Component {
 
               if (index !== null && index < length) {
                 store.setCartItemIndex(index);
-
                 Events.trigger(NEXT_PREV_CART, { index });
-
                 // setTimeout(() => {
                 //   store.setCartFlyShow(false);
                 //   store.setCartFlyImage(null);
                 // }, 750);
               }
-              this.setState({
-                buying: false
-              });
+
               flashShowMessage({
                 message: response.message,
                 type: 'success'
               });
-            })();
+            } else {
+              flashShowMessage({
+                message: response.message || 'Có lỗi xảy ra',
+                type: 'danger'
+              });
+            }
           }
         } catch (e) {
-          console.warn(e + ' site_cart_adding');
-
-          store.addApiQueue('site_cart_adding', this._addCart.bind(this, item));
+          console.warn(e + ' site_cart_plus');
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              buying: false
+            });
         }
       }
     );
-  }
+  };
 
   _getMeasure(item) {
     action(() => {
@@ -308,7 +340,7 @@ export default class Items extends Component {
           <TouchableHighlight
             style={styles.item_add_cart_btn}
             underlayColor="transparent"
-            onPress={this._addCart.bind(this, item)}
+            onPress={this._selectItemAttrs.bind(this, item)}
           >
             <View
               style={{
@@ -516,3 +548,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   }
 });
+
+export default observer(Items);

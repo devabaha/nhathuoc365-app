@@ -72,7 +72,7 @@ class StoreOrders extends Component {
 
   async _getData(delay) {
     try {
-      const response = await APIHandler.site_cart_list(this.state.store_id);
+      const response = await APIHandler.site_cart_index(this.state.store_id);
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
@@ -88,8 +88,8 @@ class StoreOrders extends Component {
         });
       }
     } catch (e) {
-      console.log(e + ' site_cart_list');
-      store.addApiQueue('site_cart_list', this._getData.bind(this, delay));
+      console.log(e + ' site_cart_index');
+      store.addApiQueue('site_cart_index', this._getData.bind(this, delay));
     } finally {
     }
   }
@@ -217,14 +217,14 @@ class StoreOrders extends Component {
           otherClose={false}
         />
 
-        <PopupConfirm
+        {/* <PopupConfirm
           ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-        />
+        /> */}
 
         <PopupConfirm
           ref_popup={ref => (this.refs_edit_cart = ref)}
@@ -247,29 +247,36 @@ class StoreOrders extends Component {
   async _cancelCart() {
     if (this.item_cancel) {
       try {
-        var response = await APIHandler.site_cart_cancel(
+        const response = await APIHandler.site_cart_canceling(
           store.store_id,
           this.item_cancel.id
         );
 
-        if (response && response.status == STATUS_SUCCESS) {
-          this._getData(450);
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS) {
+            this._getData(450);
 
-          setTimeout(() => {
-            action(() => {
+            setTimeout(() => {
               store.setOrdersKeyChange(store.orders_key_change + 1);
-            })();
-          }, 450);
+            }, 450);
 
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || 'Có lỗi xảy ra'
+            });
+          }
         }
       } catch (e) {
-        console.log(e + ' site_cart_cancel');
-
-        store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
+        console.log(e + ' site_cart_canceling');
+        flashShowMessage({
+          type: 'danger',
+          message: 'Có lỗi xảy ra'
+        });
       } finally {
       }
     }
@@ -306,8 +313,6 @@ class StoreOrders extends Component {
         }
       } catch (e) {
         console.log(e + ' site_cart_reorder');
-
-        store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       } finally {
       }
     }
@@ -332,7 +337,7 @@ class StoreOrders extends Component {
   async _editCart() {
     if (this.item_edit) {
       try {
-        const response = await APIHandler.site_cart_edit(
+        const response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
           this.item_edit.id
         );
@@ -349,9 +354,12 @@ class StoreOrders extends Component {
           this._getData();
         }
       } catch (e) {
-        console.log(e + ' site_cart_edit');
+        console.log(e + ' site_cart_update_ordering');
 
-        store.addApiQueue('site_cart_edit', this._editCart.bind(this));
+        store.addApiQueue(
+          'site_cart_update_ordering',
+          this._editCart.bind(this)
+        );
       } finally {
       }
     }

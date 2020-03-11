@@ -99,6 +99,8 @@ const config = Object.freeze({
     internetBanking: 'internetBanking',
     //
     upToPhone: 'upToPhone',
+
+    itemAttribute: 'itemAttribute',
     serviceOrders: 'serviceOrders'
   }
 });
