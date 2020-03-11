@@ -144,48 +144,69 @@ export default class Cart extends Component {
   // giảm số lượng item trong giỏ hàng
   async _item_qnt_decrement(item) {
     try {
-      var response = await APIHandler.site_cart_down(store.store_id, item.id);
+      const data = {
+        quantity: 1,
+        model: item.model
+      };
+      var response = await APIHandler.site_cart_minus(
+        store.store_id,
+        item.id,
+        data
+      );
 
       if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
-        })();
+        store.setCartData(response.data);
+        flashShowMessage({
+          type: 'success',
+          message: response.message
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message || 'Có lỗi xảy ra'
+        });
       }
     } catch (e) {
-      console.log(e + ' site_cart_down');
-
-      store.addApiQueue(
-        'site_cart_down',
-        this._item_qnt_decrement.bind(this, item)
-      );
+      console.log(e + ' site_cart_minus');
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
+      });
     }
   }
 
   // tăng số lượng sảm phẩm trong giỏ hàng
   async _item_qnt_increment(item) {
     try {
-      var response = await APIHandler.site_cart_up(store.store_id, item.id);
+      const data = {
+        quantity: 1,
+        model: item.model
+      };
+
+      const response = await APIHandler.site_cart_plus(
+        store.store_id,
+        item.id,
+        data
+      );
 
       if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
-        })();
+        store.setCartData(response.data);
+        flashShowMessage({
+          type: 'success',
+          message: response.message
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message || 'Có lỗi xảy ra'
+        });
       }
     } catch (e) {
-      console.log(e + ' site_cart_up');
-
-      store.addApiQueue(
-        'site_cart_up',
-        this._item_qnt_increment.bind(this, item)
-      );
+      console.log(e + ' site_cart_plus');
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
+      });
     }
   }
 
@@ -214,7 +235,16 @@ export default class Cart extends Component {
     var item = this.cartItemConfirmRemove;
 
     try {
-      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+      const data = {
+        quantity: 0,
+        model: item.model
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data
+      );
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
@@ -234,42 +264,51 @@ export default class Cart extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.log(e + ' site_cart_remove');
+      console.log(e + ' site_cart_update');
 
-      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
+      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 
   async _checkBoxHandler(item) {
     try {
+      const data = {
+        model: item.model
+      };
+
+      let response = null;
       if (item.selected == 1) {
-        var response = await APIHandler.site_cart_unselect(
+        response = await APIHandler.site_cart_unselected(
           store.store_id,
-          item.id
+          item.id,
+          data
         );
       } else {
-        var response = await APIHandler.site_cart_select(
+        response = await APIHandler.site_cart_selected(
           store.store_id,
-          item.id
+          item.id,
+          data
         );
       }
 
       if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
-          store.setCartData(response.data);
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
-        })();
+        store.setCartData(response.data);
+        flashShowMessage({
+          type: 'success',
+          message: response.message
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message || 'Có lỗi xảy ra'
+        });
       }
     } catch (e) {
-      console.log(e + ' site_cart_select');
-
-      store.addApiQueue(
-        'site_cart_select',
-        this._checkBoxHandler.bind(this, item)
-      );
+      console.log(e + ' site_cart_selected');
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
+      });
     } finally {
     }
   }

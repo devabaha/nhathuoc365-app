@@ -217,14 +217,14 @@ class StoreOrders extends Component {
           otherClose={false}
         />
 
-        <PopupConfirm
+        {/* <PopupConfirm
           ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-        />
+        /> */}
 
         <PopupConfirm
           ref_popup={ref => (this.refs_edit_cart = ref)}
@@ -332,7 +332,7 @@ class StoreOrders extends Component {
   async _editCart() {
     if (this.item_edit) {
       try {
-        const response = await APIHandler.site_cart_edit(
+        const response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
           this.item_edit.id
         );
@@ -349,9 +349,12 @@ class StoreOrders extends Component {
           this._getData();
         }
       } catch (e) {
-        console.log(e + ' site_cart_edit');
+        console.log(e + ' site_cart_update_ordering');
 
-        store.addApiQueue('site_cart_edit', this._editCart.bind(this));
+        store.addApiQueue(
+          'site_cart_update_ordering',
+          this._editCart.bind(this)
+        );
       } finally {
       }
     }

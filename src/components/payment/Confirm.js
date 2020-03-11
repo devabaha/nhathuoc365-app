@@ -45,6 +45,8 @@ class Confirm extends Component {
       tel_register: store.cart_data ? store.cart_data.address.tel : '',
       pass_register: ''
     };
+
+    this.unmounted = false;
   }
 
   componentWillReceiveProps(nextProps) {
@@ -69,6 +71,10 @@ class Confirm extends Component {
       })
     );
     EventTracker.logEvent('payment_confirm_page');
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   _initial(props) {
@@ -104,9 +110,8 @@ class Confirm extends Component {
   async _siteInfo(site_id) {
     try {
       var response = await APIHandler.site_detail(site_id);
-
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
           store.setStoreData(response.data);
 
           this.cart_tel = response.data.tel;
@@ -115,12 +120,19 @@ class Confirm extends Component {
             title: '#' + this.state.data.cart_code,
             renderRightButton: this._renderRightButton.bind(this)
           });
-        })();
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || 'Có lỗi xảy ra'
+          });
+        }
       }
     } catch (e) {
       console.log(e + ' site_info');
-
-      store.addApiQueue('site_info', this._siteInfo.bind(this, site_id));
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
+      });
     }
   }
 
@@ -178,29 +190,27 @@ class Confirm extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.site_cart_node(store.store_id, {
+          const response = await APIHandler.site_cart_note(store.store_id, {
             user_note: store.user_cart_note
           });
+          console.log(response);
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
+              if (typeof callback == 'function') {
+                callback();
+              }
 
-          if (response && response.status == STATUS_SUCCESS) {
-            if (typeof callback == 'function') {
-              callback();
+              // Nhập lưu ý thành công
+              // Toast.show(response.message);
             }
-
-            // Nhập lưu ý thành công
-            // Toast.show(response.message);
           }
         } catch (e) {
-          console.log(e + ' site_cart_node');
-
-          store.addApiQueue(
-            'site_cart_node',
-            this._updateCartNote.bind(this, callback)
-          );
+          console.log(e + ' site_cart_note');
         } finally {
-          this.setState({
-            continue_loading: false
-          });
+          !this.unmounted &&
+            this.setState({
+              continue_loading: false
+            });
         }
       }
     );
@@ -214,32 +224,37 @@ class Confirm extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.site_cart_orders(store.store_id);
+          const data = {
+            ref_user_id: store.cart_data ? store.cart_data.ref_user_id : ''
+          };
+          const response = await APIHandler.site_cart_order(
+            store.store_id,
+            data
+          );
 
-          if (response && response.status == STATUS_SUCCESS) {
-            if (this.popup_message) {
-              this.popup_message.open();
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
+              if (this.popup_message) {
+                this.popup_message.open();
 
-              // first orders
-              this.setState({
-                continue_loading: false,
-                suggest_register: response.data.total_orders == 1,
-                name_register: response.data.address.name,
-                tel_register: response.data.address.tel
-              });
+                // first orders
+                this.setState({
+                  suggest_register: response.data.total_orders == 1,
+                  name_register: response.data.address.name,
+                  tel_register: response.data.address.tel
+                });
 
-              // hide back button
-              Actions.refresh({
-                hideBackImage: true,
-                onBack: () => false,
-                panHandlers: null
-              });
+                // hide back button
+                Actions.refresh({
+                  hideBackImage: true,
+                  onBack: () => false,
+                  panHandlers: null
+                });
 
-              Events.trigger(RELOAD_STORE_ORDERS);
-              EventTracker.logEvent('add_to_cart');
+                Events.trigger(RELOAD_STORE_ORDERS);
+                EventTracker.logEvent('add_to_cart');
 
-              // update cart data
-              action(() => {
+                // update cart data
                 // update cart
                 store.setCartData(response.data);
                 // reload home screen
@@ -248,20 +263,29 @@ class Confirm extends Component {
                 store.setPaymentNavShow(false);
                 // reload orders list screen
                 store.setOrdersKeyChange(store.orders_key_change + 1);
-              })();
+              }
+              flashShowMessage({
+                type: 'success',
+                message: response.message
+              });
+            } else {
+              flashShowMessage({
+                type: 'danger',
+                message: response.message || 'Có lỗi xảy ra'
+              });
             }
-            flashShowMessage({
-              type: 'success',
-              message: response.message
-            });
           }
         } catch (e) {
-          console.log(e + ' site_cart_orders');
-
-          store.addApiQueue(
-            'site_cart_orders',
-            this._siteCartOrders.bind(this)
-          );
+          console.log(e + ' site_cart_order');
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              continue_loading: false
+            });
         }
       }
     );
@@ -367,11 +391,20 @@ class Confirm extends Component {
     var item = this.cartItemConfirmRemove;
 
     try {
-      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+      const data = {
+        quantity: 0,
+        model: item.model
+      };
 
-      if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          action(() => {
+      const response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data
+      );
+
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          setTimeout(() => {
             store.setCartData(response.data);
             // prev item in list
             if (isAndroid && store.cart_item_index > 0) {
@@ -384,19 +417,26 @@ class Confirm extends Component {
               store.setRefreshHomeChange(store.refresh_home_change + 1);
               Actions.pop();
             }
-          })();
-        }, this._delay());
-        flashShowMessage({
-          message: response.message,
-          type: 'info'
-        });
+          }, this._delay());
+
+          flashShowMessage({
+            message: response.message,
+            type: 'success'
+          });
+        } else {
+          flashShowMessage({
+            message: response.message || 'Có lỗi xảy ra',
+            type: 'danger'
+          });
+        }
+        this.cartItemConfirmRemove = undefined;
       }
-
-      this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.log(e + ' site_cart_remove');
-
-      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
+      console.log(e + ' site_cart_update');
+      flashShowMessage({
+        message: 'Có lỗi xảy ra',
+        type: 'danger'
+      });
     }
   }
 
@@ -952,6 +992,12 @@ class Confirm extends Component {
                         <Text style={styles.cart_item_info_name}>
                           {item.name}
                         </Text>
+
+                        {!!item.classification && (
+                          <Text style={styles.cart_item_sub_info_name}>
+                            {item.classification}
+                          </Text>
+                        )}
 
                         <View style={styles.cart_item_price_box}>
                           {item.discount_percent > 0 && (
@@ -1554,14 +1600,14 @@ class Confirm extends Component {
           otherClose={false}
         />
 
-        <PopupConfirm
+        {/* <PopupConfirm
           ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-        />
+        /> */}
 
         <PopupConfirm
           ref_popup={ref => (this.refs_edit_cart = ref)}
@@ -1683,7 +1729,7 @@ class Confirm extends Component {
   async _editCart() {
     if (this.item_edit) {
       try {
-        var response = await APIHandler.site_cart_edit(
+        var response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
           this.item_edit.id
         );
@@ -1705,9 +1751,12 @@ class Confirm extends Component {
           });
         }
       } catch (e) {
-        console.log(e + ' site_cart_edit');
+        console.log(e + ' site_cart_update_ordering');
 
-        store.addApiQueue('site_cart_edit', this._editCart.bind(this));
+        store.addApiQueue(
+          'site_cart_update_ordering',
+          this._editCart.bind(this)
+        );
       }
     }
 
@@ -1763,42 +1812,54 @@ class ItemCartComponent extends Component {
       },
       async () => {
         try {
+          const data = {
+            model: item.model
+          };
+          let response = null;
+
           if (item.selected == 1) {
-            var response = await APIHandler.site_cart_unselect(
+            response = await APIHandler.site_cart_unselected(
               store.store_id,
-              item.id
+              item.id,
+              data
             );
           } else {
-            var response = await APIHandler.site_cart_select(
+            response = await APIHandler.site_cart_selected(
               store.store_id,
-              item.id
+              item.id,
+              data
             );
           }
 
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
-            })();
-            flashShowMessage({
-              message: response.message,
-              type: 'info'
-            });
+              flashShowMessage({
+                message: response.message,
+                type: 'success'
+              });
+            } else {
+              flashShowMessage({
+                message: response.message || 'Có lỗi xảy ra',
+                type: 'danger'
+              });
+            }
           }
         } catch (e) {
           if (item.selected == 1) {
-            console.log(e + ' site_cart_unselect');
+            console.log(e + ' site_cart_unselected');
           } else {
-            console.log(e + ' site_cart_select');
+            console.log(e + ' site_cart_selected');
           }
-
-          store.addApiQueue(
-            'site_cart_select',
-            this._checkBoxHandler.bind(this, item)
-          );
-        } finally {
-          this.setState({
-            check_loading: false
+          flashShowMessage({
+            message: 'Có lỗi xảy ra',
+            type: 'danger'
           });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              check_loading: false
+            });
         }
       }
     );
@@ -1821,31 +1882,42 @@ class ItemCartComponent extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.site_cart_down(
-            store.store_id,
-            item.id
-          );
+          const data = {
+            quantity: 1,
+            model: item.model
+          };
 
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+          const response = await APIHandler.site_cart_minus(
+            store.store_id,
+            item.id,
+            data
+          );
+          console.log(data, response);
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
-            })();
-            flashShowMessage({
-              message: response.message,
-              type: 'info'
-            });
+              flashShowMessage({
+                message: response.message,
+                type: 'success'
+              });
+            } else {
+              flashShowMessage({
+                message: response.message || 'Có lỗi xảy ra',
+                type: 'danger'
+              });
+            }
           }
         } catch (e) {
-          console.log(e + ' site_cart_down');
-
-          store.addApiQueue(
-            'site_cart_down',
-            this._item_qnt_decrement.bind(this, item)
-          );
-        } finally {
-          this.setState({
-            decrement_loading: false
+          console.log(e + ' site_cart_minus');
+          flashShowMessage({
+            message: 'Có lỗi xảy ra',
+            type: 'danger'
           });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              decrement_loading: false
+            });
         }
       }
     );
@@ -1859,29 +1931,43 @@ class ItemCartComponent extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.site_cart_up(store.store_id, item.id);
+          const data = {
+            quantity: 1,
+            model: item.model
+          };
 
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+          const response = await APIHandler.site_cart_plus(
+            store.store_id,
+            item.id,
+            data
+          );
+
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
-            })();
 
-            flashShowMessage({
-              message: response.message,
-              type: 'info'
-            });
+              flashShowMessage({
+                message: response.message,
+                type: 'success'
+              });
+            } else {
+              flashShowMessage({
+                message: response.message || 'Có lỗi xảy ra',
+                type: 'danger'
+              });
+            }
           }
         } catch (e) {
-          console.log(e + ' site_cart_up');
-
-          store.addApiQueue(
-            'site_cart_up',
-            this._item_qnt_increment.bind(this, item)
-          );
-        } finally {
-          this.setState({
-            increment_loading: false
+          console.log(e + ' site_cart_plus');
+          flashShowMessage({
+            message: 'Có lỗi xảy ra',
+            type: 'danger'
           });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              increment_loading: false
+            });
         }
       }
     );
@@ -1898,7 +1984,8 @@ class ItemCartComponent extends Component {
         style={[
           styles.cart_item_box,
           {
-            height: 87
+            minHeight: 87,
+            maxHeight: 100
           }
         ]}
       >
@@ -1931,6 +2018,12 @@ class ItemCartComponent extends Component {
             <Text numberOfLines={1} style={styles.cart_item_info_name}>
               {item.name}
             </Text>
+
+            {!!item.classification && (
+              <Text numberOfLines={1} style={styles.cart_item_sub_info_name}>
+                {item.classification}
+              </Text>
+            )}
 
             <View style={styles.cart_item_price_box}>
               {item.discount_percent > 0 && (
@@ -2121,7 +2214,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
+    alignItems: 'center'
   },
   cart_item_image_box: {
     width: 50
@@ -2140,6 +2234,10 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontSize: 14,
     fontWeight: '600'
+  },
+  cart_item_sub_info_name: {
+    color: '#555',
+    fontSize: 12
   },
   cart_item_actions: {
     flexDirection: 'row',

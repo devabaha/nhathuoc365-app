@@ -293,7 +293,7 @@ class OrdersItemComponent extends Component {
               </View>
             )}
 
-            {is_reorder && (
+            {/* {is_reorder && (
               <View
                 style={{
                   flex: 1,
@@ -326,7 +326,7 @@ class OrdersItemComponent extends Component {
                   </Text>
                 </TouchableHighlight>
               </View>
-            )}
+            )} */}
           </View>
 
           <View style={[styles.orders_item_payment]}>

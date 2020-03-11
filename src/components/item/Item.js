@@ -40,6 +40,7 @@ export default class Item extends Component {
     };
 
     this._getData = this._getData.bind(this);
+    this.unmounted = false;
   }
 
   componentDidMount() {
@@ -70,6 +71,10 @@ export default class Item extends Component {
         }
       );
     }
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   _initial(props) {
@@ -235,39 +240,38 @@ export default class Item extends Component {
   }
 
   _selectItemAttrs(item) {
-    if (item.has_attr) {
-      Actions.push(appConfig.routes.itemAttribute, {
-        itemId: item.id,
-        onSubmit: (quantity, modal_key) =>
-          this._addCart(item, quantity, modal_key)
-      });
-    } else {
-      this._addCart(item);
-    }
+    // if (item.has_attr) {
+    Actions.push(appConfig.routes.itemAttribute, {
+      itemId: item.id,
+      onSubmit: (quantity, modal_key) =>
+        this._addCart(item, quantity, modal_key)
+    });
+    // } else {
+    //   this._addCart(item);
+    // }
   }
 
   // add item vào giỏ hàng
-  _addCart = (item, quantity, modal_key) => {
+  _addCart = (item, quantity = 1, model = '') => {
     this.setState(
       {
         buying: true
       },
       async () => {
-        const data = quantity
-          ? {
-              quantity,
-              modal_key
-            }
-          : null;
+        const data = {
+          quantity,
+          model
+        };
+
         try {
-          const response = await APIHandler.site_cart_adding(
+          const response = await APIHandler.site_cart_plus(
             store.store_id,
             item.id,
             data
           );
 
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
 
               var index = null,
@@ -290,21 +294,29 @@ export default class Item extends Component {
                 store.setCartItemIndex(index);
                 Events.trigger(NEXT_PREV_CART, { index });
               }
-            })();
-            this.setState({
-              buying: false
-            });
-            flashShowMessage({
-              message: response.message,
-              type: 'success'
-            });
+
+              flashShowMessage({
+                message: response.message,
+                type: 'success'
+              });
+            } else {
+              flashShowMessage({
+                message: response.message || 'Có lỗi xảy ra',
+                type: 'danger'
+              });
+            }
           }
         } catch (e) {
-          console.log(e + ' site_cart_adding');
+          console.log(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
             message: 'Có lỗi xảy ra'
           });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              buying: false
+            });
         }
       }
     );
@@ -808,7 +820,16 @@ export default class Item extends Component {
     var item = this.cartItemConfirmRemove;
 
     try {
-      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+      const data = {
+        quantity: 0,
+        model: item.model
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data
+      );
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
@@ -830,7 +851,7 @@ export default class Item extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.log(e + ' site_cart_remove');
+      console.log(e + ' site_cart_update');
       flashShowMessage({
         type: 'danger',
         message: 'Có lỗi xảy ra'

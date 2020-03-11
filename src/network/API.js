@@ -39,6 +39,17 @@ exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';
 exports.SITE_PRODUCT_ATTRIBUTES = MY_FOOD_API + 'apiSite/product_attr';
 
 // Cart
+exports.SITE_CART_PLUS = MY_FOOD_API + 'apiCart/plus';
+exports.SITE_CART_MINUS = MY_FOOD_API + 'apiCart/minus';
+exports.SITE_CART_UPDATE_ORDERING =
+  MY_FOOD_API + 'apiCart/update_cart_ordering';
+exports.SITE_CART_SELECTED = MY_FOOD_API + 'apiCart/selected';
+exports.SITE_CART_UNSELECTED = MY_FOOD_API + 'apiCart/unselected';
+exports.SITE_CART_ORDER = MY_FOOD_API + 'apiCart/order';
+exports.SITE_CART_UPDATE = MY_FOOD_API + 'apiCart/update';
+exports.SITE_CART_NOTE = MY_FOOD_API + 'apiCart/note';
+exports.SITE_CART_RATING = MY_FOOD_API + 'apiCart/rating';
+
 exports.SITE_CART_ADDING = MY_FOOD_API + 'apiSite/cartadding';
 exports.SITE_CART = MY_FOOD_API + 'apiSite/cart';
 exports.SITE_CART_DOWN = MY_FOOD_API + 'apiSite/cartdown';
@@ -54,6 +65,9 @@ exports.SITE_CART_EDIT = MY_FOOD_API + 'apiSite/cart_edit';
 exports.CART_SITE_UPDATE = MY_FOOD_API + 'apiSite/site_cart_update';
 
 // Address
+exports.SITE_CART_ADD_ADDRESS = MY_FOOD_API + 'apiCart/add_address';
+exports.SITE_CART_CHANGE_ADDRESS = MY_FOOD_API + 'apiCart/change_address';
+
 exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';
 exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiUser/add_address';
 exports.SITE_ADD_ADDRESS = MY_FOOD_API + 'apiSite/add_address';

@@ -184,6 +184,29 @@ class APIHandler {
   }
 
   /**
+   * Tăng số lượng sản phẩm trong giỏ hàng
+   */
+  async site_cart_plus(store_id, product_id, data) {
+    var api = url_for(API.SITE_CART_PLUS + '/' + store_id + '/' + product_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Giảm số lượng sản phẩm trong giỏ hàng
+   */
+  async site_cart_minus(store_id, product_id, data) {
+    var api = url_for(API.SITE_CART_MINUS + '/' + store_id + '/' + product_id);
+    return await this.postAPI(api, data);
+  }
+
+  async site_cart_update_ordering(store_id, cart_id) {
+    var api = url_for(
+      API.SITE_CART_UPDATE_ORDERING + '/' + store_id + '/' + cart_id
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
    * Sao chép đơn hàng
    */
   async site_cart_reorder(store_id, cart_id) {
@@ -234,6 +257,22 @@ class APIHandler {
   }
 
   /**
+   * Cập nhật giỏ hàng
+   */
+  async site_cart_update(store_id, product_id, data) {
+    var api = url_for(API.SITE_CART_UPDATE + '/' + store_id + '/' + product_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Đánh giá đơn hàng
+   */
+  async site_cart_rating(store_id, product_id, data) {
+    var api = url_for(API.SITE_CART_RATING + '/' + store_id + '/' + product_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
    * Danh sách địa chỉ
    */
   async user_address() {
@@ -249,6 +288,16 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  /**
+   * Thêm/sửa địa chỉ
+   */
+  async site_cart_add_address(site_id, address_id, data) {
+    var api = url_for(
+      API.SITE_CART_ADD_ADDRESS + '/' + site_id + '/' + address_id
+    );
+    return await this.postAPI(api, data);
+  }
+
   async user_add_address(address_id, data) {
     var api = url_for(API.USER_ADD_ADDRESS + '/' + address_id);
     return await this.postAPI(api, data);
@@ -260,6 +309,16 @@ class APIHandler {
   async site_cart_address(store_id, address_id) {
     var api = url_for(
       API.SITE_CART_ADDRESS + '/' + store_id + '/' + address_id
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Chọn địa chỉ cho đơn hàng
+   */
+  async site_cart_change_address(store_id, address_id) {
+    var api = url_for(
+      API.SITE_CART_CHANGE_ADDRESS + '/' + store_id + '/' + address_id
     );
     return await this.getAPI(api);
   }
@@ -291,10 +350,38 @@ class APIHandler {
   }
 
   /**
+   * Chọn mặt hàng trong giỏ hàng
+   */
+  async site_cart_selected(store_id, product_id, data) {
+    var api = url_for(
+      API.SITE_CART_SELECTED + '/' + store_id + '/' + product_id
+    );
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Bỏ chọn mặt hàng trong giỏ hàng
+   */
+  async site_cart_unselected(store_id, product_id, data) {
+    var api = url_for(
+      API.SITE_CART_UNSELECTED + '/' + store_id + '/' + product_id
+    );
+    return await this.postAPI(api, data);
+  }
+
+  /**
    * Note giỏ hàng
    */
   async site_cart_node(store_id, data) {
     var api = url_for(API.SITE_CART_NODE + '/' + store_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Note giỏ hàng
+   */
+  async site_cart_note(store_id, data) {
+    var api = url_for(API.SITE_CART_NOTE + '/' + store_id);
     return await this.postAPI(api, data);
   }
 
@@ -304,6 +391,14 @@ class APIHandler {
   async site_cart_orders(store_id) {
     var api = url_for(API.SITE_CART_ORDERS + '/' + store_id);
     return await this.getAPI(api);
+  }
+
+  /**
+   * Xác nhận đặt hàng
+   */
+  async site_cart_order(store_id, data) {
+    var api = url_for(API.SITE_CART_ORDER + '/' + store_id);
+    return await this.postAPI(api, data);
   }
 
   /**

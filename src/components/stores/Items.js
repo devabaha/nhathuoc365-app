@@ -21,9 +21,14 @@ class Items extends Component {
       loadmore: false
     };
   }
+  unmounted = false;
 
   componentDidMount() {
     EventTracker.logEvent('stores_items_page');
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   _selectItemAttrs(item) {
@@ -39,7 +44,7 @@ class Items extends Component {
   }
 
   // add item vào giỏ hàng
-  _addCart = (item, quantity, modal_key) => {
+  _addCart = (item, quantity = 1, model = '') => {
     if (this.props.buyPress) {
       this.props.buyPress(item);
     }
@@ -53,22 +58,20 @@ class Items extends Component {
         buying: true
       },
       async () => {
-        const data = quantity
-          ? {
-              quantity,
-              modal_key
-            }
-          : null;
+        const data = {
+          quantity,
+          model
+        };
 
         try {
-          const response = await APIHandler.site_cart_adding(
+          const response = await APIHandler.site_cart_plus(
             store.store_id,
             item.id,
             data
           );
-
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+          console.log(response);
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               // if (isIOS) {
               //   store.setCartFlyShow(true);
               // }
@@ -105,29 +108,35 @@ class Items extends Component {
 
               if (index !== null && index < length) {
                 store.setCartItemIndex(index);
-
                 Events.trigger(NEXT_PREV_CART, { index });
-
                 // setTimeout(() => {
                 //   store.setCartFlyShow(false);
                 //   store.setCartFlyImage(null);
                 // }, 750);
               }
-              this.setState({
-                buying: false
-              });
+
               flashShowMessage({
                 message: response.message,
                 type: 'success'
               });
-            })();
+            } else {
+              flashShowMessage({
+                message: response.message || 'Có lỗi xảy ra',
+                type: 'danger'
+              });
+            }
           }
         } catch (e) {
-          console.warn(e + ' site_cart_adding');
+          console.warn(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
             message: 'Có lỗi xảy ra'
           });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              buying: false
+            });
         }
       }
     );

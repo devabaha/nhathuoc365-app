@@ -150,7 +150,7 @@ class CreateAddress extends Component {
               data_edit
             );
           } else {
-            var response = await APIHandler.site_add_address(
+            var response = await APIHandler.site_cart_add_address(
               store.store_id,
               this.state.address_id,
               data_edit
@@ -185,9 +185,7 @@ class CreateAddress extends Component {
             }
           }
         } catch (e) {
-          console.log(e + ' site_add_address');
-
-          store.addApiQueue('site_add_address', this._onSave.bind(this));
+          console.log(e + ' add_address');
         }
       }
     );

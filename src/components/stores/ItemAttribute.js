@@ -66,7 +66,7 @@ class ItemAttribute extends PureComponent {
         store.store_data.id,
         this.props.itemId
       );
-      // console.log(response);
+      console.log(response);
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS && response.data) {
           if (response.data.product) {

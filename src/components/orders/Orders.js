@@ -296,24 +296,29 @@ class Orders extends Component {
   async _editCart() {
     if (this.item_edit) {
       try {
-        var response = await APIHandler.site_cart_edit(
+        const response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
           this.item_edit.id
         );
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
+
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS) {
             store.setCartData(response.data);
             flashShowMessage({
               type: 'success',
               message: response.message
             });
-          })();
 
-          this._getData();
+            this._getData();
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || 'Có lỗi xảy ra'
+            });
+          }
         }
       } catch (error) {
         console.log(error);
-        store.addApiQueue('site_cart_edit', this._editCart.bind(this));
       }
     }
 
