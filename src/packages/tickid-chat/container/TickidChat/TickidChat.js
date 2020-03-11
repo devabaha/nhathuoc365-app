@@ -496,22 +496,75 @@ class TickidChat extends Component {
   };
 
   renderLeftComposer = props => (
-    <TouchableOpacity
-      hitSlop={HIT_SLOP}
-      onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.EMOJI)}
-    >
-      <Animated.View style={[styles.center, styles.sendBtn, { marginLeft: 5 }]}>
-        <IconAntDesign
-          size={22}
-          name="message1"
-          color={
-            this.state.selectedType === COMPONENT_TYPE.EMOJI
-              ? config.focusColor
-              : config.blurColor
+    <View style={styles.center}>
+      <Animated.View
+        pointerEvents={this.state.showSendBtn ? 'auto' : 'none'}
+        style={[
+          styles.center,
+          styles.sendBtn,
+          {
+            left: -10,
+            opacity: this.state.animatedBtnSendValue.interpolate({
+              inputRange: [0, BTN_IMAGE_WIDTH],
+              outputRange: [0, 1]
+            }),
+            transform: [
+              {
+                scale: this.state.animatedBtnSendValue.interpolate({
+                  inputRange: [0, BTN_IMAGE_WIDTH],
+                  outputRange: [0, 1]
+                })
+              }
+            ]
           }
-        />
+        ]}
+      >
+        <TouchableOpacity hitSlop={HIT_SLOP} onPress={this.handleBackPress}>
+          <IconFontAwesome name="angle-left" color="#404040" size={28} />
+        </TouchableOpacity>
       </Animated.View>
-    </TouchableOpacity>
+
+      <Animated.View
+        pointerEvents={!this.state.showSendBtn ? 'auto' : 'none'}
+        style={[
+          styles.center,
+          styles.sendBtn,
+          {
+            position: 'absolute',
+            flexDirection: 'row'
+          },
+          {
+            opacity: this.state.animatedBtnSendValue.interpolate({
+              inputRange: [0, BTN_IMAGE_WIDTH],
+              outputRange: [1, 0]
+            }),
+            transform: [
+              {
+                scale: this.state.animatedBtnSendValue.interpolate({
+                  inputRange: [0, BTN_IMAGE_WIDTH],
+                  outputRange: [1, 2]
+                })
+              }
+            ]
+          }
+        ]}
+      >
+        <TouchableOpacity
+          hitSlop={HIT_SLOP}
+          onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.EMOJI)}
+        >
+          <IconAntDesign
+            size={22}
+            name="message1"
+            color={
+              this.state.selectedType === COMPONENT_TYPE.EMOJI
+                ? config.focusColor
+                : config.blurColor
+            }
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
   );
 
   renderComposer = () => {

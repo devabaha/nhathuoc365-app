@@ -31,6 +31,7 @@ class Orders extends Component {
     };
 
     this._getData = this._getData.bind(this);
+    this.unmounted = false;
 
     // refresh
     reaction(() => store.orders_key_change, this._getData);
@@ -42,6 +43,10 @@ class Orders extends Component {
     store.is_stay_orders = true;
     store.parentTab = '_orders';
     EventTracker.logEvent('orders_page');
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   componentWillReceiveProps() {
@@ -244,14 +249,14 @@ class Orders extends Component {
           otherClose={false}
         />
 
-        <PopupConfirm
+        {/* <PopupConfirm
           ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-        />
+        /> */}
 
         <PopupConfirm
           ref_popup={ref => (this.refs_edit_cart = ref)}
@@ -286,7 +291,6 @@ class Orders extends Component {
         }
       } catch (error) {
         console.log(error);
-        store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       }
     }
 
@@ -340,21 +344,30 @@ class Orders extends Component {
   async _cancelCart() {
     if (this.item_cancel) {
       try {
-        var response = await APIHandler.site_cart_cancel(
+        const response = await APIHandler.site_cart_canceling(
           this.item_cancel.site_id,
           this.item_cancel.id
         );
-
-        if (response && response.status == STATUS_SUCCESS) {
-          this._getData(450, true);
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS) {
+            this._getData(450, true);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || 'Có lỗi xảy ra'
+            });
+          }
         }
       } catch (error) {
         console.log(error);
-        store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
+        flashShowMessage({
+          type: 'danger',
+          message: 'Có lỗi xảy ra'
+        });
       }
     }
 

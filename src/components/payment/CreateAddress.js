@@ -45,6 +45,8 @@ class CreateAddress extends Component {
         is_user_address: props.from_page == 'account'
       };
     }
+
+    this.unmounted = false;
   }
 
   componentDidMount() {
@@ -62,6 +64,10 @@ class CreateAddress extends Component {
       }, 450);
     }
     EventTracker.logEvent('create_address_page');
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   _unMount() {
@@ -193,21 +199,17 @@ class CreateAddress extends Component {
 
   async _getCart() {
     try {
-      var response = await APIHandler.site_cart(store.store_id);
+      const response = await APIHandler.site_cart_show(store.store_id);
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
           store.setCartData(response.data);
-        })();
-      } else {
-        action(() => {
+        } else {
           store.resetCartData();
-        })();
+        }
       }
     } catch (e) {
-      console.log(e + ' site_cart');
-
-      store.addApiQueue('site_cart', this._getCart.bind(this));
+      console.log(e + ' site_cart_show');
     }
   }
 

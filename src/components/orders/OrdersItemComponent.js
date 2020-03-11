@@ -7,27 +7,29 @@ import store from '../../store/Store';
 import appConfig from 'app-config';
 
 class OrdersItemComponent extends Component {
+  unmounted = false;
+
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   async _getCart(callback) {
     try {
-      var response = await APIHandler.site_cart(store.store_id);
+      const response = await APIHandler.site_cart_show(store.store_id);
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
           store.setCartData(response.data);
-        })();
 
-        if (typeof callback == 'function') {
-          callback();
-        }
-      } else {
-        action(() => {
+          if (typeof callback == 'function') {
+            callback();
+          }
+        } else {
           store.resetCartData();
-        })();
+        }
       }
     } catch (e) {
-      console.log(e + ' site_cart');
-
-      store.addApiQueue('site_cart', this._getCart.bind(this, callback));
+      console.log(e + ' site_cart_show');
     }
   }
 

@@ -49,6 +49,8 @@ exports.SITE_CART_ORDER = MY_FOOD_API + 'apiCart/order';
 exports.SITE_CART_UPDATE = MY_FOOD_API + 'apiCart/update';
 exports.SITE_CART_NOTE = MY_FOOD_API + 'apiCart/note';
 exports.SITE_CART_RATING = MY_FOOD_API + 'apiCart/rating';
+exports.SITE_CART_SHOW = MY_FOOD_API + 'apiCart/show';
+exports.SITE_CART_CANCELING = MY_FOOD_API + 'apiCart/cancel';
 
 exports.SITE_CART_ADDING = MY_FOOD_API + 'apiSite/cartadding';
 exports.SITE_CART = MY_FOOD_API + 'apiSite/cart';
@@ -75,6 +77,8 @@ exports.SITE_CART_ADDRESS = MY_FOOD_API + 'apiSite/cartaddress';
 exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
 
 // Orders
+exports.SITE_CART_INDEX = MY_FOOD_API + 'apiCart/index';
+
 exports.SITE_CART_LIST = MY_FOOD_API + 'apiSite/cart_list';
 exports.USER_CART_LIST = MY_FOOD_API + 'apiUser/cart_list';
 //get_cart_code
@@ -135,7 +139,7 @@ exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';
 exports.SERVICE_ORDERS = MY_FOOD_API + 'apiService/orders';
 
 // Voucher
-exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + '/apiVoucher/my_voucher';
+exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + 'apiVoucher/my_voucher';
 
 //Login Firebase
-exports.LOGIN_FIREBASE_VERTIFY = MY_FOOD_API + '/apiUser/login_firebase_verify';
+exports.LOGIN_FIREBASE_VERTIFY = MY_FOOD_API + 'apiUser/login_firebase_verify';

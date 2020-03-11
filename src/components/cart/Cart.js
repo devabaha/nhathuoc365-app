@@ -25,6 +25,8 @@ export default class Cart extends Component {
       cart_check_list: {},
       loading: true
     };
+
+    this.unmounted = false;
   }
 
   componentWillMount() {
@@ -54,33 +56,36 @@ export default class Cart extends Component {
     EventTracker.logEvent('cart_page');
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   // lấy thông tin giỏ hàng
   async _getCart(delay) {
     try {
-      var response = await APIHandler.site_cart(store.store_id);
+      const response = await APIHandler.site_cart_show(store.store_id);
 
-      if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          action(() => {
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          setTimeout(() => {
             store.setCartData(response.data);
-            this.setState({
-              refreshing: false,
-              loading: false
-            });
-          })();
-        }, delay || this._delay());
-      } else {
-        action(() => {
-          this.setState({
-            loading: false
-          });
+          }, delay || this._delay());
+        } else {
           store.resetCartData();
-        })();
+        }
       }
     } catch (e) {
-      console.log(e + ' site_cart');
-
-      store.addApiQueue('site_cart', this._getCart.bind(this, delay));
+      console.log(e + ' site_cart_show');
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
+      });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false,
+          refreshing: false
+        });
     }
   }
 

@@ -227,6 +227,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+   * Lấy thông tin giỏ hàng theo site id
+   */
+  async site_cart_show(store_id) {
+    var api = url_for(API.SITE_CART_SHOW + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
   async site_cart_by_id(store_id, cart_id) {
     var api = url_for(API.SITE_CART + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
@@ -406,6 +414,14 @@ class APIHandler {
    */
   async site_cart_list(store_id) {
     var api = url_for(API.SITE_CART_LIST + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Danh sách đơn hàng (theo shop) của user
+   */
+  async site_cart_index(store_id) {
+    var api = url_for(API.SITE_CART_INDEX + '/' + store_id);
     return await this.getAPI(api);
   }
 
@@ -689,6 +705,11 @@ class APIHandler {
 
   async site_cart_cancel(store_id, cart_id) {
     var api = url_for(API.SITE_CART_CANCEL + '/' + store_id + '/' + cart_id);
+    return await this.getAPI(api);
+  }
+
+  async site_cart_canceling(store_id, cart_id) {
+    var api = url_for(API.SITE_CART_CANCELING + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
   }
 

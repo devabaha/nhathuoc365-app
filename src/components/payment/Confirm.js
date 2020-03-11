@@ -1643,26 +1643,26 @@ class Confirm extends Component {
   async _cancelCart() {
     if (this.item_cancel) {
       try {
-        var response = await APIHandler.site_cart_cancel(
+        const response = await APIHandler.site_cart_canceling(
           this.item_cancel.site_id,
           this.item_cancel.id
         );
 
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS) {
             store.setOrdersKeyChange(store.orders_key_change + 1);
             Events.trigger(RELOAD_STORE_ORDERS);
-          })();
-          this._getOrdersItem(this.item_cancel.site_id, this.item_cancel.id);
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
+
+            this._getOrdersItem(this.item_cancel.site_id, this.item_cancel.id);
+
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
+          }
         }
       } catch (e) {
-        console.log(e + ' site_cart_cancel');
-
-        store.addApiQueue('site_cart_cancel', this._cancelCart.bind(this));
+        console.log(e + ' site_cart_canceling');
       }
     }
 
@@ -1718,8 +1718,6 @@ class Confirm extends Component {
         }
       } catch (e) {
         console.log(e + ' site_cart_reorder');
-
-        store.addApiQueue('site_cart_reorder', this._coppyCart.bind(this));
       }
     }
 

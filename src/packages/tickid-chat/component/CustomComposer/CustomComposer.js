@@ -51,7 +51,7 @@ const CustomComposer = props => {
             }
           ]}
         >
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={props.onBackPress}
             style={[
               styles.back,
@@ -61,7 +61,7 @@ const CustomComposer = props => {
             ]}
           >
             <Icon name="angle-left" color="#404040" size={28} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </Animated.View>
       )}
     </View>

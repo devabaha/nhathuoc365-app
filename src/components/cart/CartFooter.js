@@ -56,7 +56,7 @@ export default class CartFooter extends Component {
 
   async _getCart() {
     try {
-      const response = await APIHandler.site_cart(store.store_id);
+      const response = await APIHandler.site_cart_show(store.store_id);
 
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
@@ -66,7 +66,7 @@ export default class CartFooter extends Component {
         }
       }
     } catch (e) {
-      console.log(e + ' site_cart');
+      console.log(e + ' site_cart_show');
       flashShowMessage({
         type: 'danger',
         message: 'Có lỗi xảy ra'
