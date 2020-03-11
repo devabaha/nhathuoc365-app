@@ -120,7 +120,11 @@ exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';
 exports.SERVICE_ORDERS = MY_FOOD_API + 'apiService/orders';
 
 // Voucher
-exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + '/apiVoucher/my_voucher';
+exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + 'apiVoucher/my_voucher';
 
-//Login Firebase
-exports.LOGIN_FIREBASE_VERTIFY = MY_FOOD_API + '/apiUser/login_firebase_verify';
+// Login Firebase
+exports.LOGIN_FIREBASE_VERTIFY = MY_FOOD_API + 'apiUser/login_firebase_verify';
+
+// Payment
+exports.PAYMENT_METHOD = MY_FOOD_API + 'apiSite/payment';
+exports.ADD_PAYMENT_METHOD = MY_FOOD_API + 'apiSite/add_payment_method_cart';
