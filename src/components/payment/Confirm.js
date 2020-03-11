@@ -28,6 +28,9 @@ import Button from 'react-native-button';
 import { USE_ONLINE } from 'app-packages/tickid-voucher';
 
 class Confirm extends Component {
+  static defaultProps = {
+    orderEdited: () => {}
+  };
   constructor(props) {
     super(props);
 
@@ -110,7 +113,8 @@ class Confirm extends Component {
 
   async _siteInfo(site_id) {
     try {
-      var response = await APIHandler.site_detail(site_id);
+      const response = await APIHandler.site_detail(site_id);
+
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
           store.setStoreData(response.data);
@@ -139,20 +143,22 @@ class Confirm extends Component {
 
   async _getOrdersItem(site_id, page_id) {
     try {
-      var response = await APIHandler.site_cart_by_id(site_id, page_id);
+      const response = await APIHandler.site_cart_by_id(site_id, page_id);
 
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState(
-          {
-            data: response.data
-          },
-          () => {
-            this._siteInfo(site_id);
-          }
-        );
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState(
+            {
+              data: response.data
+            },
+            () => {
+              this._siteInfo(site_id);
+            }
+          );
 
-        // message: lấy thông tin thành công
-        // Toast.show(response.message);
+          // message: lấy thông tin thành công
+          // Toast.show(response.message);
+        }
       }
     } catch (e) {
       console.log(e + ' site_cart_by_id');
@@ -189,7 +195,7 @@ class Confirm extends Component {
           const response = await APIHandler.site_cart_note(store.store_id, {
             user_note: store.user_cart_note
           });
-          console.log(response);
+
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               if (typeof callback == 'function') {
@@ -498,8 +504,7 @@ class Confirm extends Component {
       Actions.orders_item({
         title: `#${store.cart_data.cart_code}`,
         data: store.cart_data,
-        tel: store.store_data.tel,
-        resetCardData: true
+        tel: store.store_data.tel
       });
 
       // add stack unmount
@@ -1711,22 +1716,20 @@ class Confirm extends Component {
   }
 
   goBackStores(item) {
-    action(() => {
-      if (store.no_refresh_home_change) {
-        Actions.pop();
-      } else {
-        store.setStoreData({
-          id: item.site_id,
-          name: item.shop_name,
-          tel: item.tel
-        });
-        store.goStoreNow = true;
+    if (store.no_refresh_home_change) {
+      Actions.pop();
+    } else {
+      store.setStoreData({
+        id: item.site_id,
+        name: item.shop_name,
+        tel: item.tel
+      });
+      store.goStoreNow = true;
 
-        Actions.primaryTabbar({
-          type: ActionConst.RESET
-        });
-      }
-    })();
+      Actions.primaryTabbar({
+        type: ActionConst.RESET
+      });
+    }
   }
 
   async _cancelCart() {
@@ -1816,34 +1819,31 @@ class Confirm extends Component {
   async _editCart() {
     if (this.item_edit) {
       try {
-        var response = await APIHandler.site_cart_update_ordering(
+        const response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
           this.item_edit.id
         );
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
+
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS) {
+            this.props.orderEdited();
             store.setCartData(response.data);
             store.setOrdersKeyChange(store.orders_key_change + 1);
             Events.trigger(RELOAD_STORE_ORDERS);
-          })();
 
-          this.setState({
-            single: true
-          });
+            this.setState({
+              single: true
+            });
 
-          this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
+            this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
+          }
         }
       } catch (e) {
         console.log(e + ' site_cart_update_ordering');
-
-        store.addApiQueue(
-          'site_cart_update_ordering',
-          this._editCart.bind(this)
-        );
       }
     }
 
@@ -1979,7 +1979,7 @@ class ItemCartComponent extends Component {
             item.id,
             data
           );
-          console.log(data, response);
+
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);

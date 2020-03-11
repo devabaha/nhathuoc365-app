@@ -240,15 +240,11 @@ export default class Item extends Component {
   }
 
   _selectItemAttrs(item) {
-    // if (item.has_attr) {
     Actions.push(appConfig.routes.itemAttribute, {
       itemId: item.id,
       onSubmit: (quantity, modal_key) =>
         this._addCart(item, quantity, modal_key)
     });
-    // } else {
-    //   this._addCart(item);
-    // }
   }
 
   // add item vào giỏ hàng

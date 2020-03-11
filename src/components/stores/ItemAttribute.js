@@ -66,23 +66,28 @@ class ItemAttribute extends PureComponent {
         store.store_data.id,
         this.props.itemId
       );
-      console.log(response);
+
       if (!this.unmounted) {
-        if (response && response.status == STATUS_SUCCESS && response.data) {
-          if (response.data.product) {
-            this.setState({ product: response.data.product });
-          }
+        if (response && response.status == STATUS_SUCCESS) {
+          if (response.data) {
+            if (response.data.product) {
+              this.setState({ product: response.data.product });
+            }
 
-          if (response.data.models) {
-            // console.log(response.data.models);
-            this.setState({ models: response.data.models });
-          }
+            if (response.data.models) {
+              // console.log(response.data.models);
+              this.setState({ models: response.data.models });
+            }
 
-          if (response.data.attrs) {
-            const { viewData, selectedAttrs } = this.getBaseData(
-              response.data.attrs
-            );
-            this.setState({ viewData, selectedAttrs });
+            if (response.data.attrs) {
+              const { viewData, selectedAttrs } = this.getBaseData(
+                response.data.attrs
+              );
+              this.setState({ viewData, selectedAttrs });
+            }
+          } else {
+            this.props.onSubmit();
+            Actions.pop();
           }
         }
       }
