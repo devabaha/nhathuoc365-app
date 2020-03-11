@@ -29,7 +29,10 @@ class MordernListComponent extends Component {
       activeStyle: this.props.activeStyle,
       activeTextStyle: this.props.activeTextStyle,
       disabledStyle: this.props.disabledStyle,
-      disabledTextStyle: this.props.disabledTextStyle
+      disabledTextStyle: this.props.disabledTextStyle,
+      renderItem: this.props.renderItem,
+      extraData: this.props.extraData,
+      listEmptyComponent: this.props.listEmptyComponent
     };
     switch (this.props.type) {
       case LIST_TYPE.NORMAL:

@@ -856,7 +856,7 @@ class TickidChat extends Component {
         {!!this.props.messages && this.props.messages.length === 0 && (
           <EmptyChat onPress={this.onListViewPress} />
         )}
-        <View style={styles.container} onLayout={this.handleContainerLayout}>
+        <View style={{ flex: 1 }} onLayout={this.handleContainerLayout}>
           <TouchableWithoutFeedback
             style={styles.touchWrapper}
             onPress={this.onListViewPress}
@@ -995,7 +995,7 @@ const styles = StyleSheet.create({
   giftedChatContainer: {
     paddingBottom: 15,
     flexGrow: 1,
-    backgroundColor: '#fff'
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   flex: {
     flex: 1
@@ -1022,7 +1022,7 @@ const styles = StyleSheet.create({
     top: '30%',
     paddingBottom: 60,
     position: 'absolute',
-    zIndex: 99
+    zIndex: 0
   },
   emptyChatText: {
     color: '#909090',

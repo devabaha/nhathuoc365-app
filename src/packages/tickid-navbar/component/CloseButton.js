@@ -4,10 +4,10 @@ import Button from 'react-native-button';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-function CloseButton() {
+function CloseButton(props) {
   return (
     <Button containerStyle={styles.container} onPress={Actions.pop}>
-      <Icon name="close" size={24} color="#333" />
+      <Icon name="close" size={24} color={props.color || '#333'} />
     </Button>
   );
 }

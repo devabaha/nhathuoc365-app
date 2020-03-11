@@ -11,41 +11,47 @@ import Icon from 'react-native-vector-icons/Feather';
 class NormalList extends Component {
   state = {};
 
-  renderItem({ item, index }) {
-    const extraStyle =
-      index === 0
-        ? styles.first
-        : index === this.props.data.length - 1
-        ? styles.last
-        : {};
+  renderItem = ({ item, index }) => {
+    if (this.props.renderItem) {
+      return this.props.renderItem(item, index);
+    } else {
+      const extraStyle =
+        index === 0
+          ? styles.first
+          : index === this.props.data.length - 1
+          ? styles.last
+          : {};
 
-    const extraStyleContent = index !== 0 && styles.content;
+      const extraStyleContent = index !== 0 && styles.content;
 
-    const text = this.props.mainKey ? item[this.props.mainKey] : item;
+      const text = this.props.mainKey ? item[this.props.mainKey] : item;
 
-    return (
-      <TouchableHighlight
-        underlayColor="#eee"
-        onPress={() => this.props.onPressItem(item)}
-        style={[styles.rowWrapper, styles.row, extraStyle]}
-      >
-        <View style={[styles.rowContent, styles.row, extraStyleContent]}>
-          <Text style={styles.text}>{text}</Text>
-          <Icon name="arrow-up-left" style={styles.rightIcon} />
-        </View>
-      </TouchableHighlight>
-    );
-  }
+      return (
+        <TouchableHighlight
+          underlayColor="#eee"
+          onPress={() => this.props.onPressItem(item)}
+          style={[styles.rowWrapper, styles.row, extraStyle]}
+        >
+          <View style={[styles.rowContent, styles.row, extraStyleContent]}>
+            <Text style={styles.text}>{text}</Text>
+            <Icon name="arrow-up-left" style={styles.rightIcon} />
+          </View>
+        </TouchableHighlight>
+      );
+    }
+  };
 
   render() {
     return (
       <FlatList
         data={this.props.data}
-        renderItem={this.renderItem.bind(this)}
+        renderItem={this.renderItem}
         scrollEnabled={this.props.scrollEnabled}
         keyExtractor={(item, index) => index.toString()}
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="always"
+        extraData={this.props.extraData}
+        ListEmptyComponent={this.props.listEmptyComponent}
       />
     );
   }

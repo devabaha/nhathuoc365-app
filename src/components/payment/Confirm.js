@@ -43,7 +43,8 @@ class Confirm extends Component {
       suggest_register: false,
       name_register: store.cart_data ? store.cart_data.address.name : '',
       tel_register: store.cart_data ? store.cart_data.address.tel : '',
-      pass_register: ''
+      pass_register: '',
+      paymentMethod: {}
     };
 
     this.unmounted = false;
@@ -155,11 +156,6 @@ class Confirm extends Component {
       }
     } catch (e) {
       console.log(e + ' site_cart_by_id');
-
-      store.addApiQueue(
-        'site_cart_by_id',
-        this._getOrdersItem.bind(this, site_id, page_id)
-      );
     }
   }
 
@@ -352,10 +348,33 @@ class Confirm extends Component {
     };
 
     Actions.push(appConfig.routes.myAddress, {
-      type: ActionConst.REPLACE,
-      onBack
+      type: ActionConst.REPLACE
+      // onBack
     });
   }
+
+  _goPaymentMethod = cart_data => {
+    Actions.push(appConfig.routes.paymentMethod, {
+      onConfirm: this.onConfirmPaymentMethod,
+      selectedMethod: cart_data.payment_method,
+      price: cart_data.total_before_view,
+      totalPrice: cart_data.total_selected,
+      extraFee: cart_data.item_fee,
+      onUpdatePaymentMethod: data => {
+        if (!this.state.single) {
+          this.setState({ data });
+        }
+      }
+    });
+  };
+
+  onConfirmPaymentMethod = (method, extraData) => {
+    const paymentMethod = {
+      ...method,
+      ...extraData
+    };
+    this.setState({ paymentMethod });
+  };
 
   // show popup confirm remove item in cart
   _removeItemCartConfirm(item) {
@@ -567,7 +586,6 @@ class Confirm extends Component {
 
   render() {
     var { single } = this.state;
-
     // from this
     if (single) {
       var { cart_data, cart_products_confirm } = store;
@@ -732,9 +750,6 @@ class Confirm extends Component {
                   <Text style={styles.desc_content}>
                     Mã đơn hàng: {cart_data.cart_code}
                   </Text>
-                  <Text style={styles.desc_content}>
-                    Thanh toán: Khi nhận hàng (COD)
-                  </Text>
                 </View>
                 <View style={styles.address_default_box}>
                   <View style={styles.orders_status_box}>
@@ -744,14 +759,14 @@ class Confirm extends Component {
                     </Text>
                   </View>
                 </View>
-                <View
+                {/* <View
                   style={[
                     styles.profile_list_icon_box,
                     styles.profile_list_icon_box_angle
                   ]}
                 >
                   <Icon name="angle-right" size={16} color="#999999" />
-                </View>
+                </View> */}
               </View>
             </TouchableHighlight>
           </View>
@@ -811,7 +826,7 @@ class Confirm extends Component {
                         styles.title_active
                       ]}
                     >
-                      NHẤN ĐỂ THAY ĐỔI
+                      Thay đổi
                     </Text>
                   </TouchableHighlight>
                 ) : (
@@ -829,7 +844,7 @@ class Confirm extends Component {
                         styles.title_active
                       ]}
                     >
-                      SAO CHÉP
+                      Sao chép
                     </Text>
                   </TouchableHighlight>
                 )}
@@ -846,14 +861,88 @@ class Confirm extends Component {
                   <Text style={styles.address_content_address_detail}>
                     {address_data.address}
                   </Text>
-                  {/*<Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
-                  <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
-                  <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
                 </View>
               ) : (
                 <Text style={styles.address_content_address_detail}>
                   {address_data.address}
                 </Text>
+              )}
+            </View>
+          </View>
+
+          <View
+            style={[
+              styles.rows,
+              styles.borderBottom,
+              single ? null : styles.mt8,
+              {
+                paddingTop: 0,
+                paddingRight: 0
+              }
+            ]}
+          >
+            <View
+              style={[
+                styles.address_name_box,
+                {
+                  paddingTop: 12
+                }
+              ]}
+            >
+              <View style={styles.box_icon_label}>
+                <Icon
+                  style={styles.icon_label}
+                  name="dollar"
+                  size={13}
+                  color={DEFAULT_COLOR}
+                />
+                <Text style={styles.input_label}>Hình thức thanh toán</Text>
+              </View>
+              <View
+                style={[
+                  styles.address_default_box,
+                  {
+                    position: 'absolute',
+                    top: 0,
+                    right: 0
+                  }
+                ]}
+              >
+                <TouchableHighlight
+                  style={{
+                    paddingVertical: 12,
+                    paddingHorizontal: 15
+                  }}
+                  underlayColor="transparent"
+                  onPress={() => this._goPaymentMethod(cart_data)}
+                >
+                  <Text
+                    style={[styles.address_default_title, styles.title_active]}
+                  >
+                    Thay đổi
+                  </Text>
+                </TouchableHighlight>
+              </View>
+            </View>
+
+            <View style={{ flexDirection: 'row', ...styles.address_content }}>
+              {cart_data.payment_method ? (
+                <View style={styles.paymentMethodContainer}>
+                  {cart_data.payment_method.image && (
+                    <CachedImage
+                      mutable
+                      source={{ uri: cart_data.payment_method.image }}
+                      style={styles.imagePaymentMethod}
+                    />
+                  )}
+                  {cart_data.payment_method.name && (
+                    <Text style={[styles.address_name]}>
+                      {cart_data.payment_method.name}
+                    </Text>
+                  )}
+                </View>
+              ) : (
+                <Text style={styles.placeholder}>Chưa chọn</Text>
               )}
             </View>
           </View>
@@ -2355,7 +2444,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
-  icon_label: {},
+  icon_label: {
+    fontSize: 14,
+    width: 15
+  },
 
   success_box: {
     padding: 15
@@ -2547,6 +2639,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     color: '#333'
+  },
+  paymentMethodContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1
+  },
+  imagePaymentMethod: {
+    width: 40,
+    height: 40,
+    resizeMode: 'contain',
+    marginRight: 7
+  },
+  placeholder: {
+    color: '#999999'
   }
 });
 

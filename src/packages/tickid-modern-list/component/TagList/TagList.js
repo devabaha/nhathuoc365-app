@@ -9,7 +9,9 @@ class TagList extends Component {
     return this.props.data.map((item, index) => {
       const text = this.props.mainKey ? item[this.props.mainKey] : item;
 
-      return (
+      return this.props.renderItem ? (
+        this.props.renderItem(item, index)
+      ) : (
         <Tag
           active={item.active}
           activeStyle={this.props.activeStyle}
@@ -34,7 +36,9 @@ class TagList extends Component {
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="always"
       >
-        {this.renderItem()}
+        {this.props.data.length === 0 && this.props.listEmptyComponent
+          ? this.props.listEmptyComponent
+          : this.renderItem()}
       </ScrollView>
     );
   }

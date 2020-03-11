@@ -853,9 +853,7 @@ const styles = StyleSheet.create({
   profile_avatar_box: {
     width: 60,
     height: 60,
-    backgroundColor: '#cccccc',
-    borderWidth: 2,
-    borderColor: '#a9a9a9',
+    backgroundColor: '#f0f0f0',
     borderRadius: 30,
     marginRight: 15,
     justifyContent: 'center',
@@ -863,8 +861,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
   profile_avatar: {
-    width: 56,
-    height: 56,
+    width: 60,
+    height: 60,
     borderRadius: 28
     // resizeMode: 'cover'
   },

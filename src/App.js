@@ -59,6 +59,7 @@ import ItemImageViewer from './components/item/ItemImageViewer';
 import Cart from './components/cart/Cart';
 import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
+import PaymentMethod from './components/payment/PaymentMethod';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
 import ViewOrdersItem from './components/orders/ViewOrdersItem';
@@ -127,6 +128,7 @@ import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import ItemAttribute from './components/stores/ItemAttribute';
+import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
 /**
@@ -699,6 +701,17 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
+                <Stack key={appConfig.routes.paymentMethod}>
+                  <Scene
+                    key={`${appConfig.routes.paymentMethod}_1`}
+                    title="Hình thức thanh toán"
+                    component={PaymentMethod}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 <Stack key="create_address">
                   <Scene
                     key="create_address_1"
@@ -1281,6 +1294,18 @@ class RootRouter extends Component {
                 title="Mã voucher"
                 component={VoucherShowBarcodeContainer}
                 renderBackButton={CloseButton}
+                back
+              />
+            </Stack>
+
+            {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
+            <Stack key={appConfig.routes.internetBanking}>
+              <Scene
+                key={`${appConfig.routes.internetBanking}_1`}
+                title="Thẻ ATM"
+                component={InternetBankingModal}
+                renderBackButton={() => <CloseButton color="#fff" />}
+                {...navBarConfig}
                 back
               />
             </Stack>
