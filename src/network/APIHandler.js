@@ -176,7 +176,7 @@ class APIHandler {
   }
 
   /**
-   * Lấy chi tiết sản phẩm theo product id
+   * thêm product vào giỏ hàng
    */
   async site_cart_adding(store_id, product_id) {
     var api = url_for(API.SITE_CART_ADDING + '/' + store_id + '/' + product_id);
@@ -628,6 +628,22 @@ class APIHandler {
   async service_orders() {
     var api = url_for(API.SERVICE_ORDERS);
     return await this.getAPI(api);
+  }
+
+  /**
+   * Lấy danh sách hình thức thanh toán
+   */
+  async payment_method(store_id) {
+    var api = url_for(API.PAYMENT_METHOD + '/' + store_id);
+    return await this.postAPI(api);
+  }
+
+  /**
+   * Cập nhật hình thức thanh toán cho đơn hàng
+   */
+  async add_payment_method(store_id, cart_id, data) {
+    var api = url_for(API.ADD_PAYMENT_METHOD + '/' + store_id + '/' + cart_id);
+    return await this.postAPI(api, data);
   }
 
   _networkIndicator(flag = true) {

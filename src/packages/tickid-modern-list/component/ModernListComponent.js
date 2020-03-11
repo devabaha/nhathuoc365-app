@@ -25,7 +25,10 @@ class MordernListComponent extends Component {
       scrollEnabled: this.props.scrollEnabled,
       onPressItem: this.props.onPressItem,
       activeStyle: this.props.activeStyle,
-      activeTextStyle: this.props.activeTextStyle
+      activeTextStyle: this.props.activeTextStyle,
+      renderItem: this.props.renderItem,
+      extraData: this.props.extraData,
+      listEmptyComponent: this.props.listEmptyComponent
     };
     switch (this.props.type) {
       case LIST_TYPE.NORMAL:
