@@ -13,8 +13,11 @@ class ModernList extends Component {
     extraData: PropTypes.any,
     containerStyle: PropTypes.any,
     headerWrapperStyle: PropTypes.any,
+    headerTitleStyle: PropTypes.any,
     activeStyle: PropTypes.any,
     activeTextStyle: PropTypes.any,
+    disabledStyle: PropTypes.any,
+    disabledTextStyle: PropTypes.any,
     bodyWrapperStyle: PropTypes.any,
     headerComponent: PropTypes.node,
     headerLeftComponent: PropTypes.node,
@@ -34,8 +37,11 @@ class ModernList extends Component {
     extraData: null,
     containerStyle: {},
     headerWrapperStyle: {},
+    headerTitleStyle: {},
     activeStyle: {},
     activeTextStyle: {},
+    disabledStyle: {},
+    disabledTextStyle: {},
     bodyWrapperStyle: {},
     headerComponent: null,
     headerLeftComponent: null,
@@ -52,6 +58,7 @@ class ModernList extends Component {
     return (
       <ModernListComponent
         headerTitle={this.props.headerTitle}
+        headerTitleStyle={this.props.headerTitleStyle}
         scrollEnabled={this.props.listScrollable}
         data={this.props.data}
         extraData={this.props.extraData}
@@ -67,6 +74,8 @@ class ModernList extends Component {
         onBodyLayout={this.props.onBodyLayout}
         activeStyle={this.props.activeStyle}
         activeTextStyle={this.props.activeTextStyle}
+        disabledStyle={this.props.disabledStyle}
+        disabledTextStyle={this.props.disabledTextStyle}
         bodyWrapperStyle={this.props.bodyWrapperStyle}
         listEmptyComponent={this.props.listEmptyComponent}
       />

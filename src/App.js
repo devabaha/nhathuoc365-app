@@ -127,6 +127,7 @@ import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
 import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import ItemAttribute from './components/stores/ItemAttribute';
 import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
 
@@ -1267,6 +1268,12 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.voucherEnterCodeManual}
                 component={VoucherEnterCodeManualContainer}
+              />
+
+              {/* ================ LIGHT BOX SHOW PRODUCT's OPTIONS ================ */}
+              <Stack
+                key={appConfig.routes.itemAttribute}
+                component={ItemAttribute}
               />
             </Lightbox>
 

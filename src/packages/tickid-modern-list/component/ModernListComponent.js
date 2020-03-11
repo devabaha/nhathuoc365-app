@@ -12,7 +12,9 @@ class MordernListComponent extends Component {
     return (
       <View style={[styles.headerContent]}>
         {this.props.headerLeftComponent}
-        <Text style={styles.headerTitle}>{this.props.headerTitle}</Text>
+        <Text style={[styles.headerTitle, this.props.headerTitleStyle]}>
+          {this.props.headerTitle}
+        </Text>
         {this.props.headerRightComponent}
       </View>
     );
@@ -26,6 +28,8 @@ class MordernListComponent extends Component {
       onPressItem: this.props.onPressItem,
       activeStyle: this.props.activeStyle,
       activeTextStyle: this.props.activeTextStyle,
+      disabledStyle: this.props.disabledStyle,
+      disabledTextStyle: this.props.disabledTextStyle,
       renderItem: this.props.renderItem,
       extraData: this.props.extraData,
       listEmptyComponent: this.props.listEmptyComponent

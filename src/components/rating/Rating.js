@@ -133,7 +133,7 @@ class Rating extends Component {
       const { current, comment, rating_selection } = this.state;
       const { site_id, id } = this.state.cart_data;
 
-      const response = await APIHandler.cart_site_update(site_id, id, {
+      const response = await APIHandler.site_cart_rating(site_id, id, {
         star: current,
         comment,
         rating_data: rating_selection.join(', ')

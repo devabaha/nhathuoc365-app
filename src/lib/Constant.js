@@ -5,7 +5,7 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 // API URL
 // global.MY_FOOD_API = 'https://abaha.net/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
-global.MY_FOOD_API = 'https://apiapp.tickid.top/';
+global.MY_FOOD_API = 'http://apiapp.tickid.top/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
 global.PHOTO_MY_FOOD_API = 'https://img.tickid.top/';
 global.HOTLINE = '+8490 345 1368';
