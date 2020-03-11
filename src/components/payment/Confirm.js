@@ -195,7 +195,7 @@ class Confirm extends Component {
           const response = await APIHandler.site_cart_note(store.store_id, {
             user_note: store.user_cart_note
           });
-
+          console.log(response);
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               if (typeof callback == 'function') {
@@ -1979,7 +1979,6 @@ class ItemCartComponent extends Component {
             item.id,
             data
           );
-
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
