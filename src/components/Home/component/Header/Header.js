@@ -37,12 +37,12 @@ function Header(props) {
       </View>
 
       {/** TEST FLOW FOR SERVICE ORDERS */}
-      <Button
+      {/* <Button
         containerStyle={{ position: 'absolute', top: 45, left: 250 }}
         onPress={() => Actions.push(appConfig.routes.serviceOrders)}
       >
         <Text style={{ color: '#fff', fontWeight: 'bold' }}>Đơn dịch vụ</Text>
-      </Button>
+      </Button> */}
     </View>
   );
 }
