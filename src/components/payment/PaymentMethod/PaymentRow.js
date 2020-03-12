@@ -44,16 +44,6 @@ class PaymentRow extends Component {
 
   componentDidMount() {
     this.state.animated.addListener(this.animationListener);
-    if (this.props.active) {
-      Animated.timing(this.state.animated, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true
-      }).start();
-      this._refCheckBox.setNativeProps({
-        fill: extractBrush(DEFAULT_COLOR)
-      });
-    }
   }
 
   componentWillUnmount() {
@@ -71,7 +61,7 @@ class PaymentRow extends Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.active !== this.props.active) {
+    if (nextProps.active !== this.props.active || nextProps.active) {
       Reanimated.timing(this.state.animatedHeight, {
         toValue: nextProps.active ? 1 : 0,
         duration: 300,
