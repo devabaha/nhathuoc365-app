@@ -507,7 +507,7 @@ export default class CartFooter extends Component {
                     fontWeight: '600'
                   }}
                 >
-                  {cart_data.total}
+                  {cart_data.total_selected}
                 </Text>
               )}
             </View>
