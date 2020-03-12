@@ -143,7 +143,7 @@ class Confirm extends Component {
 
   async _getOrdersItem(site_id, page_id) {
     try {
-      const response = await APIHandler.site_cart_by_id(site_id, page_id);
+      const response = await APIHandler.site_cart_show(site_id, page_id);
 
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
@@ -161,7 +161,7 @@ class Confirm extends Component {
         }
       }
     } catch (e) {
-      console.log(e + ' site_cart_by_id');
+      console.log(e + ' site_cart_show');
     }
   }
 

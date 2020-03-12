@@ -61,7 +61,10 @@ class PaymentRow extends Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.active !== this.props.active || nextProps.active) {
+    if (
+      nextProps.active !== this.props.active ||
+      (nextProps.active && nextState.preparedData && !this.state.preparedData)
+    ) {
       Reanimated.timing(this.state.animatedHeight, {
         toValue: nextProps.active ? 1 : 0,
         duration: 300,

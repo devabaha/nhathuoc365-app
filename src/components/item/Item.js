@@ -239,14 +239,6 @@ export default class Item extends Component {
     this._getDataFromServer(1000);
   }
 
-  _selectItemAttrs(item) {
-    Actions.push(appConfig.routes.itemAttribute, {
-      itemId: item.id,
-      onSubmit: (quantity, modal_key) =>
-        this._addCart(item, quantity, modal_key)
-    });
-  }
-
   // add item vào giỏ hàng
   _addCart = (item, quantity = 1, model = '') => {
     this.setState(
@@ -268,33 +260,41 @@ export default class Item extends Component {
 
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
-              store.setCartData(response.data);
+              if (response.data.attrs) {
+                Actions.push(appConfig.routes.itemAttribute, {
+                  itemId: item.id,
+                  onSubmit: (quantity, modal_key) =>
+                    this._addCart(item, quantity, modal_key)
+                });
+              } else {
+                store.setCartData(response.data);
 
-              var index = null,
-                length = 0;
-              if (response.data.products) {
-                length = Object.keys(response.data.products).length;
+                var index = null,
+                  length = 0;
+                if (response.data.products) {
+                  length = Object.keys(response.data.products).length;
 
-                Object.keys(response.data.products)
-                  .reverse()
-                  .some((key, key_index) => {
-                    let value = response.data.products[key];
-                    if (value.id == item.id) {
-                      index = key_index;
-                      return true;
-                    }
-                  });
+                  Object.keys(response.data.products)
+                    .reverse()
+                    .some((key, key_index) => {
+                      let value = response.data.products[key];
+                      if (value.id == item.id) {
+                        index = key_index;
+                        return true;
+                      }
+                    });
+                }
+
+                if (index !== null && index < length) {
+                  store.setCartItemIndex(index);
+                  Events.trigger(NEXT_PREV_CART, { index });
+                }
+
+                flashShowMessage({
+                  message: response.message,
+                  type: 'success'
+                });
               }
-
-              if (index !== null && index < length) {
-                store.setCartItemIndex(index);
-                Events.trigger(NEXT_PREV_CART, { index });
-              }
-
-              flashShowMessage({
-                message: response.message,
-                type: 'success'
-              });
             } else {
               flashShowMessage({
                 message: response.message || 'Có lỗi xảy ra',
@@ -492,10 +492,7 @@ export default class Item extends Component {
               </TouchableHighlight>
 
               <TouchableHighlight
-                onPress={this._selectItemAttrs.bind(
-                  this,
-                  item_data ? item_data : item
-                )}
+                onPress={() => this._addCart(item_data ? item_data : item)}
                 underlayColor="transparent"
               >
                 <View
