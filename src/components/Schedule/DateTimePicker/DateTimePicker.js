@@ -98,11 +98,14 @@ class DateTimePicker extends Component {
 
   renderDateItem({ item: date, index }) {
     const isDisabled = date < this.state.today;
-    const notSundayAndSartuday =
-      (index + 1) % 7 !== 1 && (index + 1) % 7 !== 0 && index !== 0;
-    const distance = (this.state.componentWidth - 10 * 7) / 6;
+    const notSartuday = (index + 1) % 7 !== 0;
+    const width = 23;
+    const distance = (this.state.componentWidth - width * 7) / 6;
     const extraStyle = {
-      marginHorizontal: notSundayAndSartuday ? distance : 0
+      width,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: notSartuday ? distance : 0
     };
     return (
       <TouchableWithoutFeedback onPress={this.handlePressDate}>
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20
   },
   dateContentContainer: {
-    // justifyContent: 'space-between',
+    justifyContent: 'center'
   },
   text: {
     textTransform: 'uppercase',
