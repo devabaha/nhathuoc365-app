@@ -130,6 +130,7 @@ import FastImage from 'react-native-fast-image';
 import ItemAttribute from './components/stores/ItemAttribute';
 import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import Schedule from './containers/Schedule';
 
 /**
  * Not allow font scaling
@@ -1246,6 +1247,17 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.voucherScanner}_1`}
                     title="Quét mã QR"
                     component={VoucherScanScreenContainer}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SCENE SCHEDULE ================ */}
+                <Stack key={appConfig.routes.schedule}>
+                  <Scene
+                    key={`${appConfig.routes.schedule}_1`}
+                    title="Chọn ngày và giờ"
+                    component={Schedule}
                     {...whiteNavBarConfig}
                     back
                   />

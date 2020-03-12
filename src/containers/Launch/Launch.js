@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 import { Actions } from 'react-native-router-flux';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  Animated,
-  Easing
-} from 'react-native';
-import { CachedImage } from 'react-native-img-cache';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
 import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
@@ -44,6 +36,8 @@ class Launch extends Component {
   };
 
   handleAuthWithResponse = response => {
+    Actions.replace(appConfig.routes.schedule);
+    return;
     const user = response.data;
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
