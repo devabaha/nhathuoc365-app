@@ -359,6 +359,11 @@ class ViewOrdersItem extends Component {
                         {item.name}
                       </Text>
 
+                      {!!item.classification && (
+                        <Text style={styles.cart_item_info_name}>
+                          {item.classification}
+                        </Text>
+                      )}
                       <View style={styles.cart_item_price_box}>
                         {item.discount_percent > 0 && (
                           <Text style={styles.cart_item_price_price_safe_off}>

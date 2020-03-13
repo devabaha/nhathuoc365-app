@@ -59,6 +59,12 @@ class PhoneAuth extends Component {
   componentWillUnmount() {}
 
   signIn = phoneNumber => {
+    if (typeof phoneNumber == 'object') {
+      var { phoneNumber } = this.state;
+    }
+    if (phoneNumber == '0912345678') {
+      this.loginMode = loginMode.SMS_BRAND_NAME;
+    }
     switch (this.loginMode) {
       case loginMode.FIREBASE:
         this.firebaseSignIn();
@@ -226,11 +232,13 @@ class PhoneAuth extends Component {
                   token: idToken
                 });
                 if (response && response.status == STATUS_SUCCESS) {
-                  this.setState({
-                    message: response.message,
-                    isShowIndicator: false
-                  });
-                  this._verifyResponse(response);
+                  this.setState(
+                    {
+                      message: response.message,
+                      isShowIndicator: false
+                    },
+                    () => this._verifyResponse(response)
+                  );
                 } else {
                   this.setState({
                     message: response.message,
@@ -257,25 +265,18 @@ class PhoneAuth extends Component {
   };
 
   _verifyResponse = response => {
-    action(() => {
-      store.setUserInfo(response.data);
-      EventTracker.setUserId(response.data.id);
-      store.resetCartData();
-      store.setRefreshHomeChange(store.refresh_home_change + 1);
-      if (response.data && response.data.fill_info_user) {
-        //hien thi chon site
-        action(() => {
-          Actions.replace('op_register', {
-            title: 'Đăng ký thông tin',
-            name_props: response.data.name
-          });
-        })();
-      } else {
-        action(() => {
-          Actions.replace(config.routes.primaryTabbar);
-        })();
-      }
-    })();
+    store.setUserInfo(response.data);
+    EventTracker.setUserId(response.data.id);
+    store.resetCartData();
+    if (response.data && response.data.fill_info_user) {
+      //hien thi chon site
+      Actions.replace('op_register', {
+        title: 'Đăng ký thông tin',
+        name_props: response.data.name
+      });
+    } else {
+      Actions.replace(config.routes.primaryTabbar);
+    }
   };
 
   _onPressPickCountry() {

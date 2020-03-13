@@ -13,7 +13,6 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 
-@observer
 class Address extends Component {
   constructor(props) {
     super(props);
@@ -28,6 +27,7 @@ class Address extends Component {
     };
 
     this._getData = this._getData.bind(this);
+    this.unmounted = false;
   }
 
   componentDidMount() {
@@ -37,6 +37,10 @@ class Address extends Component {
 
     this._getData();
     EventTracker.logEvent('address_page');
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   // render button trên navbar
@@ -75,8 +79,6 @@ class Address extends Component {
       }
     } catch (e) {
       console.log(e + ' user_address');
-
-      store.addApiQueue('user_address', this._getData.bind(this, delay));
     }
   }
 
@@ -100,30 +102,39 @@ class Address extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.site_cart_address(
+          const response = await APIHandler.site_cart_change_address(
             store.store_id,
             this.state.item_selected
           );
 
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
-              this.setState({
-                continue_loading: false
-              });
 
               flashShowMessage({
                 type: 'success',
                 message: response.message
               });
-            })();
 
-            this._goConfirm();
+              this._goConfirm();
+            } else {
+              flashShowMessage({
+                type: 'danger',
+                message: response.message || 'Có lỗi xảy ra'
+              });
+            }
           }
         } catch (e) {
-          console.log(e + ' site_cart_address');
-
-          store.addApiQueue('site_cart_address', this._addSiteCart.bind(this));
+          console.log(e + ' site_cart_change_address');
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              continue_loading: false
+            });
         }
       }
     );
@@ -687,4 +698,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Address;
+export default observer(Address);

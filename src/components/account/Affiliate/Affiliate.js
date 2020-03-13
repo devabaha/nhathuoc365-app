@@ -79,7 +79,9 @@ class Affiliate extends Component {
       <View>
         <View style={styles.add_store_actions_box}>
           <TouchableHighlight
-            onPress={() => Communications.text(null, user_info.text_sms)}
+            onPress={() =>
+              Communications.textWithoutEncoding(null, user_info.text_sms)
+            }
             underlayColor="transparent"
             style={styles.add_store_action_btn}
           >

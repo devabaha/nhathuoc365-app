@@ -163,7 +163,7 @@ class ProfileDetail extends Component {
                 <IconMaterialCommunity
                   name="logout-variant"
                   size={24}
-                  color="#242424"
+                  color="#333"
                   style={{
                     position: 'absolute',
                     right: 15,
@@ -171,7 +171,7 @@ class ProfileDetail extends Component {
                   }}
                 />
               }
-              shadow
+              // shadow
               containerStyle={styles.logoutContainerStyle}
               btnContainerStyle={styles.logoutBtn}
               titleStyle={styles.logoutTitleBtn}
@@ -202,11 +202,11 @@ const styles = StyleSheet.create({
   },
   logoutBtn: {
     marginBottom: 10,
-    backgroundColor: '#bababa',
+    backgroundColor: '#dfdfdf',
     width: '80%'
   },
   logoutTitleBtn: {
-    color: '#242424'
+    color: '#333'
   },
   separatorSection: {
     width: '100%',

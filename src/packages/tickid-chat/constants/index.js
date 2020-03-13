@@ -51,12 +51,16 @@ export const COMPONENT_TYPE = {
     id: -1,
     name: 'none'
   },
-  GALLERY: {
+  EMOJI: {
     id: 0,
+    name: 'emoji'
+  },
+  GALLERY: {
+    id: 1,
     name: 'gallery'
   },
   PIN: {
-    id: 1,
+    id: 2,
     name: 'pin'
   }
 };

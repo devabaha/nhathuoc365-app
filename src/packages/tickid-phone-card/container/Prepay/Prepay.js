@@ -28,7 +28,8 @@ class Prepay extends Component {
     hideContact: PropTypes.bool,
     errorEmptyMessage: PropTypes.string,
     errorLengthMessage: PropTypes.string,
-    validLength: PropTypes.number
+    validLength: PropTypes.number,
+    keyboardType: PropTypes.string
   };
 
   static defaultProps = {
@@ -43,7 +44,8 @@ class Prepay extends Component {
     hideContact: false,
     errorEmptyMessage: 'Vui lòng nhập số điện thoại',
     errorLengthMessage: 'Số điện thoại không hợp lệ',
-    validLength: 10
+    validLength: 10,
+    keyboardType: undefined
   };
 
   constructor(props) {
@@ -56,6 +58,15 @@ class Prepay extends Component {
       contactPhone: config.defaultContactPhone,
       networkType: this.currentNetworks[0].type
     };
+  }
+
+  get prefixNetWorksPhoneNumber() {
+    const currentNetworks = this.currentNetworks;
+
+    return currentNetworks.map(network => ({
+      type: network.type,
+      prefix: network.prefix
+    }));
   }
 
   get currentService() {
@@ -186,11 +197,25 @@ class Prepay extends Component {
   };
 
   handleChangePhoneNumber = text => {
+    this.updateNetworkByPrefixPhoneNumber(text);
     this.setState({
       contactPhone: text,
       contactName: '',
       errorMessage: ''
     });
+  };
+
+  updateNetworkByPrefixPhoneNumber = phoneNumber => {
+    if (phoneNumber.length >= 4) {
+      const inputPrefix = phoneNumber.slice(0, 3);
+      const prefixNetWorks = this.prefixNetWorksPhoneNumber;
+      const network = prefixNetWorks.find(prefixNetWork =>
+        prefixNetWork.prefix.includes(inputPrefix)
+      );
+      if (network) {
+        this.handleNetworkChange(network);
+      }
+    }
   };
 
   handleInputPhoneBlur = () => {
@@ -225,6 +250,7 @@ class Prepay extends Component {
             networkType={this.state.networkType}
             onPressSelectNetwork={this.handlePressSelectNetwork}
             hideContact={this.props.hideContact}
+            keyboardType={this.props.keyboardType}
           />
 
           <SelectCardValueComponent

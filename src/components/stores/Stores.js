@@ -163,20 +163,17 @@ class Stores extends Component {
 
   _getCart = async () => {
     try {
-      var response = await APIHandler.site_cart(store.store_id);
+      const response = await APIHandler.site_cart_show(store.store_id);
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
           store.setCartData(response.data);
-        })();
-      } else {
-        action(() => {
+        } else {
           store.resetCartData();
-        })();
+        }
       }
     } catch (e) {
-      console.log(e + ' site_cart');
-      store.addApiQueue('site_cart', this._getCart.bind(this));
+      console.log(e + ' site_cart_show');
     }
   };
 
@@ -231,7 +228,7 @@ class Stores extends Component {
         })
       );
 
-      if (item) {
+      if (item || nav_only) {
         this.setState({
           category_nav_index: index,
           selected_category: item
@@ -402,7 +399,16 @@ class Stores extends Component {
     var item = this.cartItemConfirmRemove;
 
     try {
-      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+      const data = {
+        quantity: 0,
+        model: item.model
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data
+      );
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
@@ -425,8 +431,8 @@ class Stores extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.log(e + ' site_cart_remove');
-      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
+      console.log(e + ' site_cart_update');
+      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 }
