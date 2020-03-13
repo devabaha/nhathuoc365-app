@@ -159,7 +159,7 @@ initializePhoneCardModule({
     push: Actions.push,
     pop: Actions.pop,
     pushToMain: () => {
-      Actions.reset(appConfig.routes.sceneWrapper);
+      Actions.reset(appConfig.routes.primaryTabbar);
     }
   }
 });
@@ -195,7 +195,7 @@ initializeVoucherModule({
           });
         })();
       });
-      Actions.reset(appConfig.routes.sceneWrapper);
+      Actions.reset(appConfig.routes.primaryTabbar);
     },
     pushToStoreBySiteData: siteData => {
       action(() => {
