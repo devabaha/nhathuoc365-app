@@ -228,7 +228,7 @@ class Stores extends Component {
         })
       );
 
-      if (item || nav_only) {
+      if (item) {
         this.setState({
           category_nav_index: index,
           selected_category: item
