@@ -18,7 +18,6 @@ import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
 import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
-import { withTranslation } from 'react-i18next';
 
 const defaultListener = () => {};
 
@@ -122,7 +121,6 @@ class Home extends Component {
   );
 
   render() {
-    console.log(this.props);
     return (
       <View style={styles.container}>
         {this.props.apiFetching && <LoadingComponent loading />}

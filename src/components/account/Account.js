@@ -36,6 +36,7 @@ class Account extends Component {
   }
 
   initial = callback => {
+    const { t } = this.props;
     const isAdmin = store.user_info.admin_flag == 1;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
@@ -46,8 +47,8 @@ class Account extends Component {
           {
             key: '1',
             icon: 'map-marker',
-            label: 'Địa chỉ của tôi',
-            desc: 'Quản lý địa chỉ nhận hàng',
+            label: t('options.myAdress.label'),
+            desc: t('options.myAdress.desc'),
             rightIcon: <IconAngleRight />,
             onPress: () =>
               Actions.push(appConfig.routes.myAddress, {
@@ -65,8 +66,8 @@ class Account extends Component {
           {
             key: '2',
             icon: 'facebook-square',
-            label: 'Fanpage ' + APP_NAME_SHOW,
-            desc: 'Facebook Fanpage chăm sóc khách hàng',
+            label: t('options.fanpage.label', { appName: APP_NAME_SHOW }),
+            desc: t('options.fanpage.desc'),
             rightIcon: <IconAngleRight />,
             onPress: () => Communications.web(APP_FANPAGE),
             boxIconStyle: [
@@ -82,12 +83,14 @@ class Account extends Component {
           {
             key: '3',
             icon: 'handshake-o',
-            label: 'Về ' + APP_NAME_SHOW + ' - Điều khoản sử dụng',
-            desc: 'Điều khoản sử dụng',
+            label: t('options.termOfUse.label', { appName: APP_NAME_SHOW }),
+            desc: t('options.termOfUse.desc'),
             rightIcon: <IconAngleRight />,
             onPress: () =>
               Actions.webview({
-                title: 'Về ' + APP_NAME_SHOW,
+                title: t('options.termOfUse.webViewTitle', {
+                  appName: APP_NAME_SHOW
+                }),
                 url: APP_INFO
               }),
             boxIconStyle: [
@@ -103,12 +106,11 @@ class Account extends Component {
           {
             key: '4',
             icon: 'question-circle',
-            label: 'Thông tin ứng dụng',
-            desc:
-              'Sản phẩm của ' +
-              APP_NAME_SHOW +
-              ' - Phiên bản hiện tại: ' +
-              DeviceInfo.getVersion(),
+            label: t('options.appInformation.label'),
+            desc: t('options.appInformation.desc', {
+              appName: APP_NAME_SHOW,
+              appVersion: DeviceInfo.getVersion()
+            }),
             rightIcon: <IconAngleRight />,
             onPress: () => {},
             boxIconStyle: [
@@ -125,9 +127,10 @@ class Account extends Component {
             key: '5',
             isHidden: !isUpdate,
             icon: 'cloud-download',
-            label: 'Cập nhật ứng dụng',
-            desc:
-              'Cập nhật lên phiên bản ổn định ' + notify.new_version + ' ngay!',
+            label: t('options.appUpdate.label'),
+            desc: t('options.appUpdate.desc', {
+              newVersion: notify.new_version
+            }),
             rightIcon: <IconAngleRight />,
             onPress: () => {
               if (notify.url_update) {
@@ -175,11 +178,13 @@ class Account extends Component {
   }
 
   onTapAvatar() {
+    const { t } = this.props;
+
     const options = {
-      title: 'Cập nhật ảnh đại diện tài khoản',
-      cancelButtonTitle: 'Huỷ bỏ',
-      takePhotoButtonTitle: 'Chụp ảnh',
-      chooseFromLibraryButtonTitle: 'Chọn ảnh từ thư viện',
+      title: t('avatarPicker.title'),
+      cancelButtonTitle: t('avatarPicker.cancelTitle'),
+      takePhotoButtonTitle: t('avatarPicker.takePhotoTitle'),
+      chooseFromLibraryButtonTitle: t('avatarPicker.chooseFromLibraryTitle'),
       storageOptions: {
         skipBackup: true,
         path: 'images'
@@ -209,7 +214,6 @@ class Account extends Component {
           filename: response.fileName,
           data: response.data
         };
-        console.log(APIHandler.url_user_add_avatar());
         // call api post my form data
         RNFetchBlob.fetch(
           'POST',
@@ -231,10 +235,6 @@ class Account extends Component {
           })
           .catch(error => {
             console.log(error);
-            store.addApiQueue(
-              'url_user_add_avatar',
-              this.uploadAvatar.bind(this, response)
-            );
           });
       }
     );
@@ -257,20 +257,16 @@ class Account extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(() => {
-          action(() => {
-            store.setUserInfo(response.data);
+          store.setUserInfo(response.data);
+          store.setOrdersKeyChange(store.orders_key_change + 1);
 
-            store.setOrdersKeyChange(store.orders_key_change + 1);
-
-            this.setState({
-              refreshing: false
-            });
-          })();
+          this.setState({
+            refreshing: false
+          });
         }, delay || 0);
       }
     } catch (error) {
-      console.log(error);
-      store.addApiQueue('user_login', () => this.login(delay));
+      console.log('login', error);
     }
   };
 
@@ -293,6 +289,7 @@ class Account extends Component {
     const is_login =
       store.user_info != null && store.user_info.username != null;
     const { avatar_loading, logout_loading } = this.state;
+    const { t } = this.props;
 
     return (
       <View style={styles.container}>
@@ -420,7 +417,9 @@ class Account extends Component {
                       }
                     ]}
                   >
-                    <Text style={[styles.profile_button_title]}>Đăng nhập</Text>
+                    <Text style={[styles.profile_button_title]}>
+                      {t('signIn')}
+                    </Text>
                   </View>
                   <IconMaterialCommunity
                     name="login-variant"
@@ -614,8 +613,7 @@ class Account extends Component {
                 Actions.affiliate({
                   aff_content: store.store_data
                     ? store.store_data.aff_content
-                    : 'Thông tin chương trình tiếp thị liên kết cùng ' +
-                      APP_NAME_SHOW
+                    : t('affiliateMarketingProgram') + ' ' + APP_NAME_SHOW
                 })
               }
             >
@@ -643,7 +641,7 @@ class Account extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>
-                    Mã giới thiệu:{' '}
+                    {`${t('referralCode')}: `}
                     <Text style={styles.profile_list_label_invite_id}>
                       {user_info.username}
                     </Text>
@@ -694,10 +692,10 @@ class Account extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>
-                    Tài khoản [Nhà đầu tư]
+                    {t('accountInvestor')}
                   </Text>
                   <Text style={styles.profile_list_small_label}>
-                    Đồng bộ với tài khoản trên hệ thống Nhà đầu tư
+                    {t('investorSyncingMessage')}
                   </Text>
                 </View>
 
@@ -715,7 +713,11 @@ class Account extends Component {
           {user_info.view_tab_invite && (
             <TouchableHighlight
               underlayColor="transparent"
-              onPress={() => Actions._add_ref({ title: 'Nhập mã giới thiệu' })}
+              onPress={() =>
+                Actions._add_ref({
+                  title: t('referralCodeInput')
+                })
+              }
             >
               <View
                 style={[
@@ -741,10 +743,10 @@ class Account extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>
-                    Nhập mã giới thiệu
+                    {t('referralCodeInput')}
                   </Text>
                   <Text style={styles.profile_list_small_label}>
-                    Tham gia hệ thống Cashback 4.0
+                    {t('cashbackSystemInviteMessage')}
                   </Text>
                 </View>
 
@@ -771,7 +773,7 @@ class Account extends Component {
 
         <Sticker
           active={this.state.sticker_flag}
-          message="Thay ảnh đại diện thành công."
+          message={t('avatarPicker.messageUpdateSuccessfully')}
         />
       </View>
     );
@@ -779,15 +781,15 @@ class Account extends Component {
 
   handleLogout() {
     Alert.alert(
-      'Lưu ý khi đăng xuất',
-      'Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.',
+      t('signOut.title'),
+      t('signOut.subTitle'),
       [
         {
-          text: 'Huỷ',
+          text: t('signOut.cancel'),
           onPress: () => {}
         },
         {
-          text: 'Đăng xuất',
+          text: t('signOut.accept'),
           onPress: this.logout,
           style: 'destructive'
         }
@@ -811,7 +813,7 @@ class Account extends Component {
           store.setOrdersKeyChange(store.orders_key_change + 1);
           store.resetAsyncStorage();
           flashShowMessage({
-            message: 'Đăng xuất thành công',
+            message: t('signOut.successMessage'),
             type: 'info'
           });
           Actions.reset(appConfig.routes.sceneWrapper);
@@ -821,7 +823,6 @@ class Account extends Component {
       }
     } catch (error) {
       console.log(error);
-      store.addApiQueue('user_logout', this.logout.bind(this));
     } finally {
       this.setState({
         logout_loading: false
@@ -1044,7 +1045,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Account);
+export default withTranslation('account')(observer(Account));
 
 const IconAngleRight = () => (
   <Icon name="angle-right" size={26} color="#999999" />

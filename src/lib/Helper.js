@@ -22,9 +22,13 @@ global.Indicator = Indicator;
 import { action } from 'mobx';
 global.action = action;
 
-// observer from mbox-react
+// observer from mobx-react
 import { observer } from 'mobx-react';
 global.observer = observer;
+
+// withTranslation from react-i18next
+import { withTranslation } from 'react-i18next';
+global.withTranslation = withTranslation;
 
 // lodash
 import _ from 'lodash';

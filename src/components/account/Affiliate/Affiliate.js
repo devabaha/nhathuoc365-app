@@ -26,8 +26,7 @@ class Affiliate extends Component {
       historiesData: null,
       content: props.aff_content
         ? props.aff_content
-        : 'Nhập mã giới thiệu để nhận được phần thưởng hấp dẫn từ ' +
-          APP_NAME_SHOW,
+        : props.t('programInformationMessage', { appName: APP_NAME_SHOW }),
       activeTab: 0,
       loading: [true, false, false, false]
     };
@@ -39,8 +38,8 @@ class Affiliate extends Component {
 
   async _getInviteList() {
     try {
-      var response = await APIHandler.user_invite_history();
-      console.log(response);
+      const response = await APIHandler.user_invite_history();
+
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({ historiesData: response.data.histories });
       }
@@ -75,6 +74,8 @@ class Affiliate extends Component {
 
   renderTopLabelCoin() {
     const { user_info } = store;
+    const { t } = this.props;
+
     return (
       <View>
         <View style={styles.add_store_actions_box}>
@@ -87,7 +88,9 @@ class Affiliate extends Component {
           >
             <View style={styles.add_store_action_btn_box}>
               <Icon name="commenting" size={22} color="#333333" />
-              <Text style={styles.add_store_action_label}>Gửi tin nhắn</Text>
+              <Text style={styles.add_store_action_label}>
+                {t('header.message.title')}
+              </Text>
             </View>
           </TouchableHighlight>
 
@@ -97,7 +100,7 @@ class Affiliate extends Component {
                 null,
                 null,
                 null,
-                'Lời mời tham gia chương trình ' + APP_NAME_SHOW + ' Affiliate',
+                t('header.email.message', { appName: APP_NAME_SHOW }),
                 user_info.text_sms
               )
             }
@@ -106,7 +109,9 @@ class Affiliate extends Component {
           >
             <View style={styles.add_store_action_btn_box}>
               <Icon name="envelope-o" size={22} color="#333333" />
-              <Text style={styles.add_store_action_label}>Gửi Email</Text>
+              <Text style={styles.add_store_action_label}>
+                {t('header.email.title')}
+              </Text>
             </View>
           </TouchableHighlight>
 
@@ -130,7 +135,8 @@ class Affiliate extends Component {
                   }
                 ]}
               >
-                <Icon name="slideshare" size={16} /> Mã giới thiệu
+                <Icon name="slideshare" size={16} />
+                {t('header.referralCode.title')}
               </Text>
               <Text
                 style={[
@@ -152,11 +158,12 @@ class Affiliate extends Component {
   }
 
   render() {
-    var { activeTab, content, historiesData } = this.state;
+    const { activeTab, content, historiesData } = this.state;
+    const { t } = this.props;
     const data = [
       {
         key: 0,
-        title: 'Danh sách giới thiệu',
+        title: t('tab.referralList'),
         component: <History historyData={historiesData} />
       },
       // {
@@ -171,7 +178,7 @@ class Affiliate extends Component {
       // },
       {
         key: 1,
-        title: 'Thông tin chương trình',
+        title: t('tab.programInformation'),
         component: <Info content={content} />
       }
     ];
@@ -451,4 +458,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Affiliate);
+export default withTranslation('affiliate')(observer(Affiliate));

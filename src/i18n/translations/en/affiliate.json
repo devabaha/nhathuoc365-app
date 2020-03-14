@@ -1,0 +1,19 @@
+{
+  "header": {
+    "message": {
+      "title": "Send Message"
+    },
+    "email": {
+      "title": "Send Email",
+      "message": "Invitation to join program {{appName}} Affiliate"
+    },
+    "referralCode": {
+      "title": "Referral code"
+    }
+  },
+  "tab": {
+    "referralList": "Referral list",
+    "programInformation": "Program information"
+  },
+  "programInformationMessage": "Enter the referral code to receive interesting rewards from {{appName}}"
+}

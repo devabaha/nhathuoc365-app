@@ -1,0 +1,19 @@
+{
+  "header": {
+    "message": {
+      "title": "Gửi tin nhắn"
+    },
+    "email": {
+      "title": "Gửi Email",
+      "message": "Lời mời tham gia chương trình {{appName}} Affiliate"
+    },
+    "referralCode": {
+      "title": "Mã giới thiệu"
+    }
+  },
+  "tab": {
+    "referralList": "Danh sách giới thiệu",
+    "programInformation": "Thông tin chương trình"
+  },
+  "programInformationMessage": "Nhập mã giới thiệu để nhận được phần thưởng hấp dẫn từ {{appName}}"
+}
