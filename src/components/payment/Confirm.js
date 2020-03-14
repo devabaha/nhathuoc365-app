@@ -1979,7 +1979,6 @@ class ItemCartComponent extends Component {
             item.id,
             data
           );
-
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);

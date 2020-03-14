@@ -233,6 +233,11 @@ class Stores extends Component {
           category_nav_index: index,
           selected_category: item
         });
+      } else if (nav_only) {
+        this.setState({
+          category_nav_index: index,
+          selected_category: this.state.categories_data[index]
+        });
       }
     }
   }
