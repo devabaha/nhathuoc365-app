@@ -5,6 +5,7 @@ import appConfig from 'app-config';
 const Button = props => {
   return (
     <View style={[styles.container, props.containerStyle]}>
+      {props.renderBefore}
       <TouchableOpacity
         style={[
           styles.btn,
@@ -12,6 +13,7 @@ const Button = props => {
           props.btnContainerStyle
         ]}
         onPress={props.onPress}
+        disabled={props.disabled}
       >
         {props.iconLeft}
         <Text style={[styles.text, props.titleStyle]}>{props.title}</Text>

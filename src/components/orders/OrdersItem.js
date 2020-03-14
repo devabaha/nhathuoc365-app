@@ -5,14 +5,18 @@ import store from '../../store/Store';
 import { Actions } from 'react-native-router-flux';
 
 class OrdersItem extends Component {
-  static onEnter = () => {
-    Actions.refresh({
-      onBack: this.props.onBack
-    });
+  static defaultProps = {
+    onReturn: () => {}
   };
+  orderEdited = false;
+  // static onEnter = () => {
+  //   Actions.refresh({
+  //     onBack: this.props.onBack
+  //   });
+  // };
 
   componentWillUnmount() {
-    if (this.props.resetCardData) {
+    if (!this.orderEdited) {
       store.resetCartData();
     }
   }
@@ -29,6 +33,7 @@ class OrdersItem extends Component {
           data={this.props.data}
           tel={this.props.tel}
           from_page="orders_item"
+          orderEdited={() => (this.orderEdited = true)}
         />
       </View>
     );

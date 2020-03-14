@@ -14,13 +14,28 @@ const Tag = props => {
       : styles.textActive
     : {};
 
+  const disabledStyle = props.disabled
+    ? props.disabledStyle
+      ? props.disabledStyle
+      : styles.disabled
+    : {};
+
+  const disabledTextStyle = props.disabled
+    ? props.disabledTextStyle
+      ? props.disabledTextStyle
+      : styles.textDisabled
+    : {};
+
   return (
     <TouchableHighlight
-      style={[styles.container, activeStyle]}
+      disabled={props.disabled}
+      style={[styles.container, activeStyle, disabledStyle]}
       onPress={props.onPress}
       underlayColor="#999"
     >
-      <Text style={[styles.text, activeTextStyle]}>{props.item}</Text>
+      <Text style={[styles.text, activeTextStyle, disabledTextStyle]}>
+        {props.item}
+      </Text>
     </TouchableHighlight>
   );
 };
@@ -42,6 +57,12 @@ const styles = StyleSheet.create({
   },
   textActive: {
     color: '#fff'
+  },
+  disabled: {
+    backgroundColor: '#eee'
+  },
+  textDisabled: {
+    color: '#8c8c8c'
   }
 });
 

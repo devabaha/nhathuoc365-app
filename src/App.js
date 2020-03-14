@@ -61,6 +61,7 @@ import ItemImageViewer from './components/item/ItemImageViewer';
 import Cart from './components/cart/Cart';
 import Address from './components/payment/Address';
 import Confirm from './components/payment/Confirm';
+import PaymentMethod from './components/payment/PaymentMethod';
 import CreateAddress from './components/payment/CreateAddress';
 import OrdersItem from './components/orders/OrdersItem';
 import ViewOrdersItem from './components/orders/ViewOrdersItem';
@@ -101,6 +102,7 @@ import {
   SearchChatNavBar
 } from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
+import { default as ServiceOrders } from './components/services/Orders';
 import TabIcon from './components/TabIcon';
 import {
   initialize as initializeRadaModule,
@@ -127,6 +129,8 @@ import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
 import { addJob } from './helper/jobsOnReset';
 import { Image } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import ItemAttribute from './components/stores/ItemAttribute';
+import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
 /**
  * Not allow font scaling
@@ -718,6 +722,17 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
+                <Stack key={appConfig.routes.paymentMethod}>
+                  <Scene
+                    key={`${appConfig.routes.paymentMethod}_1`}
+                    title="Hình thức thanh toán"
+                    component={PaymentMethod}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 <Stack key="create_address">
                   <Scene
                     key="create_address_1"
@@ -1236,6 +1251,16 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack key={appConfig.routes.serviceOrders}>
+                  <Scene
+                    key={`${appConfig.routes.serviceOrders}_1`}
+                    title="Đơn dịch vụ"
+                    component={ServiceOrders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ SCENE VOUCHER SCAN ================ */}
                 <Stack key={appConfig.routes.voucherScanner}>
                   <Scene
@@ -1265,6 +1290,12 @@ class RootRouter extends Component {
                 key={appConfig.routes.voucherEnterCodeManual}
                 component={VoucherEnterCodeManualContainer}
               />
+
+              {/* ================ LIGHT BOX SHOW PRODUCT's OPTIONS ================ */}
+              <Stack
+                key={appConfig.routes.itemAttribute}
+                component={ItemAttribute}
+              />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
@@ -1284,6 +1315,18 @@ class RootRouter extends Component {
                 title="Mã voucher"
                 component={VoucherShowBarcodeContainer}
                 renderBackButton={CloseButton}
+                back
+              />
+            </Stack>
+
+            {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
+            <Stack key={appConfig.routes.internetBanking}>
+              <Scene
+                key={`${appConfig.routes.internetBanking}_1`}
+                title="Thẻ ATM"
+                component={InternetBankingModal}
+                renderBackButton={() => <CloseButton color="#fff" />}
+                {...navBarConfig}
                 back
               />
             </Stack>

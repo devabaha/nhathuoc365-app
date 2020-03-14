@@ -27,6 +27,7 @@ export default class CartFooter extends Component {
       perfix: props.perfix || ''
     };
   }
+  unmounted = false;
 
   componentDidMount() {
     var { cart_data, cart_products, store_id } = store;
@@ -49,27 +50,32 @@ export default class CartFooter extends Component {
     });
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   async _getCart() {
     try {
-      var response = await APIHandler.site_cart(store.store_id);
+      const response = await APIHandler.site_cart_show(store.store_id);
 
-      if (response && response.status == STATUS_SUCCESS) {
-        action(() => {
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
           store.setCartData(response.data);
-        })();
-      } else {
-        action(() => {
+        } else {
           store.resetCartData();
-        })();
+        }
       }
     } catch (e) {
-      console.log(e + ' site_cart');
-
-      store.addApiQueue('site_cart', this._getCart.bind(this));
-    } finally {
-      this.setState({
-        loading: false
+      console.log(e + ' site_cart_show');
+      flashShowMessage({
+        type: 'danger',
+        message: 'Có lỗi xảy ra'
       });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false
+        });
     }
   }
 
@@ -90,30 +96,41 @@ export default class CartFooter extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.site_cart_down(
+          const data = {
+            quantity: 1,
+            model: item.model
+          };
+
+          const response = await APIHandler.site_cart_minus(
             store.store_id,
-            item.id
+            item.id,
+            data
           );
 
           if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
-              store.setCartData(response.data);
-              this.setState({
-                decrement_loading: false
-              });
-              flashShowMessage({
-                type: 'info',
-                message: response.message
-              });
-            })();
+            store.setCartData(response.data);
+
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || 'Có lỗi xảy ra'
+            });
           }
         } catch (e) {
-          console.log(e + ' site_cart_down');
-
-          store.addApiQueue(
-            'site_cart_down',
-            this._item_qnt_decrement.bind(this, item)
-          );
+          console.log(e + ' site_cart_minus');
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              decrement_loading: false
+            });
         }
       }
     );
@@ -126,27 +143,43 @@ export default class CartFooter extends Component {
       },
       async () => {
         try {
-          var response = await APIHandler.site_cart_up(store.store_id, item.id);
+          const data = {
+            quantity: 1,
+            model: item.model
+          };
 
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
+          const response = await APIHandler.site_cart_plus(
+            store.store_id,
+            item.id,
+            data
+          );
+
+          if (!this.unmounted) {
+            if (response && response.status == STATUS_SUCCESS) {
               store.setCartData(response.data);
-              this.setState({
-                increment_loading: false
-              });
+
               flashShowMessage({
-                type: 'info',
+                type: 'success',
                 message: response.message
               });
-            })();
+            } else {
+              flashShowMessage({
+                type: 'danger',
+                message: response.message || 'Có lỗi xảy ra'
+              });
+            }
           }
         } catch (e) {
-          console.warn(e + ' site_cart_up');
-
-          store.addApiQueue(
-            'site_cart_up',
-            this._item_qnt_increment.bind(this, item)
-          );
+          console.warn(e + ' site_cart_plus');
+          flashShowMessage({
+            type: 'danger',
+            message: 'Có lỗi xảy ra'
+          });
+        } finally {
+          !this.unmounted &&
+            this.setState({
+              increment_loading: false
+            });
         }
       }
     );
@@ -210,9 +243,22 @@ export default class CartFooter extends Component {
           >
             {item.price_view}
           </Text>
+
+          {!!item.classification && (
+            <Text numberOfLines={1} style={[styles.store_cart_item_sub_title]}>
+              {item.classification}
+            </Text>
+          )}
         </View>
 
-        <View style={styles.store_cart_calculator}>
+        <View
+          style={[
+            styles.store_cart_calculator,
+            {
+              bottom: !!item.classification ? -4 : 0
+            }
+          ]}
+        >
           <TouchableHighlight
             onPress={this._item_qnt_decrement_handler.bind(this, item)}
             underlayColor="transparent"
@@ -368,7 +414,7 @@ export default class CartFooter extends Component {
         style={[
           styles.store_cart_box,
           {
-            height: cart_data.promotions && cart_data.promotions.title ? 87 : 69
+            height: cart_data.promotions && cart_data.promotions.title ? 93 : 75
           }
         ]}
       >
@@ -397,7 +443,7 @@ export default class CartFooter extends Component {
         <View
           style={{
             flexDirection: 'row',
-            height: 69,
+            height: 75,
             borderTopWidth: Util.pixel,
             borderTopColor: '#dddddd'
           }}
@@ -461,7 +507,7 @@ export default class CartFooter extends Component {
                     fontWeight: '600'
                   }}
                 >
-                  {cart_data.total}
+                  {cart_data.total_selected}
                 </Text>
               )}
             </View>
@@ -478,7 +524,7 @@ const styles = StyleSheet.create({
     // left: 0,
     // right: 0,
     // bottom: 0,
-    height: 69,
+    alignItems: 'center',
     backgroundColor: '#ffffff'
   },
   store_cart_container: {
@@ -532,8 +578,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row'
   },
   store_cart_item_image_box: {
-    width: 60,
-    height: 60,
+    width: 66,
+    height: 66,
     marginTop: 4,
     overflow: 'hidden',
     marginHorizontal: 4
@@ -551,6 +597,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: '500'
   },
+  store_cart_item_sub_title: {
+    color: '#555',
+    fontSize: 10,
+    marginTop: 4
+  },
   store_cart_item_price: {
     fontSize: 12,
     color: '#fa7f50',
@@ -559,7 +610,7 @@ const styles = StyleSheet.create({
   store_cart_calculator: {
     position: 'absolute',
     height: '52%',
-    bottom: 0,
+    bottom: -4,
     right: 0,
     width: Util.size.width - 232,
     flexDirection: 'row',

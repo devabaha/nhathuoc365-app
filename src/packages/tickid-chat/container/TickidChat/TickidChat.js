@@ -496,22 +496,75 @@ class TickidChat extends Component {
   };
 
   renderLeftComposer = props => (
-    <TouchableOpacity
-      hitSlop={HIT_SLOP}
-      onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.EMOJI)}
-    >
-      <Animated.View style={[styles.center, styles.sendBtn, { marginLeft: 5 }]}>
-        <IconAntDesign
-          size={22}
-          name="message1"
-          color={
-            this.state.selectedType === COMPONENT_TYPE.EMOJI
-              ? config.focusColor
-              : config.blurColor
+    <View style={styles.center}>
+      <Animated.View
+        pointerEvents={this.state.showSendBtn ? 'auto' : 'none'}
+        style={[
+          styles.center,
+          styles.sendBtn,
+          {
+            left: -10,
+            opacity: this.state.animatedBtnSendValue.interpolate({
+              inputRange: [0, BTN_IMAGE_WIDTH],
+              outputRange: [0, 1]
+            }),
+            transform: [
+              {
+                scale: this.state.animatedBtnSendValue.interpolate({
+                  inputRange: [0, BTN_IMAGE_WIDTH],
+                  outputRange: [0, 1]
+                })
+              }
+            ]
           }
-        />
+        ]}
+      >
+        <TouchableOpacity hitSlop={HIT_SLOP} onPress={this.handleBackPress}>
+          <IconFontAwesome name="angle-left" color="#404040" size={28} />
+        </TouchableOpacity>
       </Animated.View>
-    </TouchableOpacity>
+
+      <Animated.View
+        pointerEvents={!this.state.showSendBtn ? 'auto' : 'none'}
+        style={[
+          styles.center,
+          styles.sendBtn,
+          {
+            position: 'absolute',
+            flexDirection: 'row'
+          },
+          {
+            opacity: this.state.animatedBtnSendValue.interpolate({
+              inputRange: [0, BTN_IMAGE_WIDTH],
+              outputRange: [1, 0]
+            }),
+            transform: [
+              {
+                scale: this.state.animatedBtnSendValue.interpolate({
+                  inputRange: [0, BTN_IMAGE_WIDTH],
+                  outputRange: [1, 2]
+                })
+              }
+            ]
+          }
+        ]}
+      >
+        <TouchableOpacity
+          hitSlop={HIT_SLOP}
+          onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.EMOJI)}
+        >
+          <IconAntDesign
+            size={22}
+            name="message1"
+            color={
+              this.state.selectedType === COMPONENT_TYPE.EMOJI
+                ? config.focusColor
+                : config.blurColor
+            }
+          />
+        </TouchableOpacity>
+      </Animated.View>
+    </View>
   );
 
   renderComposer = () => {
@@ -803,7 +856,7 @@ class TickidChat extends Component {
         {!!this.props.messages && this.props.messages.length === 0 && (
           <EmptyChat onPress={this.onListViewPress} />
         )}
-        <View style={styles.container} onLayout={this.handleContainerLayout}>
+        <View style={{ flex: 1 }} onLayout={this.handleContainerLayout}>
           <TouchableWithoutFeedback
             style={styles.touchWrapper}
             onPress={this.onListViewPress}
@@ -942,7 +995,7 @@ const styles = StyleSheet.create({
   giftedChatContainer: {
     paddingBottom: 15,
     flexGrow: 1,
-    backgroundColor: '#fff'
+    backgroundColor: 'rgba(0,0,0,0)'
   },
   flex: {
     flex: 1
@@ -969,7 +1022,7 @@ const styles = StyleSheet.create({
     top: '30%',
     paddingBottom: 60,
     position: 'absolute',
-    zIndex: 99
+    zIndex: 0
   },
   emptyChatText: {
     color: '#909090',

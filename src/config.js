@@ -96,8 +96,13 @@ const config = Object.freeze({
     // Routes of Order
     orders: 'Orders',
     paymentConfirm: 'paymentConfirm',
+    paymentMethod: 'paymentMethod',
+    internetBanking: 'internetBanking',
     //
-    upToPhone: 'upToPhone'
+    upToPhone: 'upToPhone',
+
+    itemAttribute: 'itemAttribute',
+    serviceOrders: 'serviceOrders'
   }
 });
 

@@ -563,7 +563,16 @@ class Search extends Component {
     var item = this.cartItemConfirmRemove;
 
     try {
-      var response = await APIHandler.site_cart_remove(store.store_id, item.id);
+      const data = {
+        quantity: 0,
+        model: item.model
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data
+      );
 
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
@@ -584,9 +593,9 @@ class Search extends Component {
 
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
-      console.log(e + ' site_cart_remove');
+      console.log(e + ' site_cart_update');
 
-      store.addApiQueue('site_cart_remove', this._removeCartItem.bind(this));
+      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 }
