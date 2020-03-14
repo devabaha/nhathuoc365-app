@@ -61,17 +61,18 @@ class PaymentRow extends Component {
   };
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (
-      nextProps.active !== this.props.active ||
-      (nextProps.active && nextState.preparedData && !this.state.preparedData)
-    ) {
-      Reanimated.timing(this.state.animatedHeight, {
-        toValue: nextProps.active ? 1 : 0,
-        duration: 300,
-        easing: Easing.inOut(Easing.ease),
-        useNativeDriver: true
-      }).start();
-
+    if (nextProps.active !== this.props.active || nextProps.active) {
+      if (
+        nextProps.active !== this.props.active ||
+        (nextProps.active && nextState.preparedData && !this.state.preparedData)
+      ) {
+        Reanimated.timing(this.state.animatedHeight, {
+          toValue: nextProps.active ? 1 : 0,
+          duration: 300,
+          easing: Easing.inOut(Easing.ease),
+          useNativeDriver: true
+        }).start();
+      }
       Animated.timing(this.state.animated, {
         toValue: nextProps.active ? 1 : 0,
         duration: 200,
