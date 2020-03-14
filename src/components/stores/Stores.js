@@ -228,10 +228,15 @@ class Stores extends Component {
         })
       );
 
-      if (item || nav_only) {
+      if (item) {
         this.setState({
           category_nav_index: index,
           selected_category: item
+        });
+      } else if (nav_only) {
+        this.setState({
+          category_nav_index: index,
+          selected_category: this.state.categories_data[index]
         });
       }
     }
