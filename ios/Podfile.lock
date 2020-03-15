@@ -159,7 +159,7 @@ PODS:
     - React
   - RNReactNativeHapticFeedback (1.9.0):
     - React
-  - RNSVG (11.0.1):
+  - RNSVG (12.0.3):
     - React
   - SDWebImage/Core (4.4.8)
   - SDWebImage/GIF (4.4.8):
@@ -301,7 +301,7 @@ SPEC CHECKSUMS:
   RNFS: 54da03c2b7d862c42ea3ca8c7f86f892760a535a
   RNPermissions: 4fa81b28a6e07b31ed9068fa7dab24e2b8a3902b
   RNReactNativeHapticFeedback: 2566b468cc8d0e7bb2f84b23adc0f4614594d071
-  RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
+  RNSVG: 7e16ddfc6e00d5aa69c9eb83e699bcce5dcb85d4
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
