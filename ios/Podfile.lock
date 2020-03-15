@@ -131,6 +131,8 @@ PODS:
     - SDWebImage/Core (~> 4)
     - SDWebImage/GIF (~> 4)
     - SDWebImage/WebP (~> 4)
+  - react-native-fingerprint-scanner (4.0.0):
+    - React
   - react-native-screen-brightness (1.0.1):
     - React
   - React/Core (0.59.9):
@@ -180,6 +182,7 @@ DEPENDENCIES:
   - react-native-branch (from `../node_modules/react-native-branch`)
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
+  - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
   - react-native-screen-brightness (from `../node_modules/react-native-screen-brightness`)
   - React/RCTImage (from `../node_modules/react-native`)
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec`)
@@ -237,6 +240,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/cameraroll"
   react-native-fast-image:
     :path: "../node_modules/react-native-fast-image"
+  react-native-fingerprint-scanner:
+    :path: "../node_modules/react-native-fingerprint-scanner"
   react-native-screen-brightness:
     :path: "../node_modules/react-native-screen-brightness"
   ReactNativeExceptionHandler:
@@ -289,6 +294,7 @@ SPEC CHECKSUMS:
   react-native-branch: cc611a2d0e7e6c7c4cafebc8e59065b89c38002b
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
   react-native-fast-image: 7278563726f2455ed3ba6e04dea472345173278c
+  react-native-fingerprint-scanner: 03f3d966edacf2f515e361595b6778d3502db4fb
   react-native-screen-brightness: 07a615629827593d3ac8bb0a3498088416cadd32
   ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
   RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
@@ -300,6 +306,6 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 626ff5fbcd3e4f0f92ab7fe0bdc6caf2b3a42007
+PODFILE CHECKSUM: 60792a700f4107b80459762ef98917742d7b4dd1
 
 COCOAPODS: 1.8.4

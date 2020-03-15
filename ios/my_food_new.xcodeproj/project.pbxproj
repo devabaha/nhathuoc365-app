@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -65,7 +64,6 @@
 		CA5578E1BB6144D78B20560E /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 97890CB30B8343E4A9B3648B /* Foundation.ttf */; };
 		CC635C38B76E402782997D82 /* libRNCWebView.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 067B57B1BCC24709A992FAE2 /* libRNCWebView.a */; };
 		CCCAE5EDF74D40E492349AFA /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CF25897D0CC649789FF18C10 /* Octicons.ttf */; };
-		DA8018313E314B808FD728D2 /* libReactNativeFingerprintScanner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B7D41117C104F538A98A732 /* libReactNativeFingerprintScanner.a */; };
 		DE64931BEBBF45C6869B6174 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8997C9A241C547AB950D7084 /* libRCTOneSignal.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		EE57C7A6C7C748A0BFD7DE6E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69B46151E9D14FFD83C1E303 /* SimpleLineIcons.ttf */; };
@@ -355,13 +353,6 @@
 			remoteGlobalIDString = 58B5119B1A9E6C1200147676;
 			remoteInfo = RCTText;
 		};
-		8A0306D023683F65005AC604 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = EF636B3E893D4E0680E0602F /* ReactNativeFingerprintScanner.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = ReactNativeFingerprintScanner;
-		};
 		8A3087A222C3522A004E74D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FADCEA9D91DE49EB8E9DBACC /* RNCAsyncStorage.xcodeproj */;
@@ -628,7 +619,6 @@
 		489E11B9B258A330CC703246 /* Pods-my_food_newTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-my_food_newTests.release.xcconfig"; path = "Target Support Files/Pods-my_food_newTests/Pods-my_food_newTests.release.xcconfig"; sourceTree = "<group>"; };
 		48ADABD7227E49C0A7B87F4C /* RNImagePicker.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNImagePicker.xcodeproj; path = "../node_modules/react-native-image-picker/ios/RNImagePicker.xcodeproj"; sourceTree = "<group>"; };
 		4A3037FFAF384E5CAF510AFD /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
-		4B7D41117C104F538A98A732 /* libReactNativeFingerprintScanner.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libReactNativeFingerprintScanner.a; sourceTree = "<group>"; };
 		4D3EE4B4FF9D4FEE92F0930E /* RNCWebView.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCWebView.xcodeproj; path = "../node_modules/react-native-webview/ios/RNCWebView.xcodeproj"; sourceTree = "<group>"; };
 		4D5E3AA64E1D4DE28430E541 /* libRNAccountKit.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNAccountKit.a; sourceTree = "<group>"; };
 		522B66F1BB0B4588ADF85CB1 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
@@ -670,7 +660,6 @@
 		E4DA045097734C7A8CCF49F6 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		EF636B3E893D4E0680E0602F /* ReactNativeFingerprintScanner.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeFingerprintScanner.xcodeproj; path = "../node_modules/react-native-fingerprint-scanner/ios/ReactNativeFingerprintScanner.xcodeproj"; sourceTree = "<group>"; };
 		F79089108AC545DAB0E37C6F /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		F815A3C0772E4792810D5B6A /* libz.tbd */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		FADCEA9D91DE49EB8E9DBACC /* RNCAsyncStorage.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCAsyncStorage.xcodeproj; path = "../node_modules/@react-native-community/async-storage/ios/RNCAsyncStorage.xcodeproj"; sourceTree = "<group>"; };
@@ -722,7 +711,6 @@
 				764CD18B05AF4BC48742AF76 /* libRNReanimated.a in Frameworks */,
 				0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */,
 				B42DD41E63ED48F48B0B94C8 /* libRCTContacts.a in Frameworks */,
-				DA8018313E314B808FD728D2 /* libReactNativeFingerprintScanner.a in Frameworks */,
 				85294031339D7C0E36487A95 /* libPods-my_food_new.a in Frameworks */,
 				F4F0549C5D884D6C8DED6A38 /* libRNFirebase.a in Frameworks */,
 			);
@@ -1028,7 +1016,6 @@
 				3699F7F2FA7846CE8B15FB0E /* RNReanimated.xcodeproj */,
 				AABE044CF0D24C00A83BF395 /* RNGestureHandler.xcodeproj */,
 				9C7EC47A653A4A6484800387 /* RCTContacts.xcodeproj */,
-				EF636B3E893D4E0680E0602F /* ReactNativeFingerprintScanner.xcodeproj */,
 				39DFD91852EC4048BC516398 /* RNFirebase.xcodeproj */,
 			);
 			name = Libraries;
@@ -1068,14 +1055,6 @@
 				13B07F961A680F5B00A75B9A /* my_food_new.app */,
 				00E356EE1AD99517003FC87E /* my_food_newTests.xctest */,
 				1C206E2722F1ACCE00CF6BEA /* OneSignalNotificationServiceExtension.appex */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		8A0306CD23683F65005AC604 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8A0306D123683F65005AC604 /* libReactNativeFingerprintScanner.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1430,10 +1409,6 @@
 					ProjectRef = 146833FF1AC3E56700842450 /* React.xcodeproj */;
 				},
 				{
-					ProductGroup = 8A0306CD23683F65005AC604 /* Products */;
-					ProjectRef = EF636B3E893D4E0680E0602F /* ReactNativeFingerprintScanner.xcodeproj */;
-				},
-				{
 					ProductGroup = 1CF7B92323BB4F8A006028BC /* Products */;
 					ProjectRef = 1CF7B92223BB4F8A006028BC /* ReactNativePermissions.xcodeproj */;
 				},
@@ -1768,13 +1743,6 @@
 			fileType = archive.ar;
 			path = libRCTText.a;
 			remoteRef = 832341B41AAA6A8300B99B32 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8A0306D123683F65005AC604 /* libReactNativeFingerprintScanner.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReactNativeFingerprintScanner.a;
-			remoteRef = 8A0306D023683F65005AC604 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		8A3087A322C3522A004E74D7 /* libRNCAsyncStorage.a */ = {
@@ -2159,7 +2127,6 @@
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts/**",
-					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
@@ -2168,7 +2135,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2204,7 +2170,6 @@
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts/**",
-					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
@@ -2213,7 +2178,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -2257,7 +2221,6 @@
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts/**",
-					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
@@ -2305,7 +2268,6 @@
 					"$(SRCROOT)/../node_modules/react-native-reanimated/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-gesture-handler/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-contacts/ios/RCTContacts/**",
-					"$(SRCROOT)/../node_modules/react-native-fingerprint-scanner/ios",
 					"$(SRCROOT)/../node_modules/react-native-permissions/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
@@ -2342,7 +2304,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -2374,7 +2335,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = id.tick.OneSignalNotificationServiceExtension;
