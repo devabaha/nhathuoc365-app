@@ -17,7 +17,6 @@
 		050EADCA2BB546CAB2015BB7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F815A3C0772E4792810D5B6A /* libz.tbd */; };
 		06C095C123D2C95900F81C1F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C0957E23D2C95900F81C1F /* CoreGraphics.framework */; };
 		06C095C323D2C98200F81C1F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C095C223D2C98200F81C1F /* WebKit.framework */; };
-		06C63EF723FE3980004290DC /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C63EF023FE397A004290DC /* libRNReactNativeHapticFeedback.a */; };
 		0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD6E73A42137404B84C1637D /* libRNGestureHandler.a */; };
 		11664DB068BF4996A690450F /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2306C35B3D9446EF93D15C2A /* libRNVectorIcons.a */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
@@ -30,13 +29,14 @@
 		140ED2AC1D01E1AD002B40FF /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		1926FC5280E543DEAC3D5FAD /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 118C6A6781E54598B9E0D74A /* Zocial.ttf */; };
+		1C07FFCE241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C07FFCD241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a */; };
+		1C07FFD0241DE44A0019FDB1 /* libRNPermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C07FFCF241DE44A0019FDB1 /* libRNPermissions.a */; };
 		1C206E2B22F1ACCE00CF6BEA /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C206E2A22F1ACCE00CF6BEA /* NotificationService.m */; };
 		1C206E2F22F1ACCE00CF6BEA /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1C206E2722F1ACCE00CF6BEA /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1C206E3322F1AD3400CF6BEA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C206E1E22F1A8E200CF6BEA /* UIKit.framework */; };
 		1C206E3422F1AD3B00CF6BEA /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C206E2022F1A8F000CF6BEA /* SystemConfiguration.framework */; };
 		1C206E3522F1AD4500CF6BEA /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A3D23C922C481D500B47B28 /* libRCTOneSignal.a */; };
 		1C2070A922F54D6E00CF6BEA /* push2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1C2070A722F54D6E00CF6BEA /* push2.wav */; };
-		1CF7B92823BB4FB0006028BC /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CF7B92723BB4F8A006028BC /* libReactNativePermissions.a */; };
 		2664C4A2E0804B65A40E7934 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F79089108AC545DAB0E37C6F /* FontAwesome5_Brands.ttf */; };
 		3D84A85626634AABBFE313C1 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D1EED20F556419BBFFFFA7C /* libRNCamera.a */; };
 		471ABEE51E754FD49DB80A02 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10E68EE2F8C54F8089797626 /* libCodePush.a */; };
@@ -600,6 +600,8 @@
 		156741A4DB65D6A3CEB60929 /* libPods-my_food_newTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-my_food_newTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		15C9F3D257E04586B05C4A49 /* libRNFirebase.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFirebase.a; sourceTree = "<group>"; };
 		160F58FDDC904149B45F9E97 /* libRNPermissions.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNPermissions.a; sourceTree = "<group>"; };
+		1C07FFCD241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNReactNativeHapticFeedback.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C07FFCF241DE44A0019FDB1 /* libRNPermissions.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNPermissions.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1C206E0D22F1A71100CF6BEA /* my_food_new.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = my_food_new.entitlements; path = my_food_new/my_food_new.entitlements; sourceTree = "<group>"; };
 		1C206E1422F1A83100CF6BEA /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
 		1C206E1622F1A83100CF6BEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -689,8 +691,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				06C63EF723FE3980004290DC /* libRNReactNativeHapticFeedback.a in Frameworks */,
-				1CF7B92823BB4FB0006028BC /* libReactNativePermissions.a in Frameworks */,
+				1C07FFD0241DE44A0019FDB1 /* libRNPermissions.a in Frameworks */,
+				1C07FFCE241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a in Frameworks */,
 				8A3FB2FF236160AF0076A3DA /* libRCTContacts.a in Frameworks */,
 				8A6A14AD22C3268B00377B1B /* libART.a in Frameworks */,
 				ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */,
@@ -934,6 +936,8 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1C07FFCF241DE44A0019FDB1 /* libRNPermissions.a */,
+				1C07FFCD241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a */,
 				06C642C624052C8E004290DC /* libRNDeviceInfo.a */,
 				06C095C223D2C98200F81C1F /* WebKit.framework */,
 				06C0957E23D2C95900F81C1F /* CoreGraphics.framework */,
