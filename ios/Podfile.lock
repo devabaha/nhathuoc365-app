@@ -144,11 +144,7 @@ PODS:
     - React
   - RNDeviceInfo (5.5.3):
     - React
-  - RNFirebase (5.5.7):
-    - Firebase/Core
-    - React
-    - RNFirebase/Crashlytics (= 5.5.7)
-  - RNFirebase/Crashlytics (5.5.7):
+  - RNFirebase/Crashlytics (5.6.0):
     - Crashlytics
     - Fabric
     - Firebase/Core
@@ -188,7 +184,6 @@ DEPENDENCIES:
   - React/RCTImage (from `../node_modules/react-native`)
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
-  - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNFirebase/Crashlytics (from `../node_modules/react-native-firebase/ios`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -297,7 +292,7 @@ SPEC CHECKSUMS:
   react-native-screen-brightness: 07a615629827593d3ac8bb0a3498088416cadd32
   ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
   RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
-  RNFirebase: 3c0d26909841ad3c72ca46d85aba333ef49903bc
+  RNFirebase: 37daa9a346d070f9f6ee1f3b4aaf4c8e3b1d5d1c
   RNFS: 54da03c2b7d862c42ea3ca8c7f86f892760a535a
   RNPermissions: 4fa81b28a6e07b31ed9068fa7dab24e2b8a3902b
   RNReactNativeHapticFeedback: 2566b468cc8d0e7bb2f84b23adc0f4614594d071
@@ -305,6 +300,6 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 9542f30d25f22e3aab403e72d11bc0ba00546715
+PODFILE CHECKSUM: 626ff5fbcd3e4f0f92ab7fe0bdc6caf2b3a42007
 
 COCOAPODS: 1.8.4
