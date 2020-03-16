@@ -148,6 +148,10 @@ PODS:
     - React
   - RNDeviceInfo (5.5.3):
     - React
+  - RNFirebase (5.6.0):
+    - Firebase/Core
+    - React
+    - RNFirebase/Crashlytics (= 5.6.0)
   - RNFirebase/Crashlytics (5.6.0):
     - Crashlytics
     - Fabric
@@ -190,6 +194,7 @@ DEPENDENCIES:
   - React/RCTImage (from `../node_modules/react-native`)
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNFirebase/Crashlytics (from `../node_modules/react-native-firebase/ios`)
   - RNFS (from `../node_modules/react-native-fs`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -312,6 +317,6 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: b2395324bfd5cbaa6e0ea2798a0be797e090e8f7
+PODFILE CHECKSUM: 3cc7d6d6c85f54fecfe193cd984625029894c2ec
 
 COCOAPODS: 1.8.4
