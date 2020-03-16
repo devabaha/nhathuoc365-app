@@ -5,6 +5,7 @@
 	};
 	objectVersion = 46;
 	objects = {
+
 /* Begin PBXBuildFile section */
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
 		00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302BA1ABCB90400DB3ED1 /* libRCTGeolocation.a */; };
@@ -29,13 +30,13 @@
 		146834051AC3E58100842450 /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 146834041AC3E56700842450 /* libReact.a */; };
 		1926FC5280E543DEAC3D5FAD /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 118C6A6781E54598B9E0D74A /* Zocial.ttf */; };
 		1C07FFCE241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C07FFCD241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a */; };
-		1C07FFD0241DE44A0019FDB1 /* libRNPermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C07FFCF241DE44A0019FDB1 /* libRNPermissions.a */; };
 		1C206E2B22F1ACCE00CF6BEA /* NotificationService.m in Sources */ = {isa = PBXBuildFile; fileRef = 1C206E2A22F1ACCE00CF6BEA /* NotificationService.m */; };
 		1C206E2F22F1ACCE00CF6BEA /* OneSignalNotificationServiceExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1C206E2722F1ACCE00CF6BEA /* OneSignalNotificationServiceExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1C206E3322F1AD3400CF6BEA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C206E1E22F1A8E200CF6BEA /* UIKit.framework */; };
 		1C206E3422F1AD3B00CF6BEA /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C206E2022F1A8F000CF6BEA /* SystemConfiguration.framework */; };
 		1C206E3522F1AD4500CF6BEA /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A3D23C922C481D500B47B28 /* libRCTOneSignal.a */; };
 		1C2070A922F54D6E00CF6BEA /* push2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1C2070A722F54D6E00CF6BEA /* push2.wav */; };
+		1CCF9C3D241E94E3003F661A /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CF7B92723BB4F8A006028BC /* libReactNativePermissions.a */; };
 		2664C4A2E0804B65A40E7934 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F79089108AC545DAB0E37C6F /* FontAwesome5_Brands.ttf */; };
 		3D84A85626634AABBFE313C1 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D1EED20F556419BBFFFFA7C /* libRNCamera.a */; };
 		471ABEE51E754FD49DB80A02 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10E68EE2F8C54F8089797626 /* libCodePush.a */; };
@@ -670,7 +671,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C07FFD0241DE44A0019FDB1 /* libRNPermissions.a in Frameworks */,
+				1CCF9C3D241E94E3003F661A /* libReactNativePermissions.a in Frameworks */,
 				1C07FFCE241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a in Frameworks */,
 				8A3FB2FF236160AF0076A3DA /* libRCTContacts.a in Frameworks */,
 				8A6A14AD22C3268B00377B1B /* libART.a in Frameworks */,
@@ -1115,7 +1116,6 @@
 				0B2D8C6FFCDD475689ECAAA0 /* libRNCNetInfo.a */,
 				BB39D3D9DDE54C189E9BD994 /* libRNCNetInfo-tvOS.a */,
 				C991D47D371D494286815C69 /* libRNCAsyncStorage.a */,
-				783A802B842147D785DC3726 /* libRNImagePicker.a */,
 				8997C9A241C547AB950D7084 /* libRCTOneSignal.a */,
 				661D41B856C54469AC307022 /* libReactNativePermissions.a */,
 				4D5E3AA64E1D4DE28430E541 /* libRNAccountKit.a */,
@@ -1125,7 +1125,6 @@
 				253BE8A886934BF2A6CCFDC7 /* libRNReanimated.a */,
 				FD6E73A42137404B84C1637D /* libRNGestureHandler.a */,
 				8AC7F44870A34C06AD206A88 /* libRCTContacts.a */,
-				4B7D41117C104F538A98A732 /* libReactNativeFingerprintScanner.a */,
 				160F58FDDC904149B45F9E97 /* libRNPermissions.a */,
 				15C9F3D257E04586B05C4A49 /* libRNFirebase.a */,
 			);
@@ -2101,9 +2100,7 @@
 				INFOPLIST_FILE = my_food_newTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2143,9 +2140,7 @@
 				INFOPLIST_FILE = my_food_newTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -2267,9 +2262,7 @@
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = id.tick.OneSignalNotificationServiceExtension;
@@ -2298,9 +2291,7 @@
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = id.tick.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
