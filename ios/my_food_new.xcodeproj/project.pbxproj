@@ -67,7 +67,6 @@
 		DE64931BEBBF45C6869B6174 /* libRCTOneSignal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8997C9A241C547AB950D7084 /* libRCTOneSignal.a */; };
 		ED297163215061F000B7C4FE /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ED297162215061F000B7C4FE /* JavaScriptCore.framework */; };
 		EE57C7A6C7C748A0BFD7DE6E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 69B46151E9D14FFD83C1E303 /* SimpleLineIcons.ttf */; };
-		F4F0549C5D884D6C8DED6A38 /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15C9F3D257E04586B05C4A49 /* libRNFirebase.a */; };
 		F5F09C3709B04EF79FBBC3C3 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A3037FFAF384E5CAF510AFD /* Feather.ttf */; };
 		FC36BD30A4FE49A49EEC07E8 /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 89363297F7DC4360872EAC59 /* MaterialCommunityIcons.ttf */; };
 /* End PBXBuildFile section */
@@ -163,13 +162,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 83CBBA2E1A601D0E00E9B192;
 			remoteInfo = React;
-		};
-		1C07FF42241DE2070019FDB1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 39DFD91852EC4048BC516398 /* RNFirebase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNFirebase;
 		};
 		1C206E2D22F1ACCE00CF6BEA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -606,7 +598,6 @@
 		2D16E6891FA4F8E400B85C8A /* libReact.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libReact.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		30C895D26C20454B9F8E15AF /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		3699F7F2FA7846CE8B15FB0E /* RNReanimated.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNReanimated.xcodeproj; path = "../node_modules/react-native-reanimated/ios/RNReanimated.xcodeproj"; sourceTree = "<group>"; };
-		39DFD91852EC4048BC516398 /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
 		4577D11484497B270953E12D /* Pods-my_food_new.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-my_food_new.debug.xcconfig"; path = "Target Support Files/Pods-my_food_new/Pods-my_food_new.debug.xcconfig"; sourceTree = "<group>"; };
 		463EE80D934E40BB9BB6E7D7 /* libRNFetchBlob.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNFetchBlob.a; sourceTree = "<group>"; };
 		489E11B9B258A330CC703246 /* Pods-my_food_newTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-my_food_newTests.release.xcconfig"; path = "Target Support Files/Pods-my_food_newTests/Pods-my_food_newTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -702,7 +693,6 @@
 				0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */,
 				B42DD41E63ED48F48B0B94C8 /* libRCTContacts.a in Frameworks */,
 				85294031339D7C0E36487A95 /* libPods-my_food_new.a in Frameworks */,
-				F4F0549C5D884D6C8DED6A38 /* libRNFirebase.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -865,14 +855,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		1C07FF3F241DE2070019FDB1 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1C07FF43241DE2070019FDB1 /* libRNFirebase.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		1C206E1322F1A83100CF6BEA /* OneSignalNotificationServiceExtension */ = {
 			isa = PBXGroup;
 			children = (
@@ -1005,7 +987,6 @@
 				3699F7F2FA7846CE8B15FB0E /* RNReanimated.xcodeproj */,
 				AABE044CF0D24C00A83BF395 /* RNGestureHandler.xcodeproj */,
 				9C7EC47A653A4A6484800387 /* RCTContacts.xcodeproj */,
-				39DFD91852EC4048BC516398 /* RNFirebase.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1420,10 +1401,6 @@
 					ProjectRef = 96B3A6FE23BA4A3C8F83F278 /* RNFetchBlob.xcodeproj */;
 				},
 				{
-					ProductGroup = 1C07FF3F241DE2070019FDB1 /* Products */;
-					ProjectRef = 39DFD91852EC4048BC516398 /* RNFirebase.xcodeproj */;
-				},
-				{
 					ProductGroup = 8A3FB28D23615CAB0076A3DA /* Products */;
 					ProjectRef = AABE044CF0D24C00A83BF395 /* RNGestureHandler.xcodeproj */;
 				},
@@ -1536,13 +1513,6 @@
 			fileType = archive.ar;
 			path = libReact.a;
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		1C07FF43241DE2070019FDB1 /* libRNFirebase.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNFirebase.a;
-			remoteRef = 1C07FF42241DE2070019FDB1 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		1CF7B92723BB4F8A006028BC /* libReactNativePermissions.a */ = {
@@ -2159,7 +2129,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = my_food_new/my_food_new.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 17;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = P5KH8JVQV6;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2187,6 +2157,7 @@
 				);
 				INFOPLIST_FILE = my_food_new/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2206,7 +2177,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = my_food_new/my_food_new.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 17;
 				DEVELOPMENT_TEAM = P5KH8JVQV6;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2233,6 +2204,7 @@
 				);
 				INFOPLIST_FILE = my_food_new/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 1.1.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2255,6 +2227,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 17;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = P5KH8JVQV6;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2263,6 +2236,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.1.1;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = id.tick.OneSignalNotificationServiceExtension;
@@ -2284,6 +2258,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 17;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = P5KH8JVQV6;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2292,6 +2267,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				MARKETING_VERSION = 1.1.1;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = id.tick.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
