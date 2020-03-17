@@ -131,9 +131,9 @@ PODS:
     - SDWebImage/Core (~> 4)
     - SDWebImage/GIF (~> 4)
     - SDWebImage/WebP (~> 4)
-  - react-native-fingerprint-scanner (4.0.0):
+  - react-native-fingerprint-scanner (3.0.2):
     - React
-  - react-native-image-picker (2.3.1):
+  - react-native-image-picker (0.14.3):
     - React
   - react-native-screen-brightness (1.0.1):
     - React
@@ -148,11 +148,11 @@ PODS:
     - React
   - RNDeviceInfo (5.5.3):
     - React
-  - RNFirebase (5.6.0):
+  - RNFirebase (5.5.7):
     - Firebase/Core
     - React
-    - RNFirebase/Crashlytics (= 5.6.0)
-  - RNFirebase/Crashlytics (5.6.0):
+    - RNFirebase/Crashlytics (= 5.5.7)
+  - RNFirebase/Crashlytics (5.5.7):
     - Crashlytics
     - Fabric
     - Firebase/Core
@@ -163,7 +163,7 @@ PODS:
     - React
   - RNReactNativeHapticFeedback (1.9.0):
     - React
-  - RNSVG (12.0.3):
+  - RNSVG (11.0.1):
     - React
   - SDWebImage/Core (4.4.8)
   - SDWebImage/GIF (4.4.8):
@@ -304,16 +304,16 @@ SPEC CHECKSUMS:
   react-native-branch: cc611a2d0e7e6c7c4cafebc8e59065b89c38002b
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
   react-native-fast-image: 7278563726f2455ed3ba6e04dea472345173278c
-  react-native-fingerprint-scanner: 03f3d966edacf2f515e361595b6778d3502db4fb
-  react-native-image-picker: 6a850c41f57f0848d918c2a77aedd7aa272ffa30
+  react-native-fingerprint-scanner: 388acb4969b681a3f63fbec0c4b740d2b775a1dc
+  react-native-image-picker: 3693786b3d5958c8f71deed66ec068b323565e0d
   react-native-screen-brightness: 07a615629827593d3ac8bb0a3498088416cadd32
   ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
   RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
-  RNFirebase: 37daa9a346d070f9f6ee1f3b4aaf4c8e3b1d5d1c
+  RNFirebase: 3c0d26909841ad3c72ca46d85aba333ef49903bc
   RNFS: 54da03c2b7d862c42ea3ca8c7f86f892760a535a
   RNPermissions: 4fa81b28a6e07b31ed9068fa7dab24e2b8a3902b
   RNReactNativeHapticFeedback: 2566b468cc8d0e7bb2f84b23adc0f4614594d071
-  RNSVG: 7e16ddfc6e00d5aa69c9eb83e699bcce5dcb85d4
+  RNSVG: 67f1f12dae2cef6ed59a42cae74a6b8f5a9e7b46
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
