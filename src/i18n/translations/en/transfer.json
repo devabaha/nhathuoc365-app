@@ -1,0 +1,24 @@
+{
+  "contactInput": {
+    "title": "Recharge to",
+    "placeholder": "Choose a receiver"
+  },
+  "contact": {
+    "requestContactsPermissionTitle": "Contact",
+    "requestContactsPermissionMessage": "Giving access to contacts helps you quickly and accurately select information",
+    "notInContactsFamilyName": "Not in contacts yet",
+    "allowAccessContactsMessage": "Allow access",
+    "searchContactsPlaceholder": "Search by name or phone number"
+  },
+  "transferPaymentTitle": "Transfer to {{walletName}}",
+  "error": {
+    "sameAccount": "Cannot transfer money to the same account!",
+    "noTel": "Contact does not have phone number!"
+  },
+  "accountNotRegisterYet": {
+    "title": "You are transferring money to the phone number that has not registered your {{appName}} account",
+    "message": "Invite the owner of {{tel}} to use {{appName}} now!!",
+    "accept": "SEND INVITATION",
+    "cancel": "CANCEL"
+  }
+}

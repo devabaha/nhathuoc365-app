@@ -20,10 +20,14 @@ import vi_vndWallet from './translations/vi/vndWallet.json';
 import en_vndWallet from './translations/en/vndWallet.json';
 import vi_qrBarCode from './translations/vi/qrBarCode.json';
 import en_qrBarCode from './translations/en/qrBarCode.json';
+import vi_transfer from './translations/vi/transfer.json';
+import en_transfer from './translations/en/transfer.json';
+import vi_payment from './translations/en/payment.json';
+import en_payment from './translations/en/payment.json';
 
 i18n.use(initReactI18next).init(
   {
-    lng: 'vi',
+    lng: 'en',
     fallbackLng: 'vi',
     debug: true,
 
@@ -41,7 +45,9 @@ i18n.use(initReactI18next).init(
         address: vi_address,
         createAddress: vi_createAddress,
         vndWallet: vi_vndWallet,
-        qrBarCode: vi_qrBarCode
+        qrBarCode: vi_qrBarCode,
+        transfer: vi_transfer,
+        payment: vi_payment
       },
       en: {
         common: translateEN,
@@ -53,7 +59,9 @@ i18n.use(initReactI18next).init(
         address: en_address,
         createAddress: en_createAddress,
         vndWallet: en_vndWallet,
-        qrBarCode: en_qrBarCode
+        qrBarCode: en_qrBarCode,
+        transfer: en_transfer,
+        payment: en_payment
       }
     },
     ns: ['common'],

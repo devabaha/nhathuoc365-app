@@ -1003,7 +1003,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.transfer}_1`}
                     component={Transfer}
-                    title="Chuyển khoản"
+                    title={t('screen.transfer.mainTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -1098,7 +1098,7 @@ class RootRouter extends Component {
                 <Stack key={phoneCardConfig.routes.contact}>
                   <Scene
                     key={`${phoneCardConfig.routes.contact}_1`}
-                    title="Danh bạ"
+                    title={t('screen.contact.mainTitle')}
                     component={PhoneCardContactContainer}
                     {...navBarConfig}
                     back

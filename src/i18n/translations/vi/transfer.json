@@ -1,0 +1,24 @@
+{
+  "contactInput": {
+    "title": "Nạp đến",
+    "placeholder": "Nhập tên hoặc SĐT người nhận"
+  },
+  "contact": {
+    "requestContactsPermissionTitle": "Danh bạ",
+    "requestContactsPermissionMessage": "Cho phép truy cập danh bạ sẽ giúp bạn chọn nhanh và chính xác thông tin",
+    "notInContactsFamilyName": "Chưa có trong danh bạ",
+    "allowAccessContactsMessage": "Cho phép truy cập",
+    "searchContactsPlaceholder": "Tìm theo tên hoặc số điện thoại"
+  },
+  "transferPaymentTitle": "Chuyển tiền đến {{walletName}}",
+  "error": {
+    "sameAccount": "Không thể chuyển tiền cho cùng tài khoản!",
+    "noTel": "Liên hệ không có số điện thoại!"
+  },
+  "accountNotRegisterYet": {
+    "title": "Bạn đang chuyển tiền đến SĐT chưa đăng ký tài khoản TickID",
+    "message": "Hãy mời chủ thuê bao {{tel}} sử dụng TickID ngay thôi!!",
+    "accept": "GỬI LỜI MỜI",
+    "cancel": "HỦY"
+  }
+}

@@ -50,6 +50,9 @@
     },
     "payAccount": {
       "mainTitle": "Thông tin tài khoản"
+    },
+    "contact": {
+      "mainTitle": "Danh bạ"
     }
   },
 

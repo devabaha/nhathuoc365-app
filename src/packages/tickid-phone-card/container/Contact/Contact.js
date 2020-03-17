@@ -30,11 +30,22 @@ const CONTACTS_STORAGE_KEY = 'CONTACTS_STORAGE_KEY';
 
 class Contact extends Component {
   static propTypes = {
-    onPressContact: PropTypes.func
+    onPressContact: PropTypes.func,
+    requestContactsPermissionTitle: PropTypes.string,
+    requestContactsPermissionMessage: PropTypes.string,
+    notInContactsFamilyName: PropTypes.string,
+    allowAccessContactsMessage: PropTypes.string,
+    searchContactsPlaceholder: PropTypes.string
   };
 
   static defaultProps = {
-    onPressContact: () => {}
+    onPressContact: () => {},
+    requestContactsPermissionTitle: 'Danh bạ',
+    requestContactsPermissionMessage:
+      'Cho phép truy cập danh bạ sẽ giúp bạn chọn nhanh và chính xác thông tin',
+    notInContactsFamilyName: 'Chưa có trong danh bạ',
+    allowAccessContactsMessage: 'Cho phép truy cập',
+    searchContactsPlaceholder: 'Tìm theo tên hoặc số điện thoại'
   };
 
   constructor(props) {
@@ -72,9 +83,8 @@ class Contact extends Component {
 
   handleCheckPermissonAndroid = () => {
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-      title: 'Danh bạ',
-      message:
-        'Cho phép truy cập danh bạ sẽ giúp bạn chọn nhanh và chính xác thông tin'
+      title: this.props.requestContactsPermissionTitle,
+      message: this.props.requestContactsPermissionMessage
     }).then(async error => {
       switch (error) {
         case 'never_ask_again':
@@ -288,10 +298,10 @@ class Contact extends Component {
       searchResult = [
         {
           data: {
-            familyName: 'Chưa có trong danh bạ'
+            familyName: this.props.notInContactsFamilyName
           },
           displayPhone: searchText,
-          name: 'Chưa có trong danh bạ',
+          name: this.props.notInContactsFamilyName,
           notInContact: true
         }
       ];
@@ -323,15 +333,14 @@ class Contact extends Component {
         {this.state.isNotAccessToContact ? (
           <View style={styles.allowBox}>
             <Text style={styles.allowMessage}>
-              Cho phép truy cập danh bạ sẽ giúp bạn chọn nhanh và chính xác
-              thông tin
+              {this.props.requestContactsPermissionMessage}
             </Text>
             <Button
               containerStyle={styles.allowBtn}
               style={styles.allowText}
               onPress={this.handleOpenAllowContactPermission}
             >
-              Cho phép truy cập
+              {this.props.allowAccessContactsMessage}
             </Button>
           </View>
         ) : (
@@ -340,6 +349,7 @@ class Contact extends Component {
               value={this.state.searchText}
               onChangeText={this.handleChangeText}
               onClearText={this.handleClearText}
+              placeholder={this.props.searchContactsPlaceholder}
             />
 
             {this.renderContacts()}

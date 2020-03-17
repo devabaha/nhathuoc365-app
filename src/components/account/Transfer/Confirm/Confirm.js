@@ -598,4 +598,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Confirm);
+export default withTranslation()(observer(Confirm));

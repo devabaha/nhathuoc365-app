@@ -50,6 +50,9 @@
     },
     "payAccount": {
       "mainTitle": "Account information"
+    },
+    "contact": {
+      "mainTitle": "Contact"
     }
   },
 

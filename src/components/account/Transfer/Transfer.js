@@ -29,8 +29,9 @@ class Transfer extends Component {
   };
 
   goToScanQR = () => {
+    const { t } = this.props;
     Actions.push(appConfig.routes.qrBarCode, {
-      title: 'Chuyển khoản',
+      title: t('common:screen.transfer.mainTitle'),
       index: 1,
       from: appConfig.routes.transfer,
       wallet: this.props.wallet,
@@ -52,14 +53,25 @@ class Transfer extends Component {
   };
 
   handleOpenContact = () => {
+    const { t } = this.props;
     Actions.push(phoneCardConfig.routes.contact, {
-      onPressContact: this.handlePressContact
+      onPressContact: this.handlePressContact,
+      requestContactsPermissionTitle: t(
+        'contact.requestContactsPermissionTitle'
+      ),
+      requestContactsPermissionMessage: t(
+        'contact.requestContactsPermissionMessage'
+      ),
+      notInContactsFamilyName: t('contact.notInContactsFamilyName'),
+      allowAccessContactsMessage: t('contact.allowAccessContactsMessage'),
+      searchContactsPlaceholder: t('contact.searchContactsPlaceholder')
     });
   };
 
   handlePressContact = contact => {
     Keyboard.dismiss();
     const { name, displayPhone, data, notInContact } = contact;
+    const { t } = this.props;
 
     if (displayPhone.trim()) {
       let receiverTel = displayPhone.replace(/ /g, '');
@@ -77,7 +89,9 @@ class Transfer extends Component {
           receiverTel,
           receiverInfo => {
             Actions.push(appConfig.routes.transferPayment, {
-              title: 'Chuyển tiền đến ' + this.props.wallet.name,
+              title: t('transferPaymentTitle', {
+                walletName: this.props.wallet.name
+              }),
               wallet: this.props.wallet,
               receiver: {
                 id: receiverInfo.id,
@@ -101,13 +115,13 @@ class Transfer extends Component {
       } else {
         flashShowMessage({
           type: 'danger',
-          message: 'Không thể chuyển tiền cho cùng tài khoản!'
+          message: t('error.sameAccount')
         });
       }
     } else {
       flashShowMessage({
         type: 'danger',
-        message: 'Liên hệ không có số điện thoại!'
+        message: t('error.noTel')
       });
     }
   };
@@ -142,10 +156,6 @@ class Transfer extends Component {
       }
     } catch (error) {
       console.log(error);
-      store.addApiQueue(
-        'user_get_info_by_phone_number',
-        this.checkReceiverExistence
-      );
       !this.unmounted && this.setState({ loading: false });
     }
   };
@@ -166,10 +176,14 @@ class Transfer extends Component {
   };
 
   render() {
-    const title = 'Bạn đang chuyển tiền đến SĐT chưa đăng ký tài khoản TickID';
-    const content = `Hãy mời chủ thuê bao ${this.state.contactPhone} sử dụng TickID ngay thôi!!`;
-    const okText = 'GỬI LỜI MỜI';
-    const cancelText = 'HỦY';
+    const { t } = this.props;
+    const title = t('accountNotRegisterYet.title', { appName: APP_NAME_SHOW });
+    const content = t('accountNotRegisterYet.message', {
+      tel: this.state.contactPhone,
+      appName: APP_NAME_SHOW
+    });
+    const okText = t('accountNotRegisterYet.accept');
+    const cancelText = t('accountNotRegisterYet.cancel');
 
     return (
       <ScrollView
@@ -198,6 +212,7 @@ class Transfer extends Component {
             editable={false}
             showHistory={false}
             errorMessage={this.state.errorMessage}
+            title={t('contactInput.title')}
             // contactName={this.state.contactName}
             // contactPhone={this.state.contactPhone}
             onOpenContact={this.handleOpenContact}
@@ -206,7 +221,7 @@ class Transfer extends Component {
             onShowHistory={this.handleShowHistory}
             hideChangeNetwork
             hideContact
-            placeholder="Nhập tên hoặc SĐT người nhận"
+            placeholder={t('contactInput.placeholder')}
             customRightComponent={
               <ScanQRButton onOpenScanQR={this.goToScanQR} />
             }
@@ -243,7 +258,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Transfer;
+export default withTranslation(['transfer', 'common'])(Transfer);
 
 const ScanQRButton = props => (
   <Button containerStyle={styles.scanQRContainer} onPress={props.onOpenScanQR}>
