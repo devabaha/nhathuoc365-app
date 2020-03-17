@@ -37,7 +37,8 @@ class MasterToolBar extends Component {
       onPinPress: PropTypes.func,
       pinListNotify: PropTypes.object
     }),
-    extraData: PropTypes.any
+    extraData: PropTypes.any,
+    extraHeight: PropTypes.number
   };
   static defaultProps = {
     selectedType: COMPONENT_TYPE._NONE,
@@ -105,9 +106,8 @@ class MasterToolBar extends Component {
       );
 
       Animated.spring(animatePrevValue, {
-        toValue:
-          nextProps.baseViewHeight +
-          (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0),
+        toValue: nextProps.baseViewHeight + nextProps.extraHeight,
+        // (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0),
         overshootClamping: true,
         duration: 200,
         useNativeDriver: true
@@ -134,6 +134,7 @@ class MasterToolBar extends Component {
       nextProps.pinListProps.pinListNotify !==
         this.props.pinListProps.pinListNotify ||
       nextProps.baseViewHeight !== this.props.baseViewHeight ||
+      nextProps.extraHeight !== this.props.extraHeight ||
       nextProps.extraData !== this.props.extraData ||
       nextProps.durationShowGallery !== this.props.durationShowGallery
     ) {
@@ -197,6 +198,7 @@ class MasterToolBar extends Component {
         ref={this.refGestureWrapper}
         visible={this.props.visible}
         extraData={extraData}
+        extraHeight={this.props.extraHeight}
         expandContent={this.state.expandContent}
         isActivePanResponder={
           this.state.isActivePanResponder &&
@@ -230,6 +232,7 @@ class MasterToolBar extends Component {
         />
         <PinList
           baseViewHeight={this.props.baseViewHeight}
+          extraHeight={this.props.extraHeight}
           visible={this.state.selectedType.id === COMPONENT_TYPE.PIN.id}
           pinList={pinListProps.pinList}
           itemsPerRow={pinListProps.itemsPerRow}
