@@ -38,7 +38,7 @@ export const EXTRA_DIMENSIONS_HEIGHT =
   ANDROID_EXTRA_DIMENSIONS_HEIGHT !== 0
     ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
     : ANDROID_STATUS_BAR_HEIGHT;
-export const HAS_NOTCH = DeviceInfo.hasNotch();
+export const HAS_NOTCH = isAndroid && DeviceInfo.hasNotch();
 
 export const HEADER_HEIGHT = isIos
   ? isIphoneX
