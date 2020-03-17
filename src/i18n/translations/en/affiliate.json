@@ -12,8 +12,16 @@
     }
   },
   "tab": {
-    "referralList": "Referral list",
-    "programInformation": "Program information"
+    "referralList": {
+      "title": "Referral list",
+      "desc": "Invitation list of account"
+    },
+    "programInformation": {
+      "title": "Program information"
+    }
   },
-  "programInformationMessage": "Enter the referral code to receive interesting rewards from {{appName}}"
+  "programInformationMessage": "Enter the referral code to receive interesting rewards from {{appName}}",
+  "info": {
+    "content": "Introducing affiliate marketing program"
+  }
 }

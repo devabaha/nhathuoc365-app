@@ -34,7 +34,7 @@ class Address extends Component {
     Actions.refresh({
       renderRightButton: this._renderRightButton.bind(this)
     });
-
+    // this.props.i18n.changeLanguage('en')
     this._getData();
     EventTracker.logEvent('address_page');
   }
@@ -84,10 +84,17 @@ class Address extends Component {
 
   _goConfirmPage() {
     if (this.state.item_selected == null) {
+      const { t } = this.props;
+
       return Alert.alert(
-        'Thông báo',
-        'Nhập địa chỉ nhận hàng trước khi Tiếp tục',
-        [{ text: 'Đồng ý', onPress: this._createNew.bind(this) }],
+        t('confirmNotification.title'),
+        t('confirmNotification.description'),
+        [
+          {
+            text: t('confirmNotification.accept'),
+            onPress: this._createNew.bind(this)
+          }
+        ],
         { cancelable: false }
       );
     }
@@ -101,7 +108,9 @@ class Address extends Component {
         continue_loading: true
       },
       async () => {
+        const { t } = this.props;
         try {
+          a;
           const response = await APIHandler.site_cart_change_address(
             store.store_id,
             this.state.item_selected
@@ -120,7 +129,7 @@ class Address extends Component {
             } else {
               flashShowMessage({
                 type: 'danger',
-                message: response.message || 'Có lỗi xảy ra'
+                message: response.message || t('common:api.error.message')
               });
             }
           }
@@ -128,7 +137,7 @@ class Address extends Component {
           console.log(e + ' site_cart_change_address');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         } finally {
           !this.unmounted &&
@@ -161,7 +170,8 @@ class Address extends Component {
   }
 
   render() {
-    var { single } = this.state;
+    const { single } = this.state;
+    const { t } = this.props;
 
     return (
       <View style={styles.container}>
@@ -191,7 +201,7 @@ class Address extends Component {
                     styles.payments_nav_items_title_active
                   ]}
                 >
-                  1. Địa chỉ
+                  {t('address.title')}
                 </Text>
 
                 <View style={styles.payments_nav_items_active} />
@@ -218,7 +228,7 @@ class Address extends Component {
                   />
                 </View>
                 <Text style={[styles.payments_nav_items_title]}>
-                  2. Xác nhận
+                  {t('confirm.title')}
                 </Text>
 
                 <View style={styles.payments_nav_items_right_active} />
@@ -245,7 +255,7 @@ class Address extends Component {
                 borderColor: '#dddddd'
               }}
             >
-              <Text style={styles.add_store_title}>ĐỊA CHỈ NHẬN HÀNG</Text>
+              <Text style={styles.add_store_title}>{t('address.receive')}</Text>
             </View>
           )}
           <View
@@ -275,7 +285,7 @@ class Address extends Component {
                       >
                         <View style={styles.address_add_content}>
                           <Text style={styles.address_add_title}>
-                            Thêm địa chỉ mới
+                            {t('address.new')}
                           </Text>
                           <View style={styles.address_add_icon_box}>
                             <Icon name="plus" size={18} color="#999999" />
@@ -334,7 +344,7 @@ class Address extends Component {
                               color={DEFAULT_COLOR}
                             />
                             <Text style={styles.address_label}>
-                              Giao tới địa chỉ này
+                              {t('address.delivery')}
                             </Text>
                           </View>
                         )}
@@ -342,7 +352,7 @@ class Address extends Component {
                         {item.default_flag == 1 && (
                           <View style={styles.address_edit_btn}>
                             <Text style={styles.address_default_title}>
-                              [Mặc định]
+                              {t('address.default')}
                             </Text>
                           </View>
                         )}
@@ -353,7 +363,7 @@ class Address extends Component {
                             onPress={() => {
                               Actions.create_address({
                                 edit_data: item,
-                                title: 'Sửa địa chỉ',
+                                title: t('common:screen.address.editTitle'),
                                 addressReload: this._getData,
                                 from_page: this.props.from_page
                               });
@@ -366,7 +376,7 @@ class Address extends Component {
                                 color="#999999"
                               />
                               <Text style={styles.address_edit_label}>
-                                Chỉnh sửa
+                                {t('address.edit')}
                               </Text>
                             </View>
                           </TouchableHighlight>
@@ -414,7 +424,7 @@ class Address extends Component {
                 >
                   <View style={styles.address_add_content}>
                     <Text style={styles.address_add_title}>
-                      Thêm địa chỉ mới
+                      {t('address.new')}
                     </Text>
                     <View style={styles.address_add_icon_box}>
                       <Icon name="plus" size={18} color="#999999" />
@@ -433,7 +443,9 @@ class Address extends Component {
             style={styles.address_continue}
           >
             <View style={styles.address_continue_content}>
-              <Text style={styles.address_continue_title}>TIẾP TỤC</Text>
+              <Text style={styles.address_continue_title}>
+                {t('nextBtnMessage')}
+              </Text>
               <View
                 style={{
                   minWidth: 20,
@@ -698,4 +710,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Address);
+export default withTranslation(['address', 'common'])(observer(Address));

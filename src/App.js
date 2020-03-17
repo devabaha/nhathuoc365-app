@@ -45,7 +45,6 @@ import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
 import PhoneAuth from './components/account/PhoneAuth';
-import CodeAuth from './components/account/CodeAuth';
 import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
@@ -419,7 +418,7 @@ class App extends Component {
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
-        <RootRouter setHeader={this.setHeader.bind(this)} />
+        <RootRouter t={this.props.t} setHeader={this.setHeader.bind(this)} />
         <FlashMessage icon={'auto'} />
         <AwesomeAlert
           show={
@@ -478,7 +477,7 @@ const styles = StyleSheet.create({
 });
 
 // wrap App with codepush HOC
-export default codePush(App);
+export default withTranslation()(codePush(App));
 
 class RootRouter extends Component {
   state = {};
@@ -495,6 +494,7 @@ class RootRouter extends Component {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <Router
         store={store}
@@ -523,14 +523,14 @@ class RootRouter extends Component {
                   tabBarStyle={styles.tabBarStyle}
                   activeBackgroundColor="#ffffff"
                   inactiveBackgroundColor="#ffffff"
-                  tabBarOnPress={handleTabBarOnPress}
+                  tabBarOnPress={props => handleTabBarOnPress({ ...props, t })}
                   {...navBarConfig}
                 >
                   {/* ================ HOME TAB ================ */}
                   <Stack
                     key={appConfig.routes.homeTab}
                     icon={TabIcon}
-                    iconLabel="TickID"
+                    iconLabel={t('appTab.tab1.title')}
                     iconName="store"
                     iconSize={24}
                   >
@@ -548,7 +548,7 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
-                    iconLabel="Tin tức"
+                    iconLabel={t('appTab.tab2.title')}
                     iconName="notifications"
                     iconSize={24}
                     notifyKey="new_totals"
@@ -576,7 +576,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.ordersTab}
                     icon={TabIcon}
                     iconSize={24}
-                    iconLabel="Đơn hàng"
+                    iconLabel={t('appTab.tab4.title')}
                     iconName="shopping-cart"
                     notifyKey="notify_cart"
                   >
@@ -593,14 +593,14 @@ class RootRouter extends Component {
                   <Stack
                     key="myTab5"
                     icon={TabIcon}
-                    iconLabel="Tài khoản"
+                    iconLabel={t('appTab.tab5.title')}
                     iconName="account-circle"
                     notifyKey="notify_account"
                     iconSize={24}
                   >
                     <Scene
                       key="_account"
-                      title="Tài khoản"
+                      title={t('screen.account.mainTitle')}
                       component={Account}
                     />
                   </Stack>
@@ -675,7 +675,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.myAddress}>
                   <Scene
                     key={`${appConfig.routes.myAddress}_1`}
-                    title="Địa chỉ"
+                    title={t('screen.address.mainTitle')}
                     component={Address}
                     {...navBarConfig}
                     back
@@ -715,7 +715,7 @@ class RootRouter extends Component {
                 <Stack key="create_address">
                   <Scene
                     key="create_address_1"
-                    title="Thêm địa chỉ"
+                    // title="Thêm địa chỉ"
                     component={CreateAddress}
                     {...navBarConfig}
                     back
@@ -725,7 +725,7 @@ class RootRouter extends Component {
                 <Stack key="register">
                   <Scene
                     key="register_1"
-                    title="Đăng ký"
+                    title={t('screen.register.mainTitle')}
                     component={Register}
                     {...navBarConfig}
                     back
@@ -738,15 +738,6 @@ class RootRouter extends Component {
                     hideNavBar
                     component={PhoneAuth}
                     {...navBarConfig}
-                  />
-                </Stack>
-
-                <Stack key="auth_code">
-                  <Scene
-                    back
-                    key="auth_code_1"
-                    component={CodeAuth}
-                    {...whiteNavBarConfig}
                   />
                 </Stack>
 
@@ -1067,7 +1058,7 @@ class RootRouter extends Component {
                 <Stack key="profile_detail">
                   <Scene
                     key="profile_detail_1"
-                    title="Tài khoản của tôi"
+                    title={t('screen.account.myAccountTitle')}
                     component={ProfileDetail}
                     {...navBarConfig}
                     back
@@ -1077,7 +1068,7 @@ class RootRouter extends Component {
                 <Stack key="edit_profile">
                   <Scene
                     key="edit_profile_1"
-                    title="Chỉnh sửa thông tin"
+                    title={t('screen.account.editAccountTitle')}
                     component={EditProfile}
                     {...navBarConfig}
                     back

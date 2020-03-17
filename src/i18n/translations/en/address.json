@@ -1,0 +1,20 @@
+{
+  "confirmNotification": {
+    "title": "Notification",
+    "description": "Enter the shipping address before continue",
+    "accept": "OK"
+  },
+  "address": {
+    "title": "1. Address",
+    "receive": "SHIPPING ADDRESS",
+    "new": "Add new address",
+    "delivery": "Deliver to this address",
+    "default": "[Default]",
+    "edit": "Edit"
+  },
+  "confirm": {
+    "title": "2. confirmation"
+  },
+
+  "nextBtnMessage": "Next"
+}

@@ -1,0 +1,15 @@
+{
+  "header": {
+    "balance": "Balance"
+  },
+  "tabs": {
+    "history": {
+      "title": "History",
+      "message": "The account has no transactions"
+    },
+    "information": {
+      "title": "Information",
+      "message": "Information about the account"
+    }
+  }
+}

@@ -611,9 +611,10 @@ class Account extends Component {
               underlayColor="transparent"
               onPress={() =>
                 Actions.affiliate({
+                  title: t('common:screen.affiliate.mainTitle'),
                   aff_content: store.store_data
                     ? store.store_data.aff_content
-                    : t('affiliateMarketingProgram') + ' ' + APP_NAME_SHOW
+                    : t('affiliateMarketingProgram', { appName: APP_NAME_SHOW })
                 })
               }
             >
@@ -1045,7 +1046,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation('account')(observer(Account));
+export default withTranslation(['account', 'common'])(observer(Account));
 
 const IconAngleRight = () => (
   <Icon name="angle-right" size={26} color="#999999" />

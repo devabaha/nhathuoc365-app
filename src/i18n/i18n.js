@@ -6,6 +6,20 @@ import vi_account from './translations/vi/account.json';
 import en_account from './translations/en/account.json';
 import vi_affiliate from './translations/vi/affiliate.json';
 import en_affiliate from './translations/en/affiliate.json';
+import vi_phoneAuth from './translations/vi/phoneAuth.json';
+import en_phoneAuth from './translations/en/phoneAuth.json';
+import vi_editProfile from './translations/vi/editProfile.json';
+import en_editProfile from './translations/en/editProfile.json';
+import vi_profileDetail from './translations/vi/profileDetail.json';
+import en_profileDetail from './translations/en/profileDetail.json';
+import vi_address from './translations/vi/address.json';
+import en_address from './translations/en/address.json';
+import vi_createAddress from './translations/vi/createAddress.json';
+import en_createAddress from './translations/en/createAddress.json';
+import vi_vndWallet from './translations/vi/vndWallet.json';
+import en_vndWallet from './translations/en/vndWallet.json';
+import vi_qrBarCode from './translations/vi/qrBarCode.json';
+import en_qrBarCode from './translations/en/qrBarCode.json';
 
 i18n.use(initReactI18next).init(
   {
@@ -20,12 +34,26 @@ i18n.use(initReactI18next).init(
       vi: {
         common: translateVI,
         account: vi_account,
-        affiliate: vi_affiliate
+        affiliate: vi_affiliate,
+        phoneAuth: vi_phoneAuth,
+        editProfile: vi_editProfile,
+        profileDetail: vi_profileDetail,
+        address: vi_address,
+        createAddress: vi_createAddress,
+        vndWallet: vi_vndWallet,
+        qrBarCode: vi_qrBarCode
       },
       en: {
         common: translateEN,
         account: en_account,
-        affiliate: en_affiliate
+        affiliate: en_affiliate,
+        phoneAuth: en_phoneAuth,
+        editProfile: en_editProfile,
+        profileDetail: en_profileDetail,
+        address: en_address,
+        createAddress: en_createAddress,
+        vndWallet: en_vndWallet,
+        qrBarCode: en_qrBarCode
       }
     },
     ns: ['common'],

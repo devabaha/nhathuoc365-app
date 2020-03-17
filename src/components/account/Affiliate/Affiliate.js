@@ -21,7 +21,7 @@ import Info from './Info';
 class Affiliate extends Component {
   constructor(props) {
     super(props);
-
+    // props.i18n.changeLanguage('en')
     this.state = {
       historiesData: null,
       content: props.aff_content
@@ -163,7 +163,7 @@ class Affiliate extends Component {
     const data = [
       {
         key: 0,
-        title: t('tab.referralList'),
+        title: t('tab.referralList.title'),
         component: <History historyData={historiesData} />
       },
       // {
@@ -178,7 +178,7 @@ class Affiliate extends Component {
       // },
       {
         key: 1,
-        title: t('tab.programInformation'),
+        title: t('tab.programInformation.title'),
         component: <Info content={content} />
       }
     ];

@@ -11,7 +11,7 @@
     "termOfUse": {
       "label": "About {{appName}} - Term of use",
       "desc": "Term of use",
-      "webViewTitle": "About {{APP_NAME_SHOW}}"
+      "webViewTitle": "About {{appName}}"
     },
     "appInformation": {
       "label": "App information",

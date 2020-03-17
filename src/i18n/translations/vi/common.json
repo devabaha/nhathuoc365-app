@@ -1,6 +1,78 @@
 {
-  "welcome": {
-    "title": "Chào mừng tới Tickid",
-    "intro": "To get started, edit <1><0></0></1> and save to reload."
+  "api": {
+    "error": {
+      "message": "Có lỗi xảy ra, vui lòng thử lại sau"
+    }
+  },
+
+  "appTab": {
+    "tab1": {
+      "title": "TickID"
+    },
+    "tab2": {
+      "title": "Tin tức"
+    },
+    "tab3": {
+      "title": ""
+    },
+    "tab4": {
+      "title": "Đơn hàng"
+    },
+    "tab5": {
+      "title": "Tài khoản"
+    }
+  },
+
+  "screen": {
+    "account": {
+      "mainTitle": "Tài khoản",
+      "myAccountTitle": "Tài khoản của tôi",
+      "editAccountTitle": "Chỉnh sửa thông tin"
+    },
+    "address": {
+      "mainTitle": "Địa chỉ",
+      "createTitle": "Thêm địa chỉ",
+      "editTitle": "Sửa địa chỉ"
+    },
+    "register": {
+      "mainTitle": "Đăng ký thông tin"
+    },
+    "affiliate": {
+      "mainTitle": "Mã giới thiệu"
+    },
+    "qrBarCode": {
+      "mainTitle": "Mã tài khoản",
+      "walletAddressTitle": "Địa chỉ ví",
+      "scanTitle": "Scan QRCode"
+    },
+    "transfer": {
+      "mainTitle": "Chuyển khoản"
+    },
+    "payAccount": {
+      "mainTitle": "Thông tin tài khoản"
+    }
+  },
+
+  "system": {
+    "settings": {
+      "error": {
+        "accessProblem": "Ứng dụng không thể truy cập vào Cài đặt!"
+      }
+    },
+    "camera": {
+      "access": {
+        "request": "Ứng dụng cần quyền truy cập Camera"
+      },
+      "error": {
+        "notSupport": "Nền tảng không hỗ trợ truy cập Camera",
+        "unavailable": "Quyền truy cập Camera không khả dụng",
+        "accessProblem": "Lỗi yêu cầu quyền truy cập Camera"
+      }
+    }
+  },
+
+  "popupConfirm": {
+    "yes": "Có",
+    "no": "Không"
   }
 }

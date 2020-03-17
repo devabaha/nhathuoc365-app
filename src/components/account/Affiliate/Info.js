@@ -18,13 +18,9 @@ const Info = props => {
       //     />
       // }
     >
-      <View style={[{ paddingLeft: 10, marginTop: 10 }]}>
-        <Text style={[styles.des]}>
-          {props.content
-            ? props.content
-            : 'Giới thiệu chương trình tiếp thị liên kết'}
-        </Text>
-      </View>
+      <Text style={[styles.des]}>
+        {props.content ? props.content : props.t('info.content')}
+      </Text>
     </ScrollView>
   );
 };
@@ -45,4 +41,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Info;
+export default withTranslation('affiliate')(Info);

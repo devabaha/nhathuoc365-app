@@ -91,11 +91,17 @@ class PhoneAuth extends Component {
   };
 
   smsBrandNameSendCode = async phoneNumber => {
+    const { t } = this.props;
+
     try {
-      var formData;
+      this.setState({
+        message: t('smsBrandNameSendCodeFailMessage'),
+        isShowIndicator: false
+      });
+      let formData;
       if (typeof phoneNumber == 'object') {
-        var { phoneNumber, currentCountry } = this.state;
-        var countryCode = '';
+        let { phoneNumber, currentCountry } = this.state;
+        let countryCode = '';
         if (currentCountry[0].idd.root) {
           countryCode += currentCountry[0].idd.root;
           if (currentCountry[0].idd.suffixes[0]) {
@@ -130,20 +136,22 @@ class PhoneAuth extends Component {
       } else {
         console.log('errr', error);
         this.setState({
-          message: 'Lỗi xác thực, vui lòng thử lại.',
+          message: t('smsBrandNameSendCodeFailMessage'),
           isShowIndicator: false
         });
       }
     } catch (error) {
       console.log('errr', error);
       this.setState({
-        message: 'Lỗi xác thực, vui lòng thử lại.',
+        message: t('smsBrandNameSendCodeFailMessage'),
         isShowIndicator: false
       });
     }
   };
 
   smsBrandNameVerify = async () => {
+    const { t } = this.props;
+
     try {
       this.setState({ isShowIndicator: true });
       const { codeInput, confirmResult } = this.state;
@@ -169,7 +177,7 @@ class PhoneAuth extends Component {
     } catch (err) {
       console.log('error', error);
       this.setState({
-        message: `03: Mã xác minh không hợp lệ. Vui lòng thử lại`,
+        message: t('smsBrandNameVerifyFailMessage'),
         isShowIndicator: false
       });
     }
@@ -213,6 +221,7 @@ class PhoneAuth extends Component {
 
   firebaseConfirmCode = () => {
     const { codeInput, confirmResult } = this.state;
+    const { t } = this.props;
     Keyboard.dismiss();
     if (confirmResult && codeInput.length) {
       this.setState({ isShowIndicator: true });
@@ -248,7 +257,7 @@ class PhoneAuth extends Component {
               })
               .catch(error => {
                 this.setState({
-                  message: `01: Mã xác minh không hợp lệ. Vui lòng thử lại`,
+                  message: t('firebaseConfirmCodeFailMessage01'),
                   isShowIndicator: false
                 });
               });
@@ -257,7 +266,7 @@ class PhoneAuth extends Component {
         .catch(error => {
           console.log('error', error);
           this.setState({
-            message: `02: Mã xác minh không hợp lệ. Vui lòng thử lại`,
+            message: t('firebaseConfirmCodeFailMessage02'),
             isShowIndicator: false
           });
         });
@@ -268,10 +277,11 @@ class PhoneAuth extends Component {
     store.setUserInfo(response.data);
     EventTracker.setUserId(response.data.id);
     store.resetCartData();
+    const { t } = this.props;
     if (response.data && response.data.fill_info_user) {
       //hien thi chon site
       Actions.replace('op_register', {
-        title: 'Đăng ký thông tin',
+        title: t('common:screen.register.mainTitle'),
         name_props: response.data.name
       });
     } else {
@@ -326,6 +336,7 @@ class PhoneAuth extends Component {
   };
 
   renderCountryPicker() {
+    const { t } = this.props;
     return (
       <Modal
         animationType="slide"
@@ -349,7 +360,7 @@ class PhoneAuth extends Component {
               >
                 <Icon name="close" size={30} color="#ffffff" />
               </TouchableWithoutFeedback>
-              <Text style={[styles.title]}>Chọn quốc gia</Text>
+              <Text style={[styles.title]}>{t('countrySelectionTitle')}</Text>
             </View>
           </View>
           <View
@@ -372,11 +383,8 @@ class PhoneAuth extends Component {
       currentCountry,
       message
     } = this.state;
-    const textProps = {
-      placeholder: '87654321',
-      keyboardType: 'phone-pad',
-      maxLength: 15
-    };
+    const { t } = this.props;
+
     return (
       <View style={{ paddingHorizontal: 16, top: 115 }}>
         <Image
@@ -384,10 +392,8 @@ class PhoneAuth extends Component {
           style={styles.image}
           source={require('../../images/logo-640x410.jpg')}
         />
-        <Text style={styles.welcomeText}>Xin chào!</Text>
-        <Text style={styles.desText}>
-          Nhập số điện thoại của bạn để tiếp tục
-        </Text>
+        <Text style={styles.welcomeText}>{t('phoneWelcomeMessage')}</Text>
+        <Text style={styles.desText}>{t('phoneDescription')}</Text>
         <View style={{ flexDirection: 'row' }}>
           <TouchableWithoutFeedback
             onPress={this._onPressPickCountry.bind(this)}
@@ -429,7 +435,7 @@ class PhoneAuth extends Component {
             }}
             value={this.state.phoneNumber}
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
-            placeholder="8765 4321"
+            placeholder={t('phonePlaceholder')}
             onChangeText={text => {
               if (text.length <= 13) this.setState({ phoneNumber: text });
             }}
@@ -446,7 +452,7 @@ class PhoneAuth extends Component {
               { color: !empty(phoneNumber) ? 'black' : 'lightgray' }
             ]}
           >
-            Tiếp tục
+            {t('phoneConfirmMessage')}
           </Text>
         </TouchableOpacity>
         {message != '' && <Text style={styles.txtNote}>{message}</Text>}
@@ -492,19 +498,21 @@ class PhoneAuth extends Component {
       requestNewOtpCounter,
       message
     } = this.state;
-    var countryCode = '';
+    let countryCode = '';
     if (currentCountry[0].idd.root) {
       countryCode += currentCountry[0].idd.root;
       if (currentCountry[0].idd.suffixes[0]) {
         countryCode += currentCountry[0].idd.suffixes[0];
       }
     }
-    var phoneAuth = phoneNumber;
+    let phoneAuth = phoneNumber;
     if (phoneAuth.substring(0, 2) === '84') {
       phoneAuth = phoneAuth.substr(2);
     } else if (phoneAuth.substring(0, 1) === '0') {
       phoneAuth = phoneAuth.substr(1);
     }
+    const { t } = this.props;
+
     return (
       <View>
         <View
@@ -525,7 +533,7 @@ class PhoneAuth extends Component {
         </View>
         <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
           <Text style={[styles.desText, { marginBottom: 10, fontSize: 15 }]}>
-            Nhập mã code được gửi tới:
+            {t('verifyCodeInputTitle')}
           </Text>
           <Text
             style={[
@@ -544,7 +552,7 @@ class PhoneAuth extends Component {
             <TextInput
               autoFocus
               onChangeText={value => this.setState({ codeInput: value })}
-              placeholder="Nhập mã code..."
+              placeholder={t('verifyCodeInputPlaceholder')}
               value={codeInput}
               keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
               style={styles.txtCode}
@@ -562,7 +570,7 @@ class PhoneAuth extends Component {
                 { color: !empty(codeInput) ? 'black' : 'lightgray' }
               ]}
             >
-              Tiếp tục
+              {t('verifyCodeInputConfirmMessage')}
             </Text>
           </TouchableOpacity>
           {message != '' && <Text style={styles.txtNote}>{message}</Text>}
@@ -574,7 +582,7 @@ class PhoneAuth extends Component {
               marginTop: 20
             }}
           >
-            Không nhận được mã?
+            {t('notReceiveCode')}
           </Text>
           <TouchableOpacity
             onPress={this._onPressRequestNewOtp.bind(
@@ -592,10 +600,10 @@ class PhoneAuth extends Component {
               }}
             >
               {requestNewOtpCounter > 0
-                ? `Yêu cầu mã mới sau ${this.convertSecondToMinute(
+                ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
                     requestNewOtpCounter
                   )}`
-                : 'Yêu cầu mã mới'}
+                : t('requestNewCode')}
             </Text>
           </TouchableOpacity>
           {isShowIndicator && <Loading center style={{ marginBottom: 64 }} />}
@@ -693,4 +701,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PhoneAuth;
+export default withTranslation(['phoneAuth', 'common'])(PhoneAuth);

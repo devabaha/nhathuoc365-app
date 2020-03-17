@@ -11,7 +11,7 @@
     "termOfUse": {
       "label": "Về {{appName}} - Điều khoản sử dụng",
       "desc": "Điều khoản sử dụng",
-      "webViewTitle": "Về {{APP_NAME_SHOW}}"
+      "webViewTitle": "Về {{appName}}"
     },
     "appInformation": {
       "label": "Thông tin ứng dụng",
@@ -35,7 +35,7 @@
   "investorSyncingMessage": "Đồng bộ với tài khoản trên hệ thống Nhà đầu tư",
   "referralCodeInput": "Nhập mã giới thiệu",
   "cashbackSystemInviteMessage": "Tham gia hệ thống Cashback 4.0",
-  "affiliateMarketingProgram": "Thông tin chương trình tiếp thị liên kết cùng",
+  "affiliateMarketingProgram": "Thông tin chương trình tiếp thị liên kết cùng {{appName}}",
   "signOut": {
     "title": "Lưu ý khi đăng xuất",
     "subTitle": "Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.",

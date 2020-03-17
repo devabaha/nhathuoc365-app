@@ -16,7 +16,6 @@ import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
 import appConfig from 'app-config';
 
-@observer
 class CreateAddress extends Component {
   constructor(props) {
     super(props);
@@ -50,13 +49,18 @@ class CreateAddress extends Component {
   }
 
   componentDidMount() {
-    Actions.refresh({
-      onBack: () => {
-        this._unMount();
+    const actions = {};
+    if (!this.props.title) {
+      actions.title = this.props.t('common:screen.address.createTitle');
+    }
 
-        Actions.pop();
-      }
-    });
+    actions.onBack = () => {
+      this._unMount();
+
+      Actions.pop();
+    };
+
+    setTimeout(() => Actions.refresh(actions));
 
     if (!this.state.edit_mode && this.refs_name) {
       setTimeout(() => {
@@ -82,6 +86,7 @@ class CreateAddress extends Component {
 
   _onSave() {
     var { name, tel, address } = this.state;
+    const { t } = this.props;
 
     name = name.trim();
     tel = tel.trim();
@@ -89,11 +94,11 @@ class CreateAddress extends Component {
 
     if (!name) {
       return Alert.alert(
-        'Thông báo',
-        'Hãy điền tên Người nhận hàng',
+        t('confirmNotification.title'),
+        t('confirmNotification.nameDescription'),
         [
           {
-            text: 'Đồng ý',
+            text: t('confirmNotification.accept'),
             onPress: () => {
               this.refs_name.focus();
             }
@@ -105,11 +110,11 @@ class CreateAddress extends Component {
 
     if (!tel) {
       return Alert.alert(
-        'Thông báo',
-        'Hãy điền Số điện thoại',
+        t('confirmNotification.title'),
+        t('confirmNotification.telDescription'),
         [
           {
-            text: 'Đồng ý',
+            text: t('confirmNotification.accept'),
             onPress: () => {
               this.refs_tel.focus();
             }
@@ -121,11 +126,11 @@ class CreateAddress extends Component {
 
     if (!address) {
       return Alert.alert(
-        'Thông báo',
-        'Hãy điền Địa chỉ',
+        t('confirmNotification.title'),
+        t('confirmNotification.addressDescription'),
         [
           {
-            text: 'Đồng ý',
+            text: t('confirmNotification.accept'),
             onPress: () => {
               this.refs_address.focus();
             }
@@ -231,22 +236,14 @@ class CreateAddress extends Component {
 
       if (response && response.status == STATUS_SUCCESS) {
         this._unMount();
-
-        action(() => {
-          store.setCartData(response.data);
-          // auto reload address list
-          this._reloadParent();
-        })();
+        store.setCartData(response.data);
+        // auto reload address list
+        this._reloadParent();
 
         Actions.pop();
       }
     } catch (e) {
       console.log(e + ' user_delete_address');
-
-      store.addApiQueue(
-        'user_delete_address',
-        this._removeAddressItem.bind(this)
-      );
     }
   }
 
@@ -260,6 +257,7 @@ class CreateAddress extends Component {
   render() {
     var { edit_mode } = this.state;
     var is_go_confirm = this.props.redirect == 'confirm';
+    const { t } = this.props;
 
     return (
       <View style={styles.container}>
@@ -270,7 +268,7 @@ class CreateAddress extends Component {
           }}
         >
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Tên</Text>
+            <Text style={styles.input_label}>{t('formData.name.label')}</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -278,7 +276,7 @@ class CreateAddress extends Component {
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
-                placeholder="Tên người nhận hàng"
+                placeholder={t('formData.name.placeholder')}
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
@@ -298,7 +296,7 @@ class CreateAddress extends Component {
           </View>
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Số điện thoại</Text>
+            <Text style={styles.input_label}>{t('formData.tel.label')}</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -306,7 +304,7 @@ class CreateAddress extends Component {
                 style={styles.input_text}
                 keyboardType="phone-pad"
                 maxLength={30}
-                placeholder="Điền số điện thoại"
+                placeholder={t('formData.tel.placeholder')}
                 placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
@@ -329,9 +327,11 @@ class CreateAddress extends Component {
               }}
             >
               <View>
-                <Text style={styles.input_label}>Địa chỉ</Text>
+                <Text style={styles.input_label}>
+                  {t('formData.address.label')}
+                </Text>
                 <Text style={styles.input_label_help}>
-                  (Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)
+                  {t('formData.address.description')}
                 </Text>
               </View>
             </TouchableHighlight>
@@ -344,7 +344,7 @@ class CreateAddress extends Component {
               ]}
               keyboardType="default"
               maxLength={250}
-              placeholder="Nhập địa chỉ cụ thể"
+              placeholder={t('formData.address.placeholder')}
               placeholderTextColor="#999999"
               multiline={true}
               underlineColorAndroid="transparent"
@@ -372,7 +372,7 @@ class CreateAddress extends Component {
               }
             ]}
           >
-            <Text style={styles.input_label}>Đặt làm địa chỉ mặc định</Text>
+            <Text style={styles.input_label}>{t('setDefault')}</Text>
 
             <View style={styles.input_text_box}>
               <Switch
@@ -401,7 +401,7 @@ class CreateAddress extends Component {
               ]}
             >
               <Text style={[styles.input_label, { color: 'red' }]}>
-                Xoá địa chỉ này
+                {t('delete')}
               </Text>
             </TouchableHighlight>
           )}
@@ -452,17 +452,17 @@ class CreateAddress extends Component {
               ]}
             >
               {this.state.edit_mode
-                ? 'LƯU LẠI'
+                ? t('btn.save')
                 : is_go_confirm
-                ? 'TIẾP TỤC'
-                : 'HOÀN THÀNH'}
+                ? t('btn.next')
+                : t('btn.finish')}
             </Text>
           </View>
         </TouchableHighlight>
 
         <PopupConfirm
           ref_popup={ref => (this.refs_remove_item_confirm = ref)}
-          title="Bạn muốn xoá bỏ địa chỉ này?"
+          title={t('deleteConfirm')}
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
           yesConfirm={this._removeAddressItem.bind(this)}
@@ -552,4 +552,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateAddress;
+export default withTranslation('createAddress')(observer(CreateAddress));

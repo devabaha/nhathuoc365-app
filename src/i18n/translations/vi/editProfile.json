@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "fullName": {
+      "title": "Họ & tên"
+    },
+    "phoneNumber": {
+      "title": "Số điện thoại"
+    },
+    "birthdate": {
+      "title": "Ngày sinh",
+      "defaultValue": "Chọn ngày sinh"
+    },
+    "gender": {
+      "title": "Giới tính",
+      "defaultValue": "Chọn giới tính",
+      "male": "Nam",
+      "female": "Nữ",
+      "cancel": "Hủy"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "address": {
+      "title": "Địa chỉ"
+    }
+  },
+
+  "save": "Lưu",
+
+  "noChangeMessage": "Không có thông tin nào được thay đổi",
+  "invalidEmailMessage": "Email của bạn không đúng định dạng",
+
+  "saveChanges": "Lưu thay đổi"
+}
