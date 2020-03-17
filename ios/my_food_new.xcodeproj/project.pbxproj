@@ -45,7 +45,7 @@
 		60D8CF4A915040DBBB9363C2 /* libRNCAsyncStorage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C991D47D371D494286815C69 /* libRNCAsyncStorage.a */; };
 		72A1ED3B7201474FAE12436E /* libLRDRCTSimpleToast.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CB8C35FB5B854D92BFF61337 /* libLRDRCTSimpleToast.a */; };
 		764CD18B05AF4BC48742AF76 /* libRNReanimated.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 253BE8A886934BF2A6CCFDC7 /* libRNReanimated.a */; };
-		7749D70EE3544925A62BB09E /* libRNFirebase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0755F928313B48EE834EBC0A /* libRNFirebase.a */; };
+		7749D70EE3544925A62BB09E /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		7910CA03022C4154ABB77D1C /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 30C895D26C20454B9F8E15AF /* Fontisto.ttf */; };
 		832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 832341B51AAA6A8300B99B32 /* libRCTText.a */; };
 		85294031339D7C0E36487A95 /* libPods-my_food_new.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7026A7BB3C1AD3F7693D5D29 /* libPods-my_food_new.a */; };
@@ -170,13 +170,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 1C206E2622F1ACCE00CF6BEA;
 			remoteInfo = OneSignalNotificationServiceExtension;
-		};
-		1C9F1A3E24074862003D86EF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D0F5E215F4D74339AFF9296B /* RNFirebase.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 134814201AA4EA6300B7C361;
-			remoteInfo = RNFirebase;
 		};
 		1CF7B92623BB4F8A006028BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -590,8 +583,6 @@
 		1C206E2C22F1ACCE00CF6BEA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C2070A722F54D6E00CF6BEA /* push2.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = push2.wav; sourceTree = "<group>"; };
 		1C2070AA22F54EFC00CF6BEA /* push_1.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = push_1.mp3; path = /Users/thuclh/apps/tickapp/ios/push_1.mp3; sourceTree = "<absolute>"; };
-		1C9F17F32406D699003D86EF /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		1C9F17F52406D6B3003D86EF /* libRNReactNativeHapticFeedback.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNReactNativeHapticFeedback.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CF7B92223BB4F8A006028BC /* ReactNativePermissions.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativePermissions.xcodeproj; path = "../node_modules/react-native-qrcode-scanner/node_modules/react-native-permissions/ios/ReactNativePermissions.xcodeproj"; sourceTree = "<group>"; };
 		1FE58DDF2DC84ED3B168C409 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		23059DEE52844C64B5685889 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
@@ -641,7 +632,6 @@
 		CB8C35FB5B854D92BFF61337 /* libLRDRCTSimpleToast.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libLRDRCTSimpleToast.a; sourceTree = "<group>"; };
 		CBBE6C829AC249BF840F199D /* RCTOneSignal.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RCTOneSignal.xcodeproj; path = "../node_modules/react-native-onesignal/ios/RCTOneSignal.xcodeproj"; sourceTree = "<group>"; };
 		CF25897D0CC649789FF18C10 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
-		D0F5E215F4D74339AFF9296B /* RNFirebase.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNFirebase.xcodeproj; path = "../node_modules/react-native-firebase/ios/RNFirebase.xcodeproj"; sourceTree = "<group>"; };
 		E4DA045097734C7A8CCF49F6 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -696,7 +686,7 @@
 				0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */,
 				B42DD41E63ED48F48B0B94C8 /* libRCTContacts.a in Frameworks */,
 				85294031339D7C0E36487A95 /* libPods-my_food_new.a in Frameworks */,
-				7749D70EE3544925A62BB09E /* libRNFirebase.a in Frameworks */,
+				7749D70EE3544925A62BB09E /* (null) in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -876,14 +866,6 @@
 				1C206E2C22F1ACCE00CF6BEA /* Info.plist */,
 			);
 			path = OneSignalNotificationServiceExtension;
-			sourceTree = "<group>";
-		};
-		1C9F1A3B24074862003D86EF /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				1C9F1A3F24074862003D86EF /* libRNFirebase.a */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		1CF7B92323BB4F8A006028BC /* Products */ = {
@@ -1514,13 +1496,6 @@
 			remoteRef = 146834031AC3E56700842450 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		1C9F1A3F24074862003D86EF /* libRNFirebase.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNFirebase.a;
-			remoteRef = 1C9F1A3E24074862003D86EF /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		1CF7B92723BB4F8A006028BC /* libReactNativePermissions.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -2134,7 +2109,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = my_food_new/my_food_new.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 309;
+				CURRENT_PROJECT_VERSION = 310;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = HE24EA8C23;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -2162,7 +2137,7 @@
 				);
 				INFOPLIST_FILE = my_food_new/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.0.7;
+				MARKETING_VERSION = 3.0.8;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2182,7 +2157,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_ENTITLEMENTS = my_food_new/my_food_new.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 309;
+				CURRENT_PROJECT_VERSION = 310;
 				DEVELOPMENT_TEAM = HE24EA8C23;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2209,7 +2184,7 @@
 				);
 				INFOPLIST_FILE = my_food_new/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 3.0.7;
+				MARKETING_VERSION = 3.0.8;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -2232,7 +2207,7 @@
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 309;
+				CURRENT_PROJECT_VERSION = 310;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = HE24EA8C23;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2244,7 +2219,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
-				MARKETING_VERSION = 3.0.7;
+				MARKETING_VERSION = 3.0.8;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub.OneSignalNotificationServiceExtension;
@@ -2266,7 +2241,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 309;
+				CURRENT_PROJECT_VERSION = 310;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = HE24EA8C23;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -2278,7 +2253,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
-				MARKETING_VERSION = 3.0.7;
+				MARKETING_VERSION = 3.0.8;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = vn.foodhub.OneSignalNotificationServiceExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
