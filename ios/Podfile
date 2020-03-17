@@ -45,6 +45,10 @@ target 'my_food_new' do
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'react-native-branch', :path => '../node_modules/react-native-branch'
 
+  pod 'react-native-fingerprint-scanner', :path => '../node_modules/react-native-fingerprint-scanner'
+
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
+
   target 'my_food_newTests' do
     inherit! :search_paths
     # Pods for testing

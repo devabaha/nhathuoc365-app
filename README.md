@@ -68,6 +68,12 @@ Chạy Xcode, sửa lại version và version code cho App và Onesignal
 	- Đăng ký App Signing để tạo file aab
 	Chạy lệnh tạo file pem
 	java -jar ../pepk.jar --keystore=android/app/vn.tickid.keystore --alias=vn.tickid --output=android/app/vn.tickid.pem --encryptionkey=xxx
+
+	Build file apk from aab
+	java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar" build-apks --bundle="app/build/outputs/bundle/release/app.aab" --output="app/build/outputs/bundle/release/app01.apks" --ks="app/vn.cocosoul.keystore" --ks-pass="pass:123456" --ks-key-alias="vn.cocosoul" --key-pass="pass:123456"
+
+	java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar"  install-apks --apks=
+
 	Sửa cấu hình:
 	defaultConfig
         resConfigs "en", "vi"
