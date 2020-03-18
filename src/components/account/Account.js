@@ -3,10 +3,13 @@ import {
   View,
   Text,
   TouchableHighlight,
+  TouchableOpacity,
   StyleSheet,
   ScrollView,
   RefreshControl,
-  Alert
+  Alert,
+  Picker,
+  Easing
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
@@ -19,6 +22,8 @@ import Sticker from '../Sticker';
 import { reaction } from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
+import { languages } from '../../i18n/constants';
+import { setAppLanguage } from '../../i18n/i18n';
 
 class Account extends Component {
   constructor(props) {
@@ -36,7 +41,7 @@ class Account extends Component {
   }
 
   initial = callback => {
-    const { t } = this.props;
+    const { t, i18n } = this.props;
     const isAdmin = store.user_info.admin_flag == 1;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
@@ -145,6 +150,32 @@ class Account extends Component {
             ],
             notify: 'updating_version',
             iconColor: '#ffffff'
+          },
+          {
+            key: '6',
+            icon: 'language',
+            label: t('options.language.label'),
+            desc: languages[i18n.language].label,
+            rightIcon: <View></View>,
+            onPress: () => {
+              Actions.push(appConfig.routes.modalPicker, {
+                title: t('options.language.label'),
+                cancelTitle: t('options.language.cancel'),
+                selectTitle: t('options.language.select'),
+                selectedValue: this.props.i18n.language,
+                selectedLabel: languages[this.props.i18n.language].label,
+                data: Object.values(languages),
+                onSelect: this.handleConfirmChangeAppLanguage
+              });
+            },
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#175189'
+              }
+            ],
+            iconColor: '#ffffff',
+            marginTop: true
           }
         ]
       },
@@ -154,6 +185,14 @@ class Account extends Component {
         }
       }
     );
+  };
+
+  handleShowLanguagePicker = () => {
+    this.setState({ showLanguagePicker: true });
+  };
+
+  handleCloseLanguagePicker = () => {
+    this.setState({ showLanguagePicker: false });
   };
 
   onRefresh() {
@@ -282,6 +321,14 @@ class Account extends Component {
         ? store.store_data.loginMode
         : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
     });
+  };
+
+  handleConfirmChangeAppLanguage = languageValue => {
+    const selectedLanguage = {
+      languageTag: languages[languageValue].value,
+      isRTL: languages[languageValue].isRTL
+    };
+    setAppLanguage(this.props.i18n, selectedLanguage);
   };
 
   render() {
@@ -765,7 +812,7 @@ class Account extends Component {
           {this.state.options && (
             <SelectionList
               containerStyle={{
-                marginTop: 8
+                marginVertical: 8
               }}
               data={this.state.options}
             />
@@ -837,7 +884,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f1f1f1'
   },
-
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
     marginRight: 10,
@@ -847,7 +893,7 @@ const styles = StyleSheet.create({
   profile_user_container: {
     width: '100%',
     alignItems: 'center',
-    marginVertical: 7,
+    marginBottom: 7,
     height: null,
     paddingVertical: 15,
     paddingLeft: 15

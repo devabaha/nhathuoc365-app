@@ -1,0 +1,18 @@
+{
+  "getOrders": {
+    "error": {
+      "notFoundMessage": "Orders not found!"
+    }
+  },
+  "emptyMessage": "No orders yet",
+  "encourageMessage": "Shop now!",
+  "ordersItem": {
+    "title": "Orders #{{code}}",
+    "next": "Continue",
+    "edit": "Edit",
+    "note": "Note",
+    "cancel": "Cancel",
+    "totalSelected": "{{total}} product(s)",
+    "totalPaymentMessage": "Total payment"
+  }
+}

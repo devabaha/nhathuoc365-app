@@ -20,6 +20,12 @@
     "appUpdate": {
       "label": "App update",
       "desc": "Update to stable version {{newVersion}} now!"
+    },
+    "language": {
+      "label": "Language",
+      "desc": "",
+      "cancel": "Cancel",
+      "select": "Change"
     }
   },
   "avatarPicker": {

@@ -129,6 +129,9 @@ import FastImage from 'react-native-fast-image';
 import ItemAttribute from './components/stores/ItemAttribute';
 import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
+import * as RNLocalize from 'react-native-localize';
+import { arrayLanguages } from './i18n/constants';
+import ModalPicker from './components/ModalPicker';
 
 /**
  * Not allow font scaling
@@ -271,8 +274,19 @@ class App extends Component {
     this.state = {
       header: null,
       restartAllowed: true,
-      progress: null
+      progress: null,
+      appLanguage: props.i18n.language
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.i18n.language !== nextState.appLanguage) {
+      this.setState({
+        appLanguage: nextProps.i18n.language
+      });
+    }
+
+    return true;
   }
 
   componentDidMount() {
@@ -280,11 +294,20 @@ class App extends Component {
     this.syncImmediate();
     this.toggleAllowRestart();
     this.getUpdateMetadata();
+    // RNLocalize.addEventListener('change', this.localizeListener);
   }
 
   componentWillUnmount() {
     this.handleRemoveListenerOneSignal();
   }
+
+  localizeListener = () => {
+    const selectedLanguage = RNLocalize.findBestAvailableLanguage(
+      arrayLanguages
+    );
+    console.log(selectedLanguage, 'rere');
+    setAppLanguage(this.props.i18n, selectedLanguage);
+  };
 
   codePushStatusDidChange(syncStatus) {
     switch (syncStatus) {
@@ -418,7 +441,11 @@ class App extends Component {
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
-        <RootRouter t={this.props.t} setHeader={this.setHeader.bind(this)} />
+        <RootRouter
+          appLanguage={this.state.appLanguage}
+          t={this.props.t}
+          setHeader={this.setHeader.bind(this)}
+        />
         <FlashMessage icon={'auto'} />
         <AwesomeAlert
           show={
@@ -481,12 +508,12 @@ export default withTranslation()(codePush(App));
 
 class RootRouter extends Component {
   state = {};
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps !== this.props) {
-      return false;
-    }
 
-    return true;
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.appLanguage !== this.props.appLanguage) {
+      return true;
+    }
+    return false;
   }
 
   setHeader(header) {
@@ -555,7 +582,7 @@ class RootRouter extends Component {
                   >
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      title="Tin tức"
+                      title={t('screen.news.mainTitle')}
                       component={Notify}
                     />
                   </Stack>
@@ -582,7 +609,7 @@ class RootRouter extends Component {
                   >
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
-                      title="Đơn hàng"
+                      title={t('screen.orders.mainTitle')}
                       component={Orders}
                     />
                   </Stack>
@@ -631,7 +658,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.myVoucher}>
                   <Scene
                     key={`${appConfig.routes.myVoucher}_1`}
-                    title="Voucher của tôi"
+                    title={t('screen.myVoucher.mainTitle')}
                     component={MyVoucherContainer}
                     {...whiteNavBarConfig}
                     back
@@ -663,7 +690,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.deepLinkNewsTab}>
                   <Scene
                     key={`${appConfig.routes.deepLinkNewsTab}_1`}
-                    title="Tin tức"
+                    title={t('screen.news.mainTitle')}
                     component={Notify}
                     {...navBarConfig}
                     back
@@ -873,7 +900,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    title="Tin tức"
+                    title={t('screen.news.mainTitle')}
                     component={Notify}
                     {...navBarConfig}
                     back
@@ -903,7 +930,7 @@ class RootRouter extends Component {
                 <Stack key="notify_item">
                   <Scene
                     key="notify_item_1"
-                    title="Chi tiết"
+                    title={t('screen.newsDetail.mainTitle')}
                     component={NotifyItem}
                     {...navBarConfig}
                     back
@@ -1235,7 +1262,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.voucherScanner}>
                   <Scene
                     key={`${appConfig.routes.voucherScanner}_1`}
-                    title="Quét mã QR"
+                    title={t('screen.qrBarCode.scanTitle')}
                     component={VoucherScanScreenContainer}
                     {...whiteNavBarConfig}
                     back
@@ -1265,6 +1292,12 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.itemAttribute}
                 component={ItemAttribute}
+              />
+
+              {/* ================ MODAL PICKER ================ */}
+              <Stack
+                key={appConfig.routes.modalPicker}
+                component={ModalPicker}
               />
             </Lightbox>
 

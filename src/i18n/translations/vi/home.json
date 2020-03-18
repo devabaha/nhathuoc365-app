@@ -1,0 +1,42 @@
+{
+  "booking": {
+    "success": {
+      "title": "Thông báo",
+      "message": "Bạn đã đặt dịch vụ thành công!",
+      "accept": "Đồng ý"
+    },
+    "fail": {
+      "title": "Thông báo",
+      "message": "Có lỗi xảy ra, vui lòng thử lại",
+      "accept": "Đồng ý"
+    }
+  },
+  "web": {
+    "success": {
+      "title": "Thông báo",
+      "message": "Bạn đã đặt dịch vụ thành công!",
+      "accept": "Đồng ý"
+    },
+    "fail": {
+      "title": "Thông báo",
+      "message": "Có lỗi xảy ra, vui lòng thử lại",
+      "accept": "Đồng ý"
+    }
+  },
+  "welcome": {
+    "defaultUserName": "Tk Khách",
+    "message": "Xin chào"
+  },
+  "sections": {
+    "favoriteStore": {
+      "title": "Cửa hàng thân thiết"
+    },
+    "voucher": {
+      "title": "Tick Voucher"
+    },
+    "news": {
+      "title": "Tin tức"
+    }
+  },
+  "viewAll": "Xem tất cả"
+}

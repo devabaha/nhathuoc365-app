@@ -93,7 +93,7 @@ class OrdersItemComponent extends Component {
   }
 
   render() {
-    var { item, from_page } = this.props;
+    var { item, from_page, t } = this.props;
     var single = from_page != 'store_orders';
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     // var is_ready = item.status == CART_STATUS_READY;
@@ -138,7 +138,7 @@ class OrdersItemComponent extends Component {
               color="#999999"
             />
             <Text style={styles.orders_item_icon_title}>
-              Đơn hàng #{item.cart_code}
+              {t('ordersItem.title', { code: item.cart_code })}
             </Text>
 
             <View style={styles.orders_status_box}>
@@ -227,7 +227,7 @@ class OrdersItemComponent extends Component {
                       fontSize: 14
                     }}
                   >
-                    {'Tiếp tục '}
+                    {`${t('ordersItem.next')} `}
                     <Icon name="angle-right" size={14} color="#ffffff" />
                   </Text>
                 </TouchableHighlight>
@@ -263,7 +263,7 @@ class OrdersItemComponent extends Component {
                     }}
                   >
                     <Icon name="times" size={14} color="#ffffff" />
-                    {' Huỷ đơn'}
+                    {` ${t('ordersItem.cancel')}`}
                   </Text>
                 </TouchableHighlight>
 
@@ -289,7 +289,7 @@ class OrdersItemComponent extends Component {
                     }}
                   >
                     <Icon name="pencil-square-o" size={14} color="#ffffff" />
-                    {' Sửa đơn'}
+                    {` ${t('ordersItem.edit')}`}
                   </Text>
                 </TouchableHighlight>
               </View>
@@ -337,7 +337,7 @@ class OrdersItemComponent extends Component {
                 <Text
                   style={[styles.orders_item_content_label, styles.note_label]}
                 >
-                  Ghi chú:{' '}
+                  {`${t('ordersItem.note')}: `}
                 </Text>
                 <View style={styles.orders_item_note_content}>
                   <Text style={styles.orders_item_content_value}>
@@ -349,11 +349,11 @@ class OrdersItemComponent extends Component {
 
             <View style={[styles.orders_item_row, styles.row_payment]}>
               <Text style={styles.orders_item_content_label}>
-                {item.count_selected} sản phẩm
+                {t('ordersItem.totalSelected', { total: item.count_selected })}
               </Text>
               <View style={styles.orders_status_box}>
                 <Text style={styles.orders_item_content_value}>
-                  Tổng thanh toán:{' '}
+                  {`${t('ordersItem.totalPaymentMessage')}: `}
                 </Text>
                 <Text style={styles.orders_item_price_value}>
                   {item.total_selected}
@@ -485,4 +485,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(OrdersItemComponent);
+export default withTranslation('orders')(observer(OrdersItemComponent));

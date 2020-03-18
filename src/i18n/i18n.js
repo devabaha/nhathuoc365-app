@@ -1,73 +1,76 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import translateVI from './translations/vi/common.json';
-import translateEN from './translations/en/common.json';
-import vi_account from './translations/vi/account.json';
-import en_account from './translations/en/account.json';
-import vi_affiliate from './translations/vi/affiliate.json';
-import en_affiliate from './translations/en/affiliate.json';
-import vi_phoneAuth from './translations/vi/phoneAuth.json';
-import en_phoneAuth from './translations/en/phoneAuth.json';
-import vi_editProfile from './translations/vi/editProfile.json';
-import en_editProfile from './translations/en/editProfile.json';
-import vi_profileDetail from './translations/vi/profileDetail.json';
-import en_profileDetail from './translations/en/profileDetail.json';
-import vi_address from './translations/vi/address.json';
-import en_address from './translations/en/address.json';
-import vi_createAddress from './translations/vi/createAddress.json';
-import en_createAddress from './translations/en/createAddress.json';
-import vi_vndWallet from './translations/vi/vndWallet.json';
-import en_vndWallet from './translations/en/vndWallet.json';
-import vi_qrBarCode from './translations/vi/qrBarCode.json';
-import en_qrBarCode from './translations/en/qrBarCode.json';
-import vi_transfer from './translations/vi/transfer.json';
-import en_transfer from './translations/en/transfer.json';
-import vi_payment from './translations/en/payment.json';
-import en_payment from './translations/en/payment.json';
+import { default as resources } from './translations';
+import {
+  asyncStorageLanguageKey,
+  arrayLanguages,
+  languages
+} from './constants';
+
+import AsyncStorage from '@react-native-community/async-storage';
+import * as RNLocalize from 'react-native-localize';
+
+const saveAppLanguage = async (asyncStorageLanguage, callback = () => {}) => {
+  AsyncStorage.setItem(
+    asyncStorageLanguageKey,
+    JSON.stringify(asyncStorageLanguage),
+    err => console.log('store new app language', err)
+  ).then(() => {
+    callback();
+  });
+};
+
+export const setAppLanguage = async (i18n, selectedLanguage = null) => {
+  const currentLanguage = RNLocalize.findBestAvailableLanguage(arrayLanguages);
+  console.log(currentLanguage, 'clang');
+  AsyncStorage.getItem(asyncStorageLanguageKey).then(language => {
+    console.log(language, 'lang');
+    let asyncStorageLanguage = null;
+    if (language) {
+      const languageObj = JSON.parse(language);
+      if (selectedLanguage) {
+        asyncStorageLanguage = {
+          ...languageObj,
+          language: selectedLanguage
+        };
+        console.log(asyncStorageLanguage, 'has selected');
+        saveAppLanguage(asyncStorageLanguage, () => {
+          i18n.changeLanguage(selectedLanguage.languageTag);
+        });
+      } else {
+        const languageTag = languageObj.language.languageTag;
+        console.log(languageObj, 'no selected');
+        i18n.changeLanguage(languageTag);
+      }
+    } else {
+      i18n.changeLanguage(currentLanguage.languageTag);
+
+      asyncStorageLanguage = {
+        language: currentLanguage,
+        machineLanguage: currentLanguage
+      };
+      console.log(asyncStorageLanguage, 'no language');
+
+      saveAppLanguage(asyncStorageLanguage);
+    }
+  });
+};
 
 i18n.use(initReactI18next).init(
   {
-    lng: 'en',
-    fallbackLng: 'vi',
+    lng: languages.vi.value,
+    fallbackLng: languages.vi.value,
     debug: true,
 
     interpolation: {
       escapeValue: false // not needed for react as it escapes by default
     },
-    resources: {
-      vi: {
-        common: translateVI,
-        account: vi_account,
-        affiliate: vi_affiliate,
-        phoneAuth: vi_phoneAuth,
-        editProfile: vi_editProfile,
-        profileDetail: vi_profileDetail,
-        address: vi_address,
-        createAddress: vi_createAddress,
-        vndWallet: vi_vndWallet,
-        qrBarCode: vi_qrBarCode,
-        transfer: vi_transfer,
-        payment: vi_payment
-      },
-      en: {
-        common: translateEN,
-        account: en_account,
-        affiliate: en_affiliate,
-        phoneAuth: en_phoneAuth,
-        editProfile: en_editProfile,
-        profileDetail: en_profileDetail,
-        address: en_address,
-        createAddress: en_createAddress,
-        vndWallet: en_vndWallet,
-        qrBarCode: en_qrBarCode,
-        transfer: en_transfer,
-        payment: en_payment
-      }
-    },
+    resources,
     ns: ['common'],
     defaultNS: 'common'
   },
   () => {
+    setAppLanguage(i18n);
     console.log('from init', i18n.language);
   }
 );

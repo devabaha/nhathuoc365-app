@@ -121,6 +121,7 @@ class Home extends Component {
   );
 
   render() {
+    const { t } = this.props;
     return (
       <View style={styles.container}>
         {this.props.apiFetching && <LoadingComponent loading />}
@@ -148,7 +149,11 @@ class Home extends Component {
         >
           <Header
             notify={this.props.notify}
-            name={this.props.userInfo ? this.props.userInfo.name : 'Tk Khách'}
+            name={
+              this.props.userInfo
+                ? this.props.userInfo.name
+                : t('defaultUserName')
+            }
             onPressNoti={this.props.onPressNoti}
           />
 
@@ -189,7 +194,7 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={false} //this.props.onShowAllSites
                 data={this.props.sites}
-                title="Cửa hàng thân thiết"
+                title={t('sections.favoriteStore.title')}
               >
                 {({ item, index }) => (
                   <HomeCardItem
@@ -206,7 +211,7 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
                 data={this.props.campaigns}
-                title="Tick Voucher"
+                title={t('sections.voucher.title')}
               >
                 {({ item, index }) => {
                   return (
@@ -246,7 +251,7 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
-                title="Tin tức"
+                title={t('sections.news.title')}
               >
                 {({ item, index }) => (
                   <HomeCardItem
@@ -300,4 +305,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation()(Home);
+export default withTranslation(['home', 'common'])(Home);

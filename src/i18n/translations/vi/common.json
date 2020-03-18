@@ -43,7 +43,7 @@
     "qrBarCode": {
       "mainTitle": "Mã tài khoản",
       "walletAddressTitle": "Địa chỉ ví",
-      "scanTitle": "Scan QRCode"
+      "scanTitle": "Quét mã QR"
     },
     "transfer": {
       "mainTitle": "Chuyển khoản"
@@ -53,6 +53,24 @@
     },
     "contact": {
       "mainTitle": "Danh bạ"
+    },
+    "rada": {
+      "mainTitle": "Dịch vụ Rada"
+    },
+    "radaOrderHistory": {
+      "mainTitle": "Quản lý đơn hàng"
+    },
+    "myVoucher": {
+      "mainTitle": "Voucher của tôi"
+    },
+    "news": {
+      "mainTitle": "Tin tức"
+    },
+    "newsDetail": {
+      "mainTitle": "Chi tiết"
+    },
+    "orders": {
+      "mainTitle": "Đơn hàng"
     }
   },
 

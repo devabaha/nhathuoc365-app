@@ -55,7 +55,7 @@ class SelectionList extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>{item.label}</Text>
-                  {item.desc && (
+                  {!!item.desc && (
                     <Text style={styles.profile_list_small_label}>
                       {item.desc}
                     </Text>

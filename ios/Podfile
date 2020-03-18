@@ -45,6 +45,9 @@ target 'my_food_new' do
   pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
   pod 'react-native-branch', :path => '../node_modules/react-native-branch'
 
+  pod 'RNLocalize', :path => '../node_modules/react-native-localize'
+
+
   target 'my_food_newTests' do
     inherit! :search_paths
     # Pods for testing

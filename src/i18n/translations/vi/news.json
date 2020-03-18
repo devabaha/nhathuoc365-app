@@ -1,0 +1,8 @@
+{
+  "getNews": {
+    "error": {
+      "message": "Tin tức không tồn tại hoặc đã bị xóa!"
+    }
+  },
+  "noNews": "Oops... Chưa có tin tức nào :("
+}

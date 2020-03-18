@@ -1,0 +1,18 @@
+{
+  "getOrders": {
+    "error": {
+      "notFoundMessage": "Không tìm thấy đơn hàng!"
+    }
+  },
+  "emptyMessage": "Chưa có đơn hàng nào",
+  "encourageMessage": "Mua sắm ngay",
+  "ordersItem": {
+    "title": " Đơn hàng #{{code}}",
+    "next": "Tiếp tục",
+    "edit": "Sửa đơn",
+    "note": "Ghi chú",
+    "cancel": "Huỷ đơn",
+    "totalSelected": "{{total}} sản phẩm",
+    "totalPaymentMessage": "Tổng thanh toán"
+  }
+}

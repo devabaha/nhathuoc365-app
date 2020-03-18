@@ -16,7 +16,7 @@
       "title": ""
     },
     "tab4": {
-      "title": "Order"
+      "title": "Orders"
     },
     "tab5": {
       "title": "Account"
@@ -53,6 +53,24 @@
     },
     "contact": {
       "mainTitle": "Contact"
+    },
+    "rada": {
+      "mainTitle": "Rada service"
+    },
+    "radaOrderHistory": {
+      "mainTitle": "Order management"
+    },
+    "myVoucher": {
+      "mainTitle": "My Voucher"
+    },
+    "news": {
+      "mainTitle": "News"
+    },
+    "newsDetail": {
+      "mainTitle": "Detail"
+    },
+    "orders": {
+      "mainTitle": "Orders"
     }
   },
 

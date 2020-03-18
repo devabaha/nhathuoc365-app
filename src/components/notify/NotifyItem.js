@@ -17,8 +17,7 @@ import PopupConfirm from '../PopupConfirm';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 
-@observer
-export default class NotifyItem extends Component {
+class NotifyItem extends Component {
   constructor(props) {
     super(props);
 
@@ -77,8 +76,6 @@ export default class NotifyItem extends Component {
           }
         } catch (e) {
           console.log(e + ' user_news');
-
-          store.addApiQueue('user_news', this._getData.bind(this, delay));
         }
       }
     );
@@ -361,3 +358,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1'
   }
 });
+
+export default observer(NotifyItem);
