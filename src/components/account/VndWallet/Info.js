@@ -4,6 +4,7 @@ import React from 'react';
 import { ScrollView, View, StyleSheet, Text } from 'react-native';
 
 const Info = props => {
+  const { t } = props;
   return (
     <ScrollView
       contentContainerStyle={{
@@ -18,11 +19,9 @@ const Info = props => {
       //     />
       // }
     >
-      <View style={[{ paddingLeft: 10, marginTop: 10 }]}>
-        <Text style={[styles.des]}>
-          {props.content ? props.content : 'Thông tin về tài khoản'}
-        </Text>
-      </View>
+      <Text style={[styles.des]}>
+        {props.content ? props.content : t('tabs.information.message')}
+      </Text>
     </ScrollView>
   );
 };
@@ -43,4 +42,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Info;
+export default withTranslation('vndWallet')(Info);

@@ -102,7 +102,10 @@ const config = Object.freeze({
     upToPhone: 'upToPhone',
 
     itemAttribute: 'itemAttribute',
-    serviceOrders: 'serviceOrders'
+    serviceOrders: 'serviceOrders',
+
+    // Modal Picker
+    modalPicker: 'modalPicker'
   }
 });
 

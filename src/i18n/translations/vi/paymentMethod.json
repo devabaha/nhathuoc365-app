@@ -1,0 +1,11 @@
+{
+  "method": {
+    "selectTitle": "Chọn hình thức thanh toán",
+    "emptyMessage": "Chưa có hình thức thanh toán"
+  },
+  "payment": {
+    "tempPrice": "Tạm tính",
+    "totalPrice": "Thành tiền"
+  },
+  "confirm": "Tiếp tục"
+}

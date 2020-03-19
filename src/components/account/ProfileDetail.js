@@ -26,14 +26,19 @@ class ProfileDetail extends Component {
   }
 
   get sectionData() {
+    const { t } = this.props;
     return [
       {
         id: 'id_section_1',
         data: [
-          { id: 'ho_ten', title: 'Họ & tên', value: store.user_info.name },
+          {
+            id: 'ho_ten',
+            title: t('sections.fullName.title'),
+            value: store.user_info.name
+          },
           {
             id: 'so_dien_thoai',
-            title: 'Số điện thoại',
+            title: t('sections.phoneNumber.title'),
             value: store.user_info.tel
           }
         ]
@@ -41,19 +46,31 @@ class ProfileDetail extends Component {
       {
         id: 'id_section_2',
         data: [
-          { id: 'ngay_sinh', title: 'Ngày sinh', value: store.user_info.birth },
+          {
+            id: 'ngay_sinh',
+            title: t('sections.birthdate.title'),
+            value: store.user_info.birth
+          },
           {
             id: 'gioi_tinh',
-            title: 'Giới tính',
+            title: t('sections.gender.title'),
             value: store.user_info.gender
           },
-          { id: 'email', title: 'Email', value: store.user_info.email }
+          {
+            id: 'email',
+            title: t('sections.email.title'),
+            value: store.user_info.email
+          }
         ]
       },
       {
         id: 'id_section_3',
         data: [
-          { id: 'dia_chi', title: 'Địa chỉ', value: store.user_info.address }
+          {
+            id: 'dia_chi',
+            title: t('sections.address.title'),
+            value: store.user_info.address
+          }
         ]
       }
     ];
@@ -87,16 +104,18 @@ class ProfileDetail extends Component {
   };
 
   handleLogout = () => {
+    const { t } = this.props;
+
     Alert.alert(
-      'Lưu ý',
-      'Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.',
+      t('signOut.warningTitle'),
+      t('signOut.warningDescription'),
       [
         {
-          text: 'Huỷ',
+          text: t('signOut.cancel'),
           onPress: () => {}
         },
         {
-          text: 'Đăng xuất',
+          text: t('signOut.title'),
           onPress: this.logout,
           style: 'destructive'
         }
@@ -110,6 +129,7 @@ class ProfileDetail extends Component {
       logout_loading: true
     });
     try {
+      const { t } = this.props;
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
@@ -119,7 +139,7 @@ class ProfileDetail extends Component {
           store.setOrdersKeyChange(store.orders_key_change + 1);
           store.resetAsyncStorage();
           flashShowMessage({
-            message: 'Đăng xuất thành công',
+            message: t('signOut.successMessage'),
             type: 'info'
           });
           Actions.reset(appConfig.routes.sceneWrapper);
@@ -151,6 +171,7 @@ class ProfileDetail extends Component {
 
   render() {
     const sections = this.sectionData;
+    const { t } = this.props;
 
     return (
       <SafeAreaView style={styles.container}>
@@ -175,7 +196,7 @@ class ProfileDetail extends Component {
               containerStyle={styles.logoutContainerStyle}
               btnContainerStyle={styles.logoutBtn}
               titleStyle={styles.logoutTitleBtn}
-              title="Đăng xuất"
+              title={t('signOut.title')}
               onPress={this.handleLogout}
             />
           )}
@@ -224,4 +245,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(ProfileDetail);
+export default withTranslation('profileDetail')(observer(ProfileDetail));

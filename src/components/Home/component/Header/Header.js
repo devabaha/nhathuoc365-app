@@ -1,16 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
-import { Actions } from 'react-native-router-flux';
 
 function Header(props) {
+  const { t } = useTranslation('home');
   return (
     <View style={styles.container}>
       <Text style={styles.userNameWrapper}>
-        <Text style={styles.userName}>Xin chào</Text>
+        <Text style={styles.userName}>{t('welcome.message')}</Text>
         <Text style={[styles.userName, styles.userNameBold]}>
           {props.name ? `, ${props.name}` : ''}
         </Text>
@@ -35,14 +35,6 @@ function Header(props) {
           )}
         </Button>
       </View>
-
-      {/** TEST FLOW FOR SERVICE ORDERS */}
-      {/* <Button
-        containerStyle={{ position: 'absolute', top: 45, left: 250 }}
-        onPress={() => Actions.push(appConfig.routes.serviceOrders)}
-      >
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}>Đơn dịch vụ</Text>
-      </Button> */}
     </View>
   );
 }

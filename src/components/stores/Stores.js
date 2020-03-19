@@ -175,8 +175,9 @@ class Stores extends Component {
   }
 
   parseDataCategories(response) {
+    const { t } = this.props;
     if (!this.props.categoryId) {
-      response.data.categories.unshift({ id: 0, name: 'Cửa hàng' });
+      response.data.categories.unshift({ id: 0, name: t('tabs.store.title') });
     }
     this.setState(
       {
@@ -215,8 +216,6 @@ class Stores extends Component {
       }
     } catch (e) {
       console.log(e + ' site_info');
-
-      store.addApiQueue('site_info', this._getCategoriesNavFromServer);
     }
   };
 
@@ -421,6 +420,7 @@ class Stores extends Component {
       ]
     };
 
+    const { t } = this.props;
     return (
       <SafeAreaView style={[styles.container]}>
         {appConfig.device.isAndroid && (
@@ -608,7 +608,7 @@ class Stores extends Component {
 
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          title={t('cart:popup.remove.message')}
           height={110}
           noConfirm={this._closePopup.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
@@ -711,7 +711,6 @@ class Stores extends Component {
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.log(e + ' site_cart_update');
-      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 }
@@ -758,4 +757,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Stores);
+export default withTranslation(['stores', 'cart'])(observer(Stores));

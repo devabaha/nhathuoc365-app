@@ -313,6 +313,7 @@ class ItemAttribute extends PureComponent {
   }
 
   render() {
+    const { t } = this.props;
     const numberSelectedAttrs = this.getNumberSelectedAttrs(
       this.state.selectedAttrs
     );
@@ -341,7 +342,7 @@ class ItemAttribute extends PureComponent {
     const title = this.state.product.name;
     const subTitle =
       numberSelectedAttrs === 0
-        ? '• Chưa chọn thuộc tính'
+        ? `• ${t('attr.notChooseAttrYet')}`
         : this.getSelectedAttrsViewData(numberSelectedAttrs);
 
     return this.state.loading ? (
@@ -390,7 +391,7 @@ class ItemAttribute extends PureComponent {
                   <View>
                     <Text style={styles.highlight}>{price}</Text>
                     <Text style={styles.note}>
-                      Kho: <Text>{inventory}</Text>
+                      {`${t('attr.stock')}:`} <Text>{inventory}</Text>
                     </Text>
                   </View>
                 </View>
@@ -418,7 +419,7 @@ class ItemAttribute extends PureComponent {
               </ScrollView>
 
               <View style={styles.quantity}>
-                <Text style={styles.label}>Số lượng</Text>
+                <Text style={styles.label}>{t('attr.quantity')}</Text>
                 <NumberSelection
                   value={this.state.quantity}
                   min={MIN_QUANTITY}
@@ -442,7 +443,7 @@ class ItemAttribute extends PureComponent {
               </View>
 
               <Button
-                title="Thêm vào giỏ hàng"
+                title={t('addToCart')}
                 onPress={this.handleSubmit}
                 {...btnProps}
               />
@@ -556,4 +557,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ItemAttribute;
+export default withTranslation('product')(ItemAttribute);

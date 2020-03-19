@@ -1,0 +1,13 @@
+{
+  "content": {
+    "description": "Dùng QRCode địa chỉ Ví để nhận chuyển khoản"
+  },
+  "invalidQRCode": "Mã QR Code không hợp lệ, vui lòng thử lại",
+  "transferPaymentTitle": "Chuyển tiền đến {{walletName}}",
+  "settingLabel": "Cài đặt",
+  "qrGuideMessage": "Hướng máy ảnh của bạn về phía mã QR Code để khám phá",
+  "POSGuideMessage": "Đưa mã QRCode cho thu ngân để tích điểm",
+  "reload": "Tự động cập nhật sau 60 giây",
+  "accountDescription": "● Đây là mã vạch đại diện cho tài khoản của bạn",
+  "cashbackDescription": "● Sử dụng mã vạch này để nhận hoàn tiền từ cửa hàng"
+}

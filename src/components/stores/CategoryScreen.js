@@ -26,9 +26,11 @@ class CategoryScreen extends Component {
     let header_title;
 
     if (item.id == 0) {
-      header_title = `— Cửa hàng —`;
+      header_title = `— ${props.t('tabs.screen.mainTitle')} —`;
     } else {
-      header_title = `— Sản phẩm ${item.name} —`;
+      header_title = `— ${props.t('tabs.screen.categoryTitle', {
+        productName: item.name
+      })} —`;
     }
 
     this.state = {
@@ -251,6 +253,7 @@ class CategoryScreen extends Component {
   }
 
   render() {
+    const { t } = this.props;
     // show loading
     if (this.state.loading) {
       return (
@@ -267,7 +270,7 @@ class CategoryScreen extends Component {
         <View style={styles.emptyContainer}>
           <View style={styles.emptyWrapper}>
             <Icon name="add-shopping-cart" style={styles.emptyIcon} />
-            <Text style={styles.emptyText}>Cửa hàng hiện chưa có sản phẩm</Text>
+            <Text style={styles.emptyText}>${t('noProduct')}</Text>
           </View>
         </View>
       );
@@ -385,4 +388,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(CategoryScreen);
+export default withTranslation('stores')(observer(CategoryScreen));

@@ -1,0 +1,121 @@
+{
+  "api": {
+    "error": {
+      "message": "Something wrong happened, please try later"
+    }
+  },
+
+  "appTab": {
+    "tab1": {
+      "title": "TickID"
+    },
+    "tab2": {
+      "title": "Voucher"
+    },
+    "tab3": {
+      "title": ""
+    },
+    "tab4": {
+      "title": "Orders"
+    },
+    "tab5": {
+      "title": "Account"
+    }
+  },
+
+  "screen": {
+    "account": {
+      "mainTitle": "Account",
+      "myAccountTitle": "My account",
+      "editAccountTitle": "Account editing"
+    },
+    "address": {
+      "mainTitle": "Address",
+      "createTitle": "Address adding",
+      "editTitle": "Address editing"
+    },
+    "register": {
+      "mainTitle": "Information register"
+    },
+    "affiliate": {
+      "mainTitle": "Referral code"
+    },
+    "qrBarCode": {
+      "mainTitle": "Account code",
+      "walletAddressTitle": "Wallet address",
+      "scanTitle": "Scan QRCode"
+    },
+    "transfer": {
+      "mainTitle": "Transfer"
+    },
+    "payAccount": {
+      "mainTitle": "Account information"
+    },
+    "contact": {
+      "mainTitle": "Contact"
+    },
+    "rada": {
+      "mainTitle": "Rada service"
+    },
+    "radaOrderHistory": {
+      "mainTitle": "Order management"
+    },
+    "voucher": {
+      "mainTitle": "Voucher"
+    },
+    "myVoucher": {
+      "mainTitle": "My Voucher"
+    },
+    "news": {
+      "mainTitle": "News"
+    },
+    "newsDetail": {
+      "mainTitle": "Detail"
+    },
+    "orders": {
+      "mainTitle": "Orders"
+    },
+    "productDetail": {
+      "mainTitle": "Product detail"
+    },
+    "ordersDetail": {
+      "mainTitle": "Orders detail",
+      "confirmTitle": "Confirmation"
+    },
+    "feedback": {
+      "mainTitle": "Thank you!"
+    },
+    "cart": {
+      "mainTitle": "Cart"
+    },
+    "paymentMethod": {
+      "mainTitle": "Payment method"
+    },
+    "securePayment": {
+      "mainTitle": "Secure payment"
+    }
+  },
+
+  "system": {
+    "settings": {
+      "error": {
+        "accessProblem": "App can not access to Settings"
+      }
+    },
+    "camera": {
+      "access": {
+        "request": "App need access to Camera"
+      },
+      "error": {
+        "notSupport": "System do not support Camera",
+        "unavailable": "Camera access is not available",
+        "accessProblem": "Error requesting Camera access"
+      }
+    }
+  },
+
+  "popupConfirm": {
+    "yes": "Yes",
+    "no": "No"
+  }
+}

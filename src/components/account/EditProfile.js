@@ -32,13 +32,13 @@ class EditProfile extends Component {
           data: [
             {
               id: 'ho_ten',
-              title: 'Họ & tên',
+              title: props.t('sections.fullName.title'),
               value: store.user_info.name,
               input: true
             },
             {
               id: 'so_dien_thoai',
-              title: 'Số điện thoại',
+              title: props.t('sections.phoneNumber.title'),
               value: store.user_info.tel,
               disable: true
             }
@@ -49,21 +49,21 @@ class EditProfile extends Component {
           data: [
             {
               id: 'ngay_sinh',
-              title: 'Ngày sinh',
+              title: props.t('sections.birthdate.title'),
               value: store.user_info.birth,
-              defaultValue: 'Chọn ngày sinh',
+              defaultValue: props.t('sections.birthdate.defaultValue'),
               select: true
             },
             {
               id: 'gioi_tinh',
-              title: 'Giới tính',
+              title: props.t('sections.gender.title'),
               value: store.user_info.gender,
-              defaultValue: 'Chọn giới tính',
+              defaultValue: props.t('sections.gender.defaultValue'),
               select: true
             },
             {
               id: 'email',
-              title: 'Email',
+              title: props.t('sections.email.title'),
               value: store.user_info.email,
               input: true
             }
@@ -74,7 +74,7 @@ class EditProfile extends Component {
           data: [
             {
               id: 'dia_chi',
-              title: 'Địa chỉ cụ thể',
+              title: props.t('sections.address.title'),
               value: store.user_info.address,
               input: true
             }
@@ -89,13 +89,14 @@ class EditProfile extends Component {
   }
 
   _renderRightButton = () => {
+    const { t } = this.props;
     return (
       <TouchableHighlight
         style={styles.rightBtnEdit}
         underlayColor="transparent"
         onPress={this._onSaveProfile}
       >
-        <Text style={styles.txtEdit}>Lưu</Text>
+        <Text style={styles.txtEdit}>{t('save')}</Text>
       </TouchableHighlight>
     );
   };
@@ -108,6 +109,7 @@ class EditProfile extends Component {
     let gender = '';
     let errorMessage = '';
     const { user_info: userInfo } = store;
+    const { t } = this.props;
 
     this.state.sections.forEach(element => {
       element.data.forEach(item => {
@@ -144,12 +146,12 @@ class EditProfile extends Component {
     ) {
       flashShowMessage({
         type: 'info',
-        message: 'Không có thông tin nào được thay đổi'
+        message: t('noChangeMessage')
       });
       return;
     } else {
       if (!isEmpty(email) && !this._is_email(email)) {
-        errorMessage = 'Email của bạn không đúng định dạng';
+        errorMessage = t('invalidEmailMessage');
       }
     }
 
@@ -254,6 +256,8 @@ class EditProfile extends Component {
   };
 
   render() {
+    const { t } = this.props;
+
     return (
       <SafeAreaView style={{ flex: 1 }}>
         <KeyboardAvoidingView
@@ -272,16 +276,24 @@ class EditProfile extends Component {
           </KeyboardAwareScrollView>
           <ActionSheet
             ref={ref => (this.actionSheet = ref)}
-            options={['Nữ', 'Nam', 'Huỷ']}
+            options={[
+              t('sections.gender.female'),
+              t('sections.gender.male'),
+              t('sections.gender.cancel')
+            ]}
             cancelButtonIndex={2}
             onPress={index => {
               if (index !== 2) {
-                this._onChangeGender(index === 1 ? 'Nam' : 'Nữ');
+                this._onChangeGender(
+                  index === 1
+                    ? t('sections.gender.male')
+                    : t('sections.gender.female')
+                );
               }
             }}
           />
           {this.state.loading == true && <Loading center />}
-          <Button title="Lưu thay đổi" onPress={this._onSaveProfile} />
+          <Button title={t('saveChanges')} onPress={this._onSaveProfile} />
         </KeyboardAvoidingView>
       </SafeAreaView>
     );
@@ -327,4 +339,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(EditProfile);
+export default withTranslation('editProfile')(observer(EditProfile));

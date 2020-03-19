@@ -13,8 +13,7 @@ import History from './History';
 import Info from './Info';
 import appConfig from 'app-config';
 
-@observer
-export default class VndWallet extends Component {
+class VndWallet extends Component {
   constructor(props) {
     super(props);
 
@@ -52,8 +51,10 @@ export default class VndWallet extends Component {
   }
 
   _goQRCode() {
+    const { t } = this.props;
+
     Actions.push(appConfig.routes.qrBarCode, {
-      title: 'Địa chỉ ví',
+      title: t('common:screen.qrBarCode.walletAddressTitle'),
       wallet: this.state.wallet,
       address: this.state.wallet.address
     });
@@ -116,6 +117,8 @@ export default class VndWallet extends Component {
   renderTopLabelCoin() {
     var { wallet } = this.state;
     const { user_info } = store;
+    const { t } = this.props;
+
     return (
       <View>
         <View style={styles.add_store_actions_box}>
@@ -126,7 +129,9 @@ export default class VndWallet extends Component {
           >
             <View style={styles.add_store_action_btn_box}>
               <Icon name="qrcode" size={30} color="#333333" />
-              <Text style={styles.add_store_action_label}>Địa chỉ Ví</Text>
+              <Text style={styles.add_store_action_label}>
+                {t('common:screen.qrBarCode.walletAddressTitle')}
+              </Text>
             </View>
           </TouchableHighlight>
 
@@ -137,7 +142,9 @@ export default class VndWallet extends Component {
           >
             <View style={styles.add_store_action_btn_box}>
               <Icon name="minus-square-o" size={30} color="#333333" />
-              <Text style={styles.add_store_action_label}>Chuyển khoản</Text>
+              <Text style={styles.add_store_action_label}>
+                {t('common:screen.transfer.mainTitle')}
+              </Text>
             </View>
           </TouchableHighlight>
 
@@ -162,7 +169,8 @@ export default class VndWallet extends Component {
                   }
                 ]}
               >
-                <Icon name={wallet.icon} size={16} color={wallet.color} /> Số dư
+                <Icon name={wallet.icon} size={16} color={wallet.color} />
+                {t('header.balance')}
               </Text>
               <Text
                 style={[
@@ -186,10 +194,11 @@ export default class VndWallet extends Component {
 
   render() {
     var { wallet, activeTab, historiesData } = this.state;
+    const { t } = this.props;
     const data = [
       {
         key: 0,
-        title: 'Lịch sử',
+        title: t('tabs.history.title'),
         component: <History historyData={historiesData} />
       },
       // {
@@ -204,7 +213,7 @@ export default class VndWallet extends Component {
       // },
       {
         key: 1,
-        title: 'Thông tin',
+        title: t('tabs.information.title'),
         component: <Info content={wallet.content} />
       }
     ];
@@ -504,3 +513,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4
   }
 });
+
+export default withTranslation(['vndWallet', 'common'])(observer(VndWallet));

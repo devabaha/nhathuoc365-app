@@ -26,6 +26,7 @@ class EnterPhone extends Component {
     errorMessage: PropTypes.string,
     placeholder: PropTypes.string,
     title: PropTypes.string,
+    historyTitle: PropTypes.string,
     customRightComponent: PropTypes.oneOfType([
       PropTypes.element,
       PropTypes.node
@@ -52,6 +53,7 @@ class EnterPhone extends Component {
     errorMessage: '',
     placeholder: 'Nhập số điện thoại',
     title: 'Nạp đến',
+    historyTitle: 'Xem lịch sử',
     customRightComponent: null,
     inputStyle: {},
     inputContainerStyle: {}
@@ -75,7 +77,9 @@ class EnterPhone extends Component {
 
           {this.props.showHistory && (
             <Button onPress={this.props.onShowHistory}>
-              <Text style={styles.viewHistoryText}>Xem lịch sử</Text>
+              <Text style={styles.viewHistoryText}>
+                {this.props.historyTitle}
+              </Text>
             </Button>
           )}
         </View>
