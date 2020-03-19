@@ -31,6 +31,7 @@ class GestureWrapper extends Component {
     contentScrollEnabled: PropTypes.bool,
     isActivePanResponder: PropTypes.bool,
     headerHeight: PropTypes.number,
+    extraHeight: PropTypes.number,
     collapsedBodyHeight: PropTypes.number,
     durationShowBodyContent: PropTypes.number,
     defaultStatusBarColor: PropTypes.string,
@@ -209,11 +210,13 @@ class GestureWrapper extends Component {
     return this.actualScrollViewHeight;
   }
 
-  updateActualScrollViewHeight(otherHeight = this.props.headerHeight) {
+  updateActualScrollViewHeight(
+    otherHeight = this.props.headerHeight,
+    extraHeight = this.props.extraHeight
+  ) {
     this.actualScrollViewHeight =
-      Dimensions.get('window').height -
-      otherHeight +
-      (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0);
+      Dimensions.get('window').height - otherHeight + extraHeight;
+    // (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0);
   }
 
   animateScrollView(toValue) {
@@ -266,7 +269,10 @@ class GestureWrapper extends Component {
       nextProps.headerHeight !== this.props.headerHeight ||
       nextProps.collapsedBodyHeight !== this.props.collapsedBodyHeight
     ) {
-      this.updateActualScrollViewHeight(nextProps.headerHeight);
+      this.updateActualScrollViewHeight(
+        nextProps.headerHeight,
+        nextProps.extraHeight
+      );
       this.setState(
         {
           animatableArea: this.getAnimatableArea(
@@ -327,6 +333,7 @@ class GestureWrapper extends Component {
       nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor ||
       nextProps.visible !== this.props.visible ||
       nextProps.extraData !== this.props.extraData ||
+      nextProps.extraHeight !== this.props.extraHeight ||
       nextProps.expandContent !== this.props.expandContent ||
       nextProps.durationShowBodyContent !== this.props.durationShowBodyContent
     ) {

@@ -15,7 +15,8 @@ import {
   IMAGE_ICON_TYPE,
   BOTTOM_SPACE_IPHONE_X,
   HAS_NOTCH,
-  ANDROID_STATUS_BAR_HEIGHT
+  ANDROID_STATUS_BAR_HEIGHT,
+  ANDROID_EXTRA_DIMENSIONS_HEIGHT
 } from '../../constants';
 
 const MAX_PIN = 9;
@@ -31,6 +32,7 @@ class PinList extends Component {
     animatedEffectValue: PropTypes.any,
     visible: PropTypes.bool,
     baseViewHeight: PropTypes.number,
+    extraHeight: PropTypes.number,
     itemsPerRow: PropTypes.number
   };
 
@@ -69,6 +71,7 @@ class PinList extends Component {
       nextProps.pinListNotify !== this.props.pinListNotify ||
       nextProps.itemsPerRow !== this.props.itemsPerRow ||
       nextProps.baseViewHeight !== this.props.baseViewHeight ||
+      nextProps.extraHeight !== this.props.extraHeight ||
       nextProps.containerStyle !== this.props.containerStyle
     ) {
       return true;
@@ -140,7 +143,8 @@ class PinList extends Component {
             height:
               this.props.baseViewHeight +
               BOTTOM_SPACE_IPHONE_X +
-              (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0)
+              this.props.extraHeight
+            // (HAS_NOTCH ? ANDROID_EXTRA_DIMENSIONS_HEIGHT : 0)
           }}
         >
           <FlatList
