@@ -22,9 +22,9 @@ const saveAppLanguage = async (asyncStorageLanguage, callback = () => {}) => {
 
 export const setAppLanguage = async (i18n, selectedLanguage = null) => {
   const currentLanguage = RNLocalize.findBestAvailableLanguage(arrayLanguages);
-  console.log(currentLanguage, 'clang');
+  // console.log(currentLanguage, 'clang');
   AsyncStorage.getItem(asyncStorageLanguageKey).then(language => {
-    console.log(language, 'lang');
+    // console.log(language, 'lang');
     let asyncStorageLanguage = null;
     if (language) {
       const languageObj = JSON.parse(language);
@@ -33,13 +33,13 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
           ...languageObj,
           language: selectedLanguage
         };
-        console.log(asyncStorageLanguage, 'has selected');
+        // console.log(asyncStorageLanguage, 'has selected');
         saveAppLanguage(asyncStorageLanguage, () => {
           i18n.changeLanguage(selectedLanguage.languageTag);
         });
       } else {
         const languageTag = languageObj.language.languageTag;
-        console.log(languageObj, 'no selected');
+        // console.log(languageObj, 'no selected');
         i18n.changeLanguage(languageTag);
       }
     } else {
@@ -49,7 +49,7 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
         language: currentLanguage,
         machineLanguage: currentLanguage
       };
-      console.log(asyncStorageLanguage, 'no language');
+      // console.log(asyncStorageLanguage, 'no language');
 
       saveAppLanguage(asyncStorageLanguage);
     }
