@@ -722,7 +722,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.paymentConfirm}>
                   <Scene
                     key={`${appConfig.routes.paymentConfirm}_1`}
-                    title="Xác nhận"
+                    title={t('screen.ordersDetail.confirmTitle')}
                     component={Confirm}
                     {...navBarConfig}
                     back
@@ -732,7 +732,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.paymentMethod}>
                   <Scene
                     key={`${appConfig.routes.paymentMethod}_1`}
-                    title="Hình thức thanh toán"
+                    title={t('screen.paymentMethod.mainTitle')}
                     component={PaymentMethod}
                     {...navBarConfig}
                     back
@@ -810,7 +810,7 @@ class RootRouter extends Component {
                 <Stack key="cart">
                   <Scene
                     key="cart_1"
-                    title="Giỏ hàng"
+                    title={t('screen.cart.mainTitle')}
                     component={Cart}
                     {...navBarConfig}
                     back
@@ -847,13 +847,7 @@ class RootRouter extends Component {
                 </Stack>
 
                 <Stack key="item">
-                  <Scene
-                    key="item_1"
-                    title="Chi tiết sản phẩm"
-                    component={Item}
-                    {...navBarConfig}
-                    back
-                  />
+                  <Scene key="item_1" component={Item} {...navBarConfig} back />
                 </Stack>
 
                 <Stack key="item_image_viewer">
@@ -870,7 +864,7 @@ class RootRouter extends Component {
                 <Stack key="rating">
                   <Scene
                     key="rating_1"
-                    title="Cảm ơn quý khách!"
+                    title={t('screen.feedback.mainTitle')}
                     component={Rating}
                     {...navBarConfig}
                     back
@@ -880,7 +874,7 @@ class RootRouter extends Component {
                 <Stack key="orders_item">
                   <Scene
                     key="orders_item_1"
-                    title="Chi tiết đơn hàng"
+                    title={t('screen.ordersDetail.mainTitle')}
                     component={OrdersItem}
                     {...navBarConfig}
                     back
@@ -950,7 +944,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.scanQrCode}>
                   <Scene
                     key={`${appConfig.routes.scanQrCode}_1`}
-                    title="Quét mã"
+                    title={t('screen.qrBarCode.scanTitle')}
                     component={ScanQRCode}
                     {...navBarConfig}
                     back
@@ -1049,7 +1043,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.transferConfirm}_1`}
                     component={TransferConfirm}
-                    title="Thanh toán an toàn"
+                    title={t('screen.securePayment.mainTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -1186,7 +1180,7 @@ class RootRouter extends Component {
                 <Stack key={phoneCardConfig.routes.buyCardConfirm}>
                   <Scene
                     key={`${phoneCardConfig.routes.buyCardConfirm}_1`}
-                    title="Thanh toán an toàn"
+                    title={t('screen.securePayment.mainTitle')}
                     component={PhoneCardBuyCardConfirmContainer}
                     {...navBarConfig}
                     back
@@ -1241,7 +1235,7 @@ class RootRouter extends Component {
                 <Stack key="md_card_confirm">
                   <Scene
                     key="md_card_confirm_1"
-                    title="Xác nhận"
+                    title={t('screen.ordersDetail.confirmTitle')}
                     component={MdCardConfirm}
                     {...navBarConfig}
                     back

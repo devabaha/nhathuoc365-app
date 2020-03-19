@@ -4,5 +4,6 @@
       "message": "News does not exist or has been deleted!"
     }
   },
-  "noNews": "Oops... No news yet :("
+  "noNews": "Oops... No news yet :(",
+  "relatedItems": "RELATED PRODUCTS"
 }

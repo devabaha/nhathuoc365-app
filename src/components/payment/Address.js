@@ -110,7 +110,6 @@ class Address extends Component {
       async () => {
         const { t } = this.props;
         try {
-          a;
           const response = await APIHandler.site_cart_change_address(
             store.store_id,
             this.state.item_selected

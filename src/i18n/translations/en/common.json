@@ -71,6 +71,25 @@
     },
     "orders": {
       "mainTitle": "Orders"
+    },
+    "productDetail": {
+      "mainTitle": "Product detail"
+    },
+    "ordersDetail": {
+      "mainTitle": "Orders detail",
+      "confirmTitle": "Confirmation"
+    },
+    "feedback": {
+      "mainTitle": "Thank you!"
+    },
+    "cart": {
+      "mainTitle": "Cart"
+    },
+    "paymentMethod": {
+      "mainTitle": "Payment method"
+    },
+    "securePayment": {
+      "mainTitle": "Secure payment"
     }
   },
 

@@ -6,7 +6,7 @@
   },
   "emptyMessage": "No orders yet",
   "encourageMessage": "Shop now!",
-  "ordersItem": {
+  "item": {
     "title": "Orders #{{code}}",
     "next": "Continue",
     "edit": "Edit",
@@ -14,5 +14,74 @@
     "cancel": "Cancel",
     "totalSelected": "{{total}} product(s)",
     "totalPaymentMessage": "Total payment"
+  },
+  "confirm": {
+    "process": {
+      "step1": "1. Address",
+      "step2": "2. Confirmation"
+    },
+    "information": {
+      "title": "Order information",
+      "ordersCode": "Order code",
+      "status": "Status",
+      "recheck": "Is this information correct??"
+    },
+    "address": {
+      "title": "Delivery address"
+    },
+    "paymentMethod": {
+      "title": "Payment method",
+      "unselected": "Not selected yet"
+    },
+    "note": {
+      "title": "Note",
+      "description": "Delivery time, other notes",
+      "placeholder": "Enter your note here",
+      "noNote": "There are no notes"
+    },
+    "items": {
+      "selected": "Selected item(s)",
+      "shopped": "Purchased item(s)"
+    },
+    "payment": {
+      "price": {
+        "temp": "Temporary price",
+        "total": "Total price"
+      },
+      "discount": {
+        "title": "Promotion",
+        "add": "Add promotion",
+        "prefix": "Discount"
+      }
+    },
+    "order": {
+      "title": "ORDER",
+      "popup": {
+        "title": "SUCCESS",
+        "loggedIn": {
+          "description": "Your order will be delivered on time. Thank you!",
+          "accept": "Keep shopping",
+          "cancel": "View orders"
+        },
+        "notLoggedIn": {
+          "description": "You have successfully placed an order.\n\nSign up for more deals, promotions!",
+          "accept": "View orders",
+          "cancel": "Register now!"
+        },
+        "userPlaceholder": "Your name is...",
+        "telPlaceholder": "Your phone number is..."
+      }
+    },
+    "feedback": "Feedback",
+    "addMoreItems": "Choose more items",
+    "rebuy": "Repurchase",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "unitName": "product(s)",
+    "change": "Change",
+    "copy": {
+      "title": "Copy",
+      "success": "Copied"
+    }
   }
 }

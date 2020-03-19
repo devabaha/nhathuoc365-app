@@ -1,0 +1,15 @@
+{
+  "tabs": {
+    "store": {
+      "title": "Store"
+    },
+    "screen": {
+      "mainTitle": "STORE",
+      "categoryTitle": "{{productName}}"
+    }
+  },
+  "noProduct": "No items",
+  "item": {
+    "more": "MORE"
+  }
+}

@@ -71,6 +71,25 @@
     },
     "orders": {
       "mainTitle": "Đơn hàng"
+    },
+    "productDetail": {
+      "mainTitle": "Chi tiết sản phẩm"
+    },
+    "ordersDetail": {
+      "mainTitle": "Chi tiết đơn hàng",
+      "confirmTitle": "Xác nhận"
+    },
+    "feedback": {
+      "mainTitle": "Cảm ơn quý khách!"
+    },
+    "cart": {
+      "mainTitle": "Giỏ hàng"
+    },
+    "paymentMethod": {
+      "mainTitle": "Hình thức thanh toán"
+    },
+    "securePayment": {
+      "mainTitle": "Thanh toán an toàn"
     }
   },
 

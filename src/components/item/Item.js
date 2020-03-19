@@ -23,8 +23,7 @@ import appConfig from 'app-config';
 
 const ITEM_KEY = 'ItemKey';
 
-@observer
-export default class Item extends Component {
+class Item extends Component {
   constructor(props) {
     super(props);
 
@@ -45,11 +44,6 @@ export default class Item extends Component {
 
   componentDidMount() {
     this._initial(this.props);
-    setTimeout(() =>
-      Actions.refresh({
-        right: this._renderRightButton()
-      })
-    );
     EventTracker.logEvent('item_page');
   }
 
@@ -78,24 +72,27 @@ export default class Item extends Component {
   }
 
   _initial(props) {
-    Actions.refresh({
-      showSearchBar: true,
-      smallSearch: true,
-      placeholder: store.store_data.name,
-      searchOnpress: () => {
-        return Actions.push(appConfig.routes.searchStore, {
-          title: `Tìm kiếm tại ${store.store_data.name}`,
-          from_item: true,
-          itemRefresh: this._itemRefresh.bind(this)
-        });
-      },
-      renderRightButton: this._renderRightButton.bind(this),
-      onBack: () => {
-        this._unMount();
+    setTimeout(() =>
+      Actions.refresh({
+        title: props.title || props.t('common:screen.productDetail.mainTitle'),
+        showSearchBar: true,
+        smallSearch: true,
+        placeholder: store.store_data.name,
+        searchOnpress: () => {
+          return Actions.push(appConfig.routes.searchStore, {
+            title: `Tìm kiếm tại ${store.store_data.name}`,
+            from_item: true,
+            itemRefresh: this._itemRefresh.bind(this)
+          });
+        },
+        right: this._renderRightButton,
+        onBack: () => {
+          this._unMount();
 
-        Actions.pop();
-      }
-    });
+          Actions.pop();
+        }
+      })
+    );
 
     this.start_time = time();
 
@@ -119,7 +116,7 @@ export default class Item extends Component {
       Actions.pop();
     } else {
       Actions.push(appConfig.routes.store, {
-        title: 'Cửa hàng'
+        title: store.store_data.name
       });
     }
   }
@@ -174,9 +171,9 @@ export default class Item extends Component {
     var { item } = this.state;
     var item_key = ITEM_KEY + item.id + store.user_info.id;
     // alert(store.store_id +' - '+ item.id);
-
+    const { t } = this.props;
     try {
-      var response = await APIHandler.site_product(store.store_id, item.id);
+      const response = await APIHandler.site_product(store.store_id, item.id);
 
       if (response && response.status == STATUS_SUCCESS) {
         // delay append data
@@ -219,7 +216,7 @@ export default class Item extends Component {
       console.log(e + ' site_product');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     }
   }
@@ -250,7 +247,7 @@ export default class Item extends Component {
           quantity,
           model
         };
-
+        const { t } = this.props;
         try {
           const response = await APIHandler.site_cart_plus(
             store.store_id,
@@ -297,7 +294,7 @@ export default class Item extends Component {
               }
             } else {
               flashShowMessage({
-                message: response.message || 'Có lỗi xảy ra',
+                message: response.message || t('common:api.error.message'),
                 type: 'danger'
               });
             }
@@ -306,7 +303,7 @@ export default class Item extends Component {
           console.log(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         } finally {
           !this.unmounted &&
@@ -357,7 +354,7 @@ export default class Item extends Component {
           console.log(e + ' site_like');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         }
       }
@@ -367,6 +364,7 @@ export default class Item extends Component {
   render() {
     var { item, item_data, buying, like_loading, like_flag } = this.state;
     var is_like = like_flag == 1;
+    const { t } = this.props;
 
     return (
       <View style={styles.container}>
@@ -486,7 +484,7 @@ export default class Item extends Component {
                       }
                     ]}
                   >
-                    {is_like ? 'Đã thích' : 'Yêu thích'}
+                    {is_like ? t('liked') : t('like')}
                   </Text>
                 </View>
               </TouchableHighlight>
@@ -524,7 +522,7 @@ export default class Item extends Component {
                         styles.item_actions_title_book_cart
                       ]}
                     >
-                      Đặt trước
+                      {t('shopTitle.preOrder')}
                     </Text>
                   ) : (
                     <Text
@@ -533,7 +531,7 @@ export default class Item extends Component {
                         styles.item_actions_title_add_cart
                       ]}
                     >
-                      Chọn mua
+                      {t('shopTitle.buy')}
                     </Text>
                   )}
                 </View>
@@ -564,7 +562,9 @@ export default class Item extends Component {
                   <View style={styles.item_content_icon_box}>
                     <Icon name="user" size={16} color="#999999" />
                   </View>
-                  <Text style={styles.item_content_item_title}>NHÃN HIỆU</Text>
+                  <Text style={styles.item_content_item_title}>
+                    {t('information.brands')}
+                  </Text>
                 </View>
               )}
 
@@ -591,7 +591,9 @@ export default class Item extends Component {
                   <View style={styles.item_content_icon_box}>
                     <Icon name="map-marker" size={16} color="#999999" />
                   </View>
-                  <Text style={styles.item_content_item_title}>XUẤT XỨ</Text>
+                  <Text style={styles.item_content_item_title}>
+                    {t('information.origin')}
+                  </Text>
                 </View>
               )}
 
@@ -672,7 +674,7 @@ export default class Item extends Component {
               onEndReachedThreshold={0}
               style={[styles.items_box]}
               ListHeaderComponent={() => (
-                <ListHeader title="— SẢN PHẨM CÙNG DANH MỤC —" />
+                <ListHeader title={`— ${t('relatedItems')} —`} />
               )}
               data={item_data.related}
               renderItem={({ item, index }) => (
@@ -721,7 +723,7 @@ export default class Item extends Component {
                     }
                   ]}
                 >
-                  Vào cửa hàng
+                  {t('goToStore')}
                 </Text>
               </View>
             </TouchableHighlight>
@@ -737,7 +739,7 @@ export default class Item extends Component {
 
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          title={t('cart:popup.remove.message')}
           height={110}
           otherClose={false}
           noConfirm={() => {
@@ -778,19 +780,23 @@ export default class Item extends Component {
   }
 
   _itemRefresh(item) {
-    if (this.refs_body_item) {
-      this.refs_body_item.scrollTo({ x: 0, y: 0, animated: false });
-    }
+    // if (this.refs_body_item) {
+    //   this.refs_body_item.scrollTo({ x: 0, y: 0, animated: false });
+    // }
 
-    this.setState(
-      {
-        item,
-        item_data: null
-      },
-      () => {
-        this._getData(500);
-      }
-    );
+    // this.setState(
+    //   {
+    //     item,
+    //     item_data: null
+    //   },
+    //   () => {
+    //     this._getData(500);
+    //   }
+    // );
+    Actions.item({
+      title: item.name,
+      item
+    });
   }
 
   _confirmRemoveCartItem(item) {
@@ -811,7 +817,7 @@ export default class Item extends Component {
     }
 
     var item = this.cartItemConfirmRemove;
-
+    const { t } = this.props;
     try {
       const data = {
         quantity: 0,
@@ -847,7 +853,7 @@ export default class Item extends Component {
       console.log(e + ' site_cart_update');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     }
   }
@@ -1045,3 +1051,5 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 });
+
+export default withTranslation(['product', 'cart', 'common'])(observer(Item));

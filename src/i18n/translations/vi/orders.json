@@ -6,7 +6,7 @@
   },
   "emptyMessage": "Chưa có đơn hàng nào",
   "encourageMessage": "Mua sắm ngay",
-  "ordersItem": {
+  "item": {
     "title": " Đơn hàng #{{code}}",
     "next": "Tiếp tục",
     "edit": "Sửa đơn",
@@ -14,5 +14,74 @@
     "cancel": "Huỷ đơn",
     "totalSelected": "{{total}} sản phẩm",
     "totalPaymentMessage": "Tổng thanh toán"
+  },
+  "confirm": {
+    "process": {
+      "step1": "1. Địa chỉ",
+      "step2": "2. Xác nhận"
+    },
+    "information": {
+      "title": "Thông tin đơn hàng",
+      "ordersCode": "Mã đơn hàng",
+      "status": "Trạng thái",
+      "recheck": "Thông tin này đã chính xác?"
+    },
+    "address": {
+      "title": "Địa chỉ giao hàng"
+    },
+    "paymentMethod": {
+      "title": "Hình thức thanh toán",
+      "unselected": "Chưa chọn"
+    },
+    "note": {
+      "title": "Ghi chú",
+      "description": "(Thời gian giao hàng, ghi chú khác)",
+      "placeholder": "Nhập ghi chú của bạn tại đây",
+      "noNote": "Không có ghi chú"
+    },
+    "items": {
+      "selected": "Mặt hàng đã chọn",
+      "shopped": "Mặt hàng đã mua"
+    },
+    "payment": {
+      "price": {
+        "temp": "Giá tạm tính",
+        "total": "Thành tiền"
+      },
+      "discount": {
+        "title": "Khuyến mãi",
+        "add": "Thêm khuyến mãi",
+        "prefix": "Giảm"
+      }
+    },
+    "order": {
+      "title": "ĐẶT HÀNG",
+      "popup": {
+        "title": "THÀNH CÔNG",
+        "loggedIn": {
+          "description": "Đơn hàng của bạn sẽ được chúng tôi giao đúng hẹn. Xin cảm ơn",
+          "accept": "Tiếp tục mua hàng",
+          "cancel": "Xem đơn hàng"
+        },
+        "notLoggedIn": {
+          "description": "Bạn đã đặt hàng thành công.\n\nĐăng ký thành viên để hưởng nhiều ưu đãi, khuyến mãi hơn nữa!",
+          "accept": "Xem đơn hàng",
+          "cancel": "Đăng ký ngay!"
+        },
+        "userPlaceholder": "Nhập tên của bạn",
+        "telPlaceholder": "Nhập số điện thoại"
+      }
+    },
+    "feedback": "Phản ánh & Đánh giá",
+    "addMoreItems": "Chọn thêm mặt hàng",
+    "rebuy": "Mua lại",
+    "edit": "Sửa đơn",
+    "cancel": "Huỷ đơn",
+    "unitName": "sản phẩm",
+    "change": "Thay đổi",
+    "copy": {
+      "title": "Sao chép",
+      "success": "Sao chép thành công"
+    }
   }
 }

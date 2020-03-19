@@ -22,14 +22,22 @@ import vi_qrBarCode from './vi/qrBarCode.json';
 import en_qrBarCode from './en/qrBarCode.json';
 import vi_transfer from './vi/transfer.json';
 import en_transfer from './en/transfer.json';
-import vi_payment from './en/payment.json';
+import vi_payment from './vi/payment.json';
 import en_payment from './en/payment.json';
+import vi_paymentMethod from './vi/paymentMethod.json';
+import en_paymentMethod from './en/paymentMethod.json';
 import vi_home from './vi/home.json';
 import en_home from './en/home.json';
-import vi_news from './en/news.json';
+import vi_news from './vi/news.json';
 import en_news from './en/news.json';
-import vi_orders from './en/orders.json';
+import vi_orders from './vi/orders.json';
 import en_orders from './en/orders.json';
+import vi_stores from './vi/stores.json';
+import en_stores from './en/stores.json';
+import vi_product from './vi/product.json';
+import en_product from './en/product.json';
+import vi_cart from './vi/cart.json';
+import en_cart from './en/cart.json';
 
 export default {
   [languages.vi.value]: {
@@ -47,7 +55,11 @@ export default {
     vndWallet: vi_vndWallet,
     qrBarCode: vi_qrBarCode,
     transfer: vi_transfer,
-    payment: vi_payment
+    payment: vi_payment,
+    paymentMethod: vi_paymentMethod,
+    stores: vi_stores,
+    product: vi_product,
+    cart: vi_cart
   },
   [languages.en.value]: {
     common: en_common,
@@ -64,6 +76,10 @@ export default {
     vndWallet: en_vndWallet,
     qrBarCode: en_qrBarCode,
     transfer: en_transfer,
-    payment: en_payment
+    payment: en_payment,
+    paymentMethod: en_paymentMethod,
+    stores: en_stores,
+    product: en_product,
+    cart: en_cart
   }
 };

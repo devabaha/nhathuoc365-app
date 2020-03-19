@@ -20,5 +20,48 @@
     "message": "Hãy mời chủ thuê bao {{tel}} sử dụng TickID ngay thôi!!",
     "accept": "GỬI LỜI MỜI",
     "cancel": "HỦY"
+  },
+  "confirm": {
+    "message": "Bạn đã chuyển số tiền {{money}} đến {{this.props.receiverName}} ({{receiverTel}})",
+    "sourceMoney": "Nguồn tiền",
+    "fingerprintScanner": "Sử dụng Touch ID để mở khóa và xác nhận",
+    "modal": {
+      "enterPass": {
+        "title": "Nhập mật khẩu"
+      },
+      "wrongPass": {
+        "title": "Mật khẩu không khớp",
+        "message": "Vui lòng thử lại",
+        "accept": "Thử lại"
+      },
+      "newPass": {
+        "title": "Tạo mật khẩu mới",
+        "message": "Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch"
+      },
+      "reEnterPass": {
+        "title": "Nhập lại mật khẩu",
+        "message": "Nhập lại mật khẩu để xác nhận"
+      }
+    },
+    "transaction": {
+      "success": {
+        "title": "Giao dịch thành công",
+        "subTitle": "",
+        "message": "Về màn hình chính"
+      },
+      "detail": "Chi tiết giao dịch",
+      "form": {
+        "sendTo": "Chuyển đến",
+        "tel": "Số điện thoại",
+        "money": "Số tiền"
+      },
+      "fee": {
+        "title": "Phí giao dịch",
+        "value": "Miễn phí"
+      },
+      "totalPrice": "Tổng tiền",
+      "secure": "Bảo mật SSL/TLS, mọi thông tin giao dịch đều được mã hóa an toàn.",
+      "confirm": "Xác nhận"
+    }
   }
 }

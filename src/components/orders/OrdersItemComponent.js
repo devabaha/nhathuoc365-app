@@ -138,7 +138,7 @@ class OrdersItemComponent extends Component {
               color="#999999"
             />
             <Text style={styles.orders_item_icon_title}>
-              {t('ordersItem.title', { code: item.cart_code })}
+              {t('item.title', { code: item.cart_code })}
             </Text>
 
             <View style={styles.orders_status_box}>
@@ -227,7 +227,7 @@ class OrdersItemComponent extends Component {
                       fontSize: 14
                     }}
                   >
-                    {`${t('ordersItem.next')} `}
+                    {`${t('item.next')} `}
                     <Icon name="angle-right" size={14} color="#ffffff" />
                   </Text>
                 </TouchableHighlight>
@@ -263,7 +263,7 @@ class OrdersItemComponent extends Component {
                     }}
                   >
                     <Icon name="times" size={14} color="#ffffff" />
-                    {` ${t('ordersItem.cancel')}`}
+                    {` ${t('item.cancel')}`}
                   </Text>
                 </TouchableHighlight>
 
@@ -289,7 +289,7 @@ class OrdersItemComponent extends Component {
                     }}
                   >
                     <Icon name="pencil-square-o" size={14} color="#ffffff" />
-                    {` ${t('ordersItem.edit')}`}
+                    {` ${t('item.edit')}`}
                   </Text>
                 </TouchableHighlight>
               </View>
@@ -337,7 +337,7 @@ class OrdersItemComponent extends Component {
                 <Text
                   style={[styles.orders_item_content_label, styles.note_label]}
                 >
-                  {`${t('ordersItem.note')}: `}
+                  {`${t('item.note')}: `}
                 </Text>
                 <View style={styles.orders_item_note_content}>
                   <Text style={styles.orders_item_content_value}>
@@ -349,11 +349,11 @@ class OrdersItemComponent extends Component {
 
             <View style={[styles.orders_item_row, styles.row_payment]}>
               <Text style={styles.orders_item_content_label}>
-                {t('ordersItem.totalSelected', { total: item.count_selected })}
+                {t('item.totalSelected', { total: item.count_selected })}
               </Text>
               <View style={styles.orders_status_box}>
                 <Text style={styles.orders_item_content_value}>
-                  {`${t('ordersItem.totalPaymentMessage')}: `}
+                  {`${t('item.totalPaymentMessage')}: `}
                 </Text>
                 <Text style={styles.orders_item_price_value}>
                   {item.total_selected}
