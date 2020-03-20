@@ -70,8 +70,9 @@ class Search extends Component {
   }
 
   getPlaceholder(name = '') {
-    return `Tìm kiếm trong ${name && `${name} - `}${store.store_data.name ||
-      'cửa hàng'}...`;
+    const { t } = this.props;
+    return `${t('search.navBar.prefix')} ${name && `${name} - `}${store
+      .store_data.name || t('search.navBar.suffix')}...`;
   }
 
   componentDidMount() {
@@ -175,6 +176,7 @@ class Search extends Component {
         loading: true
       },
       async () => {
+        const { t } = this.props;
         try {
           const response = await APIHandler.search_product(store.store_id, {
             search: keyword,
@@ -186,7 +188,7 @@ class Search extends Component {
               this.setState({
                 search_data: response.data,
                 noResult: false,
-                header_title: `— Kết quả cho "${keyword}" —`
+                header_title: `— ${t('search.result.prefix')} "${keyword}" —`
               });
             }
           } else {
@@ -350,7 +352,14 @@ class Search extends Component {
   };
 
   render() {
-    const { loading, search_data, history, buying_idx } = this.state;
+    const { t } = this.props;
+    const {
+      loading,
+      search_data,
+      history,
+      buying_idx,
+      categories
+    } = this.state;
 
     const MIN_HEIGHT_CATEGORIES = new Animated.Value(0);
     const MAX_HEIGHT_CATEGORIES =
@@ -411,12 +420,12 @@ class Search extends Component {
             keyboardShouldPersistTaps="always"
           >
             {this.state.noResult && (
-              <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
+              <Text style={styles.noResult}>{t('search.result.notFound')}</Text>
             )}
             {this.state.categories.length !== 0 && (
               <ModernList
                 containerStyle={{ marginBottom: 15 }}
-                headerTitle="Danh mục"
+                headerTitle={t('search.suggest.category.title')}
                 mainKey="name"
                 data={this.state.categories}
                 onPressItem={this.handlePressCategory}
@@ -440,12 +449,12 @@ class Search extends Component {
 
                 return (
                   <ModernList
-                    headerTitle="Lịch sử tìm kiếm"
+                    headerTitle={t('search.suggest.history.title')}
                     mainKey="name"
                     data={data}
                     onPressItem={item => this._onTouchHistory(item)}
                     headerRightComponent={
-                      <RemoveBtn onPress={this.removeHistory} />
+                      <RemoveBtn t={t} onPress={this.removeHistory} />
                     }
                   />
                 );
@@ -503,7 +512,7 @@ class Search extends Component {
 
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          title={t('cart:popup.remove.message')}
           height={110}
           noConfirm={() => {
             if (this.refs_modal_delete_cart_item) {
@@ -594,8 +603,6 @@ class Search extends Component {
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.log(e + ' site_cart_update');
-
-      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 }
@@ -706,7 +713,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Search);
+export default withTranslation(['stores', 'cart'])(observer(Search));
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const CollapseIcon = props => (
@@ -724,6 +731,8 @@ const CollapseIcon = props => (
 
 const RemoveBtn = props => (
   <TouchableOpacity activeOpacity={0.6} onPress={props.onPress}>
-    <Text style={styles.removeHistoryTxt}>Xóa</Text>
+    <Text style={styles.removeHistoryTxt}>
+      {props.t('search.suggest.history.delete')}
+    </Text>
   </TouchableOpacity>
 );

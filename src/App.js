@@ -601,14 +601,14 @@ class RootRouter extends Component {
                     key={appConfig.routes.customerCardWallet}
                     icon={TabIcon}
                     special
-                    iconLabel="Shops"
+                    iconLabel={t('appTab.tab3.title')}
                     iconName="credit-card"
                     iconSize={24}
                     notifyKey="customer_card_wallet"
                   >
                     <Scene
                       key={`${appConfig.routes.customerCardWallet}_1`}
-                      title="Cửa hàng thân thiết"
+                      title={t('screen.cardWallet.mainTitle')}
                       component={CustomerCardWallet}
                     />
                   </Stack>

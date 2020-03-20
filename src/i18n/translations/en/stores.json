@@ -1,4 +1,32 @@
 {
+  "search": {
+    "navBar": {
+      "prefix": "Search in",
+      "suffix": "shop"
+    },
+    "result": {
+      "prefix": "Result for",
+      "notFound": "Item not found"
+    },
+    "suggest": {
+      "category": {
+        "title": "Category"
+      },
+      "history": {
+        "title": "Search history",
+        "delete": "Delete"
+      }
+    }
+  },
+  "navBar": {
+    "placeholder": "Search in shop...",
+    "cancel": "Cancel"
+  },
+  "header": {
+    "follow": "Follow",
+    "following": "Following",
+    "chat": "Chat"
+  },
   "tabs": {
     "store": {
       "title": "Store"

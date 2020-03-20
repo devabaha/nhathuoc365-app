@@ -88,13 +88,14 @@ class Stores extends Component {
     });
 
     setTimeout(() => {
+      const { t } = this.props;
       appConfig.device.isIOS
         ? Actions.refresh({
             // right: this._renderRightButton(),
             renderTitle: (
               <StoreNavBar
                 onPressSearch={this.handleSearchInStore}
-                placeholder="Tìm kiếm trong cửa hàng..."
+                placeholder={t('navBar.placeholder')}
               />
             ),
             title: ''
@@ -179,6 +180,7 @@ class Stores extends Component {
     if (!this.props.categoryId) {
       response.data.categories.unshift({ id: 0, name: t('tabs.store.title') });
     }
+
     this.setState(
       {
         categories_data: response.data.categories,
@@ -196,7 +198,14 @@ class Stores extends Component {
   }
 
   handleSearchInStore = () => {
-    Actions.push(appConfig.routes.searchStore);
+    Actions.push(appConfig.routes.searchStore, {
+      categories: this.state.categories_data,
+      category_id: this.state.selected_category.id,
+      category_name:
+        this.state.selected_category.id !== 0
+          ? this.state.selected_category.name
+          : ''
+    });
   };
 
   _getCategoriesNavFromServer = async () => {
@@ -426,7 +435,7 @@ class Stores extends Component {
         {appConfig.device.isAndroid && (
           <StoreNavBar
             onPressSearch={this.handleSearchInStore}
-            placeholder="Tìm kiếm trong cửa hàng..."
+            placeholder={t('navBar.placeholder')}
           />
         )}
 

@@ -13,7 +13,7 @@
       "title": "Voucher"
     },
     "tab3": {
-      "title": ""
+      "title": "Shops"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -24,6 +24,9 @@
   },
 
   "screen": {
+    "cardWallet": {
+      "mainTitle": "Cửa hàng thân thiết"
+    },
     "account": {
       "mainTitle": "Tài khoản",
       "myAccountTitle": "Tài khoản của tôi",

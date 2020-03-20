@@ -84,10 +84,13 @@ class HeaderStore extends Component {
   }
 
   render() {
+    const { t } = this.props;
     const inputProps = {
       // numberOfLines: 1
     };
-    const followMess = this.props.active ? 'Đang theo dõi' : 'Theo dõi';
+    const followMess = this.props.active
+      ? t('header.following')
+      : t('header.follow');
     const activeStyle = {
       backgroundColor: appConfig.colors.primary,
       position: 'absolute',
@@ -162,7 +165,7 @@ class HeaderStore extends Component {
                 >
                   <View style={[styles.btnInfo]}>
                     <Icon name="message1" style={styles.icon} />
-                    <Text style={styles.btnText}>Chat</Text>
+                    <Text style={styles.btnText}>{t('header.chat')}</Text>
                   </View>
                 </TouchableHighlight>
                 {!!this.props.unreadChat && (
@@ -316,4 +319,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HeaderStore;
+export default withTranslation('stores')(HeaderStore);

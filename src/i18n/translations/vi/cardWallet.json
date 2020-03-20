@@ -1,0 +1,20 @@
+{
+  "buttons": {
+    "tab1": {
+      "title": "Thêm cửa hàng",
+      "placeholder": "Nhập ít nhất 3 ký tự để tìm kiếm...",
+      "noResult": "Không tìm thấy cửa hàng"
+    },
+    "tab2": {
+      "title": "Tìm kiếm"
+    }
+  },
+  "searchInput": {
+    "placeholder": "Nhập để tìm kiếm..."
+  },
+  "header": {
+    "prefix": "Có",
+    "suffix": "kết quả"
+  },
+  "noCard": "Chưa có thẻ? Hãy thêm ngay"
+}

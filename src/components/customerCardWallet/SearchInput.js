@@ -17,6 +17,7 @@ class SearchInput extends PureComponent {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <>
         <Icon name="search" style={styles.icon} />
@@ -24,7 +25,7 @@ class SearchInput extends PureComponent {
           ref={this.refTextInput}
           numberOfLines={1}
           style={styles.input}
-          placeholder="Nhập để tìm kiếm..."
+          placeholder={t('searchInput.placeholder')}
           placeholderTextColor={appConfig.colors.placeholder}
           onChangeText={this.props.onChangeText}
           value={this.props.value}

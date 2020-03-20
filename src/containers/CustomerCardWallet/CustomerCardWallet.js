@@ -30,19 +30,6 @@ const BUTTON_TYPE = {
   SERVER: 'add',
   LOCAL: 'local'
 };
-const BUTTONS = [
-  {
-    type: BUTTON_TYPE.SERVER,
-    showModal: true,
-    title: 'Thêm cửa hàng',
-    iconName: 'plus'
-  },
-  {
-    type: BUTTON_TYPE.LOCAL,
-    title: 'Tìm kiếm',
-    iconName: 'search'
-  }
-];
 
 class CustomerCardWallet extends Component {
   state = {
@@ -66,6 +53,19 @@ class CustomerCardWallet extends Component {
   refComboHeaderButton = React.createRef();
   refCards = [];
   refShakingCards = [];
+  buttons = [
+    {
+      type: BUTTON_TYPE.SERVER,
+      showModal: true,
+      title: this.props.t('buttons.tab1.title'),
+      iconName: 'plus'
+    },
+    {
+      type: BUTTON_TYPE.LOCAL,
+      title: this.props.t('buttons.tab2.title'),
+      iconName: 'search'
+    }
+  ];
 
   componentDidMount() {
     this.getFavors();
@@ -97,7 +97,7 @@ class CustomerCardWallet extends Component {
 
   handlePressShortcutSearch = () => {
     if (this.refComboHeaderButton.current) {
-      this.refComboHeaderButton.current.handleOnPress(BUTTONS[0], 0);
+      this.refComboHeaderButton.current.handleOnPress(this.buttons[0], 0);
     }
   };
 
@@ -410,6 +410,7 @@ class CustomerCardWallet extends Component {
   };
 
   render() {
+    const { t } = this.props;
     const modalStyle = {
       height: this.modalHeight,
       paddingVertical: this.btnHeaderLayout.height,
@@ -472,12 +473,13 @@ class CustomerCardWallet extends Component {
           <ComboHeaderButton
             ref={this.refComboHeaderButton}
             containerStyle={styles.comboHeaderBtn}
-            data={BUTTONS}
+            data={this.buttons}
             onPress={this.handleHeaderButtonPress}
             onCloseInput={this.handleCloseModal}
             onContainerLayout={this.onButtonHeaderLayout}
             secretComponent={
               <SearchInput
+                t={t}
                 ref={this.refSearchInput}
                 value={this.state.searchValue}
                 onChangeText={this.handleSearch}
@@ -490,7 +492,7 @@ class CustomerCardWallet extends Component {
               locations={colorLocation}
               style={styles.gradientShadow}
             />
-            <Header text={count} style={[resultStyle]} />
+            <Header t={t} text={count} style={[resultStyle]} />
             <FlatList
               refreshControl={
                 <RefreshControl
@@ -517,7 +519,7 @@ class CustomerCardWallet extends Component {
                         onPress={this.handlePressShortcutSearch}
                       />
                     }
-                    message="Chưa có thẻ? Hãy thêm ngay"
+                    message={t('noCards')}
                   />
                 )
               }
@@ -542,6 +544,7 @@ class CustomerCardWallet extends Component {
                 onPressData={card => this.handleUpdateMyCard(card, 1)}
                 listEmptyComponent={
                   <Empty
+                    t={t}
                     isSearch={this.state.searchValue.length >= MIN_CHARACTER}
                     isTyping={this.state.isTyping}
                   />
@@ -631,18 +634,18 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CustomerCardWallet;
+export default withTranslation('cardWallet')(CustomerCardWallet);
 
 const Header = props => (
   <Animated.View
     style={[{ marginTop: 10, paddingHorizontal: 15 }, props.style]}
   >
     <Text>
-      Có{' '}
+      {`${props.t('header.prefix')} `}
       <Text style={[{ fontWeight: 'bold', color: appConfig.colors.primary }]}>
         {props.text}
-      </Text>{' '}
-      kết quả
+      </Text>
+      {` ${props.t('header.suffix')}`}
     </Text>
   </Animated.View>
 );
@@ -653,11 +656,14 @@ const Empty = props => (
       {!props.isSearch ? (
         <NoResult
           iconName="file-search"
-          message="Nhập ít nhất 3 ký tự để tìm kiếm..."
+          message={props.t('buttons.tab1.placeholder')}
         />
       ) : (
         !props.isTyping && (
-          <NoResult iconName="magnify-close" message="Không tìm thấy dữ liệu" />
+          <NoResult
+            iconName="magnify-close"
+            message={props.t('buttons.tab1.noResult')}
+          />
         )
       )}
     </View>
