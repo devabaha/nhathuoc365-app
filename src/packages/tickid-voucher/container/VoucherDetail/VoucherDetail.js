@@ -108,22 +108,23 @@ class VoucherDetail extends BaseContainer {
   };
 
   handleOpenScanScreen = voucher => {
+    const { t } = this.props;
     config.route.push(config.routes.voucherScanner, {
       voucher,
-      placeholder: 'Nhập mã cửa hàng',
-      topContentText:
-        'Hướng máy ảnh của bạn về phía mã QR Code để sử dụng voucher',
+      placeholder: t('scan.enterStore'),
+      topContentText: t('scan.description'),
       isFromMyVoucher: false
     });
   };
 
   handleAlreadyThisVoucher = ({ message, onCheckMyVoucher, onClose }) => {
+    const { t } = this.props;
     config.route.push(config.routes.alreadyVoucher, {
       onClose: () => {
         config.route.pop();
         onClose();
       },
-      heading: 'Đã lấy mã giảm giá',
+      heading: t('alreadyTaken.title'),
       message,
       onCheckMyVoucher: () => {
         /**
@@ -134,9 +135,7 @@ class VoucherDetail extends BaseContainer {
         config.route.pop();
 
         setTimeout(() => {
-          config.route.push(config.routes.myVoucher, {
-            title: 'Voucher của tôi'
-          });
+          config.route.push(config.routes.myVoucher);
           onCheckMyVoucher();
         }, 0);
       }
@@ -203,7 +202,8 @@ class VoucherDetail extends BaseContainer {
   };
 
   showNotification(title, message) {
-    Alert.alert(title, message, [{ text: 'Đóng lại' }]);
+    const { t } = this.props;
+    Alert.alert(title, message, [{ text: t('notification.accept') }]);
   }
 
   handleOnRefresh = () => {
@@ -230,7 +230,7 @@ class VoucherDetail extends BaseContainer {
     this.setState({
       showLoading: true
     });
-
+    const { t } = this.props;
     try {
       const response = await internalFetch(
         config.rest.saveCampaign(campaign.data.id)
@@ -239,7 +239,7 @@ class VoucherDetail extends BaseContainer {
         this.getVoucherDisabled = false;
 
         showMessage({
-          message: 'Bạn đã nhận thành công voucher này.',
+          message: t('api.success.taken'),
           type: 'success'
         });
         this.setState({
@@ -266,7 +266,7 @@ class VoucherDetail extends BaseContainer {
       } else {
         setTimeout(() => {
           this.getVoucherDisabled = false;
-          this.showNotification('Thông báo', response.message);
+          this.showNotification(t('notification.title'), response.message);
         }, 500);
       }
     } catch (error) {
@@ -438,6 +438,7 @@ class VoucherDetail extends BaseContainer {
   };
 
   render() {
+    const { t } = this.props;
     return (
       <View style={styles.container}>
         <VoucherDetailComponent
@@ -465,8 +466,12 @@ class VoucherDetail extends BaseContainer {
         <ModalConfirm
           hideCloseTitle
           visible={this.state.buyCampaignVisible}
-          heading="Đổi thưởng"
-          textMessage={`Đổi ${this.campaignPoint} điểm lấy khuyến mại này?`}
+          heading={t('confirm.redeem.title')}
+          textMessage={t('confirm.redeem.message', {
+            point: this.campaignPoint
+          })}
+          cancelLabel={t('modal.cancel')}
+          confirmLabel={t('modal.accept')}
           onCancel={() => this.setState({ buyCampaignVisible: false })}
           onConfirm={this.handleBuyCampaignConfirm}
         />
@@ -474,8 +479,10 @@ class VoucherDetail extends BaseContainer {
         <ModalConfirm
           hideCloseTitle
           visible={this.state.useOnlineConfirmVisible}
-          heading="Sử dụng khuyến mại"
-          textMessage="Sử dụng khuyến mại này với đơn hàng của bạn?"
+          heading={t('confirm.usePromotion.title')}
+          textMessage={t('confirm.usePromotion.message')}
+          cancelLabel={t('modal.cancel')}
+          confirmLabel={t('modal.accept')}
           onCancel={() => this.setState({ useOnlineConfirmVisible: false })}
           onConfirm={this.handleUseOnlineConfirm}
         />
@@ -526,4 +533,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default VoucherDetail;
+export default withTranslation('voucher')(VoucherDetail);
