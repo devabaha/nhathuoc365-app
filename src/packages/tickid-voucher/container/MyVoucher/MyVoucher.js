@@ -63,10 +63,10 @@ class MyVoucher extends BaseContainer {
   };
 
   handlePressEnterVoucher = () => {
+    const { t } = this.props;
     config.route.push(config.routes.voucherScanner, {
-      placeholder: 'Nhập mã Voucher',
-      topContentText:
-        'Hướng máy ảnh của bạn về phía mã QR Code để nhận voucher',
+      placeholder: t('scan.enterVoucher'),
+      topContentText: t('scan.description'),
       isFromMyVoucher: true,
       refreshMyVoucher: () => {
         this.getMyVouchers();
@@ -80,7 +80,7 @@ class MyVoucher extends BaseContainer {
         apiFetching: true
       });
     }
-
+    const { t } = this.props;
     try {
       const url = siteId
         ? config.rest.myVouchersBySiteId(siteId)
@@ -100,7 +100,7 @@ class MyVoucher extends BaseContainer {
           } else {
             showMessage({
               type: 'danger',
-              message: 'Không tìm thấy voucher!'
+              message: t('api.error.notFound')
             });
           }
         }
@@ -168,6 +168,7 @@ class MyVoucher extends BaseContainer {
   render() {
     return (
       <MyVoucherComponent
+        t={this.props.t}
         onPressVoucher={this.handlePressVoucher}
         onPressEnterVoucher={this.handlePressEnterVoucher}
         onPressUseOnline={this.handlePressUseOnline}
@@ -181,4 +182,4 @@ class MyVoucher extends BaseContainer {
   }
 }
 
-export default observer(MyVoucher);
+export default withTranslation('voucher')(observer(MyVoucher));

@@ -270,7 +270,7 @@ class CategoryScreen extends Component {
         <View style={styles.emptyContainer}>
           <View style={styles.emptyWrapper}>
             <Icon name="add-shopping-cart" style={styles.emptyIcon} />
-            <Text style={styles.emptyText}>${t('noProduct')}</Text>
+            <Text style={styles.emptyText}>{t('noProduct')}</Text>
           </View>
         </View>
       );

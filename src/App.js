@@ -653,7 +653,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.mainVoucher}>
                   <Scene
                     key={`${appConfig.routes.mainVoucher}_1`}
-                    title="TickID Voucher"
+                    title={t('screen.voucher.mainTitle')}
                     component={VoucherContainer}
                     {...navBarConfig}
                     back

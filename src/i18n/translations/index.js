@@ -38,6 +38,8 @@ import vi_product from './vi/product.json';
 import en_product from './en/product.json';
 import vi_cart from './vi/cart.json';
 import en_cart from './en/cart.json';
+import vi_voucher from './vi/voucher.json';
+import en_voucher from './en/voucher.json';
 
 import vi_cardWallet from './vi/cardWallet.json';
 import en_cardWallet from './en/cardWallet.json';
@@ -63,7 +65,8 @@ export default {
     stores: vi_stores,
     product: vi_product,
     cart: vi_cart,
-    cardWallet: vi_cardWallet
+    cardWallet: vi_cardWallet,
+    voucher: vi_voucher
   },
   [languages.en.value]: {
     common: en_common,
@@ -85,6 +88,7 @@ export default {
     stores: en_stores,
     product: en_product,
     cart: en_cart,
-    cardWallet: en_cardWallet
+    cardWallet: en_cardWallet,
+    voucher: en_voucher
   }
 };

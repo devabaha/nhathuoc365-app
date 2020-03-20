@@ -1,7 +1,8 @@
 {
   "api": {
     "error": {
-      "message": "Có lỗi xảy ra, vui lòng thử lại sau"
+      "message": "Có lỗi xảy ra, vui lòng thử lại sau",
+      "connect": "Kết nối tới máy chủ thất bại. Vui lòng thử lại sau"
     }
   },
 
