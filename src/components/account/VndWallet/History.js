@@ -13,6 +13,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 
+import Loading from '../../Loading';
+
 const History = props => {
   var historyData = props.historyData ? props.historyData : [];
   const historyRender = historyData.map(history => (
@@ -40,7 +42,7 @@ const History = props => {
       //     />
       // }
     >
-      {historyData.length ? (
+      {props.loading ? null : historyData.length ? (
         historyRender
       ) : (
         <Text>Tài khoản chưa có giao dịch</Text>

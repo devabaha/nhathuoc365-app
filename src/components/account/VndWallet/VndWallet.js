@@ -12,6 +12,7 @@ import store from '../../../store/Store';
 import History from './History';
 import Info from './Info';
 import appConfig from 'app-config';
+import Loading from '../../Loading';
 
 @observer
 export default class VndWallet extends Component {
@@ -22,25 +23,38 @@ export default class VndWallet extends Component {
       historiesData: null,
       wallet: props.wallet,
       activeTab: 0,
-      loading: [true, false, false, false]
+      loading: true
     };
+
+    this.unmounted = false;
   }
 
   componentWillMount() {
     this._getWallet();
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   async _getWallet() {
     // user_coins_wallet
     try {
-      var response = await APIHandler.user_wallet_history(
+      const response = await APIHandler.user_wallet_history(
         this.state.wallet.zone_code
       );
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({ historiesData: response.data.histories });
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({ historiesData: response.data.histories });
+        }
       }
     } catch (e) {
       console.log(e);
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false
+        });
     }
   }
 
@@ -77,7 +91,6 @@ export default class VndWallet extends Component {
       }
       if (activeTab !== this.state.activeTab) {
         let state = this.state;
-        state.loading[activeTab] = true;
         state.activeTab = activeTab;
         this.setState({ ...state });
       }
@@ -190,7 +203,9 @@ export default class VndWallet extends Component {
       {
         key: 0,
         title: 'Lịch sử',
-        component: <History historyData={historiesData} />
+        component: (
+          <History loading={this.state.loading} historyData={historiesData} />
+        )
       },
       // {
       //   key: 1,
@@ -205,7 +220,9 @@ export default class VndWallet extends Component {
       {
         key: 1,
         title: 'Thông tin',
-        component: <Info content={wallet.content} />
+        component: (
+          <Info loading={this.state.loading} content={wallet.content} />
+        )
       }
     ];
     const tabHeader = data.map((d, i) => (
@@ -241,6 +258,7 @@ export default class VndWallet extends Component {
     ));
     return (
       <View style={styles.container}>
+        {this.state.loading && <Loading center />}
         {this.renderTopLabelCoin()}
         <View
           style={{

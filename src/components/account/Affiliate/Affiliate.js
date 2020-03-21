@@ -17,6 +17,7 @@ import Communications from 'react-native-communications';
 //component
 import History from './History';
 import Info from './Info';
+import Loading from '../../Loading';
 
 class Affiliate extends Component {
   constructor(props) {
@@ -29,23 +30,32 @@ class Affiliate extends Component {
         : 'Nhập mã giới thiệu để nhận được phần thưởng hấp dẫn từ ' +
           APP_NAME_SHOW,
       activeTab: 0,
-      loading: [true, false, false, false]
+      loading: true
     };
+
+    this.unmounted = false;
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this._getInviteList();
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   async _getInviteList() {
     try {
-      var response = await APIHandler.user_invite_history();
-      console.log(response);
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({ historiesData: response.data.histories });
+      const response = await APIHandler.user_invite_history();
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({ historiesData: response.data.histories });
+        }
       }
     } catch (e) {
       console.log(e);
+    } finally {
+      !this.unmounted && this.setState({ loading: false });
     }
   }
 
@@ -67,7 +77,6 @@ class Affiliate extends Component {
     }
     if (activeTab !== this.state.activeTab) {
       let state = this.state;
-      state.loading[activeTab] = true;
       state.activeTab = activeTab;
       this.setState({ ...state });
     }
@@ -157,7 +166,9 @@ class Affiliate extends Component {
       {
         key: 0,
         title: 'Danh sách giới thiệu',
-        component: <History historyData={historiesData} />
+        component: (
+          <History loading={this.state.loading} historyData={historiesData} />
+        )
       },
       // {
       //   key: 1,
@@ -172,7 +183,7 @@ class Affiliate extends Component {
       {
         key: 1,
         title: 'Thông tin chương trình',
-        component: <Info content={content} />
+        component: <Info loading={this.state.loading} content={content} />
       }
     ];
     const tabHeader = data.map((d, i) => (
@@ -208,6 +219,7 @@ class Affiliate extends Component {
     ));
     return (
       <View style={styles.container}>
+        {this.state.loading && <Loading center />}
         {this.renderTopLabelCoin()}
         <View
           style={{
