@@ -38,7 +38,7 @@ const History = props => {
       //     />
       // }
     >
-      {historyData.length ? (
+      {props.loading ? null : historyData.length ? (
         historyRender
       ) : (
         <Text>Danh sách mời của tài khoản</Text>
