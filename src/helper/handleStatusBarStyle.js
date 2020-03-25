@@ -19,7 +19,10 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.tickidRada,
     appConfig.routes.tickidRadaListService,
     appConfig.routes.tickidRadaServiceDetail,
-    appConfig.routes.tickidRadaBooking
+    appConfig.routes.tickidRadaBooking,
+
+    appConfig.routes.schedule,
+    appConfig.routes.scheduleConfirm
   ];
 
   switch (action.type) {

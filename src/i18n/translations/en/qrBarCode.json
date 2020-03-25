@@ -1,0 +1,13 @@
+{
+  "content": {
+    "description": "Use wallet address QRCode to receive bank transfer"
+  },
+  "invalidQRCode": "Invalid QR Code, please try again",
+  "transferPaymentTitle": "Transfer to {{walletName}}",
+  "settingLabel": "Settings",
+  "qrGuideMessage": "Point your camera towards the QR Code to explore",
+  "POSGuideMessage": "Give the QRCode code to the cashier to earn points",
+  "reload": "Auto update every 60s",
+  "accountDescription": "● This is the bar code representing your account",
+  "cashbackDescription": "● Use this barcode to get a cashback from the store"
+}

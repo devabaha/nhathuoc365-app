@@ -122,7 +122,10 @@ class TickidChat extends Component {
     },
     selectedType: COMPONENT_TYPE._NONE,
     chatViewMarginTop: 0,
-    animatedChatViewHeight: '100%'
+    animatedChatViewHeight: '100%',
+    animatedChatViewWithoutKeyboardHeight: '100%',
+    animatedChatViewWithKeyboardHeight: '100%',
+    isFullscreenGestureMode: false
   };
 
   refMasterToolBar = React.createRef();
@@ -270,13 +273,13 @@ class TickidChat extends Component {
   handleShowKeyboard = e => {
     let isUpdate = false;
     const state = { ...this.state };
+
     if (
       e.endCoordinates.height &&
       e.endCoordinates.height !== this.state.keyboardInformation.height
     ) {
       state.keyboardInformation.height =
         e.endCoordinates.height - BOTTOM_SPACE_IPHONE_X;
-
       isUpdate = true;
     }
 
@@ -493,17 +496,54 @@ class TickidChat extends Component {
       });
       this.getLayoutDidMount = true;
     }
+
+    if (HAS_NOTCH && this.refInput.current) {
+      if (this.refInput.current.isFocused()) {
+        if (
+          this.state.animatedChatViewWithKeyboardHeight !==
+          e.nativeEvent.layout.height
+        ) {
+          this.setState({
+            animatedChatViewHeight:
+              e.nativeEvent.layout.height +
+              this.state.keyboardInformation.height +
+              (this.state.isFullscreenGestureMode
+                ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
+                : ANDROID_STATUS_BAR_HEIGHT),
+            animatedChatViewWithKeyboardHeight: e.nativeEvent.layout.height
+          });
+        }
+      } else {
+        if (
+          this.state.animatedChatViewWithoutKeyboardHeight !==
+          e.nativeEvent.layout.height
+        ) {
+          this.setState({
+            animatedChatViewHeight: e.nativeEvent.layout.height,
+            animatedChatViewWithoutKeyboardHeight: e.nativeEvent.layout.height
+          });
+        }
+      }
+    }
   };
 
-  renderLeftComposer = props => (
-    <View style={styles.center}>
-      <Animated.View
-        pointerEvents={this.state.showSendBtn ? 'auto' : 'none'}
-        style={[
-          styles.center,
-          styles.sendBtn,
-          {
-            left: -10,
+  handleInputToolbarLayout = e => {
+    const bottomIndex = e.nativeEvent.layout.y + e.nativeEvent.layout.height;
+
+    if (Math.abs(bottomIndex - WINDOW_HEIGHT) < 10 && HAS_NOTCH) {
+      // full screen gesture on android notch device
+      this.setState({ isFullscreenGestureMode: true });
+    } else {
+      this.setState({ isFullscreenGestureMode: false });
+    }
+  };
+
+  renderLeftComposer = props => {
+    const showBackCondition =
+      this.state.showSendBtn && this.state.selectedImages.length !== 0;
+    const backAnimated =
+      this.state.selectedImages.length !== 0
+        ? {
             opacity: this.state.animatedBtnSendValue.interpolate({
               inputRange: [0, BTN_IMAGE_WIDTH],
               outputRange: [0, 1]
@@ -517,55 +557,74 @@ class TickidChat extends Component {
               }
             ]
           }
-        ]}
-      >
-        <TouchableOpacity hitSlop={HIT_SLOP} onPress={this.handleBackPress}>
-          <IconFontAwesome name="angle-left" color="#404040" size={28} />
-        </TouchableOpacity>
-      </Animated.View>
+        : {
+            opacity: 0
+          };
 
-      <Animated.View
-        pointerEvents={!this.state.showSendBtn ? 'auto' : 'none'}
-        style={[
-          styles.center,
-          styles.sendBtn,
-          {
-            position: 'absolute',
-            flexDirection: 'row'
-          },
-          {
-            opacity: this.state.animatedBtnSendValue.interpolate({
-              inputRange: [0, BTN_IMAGE_WIDTH],
-              outputRange: [1, 0]
-            }),
-            transform: [
-              {
-                scale: this.state.animatedBtnSendValue.interpolate({
-                  inputRange: [0, BTN_IMAGE_WIDTH],
-                  outputRange: [1, 2]
-                })
-              }
-            ]
-          }
-        ]}
-      >
-        <TouchableOpacity
-          hitSlop={HIT_SLOP}
-          onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.EMOJI)}
-        >
-          <IconAntDesign
-            size={22}
-            name="message1"
-            color={
-              this.state.selectedType === COMPONENT_TYPE.EMOJI
-                ? config.focusColor
-                : config.blurColor
+    const otherAnimated = showBackCondition && {
+      opacity: this.state.animatedBtnSendValue.interpolate({
+        inputRange: [0, BTN_IMAGE_WIDTH],
+        outputRange: [1, 0]
+      }),
+      transform: [
+        {
+          scale: this.state.animatedBtnSendValue.interpolate({
+            inputRange: [0, BTN_IMAGE_WIDTH],
+            outputRange: [1, 2]
+          })
+        }
+      ]
+    };
+
+    return (
+      <View style={styles.center}>
+        <Animated.View
+          pointerEvents={showBackCondition ? 'auto' : 'none'}
+          style={[
+            styles.center,
+            styles.sendBtn,
+            backAnimated,
+            {
+              left: -10
             }
-          />
-        </TouchableOpacity>
-      </Animated.View>
-    </View>
-  );
+          ]}
+        >
+          <TouchableOpacity hitSlop={HIT_SLOP} onPress={this.handleBackPress}>
+            <IconFontAwesome name="angle-left" color="#404040" size={28} />
+          </TouchableOpacity>
+        </Animated.View>
+
+        <Animated.View
+          pointerEvents={!showBackCondition ? 'auto' : 'none'}
+          style={[
+            styles.center,
+            styles.sendBtn,
+            otherAnimated,
+            {
+              position: 'absolute',
+              flexDirection: 'row'
+            },
+            {}
+          ]}
+        >
+          <TouchableOpacity
+            hitSlop={HIT_SLOP}
+            onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.EMOJI)}
+          >
+            <IconAntDesign
+              size={22}
+              name="message1"
+              color={
+                this.state.selectedType === COMPONENT_TYPE.EMOJI
+                  ? config.focusColor
+                  : config.blurColor
+              }
+            />
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
+    );
+  };
 
   renderComposer = () => {
     return (
@@ -588,7 +647,10 @@ class TickidChat extends Component {
 
   renderInputToolbar = props => {
     return (
-      <View style={styles.inputToolbar}>
+      <View
+        onLayout={this.handleInputToolbarLayout}
+        style={styles.inputToolbar}
+      >
         {this.renderLeftComposer()}
         {this.renderComposer()}
         {this.renderSend()}
@@ -850,6 +912,11 @@ class TickidChat extends Component {
     const extraChatViewStyle = {
       marginTop: this.state.chatViewMarginTop
     };
+    const extraHeight = HAS_NOTCH
+      ? this.state.isFullscreenGestureMode
+        ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
+        : ANDROID_STATUS_BAR_HEIGHT
+      : 0;
 
     return (
       <SafeAreaView style={[styles.container, this.props.containerStyle]}>
@@ -879,7 +946,11 @@ class TickidChat extends Component {
                               outputRange: [
                                 0,
                                 -this.state.keyboardInformation.height -
-                                  (HAS_NOTCH ? ANDROID_STATUS_BAR_HEIGHT : 0)
+                                  (HAS_NOTCH
+                                    ? this.state.isFullscreenGestureMode
+                                      ? ANDROID_EXTRA_DIMENSIONS_HEIGHT
+                                      : ANDROID_STATUS_BAR_HEIGHT
+                                    : 0)
                               ]
                             }
                           )
@@ -931,6 +1002,7 @@ class TickidChat extends Component {
             pinListProps={this.pinListProps}
             visible={this.state.showToolBar}
             baseViewHeight={this.state.keyboardInformation.height}
+            extraHeight={extraHeight}
             durationShowGallery={this.state.keyboardInformation.duration}
             extraData={this.props.extraData}
           />
@@ -1019,8 +1091,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    top: '30%',
-    paddingBottom: 60,
+    paddingBottom: '25%',
+    height: WINDOW_HEIGHT,
     position: 'absolute',
     zIndex: 0
   },

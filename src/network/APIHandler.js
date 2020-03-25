@@ -230,8 +230,8 @@ class APIHandler {
   /**
    * Lấy thông tin giỏ hàng theo site id
    */
-  async site_cart_show(store_id) {
-    var api = url_for(API.SITE_CART_SHOW + '/' + store_id);
+  async site_cart_show(store_id, cart_id = '') {
+    var api = url_for(API.SITE_CART_SHOW + '/' + store_id + '/' + cart_id);
     return await this.getAPI(api);
   }
 

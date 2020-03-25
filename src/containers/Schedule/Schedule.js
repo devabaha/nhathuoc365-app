@@ -32,8 +32,7 @@ const SLOTS = [
 class Schedule extends Component {
   static defaultProps = {
     slots: SLOTS,
-    slotMessage: 'Tất cả thời gian đều thuộc giờ Đông Dương',
-    date: 'Ngày mai, 23 tháng 3'
+    slotMessage: 'Tất cả thời gian đều thuộc giờ Đông Dương (from server)'
   };
   state = {
     selectedDate: moment().format(DATE_FORMAT),
@@ -57,23 +56,22 @@ class Schedule extends Component {
 
   getTitleSlotPicker(date) {
     const momentDate = moment(date);
+    const { t, i18n } = this.props;
 
     const prefix = momentDate.isSame(moment(), 'day')
-      ? 'Hôm nay'
+      ? t('prefix.today')
       : momentDate.isSame(moment().add(1, 'days'), 'day')
-      ? 'Ngày mai'
+      ? t('prefix.tomorrow')
       : momentDate.isSame(moment().subtract(1, 'days'), 'day')
-      ? 'Hôm qua'
+      ? t('prefix.yesterday')
       : this.capitalizeFirstLetter(
           momentDate
-            .locale('vi')
+            .locale(i18n.language)
             .format('dddd')
             .split(' ')
         );
 
-    return (
-      prefix + ', ' + momentDate.date() + ' tháng ' + (momentDate.month() + 1)
-    );
+    return prefix + ', ' + momentDate.format('DD MMMM');
   }
 
   handlePressDate = selectedDate => {
@@ -86,7 +84,16 @@ class Schedule extends Component {
   };
 
   handlePressSlot(slot) {
-    Actions.push(appConfig.routes.scheduleConfirm);
+    Actions.push(appConfig.routes.scheduleConfirm, {
+      date: this.state.titleSlotPicker,
+      dateDescription: '1 giờ từ bây giờ (from server - FS)',
+      timeRange: '16:15 - 16:45 (FS)',
+      timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
+      appointmentName: 'Tick ID',
+      description:
+        'Tick ID sẽ nhìn thấy tên tài khoản của bạn để có thể liên hệ với bạn. (FS)',
+      btnMessage: 'Doanh nghiệp thường trả lời trong vòng vài phút (FS)'
+    });
   }
 
   renderExtraMessage() {
@@ -111,7 +118,7 @@ class Schedule extends Component {
           title={this.state.titleSlotPicker}
           slots={this.props.slots}
           message={this.props.slotMessage}
-          onPress={this.handlePressSlot}
+          onPress={this.handlePressSlot.bind(this)}
         />
       )
     );
@@ -169,4 +176,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Schedule;
+export default withTranslation('schedule')(Schedule);

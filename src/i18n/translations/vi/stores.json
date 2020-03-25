@@ -1,0 +1,15 @@
+{
+  "tabs": {
+    "store": {
+      "title": "Cửa hàng"
+    },
+    "screen": {
+      "mainTitle": "CỬA HÀNG",
+      "categoryTitle": "{{productName}}"
+    }
+  },
+  "noProduct": "Chưa có mặt hàng nào",
+  "item": {
+    "more": "XEM THÊM"
+  }
+}

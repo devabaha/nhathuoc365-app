@@ -119,6 +119,7 @@ class EnterCodeManual extends Component {
   };
 
   render() {
+    const { t } = this.props;
     const containerStyle = {
       opacity: this.state.opacity,
       bottom: this.state.bottom
@@ -143,7 +144,11 @@ class EnterCodeManual extends Component {
             }
           ]}
         >
-          <Header onClose={this.onClose} title={this.props.heading} />
+          <Header
+            onClose={this.onClose}
+            title={this.props.heading}
+            closeTitle={t('modal.close')}
+          />
 
           <View style={styles.body}>
             <TextInput
@@ -155,7 +160,7 @@ class EnterCodeManual extends Component {
               autoFocus
             />
             <Text style={styles.codeHelp}>
-              Hãy hỏi nhân viên để được hướng dẫn
+              {t('modal.enterCodeManually.description')}
             </Text>
             <Button
               style={styles.submitButtonTitle}
@@ -169,7 +174,7 @@ class EnterCodeManual extends Component {
               ]}
               onPress={this.onSendCode}
             >
-              Gửi mã
+              {t('modal.enterCodeManually.btnTitle')}
             </Button>
           </View>
         </View>
@@ -238,4 +243,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default EnterCodeManual;
+export default withTranslation('voucher')(EnterCodeManual);

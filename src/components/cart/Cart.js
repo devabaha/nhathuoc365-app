@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
   FlatList,
@@ -15,8 +14,7 @@ import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
 import appConfig from 'app-config';
 
-@observer
-export default class Cart extends Component {
+class Cart extends Component {
   constructor(props) {
     super(props);
 
@@ -62,6 +60,7 @@ export default class Cart extends Component {
 
   // lấy thông tin giỏ hàng
   async _getCart(delay) {
+    const { t } = this.props;
     try {
       const response = await APIHandler.site_cart_show(store.store_id);
 
@@ -78,7 +77,7 @@ export default class Cart extends Component {
       console.log(e + ' site_cart_show');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     } finally {
       !this.unmounted &&
@@ -148,6 +147,7 @@ export default class Cart extends Component {
 
   // giảm số lượng item trong giỏ hàng
   async _item_qnt_decrement(item) {
+    const { t } = this.props;
     try {
       const data = {
         quantity: 1,
@@ -168,20 +168,21 @@ export default class Cart extends Component {
       } else {
         flashShowMessage({
           type: 'danger',
-          message: response.message || 'Có lỗi xảy ra'
+          message: response.message || t('common:api.error.message')
         });
       }
     } catch (e) {
       console.log(e + ' site_cart_minus');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     }
   }
 
   // tăng số lượng sảm phẩm trong giỏ hàng
   async _item_qnt_increment(item) {
+    const { t } = this.props;
     try {
       const data = {
         quantity: 1,
@@ -203,14 +204,14 @@ export default class Cart extends Component {
       } else {
         flashShowMessage({
           type: 'danger',
-          message: response.message || 'Có lỗi xảy ra'
+          message: response.message || t('common:api.error.message')
         });
       }
     } catch (e) {
       console.log(e + ' site_cart_plus');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     }
   }
@@ -270,12 +271,11 @@ export default class Cart extends Component {
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.log(e + ' site_cart_update');
-
-      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 
   async _checkBoxHandler(item) {
+    const { t } = this.props;
     try {
       const data = {
         model: item.model
@@ -305,14 +305,14 @@ export default class Cart extends Component {
       } else {
         flashShowMessage({
           type: 'danger',
-          message: response.message || 'Có lỗi xảy ra'
+          message: response.message || t('common:api.error.mesesage')
         });
       }
     } catch (e) {
       console.log(e + ' site_cart_selected');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.mesesage')
       });
     } finally {
     }
@@ -323,12 +323,13 @@ export default class Cart extends Component {
     if (store.cart_data.count_selected > 0) {
       Actions.push(appConfig.routes.myAddress);
     } else {
+      const { t } = this.props;
       return Alert.alert(
-        'Thông báo',
-        'Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục',
+        t('notification.noItemSelected.title'),
+        t('notification.noItemSelected.messsage'),
         [
           {
-            text: 'Đồng ý',
+            text: t('notification.noItemSelected.accept'),
             onPress: () => {
               if (this.props.add_new) {
                 this.props.add_new();
@@ -342,6 +343,7 @@ export default class Cart extends Component {
   }
 
   render() {
+    const { t } = this.props;
     // cart is loading
     if (this.state.loading) {
       return <Indicator />;
@@ -351,7 +353,7 @@ export default class Cart extends Component {
 
     // cart is empty
     if (cart_data == null || cart_products == null) {
-      return <CenterText title="Chưa có sản phẩm nào" />;
+      return <CenterText title={t('noItems')} />;
     }
 
     return (
@@ -466,7 +468,7 @@ export default class Cart extends Component {
           </View>*/}
           <View style={[styles.cart_payment_rows, styles.mt12]}>
             <Text style={[styles.cart_payment_label, styles.text_both]}>
-              TỔNG CỘNG
+              {t('payment.total')}
             </Text>
             <View style={styles.cart_payment_price_box}>
               <Text style={[styles.cart_payment_price, styles.text_both]}>
@@ -483,13 +485,15 @@ export default class Cart extends Component {
         >
           <View style={styles.cart_payment_btn}>
             <Icon name="shopping-cart" size={24} color="#ffffff" />
-            <Text style={styles.cart_payment_btn_title}>ĐẶT HÀNG</Text>
+            <Text style={styles.cart_payment_btn_title}>
+              {t('payment.order')}
+            </Text>
           </View>
         </TouchableHighlight>
 
         <PopupConfirm
           ref_popup={ref => (this.refs_remove_item_confirm = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          title={t('popup.remove.message')}
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
@@ -738,3 +742,5 @@ const styles = StyleSheet.create({
     bottom: 0
   }
 });
+
+export default withTranslation(['cart', 'common'])(observer(Cart));

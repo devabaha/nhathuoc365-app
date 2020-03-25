@@ -105,7 +105,10 @@ const config = Object.freeze({
 
     // Schedule
     schedule: 'schedule',
-    scheduleConfirm: 'scheduleConfirm'
+    scheduleConfirm: 'scheduleConfirm',
+
+    // Modal Picker
+    modalPicker: 'modalPicker'
   }
 });
 

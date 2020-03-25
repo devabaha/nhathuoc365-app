@@ -28,7 +28,9 @@ class Launch extends Component {
       const response = await APIHandler.user_login({
         fb_access_token: ''
       });
-      setTimeout(() => this.handleAuthWithResponse(response), 2000);
+      setTimeout(() => {
+        this.handleAuthWithResponse(response);
+      }, 2000);
     } catch (error) {
       console.log(error);
       setTimeout(this.handleAuthorization, 1000);
@@ -36,8 +38,6 @@ class Launch extends Component {
   };
 
   handleAuthWithResponse = response => {
-    Actions.replace(appConfig.routes.schedule);
-    return;
     const user = response.data;
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;

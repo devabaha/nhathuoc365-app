@@ -10,7 +10,6 @@ import {
 import PropTypes from 'prop-types';
 
 import moment from 'moment';
-import momentVI from 'moment/locale/vi';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import appConfig from 'app-config';
 import { DAY_NAME_IN_WEEK, DATE_FORMAT } from '../constants';
@@ -92,7 +91,7 @@ class DateTimePicker extends Component {
               animated: true
             });
           }
-        }, 500);
+        }, 800);
       }
     );
   }
@@ -310,7 +309,7 @@ class DateTimePicker extends Component {
       momentDate,
       dayInWeek: momentDate.day(),
       day: momentDate.format('DD'),
-      month: momentDate.locale('vi').format('MMMM'),
+      month: momentDate.format('MMMM'),
       year: momentDate.format('YYYY'),
       fullDate: momentDate.format(DATE_FORMAT),
       isDisabled: this.checkDateDisabled(

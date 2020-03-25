@@ -14,6 +14,7 @@ import appConfig from 'app-config';
 class Confirm extends Component {
   static defaultProps = {
     date: 'Hôm nay, 24 tháng 3',
+    dateSubTitle: '',
     timeRange: '16:15 - 16:45',
     noteTitle: 'Ghi chú về cuộc hẹn',
     appointmentName: 'Tick ID',
@@ -38,22 +39,23 @@ class Confirm extends Component {
   }
 
   render() {
+    const { t } = this.props;
     const rows = [
       {
         iconName: 'calendar-star',
         title: this.props.date,
-        subTitle: 'test'
+        subTitle: this.props.dateDescription
       },
       {
         iconName: 'clock',
         title: this.props.timeRange,
-        subTitle: 'test'
+        subTitle: this.props.timeRangeDescription
       },
       {
         iconName: 'pencil',
-        title: this.props.noteTitle,
+        title: t('confirm.note.title'),
         editable: true,
-        placeholder: 'Chạm để nhập ghi chú...'
+        placeholder: t('confirm.note.placeholder')
       }
     ];
     return (
@@ -85,7 +87,7 @@ class Confirm extends Component {
               <Text style={styles.rowSubTitle}>{this.props.btnMessage}</Text>
             </View>
           }
-          title="Yêu cầu cuộc hẹn"
+          title={t('confirm.requestAppointment')}
         />
       </SafeAreaView>
     );
@@ -177,7 +179,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Confirm;
+export default withTranslation('schedule')(Confirm);
 
 const ConfirmRow = props => {
   return (

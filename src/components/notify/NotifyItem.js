@@ -17,8 +17,7 @@ import PopupConfirm from '../PopupConfirm';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 
-@observer
-export default class NotifyItem extends Component {
+class NotifyItem extends Component {
   constructor(props) {
     super(props);
 
@@ -77,8 +76,6 @@ export default class NotifyItem extends Component {
           }
         } catch (e) {
           console.log(e + ' user_news');
-
-          store.addApiQueue('user_news', this._getData.bind(this, delay));
         }
       }
     );
@@ -86,6 +83,7 @@ export default class NotifyItem extends Component {
 
   render() {
     var { item, item_data } = this.state;
+    const { t } = this.props;
 
     return (
       <View style={styles.container}>
@@ -181,7 +179,7 @@ export default class NotifyItem extends Component {
               onEndReachedThreshold={0}
               style={[styles.items_box]}
               ListHeaderComponent={() => (
-                <ListHeader title="— SẢN PHẨM LIÊN QUAN —" />
+                <ListHeader title={`—  ${t('relatedItems')}  —`} />
               )}
               data={item_data.related}
               renderItem={({ item, index }) => (
@@ -206,7 +204,7 @@ export default class NotifyItem extends Component {
 
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          title={t('cart:popup.remove.message')}
           height={110}
           otherClose={false}
           noConfirm={() => {
@@ -280,8 +278,6 @@ export default class NotifyItem extends Component {
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.log(e + ' site_cart_update');
-
-      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 }
@@ -361,3 +357,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1f1f1'
   }
 });
+
+export default withTranslation(['news', 'cart'])(observer(NotifyItem));

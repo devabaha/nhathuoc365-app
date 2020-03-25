@@ -123,6 +123,7 @@ class VoucherDetail extends Component {
   }
 
   renderSubmitButtons = () => {
+    const { t } = this.props;
     if (this.props.isUseOnlineMode) {
       return (
         <Button
@@ -130,7 +131,7 @@ class VoucherDetail extends Component {
           style={styles.getVoucherTitle}
           onPress={this.props.onRemoveVoucherOnline}
         >
-          Dùng sau
+          {t('detail.useLater')}
         </Button>
       );
     } else {
@@ -149,21 +150,22 @@ class VoucherDetail extends Component {
           }}
         >
           {this.props.canUseNow
-            ? 'Dùng ngay'
+            ? t('detail.useNow')
             : this.canBuyCampaign
-            ? 'Đổi thưởng'
-            : 'Nhận mã giảm giá'}
+            ? t('detail.redeem')
+            : t('detail.getVoucher')}
         </Button>
       );
     }
   };
 
   render() {
+    const { t } = this.props;
     const campaign = this.props.campaign || { data: {} };
     const tabs = [
       <Tab
         key={1}
-        heading="Thông tin"
+        heading={t('detail.tabs.information.title')}
         containerStyle={{
           paddingBottom: 12
         }}
@@ -177,11 +179,13 @@ class VoucherDetail extends Component {
 
     if (this.hasAddress) {
       tabs.push(
-        <Tab key={2} heading="Điểm áp dụng">
+        <Tab key={2} heading={t('detail.tabs.place.title')}>
           <View style={styles.addressWrapper}>
-            <Text style={styles.infoHeading}>Địa chỉ cửa hàng</Text>
+            <Text style={styles.infoHeading}>
+              {t('detail.tabs.place.address')}
+            </Text>
             <Text style={styles.infoSubHeading}>
-              {this.totalPlaces} cửa hàng
+              {this.totalPlaces} {t('detail.tabs.place.shop')}
             </Text>
           </View>
 
@@ -228,7 +232,9 @@ class VoucherDetail extends Component {
                 {this.canBuyCampaign ? (
                   <Fragment>
                     <View style={styles.voucherField}>
-                      <Text style={styles.voucherFieldLabel}>Đổi điểm</Text>
+                      <Text style={styles.voucherFieldLabel}>
+                        {t('detail.redeemPoint')}
+                      </Text>
                       <Text style={styles.voucherFieldValue}>
                         <Text style={styles.fieldPoint}>
                           {this.props.campaignPoint}
@@ -237,7 +243,9 @@ class VoucherDetail extends Component {
                       </Text>
                     </View>
                     <View style={[styles.voucherField, styles.rightField]}>
-                      <Text style={styles.voucherFieldLabel}>Dùng đến</Text>
+                      <Text style={styles.voucherFieldLabel}>
+                        {t('detail.useTo')}
+                      </Text>
                       <Text style={styles.voucherFieldValue}>
                         {campaign.data.expire_date}
                       </Text>
@@ -246,7 +254,7 @@ class VoucherDetail extends Component {
                 ) : (
                   <View style={styles.exprireBox}>
                     <Text style={styles.exprire}>
-                      {`Dùng đến ${campaign.data.expire_date}`}
+                      {`${t('detail.useTo')} ${campaign.data.expire_date}`}
                     </Text>
                   </View>
                 )}
@@ -272,7 +280,9 @@ class VoucherDetail extends Component {
                     />
 
                     <View style={styles.providerInfo}>
-                      <Text style={styles.providerBy}>Cung cấp bởi</Text>
+                      <Text style={styles.providerBy}>
+                        {t('detail.providedBy')}
+                      </Text>
                       <Text style={styles.providerName}>
                         {this.props.site.data.name}
                       </Text>
@@ -296,4 +306,4 @@ class VoucherDetail extends Component {
   }
 }
 
-export default VoucherDetail;
+export default withTranslation('voucher')(VoucherDetail);

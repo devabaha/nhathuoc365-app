@@ -72,20 +72,19 @@ class Payment extends Component {
     let moneyError = '';
     const min_transfer_view = formatMoney(this.props.wallet.min_transfer);
     const max_transfer_view = formatMoney(this.props.wallet.max_transfer);
+    const { t } = this.props;
 
     try {
       if (!text) {
-        moneyError = 'Vui lòng nhập số tiền';
+        moneyError = t('validate.empty');
       } else if (text < Number(this.props.wallet.min_transfer)) {
-        moneyError =
-          'Số tiền chuyển tối thiểu là ' +
-          min_transfer_view +
-          this.props.wallet.symbol;
+        moneyError = t('validate.min', {
+          money: min_transfer_view + this.props.wallet.symbol
+        });
       } else if (text > Number(this.props.wallet.max_transfer)) {
-        moneyError =
-          'Số tiền chuyển tối đa là ' +
-          max_transfer_view +
-          this.props.wallet.symbol;
+        moneyError = t('validate.max', {
+          money: max_transfer_view + this.props.wallet.symbol
+        });
       }
 
       this.setState({ moneyError });
@@ -136,6 +135,7 @@ class Payment extends Component {
   };
 
   render() {
+    const { t } = this.props;
     return (
       <KeyboardAvoidingView
         style={styles.container}
@@ -161,9 +161,9 @@ class Payment extends Component {
 
               <Input
                 ref={this.moneyInput}
-                placeholder="Nhập số tiền"
+                placeholder={t('input.money.placeholder')}
                 keyboardType="number-pad"
-                title="Số tiền"
+                title={t('input.money.title')}
                 errorMess={this.state.moneyError}
                 onChange={this.clearMoneyError}
                 onClear={this.clearMoneyError}
@@ -173,15 +173,17 @@ class Payment extends Component {
               <Input
                 ref={this.noteInput}
                 onChange={this.onNoteChange}
-                placeholder="Nhập lời nhắn cho người nhận"
-                title={`Tin nhắn (${this.state.note.length}/${MAX_NOTE_LENGTH})`}
+                placeholder={t('input.note.placeholder')}
+                title={t('input.note.title', {
+                  counter: `${this.state.note.length}/${MAX_NOTE_LENGTH}`
+                })}
                 multiline
                 maxLength={MAX_NOTE_LENGTH}
                 containerStyle={{ marginBottom: 0 }}
               />
             </View>
           </ScrollView>
-          <Button title="Chuyển tiền" onPress={this.goToConfirm} />
+          <Button title={t('transferBtnTitle')} onPress={this.goToConfirm} />
         </SafeAreaView>
       </KeyboardAvoidingView>
     );
@@ -255,4 +257,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Payment);
+export default withTranslation('payment')(observer(Payment));

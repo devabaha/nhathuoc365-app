@@ -1,0 +1,21 @@
+{
+  "smsBrandNameSendCodeFailMessage": "Lỗi xác thực, vui lòng thử lại.",
+  "smsBrandNameVerifyFailMessage": "03: Mã xác minh không hợp lệ, vui lòng thử lại.",
+  "firebaseConfirmCodeFailMessage01": "01: Mã xác minh không hợp lệ, vui lòng thử lại.",
+  "firebaseConfirmCodeFailMessage02": "02: Mã xác minh không hợp lệ, vui lòng thử lại.",
+
+  "countrySelectionTitle": "Chọn quốc gia",
+
+  "phoneWelcomeMessage": "Xin chào!",
+  "phoneDescription": "Nhập số điện thoại của bạn để tiếp tục",
+  "phonePlaceholder": "8765 4321",
+  "phoneConfirmMessage": "Tiếp tục",
+
+  "verifyCodeInputTitle": "Nhập mã code được gửi tới:",
+  "verifyCodeInputPlaceholder": "Nhập mã code...",
+  "verifyCodeInputConfirmMessage": "Tiếp tục",
+
+  "notReceiveCode": "Không nhận được mã?",
+  "requestNewCodeWithTime": "Yêu cầu mã mới sau",
+  "requestNewCode": "Yêu cầu mã mới"
+}

@@ -112,6 +112,7 @@ class Confirm extends Component {
   }
 
   async _siteInfo(site_id) {
+    const { t } = this.props;
     try {
       const response = await APIHandler.site_detail(site_id);
 
@@ -128,7 +129,7 @@ class Confirm extends Component {
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || 'Có lỗi xảy ra'
+            message: response.message || t('common:api.error.message')
           });
         }
       }
@@ -136,14 +137,14 @@ class Confirm extends Component {
       console.log(e + ' site_info');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     }
   }
 
   async _getOrdersItem(site_id, page_id) {
     try {
-      const response = await APIHandler.site_cart_by_id(site_id, page_id);
+      const response = await APIHandler.site_cart_show(site_id, page_id);
 
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
@@ -161,7 +162,7 @@ class Confirm extends Component {
         }
       }
     } catch (e) {
-      console.log(e + ' site_cart_by_id');
+      console.log(e + ' site_cart_show');
     }
   }
 
@@ -225,6 +226,7 @@ class Confirm extends Component {
         continue_loading: true
       },
       async () => {
+        const { t } = this.props;
         try {
           const data = {
             ref_user_id: store.cart_data ? store.cart_data.ref_user_id : ''
@@ -273,7 +275,7 @@ class Confirm extends Component {
             } else {
               flashShowMessage({
                 type: 'danger',
-                message: response.message || 'Có lỗi xảy ra'
+                message: response.message || t('common:api.error.message')
               });
             }
           }
@@ -281,7 +283,7 @@ class Confirm extends Component {
           console.log(e + ' site_cart_order');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         } finally {
           !this.unmounted &&
@@ -298,12 +300,13 @@ class Confirm extends Component {
     Keyboard.dismiss();
 
     if (store.cart_data.count_selected <= 0) {
+      const { t } = this.props;
       return Alert.alert(
-        'Thông báo',
-        'Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục',
+        t('cart:notification.noItemSelected.title'),
+        t('cart:notification.noItemSelected.message'),
         [
           {
-            text: 'Đồng ý',
+            text: t('cart:notification.noItemSelected.accept'),
             onPress: () => {
               if (this.props.add_new) {
                 this.props.add_new();
@@ -408,6 +411,7 @@ class Confirm extends Component {
     if (!this.cartItemConfirmRemove) {
       return;
     }
+    const { t } = this.props;
 
     this.start_time = time();
 
@@ -450,7 +454,7 @@ class Confirm extends Component {
           });
         } else {
           flashShowMessage({
-            message: response.message || 'Có lỗi xảy ra',
+            message: response.message || t('common:api.error.message'),
             type: 'danger'
           });
         }
@@ -459,7 +463,7 @@ class Confirm extends Component {
     } catch (e) {
       console.log(e + ' site_cart_update');
       flashShowMessage({
-        message: 'Có lỗi xảy ra',
+        message: t('common:api.error.message'),
         type: 'danger'
       });
     }
@@ -481,7 +485,10 @@ class Confirm extends Component {
   }
 
   _coppyAddress(address) {
-    var address_string = `Địa chỉ giao hàng: ${address.name}, ${address.tel}, ${address.address}`;
+    const { t } = this.props;
+    var address_string = `${t('confirm.address.title')}: ${address.name}, ${
+      address.tel
+    }, ${address.address}`;
 
     Clipboard.setString(address_string);
 
@@ -590,6 +597,7 @@ class Confirm extends Component {
   handleRemoveVoucherFailure = response => {};
 
   render() {
+    const { t } = this.props;
     var { single } = this.state;
     // from this
     if (single) {
@@ -668,7 +676,7 @@ class Confirm extends Component {
                     styles.payments_nav_items_title_active
                   ]}
                 >
-                  1. Địa chỉ
+                  {t('confirm.process.step1')}
                 </Text>
 
                 <View style={styles.payments_nav_items_active} />
@@ -699,7 +707,7 @@ class Confirm extends Component {
                     styles.payments_nav_items_title_active
                   ]}
                 >
-                  2. Xác nhận
+                  {t('confirm.process.step2')}
                 </Text>
 
                 <View style={styles.payments_nav_items_right_active} />
@@ -750,15 +758,20 @@ class Confirm extends Component {
                       size={16}
                       color="#999999"
                     />
-                    <Text style={styles.input_label}>Thông tin đơn hàng</Text>
+                    <Text style={styles.input_label}>
+                      {t('confirm.information.title')}
+                    </Text>
                   </View>
                   <Text style={styles.desc_content}>
-                    Mã đơn hàng: {cart_data.cart_code}
+                    {`${t('confirm.information.ordersCode')}:`}{' '}
+                    {cart_data.cart_code}
                   </Text>
                 </View>
                 <View style={styles.address_default_box}>
                   <View style={styles.orders_status_box}>
-                    <Text style={styles.address_default_title}>Trạng thái</Text>
+                    <Text style={styles.address_default_title}>
+                      {t('confirm.information.status')}
+                    </Text>
                     <Text style={[styles.orders_status]}>
                       {cart_data.status_view}
                     </Text>
@@ -776,7 +789,7 @@ class Confirm extends Component {
             </TouchableHighlight>
           </View>
 
-          {single && <ListHeader title="Thông tin này đã chính xác?" />}
+          {single && <ListHeader title={t('confirm.information.recheck')} />}
 
           <View
             style={[
@@ -804,7 +817,9 @@ class Confirm extends Component {
                   size={13}
                   color="#999999"
                 />
-                <Text style={styles.input_label}>Địa chỉ giao hàng</Text>
+                <Text style={styles.input_label}>
+                  {t('confirm.address.title')}
+                </Text>
               </View>
               <View
                 style={[
@@ -831,7 +846,7 @@ class Confirm extends Component {
                         styles.title_active
                       ]}
                     >
-                      Thay đổi
+                      {t('confirm.change')}
                     </Text>
                   </TouchableHighlight>
                 ) : (
@@ -849,7 +864,7 @@ class Confirm extends Component {
                         styles.title_active
                       ]}
                     >
-                      Sao chép
+                      {t('confirm.copy.title')}
                     </Text>
                   </TouchableHighlight>
                 )}
@@ -901,7 +916,9 @@ class Confirm extends Component {
                   size={13}
                   color={DEFAULT_COLOR}
                 />
-                <Text style={styles.input_label}>Hình thức thanh toán</Text>
+                <Text style={styles.input_label}>
+                  {t('confirm.paymentMethod.title')}
+                </Text>
               </View>
               <View
                 style={[
@@ -924,7 +941,7 @@ class Confirm extends Component {
                   <Text
                     style={[styles.address_default_title, styles.title_active]}
                   >
-                    Thay đổi
+                    {t('confirm.change')}
                   </Text>
                 </TouchableHighlight>
               </View>
@@ -947,7 +964,9 @@ class Confirm extends Component {
                   )}
                 </View>
               ) : (
-                <Text style={styles.placeholder}>Chưa chọn</Text>
+                <Text style={styles.placeholder}>
+                  {t('confirm.paymentMethod.unselected')}
+                </Text>
               )}
             </View>
           </View>
@@ -971,9 +990,11 @@ class Confirm extends Component {
                   size={15}
                   color="#999999"
                 />
-                <Text style={styles.input_label}>Ghi chú </Text>
+                <Text style={styles.input_label}>
+                  {`${t('confirm.note.title')} `}
+                </Text>
                 <Text style={styles.input_label_help}>
-                  (Thời gian giao hàng, ghi chú khác)
+                  ({t('confirm.note.description')})
                 </Text>
               </View>
             </TouchableHighlight>
@@ -992,7 +1013,7 @@ class Confirm extends Component {
                   ]}
                   keyboardType="default"
                   maxLength={250}
-                  placeholder="Nhập ghi chú của bạn tại đây"
+                  placeholder={t('confirm.note.placeholder')}
                   placeholderTextColor="#999999"
                   multiline={true}
                   underlineColorAndroid="transparent"
@@ -1015,7 +1036,7 @@ class Confirm extends Component {
               </View>
             ) : (
               <Text style={styles.input_note_value}>
-                {cart_data.user_note || 'Không có ghi chú'}
+                {cart_data.user_note || t('confirm.note.noNote')}
               </Text>
             )}
           </View>
@@ -1030,7 +1051,9 @@ class Confirm extends Component {
                   color="#999999"
                 />
                 <Text style={styles.input_label}>
-                  {single ? 'Mặt hàng đã chọn' : 'Mặt hàng đã mua'}
+                  {single
+                    ? t('confirm.items.selected')
+                    : t('confirm.items.shopped')}
                 </Text>
               </View>
             </View>
@@ -1138,7 +1161,7 @@ class Confirm extends Component {
           >
             <View style={[styles.address_name_box]}>
               <Text style={[styles.text_total_items, styles.feeLabel]}>
-                Giá tạm tính
+                {t('confirm.payment.price.temp')}
               </Text>
               <View style={styles.address_default_box}>
                 <TouchableHighlight
@@ -1184,7 +1207,8 @@ class Confirm extends Component {
                           { color: 'brown' }
                         ]}
                       >
-                        Giảm {cart_data.promotions.discount_text}
+                        {t('confirm.payment.discount.prefix')}{' '}
+                        {cart_data.promotions.discount_text}
                       </Text>
                     </TouchableHighlight>
                   </View>
@@ -1240,9 +1264,9 @@ class Confirm extends Component {
               <Text
                 style={[styles.text_total_items, styles.feeLabel, styles.both]}
               >
-                Thành tiền{' '}
+                {`${t('confirm.payment.price.total')} `}
                 <Text style={{ fontWeight: '400', fontSize: 14 }}>
-                  ({cart_data.count_selected} sản phẩm)
+                  ({cart_data.count_selected} {t('confirm.unitName')})
                 </Text>
               </Text>
               <View style={styles.address_default_box}>
@@ -1280,7 +1304,7 @@ class Confirm extends Component {
                       styles.useVoucherLabel
                     ]}
                   >
-                    Khuyến mãi
+                    {t('confirm.payment.discount.title')}
                   </Text>
                 </View>
                 <Button
@@ -1307,7 +1331,9 @@ class Confirm extends Component {
                       {` ${cart_data.user_voucher.voucher_name}`}
                     </Text>
                   ) : (
-                    <Text style={styles.addVoucherLabel}>Thêm khuyến mãi</Text>
+                    <Text style={styles.addVoucherLabel}>
+                      {t('confirm.payment.discount.add')}
+                    </Text>
                   )}
                 </Button>
               </View>
@@ -1367,7 +1393,9 @@ class Confirm extends Component {
                 >
                   <View style={styles.boxButtonAction}>
                     <Icon name="comments-o" size={16} color="#333333" />
-                    <Text style={styles.buttonActionTitle}>Huỷ đơn</Text>
+                    <Text style={styles.buttonActionTitle}>
+                      {t('confirm.cancel')}
+                    </Text>
                   </View>
                 </TouchableHighlight>
               )}
@@ -1401,7 +1429,7 @@ class Confirm extends Component {
                         }
                       ]}
                     >
-                      Sửa đơn
+                      {t('confirm.edit')}
                     </Text>
                   </View>
                 </TouchableHighlight>
@@ -1432,7 +1460,7 @@ class Confirm extends Component {
                         }
                       ]}
                     >
-                      Mua lại
+                      {t('confirm.rebuy')}
                     </Text>
                   </View>
                 </TouchableHighlight>
@@ -1463,7 +1491,7 @@ class Confirm extends Component {
                         }
                       ]}
                     >
-                      Chọn thêm mặt hàng
+                      {t('confirm.addMoreItems')}
                     </Text>
                   </View>
                 </TouchableHighlight>
@@ -1514,7 +1542,7 @@ class Confirm extends Component {
                       }
                     ]}
                   >
-                    Phản ánh & Đánh giá
+                    {t('confirm.feedback')}
                   </Text>
                 </View>
               </TouchableHighlight>
@@ -1548,7 +1576,9 @@ class Confirm extends Component {
                   <Icon name="check" size={20} color="#ffffff" />
                 )}
               </View>
-              <Text style={styles.cart_payment_btn_title}>ĐẶT HÀNG</Text>
+              <Text style={styles.cart_payment_btn_title}>
+                {t('confirm.order.title')}
+              </Text>
             </View>
           </TouchableHighlight>
         )}
@@ -1556,13 +1586,11 @@ class Confirm extends Component {
         {this.state.suggest_register && !is_login ? (
           <PopupConfirm
             ref_popup={ref => (this.popup_message = ref)}
-            title={
-              'Bạn đã đặt hàng thành công.\n\nĐăng ký thành viên để hưởng nhiều ưu đãi, khuyến mãi hơn nữa!'
-            }
-            noTitle="Xem đơn hàng"
+            title={t('confirm.order.popup.notLoggedIn.description')}
+            noTitle={t('confirm.order.popup.notLoggedIn.cancel')}
             noBlur
             noConfirm={this._viewOrders.bind(this)}
-            yesTitle="Đăng ký ngay!"
+            yesTitle={t('confirm.order.popup.notLoggedIn.accept')}
             yesConfirm={this._onRegister.bind(this)}
             height={300}
             otherClose={false}
@@ -1574,7 +1602,9 @@ class Confirm extends Component {
                 <View style={styles.success_box}>
                   <View style={styles.success_icon_box}>
                     <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
-                    <Text style={styles.success_icon_label}>THÀNH CÔNG</Text>
+                    <Text style={styles.success_icon_label}>
+                      {t('confirm.order.popup.title')}
+                    </Text>
                   </View>
                   <Text style={styles.success_title}>{title}</Text>
 
@@ -1589,7 +1619,7 @@ class Confirm extends Component {
                     }}
                     keyboardType="default"
                     maxLength={100}
-                    placeholder="Nhập tên của bạn"
+                    placeholder={t('confirm.order.popup.userPlaceholder')}
                     placeholderTextColor="#999999"
                     underlineColorAndroid="transparent"
                     onChangeText={value => {
@@ -1611,7 +1641,7 @@ class Confirm extends Component {
                     }}
                     keyboardType="default"
                     maxLength={250}
-                    placeholder="Nhập số điện thoại"
+                    placeholder={t('confirm.order.popup.telPlaceholder')}
                     placeholderTextColor="#999999"
                     underlineColorAndroid="transparent"
                     onChangeText={value => {
@@ -1650,10 +1680,10 @@ class Confirm extends Component {
         ) : (
           <PopupConfirm
             ref_popup={ref => (this.popup_message = ref)}
-            title="Đơn hàng của bạn sẽ được chúng tôi giao đúng hẹn. Xin cảm ơn"
-            noTitle="Xem đơn hàng"
+            title={t('confirm.order.popup.loggedIn.description')}
+            noTitle={t('confirm.order.popup.loggedIn.cancel')}
             noConfirm={this._viewOrders.bind(this)}
-            yesTitle="Tiếp tục mua hàng"
+            yesTitle={t('confirm.order.popup.loggedIn.accept')}
             yesConfirm={this._continueShopping.bind(this)}
             height={150}
             otherClose={false}
@@ -1662,7 +1692,9 @@ class Confirm extends Component {
                 <View style={styles.success_box}>
                   <View style={styles.success_icon_box}>
                     <Icon name="check-circle" size={24} color={DEFAULT_COLOR} />
-                    <Text style={styles.success_icon_label}>THÀNH CÔNG</Text>
+                    <Text style={styles.success_icon_label}>
+                      {t('confirm.order.popup.title')}
+                    </Text>
                   </View>
                   <Text style={styles.success_title}>{title}</Text>
                 </View>
@@ -1673,12 +1705,12 @@ class Confirm extends Component {
 
         <Sticker
           active={this.state.coppy_sticker_flag}
-          message="Sao chép thành công."
+          message={t('confirm.copy.success')}
         />
 
         <PopupConfirm
           ref_popup={ref => (this.refs_remove_item_confirm = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          title={t('cart:popup.remove.message')}
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
@@ -1687,7 +1719,7 @@ class Confirm extends Component {
 
         <PopupConfirm
           ref_popup={ref => (this.refs_cancel_cart = ref)}
-          title="Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
+          title={t('cart:popup.cancel.message')}
           height={110}
           noConfirm={this._closePopupCancel.bind(this)}
           yesConfirm={this._cancelCart.bind(this)}
@@ -1705,7 +1737,7 @@ class Confirm extends Component {
 
         <PopupConfirm
           ref_popup={ref => (this.refs_edit_cart = ref)}
-          title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
+          title={t('cart:popup.edit.message')}
           height={110}
           noConfirm={this._closePopupEdit.bind(this)}
           yesConfirm={this._editCart.bind(this)}
@@ -1898,6 +1930,7 @@ class ItemCartComponent extends Component {
         check_loading: true
       },
       async () => {
+        const { t } = this.props;
         try {
           const data = {
             model: item.model
@@ -1927,7 +1960,7 @@ class ItemCartComponent extends Component {
               });
             } else {
               flashShowMessage({
-                message: response.message || 'Có lỗi xảy ra',
+                message: response.message || t('common:api.error.message'),
                 type: 'danger'
               });
             }
@@ -1939,7 +1972,7 @@ class ItemCartComponent extends Component {
             console.log(e + ' site_cart_selected');
           }
           flashShowMessage({
-            message: 'Có lỗi xảy ra',
+            message: t('common:api.error.message'),
             type: 'danger'
           });
         } finally {
@@ -1969,6 +2002,7 @@ class ItemCartComponent extends Component {
       },
       async () => {
         try {
+          const { t } = this.props;
           const data = {
             quantity: 1,
             model: item.model
@@ -1988,7 +2022,7 @@ class ItemCartComponent extends Component {
               });
             } else {
               flashShowMessage({
-                message: response.message || 'Có lỗi xảy ra',
+                message: response.message || t('common:api.error.message'),
                 type: 'danger'
               });
             }
@@ -1996,7 +2030,7 @@ class ItemCartComponent extends Component {
         } catch (e) {
           console.log(e + ' site_cart_minus');
           flashShowMessage({
-            message: 'Có lỗi xảy ra',
+            message: t('common:api.error.message'),
             type: 'danger'
           });
         } finally {
@@ -2016,6 +2050,7 @@ class ItemCartComponent extends Component {
         increment_loading: true
       },
       async () => {
+        const { t } = this.props;
         try {
           const data = {
             quantity: 1,
@@ -2038,7 +2073,7 @@ class ItemCartComponent extends Component {
               });
             } else {
               flashShowMessage({
-                message: response.message || 'Có lỗi xảy ra',
+                message: response.message || t('common:api.error.message'),
                 type: 'danger'
               });
             }
@@ -2046,7 +2081,7 @@ class ItemCartComponent extends Component {
         } catch (e) {
           console.log(e + ' site_cart_plus');
           flashShowMessage({
-            message: 'Có lỗi xảy ra',
+            message: t('common:api.error.message'),
             type: 'danger'
           });
         } finally {
@@ -2655,4 +2690,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Confirm);
+export default withTranslation(['orders', 'cart', 'common'])(observer(Confirm));

@@ -31,14 +31,6 @@ class Items extends Component {
     this.unmounted = true;
   }
 
-  _selectItemAttrs(item) {
-    Actions.push(appConfig.routes.itemAttribute, {
-      itemId: item.id,
-      onSubmit: (quantity, modal_key) =>
-        this._addCart(item, quantity, modal_key)
-    });
-  }
-
   // add item vào giỏ hàng
   _addCart = (item, quantity = 1, model = '') => {
     if (this.props.buyPress) {
@@ -58,6 +50,7 @@ class Items extends Component {
           quantity,
           model
         };
+        const { t } = this.props;
 
         try {
           const response = await APIHandler.site_cart_plus(
@@ -65,59 +58,63 @@ class Items extends Component {
             item.id,
             data
           );
-          console.log(response);
+
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
-              // if (isIOS) {
-              //   store.setCartFlyShow(true);
-              // }
+              if (response.data.attrs) {
+                Actions.push(appConfig.routes.itemAttribute, {
+                  itemId: item.id,
+                  onSubmit: (quantity, modal_key) =>
+                    this._addCart(item, quantity, modal_key)
+                });
+              } else {
+                store.setCartData(response.data);
 
-              store.setCartData(response.data);
+                var index = null,
+                  length = 0;
+                if (response.data.products) {
+                  length = Object.keys(response.data.products).length;
 
-              var index = null,
-                length = 0;
-              if (response.data.products) {
-                length = Object.keys(response.data.products).length;
+                  Object.keys(response.data.products)
+                    .reverse()
+                    .some((key, key_index) => {
+                      let value = response.data.products[key];
+                      if (value.id == item.id) {
+                        index = key_index;
+                        return true;
+                      }
+                    });
+                }
 
-                Object.keys(response.data.products)
-                  .reverse()
-                  .some((key, key_index) => {
-                    let value = response.data.products[key];
-                    if (value.id == item.id) {
-                      index = key_index;
-                      return true;
-                    }
-                  });
+                // if (isIOS) {
+                //   setTimeout(() => {
+                //     store.setCartFlyPosition({
+                //       px: 24,
+                //       py: Util.size.height - NAV_HEIGHT - 64,
+                //       width: 60,
+                //       height: 60
+                //     });
+                //     layoutAnimation();
+                //   }, 500);
+                // }
+
+                if (index !== null && index < length) {
+                  store.setCartItemIndex(index);
+                  Events.trigger(NEXT_PREV_CART, { index });
+                  // setTimeout(() => {
+                  //   store.setCartFlyShow(false);
+                  //   store.setCartFlyImage(null);
+                  // }, 750);
+                }
+
+                flashShowMessage({
+                  message: response.message,
+                  type: 'success'
+                });
               }
-
-              // if (isIOS) {
-              //   setTimeout(() => {
-              //     store.setCartFlyPosition({
-              //       px: 24,
-              //       py: Util.size.height - NAV_HEIGHT - 64,
-              //       width: 60,
-              //       height: 60
-              //     });
-              //     layoutAnimation();
-              //   }, 500);
-              // }
-
-              if (index !== null && index < length) {
-                store.setCartItemIndex(index);
-                Events.trigger(NEXT_PREV_CART, { index });
-                // setTimeout(() => {
-                //   store.setCartFlyShow(false);
-                //   store.setCartFlyImage(null);
-                // }, 750);
-              }
-
-              flashShowMessage({
-                message: response.message,
-                type: 'success'
-              });
             } else {
               flashShowMessage({
-                message: response.message || 'Có lỗi xảy ra',
+                message: response.message || t('common:api.error.message'),
                 type: 'danger'
               });
             }
@@ -126,7 +123,7 @@ class Items extends Component {
           console.warn(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         } finally {
           !this.unmounted &&
@@ -158,7 +155,7 @@ class Items extends Component {
   }
 
   render() {
-    let { item, index, onPress, isCategories, isLocationItem } = this.props;
+    let { item, index, onPress, isCategories, isLocationItem, t } = this.props;
 
     // render item chọn khu vực đặt hàng
 
@@ -262,7 +259,7 @@ class Items extends Component {
                     fontSize: 14
                   }}
                 >
-                  XEM THÊM
+                  {t('item.more')}
                 </Text>
               </View>
             )}
@@ -336,7 +333,7 @@ class Items extends Component {
           <TouchableHighlight
             style={styles.item_add_cart_btn}
             underlayColor="transparent"
-            onPress={this._selectItemAttrs.bind(this, item)}
+            onPress={() => this._addCart(item)}
           >
             <View
               style={{
@@ -364,9 +361,13 @@ class Items extends Component {
                   <Icon name="cart-plus" size={22} color={DEFAULT_COLOR_RED} />
                 )}
                 {item.book_flag == 1 ? (
-                  <Text style={styles.item_add_book_title}>Đặt trước</Text>
+                  <Text style={styles.item_add_book_title}>
+                    {t('product:shopTitle.preOrder')}
+                  </Text>
                 ) : (
-                  <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+                  <Text style={styles.item_add_cart_title}>
+                    {t('product:shopTitle.buy')}
+                  </Text>
                 )}
 
                 {quantity > 0 && (
@@ -545,4 +546,6 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Items);
+export default withTranslation(['stores', 'product', 'common'])(
+  observer(Items)
+);

@@ -1,0 +1,18 @@
+{
+  "validate": {
+    "empty": "Vui lòng nhập số tiền",
+    "min": "Số tiền chuyển tối thiểu là {{money}}",
+    "max": "Số tiền chuyển tối đa là {{money}}"
+  },
+  "input": {
+    "money": {
+      "title": "Số tiền",
+      "placeholder": "Nhập số tiền"
+    },
+    "note": {
+      "title": "Tin nhắn ({{counter}})",
+      "placeholder": "Nhập lời nhắn cho người nhận"
+    }
+  },
+  "transferBtnTitle": "Chuyển tiền"
+}

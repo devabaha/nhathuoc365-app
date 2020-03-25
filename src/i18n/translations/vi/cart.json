@@ -1,0 +1,28 @@
+{
+  "popup": {
+    "edit": {
+      "message": "Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
+    },
+    "remove": {
+      "message": "Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+    },
+    "cancel": {
+      "message": "Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
+    }
+  },
+  "notification": {
+    "noItemSelected": {
+      "title": "Thông báo",
+      "message": "Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục",
+      "accept": "Đồng ý"
+    }
+  },
+  "noFooterItems": "Giỏ hàng trống\nHãy mua sắm ngay!",
+  "noItems": "Chưa có sản phẩm nào",
+  "discount": "giảm",
+  "payment": {
+    "total": "TỔNG CỘNG",
+    "order": "ĐẶT HÀNG",
+    "cart": "GIỎ HÀNG"
+  }
+}

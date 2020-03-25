@@ -120,8 +120,9 @@ class Stores extends Component {
   }
 
   parseDataCategories(response) {
+    const { t } = this.props;
     if (!this.props.categoryId) {
-      response.data.categories.unshift({ id: 0, name: 'Cửa hàng' });
+      response.data.categories.unshift({ id: 0, name: t('tabs.store.title') });
     }
     this.setState(
       {
@@ -156,8 +157,6 @@ class Stores extends Component {
       }
     } catch (e) {
       console.log(e + ' site_info');
-
-      store.addApiQueue('site_info', this._getCategoriesNavFromServer);
     }
   };
 
@@ -228,16 +227,22 @@ class Stores extends Component {
         })
       );
 
-      if (item || nav_only) {
+      if (item) {
         this.setState({
           category_nav_index: index,
           selected_category: item
+        });
+      } else if (nav_only) {
+        this.setState({
+          category_nav_index: index,
+          selected_category: this.state.categories_data[index]
         });
       }
     }
   }
 
   render() {
+    const { t } = this.props;
     return (
       <View style={styles.container}>
         <View style={styles.categories_nav}>
@@ -329,7 +334,7 @@ class Stores extends Component {
 
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
-          title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
+          title={t('cart:popup.remove.message')}
           height={110}
           noConfirm={this._closePopup.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
@@ -432,7 +437,6 @@ class Stores extends Component {
       this.cartItemConfirmRemove = undefined;
     } catch (e) {
       console.log(e + ' site_cart_update');
-      store.addApiQueue('site_cart_update', this._removeCartItem.bind(this));
     }
   }
 }
@@ -479,4 +483,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Stores);
+export default withTranslation(['stores', 'cart'])(observer(Stores));

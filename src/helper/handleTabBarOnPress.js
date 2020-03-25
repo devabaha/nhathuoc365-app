@@ -7,7 +7,7 @@ export default function handleTabBarOnPress(props) {
   switch (props.navigation.state.key) {
     case appConfig.routes.scanQrCodeTab:
       Actions.push(appConfig.routes.qrBarCode, {
-        title: 'Mã tài khoản'
+        title: props.t('screen.qrBarCode.mainTitle')
       });
       break;
     default:
