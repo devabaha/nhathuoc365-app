@@ -19,9 +19,11 @@ const Info = props => {
       //     />
       // }
     >
-      <Text style={[styles.des]}>
-        {props.content ? props.content : t('tabs.information.message')}
-      </Text>
+      {!props.loading && (
+        <Text style={[styles.des]}>
+          {props.content ? props.content : t('tabs.information.message')}
+        </Text>
+      )}
     </ScrollView>
   );
 };
@@ -32,7 +34,7 @@ const styles = StyleSheet.create({
     color: '#404040'
   },
   des: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 2
   },
   notice: {

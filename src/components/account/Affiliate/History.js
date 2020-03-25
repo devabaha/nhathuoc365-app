@@ -39,7 +39,7 @@ const History = props => {
       //     />
       // }
     >
-      {historyData.length ? (
+      {props.loading ? null : historyData.length ? (
         historyRender
       ) : (
         <Text style={styles.note}>{t('tab.referralList.desc')}</Text>

@@ -13,6 +13,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 
+import Loading from '../../Loading';
+
 const History = props => {
   const { t } = props;
   var historyData = props.historyData ? props.historyData : [];
@@ -41,7 +43,7 @@ const History = props => {
       //     />
       // }
     >
-      {historyData.length ? (
+      {props.loading ? null : historyData.length ? (
         historyRender
       ) : (
         <Text style={styles.note}>{t('tabs.history.message')}</Text>

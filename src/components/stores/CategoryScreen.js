@@ -74,7 +74,8 @@ class CategoryScreen extends Component {
     if (
       index == cate_index &&
       this.state.items_data == null &&
-      this.props != nextProps
+      this.props != nextProps &&
+      !this.state.loading
     ) {
       this.start_time = time();
       // get list products by category_id
