@@ -104,7 +104,8 @@ const config = Object.freeze({
     serviceOrders: 'serviceOrders',
 
     // Schedule
-    schedule: 'schedule'
+    schedule: 'schedule',
+    scheduleConfirm: 'scheduleConfirm'
   }
 });
 

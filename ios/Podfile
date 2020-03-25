@@ -21,8 +21,6 @@ target 'my_food_new' do
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
   pod 'react-native-fast-image', :path => '../node_modules/react-native-fast-image'
   pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
-
-  pod 'RNFS', :path => '../node_modules/react-native-fs'
   
   pod 'RNFirebase', :path => '../node_modules/react-native-firebase/ios'
   pod 'RNFirebase/Crashlytics', :path => '../node_modules/react-native-firebase/ios'

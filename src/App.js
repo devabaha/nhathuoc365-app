@@ -131,6 +131,7 @@ import ItemAttribute from './components/stores/ItemAttribute';
 import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Schedule from './containers/Schedule';
+import { ScheduleConfirm } from './containers/Schedule/Confirm';
 
 /**
  * Not allow font scaling
@@ -278,10 +279,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.handleAddListenerOneSignal();
-    this.syncImmediate();
-    this.toggleAllowRestart();
-    this.getUpdateMetadata();
+    // this.handleAddListenerOneSignal();
+    // this.syncImmediate();
+    // this.toggleAllowRestart();
+    // this.getUpdateMetadata();
   }
 
   componentWillUnmount() {
@@ -479,7 +480,8 @@ const styles = StyleSheet.create({
 });
 
 // wrap App with codepush HOC
-export default codePush(App);
+// export default codePush(App);
+export default App;
 
 class RootRouter extends Component {
   state = {};
@@ -1258,6 +1260,17 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.schedule}_1`}
                     title="Chọn ngày và giờ"
                     component={Schedule}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SCENE SCHEDULE CONFIRM ================ */}
+                <Stack key={appConfig.routes.scheduleConfirm}>
+                  <Scene
+                    key={`${appConfig.routes.scheduleConfirm}_1`}
+                    title="Yêu cầu đặt lịch"
+                    component={ScheduleConfirm}
                     {...whiteNavBarConfig}
                     back
                   />
