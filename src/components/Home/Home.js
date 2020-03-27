@@ -153,8 +153,8 @@ class Home extends Component {
               this.props.userInfo
                 ? this.props.userInfo.name
                   ? this.props.userInfo.name
-                  : t('defaultUserName')
-                : t('defaultUserName')
+                  : t('welcome.defaultUserName')
+                : t('welcome.defaultUserName')
             }
             onPressNoti={this.props.onPressNoti}
           />
