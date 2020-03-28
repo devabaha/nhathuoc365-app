@@ -1319,7 +1319,7 @@ class RootRouter extends Component {
                 component={ModalPicker}
               />
 
-              {/* ================ MODAL PICKER ================ */}
+              {/* ================ MODAL LIST ================ */}
               <Stack key={appConfig.routes.modalList} component={ModalList} />
             </Lightbox>
 
