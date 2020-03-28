@@ -134,6 +134,7 @@ import { ScheduleConfirm } from './containers/Schedule/Confirm';
 import * as RNLocalize from 'react-native-localize';
 import { arrayLanguages } from './i18n/constants';
 import ModalPicker from './components/ModalPicker';
+import ModalList from './components/ModalList';
 
 /**
  * Not allow font scaling
@@ -1317,6 +1318,9 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalPicker}
                 component={ModalPicker}
               />
+
+              {/* ================ MODAL PICKER ================ */}
+              <Stack key={appConfig.routes.modalList} component={ModalList} />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
