@@ -47,7 +47,6 @@ class Launch extends Component {
         store.setUserInfo(user);
         EventTracker.setUserId(user.id);
         Actions.replace(appConfig.routes.primaryTabbar);
-        Actions.replace(appConfig.routes.homeTab);
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
