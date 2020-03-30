@@ -1,0 +1,20 @@
+{
+  "confirmNotification": {
+    "title": "Thông báo",
+    "description": "Nhập địa chỉ nhận hàng trước khi Tiếp tục",
+    "accept": "Đồng ý"
+  },
+  "address": {
+    "title": "1. Địa chỉ",
+    "receive": "ĐỊA CHỈ NHẬN HÀNG",
+    "new": "Thêm địa chỉ mới",
+    "delivery": "Giao tới địa chỉ này",
+    "default": "[Mặc định]",
+    "edit": "Chỉnh sửa"
+  },
+  "confirm": {
+    "title": "2. Xác nhận"
+  },
+
+  "nextBtnMessage": "Tiếp tục"
+}

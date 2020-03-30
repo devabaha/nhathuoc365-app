@@ -46,16 +46,18 @@ class SelectionList extends Component {
                 ]}
               >
                 <View style={[styles.profile_list_icon_box, item.boxIconStyle]}>
-                  <Icon
-                    name={item.icon}
-                    size={16}
-                    color={item.iconColor || '#999999'}
-                  />
+                  {item.leftIcon || (
+                    <Icon
+                      name={item.icon}
+                      size={16}
+                      color={item.iconColor || '#999999'}
+                    />
+                  )}
                 </View>
 
                 <View>
                   <Text style={styles.profile_list_label}>{item.label}</Text>
-                  {item.desc && (
+                  {!!item.desc && (
                     <Text style={styles.profile_list_small_label}>
                       {item.desc}
                     </Text>

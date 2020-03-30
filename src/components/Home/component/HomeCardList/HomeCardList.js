@@ -4,6 +4,7 @@ import Button from 'react-native-button';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
 function HomeCardList(props) {
+  const { t } = useTranslation('home');
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -15,7 +16,7 @@ function HomeCardList(props) {
             underlayColor="transparent"
             onPress={props.onShowAll}
           >
-            <Text style={styles.viewAll}>Xem tất cả</Text>
+            <Text style={styles.viewAll}>{t('viewAll')}</Text>
           </Button>
         ) : (
           <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />

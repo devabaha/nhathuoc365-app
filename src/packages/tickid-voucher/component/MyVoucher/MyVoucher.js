@@ -71,6 +71,7 @@ class MyVoucher extends Component {
   };
 
   render() {
+    const { t } = this.props;
     return (
       <View style={styles.container}>
         {this.props.apiFetching && (
@@ -82,8 +83,8 @@ class MyVoucher extends Component {
 
         {!this.props.apiFetching && !this.hasCampaigns && (
           <NoResult
-            title="Bạn chưa có phiếu giảm giá"
-            text={'Đi săn voucher ở ' + APP_NAME_SHOW + ' Voucher ngay thôi'}
+            title={t('my.noVoucher.title')}
+            text={t('my.noVoucher.description', { appName: APP_NAME_SHOW })}
           />
         )}
 
@@ -95,7 +96,7 @@ class MyVoucher extends Component {
               this.props.onPressEnterVoucher();
             }}
           >
-            Nhập mã voucher
+            {t('my.enterVoucher')}
           </Button>
         </View>
       </View>

@@ -1,0 +1,42 @@
+{
+  "booking": {
+    "success": {
+      "title": "Notification",
+      "message": "You have successfully booked the service!",
+      "accept": "Ok"
+    },
+    "fail": {
+      "title": "Notification",
+      "message": "Something wrong happened, please try later",
+      "accept": "Ok"
+    }
+  },
+  "web": {
+    "success": {
+      "title": "Notification",
+      "message": "You have successfully booked the service!",
+      "accept": "Ok"
+    },
+    "fail": {
+      "title": "Notification",
+      "message": "Something wrong happened, please try later",
+      "accept": "Ok"
+    }
+  },
+  "welcome": {
+    "defaultUserName": "Guest",
+    "message": "Hi"
+  },
+  "sections": {
+    "favoriteStore": {
+      "title": "Favorite stores"
+    },
+    "voucher": {
+      "title": "Voucher Campaign"
+    },
+    "news": {
+      "title": "News"
+    }
+  },
+  "viewAll": "View all"
+}

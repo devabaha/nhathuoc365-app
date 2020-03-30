@@ -6,7 +6,6 @@ import { View, StyleSheet, RefreshControl, FlatList } from 'react-native';
 // library
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
-import SelectionList from '../SelectionList';
 import { reaction } from 'mobx';
 
 // components
@@ -72,6 +71,7 @@ class Notify extends Component {
   }
 
   async _getData(delay) {
+    const { t } = this.props;
     try {
       var response = await APIHandler.user_news_list(this.state.news_type);
       if (response && response.status == STATUS_SUCCESS) {
@@ -87,7 +87,7 @@ class Notify extends Component {
           } else {
             flashShowMessage({
               type: 'danger',
-              message: 'Tin tức không tồn tại hoặc đã bị xóa!'
+              message: t('getNews.error.message')
             });
           }
         }
@@ -101,8 +101,6 @@ class Notify extends Component {
       }
     } catch (e) {
       console.log(e + ' user_news_list');
-
-      store.addApiQueue('user_news_list', this._getData.bind(this, delay));
     } finally {
       store.setDeepLinkData(null);
     }
@@ -115,6 +113,7 @@ class Notify extends Component {
   }
 
   render() {
+    const { t } = this.props;
     if (this.state.loading) {
       return <Indicator />;
     }
@@ -142,7 +141,7 @@ class Notify extends Component {
             }
           />
         ) : (
-          <CenterText title="Oops... Chưa có tin tức nào :(" />
+          <CenterText title={t('noNews')} />
         )}
       </View>
     );
@@ -184,4 +183,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Notify);
+export default withTranslation('news')(observer(Notify));

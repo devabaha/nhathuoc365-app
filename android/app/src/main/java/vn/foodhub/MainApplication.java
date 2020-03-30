@@ -3,8 +3,9 @@ package vn.foodhub;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import io.invertase.firebase.RNFirebasePackage;
 import com.horcrux.svg.SvgPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import com.reactcommunity.rnlocalize.RNLocalizePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.BV.LinearGradient.LinearGradientPackage;
 import com.mkuczera.RNReactNativeHapticFeedbackPackage;
@@ -61,8 +62,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNFirebasePackage(),
             new SvgPackage(),
+            new RNFirebasePackage(),
+            new RNLocalizePackage(),
             new RNDeviceInfo(),
             new LinearGradientPackage(),
             new RNReactNativeHapticFeedbackPackage(),

@@ -1,0 +1,20 @@
+{
+  "shopTitle": {
+    "preOrder": "Đặt trước",
+    "buy": "Chọn mua"
+  },
+  "attr": {
+    "notChooseAttrYet": "Chưa chọn thuộc tính",
+    "stock": "Kho",
+    "quantity": "Số lượng"
+  },
+  "addToCart": "Thêm vào giỏ hàng",
+  "liked": "Đã thích",
+  "like": "Yêu thích",
+  "information": {
+    "brands": "NHÃN HIỆU",
+    "origin": "XUẤT XỨ"
+  },
+  "relatedItems": "SẢN PHẨM CÙNG DANH MỤC",
+  "goToStore": "Vào cửa hàng"
+}

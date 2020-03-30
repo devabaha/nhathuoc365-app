@@ -1,0 +1,87 @@
+{
+  "api": {
+    "error": {
+      "notFound": "Không tìm thấy voucher!"
+    },
+    "success": {
+      "taken": "Bạn đã nhận thành công voucher này."
+    }
+  },
+  "locationTitle": "Địa điểm",
+  "alreadyTaken": {
+    "title": "Đã lấy mã giảm giá",
+    "btnTitle": "Kiểm tra mã của tôi"
+  },
+  "header": {
+    "title": "Voucher của tôi",
+    "unusedCode": "mã chưa sử dụng",
+    "noCode": "Bạn chưa có mã giảm giá"
+  },
+  "noResult": {
+    "title": "Địa điểm chưa có ưu đãi",
+    "message": "Chưa có chương trình ưu đãi cho địa điểm này"
+  },
+  "my": {
+    "noVoucher": {
+      "title": "Bạn chưa có phiếu giảm giá",
+      "description": "Đi săn voucher ở {{appName}} Voucher ngay thôi"
+    },
+    "enterVoucher": "Nhập mã Voucher"
+  },
+  "scan": {
+    "description": "Hướng máy ảnh của bạn về phía mã QR Code để nhận voucher",
+    "enterVoucher": "Nhập mã Voucher",
+    "enterStore": "Nhập mã cửa hàng",
+    "modal": {
+      "title": "Nhập mã thủ công"
+    },
+    "enterCode": "Nhập mã"
+  },
+  "notification": {
+    "title": "Thông báo",
+    "accept": "Đóng lại"
+  },
+  "confirm": {
+    "redeem": {
+      "title": "Đổi thưởng",
+      "message": "Đổi {{point}} điểm lấy khuyến mại này?"
+    },
+    "usePromotion": {
+      "title": "Sử dụng khuyến mại",
+      "message": "Sử dụng khuyến mại này với đơn hàng của bạn?"
+    }
+  },
+  "modal": {
+    "accept": "Xác nhận",
+    "cancel": "Hủy",
+    "close": "Đóng",
+    "province": {
+      "title": "Chọn Tỉnh/Thành phố",
+      "placeholder": "Tìm kiếm",
+      "notFound": "Không có kết quả phù hợp cho \"{{searchText}}\""
+    },
+    "enterCodeManually": {
+      "description": "Hãy hỏi nhân viên để được hướng dẫn",
+      "btnTitle": "Gửi mã"
+    }
+  },
+  "detail": {
+    "useLater": "Dùng sau",
+    "useNow": "Dùng ngay",
+    "useTo": "Dùng đến",
+    "redeem": "Đổi thưởng",
+    "redeemPoint": "Đổi điểm",
+    "getVoucher": "Nhận mã giảm giá",
+    "tabs": {
+      "information": {
+        "title": "Thông tin"
+      },
+      "place": {
+        "title": "Điểm áp dụng",
+        "address": "Địa chỉ cửa hàng",
+        "shop": "cửa hàng"
+      }
+    },
+    "providedBy": "Cung cấp bởi"
+  }
+}

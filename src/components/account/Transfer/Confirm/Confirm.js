@@ -289,18 +289,19 @@ class Confirm extends Component {
   };
 
   handleTryCreatePassword = () => {
+    const { t } = this.props;
     this.setState({
       showRepeatPasswordKeyboard: false,
       newPasswordValue: [],
       repeatPasswordValue: []
     });
-    const title = 'Mật khẩu không khớp';
-    const message = 'Vui lòng thử lại';
+    const title = t('confirm.modal.wrongPass.title');
+    const message = t('confirm.modal.wrongPass.message');
 
     setTimeout(() => {
       Alert.alert(title, message, [
         {
-          text: 'Thử lại',
+          text: t('confirm.modal.wrongPass.accept'),
           onPress: () => this.setState({ showNewPasswordKeyboard: true })
         }
       ]);
@@ -322,9 +323,10 @@ class Confirm extends Component {
   handleOpenFingerprint = () => {
     if (this.printScanning) return;
     this.printScanning = true;
+    const { t } = this.props;
 
     FingerprintScanner.authenticate({
-      description: 'Sử dụng Touch ID để mở khóa và xác nhận'
+      description: t('confirm.fingerprintScanner')
     })
       .then(() => {
         this.setState({
@@ -399,10 +401,11 @@ class Confirm extends Component {
     Actions.replace(appConfig.routes.homeTab);
   };
 
-  renderWallet = () => {
+  renderWallet() {
+    const { t } = this.props;
     return (
       <View style={styles.row}>
-        <Text style={styles.heading}>Nguồn tiền</Text>
+        <Text style={styles.heading}>{t('confirm.sourceMoney')}</Text>
 
         <View style={styles.walletWrapper}>
           {this.props.wallet.image && (
@@ -420,10 +423,16 @@ class Confirm extends Component {
         </View>
       </View>
     );
-  };
+  }
 
   render() {
-    const resultTitle = `Bạn đã chuyển số tiền ${this.props.originPrice}${this.props.wallet.symbol} đến ${this.props.receiver.name} (${this.props.receiver.originTel})`;
+    const { t } = this.props;
+    const resultTitle = t('confirm.message', {
+      money: this.props.originPrice + this.props.wallet.symbol,
+      receiverName: this.props.receiver.name,
+      receiverTel: this.props.receiver.originTel
+    });
+
     return (
       <SafeAreaView style={styles.container}>
         <Result
@@ -431,10 +440,10 @@ class Confirm extends Component {
           onConfirm={this.handleBackHome}
           onClose={this.handleCloseModal}
           mainIconName="checkcircle"
-          mainTitle="Giao dịch thành công"
+          mainTitle={t('confirm.transaction.success.title')}
           title={resultTitle}
-          subTitle=""
-          btnTitle="Về màn hình chính"
+          subTitle={t('confirm.transaction.success.subTitle')}
+          btnTitle={t('confirm.transaction.success.message')}
         />
 
         <ScrollView>
@@ -442,13 +451,15 @@ class Confirm extends Component {
             {this.renderWallet()}
 
             <View style={[styles.row, { marginTop: 8 }]}>
-              <Text style={styles.heading}>Chi tiết giao dịch</Text>
+              <Text style={styles.heading}>
+                {t('confirm.transaction.detail')}
+              </Text>
 
               <View style={styles.cardInfoWrapper}>
                 <View style={styles.fieldWrapper}>
                   <FieldItemWrapper separate>
                     <FieldItem
-                      label="Chuyển đến"
+                      label={t('confirm.transaction.form.sendTo')}
                       value={this.props.receiver.name}
                     />
 
@@ -460,19 +471,25 @@ class Confirm extends Component {
                     )}
 
                     <FieldItem
-                      label="Số điện thoại"
+                      label={t('confirm.transaction.form.tel')}
                       value={this.props.receiver.tel}
                     />
-                    <FieldItem label="Số tiền" value={this.props.price} />
+                    <FieldItem
+                      label={t('confirm.transaction.form.money')}
+                      value={this.props.price}
+                    />
                   </FieldItemWrapper>
 
                   <FieldItemWrapper separate>
-                    <FieldItem label="Phí giao dịch" value="Miễn phí" />
+                    <FieldItem
+                      label={t('confirm.transaction.fee.title')}
+                      value={t('confirm.transaction.fee.value')}
+                    />
                   </FieldItemWrapper>
 
                   <FieldItemWrapper>
                     <FieldItem
-                      label="Tổng tiền"
+                      label={t('confirm.transaction.totalPrice')}
                       value={this.props.totalPrice}
                       boldValue
                     />
@@ -483,15 +500,14 @@ class Confirm extends Component {
 
             <View style={styles.secureWrapper}>
               <Text style={styles.secureText}>
-                Bảo mật SSL/TSL, mọi thông tin giao dịch đều được mã hóa an
-                toàn.
+                {t('confirm.transaction.secure')}
               </Text>
             </View>
           </View>
         </ScrollView>
 
         <SubmitButton
-          title="Xác nhận"
+          title={t('confirm.transaction.confirm')}
           iconSource={lockImage}
           onPress={this.handleConfirm}
         />
@@ -499,6 +515,7 @@ class Confirm extends Component {
         {/* Authen key board */}
         <AuthenKeyboardModal
           hideClose
+          headerTitle={t('confirm.modal.enterPassword.title')}
           showForgotPassword={false}
           visible={this.state.showAuthenKeyboard}
           showFingerprint={
@@ -515,8 +532,8 @@ class Confirm extends Component {
         {/* New password keyboard */}
         <AuthenKeyboardModal
           hideClose
-          headerTitle="Tạo mật khẩu mới"
-          description="Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch"
+          headerTitle={t('confirm.modal.newPass.title')}
+          description={t('confirm.modal.newPass.message')}
           visible={this.state.showNewPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}
@@ -529,8 +546,8 @@ class Confirm extends Component {
         {/* Repeat password keyboard */}
         <AuthenKeyboardModal
           hideClose
-          headerTitle="Nhập lại mật khẩu"
-          description="Nhập lại mật khẩu để xác nhận"
+          headerTitle={t('confirm.modal.reEnterPass.title')}
+          description={t('confirm.modal.reEnterPass.message')}
           visible={this.state.showRepeatPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}
@@ -557,9 +574,11 @@ const styles = StyleSheet.create({
     backgroundColor: config.colors.white
   },
   heading: {
-    fontSize: 18,
-    color: config.colors.black,
-    fontWeight: '600',
+    fontSize: 16,
+    color: '#656565',
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+    letterSpacing: 1.5,
     marginTop: 8
   },
   walletWrapper: {
@@ -580,7 +599,7 @@ const styles = StyleSheet.create({
   walletName: {
     fontSize: 16,
     fontWeight: '600',
-    color: config.colors.black
+    color: '#555'
   },
   walletCost: {
     fontSize: 14,
@@ -592,10 +611,10 @@ const styles = StyleSheet.create({
     margin: 16
   },
   secureText: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: 14,
+    color: '#888',
     lineHeight: 18
   }
 });
 
-export default observer(Confirm);
+export default withTranslation('transfer')(observer(Confirm));

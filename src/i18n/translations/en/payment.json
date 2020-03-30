@@ -1,0 +1,18 @@
+{
+  "validate": {
+    "empty": "Please enter the amount",
+    "min": "Minimum transfer amount is {{money}}",
+    "max": "Maximum transfer amount is {{money}}"
+  },
+  "input": {
+    "money": {
+      "title": "Amount",
+      "placeholder": "Enter amount of money"
+    },
+    "note": {
+      "title": "Message ({{counter}})",
+      "placeholder": "Enter a message for the receiver"
+    }
+  },
+  "transferBtnTitle": "Transfer"
+}

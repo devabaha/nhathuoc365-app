@@ -48,7 +48,6 @@ class Voucher extends BaseContainer {
 
   handlePressMyVoucher = () => {
     config.route.push(config.routes.myVoucher, {
-      title: 'Voucher của tôi',
       from: this.props.from
     });
   };
@@ -65,7 +64,7 @@ class Voucher extends BaseContainer {
     if (showLoading) {
       this.setState({ apiFetching: true });
     }
-
+    const { t } = this.props;
     try {
       const options = {
         method: 'POST'
@@ -91,7 +90,7 @@ class Voucher extends BaseContainer {
           } else {
             showMessage({
               type: 'danger',
-              message: 'Không tìm thấy voucher!'
+              message: t('api.error.notFound')
             });
           }
         }
@@ -142,9 +141,10 @@ class Voucher extends BaseContainer {
           setProvince: this.handleSetProvince,
           provinceSelected: this.state.provinceSelected
         })}
+        t={this.props.t}
       />
     );
   }
 }
 
-export default observer(Voucher);
+export default withTranslation('voucher')(observer(Voucher));

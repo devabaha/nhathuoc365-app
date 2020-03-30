@@ -74,6 +74,8 @@ class AlreadyVoucher extends Component {
   };
 
   render() {
+    const { t } = this.props;
+
     const containerStyle = {
       opacity: this.state.opacity,
       bottom: this.state.bottom
@@ -90,7 +92,11 @@ class AlreadyVoucher extends Component {
         />
 
         <View style={styles.content}>
-          <Header onClose={this.onClose} title={this.props.heading} />
+          <Header
+            onClose={this.onClose}
+            closeTitle={t('modal.close')}
+            title={this.props.heading}
+          />
 
           <View style={styles.body}>
             <Text style={styles.message}>{this.props.message}</Text>
@@ -99,7 +105,7 @@ class AlreadyVoucher extends Component {
               containerStyle={styles.submitButton}
               onPress={this.onCheckMyVoucher}
             >
-              Kiểm tra mã của tôi
+              {t('alreadyTaken.btnTitle')}
             </Button>
           </View>
         </View>
@@ -160,4 +166,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AlreadyVoucher;
+export default withTranslation('voucher')(AlreadyVoucher);

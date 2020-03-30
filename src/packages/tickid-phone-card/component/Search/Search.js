@@ -14,13 +14,15 @@ class Search extends PureComponent {
   static propTypes = {
     value: PropTypes.string,
     onChangeText: PropTypes.func,
-    onClearText: PropTypes.func
+    onClearText: PropTypes.func,
+    placeholder: PropTypes.string
   };
 
   static defaultProps = {
     value: '',
     onChangeText: () => {},
-    onClearText: () => {}
+    onClearText: () => {},
+    placeholder: 'Tìm theo tên hoặc số điện thoại'
   };
 
   render() {
@@ -29,7 +31,7 @@ class Search extends PureComponent {
         <Image style={styles.icon} source={searchImage} />
         <TextInput
           style={styles.textInput}
-          placeholder="Tìm theo tên hoặc số điện thoại"
+          placeholder={this.props.placeholder}
           placeholderTextColor="#c7c7cd"
           value={this.props.value}
           onChangeText={this.props.onChangeText}

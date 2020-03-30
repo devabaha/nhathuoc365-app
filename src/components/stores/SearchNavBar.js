@@ -52,7 +52,6 @@ class SearchNavBar extends Component {
         <TextInput
           style={styles.searchInput}
           placeholder={this.props.placeholder}
-          placeH
           placeholderTextColor="#ccc"
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}

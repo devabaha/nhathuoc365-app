@@ -31,9 +31,7 @@ export default class DetailHistoryPayment extends Component {
             {
               id: 'thoi_gian',
               title: 'Thời gian',
-              value: Moment(new Date(this.props.created)).format(
-                'HH:mm - DD/MM/YYYY'
-              )
+              value: this.props.created
             }
           ]
         },

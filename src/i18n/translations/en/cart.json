@@ -1,0 +1,28 @@
+{
+  "popup": {
+    "edit": {
+      "message": "The shopping cart (if existed) will be removed! Do you still want to edit this order?"
+    },
+    "remove": {
+      "message": "Do you want to remove this product from the cart?"
+    },
+    "cancel": {
+      "message": "Are you sure to cancel this order?"
+    }
+  },
+  "notification": {
+    "noItemSelected": {
+      "title": "Notification",
+      "message": "You need to select at least (01) item to continue",
+      "accept": "Ok"
+    }
+  },
+  "noFooterItems": "Cart is empty\nShop now!",
+  "noItems": "No products yet",
+  "discount": "discount",
+  "payment": {
+    "total": "TOTAL",
+    "order": "ORDER",
+    "cart": "CART"
+  }
+}

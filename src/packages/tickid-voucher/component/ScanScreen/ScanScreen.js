@@ -7,13 +7,14 @@ import config from '../../config';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 
 function ScanScreen(props) {
+  const { t } = useTranslation('voucher');
   const renderBottomContent = () => {
     return (
       <Button
         containerStyle={styles.enterCodeBtn}
         onPress={props.onPressEnterCode}
       >
-        <Text style={styles.enterCodeBtnTitle}>Nhập mã</Text>
+        <Text style={styles.enterCodeBtnTitle}>{t('scan.enterCode')}</Text>
       </Button>
     );
   };

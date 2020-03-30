@@ -1,0 +1,87 @@
+{
+  "api": {
+    "error": {
+      "notFound": "Voucher not found!"
+    },
+    "success": {
+      "taken": "You have successfully received this voucher."
+    }
+  },
+  "locationTitle": "Location",
+  "alreadyTaken": {
+    "title": "Already taken",
+    "btnTitle": "Check my new code"
+  },
+  "header": {
+    "title": "My Voucher",
+    "unusedCode": "unused code(s)",
+    "noCode": "You do not have any discount code yet"
+  },
+  "noResult": {
+    "title": "Place has no deals",
+    "message": "There are no deals for this place yet"
+  },
+  "my": {
+    "noVoucher": {
+      "title": "You do not have any voucher",
+      "description": "Go hunt for the voucher at {{appName}} Voucher right away"
+    },
+    "enterVoucher": "Enter Voucher code"
+  },
+  "scan": {
+    "description": "Point your camera towards the QR Code to receive the voucher",
+    "enterVoucher": "Enter Voucher code",
+    "enterStore": "Enter shop code",
+    "modal": {
+      "title": "Enter code manually"
+    },
+    "enterCode": "Enter code"
+  },
+  "notification": {
+    "title": "Notification",
+    "accept": "Close"
+  },
+  "confirm": {
+    "redeem": {
+      "title": "Redeem",
+      "message": "Redeem {{point}} point(s) for this promotion?"
+    },
+    "usePromotion": {
+      "title": "Use promotion",
+      "message": "Use this promotion for your orders?"
+    }
+  },
+  "modal": {
+    "accept": "Confirm",
+    "cancel": "Cancel",
+    "close": "Close",
+    "province": {
+      "title": "Select Province/City",
+      "placeholder": "Search",
+      "notFound": "No result for \"{{searchText}}\""
+    },
+    "enterCodeManually": {
+      "description": "Please ask staff for instructions",
+      "btnTitle": "Send code"
+    }
+  },
+  "detail": {
+    "useLater": "Use later",
+    "useNow": "Use now",
+    "useTo": "Expire on",
+    "redeem": "Redeem",
+    "redeemPoint": "Redeem point",
+    "getVoucher": "Get discount code",
+    "tabs": {
+      "information": {
+        "title": "Information"
+      },
+      "place": {
+        "title": "Place of application",
+        "address": "Shop address",
+        "shop": "shop"
+      }
+    },
+    "providedBy": "Provided by"
+  }
+}

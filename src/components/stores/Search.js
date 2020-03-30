@@ -33,7 +33,7 @@ class Search extends Component {
     super(props);
 
     this.state = {
-      loading: false,
+      loading: !!!this.props.categories,
       noResult: false,
       header_title: '',
       search_data: null,
@@ -70,11 +70,15 @@ class Search extends Component {
   }
 
   getPlaceholder(name = '') {
-    return `Tìm kiếm trong ${name && `${name} - `}${store.store_data.name ||
-      'cửa hàng'}...`;
+    const { t } = this.props;
+    return `${t('search.placeholder.prefix')} ${name && `${name} - `}${store
+      .store_data.name || 'cửa hàng'}...`;
   }
 
   componentDidMount() {
+    if (!!!this.props.categories) {
+      this.getCategories();
+    }
     var keyword = this.props.qr_code;
     this.getHistory();
 
@@ -125,6 +129,36 @@ class Search extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+  }
+
+  getCategories = async () => {
+    try {
+      const response = await APIHandler.site_info(
+        store.store_id,
+        this.props.categoryId
+      );
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          this.parseDataCategories(response);
+        }
+      }
+    } catch (e) {
+      console.log(e + ' site_info');
+    } finally {
+      !this.unmounted && this.setState({ loading: false });
+    }
+  };
+
+  parseDataCategories(response) {
+    const { t } = this.props;
+    if (!this.props.categoryId) {
+      response.data.categories.unshift({
+        id: 0,
+        name: t('tabs.store.title'),
+        active: true
+      });
+    }
+    this.setState({ categories: response.data.categories });
   }
 
   getHistory(categoryId = this.state.selectedCategory.id) {
@@ -704,7 +738,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Search);
+export default withTranslation('stores')(observer(Search));
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const CollapseIcon = props => (

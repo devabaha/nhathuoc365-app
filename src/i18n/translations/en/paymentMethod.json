@@ -1,0 +1,11 @@
+{
+  "method": {
+    "selectTitle": "Select a payment method",
+    "emptyMessage": "No form of payment yet"
+  },
+  "payment": {
+    "tempPrice": "Temporary price",
+    "totalPrice": "Total price"
+  },
+  "confirm": "Next"
+}

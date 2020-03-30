@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 import { Actions } from 'react-native-router-flux';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  Animated,
-  Easing
-} from 'react-native';
-import { CachedImage } from 'react-native-img-cache';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
 import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
@@ -25,6 +17,14 @@ class Launch extends Component {
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.refreshData) {
+      this.handleAuthorization();
+    }
+
+    return true;
+  }
+
   componentDidMount() {
     this.handleAuthorization();
     this.animateLoading();
@@ -36,7 +36,9 @@ class Launch extends Component {
       const response = await APIHandler.user_login({
         fb_access_token: ''
       });
-      setTimeout(() => this.handleAuthWithResponse(response), 2000);
+      setTimeout(() => {
+        this.handleAuthWithResponse(response);
+      }, 500);
     } catch (error) {
       console.log(error);
       setTimeout(this.handleAuthorization, 1000);
@@ -53,6 +55,7 @@ class Launch extends Component {
         store.setUserInfo(user);
         EventTracker.setUserId(user.id);
         Actions.replace(appConfig.routes.primaryTabbar);
+        Actions.replace(appConfig.routes.homeTab);
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
@@ -67,6 +70,11 @@ class Launch extends Component {
         Actions.replace('phone_auth', {
           loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
         });
+        break;
+      case STATUS_SYNC_FLAG:
+        store.setUserInfo(user);
+        EventTracker.setUserId(user.id);
+        Actions.replace(appConfig.routes.storeLocation);
         break;
       default:
         setTimeout(this.handleAuthorization, 1000);

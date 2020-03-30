@@ -1,0 +1,15 @@
+{
+  "header": {
+    "balance": "Số dư"
+  },
+  "tabs": {
+    "history": {
+      "title": "Lịch sử",
+      "message": "Tài khoản chưa có giao dịch"
+    },
+    "information": {
+      "title": "Thông tin",
+      "message": "Thông tin về tài khoản"
+    }
+  }
+}

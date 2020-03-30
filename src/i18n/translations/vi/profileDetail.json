@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "fullName": {
+      "title": "Họ & tên"
+    },
+    "phoneNumber": {
+      "title": "Số điện thoại"
+    },
+    "birthdate": {
+      "title": "Ngày sinh"
+    },
+    "gender": {
+      "title": "Giới tính"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "address": {
+      "title": "Địa chỉ"
+    }
+  },
+  "signOut": {
+    "title": "Đăng xuất",
+    "warningTitle": "Lưu ý",
+    "warningDescription": "Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.",
+    "cancel": "Hủy",
+    "successMessage": "Đăng xuất thành công"
+  }
+}

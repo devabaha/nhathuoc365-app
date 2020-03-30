@@ -1,0 +1,21 @@
+{
+  "search": {
+    "placeholder": {
+      "prefix": "Tìm kiếm trong",
+      "suffix": "cửa hàng"
+    }
+  },
+  "tabs": {
+    "store": {
+      "title": "Cửa hàng"
+    },
+    "screen": {
+      "mainTitle": "CỬA HÀNG",
+      "categoryTitle": "{{productName}}"
+    }
+  },
+  "noProduct": "Chưa có mặt hàng nào",
+  "item": {
+    "more": "XEM THÊM"
+  }
+}

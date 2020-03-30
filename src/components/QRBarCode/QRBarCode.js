@@ -6,7 +6,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Platform
+  Platform,
+  Alert
 } from 'react-native';
 import ScreenBrightness from 'react-native-screen-brightness';
 import {
@@ -43,10 +44,8 @@ class QRBarCode extends Component {
       loading: false,
       from: props.from || false,
       barcode: props.address || '000000000000',
-      title: props.title || 'Mã tài khoản',
-      content: props.content
-        ? props.content
-        : 'Dùng QRCode địa chỉ Ví để nhận chuyển khoản',
+      title: props.title || props.t('common:screen.qrBarCode.mainTitle'),
+      content: props.content ? props.content : props.t('content.description'),
       originLuminous: MIN_LUMINOUS,
       permissionCameraGranted: undefined
     };
@@ -85,8 +84,9 @@ class QRBarCode extends Component {
   }
 
   checkCameraPermission = async () => {
+    const { t } = this.props;
     if (!isAndroid && !isIos) {
-      Alert.alert('Nền tảng không hỗ trợ truy cập Camera');
+      Alert.alert(t('common:system.camera.error.notSupport'));
       return false;
     }
 
@@ -98,7 +98,7 @@ class QRBarCode extends Component {
       const result = await check(permissonCameraRequest);
       switch (result) {
         case RESULTS.UNAVAILABLE:
-          Alert.alert('Quyền truy cập Camera không khả dụng');
+          Alert.alert(t('common:system.camera.error.unavailable'));
           console.log(
             'This feature is not available (on this device / in this context)'
           );
@@ -117,7 +117,7 @@ class QRBarCode extends Component {
       }
     } catch (error) {
       console.log(error);
-      Alert.alert('Lỗi yêu cầu quyền truy cập Camera');
+      Alert.alert(t('common:system.camera.error.accessProblem'));
       return false;
     }
   };
@@ -226,6 +226,7 @@ class QRBarCode extends Component {
    * Lay tai khoan tu Ma Tai khoan
    */
   _getAccountByBarcode(barcode) {
+    const { t } = this.props;
     //, password, refer
     this.setState(
       {
@@ -243,7 +244,7 @@ class QRBarCode extends Component {
                   },
                   () => {
                     Actions.pay_account({
-                      title: 'Thông tin tài khoản',
+                      title: t('common:screen.payAccount.mainTitle'),
                       barcode: barcode,
                       wallet: response.data.account.default_wallet,
                       account: response.data.account,
@@ -503,7 +504,8 @@ class QRBarCode extends Component {
   }
 
   _search_store(barcode) {
-    alert('Mã QR Code không hợp lệ, vui lòng thử lại');
+    const { t } = this.props;
+    alert(t('invalidQRCode'));
   }
 
   _open_webview(link) {
@@ -555,18 +557,20 @@ class QRBarCode extends Component {
   }
 
   goToSetting() {
+    const { t } = this.props;
     openSettings().catch(() =>
-      Alert.alert('Ứng dụng không thể truy cập vào Cài đặt!')
+      Alert.alert(t('common:system.settings.error.accessProblem'))
     );
   }
 
   goToPayment = wallet_address => {
+    const { t } = this.props;
     this.getUserInfo(wallet_address, receiverInfo => {
       Actions.pop();
       setTimeout(() => {
         const wallet = this.props.wallet || store.user_info.default_wallet;
         Actions.push(appConfig.routes.transferPayment, {
-          title: 'Chuyển tiền đến ' + wallet.name,
+          title: t('transferPaymentTitle', { walletName: wallet.name }),
           wallet,
           receiver: {
             id: receiverInfo.id,
@@ -604,13 +608,13 @@ class QRBarCode extends Component {
       }
     } catch (error) {
       console.log(error);
-      store.addApiQueue('user_get_info_by_phone_number', this.getUserInfo);
     } finally {
       !this.unmounted && this.setState({ loading: false });
     }
   };
 
   renderQRCodeScanner(text_result) {
+    const { t } = this.props;
     return (
       <QRCodeScanner
         checkAndroid6Permissions={true}
@@ -623,21 +627,21 @@ class QRBarCode extends Component {
             <View style={[styles.topContent]}>
               <Text style={styles.centerText}>
                 <Icon name="camera-party-mode" size={16} color="#404040" />
-                {' Ứng dụng cần quyền truy cập Camera'}
+                {' ' + t('common:systen.camera.access.request')}
               </Text>
               <Button
                 containerStyle={styles.permissionNotGrantedBtn}
                 style={styles.permissionNotGrantedSetting}
                 onPress={this.goToSetting.bind(this)}
               >
-                Cài đặt
+                {t('settingLabel')}
               </Button>
             </View>
           ) : (
             <View style={styles.topContent}>
               <Text style={styles.centerText}>
                 <Icon name="camera-party-mode" size={16} color="#404040" />
-                {' Hướng máy ảnh của bạn về phía mã QR Code để khám phá'}
+                {' ' + t('qrGuideMessage')}
               </Text>
             </View>
           )
@@ -648,11 +652,10 @@ class QRBarCode extends Component {
 
   renderMyQRCode() {
     const { barcode } = this.state;
+    const { t } = this.props;
     return (
       <ScrollView style={{ flex: 1 }}>
-        <Text style={styles.headerText}>
-          Đưa mã QRCode cho thu ngân để tích điểm
-        </Text>
+        <Text style={styles.headerText}>{' ' + t('POSGuideMessage')}</Text>
         <View style={{ marginLeft: 30, marginRight: 30 }}>
           <Barcode
             value={barcode}
@@ -673,14 +676,10 @@ class QRBarCode extends Component {
         </View>
         <Text style={[styles.barcodeText, { fontSize: 16 }]}>
           <Icon name="reload" size={16} color="#000" />
-          Tự động cập nhật sau 60 giây
+          {t('reload')}
         </Text>
-        <Text style={styles.descText}>
-          ● Đây là mã vạch đại diện cho tài khoản của bạn
-        </Text>
-        <Text style={styles.descText}>
-          ● Sử dụng mã vạch này để nhận hoàn tiền từ cửa hàng
-        </Text>
+        <Text style={styles.descText}>{t('accountDescription')}</Text>
+        <Text style={styles.descText}>{t('cashbackDescription')}</Text>
       </ScrollView>
     );
   }
@@ -707,7 +706,8 @@ class QRBarCode extends Component {
     if (index == 0) {
       Actions.refresh({ title: this.state.title, address: this.props.address });
     } else {
-      Actions.refresh({ title: 'Scan QRCode' });
+      const { t } = this.props;
+      Actions.refresh({ title: t('common:screen.qrBarCode.scanTitle') });
     }
     this.setState({ index: index });
   }
@@ -883,4 +883,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default QRBarCode;
+export default withTranslation(['qrBarCode', 'common'])(QRBarCode);
