@@ -34,6 +34,7 @@ class BuyCardConfirm extends Component {
     contactPhone: PropTypes.string,
     serviceId: PropTypes.string,
     historyTitle: PropTypes.string,
+    messages: PropTypes.object,
     quantity: PropTypes.number
   };
 
@@ -47,7 +48,54 @@ class BuyCardConfirm extends Component {
     contactPhone: '',
     serviceId: undefined,
     historyTitle: '',
-    quantity: 0
+    quantity: 0,
+    messages: {
+      sourceMoney: 'Nguồn tiền',
+      transaction: {
+        detail: 'Chi tiết giao dịch',
+        type: 'Loại giao dịch',
+        form: {
+          sendTo: 'Nạp cho',
+          tel: 'Số điện thoại',
+          network: 'Nhà mạng',
+          cardNumber: 'Số thẻ',
+          subCardNumber: 'Số phụ',
+          month: 'Số tháng',
+          value: 'Mệnh giá',
+          quantity: 'Số lượng',
+          discount: 'Giảm',
+          fee: {
+            title: 'Phí giao dịch',
+            value: 'Miễn phí'
+          },
+          price: 'Tổng tiền'
+        }
+      },
+      error: {
+        passwordNotMatch: {
+          title: 'Mật khẩu không khớp',
+          message: 'Vui lòng thử lại',
+          accept: 'Thử lại'
+        },
+        network: 'Kết nối mạng có lỗi, vui lòng thử lại'
+      },
+      fingerprintScanner: {
+        authenMessage: 'Sử dụng Touch ID để mở khóa và xác nhận'
+      },
+      sercure:
+        'Bảo mật SSL/TLS, mọi thông tin giao dịch đều được mã hóa an toàn.',
+      confirm: 'Xác nhận',
+      modal: {
+        newPass: {
+          title: 'Tạo mật khẩu mới',
+          messsage: 'Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch'
+        },
+        renEnterPass: {
+          title: 'Nhập lại mật khẩu',
+          message: 'Nhập lại mật khẩu để xác nhận'
+        }
+      }
+    }
   };
 
   constructor(props) {
@@ -282,13 +330,13 @@ class BuyCardConfirm extends Component {
       newPasswordValue: [],
       repeatPasswordValue: []
     });
-    const title = 'Mật khẩu không khớp';
-    const message = 'Vui lòng thử lại';
+    const title = this.props.messages.error.passwordNotMatch.title;
+    const message = this.props.messages.error.passwordNotMatch.message;
 
     setTimeout(() => {
       Alert.alert(title, message, [
         {
-          text: 'Thử lại',
+          text: this.props.messages.error.passwordNotMatch.accept,
           onPress: () => this.setState({ showNewPasswordKeyboard: true })
         }
       ]);
@@ -312,7 +360,7 @@ class BuyCardConfirm extends Component {
     this.printScanning = true;
 
     FingerprintScanner.authenticate({
-      description: 'Sử dụng Touch ID để mở khóa và xác nhận'
+      description: this.props.messages.fingerprintScanner.authenMessage
     })
       .then(() => {
         this.setState({
@@ -384,7 +432,7 @@ class BuyCardConfirm extends Component {
       .catch(() => {
         showMessage({
           type: 'danger',
-          message: 'Kết nối mạng có lỗi, vui lòng thử lại'
+          message: this.props.messages.error.network
         });
       })
       .finally(() => {
@@ -398,7 +446,7 @@ class BuyCardConfirm extends Component {
     if (!this.props.wallet) return null;
     return (
       <View style={styles.row}>
-        <Text style={styles.heading}>Nguồn tiền</Text>
+        <Text style={styles.heading}>{this.props.messages.sourceMoney}</Text>
 
         <View style={styles.walletWrapper}>
           {this.props.wallet.image && (
@@ -426,59 +474,81 @@ class BuyCardConfirm extends Component {
             {this.renderWallet()}
 
             <View style={[styles.row, { marginTop: 8 }]}>
-              <Text style={styles.heading}>Chi tiết giao dịch</Text>
+              <Text style={styles.heading}>
+                {this.props.messages.transaction.detail}
+              </Text>
 
               <View style={styles.cardInfoWrapper}>
                 <View style={styles.fieldWrapper}>
                   <FieldItemWrapper separate>
-                    <FieldItem label="Loại giao dịch" value={this.props.type} />
+                    <FieldItem
+                      label={this.props.messages.transaction.type}
+                      value={this.props.type}
+                    />
                     {!!this.props.contactName && (
                       <FieldItem
-                        label="Nạp cho"
+                        label={this.props.messages.transaction.form.sendTo}
                         value={this.props.contactName}
                       />
                     )}
 
                     {!!this.props.contactPhone && (
                       <FieldItem
-                        label="Số điện thoại"
+                        label={this.props.messages.transaction.form.tel}
                         value={this.props.contactPhone}
                       />
                     )}
 
                     <FieldItem
-                      label="Nhà mạng"
+                      label={this.props.messages.transaction.form.network}
                       value={this.props.network.name}
                     />
                     {!!this.props.cardNumber && (
-                      <FieldItem label="Số thẻ" value={this.props.cardNumber} />
+                      <FieldItem
+                        label={this.props.messages.transaction.form.cardNumber}
+                        value={this.props.cardNumber}
+                      />
                     )}
                     {!!this.props.subCard && (
-                      <FieldItem label="Số phụ" value={this.props.subCard} />
+                      <FieldItem
+                        label={
+                          this.props.messages.transaction.form.subCardNumber
+                        }
+                        value={this.props.subCard}
+                      />
                     )}
                     {!!this.props.totalMonth && (
                       <FieldItem
-                        label="Số tháng"
+                        label={this.props.messages.transaction.form.month}
                         value={this.props.totalMonth}
                       />
                     )}
-                    <FieldItem label="Mệnh giá" value={this.props.card.label} />
+                    <FieldItem
+                      label={this.props.messages.transaction.form.value}
+                      value={this.props.card.label}
+                    />
                     {this.props.quantity > 0 && (
-                      <FieldItem label="Số lượng" value={this.props.quantity} />
+                      <FieldItem
+                        label={this.props.messages.transaction.form.quantity}
+                        value={this.props.quantity}
+                      />
                     )}
                     <FieldItem
-                      label="Giảm"
+                      label={this.props.messages.transaction.form.discount}
                       value={this.props.card.cashbackValue}
                     />
                   </FieldItemWrapper>
 
                   <FieldItemWrapper separate>
-                    <FieldItem label="Phí giao dịch" value="Miễn phí" />
+                    <FieldItem
+                      label={this.props.messages.transaction.form.fee.title}
+                      value={this.props.messages.transaction.form.fee.value}
+                    />
                   </FieldItemWrapper>
 
                   <FieldItemWrapper>
                     <FieldItem
-                      label="Tổng tiền"
+                      label={this.props.messages.transaction.form.price}
                       value={this.props.card.total_price}
                       boldValue
                     />
@@ -489,15 +559,14 @@ class BuyCardConfirm extends Component {
 
             <View style={styles.secureWrapper}>
               <Text style={styles.secureText}>
-                Bảo mật SSL/TSL, mọi thông tin giao dịch đều được mã hóa an
-                toàn.
+                {this.props.messages.sercure}
               </Text>
             </View>
           </View>
         </ScrollView>
 
         <SubmitButton
-          title="Xác nhận"
+          title={this.props.messages.confirm}
           iconSource={lockImage}
           onPress={this.handleConfirm}
         />
@@ -521,8 +590,8 @@ class BuyCardConfirm extends Component {
         {/* New password keyboard */}
         <AuthenKeyboardModal
           hideClose
-          headerTitle="Tạo mật khẩu mới"
-          description="Để đảm bảo an toàn, vui lòng tạo mật khẩu giao dịch"
+          headerTitle={this.props.messages.modal.newPass.title}
+          description={this.props.messages.modal.newPass.message}
           visible={this.state.showNewPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}
@@ -535,8 +604,8 @@ class BuyCardConfirm extends Component {
         {/* Repeast password keyboard */}
         <AuthenKeyboardModal
           hideClose
-          headerTitle="Nhập lại mật khẩu"
-          description="Nhập lại mật khẩu để xác nhận"
+          headerTitle={this.props.messages.modal.renEnterPass.title}
+          description={this.props.messages.modal.renEnterPass.message}
           visible={this.state.showRepeatPasswordKeyboard}
           showFingerprint={false}
           showForgotPassword={false}

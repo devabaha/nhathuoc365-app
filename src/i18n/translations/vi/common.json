@@ -1,0 +1,131 @@
+{
+  "api": {
+    "error": {
+      "message": "Có lỗi xảy ra, vui lòng thử lại sau",
+      "connect": "Kết nối tới máy chủ thất bại. Vui lòng thử lại sau"
+    }
+  },
+
+  "appTab": {
+    "tab1": {
+      "title": "Trang chủ"
+    },
+    "tab2": {
+      "title": "Tin tức"
+    },
+    "tab3": {
+      "title": ""
+    },
+    "tab4": {
+      "title": "Đơn hàng"
+    },
+    "tab5": {
+      "title": "Tài khoản"
+    }
+  },
+
+  "screen": {
+    "storeLocation": {
+      "mainTitle": "Chọn khu vực"
+    },
+    "account": {
+      "mainTitle": "Tài khoản",
+      "myAccountTitle": "Tài khoản của tôi",
+      "editAccountTitle": "Chỉnh sửa thông tin"
+    },
+    "address": {
+      "mainTitle": "Địa chỉ",
+      "createTitle": "Thêm địa chỉ",
+      "editTitle": "Sửa địa chỉ"
+    },
+    "register": {
+      "mainTitle": "Đăng ký thông tin"
+    },
+    "affiliate": {
+      "mainTitle": "Mã giới thiệu"
+    },
+    "qrBarCode": {
+      "mainTitle": "Mã tài khoản",
+      "walletAddressTitle": "Địa chỉ ví",
+      "scanTitle": "Quét mã QR"
+    },
+    "transfer": {
+      "mainTitle": "Chuyển khoản"
+    },
+    "payAccount": {
+      "mainTitle": "Thông tin tài khoản"
+    },
+    "contact": {
+      "mainTitle": "Danh bạ"
+    },
+    "rada": {
+      "mainTitle": "Dịch vụ Rada"
+    },
+    "radaOrderHistory": {
+      "mainTitle": "Quản lý đơn hàng"
+    },
+    "voucher": {
+      "mainTitle": "TickID Voucher"
+    },
+    "myVoucher": {
+      "mainTitle": "Voucher của tôi"
+    },
+    "news": {
+      "mainTitle": "Tin tức"
+    },
+    "newsDetail": {
+      "mainTitle": "Chi tiết"
+    },
+    "orders": {
+      "mainTitle": "Đơn hàng"
+    },
+    "productDetail": {
+      "mainTitle": "Chi tiết sản phẩm"
+    },
+    "ordersDetail": {
+      "mainTitle": "Chi tiết đơn hàng",
+      "confirmTitle": "Xác nhận"
+    },
+    "feedback": {
+      "mainTitle": "Cảm ơn quý khách!"
+    },
+    "cart": {
+      "mainTitle": "Giỏ hàng"
+    },
+    "paymentMethod": {
+      "mainTitle": "Hình thức thanh toán"
+    },
+    "securePayment": {
+      "mainTitle": "Thanh toán an toàn"
+    },
+    "schedule": {
+      "mainTitle": "Chọn ngày và giờ"
+    },
+    "scheduleConfirm": {
+      "mainTitle": "Yêu cầu đặt lịch"
+    }
+  },
+
+  "system": {
+    "settings": {
+      "error": {
+        "accessProblem": "Ứng dụng không thể truy cập vào Cài đặt!"
+      }
+    },
+    "camera": {
+      "access": {
+        "request": "Ứng dụng cần quyền truy cập Camera"
+      },
+      "error": {
+        "notSupport": "Nền tảng không hỗ trợ truy cập Camera",
+        "unavailable": "Quyền truy cập Camera không khả dụng",
+        "accessProblem": "Lỗi yêu cầu quyền truy cập Camera"
+      }
+    }
+  },
+
+  "popupConfirm": {
+    "yes": "Có",
+    "no": "Không"
+  }
+}

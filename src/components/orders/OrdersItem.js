@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Confirm from '../payment/Confirm';
 import store from '../../store/Store';
-import { Actions } from 'react-native-router-flux';
 
 class OrdersItem extends Component {
   static defaultProps = {

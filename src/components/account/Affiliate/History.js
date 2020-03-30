@@ -15,6 +15,7 @@ import Communications from 'react-native-communications';
 
 const History = props => {
   var historyData = props.historyData ? props.historyData : [];
+  const { t } = props;
   const historyRender = historyData.map(history => (
     <HistoryRow
       key={history.id}
@@ -38,10 +39,10 @@ const History = props => {
       //     />
       // }
     >
-      {historyData.length ? (
+      {props.loading ? null : historyData.length ? (
         historyRender
       ) : (
-        <Text>Danh sách mời của tài khoản</Text>
+        <Text style={styles.note}>{t('tab.referralList.desc')}</Text>
       )}
     </ScrollView>
   );
@@ -75,10 +76,14 @@ const styles = StyleSheet.create({
   des: {
     fontSize: 12,
     color: '#404040'
+  },
+  note: {
+    fontSize: 16,
+    marginBottom: 2
   }
 });
 
-export default History;
+export default withTranslation('affiliate')(History);
 
 const HistoryRow = props => {
   return (

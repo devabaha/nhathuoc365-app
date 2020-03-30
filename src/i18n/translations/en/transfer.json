@@ -1,0 +1,67 @@
+{
+  "contactInput": {
+    "title": "Transfer to",
+    "placeholder": "Choose a receiver"
+  },
+  "contact": {
+    "requestContactsPermissionTitle": "Contact",
+    "requestContactsPermissionMessage": "Giving access to contacts helps you quickly and accurately select information",
+    "notInContactsFamilyName": "Not in contacts yet",
+    "allowAccessContactsMessage": "Allow access",
+    "searchContactsPlaceholder": "Search by name or phone number"
+  },
+  "transferPaymentTitle": "Transfer to {{walletName}}",
+  "error": {
+    "sameAccount": "Cannot transfer money to the same account!",
+    "noTel": "Contact does not have phone number!"
+  },
+  "accountNotRegisterYet": {
+    "title": "You are transferring money to the phone number that has not registered your {{appName}} account",
+    "message": "Invite the owner of {{tel}} to use {{appName}} now!!",
+    "accept": "SEND INVITATION",
+    "cancel": "CANCEL"
+  },
+  "confirm": {
+    "message": "You transferred {{money}} to {{this.props.receiverName}} ({{receiverTel}})",
+    "sourceMoney": "Wallet",
+    "fingerprintScanner": "Use Touch ID to unlock and confirm",
+    "modal": {
+      "enterPass": {
+        "title": "Enter password"
+      },
+      "wrongPass": {
+        "title": "Password not match",
+        "message": "Please try again!",
+        "accept": "Try again"
+      },
+      "newPass": {
+        "title": "Create new password",
+        "message": "To be secured, please create a transaction password"
+      },
+      "reEnterPass": {
+        "title": "Re-enter password",
+        "message": "Re-enter password to confirm"
+      }
+    },
+    "transaction": {
+      "success": {
+        "title": "Transaction successful",
+        "subTitle": "",
+        "message": "Back to home"
+      },
+      "detail": "Transaction detail",
+      "form": {
+        "sendTo": "Transfer to",
+        "tel": "Phone number",
+        "money": "Amount"
+      },
+      "fee": {
+        "title": "Fee",
+        "value": "Free"
+      },
+      "totalPrice": "Total price",
+      "secure": "Secure SSL/TLS, all transaction information is securely encrypted.",
+      "confirm": "Confirm"
+    }
+  }
+}

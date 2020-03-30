@@ -1,0 +1,21 @@
+{
+  "smsBrandNameSendCodeFailMessage": "Authentication error, please try again.",
+  "smsBrandNameVerifyFailMessage": "03: Incorrect authentication code, please try again.",
+  "firebaseConfirmCodeFailMessage01": "01: Incorrect authentication code, please try again.",
+  "firebaseConfirmCodeFailMessage02": "02: Incorrect authentication code, please try again.",
+
+  "countrySelectionTitle": "Choose a country",
+
+  "phoneWelcomeMessage": "Hello!",
+  "phoneDescription": "Enter your phone number to continue",
+  "phonePlaceholder": "8765 4321",
+  "phoneConfirmMessage": "Next",
+
+  "verifyCodeInputTitle": "Enter the code sent to:",
+  "verifyCodeInputPlaceholder": "Enter code...",
+  "verifyCodeInputConfirmMessage": "Next",
+
+  "notReceiveCode": "Not receive the code?",
+  "requestNewCodeWithTime": "Request new code after",
+  "requestNewCode": "Request new code"
+}

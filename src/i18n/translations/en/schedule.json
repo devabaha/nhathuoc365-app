@@ -1,0 +1,14 @@
+{
+  "prefix": {
+    "yesterday": "Yesterday",
+    "today": "Today",
+    "tomorrow": "Tomorrow"
+  },
+  "confirm": {
+    "note": {
+      "title": "Appointment Notes",
+      "placeholder": "Type your note here..."
+    },
+    "requestAppointment": "Request appointment"
+  }
+}

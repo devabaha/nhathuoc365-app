@@ -1,0 +1,56 @@
+{
+  "options": {
+    "changeStoreLocation": {
+      "label": "Chọn cửa hàng khác",
+      "desc": ""
+    },
+    "myAdress": {
+      "label": "Địa chỉ của tôi",
+      "desc": "Quản lý địa chỉ nhận hàng"
+    },
+    "fanpage": {
+      "label": "Fanpage {{appName}}",
+      "desc": "Facebook Fanpage chăm sóc khách hàng"
+    },
+    "termOfUse": {
+      "label": "Về {{appName}} - Điều khoản sử dụng",
+      "desc": "Điều khoản sử dụng",
+      "webViewTitle": "Về {{appName}}"
+    },
+    "appInformation": {
+      "label": "Thông tin ứng dụng",
+      "desc": "Sản phẩm của {{appName}} - Phiên bản hiện tại: {{appVersion}}"
+    },
+    "appUpdate": {
+      "label": "Cập nhật ứng dụng",
+      "desc": "Cập nhật lên phiên bản ổn định {{newVersion}} ngay!"
+    },
+    "language": {
+      "label": "Ngôn ngữ",
+      "desc": "",
+      "cancel": "Huỷ",
+      "select": "Chọn"
+    }
+  },
+  "avatarPicker": {
+    "title": "Cập nhật ảnh đại diện tài khoản",
+    "cancelTitle": "Huỷ bỏ",
+    "takePhotoTitle": "Chụp ảnh",
+    "chooseFromLibraryTitle": "Chọn ảnh từ thư viện",
+    "messageUpdateSuccessfully": "Thay ảnh đại diện thành công."
+  },
+  "signIn": "Đăng nhập",
+  "referralCode": "Mã giới thiệu",
+  "accountInvestor": "Tài khoản [Nhà đầu tư]",
+  "investorSyncingMessage": "Đồng bộ với tài khoản trên hệ thống Nhà đầu tư",
+  "referralCodeInput": "Nhập mã giới thiệu",
+  "cashbackSystemInviteMessage": "Tham gia hệ thống Cashback 4.0",
+  "affiliateMarketingProgram": "Thông tin chương trình tiếp thị liên kết cùng {{appName}}",
+  "signOut": {
+    "title": "Lưu ý khi đăng xuất",
+    "subTitle": "Bạn sẽ không nhận được thông báo khuyến mãi từ các cửa hàng của bạn cho tới khi đăng nhập lại.",
+    "cancel": "Huỷ",
+    "accept": "Đăng xuất",
+    "successMessage": "Đăng xuất thành công"
+  }
+}

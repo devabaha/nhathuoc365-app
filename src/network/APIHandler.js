@@ -82,6 +82,23 @@ class APIHandler {
   }
 
   /**
+   * Lấy d/s địa điểm cửa hàng
+   */
+  async user_list_store_location() {
+    var api = url_for(API.USER_LIST_STORE_LOCATION);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Chọn địa điểm cửa hàng
+   */
+
+  async user_choose_store_location(site_id) {
+    var api = url_for(API.USER_CHOOSE_STORE_LOCATION + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Tìm cửa hàng theo mã CH
    */
   async user_search_store(store_code) {

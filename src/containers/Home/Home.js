@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { Alert } from 'react-native';
 
 import OneSignal from 'react-native-onesignal';
 import branch from 'react-native-branch';
@@ -56,11 +56,13 @@ class Home extends Component {
   };
 
   handleOpenningNotification(openResult) {
+    const { t } = this.props;
     const data = openResult.notification.payload.additionalData;
-    servicesHandler(data);
+    servicesHandler(data, t);
   }
 
   handleSubcribeBranchIO = () => {
+    const { t } = this.props;
     this.branchIOUnsubcribe = branch.subscribe(({ error, params }) => {
       if (error) {
         console.error('Error from Branch: ' + error);
@@ -70,7 +72,7 @@ class Home extends Component {
       try {
         console.log(params, this.props);
         if (params['+clicked_branch_link'] && params['+match_guaranteed']) {
-          servicesHandler(params);
+          servicesHandler(params, t);
         }
       } catch (err) {
         console.log('branchIO', err);
@@ -174,9 +176,10 @@ class Home extends Component {
   }
 
   handleOrderHistoryPress(item) {
+    const { t } = this.props;
     Actions.push('tickidRadaOrderHistory', {
       category: item,
-      title: 'Quản lý đơn hàng'
+      title: t('common:screen.radaOrderHistory.mainTitle')
     });
   }
 
@@ -217,80 +220,94 @@ class Home extends Component {
   }
 
   handleBookingSuccess(response) {
+    const { t } = this.props;
     return Alert.alert(
-      'Thông báo',
-      'Bạn đã đặt dịch vụ thành công!',
-      [{ text: 'Đồng ý', onPress: () => Actions.homeTab() }],
+      t('booking.success.title'),
+      t('booking.success.message'),
+      [{ text: t('booking.success.accept'), onPress: () => Actions.homeTab() }],
       { cancelable: false }
     );
   }
 
   handleBookingFail(err) {
+    const { t } = this.props;
     if (err && err.data) {
       if (err.data.customer.length != 0) {
         return Alert.alert(
-          'Thông báo',
+          t('booking.fail.title'),
           err.data.customer[0],
-          [{ text: 'Đồng ý' }],
+          [{ text: t('booking.fail.accept') }],
           { cancelable: false }
         );
       } else {
         return Alert.alert(
-          'Thông báo',
+          t('booking.fail.title'),
           err.message || '',
-          [{ text: 'Đồng ý' }],
+          [{ text: t('booking.fail.accept') }],
           { cancelable: false }
         );
       }
     } else if (err.message) {
-      return Alert.alert('Thông báo', err.message, [{ text: 'Đồng ý' }], {
-        cancelable: false
-      });
+      return Alert.alert(
+        t('booking.fail.title'),
+        err.message,
+        [{ text: t('booking.fail.accept') }],
+        {
+          cancelable: false
+        }
+      );
     } else {
       return Alert.alert(
-        'Thông báo',
-        'Có lỗi xảy ra, vui lòng thử lại',
-        [{ text: 'Đồng ý' }],
+        t('booking.fail.title'),
+        t('booking.fail.message'),
+        [{ text: t('booking.fail.accept') }],
         { cancelable: false }
       );
     }
   }
 
   handleCallWebHookSuccess(response) {
+    const { t } = this.props;
     return Alert.alert(
-      'Thông báo',
-      'Bạn đã đặt dịch vụ thành công!',
-      [{ text: 'Đồng ý', onPress: () => Actions.homeTab() }],
+      t('web.success.title'),
+      t('web.success.message'),
+      [{ text: t('web.success.accept'), onPress: () => Actions.homeTab() }],
       { cancelable: false }
     );
   }
 
   handleCallWebHookFail(err) {
+    const { t } = this.props;
     if (err && err.data) {
       if (err.data.customer.length != 0) {
         return Alert.alert(
-          'Thông báo',
+          t('web.fail.title'),
           err.data.customer[0],
-          [{ text: 'Đồng ý' }],
+          [{ text: t('web.fail.accept') }],
           { cancelable: false }
         );
       } else {
         return Alert.alert(
-          'Thông báo',
+          t('web.fail.title'),
           err.message || '',
-          [{ text: 'Đồng ý' }],
+          [{ text: t('web.fail.accept') }],
           { cancelable: false }
         );
       }
     } else if (err.message) {
-      return Alert.alert('Thông báo', err.message, [{ text: 'Đồng ý' }], {
-        cancelable: false
-      });
+      return Alert.alert(
+        t('web.fail.title'),
+        err.message,
+        [{ text: t('web.fail.accept') }],
+        {
+          cancelable: false
+        }
+      );
     } else {
       return Alert.alert(
-        'Thông báo',
-        'Có lỗi xảy ra, vui lòng thử lại',
-        [{ text: 'Đồng ý' }],
+        t('web.fail.title'),
+        t('web.fail.message'),
+        [{ text: t('web.fail.accept') }],
         { cancelable: false }
       );
     }
@@ -299,13 +316,14 @@ class Home extends Component {
   handleShowAllVouchers = () => {};
 
   handlePressService = service => {
+    const { t } = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else if (service.type === 'rada_service') {
       Actions.push('tickidRada', {
         service_type: service.type,
         service_id: service.id,
-        title: 'Dịch vụ Rada',
+        title: t('common:screen.rada.mainTitle'),
         onPressItem: item => {
           this.handleCategoryPress(item);
         },
@@ -314,7 +332,7 @@ class Home extends Component {
         }
       });
     } else {
-      servicesHandler(service);
+      servicesHandler(service, t);
     }
   };
 
@@ -397,6 +415,14 @@ class Home extends Component {
       });
   };
 
+  goToSearch = () => {
+    Actions.push(appConfig.routes.searchStore, {
+      categories: null,
+      category_id: 0,
+      category_name: ''
+    });
+  };
+
   render() {
     return (
       <HomeComponent
@@ -430,16 +456,10 @@ class Home extends Component {
         onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
         product_groups={this.state.product_groups}
+        goToSearch={this.goToSearch}
       />
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    position: 'relative'
-  }
-});
-
-export default observer(Home);
+export default withTranslation(['home', 'common'])(observer(Home));

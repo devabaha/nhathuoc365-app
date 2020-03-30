@@ -7,8 +7,9 @@ import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
 //library
 import Modal from 'react-native-modalbox';
 
-export default class PopupConfirm extends Component {
+class PopupConfirm extends Component {
   render() {
+    const { t } = this.props;
     return (
       <Modal
         isOpen={this.props.isOpen}
@@ -48,7 +49,7 @@ export default class PopupConfirm extends Component {
                 }
               ]}
             >
-              {this.props.noTitle || 'Không'}
+              {this.props.noTitle || t('popupConfirm.no')}
             </Text>
           </TouchableHighlight>
 
@@ -58,7 +59,7 @@ export default class PopupConfirm extends Component {
             onPress={this.props.yesConfirm}
           >
             <Text style={styles.modal_confirm_label}>
-              {this.props.yesTitle || 'Có'}
+              {this.props.yesTitle || t('popupConfirm.yes')}
             </Text>
           </TouchableHighlight>
         </View>
@@ -126,3 +127,5 @@ const styles = StyleSheet.create({
     lineHeight: 20
   }
 });
+
+export default withTranslation()(PopupConfirm);

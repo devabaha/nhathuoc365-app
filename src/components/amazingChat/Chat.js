@@ -326,6 +326,7 @@ class Chat extends Component {
   }
 
   handlePinPress = pin => {
+    const { t } = this.props;
     if (pin.type === 'STORE_ORDERS_TYPE') {
       Actions.push(appConfig.routes.storeOrders, {
         store_id: this.state.site.id,
@@ -333,7 +334,7 @@ class Chat extends Component {
         tel: this.state.site.tel
       });
     } else {
-      servicesHandler(pin);
+      servicesHandler(pin, t);
     }
   };
 
@@ -379,4 +380,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Chat);
+export default withTranslation()(observer(Chat));

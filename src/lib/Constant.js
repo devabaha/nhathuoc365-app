@@ -3,7 +3,7 @@
 import { Platform, Dimensions, PixelRatio } from 'react-native';
 
 // API URL
-// global.MY_FOOD_API = 'https://abaha.net/';
+// global.MY_FOOD_API = 'https://apiapp.tickid.top/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
 global.MY_FOOD_API = 'https://api.foodhub.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
@@ -135,8 +135,8 @@ global.FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
 global.MESSAGE_OTHER_ERROR = 'Lỗi không xác định, xin thử lại';
 
 global.EMAIL_SUPPORT = 'info@foodhub.vn';
-global.APP_FANPAGE = 'http://foodhub-fanpage.tickid.vn';
-global.APP_INFO = 'http://foodhub-info.tickid.vn';
+global.APP_FANPAGE = 'https://www.facebook.com/foodhubshop';
+global.APP_INFO = 'http://foodhub.vn';
 
 const X_WIDTH = 375;
 const X_HEIGHT = 812;

@@ -12,9 +12,9 @@ import store from '../../../store/Store';
 import History from './History';
 import Info from './Info';
 import appConfig from 'app-config';
+import Loading from '../../Loading';
 
-@observer
-export default class VndWallet extends Component {
+class VndWallet extends Component {
   constructor(props) {
     super(props);
 
@@ -22,25 +22,38 @@ export default class VndWallet extends Component {
       historiesData: null,
       wallet: props.wallet,
       activeTab: 0,
-      loading: [true, false, false, false]
+      loading: true
     };
+
+    this.unmounted = false;
   }
 
   componentWillMount() {
     this._getWallet();
   }
 
+  componentWillUnmount() {
+    this.unmounted = true;
+  }
+
   async _getWallet() {
     // user_coins_wallet
     try {
-      var response = await APIHandler.user_wallet_history(
+      const response = await APIHandler.user_wallet_history(
         this.state.wallet.zone_code
       );
-      if (response && response.status == STATUS_SUCCESS) {
-        this.setState({ historiesData: response.data.histories });
+      if (!this.unmounted) {
+        if (response && response.status == STATUS_SUCCESS) {
+          this.setState({ historiesData: response.data.histories });
+        }
       }
     } catch (e) {
       console.log(e);
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false
+        });
     }
   }
 
@@ -52,8 +65,10 @@ export default class VndWallet extends Component {
   }
 
   _goQRCode() {
+    const { t } = this.props;
+
     Actions.push(appConfig.routes.qrBarCode, {
-      title: 'Địa chỉ ví',
+      title: t('common:screen.qrBarCode.walletAddressTitle'),
       wallet: this.state.wallet,
       address: this.state.wallet.address
     });
@@ -77,7 +92,6 @@ export default class VndWallet extends Component {
       }
       if (activeTab !== this.state.activeTab) {
         let state = this.state;
-        state.loading[activeTab] = true;
         state.activeTab = activeTab;
         this.setState({ ...state });
       }
@@ -116,6 +130,8 @@ export default class VndWallet extends Component {
   renderTopLabelCoin() {
     var { wallet } = this.state;
     const { user_info } = store;
+    const { t } = this.props;
+
     return (
       <View>
         <View style={styles.add_store_actions_box}>
@@ -126,7 +142,9 @@ export default class VndWallet extends Component {
           >
             <View style={styles.add_store_action_btn_box}>
               <Icon name="qrcode" size={30} color="#333333" />
-              <Text style={styles.add_store_action_label}>Địa chỉ Ví</Text>
+              <Text style={styles.add_store_action_label}>
+                {t('common:screen.qrBarCode.walletAddressTitle')}
+              </Text>
             </View>
           </TouchableHighlight>
 
@@ -137,7 +155,9 @@ export default class VndWallet extends Component {
           >
             <View style={styles.add_store_action_btn_box}>
               <Icon name="minus-square-o" size={30} color="#333333" />
-              <Text style={styles.add_store_action_label}>Chuyển khoản</Text>
+              <Text style={styles.add_store_action_label}>
+                {t('common:screen.transfer.mainTitle')}
+              </Text>
             </View>
           </TouchableHighlight>
 
@@ -162,7 +182,8 @@ export default class VndWallet extends Component {
                   }
                 ]}
               >
-                <Icon name={wallet.icon} size={16} color={wallet.color} /> Số dư
+                <Icon name={wallet.icon} size={16} color={wallet.color} />
+                {t('header.balance')}
               </Text>
               <Text
                 style={[
@@ -186,11 +207,14 @@ export default class VndWallet extends Component {
 
   render() {
     var { wallet, activeTab, historiesData } = this.state;
+    const { t } = this.props;
     const data = [
       {
         key: 0,
-        title: 'Lịch sử',
-        component: <History historyData={historiesData} />
+        title: t('tabs.history.title'),
+        component: (
+          <History loading={this.state.loading} historyData={historiesData} />
+        )
       },
       // {
       //   key: 1,
@@ -204,8 +228,10 @@ export default class VndWallet extends Component {
       // },
       {
         key: 1,
-        title: 'Thông tin',
-        component: <Info content={wallet.content} />
+        title: t('tabs.information.title'),
+        component: (
+          <Info loading={this.state.loading} content={wallet.content} />
+        )
       }
     ];
     const tabHeader = data.map((d, i) => (
@@ -241,6 +267,7 @@ export default class VndWallet extends Component {
     ));
     return (
       <View style={styles.container}>
+        {this.state.loading && <Loading center />}
         {this.renderTopLabelCoin()}
         <View
           style={{
@@ -504,3 +531,5 @@ const styles = StyleSheet.create({
     borderBottomWidth: 4
   }
 });
+
+export default withTranslation(['vndWallet', 'common'])(observer(VndWallet));

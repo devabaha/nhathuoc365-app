@@ -38,8 +38,8 @@ code-push app add tick-foodhub-android android react-native
 │ Staging    │ Ysxk9PCgfA9owCJfVg2m2AT4C4GDf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7 │
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Nang cap ATTR"
-code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap ATTR"
+code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Them Attr"
+code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap Chat va loading"
 
 1. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
@@ -70,7 +70,7 @@ Chạy Xcode, sửa lại version và version code cho App và Onesignal
 	java -jar ../pepk.jar --keystore=android/app/vn.tickid.keystore --alias=vn.tickid --output=android/app/vn.tickid.pem --encryptionkey=xxx
 
 	Build file apk from aab
-	java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar" build-apks --bundle="app/build/outputs/bundle/release/app.aab" --output="app/build/outputs/bundle/release/app01.apks" --ks="app/vn.cocosoul.keystore" --ks-pass="pass:123456" --ks-key-alias="vn.cocosoul" --key-pass="pass:123456"
+	java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar" build-apks --bundle="app/build/outputs/bundle/release/app.aab" --output="app/build/outputs/bundle/release/app01.apks" --ks="app/vn.foodhub.keystore" --ks-pass="pass:123456" --ks-key-alias="vn.foodhub" --key-pass="pass:123456"
 
 	java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar"  install-apks --apks=
 

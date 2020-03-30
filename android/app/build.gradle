@@ -118,8 +118,8 @@ android {
         applicationId "vn.foodhub"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 309
-        versionName "3.0.7"
+        versionCode 311
+        versionName "3.0.9"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
         resConfigs "en", "vi"
@@ -169,8 +169,9 @@ android {
 }
 
 dependencies {
-    implementation project(':react-native-firebase')
     implementation project(':react-native-svg')
+    implementation project(':react-native-firebase')
+    implementation project(':react-native-localize')
     implementation project(':react-native-device-info')
     implementation project(':react-native-linear-gradient')
     implementation project(':react-native-haptic-feedback')

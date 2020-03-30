@@ -184,6 +184,7 @@ class SelectProvince extends Component {
   }
 
   render() {
+    const { t } = this.props;
     return (
       <Animated.View style={[styles.container, this.containerStyle]}>
         <Button
@@ -192,14 +193,18 @@ class SelectProvince extends Component {
         />
 
         <View style={[styles.content, this.contentStyle]}>
-          <Header onClose={this.onClose} />
+          <Header
+            closeTitle={t('modal.close')}
+            title={t('modal.province.title')}
+            onClose={this.onClose}
+          />
 
           <ScrollView keyboardShouldPersistTaps="handled">
             <View style={styles.searchWrapper}>
               <Image style={styles.searchIcon} source={iconSearch} />
               <TextInput
                 style={styles.searchInput}
-                placeholder="Tìm kiếm"
+                placeholder={t('modal.province.placeholder')}
                 onChangeText={this.handleSearch}
                 value={this.state.searchText}
               />
@@ -215,7 +220,9 @@ class SelectProvince extends Component {
             ) : (
               <View style={styles.noResultWrapper}>
                 <Text style={styles.noResult}>
-                  Không có kết quả phù hợp cho "{this.state.searchText}"
+                  {t('modal.province.notFound', {
+                    searchText: this.state.searchText
+                  })}
                 </Text>
               </View>
             )}
@@ -302,4 +309,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SelectProvince;
+export default withTranslation('voucher')(SelectProvince);

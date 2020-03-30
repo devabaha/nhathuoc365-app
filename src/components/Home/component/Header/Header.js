@@ -1,20 +1,51 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
+import { ifIphoneX } from 'react-native-iphone-x-helper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import store from 'app-store';
 
 function Header(props) {
+  const { t } = useTranslation(['home', 'stores']);
   return (
     <View style={styles.container}>
-      <Text style={styles.userNameWrapper}>
-        <Text style={styles.userName}>Xin chào</Text>
+      <View style={styles.userNameWrapper}>
+        {/* <Text style={styles.userName}>{t('welcome.message')}</Text>
         <Text style={[styles.userName, styles.userNameBold]}>
           {props.name ? `, ${props.name}` : ''}
-        </Text>
-      </Text>
+        </Text> */}
+        <TouchableOpacity onPress={props.goToSearch}>
+          <View pointerEvents="none" style={styles.searchWrapper}>
+            <Ionicons
+              size={20}
+              color="#ccc"
+              style={styles.searchIcon}
+              name="ios-search"
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholder={
+                t('stores:search.placeholder.prefix') +
+                ' ' +
+                (store.store_data ? store.store_data.name : '') +
+                '...'
+              }
+              placeholderTextColor="#ccc"
+              numberOfLines={1}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
 
       <View style={styles.notificationWrapper}>
         <Button
@@ -36,12 +67,12 @@ function Header(props) {
         </Button>
       </View>
 
-      {/** TEST FLOW FOR SERVICE ORDERS */}
+      {/* DEMO SCHEDULE FUNCTION */}
       {/* <Button
-        containerStyle={{ position: 'absolute', top: 45, left: 250 }}
-        onPress={() => Actions.push(appConfig.routes.serviceOrders)}
+        containerStyle={{ position: 'absolute', right: 70, top: 40 }}
+        onPress={() => Actions.push(appConfig.routes.schedule)}
       >
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}>Đơn dịch vụ</Text>
+        <Text style={{ color: '#fff', fontWeight: 'bold' }}> Đặt lịch</Text>
       </Button> */}
     </View>
   );
@@ -51,7 +82,8 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
     flexDirection: 'row',
-    paddingTop: appConfig.device.isIphoneX ? 35 : 25
+    paddingTop: appConfig.device.isIphoneX ? 35 : 25,
+    alignItems: 'center'
   },
   notificationWrapper: {
     alignItems: 'flex-end',
@@ -66,7 +98,7 @@ const styles = StyleSheet.create({
   },
   iconNotication: {},
   userNameWrapper: {
-    marginTop: 16,
+    // marginTop: 16,
     flex: 1
   },
   userName: {
@@ -94,6 +126,29 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#ffffff',
     fontWeight: '600'
+  },
+  searchWrapper: {
+    flex: 1,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    alignItems: 'center',
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    ...ifIphoneX(
+      {
+        marginTop: 4,
+        marginBottom: 8
+      },
+      {
+        marginVertical: appConfig.device.isIOS === 'ios' ? 6 : 8
+      }
+    )
+  },
+  searchInput: {
+    flex: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    color: appConfig.colors.white
   }
 });
 

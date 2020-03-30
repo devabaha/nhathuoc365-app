@@ -106,6 +106,7 @@ class Voucher extends Component {
   };
 
   render() {
+    const { t } = this.props;
     return (
       <View style={styles.container}>
         {this.props.apiFetching && <LoadingComponent loading />}
@@ -128,7 +129,7 @@ class Voucher extends Component {
           }
         >
           <View style={styles.placeWrapper}>
-            <Text style={styles.placeLabel}>Địa điểm</Text>
+            <Text style={styles.placeLabel}>{t('locationTitle')}</Text>
 
             <Button onPress={this.props.onPressSelectProvince}>
               <View style={styles.placeNameWrapper}>
@@ -152,18 +153,16 @@ class Voucher extends Component {
             <View style={styles.myVoucherWrapper}>
               <Image source={iconVoucher} style={styles.myVoucherIcon} />
               <View style={styles.myVoucherTitleWrapper}>
-                <Text style={styles.myVoucherTitle}>Voucher của tôi</Text>
+                <Text style={styles.myVoucherTitle}>{t('header.title')}</Text>
                 {this.props.newVoucherNum > 0 ? (
                   <Text style={styles.myVoucherInfo}>
                     <Text
                       style={styles.myVoucherCount}
                     >{`${this.props.newVoucherNum} `}</Text>
-                    mã chưa sử dụng
+                    {t('header.unusedCode')}
                   </Text>
                 ) : (
-                  <Text style={styles.myVoucherInfo}>
-                    Bạn chưa có mã giảm giá
-                  </Text>
+                  <Text style={styles.myVoucherInfo}>{t('header.noCode')}</Text>
                 )}
               </View>
               <Icon name="chevron-right" size={16} color="#999" />
@@ -177,8 +176,8 @@ class Voucher extends Component {
               style={{
                 marginTop: config.device.height / 2 - 168
               }}
-              title="Địa điểm chưa có ưu đãi"
-              text="Chưa có chương trình ưu đãi cho địa điểm này"
+              title={t('noResult.title')}
+              text={t('noResult.message')}
             />
           )}
         </ScrollView>
