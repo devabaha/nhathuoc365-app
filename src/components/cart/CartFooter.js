@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
   FlatList,
@@ -13,8 +12,7 @@ import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from '../../store/Store';
 
-@observer
-export default class CartFooter extends Component {
+class CartFooter extends Component {
   constructor(props) {
     super(props);
 
@@ -55,6 +53,7 @@ export default class CartFooter extends Component {
   }
 
   async _getCart() {
+    const { t } = this.props;
     try {
       const response = await APIHandler.site_cart_show(store.store_id);
 
@@ -69,7 +68,7 @@ export default class CartFooter extends Component {
       console.log(e + ' site_cart_show');
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     } finally {
       !this.unmounted &&
@@ -95,6 +94,7 @@ export default class CartFooter extends Component {
         decrement_loading: true
       },
       async () => {
+        const { t } = this.props;
         try {
           const data = {
             quantity: 1,
@@ -117,14 +117,14 @@ export default class CartFooter extends Component {
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || 'Có lỗi xảy ra'
+              message: response.message || t('common:api.error.message')
             });
           }
         } catch (e) {
           console.log(e + ' site_cart_minus');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         } finally {
           !this.unmounted &&
@@ -142,6 +142,7 @@ export default class CartFooter extends Component {
         increment_loading: true
       },
       async () => {
+        const { t } = this.props;
         try {
           const data = {
             quantity: 1,
@@ -165,7 +166,7 @@ export default class CartFooter extends Component {
             } else {
               flashShowMessage({
                 type: 'danger',
-                message: response.message || 'Có lỗi xảy ra'
+                message: response.message || t('common:api.error.message')
               });
             }
           }
@@ -173,7 +174,7 @@ export default class CartFooter extends Component {
           console.warn(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         } finally {
           !this.unmounted &&
@@ -312,7 +313,7 @@ export default class CartFooter extends Component {
         </View>
       );
     }
-
+    const { t } = this.props;
     var { cart_data, cart_products } = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
@@ -362,10 +363,7 @@ export default class CartFooter extends Component {
     } else {
       return (
         <View style={styles.store_cart_container}>
-          <CenterText
-            marginTop={-8}
-            title={'Giỏ hàng trống\nHãy mua sắm ngay!'}
-          />
+          <CenterText marginTop={-8} title={t('noFooterItems')} />
         </View>
       );
     }
@@ -383,12 +381,13 @@ export default class CartFooter extends Component {
         });
       }
     } else {
+      const { t } = this.props;
       return Alert.alert(
-        'Thông báo',
-        'Bạn cần chọn ít nhất (01) mặt hàng để tiếp tục',
+        t('notification.noItemSelected.title'),
+        t('notification.noItemSelected.message'),
         [
           {
-            text: 'Đồng ý',
+            text: t('notification.noItemSelected.accept'),
             onPress: () => {
               if (this.props.add_new) {
                 this.props.add_new();
@@ -402,6 +401,7 @@ export default class CartFooter extends Component {
   }
 
   render() {
+    const { t } = this.props;
     var { cart_data, cart_products } = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
@@ -434,7 +434,7 @@ export default class CartFooter extends Component {
                 color: '#ffffff'
               }}
             >
-              {cart_data.promotions.title} giảm{' '}
+              {cart_data.promotions.title} {`${t('discount')} `}
               {cart_data.promotions.discount_text}
             </Text>
           </View>
@@ -467,7 +467,7 @@ export default class CartFooter extends Component {
               <View style={styles.checkout_box}>
                 <Icon name="shopping-cart" size={22} color="#ffffff" />
                 <Text style={styles.checkout_title}>
-                  {isset_cart ? 'ĐẶT HÀNG' : 'GIỎ HÀNG'}
+                  {isset_cart ? t('payment.order') : t('payment.cart')}
                 </Text>
 
                 {isset_cart && (
@@ -640,3 +640,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 });
+
+export default withTranslation(['cart', 'common'])(observer(CartFooter));

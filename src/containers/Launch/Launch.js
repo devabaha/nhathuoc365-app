@@ -1,14 +1,6 @@
 import React, { Component } from 'react';
 import { Actions } from 'react-native-router-flux';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-  Animated,
-  Easing
-} from 'react-native';
-import { CachedImage } from 'react-native-img-cache';
+import { View, StyleSheet, Animated, Easing } from 'react-native';
 import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
@@ -36,7 +28,9 @@ class Launch extends Component {
       const response = await APIHandler.user_login({
         fb_access_token: ''
       });
-      setTimeout(() => this.handleAuthWithResponse(response), 2000);
+      setTimeout(() => {
+        this.handleAuthWithResponse(response);
+      }, 500);
     } catch (error) {
       console.log(error);
       setTimeout(this.handleAuthorization, 1000);

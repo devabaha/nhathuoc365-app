@@ -10,6 +10,8 @@ import { CachedImage, CachedImageBackground } from 'react-native-img-cache';
 global.CachedImage = CachedImage;
 global.CachedImageBackground = CachedImageBackground;
 
+global.AsyncStorage = AsyncStorage;
+
 // center text
 import CenterText from '../components/CenterText';
 global.CenterText = CenterText;
@@ -22,9 +24,17 @@ global.Indicator = Indicator;
 import { action } from 'mobx';
 global.action = action;
 
-// observer from mbox-react
+// observer from mobx-react
 import { observer } from 'mobx-react';
 global.observer = observer;
+
+// withTranslation from react-i18next
+import { withTranslation } from 'react-i18next';
+global.withTranslation = withTranslation;
+
+// useTranslation from react-i18next
+import { useTranslation } from 'react-i18next';
+global.useTranslation = useTranslation;
 
 // lodash
 import _ from 'lodash';

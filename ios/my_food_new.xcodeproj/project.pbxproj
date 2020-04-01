@@ -520,13 +520,6 @@
 			remoteGlobalIDString = F886647B1F4ADB500036D01B;
 			remoteInfo = "CodePush-tvOS";
 		};
-		C79F841322FCC4090065AD0B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 862B4DC1964F4723B1CA2346 /* RNAccountKit.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D2C7C6901CD1552900C9B392;
-			remoteInfo = RNAccountKit;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -619,7 +612,6 @@
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		83F383E3194847F7B969684F /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		83F77FE7F2A84B89BAB7550A /* RNCNetInfo.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCNetInfo.xcodeproj; path = "../node_modules/@react-native-community/netinfo/ios/RNCNetInfo.xcodeproj"; sourceTree = "<group>"; };
-		862B4DC1964F4723B1CA2346 /* RNAccountKit.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNAccountKit.xcodeproj; path = "../node_modules/react-native-facebook-account-kit/ios/RNAccountKit.xcodeproj"; sourceTree = "<group>"; };
 		88EE2B8A23A341FA0073E518 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		89363297F7DC4360872EAC59 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		8997C9A241C547AB950D7084 /* libRCTOneSignal.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRCTOneSignal.a; sourceTree = "<group>"; };
@@ -981,7 +973,6 @@
 				83F77FE7F2A84B89BAB7550A /* RNCNetInfo.xcodeproj */,
 				FADCEA9D91DE49EB8E9DBACC /* RNCAsyncStorage.xcodeproj */,
 				CBBE6C829AC249BF840F199D /* RCTOneSignal.xcodeproj */,
-				862B4DC1964F4723B1CA2346 /* RNAccountKit.xcodeproj */,
 				2BB12D7D1CC04742A95643E3 /* CodePush.xcodeproj */,
 				5C4DE4C96D3A4393AC3CEC92 /* RNCamera.xcodeproj */,
 				3699F7F2FA7846CE8B15FB0E /* RNReanimated.xcodeproj */,
@@ -1181,14 +1172,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		C79F841022FCC4090065AD0B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				C79F841422FCC4090065AD0B /* libRNAccountKit.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1371,10 +1354,6 @@
 				{
 					ProductGroup = 1CF7B92323BB4F8A006028BC /* Products */;
 					ProjectRef = 1CF7B92223BB4F8A006028BC /* ReactNativePermissions.xcodeproj */;
-				},
-				{
-					ProductGroup = C79F841022FCC4090065AD0B /* Products */;
-					ProjectRef = 862B4DC1964F4723B1CA2346 /* RNAccountKit.xcodeproj */;
 				},
 				{
 					ProductGroup = 8A482F0C233CA0A90036AF7F /* Products */;
@@ -1863,13 +1842,6 @@
 			fileType = archive.ar;
 			path = libCodePush.a;
 			remoteRef = C726F5FB2304087100F234AC /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		C79F841422FCC4090065AD0B /* libRNAccountKit.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRNAccountKit.a;
-			remoteRef = C79F841322FCC4090065AD0B /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

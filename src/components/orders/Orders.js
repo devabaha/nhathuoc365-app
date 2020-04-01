@@ -93,8 +93,9 @@ class Orders extends Component {
   }
 
   async _getData(delay, noScroll = false) {
+    const { t } = this.props;
     try {
-      var response = await APIHandler.user_cart_list();
+      const response = await APIHandler.user_cart_list();
 
       if (response && response.status == STATUS_SUCCESS) {
         if (store.deep_link_data) {
@@ -111,7 +112,7 @@ class Orders extends Component {
           } else {
             flashShowMessage({
               type: 'danger',
-              message: 'Không tìm thấy đơn hàng!'
+              message: t('getOrders.error.notFoundMessage')
             });
           }
         }
@@ -140,10 +141,6 @@ class Orders extends Component {
       }
     } catch (error) {
       console.log(error);
-      store.addApiQueue(
-        'user_cart_list',
-        this._getData.bind(this, delay, noScroll)
-      );
     } finally {
       store.getNoitify();
       store.setDeepLinkData(null);
@@ -166,8 +163,8 @@ class Orders extends Component {
   }
 
   render() {
-    var { loading, data } = this.state;
-
+    const { loading, data } = this.state;
+    const { t } = this.props;
     if (loading) {
       return <Indicator />;
     }
@@ -203,7 +200,7 @@ class Orders extends Component {
                 <View style={styles.separator}></View>
               )}
               style={styles.items_box}
-              data={this.state.data}
+              data={data}
               extraData={this.state}
               renderItem={({ item, index }) => {
                 return (
@@ -225,7 +222,7 @@ class Orders extends Component {
               size={32}
               color={hexToRgbA(DEFAULT_COLOR, 0.6)}
             />
-            <Text style={styles.empty_box_title}>Chưa có đơn hàng nào</Text>
+            <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
 
             <TouchableHighlight
               onPress={() => {
@@ -234,7 +231,9 @@ class Orders extends Component {
               underlayColor="transparent"
             >
               <View style={styles.empty_box_btn}>
-                <Text style={styles.empty_box_btn_title}>Mua sắm ngay</Text>
+                <Text style={styles.empty_box_btn_title}>
+                  {t('encourageMessage')}
+                </Text>
               </View>
             </TouchableHighlight>
           </View>
@@ -298,6 +297,7 @@ class Orders extends Component {
   }
 
   async _editCart() {
+    const { t } = this.props;
     if (this.item_edit) {
       try {
         const response = await APIHandler.site_cart_update_ordering(
@@ -317,7 +317,7 @@ class Orders extends Component {
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || 'Có lỗi xảy ra'
+              message: response.message || t('common:api.error.message')
             });
           }
         }
@@ -342,6 +342,7 @@ class Orders extends Component {
   }
 
   async _cancelCart() {
+    const { t } = this.props;
     if (this.item_cancel) {
       try {
         const response = await APIHandler.site_cart_canceling(
@@ -358,7 +359,7 @@ class Orders extends Component {
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || 'Có lỗi xảy ra'
+              message: response.message || t('common:api.error.message')
             });
           }
         }
@@ -366,7 +367,7 @@ class Orders extends Component {
         console.log(error);
         flashShowMessage({
           type: 'danger',
-          message: 'Có lỗi xảy ra'
+          message: t('common:api.error.message')
         });
       }
     }
@@ -461,4 +462,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Orders);
+export default withTranslation(['orders', 'common'])(observer(Orders));

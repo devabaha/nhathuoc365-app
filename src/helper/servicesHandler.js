@@ -4,17 +4,17 @@ import { Alert } from 'react-native';
 import Communications from 'react-native-communications';
 import store from 'app-store';
 
-export const servicesHandler = service => {
+export const servicesHandler = (service, t) => {
   switch (service.type) {
     case SERVICES_TYPE.ACCUMULATE_POINTS:
       Actions.push(appConfig.routes.qrBarCode, {
-        title: 'Mã tài khoản'
+        title: t('common:screen.qrBarCode.mainTitle')
       });
       break;
     case 'MY_VOUCHER_TYPE':
     case SERVICES_TYPE.MY_VOUCHER:
       Actions.push(appConfig.routes.myVoucher, {
-        title: 'Voucher của tôi',
+        title: t('common:screen.myVoucher.mainTitle'),
         from: 'home'
       });
       break;
@@ -38,7 +38,7 @@ export const servicesHandler = service => {
     case SERVICES_TYPE.QRCODE_SCAN:
       Actions.push(appConfig.routes.qrBarCode, {
         index: 1,
-        title: 'Quét QR Code',
+        title: t('common:screen.qrBarCode.scanTitle'),
         wallet: store.user_info.default_wallet
       });
       break;
@@ -153,7 +153,7 @@ export const servicesHandler = service => {
     case 'my_voucher_detail':
       store.setDeepLinkData({ id: service.id });
       Actions.push(appConfig.routes.myVoucher, {
-        title: 'Voucher của tôi',
+        title: t('common:screen.myVoucher.mainTitle'),
         from: 'home',
         onUseVoucherOnlineSuccess: handleUseVoucherOnlineSuccess,
         onUseVoucherOnlineFailure: () => {}

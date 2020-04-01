@@ -1,0 +1,52 @@
+{
+  "options": {
+    "myAdress": {
+      "label": "My address",
+      "desc": "Delivery address management"
+    },
+    "fanpage": {
+      "label": "Fanpage {{appName}}",
+      "desc": "Facebook Fanpage customer care"
+    },
+    "termOfUse": {
+      "label": "About {{appName}} - Term of use",
+      "desc": "Term of use",
+      "webViewTitle": "About {{appName}}"
+    },
+    "appInformation": {
+      "label": "App information",
+      "desc": "Product of {{appName}} - Current version: {{appVersion}}"
+    },
+    "appUpdate": {
+      "label": "App update",
+      "desc": "Update to stable version {{newVersion}} now!"
+    },
+    "language": {
+      "label": "Language",
+      "desc": "",
+      "cancel": "Cancel",
+      "select": "Change"
+    }
+  },
+  "avatarPicker": {
+    "title": "Update your avatar",
+    "cancelTitle": "Cancel",
+    "takePhotoTitle": "Take a photo",
+    "chooseFromLibraryTitle": "Choose from library",
+    "messageUpdateSuccessfully": "Your avatar updated successfully."
+  },
+  "signIn": "Sign in",
+  "referralCode": "Referral code",
+  "accountInvestor": "Account [Investor]",
+  "investorSyncingMessage": "Synchronize with accounts on Investors system",
+  "referralCodeInput": "Enter referral code",
+  "cashbackSystemInviteMessage": "Join the Cashback 4.0 system",
+  "affiliateMarketingProgram": "Affiliate marketing information with",
+  "signOut": {
+    "title": "Wait a minute",
+    "subTitle": "You will not receive promotional notifications from your stores until you log back in.",
+    "cancel": "Cancel",
+    "accept": "Sign out",
+    "successMessage": "Sign out successfully"
+  }
+}

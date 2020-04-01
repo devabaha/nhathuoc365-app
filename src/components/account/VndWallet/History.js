@@ -13,7 +13,10 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 
+import Loading from '../../Loading';
+
 const History = props => {
+  const { t } = props;
   var historyData = props.historyData ? props.historyData : [];
   const historyRender = historyData.map(history => (
     <HistoryRow
@@ -40,10 +43,10 @@ const History = props => {
       //     />
       // }
     >
-      {historyData.length ? (
+      {props.loading ? null : historyData.length ? (
         historyRender
       ) : (
-        <Text>Tài khoản chưa có giao dịch</Text>
+        <Text style={styles.note}>{t('tabs.history.message')}</Text>
       )}
     </ScrollView>
   );
@@ -77,10 +80,14 @@ const styles = StyleSheet.create({
   des: {
     fontSize: 12,
     color: '#404040'
+  },
+  note: {
+    fontSize: 16,
+    marginBottom: 2
   }
 });
 
-export default History;
+export default withTranslation('vndWallet')(History);
 
 const HistoryRow = props => {
   _onShowHistoryDetail = () => {

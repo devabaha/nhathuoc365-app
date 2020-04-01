@@ -159,6 +159,8 @@ PODS:
     - React
   - RNFS (2.15.2):
     - React
+  - RNLocalize (1.3.4):
+    - React
   - RNPermissions (2.0.6):
     - React
   - RNReactNativeHapticFeedback (1.9.0):
@@ -197,6 +199,7 @@ DEPENDENCIES:
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNFirebase/Crashlytics (from `../node_modules/react-native-firebase/ios`)
   - RNFS (from `../node_modules/react-native-fs`)
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -262,6 +265,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-firebase/ios"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReactNativeHapticFeedback:
@@ -311,12 +316,13 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
   RNFirebase: 37daa9a346d070f9f6ee1f3b4aaf4c8e3b1d5d1c
   RNFS: 54da03c2b7d862c42ea3ca8c7f86f892760a535a
+  RNLocalize: 215c419a17d7585eb7a63c748ebfd042e0cb2c3d
   RNPermissions: 4fa81b28a6e07b31ed9068fa7dab24e2b8a3902b
   RNReactNativeHapticFeedback: 2566b468cc8d0e7bb2f84b23adc0f4614594d071
   RNSVG: 7e16ddfc6e00d5aa69c9eb83e699bcce5dcb85d4
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 3cc7d6d6c85f54fecfe193cd984625029894c2ec
+PODFILE CHECKSUM: c265cd847a26522f9826fa9832a78031936a9f5f
 
 COCOAPODS: 1.8.4

@@ -32,6 +32,7 @@ class PaymentMethod extends Component {
   }
 
   getPaymentMethod = async () => {
+    const { t } = this.props;
     try {
       const response = await APIHandler.payment_method(store.store_id);
 
@@ -43,7 +44,7 @@ class PaymentMethod extends Component {
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || 'Có lỗi xảy ra'
+            message: response.message || t('common:api.error.message')
           });
         }
       }
@@ -51,7 +52,7 @@ class PaymentMethod extends Component {
       console.log('get_payment_method', err);
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     } finally {
       !this.unmounted && this.setState({ loading: false });
@@ -80,7 +81,7 @@ class PaymentMethod extends Component {
       payment_type: this.state.selectedMethod.type,
       payment_content: ''
     };
-
+    const { t } = this.props;
     try {
       const response = await APIHandler.add_payment_method(
         store.store_id,
@@ -102,7 +103,7 @@ class PaymentMethod extends Component {
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || 'Có lỗi xảy ra'
+            message: response.message || t('common:api.error.message')
           });
         }
       }
@@ -110,7 +111,7 @@ class PaymentMethod extends Component {
       console.log('get_payment_method', err);
       flashShowMessage({
         type: 'danger',
-        message: 'Có lỗi xảy ra'
+        message: t('common:api.error.message')
       });
     } finally {
       !this.unmounted && this.setState({ loading: false });
@@ -161,6 +162,7 @@ class PaymentMethod extends Component {
   }
 
   render() {
+    const { t } = this.props;
     const extraData = this.state.selectedMethod.id + this.state.selectedBank.id;
     const extraFee = this.props.extraFee || {};
 
@@ -172,11 +174,11 @@ class PaymentMethod extends Component {
             <ModernList
               extraData={extraData}
               data={this.state.paymentMethod}
-              headerTitle="Chọn hình thức thanh toán"
+              headerTitle={t('method.selectTitle')}
               renderItem={this.renderPaymentMethod.bind(this)}
               listEmptyComponent={
                 !this.state.loading && (
-                  <NoPaymentMethod message="Chưa có hình thức thanh toán" />
+                  <NoPaymentMethod message={t('method.emptyMessage')} />
                 )
               }
             />
@@ -184,7 +186,7 @@ class PaymentMethod extends Component {
 
           <View style={[styles.box, { paddingVertical: 7 }]}>
             <View style={styles.priceInfoRow}>
-              <Text style={styles.priceLabel}>Tạm tính</Text>
+              <Text style={styles.priceLabel}>{t('payment.tempPrice')}</Text>
               <Text style={styles.priceValue}>{this.props.price}</Text>
             </View>
             {Object.keys(extraFee).map(key => {
@@ -198,9 +200,9 @@ class PaymentMethod extends Component {
           </View>
         </ScrollView>
         <Button
-          renderBefore={<TotalPrice value={this.props.totalPrice} />}
+          renderBefore={<TotalPrice t={t} value={this.props.totalPrice} />}
           containerStyle={styles.confirmContainer}
-          title="Tiếp tục"
+          title={t('confirm')}
           onPress={this.handleConfirm}
         />
       </SafeAreaView>
@@ -291,12 +293,14 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PaymentMethod;
+export default withTranslation(['paymentMethod', 'common'])(PaymentMethod);
 
 const TotalPrice = props => {
   return (
     <View style={[styles.priceInfoRow, styles.totalPriceInfoRow]}>
-      <Text style={[styles.priceLabel, styles.totalPriceText]}>Thành tiền</Text>
+      <Text style={[styles.priceLabel, styles.totalPriceText]}>
+        {props.t('payment.totalPrice')}
+      </Text>
       <Text style={[styles.totalPriceValue, styles.totalPriceText]}>
         {props.value}
       </Text>

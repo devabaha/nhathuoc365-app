@@ -1,0 +1,29 @@
+{
+  "sections": {
+    "fullName": {
+      "title": "Full name"
+    },
+    "phoneNumber": {
+      "title": "Phone number"
+    },
+    "birthdate": {
+      "title": "Birthdate"
+    },
+    "gender": {
+      "title": "Gender"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "address": {
+      "title": "Address"
+    }
+  },
+  "signOut": {
+    "title": "Sign out",
+    "warningTitle": "Wait a minute",
+    "warningDescription": "You will not receive promotional notifications from your stores until you log back in.",
+    "cancel": "Cancel",
+    "successMessage": "Sign out successfully"
+  }
+}

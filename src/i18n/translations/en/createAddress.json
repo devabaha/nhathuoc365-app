@@ -1,0 +1,39 @@
+{
+  "confirmNotification": {
+    "title": "Notification",
+    "nameDescription": "Please enter the receiver's name",
+    "telDescription": "Please enter the phone number",
+    "mapAddressDescription": "Please choose the map address",
+    "addressDescription": "Please enter the address",
+    "accept": "OK"
+  },
+  "formData": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Receiver's name"
+    },
+    "tel": {
+      "label": "Phone",
+      "placeholder": "Enter phone number"
+    },
+    "map_address": {
+      "label": "Map address",
+      "description": "",
+      "placeholder": "Choose your address"
+    },
+    "address": {
+      "label": "Detail address",
+      "description": "",
+      "placeholder": "Enter for more specific address (room number, house number, building name,...)"
+    }
+  },
+  "setDefault": "Set as default address",
+  "delete": "Delete this address",
+  "deleteConfirm": "Do you want to delete this address?",
+
+  "btn": {
+    "save": "SAVE",
+    "finish": "FINISH",
+    "next": "NEXT"
+  }
+}

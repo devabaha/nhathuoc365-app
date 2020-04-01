@@ -1,0 +1,20 @@
+{
+  "shopTitle": {
+    "preOrder": "Pre-order",
+    "buy": "Add to cart"
+  },
+  "attr": {
+    "notChooseAttrYet": "No attribute selected",
+    "stock": "Stock",
+    "quantity": "Quantity"
+  },
+  "addToCart": "Add to cart",
+  "liked": "Liked",
+  "like": "Like",
+  "information": {
+    "brands": "BRANDS",
+    "origin": "ORIGIN"
+  },
+  "relatedItems": "PRODUCTS OF THE SAME TYPE",
+  "goToStore": "Go to store"
+}

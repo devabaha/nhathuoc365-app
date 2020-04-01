@@ -1,0 +1,34 @@
+{
+  "sections": {
+    "fullName": {
+      "title": "Full name"
+    },
+    "phoneNumber": {
+      "title": "Phone number"
+    },
+    "birthdate": {
+      "title": "Birthdate",
+      "defaultValue": "Pick your birthdate"
+    },
+    "gender": {
+      "title": "Gender",
+      "defaultValue": "Choose a gender",
+      "male": "Male",
+      "female": "Female",
+      "cancel": "Cancel"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "address": {
+      "title": "Address"
+    }
+  },
+
+  "save": "Save",
+
+  "noChangeMessage": "No information has been changed",
+  "invalidEmailMessage": "Your email is malformed",
+
+  "saveChanges": "Save changes"
+}

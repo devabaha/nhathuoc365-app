@@ -1,0 +1,39 @@
+{
+  "confirmNotification": {
+    "title": "Thông báo",
+    "nameDescription": "Hãy điền tên Người nhận hàng",
+    "telDescription": "Hãy điền Số điện thoại",
+    "mapAddressDescription": "Hãy chọn địa chỉ bản đồ",
+    "addressDescription": "Hãy điền Địa chỉ",
+    "accept": "Đồng ý"
+  },
+  "formData": {
+    "name": {
+      "label": "Tên",
+      "placeholder": "Tên người nhận hàng"
+    },
+    "tel": {
+      "label": "Số điện thoại",
+      "placeholder": "Điền số điện thoại"
+    },
+    "map_address": {
+      "label": "Địa chỉ bản đồ",
+      "description": "",
+      "placeholder": "Chọn địa chỉ của bạn"
+    },
+    "address": {
+      "label": "Địa chỉ chi tiết",
+      "description": "",
+      "placeholder": "Nhập địa chỉ cụ thể (số phòng, số nhà, tên toà nhà,... )"
+    }
+  },
+  "setDefault": "Đặt làm địa chỉ mặc định",
+  "delete": "Xoá địa chỉ này",
+  "deleteConfirm": "Bạn muốn xoá bỏ địa chỉ này?",
+
+  "btn": {
+    "save": "LƯU LẠI",
+    "finish": "HOÀN THÀNH",
+    "next": "TIẾP TỤC"
+  }
+}

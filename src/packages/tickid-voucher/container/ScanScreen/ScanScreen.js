@@ -27,9 +27,10 @@ class ScanScreen extends BaseContainer {
   }
 
   handlePressEnterCode = ({ onSendCode }) => {
+    const { t } = this.props;
     config.route.push(config.routes.voucherEnterCodeManual, {
       onClose: config.route.pop,
-      heading: 'Nhập mã thủ công',
+      heading: t('scan.modal.title'),
       placeholder: this.props.placeholder,
       /**
        * In case enter code manual
@@ -127,12 +128,12 @@ class ScanScreen extends BaseContainer {
     this.setState({
       showLoading: true
     });
-
+    const { t } = this.props;
     try {
       const response = await internalFetch(config.rest.saveVoucher(code));
       if (response.status === config.httpCode.success) {
         showMessage({
-          message: 'Bạn đã nhận thành công voucher này.',
+          message: response.message,
           type: 'success'
         });
         this.handleRefreshMyVoucher();
@@ -150,7 +151,7 @@ class ScanScreen extends BaseContainer {
         },
         () => {
           showMessage({
-            message: 'Kết nối tới máy chủ thất bại. Vui lòng thử lại sau',
+            message: t('common:api.error.network'),
             type: 'danger'
           });
         }
@@ -171,4 +172,4 @@ class ScanScreen extends BaseContainer {
   }
 }
 
-export default ScanScreen;
+export default withTranslation(['voucher', 'common'])(ScanScreen);

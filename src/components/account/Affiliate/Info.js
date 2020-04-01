@@ -18,13 +18,11 @@ const Info = props => {
       //     />
       // }
     >
-      <View style={[{ paddingLeft: 10, marginTop: 10 }]}>
+      {!props.loading && (
         <Text style={[styles.des]}>
-          {props.content
-            ? props.content
-            : 'Giới thiệu chương trình tiếp thị liên kết'}
+          {props.content ? props.content : props.t('info.content')}
         </Text>
-      </View>
+      )}
     </ScrollView>
   );
 };
@@ -35,7 +33,7 @@ const styles = StyleSheet.create({
     color: '#404040'
   },
   des: {
-    fontSize: 16,
+    fontSize: 14,
     marginBottom: 2
   },
   notice: {
@@ -45,4 +43,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Info;
+export default withTranslation('affiliate')(Info);

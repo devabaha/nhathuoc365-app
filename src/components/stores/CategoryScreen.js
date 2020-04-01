@@ -26,9 +26,11 @@ class CategoryScreen extends Component {
     let header_title;
 
     if (item.id == 0) {
-      header_title = `— Cửa hàng —`;
+      header_title = `— ${props.t('tabs.screen.mainTitle')} —`;
     } else {
-      header_title = `— Sản phẩm ${item.name} —`;
+      header_title = `— ${props.t('tabs.screen.categoryTitle', {
+        productName: item.name
+      })} —`;
     }
 
     this.state = {
@@ -80,7 +82,8 @@ class CategoryScreen extends Component {
     if (
       index == cate_index &&
       this.state.items_data == null &&
-      this.props != nextProps
+      this.props != nextProps &&
+      !this.state.loading
     ) {
       this.start_time = time();
       // get list products by category_id
@@ -231,11 +234,6 @@ class CategoryScreen extends Component {
       this.props.onRefreshEnd();
     } catch (e) {
       console.log(e + ' site_category_product');
-      this.props.onRefreshEnd();
-      // store.addApiQueue(
-      //   'site_category_product',
-      //   this._getItemByCateIdFromServer.bind(this, category_id, delay, loadmore)
-      // );
     }
   }
 
@@ -251,6 +249,7 @@ class CategoryScreen extends Component {
   }
 
   render() {
+    const { t } = this.props;
     // show loading
     if (this.state.loading) {
       return (
@@ -385,4 +384,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(CategoryScreen);
+export default withTranslation('stores')(observer(CategoryScreen));

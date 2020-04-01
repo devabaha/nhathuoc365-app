@@ -50,6 +50,7 @@ class Items extends Component {
           quantity,
           model
         };
+        const { t } = this.props;
 
         try {
           const response = await APIHandler.site_cart_plus(
@@ -113,7 +114,7 @@ class Items extends Component {
               }
             } else {
               flashShowMessage({
-                message: response.message || 'Có lỗi xảy ra',
+                message: response.message || t('common:api.error.message'),
                 type: 'danger'
               });
             }
@@ -122,7 +123,7 @@ class Items extends Component {
           console.warn(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
-            message: 'Có lỗi xảy ra'
+            message: t('common:api.error.message')
           });
         } finally {
           !this.unmounted &&
@@ -154,7 +155,7 @@ class Items extends Component {
   }
 
   render() {
-    let { item, index, onPress, isCategories, isLocationItem } = this.props;
+    let { item, index, onPress, isCategories, isLocationItem, t } = this.props;
 
     // render item chọn khu vực đặt hàng
 
@@ -258,7 +259,7 @@ class Items extends Component {
                     fontSize: 14
                   }}
                 >
-                  XEM THÊM
+                  {t('item.more')}
                 </Text>
               </View>
             )}
@@ -360,9 +361,13 @@ class Items extends Component {
                   <Icon name="cart-plus" size={22} color={DEFAULT_COLOR_RED} />
                 )}
                 {item.book_flag == 1 ? (
-                  <Text style={styles.item_add_book_title}>Đặt trước</Text>
+                  <Text style={styles.item_add_book_title}>
+                    {t('product:shopTitle.preOrder')}
+                  </Text>
                 ) : (
-                  <Text style={styles.item_add_cart_title}>Chọn mua</Text>
+                  <Text style={styles.item_add_cart_title}>
+                    {t('product:shopTitle.buy')}
+                  </Text>
                 )}
 
                 {quantity > 0 && (
@@ -541,4 +546,6 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(Items);
+export default withTranslation(['stores', 'product', 'common'])(
+  observer(Items)
+);
