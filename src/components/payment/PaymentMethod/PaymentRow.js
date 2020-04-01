@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
   View,
   TouchableWithoutFeedback,
-  ScrollView,
+  TouchableOpacity,
   StyleSheet,
   Text,
   Animated,
@@ -16,7 +16,6 @@ import Ionicon from 'react-native-vector-icons/Ionicons';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import LinearGradient from 'react-native-linear-gradient';
 import { default as Reanimated, Easing } from 'react-native-reanimated';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const CIRCLE_PATH =
   'M23 12c0-3.037-1.232-5.789-3.222-7.778s-4.741-3.222-7.778-3.222-5.789 1.232-7.778 3.222-3.222 4.741-3.222 7.778 1.232 5.789 3.222 7.778 4.741 3.222 7.778 3.222 5.789-1.232 7.778-3.222 3.222-4.741 3.222-7.778zM21 12c0 2.486-1.006 4.734-2.636 6.364s-3.878 2.636-6.364 2.636-4.734-1.006-6.364-2.636-2.636-3.878-2.636-6.364 1.006-4.734 2.636-6.364 3.878-2.636 6.364-2.636 4.734 1.006 6.364 2.636 2.636 3.878 2.636 6.364z';
