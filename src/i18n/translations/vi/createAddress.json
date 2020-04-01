@@ -3,6 +3,7 @@
     "title": "Thông báo",
     "nameDescription": "Hãy điền tên Người nhận hàng",
     "telDescription": "Hãy điền Số điện thoại",
+    "mapAddressDescription": "Hãy chọn địa chỉ bản đồ",
     "addressDescription": "Hãy điền Địa chỉ",
     "accept": "Đồng ý"
   },
@@ -15,10 +16,15 @@
       "label": "Số điện thoại",
       "placeholder": "Điền số điện thoại"
     },
+    "map_address": {
+      "label": "Địa chỉ bản đồ",
+      "description": "",
+      "placeholder": "Chọn địa chỉ của bạn"
+    },
     "address": {
-      "label": "Địa chỉ",
-      "description": "(Số nhà, tên toà nhà, tên đường, tên khu vực, thành phố)",
-      "placeholder": "Nhập địa chỉ cụ thể"
+      "label": "Địa chỉ chi tiết",
+      "description": "",
+      "placeholder": "Nhập địa chỉ cụ thể (số phòng, số nhà, tên toà nhà,... )"
     }
   },
   "setDefault": "Đặt làm địa chỉ mặc định",

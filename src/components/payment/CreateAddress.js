@@ -28,7 +28,12 @@ class CreateAddress extends Component {
         address_id: edit_data.id,
         name: edit_data.name || '',
         tel: edit_data.tel || '',
+        map_address: edit_data.map_address || '',
         address: edit_data.address || '',
+        city: edit_data.city || '',
+        district: edit_data.district || '',
+        latitude: edit_data.latitude || '',
+        longitude: edit_data.longitude || '',
         default_flag: edit_data.default_flag == 1 ? true : false,
         finish_loading: false,
         is_user_address: props.from_page == 'account'
@@ -38,7 +43,12 @@ class CreateAddress extends Component {
         address_id: 0,
         name: '',
         tel: '',
+        map_address: '',
         address: '',
+        city: '',
+        district: '',
+        latitude: '',
+        longitude: '',
         default_flag: false,
         finish_loading: false,
         is_user_address: props.from_page == 'account'
@@ -85,12 +95,26 @@ class CreateAddress extends Component {
   }
 
   _onSave() {
-    var { name, tel, address } = this.state;
+    var {
+      name,
+      tel,
+      map_address,
+      address,
+      city,
+      district,
+      latitude,
+      longitude
+    } = this.state;
     const { t } = this.props;
 
     name = name.trim();
     tel = tel.trim();
+    map_address = map_address.trim();
     address = address.trim();
+    city = city.trim();
+    district = district.trim();
+    latitude = latitude.trim();
+    longitude = longitude.trim();
 
     if (!name) {
       return Alert.alert(
@@ -124,6 +148,25 @@ class CreateAddress extends Component {
       );
     }
 
+    if (!map_address) {
+      return Alert.alert(
+        t('confirmNotification.title'),
+        t('confirmNotification.mapAddressDescription'),
+        [
+          {
+            text: t('confirmNotification.accept'),
+            onPress: () => {
+              Actions.push(appConfig.routes.modalSearchPlaces, {
+                onCloseModal: Actions.pop,
+                onPressItem: this.handlePressAddress.bind(this)
+              });
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+
     if (!address) {
       return Alert.alert(
         t('confirmNotification.title'),
@@ -150,9 +193,14 @@ class CreateAddress extends Component {
             name,
             tel,
             address,
+            map_address,
+            city,
+            district,
+            latitude,
+            longitude,
             default_flag: this.state.default_flag ? 1 : 0
           };
-
+          console.log(data_edit);
           var { is_user_address } = this.state;
 
           if (is_user_address) {
@@ -254,6 +302,17 @@ class CreateAddress extends Component {
     }
   }
 
+  handlePressAddress({ detail_address, map_address }) {
+    this.setState({
+      address: detail_address.description,
+      map_address: map_address.description,
+      district: detail_address.district,
+      city: detail_address.city,
+      latitude: map_address.lat,
+      longitude: map_address.lng
+    });
+  }
+
   render() {
     var { edit_mode } = this.state;
     var is_go_confirm = this.props.redirect == 'confirm';
@@ -277,7 +336,7 @@ class CreateAddress extends Component {
                 keyboardType="default"
                 maxLength={30}
                 placeholder={t('formData.name.placeholder')}
-                placeholderTextColor="#999999"
+                placeholderTextColor={appConfig.colors.placeholder}
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
                   this.setState({
@@ -305,7 +364,7 @@ class CreateAddress extends Component {
                 keyboardType="phone-pad"
                 maxLength={30}
                 placeholder={t('formData.tel.placeholder')}
-                placeholderTextColor="#999999"
+                placeholderTextColor={appConfig.colors.placeholder}
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
                   this.setState({
@@ -320,39 +379,92 @@ class CreateAddress extends Component {
           <View style={styles.input_address_box}>
             <TouchableHighlight
               underlayColor="#ffffff"
-              onPress={() => {
-                if (this.refs_address) {
-                  this.refs_address.focus();
-                }
-              }}
+              // onPress={() => {
+              //   if (this.refs_map_address) {
+              //     this.refs_map_address.focus();
+              //   }
+              // }}
             >
               <View>
                 <Text style={styles.input_label}>
-                  {t('formData.address.label')}
+                  {t('formData.map_address.label')}
                 </Text>
+                {!!t('formData.map_address.description') && (
+                  <Text style={styles.input_label_help}>
+                    {t('formData.map_address.description')}
+                  </Text>
+                )}
+              </View>
+            </TouchableHighlight>
+
+            <TouchableHighlight
+              underlayColor="#ffffff"
+              onPress={() => {
+                Actions.push(appConfig.routes.modalSearchPlaces, {
+                  onCloseModal: Actions.pop,
+                  onPressItem: this.handlePressAddress.bind(this)
+                });
+              }}
+            >
+              <View pointerEvents="none">
+                <TextInput
+                  ref={ref => (this.refs_map_address = ref)}
+                  style={[
+                    styles.input_address_text,
+                    {
+                      minHeight: this.state.address_height | 50,
+                      maxHeight: 100
+                    }
+                  ]}
+                  keyboardType="default"
+                  maxLength={250}
+                  placeholder={t('formData.map_address.placeholder')}
+                  placeholderTextColor={appConfig.colors.placeholder}
+                  multiline={true}
+                  underlineColorAndroid="transparent"
+                  // onContentSizeChange={e => {
+                  //   this.setState({
+                  //     address_height: e.nativeEvent.contentSize.height
+                  //   });
+                  // }}
+                  value={this.state.map_address}
+                />
+              </View>
+            </TouchableHighlight>
+          </View>
+
+          <View style={styles.input_address_box}>
+            <View>
+              <Text style={styles.input_label}>
+                {t('formData.address.label')}
+              </Text>
+              {!!t('formData.address.description') && (
                 <Text style={styles.input_label_help}>
                   {t('formData.address.description')}
                 </Text>
-              </View>
-            </TouchableHighlight>
+              )}
+            </View>
 
             <TextInput
               ref={ref => (this.refs_address = ref)}
               style={[
                 styles.input_address_text,
-                { height: this.state.address_height | 50 }
+                {
+                  minHeight: this.state.address_height | 50,
+                  maxHeight: 100
+                }
               ]}
               keyboardType="default"
               maxLength={250}
               placeholder={t('formData.address.placeholder')}
-              placeholderTextColor="#999999"
+              placeholderTextColor={appConfig.colors.placeholder}
               multiline={true}
               underlineColorAndroid="transparent"
-              onContentSizeChange={e => {
-                this.setState({
-                  address_height: e.nativeEvent.contentSize.height
-                });
-              }}
+              // onContentSizeChange={e => {
+              //   this.setState({
+              //     address_height: e.nativeEvent.contentSize.height
+              //   });
+              // }}
               onChangeText={value => {
                 this.setState({
                   address: value
@@ -496,13 +608,13 @@ const styles = StyleSheet.create({
   },
   input_label: {
     fontSize: 14,
-    color: '#000000'
+    color: '#000'
   },
   input_text: {
     width: '96%',
     height: 44,
     paddingLeft: 8,
-    color: '#000000',
+    color: '#666',
     fontSize: 14,
     textAlign: 'right',
     paddingVertical: 0
@@ -524,9 +636,9 @@ const styles = StyleSheet.create({
   },
   input_address_text: {
     width: '100%',
-    color: '#000000',
+    color: '#666',
     fontSize: 14,
-    marginTop: 4,
+    marginTop: 8,
     paddingVertical: 0
   },
 

@@ -109,7 +109,8 @@ const config = Object.freeze({
 
     // Modal
     modalPicker: 'modalPicker',
-    modalList: 'modalList'
+    modalList: 'modalList',
+    modalSearchPlaces: 'modalSearchPlaces'
   }
 });
 

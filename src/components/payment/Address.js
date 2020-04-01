@@ -320,43 +320,15 @@ class Address extends Component {
                     >
                       <View style={[styles.address_box]}>
                         <View style={styles.address_name_box}>
-                          <Text style={styles.address_name}>{item.name}</Text>
-                        </View>
-
-                        <View style={styles.address_content}>
-                          <Text style={styles.address_content_phone}>
-                            {item.tel}
+                          <Text style={styles.address_name}>
+                            {item.name}{' '}
+                            {item.default_flag == 1 && (
+                              <Icon
+                                name="map-marker"
+                                style={styles.address_edit_btn}
+                              />
+                            )}
                           </Text>
-                          <Text style={styles.address_content_address_detail}>
-                            {item.address}
-                          </Text>
-                          {/*<Text style={styles.address_content_phuong}>Phường Phương Lâm</Text>
-                          <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
-                          <Text style={styles.address_content_tinh}>Hoà Bình</Text>*/}
-                        </View>
-
-                        {is_selected && single && (
-                          <View style={styles.address_selected_box}>
-                            <Icon
-                              name="check"
-                              size={24}
-                              color={DEFAULT_COLOR}
-                            />
-                            <Text style={styles.address_label}>
-                              {t('address.delivery')}
-                            </Text>
-                          </View>
-                        )}
-
-                        {item.default_flag == 1 && (
-                          <View style={styles.address_edit_btn}>
-                            <Text style={styles.address_default_title}>
-                              {t('address.default')}
-                            </Text>
-                          </View>
-                        )}
-
-                        <View style={styles.address_default_box}>
                           <TouchableHighlight
                             underlayColor="transparent"
                             onPress={() => {
@@ -380,6 +352,68 @@ class Address extends Component {
                             </View>
                           </TouchableHighlight>
                         </View>
+
+                        <View style={styles.address_content}>
+                          <Text style={styles.address_content_phone}>
+                            {item.tel}
+                          </Text>
+                          <Text style={styles.address_content_address_detail}>
+                            {item.address}
+                          </Text>
+                          {!!item.map_address && (
+                            <Text style={styles.address_content_map_address}>
+                              {item.map_address}
+                            </Text>
+                          )}
+                          {/* <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
+                          <Text style={styles.address_content_tinh}>Hoà Bình</Text> */}
+                        </View>
+
+                        {is_selected && single && (
+                          <View style={styles.address_selected_box}>
+                            <Icon
+                              name="check"
+                              size={24}
+                              color={DEFAULT_COLOR}
+                            />
+                            <Text style={styles.address_label}>
+                              {t('address.delivery')}
+                            </Text>
+                          </View>
+                        )}
+
+                        {/* {item.default_flag == 1 && (
+                          <View style={styles.address_edit_btn}>
+                            <Text style={styles.address_default_title}>
+                              {t('address.default')}
+                            </Text>
+                          </View>
+                        )} */}
+
+                        {/* <View style={styles.address_default_box}>
+                          <TouchableHighlight
+                            underlayColor="transparent"
+                            onPress={() => {
+                              Actions.create_address({
+                                edit_data: item,
+                                title: t('common:screen.address.editTitle'),
+                                addressReload: this._getData,
+                                from_page: this.props.from_page
+                              });
+                            }}
+                          >
+                            <View style={styles.address_edit_box}>
+                              <Icon
+                                name="pencil-square-o"
+                                size={12}
+                                color="#999999"
+                              />
+                              <Text style={styles.address_edit_label}>
+                                {t('address.edit')}
+                              </Text>
+                            </View>
+                          </TouchableHighlight>
+                        </View> */}
 
                         {!is_selected && single && (
                           <TouchableHighlight
@@ -494,18 +528,20 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd'
   },
   address_box: {
-    paddingVertical: 8,
+    paddingVertical: 15,
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     minHeight: 120
   },
   address_name_box: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
+    justifyContent: 'space-between'
   },
   address_name: {
     fontSize: 16,
-    color: '#000000'
+    color: '#3c3c3c',
+    fontWeight: 'bold'
   },
   address_default_box: {
     alignItems: 'flex-end',
@@ -520,17 +556,21 @@ const styles = StyleSheet.create({
     fontSize: 12
   },
   address_content: {
-    marginTop: 8,
-    width: Util.size.width - 140
+    marginTop: 8
+    // width: Util.size.width - 140
   },
   address_content_phone: {
-    color: '#404040',
-    fontSize: 16,
-    marginTop: 4
+    color: '#333',
+    fontSize: 14
   },
   address_content_address_detail: {
-    color: '#404040',
+    color: '#333',
     fontSize: 14,
+    marginTop: 6
+  },
+  address_content_map_address: {
+    color: '#666',
+    fontSize: 12,
     marginTop: 4
   },
   address_content_phuong: {
@@ -579,7 +619,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#dddddd'
   },
   address_add_title: {
-    color: '#404040',
+    color: '#242424',
     fontSize: 14
   },
   address_add_icon_box: {
@@ -616,18 +656,20 @@ const styles = StyleSheet.create({
   },
 
   address_edit_btn: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    paddingVertical: 8,
-    paddingHorizontal: 15
+    // position: 'absolute',
+    // bottom: 0,
+    // right: 0,
+    // paddingVertical: 8,
+    // paddingHorizontal: 15
+    fontSize: 22,
+    color: DEFAULT_COLOR
   },
   address_edit_box: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingHorizontal: 15
+    paddingLeft: 15
   },
   address_edit_label: {
     fontSize: 12,
