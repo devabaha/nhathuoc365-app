@@ -155,7 +155,7 @@ class Address extends Component {
   }
 
   // chọn địa chỉ cho đơn hàng
-  async _addressSelectHanlder(item) {
+  _addressSelectHanlder(item) {
     this.setState({
       item_selected: item.id
     });
@@ -317,8 +317,14 @@ class Address extends Component {
                     <TouchableHighlight
                       underlayColor="transparent"
                       onPress={this._addressSelectHanlder.bind(this, item)}
+                      style={{ backgroundColor: '#fff' }}
                     >
-                      <View style={[styles.address_box]}>
+                      <View
+                        style={[
+                          styles.address_box,
+                          !is_selected && single && styles.uncheckOverlay
+                        ]}
+                      >
                         <View style={styles.address_name_box}>
                           <Text style={styles.address_name}>
                             {item.name}{' '}
@@ -352,36 +358,36 @@ class Address extends Component {
                             </View>
                           </TouchableHighlight>
                         </View>
-
-                        <View style={styles.address_content}>
-                          <Text style={styles.address_content_phone}>
-                            {item.tel}
-                          </Text>
-                          <Text style={styles.address_content_address_detail}>
-                            {item.address}
-                          </Text>
-                          {!!item.map_address && (
-                            <Text style={styles.address_content_map_address}>
-                              {item.map_address}
+                        <View style={styles.address_name_box}>
+                          <View style={styles.address_content}>
+                            <Text style={styles.address_content_phone}>
+                              {item.tel}
                             </Text>
-                          )}
-                          {/* <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
+                            <Text style={styles.address_content_address_detail}>
+                              {item.address}
+                            </Text>
+                            {!!item.map_address && (
+                              <Text style={styles.address_content_map_address}>
+                                {item.map_address}
+                              </Text>
+                            )}
+                            {/* <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
                           <Text style={styles.address_content_tinh}>Hoà Bình</Text> */}
-                        </View>
-
-                        {is_selected && single && (
-                          <View style={styles.address_selected_box}>
-                            <Icon
-                              name="check"
-                              size={24}
-                              color={DEFAULT_COLOR}
-                            />
-                            <Text style={styles.address_label}>
-                              {t('address.delivery')}
-                            </Text>
                           </View>
-                        )}
 
+                          {is_selected && single && (
+                            <View style={styles.address_selected_box}>
+                              <Icon
+                                name="check"
+                                size={24}
+                                color={DEFAULT_COLOR}
+                              />
+                              {/* <Text style={styles.address_label}>
+                                {t('address.delivery')}
+                              </Text> */}
+                            </View>
+                          )}
+                        </View>
                         {/* {item.default_flag == 1 && (
                           <View style={styles.address_edit_btn}>
                             <Text style={styles.address_default_title}>
@@ -415,18 +421,20 @@ class Address extends Component {
                           </TouchableHighlight>
                         </View> */}
 
-                        {!is_selected && single && (
-                          <TouchableHighlight
-                            underlayColor="transparent"
-                            onPress={this._addressSelectHanlder.bind(
-                              this,
-                              item
-                            )}
-                            style={styles.uncheckOverlay}
-                          >
-                            <View></View>
-                          </TouchableHighlight>
-                        )}
+                        {/* {
+                          !is_selected && single && (
+                            <TouchableHighlight
+                              underlayColor="transparent"
+                              onPress={this._addressSelectHanlder.bind(
+                                this,
+                                item
+                              )}
+                              style={styles.uncheckOverlay}
+                            >
+                              <View></View>
+                            </TouchableHighlight>
+                          )
+                        } */}
                       </View>
                     </TouchableHighlight>
                   );
@@ -589,13 +597,13 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   address_selected_box: {
-    position: 'absolute',
-    width: 100,
-    height: 60,
+    // position: 'absolute',
+    // width: 100,
+    // height: 60,
     justifyContent: 'center',
-    alignItems: 'center',
-    top: 20,
-    right: 10
+    alignItems: 'center'
+    // top: 20,
+    // right: 10
   },
   address_label: {
     fontSize: 10,
@@ -678,12 +686,13 @@ const styles = StyleSheet.create({
   },
 
   uncheckOverlay: {
-    backgroundColor: 'rgba(0,0,0,0.03)',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0
+    backgroundColor: hexToRgbA('#000', 0.03)
+    // backgroundColor: 'rgba(0,0,0,.03)',
+    // position: 'absolute',
+    // top: 0,
+    // left: 0,
+    // right: 0,
+    // bottom: 0
   },
 
   payments_nav: {
