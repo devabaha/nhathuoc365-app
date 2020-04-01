@@ -111,9 +111,10 @@ const config = Object.freeze({
     // Store Location
     storeLocation: 'storeLocation',
 
-    // Modal Picker
+    // Modal
     modalPicker: 'modalPicker',
-    modalList: 'modalList'
+    modalList: 'modalList',
+    modalSearchPlaces: 'modalSearchPlaces'
   }
 });
 

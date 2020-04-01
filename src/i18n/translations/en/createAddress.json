@@ -3,6 +3,7 @@
     "title": "Notification",
     "nameDescription": "Please enter the receiver's name",
     "telDescription": "Please enter the phone number",
+    "mapAddressDescription": "Please choose the map address",
     "addressDescription": "Please enter the address",
     "accept": "OK"
   },
@@ -15,10 +16,15 @@
       "label": "Phone",
       "placeholder": "Enter phone number"
     },
+    "map_address": {
+      "label": "Map address",
+      "description": "",
+      "placeholder": "Choose your address"
+    },
     "address": {
-      "label": "Address",
-      "description": "(House number, building name, street name, area name, city)",
-      "placeholder": "Enter a specific address"
+      "label": "Detail address",
+      "description": "",
+      "placeholder": "Enter for more specific address (room number, house number, building name,...)"
     }
   },
   "setDefault": "Set as default address",

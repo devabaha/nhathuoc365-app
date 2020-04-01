@@ -42,6 +42,8 @@ import vi_voucher from './vi/voucher.json';
 import en_voucher from './en/voucher.json';
 import vi_schedule from './vi/schedule.json';
 import en_schedule from './en/schedule.json';
+import vi_searchPlaces from './vi/searchPlaces.json';
+import en_searchPlaces from './en/searchPlaces.json';
 
 export default {
   [languages.vi.value]: {
@@ -65,7 +67,8 @@ export default {
     product: vi_product,
     cart: vi_cart,
     voucher: vi_voucher,
-    schedule: vi_schedule
+    schedule: vi_schedule,
+    searchPlaces: vi_searchPlaces
   },
   [languages.en.value]: {
     common: en_common,
@@ -88,6 +91,7 @@ export default {
     product: en_product,
     cart: en_cart,
     voucher: en_voucher,
-    schedule: en_schedule
+    schedule: en_schedule,
+    searchPlaces: en_searchPlaces
   }
 };

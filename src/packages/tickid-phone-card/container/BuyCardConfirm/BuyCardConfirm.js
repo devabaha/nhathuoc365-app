@@ -387,7 +387,9 @@ class BuyCardConfirm extends Component {
       method: 'POST',
       body: {
         quantity: this.props.quantity,
-        code: this.props.contactPhone,
+        code: this.props.contactPhone
+          ? this.props.contactPhone
+          : this.props.cardNumber,
         price: this.props.card.price,
         service_id: this.props.network.id,
         zone_code: this.props.wallet.zone_code,

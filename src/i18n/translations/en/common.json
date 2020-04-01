@@ -103,6 +103,9 @@
     },
     "scheduleConfirm": {
       "mainTitle": "Request Appointment"
+    },
+    "searchPlaces": {
+      "mainTitle": "Location"
     }
   },
 
