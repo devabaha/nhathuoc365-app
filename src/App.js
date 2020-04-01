@@ -135,6 +135,7 @@ import * as RNLocalize from 'react-native-localize';
 import { arrayLanguages } from './i18n/constants';
 import ModalPicker from './components/ModalPicker';
 import ModalList from './components/ModalList';
+import PlacesAutoComplete from './containers/PlacesAutoComplete';
 
 /**
  * Not allow font scaling
@@ -143,6 +144,7 @@ if (Text.defaultProps == null) Text.defaultProps = {};
 Text.defaultProps.allowFontScaling = false;
 if (TextInput.defaultProps == null) TextInput.defaultProps = {};
 TextInput.defaultProps.allowFontScaling = false;
+TextInput.defaultProps.placeholderTextColor = appConfig.colors.placeholder;
 /**
  * Initializes config for Phone Card module
  */
@@ -1321,6 +1323,12 @@ class RootRouter extends Component {
 
               {/* ================ MODAL LIST ================ */}
               <Stack key={appConfig.routes.modalList} component={ModalList} />
+
+              {/* ================ MODAL LIST ================ */}
+              <Stack
+                key={appConfig.routes.modalSearchPlaces}
+                component={PlacesAutoComplete}
+              />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
