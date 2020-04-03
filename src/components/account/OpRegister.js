@@ -184,34 +184,40 @@ class OpRegister extends Component {
               />
             </View>
           </View>
+          {this.state.referCodeEditable && (
+            <>
+              <View style={styles.input_box}>
+                <Text style={styles.input_label}>
+                  {t('data.referCode.title')}
+                </Text>
 
-          <View style={styles.input_box}>
-            <Text style={styles.input_label}>{t('data.referCode.title')}</Text>
-
-            <View style={styles.input_text_box}>
-              <TextInput
-                editable={this.state.referCodeEditable}
-                ref={ref => (this.refs_refer = ref)}
-                style={[
-                  styles.input_text,
-                  !this.state.referCodeEditable && styles.input_text_disabled
-                ]}
-                keyboardType="default"
-                maxLength={30}
-                placeholder={t('data.referCode.placeholder')}
-                underlineColorAndroid="transparent"
-                onChangeText={value => {
-                  this.setState({
-                    refer: value.replaceAll(' ', '')
-                  });
-                }}
-                value={this.state.refer}
-              />
-            </View>
-          </View>
-          <Text style={styles.disclaimerText}>
-            {t('encourageMessage', { appName: APP_NAME_SHOW })}
-          </Text>
+                <View style={styles.input_text_box}>
+                  <TextInput
+                    editable={this.state.referCodeEditable}
+                    ref={ref => (this.refs_refer = ref)}
+                    style={[
+                      styles.input_text,
+                      !this.state.referCodeEditable &&
+                        styles.input_text_disabled
+                    ]}
+                    keyboardType="default"
+                    maxLength={30}
+                    placeholder={t('data.referCode.placeholder')}
+                    underlineColorAndroid="transparent"
+                    onChangeText={value => {
+                      this.setState({
+                        refer: value.replaceAll(' ', '')
+                      });
+                    }}
+                    value={this.state.refer}
+                  />
+                </View>
+              </View>
+              <Text style={styles.disclaimerText}>
+                {t('encourageMessage', { appName: APP_NAME_SHOW })}
+              </Text>
+            </>
+          )}
         </ScrollView>
 
         <TouchableHighlight
