@@ -33,9 +33,15 @@ SubmitButton.defaultProps = {
 };
 
 function SubmitButton(props) {
+  const extraStyle = {
+    backgroundColor: config.colors.primary
+  };
   return (
     <View style={[styles.submitWrapper, props.style]}>
-      <Button containerStyle={styles.submitBtn} onPress={props.onPress}>
+      <Button
+        containerStyle={[styles.submitBtn, extraStyle]}
+        onPress={props.onPress}
+      >
         {!!props.iconSource && (
           <Image style={styles.icon} source={props.iconSource} />
         )}
