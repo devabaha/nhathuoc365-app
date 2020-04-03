@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   TouchableOpacity,
@@ -6,7 +6,8 @@ import {
   Text,
   View,
   StyleSheet,
-  Image
+  Image,
+  BackHandler
 } from 'react-native';
 import BgrStatusBar, {
   showBgrStatusIfOffsetTop
@@ -30,6 +31,16 @@ function BuyCardSuccess({
   historyTitle = 'Lịch sử nạp',
   serviceId = undefined
 }) {
+  useEffect(() => {
+    function backHandlerListener() {
+      return true;
+    }
+    BackHandler.addEventListener('hardwareBackPress', backHandlerListener);
+
+    return () =>
+      BackHandler.removeEventListener('hardwareBackPress', backHandlerListener);
+  });
+
   const pushToCardBuyed = () => {
     config.route.push(config.routes.cardHistory, {
       serviceId,
@@ -119,7 +130,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    marginBottom: config.device.bottomSpace
+    paddingBottom: config.device.bottomSpace
   },
   header: {
     alignItems: 'center',

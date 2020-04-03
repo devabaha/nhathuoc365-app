@@ -159,6 +159,9 @@ export const servicesHandler = (service, t) => {
         onUseVoucherOnlineFailure: () => {}
       });
       break;
+    case 'affiliate':
+      store.setReferCode(service.refer_code);
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
       //   { text: 'Đồng ý' }

@@ -16,13 +16,13 @@
     "noTel": "Liên hệ không có số điện thoại!"
   },
   "accountNotRegisterYet": {
-    "title": "Bạn đang chuyển tiền đến SĐT chưa đăng ký tài khoản TickID",
-    "message": "Hãy mời chủ thuê bao {{tel}} sử dụng TickID ngay thôi!!",
+    "title": "Bạn đang chuyển tiền đến SĐT chưa đăng ký tài khoản {{appName}}",
+    "message": "Hãy mời chủ thuê bao {{tel}} sử dụng {{appName}} ngay thôi!!",
     "accept": "GỬI LỜI MỜI",
     "cancel": "HỦY"
   },
   "confirm": {
-    "message": "Bạn đã chuyển số tiền {{money}} đến {{this.props.receiverName}} ({{receiverTel}})",
+    "message": "Bạn đã chuyển số tiền {{money}} đến {{receiverName}} ({{receiverTel}})",
     "sourceMoney": "Nguồn tiền",
     "fingerprintScanner": "Sử dụng Touch ID để mở khóa và xác nhận",
     "modal": {

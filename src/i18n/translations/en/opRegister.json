@@ -1,0 +1,28 @@
+{
+  "notification": {
+    "name": {
+      "title": "Notification",
+      "message": "Please enter your name!",
+      "accept": "OK"
+    }
+  },
+  "data": {
+    "name": {
+      "title": "Name",
+      "placeholder": "Enter your full name"
+    },
+    "referCode": {
+      "title": "Referral code",
+      "placeholder": "Enter the phone number of the referrer"
+    }
+  },
+  "encourageMessage": "Enter the phone number of the referrer, enjoy together at {{appName}}!",
+  "confirm": {
+    "save": {
+      "title": "SAVE"
+    },
+    "register": {
+      "title": "REGISTER"
+    }
+  }
+}

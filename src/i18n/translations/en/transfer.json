@@ -22,7 +22,7 @@
     "cancel": "CANCEL"
   },
   "confirm": {
-    "message": "You transferred {{money}} to {{this.props.receiverName}} ({{receiverTel}})",
+    "message": "You transferred {{money}} to {{receiverName}} ({{receiverTel}})",
     "sourceMoney": "Wallet",
     "fingerprintScanner": "Use Touch ID to unlock and confirm",
     "modal": {

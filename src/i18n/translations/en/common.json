@@ -102,7 +102,10 @@
       "mainTitle": "Request Appointment"
     },
     "searchPlaces": {
-      "mainTitle": "Location"
+      "mainTitle": "Enter your address"
+    },
+    "opRegister": {
+      "mainTitle": "Register"
     }
   },
 
