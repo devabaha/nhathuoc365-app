@@ -773,9 +773,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="op_register">
+                <Stack key={appConfig.routes.op_register}>
                   <Scene
-                    key="op_register_1"
+                    key={`${appConfig.routes.op_register}_1`}
                     title="Đăng ký"
                     component={OpRegister}
                     {...navBarConfig}

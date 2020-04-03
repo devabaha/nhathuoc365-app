@@ -73,6 +73,8 @@ const config = Object.freeze({
     storeOrders: 'store_orders',
     ordersChat: 'ordersChat',
 
+    op_register: 'op_register',
+
     // ** Begin routes of Rada module
     tickidRada: 'tickidRada',
     tickidRadaListService: 'tickidRadaListService',

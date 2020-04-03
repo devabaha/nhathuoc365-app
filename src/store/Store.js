@@ -363,6 +363,12 @@ class Store {
       console.log('reset asyncStorage', err)
     );
   }
+
+  @observable refer_code = '';
+
+  @action setReferCode(refer_code) {
+    this.refer_code = refer_code;
+  }
 }
 
 export default new Store();
