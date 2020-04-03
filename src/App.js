@@ -1397,6 +1397,15 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
+
+            {/* ================ MODAL TRANSFER RESULT ================ */}
+            <Stack key={appConfig.routes.transferResult} panHandlers={null}>
+              <Scene
+                key={`${appConfig.routes.transferResult}_1`}
+                component={TransferResult}
+                hideNavBar
+              />
+            </Stack>
           </Modal>
         </Overlay>
       </Router>
