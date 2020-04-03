@@ -151,11 +151,6 @@ export const servicesHandler = (service, t) => {
       break;
     case 'affiliate':
       store.setReferCode(service.refer_code);
-      if (!Actions.currentScene.includes(appConfig.routes.op_register)) {
-        Actions.push(appConfig.routes.op_register, {
-          refer_props: service.refer_code
-        });
-      }
       break;
     default:
       // Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [

@@ -21,8 +21,9 @@ class OpRegister extends Component {
       name: props.name_props || '',
       // email: props.email_props || '',
       // password: props.password_props || '',
-      refer: props.refer_props || '',
-      loading: false
+      refer: props.refer_props || store.refer_code,
+      loading: false,
+      referCodeEditable: true
     };
   }
 
@@ -127,10 +128,16 @@ class OpRegister extends Component {
   updateReferCode() {
     const store_refer_code = store.refer_code;
 
-    if (store_refer_code && store_refer_code !== this.state.refer) {
-      this.setState({ refer: store_refer_code }, () => {
-        store.setReferCode('');
-      });
+    if (store_refer_code) {
+      this.setState(
+        {
+          refer: store_refer_code,
+          referCodeEditable: false
+        },
+        () => {
+          store.setReferCode('');
+        }
+      );
     }
   }
 
@@ -156,7 +163,6 @@ class OpRegister extends Component {
                 keyboardType="default"
                 maxLength={30}
                 placeholder={t('data.name.placeholder')}
-                placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
                   this.setState({
@@ -184,12 +190,15 @@ class OpRegister extends Component {
 
             <View style={styles.input_text_box}>
               <TextInput
+                editable={this.state.referCodeEditable}
                 ref={ref => (this.refs_refer = ref)}
-                style={styles.input_text}
+                style={[
+                  styles.input_text,
+                  !this.state.referCodeEditable && styles.input_text_disabled
+                ]}
                 keyboardType="default"
                 maxLength={30}
                 placeholder={t('data.referCode.placeholder')}
-                placeholderTextColor="#999999"
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
                   this.setState({
@@ -315,6 +324,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'right',
     paddingVertical: 0
+  },
+  input_text_disabled: {
+    color: '#777'
   },
 
   input_address_box: {

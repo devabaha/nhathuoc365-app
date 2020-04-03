@@ -95,7 +95,7 @@ class PhoneAuth extends Component {
 
     try {
       this.setState({
-        message: t('smsBrandNameSendCodeFailMessage'),
+        message: '',
         isShowIndicator: false
       });
       let formData;

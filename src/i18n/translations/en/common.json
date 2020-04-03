@@ -103,6 +103,9 @@
     },
     "searchPlaces": {
       "mainTitle": "Enter your address"
+    },
+    "opRegister": {
+      "mainTitle": "Register"
     }
   },
 

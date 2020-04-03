@@ -369,6 +369,30 @@ class Store {
   @action setReferCode(refer_code) {
     this.refer_code = refer_code;
   }
+
+  @observable branchIOSubcriber = null;
+
+  @action branchIOSubcribe(branchIOSubcriber) {
+    this.branchIOSubcriber = branchIOSubcriber;
+  }
+
+  @action branchIOUnsubcribe() {
+    if (this.branchIOSubcriber) {
+      this.branchIOSubcriber();
+    }
+  }
+
+  @observable tempBranchIOData = null;
+
+  @action setTempBranchIOSubcribeData(tempBranchIOData) {
+    this.tempBranchIOData = tempBranchIOData;
+  }
+
+  @observable isHomeLoaded = false;
+
+  @action updateHomeLoaded(isHomeLoaded) {
+    this.isHomeLoaded = isHomeLoaded;
+  }
 }
 
 export default new Store();

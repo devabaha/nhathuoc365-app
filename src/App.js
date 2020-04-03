@@ -136,6 +136,8 @@ import { arrayLanguages } from './i18n/constants';
 import ModalPicker from './components/ModalPicker';
 import ModalList from './components/ModalList';
 import PlacesAutoComplete from './containers/PlacesAutoComplete';
+import { servicesHandler } from './helper/servicesHandler';
+import branch from 'react-native-branch';
 
 /**
  * Not allow font scaling
@@ -295,6 +297,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.handleSubcribeBranchIO();
     this.handleAddListenerOneSignal();
     this.syncImmediate();
     this.toggleAllowRestart();
@@ -304,7 +307,38 @@ class App extends Component {
 
   componentWillUnmount() {
     this.handleRemoveListenerOneSignal();
+    store.branchIOUnsubcribe();
   }
+
+  handleSubcribeBranchIO = () => {
+    const { t } = this.props;
+    const branchIOSubcribe = branch.subscribe(({ error, params }) => {
+      if (error) {
+        console.error('Error from APP Branch: ' + error);
+        return;
+      }
+
+      try {
+        console.log('APP', params, this.props);
+        if (params['+clicked_branch_link'] && params['+match_guaranteed']) {
+          if (store.isHomeLoaded) {
+            servicesHandler(params, t);
+          } else {
+            if (params.type === 'affiliate') {
+              servicesHandler(params, t);
+            } else {
+              store.setTempBranchIOSubcribeData({ params, t });
+            }
+          }
+        }
+      } catch (err) {
+        console.log('APP branchIO', err);
+      }
+      // params will never be null if error is null
+    });
+
+    store.branchIOSubcribe(branchIOSubcribe);
+  };
 
   localizeListener = () => {
     const selectedLanguage = RNLocalize.findBestAvailableLanguage(
@@ -776,7 +810,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.op_register}>
                   <Scene
                     key={`${appConfig.routes.op_register}_1`}
-                    title="Đăng ký"
+                    title={t('screen.opRegister.mainTitle')}
                     component={OpRegister}
                     {...navBarConfig}
                   />
