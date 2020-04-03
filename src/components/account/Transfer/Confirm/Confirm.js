@@ -24,7 +24,6 @@ import config from 'app-packages/tickid-phone-card/config';
 import store from 'app-store';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
-import Result from './Result';
 
 const PASSWORD_LENGTH = 4;
 
@@ -67,8 +66,7 @@ class Confirm extends Component {
       showNewPasswordKeyboard: false,
       showRepeatPasswordKeyboard: false,
       isSensorAvailable: false,
-      loading: false,
-      showResultModal: false
+      loading: false
     };
 
     this.unmounted = false;
@@ -343,6 +341,7 @@ class Confirm extends Component {
   };
 
   transfer = pw4n => {
+    const { t } = this.props;
     this.setState(
       {
         showRepeatPasswordKeyboard: false,
@@ -360,14 +359,28 @@ class Confirm extends Component {
         try {
           const response = await APIHandler.user_transfer_balance(data);
           if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
+            if (response && response.status === STATUS_SUCCESS) {
               flashShowMessage({
                 type: 'success',
                 message: response.message
               });
               setTimeout(() => {
                 if (!this.unmounted) {
-                  this.setState({ showResultModal: true });
+                  const resultTitle = t('confirm.message', {
+                    money: this.props.originPrice + this.props.wallet.symbol,
+                    receiverName: this.props.receiver.name,
+                    receiverTel: this.props.receiver.originTel
+                  });
+
+                  Actions.push(appConfig.routes.transferResult, {
+                    onConfirm: this.handleBackHome,
+                    onClose: this.handleCloseModal,
+                    mainIconName: 'checkcircle',
+                    mainTitle: t('confirm.transaction.success.title'),
+                    title: resultTitle,
+                    subTitle: t('confirm.transaction.success.subTitle'),
+                    btnTitle: t('confirm.transaction.success.message')
+                  });
                 }
               }, 200);
             } else {
@@ -392,13 +405,12 @@ class Confirm extends Component {
     );
   };
 
-  handleCloseModal = () => {
-    this.setState({ showResultModal: false });
-  };
+  handleCloseModal = () => {};
 
   handleBackHome = () => {
     this.handleCloseModal();
-    Actions.replace(appConfig.routes.homeTab);
+    Actions.pop();
+    Actions.reset(appConfig.routes.primaryTabbar);
   };
 
   renderWallet() {
@@ -435,17 +447,6 @@ class Confirm extends Component {
 
     return (
       <SafeAreaView style={styles.container}>
-        <Result
-          visible={this.state.showResultModal}
-          onConfirm={this.handleBackHome}
-          onClose={this.handleCloseModal}
-          mainIconName="checkcircle"
-          mainTitle={t('confirm.transaction.success.title')}
-          title={resultTitle}
-          subTitle={t('confirm.transaction.success.subTitle')}
-          btnTitle={t('confirm.transaction.success.message')}
-        />
-
         <ScrollView>
           <View>
             {this.renderWallet()}
@@ -515,7 +516,7 @@ class Confirm extends Component {
         {/* Authen key board */}
         <AuthenKeyboardModal
           hideClose
-          headerTitle={t('confirm.modal.enterPassword.title')}
+          headerTitle={t('confirm.modal.enterPass.title')}
           showForgotPassword={false}
           visible={this.state.showAuthenKeyboard}
           showFingerprint={

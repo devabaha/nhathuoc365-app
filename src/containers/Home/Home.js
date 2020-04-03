@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Alert } from 'react-native';
 
 import OneSignal from 'react-native-onesignal';
-import branch from 'react-native-branch';
 
 import store from 'app-store';
 import appConfig from 'app-config';

@@ -22,7 +22,7 @@
     "cancel": "HỦY"
   },
   "confirm": {
-    "message": "Bạn đã chuyển số tiền {{money}} đến {{this.props.receiverName}} ({{receiverTel}})",
+    "message": "Bạn đã chuyển số tiền {{money}} đến {{receiverName}} ({{receiverTel}})",
     "sourceMoney": "Nguồn tiền",
     "fingerprintScanner": "Sử dụng Touch ID để mở khóa và xác nhận",
     "modal": {
