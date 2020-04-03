@@ -15,7 +15,7 @@
   "verifyCodeInputPlaceholder": "Enter code...",
   "verifyCodeInputConfirmMessage": "Next",
 
-  "notReceiveCode": "Not receive the code?",
+  "notReceiveCode": "Not receive the code or Error? Please request new code.",
   "requestNewCodeWithTime": "Request new code after",
   "requestNewCode": "Request new code"
 }
