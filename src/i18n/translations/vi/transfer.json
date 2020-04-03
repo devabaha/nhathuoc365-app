@@ -16,8 +16,8 @@
     "noTel": "Liên hệ không có số điện thoại!"
   },
   "accountNotRegisterYet": {
-    "title": "Bạn đang chuyển tiền đến SĐT chưa đăng ký tài khoản TickID",
-    "message": "Hãy mời chủ thuê bao {{tel}} sử dụng TickID ngay thôi!!",
+    "title": "Bạn đang chuyển tiền đến SĐT chưa đăng ký tài khoản {{appName}}",
+    "message": "Hãy mời chủ thuê bao {{tel}} sử dụng {{appName}} ngay thôi!!",
     "accept": "GỬI LỜI MỜI",
     "cancel": "HỦY"
   },
