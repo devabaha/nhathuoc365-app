@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Alert } from 'react-native';
 
 import OneSignal from 'react-native-onesignal';
-import branch from 'react-native-branch';
 
 import store from 'app-store';
 import appConfig from 'app-config';
@@ -32,7 +31,6 @@ class Home extends Component {
       product_groups: {}
     };
   }
-  branchIOUnsubcribe = null;
   homeDataLoaded = false;
 
   componentDidMount() {
@@ -42,9 +40,6 @@ class Home extends Component {
 
   componentWillUnmount() {
     this.homeDataLoaded && this.handleRemoveListenerOneSignal();
-    if (this.branchIOUnsubcribe) {
-      this.branchIOUnsubcribe();
-    }
   }
 
   handleAddListenerOneSignal = () => {
@@ -55,31 +50,18 @@ class Home extends Component {
     OneSignal.removeEventListener('opened', this.handleOpenningNotification);
   };
 
+  handleExecuteTempBranchIO() {
+    if (store.tempBranchIOData) {
+      servicesHandler(store.tempBranchIOData.params, store.tempBranchIOData.t);
+      store.setTempBranchIOSubcribeData(null);
+    }
+  }
+
   handleOpenningNotification(openResult) {
     const { t } = this.props;
     const data = openResult.notification.payload.additionalData;
     servicesHandler(data, t);
   }
-
-  handleSubcribeBranchIO = () => {
-    const { t } = this.props;
-    this.branchIOUnsubcribe = branch.subscribe(({ error, params }) => {
-      if (error) {
-        console.error('Error from Branch: ' + error);
-        return;
-      }
-
-      try {
-        console.log(params, this.props);
-        if (params['+clicked_branch_link'] && params['+match_guaranteed']) {
-          servicesHandler(params, t);
-        }
-      } catch (err) {
-        console.log('branchIO', err);
-      }
-      // params will never be null if error is null
-    });
-  };
 
   getHomeDataFromApi = async (showLoading = true) => {
     if (showLoading) {
@@ -116,7 +98,8 @@ class Home extends Component {
         if (!this.homeDataLoaded) {
           this.homeDataLoaded = true;
           this.handleAddListenerOneSignal();
-          this.handleSubcribeBranchIO();
+          this.handleExecuteTempBranchIO();
+          store.updateHomeLoaded(true);
         }
       }
     } catch (error) {

@@ -3,24 +3,24 @@
     "success": {
       "title": "Notification",
       "message": "You have successfully booked the service!",
-      "accept": "Ok"
+      "accept": "OK"
     },
     "fail": {
       "title": "Notification",
       "message": "Something wrong happened, please try later",
-      "accept": "Ok"
+      "accept": "OK"
     }
   },
   "web": {
     "success": {
       "title": "Notification",
       "message": "You have successfully booked the service!",
-      "accept": "Ok"
+      "accept": "OK"
     },
     "fail": {
       "title": "Notification",
       "message": "Something wrong happened, please try later",
-      "accept": "Ok"
+      "accept": "OK"
     }
   },
   "welcome": {

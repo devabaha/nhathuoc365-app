@@ -44,6 +44,8 @@ import vi_schedule from './vi/schedule.json';
 import en_schedule from './en/schedule.json';
 import vi_searchPlaces from './vi/searchPlaces.json';
 import en_searchPlaces from './en/searchPlaces.json';
+import vi_opRegister from './vi/opRegister.json';
+import en_opRegister from './en/opRegister.json';
 
 export default {
   [languages.vi.value]: {
@@ -68,7 +70,8 @@ export default {
     cart: vi_cart,
     voucher: vi_voucher,
     schedule: vi_schedule,
-    searchPlaces: vi_searchPlaces
+    searchPlaces: vi_searchPlaces,
+    opRegister: vi_opRegister
   },
   [languages.en.value]: {
     common: en_common,
@@ -92,6 +95,7 @@ export default {
     cart: en_cart,
     voucher: en_voucher,
     schedule: en_schedule,
-    searchPlaces: en_searchPlaces
+    searchPlaces: en_searchPlaces,
+    opRegister: en_opRegister
   }
 };

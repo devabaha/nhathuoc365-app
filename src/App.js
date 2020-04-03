@@ -138,6 +138,8 @@ import ModalPicker from './components/ModalPicker';
 import ModalList from './components/ModalList';
 import StoreLocation from './containers/StoreLocation/StoreLocation';
 import PlacesAutoComplete from './containers/PlacesAutoComplete';
+import { servicesHandler } from './helper/servicesHandler';
+import branch from 'react-native-branch';
 
 /**
  * Not allow font scaling
@@ -297,6 +299,7 @@ class App extends Component {
   }
 
   componentDidMount() {
+    this.handleSubcribeBranchIO();
     this.handleAddListenerOneSignal();
     this.syncImmediate();
     this.toggleAllowRestart();
@@ -306,7 +309,38 @@ class App extends Component {
 
   componentWillUnmount() {
     this.handleRemoveListenerOneSignal();
+    store.branchIOUnsubcribe();
   }
+
+  handleSubcribeBranchIO = () => {
+    const { t } = this.props;
+    const branchIOSubcribe = branch.subscribe(({ error, params }) => {
+      if (error) {
+        console.error('Error from APP Branch: ' + error);
+        return;
+      }
+
+      try {
+        console.log('APP', params, this.props);
+        if (params['+clicked_branch_link'] && params['+match_guaranteed']) {
+          if (store.isHomeLoaded) {
+            servicesHandler(params, t);
+          } else {
+            if (params.type === 'affiliate') {
+              servicesHandler(params, t);
+            } else {
+              store.setTempBranchIOSubcribeData({ params, t });
+            }
+          }
+        }
+      } catch (err) {
+        console.log('APP branchIO', err);
+      }
+      // params will never be null if error is null
+    });
+
+    store.branchIOSubcribe(branchIOSubcribe);
+  };
 
   localizeListener = () => {
     const selectedLanguage = RNLocalize.findBestAvailableLanguage(
@@ -775,10 +809,10 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="op_register">
+                <Stack key={appConfig.routes.op_register}>
                   <Scene
-                    key="op_register_1"
-                    title="Đăng ký"
+                    key={`${appConfig.routes.op_register}_1`}
+                    title={t('screen.opRegister.mainTitle')}
                     component={OpRegister}
                     {...navBarConfig}
                   />
@@ -1373,6 +1407,15 @@ class RootRouter extends Component {
                 renderBackButton={() => <CloseButton color="#fff" />}
                 {...navBarConfig}
                 back
+              />
+            </Stack>
+
+            {/* ================ MODAL TRANSFER RESULT ================ */}
+            <Stack key={appConfig.routes.transferResult} panHandlers={null}>
+              <Scene
+                key={`${appConfig.routes.transferResult}_1`}
+                component={TransferResult}
+                hideNavBar
               />
             </Stack>
           </Modal>

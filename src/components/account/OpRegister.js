@@ -21,8 +21,9 @@ class OpRegister extends Component {
       name: props.name_props || '',
       // email: props.email_props || '',
       // password: props.password_props || '',
-      refer: props.refer_props || '',
-      loading: false
+      refer: props.refer_props || store.refer_code,
+      loading: false,
+      referCodeEditable: true
     };
   }
 
@@ -49,18 +50,18 @@ class OpRegister extends Component {
   }
 
   _onSave() {
-    var { name, refer } = this.state; //email, password, refer
-
+    let { name, refer } = this.state; //email, password, refer
+    const { t } = this.props;
     name = name.trim();
     refer = refer.trim();
 
     if (!name) {
       return Alert.alert(
-        'Thông báo',
-        'Hãy điền tên của bạn',
+        t('notification.name.title'),
+        t('notification.name.message'),
         [
           {
-            text: 'Đồng ý',
+            text: t('notification.name.accept'),
             onPress: () => {
               this.refs_name.focus();
             }
@@ -124,8 +125,26 @@ class OpRegister extends Component {
     );
   }
 
+  updateReferCode() {
+    const store_refer_code = store.refer_code;
+
+    if (store_refer_code) {
+      this.setState(
+        {
+          refer: store_refer_code,
+          referCodeEditable: false
+        },
+        () => {
+          store.setReferCode('');
+        }
+      );
+    }
+  }
+
   render() {
-    var { name, email, loading } = this.state;
+    const { name, email, loading } = this.state;
+    const { t } = this.props;
+    this.updateReferCode();
 
     return (
       <View style={styles.container}>
@@ -135,7 +154,7 @@ class OpRegister extends Component {
           }}
         >
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Tên của bạn (*)</Text>
+            <Text style={styles.input_label}>{t('data.name.title')} (*)</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
@@ -143,8 +162,7 @@ class OpRegister extends Component {
                 style={styles.input_text}
                 keyboardType="default"
                 maxLength={30}
-                placeholder="Điền họ và tên"
-                placeholderTextColor="#999999"
+                placeholder={t('data.name.placeholder')}
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
                   this.setState({
@@ -168,16 +186,19 @@ class OpRegister extends Component {
           </View>
 
           <View style={styles.input_box}>
-            <Text style={styles.input_label}>Mã giới thiệu</Text>
+            <Text style={styles.input_label}>{t('data.referCode.title')}</Text>
 
             <View style={styles.input_text_box}>
               <TextInput
+                editable={this.state.referCodeEditable}
                 ref={ref => (this.refs_refer = ref)}
-                style={styles.input_text}
+                style={[
+                  styles.input_text,
+                  !this.state.referCodeEditable && styles.input_text_disabled
+                ]}
                 keyboardType="default"
                 maxLength={30}
-                placeholder="Điền số điện thoại người giới thiệu"
-                placeholderTextColor="#999999"
+                placeholder={t('data.referCode.placeholder')}
                 underlineColorAndroid="transparent"
                 onChangeText={value => {
                   this.setState({
@@ -189,8 +210,7 @@ class OpRegister extends Component {
             </View>
           </View>
           <Text style={styles.disclaimerText}>
-            Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại{' '}
-            {global.APP_NAME_SHOW_SHOW} nhé
+            {t('encourageMessage', { appName: APP_NAME_SHOW })}
           </Text>
         </ScrollView>
 
@@ -219,7 +239,9 @@ class OpRegister extends Component {
               )}
             </View>
             <Text style={styles.address_continue_title}>
-              {this.state.edit_mode ? 'LƯU LẠI' : 'ĐĂNG KÝ'}
+              {this.state.edit_mode
+                ? t('confirm.save.title')
+                : t('confirm.register.title')}
             </Text>
           </View>
         </TouchableHighlight>
@@ -303,6 +325,9 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     paddingVertical: 0
   },
+  input_text_disabled: {
+    color: '#777'
+  },
 
   input_address_box: {
     width: '100%',
@@ -357,4 +382,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default observer(OpRegister);
+export default withTranslation('opRegister')(observer(OpRegister));

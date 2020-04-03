@@ -4,13 +4,13 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Modal,
-  SafeAreaView
+  BackHandler
 } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import appConfig from 'app-config';
 import PropTypes from 'prop-types';
 import Button from '../../../Button';
+import { Actions } from 'react-native-router-flux';
 
 const defaultListener = () => {};
 
@@ -38,45 +38,63 @@ class Result extends Component {
   };
 
   state = {};
+
+  componentDidMount() {
+    BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.backHandlerListener.bind(this)
+    );
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener(
+      'hardwareBackPress',
+      this.backHandlerListener.bind(this)
+    );
+  }
+
+  backHandlerListener() {
+    return true;
+  }
+
+  onClose = () => {
+    Actions.pop();
+    this.props.onClose();
+  };
+
   render() {
     return (
-      <Modal animationType="slide" visible={this.props.visible}>
-        <View style={styles.container}>
-          <View style={[styles.header]}>
-            <TouchableOpacity style={styles.close} onPress={this.props.onClose}>
+      <View style={styles.container}>
+        <View style={[styles.header]}>
+          {/* <TouchableOpacity style={styles.close} onPress={this.onClose}>
               <Icon name="close" size={24} color="#ffffff" />
-            </TouchableOpacity>
-            <View style={[styles.header_content, styles.center]}>
-              <Icon name={this.props.mainIconName} size={46} color="#ffffff" />
-              <Text style={styles.header_mess}>{this.props.mainTitle}</Text>
-            </View>
+            </TouchableOpacity> */}
+          <View style={[styles.header_content, styles.center]}>
+            <Icon name={this.props.mainIconName} size={80} color="#ffffff" />
+            <Text style={styles.header_mess}>{this.props.mainTitle}</Text>
           </View>
-
-          <View style={styles.body}>
-            <View style={[styles.notification, styles.center]}>
-              <Text style={styles.noti_mess_title}>{this.props.title}</Text>
-              {!!this.props.subTitle && (
-                <Text style={styles.noti_mess_sub_title}>
-                  {this.props.subTitle}
-                </Text>
-              )}
-            </View>
-          </View>
-          <Button
-            containerStyle={styles.submitBtn}
-            title={this.props.btnTitle}
-            onPress={this.props.onConfirm}
-            iconLeft={
-              <Icon
-                name="home"
-                color="white"
-                size={22}
-                style={styles.btnIcon}
-              />
-            }
-          />
         </View>
-      </Modal>
+
+        <View style={styles.body}>
+          <View style={[styles.notification, styles.center]}>
+            <Text style={styles.noti_mess_title}>{this.props.title}</Text>
+            {!!this.props.subTitle && (
+              <Text style={styles.noti_mess_sub_title}>
+                {this.props.subTitle}
+              </Text>
+            )}
+          </View>
+        </View>
+
+        <Button
+          containerStyle={styles.submitBtn}
+          title={this.props.btnTitle}
+          onPress={this.props.onConfirm}
+          iconLeft={
+            <Icon name="home" color="white" size={22} style={styles.btnIcon} />
+          }
+        />
+      </View>
     );
   }
 }

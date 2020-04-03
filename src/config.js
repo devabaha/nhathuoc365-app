@@ -61,6 +61,7 @@ const config = Object.freeze({
     transfer: 'transfer',
     transferPayment: 'transfer_payment',
     transferConfirm: 'transfer_confirm',
+    transferResult: 'transfer_result',
 
     scanQrCode: 'scanQrCode',
     qrBarCode: 'qrBarCode',
@@ -73,6 +74,8 @@ const config = Object.freeze({
 
     storeOrders: 'store_orders',
     ordersChat: 'ordersChat',
+
+    op_register: 'op_register',
 
     // ** Begin routes of Rada module
     tickidRada: 'tickidRada',
