@@ -22,7 +22,9 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.tickidRadaBooking,
 
     appConfig.routes.schedule,
-    appConfig.routes.scheduleConfirm
+    appConfig.routes.scheduleConfirm,
+
+    appConfig.routes.resetPassword
   ];
 
   switch (action.type) {

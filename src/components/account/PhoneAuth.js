@@ -32,6 +32,10 @@ const loginMode = {
 };
 
 class PhoneAuth extends Component {
+  static defaultProps = {
+    onCloseOTP: () => {}
+  };
+
   constructor(props) {
     super(props);
     this.unsubscribe = null;
@@ -43,7 +47,7 @@ class PhoneAuth extends Component {
       message: '',
       codeInput: '',
       phoneNumber: this.props.tel || '',
-      confirmResult: null,
+      confirmResult: this.props.showOTP || null,
       isShowIndicator: false,
       modalVisible: false,
       currentCountry: countries.filter(country => country.cca2 == 'VN'),
@@ -52,6 +56,9 @@ class PhoneAuth extends Component {
   }
 
   componentDidMount() {
+    if (this.props.showOTP) {
+      this.signIn(this.state.phoneNumber);
+    }
     this.startCountDown();
     EventTracker.logEvent('phone_auth_page');
   }
@@ -468,6 +475,7 @@ class PhoneAuth extends Component {
   }
 
   _onPressBackToPhoneInput() {
+    this.props.onCloseOTP();
     this.loginMode = loginMode.FIREBASE;
     this.setState({ confirmResult: null });
   }

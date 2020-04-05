@@ -113,7 +113,10 @@ const config = Object.freeze({
     // Modal
     modalPicker: 'modalPicker',
     modalList: 'modalList',
-    modalSearchPlaces: 'modalSearchPlaces'
+    modalSearchPlaces: 'modalSearchPlaces',
+
+    //  Reset password
+    resetPassword: 'resetPassword'
   }
 });
 

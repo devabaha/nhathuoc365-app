@@ -38,6 +38,8 @@ class Launch extends Component {
   };
 
   handleAuthWithResponse = response => {
+    Actions.replace(appConfig.routes.resetPassword);
+    return;
     const user = response.data;
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
