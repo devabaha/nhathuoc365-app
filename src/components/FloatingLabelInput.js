@@ -13,14 +13,15 @@ const defaultFunc = () => {};
 class FloatingLabelInput extends Component {
   static defaultProps = {
     onInputContainerLayout: defaultFunc,
-    onChangeText: defaultFunc
+    onChangeText: defaultFunc,
+    onBlur: defaultFunc,
+    onFocus: defaultFunc
   };
   state = {
     animatedFloating: new Animated.Value(0),
     animatedOpacity: new Animated.Value(0),
     inputContainerHeight: undefined
   };
-  text = '';
   refLabel = React.createRef();
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -60,7 +61,7 @@ class FloatingLabelInput extends Component {
       if (value >= (this.state.inputContainerHeight * 9) / 10) {
         this.refLabel.current.setNativeProps({
           style: {
-            color: '#666'
+            color: '#888'
           }
         });
       } else {
@@ -79,43 +80,45 @@ class FloatingLabelInput extends Component {
   };
 
   onChangeText(text) {
-    this.text = text;
     this.props.onChangeText(text);
   }
 
   onFocus() {
-    if (!this.props.value && !this.text) {
+    if (!this.props.value) {
       Animated.timing(this.state.animatedFloating, {
         toValue: 0,
-        ease: Easing.in(),
+        ease: Easing.cubic,
         duration: 300,
         useNativeDriver: true
       }).start();
     }
+    this.props.onFocus();
   }
 
   onBlur() {
-    if (!this.props.value && !this.text) {
+    if (!this.props.value) {
       Animated.timing(this.state.animatedFloating, {
         toValue: this.state.inputContainerHeight,
-        ease: Easing.in(),
+        ease: Easing.cubic,
         duration: 300,
         useNativeDriver: true
       }).start();
     }
+    this.props.onBlur();
   }
 
   render() {
     const {
       label,
       labelStyle,
+      error,
+      errorStyle,
       containerStyle,
       inputStyle,
       onFocus,
       onBlur,
       onChangeText,
       last,
-      value,
       ...textInputProps
     } = this.props;
 
@@ -151,6 +154,9 @@ class FloatingLabelInput extends Component {
               {...textInputProps}
             />
           </View>
+          {!!this.props.error && (
+            <Text style={[styles.error, errorStyle]}>{error}</Text>
+          )}
         </View>
         {last && <View style={[styles.separator]} />}
       </View>
@@ -183,6 +189,12 @@ const styles = StyleSheet.create({
   separator: {
     height: 0.5,
     backgroundColor: '#ddd'
+  },
+  error: {
+    zIndex: -1,
+    color: 'red',
+    fontSize: 12,
+    marginTop: 4
   }
 });
 

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Animated } from 'react-native';
-import Button from '../../../components/Button';
 import SlidingView from './SlidingView';
 
 class ComboSlidingButton extends Component {

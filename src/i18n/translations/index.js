@@ -46,6 +46,8 @@ import vi_searchPlaces from './vi/searchPlaces.json';
 import en_searchPlaces from './en/searchPlaces.json';
 import vi_opRegister from './vi/opRegister.json';
 import en_opRegister from './en/opRegister.json';
+import vi_resetPassword from './vi/resetPassword.json';
+import en_resetPassword from './en/resetPassword.json';
 
 export default {
   [languages.vi.value]: {
@@ -71,7 +73,8 @@ export default {
     voucher: vi_voucher,
     schedule: vi_schedule,
     searchPlaces: vi_searchPlaces,
-    opRegister: vi_opRegister
+    opRegister: vi_opRegister,
+    resetPassword: vi_resetPassword
   },
   [languages.en.value]: {
     common: en_common,
@@ -96,6 +99,7 @@ export default {
     voucher: en_voucher,
     schedule: en_schedule,
     searchPlaces: en_searchPlaces,
-    opRegister: en_opRegister
+    opRegister: en_opRegister,
+    resetPassword: en_resetPassword
   }
 };
