@@ -131,14 +131,14 @@ class BuyCardConfirm extends Component {
   }
 
   componentDidMount() {
-    FingerprintScanner.isSensorAvailable()
-      .then(biometryType => {
-        this.setState({
-          biometryType,
-          isSensorAvailable: true
-        });
-      })
-      .catch(error => this.setState({ errorMessage: error.message }));
+    // FingerprintScanner.isSensorAvailable()
+    //   .then(biometryType => {
+    //     this.setState({
+    //       biometryType,
+    //       isSensorAvailable: true
+    //     });
+    //   })
+    //   .catch(error => this.setState({ errorMessage: error.message }));
 
     this.loadStoredPassword();
     EventTracker.logEvent('buy_card_confirm_page');
@@ -168,9 +168,9 @@ class BuyCardConfirm extends Component {
           showAuthenKeyboard: true
         },
         () => {
-          if (this.state.isSensorAvailable && this.state.authenPasswordStored) {
-            this.handleOpenFingerprint();
-          }
+          // if (this.state.isSensorAvailable && this.state.authenPasswordStored) {
+          //   this.handleOpenFingerprint();
+          // }
         }
       );
     }
@@ -579,14 +579,15 @@ class BuyCardConfirm extends Component {
           showForgotPassword={false}
           visible={this.state.showAuthenKeyboard}
           showFingerprint={
-            !!(this.state.isSensorAvailable && this.state.authenPasswordStored)
+            // !!(this.state.isSensorAvailable && this.state.authenPasswordStored)
+            false
           }
           passwordValue={this.passwordValue}
           onClose={this.handleCloseAuthenKeyboard}
           onPressKeyboard={this.handlePressKeyboard}
           onClearPassword={this.handleClearPassword}
           onForgotPress={this.handleForgotPress}
-          onOpenFingerprint={this.handleOpenFingerprint}
+          // onOpenFingerprint={this.handleOpenFingerprint}
         />
 
         {/* New password keyboard */}
