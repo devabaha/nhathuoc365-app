@@ -109,6 +109,9 @@
     },
     "opRegister": {
       "mainTitle": "Đăng ký"
+    },
+    "resetPassword": {
+      "mainTitle": "Đặt lại mật khẩu"
     }
   },
 

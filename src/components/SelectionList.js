@@ -7,7 +7,8 @@ import {
   FlatList,
   TouchableHighlight
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import store from '../store/Store';
 
 @observer
@@ -30,6 +31,13 @@ class SelectionList extends Component {
             notifyCount = parseInt(store.notify[item.notify]);
           }
 
+          let Icon = FontAwesomeIcon;
+          switch (item.iconType) {
+            case 'MaterialCommunityIcons':
+              Icon = MaterialCommunityIcons;
+              break;
+          }
+
           return (
             <TouchableHighlight
               underlayColor="transparent"
@@ -49,7 +57,7 @@ class SelectionList extends Component {
                   {item.leftIcon || (
                     <Icon
                       name={item.icon}
-                      size={16}
+                      size={item.iconSize || 16}
                       color={item.iconColor || '#999999'}
                     />
                   )}

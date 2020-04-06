@@ -109,6 +109,9 @@
     },
     "opRegister": {
       "mainTitle": "Register"
+    },
+    "resetPassword": {
+      "mainTitle": "Reset Password"
     }
   },
 

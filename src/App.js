@@ -140,6 +140,7 @@ import StoreLocation from './containers/StoreLocation/StoreLocation';
 import PlacesAutoComplete from './containers/PlacesAutoComplete';
 import { servicesHandler } from './helper/servicesHandler';
 import branch from 'react-native-branch';
+import ResetPassword from './containers/ResetPassword';
 
 /**
  * Not allow font scaling
@@ -1300,6 +1301,15 @@ class RootRouter extends Component {
                     component={StoreLocation}
                     {...navBarConfig}
                     back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.resetPassword}>
+                  <Scene
+                    key={`${appConfig.routes.resetPassword}_1`}
+                    title={t('screen.resetPassword.mainTitle')}
+                    component={ResetPassword}
+                    hideNavBar
                   />
                 </Stack>
 

@@ -25,6 +25,10 @@
       "label": "Cập nhật ứng dụng",
       "desc": "Cập nhật lên phiên bản ổn định {{newVersion}} ngay!"
     },
+    "resetPassword": {
+      "label": "Đặt lại mật khẩu",
+      "desc": "Đặt lại mật khẩu giao dịch của bạn"
+    },
     "language": {
       "label": "Ngôn ngữ",
       "desc": "",
