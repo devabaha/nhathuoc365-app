@@ -177,6 +177,7 @@ class Account extends Component {
             icon: 'language',
             label: t('options.language.label'),
             desc: languages[i18n.language].label,
+            marginTop: !store.user_info || !store.user_info.tel,
             rightIcon: <View></View>,
             onPress: () => {
               Actions.push(appConfig.routes.modalPicker, {
