@@ -153,6 +153,27 @@ class Account extends Component {
           },
           {
             key: '6',
+            icon: 'lock-reset',
+            label: t('options.resetPassword.label'),
+            desc: t('options.resetPassword.desc'),
+            rightIcon: <IconAngleRight />,
+            onPress: () => {
+              Actions.push(appConfig.routes.resetPassword);
+            },
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#888'
+              }
+            ],
+            iconColor: '#fff',
+            iconSize: 18,
+            iconType: 'MaterialCommunityIcons',
+            marginTop: true,
+            isHidden: !store.user_info || !store.user_info.tel
+          },
+          {
+            key: '7',
             icon: 'language',
             label: t('options.language.label'),
             desc: languages[i18n.language].label,
@@ -174,8 +195,7 @@ class Account extends Component {
                 backgroundColor: '#175189'
               }
             ],
-            iconColor: '#ffffff',
-            marginTop: true
+            iconColor: '#ffffff'
           }
         ]
       },

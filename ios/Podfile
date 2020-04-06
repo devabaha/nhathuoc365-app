@@ -65,4 +65,4 @@ post_install do |installer|
       target.remove_from_project
     end
   end
-end
+end 

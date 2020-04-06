@@ -136,6 +136,7 @@ exports.USER_GET_INFO_BY_WALLET_ADDRESS =
 exports.USER_GET_FAVOR_SITES = MY_FOOD_API + 'apiUser/favor_sites';
 exports.USER_SEARCH_FAVOR_SITES = MY_FOOD_API + 'apiUser/search_favor_sites';
 exports.USER_UPDATE_FAVOR_SITE = MY_FOOD_API + 'apiUser/update_favor_site';
+exports.USER_RESET_PASSWORD = MY_FOOD_API + 'apiUser/reset_pass';
 
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';

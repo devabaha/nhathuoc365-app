@@ -21,6 +21,10 @@
       "label": "App update",
       "desc": "Update to stable version {{newVersion}} now!"
     },
+    "resetPassword": {
+      "label": "Reset password",
+      "desc": "Reset your transaction password"
+    },
     "language": {
       "label": "Language",
       "desc": "",
