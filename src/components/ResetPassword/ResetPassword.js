@@ -31,7 +31,8 @@ const ResetPassword = props => {
           onChangeText={otp => props.onInputChange(otp, INPUT_TYPE.OTP)}
           placeholder={t('btn.typeOTP.placeholder')}
           value={props.OTPValue}
-          disabled={props.loading}
+          loading={props.loading}
+          disabled={props.verifyOTPDisabled}
           onSendPress={() => props.onVerifyPress(0)}
         />
       )
@@ -221,6 +222,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center'
+  },
+  disabledVerifyOTP: {
+    color: '#aaa'
   }
 });
 
@@ -244,7 +248,19 @@ const OTPInput = memo(props => {
           containerStyle={styles.confirmOTPbtnContainer}
           btnContainerStyle={[styles.btn, styles.confirmOTPBtn]}
           disabled={props.disabled}
-          iconRight={<Ionicons name="ios-send" style={styles.confirmOTPIcon} />}
+          iconRight={
+            props.loading ? (
+              <ActivityIndicator animating={true} size="small" />
+            ) : (
+              <Ionicons
+                name="ios-send"
+                style={[
+                  styles.confirmOTPIcon,
+                  props.disabled && styles.disabledVerifyOTP
+                ]}
+              />
+            )
+          }
           onPress={props.onSendPress}
         />
       </View>

@@ -479,7 +479,6 @@ class App extends Component {
     }
 
     return (
-      // <ResetPassword />
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
         <RootRouter

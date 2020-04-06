@@ -36,6 +36,11 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  async user_reset_password(data) {
+    var api = url_for(API.USER_RESET_PASSWORD);
+    return await this.postAPI(api, data);
+  }
+
   /**
    * Lấy dữ liệu trang home
    */

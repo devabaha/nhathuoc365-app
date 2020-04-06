@@ -21,7 +21,9 @@ class Modal extends Component {
     cancelText: PropTypes.string,
     onCancel: PropTypes.func,
     onRequestClose: PropTypes.func,
-    onOk: PropTypes.func
+    onOk: PropTypes.func,
+    titleStyle: PropTypes.any,
+    contentStyle: PropTypes.any
   };
 
   static defaultProps = {
@@ -32,7 +34,9 @@ class Modal extends Component {
     cancelText: '',
     onCancel: defaultListener,
     onRequestClose: defaultListener,
-    onOk: defaultListener
+    onOk: defaultListener,
+    titleStyle: {},
+    contentStyle: {}
   };
 
   state = {};
@@ -52,20 +56,26 @@ class Modal extends Component {
           <View style={[styles.wrapper, styles.fullCenter, styles.background]}>
             <View style={styles.modal}>
               <View style={[styles.container]}>
-                <View>
-                  <Text style={styles.title}>{this.props.title}</Text>
-                  <Text style={styles.content}>{this.props.content}</Text>
+                <View style={styles.textContainer}>
+                  <Text style={[styles.title, this.props.titleStyle]}>
+                    {this.props.title}
+                  </Text>
+                  <Text style={[styles.content, this.props.contentStyle]}>
+                    {this.props.content}
+                  </Text>
                 </View>
 
                 <View style={styles.footer}>
-                  <TouchableOpacity
-                    style={[styles.btn]}
-                    onPress={this.props.onCancel}
-                  >
-                    <Text style={styles.cancelText}>
-                      {this.props.cancelText}
-                    </Text>
-                  </TouchableOpacity>
+                  {!!this.props.cancelText && (
+                    <TouchableOpacity
+                      style={[styles.btn]}
+                      onPress={this.props.onCancel}
+                    >
+                      <Text style={styles.cancelText}>
+                        {this.props.cancelText}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
                   <TouchableOpacity
                     style={[styles.btn]}
                     onPress={this.props.onOk}
@@ -103,6 +113,9 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: 'center'
+  },
+  textContainer: {
+    width: '100%'
   },
   title: {
     fontSize: 22,
