@@ -169,7 +169,8 @@ class Account extends Component {
             iconColor: '#fff',
             iconSize: 18,
             iconType: 'MaterialCommunityIcons',
-            marginTop: true
+            marginTop: true,
+            isHidden: !store.user_info || !store.user_info.tel
           },
           {
             key: '7',
