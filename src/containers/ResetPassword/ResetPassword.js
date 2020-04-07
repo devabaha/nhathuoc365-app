@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Keyboard } from 'react-native';
+import { Keyboard } from 'react-native';
 import { default as ResetPasswordComponent } from '../../components/ResetPassword';
 import { Actions } from 'react-native-router-flux';
 import store from 'app-store';
@@ -249,9 +249,9 @@ class ResetPassword extends Component {
         <Modal
           visible={!!this.state[INPUT_TYPE.OTP].error}
           title={t('modal.title')}
-          titleStyle={{ color: '#d20f0f' }}
+          titleStyle={{ color: '#d20f0f', paddingHorizontal: 15 }}
           content={this.state[INPUT_TYPE.OTP].error}
-          contentStyle={{ marginTop: 5 }}
+          contentStyle={{ marginTop: 5, paddingHorizontal: 15 }}
           okText={t('modal.accept')}
           onRequestClose={this.onCloseModal}
           onOk={this.onCloseModal}
