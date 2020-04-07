@@ -64,14 +64,19 @@ const ResetPassword = props => {
   ];
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={appConfig.device.isIOS ? 'padding' : null}
+      style={{ flex: 1 }}
+    >
       <SafeAreaView style={styles.container}>
-        <View style={styles.nav}>
-          <LinearGradient
-            style={styles.mask}
-            colors={[hexToRgbA('#fafafa', 0.3), hexToRgbA('#fafafa', 0)]}
-            locations={[0, 1]}
-          >
+        <View style={[appConfig.device.isIOS ? { zIndex: 1 } : { flex: 1 }]}>
+          <View style={styles.nav}>
+            <LinearGradient
+              style={styles.mask}
+              colors={[hexToRgbA('#fafafa', 0.3), hexToRgbA('#fafafa', 0)]}
+              locations={[0, 1]}
+            />
+
             <TouchableOpacity
               hitSlop={HIT_SLOP}
               style={styles.backBtn}
@@ -79,8 +84,9 @@ const ResetPassword = props => {
             >
               <Ionicons name="ios-arrow-round-back" style={styles.backIcon} />
             </TouchableOpacity>
-          </LinearGradient>
+          </View>
         </View>
+
         <ScrollView
           ref={props.refScrollView}
           style={styles.scrollView}
@@ -150,8 +156,9 @@ const styles = StyleSheet.create({
   },
   nav: {
     width: '100%',
+    position: 'absolute',
     justifyContent: 'center',
-    zIndex: 1
+    backgroundColor: 'transparent'
   },
   mask: {
     top: 0,
@@ -160,6 +167,8 @@ const styles = StyleSheet.create({
     position: 'absolute'
   },
   backBtn: {
+    backgroundColor: 'transparent',
+    zIndex: 1,
     top: 10,
     left: 20
   },
@@ -171,7 +180,9 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 15
   },
-  scrollView: {},
+  scrollView: {
+    zIndex: appConfig.device.isIOS ? undefined : -1
+  },
   loading: {
     left: 15
   },
@@ -182,7 +193,7 @@ const styles = StyleSheet.create({
     paddingBottom: 30
   },
   inputDisabled: {
-    color: '#eee',
+    color: '#aaa',
     backgroundColor: '#eee'
   },
   comboContainerStyle: {
@@ -191,7 +202,8 @@ const styles = StyleSheet.create({
   },
   confirmOTPbtnContainer: {
     paddingHorizontal: 0,
-    paddingVertical: 0
+    paddingVertical: 0,
+    marginVertical: 2
   },
   disabledConfirmOTP: {
     backgroundColor: '#aaa'
@@ -217,8 +229,9 @@ const styles = StyleSheet.create({
   OTPInput: {
     flex: 1,
     paddingHorizontal: 15,
+    paddingVertical: 0,
     marginVertical: 10,
-    borderRightWidth: 0.2,
+    borderRightWidth: appConfig.device.isIOS ? 0.2 : 0.8,
     fontWeight: 'bold',
     fontSize: 20,
     textAlign: 'center'
