@@ -118,8 +118,8 @@ android {
         applicationId "id.tick"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 17
-        versionName "1.1.1"
+        versionCode 18
+        versionName "1.1.2"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
         resConfigs "en", "vi"
