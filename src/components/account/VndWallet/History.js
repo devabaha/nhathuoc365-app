@@ -30,7 +30,6 @@ const History = props => {
       />
     );
   }
-  console.log('render row');
   return (
     <View style={styles.container}>
       {props.loading ? null : historyData.length ? (
@@ -79,6 +78,7 @@ const styles = StyleSheet.create({
     color: '#404040'
   },
   note: {
+    padding: 15,
     fontSize: 16,
     marginBottom: 2
   }

@@ -207,8 +207,6 @@ class VndWallet extends Component {
   }
 
   render() {
-    console.log('render vndWallet');
-
     var { wallet, activeTab, historiesData } = this.state;
     const { t } = this.props;
     const data = [
