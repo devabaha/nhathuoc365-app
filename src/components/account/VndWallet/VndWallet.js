@@ -42,6 +42,7 @@ class VndWallet extends Component {
       const response = await APIHandler.user_wallet_history(
         this.state.wallet.zone_code
       );
+      console.log(response);
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
           this.setState({ historiesData: response.data.histories });
@@ -206,6 +207,8 @@ class VndWallet extends Component {
   }
 
   render() {
+    console.log('render vndWallet');
+
     var { wallet, activeTab, historiesData } = this.state;
     const { t } = this.props;
     const data = [
