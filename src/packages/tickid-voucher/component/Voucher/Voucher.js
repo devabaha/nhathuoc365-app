@@ -193,14 +193,23 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: config.device.bottomSpace
   },
+  // headerBackground: {
+  //   backgroundColor: config.colors.primary,
+  //   width: 1000,
+  //   height: 1000,
+  //   borderRadius: 480,
+  //   position: 'absolute',
+  //   top: -860,
+  //   left: screenWidth / 2 - 500
+  // },
   headerBackground: {
     backgroundColor: config.colors.primary,
-    width: 1000,
-    height: 1000,
-    borderRadius: 480,
+    width: config.device.width * 3,
+    height: config.device.width * 3,
+    borderRadius: config.device.width * 3 * 0.48,
     position: 'absolute',
-    top: -860,
-    left: screenWidth / 2 - 500
+    top: -(config.device.width * 3) + config.device.height / 5.2,
+    left: config.device.width / 2 - config.device.width * 1.5
   },
   voucherX2Backgound: {
     ...getImageRatio(350, 255, 160),
