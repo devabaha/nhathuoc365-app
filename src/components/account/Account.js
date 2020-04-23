@@ -114,7 +114,7 @@ class Account extends Component {
             label: t('options.appInformation.label'),
             desc: t('options.appInformation.desc', {
               appName: APP_NAME_SHOW,
-              appVersion: DeviceInfo.getVersion()
+              appVersion: DeviceInfo.getVersion() + ' - CP.1001'
             }),
             rightIcon: <IconAngleRight />,
             onPress: () => {},

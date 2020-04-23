@@ -39,9 +39,10 @@ class PhoneAuth extends Component {
   constructor(props) {
     super(props);
     this.unsubscribe = null;
-    this.loginMode = props.loginMode
-      ? props.loginMode
-      : loginMode.SMS_BRAND_NAME;
+    // this.loginMode = props.loginMode
+    //   ? props.loginMode
+    //   : loginMode.SMS_BRAND_NAME;
+    this.loginMode = loginMode.SMS_BRAND_NAME;
     this.state = {
       user: null,
       message: '',
@@ -476,7 +477,7 @@ class PhoneAuth extends Component {
 
   _onPressBackToPhoneInput() {
     this.props.onCloseOTP();
-    this.loginMode = loginMode.FIREBASE;
+    // this.loginMode = loginMode.FIREBASE;
     this.setState({ confirmResult: null });
   }
 

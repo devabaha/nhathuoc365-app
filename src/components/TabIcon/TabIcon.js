@@ -41,6 +41,7 @@ class TabIcon extends Component {
     return (
       <View style={this.props.special && styles.specialLabel}>
         <Text
+          numberOfLines={1}
           style={[
             this.props.focused ? styles.labelSelected : styles.label,
             styles.labelDefault
@@ -122,7 +123,8 @@ const styles = StyleSheet.create({
   labelDefault: {
     fontSize: 10,
     marginTop: 2,
-    fontWeight: '400'
+    fontWeight: '400',
+    width: '90%'
   },
   iconBox: {
     justifyContent: 'center',

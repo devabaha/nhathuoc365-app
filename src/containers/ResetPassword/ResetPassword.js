@@ -13,11 +13,6 @@ import {
 } from '../../components/ResetPassword/constants';
 const timer = require('react-timer-mixin');
 
-const LOGIN_MODE = {
-  FIREBASE: 'FIREBASE',
-  SMS_BRAND_NAME: 'SMS_BRAND_NAME'
-};
-
 class ResetPassword extends Component {
   state = {
     selectedItems: [],
@@ -40,9 +35,6 @@ class ResetPassword extends Component {
   refScrollView = React.createRef();
   refOTP = React.createRef();
   unmounted = false;
-  loginMode = this.props.loginMode
-    ? this.props.loginMode
-    : LOGIN_MODE.SMS_BRAND_NAME;
 
   componentWillUnmount() {
     this.unmounted = true;
@@ -241,7 +233,8 @@ class ResetPassword extends Component {
 
     const verifyOTPDisabled =
       this.state.loading ||
-      this.state[INPUT_TYPE.OTP].value.length !== OTP_LENGTH;
+      this.state[INPUT_TYPE.OTP].value.length === 0 ||
+      this.state[INPUT_TYPE.OTP].value.length > OTP_LENGTH;
 
     return (
       <>

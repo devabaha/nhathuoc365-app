@@ -283,23 +283,17 @@ const styles = StyleSheet.create({
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
-    width: 1000,
-    height: 1000,
-    borderRadius: 480,
-    alignItems: 'center',
+    width: appConfig.device.width * 3,
+    height: appConfig.device.width * 3,
+    borderRadius: appConfig.device.width * 3 * 0.48,
     position: 'absolute',
-    left: appConfig.device.width / 2 - 500,
-    // transform: [{
-    //   scaleX: 1.8
-    // }],
-    top: -830,
+    top: -(appConfig.device.width * 3) + appConfig.device.height / 4.8,
+    left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
+    alignItems: 'center',
     overflow: 'hidden'
   },
   headerImage: {
-    height: 180,
-    // transform: [{
-    //   scaleX: 1/1.8
-    // }],
+    height: appConfig.device.width / 2,
     resizeMode: 'cover',
     width: appConfig.device.width,
     position: 'absolute',
