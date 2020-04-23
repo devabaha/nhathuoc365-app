@@ -351,6 +351,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   row: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center'
   },
