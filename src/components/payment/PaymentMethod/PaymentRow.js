@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   bankMainContent: {
-    marginLeft: 10,
+    paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center'
   },
