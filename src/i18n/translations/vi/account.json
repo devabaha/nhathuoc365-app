@@ -15,7 +15,7 @@
     },
     "appInformation": {
       "label": "Thông tin ứng dụng",
-      "desc": "Sản phẩm của {{appName}} - Phiên bản hiện tại: {{appVersion}}"
+      "desc": "© {{appName}} - Phiên bản: {{appVersion}}"
     },
     "appUpdate": {
       "label": "Cập nhật ứng dụng",

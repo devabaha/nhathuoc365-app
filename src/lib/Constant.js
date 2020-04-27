@@ -12,8 +12,9 @@ global.HOTLINE = '+8490 345 1368';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: 'zNRC9fLTHDCBngHiUamHbfziyRM7f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
-  android: '64zepyz9oRV-xfXlJdrsyNKcRTJzf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7'
+  ios: '_jaoHsAy6EW4tIHabsFFZ0uHTG8hf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
+  android: '9qJpK0qBZvKbTEzuKBOKKBr4qaRWf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
+  version: 1 // tickid-prod-3 - version 1
 };
 
 // width, height of screen

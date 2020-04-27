@@ -15,7 +15,7 @@
     },
     "appInformation": {
       "label": "App information",
-      "desc": "Product of {{appName}} - Current version: {{appVersion}}"
+      "desc": "© {{appName}} - Version: {{appVersion}}"
     },
     "appUpdate": {
       "label": "App update",
