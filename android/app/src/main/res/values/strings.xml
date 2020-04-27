@@ -1,4 +1,4 @@
 <resources>
-	<string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">64zepyz9oRV-xfXlJdrsyNKcRTJzf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
-    <string name="app_name">TickID</string>
+	<string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">TmfMXtNe5yrz6tYSKRAvT2YjzM_Kjg-2NWEBuB</string>
+    <string name="app_name">ShopID</string>
 </resources>

@@ -1,4 +1,4 @@
-package id.tick;
+package vn.shopid;
 
 import com.facebook.react.ReactActivity;
 import io.branch.rnbranch.*; // <-- add this

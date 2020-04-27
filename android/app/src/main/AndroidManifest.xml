@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="id.tick">
+  package="vn.shopid">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -36,7 +36,7 @@
 
         <!-- Branch URI scheme -->
             <intent-filter>
-                <data android:scheme="tickid" android:host="open" />
+                <data android:scheme="shopid" android:host="open" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -47,12 +47,12 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="tickid.app.link" />
+                <data android:scheme="https" android:host="shopid.app.link" />
             </intent-filter>
       </activity>
 
       <!-- Branch init -->
-        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_ndMKBvSauLP0JPd3Cf0JqjaczAffd33K" />
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_cnUO6CXUyz0M9XY9MJexqkhgyzaTJAfr" />
         <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
         <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
  

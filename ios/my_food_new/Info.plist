@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>TickID</string>
+	<string>ShopID</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,15 +27,15 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd</string>
-				<string>id.tick</string>
+				<string>com.googleusercontent.apps.436711985747-09mqs16530im32r82pskvqpqtgfthqpn</string>
+				<string>vn.shopid</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CodePushDeploymentKey</key>
-	<string>zNRC9fLTHDCBngHiUamHbfziyRM7f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
+	<string>xNmNpAwsu0EPNbXurAuwF1uLZKC5P1w_f-LBfY</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -113,7 +113,7 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>branch_app_domain</key>
-	<string>tickid.app.link</string>
+	<string>shopid.app.link</string>
 	<key>branch_key</key>
 	<string>key_live_ndMKBvSauLP0JPd3Cf0JqjaczAffd33K</string>
 </dict>

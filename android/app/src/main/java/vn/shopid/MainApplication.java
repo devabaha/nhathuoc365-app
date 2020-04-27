@@ -1,4 +1,4 @@
-package id.tick;
+package vn.shopid;
 
 import android.app.Application;
 

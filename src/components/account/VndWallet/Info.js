@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
     color: '#404040'
   },
   des: {
-    fontSize: 14,
+    fontSize: 16,
     marginBottom: 2
   },
   notice: {

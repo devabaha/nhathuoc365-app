@@ -12,8 +12,9 @@ global.HOTLINE = '+8490 345 1368';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: 'zNRC9fLTHDCBngHiUamHbfziyRM7f87a6e14-8df5-40b0-b8e4-7ff15b6db3a7',
-  android: '64zepyz9oRV-xfXlJdrsyNKcRTJzf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7'
+  ios: 'xNmNpAwsu0EPNbXurAuwF1uLZKC5P1w_f-LBfY',
+  android: 'TmfMXtNe5yrz6tYSKRAvT2YjzM_Kjg-2NWEBuB',
+  version: ''
 };
 
 // width, height of screen
@@ -44,8 +45,8 @@ global.KEY_BOARD_SHOW = 'keyboardWillShow';
 global.KEY_BOARD_HIDE = 'keyboardWillHide';
 
 // Apps
-global.APP_NAME = 'TICKID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
-global.APP_NAME_SHOW = 'TickID';
+global.APP_NAME = 'SHOPID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
+global.APP_NAME_SHOW = 'ShopID';
 //appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
 global.DELAY_UPDATE_NOTICE = 3000;
@@ -134,9 +135,9 @@ global.FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
 
 global.MESSAGE_OTHER_ERROR = 'Lỗi không xác định, xin thử lại';
 
-global.EMAIL_SUPPORT = 'hi@tickid.vn';
-global.APP_FANPAGE = 'http://fanpage.tickid.vn';
-global.APP_INFO = 'http://tickid.vn';
+global.EMAIL_SUPPORT = 'shopid.vn@gmail.com	';
+global.APP_FANPAGE = '';
+global.APP_INFO = 'https://shopid.vn';
 
 global.HIT_SLOP = { right: 10, left: 10, top: 10, bottom: 10 };
 

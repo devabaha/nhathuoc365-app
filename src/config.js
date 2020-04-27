@@ -6,18 +6,18 @@ import {
 } from 'react-native-iphone-x-helper';
 
 const config = Object.freeze({
-  appName: 'TICKID',
+  appName: 'SHOPID',
   namespace: 'app',
   reduxLoggerEnable: false,
   voucherModule: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: 'shopidappkey',
+    secretKey: '2897423jkshopidappkey3423h'
   },
   radaModule: {
     partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
   },
   oneSignal: {
-    appKey: 'e2e80243-08c0-405a-9a36-5d060ba0af12'
+    appKey: 'a1d6057d-f162-43f8-82e0-c9445610d5d3'
   },
   device: Object.freeze({
     isIphoneX: isIphoneX(),

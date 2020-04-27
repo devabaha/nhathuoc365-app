@@ -6,9 +6,8 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:tickid.app.link</string>
-		<string>applinks:tickid-alternate.app.link</string>
-		<string>applinks:app.tickid.vn</string>
+		<string>applinks:shopid.app.link</string>
+		<string>applinks:shopid-alternate.app.link</string>
 	</array>
 </dict>
 </plist>

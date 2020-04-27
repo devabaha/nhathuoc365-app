@@ -8,7 +8,7 @@
 
   "appTab": {
     "tab1": {
-      "title": "TickID"
+      "title": "ShopID"
     },
     "tab2": {
       "title": "Tin tức"
@@ -62,7 +62,7 @@
       "mainTitle": "Quản lý đơn hàng"
     },
     "voucher": {
-      "mainTitle": "TickID Voucher"
+      "mainTitle": "ShopID Voucher"
     },
     "myVoucher": {
       "mainTitle": "Voucher của tôi"

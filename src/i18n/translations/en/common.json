@@ -8,7 +8,7 @@
 
   "appTab": {
     "tab1": {
-      "title": "TickID"
+      "title": "ShopID"
     },
     "tab2": {
       "title": "News"
@@ -62,7 +62,7 @@
       "mainTitle": "Order management"
     },
     "voucher": {
-      "mainTitle": "TickID Voucher"
+      "mainTitle": "ShopID Voucher"
     },
     "myVoucher": {
       "mainTitle": "My Voucher"
