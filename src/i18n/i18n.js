@@ -24,6 +24,7 @@ const saveAppLanguage = async (asyncStorageLanguage, callback = () => {}) => {
 
 export const setAppLanguage = async (i18n, selectedLanguage = null) => {
   const currentLanguage = RNLocalize.findBestAvailableLanguage(arrayLanguages);
+  // const currentLanguage = null;
   // console.log(currentLanguage, 'clang');
   AsyncStorage.getItem(asyncStorageLanguageKey).then(language => {
     // console.log(language, 'lang');
@@ -46,7 +47,7 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
         moment.locale(languageTag);
         i18n.changeLanguage(languageTag);
       }
-    } else {
+    } else if (currentLanguage) {
       moment.locale(currentLanguage.languageTag);
       i18n.changeLanguage(currentLanguage.languageTag);
 
