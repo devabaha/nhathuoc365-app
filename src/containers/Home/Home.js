@@ -57,11 +57,11 @@ class Home extends Component {
     }
   }
 
-  handleOpenningNotification(openResult) {
+  handleOpenningNotification = openResult => {
     const { t } = this.props;
     const data = openResult.notification.payload.additionalData;
     servicesHandler(data, t);
-  }
+  };
 
   getHomeDataFromApi = async (showLoading = true) => {
     if (showLoading) {
