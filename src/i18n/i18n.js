@@ -58,6 +58,15 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
       // console.log(asyncStorageLanguage, 'no language');
 
       saveAppLanguage(asyncStorageLanguage);
+    } else {
+      let asyncStorageLanguage = {
+        language: selectedLanguage
+      };
+      // console.log(asyncStorageLanguage, 'has selected');
+      saveAppLanguage(asyncStorageLanguage, () => {
+        moment.locale(selectedLanguage.languageTag);
+        i18n.changeLanguage(selectedLanguage.languageTag);
+      });
     }
   });
 };
