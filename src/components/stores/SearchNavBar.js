@@ -27,6 +27,7 @@ class SearchNavBar extends Component {
   };
 
   renderRight() {
+    const { t } = this.props;
     return (
       <Button
         containerStyle={styles.cancelButton}
@@ -35,7 +36,7 @@ class SearchNavBar extends Component {
           this.props.onCancel();
         }}
       >
-        <Text style={styles.cancelText}>Hủy</Text>
+        <Text style={styles.cancelText}>{t('navBar.cancel')}</Text>
       </Button>
     );
   }
@@ -52,7 +53,6 @@ class SearchNavBar extends Component {
         <TextInput
           style={styles.searchInput}
           placeholder={this.props.placeholder}
-          placeH
           placeholderTextColor="#ccc"
           onChangeText={this.props.onSearch}
           value={this.props.searchValue}
@@ -149,4 +149,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default SearchNavBar;
+export default withTranslation('stores')(SearchNavBar);

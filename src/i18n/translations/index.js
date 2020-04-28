@@ -49,6 +49,9 @@ import en_opRegister from './en/opRegister.json';
 import vi_resetPassword from './vi/resetPassword.json';
 import en_resetPassword from './en/resetPassword.json';
 
+import vi_cardWallet from './vi/cardWallet.json';
+import en_cardWallet from './en/cardWallet.json';
+
 export default {
   [languages.vi.value]: {
     common: vi_common,
@@ -74,7 +77,8 @@ export default {
     schedule: vi_schedule,
     searchPlaces: vi_searchPlaces,
     opRegister: vi_opRegister,
-    resetPassword: vi_resetPassword
+    resetPassword: vi_resetPassword,
+    cardWallet: vi_cardWallet
   },
   [languages.en.value]: {
     common: en_common,
@@ -100,6 +104,7 @@ export default {
     schedule: en_schedule,
     searchPlaces: en_searchPlaces,
     opRegister: en_opRegister,
-    resetPassword: en_resetPassword
+    resetPassword: en_resetPassword,
+    cardWallet: en_cardWallet
   }
 };

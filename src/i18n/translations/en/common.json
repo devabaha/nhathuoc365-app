@@ -11,10 +11,10 @@
       "title": "TickID"
     },
     "tab2": {
-      "title": "News"
+      "title": "Voucher"
     },
     "tab3": {
-      "title": ""
+      "title": "Shops"
     },
     "tab4": {
       "title": "Orders"
@@ -25,6 +25,9 @@
   },
 
   "screen": {
+    "cardWallet": {
+      "mainTitle": "Favorite shops"
+    },
     "account": {
       "mainTitle": "Account",
       "myAccountTitle": "My account",
@@ -62,7 +65,7 @@
       "mainTitle": "Order management"
     },
     "voucher": {
-      "mainTitle": "TickID Voucher"
+      "mainTitle": "Voucher"
     },
     "myVoucher": {
       "mainTitle": "My Voucher"
