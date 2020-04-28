@@ -478,7 +478,7 @@ class PhoneAuth extends Component {
   _onPressBackToPhoneInput() {
     this.props.onCloseOTP();
     // this.loginMode = loginMode.FIREBASE;
-    this.setState({ confirmResult: null });
+    this.setState({ confirmResult: null, message: '' });
   }
 
   startCountDown() {

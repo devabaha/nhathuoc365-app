@@ -12,13 +12,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
-
     <application
       android:usesCleartextTraffic="true"
       android:name=".MainApplication"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
-      android:roundIcon="@mipmap/ic_launcher_round"
+      android:roundIcon="@mipmap/ic_launcher"
       android:allowBackup="false"
       android:theme="@style/AppTheme">
       <activity
@@ -50,7 +49,7 @@
                 <data android:scheme="https" android:host="shopid.app.link" />
             </intent-filter>
       </activity>
-
+      <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FF812384" />
       <!-- Branch init -->
         <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_cnUO6CXUyz0M9XY9MJexqkhgyzaTJAfr" />
         <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->

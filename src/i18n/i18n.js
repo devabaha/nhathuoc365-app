@@ -75,7 +75,7 @@ i18n.use(initReactI18next).init(
     defaultNS: 'common'
   },
   () => {
-    setAppLanguage(i18n);
+    // setAppLanguage(i18n);
     console.log('from init', i18n.language);
   }
 );

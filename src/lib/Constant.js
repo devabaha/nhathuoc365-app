@@ -8,13 +8,13 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 global.MY_FOOD_API = 'https://apiapp.tickid.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
 global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
-global.HOTLINE = '+8490 345 1368';
+global.HOTLINE = '+8492 721 7227';
 
 // codepush deployment keys (production)
 global.CPDK = {
   ios: 'xNmNpAwsu0EPNbXurAuwF1uLZKC5P1w_f-LBfY',
   android: 'TmfMXtNe5yrz6tYSKRAvT2YjzM_Kjg-2NWEBuB',
-  version: ''
+  version: 1 // shopid - version 1
 };
 
 // width, height of screen
