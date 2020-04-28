@@ -519,7 +519,7 @@ class CustomerCardWallet extends Component {
                         onPress={this.handlePressShortcutSearch}
                       />
                     }
-                    message={t('noCards')}
+                    message={t('noCard')}
                   />
                 )
               }
