@@ -90,6 +90,7 @@ class StoreNavBar extends Component {
   }
 
   renderRight() {
+    const { t } = this.props;
     return (
       <Button
         containerStyle={styles.cancelButton}
@@ -98,7 +99,7 @@ class StoreNavBar extends Component {
           this.props.onCancel();
         }}
       >
-        <Text style={styles.cancelText}>Hủy</Text>
+        <Text style={styles.cancelText}>{t('navBar.cancel')}</Text>
       </Button>
     );
   }
@@ -211,4 +212,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default StoreNavBar;
+export default withTranslation('stores')(StoreNavBar);

@@ -16,7 +16,7 @@
     "noTel": "未有电话号码的联系人!"
   },
   "accountNotRegisterYet": {
-    "title": "您将转账到未注册TickID的号码 {{appName}}",
+    "title": "您将转账到未注册{{appName}}的号码",
     "message": "Hãy mời chủ thuê bao {{tel}} sử dụng {{appName}} ngay thôi!!",
     "accept": "发送邀请",
     "cancel": "取消"

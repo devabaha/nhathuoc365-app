@@ -1,4 +1,32 @@
 {
+  "search": {
+    "navBar": {
+      "prefix": "Tìm kiếm trong",
+      "suffix": "cửa hàng"
+    },
+    "result": {
+      "prefix": "Kết quả cho",
+      "notFound": "Không tìm thấy sản phẩm"
+    },
+    "suggest": {
+      "category": {
+        "title": "Danh mục"
+      },
+      "history": {
+        "title": "Lịch sử tìm kiếm",
+        "delete": "Xoá"
+      }
+    }
+  },
+  "navBar": {
+    "placeholder": "Tìm kiếm trong cửa hàng...",
+    "cancel": "Hủy"
+  },
+  "header": {
+    "follow": "Theo dõi",
+    "following": "Đang theo dõi",
+    "chat": "Chat"
+  },
   "tabs": {
     "store": {
       "title": "Cửa hàng"
@@ -8,7 +36,7 @@
       "categoryTitle": "{{productName}}"
     }
   },
-  "noProduct": "Chưa có mặt hàng nào",
+  "noProduct": "Cửa hàng hiện chưa có sản phẩm",
   "item": {
     "more": "XEM THÊM"
   }

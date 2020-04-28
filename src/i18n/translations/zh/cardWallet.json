@@ -1,0 +1,20 @@
+{
+  "buttons": {
+    "tab1": {
+      "title": "添加更多商店",
+      "placeholder": "输入至少3个字符进行搜索...",
+      "noResult": "没有相关信息"
+    },
+    "tab2": {
+      "title": "搜索"
+    }
+  },
+  "searchInput": {
+    "placeholder": "输入搜索..."
+  },
+  "header": {
+    "prefix": "是",
+    "suffix": "结果"
+  },
+  "noCard": " 没有卡！立即添加"
+}

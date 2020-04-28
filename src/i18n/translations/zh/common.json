@@ -14,7 +14,7 @@
       "title": "信息"
     },
     "tab3": {
-      "title": ""
+      "title": "Shops"
     },
     "tab4": {
       "title": "订单"
@@ -25,6 +25,9 @@
   },
 
   "screen": {
+    "cardWallet": {
+      "mainTitle": "特权商店"
+    },
     "account": {
       "mainTitle": "账号",
       "myAccountTitle": "我的账号",

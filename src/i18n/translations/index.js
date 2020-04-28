@@ -24,6 +24,7 @@ import vi_schedule from './vi/schedule.json';
 import vi_searchPlaces from './vi/searchPlaces.json';
 import vi_opRegister from './vi/opRegister.json';
 import vi_resetPassword from './vi/resetPassword.json';
+import vi_cardWallet from './vi/cardWallet.json';
 
 // en
 import en_common from './en/common.json';
@@ -50,6 +51,7 @@ import en_schedule from './en/schedule.json';
 import en_searchPlaces from './en/searchPlaces.json';
 import en_opRegister from './en/opRegister.json';
 import en_resetPassword from './en/resetPassword.json';
+import en_cardWallet from './en/cardWallet.json';
 
 // zh
 import zh_common from './zh/common.json';
@@ -76,6 +78,8 @@ import zh_schedule from './zh/schedule.json';
 import zh_searchPlaces from './zh/searchPlaces.json';
 import zh_opRegister from './zh/opRegister.json';
 import zh_resetPassword from './zh/resetPassword.json';
+import zh_cardWallet from './zh/cardWallet.json';
+
 export default {
   [languages.vi.value]: {
     common: vi_common,
@@ -101,7 +105,8 @@ export default {
     schedule: vi_schedule,
     searchPlaces: vi_searchPlaces,
     opRegister: vi_opRegister,
-    resetPassword: vi_resetPassword
+    resetPassword: vi_resetPassword,
+    cardWallet: vi_cardWallet
   },
   [languages.en.value]: {
     common: en_common,
@@ -127,7 +132,8 @@ export default {
     schedule: en_schedule,
     searchPlaces: en_searchPlaces,
     opRegister: en_opRegister,
-    resetPassword: en_resetPassword
+    resetPassword: en_resetPassword,
+    cardWallet: en_cardWallet
   },
   [languages.zh.value]: {
     common: zh_common,
@@ -153,6 +159,7 @@ export default {
     schedule: zh_schedule,
     searchPlaces: zh_searchPlaces,
     opRegister: zh_opRegister,
-    resetPassword: zh_resetPassword
+    resetPassword: zh_resetPassword,
+    cardWallet: zh_cardWallet
   }
 };
