@@ -10,12 +10,12 @@ export const languages = {
     label: 'English',
     value: 'en',
     isRTL: false
+  },
+  zh: {
+    label: '中文',
+    value: 'zh',
+    isRTL: false
   }
-  // cn: {
-  //     label: 'Chinese',
-  //     value: 'cn',
-  //     isRTL: false
-  // },
   // jp: {
   //     label: 'Japanese',
   //     value: 'jp',

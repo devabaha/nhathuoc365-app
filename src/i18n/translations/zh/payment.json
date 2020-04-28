@@ -1,0 +1,18 @@
+{
+  "validate": {
+    "empty": "请输入金额",
+    "min": "最低金额 {{money}}",
+    "max": "最高金金额 {{money}}"
+  },
+  "input": {
+    "money": {
+      "title": "资金",
+      "placeholder": "输入金额"
+    },
+    "note": {
+      "title": "讯息 ({{counter}})",
+      "placeholder": "请输入讯息到接收人"
+    }
+  },
+  "transferBtnTitle": "转账"
+}

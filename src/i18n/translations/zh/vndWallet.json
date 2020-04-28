@@ -1,0 +1,15 @@
+{
+  "header": {
+    "balance": "余额"
+  },
+  "tabs": {
+    "history": {
+      "title": "交易历史",
+      "message": "此账号目前未有交易"
+    },
+    "information": {
+      "title": "信息",
+      "message": "账号信息"
+    }
+  }
+}

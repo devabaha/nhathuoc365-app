@@ -1,0 +1,137 @@
+{
+  "api": {
+    "error": {
+      "message": "错误，请重试",
+      "connect": "网络连接失误，请重试"
+    }
+  },
+
+  "appTab": {
+    "tab1": {
+      "title": "ShopID"
+    },
+    "tab2": {
+      "title": "信息"
+    },
+    "tab3": {
+      "title": ""
+    },
+    "tab4": {
+      "title": "订单"
+    },
+    "tab5": {
+      "title": "账号"
+    }
+  },
+
+  "screen": {
+    "account": {
+      "mainTitle": "账号",
+      "myAccountTitle": "我的账号",
+      "editAccountTitle": "编辑账号信息"
+    },
+    "address": {
+      "mainTitle": "地址",
+      "createTitle": "添加更多地址",
+      "editTitle": "编辑地址"
+    },
+    "register": {
+      "mainTitle": "注册信息"
+    },
+    "affiliate": {
+      "mainTitle": "推荐代码"
+    },
+    "qrBarCode": {
+      "mainTitle": "账号代码",
+      "walletAddressTitle": "钱包地址",
+      "scanTitle": "扫描二维码"
+    },
+    "transfer": {
+      "mainTitle": "转帐"
+    },
+    "payAccount": {
+      "mainTitle": "账号信息"
+    },
+    "contact": {
+      "mainTitle": "联络人"
+    },
+    "rada": {
+      "mainTitle": "Rada服务"
+    },
+    "radaOrderHistory": {
+      "mainTitle": "订单管理"
+    },
+    "voucher": {
+      "mainTitle": "ShopID Voucher"
+    },
+    "myVoucher": {
+      "mainTitle": "我的优惠券"
+    },
+    "news": {
+      "mainTitle": "信息"
+    },
+    "newsDetail": {
+      "mainTitle": "详细信息"
+    },
+    "orders": {
+      "mainTitle": "订单"
+    },
+    "productDetail": {
+      "mainTitle": "产品详细信息"
+    },
+    "ordersDetail": {
+      "mainTitle": "订单详细信息",
+      "confirmTitle": "确认"
+    },
+    "feedback": {
+      "mainTitle": "谢谢！"
+    },
+    "cart": {
+      "mainTitle": "购物车"
+    },
+    "paymentMethod": {
+      "mainTitle": "付款"
+    },
+    "securePayment": {
+      "mainTitle": "安全付款"
+    },
+    "schedule": {
+      "mainTitle": "Chọn ngày và giờ"
+    },
+    "scheduleConfirm": {
+      "mainTitle": "Yêu cầu đặt lịch"
+    },
+    "searchPlaces": {
+      "mainTitle": "Nhập địa chỉ của bạn"
+    },
+    "opRegister": {
+      "mainTitle": "Đăng ký"
+    },
+    "resetPassword": {
+      "mainTitle": "Đặt lại mật khẩu"
+    }
+  },
+
+  "system": {
+    "settings": {
+      "error": {
+        "accessProblem": "无法进接设置!"
+      }
+    },
+    "camera": {
+      "access": {
+        "request": "申请需求进接摄像机"
+      },
+      "error": {
+        "notSupport": "不支持摄像机",
+        "unavailable": "无法进接摄像机",
+        "accessProblem": "摄像机进接权限"
+      }
+    }
+  },
+
+  "popupConfirm": {
+    "yes": "是",
+    "no": "否"
+  }
+}

@@ -68,22 +68,22 @@ class Account extends Component {
             iconColor: '#ffffff'
           },
 
-          {
-            key: '2',
-            icon: 'facebook-square',
-            label: t('options.fanpage.label', { appName: APP_NAME_SHOW }),
-            desc: t('options.fanpage.desc'),
-            rightIcon: <IconAngleRight />,
-            onPress: () => Communications.web(APP_FANPAGE),
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#4267b2'
-              }
-            ],
-            iconColor: '#ffffff',
-            marginTop: !isAdmin
-          },
+          // {
+          //   key: '2',
+          //   icon: 'facebook-square',
+          //   label: t('options.fanpage.label', { appName: APP_NAME_SHOW }),
+          //   desc: t('options.fanpage.desc'),
+          //   rightIcon: <IconAngleRight />,
+          //   onPress: () => Communications.web(APP_FANPAGE),
+          //   boxIconStyle: [
+          //     styles.boxIconStyle,
+          //     {
+          //       backgroundColor: '#4267b2'
+          //     }
+          //   ],
+          //   iconColor: '#ffffff',
+          //   marginTop: !isAdmin
+          // },
 
           {
             key: '3',

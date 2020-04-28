@@ -1,0 +1,28 @@
+{
+  "popup": {
+    "edit": {
+      "message": "当前购物车将被删除！ 您仍要编辑此订单吗？"
+    },
+    "remove": {
+      "message": "您确认从您购物车删除此产品吗？"
+    },
+    "cancel": {
+      "message": "您确认取消此订单吗？"
+    }
+  },
+  "notification": {
+    "noItemSelected": {
+      "title": "通知",
+      "message": "您需要挑选至少一种产品才能继续",
+      "accept": "确定"
+    }
+  },
+  "noFooterItems": "Giỏ hàng trống\nHãy mua sắm ngay!",
+  "noItems": "没有产品",
+  "discount": "折扣",
+  "payment": {
+    "total": "总结算",
+    "order": "订单",
+    "cart": "购物车"
+  }
+}

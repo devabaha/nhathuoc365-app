@@ -1,0 +1,67 @@
+{
+  "contactInput": {
+    "title": "充值到",
+    "placeholder": "输入接收人手机号码"
+  },
+  "contact": {
+    "requestContactsPermissionTitle": "联系人",
+    "requestContactsPermissionMessage": "允许进接联系人名单，可帮您获得正确信息",
+    "notInContactsFamilyName": "未在联系人名单里",
+    "allowAccessContactsMessage": "允许进接",
+    "searchContactsPlaceholder": "搜索姓名与手机号码"
+  },
+  "transferPaymentTitle": "转账付款到 {{walletName}}",
+  "error": {
+    "sameAccount": "错误，同一帐号!",
+    "noTel": "未有电话号码的联系人!"
+  },
+  "accountNotRegisterYet": {
+    "title": "您将转账到未注册TickID的号码 {{appName}}",
+    "message": "Hãy mời chủ thuê bao {{tel}} sử dụng {{appName}} ngay thôi!!",
+    "accept": "发送邀请",
+    "cancel": "取消"
+  },
+  "confirm": {
+    "message": "您已将 {{money}} 转账到 {{receiverName}} ({{receiverTel}})",
+    "sourceMoney": "来源资金",
+    "fingerprintScanner": "使用触摸ID解锁和确认",
+    "modal": {
+      "enterPass": {
+        "title": "输入密码"
+      },
+      "wrongPass": {
+        "title": "无效密码",
+        "message": "请重试",
+        "accept": "重试"
+      },
+      "newPass": {
+        "title": "创建新密码",
+        "message": "为了安全，请创建密码"
+      },
+      "reEnterPass": {
+        "title": "再次输入已创建密码",
+        "message": "再次输入已创建密码并确认"
+      }
+    },
+    "transaction": {
+      "success": {
+        "title": "交易成功",
+        "subTitle": "",
+        "message": "回到首页"
+      },
+      "detail": "转账详细信息",
+      "form": {
+        "sendTo": "发到",
+        "tel": "手机",
+        "money": "资金"
+      },
+      "fee": {
+        "title": "费用",
+        "value": "免费"
+      },
+      "totalPrice": "总价",
+      "secure": "SSL / TLS安全性，所有信息均已安全加密",
+      "confirm": "确认"
+    }
+  }
+}

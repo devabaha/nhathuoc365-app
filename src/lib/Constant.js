@@ -54,7 +54,7 @@ global.DELAY_UPDATE_NOTICE = 3000;
 global.GA_ID = 'UA-143334124-2';
 
 // color
-global.DEFAULT_COLOR = '#812384'; //2c6ca3
+global.DEFAULT_COLOR = '#128C7E'; //2c6ca3
 global.DEFAULT_COLOR_RED = '#55b947';
 global.DEFAULT_ADMIN_COLOR = '#55b947';
 global.HEADER_BGR = DEFAULT_COLOR;

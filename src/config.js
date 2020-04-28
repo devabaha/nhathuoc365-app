@@ -32,11 +32,11 @@ const config = Object.freeze({
   }),
   colors: {
     logo: {
-      main: '#8d2d8c',
-      sub: '#f5bb4b',
-      addition: '#f18c21'
+      main: '#59b2e4',
+      sub: '#6559c5',
+      addition: '#d37ee9'
     },
-    primary: '#812384',
+    primary: '#128C7E',
     white: '#fff',
     black: '#000',
     text: '#333',

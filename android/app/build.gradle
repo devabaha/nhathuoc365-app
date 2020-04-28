@@ -118,8 +118,8 @@ android {
         applicationId "vn.shopid"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 18
-        versionName "1.1.2"
+        versionCode 1
+        versionName "1.0.1"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
         resConfigs "en", "vi"

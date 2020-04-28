@@ -1,0 +1,20 @@
+{
+  "confirmNotification": {
+    "title": "通知",
+    "description": "输入运送地址及继续",
+    "accept": "确定"
+  },
+  "address": {
+    "title": "1. 地址",
+    "receive": "收货地址",
+    "new": "添加更多新地址",
+    "delivery": "邮寄地址",
+    "default": "[默认]",
+    "edit": "编辑"
+  },
+  "confirm": {
+    "title": "2. 确认"
+  },
+
+  "nextBtnMessage": "下一步"
+}
