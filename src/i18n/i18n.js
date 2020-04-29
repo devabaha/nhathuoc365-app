@@ -38,7 +38,7 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
         };
         // console.log(asyncStorageLanguage, 'has selected');
         saveAppLanguage(asyncStorageLanguage, () => {
-          moment.locale(selectedLanguage.languageTag);
+          moment.locale(selectedLanguage.locale);
           i18n.changeLanguage(selectedLanguage.languageTag);
         });
       } else {
@@ -64,7 +64,7 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
       };
       // console.log(asyncStorageLanguage, 'has selected');
       saveAppLanguage(asyncStorageLanguage, () => {
-        moment.locale(selectedLanguage.languageTag);
+        moment.locale(selectedLanguage.locale);
         i18n.changeLanguage(selectedLanguage.languageTag);
       });
     }
