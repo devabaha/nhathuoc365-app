@@ -4,17 +4,20 @@ export const languages = {
   vi: {
     label: 'Tiếng Việt',
     value: 'vi',
-    isRTL: false
+    isRTL: false,
+    locale: 'vi'
   },
   en: {
     label: 'English',
     value: 'en',
-    isRTL: false
+    isRTL: false,
+    locale: 'en'
   },
   zh: {
     label: '中文',
     value: 'zh',
-    isRTL: false
+    isRTL: false,
+    locale: 'zh-cn'
   }
   // jp: {
   //     label: 'Japanese',

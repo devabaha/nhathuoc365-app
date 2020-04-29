@@ -10,6 +10,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import * as RNLocalize from 'react-native-localize';
 import 'moment/locale/vi';
+import 'moment/locale/zh-cn';
 import moment from 'moment';
 
 const saveAppLanguage = async (asyncStorageLanguage, callback = () => {}) => {
@@ -38,7 +39,7 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
         };
         // console.log(asyncStorageLanguage, 'has selected');
         saveAppLanguage(asyncStorageLanguage, () => {
-          moment.locale(selectedLanguage.languageTag);
+          moment.locale(selectedLanguage.locale);
           i18n.changeLanguage(selectedLanguage.languageTag);
         });
       } else {
@@ -64,7 +65,7 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
       };
       // console.log(asyncStorageLanguage, 'has selected');
       saveAppLanguage(asyncStorageLanguage, () => {
-        moment.locale(selectedLanguage.languageTag);
+        moment.locale(selectedLanguage.locale);
         i18n.changeLanguage(selectedLanguage.languageTag);
       });
     }

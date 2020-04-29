@@ -347,7 +347,8 @@ class Account extends Component {
   handleConfirmChangeAppLanguage = languageValue => {
     const selectedLanguage = {
       languageTag: languages[languageValue].value,
-      isRTL: languages[languageValue].isRTL
+      isRTL: languages[languageValue].isRTL,
+      locale: languages[languageValue].locale
     };
     setAppLanguage(this.props.i18n, selectedLanguage);
   };
