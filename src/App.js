@@ -582,6 +582,7 @@ class RootRouter extends Component {
                 hideNavBar
               >
                 <Scene
+                  appLanguage={this.props.appLanguage}
                   key={appConfig.routes.launch}
                   component={LaunchContainer}
                 />
