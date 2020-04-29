@@ -171,30 +171,30 @@ class Orders extends Component {
 
     return (
       <View style={styles.container}>
-        {data != null ? (
-          <ScrollView
-            scrollEventThrottle={16}
-            onScroll={event => {
-              this.setState({
-                scrollTop: event.nativeEvent.contentOffset.y
-              });
-            }}
-            ref={ref => (this.refs_orders = ref)}
-            // renderSectionHeader={({section}) => (
-            //   <View style={styles.cart_section_box}>
-            //     <CachedImage mutable style={styles.cart_section_image} source={{uri: section.image}} />
-            //     <Text style={styles.cart_section_title}>{section.key}</Text>
-            //   </View>
-            // )}
-            onEndReached={num => {}}
-            onEndReachedThreshold={0}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }
-          >
+        <ScrollView
+          scrollEventThrottle={16}
+          onScroll={event => {
+            this.setState({
+              scrollTop: event.nativeEvent.contentOffset.y
+            });
+          }}
+          ref={ref => (this.refs_orders = ref)}
+          // renderSectionHeader={({section}) => (
+          //   <View style={styles.cart_section_box}>
+          //     <CachedImage mutable style={styles.cart_section_image} source={{uri: section.image}} />
+          //     <Text style={styles.cart_section_title}>{section.key}</Text>
+          //   </View>
+          // )}
+          onEndReached={num => {}}
+          onEndReachedThreshold={0}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
+            />
+          }
+        >
+          {data != null ? (
             <FlatList
               ItemSeparatorComponent={() => (
                 <View style={styles.separator}></View>
@@ -214,30 +214,30 @@ class Orders extends Component {
               }}
               keyExtractor={item => item.id}
             />
-          </ScrollView>
-        ) : (
-          <View style={styles.empty_box}>
-            <Icon
-              name="shopping-basket"
-              size={32}
-              color={hexToRgbA(DEFAULT_COLOR, 0.6)}
-            />
-            <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
+          ) : (
+            <View style={styles.empty_box}>
+              <Icon
+                name="shopping-basket"
+                size={32}
+                color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+              />
+              <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
 
-            <TouchableHighlight
-              onPress={() => {
-                Actions.jump(appConfig.routes.homeTab);
-              }}
-              underlayColor="transparent"
-            >
-              <View style={styles.empty_box_btn}>
-                <Text style={styles.empty_box_btn_title}>
-                  {t('encourageMessage')}
-                </Text>
-              </View>
-            </TouchableHighlight>
-          </View>
-        )}
+              <TouchableHighlight
+                onPress={() => {
+                  Actions.jump(appConfig.routes.homeTab);
+                }}
+                underlayColor="transparent"
+              >
+                <View style={styles.empty_box_btn}>
+                  <Text style={styles.empty_box_btn_title}>
+                    {t('encourageMessage')}
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          )}
+        </ScrollView>
 
         <PopupConfirm
           ref_popup={ref => (this.refs_cancel_cart = ref)}

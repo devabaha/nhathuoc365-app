@@ -4,6 +4,7 @@ import { View, StyleSheet, Animated, Easing } from 'react-native';
 import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
+import { languages } from '../../i18n/constants';
 
 class Launch extends Component {
   constructor(props) {
@@ -26,7 +27,9 @@ class Launch extends Component {
   handleAuthorization = async () => {
     try {
       const response = await APIHandler.user_login({
-        fb_access_token: ''
+        fb_access_token: '',
+        language: this.props.appLanguage,
+        locale: languages[this.props.appLanguage].locale
       });
       setTimeout(() => {
         this.handleAuthWithResponse(response);
