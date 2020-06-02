@@ -43,10 +43,12 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
           i18n.changeLanguage(selectedLanguage.languageTag);
         });
       } else {
-        const languageTag = languageObj.language.languageTag;
+        const languageTag = languageObj.language;
         // console.log(languageObj, 'no selected');
-        moment.locale(languageTag);
-        i18n.changeLanguage(languageTag);
+        if (languageTag) {
+          moment.locale(languageTag.languageTag);
+          i18n.changeLanguage(languageTag.languageTag);
+        }
       }
     } else if (currentLanguage) {
       moment.locale(currentLanguage.languageTag);
