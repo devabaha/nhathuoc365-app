@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>ShopID</string>
+	<string>HomeID</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -27,8 +27,8 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.436711985747-09mqs16530im32r82pskvqpqtgfthqpn</string>
-				<string>vn.shopid</string>
+				<string>com.googleusercontent.apps.857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3</string>
+				<string>asia.homeid</string>
 			</array>
 		</dict>
 	</array>
@@ -113,8 +113,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>branch_app_domain</key>
-	<string>shopid.app.link</string>
+	<string>homeid.app.link</string>
 	<key>branch_key</key>
-	<string>key_live_cnUO6CXUyz0M9XY9MJexqkhgyzaTJAfr</string>
+	<string>key_live_fgS5jf8yiaqZECmlBl7uugckBtgRwCc6</string>
 </dict>
 </plist>

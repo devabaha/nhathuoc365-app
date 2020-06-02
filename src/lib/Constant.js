@@ -14,7 +14,7 @@ global.HOTLINE = '+8492 721 7227';
 global.CPDK = {
   ios: 'xNmNpAwsu0EPNbXurAuwF1uLZKC5P1w_f-LBfY',
   android: 'TmfMXtNe5yrz6tYSKRAvT2YjzM_Kjg-2NWEBuB',
-  version: 1 // shopid - version 1
+  version: 1 // homeid - version 1
 };
 
 // width, height of screen
@@ -45,8 +45,8 @@ global.KEY_BOARD_SHOW = 'keyboardWillShow';
 global.KEY_BOARD_HIDE = 'keyboardWillHide';
 
 // Apps
-global.APP_NAME = 'SHOPID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
-global.APP_NAME_SHOW = 'ShopID';
+global.APP_NAME = 'HOMEID'; //Ma cua ung dung, khong thay doi, vi dung ten nay gan vao device id
+global.APP_NAME_SHOW = 'HomeID';
 //appConfig.appName
 global.TIME_THE_LAUNCH = 1000;
 global.DELAY_UPDATE_NOTICE = 3000;
@@ -135,9 +135,9 @@ global.FACEBOOK_PERMISSIONS = ['email', 'public_profile'];
 
 global.MESSAGE_OTHER_ERROR = 'Lỗi không xác định, xin thử lại';
 
-global.EMAIL_SUPPORT = 'shopid.vn@gmail.com	';
+global.EMAIL_SUPPORT = 'abahavietnam@gmail.com';
 global.APP_FANPAGE = '';
-global.APP_INFO = 'https://shopid.vn';
+global.APP_INFO = 'https://homeid.asia';
 
 global.HIT_SLOP = { right: 10, left: 10, top: 10, bottom: 10 };
 

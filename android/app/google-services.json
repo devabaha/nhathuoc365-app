@@ -1,50 +1,50 @@
 {
   "project_info": {
-    "project_number": "436711985747",
-    "firebase_url": "https://shopid-ca2da.firebaseio.com",
-    "project_id": "shopid-ca2da",
-    "storage_bucket": "shopid-ca2da.appspot.com"
+    "project_number": "857380148290",
+    "firebase_url": "https://homeid-6f859.firebaseio.com",
+    "project_id": "homeid-6f859",
+    "storage_bucket": "homeid-6f859.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:436711985747:android:c4683804773694971d6ca6",
+        "mobilesdk_app_id": "1:857380148290:android:34a687facab39d77fac9db",
         "android_client_info": {
-          "package_name": "vn.shopid"
+          "package_name": "asia.homeid"
         }
       },
       "oauth_client": [
         {
-          "client_id": "436711985747-tre64911be6014jjcm8e0fo8hb34rsku.apps.googleusercontent.com",
+          "client_id": "857380148290-msot0go7sm4ug7tmdg0qrfm1i4im5nph.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "vn.shopid",
-            "certificate_hash": "1a6e3583a23df85ee6459217ec072852abe7766a"
+            "package_name": "asia.homeid",
+            "certificate_hash": "b710cfc396291859002a5e2b5efe3932cf019be1"
           }
         },
         {
-          "client_id": "436711985747-ba6coc3luqaf2bektcdp9b55qlh9rio4.apps.googleusercontent.com",
+          "client_id": "857380148290-fjqplkf8318261c3a382lqkfmufjb9ea.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDvk10nbhGyOLZzDkXZGECaBNp4RSjh1zs"
+          "current_key": "AIzaSyBiXPTP7P8gVv8XSpVSSAK36fJWO-XGNk4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "436711985747-ba6coc3luqaf2bektcdp9b55qlh9rio4.apps.googleusercontent.com",
+              "client_id": "857380148290-fjqplkf8318261c3a382lqkfmufjb9ea.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "436711985747-09mqs16530im32r82pskvqpqtgfthqpn.apps.googleusercontent.com",
+              "client_id": "857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "vn.shopid",
-                "app_store_id": "1510277474"
+                "bundle_id": "asia.homeid",
+                "app_store_id": "1516452688"
               }
             }
           ]

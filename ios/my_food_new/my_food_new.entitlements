@@ -6,8 +6,8 @@
 	<string>development</string>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:shopid.app.link</string>
-		<string>applinks:shopid-alternate.app.link</string>
+		<string>applinks:homeid.app.link</string>
+		<string>applinks:homeid-alternate.app.link</string>
 	</array>
 </dict>
 </plist>

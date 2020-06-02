@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>436711985747-09mqs16530im32r82pskvqpqtgfthqpn.apps.googleusercontent.com</string>
+	<string>857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.436711985747-09mqs16530im32r82pskvqpqtgfthqpn</string>
+	<string>com.googleusercontent.apps.857380148290-6a0hts7mmfktf9tprkcfammfdegtjbm3</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>436711985747-tre64911be6014jjcm8e0fo8hb34rsku.apps.googleusercontent.com</string>
+	<string>857380148290-msot0go7sm4ug7tmdg0qrfm1i4im5nph.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCDUAvwPpUCXii5RLFcyHi0fU4hcG_v9oQ</string>
+	<string>AIzaSyBMwQDLKUqLZskG_4QBWSU79RUCYeXclwQ</string>
 	<key>GCM_SENDER_ID</key>
-	<string>436711985747</string>
+	<string>857380148290</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>vn.shopid</string>
+	<string>asia.homeid</string>
 	<key>PROJECT_ID</key>
-	<string>shopid-ca2da</string>
+	<string>homeid-6f859</string>
 	<key>STORAGE_BUCKET</key>
-	<string>shopid-ca2da.appspot.com</string>
+	<string>homeid-6f859.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:436711985747:ios:8aab127c4d6f4fa71d6ca6</string>
+	<string>1:857380148290:ios:86cb498a8a120de9fac9db</string>
 	<key>DATABASE_URL</key>
-	<string>https://shopid-ca2da.firebaseio.com</string>
+	<string>https://homeid-6f859.firebaseio.com</string>
 </dict>
 </plist>

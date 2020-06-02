@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="vn.shopid">
+  package="asia.homeid">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -35,7 +35,7 @@
 
         <!-- Branch URI scheme -->
             <intent-filter>
-                <data android:scheme="shopid" android:host="open" />
+                <data android:scheme="homeid" android:host="open" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -46,12 +46,12 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="shopid.app.link" />
+                <data android:scheme="https" android:host="homeid.app.link" />
             </intent-filter>
       </activity>
       <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FF59b2e4" />
       <!-- Branch init -->
-        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_cnUO6CXUyz0M9XY9MJexqkhgyzaTJAfr" />
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_fgS5jf8yiaqZECmlBl7uugckBtgRwCc6" />
         <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
         <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
  

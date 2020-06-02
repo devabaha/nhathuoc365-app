@@ -1,4 +1,4 @@
-package vn.shopid;
+package asia.homeid;
 
 import com.facebook.react.ReactActivity;
 import io.branch.rnbranch.*; // <-- add this

@@ -606,7 +606,7 @@ class RootRouter extends Component {
                   >
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
-                      title="ShopID"
+                      title="HomeID"
                       component={HomeContainer}
                       hideNavBar
                     />

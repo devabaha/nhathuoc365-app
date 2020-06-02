@@ -8,7 +8,7 @@
 
   "appTab": {
     "tab1": {
-      "title": "ShopID"
+      "title": "HomeID"
     },
     "tab2": {
       "title": "信息"
@@ -65,7 +65,7 @@
       "mainTitle": "订单管理"
     },
     "voucher": {
-      "mainTitle": "ShopID Voucher"
+      "mainTitle": "HomeID Voucher"
     },
     "myVoucher": {
       "mainTitle": "我的优惠券"

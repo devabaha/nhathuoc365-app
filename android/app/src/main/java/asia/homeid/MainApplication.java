@@ -1,4 +1,4 @@
-package vn.shopid;
+package asia.homeid;
 
 import android.app.Application;
 

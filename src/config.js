@@ -6,18 +6,18 @@ import {
 } from 'react-native-iphone-x-helper';
 
 const config = Object.freeze({
-  appName: 'SHOPID',
+  appName: 'homeid',
   namespace: 'app',
   reduxLoggerEnable: false,
   voucherModule: {
-    appKey: 'shopidappkey',
-    secretKey: '2897423jkshopidappkey3423h'
+    appKey: 'homeidkey',
+    secretKey: 'homeidkey234jhjksefdsd'
   },
   radaModule: {
     partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
   },
   oneSignal: {
-    appKey: 'a1d6057d-f162-43f8-82e0-c9445610d5d3'
+    appKey: '2647d461-03d1-43f0-a17a-31375254aca1'
   },
   device: Object.freeze({
     isIphoneX: isIphoneX(),
