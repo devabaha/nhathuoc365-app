@@ -34,7 +34,7 @@ class CategoryScreen extends Component {
     }
 
     this.state = {
-      loading: true,
+      loading: false,
       refreshing: false,
       header_title,
       items_data: null,
@@ -77,7 +77,7 @@ class CategoryScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    var { item, index, cate_index } = nextProps;
+    const { item, index, cate_index } = nextProps;
 
     if (
       index == cate_index &&
@@ -200,6 +200,7 @@ class CategoryScreen extends Component {
                 : items_data,
             items_data_bak: items_data,
             loading: false,
+            fetched: true,
             refreshing: false,
             page: this.state.page
           });
@@ -224,6 +225,7 @@ class CategoryScreen extends Component {
           this.setState({
             loading: false,
             refreshing: false,
+            fetched: true,
             items_data: this.state.items_data_bak
           });
 
@@ -234,6 +236,11 @@ class CategoryScreen extends Component {
       this.props.onRefreshEnd();
     } catch (e) {
       console.log(e + ' site_category_product');
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false
+        });
     }
   }
 
@@ -261,7 +268,7 @@ class CategoryScreen extends Component {
 
     const { items_data, header_title, fetched } = this.state;
 
-    if (!items_data) {
+    if (!items_data && fetched) {
       return (
         <View style={styles.emptyContainer}>
           <View style={styles.emptyWrapper}>
