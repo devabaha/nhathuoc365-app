@@ -3,7 +3,7 @@
 import React, { Fragment } from 'react';
 import {
   View,
-  ScrollView,
+  FlatList,
   StyleSheet,
   Text,
   TouchableOpacity
@@ -18,47 +18,43 @@ import Loading from '../../Loading';
 const History = props => {
   const { t } = props;
   var historyData = props.historyData ? props.historyData : [];
-  const historyRender = historyData.map(history => (
-    <HistoryRow
-      key={history.transaction_hash}
-      id={history.transaction_hash}
-      title={history.content}
-      date={history.created}
-      amount={history.amount}
-      balance_view={history.balance_view}
-      money={history.amount_view}
-    />
-  ));
+  function renderHistory({ item: history, index }) {
+    return (
+      <HistoryRow
+        id={history.transaction_hash}
+        title={history.content}
+        date={history.created}
+        amount={history.amount}
+        balance_view={history.balance_view}
+        money={history.amount_view}
+      />
+    );
+  }
   return (
-    <ScrollView
-      contentContainerStyle={{
-        padding: 15,
-        width: Util.size.width
-      }}
-      keyboardShouldPersistTaps="always"
-      // refreshControl={
-      //     <RefreshControl
-      //         refreshing={loadingHistory || loadingHistoryWithdraw}
-      //         onRefresh={this._getData.bind(this)}
-      //     />
-      // }
-    >
+    <View style={styles.container}>
       {props.loading ? null : historyData.length ? (
-        historyRender
+        <FlatList
+          data={historyData}
+          renderItem={renderHistory}
+          keyExtractor={item => item.transaction_hash}
+        />
       ) : (
         <Text style={styles.note}>{t('tabs.history.message')}</Text>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: Util.size.width
+  },
   history_row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingBottom: 10,
-    paddingTop: 10,
+    padding: 15,
     width: '100%',
     borderBottomWidth: Util.pixel,
     borderColor: '#dddddd'
@@ -82,6 +78,7 @@ const styles = StyleSheet.create({
     color: '#404040'
   },
   note: {
+    padding: 15,
     fontSize: 16,
     marginBottom: 2
   }

@@ -627,7 +627,7 @@ class QRBarCode extends Component {
             <View style={[styles.topContent]}>
               <Text style={styles.centerText}>
                 <Icon name="camera-party-mode" size={16} color="#404040" />
-                {' ' + t('common:systen.camera.access.request')}
+                {' ' + t('common:system.camera.access.request')}
               </Text>
               <Button
                 containerStyle={styles.permissionNotGrantedBtn}

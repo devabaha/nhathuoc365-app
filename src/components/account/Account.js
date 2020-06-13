@@ -146,7 +146,7 @@ class Account extends Component {
             label: t('options.appInformation.label'),
             desc: t('options.appInformation.desc', {
               appName: APP_NAME_SHOW,
-              appVersion: DeviceInfo.getVersion()
+              appVersion: DeviceInfo.getVersion() + '-' + CPDK.version
             }),
             rightIcon: <IconAngleRight />,
             onPress: () => {},
@@ -185,27 +185,6 @@ class Account extends Component {
           },
           {
             key: '6',
-            icon: 'lock-reset',
-            label: t('options.resetPassword.label'),
-            desc: t('options.resetPassword.desc'),
-            rightIcon: <IconAngleRight />,
-            onPress: () => {
-              Actions.push(appConfig.routes.resetPassword);
-            },
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#888'
-              }
-            ],
-            iconColor: '#fff',
-            iconSize: 18,
-            iconType: 'MaterialCommunityIcons',
-            marginTop: true,
-            isHidden: !store.user_info || !store.user_info.tel
-          },
-          {
-            key: '7',
             icon: 'language',
             label: t('options.language.label'),
             desc: languages[i18n.language].label,
@@ -379,7 +358,8 @@ class Account extends Component {
   handleConfirmChangeAppLanguage = languageValue => {
     const selectedLanguage = {
       languageTag: languages[languageValue].value,
-      isRTL: languages[languageValue].isRTL
+      isRTL: languages[languageValue].isRTL,
+      locale: languages[languageValue].locale
     };
     setAppLanguage(this.props.i18n, selectedLanguage);
   };

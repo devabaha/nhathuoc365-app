@@ -351,6 +351,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10
   },
   row: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center'
   },
@@ -412,7 +413,7 @@ const styles = StyleSheet.create({
     fontSize: 16
   },
   bankMainContent: {
-    marginLeft: 10,
+    paddingHorizontal: 15,
     flexDirection: 'row',
     alignItems: 'center'
   },

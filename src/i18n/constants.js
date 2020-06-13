@@ -4,12 +4,14 @@ export const languages = {
   vi: {
     label: 'Tiếng Việt',
     value: 'vi',
-    isRTL: false
+    isRTL: false,
+    locale: 'vi'
   },
   en: {
     label: 'English',
     value: 'en',
-    isRTL: false
+    isRTL: false,
+    locale: 'en'
   }
   // cn: {
   //     label: 'Chinese',
