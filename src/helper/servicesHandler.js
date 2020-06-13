@@ -153,9 +153,9 @@ export const servicesHandler = (service, t) => {
       store.setReferCode(service.refer_code);
       break;
     default:
-      // Alert.alert('Thông báo', 'Chức năng đặt đang được phát triển.', [
-      //   { text: 'Đồng ý' }
-      // ]);
+      Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
+        { text: 'Đồng ý' }
+      ]);
       break;
   }
 };
