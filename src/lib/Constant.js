@@ -7,7 +7,7 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 // global.MY_FOOD_API = 'http://localhost:8000/';
 global.MY_FOOD_API = 'https://api.foodhub.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
-global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
+global.PHOTO_MY_FOOD_API = 'https://img.abaha.vn/';
 global.HOTLINE = '+84888301518';
 
 // codepush deployment keys (production)
