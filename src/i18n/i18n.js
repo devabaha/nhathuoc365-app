@@ -23,31 +23,35 @@ const saveAppLanguage = async (asyncStorageLanguage, callback = () => {}) => {
 };
 
 export const setAppLanguage = async (i18n, selectedLanguage = null) => {
-  const currentLanguage = RNLocalize.findBestAvailableLanguage(arrayLanguages);
-  // const currentLanguage = null;
+  // const currentLanguage = RNLocalize.findBestAvailableLanguage(arrayLanguages);
+  const currentLanguage = null;
   // console.log(currentLanguage, 'clang');
   AsyncStorage.getItem(asyncStorageLanguageKey).then(language => {
-    // console.log(language, 'lang');
+    console.log(language, 'lang');
     let asyncStorageLanguage = null;
+    let languageObj = {};
     if (language) {
-      const languageObj = JSON.parse(language);
-      if (selectedLanguage) {
-        asyncStorageLanguage = {
-          ...languageObj,
-          language: selectedLanguage
-        };
-        // console.log(asyncStorageLanguage, 'has selected');
-        saveAppLanguage(asyncStorageLanguage, () => {
-          moment.locale(selectedLanguage.locale);
-          i18n.changeLanguage(selectedLanguage.languageTag);
-        });
-      } else {
-        const languageTag = languageObj.language.languageTag;
-        // console.log(languageObj, 'no selected');
-        moment.locale(languageTag);
-        i18n.changeLanguage(languageTag);
+      languageObj = JSON.parse(language);
+    }
+
+    if (selectedLanguage) {
+      asyncStorageLanguage = {
+        ...languageObj,
+        language: selectedLanguage
+      };
+      // console.log(asyncStorageLanguage, 'has selected');
+      saveAppLanguage(asyncStorageLanguage, () => {
+        moment.locale(selectedLanguage.languageTag);
+        i18n.changeLanguage(selectedLanguage.languageTag);
+      });
+    } else if (language) {
+      const languageTag = languageObj.language;
+      // console.log(languageObj, 'no selected');
+      if (languageTag) {
+        moment.locale(languageTag.languageTag);
+        i18n.changeLanguage(languageTag.languageTag);
       }
-    } else if (currentLanguage) {
+    } else {
       moment.locale(currentLanguage.languageTag);
       i18n.changeLanguage(currentLanguage.languageTag);
 
@@ -58,15 +62,6 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
       // console.log(asyncStorageLanguage, 'no language');
 
       saveAppLanguage(asyncStorageLanguage);
-    } else {
-      let asyncStorageLanguage = {
-        language: selectedLanguage
-      };
-      // console.log(asyncStorageLanguage, 'has selected');
-      saveAppLanguage(asyncStorageLanguage, () => {
-        moment.locale(selectedLanguage.locale);
-        i18n.changeLanguage(selectedLanguage.languageTag);
-      });
     }
   });
 };
