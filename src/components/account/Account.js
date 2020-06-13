@@ -49,38 +49,38 @@ class Account extends Component {
     this.setState(
       {
         options: [
-          {
-            key: '0',
-            leftIcon: (
-              <View>
-                <IconMaterialCommunity
-                  name="store"
-                  style={{ fontSize: 15, left: -3, top: 2, color: '#fff' }}
-                />
-                <Icon
-                  name="map-marker"
-                  style={{
-                    fontSize: 16,
-                    color: '#fff',
-                    position: 'absolute',
-                    right: -3,
-                    top: 0,
-                    backgroundColor: 'transparent'
-                  }}
-                />
-              </View>
-            ),
-            label: t('options.changeStoreLocation.label'),
-            desc: store.store_data.name,
-            rightIcon: <IconAngleRight />,
-            onPress: () => Actions.push(appConfig.routes.storeLocation),
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#f66'
-              }
-            ]
-          },
+          // {
+          //   key: '0',
+          //   leftIcon: (
+          //     <View>
+          //       <IconMaterialCommunity
+          //         name="store"
+          //         style={{ fontSize: 15, left: -3, top: 2, color: '#fff' }}
+          //       />
+          //       <Icon
+          //         name="map-marker"
+          //         style={{
+          //           fontSize: 16,
+          //           color: '#fff',
+          //           position: 'absolute',
+          //           right: -3,
+          //           top: 0,
+          //           backgroundColor: 'transparent'
+          //         }}
+          //       />
+          //     </View>
+          //   ),
+          //   label: t('options.changeStoreLocation.label'),
+          //   desc: store.store_data.name,
+          //   rightIcon: <IconAngleRight />,
+          //   onPress: () => Actions.push(appConfig.routes.storeLocation),
+          //   boxIconStyle: [
+          //     styles.boxIconStyle,
+          //     {
+          //       backgroundColor: '#f66'
+          //     }
+          //   ]
+          // },
           {
             key: '1',
             icon: 'map-marker',
