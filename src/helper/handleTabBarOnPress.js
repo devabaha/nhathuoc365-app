@@ -12,7 +12,7 @@ export default function handleTabBarOnPress(props) {
       if (productOpening) return;
       productOpening = true;
 
-      APIHandler.site_info(store.store_id)
+      APIHandler.site_info(appConfig.defaultSiteId)
         .then(response => {
           if (response && response.status == STATUS_SUCCESS) {
             action(() => {
