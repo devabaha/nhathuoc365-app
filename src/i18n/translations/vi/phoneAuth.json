@@ -11,11 +11,11 @@
   "phonePlaceholder": "8765 4321",
   "phoneConfirmMessage": "Tiếp tục",
 
-  "verifyCodeInputTitle": "Nhập mã code được gửi tới:",
+  "verifyCodeInputTitle": "Nhập OTP gửi qua tin nhắn - cuộc gọi tới số:",
   "verifyCodeInputPlaceholder": "Nhập mã code...",
   "verifyCodeInputConfirmMessage": "Tiếp tục",
 
-  "notReceiveCode": "Không nhận được mã hoặc mã nhập bị lỗi? Vui lòng yêu cầu mã mới.",
+  "notReceiveCode": "Mã Không nhận được mã hoặc mã nhập bị lỗi? Vui lòng yêu cầu mã mới.",
   "requestNewCodeWithTime": "Yêu cầu mã mới sau",
   "requestNewCode": "Yêu cầu mã mới"
 }
