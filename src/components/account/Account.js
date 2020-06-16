@@ -82,6 +82,32 @@ class Account extends Component {
           //   ]
           // },
           {
+            key: '0',
+            label: t('options.myVoucher.label'),
+            desc: t('options.myVoucher.desc'),
+            leftIcon: (
+              <View>
+                <IconMaterialCommunity
+                  name="sale"
+                  style={{ fontSize: 16, color: '#fff' }}
+                />
+              </View>
+            ),
+            rightIcon: <IconAngleRight />,
+            onPress: () =>
+              Actions.push(appConfig.routes.myVoucher, {
+                title: t('common:screen.myVoucher.mainTitle'),
+                from: 'home'
+              }),
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#ffc3c0'
+              }
+            ],
+            iconColor: '#ffffff'
+          },
+          {
             key: '1',
             icon: 'map-marker',
             label: t('options.myAdress.label'),
