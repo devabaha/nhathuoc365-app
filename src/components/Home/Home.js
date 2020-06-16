@@ -24,6 +24,7 @@ const defaultListener = () => {};
 class Home extends Component {
   static propTypes = {
     sites: PropTypes.array,
+    title_sites: PropTypes.string,
     newses: PropTypes.array,
     notices: PropTypes.array,
     services: PropTypes.array,
@@ -57,6 +58,7 @@ class Home extends Component {
 
   static defaultProps = {
     sites: [],
+    title_sites: '',
     newses: [],
     notices: [],
     services: [],
@@ -200,7 +202,11 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={false} //this.props.onShowAllSites
                 data={this.props.sites}
-                title={t('sections.favoriteStore.title')}
+                title={
+                  this.props.title_sites
+                    ? this.props.title_sites
+                    : t('sections.favoriteStore.title')
+                }
               >
                 {({ item, index }) => (
                   <HomeCardItem
