@@ -92,6 +92,7 @@ class Home extends Component {
           promotions: response.data.promotions,
           listService: response.data.list_service,
           primaryActions: response.data.primary_actions,
+          showPrimaryActions: response.data.showPrimaryActions,
           product_groups: response.data.product_groups
         });
 
@@ -413,6 +414,7 @@ class Home extends Component {
         promotions={this.state.promotions}
         listService={this.state.listService}
         primaryActions={this.state.primaryActions}
+        showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}
         onActionPress={this.handlePressService}
         onPressProduct={this.handlePressProduct}
