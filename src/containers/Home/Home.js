@@ -20,6 +20,7 @@ class Home extends Component {
       isDarkStatusBar: false,
       site: null,
       sites: null,
+      title_sites: null,
       newses: null,
       notices: null,
       campaigns: null,
@@ -84,6 +85,7 @@ class Home extends Component {
         this.setState({
           site: response.data.site,
           sites: response.data.sites,
+          title_sites: response.data.title_sites,
           newses: response.data.newses,
           notices: response.data.notices,
           services: response.data.services,
@@ -412,6 +414,7 @@ class Home extends Component {
       <HomeComponent
         site={this.state.site}
         sites={this.state.sites}
+        title_sites={this.state.title_sites}
         newses={this.state.newses}
         notices={this.state.notices}
         services={this.state.services}
