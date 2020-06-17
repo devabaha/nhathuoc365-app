@@ -24,6 +24,7 @@ const defaultListener = () => {};
 class Home extends Component {
   static propTypes = {
     sites: PropTypes.array,
+    title_sites: PropTypes.string,
     newses: PropTypes.array,
     notices: PropTypes.array,
     services: PropTypes.array,
@@ -32,6 +33,7 @@ class Home extends Component {
     products: PropTypes.array,
     listService: PropTypes.array,
     primaryActions: PropTypes.array,
+    showPrimaryActions: PropTypes.bool,
     notify: PropTypes.object,
     userInfo: PropTypes.object,
     refreshing: PropTypes.bool,
@@ -56,6 +58,7 @@ class Home extends Component {
 
   static defaultProps = {
     sites: [],
+    title_sites: '',
     newses: [],
     notices: [],
     services: [],
@@ -64,6 +67,7 @@ class Home extends Component {
     products: [],
     listService: [],
     primaryActions: [],
+    showPrimaryActions: true,
     notify: {},
     userInfo: undefined,
     refreshing: false,
@@ -172,7 +176,9 @@ class Home extends Component {
                   ? this.props.userInfo.default_wallet.balance_view
                   : ''
               }
-              primaryActions={this.props.primaryActions}
+              primaryActions={
+                this.props.showPrimaryActions ? this.props.primaryActions : null
+              }
               onPressItem={this.props.onActionPress}
               onSurplusNext={this.props.onSurplusNext}
             />
@@ -190,7 +196,11 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={this.props.onShowAllSites}
                 data={this.props.sites}
-                title={t('sections.favoriteStore.title')}
+                title={
+                  this.props.title_sites
+                    ? this.props.title_sites
+                    : t('sections.favoriteStore.title')
+                }
               >
                 {({ item, index }) => (
                   <HomeCardItem

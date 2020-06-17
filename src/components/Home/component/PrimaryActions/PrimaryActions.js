@@ -7,9 +7,12 @@ import getImageRatio from 'app-packages/tickid-util/getImageRatio';
 import imageIconNext from '../../../../images/next.png';
 
 function PrimaryActions(props) {
+  const actionsWrapper = !props.primaryActions && {
+    height: null
+  };
   return (
     <View style={styles.container}>
-      <View style={styles.actionsWrapper}>
+      <View style={[styles.actionsWrapper, actionsWrapper]}>
         <Button onPress={() => props.onSurplusNext()}>
           <View style={styles.walletInfoWrapper}>
             <Text style={styles.walletNameLabel}>{props.walletName}</Text>
@@ -22,33 +25,35 @@ function PrimaryActions(props) {
             </View>
           </View>
         </Button>
-        <View style={styles.walletAction}>
-          {props.primaryActions.map(action => (
-            <Button
-              key={action.type}
-              onPress={() => props.onPressItem(action)}
-              containerStyle={styles.actionButton}
-            >
-              <View style={styles.actionWrapper}>
-                <Image
-                  source={{ uri: action.icon }}
-                  style={[
-                    styles.actionIcon,
-                    {
-                      ...getImageRatio(
-                        action.iconOriginSize.width,
-                        action.iconOriginSize.height,
-                        undefined,
-                        35
-                      )
-                    }
-                  ]}
-                />
-                <Text style={styles.actionTitle}>{action.title}</Text>
-              </View>
-            </Button>
-          ))}
-        </View>
+        {props.primaryActions && (
+          <View style={styles.walletAction}>
+            {props.primaryActions.map(action => (
+              <Button
+                key={action.type}
+                onPress={() => props.onPressItem(action)}
+                containerStyle={styles.actionButton}
+              >
+                <View style={styles.actionWrapper}>
+                  <Image
+                    source={{ uri: action.icon }}
+                    style={[
+                      styles.actionIcon,
+                      {
+                        ...getImageRatio(
+                          action.iconOriginSize.width,
+                          action.iconOriginSize.height,
+                          undefined,
+                          35
+                        )
+                      }
+                    ]}
+                  />
+                  <Text style={styles.actionTitle}>{action.title}</Text>
+                </View>
+              </Button>
+            ))}
+          </View>
+        )}
       </View>
     </View>
   );
