@@ -11,10 +11,10 @@
       "title": "HomeID"
     },
     "tab2": {
-      "title": "Voucher"
+      "title": "News"
     },
     "tab3": {
-      "title": "Shops"
+      "title": "Buildings"
     },
     "tab4": {
       "title": "Orders"
@@ -26,7 +26,7 @@
 
   "screen": {
     "cardWallet": {
-      "mainTitle": "Favorite shops"
+      "mainTitle": "Building in HomeID"
     },
     "account": {
       "mainTitle": "Account",

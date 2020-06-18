@@ -14,7 +14,7 @@
       "title": "信息"
     },
     "tab3": {
-      "title": "Shops"
+      "title": "Buildings"
     },
     "tab4": {
       "title": "订单"
@@ -26,7 +26,7 @@
 
   "screen": {
     "cardWallet": {
-      "mainTitle": "特权商店"
+      "mainTitle": "在HomeID中建立"
     },
     "account": {
       "mainTitle": "账号",

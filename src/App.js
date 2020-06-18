@@ -600,7 +600,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.homeTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab1.title')}
-                    iconName="store"
+                    iconName="home-assistant"
                     iconSize={24}
                     initial
                   >
@@ -616,17 +616,17 @@ class RootRouter extends Component {
                    ************************ Tab 2 ************************
                    */}
                   <Stack
-                    key={appConfig.routes.mainVoucher}
+                    key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
-                    iconName="ticket"
+                    iconName="newspaper"
                     iconSize={24}
                     notifyKey="new_totals"
                   >
                     <Scene
-                      key={`${appConfig.routes.mainVoucher}_1`}
+                      key={`${appConfig.routes.newsTab}_1`}
                       title={t('screen.news.mainTitle')}
-                      component={VoucherContainer}
+                      component={Notify}
                     />
                   </Stack>
 
@@ -641,9 +641,8 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.customerCardWallet}
                     icon={TabIcon}
-                    special
                     iconLabel={t('appTab.tab3.title')}
-                    iconName="credit-card"
+                    iconName="home-city-outline"
                     iconSize={24}
                     notifyKey="customer_card_wallet"
                   >
@@ -656,20 +655,6 @@ class RootRouter extends Component {
                   {/**
                    ************************ Tab 3 ************************
                    */}
-                  <Stack
-                    key={appConfig.routes.ordersTab}
-                    icon={TabIcon}
-                    iconSize={24}
-                    iconLabel={t('appTab.tab4.title')}
-                    iconName="cart"
-                    notifyKey="notify_cart"
-                  >
-                    <Scene
-                      key={`${appConfig.routes.ordersTab}_1`}
-                      title={t('screen.orders.mainTitle')}
-                      component={Orders}
-                    />
-                  </Stack>
 
                   {/**
                    ************************ Tab 4 ************************
@@ -701,6 +686,15 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack key={appConfig.routes.ordersTab}>
+                  <Scene
+                    key={`${appConfig.routes.ordersTab}_1`}
+                    title={t('screen.orders.mainTitle')}
+                    component={Orders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
                 {/* ================ VOUCHER DETAIL ================ */}
                 <Stack key={appConfig.routes.voucherDetail}>
                   <Scene

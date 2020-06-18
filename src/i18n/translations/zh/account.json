@@ -4,6 +4,10 @@
       "label": "我的地址",
       "desc": "修改运送地址"
     },
+    "myVoucher": {
+      "label": "Voucher",
+      "desc": "Manage your voucher codes"
+    },
     "fanpage": {
       "label": "页面 {{appName}}",
       "desc": "Facebook 客户服务页面"

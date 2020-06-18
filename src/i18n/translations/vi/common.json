@@ -11,10 +11,10 @@
       "title": "HomeID"
     },
     "tab2": {
-      "title": "Voucher"
+      "title": "Tin tức"
     },
     "tab3": {
-      "title": "Shops"
+      "title": "Tòa nhà"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -26,7 +26,7 @@
 
   "screen": {
     "cardWallet": {
-      "mainTitle": "Cửa hàng thân thiết"
+      "mainTitle": "Tòa nhà trên HomeID"
     },
     "account": {
       "mainTitle": "Tài khoản",

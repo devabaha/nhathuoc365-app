@@ -67,46 +67,45 @@ class Account extends Component {
             ],
             iconColor: '#ffffff'
           },
-
-          // {
-          //   key: '2',
-          //   icon: 'facebook-square',
-          //   label: t('options.fanpage.label', { appName: APP_NAME_SHOW }),
-          //   desc: t('options.fanpage.desc'),
-          //   rightIcon: <IconAngleRight />,
-          //   onPress: () => Communications.web(APP_FANPAGE),
-          //   boxIconStyle: [
-          //     styles.boxIconStyle,
-          //     {
-          //       backgroundColor: '#4267b2'
-          //     }
-          //   ],
-          //   iconColor: '#ffffff',
-          //   marginTop: !isAdmin
-          // },
-
           {
-            key: '3',
-            icon: 'handshake-o',
-            label: t('options.termOfUse.label', { appName: APP_NAME_SHOW }),
-            desc: t('options.termOfUse.desc'),
+            key: '2',
+            icon: 'tags',
+            label: t('options.myVoucher.label'),
+            desc: t('options.myVoucher.desc'),
             rightIcon: <IconAngleRight />,
             onPress: () =>
-              Actions.webview({
-                title: t('options.termOfUse.webViewTitle', {
-                  appName: APP_NAME_SHOW
-                }),
-                url: APP_INFO
+              Actions.push(appConfig.routes.myVoucher, {
+                title: t('common:screen.myVoucher.mainTitle'),
+                from: 'home'
               }),
             boxIconStyle: [
               styles.boxIconStyle,
               {
-                backgroundColor: DEFAULT_COLOR
+                backgroundColor: '#F35022'
               }
             ],
             iconColor: '#ffffff'
-            // marginTop: true
           },
+          {
+            key: '-1',
+            icon: 'shopping-cart',
+            label: 'Đơn hàng của tôi',
+            desc: 'Quản lý đơn hàng đặt tới cửa hàng',
+            rightIcon: <IconAngleRight />,
+            onPress: () =>
+              Actions.push(appConfig.routes.ordersTab, {
+                title: 'Đơn hàng của tôi',
+                from: 'home'
+              }),
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#03A5F0'
+              }
+            ],
+            iconColor: '#ffffff'
+          },
+
           {
             key: '6',
             icon: 'lock-reset',
@@ -125,7 +124,6 @@ class Account extends Component {
             iconColor: '#fff',
             iconSize: 18,
             iconType: 'MaterialCommunityIcons',
-            marginTop: true,
             isHidden: !store.user_info || !store.user_info.tel
           },
           {
@@ -153,6 +151,28 @@ class Account extends Component {
               }
             ],
             iconColor: '#ffffff'
+          },
+          {
+            key: '3',
+            icon: 'handshake-o',
+            label: t('options.termOfUse.label', { appName: APP_NAME_SHOW }),
+            desc: t('options.termOfUse.desc'),
+            rightIcon: <IconAngleRight />,
+            onPress: () =>
+              Actions.webview({
+                title: t('options.termOfUse.webViewTitle', {
+                  appName: APP_NAME_SHOW
+                }),
+                url: APP_INFO
+              }),
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: DEFAULT_COLOR
+              }
+            ],
+            iconColor: '#ffffff',
+            marginTop: true
           },
 
           {
@@ -675,162 +695,6 @@ class Account extends Component {
             </View>
           )}
 
-          {!!user_info.username && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() =>
-                Actions.affiliate({
-                  title: t('common:screen.affiliate.mainTitle'),
-                  aff_content: store.store_data
-                    ? store.store_data.aff_content
-                    : t('affiliateMarketingProgram', { appName: APP_NAME_SHOW })
-                })
-              }
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 1,
-                    borderTopWidth: 0,
-                    borderColor: '#dddddd'
-                  }
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: '#51A9FF'
-                    }
-                  ]}
-                >
-                  <Icon name="commenting-o" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    {`${t('referralCode')}: `}
-                    <Text style={styles.profile_list_label_invite_id}>
-                      {user_info.username}
-                    </Text>
-                  </Text>
-                  <Text style={styles.profile_list_small_label}>
-                    {user_info.text_invite}
-                  </Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle
-                  ]}
-                >
-                  <IconAngleRight />
-                </View>
-              </View>
-            </TouchableHighlight>
-          )}
-
-          {user_info.view_tab_ndt && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() => Actions.view_ndt_list()}
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 7,
-                    borderTopWidth: 0,
-                    borderColor: '#dddddd'
-                  }
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: '#1fa67a'
-                    }
-                  ]}
-                >
-                  <Icon name="share-alt" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    {t('accountInvestor')}
-                  </Text>
-                  <Text style={styles.profile_list_small_label}>
-                    {t('investorSyncingMessage')}
-                  </Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle
-                  ]}
-                >
-                  <IconAngleRight />
-                </View>
-              </View>
-            </TouchableHighlight>
-          )}
-          {user_info.view_tab_invite && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() =>
-                Actions._add_ref({
-                  title: t('referralCodeInput')
-                })
-              }
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 1,
-                    borderTopWidth: 0,
-                    borderColor: '#dddddd'
-                  }
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: '#688efb'
-                    }
-                  ]}
-                >
-                  <Icon name="globe" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    {t('referralCodeInput')}
-                  </Text>
-                  <Text style={styles.profile_list_small_label}>
-                    {t('cashbackSystemInviteMessage')}
-                  </Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle
-                  ]}
-                >
-                  <IconAngleRight />
-                </View>
-              </View>
-            </TouchableHighlight>
-          )}
           {this.state.options && (
             <SelectionList
               containerStyle={{

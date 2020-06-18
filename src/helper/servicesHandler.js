@@ -162,6 +162,9 @@ export const servicesHandler = (service, t) => {
     case 'affiliate':
       store.setReferCode(service.refer_code);
       break;
+    case SERVICES_TYPE.BEEHOME_SERVICE_TYPE:
+      Actions.jump(appConfig.routes.customerCardWallet);
+      break;
     default:
       Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
         { text: 'Đồng ý' }
@@ -187,6 +190,7 @@ export const SERVICES_TYPE = {
   CHAT_NOTI: 'chat_noti',
   LIST_CHAT: 'list_chat',
   OPEN_SHOP: 'open_shop',
+  BEEHOME_SERVICE_TYPE: 'beehome_service',
   CALL: 'call',
   NEWS_CATEGORY: 'news_category'
 };

@@ -4,6 +4,10 @@
       "label": "My address",
       "desc": "Delivery address management"
     },
+    "myVoucher": {
+      "label": "Voucher",
+      "desc": "Manage your voucher codes"
+    },
     "fanpage": {
       "label": "Fanpage {{appName}}",
       "desc": "Facebook Fanpage customer care"

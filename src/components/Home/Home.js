@@ -18,6 +18,7 @@ import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
 import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
+import { SERVICES_TYPE } from '../../helper/servicesHandler';
 
 const defaultListener = () => {};
 
@@ -25,6 +26,8 @@ class Home extends Component {
   static propTypes = {
     sites: PropTypes.array,
     title_sites: PropTypes.string,
+    rooms: PropTypes.array,
+    title_rooms: PropTypes.string,
     newses: PropTypes.array,
     notices: PropTypes.array,
     services: PropTypes.array,
@@ -59,6 +62,8 @@ class Home extends Component {
   static defaultProps = {
     sites: [],
     title_sites: '',
+    rooms: [],
+    title_rooms: '',
     newses: [],
     notices: [],
     services: [],
@@ -104,6 +109,10 @@ class Home extends Component {
 
   get hasSites() {
     return Array.isArray(this.props.sites) && this.props.sites.length > 0;
+  }
+
+  get hasRooms() {
+    return Array.isArray(this.props.rooms) && this.props.rooms.length > 0;
   }
 
   get hasNews() {
@@ -181,6 +190,9 @@ class Home extends Component {
               }
               onPressItem={this.props.onActionPress}
               onSurplusNext={this.props.onSurplusNext}
+              onScanPress={() =>
+                this.props.onActionPress({ type: SERVICES_TYPE.QRCODE_SCAN })
+              }
             />
           </View>
 
@@ -192,6 +204,28 @@ class Home extends Component {
           />
 
           <View style={styles.contentWrapper}>
+            {this.hasRooms && (
+              <HomeCardList
+                data={this.props.rooms}
+                onShowAll={null}
+                title={
+                  this.props.title_rooms
+                    ? this.props.title_rooms
+                    : 'Căn hộ của tôi'
+                }
+              >
+                {({ item, index }) => (
+                  <HomeCardItem
+                    title={item.title}
+                    isShowSubTitle={true}
+                    subTitle={item.address}
+                    imageUrl={item.image_url}
+                    onPress={() => this.props.onPressSiteItem(item)}
+                    last={this.props.sites.length - 1 === index}
+                  />
+                )}
+              </HomeCardList>
+            )}
             {this.hasSites && (
               <HomeCardList
                 onShowAll={this.props.onShowAllSites}
@@ -205,6 +239,8 @@ class Home extends Component {
                 {({ item, index }) => (
                   <HomeCardItem
                     title={item.title}
+                    isShowSubTitle={true}
+                    subTitle={item.address}
                     imageUrl={item.image_url}
                     onPress={() => this.props.onPressSiteItem(item)}
                     last={this.props.sites.length - 1 === index}

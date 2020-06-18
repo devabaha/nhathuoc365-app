@@ -21,6 +21,8 @@ class Home extends Component {
       site: null,
       sites: null,
       title_sites: null,
+      rooms: null,
+      title_rooms: null,
       newses: null,
       notices: null,
       campaigns: null,
@@ -88,6 +90,8 @@ class Home extends Component {
           site: response.data.site,
           sites: response.data.sites,
           title_sites: response.data.title_sites,
+          rooms: response.data.rooms,
+          title_rooms: response.data.title_rooms,
           newses: response.data.newses,
           notices: response.data.notices,
           services: response.data.services,
@@ -412,6 +416,8 @@ class Home extends Component {
         site={this.state.site}
         sites={this.state.sites}
         title_sites={this.state.title_sites}
+        rooms={this.state.rooms}
+        title_rooms={this.state.title_rooms}
         newses={this.state.newses}
         notices={this.state.notices}
         services={this.state.services}

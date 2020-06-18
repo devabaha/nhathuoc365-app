@@ -470,7 +470,7 @@ class CustomerCardWallet extends Component {
             /> */}
           </View>
 
-          <ComboHeaderButton
+          {/* <ComboHeaderButton
             ref={this.refComboHeaderButton}
             containerStyle={styles.comboHeaderBtn}
             data={this.buttons}
@@ -485,7 +485,7 @@ class CustomerCardWallet extends Component {
                 onChangeText={this.handleSearch}
               />
             }
-          />
+          /> */}
           <View onLayout={this.onBodyLayout} style={styles.container}>
             <LinearGradient
               colors={colorMap}
@@ -529,6 +529,7 @@ class CustomerCardWallet extends Component {
             >
               {appConfig.device.isAndroid && (
                 <Header
+                  t={t}
                   text={count}
                   style={[
                     resultStyle,
