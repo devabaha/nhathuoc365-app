@@ -5,16 +5,16 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 // API URL
 // global.MY_FOOD_API = 'https://abaha.net/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
-global.MY_FOOD_API = 'https://apiapp.tickid.vn/';
+global.MY_FOOD_API = 'https://apiapp.abaha.vn/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
-global.PHOTO_MY_FOOD_API = 'https://img.tickid.vn/';
+global.PHOTO_MY_FOOD_API = 'https://img.abaha.vn/';
 global.HOTLINE = '+8492 721 7227';
 
 // codepush deployment keys (production)
 global.CPDK = {
-  ios: 'xNmNpAwsu0EPNbXurAuwF1uLZKC5P1w_f-LBfY',
-  android: 'TmfMXtNe5yrz6tYSKRAvT2YjzM_Kjg-2NWEBuB',
-  version: 1 // homeid - version 1
+  ios: 'axkVLCubH_6cgpM0cMeFemCdpc2ZQqIwwGGn9r',
+  android: 'Dw5jnQkhORiM9eSdO4loklLjSBayy8k3_CR12J',
+  version: 2 // homeid - version 1
 };
 
 // width, height of screen
