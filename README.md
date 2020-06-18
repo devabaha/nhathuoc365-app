@@ -77,3 +77,14 @@ Chạy Xcode, sửa lại version và version code cho App và Onesignal
 	Sửa cấu hình:
 	defaultConfig
         resConfigs "en", "vi"
+
+
+This issue take me some days to fixed.
+Here is my fix:
+Add this line to scripts in your package.json file.
+
+"build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios'"
+Now your can run the command to generate main.jsbundle.
+yarn build:ios or npm run build:ios
+
+Open the Xcode -> Select project target -> add main.jsbundle to Copy Bundle Resource in Build Phases. (image below).
