@@ -62,11 +62,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-<<<<<<< HEAD:android/app/src/main/java/vn/foodhub/MainApplication.java
             new SvgPackage(),
             new RNFirebasePackage(),
-=======
->>>>>>> hot_fix/k+_and_android:android/app/src/main/java/id/tick/MainApplication.java
             new RNLocalizePackage(),
             new RNDeviceInfo(),
             new LinearGradientPackage(),
