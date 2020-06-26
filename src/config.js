@@ -114,6 +114,7 @@ const config = Object.freeze({
     modalPicker: 'modalPicker',
     modalList: 'modalList',
     modalSearchPlaces: 'modalSearchPlaces',
+    modalRateApp: 'modalRateApp',
 
     //  Reset password
     resetPassword: 'resetPassword'

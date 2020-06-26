@@ -1,0 +1,11 @@
+{
+  "title": "Đánh giá ứng dụng",
+  "btn": {
+    "cancel": "Bỏ qua",
+    "accept": "Góp ý"
+  },
+  "message": {
+    "first": "Cảm ơn bạn đã sử dụng {{appName}}, hãy đánh giá và góp ý cho chúng tôi trên {{storeName}} nhé!",
+    "second": "Góp ý của bạn sẽ giúp chúng tôi nâng cấp và hoàn thiện hơn."
+  }
+}

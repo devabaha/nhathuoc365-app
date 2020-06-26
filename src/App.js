@@ -139,6 +139,7 @@ import PlacesAutoComplete from './containers/PlacesAutoComplete';
 import { servicesHandler } from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
+import RateApp from './components/RateApp';
 
 /**
  * Not allow font scaling
@@ -321,7 +322,7 @@ class App extends Component {
 
       try {
         console.log('APP', params, this.props);
-        if (params['+clicked_branch_link'] && params['+match_guaranteed']) {
+        if (params['+clicked_branch_link']) {
           if (store.isHomeLoaded) {
             servicesHandler(params, t);
           } else {
@@ -448,7 +449,7 @@ class App extends Component {
     OneSignal.removeEventListener('ids', this.handleAddPushToken);
   };
 
-  async handleAddPushToken(device) {
+  handleAddPushToken = async device => {
     if (_.isObject(device)) {
       const push_token = device.pushToken;
       const player_id = device.userId;
@@ -462,7 +463,7 @@ class App extends Component {
         console.log(error);
       }
     }
-  }
+  };
 
   render() {
     let loadingPercent;
@@ -1369,11 +1370,14 @@ class RootRouter extends Component {
               {/* ================ MODAL LIST ================ */}
               <Stack key={appConfig.routes.modalList} component={ModalList} />
 
-              {/* ================ MODAL LIST ================ */}
+              {/* ================ MODAL SEARCH PLACES ================ */}
               <Stack
                 key={appConfig.routes.modalSearchPlaces}
                 component={PlacesAutoComplete}
               />
+
+              {/* ================ MODAL RATE APP ================ */}
+              <Stack key={appConfig.routes.modalRateApp} component={RateApp} />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}

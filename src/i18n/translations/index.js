@@ -48,6 +48,8 @@ import vi_opRegister from './vi/opRegister.json';
 import en_opRegister from './en/opRegister.json';
 import vi_resetPassword from './vi/resetPassword.json';
 import en_resetPassword from './en/resetPassword.json';
+import vi_rateApp from './vi/rateApp.json';
+import en_rateApp from './en/rateApp.json';
 
 export default {
   [languages.vi.value]: {
@@ -74,7 +76,8 @@ export default {
     schedule: vi_schedule,
     searchPlaces: vi_searchPlaces,
     opRegister: vi_opRegister,
-    resetPassword: vi_resetPassword
+    resetPassword: vi_resetPassword,
+    rateApp: vi_rateApp
   },
   [languages.en.value]: {
     common: en_common,
@@ -100,6 +103,7 @@ export default {
     schedule: en_schedule,
     searchPlaces: en_searchPlaces,
     opRegister: en_opRegister,
-    resetPassword: en_resetPassword
+    resetPassword: en_resetPassword,
+    rateApp: en_rateApp
   }
 };

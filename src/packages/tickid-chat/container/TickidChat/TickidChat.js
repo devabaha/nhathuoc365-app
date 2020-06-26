@@ -21,6 +21,8 @@ import {
 } from 'react-native-gifted-chat';
 import { ImageMessageChat, CustomComposer } from '../../component';
 import PropTypes from 'prop-types';
+import ImagePicker from 'react-native-image-picker';
+import ImageCropPicker from 'react-native-image-crop-picker';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import IconFontisto from 'react-native-vector-icons/Fontisto';
@@ -38,11 +40,11 @@ import {
   HEADER_HEIGHT,
   ANDROID_EXTRA_DIMENSIONS_HEIGHT,
   ANDROID_STATUS_BAR_HEIGHT,
-  isAndroidEmulator,
-  isAndroid,
+  isIos,
   HAS_NOTCH
 } from '../../constants';
 import MasterToolBar from '../MasterToolBar';
+import ModalGalleryOptionAndroid from '../ModalGalleryOptionAndroid';
 
 const SCROLL_OFFSET_TOP = 100;
 const BTN_IMAGE_WIDTH = 35;
@@ -51,6 +53,7 @@ const MAX_PIN = 9;
 const defaultListener = () => {};
 class TickidChat extends Component {
   static propTypes = {
+    galleryVisible: PropTypes.bool,
     setHeader: PropTypes.func,
     expandedGallery: PropTypes.func,
     expandingGallery: PropTypes.func,
@@ -70,6 +73,7 @@ class TickidChat extends Component {
     animatedTypeComposerBtn: PropTypes.any,
     uploadURL: PropTypes.string,
     messages: PropTypes.array,
+    pinListVisible: PropTypes.bool,
     pinList: PropTypes.array,
     pinNotify: PropTypes.number,
     pinListNotify: PropTypes.object,
@@ -112,6 +116,7 @@ class TickidChat extends Component {
     selectedImages: [],
     uploadImages: [],
     text: '',
+    androidGalleryModalOptionVisible: false,
     animatedBtnSendValue: new Animated.Value(0),
     animatedBtnBackValue: new Animated.Value(0),
     animatedNotification: new Animated.Value(0),
@@ -135,6 +140,7 @@ class TickidChat extends Component {
   unmounted = false;
   animatedShowUpValue = 0;
   pinListProps = {
+    visible: this.props.pinListVisible,
     pinList: this.props.pinList,
     pinListNotify: this.props.pinListNotify,
     itemsPerRow: 4,
@@ -339,13 +345,86 @@ class TickidChat extends Component {
     });
   };
 
+  openLibrary = () => {
+    this.closeModal();
+    ImageCropPicker.openPicker({
+      includeExif: true,
+      multiple: true,
+      includeBase64: true,
+      mediaType: 'photo'
+    }).then(images => {
+      const selectedImages = this.nomarlizeImages(images);
+      console.log(selectedImages);
+      this.setState(
+        {
+          selectedImages
+        },
+        () => {
+          this.handleSendMessage();
+        }
+      );
+    });
+  };
+
+  openCamera = () => {
+    this.closeModal();
+    const options = {
+      rotation: 360,
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      }
+    };
+    ImagePicker.launchCamera(options, response => {
+      if (response.error) {
+        console.log(response.error);
+      } else if (response.didCancel) {
+        console.log(response);
+      } else {
+        // console.log(response);
+        response.path = response.uri;
+        const selectedImages = this.nomarlizeImages([response]);
+        console.log(selectedImages);
+        this.setState(
+          {
+            selectedImages
+          },
+          () => {
+            this.handleSendMessage();
+          }
+        );
+      }
+    });
+  };
+
+  closeModal = () => {
+    this.setState({ androidGalleryModalOptionVisible: false });
+  };
+
   handlePressGallery = (state = this.state) => {
-    if (!state.showToolBar && state.selectedImages.length !== 0) {
-      this.animateBtnBack(1).start();
-      state.showBackBtn = true;
-      state.showSendBtn = true;
+    if (isIos) {
+      if (!state.showToolBar && state.selectedImages.length !== 0) {
+        this.animateBtnBack(1).start();
+        state.showBackBtn = true;
+        state.showSendBtn = true;
+      }
     }
   };
+
+  nomarlizeImages(images) {
+    return images.map(img => {
+      if (!img.filename) {
+        img.filename = `${new Date().getTime()}`;
+      }
+      if (!img.fileName) {
+        img.fileName = `${new Date().getTime()}`;
+      }
+      if (img.data) {
+        img.uploadPath = img.data;
+      }
+      return img;
+    });
+  }
 
   handlePressPin = (state = this.state) => {
     if (state.showBackBtn) {
@@ -367,9 +446,16 @@ class TickidChat extends Component {
         }
         break;
       case COMPONENT_TYPE.GALLERY.id:
-        state.editable = false;
         Keyboard.dismiss();
         this.handlePressGallery(state);
+        if (!isIos) {
+          state.selectedType = COMPONENT_TYPE._NONE;
+          state.showToolBar = false;
+          state.editable = false;
+          state.androidGalleryModalOptionVisible = true;
+          this.setState(state);
+          return;
+        }
         break;
       case COMPONENT_TYPE.PIN.id:
         state.editable = false;
@@ -389,10 +475,10 @@ class TickidChat extends Component {
     this.setState(state);
   };
 
-  onTyping = e => {
+  onTyping = text => {
     this.setState({
-      showSendBtn: e.nativeEvent.text !== '',
-      text: e.nativeEvent.text
+      showSendBtn: text !== '',
+      text
     });
   };
 
@@ -420,6 +506,7 @@ class TickidChat extends Component {
     if (!Array.isArray(images)) {
       images = [...state.selectedImages];
     }
+
     if (images.length !== 0) {
       this.clearSelectedPhotos();
     }
@@ -626,7 +713,7 @@ class TickidChat extends Component {
     );
   };
 
-  renderComposer = () => {
+  renderComposer = props => {
     return (
       <CustomComposer
         showInput={
@@ -634,11 +721,12 @@ class TickidChat extends Component {
         }
         onFocusInput={() => this.handleFocus(COMPONENT_TYPE.EMOJI)}
         refInput={this.refInput}
-        editable={this.state.editable}
-        onTyping={this.onTyping}
         animatedBtnBackValue={this.state.animatedBtnBackValue}
         onBackPress={this.handleBackPress}
         btnWidth={BTN_IMAGE_WIDTH}
+        {...props}
+        editable={this.state.editable}
+        onTyping={this.onTyping}
         placeholder="Nhập nội dung chat..."
         value={this.state.text}
       />
@@ -724,7 +812,7 @@ class TickidChat extends Component {
             flexDirection: 'row'
           }}
         >
-          <Animated.View
+          {/* <Animated.View
             style={[
               styles.center,
               styles.sendBtn,
@@ -777,7 +865,7 @@ class TickidChat extends Component {
                 </Text>
               </Animated.View>
             </TouchableOpacity>
-          </Animated.View>
+          </Animated.View> */}
 
           <Animated.View
             style={[
@@ -910,7 +998,7 @@ class TickidChat extends Component {
   render() {
     console.log('@_@ renderTickidChat');
     const extraChatViewStyle = {
-      marginTop: this.state.chatViewMarginTop
+      marginTop: isIos ? this.state.chatViewMarginTop : 0
     };
     const extraHeight = HAS_NOTCH
       ? this.state.isFullscreenGestureMode
@@ -920,6 +1008,13 @@ class TickidChat extends Component {
 
     return (
       <SafeAreaView style={[styles.container, this.props.containerStyle]}>
+        <ModalGalleryOptionAndroid
+          visible={this.state.androidGalleryModalOptionVisible}
+          onClose={this.closeModal}
+          onRequestClose={this.closeModal}
+          onPressCamera={this.openCamera}
+          onPressLibrary={this.openLibrary}
+        />
         {!!this.props.messages && this.props.messages.length === 0 && (
           <EmptyChat onPress={this.onListViewPress} />
         )}
@@ -931,8 +1026,8 @@ class TickidChat extends Component {
             <Animated.View
               style={[
                 styles.flex,
-                styles.animatedChatView,
-                {
+                isIos && styles.animatedChatView,
+                isIos && {
                   height: this.state.animatedChatViewHeight,
                   transform: [
                     {
@@ -964,9 +1059,10 @@ class TickidChat extends Component {
                 renderDay={this.renderDay}
                 renderMessage={this.renderMessage}
                 renderMessageImage={this.renderMessageImage}
-                // renderSend={this.renderSend}
-                // renderComposer={this.renderComposer}
-                renderInputToolbar={this.renderInputToolbar}
+                renderActions={this.renderLeftComposer}
+                renderComposer={this.renderComposer}
+                renderSend={this.renderSend}
+                // renderInputToolbar={this.renderInputToolbar}
                 renderBubble={this.renderBubble}
                 renderTime={this.renderTime}
                 // renderChatFooter={this.renderFooter.bind(this)}
@@ -974,7 +1070,7 @@ class TickidChat extends Component {
                 messages={this.props.messages}
                 // onSend={this.handleSendMessage}
                 // alwaysShowSend={true}
-                isKeyboardInternallyHandled={false}
+                isKeyboardInternallyHandled={!isIos}
                 listViewProps={{
                   contentContainerStyle: styles.giftedChatContainer,
                   style: [styles.flex, extraChatViewStyle]
@@ -991,6 +1087,7 @@ class TickidChat extends Component {
             ref={this.refMasterToolBar}
             selectedType={this.state.selectedType}
             galleryProps={{
+              visible: this.props.galleryVisible,
               setHeader: this.props.setHeader,
               defaultStatusBarColor: this.props.defaultStatusBarColor,
               onExpandedBodyContent: this.handleExpandedGallery,
@@ -1000,7 +1097,7 @@ class TickidChat extends Component {
               onSendImage: this.handleSendImage
             }}
             pinListProps={this.pinListProps}
-            visible={this.state.showToolBar}
+            visible={isIos ? this.state.showToolBar : false}
             baseViewHeight={this.state.keyboardInformation.height}
             extraHeight={extraHeight}
             durationShowGallery={this.state.keyboardInformation.duration}
@@ -1029,11 +1126,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    alignSelf: 'center',
     marginRight: 5
   },
   sendBtn: {
-    height: '100%',
+    height: 44,
     width: BTN_IMAGE_WIDTH,
     marginLeft: 10
   },

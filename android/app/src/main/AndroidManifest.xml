@@ -51,6 +51,8 @@
             </intent-filter>
       </activity>
 
+      <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FF812384" />
+
       <!-- Branch init -->
         <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_ndMKBvSauLP0JPd3Cf0JqjaczAffd33K" />
         <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->

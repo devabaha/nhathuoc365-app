@@ -109,49 +109,6 @@ class Account extends Component {
           },
 
           {
-            key: '4',
-            icon: 'question-circle',
-            label: t('options.appInformation.label'),
-            desc: t('options.appInformation.desc', {
-              appName: APP_NAME_SHOW,
-              appVersion: DeviceInfo.getVersion() + '-' + CPDK.version
-            }),
-            rightIcon: <IconAngleRight />,
-            onPress: () => {},
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#688efb'
-              }
-            ],
-            iconColor: '#ffffff',
-            hideAngle: true,
-            marginTop: true
-          },
-          {
-            key: '5',
-            isHidden: !isUpdate,
-            icon: 'cloud-download',
-            label: t('options.appUpdate.label'),
-            desc: t('options.appUpdate.desc', {
-              newVersion: notify.new_version
-            }),
-            rightIcon: <IconAngleRight />,
-            onPress: () => {
-              if (notify.url_update) {
-                Communications.web(notify.url_update);
-              }
-            },
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#dd4b39'
-              }
-            ],
-            notify: 'updating_version',
-            iconColor: '#ffffff'
-          },
-          {
             key: '6',
             icon: 'lock-reset',
             label: t('options.resetPassword.label'),
@@ -196,6 +153,49 @@ class Account extends Component {
                 backgroundColor: '#175189'
               }
             ],
+            iconColor: '#ffffff'
+          },
+          {
+            key: '4',
+            icon: 'question-circle',
+            label: t('options.appInformation.label'),
+            desc: t('options.appInformation.desc', {
+              appName: APP_NAME_SHOW,
+              appVersion: DeviceInfo.getVersion() + '-' + CPDK.version
+            }),
+            rightIcon: <IconAngleRight />,
+            onPress: () => {},
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#688efb'
+              }
+            ],
+            iconColor: '#ffffff',
+            hideAngle: true,
+            marginTop: true
+          },
+          {
+            key: '5',
+            isHidden: !isUpdate,
+            icon: 'cloud-download',
+            label: t('options.appUpdate.label'),
+            desc: t('options.appUpdate.desc', {
+              newVersion: notify.new_version
+            }),
+            rightIcon: <IconAngleRight />,
+            onPress: () => {
+              if (notify.url_update) {
+                Communications.web(notify.url_update);
+              }
+            },
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#dd4b39'
+              }
+            ],
+            notify: 'updating_version',
             iconColor: '#ffffff'
           }
         ]

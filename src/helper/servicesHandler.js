@@ -1,11 +1,17 @@
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import Communications from 'react-native-communications';
 import store from 'app-store';
 
 export const servicesHandler = (service, t) => {
   switch (service.type) {
+    case 'external_link':
+      Linking.openURL(service.link).catch(err => {
+        console.log('open_external_link', err);
+        Alert.alert(t('common:link.error.message'));
+      });
+      break;
     case 'ACCUMULATE_POINTS_TYPE':
       Actions.push(appConfig.routes.qrBarCode, {
         title: t('common:screen.qrBarCode.mainTitle')
@@ -70,6 +76,12 @@ export const servicesHandler = (service, t) => {
       break;
     case 'news':
       Actions.jump(appConfig.routes.newsTab);
+      break;
+    case 'news_detail':
+      Actions.notify_item({
+        title: service.news.title,
+        data: service.news
+      });
       break;
     case 'orders':
       Actions.jump(appConfig.routes.ordersTab);
@@ -153,9 +165,9 @@ export const servicesHandler = (service, t) => {
       store.setReferCode(service.refer_code);
       break;
     default:
-      Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
-        { text: 'Đồng ý' }
-      ]);
+      // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
+      //   { text: 'Đồng ý' }
+      // ]);
       break;
   }
 };

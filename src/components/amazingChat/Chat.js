@@ -117,7 +117,7 @@ class Chat extends Component {
 
   onBack() {
     if (this.props.fromSearchScene) {
-      Actions.replace('list_amazing_chat_1');
+      Actions.replace(`${appConfig.routes.listChat}_1`);
     } else {
       Actions.pop();
     }
@@ -278,6 +278,7 @@ class Chat extends Component {
   };
 
   handleSendText = message => {
+    message && (message = message.trim());
     this._appendMessages(
       this.getFormattedMessage(MESSAGE_TYPE_TEXT, message),
       () => {},
@@ -355,12 +356,14 @@ class Chat extends Component {
         messages={this.state.messages}
         onSendText={this.handleSendText}
         // Gallery props
+        galleryVisible={appConfig.device.isIOS}
         uploadURL={UPLOAD_URL}
         onSendImage={this.handleSendImage}
         onUploadedImage={response =>
           this._onSend({ image: response.data.name })
         }
         // Pin props
+        pinListVisible={false}
         pinList={this.state.pinList}
         onPinPress={this.handlePinPress}
         pinNotify={this.state.pinNotify}

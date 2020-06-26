@@ -122,6 +122,9 @@ android {
         versionName "1.0.3"
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
+        
+        // react-native-image-crop-picker
+        vectorDrawables.useSupportLibrary true
     }
     signingConfigs {
         release {
@@ -168,6 +171,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-localize')
     implementation project(':react-native-device-info')
     implementation project(':react-native-linear-gradient')

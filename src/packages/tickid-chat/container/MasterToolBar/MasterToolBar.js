@@ -23,6 +23,7 @@ class MasterToolBar extends Component {
     baseViewHeight: PropTypes.number,
     durationShowGallery: PropTypes.number,
     galleryProps: PropTypes.exact({
+      visible: PropTypes.bool,
       defaultStatusBarColor: PropTypes.string,
       setHeader: PropTypes.func,
       onExpandedBodyContent: PropTypes.func,
@@ -32,6 +33,7 @@ class MasterToolBar extends Component {
       onToggleImage: PropTypes.func
     }),
     pinListProps: PropTypes.exact({
+      visible: PropTypes.bool,
       pinList: PropTypes.array,
       itemsPerRow: PropTypes.number,
       onPinPress: PropTypes.func,
@@ -210,36 +212,42 @@ class MasterToolBar extends Component {
         onExpandingBodyContent={this.handleExpandingGallery}
         onFinishVisibleAnimation={this.handleVisibleAnimation}
       >
-        <ImageGallery
-          ref={this.refImageGallery}
-          refGestureWrapper={this.refGestureWrapper}
-          visible={this.state.selectedType.id === COMPONENT_TYPE.GALLERY.id}
-          expandContent={this.state.expandContent}
-          //---outsideProps-function
-          setHeader={galleryProps.setHeader}
-          defaultStatusBarColor={galleryProps.defaultStatusBarColor}
-          onSendImage={this.handleSendImage}
-          onToggleImage={galleryProps.onToggleImage}
-          onCollapsingBodyContent={this.handleCollapsingGesture}
-          //---insideProps-function
-          onChangePanActivationStatus={this.handleChangePanResponderStatus}
-          //--const_primative
-          baseViewHeight={this.props.baseViewHeight}
-          durationShowGallery={this.props.durationShowGallery}
-          animatedEffectValue={this.getAnimatedEffectValue(
-            COMPONENT_TYPE.GALLERY
-          )}
-        />
-        <PinList
-          baseViewHeight={this.props.baseViewHeight}
-          extraHeight={this.props.extraHeight}
-          visible={this.state.selectedType.id === COMPONENT_TYPE.PIN.id}
-          pinList={pinListProps.pinList}
-          itemsPerRow={pinListProps.itemsPerRow}
-          animatedEffectValue={this.getAnimatedEffectValue(COMPONENT_TYPE.PIN)}
-          onPinPress={this.handlePinPress}
-          pinListNotify={pinListProps.pinListNotify}
-        />
+        {!!galleryProps && galleryProps.visible && (
+          <ImageGallery
+            ref={this.refImageGallery}
+            refGestureWrapper={this.refGestureWrapper}
+            visible={this.state.selectedType.id === COMPONENT_TYPE.GALLERY.id}
+            expandContent={this.state.expandContent}
+            //---outsideProps-function
+            setHeader={galleryProps.setHeader}
+            defaultStatusBarColor={galleryProps.defaultStatusBarColor}
+            onSendImage={this.handleSendImage}
+            onToggleImage={galleryProps.onToggleImage}
+            onCollapsingBodyContent={this.handleCollapsingGesture}
+            //---insideProps-function
+            onChangePanActivationStatus={this.handleChangePanResponderStatus}
+            //--const_primative
+            baseViewHeight={this.props.baseViewHeight}
+            durationShowGallery={this.props.durationShowGallery}
+            animatedEffectValue={this.getAnimatedEffectValue(
+              COMPONENT_TYPE.GALLERY
+            )}
+          />
+        )}
+        {!!pinListProps && pinListProps.visible && (
+          <PinList
+            baseViewHeight={this.props.baseViewHeight}
+            extraHeight={this.props.extraHeight}
+            visible={this.state.selectedType.id === COMPONENT_TYPE.PIN.id}
+            pinList={pinListProps.pinList}
+            itemsPerRow={pinListProps.itemsPerRow}
+            animatedEffectValue={this.getAnimatedEffectValue(
+              COMPONENT_TYPE.PIN
+            )}
+            onPinPress={this.handlePinPress}
+            pinListNotify={pinListProps.pinListNotify}
+          />
+        )}
       </GestureWrapper>
     );
   }

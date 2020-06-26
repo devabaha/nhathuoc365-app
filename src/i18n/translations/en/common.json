@@ -133,5 +133,11 @@
   "popupConfirm": {
     "yes": "Yes",
     "no": "No"
+  },
+
+  "link": {
+    "error": {
+      "message": "Can't open the link"
+    }
   }
 }

@@ -9,7 +9,9 @@ import {
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import appConfig from 'app-config';
+import Icon from 'react-native-vector-icons/Entypo';
 
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const PROMOTION_WIDTH = appConfig.device.width - 32;
 const PAGINATION_WIDTH = 8;
 const PAGINATION_SPACE = 8;
@@ -48,7 +50,7 @@ class Promotion extends Component {
         style={[styles.promotionItem, this.props.promotionItemStyle]}
       >
         <TouchableHighlight
-          onPress={() => this.props.onPress(promotion.news)}
+          onPress={() => this.props.onPress(promotion)}
           underlayColor="transparent"
         >
           <CachedImage
@@ -99,13 +101,17 @@ class Promotion extends Component {
             />
           );
         })}
-        <Animated.View
+        {/* <Animated.View
           style={[
             styles.paginationActive,
             {
               left: this.state.paginationLeft
             }
           ]}
+        /> */}
+        <AnimatedIcon
+          name="circle"
+          style={[styles.paginationActive, { left: this.state.paginationLeft }]}
         />
       </View>
     );
@@ -173,13 +179,10 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(1)
   },
   paginationActive: {
-    height: PAGINATION_WIDTH,
-    width: PAGINATION_WIDTH,
-    borderRadius: PAGINATION_WIDTH / 2,
-    borderWidth: 1,
-    borderColor: '#fff',
+    fontSize: PAGINATION_WIDTH + 1,
+    color: '#fff',
     position: 'absolute',
-    ...elevationShadowStyle(1)
+    ...elevationShadowStyle(2)
   }
 });
 

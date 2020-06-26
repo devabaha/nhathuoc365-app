@@ -133,5 +133,11 @@
   "popupConfirm": {
     "yes": "Có",
     "no": "Không"
+  },
+
+  "link": {
+    "error": {
+      "message": "Không mở được link"
+    }
   }
 }
