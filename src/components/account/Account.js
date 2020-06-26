@@ -167,6 +167,32 @@ class Account extends Component {
           },
 
           {
+            key: '6',
+            icon: 'language',
+            label: t('options.language.label'),
+            desc: languages[i18n.language].label,
+            marginTop: !store.user_info || !store.user_info.tel,
+            rightIcon: <View></View>,
+            onPress: () => {
+              Actions.push(appConfig.routes.modalPicker, {
+                title: t('options.language.label'),
+                cancelTitle: t('options.language.cancel'),
+                selectTitle: t('options.language.select'),
+                selectedValue: this.props.i18n.language,
+                selectedLabel: languages[this.props.i18n.language].label,
+                data: Object.values(languages),
+                onSelect: this.handleConfirmChangeAppLanguage
+              });
+            },
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#175189'
+              }
+            ],
+            iconColor: '#ffffff'
+          },
+          {
             key: '4',
             icon: 'question-circle',
             label: t('options.appInformation.label'),
@@ -207,32 +233,6 @@ class Account extends Component {
               }
             ],
             notify: 'updating_version',
-            iconColor: '#ffffff'
-          },
-          {
-            key: '6',
-            icon: 'language',
-            label: t('options.language.label'),
-            desc: languages[i18n.language].label,
-            marginTop: !store.user_info || !store.user_info.tel,
-            rightIcon: <View></View>,
-            onPress: () => {
-              Actions.push(appConfig.routes.modalPicker, {
-                title: t('options.language.label'),
-                cancelTitle: t('options.language.cancel'),
-                selectTitle: t('options.language.select'),
-                selectedValue: this.props.i18n.language,
-                selectedLabel: languages[this.props.i18n.language].label,
-                data: Object.values(languages),
-                onSelect: this.handleConfirmChangeAppLanguage
-              });
-            },
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#175189'
-              }
-            ],
             iconColor: '#ffffff'
           }
         ]

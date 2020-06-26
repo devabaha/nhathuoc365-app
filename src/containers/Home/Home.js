@@ -134,12 +134,9 @@ class Home extends Component {
     });
   };
 
-  handlePromotionPressed(item) {
-    Actions.notify_item({
-      title: item.title,
-      data: item
-    });
-  }
+  handlePromotionPressed = item => {
+    servicesHandler(item, this.props.t);
+  };
 
   handleVoucherPressed = item => {
     Actions.notify_item({

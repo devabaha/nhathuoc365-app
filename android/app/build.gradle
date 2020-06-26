@@ -123,6 +123,9 @@ android {
         multiDexEnabled true
         missingDimensionStrategy 'react-native-camera', 'general'
         resConfigs "en", "vi"
+        
+        // react-native-image-crop-picker
+        vectorDrawables.useSupportLibrary true
     }
     signingConfigs {
         release {
@@ -171,6 +174,7 @@ android {
 dependencies {
     implementation project(':react-native-svg')
     implementation project(':react-native-firebase')
+    implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-localize')
     implementation project(':react-native-device-info')
     implementation project(':react-native-linear-gradient')

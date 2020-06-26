@@ -303,6 +303,14 @@ class APIHandler {
   }
 
   /**
+   * Đánh giá ứng dụng
+   */
+  async user_rate_app() {
+    var api = url_for(API.USER_RATE_APP);
+    return await this.getAPI(api);
+  }
+
+  /**
    * Danh sách địa chỉ
    */
   async user_address() {

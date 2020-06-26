@@ -5,6 +5,7 @@ import android.app.Application;
 import com.facebook.react.ReactApplication;
 import com.horcrux.svg.SvgPackage;
 import io.invertase.firebase.RNFirebasePackage;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.reactcommunity.rnlocalize.RNLocalizePackage;
 import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.BV.LinearGradient.LinearGradientPackage;
@@ -64,6 +65,7 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new SvgPackage(),
             new RNFirebasePackage(),
+            new PickerPackage(),
             new RNLocalizePackage(),
             new RNDeviceInfo(),
             new LinearGradientPackage(),
