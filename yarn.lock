@@ -7375,10 +7375,10 @@ react-native-modalbox@^1.4.2:
     create-react-class "^15.6.0"
     prop-types "^15.5.10"
 
-react-native-onesignal@^3.3.1:
-  version "3.3.2"
-  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.3.2.tgz#3c9cb7f8ac919de3f414089613a114406180a309"
-  integrity sha512-SZBGVVWZ5xAe2ALeE2L5HBIh6hfFKjFqARrV8U80zyLFUN8QatRy1eaXKAHgb7wvnCGR8FoNKI8qF+Z4kIKgjg==
+react-native-onesignal@3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/react-native-onesignal/-/react-native-onesignal-3.6.3.tgz#977179936822a35766a4de590021c0e354b5842a"
+  integrity sha512-zGSDGx14owcntn5XZ7DvaakVcu0yu4GrsIpNdhpCVDKK5+RmgU2+ALit8m16KWSA6QTfOSzEZPUJyS7VOQlSVg==
   dependencies:
     invariant "^2.2.2"
 
