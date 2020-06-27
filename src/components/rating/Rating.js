@@ -147,7 +147,11 @@ class Rating extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         Actions.pop();
 
-        if (current >= MIN_TO_RATE_APP) {
+        if (
+          current >= MIN_TO_RATE_APP &&
+          response.data &&
+          response.data.vote_app_flag
+        ) {
           Actions.push(appConfig.routes.modalRateApp);
         } else {
           flashShowMessage({
