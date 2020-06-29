@@ -15,6 +15,9 @@ import OrdersItemComponent from '../orders/OrdersItemComponent';
 
 const DEFAULT_RATING_MSG =
   'Đánh giá, góp ý của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn!';
+const STARS = [1, 2, 3, 4, 5];
+const MIN_TO_RATE_APP = 4;
+const MAX_TO_TAKE_FEEDBACK = 3;
 
 class Rating extends Component {
   constructor(props) {
@@ -100,14 +103,16 @@ class Rating extends Component {
         current,
         had_action: true,
         rating_msg:
-          current <= 3 ? 'Chúng tôi cần cải thiện điều gì?' : DEFAULT_RATING_MSG
+          current <= MAX_TO_TAKE_FEEDBACK
+            ? 'Chúng tôi cần cải thiện điều gì?'
+            : DEFAULT_RATING_MSG
       };
     });
   };
 
   renderStar = () => {
     const { current } = this.state;
-    return [1, 2, 3, 4, 5].map((star, index) => {
+    return STARS.map((star, index) => {
       let active = current >= star;
       return (
         <TouchableHighlight
@@ -140,14 +145,20 @@ class Rating extends Component {
       });
 
       if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          Actions.pop();
-        }, 1000);
+        Actions.pop();
 
-        flashShowMessage({
-          message: 'Góp ý của bạn đã được ghi nhận!',
-          type: 'success'
-        });
+        if (
+          current >= MIN_TO_RATE_APP &&
+          response.data &&
+          response.data.vote_app_flag
+        ) {
+          Actions.push(appConfig.routes.modalRateApp);
+        } else {
+          flashShowMessage({
+            message: 'Góp ý của bạn đã được ghi nhận!',
+            type: 'success'
+          });
+        }
       }
     } catch (error) {
       console.log(error);

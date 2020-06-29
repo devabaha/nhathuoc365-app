@@ -127,35 +127,41 @@ class HeaderStore extends Component {
                 <Text {...inputProps} style={styles.subTitle}>
                   {this.props.subTitle}
                 </Text>
-                <Text {...inputProps} style={styles.description}>
-                  {this.props.description}
-                </Text>
+                {!!this.props.description && (
+                  <Text {...inputProps} style={styles.description}>
+                    {this.props.description}
+                  </Text>
+                )}
               </View>
             </View>
 
             <View style={styles.right}>
-              <TouchableHighlight
-                underlayColor={UNDERLAYCOLOR}
-                onPress={this.props.onPressFollow}
-                style={[
-                  styles.btn,
-                  styles.topBtn,
-                  this.props.active && { borderColor: appConfig.colors.primary }
-                ]}
-              >
-                <>
-                  <Animated.View style={activeStyle} />
-                  <View style={[styles.btnInfo]}>
-                    <Icon
-                      name={this.props.active ? 'minus' : 'plus'}
-                      style={styles.icon}
-                    />
-                    <Text numberOfLines={1} style={styles.btnText}>
-                      {followMess}
-                    </Text>
-                  </View>
-                </>
-              </TouchableHighlight>
+              {this.props.active !== null && (
+                <TouchableHighlight
+                  underlayColor={UNDERLAYCOLOR}
+                  onPress={this.props.onPressFollow}
+                  style={[
+                    styles.btn,
+                    styles.topBtn,
+                    this.props.active && {
+                      borderColor: appConfig.colors.primary
+                    }
+                  ]}
+                >
+                  <>
+                    <Animated.View style={activeStyle} />
+                    <View style={[styles.btnInfo]}>
+                      <Icon
+                        name={this.props.active ? 'minus' : 'plus'}
+                        style={styles.icon}
+                      />
+                      <Text numberOfLines={1} style={styles.btnText}>
+                        {followMess}
+                      </Text>
+                    </View>
+                  </>
+                </TouchableHighlight>
+              )}
 
               <View style={[styles.btn, styles.bottomBtn]}>
                 <TouchableHighlight

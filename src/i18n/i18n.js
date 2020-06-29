@@ -52,7 +52,7 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
         moment.locale(languageTag.languageTag);
         i18n.changeLanguage(languageTag.languageTag);
       }
-    } else {
+    } else if (currentLanguage) {
       moment.locale(currentLanguage.languageTag);
       i18n.changeLanguage(currentLanguage.languageTag);
 

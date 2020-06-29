@@ -25,6 +25,7 @@ import vi_searchPlaces from './vi/searchPlaces.json';
 import vi_opRegister from './vi/opRegister.json';
 import vi_resetPassword from './vi/resetPassword.json';
 import vi_cardWallet from './vi/cardWallet.json';
+import vi_rateApp from './vi/rateApp.json';
 
 // en
 import en_common from './en/common.json';
@@ -52,6 +53,7 @@ import en_searchPlaces from './en/searchPlaces.json';
 import en_opRegister from './en/opRegister.json';
 import en_resetPassword from './en/resetPassword.json';
 import en_cardWallet from './en/cardWallet.json';
+import en_rateApp from './en/rateApp.json';
 
 // zh
 import zh_common from './zh/common.json';
@@ -106,7 +108,8 @@ export default {
     searchPlaces: vi_searchPlaces,
     opRegister: vi_opRegister,
     resetPassword: vi_resetPassword,
-    cardWallet: vi_cardWallet
+    cardWallet: vi_cardWallet,
+    rateApp: vi_rateApp
   },
   [languages.en.value]: {
     common: en_common,
@@ -133,7 +136,8 @@ export default {
     searchPlaces: en_searchPlaces,
     opRegister: en_opRegister,
     resetPassword: en_resetPassword,
-    cardWallet: en_cardWallet
+    cardWallet: en_cardWallet,
+    rateApp: en_rateApp
   },
   [languages.zh.value]: {
     common: zh_common,

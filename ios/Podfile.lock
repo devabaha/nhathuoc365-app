@@ -120,6 +120,7 @@ PODS:
   - Permission-PhotoLibrary (2.0.6):
     - RNPermissions
   - PromisesObjC (1.2.8)
+  - QBImagePickerController (3.4.0)
   - React (0.59.9):
     - React/Core (= 0.59.9)
   - react-native-branch (4.2.1):
@@ -161,6 +162,10 @@ PODS:
     - React
   - RNFS (2.15.2):
     - React
+  - RNImageCropPicker (0.24.1):
+    - QBImagePickerController
+    - React/Core
+    - RSKImageCropper
   - RNLocalize (1.3.4):
     - React
   - RNPermissions (2.0.6):
@@ -169,6 +174,7 @@ PODS:
     - React
   - RNSVG (12.0.3):
     - React
+  - RSKImageCropper (2.2.3)
   - SDWebImage/Core (4.4.8)
   - SDWebImage/GIF (4.4.8):
     - FLAnimatedImage (~> 1.0)
@@ -201,6 +207,7 @@ DEPENDENCIES:
   - RNFirebase (from `../node_modules/react-native-firebase/ios`)
   - RNFirebase/Crashlytics (from `../node_modules/react-native-firebase/ios`)
   - RNFS (from `../node_modules/react-native-fs`)
+  - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
@@ -232,6 +239,8 @@ SPEC REPOS:
     - libwebp
     - nanopb
     - PromisesObjC
+    - QBImagePickerController
+    - RSKImageCropper
     - SDWebImage
 
 EXTERNAL SOURCES:
@@ -267,6 +276,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-firebase/ios"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  RNImageCropPicker:
+    :path: "../node_modules/react-native-image-crop-picker"
   RNLocalize:
     :path: "../node_modules/react-native-localize"
   RNPermissions:
@@ -307,6 +318,7 @@ SPEC CHECKSUMS:
   Permission-LocationWhenInUse: c630266b278f7d2c889a5d0910626fb6fca886bd
   Permission-PhotoLibrary: 5ec33ed00660cfe4ef79b88a1ed7ebe230d7a752
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
+  QBImagePickerController: d54cf93db6decf26baf6ed3472f336ef35cae022
   React: a86b92f00edbe1873a63e4a212c29b7a7ad5224f
   react-native-branch: cc611a2d0e7e6c7c4cafebc8e59065b89c38002b
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
@@ -318,13 +330,15 @@ SPEC CHECKSUMS:
   RNDeviceInfo: 310c1f43d418d950a193c7650de2f9559c906048
   RNFirebase: 37daa9a346d070f9f6ee1f3b4aaf4c8e3b1d5d1c
   RNFS: 54da03c2b7d862c42ea3ca8c7f86f892760a535a
+  RNImageCropPicker: 6134b66a3d5bc13e2895a97c630a4254006902b4
   RNLocalize: 215c419a17d7585eb7a63c748ebfd042e0cb2c3d
   RNPermissions: 4fa81b28a6e07b31ed9068fa7dab24e2b8a3902b
   RNReactNativeHapticFeedback: 2566b468cc8d0e7bb2f84b23adc0f4614594d071
   RNSVG: 7e16ddfc6e00d5aa69c9eb83e699bcce5dcb85d4
+  RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: 86e91b36def278a990b8e8d4dd1d817570e59b99
+PODFILE CHECKSUM: a02e5792770ce35af804a03809c4cb7e0616fdfa
 
 COCOAPODS: 1.9.1
