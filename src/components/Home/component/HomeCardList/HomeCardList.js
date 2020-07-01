@@ -3,32 +3,35 @@ import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-function HomeCardList(props) {
+function HomeCardList({ horizontal = true, ...props }) {
   const { t } = useTranslation('home');
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>{props.title}</Text>
+    <View style={[styles.container, props.containerStyle]}>
+      {!!props.title && (
+        <View style={styles.content}>
+          <Text style={styles.title}>{props.title}</Text>
 
-        {props.onShowAll ? (
-          <Button
-            containerStyle={styles.showAllBtn}
-            underlayColor="transparent"
-            onPress={props.onShowAll}
-          >
-            <Text style={styles.viewAll}>{t('viewAll')}</Text>
-          </Button>
-        ) : (
-          <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
-        )}
-      </View>
+          {props.onShowAll ? (
+            <Button
+              containerStyle={styles.showAllBtn}
+              underlayColor="transparent"
+              onPress={props.onShowAll}
+            >
+              <Text style={styles.viewAll}>{t('viewAll')}</Text>
+            </Button>
+          ) : (
+            <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
+          )}
+        </View>
+      )}
 
       <FlatList
-        horizontal
+        horizontal={horizontal}
         data={props.data}
         showsHorizontalScrollIndicator={false}
         renderItem={props.children}
         keyExtractor={item => `${item.id}`}
+        refreshControl={props.refreshControl}
       />
     </View>
   );

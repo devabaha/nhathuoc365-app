@@ -341,12 +341,9 @@ class Home extends Component {
   };
 
   handlePressSiteItem = site => {
-    action(() => {
-      // store.setStoreData(site);
-      Actions.push(appConfig.routes.building, {
-        building: site
-      });
-    })();
+    Actions.push(appConfig.routes.building, {
+      siteId: site.id
+    });
   };
 
   handlePressCampaignItem = campaign => {

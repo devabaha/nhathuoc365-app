@@ -15,13 +15,16 @@ function HomeCardItem(props) {
         }
       ]}
     >
-      <View style={styles.container}>
-        <Image style={styles.image} source={{ uri: props.imageUrl }} />
-        <View style={styles.titleWrapper}>
+      <View style={[styles.container, props.containerStyle]}>
+        <Image
+          style={[styles.image, props.imageStyle]}
+          source={{ uri: props.imageUrl }}
+        />
+        <View style={[styles.titleWrapper, props.textWrapperStyle]}>
           <Text style={styles.title}>
             {stringHelper.shorten(props.title, 48)}
           </Text>
-          {!!props.isShowSubTitle && (
+          {!!props.subTitle && (
             <Text style={styles.subTitle}>
               <Text style={styles.specialSubTitle}>
                 {props.specialSubTitle}
@@ -60,7 +63,7 @@ const styles = StyleSheet.create({
     color: '#00b140'
   },
   subTitle: {
-    fontSize: 14,
+    fontSize: 12,
     marginTop: 3
   }
 });

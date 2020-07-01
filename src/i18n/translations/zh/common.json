@@ -25,6 +25,9 @@
   },
 
   "screen": {
+    "listBuilding": {
+      "mainTitle": ""
+    },
     "cardWallet": {
       "mainTitle": "在HomeID中建立"
     },

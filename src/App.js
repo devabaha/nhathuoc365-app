@@ -142,7 +142,8 @@ import { servicesHandler } from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
-import Building from './containers/Buliding';
+import Building, { ListBuilding } from './containers/Building';
+import SupplierStore from './components/stores/SupplierStore';
 
 /**
  * Not allow font scaling
@@ -641,7 +642,7 @@ class RootRouter extends Component {
                     <Scene component={() => null} />
                   </Stack> */}
                   <Stack
-                    key={appConfig.routes.customerCardWallet}
+                    key={appConfig.routes.listBuilding}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab3.title')}
                     iconName="home-city-outline"
@@ -649,9 +650,9 @@ class RootRouter extends Component {
                     notifyKey="customer_card_wallet"
                   >
                     <Scene
-                      key={`${appConfig.routes.customerCardWallet}_1`}
-                      title={t('screen.cardWallet.mainTitle')}
-                      component={CustomerCardWallet}
+                      key={`${appConfig.routes.listBuilding}_1`}
+                      title={t('screen.listBuilding.mainTitle')}
+                      component={ListBuilding}
                     />
                   </Stack>
                   {/**
@@ -891,6 +892,15 @@ class RootRouter extends Component {
                     component={StoreContainer}
                     {...navBarConfig}
                     back={appConfig.device.isIOS}
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.supplierStore}>
+                  <Scene
+                    key={`${appConfig.routes.supplierStore}_1`}
+                    component={SupplierStore}
+                    {...navBarConfig}
+                    back
                   />
                 </Stack>
 

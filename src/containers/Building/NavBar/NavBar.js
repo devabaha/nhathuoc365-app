@@ -2,12 +2,11 @@ import React, { Component } from 'react';
 import appConfig from 'app-config';
 import PropTypes from 'prop-types';
 import {
+  StatusBar,
   Platform,
   StyleSheet,
   Text,
   View,
-  TextInput,
-  TouchableHighlight,
   TouchableNativeFeedback
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
@@ -90,17 +89,35 @@ class NavBar extends Component {
     );
   }
 
+  renderMiddle() {
+    if (this.props.renderTitle) {
+      return this.props.renderTitle({ style: styles.text });
+    }
+    return <Text style={styles.text}>{this.props.title}</Text>;
+  }
+
   render() {
-    return <View style={styles.container}>{this.renderLeft()}</View>;
+    return (
+      <View style={styles.container}>
+        {this.renderLeft()}
+        {this.renderMiddle()}
+      </View>
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    // position: 'absolute',
+    position: 'absolute',
+    marginTop: 5,
     zIndex: 999,
+    flex: 1,
     flexDirection: 'row',
-    backgroundColor: 'transparent'
+    alignItems: 'center',
+    top: Platform.select({
+      ios: appConfig.device.isIphoneX ? 50 : 20,
+      android: StatusBar.currentHeight
+    })
   },
   cancelButton: {
     justifyContent: 'center',
@@ -146,12 +163,13 @@ const styles = StyleSheet.create({
       }
     )
   },
-  searchInput: {
-    flex: 1,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    alignSelf: 'flex-end',
-    color: appConfig.colors.white
+  text: {
+    position: 'absolute',
+    fontSize: 16,
+    width: appConfig.device.width,
+    color: '#fff',
+    fontWeight: '600',
+    textAlign: 'center'
   }
 });
 

@@ -86,7 +86,7 @@ class HeaderStore extends Component {
   render() {
     const { t } = this.props;
     const inputProps = {
-      // numberOfLines: 1
+      // numberOfLines: 2
     };
     const followMess = this.props.active
       ? t('header.following')
@@ -107,6 +107,7 @@ class HeaderStore extends Component {
           resizeMode="cover"
         >
           <View style={styles.overlay} />
+          <Animated.View style={[styles.maskOverlay, this.props.maskStyle]} />
         </AnimatedImageBackground>
 
         <Animated.View
@@ -121,7 +122,7 @@ class HeaderStore extends Component {
                 />
               </View>
               <View style={styles.info}>
-                <Text {...inputProps} style={styles.title}>
+                <Text numberOfLines={2} style={styles.title}>
                   {this.props.title}
                 </Text>
                 <Text {...inputProps} style={styles.subTitle}>
@@ -144,6 +145,7 @@ class HeaderStore extends Component {
                     styles.btn,
                     styles.topBtn,
                     this.props.active && {
+                      backgroundColor: appConfig.colors.primary,
                       borderColor: appConfig.colors.primary
                     }
                   ]}
@@ -204,6 +206,15 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%'
   },
+  maskOverlay: {
+    backgroundColor: appConfig.colors.primary,
+    position: 'absolute',
+    flex: 1,
+    zIndex: 0,
+    width: '100%',
+    height: '100%',
+    opacity: 0
+  },
   cachedImg: {
     width: '100%',
     height: '100%'
@@ -256,7 +267,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#fff',
     fontSize: 18,
-    marginBottom: 8
+    marginBottom: 8,
+    flexWrap: 'wrap'
   },
   subTitle: {
     fontWeight: '300',

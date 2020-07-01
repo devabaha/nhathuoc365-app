@@ -25,6 +25,9 @@
   },
 
   "screen": {
+    "listBuilding": {
+      "mainTitle": "Danh sách tòa nhà"
+    },
     "cardWallet": {
       "mainTitle": "Tòa nhà trên HomeID"
     },

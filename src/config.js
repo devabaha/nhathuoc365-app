@@ -121,8 +121,10 @@ const config = Object.freeze({
     resetPassword: 'resetPassword',
 
     // HomeID
+    listBuilding: 'listBuilding',
     building: 'building',
-    apartment: 'apartment'
+    room: 'room',
+    supplierStore: 'supplierStore'
   }
 });
 

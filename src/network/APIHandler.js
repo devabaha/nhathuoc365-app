@@ -840,6 +840,23 @@ class APIHandler {
     return await this.postAPI(api, data);
   }
 
+  // HOME ID
+  /**
+   * lấy danh sách chung cư
+   */
+  async user_list_building() {
+    const api = url_for(API.USER_LIST_BUILDING);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * lấy thông tin chi tiết chung cư
+   */
+  async user_building_detail(site_id) {
+    const api = url_for(API.SITE_HOME + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
   _networkIndicator(flag = true) {
     if (isIOS) {
       // StatusBar.setNetworkActivityIndicatorVisible(flag);

@@ -25,6 +25,9 @@
   },
 
   "screen": {
+    "listBuilding": {
+      "mainTitle": "List of buildings"
+    },
     "cardWallet": {
       "mainTitle": "Building in HomeID"
     },

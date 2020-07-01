@@ -35,36 +35,36 @@ class PrimaryActions extends Component {
               </View>
             </View>
           </Button>
-          {this.props.primaryActions && (
-            <View style={styles.walletAction}>
-              {this.props.primaryActions.map(action => (
-                <Button
-                  key={action.type}
-                  onPress={() => this.props.onPressItem(action)}
-                  containerStyle={styles.actionButton}
-                >
-                  <View style={styles.actionWrapper}>
-                    <Image
-                      source={{ uri: action.icon }}
-                      style={[
-                        styles.actionIcon,
-                        {
-                          ...getImageRatio(
-                            action.iconOriginSize.width,
-                            action.iconOriginSize.height,
-                            undefined,
-                            35
-                          )
-                        }
-                      ]}
-                    />
-                    <Text style={styles.actionTitle}>{action.title}</Text>
-                  </View>
-                </Button>
-              ))}
-            </View>
-          )}
         </View>
+        {this.props.primaryActions && (
+          <View style={styles.walletAction}>
+            {this.props.primaryActions.map(action => (
+              <Button
+                key={action.type}
+                onPress={() => this.props.onPressItem(action)}
+                containerStyle={styles.actionButton}
+              >
+                <View style={styles.actionWrapper}>
+                  <Image
+                    source={{ uri: action.icon }}
+                    style={[
+                      styles.actionIcon,
+                      {
+                        ...getImageRatio(
+                          action.iconOriginSize.width,
+                          action.iconOriginSize.height,
+                          undefined,
+                          35
+                        )
+                      }
+                    ]}
+                  />
+                  <Text style={styles.actionTitle}>{action.title}</Text>
+                </View>
+              </Button>
+            ))}
+          </View>
+        )}
       </View>
     );
   }
