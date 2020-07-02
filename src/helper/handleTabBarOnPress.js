@@ -31,5 +31,6 @@ export default function handleTabBarOnPress(props) {
       props.defaultHandler();
   }
 
+  store.setSelectedTab(props.navigation.state.key);
   touchedTabs[props.navigation.state.key] = true;
 }

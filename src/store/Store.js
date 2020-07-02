@@ -105,6 +105,12 @@ class Store {
     this.storeUnMount = {};
   }
 
+  @observable selectedTab = '';
+
+  @action setSelectedTab(name) {
+    this.selectedTab = name;
+  }
+
   @action setStoreUnMount(key, unMount) {
     this.storeUnMount[key] = unMount;
   }

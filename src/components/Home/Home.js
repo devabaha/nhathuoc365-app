@@ -200,27 +200,6 @@ class Home extends Component {
               />
             )}
 
-            {this.hasSites && (
-              <HomeCardList
-                onShowAll={false} //this.props.onShowAllSites
-                data={this.props.sites}
-                title={
-                  this.props.title_sites
-                    ? this.props.title_sites
-                    : t('sections.favoriteStore.title')
-                }
-              >
-                {({ item, index }) => (
-                  <HomeCardItem
-                    title={item.title}
-                    imageUrl={item.image_url}
-                    onPress={() => this.props.onPressSiteItem(item)}
-                    last={this.props.sites.length - 1 === index}
-                  />
-                )}
-              </HomeCardList>
-            )}
-
             {this.hasProduct_groups &&
               Object.keys(this.props.product_groups).map((key, index) => {
                 let { products, title } = this.props.product_groups[key];
@@ -240,6 +219,27 @@ class Home extends Component {
                   </ListProducts>
                 );
               })}
+
+            {this.hasSites && (
+              <HomeCardList
+                onShowAll={this.props.onShowAllSites}
+                data={this.props.sites}
+                title={
+                  this.props.title_sites
+                    ? this.props.title_sites
+                    : t('sections.favoriteStore.title')
+                }
+              >
+                {({ item, index }) => (
+                  <HomeCardItem
+                    title={item.title}
+                    imageUrl={item.image_url}
+                    onPress={() => this.props.onPressSiteItem(item)}
+                    last={this.props.sites.length - 1 === index}
+                  />
+                )}
+              </HomeCardList>
+            )}
 
             {this.hasCampaigns && (
               <HomeCardList
