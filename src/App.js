@@ -36,6 +36,7 @@ import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
 import handleBackAndroid from './helper/handleBackAndroid';
 import HomeContainer from './containers/Home';
+import CustomerCardWallet from './containers/CustomerCardWallet';
 import QRBarCode from './containers/QRBarCode';
 import LaunchContainer from './containers/Launch';
 import AddStore from './components/Home/AddStore';
@@ -617,17 +618,17 @@ class RootRouter extends Component {
                    ************************ Tab 2 ************************
                    */}
                   <Stack
-                    key={appConfig.routes.newsTab}
+                    key={appConfig.routes.customerCardWallet}
                     icon={TabIcon}
-                    iconLabel={t('appTab.tab2.title')}
-                    iconName="notifications"
+                    iconLabel={t('appTab.tab3.title')}
+                    iconName="filter-vintage"
                     iconSize={24}
-                    notifyKey="new_totals"
+                    notifyKey="customer_card_wallet"
                   >
                     <Scene
-                      key={`${appConfig.routes.newsTab}_1`}
-                      title={t('screen.news.mainTitle')}
-                      component={Notify}
+                      key={`${appConfig.routes.customerCardWallet}_1`}
+                      title={t('screen.cardWallet.mainTitle')}
+                      component={CustomerCardWallet}
                     />
                   </Stack>
 

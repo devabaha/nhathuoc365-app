@@ -14,7 +14,7 @@
       "title": "Tin tức"
     },
     "tab3": {
-      "title": ""
+      "title": "Nông trại"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -25,6 +25,9 @@
   },
 
   "screen": {
+    "cardWallet": {
+      "mainTitle": "Đặt hàng trực tiếp từ nhà sản xuất"
+    },
     "storeLocation": {
       "mainTitle": "Chọn khu vực"
     },

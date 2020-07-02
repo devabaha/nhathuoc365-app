@@ -367,6 +367,12 @@ const Center = ({ ref, style, children }) => (
 );
 global.Center = Center;
 
+global.setStater = (context, isUnmounted, state, callback = () => {}) => {
+  if (!isUnmounted) {
+    context.setState({ ...state }, () => callback());
+  }
+};
+
 global.elevationShadowStyle = (
   elevation,
   width = 0,

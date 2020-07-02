@@ -321,6 +321,11 @@ class Home extends Component {
 
   handleShowAllSites = () => {};
 
+  handleShowAllSites = () => {
+    store.setSelectedTab(appConfig.routes.customerCardWallet);
+    Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
+  };
+
   handleShowAllCampaigns = () => {
     Actions.push(appConfig.routes.mainVoucher, {
       from: 'home'

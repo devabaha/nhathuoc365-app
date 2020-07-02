@@ -51,6 +51,9 @@ import en_resetPassword from './en/resetPassword.json';
 import vi_rateApp from './vi/rateApp.json';
 import en_rateApp from './en/rateApp.json';
 
+import vi_cardWallet from './vi/cardWallet.json';
+import en_cardWallet from './en/cardWallet.json';
+
 export default {
   [languages.vi.value]: {
     common: vi_common,
@@ -77,7 +80,8 @@ export default {
     searchPlaces: vi_searchPlaces,
     opRegister: vi_opRegister,
     resetPassword: vi_resetPassword,
-    rateApp: vi_rateApp
+    rateApp: vi_rateApp,
+    cardWallet: vi_cardWallet
   },
   [languages.en.value]: {
     common: en_common,
@@ -104,6 +108,7 @@ export default {
     searchPlaces: en_searchPlaces,
     opRegister: en_opRegister,
     resetPassword: en_resetPassword,
-    rateApp: en_rateApp
+    rateApp: en_rateApp,
+    cardWallet: en_cardWallet
   }
 };

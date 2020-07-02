@@ -53,6 +53,7 @@ const config = Object.freeze({
     newsTab: 'newsTab',
     deepLinkNewsTab: 'deepLinkNewsTab',
     scanQrCodeTab: 'scanQrCodeTab',
+    customerCardWallet: 'customer_card_wallet',
     ordersTab: 'ordersTab',
     deepLinkOrdersTab: 'deepLinkOrdersTab',
 
