@@ -1046,9 +1046,9 @@
     react-native-button "^2.4.0"
 
 "@tickid/tickid-rada@^2.1.6":
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.1.6.tgz#891f6a5b3043209980871ee5ed49abb10d1cc8b4"
-  integrity sha512-Sbp0DelFu1XhTetOaFMw+f2nD9p9VFxxzgRAPL2mMDFY32e3iG8jNmo036dGR7oD8KIKq0ir9L1ZUHbwLOqN+g==
+  version "2.1.7"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.1.7.tgz#41a0794fe54b5d96dfe430c4c9f142966c4b09a5"
+  integrity sha512-DLFHDxK7qV2k6QnMor/AaKyVP618fLW9/hQsuCt3UFliCAvTlflCj5MgwYoOJIHoWyRYihrNC1w4TWpWmnpdOg==
   dependencies:
     prop-types "^15.7.2"
     react-native-render-html "^4.1.2"
@@ -7088,9 +7088,9 @@ react-is@^16.5.2, react-is@^16.7.0, react-is@^16.8.3, react-is@^16.8.4, react-is
   integrity sha512-tJBzzzIgnnRfEm046qRcURvwQnZVXmuCbscxUO5RWrGTXpon2d4c8mI0D8WE6ydVIm29JiLB6+RslkIvym9Rjw==
 
 react-is@^16.8.1:
-  version "16.10.1"
-  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.10.1.tgz#0612786bf19df406502d935494f0450b40b8294f"
-  integrity sha512-BXUMf9sIOPXXZWqr7+c5SeOKJykyVr2u0UDzEf4LNGc6taGkQe1A9DFD07umCIXz45RLr9oAAwZbAJ0Pkknfaw==
+  version "16.13.1"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
+  integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
 react-lifecycles-compat@^3, react-lifecycles-compat@^3.0.4:
   version "3.0.4"
