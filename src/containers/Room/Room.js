@@ -25,7 +25,7 @@ const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT;
 
-class Building extends Component {
+class Room extends Component {
   state = {
     loading: true,
     refreshing: false,
@@ -166,14 +166,14 @@ class Building extends Component {
         }
       ],
       opacity: this.state.scrollY.interpolate({
-        inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2, COLLAPSED_HEADER_VIEW],
+        inputRange: [0, COLLAPSED_HEADER_VIEW, COLLAPSED_HEADER_VIEW],
         outputRange: [1, 1, 0],
         extrapolate: 'clamp'
       })
     };
     const navBarAnimated = {
       opacity: this.state.scrollY.interpolate({
-        inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2, COLLAPSED_HEADER_VIEW],
+        inputRange: [0, COLLAPSED_HEADER_VIEW / 2, COLLAPSED_HEADER_VIEW],
         outputRange: [0, 0, 1],
         extrapolate: 'clamp'
       })
@@ -293,4 +293,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation()(Building);
+export default withTranslation()(Room);

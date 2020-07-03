@@ -1,5 +1,4 @@
-'use strict';
-
+export * from './HomeID';
 /**
  * Name: API v0
  * Docs: https://docs.google.com/spreadsheets/d/1TmJAnrADprIjgkn1MWv5PFiUpTSmaKAVkfMCPKZ9L7A/edit#gid=0
@@ -153,7 +152,3 @@ exports.LOGIN_FIREBASE_VERTIFY = MY_FOOD_API + 'apiUser/login_firebase_verify';
 // Payment
 exports.PAYMENT_METHOD = MY_FOOD_API + 'apiSite/payment';
 exports.ADD_PAYMENT_METHOD = MY_FOOD_API + 'apiSite/add_payment_method_cart';
-
-// HomeID
-exports.USER_LIST_BUILDING = MY_FOOD_API + 'apiUser/list_building';
-exports.SITE_HOME = MY_FOOD_API + 'apiSite/site_home';

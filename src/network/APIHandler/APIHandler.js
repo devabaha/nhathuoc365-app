@@ -1,10 +1,6 @@
-'use strict';
-
-// import { StatusBar } from 'react-native';
-
-import API from './API';
+import API from '../API';
 import axios from 'axios';
-import store from '../store/Store';
+import store from '../../store/Store';
 
 var HTTP_SUCCESS = 200;
 const CancelToken = axios.CancelToken;
