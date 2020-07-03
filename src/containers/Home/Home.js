@@ -373,6 +373,23 @@ class Home extends Component {
     }
   };
 
+  getStore(id, onSuccess = () => {}, onFail = () => {}, onFinally = () => {}) {
+    const { t } = this.props;
+    APIHandler.site_info(id)
+      .then(response => {
+        if (response) {
+          onSuccess(response);
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: t('common:api.error.message')
+          });
+        }
+      })
+      .catch(onFail)
+      .finally(onFinally);
+  }
+
   productOpening;
 
   handlePressProduct = product => {
@@ -382,9 +399,9 @@ class Home extends Component {
     this.setState({
       showLoading: true
     });
-
-    APIHandler.site_info(product.site_id)
-      .then(response => {
+    this.getStore(
+      product.site_id,
+      response => {
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
             store.setStoreData(response.data);
@@ -394,21 +411,43 @@ class Home extends Component {
             });
           })();
         }
-      })
-      .finally(() => {
+      },
+      error => {},
+      () => {
         this.productOpening = false;
         this.setState({
           showLoading: false
         });
-      });
+      }
+    );
   };
 
   goToSearch = () => {
-    Actions.push(appConfig.routes.searchStore, {
-      categories: null,
-      category_id: 0,
-      category_name: ''
-    });
+    const { t } = this.props;
+    this.setState({ apiFetching: true });
+
+    this.getStore(
+      appConfig.defaultSiteId,
+      response => {
+        if (response.status == STATUS_SUCCESS && response.data) {
+          store.setStoreData(response.data);
+          Actions.push(appConfig.routes.searchStore, {
+            categories: null,
+            category_id: 0,
+            category_name: ''
+          });
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || t('common:api.error.message')
+          });
+        }
+      },
+      error => {},
+      () => {
+        this.setState({ apiFetching: false });
+      }
+    );
   };
 
   render() {

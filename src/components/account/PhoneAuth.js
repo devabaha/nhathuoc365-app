@@ -104,7 +104,7 @@ class PhoneAuth extends Component {
     try {
       this.setState({
         message: '',
-        isShowIndicator: false
+        isShowIndicator: true
       });
       let formData;
       if (typeof phoneNumber == 'object') {
@@ -117,7 +117,7 @@ class PhoneAuth extends Component {
           }
         }
         var phoneAuth = phoneNumber;
-        console.log(phoneAuth);
+
         if (phoneAuth.substring(0, 2) === countryCode.replace('+', '')) {
           phoneAuth = phoneAuth.substr(2);
         } else if (phoneAuth.substring(0, 1) === '0') {
@@ -132,7 +132,7 @@ class PhoneAuth extends Component {
           username: phoneNumber
         };
       }
-      console.log(formData);
+
       const response = await APIHandler.user_login_sms(formData);
       if (response && response.status == STATUS_SUCCESS) {
         this.setState({

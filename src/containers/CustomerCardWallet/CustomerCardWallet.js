@@ -366,19 +366,18 @@ class CustomerCardWallet extends Component {
   };
 
   handleLongPressCard = card => {
-    const refCard = this.refCards.find(ref => ref.id === card.id);
-
-    if (refCard) {
-      this.refShakingCards.push(refCard);
-    }
+    // const refCard = this.refCards.find(ref => ref.id === card.id);
+    // if (refCard) {
+    //   this.refShakingCards.push(refCard);
+    // }
   };
 
   handleCancelLongPressCard = card => {
-    this.refShakingCards.forEach((refCard, index) => {
-      if (refCard.id === card.id) {
-        this.refShakingCards.splice(index, 1);
-      }
-    });
+    // this.refShakingCards.forEach((refCard, index) => {
+    //   if (refCard.id === card.id) {
+    //     this.refShakingCards.splice(index, 1);
+    //   }
+    // });
   };
 
   handleOnPressContainer = () => {
@@ -529,6 +528,7 @@ class CustomerCardWallet extends Component {
             >
               {appConfig.device.isAndroid && (
                 <Header
+                  t={t}
                   text={count}
                   style={[
                     resultStyle,

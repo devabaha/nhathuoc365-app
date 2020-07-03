@@ -20,10 +20,6 @@ function Header(props) {
   return (
     <View style={styles.container}>
       <View style={styles.userNameWrapper}>
-        {/* <Text style={styles.userName}>{t('welcome.message')}</Text>
-        <Text style={[styles.userName, styles.userNameBold]}>
-          {props.name ? `, ${props.name}` : ''}
-        </Text> */}
         <TouchableOpacity onPress={props.goToSearch}>
           <View pointerEvents="none" style={styles.searchWrapper}>
             <Ionicons
@@ -37,7 +33,8 @@ function Header(props) {
               placeholder={
                 t('stores:search.placeholder.prefix') +
                 ' ' +
-                (store.store_data ? store.store_data.name : '') +
+                // (store.store_data ? store.store_data.name : '') +
+                APP_NAME_SHOW +
                 '...'
               }
               placeholderTextColor="#ccc"
