@@ -129,6 +129,7 @@ class Promotion extends Component {
           autoplay
           autoplayTimeout={5}
           backgroundColor="#fafafa"
+          removeClippedSubviews={false}
           renderPagination={this.renderPagination}
           onIndexChanged={this.onIndexChanged.bind(this)}
           containerStyle={[

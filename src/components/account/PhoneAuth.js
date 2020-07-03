@@ -104,7 +104,7 @@ class PhoneAuth extends Component {
     try {
       this.setState({
         message: '',
-        isShowIndicator: false
+        isShowIndicator: true
       });
       let formData;
       if (typeof phoneNumber == 'object') {
