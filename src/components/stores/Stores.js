@@ -32,7 +32,7 @@ const STATUS_BAR_HEIGHT = appConfig.device.isIOS
   ? appConfig.device.isIphoneX
     ? 50
     : 20
-  : 0;
+  : StatusBar.currentHeight;
 const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW =
@@ -585,29 +585,33 @@ class Stores extends Component {
                     index
                   };
                 }}
-                renderItem={({ item, index }) => (
-                  <CategoryScreen
-                    ref={inst => (this.refCategories[index] = inst)}
-                    refreshing={
-                      index === this.state.category_nav_index &&
-                      !!this.state.refreshingCate
-                    }
-                    item={item}
-                    index={index}
-                    cate_index={this.state.category_nav_index}
-                    that={this}
-                    onLayout={e => this.handleLayoutFlatListContent(e, index)}
-                    onRefreshEnd={this._onRefreshCateEnd}
-                    minHeight={appConfig.device.height / 2}
-                  />
-                )}
+                renderItem={({ item, index }) => {
+                  return (
+                    <CategoryScreen
+                      ref={inst => (this.refCategories[index] = inst)}
+                      scrollEnabled={false}
+                      activeRefreshControl={appConfig.device.isIOS}
+                      refreshing={
+                        index === this.state.category_nav_index &&
+                        this.state.refreshingCate
+                      }
+                      item={item}
+                      index={index}
+                      cate_index={this.state.category_nav_index}
+                      that={this}
+                      onLayout={e => this.handleLayoutFlatListContent(e, index)}
+                      onRefreshEnd={this._onRefreshCateEnd}
+                      minHeight={appConfig.device.height / 2}
+                    />
+                  );
+                }}
               />
             ) : (
               <Indicator />
             )}
           </Animated.View>
         </Animated.ScrollView>
-
+        {/* 
         {store.stores_finish == true && (
           <CartFooter
             perfix="stores"
@@ -622,7 +626,7 @@ class Stores extends Component {
           noConfirm={this._closePopup.bind(this)}
           yesConfirm={this._removeCartItem.bind(this)}
           otherClose={false}
-        />
+        /> */}
 
         {store.cart_fly_show && (
           <View
@@ -713,7 +717,7 @@ class Stores extends Component {
 
         flashShowMessage({
           message: response.message,
-          type: 'info'
+          type: 'success'
         });
       }
 

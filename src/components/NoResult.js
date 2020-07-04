@@ -6,7 +6,7 @@ const DEFAULT_COLOR = '#909090';
 
 const NoResult = props => {
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, props.containerStyle]}>
       <View style={styles.wrapper}>
         {props.icon || (
           <Icon

@@ -22,6 +22,7 @@ const defaultListener = () => {};
 class HeaderStore extends Component {
   static propTypes = {
     active: PropTypes.bool,
+    hideChat: PropTypes.bool,
     containerStyle: PropTypes.object,
     imageBgStyle: PropTypes.object,
     infoContainerStyle: PropTypes.object,
@@ -35,6 +36,7 @@ class HeaderStore extends Component {
   };
   static defaultProps = {
     active: false,
+    hideChat: false,
     containerStyle: {},
     imageBgStyle: {},
     infoContainerStyle: {},
@@ -100,91 +102,98 @@ class HeaderStore extends Component {
     };
     return (
       <Animated.View style={[styles.container, this.props.containerStyle]}>
-        <AnimatedImageBackground
-          component={ImageBackground}
-          style={[styles.cachedImg, this.props.imageBgStyle]}
-          source={{ uri: this.props.bannerUrl }}
-          resizeMode="cover"
-        >
-          <View style={styles.overlay} />
-          <Animated.View style={[styles.maskOverlay, this.props.maskStyle]} />
-        </AnimatedImageBackground>
+        <View style={this.props.wrapperStyle}>
+          <AnimatedImageBackground
+            component={ImageBackground}
+            style={[styles.cachedImg, this.props.imageBgStyle]}
+            source={{ uri: this.props.bannerUrl }}
+            resizeMode="cover"
+          >
+            <View style={styles.overlay} />
+            <Animated.View style={[styles.maskOverlay, this.props.maskStyle]} />
+          </AnimatedImageBackground>
 
-        <Animated.View
-          style={[styles.headerInfo, this.props.infoContainerStyle]}
-        >
-          <View style={styles.headerInfoWrapper}>
-            <View style={styles.left}>
-              <View style={styles.avatarContainer}>
-                <CachedImage
-                  style={styles.avatar}
-                  source={{ uri: this.props.avatarUrl }}
-                />
-              </View>
-              <View style={styles.info}>
-                <Text numberOfLines={2} style={styles.title}>
-                  {this.props.title}
-                </Text>
-                <Text {...inputProps} style={styles.subTitle}>
-                  {this.props.subTitle}
-                </Text>
-                {!!this.props.description && (
-                  <Text {...inputProps} style={styles.description}>
-                    {this.props.description}
+          <Animated.View
+            style={[styles.headerInfo, this.props.infoContainerStyle]}
+          >
+            <View style={styles.headerInfoWrapper}>
+              <View style={styles.left}>
+                <View style={styles.avatarContainer}>
+                  <CachedImage
+                    style={styles.avatar}
+                    source={{ uri: this.props.avatarUrl }}
+                  />
+                </View>
+                <View style={styles.info}>
+                  <Text numberOfLines={2} style={styles.title}>
+                    {this.props.title}
                   </Text>
+                  <Text {...inputProps} style={styles.subTitle}>
+                    {this.props.subTitle}
+                  </Text>
+                  {!!this.props.description && (
+                    <Text {...inputProps} style={styles.description}>
+                      {this.props.description}
+                    </Text>
+                  )}
+                </View>
+              </View>
+
+              <View style={styles.right}>
+                {this.props.active !== null && (
+                  <TouchableHighlight
+                    underlayColor={UNDERLAYCOLOR}
+                    onPress={this.props.onPressFollow}
+                    style={[
+                      styles.btn,
+                      styles.topBtn,
+                      this.props.active && {
+                        backgroundColor: appConfig.colors.primary,
+                        borderColor: appConfig.colors.primary
+                      }
+                    ]}
+                  >
+                    <>
+                      <Animated.View style={activeStyle} />
+                      <View style={[styles.btnInfo]}>
+                        <Icon
+                          name={this.props.active ? 'minus' : 'plus'}
+                          style={styles.icon}
+                        />
+                        <Text numberOfLines={1} style={styles.btnText}>
+                          {followMess}
+                        </Text>
+                      </View>
+                    </>
+                  </TouchableHighlight>
+                )}
+
+                {!this.props.hideChat && (
+                  <View style={[styles.btn, styles.bottomBtn]}>
+                    <TouchableHighlight
+                      underlayColor={UNDERLAYCOLOR}
+                      onPress={this.props.onPressChat}
+                      style={[styles.btn]}
+                    >
+                      <View style={[styles.btnInfo]}>
+                        <Icon name="message1" style={styles.icon} />
+                        <Text style={styles.btnText}>{t('header.chat')}</Text>
+                      </View>
+                    </TouchableHighlight>
+                    {!!this.props.unreadChat && (
+                      <View style={[styles.badge]}>
+                        <Text style={styles.notiMess}>
+                          {this.props.unreadChat}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
                 )}
               </View>
             </View>
-
-            <View style={styles.right}>
-              {this.props.active !== null && (
-                <TouchableHighlight
-                  underlayColor={UNDERLAYCOLOR}
-                  onPress={this.props.onPressFollow}
-                  style={[
-                    styles.btn,
-                    styles.topBtn,
-                    this.props.active && {
-                      backgroundColor: appConfig.colors.primary,
-                      borderColor: appConfig.colors.primary
-                    }
-                  ]}
-                >
-                  <>
-                    <Animated.View style={activeStyle} />
-                    <View style={[styles.btnInfo]}>
-                      <Icon
-                        name={this.props.active ? 'minus' : 'plus'}
-                        style={styles.icon}
-                      />
-                      <Text numberOfLines={1} style={styles.btnText}>
-                        {followMess}
-                      </Text>
-                    </View>
-                  </>
-                </TouchableHighlight>
-              )}
-
-              <View style={[styles.btn, styles.bottomBtn]}>
-                <TouchableHighlight
-                  underlayColor={UNDERLAYCOLOR}
-                  onPress={this.props.onPressChat}
-                  style={[styles.btn]}
-                >
-                  <View style={[styles.btnInfo]}>
-                    <Icon name="message1" style={styles.icon} />
-                    <Text style={styles.btnText}>{t('header.chat')}</Text>
-                  </View>
-                </TouchableHighlight>
-                {!!this.props.unreadChat && (
-                  <View style={[styles.badge]}>
-                    <Text style={styles.notiMess}>{this.props.unreadChat}</Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          </View>
-        </Animated.View>
+          </Animated.View>
+        </View>
+        {this.props.extraComponent}
       </Animated.View>
     );
   }
@@ -195,8 +204,7 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     position: 'absolute',
-    zIndex: 1,
-    backgroundColor: '#fff'
+    zIndex: 1
   },
   overlay: {
     backgroundColor: 'rgba(59,52,70, .65)',

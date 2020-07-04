@@ -143,6 +143,7 @@ import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import Building, { ListBuilding } from './containers/Building';
+import Room from './containers/Room';
 import SupplierStore from './components/stores/SupplierStore';
 
 /**
@@ -683,6 +684,15 @@ class RootRouter extends Component {
                   navTransparent
                   key={appConfig.routes.building}
                   component={Building}
+                  {...navBarConfig}
+                  back={appConfig.device.isIOS}
+                />
+
+                {/* ================ BUILDING ================ */}
+                <Scene
+                  navTransparent
+                  key={appConfig.routes.room}
+                  component={Room}
                   {...navBarConfig}
                   back={appConfig.device.isIOS}
                 />

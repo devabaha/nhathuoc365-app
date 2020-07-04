@@ -15,7 +15,8 @@ import {
   Modal,
   FlatList,
   SafeAreaView,
-  Dimensions
+  Dimensions,
+  ScrollView
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import firebase from 'react-native-firebase';
@@ -24,6 +25,9 @@ import countries from 'world-countries';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import store from '../../store/Store';
 import Loading from '../Loading';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import appConfig from 'app-config';
 const timer = require('react-timer-mixin');
 
 const loginMode = {
@@ -193,6 +197,7 @@ class PhoneAuth extends Component {
 
   firebaseSignIn = () => {
     Keyboard.dismiss();
+    this.setState({ isShowIndicator: true });
     const { phoneNumber, currentCountry } = this.state;
     var countryCode = '';
     if (currentCountry[0].idd.root) {
@@ -208,7 +213,6 @@ class PhoneAuth extends Component {
       phoneAuth = phoneAuth.substr(1);
     }
     setTimeout(() => {
-      this.setState({ isShowIndicator: true });
       firebase
         .auth()
         .signInWithPhoneNumber(countryCode + phoneAuth)
@@ -385,16 +389,15 @@ class PhoneAuth extends Component {
   }
 
   renderPhoneNumberInput() {
-    const {
-      phoneNumber,
-      isShowIndicator,
-      currentCountry,
-      message
-    } = this.state;
+    const { phoneNumber, currentCountry, message } = this.state;
     const { t } = this.props;
 
     return (
-      <View style={{ paddingHorizontal: 16, top: 115 }}>
+      <ScrollView
+        keyboardShouldPersistTaps="handled"
+        bounces={false}
+        style={{ paddingHorizontal: 16, marginTop: 115 }}
+      >
         <Image
           resizeMode="contain"
           style={styles.image}
@@ -464,8 +467,7 @@ class PhoneAuth extends Component {
           </Text>
         </TouchableOpacity>
         {message != '' && <Text style={styles.txtNote}>{message}</Text>}
-        {isShowIndicator && <Loading center style={{ marginBottom: 64 }} />}
-      </View>
+      </ScrollView>
     );
   }
 
@@ -501,7 +503,6 @@ class PhoneAuth extends Component {
   renderVerificationCodeInput() {
     const {
       codeInput,
-      isShowIndicator,
       phoneNumber,
       currentCountry,
       requestNewOtpCounter,
@@ -523,7 +524,7 @@ class PhoneAuth extends Component {
     const { t } = this.props;
 
     return (
-      <View>
+      <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
         <View
           style={{
             width: '100%',
@@ -615,21 +616,25 @@ class PhoneAuth extends Component {
                 : t('requestNewCode')}
             </Text>
           </TouchableOpacity>
-          {isShowIndicator && <Loading center style={{ marginBottom: 64 }} />}
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
   render() {
-    const { user, confirmResult, modalVisible } = this.state;
-    console.log('user', user);
+    const { user, confirmResult, modalVisible, isShowIndicator } = this.state;
     return (
-      <View style={styles.container}>
+      <KeyboardAwareScrollView
+        keyboardShouldPersistTaps="handled"
+        bounces={false}
+        style={styles.container}
+      >
+        {isShowIndicator && <Loading center style={{ marginBottom: 64 }} />}
         {modalVisible && this.renderCountryPicker()}
         {!user && !confirmResult && this.renderPhoneNumberInput()}
         {!user && confirmResult && this.renderVerificationCodeInput()}
-      </View>
+        {appConfig.device.isIOS && <KeyboardSpacer />}
+      </KeyboardAwareScrollView>
     );
   }
 }

@@ -848,8 +848,32 @@ class APIHandler {
   /**
    * lấy thông tin chi tiết chung cư
    */
-  async user_building_detail(site_id) {
+  async site_building_detail(site_id) {
     const api = url_for(API.SITE_HOME + '/' + site_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * lấy thông tin chi tiết căn hộ
+   */
+  async site_room_detail(site_id, room_id) {
+    const api = url_for(API.SITE_ROOM + '/' + site_id + '/' + room_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * lấy thông tin hóa đơn của căn hộ
+   */
+  async site_bills_room(site_id, room_id) {
+    const api = url_for(API.SITE_BILLS_ROOM + '/' + site_id + '/' + room_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * lấy thông tin phản ánh của căn hộ
+   */
+  async site_requests_room(site_id, room_id) {
+    const api = url_for(API.SITE_REQUESTS_ROOM + '/' + site_id + '/' + room_id);
     return await this.getAPI(api);
   }
 

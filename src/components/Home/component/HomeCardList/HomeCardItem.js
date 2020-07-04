@@ -21,8 +21,9 @@ function HomeCardItem(props) {
           source={{ uri: props.imageUrl }}
         />
         <View style={[styles.titleWrapper, props.textWrapperStyle]}>
-          <Text style={styles.title}>
-            {stringHelper.shorten(props.title, 48)}
+          <Text numberOfLines={2} style={styles.title}>
+            {/* {stringHelper.shorten(props.title, 48)} */}
+            {props.title}
           </Text>
           {!!props.subTitle && (
             <Text style={styles.subTitle}>

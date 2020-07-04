@@ -90,27 +90,27 @@ class OpRegister extends Component {
             name: name,
             refer: refer
           });
-          if (response && response.status == STATUS_SUCCESS) {
-            store.setUserInfo(response.data);
-            this.setState(
-              {
-                loading: false
-              },
-              () => {
-                Actions.reset(appConfig.routes.sceneWrapper);
-              }
-            );
-          } else {
-            this.setState({
-              loading: false
-            });
-          }
-
           if (response) {
-            flashShowMessage({
-              message: response.message,
-              type: 'info'
-            });
+            if (response.status == STATUS_SUCCESS) {
+              store.setUserInfo(response.data);
+              this.setState(
+                {
+                  loading: false
+                },
+                () => {
+                  Actions.reset(appConfig.routes.sceneWrapper);
+                }
+              );
+              flashShowMessage({
+                message: response.message,
+                type: 'success'
+              });
+            } else {
+              flashShowMessage({
+                message: response.message,
+                type: 'danger'
+              });
+            }
           }
         } catch (e) {
           this.setState({

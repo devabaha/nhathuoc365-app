@@ -220,8 +220,8 @@ class Home extends Component {
                     isShowSubTitle={true}
                     subTitle={item.address}
                     imageUrl={item.image_url}
-                    onPress={() => this.props.onPressSiteItem(item)}
-                    last={this.props.sites.length - 1 === index}
+                    onPress={() => this.props.onPressRoomItem(item)}
+                    last={this.props.rooms.length - 1 === index}
                   />
                 )}
               </HomeCardList>

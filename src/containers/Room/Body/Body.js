@@ -3,6 +3,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import HomeCardList, {
   HomeCardItem
 } from '../../../components/Home/component/HomeCardList';
+import Request from './Request';
+import Bill from './Bill';
 
 class Body extends Component {
   state = {};
@@ -16,24 +18,57 @@ class Body extends Component {
   get hasSite() {
     return this.props.sites && this.props.sites.length !== 0;
   }
-
-  onPressRoom = room => {};
-
-  onPressNews = news => {};
+  get hasBills() {
+    return this.props.bills && this.props.bills.length !== 0;
+  }
+  get hasRequests() {
+    return this.props.requests && this.props.requests.length !== 0;
+  }
 
   render() {
     return (
       <View>
-        {this.hasRoom && (
+        {this.hasBills && (
           <HomeCardList
-            data={this.props.rooms}
-            onShowAll={null}
-            title={this.props.title_rooms}
+            data={this.props.bills}
+            onShowAll={this.props.onShowAllBills}
+            title={this.props.title_bills}
           >
+            {({ item, index }) => (
+              <Bill
+                title={item.title}
+                period={item.payment_period}
+                price={item.price}
+                onPress={() => this.props.onPressBill(item)}
+                last={this.props.bills.length - 1 === index}
+              />
+            )}
+          </HomeCardList>
+        )}
+
+        {this.hasRequests && (
+          <HomeCardList
+            data={this.props.requests}
+            onShowAll={this.props.onShowAllRequests}
+            title={this.props.title_requests}
+          >
+            {({ item, index }) => (
+              <Request
+                title={item.title}
+                subTitle={item.content}
+                description={item.created}
+                onPress={() => this.props.onPressRequest(item)}
+                last={this.props.requests.length - 1 === index}
+              />
+            )}
+          </HomeCardList>
+        )}
+
+        {this.hasRoom && (
+          <HomeCardList data={this.props.rooms} title={this.props.title_rooms}>
             {({ item, index }) => (
               <HomeCardItem
                 title={item.title}
-                isShowSubTitle={true}
                 subTitle={item.address}
                 imageUrl={item.image_url}
                 onPress={() => this.props.onPressRoom(item)}
@@ -46,11 +81,11 @@ class Body extends Component {
           <HomeCardList
             data={this.props.newses}
             title={this.props.title_newses}
+            onShowAll={this.props.onShowAllNewses}
           >
             {({ item, index }) => (
               <HomeCardItem
                 title={item.title}
-                isShowSubTitle={true}
                 subTitle={item.address}
                 imageUrl={item.image_url}
                 onPress={() => this.props.onPressNews(item)}
@@ -64,7 +99,7 @@ class Body extends Component {
             {({ item, index }) => (
               <HomeCardItem
                 title={item.title}
-                isShowSubTitle={true}
+                onShowAll={this.props.onShowAllStores}
                 subTitle={item.address}
                 imageUrl={item.image_url}
                 onPress={() => this.props.onPressStore(item)}

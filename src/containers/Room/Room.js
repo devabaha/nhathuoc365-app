@@ -4,7 +4,8 @@ import {
   SafeAreaView,
   Animated,
   ScrollView,
-  RefreshControl
+  RefreshControl,
+  View
 } from 'react-native';
 import HeaderStore from '../../components/stores/HeaderStore';
 import appConfig from 'app-config';
@@ -13,36 +14,54 @@ import Loading from '../../components/Loading';
 import { Actions } from 'react-native-router-flux';
 import NavBar from './NavBar';
 import Body from './Body';
+import SkeletonLoading from '../../components/SkeletonLoading';
+import BuildingSVG from '../../images/building.svg';
+import NoResult from '../../components/NoResult';
+import { default as RoomActions } from './Actions';
+import { servicesHandler } from '../../helper/servicesHandler';
 
 const BANNER_ABSOLUTE_HEIGHT =
-  appConfig.device.height / 3 - appConfig.device.bottomSpace;
+  appConfig.device.height / 3.5 - appConfig.device.bottomSpace;
 const STATUS_BAR_HEIGHT = appConfig.device.isIOS
   ? appConfig.device.isIphoneX
     ? 50
     : 20
   : 0;
 const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
-const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
+const NAV_BAR_HEIGHT = appConfig.device.isIOS
+  ? appConfig.device.isIphoneX
+    ? 60 + appConfig.device.statusBarHeight
+    : 64
+  : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT;
 
-class Room extends Component {
+class room extends Component {
   state = {
     loading: true,
     refreshing: false,
-    building: null,
+    room: null,
     newses: [],
-    rooms: [],
     sites: [],
+    bills: [],
+    requests: [],
     title_newses: '',
     title_rooms: '',
     title_sites: '',
-    scrollY: new Animated.Value(0)
+    title_bills: '',
+    title_requests: '',
+    scrollY: new Animated.Value(0),
+    actionsHeight: 0
   };
   unmounted = false;
   refTempScrollView = React.createRef();
 
+  get isDataEmpty() {
+    const { room, sites, newses } = this.state;
+    return !!!room && sites.length === 0 && newses.length === 0;
+  }
+
   componentDidMount() {
-    this.getBuilding(this.props.siteId);
+    this.getData();
     this.state.scrollY.addListener(this.scrollListener);
 
     EventTracker.logEvent('building_page');
@@ -62,72 +81,131 @@ class Room extends Component {
     }
   };
 
-  getBuilding = async siteId => {
+  apiExcutor = async (
+    api,
+    siteId,
+    roomId,
+    onSuccess = () => {},
+    onFinally = () => {},
+    onError
+  ) => {
     const { t } = this.props;
     try {
-      const response = await APIHandler.user_building_detail(siteId);
+      const response = await APIHandler[api](siteId, roomId);
+      console.log(api, response);
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
-          this.setState({
-            building: response.data.building,
-            newses: response.data.newses,
-            rooms: response.data.rooms,
-            sites: response.data.sites,
-            title_newses: response.data.title_newses,
-            title_rooms: response.data.title_rooms,
-            title_sites: response.data.title_sites
-          });
+          onSuccess(response.data);
         } else {
-          flashShowMessage({
-            type: 'danger',
-            message: response.message || t('api.error.message')
-          });
+          const errMess = response.message || t('api.error.message');
+          onError
+            ? onError(errMess)
+            : flashShowMessage({
+                type: 'danger',
+                message: errMess
+              });
         }
       }
     } catch (err) {
-      console.log('get_building', err);
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message')
-      });
+      console.log(api, err);
+      onError
+        ? onError(err)
+        : flashShowMessage({
+            type: 'danger',
+            message: t('api.error.message')
+          });
     } finally {
-      !this.unmounted &&
+      !this.unmounted && onFinally();
+    }
+  };
+
+  getData() {
+    this.getRoom(this.props.siteId, this.props.roomId);
+    this.getBills(this.props.siteId, this.props.roomId);
+    this.getRequests(this.props.siteId, this.props.roomId);
+  }
+
+  getRoom = (siteId, roomId) => {
+    this.apiExcutor(
+      'site_room_detail',
+      siteId,
+      roomId,
+      data => {
+        this.setState({
+          room: data.room,
+          newses: data.newses,
+          sites: data.sites,
+          title_newses: data.title_newses,
+          title_sites: data.title_sites
+        });
+      },
+      () => {
         this.setState({
           loading: false,
           refreshing: false
         });
-    }
+      }
+    );
   };
 
+  getBills = (siteId, roomId) => {
+    this.apiExcutor(
+      'site_bills_room',
+      siteId,
+      roomId,
+      data => {
+        console.log(data);
+        this.setState({
+          bills: data.bills,
+          title_bills: data.title_bills
+        });
+      },
+      () => {},
+      err => {
+        console.log('get_bills', err);
+      }
+    );
+  };
+
+  getRequests = (siteId, roomId) => {
+    this.apiExcutor(
+      'site_requests_room',
+      siteId,
+      roomId,
+      data => {
+        console.log(data);
+        this.setState({
+          requests: data.requests,
+          title_requests: data.title_requests
+        });
+      },
+      () => {},
+      err => {
+        console.log('get_requests', err);
+      }
+    );
+  };
+
+  handlePressBill = () => {};
+
+  handlePressRequest = () => {};
+
   handlePressChat = () => {
-    const { building } = this.state;
+    const { room } = this.state;
     const { user_info } = store;
-    if (building) {
+    if (room) {
       Actions.amazing_chat({
-        site_id: building.id,
+        site_id: room.id,
         user_id: user_info.id,
-        phoneNumber: building.tel,
-        title: building.name
+        phoneNumber: room.tel,
+        title: room.name
       });
     }
   };
 
   onRefresh = () => {
     this.setState({ refreshing: true });
-    this.getBuilding(this.props.siteId);
-  };
-
-  renderTitle = props => {
-    const title = this.state.building ? this.state.building.name : '';
-    const textStyle = {
-      ...props.style,
-      opacity: this.state.scrollY.interpolate({
-        inputRange: [0, BANNER_ABSOLUTE_HEIGHT / 2, COLLAPSED_HEADER_VIEW],
-        outputRange: [0, 0, 1],
-        extrapolate: 'clamp'
-      })
-    };
-    return <Animated.Text style={textStyle}>{title}</Animated.Text>;
+    this.getData();
   };
 
   handlePressNews = news => {
@@ -138,23 +216,53 @@ class Room extends Component {
   };
 
   handlePressStore = store => {
-    Actions.push(appConfig.routes.supplierStore, {
-      store_id: store.id,
-      title: store.title
+    servicesHandler({ type: 'open_shop', siteId: store.id }, this.props.t);
+  };
+
+  handleActionsLayout = e => {
+    this.setState({
+      actionsHeight: e.nativeEvent.layout.height
     });
+  };
+
+  renderTitle = props => {
+    const title =
+      this.props.title || (this.state.room ? this.state.room.name : '');
+    const textStyle = {
+      ...props.style,
+      opacity:
+        this.isDataEmpty && !this.state.loading
+          ? 1
+          : this.state.scrollY.interpolate({
+              inputRange: [
+                0,
+                BANNER_ABSOLUTE_HEIGHT / 2,
+                COLLAPSED_HEADER_VIEW
+              ],
+              outputRange: [0, 0, 1],
+              extrapolate: 'clamp'
+            })
+    };
+    return <Animated.Text style={textStyle}>{title}</Animated.Text>;
   };
 
   render() {
     const {
-      building,
+      room,
       newses,
+      bills,
+      requests,
+      sites,
       title_newses,
       title_rooms,
       title_sites,
-      rooms,
-      sites
+      title_bills,
+      title_requests,
+      loading
     } = this.state;
-    const unreadChat = building ? normalizeNotify(building.unreadChat) : '';
+    const unreadChat = room ? normalizeNotify(room.unreadChat) : '';
+    const skeletonLoading = loading && !!!room;
+
     const animated = {
       transform: [
         {
@@ -164,19 +272,21 @@ class Room extends Component {
             extrapolate: 'clamp'
           })
         }
-      ],
-      opacity: this.state.scrollY.interpolate({
-        inputRange: [0, COLLAPSED_HEADER_VIEW, COLLAPSED_HEADER_VIEW],
-        outputRange: [1, 1, 0],
-        extrapolate: 'clamp'
-      })
+      ]
     };
     const navBarAnimated = {
-      opacity: this.state.scrollY.interpolate({
-        inputRange: [0, COLLAPSED_HEADER_VIEW / 2, COLLAPSED_HEADER_VIEW],
-        outputRange: [0, 0, 1],
-        extrapolate: 'clamp'
-      })
+      opacity:
+        this.isDataEmpty && !loading
+          ? 1
+          : this.state.scrollY.interpolate({
+              inputRange: [
+                0,
+                COLLAPSED_HEADER_VIEW / 1.2,
+                COLLAPSED_HEADER_VIEW
+              ],
+              outputRange: [0, 0, 1],
+              extrapolate: 'clamp'
+            })
     };
 
     const infoContainerStyle = {
@@ -201,96 +311,149 @@ class Room extends Component {
     };
 
     return (
-      <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loading center />}
-        <NavBar maskStyle={navBarAnimated} renderTitle={this.renderTitle} />
-        {!!building && (
-          <>
-            <HeaderStore
-              active={null}
-              avatarUrl={building.logo_url}
-              bannerUrl={building.image_url}
-              containerStyle={{
-                height: BANNER_ABSOLUTE_HEIGHT,
-                ...animated
+      <View style={styles.screenContainer}>
+        <SafeAreaView style={styles.container}>
+          {loading && <Loading center />}
+          <NavBar maskStyle={navBarAnimated} renderTitle={this.renderTitle} />
+
+          <SkeletonLoading loading={skeletonLoading} style={styles.skeleton}>
+            {!!room && (
+              <HeaderStore
+                active={null}
+                hideChat
+                avatarUrl={room.logo_url}
+                bannerUrl={room.image_url}
+                containerStyle={{
+                  height: BANNER_ABSOLUTE_HEIGHT + this.state.actionsHeight,
+                  ...animated
+                }}
+                wrapperStyle={{
+                  height: BANNER_ABSOLUTE_HEIGHT
+                }}
+                infoContainerStyle={infoContainerStyle}
+                imageBgStyle={imageBgStyle}
+                title={room.name}
+                subTitle={room.address}
+                extraComponent={
+                  <RoomActions
+                    onLayout={this.handleActionsLayout}
+                    onBillPress={this.handlePressBill}
+                    onRequestPress={this.handlePressRequest}
+                    onChatPress={this.handlePressChat}
+                    chatNoti={unreadChat}
+                  />
+                }
+              />
+            )}
+          </SkeletonLoading>
+
+          <Animated.ScrollView
+            ref={this.refScrollView}
+            contentContainerStyle={{ flexGrow: 1 }}
+            style={[styles.container]}
+            scrollEventThrottle={1}
+            refreshControl={
+              appConfig.device.isAndroid ? (
+                <RefreshControl
+                  progressViewOffset={
+                    BANNER_ABSOLUTE_HEIGHT + this.state.actionsHeight
+                  }
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefresh}
+                />
+              ) : null
+            }
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: this.state.scrollY
+                    }
+                  }
+                }
+              ],
+              {
+                useNativeDriver: true
+              }
+            )}
+          >
+            <Animated.View
+              style={{
+                height: this.isDataEmpty
+                  ? NAV_BAR_HEIGHT
+                  : BANNER_VIEW_HEIGHT + this.state.actionsHeight,
+                width: '100%'
               }}
-              infoContainerStyle={infoContainerStyle}
-              imageBgStyle={imageBgStyle}
-              onPressChat={this.handlePressChat}
-              title={building.name}
-              subTitle={building.address}
-              unreadChat={unreadChat}
             />
-            <Animated.ScrollView
-              ref={this.refScrollView}
-              contentContainerStyle={{ flexGrow: 1 }}
-              style={[styles.container]}
-              scrollEventThrottle={1}
+
+            <ScrollView
               refreshControl={
-                appConfig.device.iaAndroid ? (
+                appConfig.device.isIOS ? (
                   <RefreshControl
-                    progressViewOffset={BANNER_ABSOLUTE_HEIGHT}
                     refreshing={this.state.refreshing}
                     onRefresh={this.onRefresh}
                   />
                 ) : null
               }
-              onScroll={Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        y: this.state.scrollY
-                      }
-                    }
-                  }
-                ],
-                {
-                  useNativeDriver: true
-                }
-              )}
             >
-              <Animated.View
-                style={{
-                  height: BANNER_VIEW_HEIGHT,
-                  width: '100%'
-                }}
-              />
-
-              <ScrollView
-                refreshControl={
-                  appConfig.device.isIOS ? (
-                    <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.onRefresh}
+              {this.isDataEmpty && !loading ? (
+                <NoResult
+                  containerStyle={{ paddingTop: '30%' }}
+                  icon={
+                    <BuildingSVG
+                      width={appConfig.device.width / 3}
+                      height={appConfig.device.width / 3}
+                      fill={appConfig.colors.primary}
                     />
-                  ) : null
-                }
-              >
-                <Body
-                  refreshing={this.state.refreshing}
-                  newses={newses}
-                  rooms={rooms}
-                  sites={sites}
-                  title_newses={title_newses}
-                  title_rooms={title_rooms}
-                  title_sites={title_sites}
-                  onPressNews={this.handlePressNews}
-                  onPressStore={this.handlePressStore}
+                  }
+                  message="Chưa có dữ liệu"
                 />
-              </ScrollView>
-            </Animated.ScrollView>
-          </>
-        )}
-      </SafeAreaView>
+              ) : (
+                !loading && (
+                  <>
+                    <Body
+                      refreshing={this.state.refreshing}
+                      newses={newses}
+                      sites={sites}
+                      bills={bills}
+                      requests={requests}
+                      title_bills={title_bills}
+                      title_requests={title_requests}
+                      title_newses={title_newses}
+                      title_rooms={title_rooms}
+                      title_sites={title_sites}
+                      onPressNews={this.handlePressNews}
+                      onPressStore={this.handlePressStore}
+                      onPressBill={this.handlePressBill}
+                      onPressRequest={this.handlePressRequest}
+                    />
+                  </>
+                )
+              )}
+            </ScrollView>
+          </Animated.ScrollView>
+        </SafeAreaView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
   container: {
     flex: 1
+  },
+  skeleton: {
+    width: '100%',
+    height: BANNER_ABSOLUTE_HEIGHT,
+    backgroundColor: 'rgba(59,52,70, .65)',
+    position: 'absolute',
+    zIndex: 1
   }
 });
 
-export default withTranslation()(Room);
+export default withTranslation()(room);

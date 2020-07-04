@@ -596,7 +596,7 @@ class Search extends Component {
 
         flashShowMessage({
           message: response.message,
-          type: 'info'
+          type: 'success'
         });
       }
 

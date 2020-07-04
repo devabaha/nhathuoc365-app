@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from 'react-native';
 import HomeCardList, {
   HomeCardItem
 } from '../../../components/Home/component/HomeCardList';
+import Promotion from '../../../components/Home/component/Promotion';
 
 class Body extends Component {
   state = {};
@@ -16,10 +17,9 @@ class Body extends Component {
   get hasSite() {
     return this.props.sites && this.props.sites.length !== 0;
   }
-
-  onPressRoom = room => {};
-
-  onPressNews = news => {};
+  get hasPromotion() {
+    return this.props.promotions && this.props.promotions.length !== 0;
+  }
 
   render() {
     return (
@@ -42,6 +42,14 @@ class Body extends Component {
             )}
           </HomeCardList>
         )}
+
+        {this.hasPromotion && (
+          <Promotion
+            data={this.props.promotions}
+            onPress={this.props.onPromotionPressed}
+          />
+        )}
+
         {this.hasNews && (
           <HomeCardList
             data={this.props.newses}

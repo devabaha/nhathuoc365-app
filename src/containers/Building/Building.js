@@ -4,7 +4,8 @@ import {
   SafeAreaView,
   Animated,
   ScrollView,
-  RefreshControl
+  RefreshControl,
+  View
 } from 'react-native';
 import HeaderStore from '../../components/stores/HeaderStore';
 import appConfig from 'app-config';
@@ -13,6 +14,9 @@ import Loading from '../../components/Loading';
 import { Actions } from 'react-native-router-flux';
 import NavBar from './NavBar';
 import Body from './Body';
+import SkeletonLoading from '../../components/SkeletonLoading';
+import BuildingSVG from '../../images/building.svg';
+import NoResult from '../../components/NoResult';
 
 const BANNER_ABSOLUTE_HEIGHT =
   appConfig.device.height / 3 - appConfig.device.bottomSpace;
@@ -22,7 +26,11 @@ const STATUS_BAR_HEIGHT = appConfig.device.isIOS
     : 20
   : 0;
 const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
-const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
+const NAV_BAR_HEIGHT = appConfig.device.isIOS
+  ? appConfig.device.isIphoneX
+    ? 60 + appConfig.device.statusBarHeight
+    : 64
+  : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT;
 
 class Building extends Component {
@@ -33,6 +41,7 @@ class Building extends Component {
     newses: [],
     rooms: [],
     sites: [],
+    promotions: [],
     title_newses: '',
     title_rooms: '',
     title_sites: '',
@@ -65,7 +74,8 @@ class Building extends Component {
   getBuilding = async siteId => {
     const { t } = this.props;
     try {
-      const response = await APIHandler.user_building_detail(siteId);
+      const response = await APIHandler.site_building_detail(siteId);
+      console.log(response);
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           this.setState({
@@ -73,6 +83,7 @@ class Building extends Component {
             newses: response.data.newses,
             rooms: response.data.rooms,
             sites: response.data.sites,
+            promotions: response.data.promotions,
             title_newses: response.data.title_newses,
             title_rooms: response.data.title_rooms,
             title_sites: response.data.title_sites
@@ -144,17 +155,34 @@ class Building extends Component {
     });
   };
 
+  handlePressRoom = room => {
+    Actions.push(appConfig.routes.room, {
+      roomId: room.id,
+      siteId: room.site_id,
+      title: room.name
+    });
+  };
+
   render() {
     const {
       building,
       newses,
+      promotions,
       title_newses,
       title_rooms,
       title_sites,
       rooms,
-      sites
+      sites,
+      loading
     } = this.state;
     const unreadChat = building ? normalizeNotify(building.unreadChat) : '';
+    const skeletonLoading = loading && !!!building;
+    const isDataEmpty =
+      !!!building &&
+      rooms.length === 0 &&
+      sites.length === 0 &&
+      newses.length === 0;
+
     const animated = {
       transform: [
         {
@@ -172,11 +200,18 @@ class Building extends Component {
       })
     };
     const navBarAnimated = {
-      opacity: this.state.scrollY.interpolate({
-        inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2, COLLAPSED_HEADER_VIEW],
-        outputRange: [0, 0, 1],
-        extrapolate: 'clamp'
-      })
+      opacity:
+        isDataEmpty && !loading
+          ? 1
+          : this.state.scrollY.interpolate({
+              inputRange: [
+                0,
+                COLLAPSED_HEADER_VIEW / 1.2,
+                COLLAPSED_HEADER_VIEW
+              ],
+              outputRange: [0, 0, 1],
+              extrapolate: 'clamp'
+            })
     };
 
     const infoContainerStyle = {
@@ -201,95 +236,123 @@ class Building extends Component {
     };
 
     return (
-      <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loading center />}
-        <NavBar maskStyle={navBarAnimated} renderTitle={this.renderTitle} />
-        {!!building && (
-          <>
-            <HeaderStore
-              active={null}
-              avatarUrl={building.logo_url}
-              bannerUrl={building.image_url}
-              containerStyle={{
-                height: BANNER_ABSOLUTE_HEIGHT,
-                ...animated
+      <View style={styles.screenContainer}>
+        <SafeAreaView style={styles.container}>
+          {loading && <Loading center />}
+          <NavBar maskStyle={navBarAnimated} renderTitle={this.renderTitle} />
+          <SkeletonLoading loading={skeletonLoading} style={styles.skeleton}>
+            {!!building && (
+              <HeaderStore
+                active={null}
+                avatarUrl={building.logo_url}
+                bannerUrl={building.image_url}
+                containerStyle={{
+                  height: BANNER_ABSOLUTE_HEIGHT,
+                  ...animated
+                }}
+                infoContainerStyle={infoContainerStyle}
+                imageBgStyle={imageBgStyle}
+                onPressChat={this.handlePressChat}
+                title={building.name}
+                subTitle={building.address}
+                unreadChat={unreadChat}
+              />
+            )}
+          </SkeletonLoading>
+          <Animated.ScrollView
+            ref={this.refScrollView}
+            contentContainerStyle={{ flexGrow: 1 }}
+            style={[styles.container]}
+            scrollEventThrottle={1}
+            refreshControl={
+              appConfig.device.isAndroid ? (
+                <RefreshControl
+                  progressViewOffset={BANNER_ABSOLUTE_HEIGHT}
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.onRefresh}
+                />
+              ) : null
+            }
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: this.state.scrollY
+                    }
+                  }
+                }
+              ],
+              {
+                useNativeDriver: true
+              }
+            )}
+          >
+            <Animated.View
+              style={{
+                height: isDataEmpty ? NAV_BAR_HEIGHT : BANNER_VIEW_HEIGHT,
+                width: '100%'
               }}
-              infoContainerStyle={infoContainerStyle}
-              imageBgStyle={imageBgStyle}
-              onPressChat={this.handlePressChat}
-              title={building.name}
-              subTitle={building.address}
-              unreadChat={unreadChat}
             />
-            <Animated.ScrollView
-              ref={this.refScrollView}
-              contentContainerStyle={{ flexGrow: 1 }}
-              style={[styles.container]}
-              scrollEventThrottle={1}
+
+            <ScrollView
               refreshControl={
-                appConfig.device.iaAndroid ? (
+                appConfig.device.isIOS ? (
                   <RefreshControl
-                    progressViewOffset={BANNER_ABSOLUTE_HEIGHT}
                     refreshing={this.state.refreshing}
                     onRefresh={this.onRefresh}
                   />
                 ) : null
               }
-              onScroll={Animated.event(
-                [
-                  {
-                    nativeEvent: {
-                      contentOffset: {
-                        y: this.state.scrollY
-                      }
-                    }
-                  }
-                ],
-                {
-                  useNativeDriver: true
-                }
-              )}
             >
-              <Animated.View
-                style={{
-                  height: BANNER_VIEW_HEIGHT,
-                  width: '100%'
-                }}
-              />
-
-              <ScrollView
-                refreshControl={
-                  appConfig.device.isIOS ? (
-                    <RefreshControl
-                      refreshing={this.state.refreshing}
-                      onRefresh={this.onRefresh}
+              {isDataEmpty && !loading ? (
+                <NoResult
+                  containerStyle={{ paddingTop: '30%' }}
+                  icon={
+                    <BuildingSVG
+                      width={appConfig.device.width / 3}
+                      height={appConfig.device.width / 3}
+                      fill={appConfig.colors.primary}
                     />
-                  ) : null
-                }
-              >
+                  }
+                  message="Chưa có dữ liệu"
+                />
+              ) : (
                 <Body
                   refreshing={this.state.refreshing}
                   newses={newses}
                   rooms={rooms}
                   sites={sites}
+                  promotions={promotions}
                   title_newses={title_newses}
                   title_rooms={title_rooms}
                   title_sites={title_sites}
                   onPressNews={this.handlePressNews}
                   onPressStore={this.handlePressStore}
+                  onPressRoom={this.handlePressRoom}
                 />
-              </ScrollView>
-            </Animated.ScrollView>
-          </>
-        )}
-      </SafeAreaView>
+              )}
+            </ScrollView>
+          </Animated.ScrollView>
+        </SafeAreaView>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  screenContainer: {
+    flex: 1,
+    backgroundColor: '#fff'
+  },
   container: {
     flex: 1
+  },
+  skeleton: {
+    width: '100%',
+    height: BANNER_ABSOLUTE_HEIGHT,
+    backgroundColor: 'rgba(59,52,70, .65)',
+    position: 'absolute'
   }
 });
 

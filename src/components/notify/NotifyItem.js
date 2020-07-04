@@ -269,7 +269,7 @@ class NotifyItem extends Component {
             }
             flashShowMessage({
               message: response.message,
-              type: 'info'
+              type: 'success'
             });
           })();
         }, 450);

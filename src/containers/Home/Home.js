@@ -340,10 +340,15 @@ class Home extends Component {
     Actions.jump(appConfig.routes.newsTab);
   };
 
-  handlePressSiteItem = site => {
-    Actions.push(appConfig.routes.building, {
-      siteId: site.id
+  handlePressRoomItem = room => {
+    Actions.push(appConfig.routes.room, {
+      siteId: room.site_id,
+      roomId: room.id
     });
+  };
+
+  handlePressSiteItem = store => {
+    servicesHandler({ type: 'open_shop', siteId: store.id }, this.props.t);
   };
 
   handlePressCampaignItem = campaign => {
@@ -417,7 +422,8 @@ class Home extends Component {
         userInfo={store.user_info}
         notify={store.notify}
         products={this.state.products}
-        campaigns={this.state.campaigns}
+        campai
+        gns={this.state.campaigns}
         promotions={this.state.promotions}
         listService={this.state.listService}
         primaryActions={this.state.primaryActions}
@@ -435,11 +441,13 @@ class Home extends Component {
         onShowAllCampaigns={this.handleShowAllCampaigns}
         onShowAllNews={this.handleShowAllNews}
         onPressSiteItem={this.handlePressSiteItem}
+        onPressRoomItem={this.handlePressRoomItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
         onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
-        product_groups={this.state.product_groups}
+        product_
+        groups={this.state.product_groups}
       />
     );
   }

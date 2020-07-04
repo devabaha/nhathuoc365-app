@@ -56,9 +56,10 @@ class NavBar extends Component {
             Actions.pop();
             this.props.onCancel();
           }}
-          // background={TouchableNativeFeedback.Ripple(pressColor, true)}
-          // accessible
-          // accessibilityComponentType="button"
+          hitSlop={HIT_SLOP}
+          background={TouchableNativeFeedback.Ripple(pressColor, true)}
+          accessible
+          accessibilityComponentType="button"
         >
           <View style={[styles.cancelButton, { borderRadius: 20 }]}>
             <BackIcon
@@ -116,9 +117,9 @@ const styles = StyleSheet.create({
     zIndex: 999,
     paddingTop: Platform.select({
       ios: appConfig.device.isIphoneX ? 50 : 24,
-      android: StatusBar.currentHeight
+      android: StatusBar.currentHeight / 1.5
     }),
-    paddingBottom: 7,
+    paddingBottom: 7 + (StatusBar.currentHeight || 0) / 2.5,
     width: appConfig.device.width,
     overflow: 'hidden'
   },
