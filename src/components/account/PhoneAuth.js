@@ -396,7 +396,7 @@ class PhoneAuth extends Component {
       <ScrollView
         keyboardShouldPersistTaps="handled"
         bounces={false}
-        style={{ paddingHorizontal: 16, marginTop: 115 }}
+        style={{ paddingHorizontal: 16, paddingTop: 115 }}
       >
         <Image
           resizeMode="contain"
