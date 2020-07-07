@@ -144,6 +144,7 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import Building, { ListBuilding } from './containers/Building';
 import Room from './containers/Room';
+import BillPayment from './containers/BillPayment';
 import SupplierStore from './components/stores/SupplierStore';
 
 /**
@@ -696,6 +697,17 @@ class RootRouter extends Component {
                   {...navBarConfig}
                   back={appConfig.device.isIOS}
                 />
+
+                {/* ================ BILL PAYMENT ================ */}
+                <Stack key={appConfig.routes.billPayment}>
+                  <Scene
+                    key={`${appConfig.routes.billPayment}_1`}
+                    component={BillPayment}
+                    title={t('screen.billPayment.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ MAIN VOUCHER ================ */}
                 <Stack key={appConfig.routes.mainVoucher}>

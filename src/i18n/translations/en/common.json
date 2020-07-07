@@ -115,6 +115,9 @@
     },
     "resetPassword": {
       "mainTitle": "Reset Password"
+    },
+    "billPayment": {
+      "mainTitle": "Bill payment"
     }
   },
 

@@ -33,6 +33,7 @@ function HomeCardList({ horizontal = true, ...props }) {
         keyExtractor={item => `${item.id}`}
         refreshControl={props.refreshControl}
       />
+      {props.extraComponent}
     </View>
   );
 }

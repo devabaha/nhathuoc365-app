@@ -238,11 +238,13 @@ class Home extends Component {
               >
                 {({ item, index }) => (
                   <HomeCardItem
+                    selfRequest={callBack =>
+                      this.props.onPressSiteItem(item, callBack)
+                    }
                     title={item.title}
                     isShowSubTitle={true}
                     subTitle={item.address}
                     imageUrl={item.image_url}
-                    onPress={() => this.props.onPressSiteItem(item)}
                     last={this.props.sites.length - 1 === index}
                   />
                 )}

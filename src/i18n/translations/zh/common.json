@@ -115,6 +115,9 @@
     },
     "resetPassword": {
       "mainTitle": "Đặt lại mật khẩu"
+    },
+    "billPayment": {
+      "mainTitle": "Thanh toán hóa đơn"
     }
   },
 

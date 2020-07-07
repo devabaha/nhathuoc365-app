@@ -347,8 +347,12 @@ class Home extends Component {
     });
   };
 
-  handlePressSiteItem = store => {
-    servicesHandler({ type: 'open_shop', siteId: store.id }, this.props.t);
+  handlePressSiteItem = (store, callBack) => {
+    servicesHandler(
+      { type: 'open_shop', siteId: store.id },
+      this.props.t,
+      callBack
+    );
   };
 
   handlePressCampaignItem = campaign => {

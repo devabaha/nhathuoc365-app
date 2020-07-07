@@ -4,6 +4,7 @@ import HomeCardList, {
   HomeCardItem
 } from '../../../components/Home/component/HomeCardList';
 import Promotion from '../../../components/Home/component/Promotion';
+import { servicesHandler } from '../../../helper/servicesHandler';
 
 class Body extends Component {
   state = {};
@@ -19,6 +20,10 @@ class Body extends Component {
   }
   get hasPromotion() {
     return this.props.promotions && this.props.promotions.length !== 0;
+  }
+
+  handleSelfRequestStore(store, callBack) {
+    servicesHandler({ type: 'open_shop', siteId: store.id }, {}, callBack);
   }
 
   render() {
@@ -71,11 +76,13 @@ class Body extends Component {
           <HomeCardList data={this.props.sites} title={this.props.title_sites}>
             {({ item, index }) => (
               <HomeCardItem
+                selfRequest={callBack =>
+                  this.handleSelfRequestStore(item, callBack)
+                }
                 title={item.title}
                 isShowSubTitle={true}
                 subTitle={item.address}
                 imageUrl={item.image_url}
-                onPress={() => this.props.onPressStore(item)}
                 last={this.props.sites.length - 1 === index}
               />
             )}

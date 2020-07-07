@@ -864,9 +864,9 @@ class APIHandler {
   /**
    * lấy thông tin hóa đơn của căn hộ
    */
-  async site_bills_room(site_id, room_id) {
+  async site_bills_room(site_id, room_id, data) {
     const api = url_for(API.SITE_BILLS_ROOM + '/' + site_id + '/' + room_id);
-    return await this.getAPI(api);
+    return await this.postAPI(api, data);
   }
 
   /**
@@ -875,6 +875,14 @@ class APIHandler {
   async site_requests_room(site_id, room_id) {
     const api = url_for(API.SITE_REQUESTS_ROOM + '/' + site_id + '/' + room_id);
     return await this.getAPI(api);
+  }
+
+  /**
+   * Update room
+   */
+  async room_update(room_id, data) {
+    var api = url_for(API.ROOM_UPDATE + '/' + room_id);
+    return await this.postAPI(api, data);
   }
 
   _networkIndicator(flag = true) {

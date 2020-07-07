@@ -124,7 +124,8 @@ const config = Object.freeze({
     listBuilding: 'listBuilding',
     building: 'building',
     room: 'room',
-    supplierStore: 'supplierStore'
+    supplierStore: 'supplierStore',
+    billPayment: 'billPayment'
   }
 });
 

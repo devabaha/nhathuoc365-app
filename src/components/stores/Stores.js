@@ -22,8 +22,8 @@ import appConfig from 'app-config';
 import IconFeather from 'react-native-vector-icons/Feather';
 import { willUpdateState } from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
-import HeaderStore from './HeaderStore';
 import StoreNavBar from './StoreNavBar';
+import HeaderStoreHomeID from './HeaderStoreHomeID';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const BANNER_ABSOLUTE_HEIGHT =
@@ -89,22 +89,16 @@ class Stores extends Component {
 
     setTimeout(() => {
       const { t } = this.props;
-      appConfig.device.isIOS
-        ? Actions.refresh({
-            // right: this._renderRightButton(),
-            renderTitle: (
-              <StoreNavBar
-                onPressSearch={this.handleSearchInStore}
-                placeholder={t('navBar.placeholder')}
-              />
-            ),
-            title: ''
-          })
-        : Actions.refresh({
-            // right: this._renderRightButton(),
-            renderTitle: null,
-            title: ''
-          });
+      Actions.refresh({
+        right: this._renderRightButton(),
+        renderTitle: appConfig.device.isIOS ? (
+          <StoreNavBar
+            onPressSearch={this.handleSearchInStore}
+            placeholder={t('navBar.placeholder')}
+          />
+        ) : null,
+        title: ''
+      });
     });
     EventTracker.logEvent('stores_page');
   }
@@ -247,22 +241,7 @@ class Stores extends Component {
   _renderRightButton() {
     return (
       <View style={[styles.right_btn_box]}>
-        {/* <RightButtonOrders tel={store.store_data.tel} /> */}
-        <Button
-          onPress={() => {
-            Actions.push(appConfig.routes.searchStore, {
-              categories: this.state.categories_data,
-              category_id: this.state.selected_category.id,
-              category_name:
-                this.state.selected_category.id !== 0
-                  ? this.state.selected_category.name
-                  : ''
-            });
-          }}
-        >
-          <IconFeather size={26} color={appConfig.colors.white} name="search" />
-        </Button>
-        <RightButtonChat tel={store.store_data.tel} />
+        <RightButtonOrders tel={store.store_data.tel} />
       </View>
     );
   }
@@ -310,37 +289,10 @@ class Stores extends Component {
     }
   }
 
-  handlePressFollow = async () => {
-    const siteId = store.store_data.id;
-    const active = this.state.siteNotify.favor_flag ? 0 : 1;
-    this.setState({
-      loading: true
+  handlePressOrders = async () => {
+    Actions.push(appConfig.routes.ordersTab, {
+      title: 'Đơn hàng của tôi'
     });
-    try {
-      const response = await APIHandler.user_update_favor_site(siteId, active);
-      if (!this.unmounted) {
-        if (response.status === STATUS_SUCCESS) {
-          this.setState(prevState => ({
-            siteNotify: {
-              ...prevState.siteNotify,
-              favor_flag: active
-            }
-          }));
-          flashShowMessage({
-            type: 'success',
-            message: response.message
-          });
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: response.message
-          });
-        }
-      }
-    } catch (error) {
-      console.log('update_customer_card_wallet', error);
-    } finally {
-    }
   };
 
   _getNotifySite = async () => {
@@ -439,7 +391,7 @@ class Stores extends Component {
           />
         )}
 
-        <HeaderStore
+        <HeaderStoreHomeID
           active={this.state.siteNotify.favor_flag}
           avatarUrl={store.store_data.logo_url}
           bannerUrl={store.store_data.image_url}
@@ -450,7 +402,7 @@ class Stores extends Component {
           infoContainerStyle={infoContainerStyle}
           imageBgStyle={imageBgStyle}
           onPressChat={this.handlePressChat}
-          onPressFollow={this.handlePressFollow}
+          onPressOrders={this.handlePressOrders}
           title={store.store_data.name}
           subTitle={this.state.siteNotify.last_online}
           description={this.state.siteNotify.favor_count}
@@ -733,7 +685,9 @@ const styles = StyleSheet.create({
     flex: 1
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
+    marginHorizontal: 15,
+    ...elevationShadowStyle(7)
   },
 
   items_box: {

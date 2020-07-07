@@ -343,7 +343,7 @@ class Building extends Component {
 const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#eee'
   },
   container: {
     flex: 1

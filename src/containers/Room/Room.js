@@ -19,6 +19,8 @@ import BuildingSVG from '../../images/building.svg';
 import NoResult from '../../components/NoResult';
 import { default as RoomActions } from './Actions';
 import { servicesHandler } from '../../helper/servicesHandler';
+import ImagePicker from 'react-native-image-picker';
+import RNFetchBlob from 'rn-fetch-blob';
 
 const BANNER_ABSOLUTE_HEIGHT =
   appConfig.device.height / 3.5 - appConfig.device.bottomSpace;
@@ -39,6 +41,8 @@ class room extends Component {
   state = {
     loading: true,
     refreshing: false,
+    avatarLoading: false,
+    bannerLoading: false,
     room: null,
     newses: [],
     sites: [],
@@ -87,11 +91,12 @@ class room extends Component {
     roomId,
     onSuccess = () => {},
     onFinally = () => {},
-    onError
+    onError,
+    data
   ) => {
     const { t } = this.props;
     try {
-      const response = await APIHandler[api](siteId, roomId);
+      const response = await APIHandler[api](siteId, roomId, data);
       console.log(api, response);
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
@@ -121,7 +126,7 @@ class room extends Component {
 
   getData() {
     this.getRoom(this.props.siteId, this.props.roomId);
-    this.getBills(this.props.siteId, this.props.roomId);
+    this.getIncompleteBills(this.props.siteId, this.props.roomId);
     this.getRequests(this.props.siteId, this.props.roomId);
   }
 
@@ -148,21 +153,23 @@ class room extends Component {
     );
   };
 
-  getBills = (siteId, roomId) => {
+  getIncompleteBills = (siteId, roomId) => {
     this.apiExcutor(
       'site_bills_room',
       siteId,
       roomId,
       data => {
-        console.log(data);
         this.setState({
-          bills: data.bills,
-          title_bills: data.title_bills
+          bills: data.bills_incomplete,
+          title_bills: data.title_bills_incomplete
         });
       },
       () => {},
       err => {
         console.log('get_bills', err);
+      },
+      {
+        type: 'bills_incomplete'
       }
     );
   };
@@ -186,7 +193,102 @@ class room extends Component {
     );
   };
 
-  handlePressBill = () => {};
+  async uploadImageRoom(image, name, onSuccess, onError, onFinally) {
+    const { t } = this.props;
+    try {
+      const data = {
+        [name]: image.name
+      };
+      const response = await APIHandler.room_update(this.state.room.id, data);
+
+      if (!this.unmounted && response) {
+        if (response.data && response.status === STATUS_SUCCESS) {
+          flashShowMessage({
+            type: 'success',
+            message: response.message
+          });
+          onSuccess(response.data);
+        } else {
+          const errMess = response.message || t('api.error.message');
+          onError
+            ? onError(errMess)
+            : flashShowMessage({
+                type: 'danger',
+                message: errMess
+              });
+        }
+      }
+    } catch (err) {
+      console.log('upload_temp_image_room', err);
+      onError
+        ? onError(err)
+        : flashShowMessage({
+            type: 'danger',
+            message: t('api.error.message')
+          });
+    } finally {
+      !this.unmounted && onFinally();
+    }
+  }
+
+  uploadTempImageRoom(
+    data,
+    name,
+    onSuccess = () => {},
+    onError = () => {},
+    onFinally = () => {}
+  ) {
+    const { t } = this.props;
+    // call api post my form data
+    RNFetchBlob.fetch(
+      'POST',
+      APIHandler.url_user_upload_image(),
+      {
+        'Content-Type': 'multipart/form-data'
+      },
+      [data]
+    )
+      .then(resp => {
+        const { data } = resp;
+        const response = JSON.parse(data);
+        if (!this.unmounted && response) {
+          if (response.status == STATUS_SUCCESS) {
+            this.uploadImageRoom(
+              response.data,
+              name,
+              data => onSuccess(data),
+              () => onError(),
+              () => onFinally()
+            );
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: t('api.error.message')
+            });
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: t('api.error.message')
+          });
+        }
+      })
+      .catch(error => {
+        console.log('upload_image_room', error);
+        flashShowMessage({
+          type: 'danger',
+          message: t('api.error.message')
+        });
+      })
+      .finally(() => !this.unmounted && onFinally());
+  }
+
+  handlePressBill = () => {
+    Actions.push(appConfig.routes.billPayment, {
+      siteId: this.props.siteId,
+      roomId: this.state.room.id
+    });
+  };
 
   handlePressRequest = () => {};
 
@@ -195,10 +297,10 @@ class room extends Component {
     const { user_info } = store;
     if (room) {
       Actions.amazing_chat({
-        site_id: room.id,
-        user_id: user_info.id,
+        site_id: room.site_id,
+        user_id: room.user_id,
         phoneNumber: room.tel,
-        title: room.name
+        title: room.site_name
       });
     }
   };
@@ -218,6 +320,84 @@ class room extends Component {
   handlePressStore = store => {
     servicesHandler({ type: 'open_shop', siteId: store.id }, this.props.t);
   };
+
+  handlePressBanner = () => {
+    this.openCamera('banner', 'bannerLoading', {
+      title: 'Chọn ảnh cover từ',
+      cancelButtonTitle: 'Hủy',
+      takePhotoButtonTitle: 'Camera',
+      chooseFromLibraryButtonTitle: 'Mở thư viện'
+    });
+  };
+
+  handlePressAvatar = () => {
+    this.openCamera('avatar', 'avatarLoading', {
+      title: 'Chọn ảnh đại diện từ',
+      cancelButtonTitle: 'Hủy',
+      takePhotoButtonTitle: 'Camera',
+      chooseFromLibraryButtonTitle: 'Mở thư viện'
+    });
+  };
+
+  openCamera = (name, loadingParam, opts) => {
+    const options = {
+      rotation: 360,
+      storageOptions: {
+        skipBackup: true,
+        path: 'images'
+      },
+      ...opts
+    };
+    ImagePicker.showImagePicker(options, response => {
+      if (response.error) {
+        console.log(response.error);
+      } else if (response.didCancel) {
+        console.log(response);
+      } else {
+        // console.log(response);
+        response.path = response.uri;
+        const image = this.nomarlizeImages([response])[0];
+        this.setState({
+          [loadingParam]: true
+        });
+        const data = {
+          name,
+          filename: image.fileName,
+          data: image.data
+        };
+        this.uploadTempImageRoom(
+          data,
+          name,
+          data => {
+            this.setState({
+              room: data.room
+            });
+          },
+          () => {},
+          () => {
+            this.setState({
+              [loadingParam]: false
+            });
+          }
+        );
+      }
+    });
+  };
+
+  nomarlizeImages(images) {
+    return images.map(img => {
+      if (!img.filename) {
+        img.filename = `${new Date().getTime()}`;
+      }
+      if (!img.fileName) {
+        img.fileName = `${new Date().getTime()}`;
+      }
+      if (img.data) {
+        img.uploadPath = img.data;
+      }
+      return img;
+    });
+  }
 
   handleActionsLayout = e => {
     this.setState({
@@ -323,6 +503,12 @@ class room extends Component {
                 hideChat
                 avatarUrl={room.logo_url}
                 bannerUrl={room.image_url}
+                avatarLoading={this.state.avatarLoading}
+                avatarDisabled={this.state.avatarLoading || !this.state.room}
+                bannerLoading={this.state.bannerLoading}
+                bannerDisabled={this.state.bannerLoading || !this.state.room}
+                onPressBanner={this.handlePressBanner}
+                onPressAvatar={this.handlePressAvatar}
                 containerStyle={{
                   height: BANNER_ABSOLUTE_HEIGHT + this.state.actionsHeight,
                   ...animated

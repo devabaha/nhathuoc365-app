@@ -4,3 +4,4 @@ exports.SITE_HOME = MY_FOOD_API + 'apiSite/site_home';
 exports.SITE_ROOM = MY_FOOD_API + 'apiSite/room';
 exports.SITE_BILLS_ROOM = MY_FOOD_API + 'apiSite/get_bills_room';
 exports.SITE_REQUESTS_ROOM = MY_FOOD_API + 'apiSite/get_requests_room';
+exports.ROOM_UPDATE = MY_FOOD_API + 'apiRoom/update_room';

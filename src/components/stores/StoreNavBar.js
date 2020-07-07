@@ -91,17 +91,7 @@ class StoreNavBar extends Component {
 
   renderRight() {
     const { t } = this.props;
-    return (
-      <Button
-        containerStyle={styles.cancelButton}
-        onPress={() => {
-          Actions.pop();
-          this.props.onCancel();
-        }}
-      >
-        <Text style={styles.cancelText}>{t('navBar.cancel')}</Text>
-      </Button>
-    );
+    return <View style={[styles.cancelButton, styles.right]}></View>;
   }
 
   renderMiddle() {
@@ -182,17 +172,18 @@ const styles = StyleSheet.create({
   },
   searchWrapper: {
     zIndex: 999,
-    flex: 1,
+    // flex: 1,
     height: 38,
-    width: '100%',
+    // width: '100%',
     paddingLeft: 10,
-    maxWidth: appConfig.device.width * 0.8,
+    maxWidth: appConfig.device.width - 100,
     borderWidth: 1,
     borderRadius: 5,
     borderColor: '#696969',
     alignItems: 'center',
     flexDirection: 'row',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    marginRight: 15,
     ...ifIphoneX(
       {
         marginTop: 4,

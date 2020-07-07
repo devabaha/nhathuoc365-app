@@ -4,7 +4,7 @@ import { Alert, Linking } from 'react-native';
 import Communications from 'react-native-communications';
 import store from 'app-store';
 
-export const servicesHandler = (service, t) => {
+export const servicesHandler = (service, t, callback = () => {}) => {
   switch (service.type) {
     case 'external_link':
       Linking.openURL(service.link).catch(err => {
@@ -111,17 +111,19 @@ export const servicesHandler = (service, t) => {
       });
       break;
     case SERVICES_TYPE.OPEN_SHOP:
-      APIHandler.site_info(service.siteId).then(response => {
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setStoreData(response.data);
-            Actions.push(appConfig.routes.store, {
-              title: service.name || response.data.name,
-              categoryId: service.categoryId || 0
-            });
-          })();
-        }
-      });
+      APIHandler.site_info(service.siteId)
+        .then(response => {
+          if (response && response.status == STATUS_SUCCESS) {
+            action(() => {
+              store.setStoreData(response.data);
+              Actions.push(appConfig.routes.store, {
+                title: service.name || response.data.name,
+                categoryId: service.categoryId || 0
+              });
+            })();
+          }
+        })
+        .finally(callback);
       break;
     case SERVICES_TYPE.CALL:
       Communications.phonecall(service.tel, true);

@@ -1,42 +1,70 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { stringHelper } from 'app-util';
 import Button from 'react-native-button';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground } from 'react-native';
+import Loading from '../../../Loading';
 
-function HomeCardItem(props) {
-  return (
-    <Button
-      onPress={props.onPress}
-      containerStyle={[
-        styles.containerBtn,
-        {
-          marginRight: props.last ? 16 : 0
-        }
-      ]}
-    >
-      <View style={[styles.container, props.containerStyle]}>
-        <Image
-          style={[styles.image, props.imageStyle]}
-          source={{ uri: props.imageUrl }}
-        />
-        <View style={[styles.titleWrapper, props.textWrapperStyle]}>
-          <Text numberOfLines={2} style={styles.title}>
-            {/* {stringHelper.shorten(props.title, 48)} */}
-            {props.title}
-          </Text>
-          {!!props.subTitle && (
-            <Text style={styles.subTitle}>
-              <Text style={styles.specialSubTitle}>
-                {props.specialSubTitle}
-              </Text>
-              {props.subTitle}
+class HomeCardItem extends Component {
+  state = {
+    loading: false
+  };
+  unmounted = false;
+
+  handlePress = () => {
+    if (this.props.selfRequest) {
+      this.setState({
+        loading: true
+      });
+      this.handleSelfRequest();
+    } else {
+      this.props.onPress();
+    }
+  };
+
+  handleSelfRequest = () => {
+    this.props.selfRequest(() => {
+      !this.unmounted && this.setState({ loading: false });
+    });
+  };
+
+  render() {
+    const props = this.props;
+    return (
+      <Button
+        disabled={this.state.loading}
+        onPress={this.handlePress}
+        containerStyle={[
+          styles.containerBtn,
+          {
+            marginRight: props.last ? 16 : 0
+          }
+        ]}
+      >
+        <View style={[styles.container, props.containerStyle]}>
+          <ImageBackground
+            style={[styles.image, props.imageStyle]}
+            source={{ uri: props.imageUrl }}
+          >
+            {this.state.loading && <Loading style={styles.loading} />}
+          </ImageBackground>
+          <View style={[styles.titleWrapper, props.textWrapperStyle]}>
+            <Text numberOfLines={2} style={styles.title}>
+              {/* {stringHelper.shorten(props.title, 48)} */}
+              {props.title}
             </Text>
-          )}
+            {!!props.subTitle && (
+              <Text style={styles.subTitle}>
+                <Text style={styles.specialSubTitle}>
+                  {props.specialSubTitle}
+                </Text>
+                {props.subTitle}
+              </Text>
+            )}
+          </View>
         </View>
-      </View>
-    </Button>
-  );
+      </Button>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -50,7 +78,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#ebebeb',
     width: '100%',
     height: 116,
-    borderRadius: 8
+    borderRadius: 8,
+    overflow: 'hidden'
   },
   titleWrapper: {
     marginTop: 10
@@ -66,6 +95,10 @@ const styles = StyleSheet.create({
   subTitle: {
     fontSize: 12,
     marginTop: 3
+  },
+  loading: {
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,.5)'
   }
 });
 
