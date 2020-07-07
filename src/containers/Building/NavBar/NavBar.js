@@ -56,10 +56,10 @@ class NavBar extends Component {
             Actions.pop();
             this.props.onCancel();
           }}
-          hitSlop={HIT_SLOP}
           background={TouchableNativeFeedback.Ripple(pressColor, true)}
           accessible
           accessibilityComponentType="button"
+          hitSlop={HIT_SLOP}
         >
           <View style={[styles.cancelButton, { borderRadius: 20 }]}>
             <BackIcon
@@ -76,6 +76,7 @@ class NavBar extends Component {
     return (
       <Button
         containerStyle={styles.cancelButton}
+        hitSlop={HIT_SLOP}
         onPress={() => {
           Actions.pop();
           this.props.onCancel();
@@ -137,8 +138,8 @@ const styles = StyleSheet.create({
     opacity: 0
   },
   cancelButton: {
-    justifyContent: 'center',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    zIndex: 1
   },
   cancelText: {
     fontSize: 16,

@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     opacity: 0
   },
   cancelButton: {
-    justifyContent: 'center',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    zIndex: 1
   },
   cancelText: {
     fontSize: 16,

@@ -4,8 +4,27 @@ import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
 import appConfig from 'app-config';
 
+const BILL_STATUS = {
+  INCOMPLETE: 'Chưa thanh toán',
+  COMPLETE: 'Đã thanh toán'
+};
+
 class Bill extends Component {
   state = {};
+
+  get extraStyle() {
+    let extraStyle = styles.successMark;
+    switch (this.props.status) {
+      case BILL_STATUS.INCOMPLETE:
+        extraStyle = styles.errorMark;
+        break;
+      case BILL_STATUS.COMPLETE:
+        break;
+    }
+
+    return extraStyle;
+  }
+
   render() {
     return (
       <Button
@@ -14,10 +33,12 @@ class Bill extends Component {
           styles.containerBtn,
           {
             marginRight: this.props.last ? 16 : 0
-          }
+          },
+          this.extraStyle,
+          this.props.wrapperStyle
         ]}
       >
-        <View style={styles.container}>
+        <View style={[styles.container, this.props.containerStyle]}>
           {!!this.props.title && (
             <View style={styles.titleContainer}>
               <Text numberOfLines={2} style={styles.title}>
@@ -65,6 +86,14 @@ const styles = StyleSheet.create({
   container: {
     width: 205,
     flex: 1
+  },
+  successMark: {
+    borderLeftColor: '#5bb85c',
+    borderLeftWidth: 3
+  },
+  errorMark: {
+    borderLeftColor: '#eeae4d',
+    borderLeftWidth: 3
   },
   footer: {
     alignItems: 'flex-end',

@@ -7,12 +7,19 @@ import Request from './Request';
 import Bill from './Bill';
 import appConfig from 'app-config';
 import { servicesHandler } from '../../../helper/servicesHandler';
+import QuickPayment from './Bill/QuickPayment';
 
 class Body extends Component {
   state = {};
 
   get totalBillPrice() {
-    return '480.000đ';
+    return (
+      numberFormat(
+        this.props.bills.reduce(
+          (prev, next) => (prev.price || prev) + next.price
+        )
+      ) + 'đ'
+    );
   }
 
   get hasRoom() {
@@ -44,22 +51,16 @@ class Body extends Component {
             onShowAll={this.props.onShowAllBills}
             title={this.props.title_bills}
             extraComponent={
-              <View style={styles.billPaymentFooter}>
-                <Text>
-                  Tổng tiền:{' '}
-                  <Text style={styles.billTotal}>{this.totalBillPrice}</Text>
-                </Text>
-                <TouchableOpacity
-                  onPress={this.props.onPayBill}
-                  style={styles.billPaymentBtn}
-                >
-                  <Text style={styles.billPaymentBtnTitle}>Thanh toán</Text>
-                </TouchableOpacity>
-              </View>
+              <QuickPayment
+                prefix={'Tổng tiền:   '}
+                price={this.totalBillPrice}
+                onPress={this.props.onPayBill}
+              />
             }
           >
             {({ item, index }) => (
               <Bill
+                status={item.status}
                 title={item.title}
                 period={item.payment_period}
                 price={item.price_view}
@@ -142,27 +143,6 @@ class Body extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#eee'
-  },
-  billPaymentFooter: {
-    flexDirection: 'row',
-    padding: 16,
-    paddingBottom: 0,
-    alignItems: 'center',
-    justifyContent: 'space-between'
-  },
-  billTotal: {
-    color: appConfig.colors.primary,
-    fontSize: 16,
-    fontWeight: '500'
-  },
-  billPaymentBtn: {
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    borderRadius: 4,
-    backgroundColor: appConfig.colors.primary
-  },
-  billPaymentBtnTitle: {
-    color: '#fff'
   }
 });
 

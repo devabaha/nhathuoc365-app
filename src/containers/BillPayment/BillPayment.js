@@ -76,7 +76,6 @@ class BillPayment extends Component {
           }
           initialLayout={{ width: appConfig.device.width }}
           style={styles.tabBarContainer}
-          st
         />
       </SafeAreaView>
     );
@@ -91,17 +90,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   tabBarLabel: {
-    color: '#666',
-    paddingHorizontal: 4
+    textAlign: 'center',
+    color: '#666'
   },
   tabBarLabelActive: {
     fontWeight: 'bold',
+    marginHorizontal: '-100%',
     color: appConfig.colors.primary
   },
   indicatorStyle: {
     backgroundColor: appConfig.colors.primary,
     height: 3
-  }
+  },
+  tabBarContainer: {}
 });
 
 export default BillPayment;

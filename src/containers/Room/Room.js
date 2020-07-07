@@ -21,6 +21,7 @@ import { default as RoomActions } from './Actions';
 import { servicesHandler } from '../../helper/servicesHandler';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
+import { isArray } from 'lodash';
 
 const BANNER_ABSOLUTE_HEIGHT =
   appConfig.device.height / 3.5 - appConfig.device.bottomSpace;
@@ -37,7 +38,7 @@ const NAV_BAR_HEIGHT = appConfig.device.isIOS
   : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW = BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT;
 
-class room extends Component {
+class Room extends Component {
   state = {
     loading: true,
     refreshing: false,
@@ -97,7 +98,7 @@ class room extends Component {
     const { t } = this.props;
     try {
       const response = await APIHandler[api](siteId, roomId, data);
-      console.log(api, response);
+      console.log(api, response, data);
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           onSuccess(response.data);
@@ -160,7 +161,7 @@ class room extends Component {
       roomId,
       data => {
         this.setState({
-          bills: data.bills_incomplete,
+          bills: isArray(data.bills_incomplete) ? data.bills_incomplete : [],
           title_bills: data.title_bills_incomplete
         });
       },
@@ -283,12 +284,16 @@ class room extends Component {
       .finally(() => !this.unmounted && onFinally());
   }
 
-  handlePressBill = () => {
+  handlePressBills = () => {
     Actions.push(appConfig.routes.billPayment, {
       siteId: this.props.siteId,
       roomId: this.state.room.id
     });
   };
+
+  handlePressBill = () => {};
+
+  handlePressRequests = () => {};
 
   handlePressRequest = () => {};
 
@@ -523,8 +528,8 @@ class room extends Component {
                 extraComponent={
                   <RoomActions
                     onLayout={this.handleActionsLayout}
-                    onBillPress={this.handlePressBill}
-                    onRequestPress={this.handlePressRequest}
+                    onBillPress={this.handlePressBills}
+                    onRequestPress={this.handlePressRequests}
                     onChatPress={this.handlePressChat}
                     chatNoti={unreadChat}
                   />
@@ -613,6 +618,8 @@ class room extends Component {
                       onPressStore={this.handlePressStore}
                       onPressBill={this.handlePressBill}
                       onPressRequest={this.handlePressRequest}
+                      onShowAllBills={this.handlePressBills}
+                      onShowAllRequests={this.handlePressRequests}
                     />
                   </>
                 )
@@ -642,4 +649,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation()(room);
+export default withTranslation()(Room);

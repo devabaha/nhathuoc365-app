@@ -8,7 +8,7 @@ function HomeCardList({ horizontal = true, ...props }) {
   return (
     <View style={[styles.container, props.containerStyle]}>
       {!!props.title && (
-        <View style={styles.content}>
+        <View style={[styles.content, props.headerStyle]}>
           <Text style={styles.title}>{props.title}</Text>
 
           {props.onShowAll ? (
@@ -32,6 +32,7 @@ function HomeCardList({ horizontal = true, ...props }) {
         renderItem={props.children}
         keyExtractor={item => `${item.id}`}
         refreshControl={props.refreshControl}
+        {...props.flatListProps}
       />
       {props.extraComponent}
     </View>
