@@ -16,8 +16,16 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 
 class ModalPicker extends PureComponent {
+  static defaultProps = {
+    cancelTitle: 'Hủy',
+    selectTitle: 'Chọn',
+    onClose: () => {}
+  };
   state = {
-    selectedValue: this.props.selectedValue,
+    selectedValue:
+      this.props.selectedValue ||
+      this.props.defaultValue ||
+      this.props.data[0].id,
     headerHeight: 0
   };
   refModal = React.createRef();
@@ -105,16 +113,17 @@ class ModalPicker extends PureComponent {
     if (this.refModal.current) {
       this.refModal.current.close();
     } else {
-      Actions.pop();
+      this.onClosed();
     }
   };
 
   onClosed = () => {
+    this.props.onClose();
     Actions.pop();
   };
 
   onSelectPress = () => {
-    this.props.onSelect(this.state.selectedValue);
+    this.props.onSelect(this.state.selectedValue || this.props.defaultValue);
     this.onCancelPress();
   };
 

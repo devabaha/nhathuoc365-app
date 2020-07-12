@@ -125,7 +125,13 @@ const config = Object.freeze({
     building: 'building',
     room: 'room',
     supplierStore: 'supplierStore',
-    billPayment: 'billPayment'
+    bills: 'bills',
+    billsPaymentMethod: 'billsPaymentMethod',
+    requests: 'requests',
+    requestDetail: 'requestDetail',
+    requestCreation: 'requestCreation',
+    members: 'members',
+    memberModal: 'memberModal'
   }
 });
 

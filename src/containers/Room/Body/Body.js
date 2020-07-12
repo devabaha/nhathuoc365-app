@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import HomeCardList, {
   HomeCardItem
 } from '../../../components/Home/component/HomeCardList';
-import Request from './Request';
-import Bill from './Bill';
-import appConfig from 'app-config';
+import { Request } from '../../Requests';
+import { Bill, QuickPayment } from '../../Bills';
 import { servicesHandler } from '../../../helper/servicesHandler';
-import QuickPayment from './Bill/QuickPayment';
 
 class Body extends Component {
   state = {};
@@ -16,7 +14,8 @@ class Body extends Component {
     return (
       numberFormat(
         this.props.bills.reduce(
-          (prev, next) => (prev.price || prev) + next.price
+          (prev, next) => (prev.price || prev) + next.price,
+          0
         )
       ) + 'đ'
     );
@@ -82,6 +81,8 @@ class Body extends Component {
                 title={item.title}
                 subTitle={item.content}
                 description={item.created}
+                status={item.status}
+                color={item.color}
                 onPress={() => this.props.onPressRequest(item)}
                 last={this.props.requests.length - 1 === index}
               />
@@ -106,7 +107,8 @@ class Body extends Component {
           <HomeCardList
             data={this.props.newses}
             title={this.props.title_newses}
-            onShowAll={this.props.onShowAllNewses}
+            onShowAll={null}
+            // onShowAll={this.props.onShowAllNewses}
           >
             {({ item, index }) => (
               <HomeCardItem
@@ -120,14 +122,18 @@ class Body extends Component {
           </HomeCardList>
         )}
         {this.hasSite && (
-          <HomeCardList data={this.props.sites} title={this.props.title_sites}>
+          <HomeCardList
+            data={this.props.sites}
+            title={this.props.title_sites}
+            onShowAll={null}
+            // onShowAll={this.props.onShowAllStores}
+          >
             {({ item, index }) => (
               <HomeCardItem
                 selfRequest={callBack =>
                   this.handleSelfRequestStore(item, callBack)
                 }
                 title={item.title}
-                onShowAll={this.props.onShowAllStores}
                 subTitle={item.address}
                 imageUrl={item.image_url}
                 last={this.props.sites.length - 1 === index}

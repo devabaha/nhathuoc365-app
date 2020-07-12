@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet, TouchableHighlight, Text } from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/Feather';
+import appConfig from 'app-config';
 
 class Actions extends PureComponent {
   state = {};
@@ -8,7 +9,7 @@ class Actions extends PureComponent {
   renderActions() {
     const LIST_ACTION = [
       {
-        icon: 'filetext1',
+        icon: 'file-text',
         title: 'Hóa đơn',
         onPress: this.props.onBillPress
       },
@@ -19,7 +20,13 @@ class Actions extends PureComponent {
         style: styles.middle
       },
       {
-        icon: 'message1',
+        icon: 'users',
+        title: 'Thành viên',
+        onPress: this.props.onMemberPress,
+        style: styles.right
+      },
+      {
+        icon: 'message-circle',
         title: 'Chat BQL',
         onPress: this.props.onChatPress
       }
@@ -69,7 +76,8 @@ const styles = StyleSheet.create({
   actionTitle: {
     fontSize: 15,
     color: '#555',
-    fontWeight: '500'
+    fontWeight: appConfig.device.isIOS ? '500' : '400',
+    textAlign: 'center'
   },
   icon: {
     fontSize: 26,
@@ -78,6 +86,10 @@ const styles = StyleSheet.create({
   },
   middle: {
     borderLeftWidth: 0.5,
+    borderRightWidth: 0.5,
+    borderColor: '#ddd'
+  },
+  right: {
     borderRightWidth: 0.5,
     borderColor: '#ddd'
   }

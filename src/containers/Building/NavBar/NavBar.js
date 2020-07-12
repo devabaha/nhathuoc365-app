@@ -99,6 +99,14 @@ class NavBar extends Component {
     return <Text style={styles.text}>{this.props.title}</Text>;
   }
 
+  renderRight() {
+    return (
+      <Button containerStyle={styles.rightBtn} onPress={this.props.onPressChat}>
+        <Icon name="message-circle" style={styles.chatIcon} />
+      </Button>
+    );
+  }
+
   render() {
     return (
       <Animated.View style={[styles.container, this.props.containerStyle]}>
@@ -106,6 +114,7 @@ class NavBar extends Component {
         <View style={styles.wrapper}>
           {this.renderLeft()}
           {this.renderMiddle()}
+          {this.renderRight()}
         </View>
       </Animated.View>
     );
@@ -117,7 +126,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 999,
     paddingTop: Platform.select({
-      ios: appConfig.device.isIphoneX ? 50 : 24,
+      ios: appConfig.device.isIphoneX ? 50 : 30,
       android: StatusBar.currentHeight / 1.5
     }),
     paddingBottom: 7 + (StatusBar.currentHeight || 0) / 2.5,
@@ -127,6 +136,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%'
   },
@@ -188,6 +198,14 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     textAlign: 'center'
+  },
+  rightBtn: {
+    ...elevationShadowStyle(5),
+    paddingHorizontal: 15
+  },
+  chatIcon: {
+    fontSize: 24,
+    color: '#fff'
   }
 });
 

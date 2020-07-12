@@ -19,8 +19,8 @@ class Launch extends Component {
   }
 
   componentDidMount() {
-    this.handleAuthorization();
     this.animateLoading();
+    this.handleAuthorization();
     EventTracker.logEvent('launch_page');
   }
 

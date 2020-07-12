@@ -5,7 +5,8 @@ import {
   Image,
   StyleSheet,
   RefreshControl,
-  ScrollView
+  ScrollView,
+  Text
 } from 'react-native';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop
@@ -112,7 +113,7 @@ class Home extends Component {
   }
 
   get hasRooms() {
-    return Array.isArray(this.props.rooms) && this.props.rooms.length > 0;
+    return Array.isArray(this.props.rooms);
   }
 
   get hasNews() {
@@ -213,6 +214,7 @@ class Home extends Component {
                     ? this.props.title_rooms
                     : 'Căn hộ của tôi'
                 }
+                extraComponent={!this.hasRooms && <NoRoom />}
               >
                 {({ item, index }) => (
                   <HomeCardItem
@@ -357,3 +359,23 @@ const styles = StyleSheet.create({
 });
 
 export default withTranslation(['home', 'common'])(Home);
+
+const NoRoom = props => (
+  <View style={noRoomStyles.container}>
+    <Text style={noRoomStyles.text}>
+      {`Bạn chưa có nhà trên HomeID.\r\rVui lòng liên hệ BQL tòa nhà của bạn và kiểm tra số điện thoại chủ hộ được đăng ký có đúng với số đang đăng nhập không?`}
+    </Text>
+  </View>
+);
+
+const noRoomStyles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+    padding: 15,
+    borderTopWidth: 0.5,
+    borderColor: '#ddd'
+  },
+  text: {
+    color: '#444'
+  }
+});

@@ -6,6 +6,9 @@ import store from 'app-store';
 
 export const servicesHandler = (service, t, callback = () => {}) => {
   switch (service.type) {
+    case 'beehome_service':
+      Actions.jump(appConfig.routes.listBuilding);
+      break;
     case 'external_link':
       Linking.openURL(service.link).catch(err => {
         console.log('open_external_link', err);

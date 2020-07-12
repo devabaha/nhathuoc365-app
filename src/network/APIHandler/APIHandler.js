@@ -862,7 +862,7 @@ class APIHandler {
   }
 
   /**
-   * lấy thông tin hóa đơn của căn hộ
+   * lấy danh sách hóa đơn của căn hộ
    */
   async site_bills_room(site_id, room_id, data) {
     const api = url_for(API.SITE_BILLS_ROOM + '/' + site_id + '/' + room_id);
@@ -870,7 +870,7 @@ class APIHandler {
   }
 
   /**
-   * lấy thông tin phản ánh của căn hộ
+   * lấy danh sách phản ánh của căn hộ
    */
   async site_requests_room(site_id, room_id) {
     const api = url_for(API.SITE_REQUESTS_ROOM + '/' + site_id + '/' + room_id);
@@ -878,10 +878,96 @@ class APIHandler {
   }
 
   /**
-   * Update room
+   * lấy thông tin chi tiết phản ánh của căn hộ
    */
-  async room_update(room_id, data) {
-    var api = url_for(API.ROOM_UPDATE + '/' + room_id);
+  async site_detail_request_room(site_id, room_id, request_id) {
+    const api = url_for(
+      API.SITE_DETAIL_REQUEST_ROOM +
+        '/' +
+        site_id +
+        '/' +
+        room_id +
+        '/' +
+        request_id
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
+   * lấy thông tin phiếu thu của căn hộ
+   */
+  async site_receipts_room(site_id, room_id) {
+    const api = url_for(API.SITE_RECEIPTS_ROOM + '/' + site_id + '/' + room_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * lấy danh sách loại phản ánh của căn hộ
+   */
+  async site_request_types_room(site_id, room_id) {
+    const api = url_for(
+      API.SITE_REQUEST_TYPES_ROOM + '/' + site_id + '/' + room_id
+    );
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Tạo phản ánh căn hộ
+   */
+  async site_request_room(site_id, room_id, data) {
+    var api = url_for(API.SITE_REQUEST_ROOM + '/' + site_id + '/' + room_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Gửi comment phản ánh căn hộ
+   */
+  async site_comment_request_room(site_id, room_id, request_id, data) {
+    var api = url_for(
+      API.SITE_COMMENT_REQUEST_ROOM +
+        '/' +
+        site_id +
+        '/' +
+        room_id +
+        '/' +
+        request_id
+    );
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Lấy danh sách thành viên room
+   */
+  async site_list_user_room(site_id, room_id) {
+    var api = url_for(API.SITE_LIST_USER_ROOM + '/' + site_id + '/' + room_id);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * Tìm kiếm thành viên room theo sđt
+   */
+  async site_search_user_room_by_phone(site_id, room_id, data) {
+    var api = url_for(
+      API.SITE_SEARCH_USER_ROOM_BY_PHONE + '/' + site_id + '/' + room_id
+    );
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Thêm thành viên room
+   */
+  async site_add_user_room(site_id, room_id, data) {
+    var api = url_for(API.SITE_ADD_USER_ROOM + '/' + site_id + '/' + room_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * Xóa thành viên room
+   */
+  async site_delete_user_room(site_id, room_id, data) {
+    var api = url_for(
+      API.SITE_DELETE_USER_ROOM + '/' + site_id + '/' + room_id
+    );
     return await this.postAPI(api, data);
   }
 

@@ -32,8 +32,8 @@ class Body extends Component {
         {this.hasRoom && (
           <HomeCardList
             data={this.props.rooms}
-            onShowAll={null}
             title={this.props.title_rooms}
+            onShowAll={null}
           >
             {({ item, index }) => (
               <HomeCardItem
@@ -51,7 +51,8 @@ class Body extends Component {
         {this.hasPromotion && (
           <Promotion
             data={this.props.promotions}
-            onPress={this.props.onPromotionPressed}
+            onPress={this.props.onPressPromotion}
+            containerStyle={!this.hasRoom && styles.extraStylePromotion}
           />
         )}
 
@@ -59,6 +60,7 @@ class Body extends Component {
           <HomeCardList
             data={this.props.newses}
             title={this.props.title_newses}
+            onShowAll={null}
           >
             {({ item, index }) => (
               <HomeCardItem
@@ -73,7 +75,11 @@ class Body extends Component {
           </HomeCardList>
         )}
         {this.hasSite && (
-          <HomeCardList data={this.props.sites} title={this.props.title_sites}>
+          <HomeCardList
+            data={this.props.sites}
+            title={this.props.title_sites}
+            onShowAll={null}
+          >
             {({ item, index }) => (
               <HomeCardItem
                 selfRequest={callBack =>
@@ -93,6 +99,10 @@ class Body extends Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  extraStylePromotion: {
+    marginTop: 15
+  }
+});
 
 export default Body;

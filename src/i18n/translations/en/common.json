@@ -116,8 +116,17 @@
     "resetPassword": {
       "mainTitle": "Reset Password"
     },
-    "billPayment": {
-      "mainTitle": "Bill payment"
+    "bills": {
+      "mainTitle": "Bill list",
+      "paymentTitle": "Bill payment"
+    },
+    "requests": {
+      "mainTitle": "Request list",
+      "detailTitle": "Request detail",
+      "creationTitle": "Create a request"
+    },
+    "members": {
+      "mainTitle": "Member list"
     }
   },
 

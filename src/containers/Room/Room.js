@@ -5,7 +5,8 @@ import {
   Animated,
   ScrollView,
   RefreshControl,
-  View
+  View,
+  Text
 } from 'react-native';
 import HeaderStore from '../../components/stores/HeaderStore';
 import appConfig from 'app-config';
@@ -21,10 +22,9 @@ import { default as RoomActions } from './Actions';
 import { servicesHandler } from '../../helper/servicesHandler';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
-import { isArray } from 'lodash';
 
 const BANNER_ABSOLUTE_HEIGHT =
-  appConfig.device.height / 3.5 - appConfig.device.bottomSpace;
+  appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
 const STATUS_BAR_HEIGHT = appConfig.device.isIOS
   ? appConfig.device.isIphoneX
     ? 50
@@ -98,7 +98,7 @@ class Room extends Component {
     const { t } = this.props;
     try {
       const response = await APIHandler[api](siteId, roomId, data);
-      console.log(api, response, data);
+      console.log(api, response, siteId, roomId, data);
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           onSuccess(response.data);
@@ -111,6 +111,8 @@ class Room extends Component {
                 message: errMess
               });
         }
+      } else {
+        throw Error(response);
       }
     } catch (err) {
       console.log(api, err);
@@ -161,7 +163,7 @@ class Room extends Component {
       roomId,
       data => {
         this.setState({
-          bills: isArray(data.bills_incomplete) ? data.bills_incomplete : [],
+          bills: data.bills_incomplete,
           title_bills: data.title_bills_incomplete
         });
       },
@@ -181,7 +183,6 @@ class Room extends Component {
       siteId,
       roomId,
       data => {
-        console.log(data);
         this.setState({
           requests: data.requests,
           title_requests: data.title_requests
@@ -218,6 +219,8 @@ class Room extends Component {
                 message: errMess
               });
         }
+      } else {
+        throw Error(response);
       }
     } catch (err) {
       console.log('upload_temp_image_room', err);
@@ -284,30 +287,56 @@ class Room extends Component {
       .finally(() => !this.unmounted && onFinally());
   }
 
-  handlePressBills = () => {
-    Actions.push(appConfig.routes.billPayment, {
+  goToBills = () => {
+    Actions.push(appConfig.routes.bills, {
       siteId: this.props.siteId,
       roomId: this.state.room.id
     });
   };
 
+  handlePayBill = () => {
+    Actions.push(appConfig.routes.billsPaymentMethod, {
+      id: this.props.siteId
+    });
+  };
+
   handlePressBill = () => {};
 
-  handlePressRequests = () => {};
+  goToRequests = () => {
+    Actions.push(appConfig.routes.requests, {
+      siteId: this.props.siteId,
+      roomId: this.state.room.id
+    });
+  };
 
-  handlePressRequest = () => {};
+  handlePressRequest = request => {
+    Actions.push(appConfig.routes.requestDetail, {
+      siteId: this.props.siteId,
+      roomId: this.props.roomId,
+      requestId: request.id,
+      title: request.title || this.props.t('screen.requests.detailTitle')
+    });
+  };
 
-  handlePressChat = () => {
+  goToChat = () => {
     const { room } = this.state;
     const { user_info } = store;
     if (room) {
       Actions.amazing_chat({
         site_id: room.site_id,
-        user_id: room.user_id,
+        user_id: user_info.id,
         phoneNumber: room.tel,
         title: room.site_name
       });
     }
+  };
+
+  goToMembers = () => {
+    Actions.push(appConfig.routes.members, {
+      siteId: this.props.siteId,
+      roomId: this.props.roomId,
+      owner_id: this.state.room.user_id
+    });
   };
 
   onRefresh = () => {
@@ -475,7 +504,7 @@ class Room extends Component {
     };
 
     const infoContainerStyle = {
-      height: BANNER_VIEW_HEIGHT / 1.618,
+      // height: BANNER_VIEW_HEIGHT / 1.618,
       opacity: this.state.scrollY.interpolate({
         inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2],
         outputRange: [1, 0],
@@ -504,6 +533,7 @@ class Room extends Component {
           <SkeletonLoading loading={skeletonLoading} style={styles.skeleton}>
             {!!room && (
               <HeaderStore
+                extraTitle={<ExtraTitle name={store.user_info.name} />}
                 active={null}
                 hideChat
                 avatarUrl={room.logo_url}
@@ -528,9 +558,10 @@ class Room extends Component {
                 extraComponent={
                   <RoomActions
                     onLayout={this.handleActionsLayout}
-                    onBillPress={this.handlePressBills}
-                    onRequestPress={this.handlePressRequests}
-                    onChatPress={this.handlePressChat}
+                    onBillPress={this.goToBills}
+                    onRequestPress={this.goToRequests}
+                    onMemberPress={this.goToMembers}
+                    onChatPress={this.goToChat}
                     chatNoti={unreadChat}
                   />
                 }
@@ -618,8 +649,9 @@ class Room extends Component {
                       onPressStore={this.handlePressStore}
                       onPressBill={this.handlePressBill}
                       onPressRequest={this.handlePressRequest}
-                      onShowAllBills={this.handlePressBills}
-                      onShowAllRequests={this.handlePressRequests}
+                      onShowAllBills={this.goToBills}
+                      onShowAllRequests={this.goToRequests}
+                      onPayBill={this.handlePayBill}
                     />
                   </>
                 )
@@ -650,3 +682,30 @@ const styles = StyleSheet.create({
 });
 
 export default withTranslation()(Room);
+
+const ExtraTitle = ({ name }) => (
+  <View style={extraTitleStyles.container}>
+    <Text style={extraTitleStyles.text}>
+      <Text style={extraTitleStyles.sub}>Mừng bạn về nhà,</Text> {name}
+    </Text>
+  </View>
+);
+
+const extraTitleStyles = StyleSheet.create({
+  container: {
+    alignSelf: 'flex-start',
+    marginBottom: 20,
+    paddingHorizontal: 15,
+    bottom: 0
+  },
+  text: {
+    color: '#fff',
+    fontWeight: '500',
+    fontSize: 16
+  },
+  sub: {
+    fontStyle: 'italic',
+    fontWeight: '400',
+    fontSize: 13
+  }
+});

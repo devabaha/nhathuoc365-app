@@ -116,8 +116,17 @@
     "resetPassword": {
       "mainTitle": "Đặt lại mật khẩu"
     },
-    "billPayment": {
-      "mainTitle": "Thanh toán hóa đơn"
+    "bills": {
+      "mainTitle": "Danh sách hóa đơn",
+      "paymentTitle": "Thanh toán hóa đơn"
+    },
+    "requests": {
+      "mainTitle": "Danh sách phản ánh",
+      "detailTitle": "Chi tiết phản ánh",
+      "creationTitle": "Tạo phản ánh"
+    },
+    "members": {
+      "mainTitle": "Danh sách thành viên"
     }
   },
 

@@ -1,6 +1,6 @@
 import { reaction, observable, action, toJS } from 'mobx';
 import autobind from 'autobind-decorator';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 
 @autobind
@@ -45,6 +45,7 @@ class Store {
     this.getNotifyFlag = true;
     this.getNotifyChatFlag = true;
     this.updateNotifyFlag = true;
+    this.notifyReceived = false;
 
     // Get notice repeat
     clearInterval(this._timeGetNotify);
@@ -76,6 +77,10 @@ class Store {
       const response = await APIHandler.user_notify();
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
+          if (!this.notifyReceived) {
+            this.notifyReceived = true;
+            this.newVersionChecking(response.data);
+          }
           if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
           }
@@ -90,6 +95,33 @@ class Store {
       this.getNotifyFlag = true;
     }
   };
+
+  newVersionChecking(notifies) {
+    const appStoreName = Platform.OS === 'ios' ? 'App Store' : 'Play Store';
+    if (notifies && notifies.updating_version == 1) {
+      Alert.alert(
+        `Phiên bản mới ${notifies.new_version}!`,
+        'Đã có bản cập nhật mới, bạn vui lòng cập nhật ứng dụng để có trải nghiệm tốt nhất.',
+        [
+          {
+            text: 'Lúc khác',
+            style: 'cancel'
+          },
+          {
+            text: 'Cập nhật',
+            onPress: () =>
+              Linking.openURL(notifies.url_update).catch(error => {
+                console.log('update_app', error);
+                Alert.alert(
+                  'Có lỗi xảy ra',
+                  `Bạn có thể truy cập ${appStoreName} để thử lại.`
+                );
+              })
+          }
+        ]
+      );
+    }
+  }
 
   storeUnMount = {};
 

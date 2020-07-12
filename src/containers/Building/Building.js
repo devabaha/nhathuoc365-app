@@ -17,9 +17,10 @@ import Body from './Body';
 import SkeletonLoading from '../../components/SkeletonLoading';
 import BuildingSVG from '../../images/building.svg';
 import NoResult from '../../components/NoResult';
+import { servicesHandler } from '../../helper/servicesHandler';
 
 const BANNER_ABSOLUTE_HEIGHT =
-  appConfig.device.height / 3 - appConfig.device.bottomSpace;
+  appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
 const STATUS_BAR_HEIGHT = appConfig.device.isIOS
   ? appConfig.device.isIphoneX
     ? 50
@@ -163,6 +164,10 @@ class Building extends Component {
     });
   };
 
+  handlePressPromotion = promotion => {
+    servicesHandler(promotion, this.props.t);
+  };
+
   render() {
     const {
       building,
@@ -215,7 +220,7 @@ class Building extends Component {
     };
 
     const infoContainerStyle = {
-      height: BANNER_VIEW_HEIGHT / 1.618,
+      // height: BANNER_VIEW_HEIGHT / 1.618,
       opacity: this.state.scrollY.interpolate({
         inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2],
         outputRange: [1, 0],
@@ -239,7 +244,11 @@ class Building extends Component {
       <View style={styles.screenContainer}>
         <SafeAreaView style={styles.container}>
           {loading && <Loading center />}
-          <NavBar maskStyle={navBarAnimated} renderTitle={this.renderTitle} />
+          <NavBar
+            maskStyle={navBarAnimated}
+            renderTitle={this.renderTitle}
+            onPressChat={this.handlePressChat}
+          />
           <SkeletonLoading loading={skeletonLoading} style={styles.skeleton}>
             {!!building && (
               <HeaderStore
@@ -250,9 +259,9 @@ class Building extends Component {
                   height: BANNER_ABSOLUTE_HEIGHT,
                   ...animated
                 }}
+                hideChat
                 infoContainerStyle={infoContainerStyle}
                 imageBgStyle={imageBgStyle}
-                onPressChat={this.handlePressChat}
                 title={building.name}
                 subTitle={building.address}
                 unreadChat={unreadChat}
@@ -330,6 +339,7 @@ class Building extends Component {
                   onPressNews={this.handlePressNews}
                   onPressStore={this.handlePressStore}
                   onPressRoom={this.handlePressRoom}
+                  onPressPromotion={this.handlePressPromotion}
                 />
               )}
             </ScrollView>

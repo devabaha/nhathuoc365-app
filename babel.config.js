@@ -10,7 +10,9 @@ module.exports = {
           'app-util': './src/util',
           'app-store': './src/store',
           'app-config': './src/config',
-          'app-packages': './src/packages'
+          'app-packages': './src/packages',
+          'app-components': './src/components',
+          'app-containers': './src/containers'
         }
       }
     ]

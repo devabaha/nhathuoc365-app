@@ -128,6 +128,7 @@ class HeaderStore extends Component {
             <Animated.View
               style={[styles.headerInfo, this.props.infoContainerStyle]}
             >
+              {this.props.extraTitle}
               <View style={styles.headerInfoWrapper}>
                 <View style={styles.left}>
                   <TouchableWithoutFeedback
@@ -263,15 +264,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     position: 'absolute',
     alignSelf: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'flex-end',
-    paddingBottom: 50
+    paddingBottom: '10%'
   },
   headerInfoWrapper: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1
+    alignItems: 'center'
+    // flex: 1
   },
   left: {
     flex: 1,

@@ -144,8 +144,15 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import Building, { ListBuilding } from './containers/Building';
 import Room from './containers/Room';
-import BillPayment from './containers/BillPayment';
+import Requests, {
+  RequestDetail,
+  RequestCreation
+} from './containers/Requests';
+import Bills from './containers/Bills';
 import SupplierStore from './components/stores/SupplierStore';
+import { default as BillsPaymentMethod } from './containers/Bills/Payment/Method/Method';
+import Members from './containers/Members';
+import MemberModal from './containers/Members/MemberModal';
 
 /**
  * Not allow font scaling
@@ -698,12 +705,67 @@ class RootRouter extends Component {
                   back={appConfig.device.isIOS}
                 />
 
-                {/* ================ BILL PAYMENT ================ */}
-                <Stack key={appConfig.routes.billPayment}>
+                {/* ================ BILLS ================ */}
+                <Stack key={appConfig.routes.bills}>
                   <Scene
-                    key={`${appConfig.routes.billPayment}_1`}
-                    component={BillPayment}
-                    title={t('screen.billPayment.mainTitle')}
+                    key={`${appConfig.routes.bills}_1`}
+                    component={Bills}
+                    title={t('screen.bills.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BILLS PAYMENT METHOD ================ */}
+                <Stack key={appConfig.routes.billsPaymentMethod}>
+                  <Scene
+                    key={`${appConfig.routes.billsPaymentMethod}_1`}
+                    component={BillsPaymentMethod}
+                    title={t('screen.bills.paymentTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUESTS ================ */}
+                <Stack key={appConfig.routes.requests}>
+                  <Scene
+                    key={`${appConfig.routes.requests}_1`}
+                    component={Requests}
+                    title={t('screen.requests.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST CREATION================ */}
+                <Stack key={appConfig.routes.requestCreation}>
+                  <Scene
+                    key={`${appConfig.routes.requestCreation}_1`}
+                    component={RequestCreation}
+                    title={t('screen.requests.creationTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ REQUEST DETAIL ================ */}
+                <Stack key={appConfig.routes.requestDetail}>
+                  <Scene
+                    key={`${appConfig.routes.requestDetail}_1`}
+                    component={RequestDetail}
+                    // title={t('screen.requests.detailTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MEMBERS ================ */}
+                <Stack key={appConfig.routes.members}>
+                  <Scene
+                    key={`${appConfig.routes.members}_1`}
+                    component={Members}
+                    title={t('screen.members.mainTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -1436,6 +1498,12 @@ class RootRouter extends Component {
 
               {/* ================ MODAL RATE APP ================ */}
               <Stack key={appConfig.routes.modalRateApp} component={RateApp} />
+
+              {/* ================ MODAL MEMBER ================ */}
+              <Stack
+                key={appConfig.routes.memberModal}
+                component={MemberModal}
+              />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}

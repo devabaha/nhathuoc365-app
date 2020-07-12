@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 
 import OneSignal from 'react-native-onesignal';
 
@@ -450,7 +450,6 @@ class Home extends Component {
         onPressNewItem={this.handlePressNewItem}
         onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
-        product_
         groups={this.state.product_groups}
       />
     );

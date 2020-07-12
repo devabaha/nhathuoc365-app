@@ -53,7 +53,13 @@ const MAX_PIN = 9;
 const defaultListener = () => {};
 class TickidChat extends Component {
   static propTypes = {
+    listHeaderComponent: PropTypes.node,
+    listFooterComponent: PropTypes.node,
+    renderEmpty: PropTypes.any,
     galleryVisible: PropTypes.bool,
+    renderScrollComponent: PropTypes.any,
+    onListScroll: PropTypes.func,
+    onListLayout: PropTypes.func,
     setHeader: PropTypes.func,
     expandedGallery: PropTypes.func,
     expandingGallery: PropTypes.func,
@@ -67,6 +73,8 @@ class TickidChat extends Component {
     onUploadedImage: PropTypes.func,
     onScrollOffsetTop: PropTypes.func,
     containerStyle: ViewPropTypes.style,
+    listContainerStyle: ViewPropTypes.style,
+    listContentContainerStyle: ViewPropTypes.style,
     durationShowGallery: PropTypes.number,
     bottomOffsetGallery: PropTypes.number,
     scrollOffsetTop: PropTypes.number,
@@ -79,10 +87,18 @@ class TickidChat extends Component {
     pinListNotify: PropTypes.object,
     giftedChatProps: PropTypes.any,
     defaultStatusBarColor: PropTypes.string,
+    placeholder: PropTypes.string,
     extraData: PropTypes.any
   };
 
   static defaultProps = {
+    listFooterComponent: null,
+    listHeaderComponent: null,
+    renderEmpty: null,
+    galleryVisible: true,
+    onListScroll: defaultListener,
+    onListLayout: defaultListener,
+    renderScrollComponent: null,
     setHeader: defaultListener,
     expandedGallery: defaultListener,
     expandingGallery: defaultListener,
@@ -96,6 +112,8 @@ class TickidChat extends Component {
     onScrollOffsetTop: defaultListener,
     refGiftedChat: defaultListener,
     containerStyle: {},
+    listContainerStyle: {},
+    listContentContainerStyle: {},
     durationShowGallery: DURATION_SHOW_GALLERY,
     bottomOffsetGallery: BOTTOM_OFFSET_GALLERY,
     animatedTypeComposerBtn: ANIMATED_TYPE_COMPOSER_BTN,
@@ -105,7 +123,8 @@ class TickidChat extends Component {
     pinList: [],
     pinNotify: 0,
     pinListNotify: {},
-    extraData: null
+    extraData: null,
+    placeholder: 'Nhập nội dung chat...'
   };
 
   state = {
@@ -193,7 +212,10 @@ class TickidChat extends Component {
       nextProps.uploadURL !== this.props.uploadURL ||
       nextProps.giftedChatProps !== this.props.giftedChatProps ||
       nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor ||
-      nextProps.extraData !== this.props.extraData
+      nextProps.extraData !== this.props.extraData ||
+      nextProps.listContainerStyle !== this.props.listContainerStyle ||
+      nextProps.listContentContainerStyle !==
+        this.props.listContentContainerStyle
     ) {
       return true;
     }
@@ -727,7 +749,7 @@ class TickidChat extends Component {
         {...props}
         editable={this.state.editable}
         onTyping={this.onTyping}
-        placeholder="Nhập nội dung chat..."
+        placeholder={this.props.placeholder}
         value={this.state.text}
       />
     );
@@ -812,99 +834,105 @@ class TickidChat extends Component {
             flexDirection: 'row'
           }}
         >
-          {/* <Animated.View
-            style={[
-              styles.center,
-              styles.sendBtn,
-              {
-                opacity: this.state.animatedBtnSendValue.interpolate({
-                  inputRange: [0, BTN_IMAGE_WIDTH],
-                  outputRange: [1, 0]
-                }),
-                transform: [
-                  {
-                    scale: this.state.animatedBtnSendValue.interpolate({
-                      inputRange: [0, BTN_IMAGE_WIDTH],
-                      outputRange: [1, 2]
-                    })
-                  }
-                ]
-              }
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.PIN)}
-              hitSlop={HIT_SLOP}
-              style={[styles.fullCenter, { flex: 1 }]}
-            >
-              <IconAntDesign
-                size={23}
-                name="paperclip"
-                color={
-                  this.state.selectedType === COMPONENT_TYPE.PIN
-                    ? config.focusColor
-                    : config.blurColor
+          {this.props.pinListVisible && (
+            <Animated.View
+              style={[
+                styles.center,
+                styles.sendBtn,
+                {
+                  opacity: this.state.animatedBtnSendValue.interpolate({
+                    inputRange: [0, BTN_IMAGE_WIDTH],
+                    outputRange: [1, 0]
+                  }),
+                  transform: [
+                    {
+                      scale: this.state.animatedBtnSendValue.interpolate({
+                        inputRange: [0, BTN_IMAGE_WIDTH],
+                        outputRange: [1, 2]
+                      })
+                    }
+                  ]
                 }
-              />
-              <Animated.View
-                style={[
-                  styles.badge,
-                  {
-                    opacity: this.state.animatedNotification.interpolate({
-                      inputRange: [0, 0.1, 1],
-                      outputRange: [0, 1, 1]
-                    }),
-                    transform: [{ scale: this.state.animatedNotification }]
-                  }
-                ]}
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() =>
+                  this.handlePressComposerButton(COMPONENT_TYPE.PIN)
+                }
+                hitSlop={HIT_SLOP}
+                style={[styles.fullCenter, { flex: 1 }]}
               >
-                <Text style={styles.badgeText}>
-                  {this.props.pinNotify > MAX_PIN
-                    ? `${MAX_PIN}+`
-                    : this.props.pinNotify}
-                </Text>
-              </Animated.View>
-            </TouchableOpacity>
-          </Animated.View> */}
-
-          <Animated.View
-            style={[
-              styles.center,
-              styles.sendBtn,
-              {
-                opacity: this.state.animatedBtnSendValue.interpolate({
-                  inputRange: [0, BTN_IMAGE_WIDTH],
-                  outputRange: [1, 0]
-                }),
-                transform: [
-                  {
-                    scale: this.state.animatedBtnSendValue.interpolate({
-                      inputRange: [0, BTN_IMAGE_WIDTH],
-                      outputRange: [1, 2]
-                    })
+                <IconAntDesign
+                  size={23}
+                  name="paperclip"
+                  color={
+                    this.state.selectedType === COMPONENT_TYPE.PIN
+                      ? config.focusColor
+                      : config.blurColor
                   }
-                ]
-              }
-            ]}
-          >
-            <TouchableOpacity
-              hitSlop={HIT_SLOP}
-              onPress={() =>
-                this.handlePressComposerButton(COMPONENT_TYPE.GALLERY)
-              }
-              style={[styles.fullCenter]}
-            >
-              <IconAntDesign
-                size={25}
-                name="picture"
-                color={
-                  this.state.selectedType === COMPONENT_TYPE.GALLERY
-                    ? config.focusColor
-                    : config.blurColor
+                />
+                <Animated.View
+                  style={[
+                    styles.badge,
+                    {
+                      opacity: this.state.animatedNotification.interpolate({
+                        inputRange: [0, 0.1, 1],
+                        outputRange: [0, 1, 1]
+                      }),
+                      transform: [{ scale: this.state.animatedNotification }]
+                    }
+                  ]}
+                >
+                  <Text style={styles.badgeText}>
+                    {this.props.pinNotify > MAX_PIN
+                      ? `${MAX_PIN}+`
+                      : this.props.pinNotify}
+                  </Text>
+                </Animated.View>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
+          {this.props.galleryVisible && (
+            <Animated.View
+              style={[
+                styles.center,
+                styles.sendBtn,
+                {
+                  opacity: this.state.animatedBtnSendValue.interpolate({
+                    inputRange: [0, BTN_IMAGE_WIDTH],
+                    outputRange: [1, 0]
+                  }),
+                  transform: [
+                    {
+                      scale: this.state.animatedBtnSendValue.interpolate({
+                        inputRange: [0, BTN_IMAGE_WIDTH],
+                        outputRange: [1, 2]
+                      })
+                    }
+                  ]
                 }
-              />
-            </TouchableOpacity>
-          </Animated.View>
+              ]}
+            >
+              <TouchableOpacity
+                hitSlop={HIT_SLOP}
+                onPress={() =>
+                  this.handlePressComposerButton(COMPONENT_TYPE.GALLERY)
+                }
+                style={[styles.fullCenter]}
+              >
+                <IconAntDesign
+                  size={25}
+                  name="picture"
+                  color={
+                    this.state.selectedType === COMPONENT_TYPE.GALLERY
+                      ? config.focusColor
+                      : config.blurColor
+                  }
+                />
+              </TouchableOpacity>
+            </Animated.View>
+          )}
         </View>
       </View>
     );
@@ -1015,9 +1043,11 @@ class TickidChat extends Component {
           onPressCamera={this.openCamera}
           onPressLibrary={this.openLibrary}
         />
-        {!!this.props.messages && this.props.messages.length === 0 && (
-          <EmptyChat onPress={this.onListViewPress} />
-        )}
+        {!!this.props.messages &&
+          this.props.messages.length === 0 &&
+          (this.props.renderEmpty || (
+            <EmptyChat onPress={this.onListViewPress} />
+          ))}
         <View style={{ flex: 1 }} onLayout={this.handleContainerLayout}>
           <TouchableWithoutFeedback
             style={styles.touchWrapper}
@@ -1072,9 +1102,20 @@ class TickidChat extends Component {
                 // alwaysShowSend={true}
                 isKeyboardInternallyHandled={!isIos}
                 listViewProps={{
-                  contentContainerStyle: styles.giftedChatContainer,
-                  style: [styles.flex, extraChatViewStyle]
-                  // ListEmptyComponent: EmptyChat
+                  contentContainerStyle: [
+                    styles.giftedChatContainer,
+                    this.props.listContentContainerStyle
+                  ],
+                  style: [
+                    styles.flex,
+                    this.props.listContainerStyle,
+                    extraChatViewStyle
+                  ],
+                  ListHeaderComponent: this.props.listHeaderComponent,
+                  ListFooterComponent: this.props.listFooterComponent,
+                  renderScrollComponent: this.props.renderScrollComponent,
+                  // onScroll: this.props.onListScroll,
+                  onLayout: this.props.onListLayout
                 }}
                 scrollToBottom
                 scrollToBottomComponent={this.renderScrollBottomComponent}
