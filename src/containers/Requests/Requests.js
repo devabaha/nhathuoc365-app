@@ -79,7 +79,7 @@ class Requests extends Component {
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
-            requests: response.data.requests.filter(re => re.id >= 179)
+            requests: response.data.requests
           });
         } else {
           flashShowMessage({
@@ -87,8 +87,6 @@ class Requests extends Component {
             message: response.message || t('api.error.message')
           });
         }
-      } else {
-        throw Error(response);
       }
     } catch (error) {
       console.log('get_requests', error);

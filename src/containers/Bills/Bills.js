@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { StyleSheet, SafeAreaView, View, Text } from 'react-native';
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import { StyleSheet, SafeAreaView, Text } from 'react-native';
+import { TabView, TabBar } from 'react-native-tab-view';
 import appConfig from 'app-config';
 import { BillsTab, ReceiptsTab } from './Tabs';
 import { Actions } from 'react-native-router-flux';

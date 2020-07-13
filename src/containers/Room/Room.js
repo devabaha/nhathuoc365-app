@@ -111,8 +111,6 @@ class Room extends Component {
                 message: errMess
               });
         }
-      } else {
-        throw Error(response);
       }
     } catch (err) {
       console.log(api, err);
@@ -219,8 +217,6 @@ class Room extends Component {
                 message: errMess
               });
         }
-      } else {
-        throw Error(response);
       }
     } catch (err) {
       console.log('upload_temp_image_room', err);

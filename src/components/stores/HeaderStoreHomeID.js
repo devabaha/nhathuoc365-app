@@ -19,7 +19,7 @@ const AnimatedImageBackground = Animated.createAnimatedComponent(
 const UNDERLAYCOLOR = 'rgba(0,0,0,.6)';
 const defaultListener = () => {};
 
-class HeaderStore extends Component {
+class HeaderStoreHomeID extends Component {
   static propTypes = {
     hideOrders: PropTypes.bool,
     hideChat: PropTypes.bool,
@@ -315,4 +315,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation('stores')(HeaderStore);
+export default withTranslation('stores')(HeaderStoreHomeID);

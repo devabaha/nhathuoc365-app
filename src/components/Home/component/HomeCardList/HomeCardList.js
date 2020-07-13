@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 
 function HomeCardList({ horizontal = true, ...props }) {
   const { t } = useTranslation('home');
   return (
-    <View style={[styles.container, props.containerStyle]}>
+    <View
+      onLayout={props.onLayout}
+      style={[styles.container, props.containerStyle]}
+    >
       {!!props.title && (
         <View style={[styles.content, props.headerStyle]}>
           <Text style={styles.title}>{props.title}</Text>
@@ -25,7 +28,7 @@ function HomeCardList({ horizontal = true, ...props }) {
         </View>
       )}
 
-      <FlatList
+      <Animated.FlatList
         horizontal={horizontal}
         data={props.data}
         showsHorizontalScrollIndicator={false}

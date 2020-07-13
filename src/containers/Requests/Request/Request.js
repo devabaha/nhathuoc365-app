@@ -101,7 +101,8 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 12,
     textAlign: 'right',
-    color: '#666'
+    color: '#666',
+    marginTop: 10
   },
   statusContainer: {
     borderTopRightRadius: 4,

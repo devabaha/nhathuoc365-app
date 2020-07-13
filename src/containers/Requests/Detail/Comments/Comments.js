@@ -33,6 +33,7 @@ class Comments extends Component {
 
   get giftedChatProps() {
     this.giftedChatExtraProps.user = { _id: this.props.user._id };
+    this.giftedChatExtraProps.renderAvatar = null;
 
     return this.giftedChatExtraProps;
   }
@@ -54,13 +55,15 @@ class Comments extends Component {
     return false;
   }
 
-  componentDidMount() {
-    setTimeout(() => (this.stopTracking = true), 800);
-  }
+  componentDidMount() {}
 
   componentWillUnmount() {
     this.unmounted = true;
   }
+
+  handleFinishLayout = () => {
+    this.stopTracking = true;
+  };
 
   handleHeaderLayout = e => {
     if (!this.stopTracking) {
@@ -68,6 +71,12 @@ class Comments extends Component {
       this.setState({
         headerHeight: height
       });
+    }
+  };
+
+  handleForceCloseKeyboard = () => {
+    if (this.refTickidChat) {
+      this.refTickidChat.collapseComposer();
     }
   };
 
@@ -86,9 +95,11 @@ class Comments extends Component {
 
     return this.props.headerData ? (
       <DetailCard
+        onFinishLayout={this.handleFinishLayout}
         onContainerLayout={this.handleHeaderLayout}
         containerStyle={[styles.header, animatedHeaderStyle]}
         request={this.props.headerData}
+        forceCloseKeyboard={this.handleForceCloseKeyboard}
         onPressLayout={() => {
           if (this.refTickidChat) {
             this.refTickidChat.onListViewPress();
@@ -169,7 +180,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   header: {
-    backgroundColor: '#fff',
     position: 'absolute',
     width: '100%',
     zIndex: 1,

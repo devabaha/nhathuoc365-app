@@ -1,10 +1,5 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Animated,
-  TouchableWithoutFeedback
-} from 'react-native';
+import { StyleSheet, View, Animated, Keyboard } from 'react-native';
 
 import Reanimated, { Easing } from 'react-native-reanimated';
 
@@ -20,10 +15,22 @@ const COLLAPSE_MESSAGE = 'Thu gọn';
 class Card extends Component {
   state = {
     isExpanded: false,
+    isKeyboardOpening: false,
     animatedArrow: new Animated.Value(0),
     animatedAreaHeight: new Reanimated.Value(0),
+    animatedVisible: new Animated.Value(0),
     heightCollapsable: undefined
   };
+
+  componentDidMount() {
+    Keyboard.addListener('keyboardDidShow', this.handleShowKeyboard);
+    Keyboard.addListener('keyboardDidHide', this.handleHideKeyboard);
+  }
+
+  componentWillUnmount() {
+    Keyboard.removeListener('keyboardDidShow', this.handleShowKeyboard);
+    Keyboard.removeListener('keyboardDidHide', this.handleHideKeyboard);
+  }
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.isExpanded !== this.state.isExpanded) {
@@ -52,27 +59,68 @@ class Card extends Component {
     }
 
     if (nextState !== this.state) {
-      console.log('render card state');
       return true;
     }
 
-    if (nextProps.request !== this.props.request) {
+    if (
+      nextProps.request !== this.props.request ||
+      nextProps.containerStyle !== this.props.containerStyle
+    ) {
       return true;
     }
 
     return false;
   }
 
+  handleShowKeyboard = e => {
+    const state = { ...this.state };
+    state.isKeyboardOpening = true;
+    this.blurCard(0.5);
+    if (this.state.isExpanded) {
+      state.isExpanded = false;
+    }
+    this.setState(state);
+  };
+
+  handleHideKeyboard = e => {
+    if (this.state.isKeyboardOpening) {
+      this.setState({ isKeyboardOpening: false });
+      this.blurCard(1);
+    }
+  };
+
+  blurCard(value) {
+    Animated.timing(this.state.animatedVisible, {
+      toValue: value,
+      duration: 200,
+      useNativeDriver: true
+    }).start();
+  }
+
   onTogglePress = () => {
+    if (this.state.isKeyboardOpening && !this.state.isExpanded) {
+      this.props.forceCloseKeyboard();
+    }
     this.setState({ isExpanded: !this.state.isExpanded });
   };
 
   handleLayoutAnimatedArea = e => {
     if (this.state.heightCollapsable === undefined) {
+      this.props.onFinishLayout();
       const { height } = e.nativeEvent.layout;
-      this.setState({
-        heightCollapsable: height
-      });
+      this.setState(
+        {
+          heightCollapsable: height
+        },
+        () => {
+          Animated.timing(this.state.animatedVisible, {
+            toValue: 1,
+            duration: 200,
+            delay: 100,
+            useNativeDriver: true
+          }).start();
+        }
+      );
     }
   };
 
@@ -92,7 +140,7 @@ class Card extends Component {
 
     const showUpStyle = {
       position: this.state.heightCollapsable ? 'relative' : 'absolute',
-      opacity: this.state.heightCollapsable ? 1 : 0
+      opacity: this.state.animatedVisible
     };
     const animatedIconStyle = {
       transform: [
@@ -105,57 +153,64 @@ class Card extends Component {
       ]
     };
 
-    const animatedHeight = {
+    const animatedHeight = this.state.heightCollapsable && {
       overflow: 'hidden',
       height: this.state.animatedAreaHeight.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, this.state.heightCollapsable || 0]
+        outputRange: [0, this.state.heightCollapsable]
       }),
       opacity: this.state.animatedAreaHeight
     };
-    console.log('render card');
-    return (
-      <Animated.View
-        onLayout={this.props.onContainerLayout}
-        style={this.props.containerStyle}
-      >
-        <TouchableWithoutFeedback onPress={this.props.onPressLayout}>
-          <View style={[styles.container, showUpStyle]}>
-            <Header title={title} subTitle={department} />
 
-            <Row
-              label="Trạng thái"
-              value={status}
-              valueStyle={{ backgroundColor: color, padding: 7 }}
-            />
-            <Reanimated.View
-              onLayout={this.handleLayoutAnimatedArea}
-              style={animatedHeight}
+    return (
+      <>
+        <Animated.View
+          onLayout={this.props.onContainerLayout}
+          style={[showUpStyle, this.props.containerStyle]}
+          pointerEvents="box-none"
+        >
+          <View pointerEvents="box-none" style={[styles.container]}>
+            <View
+              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}
             >
-              <Row label="Thời gian yêu cầu" value={created} />
+              <Header title={title} subTitle={department} />
+
               <Row
-                isColumn
-                label="Nội dung"
-                labelStyle={{ marginBottom: 10 }}
-                value={content}
-                extraComponent={<Images images={images} />}
+                label="Trạng thái"
+                value={status}
+                valueStyle={{ backgroundColor: color, padding: 7 }}
               />
-            </Reanimated.View>
-            <Row
-              disabled={false}
-              isColumn
-              valueComponent={
-                <Toggle
-                  value={toggleValue}
-                  animatedIconStyle={animatedIconStyle}
+              <Reanimated.View
+                onLayout={this.handleLayoutAnimatedArea}
+                style={animatedHeight}
+              >
+                <Row label="Thời gian yêu cầu" value={created} />
+                <Row
+                  isColumn
+                  label="Nội dung"
+                  labelStyle={{ marginBottom: 10 }}
+                  value={content}
+                  extraComponent={<Images images={images} />}
                 />
-              }
-              onPressValue={this.onTogglePress}
-              valueStyle={styles.imagesValue}
-            />
+              </Reanimated.View>
+            </View>
+            <View pointerEvents="box-none">
+              <Row
+                disabled={false}
+                isColumn
+                valueComponent={
+                  <Toggle
+                    value={toggleValue}
+                    animatedIconStyle={animatedIconStyle}
+                  />
+                }
+                onPressValue={this.onTogglePress}
+                valueStyle={styles.imagesValue}
+              />
+            </View>
           </View>
-        </TouchableWithoutFeedback>
-      </Animated.View>
+        </Animated.View>
+      </>
     );
   }
 }
@@ -164,7 +219,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginBottom: 15,
     ...elevationShadowStyle(7)
   },
   imagesValue: {

@@ -62,8 +62,6 @@ class Detail extends Component {
             message: response.message || t('api.error.message')
           });
         }
-      } else {
-        throw Error(response);
       }
     } catch (error) {
       console.log('get_request', error);
@@ -82,13 +80,6 @@ class Detail extends Component {
 
   normalizeComments(comments) {
     return comments.map((comment, index) => {
-      const [date = '', hour = ''] = comment.create.split(' ');
-      const message = {
-        createdAt: comment.create,
-        day: date.trim(),
-        hour: hour.trim(),
-        text: comment.content
-      };
       const chatFormat = {
         _id: new Date().getTime() + '',
         createdAt: comment.create,
@@ -99,7 +90,6 @@ class Detail extends Component {
       };
       return {
         ...comment,
-        message,
         ...chatFormat
       };
     });
@@ -108,18 +98,14 @@ class Detail extends Component {
   handlePressSend = callBack => {
     const text = this.state.text.trim();
     if (text) {
-      const date = new Date();
-      const day =
-        date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear();
-      const hour = date.getHours() + ':' + date.getMinutes();
       const comments = [...this.state.comments];
-      const message = {
-        createdAt: day + ' ' + hour,
-        day: day.trim(),
-        hour: hour.trim(),
-        text
+      const chatFormat = {
+        _id: new Date().getTime() + '',
+        createdAt: new Date(),
+        text,
+        user: this.user
       };
-      comments.push({ message });
+      comments.push(chatFormat);
       this.setState({ comments }, () => {
         callBack();
       });
@@ -155,8 +141,6 @@ class Detail extends Component {
             message: response.message || t('api.error.message')
           });
         }
-      } else {
-        throw Error(response);
       }
     } catch (error) {
       console.log('send_request', error);

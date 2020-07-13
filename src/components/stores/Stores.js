@@ -290,8 +290,10 @@ class Stores extends Component {
   }
 
   handlePressOrders = async () => {
-    Actions.push(appConfig.routes.ordersTab, {
-      title: 'Đơn hàng của tôi'
+    Actions.store_orders({
+      store_id: store.store_id,
+      title: store.store_data.name,
+      tel: store.store_data.tel
     });
   };
 

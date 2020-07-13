@@ -230,7 +230,8 @@ class Home extends Component {
             )}
             {this.hasSites && (
               <HomeCardList
-                onShowAll={this.props.onShowAllSites}
+                onShowAll={null}
+                // onShowAll={this.props.onShowAllSites}
                 data={this.props.sites}
                 title={
                   this.props.title_sites

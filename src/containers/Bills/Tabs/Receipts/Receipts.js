@@ -53,8 +53,6 @@ class Receipts extends Component {
             message: response.message || t('api.error.message')
           });
         }
-      } else {
-        throw Error(response);
       }
     } catch (error) {
       console.log('get_receipts', error);

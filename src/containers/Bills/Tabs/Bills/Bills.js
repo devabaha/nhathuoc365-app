@@ -3,7 +3,8 @@ import {
   SafeAreaView,
   StyleSheet,
   RefreshControl,
-  ScrollView
+  Easing,
+  Animated
 } from 'react-native';
 import Loading from 'app-components/Loading';
 import NoResult from 'app-components/NoResult';
@@ -16,8 +17,13 @@ class Bills extends Component {
     refreshing: false,
     billsComplete: null,
     billsInComplete: null,
+    quickPaymentHeight: undefined,
+    inCompleteBillsScrollY: 0,
+    scrollViewHeight: 0,
     titleBillsComplete: '',
-    titleBillsInComplete: ''
+    titleBillsInComplete: '',
+    scrollY: new Animated.Value(0),
+    animatedQuickPaymentTranslateY: new Animated.Value(0)
   };
   unmounted = false;
 
@@ -26,7 +32,7 @@ class Bills extends Component {
       !!this.state.billsComplete &&
       !!this.state.billsInComplete &&
       this.state.billsInComplete.length === 0 &&
-      this.state.billsComplete === 0
+      this.state.billsComplete.length === 0
     );
   }
 
@@ -34,6 +40,10 @@ class Bills extends Component {
     return (
       !!this.state.billsInComplete && this.state.billsInComplete.length !== 0
     );
+  }
+
+  get hasCompleteBills() {
+    return !!this.state.billsComplete && this.state.billsComplete.length !== 0;
   }
 
   get totalBillIncompletePrice() {
@@ -62,6 +72,7 @@ class Bills extends Component {
         this.props.siteId,
         this.props.roomId
       );
+      console.log(response);
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
@@ -76,8 +87,6 @@ class Bills extends Component {
             message: response.message || t('api.error.message')
           });
         }
-      } else {
-        throw Error(response);
       }
     } catch (err) {
       console.log('get_all_bills', err);
@@ -99,6 +108,34 @@ class Bills extends Component {
     this.getBills();
   };
 
+  handleLayoutInCompleteBills = e => {
+    const { y, height } = e.nativeEvent.layout;
+    this.setState({
+      inCompleteBillsScrollY: height
+    });
+  };
+
+  handleLayoutScrollView = e => {
+    this.setState({
+      scrollViewHeight: e.nativeEvent.layout.height
+    });
+  };
+
+  handleLayoutQuickPayment = e => {
+    const { height } = e.nativeEvent.layout;
+    this.setState({
+      quickPaymentHeight: height
+    });
+    this.state.animatedQuickPaymentTranslateY.setValue(height);
+    Animated.timing(this.state.animatedQuickPaymentTranslateY, {
+      toValue: 0,
+      duration: 300,
+      easing: Easing.quad,
+      useNativeDriver: true,
+      delay: 100
+    }).start();
+  };
+
   renderBill(index, bill) {
     return (
       <Bill
@@ -113,13 +150,86 @@ class Bills extends Component {
     );
   }
 
+  renderQuickPayment = () => {
+    return (
+      <QuickPayment
+        prefix={'Tổng tiền:   '}
+        price={this.totalBillIncompletePrice}
+        onPress={this.props.onPayBill}
+      />
+    );
+  };
+
+  renderQuickPaymentShortcut() {
+    const positionY =
+      this.state.inCompleteBillsScrollY - this.state.scrollViewHeight;
+    const extraStyle =
+      this.state.inCompleteBillsScrollY &&
+      this.state.scrollViewHeight &&
+      positionY > 0
+        ? {
+            position: 'absolute',
+            bottom: 15,
+            width: '100%',
+            zIndex: 1,
+            opacity: this.state.scrollY.interpolate({
+              inputRange: [0, positionY - 1, positionY],
+              outputRange: [1, 1, 0]
+            }),
+            transform: [
+              {
+                translateY: this.state.scrollY.interpolate({
+                  inputRange: [positionY, positionY + 1],
+                  outputRange: [0, this.state.quickPaymentHeight || 0],
+                  extrapolateLeft: 'clamp'
+                })
+              }
+            ]
+          }
+        : {
+            position: 'absolute',
+            opacity: 0
+          };
+
+    const wrapperStyle = {
+      transform: [
+        {
+          translateY: this.state.animatedQuickPaymentTranslateY
+        }
+      ]
+    };
+    return (
+      <Animated.View
+        onLayout={this.handleLayoutQuickPayment}
+        style={extraStyle}
+      >
+        <Animated.View style={wrapperStyle}>
+          {this.renderQuickPayment()}
+        </Animated.View>
+      </Animated.View>
+    );
+  }
+
   render() {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loading center />}
-        <ScrollView
-          style={styles.scrollView}
+        {!!this.hasIncompleteBills && this.renderQuickPaymentShortcut()}
+        <Animated.ScrollView
           contentContainerStyle={styles.contentScrollView}
+          onLayout={this.handleLayoutScrollView}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: this.state.scrollY
+                  }
+                }
+              }
+            ],
+            { useNativeDriver: true }
+          )}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -128,31 +238,26 @@ class Bills extends Component {
           }
         >
           {!!this.isBillsEmpty ? (
-            <NoResult />
+            <NoResult message="Danh sách hóa đơn đang trống" />
           ) : (
             <>
-              {!!this.state.billsInComplete && (
+              {!!this.hasIncompleteBills && (
                 <HomeCardList
-                  flatListProps={{ scrollEnabled: false }}
+                  onLayout={this.handleLayoutInCompleteBills}
+                  flatListProps={{
+                    scrollEnabled: false
+                  }}
                   title={`${this.state.titleBillsInComplete} (${this.state.billsInComplete.length})`}
                   headerStyle={styles.billsHeader}
                   onShowAll={false}
                   horizontal={false}
                   data={this.state.billsInComplete}
-                  extraComponent={
-                    this.hasIncompleteBills ? (
-                      <QuickPayment
-                        prefix={'Tổng tiền:   '}
-                        price={this.totalBillIncompletePrice}
-                        onPress={this.props.onPayBill}
-                      />
-                    ) : null
-                  }
+                  extraComponent={this.renderQuickPayment()}
                 >
                   {({ item, index }) => this.renderBill(index, item)}
                 </HomeCardList>
               )}
-              {!!this.state.billsComplete && (
+              {!!this.hasCompleteBills && (
                 <HomeCardList
                   flatListProps={{ scrollEnabled: false }}
                   title={`${this.state.titleBillsComplete} (${this.state.billsComplete.length})`}
@@ -166,16 +271,15 @@ class Bills extends Component {
               )}
             </>
           )}
-        </ScrollView>
+        </Animated.ScrollView>
       </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    width: '100%',
-    height: '100%'
+  container: {
+    flex: 1
   },
   contentScrollView: {
     flexGrow: 1

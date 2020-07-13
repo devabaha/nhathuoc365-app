@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   avatar: {
     width: 80,
     height: 80,
-    borderRadius: 4,
+    borderRadius: 10,
     borderBottomRightRadius: 0,
     overflow: 'hidden'
   },

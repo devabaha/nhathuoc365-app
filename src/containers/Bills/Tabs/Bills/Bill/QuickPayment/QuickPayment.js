@@ -6,7 +6,10 @@ class QuickPayment extends Component {
   state = {};
   render() {
     return (
-      <View style={[styles.container, this.props.containerStyle]}>
+      <View
+        onLayout={this.props.onLayout}
+        style={[styles.container, this.props.containerStyle]}
+      >
         <Text>
           {this.props.prefix}
           <Text style={styles.price}>{this.props.price}</Text>
@@ -29,8 +32,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: '#fafafa',
-    marginBottom: -16,
     marginTop: 15,
+    marginBottom: -16,
     borderTopColor: '#ddd',
     borderTopWidth: 1
   },
