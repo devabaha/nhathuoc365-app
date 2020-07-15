@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { View, StyleSheet, TouchableHighlight, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
+import { NotiBadge } from '../../../components/Badges';
 
 class Actions extends PureComponent {
   state = {};
@@ -17,7 +18,8 @@ class Actions extends PureComponent {
         icon: 'mail',
         title: 'Phản ánh',
         onPress: this.props.onRequestPress,
-        style: styles.middle
+        style: styles.middle,
+        notify: this.props.requestNoti
       },
       {
         icon: 'users',
@@ -28,7 +30,8 @@ class Actions extends PureComponent {
       {
         icon: 'message-circle',
         title: 'Chat BQL',
-        onPress: this.props.onChatPress
+        onPress: this.props.onChatPress,
+        notify: this.props.chatNoti
       }
     ];
 
@@ -39,10 +42,11 @@ class Actions extends PureComponent {
         onPress={action.onPress}
         style={[styles.action, action.style]}
       >
-        <>
+        <View style={styles.actionWrapper}>
           <Icon name={action.icon} style={styles.icon} />
           <Text style={styles.actionTitle}>{action.title}</Text>
-        </>
+          {!!action.notify && <NotiBadge label={action.notify} />}
+        </View>
       </TouchableHighlight>
     ));
   }
@@ -70,6 +74,10 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     paddingVertical: 12,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  actionWrapper: {
     justifyContent: 'center',
     alignItems: 'center'
   },

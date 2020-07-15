@@ -66,7 +66,7 @@ class Comments extends Component {
   };
 
   handleHeaderLayout = e => {
-    if (!this.stopTracking) {
+    if (!this.stopTracking || !this.state.headerHeight) {
       const height = e.nativeEvent.layout.height;
       this.setState({
         headerHeight: height
@@ -81,7 +81,7 @@ class Comments extends Component {
   };
 
   renderHeader = () => {
-    const animatedHeaderStyle = this.state.headerHeight && {
+    const animatedHeaderStyle = {
       transform: [
         {
           translateY: this.state.animatedListScroll.interpolate({

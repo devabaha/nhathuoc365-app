@@ -470,7 +470,8 @@ class Room extends Component {
       title_requests,
       loading
     } = this.state;
-    const unreadChat = room ? normalizeNotify(room.unreadChat) : '';
+    const unreadChat = room ? normalizeNotify(room.notify_chat) : '';
+    const unreadRequest = room ? normalizeNotify(room.notify_request) : '';
     const skeletonLoading = loading && !!!room;
 
     const animated = {
@@ -559,6 +560,7 @@ class Room extends Component {
                     onMemberPress={this.goToMembers}
                     onChatPress={this.goToChat}
                     chatNoti={unreadChat}
+                    requestNoti={unreadRequest}
                   />
                 }
               />

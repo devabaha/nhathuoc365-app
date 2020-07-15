@@ -1053,13 +1053,13 @@
     react-native-button "^2.4.0"
 
 "@tickid/tickid-rada@^2.1.6":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.2.0.tgz#dc268163c0057bd67da8f98be0088eaae268093c"
-  integrity sha512-8B4Np9Q83yM+7YfEDYLpLGCHijabJeuMgvcdzpkCFTFRIgoKaxQVvkYFA/OqIU9+RuIZfrsRU9aBhZpI/mwA2A==
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.2.2.tgz#1a156500f5738ba9edc4e4bc3d73fb7450f4b656"
+  integrity sha512-9tISrFJakymi+fcbIj5/no9RDBno3/NgG55ozgQp95BoNFSgOqrxhnrN1HJ+UF1gL5ZgxjRKKWB7EMXAJ0UDsQ==
   dependencies:
     prop-types "^15.7.2"
-    react-native-render-html "^4.1.2"
     react-native-tab-view "^2.10.0"
+    react-native-webview "9.1.1"
 
 "@tickid/tickid-rn-loading@^1.0.0":
   version "1.0.1"

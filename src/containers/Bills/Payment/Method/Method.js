@@ -36,7 +36,6 @@ class Method extends Component {
           const state = { ...this.state };
           state.paymentMethod = response.data || [];
           const selectedMethod = response.data.find(item => item.default_flag);
-          console.log(response.data, selectedMethod);
           if (selectedMethod) {
             state.selectedMethod = selectedMethod;
           }

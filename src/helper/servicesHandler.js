@@ -6,10 +6,24 @@ import store from 'app-store';
 
 export const servicesHandler = (service, t, callback = () => {}) => {
   switch (service.type) {
-    case 'beehome_service':
+    case SERVICES_TYPE.RADA_SERVICE_DETAIL:
+      const radaService = {
+        id: service.id,
+        name: service.name
+      };
+      handleServicePress(radaService, t);
+      break;
+    case SERVICES_TYPE.RADA_LIST_SERVICE:
+      const radaCategory = {
+        id: service.id,
+        name: service.name
+      };
+      handleCategoryPress(radaCategory, t);
+      break;
+    case SERVICES_TYPE.BEEHOME_SERVICE_TYPE:
       Actions.jump(appConfig.routes.listBuilding);
       break;
-    case 'external_link':
+    case SERVICES_TYPE.EXTERNAL_LINK:
       Linking.openURL(service.link).catch(err => {
         console.log('open_external_link', err);
         Alert.alert(t('common:link.error.message'));
@@ -69,9 +83,12 @@ export const servicesHandler = (service, t, callback = () => {}) => {
       Actions.push('tickidRada', {
         service_type: service.type,
         service_id: service.id,
-        title: 'Dịch vụ Rada',
+        title: t('common:screen.rada.mainTitle'),
         onPressItem: item => {
-          this.handleCategoryPress(item);
+          handleCategoryPress(item, t);
+        },
+        onPressOrderHistory: item => {
+          handleOrderHistoryPress(item, t);
         }
       });
       break;
@@ -200,6 +217,8 @@ export const SERVICES_TYPE = {
   UP_TO_PHONE: 'up_to_phone',
   LIST_VOUCHER: 'list_voucher',
   RADA_SERVICE: 'rada_service',
+  RADA_SERVICE_DETAIL: 'rada_service_detail',
+  RADA_LIST_SERVICE: 'rada_list_service',
   _30DAY_SERVICE: '30day_service',
   MY_ADDRESS: 'my_address',
   NEWS: 'news',
@@ -209,5 +228,154 @@ export const SERVICES_TYPE = {
   OPEN_SHOP: 'open_shop',
   BEEHOME_SERVICE_TYPE: 'beehome_service',
   CALL: 'call',
-  NEWS_CATEGORY: 'news_category'
+  NEWS_CATEGORY: 'news_category',
+  EXTERNAL_LINK: 'external_link'
 };
+
+// RADA List Service --start
+function handleCategoryPress(item, t) {
+  Actions.push(appConfig.routes.tickidRadaListService, {
+    category: item,
+    title: item.name,
+    onPressItem: item => {
+      handleServicePress(item, t);
+    },
+    onPressCartImage: item => {
+      handleCartImagePress(item, t);
+    }
+  });
+}
+
+function handleOrderHistoryPress(item, t) {
+  Actions.push('tickidRadaOrderHistory', {
+    category: item,
+    title: t('common:screen.radaOrderHistory.mainTitle')
+  });
+}
+
+function handleServicePress(item, t) {
+  Actions.push(appConfig.routes.tickidRadaServiceDetail, {
+    service: item,
+    title: item.name,
+    onPressOrder: item => {
+      handleOrderButtonPress(item, t);
+    }
+  });
+}
+
+function handleCartImagePress(item, t) {
+  handleOrderButtonPress(item, t);
+}
+
+function handleOrderButtonPress(service, t) {
+  Actions.push(appConfig.routes.tickidRadaBooking, {
+    service: service,
+    title: service.name || '',
+    customerName: '',
+    phone: '',
+    address: '',
+    onBookingSuccess: response => {
+      handleBookingSuccess(response, t);
+    },
+    onBookingFail: err => {
+      handleBookingFail(err, t);
+    },
+    onCallWebHookSuccess: response => {
+      handleCallWebHookSuccess(response, t);
+    },
+    onCallWebHookFail: err => {
+      handleCallWebHookFail(err, t);
+    }
+  });
+}
+
+function handleBookingSuccess(response, t) {
+  return Alert.alert(
+    t('booking.success.title'),
+    t('booking.success.message'),
+    [{ text: t('booking.success.accept'), onPress: () => Actions.homeTab() }],
+    { cancelable: false }
+  );
+}
+
+function handleBookingFail(err, t) {
+  if (err && err.data) {
+    if (err.data.customer.length != 0) {
+      return Alert.alert(
+        t('booking.fail.title'),
+        err.data.customer[0],
+        [{ text: t('booking.fail.accept') }],
+        { cancelable: false }
+      );
+    } else {
+      return Alert.alert(
+        t('booking.fail.title'),
+        err.message || '',
+        [{ text: t('booking.fail.accept') }],
+        { cancelable: false }
+      );
+    }
+  } else if (err.message) {
+    return Alert.alert(
+      t('booking.fail.title'),
+      err.message,
+      [{ text: t('booking.fail.accept') }],
+      {
+        cancelable: false
+      }
+    );
+  } else {
+    return Alert.alert(
+      t('booking.fail.title'),
+      t('booking.fail.message'),
+      [{ text: t('booking.fail.accept') }],
+      { cancelable: false }
+    );
+  }
+}
+
+function handleCallWebHookSuccess(response, t) {
+  return Alert.alert(
+    t('web.success.title'),
+    t('web.success.message'),
+    [{ text: t('web.success.accept'), onPress: () => Actions.homeTab() }],
+    { cancelable: false }
+  );
+}
+
+function handleCallWebHookFail(err, t) {
+  if (err && err.data) {
+    if (err.data.customer.length != 0) {
+      return Alert.alert(
+        t('web.fail.title'),
+        err.data.customer[0],
+        [{ text: t('web.fail.accept') }],
+        { cancelable: false }
+      );
+    } else {
+      return Alert.alert(
+        t('web.fail.title'),
+        err.message || '',
+        [{ text: t('web.fail.accept') }],
+        { cancelable: false }
+      );
+    }
+  } else if (err.message) {
+    return Alert.alert(
+      t('web.fail.title'),
+      err.message,
+      [{ text: t('web.fail.accept') }],
+      {
+        cancelable: false
+      }
+    );
+  } else {
+    return Alert.alert(
+      t('web.fail.title'),
+      t('web.fail.message'),
+      [{ text: t('web.fail.accept') }],
+      { cancelable: false }
+    );
+  }
+}
+// RADA list service --end
