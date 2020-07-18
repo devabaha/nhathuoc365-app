@@ -53,6 +53,7 @@ const MAX_PIN = 9;
 const defaultListener = () => {};
 class TickidChat extends Component {
   static propTypes = {
+    useModalGallery: PropTypes.bool,
     listHeaderComponent: PropTypes.node,
     listFooterComponent: PropTypes.node,
     renderEmpty: PropTypes.any,
@@ -92,6 +93,7 @@ class TickidChat extends Component {
   };
 
   static defaultProps = {
+    useModalGallery: !isIos,
     listFooterComponent: null,
     listHeaderComponent: null,
     renderEmpty: null,
@@ -368,28 +370,33 @@ class TickidChat extends Component {
   };
 
   openLibrary = () => {
-    this.closeModal();
     ImageCropPicker.openPicker({
       includeExif: true,
       multiple: true,
       includeBase64: true,
       mediaType: 'photo'
-    }).then(images => {
-      const selectedImages = this.nomarlizeImages(images);
-      console.log(selectedImages);
-      this.setState(
-        {
-          selectedImages
-        },
-        () => {
-          this.handleSendMessage();
-        }
-      );
-    });
+    })
+      .then(images => {
+        console.log(images);
+        this.closeModal();
+        const selectedImages = this.nomarlizeImages(images);
+        console.log(selectedImages);
+        this.setState(
+          {
+            selectedImages
+          },
+          () => {
+            this.handleSendMessage();
+          }
+        );
+      })
+      .catch(err => {
+        console.log('open_picker_err', err);
+        this.closeModal();
+      });
   };
 
   openCamera = () => {
-    this.closeModal();
     const options = {
       rotation: 360,
       storageOptions: {
@@ -400,10 +407,13 @@ class TickidChat extends Component {
     ImagePicker.launchCamera(options, response => {
       if (response.error) {
         console.log(response.error);
+        this.closeModal();
       } else if (response.didCancel) {
         console.log(response);
+        this.closeModal();
       } else {
         // console.log(response);
+        this.closeModal();
         response.path = response.uri;
         const selectedImages = this.nomarlizeImages([response]);
         console.log(selectedImages);
@@ -443,6 +453,7 @@ class TickidChat extends Component {
       }
       if (img.data) {
         img.uploadPath = img.data;
+        img.isBase64 = true;
       }
       return img;
     });
@@ -470,7 +481,7 @@ class TickidChat extends Component {
       case COMPONENT_TYPE.GALLERY.id:
         Keyboard.dismiss();
         this.handlePressGallery(state);
-        if (!isIos) {
+        if (this.props.useModalGallery) {
           state.selectedType = COMPONENT_TYPE._NONE;
           state.showToolBar = false;
           state.editable = false;
@@ -893,7 +904,7 @@ class TickidChat extends Component {
             </Animated.View>
           )}
 
-          {this.props.galleryVisible && (
+          {(this.props.galleryVisible || this.props.useModalGallery) && (
             <Animated.View
               style={[
                 styles.center,

@@ -6,9 +6,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 class Request extends Component {
   state = {};
   render() {
-    const extraStyle = this.props.color && {
+    const extraStyle = this.props.bgColor && {
       borderLeftWidth: 7,
-      borderLeftColor: this.props.color
+      borderLeftColor: this.props.bgColor
+    };
+    const statusStyle = this.props.textColor && {
+      color: this.props.textColor
     };
     return (
       <Button
@@ -33,10 +36,12 @@ class Request extends Component {
                 <View
                   style={[
                     styles.statusContainer,
-                    { backgroundColor: this.props.color || 'transparent' }
+                    { backgroundColor: this.props.bgColor || 'transparent' }
                   ]}
                 >
-                  <Text style={[styles.status]}>{this.props.status}</Text>
+                  <Text style={[styles.status, statusStyle]}>
+                    {this.props.status}
+                  </Text>
                 </View>
               )}
             </View>

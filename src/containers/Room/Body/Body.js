@@ -82,7 +82,8 @@ class Body extends Component {
                 subTitle={item.content}
                 description={item.created}
                 status={item.status}
-                color={item.color}
+                bgColor={item.color}
+                textColor={item.textColor}
                 onPress={() => this.props.onPressRequest(item)}
                 last={this.props.requests.length - 1 === index}
               />

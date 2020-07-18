@@ -125,7 +125,8 @@ class Requests extends Component {
         title={request.title}
         subTitle={request.content}
         status={request.status}
-        color={request.color}
+        bgColor={request.color}
+        textColor={request.textColor}
         description={request.created}
         onPress={() => this.handlePressRequest(request)}
       />

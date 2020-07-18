@@ -6,7 +6,6 @@ import Loading from '../../../components/Loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Comments from './Comments';
 
-export const DEFAULT_USER_ID = 'home_id_user';
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
 
@@ -18,19 +17,9 @@ class Detail extends Component {
     comments: [],
     title_request: '',
     text: '',
-    user: this.user
+    user: {}
   };
   unmounted = false;
-
-  get user() {
-    let _id = DEFAULT_USER_ID;
-
-    return {
-      _id
-      //   name: store.store_data.name,
-      //   avatar: store.store_data.logo_url
-    };
-  }
 
   componentDidMount() {
     this.getRequest();
@@ -48,13 +37,13 @@ class Detail extends Component {
         this.props.roomId,
         this.props.requestId
       );
-      console.log(response);
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
             request: response.data.request,
-            comments: this.normalizeComments(response.data.comments),
-            title_request: response.data.title_request
+            comments: response.data.comments,
+            title_request: response.data.title_request,
+            user: response.data.main_user
           });
         } else {
           flashShowMessage({
@@ -78,23 +67,6 @@ class Detail extends Component {
     }
   };
 
-  normalizeComments(comments) {
-    return comments.map((comment, index) => {
-      const chatFormat = {
-        _id: new Date().getTime() + '',
-        createdAt: comment.create,
-        text: comment.content,
-        user: {
-          _id: comment.user_name || DEFAULT_USER_ID
-        }
-      };
-      return {
-        ...comment,
-        ...chatFormat
-      };
-    });
-  }
-
   handlePressSend = callBack => {
     const text = this.state.text.trim();
     if (text) {
@@ -103,25 +75,23 @@ class Detail extends Component {
         _id: new Date().getTime() + '',
         createdAt: new Date(),
         text,
-        user: this.user
+        user: this.state.user
       };
       comments.push(chatFormat);
       this.setState({ comments }, () => {
         callBack();
       });
 
-      this.sendRequest(text);
+      this.sendRequest({ content: text });
       this.setState({
         text: ''
       });
     }
   };
 
-  sendRequest = async text => {
+  sendRequest = async message => {
     const { t } = this.props;
-    const data = {
-      content: text
-    };
+    const data = message;
     try {
       const response = await APIHandler.site_comment_request_room(
         this.props.siteId,
@@ -129,11 +99,10 @@ class Detail extends Component {
         this.props.requestId,
         data
       );
-      console.log(response);
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
-            comments: this.normalizeComments(response.data.comments)
+            comments: response.data.comments
           });
         } else {
           flashShowMessage({
@@ -203,14 +172,14 @@ class Detail extends Component {
       () => {},
       true
     );
-    this.sendRequest(message);
+    this.sendRequest({ content: message });
   };
 
   getFormattedMessage(type, message) {
     const formattedMessage = {
       _id: String(new Date().getTime()),
       createdAt: new Date(),
-      user: { ...this.state.user }
+      user: this.state.user
     };
     switch (type) {
       case MESSAGE_TYPE_TEXT:
@@ -244,6 +213,8 @@ class Detail extends Component {
           }
           comments={this.state.comments}
           onPressSend={this.handlePressSend}
+          onSendTempImage={this.handleSendImage}
+          onSendImage={this.sendRequest}
           onSendText={this.handleSendText}
           text={this.state.text}
           user={this.state.user}

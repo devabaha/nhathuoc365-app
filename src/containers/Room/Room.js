@@ -353,7 +353,7 @@ class Room extends Component {
 
   handlePressBanner = () => {
     this.openCamera('banner', 'bannerLoading', {
-      title: 'Chọn ảnh cover từ',
+      title: 'Thay đổi ảnh nền từ',
       cancelButtonTitle: 'Hủy',
       takePhotoButtonTitle: 'Camera',
       chooseFromLibraryButtonTitle: 'Mở thư viện'
@@ -362,7 +362,7 @@ class Room extends Component {
 
   handlePressAvatar = () => {
     this.openCamera('avatar', 'avatarLoading', {
-      title: 'Chọn ảnh đại diện từ',
+      title: 'Thay đổi ảnh đại diện từ',
       cancelButtonTitle: 'Hủy',
       takePhotoButtonTitle: 'Camera',
       chooseFromLibraryButtonTitle: 'Mở thư viện'

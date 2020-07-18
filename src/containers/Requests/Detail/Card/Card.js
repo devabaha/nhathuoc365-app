@@ -75,7 +75,7 @@ class Card extends Component {
   handleShowKeyboard = e => {
     const state = { ...this.state };
     state.isKeyboardOpening = true;
-    this.blurCard(0.5);
+    // this.blurCard(0.5);
     if (this.state.isExpanded) {
       state.isExpanded = false;
     }
@@ -85,7 +85,7 @@ class Card extends Component {
   handleHideKeyboard = e => {
     if (this.state.isKeyboardOpening) {
       this.setState({ isKeyboardOpening: false });
-      this.blurCard(1);
+      // this.blurCard(1);
     }
   };
 
@@ -132,7 +132,8 @@ class Card extends Component {
       created,
       content,
       images,
-      color
+      color: bgColor,
+      textColor
     } = this.props.request;
     const toggleValue = this.state.isExpanded
       ? COLLAPSE_MESSAGE
@@ -162,6 +163,14 @@ class Card extends Component {
       opacity: this.state.animatedAreaHeight
     };
 
+    const statusStyle = [
+      {
+        backgroundColor: bgColor,
+        padding: 7
+      },
+      textColor && { color: textColor }
+    ];
+
     return (
       <>
         <Animated.View
@@ -175,11 +184,7 @@ class Card extends Component {
             >
               <Header title={title} subTitle={department} />
 
-              <Row
-                label="Trạng thái"
-                value={status}
-                valueStyle={{ backgroundColor: color, padding: 7 }}
-              />
+              <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
               <Reanimated.View
                 onLayout={this.handleLayoutAnimatedArea}
                 style={animatedHeight}

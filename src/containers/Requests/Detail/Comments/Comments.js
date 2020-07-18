@@ -133,6 +133,7 @@ class Comments extends Component {
             refListMessages={inst => (this.refListMessages = inst)}
             // GiftedChat props
             giftedChatProps={this.giftedChatProps}
+            useModalGallery
             messages={comments}
             onSendText={this.props.onSendText}
             renderScrollComponent={props => (
@@ -156,10 +157,9 @@ class Comments extends Component {
             // Gallery props
             galleryVisible={false}
             uploadURL={UPLOAD_URL}
-            onSendImage={this.handleSendImage}
-            onUploadedImage={
-              response => {}
-              //   this._onSend({ image: response.data.name })
+            onSendImage={this.props.onSendTempImage}
+            onUploadedImage={response =>
+              this.props.onSendImage({ image: response.data.name })
             }
             // Pin props
             pinListVisible={false}

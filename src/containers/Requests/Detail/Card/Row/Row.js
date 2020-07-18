@@ -35,7 +35,6 @@ const Row = ({
 
 const styles = StyleSheet.create({
   rowItem: {
-    // flexGrow: 1,
     borderTopWidth: 0.5,
     borderTopColor: '#ddd',
     padding: 15

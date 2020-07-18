@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import { View, Image as RNImage, StyleSheet } from 'react-native';
 import Lightbox from 'react-native-lightbox';
 import appConfig from 'app-config';
 
@@ -9,33 +9,18 @@ const WIDTH_IMAGES = appConfig.device.width - 60;
 const IMAGE_SIZE = (WIDTH_IMAGES - IMAGE_SPACE * (MAX_IMAGES - 1)) / MAX_IMAGES;
 
 const Images = ({ images = [] }) => {
-  const [isOpenLightBox, setIsOpenLightBox] = useState(false);
-  function handleOpen() {
-    setIsOpenLightBox(true);
-  }
-
-  function handleWillClose() {
-    setIsOpenLightBox(false);
-  }
   return (
     <View style={styles.images}>
       {images.map((image, index) => (
-        <View
+        <Image
+          key={index}
+          uri={image.url_image}
           style={[
-            styles.imageContainer,
             index !== images.length - 1 && {
               marginRight: IMAGE_SPACE
             }
           ]}
-        >
-          <Lightbox key={index} onOpen={handleOpen} willClose={handleWillClose}>
-            <Image
-              source={{ uri: image.url_image }}
-              style={styles.image}
-              resizeMode={isOpenLightBox ? 'contain' : 'cover'}
-            />
-          </Lightbox>
-        </View>
+        />
       ))}
     </View>
   );
@@ -43,7 +28,6 @@ const Images = ({ images = [] }) => {
 
 const styles = StyleSheet.create({
   images: {
-    flex: 1,
     flexDirection: 'row',
     marginTop: 15
   },
@@ -62,3 +46,30 @@ const styles = StyleSheet.create({
 });
 
 export default Images;
+
+const Image = ({ uri, style }) => {
+  const [isOpenLightBox, setIsOpenLightBox] = useState(false);
+  function handleOpen() {
+    setIsOpenLightBox(true);
+  }
+
+  function handleWillClose() {
+    setIsOpenLightBox(false);
+  }
+
+  return (
+    <View style={[styles.imageContainer, style]}>
+      <Lightbox
+        springConfig={{ overshootClamping: true }}
+        onOpen={handleOpen}
+        willClose={handleWillClose}
+      >
+        <RNImage
+          source={{ uri }}
+          style={styles.image}
+          resizeMode={isOpenLightBox ? 'contain' : 'cover'}
+        />
+      </Lightbox>
+    </View>
+  );
+};

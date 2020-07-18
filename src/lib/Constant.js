@@ -5,7 +5,7 @@ import { Platform, Dimensions, PixelRatio } from 'react-native';
 // API URL
 // global.MY_FOOD_API = 'https://abaha.net/';
 // global.MY_FOOD_API = 'http://localhost:8000/';
-global.MY_FOOD_API = 'https://apiapp.abaha.vn/';
+global.MY_FOOD_API = 'https://apiapp.homeid.asia/';
 // global.PHOTO_MY_FOOD_API = 'http://mshop.com/';
 global.PHOTO_MY_FOOD_API = 'https://img.abaha.vn/';
 global.HOTLINE = '+8492 721 7227';
@@ -14,7 +14,7 @@ global.HOTLINE = '+8492 721 7227';
 global.CPDK = {
   ios: 'axkVLCubH_6cgpM0cMeFemCdpc2ZQqIwwGGn9r',
   android: 'Dw5jnQkhORiM9eSdO4loklLjSBayy8k3_CR12J',
-  version: 1 // homeid - version 1
+  version: 3 // homeid - version 3
 };
 
 // width, height of screen
