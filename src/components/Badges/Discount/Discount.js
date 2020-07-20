@@ -4,18 +4,23 @@ import appConfig from 'app-config';
 
 class Discount extends Component {
   static defaultProps = {
-    leftSpace: 0,
+    left: true,
+    right: false,
+    tailSpace: 0,
     containerStyle: {}
   };
   state = {};
   render() {
     const extraStyle = {
-      left: -this.props.leftSpace
+      [this.props.right ? 'right' : 'left']: -this.props.tailSpace
     };
     const tailStyle = {
-      borderTopWidth: this.props.leftSpace,
-      borderLeftWidth: this.props.leftSpace,
-      bottom: -this.props.leftSpace
+      borderTopWidth: this.props.tailSpace,
+      [this.props.right ? 'borderRightWidth' : 'borderLeftWidth']: this.props
+        .tailSpace,
+      borderRightColor: 'transparent',
+      bottom: -this.props.tailSpace,
+      [this.props.right ? 'right' : 'left']: 0
     };
 
     return (
@@ -52,7 +57,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     width: 0,
     height: 0,
-    left: 0,
     borderTopColor: LightenColor(appConfig.colors.primary, -30),
     borderLeftColor: 'transparent'
   }

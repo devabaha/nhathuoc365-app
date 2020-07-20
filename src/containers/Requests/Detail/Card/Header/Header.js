@@ -1,10 +1,19 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import appConfig from 'app-config';
 
-const Header = ({ title, subTitle }) => {
+import appConfig from 'app-config';
+import { DiscountBadge } from '../../../../../components/Badges';
+
+const Header = ({ title, subTitle, type }) => {
   return (
     <View style={styles.header}>
+      {!!type && (
+        <DiscountBadge
+          containerStyle={styles.badge}
+          tailSpace={4}
+          label={type}
+        />
+      )}
       <Text style={styles.title}>{title}</Text>
       {!!subTitle && <Text style={styles.subTitle}>{subTitle}</Text>}
     </View>
@@ -14,6 +23,10 @@ const Header = ({ title, subTitle }) => {
 const styles = StyleSheet.create({
   header: {
     padding: 20
+  },
+  badge: {
+    position: 'absolute',
+    top: -2
   },
   title: {
     textAlign: 'center',

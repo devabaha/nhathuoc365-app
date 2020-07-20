@@ -108,7 +108,7 @@ class Comments extends Component {
       />
     ) : (
       !this.props.loading && (
-        <Text styles={styles.emptyText}>Không có thông tin phản ánh</Text>
+        <Text style={styles.emptyText}>Không có thông tin phản ánh</Text>
       )
     );
   };
@@ -185,6 +185,15 @@ const styles = StyleSheet.create({
     zIndex: 1,
     padding: 15,
     paddingBottom: 0
+  },
+  emptyText: {
+    textAlign: 'center',
+    width: '100%',
+    position: 'absolute',
+    zIndex: 1,
+    padding: 15,
+    color: '#666',
+    fontStyle: 'italic'
   }
 });
 

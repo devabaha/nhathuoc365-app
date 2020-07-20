@@ -84,6 +84,7 @@ class Body extends Component {
                 status={item.status}
                 bgColor={item.color}
                 textColor={item.textColor}
+                type={item.request_type}
                 onPress={() => this.props.onPressRequest(item)}
                 last={this.props.requests.length - 1 === index}
               />

@@ -132,6 +132,7 @@ class Card extends Component {
       created,
       content,
       images,
+      request_type,
       color: bgColor,
       textColor
     } = this.props.request;
@@ -183,7 +184,7 @@ class Card extends Component {
             <View
               pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}
             >
-              <Header title={title} subTitle={department} />
+              <Header type={request_type} title={title} subTitle={department} />
 
               <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
               <Reanimated.View
