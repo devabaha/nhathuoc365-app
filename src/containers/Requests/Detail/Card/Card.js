@@ -166,7 +166,8 @@ class Card extends Component {
     const statusStyle = [
       {
         backgroundColor: bgColor,
-        padding: 7
+        padding: 7,
+        color: '#fff'
       },
       textColor && { color: textColor }
     ];

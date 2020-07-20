@@ -119,7 +119,8 @@ const styles = StyleSheet.create({
     paddingLeft: 8
   },
   status: {
-    fontSize: 11
+    fontSize: 11,
+    color: '#fff'
   }
 });
 
