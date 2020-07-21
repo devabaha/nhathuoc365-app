@@ -214,7 +214,7 @@ class Home extends Component {
                     ? this.props.title_rooms
                     : 'Căn hộ của tôi'
                 }
-                extraComponent={!this.hasRooms && <NoRoom />}
+                extraComponent={this.props.rooms.length === 0 && <NoRoom />}
               >
                 {({ item, index }) => (
                   <HomeCardItem
