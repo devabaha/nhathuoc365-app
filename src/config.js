@@ -127,6 +127,7 @@ const config = Object.freeze({
     supplierStore: 'supplierStore',
     bills: 'bills',
     billsPaymentMethod: 'billsPaymentMethod',
+    billsPaymentList: 'billsPaymentList',
     requests: 'requests',
     requestDetail: 'requestDetail',
     requestCreation: 'requestCreation',

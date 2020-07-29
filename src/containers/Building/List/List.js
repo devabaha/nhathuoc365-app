@@ -7,6 +7,10 @@ import HomeCardList, {
 } from '../../../components/Home/component/HomeCardList';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
+import {
+  servicesHandler,
+  SERVICES_TYPE
+} from '../../../helper/servicesHandler';
 
 const IMAGE_HEIGHT = (appConfig.device.width - 32) / 2;
 
@@ -58,9 +62,11 @@ class List extends Component {
   };
 
   onPressBuilding(building) {
-    Actions.push(appConfig.routes.building, {
-      siteId: building.id
-    });
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_BUILDING,
+      id: building.id
+    };
+    servicesHandler(service);
   }
 
   onRefresh = () => {

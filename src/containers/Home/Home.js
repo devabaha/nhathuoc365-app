@@ -8,7 +8,7 @@ import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import HomeComponent from '../../components/Home';
 import { executeJobs } from '../../helper/jobsOnReset';
-import { servicesHandler } from '../../helper/servicesHandler';
+import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 
 class Home extends Component {
   constructor(props) {
@@ -329,15 +329,17 @@ class Home extends Component {
   };
 
   handlePressRoomItem = room => {
-    Actions.push(appConfig.routes.room, {
-      siteId: room.site_id,
-      roomId: room.id
-    });
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_ROOM,
+      room_id: room.id,
+      site_id: room.site_id
+    };
+    servicesHandler(service);
   };
 
   handlePressSiteItem = (store, callBack) => {
     servicesHandler(
-      { type: 'open_shop', siteId: store.id },
+      { type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id },
       this.props.t,
       callBack
     );

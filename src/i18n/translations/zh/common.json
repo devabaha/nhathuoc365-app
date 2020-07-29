@@ -118,7 +118,8 @@
     },
     "bills": {
       "mainTitle": "Danh sách hóa đơn",
-      "paymentTitle": "Thanh toán hóa đơn"
+      "paymentMethodTitle": "Phương thức thanh toán",
+      "paymentListTitle": "Thanh toán hóa đơn"
     },
     "requests": {
       "mainTitle": "Danh sách phản ánh",

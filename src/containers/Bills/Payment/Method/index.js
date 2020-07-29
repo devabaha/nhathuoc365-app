@@ -1,1 +1,1 @@
-export { default } from './PaymentMethod';
+export { default } from './Method';

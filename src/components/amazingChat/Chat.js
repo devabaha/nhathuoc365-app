@@ -7,6 +7,7 @@ import appConfig from 'app-config';
 import TickidChat from '../../packages/tickid-chat/container/TickidChat/TickidChat';
 import RightButtonCall from '../RightButtonCall';
 import { servicesHandler } from '../../helper/servicesHandler';
+import { languages } from '../../i18n/constants';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -56,6 +57,9 @@ class Chat extends Component {
 
   get giftedChatProps() {
     this.giftedChatExtraProps.user = { _id: this.state.user_id };
+    this.giftedChatExtraProps.locale =
+      languages[this.props.i18n.language].locale;
+
     return this.giftedChatExtraProps;
   }
 

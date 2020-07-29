@@ -139,9 +139,9 @@ class Bills extends Component {
   renderBill(index, bill) {
     return (
       <Bill
+        disabled
         index={index + 1}
         wrapperStyle={styles.billItemWrapper}
-        containerStyle={styles.billItemContainer}
         status={bill.status}
         title={bill.title}
         period={bill.payment_period}
@@ -291,9 +291,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 16,
     marginBottom: 15
-  },
-  billItemContainer: {
-    width: '100%'
   },
   billIndex: {
     fontSize: 13,

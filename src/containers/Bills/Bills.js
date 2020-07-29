@@ -18,7 +18,7 @@ const BILL_SCENCE = {
 
 class Bills extends Component {
   state = {
-    selectedTabIndex: 0
+    selectedTabIndex: this.props.index
   };
   unmounted = false;
 
@@ -34,8 +34,9 @@ class Bills extends Component {
   }
 
   handlePayBill = () => {
-    Actions.push(appConfig.routes.billsPaymentMethod, {
-      id: this.props.siteId
+    Actions.push(appConfig.routes.billsPaymentList, {
+      site_id: this.props.siteId,
+      room_id: this.props.roomId
     });
   };
 
@@ -117,3 +118,7 @@ const styles = StyleSheet.create({
 });
 
 export default Bills;
+
+Bills.defaultProps = {
+  index: 0
+};

@@ -129,6 +129,7 @@ class Requests extends Component {
         textColor={request.textColor}
         description={request.created}
         type={request.request_type}
+        noti={request.unread}
         onPress={() => this.handlePressRequest(request)}
       />
     );

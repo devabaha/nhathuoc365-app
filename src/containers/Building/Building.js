@@ -17,7 +17,7 @@ import Body from './Body';
 import SkeletonLoading from '../../components/SkeletonLoading';
 import BuildingSVG from '../../images/building.svg';
 import NoResult from '../../components/NoResult';
-import { servicesHandler } from '../../helper/servicesHandler';
+import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 
 const BANNER_ABSOLUTE_HEIGHT =
   appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
@@ -157,11 +157,13 @@ class Building extends Component {
   };
 
   handlePressRoom = room => {
-    Actions.push(appConfig.routes.room, {
-      roomId: room.id,
-      siteId: room.site_id,
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_ROOM,
+      room_id: room.id,
+      site_id: room.site_id,
       title: room.name
-    });
+    };
+    servicesHandler(service);
   };
 
   handlePressPromotion = promotion => {

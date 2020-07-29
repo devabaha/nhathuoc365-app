@@ -4,7 +4,10 @@ import HomeCardList, {
   HomeCardItem
 } from '../../../components/Home/component/HomeCardList';
 import Promotion from '../../../components/Home/component/Promotion';
-import { servicesHandler } from '../../../helper/servicesHandler';
+import {
+  servicesHandler,
+  SERVICES_TYPE
+} from '../../../helper/servicesHandler';
 
 class Body extends Component {
   state = {};
@@ -23,7 +26,11 @@ class Body extends Component {
   }
 
   handleSelfRequestStore(store, callBack) {
-    servicesHandler({ type: 'open_shop', siteId: store.id }, {}, callBack);
+    servicesHandler(
+      { type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id },
+      {},
+      callBack
+    );
   }
 
   render() {

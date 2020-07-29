@@ -4,6 +4,7 @@ import { StyleSheet, View, Animated, Text } from 'react-native';
 import appConfig from 'app-config';
 import TickidChat from '../../../../packages/tickid-chat';
 import { default as DetailCard } from '../Card';
+import { languages } from '../../../../i18n/constants';
 
 const UPLOAD_URL = APIHandler.url_user_upload_image();
 
@@ -33,6 +34,8 @@ class Comments extends Component {
 
   get giftedChatProps() {
     this.giftedChatExtraProps.user = { _id: this.props.user._id };
+    this.giftedChatExtraProps.locale =
+      languages[this.props.i18n.languages].locale;
     this.giftedChatExtraProps.renderAvatar = null;
 
     return this.giftedChatExtraProps;

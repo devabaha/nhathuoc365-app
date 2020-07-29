@@ -3,6 +3,7 @@ import Button from 'react-native-button';
 import { View, Text, StyleSheet } from 'react-native';
 import Svg, { Line } from 'react-native-svg';
 import appConfig from 'app-config';
+import { CheckBox } from 'react-native-elements';
 
 const BILL_STATUS = {
   INCOMPLETE: 'Chưa thanh toán',
@@ -11,7 +12,7 @@ const BILL_STATUS = {
 
 class Bill extends Component {
   static defaultProps = {
-    disabled: true
+    disabled: false
   };
 
   state = {};
@@ -43,6 +44,18 @@ class Bill extends Component {
           this.props.wrapperStyle
         ]}
       >
+        {!!this.props.checkable && (
+          <CheckBox
+            containerStyle={styles.checkBox}
+            title={<View />}
+            uncheckedIcon="square"
+            uncheckedColor="#fafafa"
+            checked={this.props.checked}
+            checkedIcon="check-square"
+            checkedColor={appConfig.colors.primary}
+            onPress={this.props.onCheck}
+          />
+        )}
         <View style={[styles.container, this.props.containerStyle]}>
           {!!this.props.title && (
             <View style={styles.titleContainer}>
@@ -94,8 +107,15 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 15,
-    width: 205,
+    width: '100%',
     flex: 1
+  },
+  checkBox: {
+    backgroundColor: 'transparent',
+    padding: 0,
+    marginRight: 5,
+    marginLeft: 15,
+    borderWidth: 0
   },
   mainTitle: {
     padding: 3,

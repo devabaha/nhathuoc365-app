@@ -5,7 +5,10 @@ import HomeCardList, {
 } from '../../../components/Home/component/HomeCardList';
 import { Request } from '../../Requests';
 import { Bill, QuickPayment } from '../../Bills';
-import { servicesHandler } from '../../../helper/servicesHandler';
+import {
+  servicesHandler,
+  SERVICES_TYPE
+} from '../../../helper/servicesHandler';
 
 class Body extends Component {
   state = {};
@@ -38,7 +41,11 @@ class Body extends Component {
   }
 
   handleSelfRequestStore(store, callBack) {
-    servicesHandler({ type: 'open_shop', siteId: store.id }, {}, callBack);
+    servicesHandler(
+      { type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id },
+      {},
+      callBack
+    );
   }
 
   render() {
@@ -59,6 +66,8 @@ class Body extends Component {
           >
             {({ item, index }) => (
               <Bill
+                disabled
+                containerStyle={styles.bill}
                 status={item.status}
                 title={item.title}
                 period={item.payment_period}
@@ -85,6 +94,7 @@ class Body extends Component {
                 bgColor={item.color}
                 textColor={item.textColor}
                 type={item.request_type}
+                noti={item.unread}
                 onPress={() => this.props.onPressRequest(item)}
                 last={this.props.requests.length - 1 === index}
               />
@@ -151,6 +161,9 @@ class Body extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#eee'
+  },
+  bill: {
+    width: 205
   }
 });
 

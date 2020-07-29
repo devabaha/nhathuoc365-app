@@ -19,7 +19,7 @@ import SkeletonLoading from '../../components/SkeletonLoading';
 import BuildingSVG from '../../images/building.svg';
 import NoResult from '../../components/NoResult';
 import { default as RoomActions } from './Actions';
-import { servicesHandler } from '../../helper/servicesHandler';
+import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 
@@ -284,34 +284,46 @@ class Room extends Component {
   }
 
   goToBills = () => {
-    Actions.push(appConfig.routes.bills, {
-      siteId: this.props.siteId,
-      roomId: this.state.room.id
-    });
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_LIST_BILL,
+      site_id: this.props.siteId,
+      room_id: this.state.room.id
+    };
+    servicesHandler(service);
   };
 
+  // handlePayBill = () => {
+  //   Actions.push(appConfig.routes.billsPaymentMethod, {
+  //     id: this.props.siteId
+  //   });
+  // };
   handlePayBill = () => {
-    Actions.push(appConfig.routes.billsPaymentMethod, {
-      id: this.props.siteId
+    Actions.push(appConfig.routes.billsPaymentList, {
+      site_id: this.props.siteId,
+      room_id: this.state.room.id
     });
   };
 
   handlePressBill = () => {};
 
   goToRequests = () => {
-    Actions.push(appConfig.routes.requests, {
-      siteId: this.props.siteId,
-      roomId: this.state.room.id
-    });
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_LIST_REQUEST,
+      site_id: this.props.siteId,
+      room_id: this.state.room.id
+    };
+    servicesHandler(service);
   };
 
   handlePressRequest = request => {
-    Actions.push(appConfig.routes.requestDetail, {
-      siteId: this.props.siteId,
-      roomId: this.props.roomId,
-      requestId: request.id,
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_REQUEST,
+      site_id: this.props.siteId,
+      room_id: this.props.roomId,
+      request_id: request.id,
       title: request.title || this.props.t('screen.requests.detailTitle')
-    });
+    };
+    servicesHandler(service);
   };
 
   goToChat = () => {
@@ -348,7 +360,10 @@ class Room extends Component {
   };
 
   handlePressStore = store => {
-    servicesHandler({ type: 'open_shop', siteId: store.id }, this.props.t);
+    servicesHandler(
+      { type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id },
+      this.props.t
+    );
   };
 
   handlePressBanner = () => {

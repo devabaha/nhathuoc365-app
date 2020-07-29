@@ -118,7 +118,8 @@
     },
     "bills": {
       "mainTitle": "Bill list",
-      "paymentTitle": "Bill payment"
+      "paymentMethodTitle": "Payment method",
+      "paymentListTitle": "Bill payment"
     },
     "requests": {
       "mainTitle": "Request list",

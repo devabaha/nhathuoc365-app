@@ -14,7 +14,7 @@ global.HOTLINE = '+8492 721 7227';
 global.CPDK = {
   ios: 'axkVLCubH_6cgpM0cMeFemCdpc2ZQqIwwGGn9r',
   android: 'Dw5jnQkhORiM9eSdO4loklLjSBayy8k3_CR12J',
-  version: 3 // homeid - version 3
+  version: 4 // homeid - version 4
 };
 
 // width, height of screen

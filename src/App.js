@@ -150,7 +150,10 @@ import Requests, {
 } from './containers/Requests';
 import Bills from './containers/Bills';
 import SupplierStore from './components/stores/SupplierStore';
-import { default as BillsPaymentMethod } from './containers/Bills/Payment/Method/Method';
+import {
+  BillsPaymentMethod,
+  BillsPaymentList
+} from './containers/Bills/Payment';
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
 
@@ -696,7 +699,7 @@ class RootRouter extends Component {
                   back={appConfig.device.isIOS}
                 />
 
-                {/* ================ BUILDING ================ */}
+                {/* ================ ROOM ================ */}
                 <Scene
                   navTransparent
                   key={appConfig.routes.room}
@@ -716,12 +719,23 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                {/* ================ BILLS PAYMENT LIST ================ */}
+                <Stack key={appConfig.routes.billsPaymentList}>
+                  <Scene
+                    key={`${appConfig.routes.billsPaymentList}_1`}
+                    component={BillsPaymentList}
+                    title={t('screen.bills.paymentListTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ BILLS PAYMENT METHOD ================ */}
                 <Stack key={appConfig.routes.billsPaymentMethod}>
                   <Scene
                     key={`${appConfig.routes.billsPaymentMethod}_1`}
                     component={BillsPaymentMethod}
-                    title={t('screen.bills.paymentTitle')}
+                    title={t('screen.bills.paymentMethodTitle')}
                     {...navBarConfig}
                     back
                   />

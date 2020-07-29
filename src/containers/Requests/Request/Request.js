@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Button from 'react-native-button';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { DiscountBadge } from '../../../components/Badges';
+import { DiscountBadge, NotiBadge } from '../../../components/Badges';
 
 class Request extends Component {
   state = {};
@@ -14,6 +14,7 @@ class Request extends Component {
     const statusStyle = this.props.textColor && {
       color: this.props.textColor
     };
+    const notiMess = this.props.noti ? normalizeNotify(this.props.noti) : '';
     return (
       <>
         <Button
@@ -51,6 +52,12 @@ class Request extends Component {
                   <Text numberOfLines={2} style={styles.title}>
                     {this.props.title}
                   </Text>
+                )}
+                {!!notiMess && (
+                  <NotiBadge
+                    label={notiMess}
+                    containerStyle={styles.notiMess}
+                  />
                 )}
               </View>
               {!!this.props.subTitle && (
@@ -131,6 +138,9 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 11,
     color: '#fff'
+  },
+  notiMess: {
+    right: -10
   }
 });
 

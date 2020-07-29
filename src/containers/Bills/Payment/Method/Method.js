@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import { View, ScrollView, SafeAreaView, StyleSheet, Text } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+
 import ModernList from 'app-packages/tickid-modern-list';
 import Loading from '@tickid/tickid-rn-loading';
 import PaymentRow from '../../../../components/payment/PaymentMethod/PaymentRow';
+import Button from '../../../../components/Button';
 
 const DEFAULT_OBJECT = { id: -1 };
 
@@ -78,6 +81,19 @@ class Method extends Component {
     // }
   };
 
+  handleConfirm = async () => {
+    const selectedMethod =
+      this.state.selectedMethod === DEFAULT_OBJECT
+        ? null
+        : this.state.selectedMethod;
+    const selectedBank =
+      this.state.selectedBank === DEFAULT_OBJECT
+        ? null
+        : this.state.selectedBank;
+    this.props.onConfirm(selectedMethod, selectedBank);
+    Actions.pop();
+  };
+
   renderPaymentMethod(item, index) {
     return (
       <PaymentRow
@@ -123,6 +139,12 @@ class Method extends Component {
             />
           </View>
         </ScrollView>
+
+        <Button
+          containerStyle={styles.confirmContainer}
+          title={t('confirm')}
+          onPress={this.handleConfirm}
+        />
       </SafeAreaView>
     );
   }

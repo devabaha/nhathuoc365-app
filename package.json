@@ -20,6 +20,7 @@
     "autobind-decorator": "^2.1.0",
     "axios": "^0.18.0",
     "color-interpolate": "^1.0.5",
+    "dayjs": "^1.8.30",
     "flubber": "^0.4.2",
     "formik": "^2.1.4",
     "i18next": "^19.3.2",
