@@ -801,7 +801,7 @@ class CommonAPIHandler extends BaseHandler {
    * Service
    */
   async service_detail(service_id) {
-    var api = url_for(API.SERVICE_DETAIL + '/' + service_type);
+    var api = url_for(API.SERVICE_DETAIL + '/' + service_id);
     return await this.getAPI(api);
   }
   /**

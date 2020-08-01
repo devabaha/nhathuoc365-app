@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   buttonWrapper: {
-    flex: 1
+    flex: 1,
+    maxWidth: '25%'
   },
   itemWrapper: {
     alignItems: 'center',

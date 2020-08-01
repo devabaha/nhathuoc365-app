@@ -16,8 +16,8 @@ export const getBase64Image = async path => {
     path = await RNFS.copyAssetsFileIOS(
       tempPath,
       dest,
-      500,
-      500,
+      0,
+      0,
       1.0,
       1.0,
       'contain'

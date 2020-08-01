@@ -101,16 +101,12 @@ class OpRegister extends Component {
                   Actions.reset(appConfig.routes.sceneWrapper);
                 }
               );
-              flashShowMessage({
-                message: response.message,
-                type: 'success'
-              });
-            } else {
-              flashShowMessage({
-                message: response.message,
-                type: 'danger'
-              });
             }
+
+            flashShowMessage({
+              message: response.message,
+              type: response.status == STATUS_SUCCESS ? 'success' : 'danger'
+            });
           }
         } catch (e) {
           this.setState({
