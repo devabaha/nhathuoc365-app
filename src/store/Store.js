@@ -382,10 +382,10 @@ class Store {
     }
   }
 
-  @observable tempBranchIOData = null;
+  @observable tempDeepLinkData = null;
 
-  @action setTempBranchIOSubcribeData(tempBranchIOData) {
-    this.tempBranchIOData = tempBranchIOData;
+  @action setTempDeepLinkData(tempDeepLinkData) {
+    this.tempDeepLinkData = tempDeepLinkData;
   }
 
   @observable isHomeLoaded = false;

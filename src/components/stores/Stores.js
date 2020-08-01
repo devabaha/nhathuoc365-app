@@ -430,7 +430,7 @@ class Stores extends Component {
 
         flashShowMessage({
           message: response.message,
-          type: 'info'
+          type: 'success'
         });
       }
 

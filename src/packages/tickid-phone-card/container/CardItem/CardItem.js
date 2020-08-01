@@ -127,7 +127,7 @@ class CardItem extends Component {
     const codeAndSeri = cardInfo.map(card => `${card[0]} ${card[1]}`);
     Clipboard.setString(codeAndSeri);
     showMessage({
-      type: 'info',
+      type: 'success',
       message: 'Đã sao chép mã thẻ và số seri'
     });
   };
@@ -136,7 +136,7 @@ class CardItem extends Component {
     this.hideCopyCardModal();
     Clipboard.setString(cardCode);
     showMessage({
-      type: 'info',
+      type: 'success',
       message: 'Đã sao chép mã thẻ'
     });
   };
@@ -145,7 +145,7 @@ class CardItem extends Component {
     this.hideCopyCardModal();
     Clipboard.setString(cardSeri);
     showMessage({
-      type: 'info',
+      type: 'success',
       message: 'Đã sao chép số seri'
     });
   };
@@ -154,7 +154,7 @@ class CardItem extends Component {
     this.hideCopyCardModal();
     Clipboard.setString(prepaySyntax);
     showMessage({
-      type: 'info',
+      type: 'success',
       message: 'Đã sao chép cú pháp nạp trả trước'
     });
   };
@@ -163,7 +163,7 @@ class CardItem extends Component {
     this.hideCopyCardModal();
     Clipboard.setString(postpaidSyntax);
     showMessage({
-      type: 'info',
+      type: 'success',
       message: 'Đã sao chép cú pháp nạp trả sau'
     });
   };

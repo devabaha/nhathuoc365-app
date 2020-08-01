@@ -136,7 +136,7 @@ import { arrayLanguages } from './i18n/constants';
 import ModalPicker from './components/ModalPicker';
 import ModalList from './components/ModalList';
 import PlacesAutoComplete from './containers/PlacesAutoComplete';
-import { servicesHandler } from './helper/servicesHandler';
+import { servicesHandler, SERVICES_TYPE } from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
@@ -323,14 +323,10 @@ class App extends Component {
       try {
         console.log('APP', params, this.props);
         if (params['+clicked_branch_link']) {
-          if (store.isHomeLoaded) {
+          if (store.isHomeLoaded || params.type === SERVICES_TYPE.AFFILIATE) {
             servicesHandler(params, t);
           } else {
-            if (params.type === 'affiliate') {
-              servicesHandler(params, t);
-            } else {
-              store.setTempBranchIOSubcribeData({ params, t });
-            }
+            store.setTempDeepLinkData({ params, t });
           }
         }
       } catch (err) {
@@ -340,6 +336,24 @@ class App extends Component {
     });
 
     store.branchIOSubcribe(branchIOSubcribe);
+  };
+
+  handleAddListenerOpenedOneSignal = () => {
+    OneSignal.addEventListener('opened', this.handleOpenningNotification);
+  };
+
+  handleRemoveListenerOpenedOneSignal = () => {
+    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
+  };
+
+  handleOpenningNotification = openResult => {
+    const { t } = this.props;
+    const params = openResult.notification.payload.additionalData;
+    if (store.isHomeLoaded) {
+      servicesHandler(params, t);
+    } else {
+      store.setTempDeepLinkData({ params, t });
+    }
   };
 
   localizeListener = () => {
@@ -453,12 +467,12 @@ class App extends Component {
     if (_.isObject(device)) {
       const push_token = device.pushToken;
       const player_id = device.userId;
-
       try {
         await APIHandler.add_push_token({
           push_token,
           player_id
         });
+        this.handleAddListenerOpenedOneSignal();
       } catch (error) {
         console.log(error);
       }

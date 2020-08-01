@@ -1,18 +1,14 @@
-'use strict';
+import { CommonAPI as API } from '../API';
+import BaseHandler from './BaseHandler';
 
-// import { StatusBar } from 'react-native';
-
-import API from './API';
-import axios from 'axios';
-import store from '../store/Store';
-
-var HTTP_SUCCESS = 200;
-const CancelToken = axios.CancelToken;
-
-class APIHandler {
-  getCancelInstance() {
-    return CancelToken.source();
-  }
+/**
+ * A handler for all common/old API handler existed in app.
+ * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
+ *
+ * @class
+ * @mixin
+ */
+class CommonAPIHandler extends BaseHandler {
   /**
    * Login khi mở app
    */
@@ -683,6 +679,14 @@ class APIHandler {
     return await this.getAPI(api);
   }
 
+  /**
+   * Lấy dữ liệu thông tin cửa hàng
+   */
+  async site_notify(store_id) {
+    var api = url_for(API.SITE_NOTIFY + '/' + store_id);
+    return await this.getAPI(api);
+  }
+
   async user_notify_chat() {
     var api = url_for(API.USER_NOTIFY_CHAT);
     return await this.getAPI(api);
@@ -751,7 +755,7 @@ class APIHandler {
    * Service
    */
   async service_detail(service_id) {
-    var api = url_for(API.SERVICE_DETAIL + '/' + service_type);
+    var api = url_for(API.SERVICE_DETAIL + '/' + service_id);
     return await this.getAPI(api);
   }
   /**
@@ -784,52 +788,6 @@ class APIHandler {
     var api = url_for(API.ADD_PAYMENT_METHOD + '/' + store_id + '/' + cart_id);
     return await this.postAPI(api, data);
   }
-
-  _networkIndicator(flag = true) {
-    if (isIOS) {
-      // StatusBar.setNetworkActivityIndicatorVisible(flag);
-    }
-  }
-
-  /**
-   * Gửi yêu cầu phương thức GET
-   */
-  async getAPI(api) {
-    this._networkIndicator();
-
-    // console.log(api);
-    var response = await axios(api);
-    return await this.processError(response);
-  }
-
-  /**
-   * Gửi yêu cầu phương thức POST
-   */
-  async postAPI(api, data) {
-    this._networkIndicator();
-
-    return axios
-      .post(api, encodeQueryData(data))
-      .then(response => this.processError(response))
-      .catch(err => err);
-  }
-
-  /**
-   * Xử lý ngoại lệ
-   */
-  async processError(response) {
-    this._networkIndicator(false);
-
-    if (response.status != HTTP_SUCCESS) {
-      throw 'Error: ' + response.statusText;
-    } else {
-      action(() => {
-        store.setConnect(true);
-      })();
-    }
-    // console.log('--- response: ', JSON.stringify(response.data));
-    return response.data;
-  }
 }
 
-export default new APIHandler();
+export default CommonAPIHandler;

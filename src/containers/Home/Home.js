@@ -40,29 +40,15 @@ class Home extends Component {
   }
 
   componentWillUnmount() {
-    this.homeDataLoaded && this.handleRemoveListenerOneSignal();
+    store.updateHomeLoaded(false);
   }
 
-  handleAddListenerOneSignal = () => {
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
-  };
-
-  handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
-  };
-
-  handleExecuteTempBranchIO() {
-    if (store.tempBranchIOData) {
-      servicesHandler(store.tempBranchIOData.params, store.tempBranchIOData.t);
-      store.setTempBranchIOSubcribeData(null);
+  handleExecuteTempDeepLink() {
+    if (store.tempDeepLinkData) {
+      servicesHandler(store.tempDeepLinkData.params, store.tempDeepLinkData.t);
+      store.setTempDeepLinkData(null);
     }
   }
-
-  handleOpenningNotification = openResult => {
-    const { t } = this.props;
-    const data = openResult.notification.payload.additionalData;
-    servicesHandler(data, t);
-  };
 
   getHomeDataFromApi = async (showLoading = true) => {
     if (showLoading) {
@@ -100,9 +86,8 @@ class Home extends Component {
 
         if (!this.homeDataLoaded) {
           this.homeDataLoaded = true;
-          this.handleAddListenerOneSignal();
-          this.handleExecuteTempBranchIO();
           store.updateHomeLoaded(true);
+          this.handleExecuteTempDeepLink();
         }
       }
     } catch (error) {
