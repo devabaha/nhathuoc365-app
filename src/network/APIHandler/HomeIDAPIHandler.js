@@ -142,6 +142,32 @@ class HomeIDAPIHandler extends BaseHandler {
     );
     return await this.postAPI(api, data);
   }
+
+  /** E-PAY TRANSFER */
+  /**
+   * @todo Thực hiện khởi tạo giao dịch thanh toán qua Virtual Account
+   *
+   * @param {Object} data
+   * @param {Array} data.bill_ids - id của các hoá đơn
+   * @param {number} data.amount - số tiền thanh toán
+   * @returns {Promise}
+   */
+  async site_transfer_pay_va(site_id, room_id, data) {
+    var api = url_for(API.SITE_TRANSFER_PAY_VA + '/' + site_id + '/' + room_id);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * @todo  Thực hiện kiểm tra trạng thái khởi taọ giao dịch
+   *
+   * @param {Object} data
+   * @param {number} data.request_id - trả về ở @see site_transfer_pay_va
+   * @returns {Promise}
+   */
+  async site_check_status_va(site_id, room_id, data) {
+    var api = url_for(API.SITE_CHECK_STATUS_VA + '/' + site_id + '/' + room_id);
+    return await this.postAPI(api, data);
+  }
 }
 
 export default HomeIDAPIHandler;

@@ -26,3 +26,7 @@ exports.SITE_ADD_USER_ROOM = MY_FOOD_API + 'apiSite/add_user_room';
 exports.SITE_DELETE_USER_ROOM = MY_FOOD_API + 'apiSite/delete_user_room';
 
 exports.ROOM_UPDATE = MY_FOOD_API + 'apiRoom/update_room';
+
+/** E-PAY TRANSFER */
+exports.SITE_TRANSFER_PAY_VA = MY_FOOD_API + 'apiSite/transfer_pay_va';
+exports.SITE_CHECK_STATUS_VA = MY_FOOD_API + 'apiSite/check_status_va';

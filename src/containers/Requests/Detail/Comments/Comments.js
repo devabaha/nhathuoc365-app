@@ -88,7 +88,8 @@ class Comments extends Component {
       transform: [
         {
           translateY: this.state.animatedListScroll.interpolate({
-            inputRange: [0, this.state.headerHeight || 0.1],
+            // inputRange: [0, this.state.headerHeight || 0.1],
+            inputRange: [0, 100],
             outputRange: [0, -this.state.headerHeight],
             extrapolate: 'clamp'
           })

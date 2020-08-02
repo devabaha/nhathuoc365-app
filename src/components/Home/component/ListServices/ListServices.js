@@ -46,8 +46,9 @@ function renderService({ item, data, app, notify, onPress }) {
 
 function ListServices(props) {
   return (
-    <View style={styles.container}>
+    <View onLayout={props.onLayout} style={styles.container}>
       <FlatList
+        scrollEnabled={props.scrollEnabled}
         data={props.listService}
         extraData={props.notify}
         renderItem={({ item, index }) =>

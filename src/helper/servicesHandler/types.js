@@ -17,6 +17,8 @@ export const SERVICES_TYPE = {
   BEEHOME_LIST_BILL: 'beehome_list_bill',
   BEEHOME_LIST_REQUEST: 'beehome_list_request',
   BEEHOME_REQUEST: 'beehome_request',
+  BEEHOME_ROOM_CHAT: 'beehome_room_chat',
+  BEEHOME_ROOM_USER: 'beehome_room_user',
 
   /** EXTERNAL LINK */
   EXTERNAL_LINK: 'external_link',

@@ -120,6 +120,9 @@ const config = Object.freeze({
     //  Reset password
     resetPassword: 'resetPassword',
 
+    // Amazing_chat
+    amazing_chat: 'amazing_chat',
+
     // HomeID
     listBuilding: 'listBuilding',
     building: 'building',

@@ -76,6 +76,9 @@ class Home extends Component {
           title_sites: response.data.title_sites,
           rooms: response.data.rooms,
           title_rooms: response.data.title_rooms,
+          title_room_news: response.data.title_room_news,
+          room_news: response.data.room_news,
+          title_newses: response.data.title_newses,
           newses: response.data.newses,
           notices: response.data.notices,
           services: response.data.services,
@@ -133,157 +136,6 @@ class Home extends Component {
       data: item
     });
   };
-
-  handleCategoryPress(item) {
-    Actions.push('tickidRadaListService', {
-      category: item,
-      title: item.name,
-      onPressItem: item => {
-        this.handleServicePress(item);
-      },
-      onPressCartImage: item => {
-        this.handleCartImagePress(item);
-      }
-    });
-  }
-
-  handleOrderHistoryPress(item) {
-    const { t } = this.props;
-    Actions.push('tickidRadaOrderHistory', {
-      category: item,
-      title: t('common:screen.radaOrderHistory.mainTitle')
-    });
-  }
-
-  handleServicePress(item) {
-    Actions.push('tickidRadaServiceDetail', {
-      service: item,
-      title: item.name,
-      onPressOrder: item => {
-        this.handleOrderButtonPress(item);
-      }
-    });
-  }
-
-  handleCartImagePress(item) {
-    this.handleOrderButtonPress(item);
-  }
-
-  handleOrderButtonPress(service) {
-    Actions.push('tickidRadaBooking', {
-      service: service,
-      title: service.name || '',
-      customerName: '',
-      phone: '',
-      address: '',
-      onBookingSuccess: response => {
-        this.handleBookingSuccess(response);
-      },
-      onBookingFail: err => {
-        this.handleBookingFail(err);
-      },
-      onCallWebHookSuccess: response => {
-        this.handleCallWebHookSuccess(response);
-      },
-      onCallWebHookFail: err => {
-        this.handleCallWebHookFail(err);
-      }
-    });
-  }
-
-  handleBookingSuccess(response) {
-    const { t } = this.props;
-    return Alert.alert(
-      t('booking.success.title'),
-      t('booking.success.message'),
-      [{ text: t('booking.success.accept'), onPress: () => Actions.homeTab() }],
-      { cancelable: false }
-    );
-  }
-
-  handleBookingFail(err) {
-    const { t } = this.props;
-    if (err && err.data) {
-      if (err.data.customer.length != 0) {
-        return Alert.alert(
-          t('booking.fail.title'),
-          err.data.customer[0],
-          [{ text: t('booking.fail.accept') }],
-          { cancelable: false }
-        );
-      } else {
-        return Alert.alert(
-          t('booking.fail.title'),
-          err.message || '',
-          [{ text: t('booking.fail.accept') }],
-          { cancelable: false }
-        );
-      }
-    } else if (err.message) {
-      return Alert.alert(
-        t('booking.fail.title'),
-        err.message,
-        [{ text: t('booking.fail.accept') }],
-        {
-          cancelable: false
-        }
-      );
-    } else {
-      return Alert.alert(
-        t('booking.fail.title'),
-        t('booking.fail.message'),
-        [{ text: t('booking.fail.accept') }],
-        { cancelable: false }
-      );
-    }
-  }
-
-  handleCallWebHookSuccess(response) {
-    const { t } = this.props;
-    return Alert.alert(
-      t('web.success.title'),
-      t('web.success.message'),
-      [{ text: t('web.success.accept'), onPress: () => Actions.homeTab() }],
-      { cancelable: false }
-    );
-  }
-
-  handleCallWebHookFail(err) {
-    const { t } = this.props;
-    if (err && err.data) {
-      if (err.data.customer.length != 0) {
-        return Alert.alert(
-          t('web.fail.title'),
-          err.data.customer[0],
-          [{ text: t('web.fail.accept') }],
-          { cancelable: false }
-        );
-      } else {
-        return Alert.alert(
-          t('web.fail.title'),
-          err.message || '',
-          [{ text: t('web.fail.accept') }],
-          { cancelable: false }
-        );
-      }
-    } else if (err.message) {
-      return Alert.alert(
-        t('web.fail.title'),
-        err.message,
-        [{ text: t('web.fail.accept') }],
-        {
-          cancelable: false
-        }
-      );
-    } else {
-      return Alert.alert(
-        t('web.fail.title'),
-        t('web.fail.message'),
-        [{ text: t('web.fail.accept') }],
-        { cancelable: false }
-      );
-    }
-  }
 
   handleShowAllVouchers = () => {};
 
@@ -343,6 +195,14 @@ class Home extends Component {
     });
   };
 
+  handlePressRoomNews = news => {
+    const service = {
+      type: SERVICES_TYPE.NEWS_DETAIL,
+      news
+    };
+    servicesHandler(service);
+  };
+
   handlePressButtonChat = () => {
     if (store.user_info && this.state.site) {
       Actions.amazing_chat({
@@ -393,14 +253,16 @@ class Home extends Component {
         title_sites={this.state.title_sites}
         rooms={this.state.rooms}
         title_rooms={this.state.title_rooms}
+        title_room_news={this.state.title_room_news}
+        room_news={this.state.room_news}
+        title_newses={this.state.title_newses}
         newses={this.state.newses}
         notices={this.state.notices}
         services={this.state.services}
         userInfo={store.user_info}
         notify={store.notify}
         products={this.state.products}
-        campai
-        gns={this.state.campaigns}
+        campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         listService={this.state.listService}
         primaryActions={this.state.primaryActions}
@@ -421,6 +283,7 @@ class Home extends Component {
         onPressRoomItem={this.handlePressRoomItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
+        onPressRoomNews={this.handlePressRoomNews}
         onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
         groups={this.state.product_groups}

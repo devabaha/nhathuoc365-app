@@ -22,6 +22,7 @@ import { default as RoomActions } from './Actions';
 import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
+import ListServices from '../../components/Home/component/ListServices';
 
 const BANNER_ABSOLUTE_HEIGHT =
   appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
@@ -138,6 +139,7 @@ class Room extends Component {
       roomId,
       data => {
         this.setState({
+          list_service: data.list_service,
           room: data.room,
           newses: data.newses,
           sites: data.sites,
@@ -343,7 +345,7 @@ class Room extends Component {
     Actions.push(appConfig.routes.members, {
       siteId: this.props.siteId,
       roomId: this.props.roomId,
-      owner_id: this.state.room.user_id
+      ownerId: this.state.room.user_id
     });
   };
 
@@ -382,6 +384,30 @@ class Room extends Component {
       takePhotoButtonTitle: 'Camera',
       chooseFromLibraryButtonTitle: 'Mở thư viện'
     });
+  };
+
+  handlePressService = ({ type }) => {
+    const service = { type };
+    service.site_id = this.props.siteId;
+    service.room_id = this.props.roomId;
+
+    switch (type) {
+      case SERVICES_TYPE.BEEHOME_LIST_BILL:
+        service.index = 0;
+        break;
+      case SERVICES_TYPE.BEEHOME_LIST_REQUEST:
+        break;
+      case SERVICES_TYPE.BEEHOME_ROOM_USER:
+        service.user_id = this.state.room.user_id;
+        break;
+      case SERVICES_TYPE.BEEHOME_ROOM_CHAT:
+        service.user_id = this.state.room.user_id;
+        service.tel = this.state.room.tel;
+        service.site_name = this.state.room.site_name;
+        break;
+    }
+
+    servicesHandler(service, this.props.t);
   };
 
   openCamera = (name, loadingParam, opts) => {
@@ -565,18 +591,24 @@ class Room extends Component {
                 }}
                 infoContainerStyle={infoContainerStyle}
                 imageBgStyle={imageBgStyle}
-                title={room.name}
+                title={room.title}
                 subTitle={room.address}
                 extraComponent={
-                  <RoomActions
+                  <ListServices
                     onLayout={this.handleActionsLayout}
-                    onBillPress={this.goToBills}
-                    onRequestPress={this.goToRequests}
-                    onMemberPress={this.goToMembers}
-                    onChatPress={this.goToChat}
-                    chatNoti={unreadChat}
-                    requestNoti={unreadRequest}
+                    listService={this.state.list_service}
+                    notify={store.notify}
+                    onItemPress={this.handlePressService}
                   />
+                  // <RoomActions
+                  //   onLayout={this.handleActionsLayout}
+                  //   onBillPress={this.goToBills}
+                  //   onRequestPress={this.goToRequests}
+                  //   onMemberPress={this.goToMembers}
+                  //   onChatPress={this.goToChat}
+                  //   chatNoti={unreadChat}
+                  //   requestNoti={unreadRequest}
+                  // />
                 }
               />
             )}

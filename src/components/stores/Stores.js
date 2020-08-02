@@ -406,8 +406,9 @@ class Stores extends Component {
           onPressChat={this.handlePressChat}
           onPressOrders={this.handlePressOrders}
           title={store.store_data.name}
-          subTitle={this.state.siteNotify.last_online}
-          description={this.state.siteNotify.favor_count}
+          subTitle={store.store_data.address}
+          // subTitle={this.state.siteNotify.last_online}
+          // description={this.state.siteNotify.favor_count}
           unreadChat={unreadChat}
         />
 

@@ -161,15 +161,15 @@ class Members extends Component {
         avatar={member.avatar}
         title={member.name}
         subTitle={member.tel}
-        isMemberAsOwner={this.props.owner_id === member.id}
-        isUserAsOwner={this.props.owner_id === store.user_info.id}
+        isMemberAsOwner={this.props.ownerId === member.id}
+        isUserAsOwner={this.props.ownerId === store.user_info.id}
         onMorePress={() => this.handleMorePress(member)}
       />
     );
   };
 
   render() {
-    const isUserAsOwner = this.props.owner_id === store.user_info.id;
+    const isUserAsOwner = this.props.ownerId === store.user_info.id;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loading center />}

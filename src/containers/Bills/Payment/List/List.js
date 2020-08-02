@@ -15,6 +15,7 @@ import Loading from '../../../../components/Loading';
 import NoResult from 'app-components/NoResult';
 import { Bill } from '../../../Bills';
 import Button from '../../../../components/Button';
+import { CheckBox } from 'react-native-elements';
 
 const EMPTY_PAYMENT_METHOD_MESS = 'Chưa chọn phương thức thanh toán';
 
@@ -22,8 +23,9 @@ class List extends Component {
   state = {
     paymentMethod: null,
     bills: null,
+    isCheckedAllBills: true,
     checkedBills: [],
-    title_bills_incomplete: '',
+    title: '',
     loading: true,
     refreshing: false
   };
@@ -38,14 +40,14 @@ class List extends Component {
   }
 
   componentDidMount() {
-    this.getIncompleteBills();
+    this.getIncompleteBills(this.state.isCheckedAllBills);
   }
 
   componentWillUnmount() {
     this.unmounted = true;
   }
 
-  getIncompleteBills = async () => {
+  getIncompleteBills = async (isCheckedAllBills = false) => {
     const { t } = this.props;
     const data = {
       type: 'bills_incomplete'
@@ -59,10 +61,13 @@ class List extends Component {
 
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
-          this.setState({
-            title: response.data.title_bills_incomplete,
-            bills: response.data.bills_incomplete
-          });
+          const state = { ...this.state };
+          state.title = response.data.title_bills_incomplete;
+          state.bills = response.data.bills_incomplete;
+          isCheckedAllBills &&
+            (state.checkedBills = response.data.bills_incomplete);
+
+          this.setState(state);
         } else {
           const errMess = response.message || t('api.error.message');
           flashShowMessage({
@@ -106,8 +111,20 @@ class List extends Component {
       checkedBills.push(checkingBill);
     }
 
-    this.setState({ checkedBills });
+    const isCheckedAllBills = checkedBills.length === this.state.bills.length;
+
+    this.setState({
+      checkedBills,
+      isCheckedAllBills
+    });
   }
+
+  handleToggleCheckAllBills = () => {
+    this.setState(prevState => ({
+      checkedBills: prevState.isCheckedAllBills ? [] : prevState.bills,
+      isCheckedAllBills: !prevState.isCheckedAllBills
+    }));
+  };
 
   onRefresh = () => {
     this.setState({ refreshing: true });
@@ -175,14 +192,29 @@ class List extends Component {
   render() {
     const disabled =
       !this.state.paymentMethod || this.state.checkedBills.length === 0;
+    const title = `${this.state.title} ${
+      this.state.bills ? `(${this.state.bills.length})` : ''
+    }`;
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loading center />}
-        <View style={styles.headingContainer}>
-          <Text style={styles.heading}>{this.state.title}</Text>
-        </View>
         {!!this.state.bills && (
           <>
+            <View
+              style={[styles.headingContainer, styles.billsCheckableContainer]}
+            >
+              <CheckBox
+                containerStyle={styles.checkBox}
+                title={<View />}
+                uncheckedIcon="square"
+                uncheckedColor="#666"
+                checked={this.state.isCheckedAllBills}
+                checkedIcon="check-square"
+                checkedColor={appConfig.colors.primary}
+                onPress={this.handleToggleCheckAllBills}
+              />
+              <Text style={styles.heading}>{title}</Text>
+            </View>
             <FlatList
               contentContainerStyle={styles.contentList}
               data={this.state.bills}
@@ -218,6 +250,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff'
+  },
+  billsCheckableContainer: {
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+  },
+  checkBox: {
+    backgroundColor: 'transparent',
+    padding: 0,
+    marginLeft: 0,
+    borderWidth: 0,
+
+    margin: 0,
+    marginRight: 15
   },
   heading: {
     fontSize: 16,

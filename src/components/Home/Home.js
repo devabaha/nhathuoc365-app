@@ -20,6 +20,7 @@ import ListServices from './component/ListServices';
 import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
 import { SERVICES_TYPE } from '../../helper/servicesHandler';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const defaultListener = () => {};
 
@@ -118,6 +119,12 @@ class Home extends Component {
 
   get hasNews() {
     return Array.isArray(this.props.newses) && this.props.newses.length > 0;
+  }
+
+  get hasRoomNews() {
+    return (
+      Array.isArray(this.props.room_news) && this.props.room_news.length > 0
+    );
   }
 
   get hasProducts() {
@@ -221,9 +228,28 @@ class Home extends Component {
                     title={item.title}
                     isShowSubTitle={true}
                     subTitle={item.address}
+                    iconSubTitle={<Icon name="map-marker" />}
                     imageUrl={item.image_url}
                     onPress={() => this.props.onPressRoomItem(item)}
                     last={this.props.rooms.length - 1 === index}
+                  />
+                )}
+              </HomeCardList>
+            )}
+            {this.hasRoomNews && (
+              <HomeCardList
+                onShowAll={null}
+                data={this.props.room_news}
+                title={this.props.title_room_news}
+              >
+                {({ item, index }) => (
+                  <HomeCardItem
+                    title={item.title}
+                    iconSubTitle={<Icon name="building" />}
+                    subTitle={item.shop_name}
+                    imageUrl={item.image_url}
+                    onPress={() => this.props.onPressRoomNews(item)}
+                    last={this.props.room_news.length - 1 === index}
                   />
                 )}
               </HomeCardList>
@@ -305,7 +331,7 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
-                title={t('sections.news.title')}
+                title={this.props.title_newses}
               >
                 {({ item, index }) => (
                   <HomeCardItem

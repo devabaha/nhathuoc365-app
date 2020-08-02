@@ -49,11 +49,12 @@ class HomeCardItem extends Component {
           </ImageBackground>
           <View style={[styles.titleWrapper, props.textWrapperStyle]}>
             <Text numberOfLines={2} style={styles.title}>
-              {/* {stringHelper.shorten(props.title, 48)} */}
               {props.title}
             </Text>
             {!!props.subTitle && (
               <Text style={styles.subTitle}>
+                {this.props.iconSubTitle}
+                {!!this.props.iconSubTitle && ` `}
                 <Text style={styles.specialSubTitle}>
                   {props.specialSubTitle}
                 </Text>
@@ -94,7 +95,8 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     fontSize: 12,
-    marginTop: 3
+    marginTop: 3,
+    color: '#444'
   },
   loading: {
     height: '100%',

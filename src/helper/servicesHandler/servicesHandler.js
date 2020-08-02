@@ -63,6 +63,66 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       });
       break;
 
+    /** BEEHOME */
+    case SERVICES_TYPE.BEEHOME_SERVICE_TYPE:
+      Actions.jump(appConfig.routes.listBuilding);
+      break;
+    case SERVICES_TYPE.BEEHOME_BUILDING:
+      Actions.push(appConfig.routes.building, {
+        siteId: service.id
+      });
+      break;
+    case SERVICES_TYPE.BEEHOME_ROOM:
+      Actions.push(appConfig.routes.room, {
+        roomId: service.room_id,
+        siteId: service.site_id,
+        title: service.title
+      });
+      break;
+    case SERVICES_TYPE.BEEHOME_LIST_BILL:
+      /**
+       * @type {Object}
+       * @property {(number|string)} siteId
+       * @property {(number|string)} roomId
+       * @property {number} index - tab index in list bill
+       */
+      const billData = {
+        siteId: service.site_id,
+        roomId: service.room_id,
+        index: service.index // 0: list bill, 1: list receipt
+      };
+      Actions.push(appConfig.routes.bills, billData);
+      break;
+    case SERVICES_TYPE.BEEHOME_LIST_REQUEST:
+      Actions.push(appConfig.routes.requests, {
+        siteId: service.site_id,
+        roomId: service.room_id
+      });
+      break;
+    case SERVICES_TYPE.BEEHOME_REQUEST:
+      Actions.push(appConfig.routes.requestDetail, {
+        siteId: service.site_id,
+        roomId: service.room_id,
+        requestId: service.request_id,
+        title: service.title
+      });
+      break;
+    case SERVICES_TYPE.BEEHOME_ROOM_CHAT:
+      Actions.push(appConfig.routes.amazing_chat, {
+        site_id: service.site_id,
+        user_id: service.id,
+        phoneNumber: service.tel,
+        title: service.site_name
+      });
+      break;
+    case SERVICES_TYPE.BEEHOME_ROOM_USER:
+      Actions.push(appConfig.routes.members, {
+        siteId: service.site_id,
+        roomId: service.room_id,
+        ownerId: service.user_id
+      });
+      break;
+
     /** EXTERNAL LINK */
     case SERVICES_TYPE.EXTERNAL_LINK:
       Linking.openURL(service.link).catch(err => {
