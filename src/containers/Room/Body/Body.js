@@ -14,13 +14,11 @@ class Body extends Component {
   state = {};
 
   get totalBillPrice() {
-    return (
-      numberFormat(
-        this.props.bills.reduce(
-          (prev, next) => (prev.price || prev) + next.price,
-          0
-        )
-      ) + 'đ'
+    return vndCurrencyFormat(
+      this.props.bills.reduce(
+        (prev, next) => (prev.price || prev) + next.price,
+        0
+      )
     );
   }
 

@@ -5,7 +5,9 @@
   },
   "payment": {
     "tempPrice": "临时价格",
-    "totalPrice": "总价格"
+    "totalPrice": "总价格",
+    "transferFee": "Phí giao dịch"
   },
-  "confirm": "确认"
+  "confirm": "确认",
+  "agree": "Đồng ý"
 }

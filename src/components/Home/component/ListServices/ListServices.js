@@ -44,11 +44,11 @@ function renderService({ item, data, app, notify, onPress }) {
   );
 }
 
-function ListServices(props) {
+function ListServices({ scrollEnabled = false, ...props }) {
   return (
     <View onLayout={props.onLayout} style={styles.container}>
       <FlatList
-        scrollEnabled={props.scrollEnabled}
+        scrollEnabled={scrollEnabled}
         data={props.listService}
         extraData={props.notify}
         renderItem={({ item, index }) =>

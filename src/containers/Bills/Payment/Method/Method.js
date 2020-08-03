@@ -7,7 +7,9 @@ import Loading from '@tickid/tickid-rn-loading';
 import PaymentRow from '../../../../components/payment/PaymentMethod/PaymentRow';
 import Button from '../../../../components/Button';
 
-const DEFAULT_OBJECT = { id: -1 };
+import appConfig from 'app-config';
+
+const DEFAULT_OBJECT = { id: -1, type: -1 };
 
 class Method extends Component {
   static defaultProps = {
@@ -22,6 +24,52 @@ class Method extends Component {
   };
   unmounted = false;
 
+  get confirmTitle() {
+    const { t } = this.props;
+    let title = t('agree');
+    switch (this.state.selectedMethod.type) {
+      case PAYMENT_METHOD_TYPES.EPAY:
+        title = t('confirm');
+        break;
+    }
+
+    return title;
+  }
+
+  get transferFeeView() {
+    let transferFee = 0;
+    const currentFee = this.state.selectedMethod.user_fee || '0';
+    if (currentFee) {
+      const [fee, percentTag] = currentFee.split('%');
+      if (percentTag) {
+        transferFee = currentFee * (fee / 100);
+      } else {
+        transferFee = +fee;
+      }
+    }
+
+    return {
+      value: transferFee,
+      view: vndCurrencyFormat(transferFee)
+    };
+  }
+
+  get priceView() {
+    const price = this.props.price || 0;
+    return {
+      value: price,
+      view: vndCurrencyFormat(price)
+    };
+  }
+
+  get totalPriceView() {
+    let totalPrice = this.transferFeeView.value + this.priceView.value;
+    return {
+      value: totalPrice,
+      view: vndCurrencyFormat(totalPrice)
+    };
+  }
+
   componentDidMount() {
     this.getPaymentMethod();
   }
@@ -33,7 +81,7 @@ class Method extends Component {
   getPaymentMethod = async () => {
     const { t } = this.props;
     try {
-      const response = await APIHandler.payment_method(this.props.id);
+      const response = await APIHandler.payment_method(this.props.site_id);
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           const state = { ...this.state };
@@ -61,6 +109,45 @@ class Method extends Component {
     }
   };
 
+  async createEpayTransfer() {
+    this.setState({ loading: true });
+    const { t } = this.props;
+    const data = {
+      bill_ids: this.props.ids,
+      amount: this.totalPriceView.value
+    };
+    try {
+      const response = await APIHandler.site_transfer_pay_va(
+        this.props.site_id,
+        this.props.room_id,
+        data
+      );
+
+      if (!this.unmounted && response) {
+        if (response.data && response.status === STATUS_SUCCESS) {
+          Actions.push(appConfig.routes.transferInfo, {
+            info: response.data.va_info,
+            title: this.state.selectedMethod.name,
+            note: this.state.selectedMethod.content
+          });
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || t('common:api.error.message')
+          });
+        }
+      }
+    } catch (err) {
+      console.log('create_transfer_epay', err);
+      flashShowMessage({
+        type: 'danger',
+        message: t('common:api.error.message')
+      });
+    } finally {
+      !this.unmounted && this.setState({ loading: false });
+    }
+  }
+
   handleBankPress = selectedBank => {
     this.setState({ selectedBank });
   };
@@ -82,16 +169,17 @@ class Method extends Component {
   };
 
   handleConfirm = async () => {
-    const selectedMethod =
-      this.state.selectedMethod === DEFAULT_OBJECT
-        ? null
-        : this.state.selectedMethod;
-    const selectedBank =
-      this.state.selectedBank === DEFAULT_OBJECT
-        ? null
-        : this.state.selectedBank;
-    this.props.onConfirm(selectedMethod, selectedBank);
-    Actions.pop();
+    switch (this.state.selectedMethod.type) {
+      case PAYMENT_METHOD_TYPES.EPAY:
+        this.createEpayTransfer();
+        break;
+      default:
+        Actions.replace(appConfig.routes.room, {
+          room_id: this.props.room_id,
+          site_id: this.props.site_id
+        });
+        break;
+    }
   };
 
   renderPaymentMethod(item, index) {
@@ -120,6 +208,7 @@ class Method extends Component {
   render() {
     const { t } = this.props;
     const extraData = this.state.selectedMethod.id + this.state.selectedBank.id;
+    const disabled = this.state.selectedMethod.id === -1;
 
     return (
       <SafeAreaView style={styles.container}>
@@ -141,8 +230,18 @@ class Method extends Component {
         </ScrollView>
 
         <Button
+          renderBefore={
+            <TotalPrice
+              t={t}
+              transferFeeLabel={t('payment.transferFee')}
+              transferFee={this.transferFeeView.view}
+              priceLabel={t('payment.totalPrice')}
+              price={this.totalPriceView.view}
+            />
+          }
+          disabled={disabled}
           containerStyle={styles.confirmContainer}
-          title={t('confirm')}
+          title={this.confirmTitle}
           onPress={this.handleConfirm}
         />
       </SafeAreaView>
@@ -199,8 +298,10 @@ const styles = StyleSheet.create({
   },
   confirmContainer: {
     backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
     paddingVertical: 15,
-    paddingBottom: 30
+    paddingBottom: 10
   },
   totalPriceInfoRow: {
     justifyContent: 'space-between',
@@ -237,14 +338,20 @@ export default withTranslation(['paymentMethod', 'common'])(Method);
 
 const TotalPrice = props => {
   return (
-    <View style={[styles.priceInfoRow, styles.totalPriceInfoRow]}>
-      <Text style={[styles.priceLabel, styles.totalPriceText]}>
-        {props.t('payment.totalPrice')}
-      </Text>
-      <Text style={[styles.totalPriceValue, styles.totalPriceText]}>
-        {props.value}
-      </Text>
-    </View>
+    <>
+      <View style={[styles.priceInfoRow, styles.totalPriceInfoRow]}>
+        <Text style={styles.priceLabel}>{props.transferFeeLabel}</Text>
+        <Text style={styles.priceValue}>{props.transferFee}</Text>
+      </View>
+      <View style={[styles.priceInfoRow, styles.totalPriceInfoRow]}>
+        <Text style={[styles.priceLabel, styles.totalPriceText]}>
+          {props.priceLabel}
+        </Text>
+        <Text style={[styles.totalPriceValue, styles.totalPriceText]}>
+          {props.price}
+        </Text>
+      </View>
+    </>
   );
 };
 

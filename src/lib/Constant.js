@@ -163,3 +163,7 @@ global.isIPhoneX = (() => {
 })();
 
 global.heightTabbar = global.isIPhoneX ? 83 : 49;
+
+global.PAYMENT_METHOD_TYPES = {
+  EPAY: '5'
+};

@@ -594,12 +594,16 @@ class Room extends Component {
                 title={room.title}
                 subTitle={room.address}
                 extraComponent={
-                  <ListServices
+                  <View
                     onLayout={this.handleActionsLayout}
-                    listService={this.state.list_service}
-                    notify={store.notify}
-                    onItemPress={this.handlePressService}
-                  />
+                    style={styles.roomActionsContainer}
+                  >
+                    <ListServices
+                      listService={this.state.list_service}
+                      notify={store.notify}
+                      onItemPress={this.handlePressService}
+                    />
+                  </View>
                   // <RoomActions
                   //   onLayout={this.handleActionsLayout}
                   //   onBillPress={this.goToBills}
@@ -723,6 +727,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(59,52,70, .65)',
     position: 'absolute',
     zIndex: 1
+  },
+  roomActionsContainer: {
+    borderBottomColor: '#eee',
+    borderBottomWidth: 0.5
   }
 });
 

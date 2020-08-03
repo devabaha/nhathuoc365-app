@@ -47,13 +47,11 @@ class Bills extends Component {
   }
 
   get totalBillIncompletePrice() {
-    return (
-      numberFormat(
-        this.state.billsInComplete.reduce(
-          (prev, next) => (prev.price || prev) + (next.price || 0),
-          0
-        )
-      ) + 'đ'
+    return vndCurrencyFormat(
+      this.state.billsInComplete.reduce(
+        (prev, next) => (prev.price || prev) + (next.price || 0),
+        0
+      )
     );
   }
 

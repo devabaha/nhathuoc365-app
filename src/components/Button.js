@@ -10,6 +10,7 @@ const Button = props => {
         style={[
           styles.btn,
           props.shadow && styles.shadow,
+          props.disabled && styles.btnDisabled,
           props.btnContainerStyle
         ]}
         onPress={props.onPress}
@@ -40,6 +41,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row'
+  },
+  btnDisabled: {
+    backgroundColor: '#ccc'
   },
   shadow: {
     shadowColor: '#000',

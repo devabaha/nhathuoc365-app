@@ -158,7 +158,7 @@ class HomeIDAPIHandler extends BaseHandler {
   }
 
   /**
-   * @todo  Thực hiện kiểm tra trạng thái khởi taọ giao dịch
+   * @todo  Thực hiện kiểm tra trạng thái khởi tạo giao dịch
    *
    * @param {Object} data
    * @param {number} data.request_id - trả về ở @see site_transfer_pay_va

@@ -131,6 +131,7 @@ const config = Object.freeze({
     bills: 'bills',
     billsPaymentMethod: 'billsPaymentMethod',
     billsPaymentList: 'billsPaymentList',
+    transferInfo: 'transferInfo',
     requests: 'requests',
     requestDetail: 'requestDetail',
     requestCreation: 'requestCreation',

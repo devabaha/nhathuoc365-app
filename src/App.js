@@ -152,7 +152,8 @@ import Bills from './containers/Bills';
 import SupplierStore from './components/stores/SupplierStore';
 import {
   BillsPaymentMethod,
-  BillsPaymentList
+  BillsPaymentList,
+  BillsTransferInfo
 } from './containers/Bills/Payment';
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
@@ -805,6 +806,17 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.mainVoucher}_1`}
                     title={t('screen.voucher.mainTitle')}
                     component={VoucherContainer}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MAIN VOUCHER ================ */}
+                <Stack key={appConfig.routes.transferInfo}>
+                  <Scene
+                    key={`${appConfig.routes.transferInfo}_1`}
+                    title={t('screen.transferInfo.mainTitle')}
+                    component={BillsTransferInfo}
                     {...navBarConfig}
                     back
                   />

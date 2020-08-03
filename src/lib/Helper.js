@@ -424,7 +424,24 @@ global.normalizeNotify = (notify = '') => {
   return notify > 9 ? '9+' : notify + '';
 };
 
+/**
+ * @todo format number to standard format
+ * @example 1000 -> 1.000
+ * @param {!number} target
+ * @param {number} n
+ * @param {number} x
+ * @returns {string}
+ */
 global.numberFormat = (target, n, x) => {
   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\,' : '$') + ')';
   return target.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&.');
+};
+
+/**
+ * @todo format standard number to vnđ currency
+ * @example 1.000 -> 1.000đ
+ * @see numberFormat
+ */
+global.vndCurrencyFormat = (target, n, x) => {
+  return numberFormat(target, n, x) + 'đ';
 };

@@ -17,11 +17,8 @@ import { Bill } from '../../../Bills';
 import Button from '../../../../components/Button';
 import { CheckBox } from 'react-native-elements';
 
-const EMPTY_PAYMENT_METHOD_MESS = 'Chưa chọn phương thức thanh toán';
-
 class List extends Component {
   state = {
-    paymentMethod: null,
     bills: null,
     isCheckedAllBills: true,
     checkedBills: [],
@@ -36,7 +33,14 @@ class List extends Component {
       (total, bill) => total + bill.price,
       0
     );
-    return numberFormat(totalPrice) + 'đ';
+    return {
+      value: totalPrice,
+      view: vndCurrencyFormat(totalPrice)
+    };
+  }
+
+  get billIds() {
+    return this.state.checkedBills.map(bill => bill.id);
   }
 
   componentDidMount() {
@@ -93,13 +97,6 @@ class List extends Component {
 
   onPayment = () => {};
 
-  handleChangePaymentMethod = paymentMethod => {
-    this.setState({
-      paymentMethod: paymentMethod ? paymentMethod.name : null
-    });
-    console.log(paymentMethod);
-  };
-
   handleCheckBill(checkingBill) {
     const checkedBills = [...this.state.checkedBills];
     const billExistedIndex = checkedBills.findIndex(
@@ -131,10 +128,12 @@ class List extends Component {
     this.getIncompleteBills();
   };
 
-  goToBillPaymentMethod = () => {
+  goToBillsPaymentMethod = () => {
     Actions.push(appConfig.routes.billsPaymentMethod, {
-      id: this.props.site_id,
-      onConfirm: this.handleChangePaymentMethod
+      site_id: this.props.site_id,
+      room_id: this.props.room_id,
+      price: this.totalPriceView.value,
+      ids: this.billIds
     });
   };
 
@@ -142,30 +141,7 @@ class List extends Component {
     return (
       <View style={styles.priceViewContainer}>
         <Text style={styles.priceViewHeading}>Tổng tiền: </Text>
-        <Text style={styles.priceViewValue}>{this.totalPriceView}</Text>
-      </View>
-    );
-  }
-
-  renderPaymentMethod() {
-    const paymentMethodMess =
-      this.state.paymentMethod || EMPTY_PAYMENT_METHOD_MESS;
-    return (
-      <View>
-        <View style={styles.headingContainer}>
-          <Text style={styles.heading}>Hình thức thanh toán</Text>
-          <TouchableOpacity onPress={this.goToBillPaymentMethod}>
-            <Text style={styles.txtChangePaymentMethod}>Chọn</Text>
-          </TouchableOpacity>
-        </View>
-        <Text
-          style={[
-            styles.paymentMethod,
-            !this.state.paymentMethod && styles.emptyPaymentMethod
-          ]}
-        >
-          {paymentMethodMess}
-        </Text>
+        <Text style={styles.priceViewValue}>{this.totalPriceView.view}</Text>
       </View>
     );
   }
@@ -190,8 +166,7 @@ class List extends Component {
   };
 
   render() {
-    const disabled =
-      !this.state.paymentMethod || this.state.checkedBills.length === 0;
+    const disabled = this.state.checkedBills.length === 0;
     const title = `${this.state.title} ${
       this.state.bills ? `(${this.state.bills.length})` : ''
     }`;
@@ -230,13 +205,11 @@ class List extends Component {
               }
               keyExtractor={(item, index) => index.toString()}
             />
-            {this.renderPaymentMethod()}
             <Button
               disabled={disabled}
-              title="Thanh toán"
-              onPress={this.onPayment}
+              title="Tiếp tục"
+              onPress={this.goToBillsPaymentMethod}
               containerStyle={styles.btnContainer}
-              btnContainerStyle={disabled && styles.btnDisabled}
               renderBefore={this.renderPriceView()}
             />
           </>
@@ -293,10 +266,8 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   btnContainer: {
-    backgroundColor: '#f0f0f0'
-  },
-  btnDisabled: {
-    backgroundColor: '#aaa'
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0'
   },
   priceViewContainer: {
     flexDirection: 'row',
@@ -315,14 +286,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: appConfig.colors.primary,
     fontWeight: 'bold'
-  },
-  paymentMethod: {
-    paddingHorizontal: 15,
-    marginBottom: 15
-  },
-  emptyPaymentMethod: {
-    textAlign: 'center',
-    fontStyle: 'italic'
   }
 });
 
