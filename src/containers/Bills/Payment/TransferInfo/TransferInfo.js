@@ -8,7 +8,7 @@ import {
   ScrollView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import Button from '../../../../components/Button';
 
@@ -24,7 +24,7 @@ class TransferInfo extends Component {
   };
 
   handleConfirm = () => {
-    Actions.replace(appConfig.routes.room, {
+    Actions.popTo(appConfig.routes.room, {
       room_id: this.props.room_id,
       site_id: this.props.site_id
     });

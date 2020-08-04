@@ -127,7 +127,7 @@ class Method extends Component {
         if (response.data && response.status === STATUS_SUCCESS) {
           Actions.push(appConfig.routes.transferInfo, {
             info: response.data.va_info,
-            title: this.state.selectedMethod.name,
+            heading: this.state.selectedMethod.name,
             note: this.state.selectedMethod.content
           });
         } else {

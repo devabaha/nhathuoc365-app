@@ -110,7 +110,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     case SERVICES_TYPE.BEEHOME_ROOM_CHAT:
       Actions.push(appConfig.routes.amazing_chat, {
         site_id: service.site_id,
-        user_id: service.id,
+        user_id: service.user_id,
         phoneNumber: service.tel,
         title: service.site_name
       });

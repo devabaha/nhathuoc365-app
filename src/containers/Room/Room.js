@@ -387,6 +387,7 @@ class Room extends Component {
   };
 
   handlePressService = ({ type }) => {
+    if (!this.state.room) return;
     const service = { type };
     service.site_id = this.props.siteId;
     service.room_id = this.props.roomId;
@@ -401,8 +402,8 @@ class Room extends Component {
         service.user_id = this.state.room.user_id;
         break;
       case SERVICES_TYPE.BEEHOME_ROOM_CHAT:
-        service.user_id = this.state.room.user_id;
-        service.tel = this.state.room.tel;
+        service.site_id = this.state.room.site_id;
+        service.user_id = store.user_info.id;
         service.site_name = this.state.room.site_name;
         break;
     }
