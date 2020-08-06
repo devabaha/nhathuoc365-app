@@ -18,6 +18,25 @@ class HomeIDAPIHandler extends BaseHandler {
   }
 
   /**
+   * @todo lấy danh sách căn hộ của người dùng
+   */
+  async user_list_room() {
+    const api = url_for(API.USER_LIST_ROOM);
+    return await this.getAPI(api);
+  }
+
+  /**
+   * @todo cập nhật căn hộ mặc định cho roomTab
+   *
+   * @param {Object} data
+   * @param {(number|string)} data.room_id
+   */
+  async user_update_room_default(data) {
+    const api = url_for(API.USER_UPDATE_ROOM_DEFAULT);
+    return await this.postAPI(api, data);
+  }
+
+  /**
    * @todo lấy thông tin chi tiết chung cư
    */
   async site_building_detail(site_id) {
@@ -140,6 +159,19 @@ class HomeIDAPIHandler extends BaseHandler {
     var api = url_for(
       API.SITE_DELETE_USER_ROOM + '/' + site_id + '/' + room_id
     );
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * @todo Cập nhật ảnh avatar/banner cho room
+   *
+   * @param {Object} data
+   * @param {?string} banner - banner's name
+   * @param {?string} avatar - avatar's name
+   * @returns {Promise}
+   */
+  async room_update(room_id, data) {
+    var api = url_for(API.ROOM_UPDATE + '/' + room_id);
     return await this.postAPI(api, data);
   }
 

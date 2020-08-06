@@ -43,6 +43,7 @@ class Room extends Component {
   state = {
     loading: true,
     refreshing: false,
+    isForceRefreshing: false,
     avatarLoading: false,
     bannerLoading: false,
     room: null,
@@ -56,7 +57,9 @@ class Room extends Component {
     title_bills: '',
     title_requests: '',
     scrollY: new Animated.Value(0),
-    actionsHeight: 0
+    actionsHeight: 0,
+    roomMainInfo:
+      store.user_info && store.user_info.room ? store.user_info.room : {}
   };
   unmounted = false;
   refTempScrollView = React.createRef();
@@ -66,24 +69,55 @@ class Room extends Component {
     return !!!room && sites.length === 0 && newses.length === 0;
   }
 
+  get room() {
+    const room = {
+      siteId: this.props.siteId,
+      roomId: this.props.roomId,
+      name: this.props.title,
+      title: this.state.room ? this.state.room.title : this.props.title
+    };
+    if (!this.props.roomId && store.user_info && store.user_info.room) {
+      room.siteId = this.state.roomMainInfo.site_id;
+      room.roomId = this.state.roomMainInfo.id;
+      room.name = this.state.roomMainInfo.name;
+      room.title = this.state.roomMainInfo.title;
+    }
+
+    return room;
+  }
+
   componentDidMount() {
     this.getData();
-    this.state.scrollY.addListener(this.scrollListener);
 
+    if (!this.props.title) {
+      Actions.refresh({
+        title: this.room.name
+      });
+    }
     EventTracker.logEvent('building_page');
   }
 
   componentWillUnmount() {
     this.unmounted = true;
-    this.state.scrollY.removeListener(this.scrollListener);
   }
 
-  scrollListener = ({ value }) => {
-    if (value < -70 && this.state.refreshing === false) {
-      this.setState({ refreshing: true });
+  scrollListener = ({ nativeEvent }) => {
+    const value = nativeEvent.contentOffset.y;
+
+    /**
+     * @todo force refreshing when scroll reached <70
+     * @todo check flag `isForceRefreshing` to prevent others executable scroll event <70
+     */
+    if (value < -70 && !this.state.isForceRefreshing) {
+      this.setState({ isForceRefreshing: true });
+      this.onRefresh();
     }
-    if (value === 0 && this.state.refreshing) {
-      this.setState({ refreshing: false });
+
+    /**
+     * @todo uncheck flag `isForceRefreshing` to others scroll event can trigger `onRefresh()`
+     */
+    if (value === 0 && this.state.isForceRefreshing) {
+      this.setState({ isForceRefreshing: false });
     }
   };
 
@@ -98,8 +132,10 @@ class Room extends Component {
   ) => {
     const { t } = this.props;
     try {
+      siteId === undefined && (siteId = this.room.siteId);
+      roomId === undefined && (roomId = this.room.roomId);
       const response = await APIHandler[api](siteId, roomId, data);
-      console.log(api, response, siteId, roomId, data);
+
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           onSuccess(response.data);
@@ -127,9 +163,9 @@ class Room extends Component {
   };
 
   getData() {
-    this.getRoom(this.props.siteId, this.props.roomId);
-    this.getIncompleteBills(this.props.siteId, this.props.roomId);
-    this.getRequests(this.props.siteId, this.props.roomId);
+    this.getRoom(this.room.siteId, this.room.roomId);
+    this.getIncompleteBills(this.room.siteId, this.room.roomId);
+    this.getRequests(this.room.siteId, this.room.roomId);
   }
 
   getRoom = (siteId, roomId) => {
@@ -202,7 +238,7 @@ class Room extends Component {
         [name]: image.name
       };
       const response = await APIHandler.room_update(this.state.room.id, data);
-
+      console.log(response);
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           flashShowMessage({
@@ -288,7 +324,7 @@ class Room extends Component {
   goToBills = () => {
     const service = {
       type: SERVICES_TYPE.BEEHOME_LIST_BILL,
-      site_id: this.props.siteId,
+      site_id: this.room.siteId,
       room_id: this.state.room.id
     };
     servicesHandler(service);
@@ -296,14 +332,18 @@ class Room extends Component {
 
   // handlePayBill = () => {
   //   Actions.push(appConfig.routes.billsPaymentMethod, {
-  //     id: this.props.siteId
+  //     id: this.room.siteId
   //   });
   // };
   handlePayBill = () => {
-    Actions.push(appConfig.routes.billsPaymentList, {
-      site_id: this.props.siteId,
-      room_id: this.state.room.id
-    });
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_BILLS_PAYMENT,
+      site_id: this.room.siteId,
+      room_id: this.state.room.id,
+      sceneKey: Actions.currentScene
+    };
+
+    servicesHandler(service);
   };
 
   handlePressBill = () => {};
@@ -311,7 +351,7 @@ class Room extends Component {
   goToRequests = () => {
     const service = {
       type: SERVICES_TYPE.BEEHOME_LIST_REQUEST,
-      site_id: this.props.siteId,
+      site_id: this.room.siteId,
       room_id: this.state.room.id
     };
     servicesHandler(service);
@@ -320,8 +360,8 @@ class Room extends Component {
   handlePressRequest = request => {
     const service = {
       type: SERVICES_TYPE.BEEHOME_REQUEST,
-      site_id: this.props.siteId,
-      room_id: this.props.roomId,
+      site_id: this.room.siteId,
+      room_id: this.room.roomId,
       request_id: request.id,
       title: request.title || this.props.t('screen.requests.detailTitle')
     };
@@ -343,8 +383,8 @@ class Room extends Component {
 
   goToMembers = () => {
     Actions.push(appConfig.routes.members, {
-      siteId: this.props.siteId,
-      roomId: this.props.roomId,
+      siteId: this.room.siteId,
+      roomId: this.room.roomId,
       ownerId: this.state.room.user_id
     });
   };
@@ -389,8 +429,8 @@ class Room extends Component {
   handlePressService = ({ type }) => {
     if (!this.state.room) return;
     const service = { type };
-    service.site_id = this.props.siteId;
-    service.room_id = this.props.roomId;
+    service.site_id = this.room.siteId;
+    service.room_id = this.room.roomId;
 
     switch (type) {
       case SERVICES_TYPE.BEEHOME_LIST_BILL:
@@ -456,6 +496,17 @@ class Room extends Component {
     });
   };
 
+  goToListRoom = () => {
+    !this.props.roomId &&
+      Actions.push(appConfig.routes.listRoom, {
+        room_id: this.room.roomId,
+        title: this.room.title,
+        onConfirm: roomMainInfo => {
+          this.setState({ roomMainInfo, loading: true }, () => this.getData());
+        }
+      });
+  };
+
   nomarlizeImages(images) {
     return images.map(img => {
       if (!img.filename) {
@@ -478,8 +529,7 @@ class Room extends Component {
   };
 
   renderTitle = props => {
-    const title =
-      this.props.title || (this.state.room ? this.state.room.name : '');
+    const title = this.room.name;
     const textStyle = {
       ...props.style,
       opacity:
@@ -567,7 +617,12 @@ class Room extends Component {
       <View style={styles.screenContainer}>
         <SafeAreaView style={styles.container}>
           {loading && <Loading center />}
-          <NavBar maskStyle={navBarAnimated} renderTitle={this.renderTitle} />
+          <NavBar
+            back={this.props.roomId}
+            maskStyle={navBarAnimated}
+            renderTitle={this.renderTitle}
+            onPressRight={this.goToListRoom}
+          />
 
           <SkeletonLoading loading={skeletonLoading} style={styles.skeleton}>
             {!!room && (
@@ -646,7 +701,8 @@ class Room extends Component {
                 }
               ],
               {
-                useNativeDriver: true
+                useNativeDriver: true,
+                listener: this.scrollListener
               }
             )}
           >
@@ -679,13 +735,12 @@ class Room extends Component {
                       fill={appConfig.colors.primary}
                     />
                   }
-                  message="Chưa có dữ liệu"
+                  message={`Bạn chưa có nhà trên HomeID.\r\rVui lòng liên hệ BQL tòa nhà của bạn và kiểm tra số điện thoại chủ hộ được đăng ký có đúng với số đang đăng nhập không?`}
                 />
               ) : (
                 !loading && (
                   <>
                     <Body
-                      refreshing={this.state.refreshing}
                       newses={newses}
                       sites={sites}
                       bills={bills}

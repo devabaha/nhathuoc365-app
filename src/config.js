@@ -50,6 +50,7 @@ const config = Object.freeze({
 
     homeTab: 'homeTab',
     newsTab: 'newsTab',
+    roomTab: 'roomTab',
     deepLinkNewsTab: 'deepLinkNewsTab',
     scanQrCodeTab: 'scanQrCodeTab',
     customerCardWallet: 'customer_card_wallet',
@@ -125,6 +126,7 @@ const config = Object.freeze({
 
     // HomeID
     listBuilding: 'listBuilding',
+    listRoom: 'listRoom',
     building: 'building',
     room: 'room',
     supplierStore: 'supplierStore',

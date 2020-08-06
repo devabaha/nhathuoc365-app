@@ -157,6 +157,8 @@ import {
 } from './containers/Bills/Payment';
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
+import MultiTaskView from './components/MultiTaskView';
+import { ListRoom } from './containers/Room';
 
 /**
  * Not allow font scaling
@@ -512,6 +514,7 @@ class App extends Component {
 
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
+        {/* <MultiTaskView /> */}
         {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
@@ -625,19 +628,17 @@ class RootRouter extends Component {
                   tabBarOnPress={props => handleTabBarOnPress({ ...props, t })}
                   {...navBarConfig}
                 >
-                  {/* ================ HOME TAB ================ */}
+                  {/* ================ Tab 1 ================ */}
                   <Stack
-                    key={appConfig.routes.homeTab}
+                    key={appConfig.routes.roomTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab1.title')}
-                    iconName="home-assistant"
+                    iconName="sofa"
                     iconSize={24}
-                    initial
                   >
                     <Scene
-                      key={`${appConfig.routes.homeTab}_1`}
-                      title="HomeID"
-                      component={HomeContainer}
+                      key={`${appConfig.routes.roomTab}_1`}
+                      component={Room}
                       hideNavBar
                     />
                   </Stack>
@@ -645,7 +646,7 @@ class RootRouter extends Component {
                   {/**
                    ************************ Tab 2 ************************
                    */}
-                  <Stack
+                  {/* <Stack
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
@@ -658,6 +659,20 @@ class RootRouter extends Component {
                       title={t('screen.news.mainTitle')}
                       component={Notify}
                     />
+                  </Stack> */}
+                  <Stack
+                    key={appConfig.routes.homeTab}
+                    icon={TabIcon}
+                    iconLabel={t('appTab.tab2.title')}
+                    iconName="home-assistant"
+                    iconSize={24}
+                    initial
+                  >
+                    <Scene
+                      key={`${appConfig.routes.homeTab}_1`}
+                      component={HomeContainer}
+                      hideNavBar
+                    />
                   </Stack>
 
                   {/* ================ SCAN QR TAB ================ */}
@@ -668,11 +683,15 @@ class RootRouter extends Component {
                   >
                     <Scene component={() => null} />
                   </Stack> */}
+
+                  {/**
+                   ************************ Tab 3 ************************
+                   */}
                   <Stack
                     key={appConfig.routes.listBuilding}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab3.title')}
-                    iconName="home-city-outline"
+                    iconName="office-building"
                     iconSize={24}
                     notifyKey="customer_card_wallet"
                   >
@@ -682,9 +701,6 @@ class RootRouter extends Component {
                       component={ListBuilding}
                     />
                   </Stack>
-                  {/**
-                   ************************ Tab 3 ************************
-                   */}
 
                   {/**
                    ************************ Tab 4 ************************
@@ -1544,6 +1560,9 @@ class RootRouter extends Component {
                 key={appConfig.routes.memberModal}
                 component={MemberModal}
               />
+
+              {/* ================ MODAL LIST ROOM ================ */}
+              <Stack key={appConfig.routes.listRoom} component={ListRoom} />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}

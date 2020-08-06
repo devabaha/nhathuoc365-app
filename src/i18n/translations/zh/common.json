@@ -14,7 +14,7 @@
       "title": "信息"
     },
     "tab3": {
-      "title": "Buildings"
+      "title": "Dự án"
     },
     "tab4": {
       "title": "订单"
@@ -26,7 +26,7 @@
 
   "screen": {
     "listBuilding": {
-      "mainTitle": ""
+      "mainTitle": "Danh sách dự án"
     },
     "cardWallet": {
       "mainTitle": "在HomeID中建立"

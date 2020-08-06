@@ -14,13 +14,14 @@ import { Actions } from 'react-native-router-flux';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import HomeExchangesSVG from '../../../images/home_exchanges.svg';
 import Button from 'react-native-button';
 
 const defaultListener = () => {};
 
 class NavBar extends Component {
   static propTypes = {
-    onCancel: PropTypes.func,
+    onPressLeft: PropTypes.func,
     onSearch: PropTypes.func,
     onClearText: PropTypes.func,
     placeholder: PropTypes.string,
@@ -28,15 +29,38 @@ class NavBar extends Component {
   };
 
   static defaultProps = {
-    onCancel: defaultListener,
+    onPressLeft: defaultListener,
     onSearch: defaultListener,
     onClearText: defaultListener,
     placeholder: '',
     searchValue: ''
   };
 
+  handleLeftPress = () => {
+    if (this.props.back) {
+      Actions.pop();
+    }
+    this.props.onPressLeft();
+  };
+
+  handleRightPress = () => {
+    this.props.onPressRight();
+  };
+
+  renderIcon(CustomIcon, iconSize, iconName) {
+    return (
+      <CustomIcon
+        size={iconSize}
+        color="#fff"
+        style={[styles.icon]}
+        name={iconName}
+      />
+    );
+  }
+
   renderLeft() {
-    const BackIcon = appConfig.device.isIOS ? Ionicons : Icon;
+    if (!this.props.back) return;
+    const CustomIcon = appConfig.device.isIOS ? Ionicons : Icon;
     const iconName = appConfig.device.isIOS ? 'ios-arrow-back' : 'arrow-left';
     const iconSize = appConfig.device.isIOS ? 30 : 25;
     const pressColor = 'rgba(0,0,0,.32)';
@@ -52,22 +76,14 @@ class NavBar extends Component {
     if (Platform.OS === 'android' && Platform.Version >= 21) {
       return (
         <TouchableNativeFeedback
-          onPress={() => {
-            Actions.pop();
-            this.props.onCancel();
-          }}
+          onPress={this.handleLeftPress}
           background={TouchableNativeFeedback.Ripple(pressColor, true)}
           accessible
           accessibilityComponentType="button"
           hitSlop={HIT_SLOP}
         >
           <View style={[styles.cancelButton, { borderRadius: 20 }]}>
-            <BackIcon
-              size={iconSize}
-              color="#fff"
-              style={styles.searchIcon}
-              name={iconName}
-            />
+            {this.renderIcon(CustomIcon, iconSize, iconName)}
           </View>
         </TouchableNativeFeedback>
       );
@@ -76,17 +92,9 @@ class NavBar extends Component {
     return (
       <Button
         containerStyle={styles.cancelButton}
-        onPress={() => {
-          Actions.pop();
-          this.props.onCancel();
-        }}
+        onPress={this.handleLeftPress}
       >
-        <BackIcon
-          size={iconSize}
-          color="#fff"
-          style={styles.searchIcon}
-          name={iconName}
-        />
+        {this.renderIcon(CustomIcon, iconSize, iconName)}
       </Button>
     );
   }
@@ -98,6 +106,26 @@ class NavBar extends Component {
     return <Text style={styles.text}>{this.props.title}</Text>;
   }
 
+  renderRight() {
+    if (!this.props.back) {
+      return (
+        <Button
+          containerStyle={styles.rightButton}
+          onPress={this.handleRightPress}
+        >
+          <HomeExchangesSVG
+            width={25}
+            height={25}
+            fill="#fff"
+            style={styles.icon}
+          />
+        </Button>
+      );
+    }
+
+    return null;
+  }
+
   render() {
     return (
       <Animated.View style={[styles.container, this.props.containerStyle]}>
@@ -105,6 +133,7 @@ class NavBar extends Component {
         <View style={styles.wrapper}>
           {this.renderLeft()}
           {this.renderMiddle()}
+          {this.renderRight()}
         </View>
       </Animated.View>
     );
@@ -115,11 +144,21 @@ const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     zIndex: 999,
+    ...Platform.select({
+      ios: {
+        height: 64
+      },
+      android: {
+        height: 54
+      },
+      windows: {
+        height: 54
+      }
+    }),
     paddingTop: Platform.select({
       ios: appConfig.device.isIphoneX ? 50 : 24,
-      android: StatusBar.currentHeight / 1.5
+      android: 0
     }),
-    paddingBottom: 7 + (StatusBar.currentHeight || 0) / 2.5,
     width: appConfig.device.width,
     overflow: 'hidden'
   },
@@ -127,7 +166,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
+    paddingVertical: 10
   },
   mask: {
     position: 'absolute',
@@ -137,17 +177,21 @@ const styles = StyleSheet.create({
     opacity: 0
   },
   cancelButton: {
+    position: 'absolute',
     paddingHorizontal: 16,
     zIndex: 1
+  },
+  rightButton: {
+    position: 'absolute',
+    paddingHorizontal: 16,
+    zIndex: 1,
+    right: 0
   },
   cancelText: {
     fontSize: 16,
     color: '#fff'
   },
-  searchIcon: {
-    position: 'relative',
-    top: 2
-  },
+  icon: {},
   clearWrapper: {
     width: 20,
     height: 20,
@@ -181,7 +225,6 @@ const styles = StyleSheet.create({
     )
   },
   text: {
-    position: 'absolute',
     fontSize: 16,
     width: appConfig.device.width,
     color: '#fff',

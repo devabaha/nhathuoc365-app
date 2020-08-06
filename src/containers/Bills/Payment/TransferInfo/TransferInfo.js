@@ -24,7 +24,7 @@ class TransferInfo extends Component {
   };
 
   handleConfirm = () => {
-    Actions.popTo(appConfig.routes.room, {
+    Actions.popTo(this.props.rootSceneKey, {
       room_id: this.props.room_id,
       site_id: this.props.site_id
     });

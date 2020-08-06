@@ -8,13 +8,13 @@
 
   "appTab": {
     "tab1": {
-      "title": "HomeID"
+      "title": "Căn hộ"
     },
     "tab2": {
-      "title": "Tin tức"
+      "title": "Tiện ích"
     },
     "tab3": {
-      "title": "Tòa nhà"
+      "title": "Dự án"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -26,7 +26,7 @@
 
   "screen": {
     "listBuilding": {
-      "mainTitle": "Danh sách tòa nhà"
+      "mainTitle": "Danh sách dự án"
     },
     "cardWallet": {
       "mainTitle": "Tòa nhà trên HomeID"

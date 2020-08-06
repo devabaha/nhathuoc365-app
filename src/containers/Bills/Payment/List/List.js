@@ -132,6 +132,7 @@ class List extends Component {
     Actions.push(appConfig.routes.billsPaymentMethod, {
       site_id: this.props.site_id,
       room_id: this.props.room_id,
+      rootSceneKey: this.props.rootSceneKey,
       price: this.totalPriceView.value,
       ids: this.billIds
     });

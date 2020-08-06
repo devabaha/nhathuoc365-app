@@ -8,13 +8,13 @@
 
   "appTab": {
     "tab1": {
-      "title": "HomeID"
+      "title": "Room"
     },
     "tab2": {
-      "title": "News"
+      "title": "Utilities"
     },
     "tab3": {
-      "title": "Buildings"
+      "title": "Project"
     },
     "tab4": {
       "title": "Orders"
@@ -26,7 +26,7 @@
 
   "screen": {
     "listBuilding": {
-      "mainTitle": "List of buildings"
+      "mainTitle": "List of project"
     },
     "cardWallet": {
       "mainTitle": "Building in HomeID"

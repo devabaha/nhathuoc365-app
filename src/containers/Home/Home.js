@@ -167,7 +167,8 @@ class Home extends Component {
     const service = {
       type: SERVICES_TYPE.BEEHOME_ROOM,
       room_id: room.id,
-      site_id: room.site_id
+      site_id: room.site_id,
+      title: room.name
     };
     servicesHandler(service);
   };

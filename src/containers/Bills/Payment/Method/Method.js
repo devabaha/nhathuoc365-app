@@ -128,7 +128,8 @@ class Method extends Component {
           Actions.push(appConfig.routes.transferInfo, {
             info: response.data.va_info,
             heading: this.state.selectedMethod.name,
-            note: this.state.selectedMethod.content
+            note: this.state.selectedMethod.content,
+            rootSceneKey: this.props.rootSceneKey
           });
         } else {
           flashShowMessage({
@@ -174,7 +175,7 @@ class Method extends Component {
         this.createEpayTransfer();
         break;
       default:
-        Actions.replace(appConfig.routes.room, {
+        Actions.popTo(this.props.rootSceneKey, {
           room_id: this.props.room_id,
           site_id: this.props.site_id
         });

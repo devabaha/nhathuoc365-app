@@ -5,6 +5,8 @@
  * @module HomeIDAPI
  */
 exports.USER_LIST_BUILDING = MY_FOOD_API + 'apiUser/list_building';
+exports.USER_LIST_ROOM = MY_FOOD_API + 'apiUser/list_room';
+exports.USER_UPDATE_ROOM_DEFAULT = MY_FOOD_API + 'apiUser/update_room_default';
 exports.SITE_HOME = MY_FOOD_API + 'apiSite/site_home';
 exports.SITE_ROOM = MY_FOOD_API + 'apiSite/room';
 

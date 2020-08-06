@@ -14,6 +14,7 @@ export const SERVICES_TYPE = {
   BEEHOME_SERVICE_TYPE: 'beehome_service',
   BEEHOME_BUILDING: 'beehome_building',
   BEEHOME_ROOM: 'beehome_room',
+  BEEHOME_BILLS_PAYMENT: 'beehome_bills_payment',
   BEEHOME_LIST_BILL: 'beehome_list_bill',
   BEEHOME_LIST_REQUEST: 'beehome_list_request',
   BEEHOME_REQUEST: 'beehome_request',

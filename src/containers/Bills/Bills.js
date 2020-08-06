@@ -4,6 +4,7 @@ import { TabView, TabBar } from 'react-native-tab-view';
 import appConfig from 'app-config';
 import { BillsTab, ReceiptsTab } from './Tabs';
 import { Actions } from 'react-native-router-flux';
+import { SERVICES_TYPE, servicesHandler } from '../../helper/servicesHandler';
 
 const BILL_SCENCE = {
   BILL: {
@@ -34,10 +35,14 @@ class Bills extends Component {
   }
 
   handlePayBill = () => {
-    Actions.push(appConfig.routes.billsPaymentList, {
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_BILLS_PAYMENT,
       site_id: this.props.siteId,
-      room_id: this.props.roomId
-    });
+      room_id: this.props.roomId,
+      sceneKey: Actions.currentScene
+    };
+
+    servicesHandler(service);
   };
 
   renderTabBarLabel = ({ focused, route: { title } }) => {

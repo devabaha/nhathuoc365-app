@@ -79,6 +79,13 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         title: service.title
       });
       break;
+    case SERVICES_TYPE.BEEHOME_BILLS_PAYMENT:
+      Actions.push(appConfig.routes.billsPaymentList, {
+        site_id: service.site_id,
+        room_id: service.room_id,
+        rootSceneKey: service.sceneKey
+      });
+      break;
     case SERVICES_TYPE.BEEHOME_LIST_BILL:
       /**
        * @type {Object}
