@@ -14,8 +14,8 @@ import Lightbox from 'react-native-lightbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
 import { getBase64Image, setStater } from '../../helper';
-import FastImage from 'react-native-fast-image';
-import { isIos } from '../../constants';
+// import FastImage from 'react-native-fast-image';
+// import { isIos } from '../../constants';
 
 const CONTAINER_WIDTH = 150;
 const CONTAINER_HEIGHT = 100;
@@ -171,7 +171,7 @@ class ImageMessageChat extends Component {
       });
     }
 
-    const ImageComponent = isIos ? Image : FastImage;
+    // const ImageComponent = isIos ? Image : FastImage;
 
     return (
       <View
@@ -187,7 +187,7 @@ class ImageMessageChat extends Component {
           onOpen={this.handleOpen.bind(this)}
           willClose={this.handleWillClose.bind(this)}
         >
-          <ImageComponent
+          <Image
             resizeMode={this.state.isOpenLightBox ? 'contain' : 'cover'}
             source={{
               uri: this.state.isOpenLightBox ? highQualityUri : lowQualityUri
