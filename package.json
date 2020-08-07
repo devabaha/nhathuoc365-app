@@ -17,6 +17,7 @@
     "@tickid/tickid-rn-loading": "^1.0.0",
     "@tickid/tickid-rn-message-bar": "^1.0.2",
     "@tickid/tickid-scaning-button": "^1.0.0",
+    "@types/react-native": "^0.63.4",
     "autobind-decorator": "^2.1.0",
     "axios": "^0.18.0",
     "color-interpolate": "^1.0.5",

@@ -157,7 +157,7 @@ import {
 } from './containers/Bills/Payment';
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
-import MultiTaskView from './components/MultiTaskView';
+import { MultiTaskView } from './components/MultiTaskView/MultiTaskView';
 import { ListRoom } from './containers/Room';
 
 /**
@@ -514,8 +514,8 @@ class App extends Component {
 
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
-        {/* <MultiTaskView /> */}
-        {this.state.header}
+        <MultiTaskView />
+        {/* {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
@@ -535,7 +535,7 @@ class App extends Component {
           closeOnHardwareBackPress={false}
           showCancelButton={false}
           showConfirmButton={false}
-        />
+        /> */}
       </View>
     );
   }
