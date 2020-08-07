@@ -105,6 +105,22 @@ class Account extends Component {
             ],
             iconColor: '#ffffff'
           },
+          {
+            key: '-2',
+            icon: 'store',
+            label: 'Đăng ký cửa hàng trên HomeID',
+            desc: 'Tạo nhanh 1 cửa hàng online',
+            iconType: 'MaterialCommunityIcons',
+            rightIcon: <IconAngleRight />,
+            onPress: () => Actions.push(appConfig.routes.registerStore),
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#846faa'
+              }
+            ],
+            iconColor: '#ffffff'
+          },
 
           {
             key: '6',

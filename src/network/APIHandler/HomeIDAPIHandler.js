@@ -106,7 +106,7 @@ class HomeIDAPIHandler extends BaseHandler {
    * @todo Tạo phản ánh căn hộ
    */
   async site_request_room(site_id, room_id, data) {
-    var api = url_for(API.SITE_REQUEST_ROOM + '/' + site_id + '/' + room_id);
+    const api = url_for(API.SITE_REQUEST_ROOM + '/' + site_id + '/' + room_id);
     return await this.postAPI(api, data);
   }
 
@@ -114,7 +114,7 @@ class HomeIDAPIHandler extends BaseHandler {
    * @todo Gửi comment phản ánh căn hộ
    */
   async site_comment_request_room(site_id, room_id, request_id, data) {
-    var api = url_for(
+    const api = url_for(
       API.SITE_COMMENT_REQUEST_ROOM +
         '/' +
         site_id +
@@ -130,7 +130,9 @@ class HomeIDAPIHandler extends BaseHandler {
    * @todo Lấy danh sách thành viên room
    */
   async site_list_user_room(site_id, room_id) {
-    var api = url_for(API.SITE_LIST_USER_ROOM + '/' + site_id + '/' + room_id);
+    const api = url_for(
+      API.SITE_LIST_USER_ROOM + '/' + site_id + '/' + room_id
+    );
     return await this.getAPI(api);
   }
 
@@ -138,7 +140,7 @@ class HomeIDAPIHandler extends BaseHandler {
    * @todo Tìm kiếm thành viên room theo sđt
    */
   async site_search_user_room_by_phone(site_id, room_id, data) {
-    var api = url_for(
+    const api = url_for(
       API.SITE_SEARCH_USER_ROOM_BY_PHONE + '/' + site_id + '/' + room_id
     );
     return await this.postAPI(api, data);
@@ -148,7 +150,7 @@ class HomeIDAPIHandler extends BaseHandler {
    * @todo Thêm thành viên room
    */
   async site_add_user_room(site_id, room_id, data) {
-    var api = url_for(API.SITE_ADD_USER_ROOM + '/' + site_id + '/' + room_id);
+    const api = url_for(API.SITE_ADD_USER_ROOM + '/' + site_id + '/' + room_id);
     return await this.postAPI(api, data);
   }
 
@@ -156,7 +158,7 @@ class HomeIDAPIHandler extends BaseHandler {
    * @todo Xóa thành viên room
    */
   async site_delete_user_room(site_id, room_id, data) {
-    var api = url_for(
+    const api = url_for(
       API.SITE_DELETE_USER_ROOM + '/' + site_id + '/' + room_id
     );
     return await this.postAPI(api, data);
@@ -171,8 +173,32 @@ class HomeIDAPIHandler extends BaseHandler {
    * @returns {Promise}
    */
   async room_update(room_id, data) {
-    var api = url_for(API.ROOM_UPDATE + '/' + room_id);
+    const api = url_for(API.ROOM_UPDATE + '/' + room_id);
     return await this.postAPI(api, data);
+  }
+
+  /** STORE */
+  /**
+   * @todo đăng ký gian hàng trên HomeID
+   *
+   * @param {Object} data
+   * @param {number} source_id - id lĩnh vực kinh doanh
+   * @param {string} store_name - tên của hàng
+   * @param {string} email
+   * @param {string} address - địa chỉ cửa hàng
+   * @returns {Promise}
+   */
+  async user_create_store(data) {
+    const api = url_for(API.USER_CREATE_STORE);
+    return await this.postAPI(api, data);
+  }
+
+  /**
+   * @todo lấy danh sách lĩnh vực kinh doanh ở trang tạo cửa hàng
+   */
+  async user_list_business_area() {
+    const api = url_for(API.USER_LIST_BUSINESS_AREA);
+    return await this.getAPI(api);
   }
 
   /** E-PAY TRANSFER */
@@ -185,7 +211,9 @@ class HomeIDAPIHandler extends BaseHandler {
    * @returns {Promise}
    */
   async site_transfer_pay_va(site_id, room_id, data) {
-    var api = url_for(API.SITE_TRANSFER_PAY_VA + '/' + site_id + '/' + room_id);
+    const api = url_for(
+      API.SITE_TRANSFER_PAY_VA + '/' + site_id + '/' + room_id
+    );
     return await this.postAPI(api, data);
   }
 
@@ -197,7 +225,9 @@ class HomeIDAPIHandler extends BaseHandler {
    * @returns {Promise}
    */
   async site_check_status_va(site_id, room_id, data) {
-    var api = url_for(API.SITE_CHECK_STATUS_VA + '/' + site_id + '/' + room_id);
+    const api = url_for(
+      API.SITE_CHECK_STATUS_VA + '/' + site_id + '/' + room_id
+    );
     return await this.postAPI(api, data);
   }
 }

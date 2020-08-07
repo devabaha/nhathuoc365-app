@@ -19,189 +19,102 @@ import {
 import { Actions } from 'react-native-router-flux';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import appConfig from 'app-config';
-import ImagePicker from 'react-native-image-picker';
-import RNFetchBlob from 'rn-fetch-blob';
 
-import FloatingLabelInput from '../../../components/FloatingLabelInput';
-import Loading from '../../../components/Loading';
-import Button from '../../../components/Button';
-import Images from './Images';
+import FloatingLabelInput from '../../components/FloatingLabelInput';
+import Loading from '../../components/Loading';
+import Button from '../../components/Button';
 
 const MyInput = compose(
-  handleTextInput
-  // withNextInputAutoFocusInput
+  handleTextInput,
+  withNextInputAutoFocusInput
 )(FloatingLabelInput);
 
 const Form = withNextInputAutoFocusForm(View);
 
 const FORM_DATA = {
   TITLE: {
-    label: 'Tiêu đề *',
-    name: 'title',
+    label: 'Tên cửa hàng *',
+    name: 'store_name',
     type: 'name'
   },
-  REQUEST_TYPE: {
-    label: 'Loại phản ánh *',
-    name: 'code_type',
+  EMAIL: {
+    label: 'Email *',
+    name: 'email',
+    type: 'email'
+  },
+  ADDRESS: {
+    label: 'Địa chỉ *',
+    name: 'address',
     type: 'name'
   },
-  CONTENT: {
-    label: 'Nội dung *',
-    name: 'content',
-    type: 'name'
-  },
-  IMAGES: {
-    label: 'Hình ảnh',
-    name: 'images',
+  SOURCE: {
+    label: 'Lĩnh vực kinh doanh *',
+    name: 'source_id',
     type: 'name'
   }
 };
 
-const REQUIRED_MESSAGE = 'Vui lòng nhập trường này';
+const REQUIRED_MESSAGE = 'Vui lòng nhập trường này!';
+const INVALID_EMAIL_MESSAGE = 'Email không hợp lệ, vui lòng nhập lại!';
 const validationSchema = Yup.object().shape({
   [FORM_DATA.TITLE.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.REQUEST_TYPE.name]: Yup.string().required(REQUIRED_MESSAGE),
-  [FORM_DATA.CONTENT.name]: Yup.string().required(REQUIRED_MESSAGE)
+  [FORM_DATA.EMAIL.name]: Yup.string()
+    .required(REQUIRED_MESSAGE)
+    .email(INVALID_EMAIL_MESSAGE),
+  [FORM_DATA.ADDRESS.name]: Yup.string().required(REQUIRED_MESSAGE),
+  [FORM_DATA.SOURCE.name]: Yup.string().required(REQUIRED_MESSAGE)
 });
 
-class Creation extends Component {
+class RegisterStore extends Component {
   state = {
     loading: true,
-    requestTypes: [],
-    selectedRequestType: {
+    sources: [],
+    selectedSource: {
       value: ''
     },
-    formData: FORM_DATA,
-    uploadImageLoading: false,
-    images: []
+    formData: FORM_DATA
   };
   unmounted = false;
   refForm = React.createRef();
-  takePicture = this.takePicture.bind(this);
 
   get initialValues() {
     const values = {};
 
     Object.values(this.state.formData).forEach(value => {
-      let itemValue = value.name === FORM_DATA.IMAGES.name ? [] : '';
-      values[value.name] = itemValue;
+      values[value.name] = '';
     });
     return values;
   }
 
   componentDidMount() {
-    this.getRequestTypes();
+    this.getSources();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
   }
 
-  takePicture(key, values) {
-    this.setState({ uploadImageLoading: true });
-    const options = {
-      title: 'Tải ảnh phản ánh',
-      cancelButtonTitle: 'Hủy',
-      takePhotoButtonTitle: 'Chụp ảnh',
-      chooseFromLibraryButtonTitle: 'Mở thư viện',
-      rotation: 360,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images'
-      }
-    };
-
-    ImagePicker.showImagePicker(options, response => {
-      if (response.error) {
-        console.log(response.error);
-        !this.unmounted && this.setState({ uploadImageLoading: false });
-      } else if (response.didCancel) {
-        console.log(response);
-        !this.unmounted && this.setState({ uploadImageLoading: false });
-      } else {
-        // console.log(response);
-        if (!response.filename) {
-          response.filename = `${new Date().getTime()}`;
-        }
-        this.uploadTempImage(response, image => {
-          const imageValues = [...values[key]];
-          imageValues.push(image.name);
-          this.handleSetValueFormData(key, imageValues);
-        });
-      }
-    });
-  }
-
-  uploadTempImage = (response, callBack) => {
-    const { t } = this.props;
-    const image = {
-      name: 'image',
-      filename: response.filename,
-      data: response.data
-    };
-    // call api post my form data
-    RNFetchBlob.fetch(
-      'POST',
-      APIHandler.url_user_upload_image(),
-      {
-        'Content-Type': 'multipart/form-data'
-      },
-      [image]
-    )
-      .then(resp => {
-        if (!this.unmounted) {
-          const { data } = resp;
-          const response = JSON.parse(data);
-          if (response.status == STATUS_SUCCESS && response.data) {
-            const images = [...this.state.images];
-            images.push(response.data);
-            this.setState({ images });
-            callBack(response.data);
-          } else {
-            flashShowMessage({
-              type: 'danger',
-              message: response.message || t('common:api.error.message')
-            });
-          }
-        }
-      })
-      .catch(error => {
-        console.log('upload_id_card', error);
-        flashShowMessage({
-          type: 'danger',
-          message: t('common:api.error.message')
-        });
-      })
-      .finally(() => {
-        !this.unmounted &&
-          this.setState({
-            uploadImageLoading: false
-          });
-      });
-  };
-
-  async getRequestTypes() {
+  async getSources() {
     const { t } = this.props;
     try {
-      const response = await APIHandler.site_request_types_room(
-        this.props.siteId,
-        this.props.roomId
-      );
+      const response = await APIHandler.user_list_business_area();
+      console.log(response);
+
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           const state = { ...this.state };
-          const requestTypes = response.data.request_types.map(type => ({
-            ...type,
-            label: type.title,
-            value: type.id
+          const sources = response.data.list_business_area.map(source => ({
+            ...source,
+            label: source.name,
+            value: source.id
           }));
-          state.requestTypes = requestTypes;
+          state.sources = sources;
 
-          const selectedRequestType = requestTypes.find(
-            type => type.value === this.state.selectedRequestType.value
+          const selectedSource = sources.find(
+            source => source.value === this.state.selectedSource.value
           );
-          if (selectedRequestType) {
-            state.selectedRequestType = selectedRequestType;
+          if (selectedSource) {
+            state.selectedSource = selectedSource;
           }
           this.setState(state);
         } else {
@@ -227,15 +140,10 @@ class Creation extends Component {
     const { t } = this.props;
     console.log(data);
     try {
-      const response = await APIHandler.site_request_room(
-        this.props.siteId,
-        this.props.roomId,
-        data
-      );
+      const response = await APIHandler.user_create_store(data);
       console.log(response);
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS) {
-          this.props.onRefresh();
           Actions.pop();
           flashShowMessage({
             type: 'success',
@@ -283,34 +191,35 @@ class Creation extends Component {
     }
   }
 
-  onSelectRequestType = type_id => {
-    const selectedRequestType = this.state.requestTypes.find(
-      type => type.id === type_id
+  onSelectSource = source_id => {
+    const selectedSource = this.state.sources.find(
+      source => source.id === source_id
     );
-    this.handleSetValueFormData(FORM_DATA.REQUEST_TYPE.name, type_id);
+
+    this.handleSetValueFormData(FORM_DATA.SOURCE.name, source_id);
     this.setState({
-      selectedRequestType
+      selectedSource
     });
   };
 
-  goToRequestTypeSelection = () => {
+  goToSourcesSelection = () => {
     Keyboard.dismiss();
 
     Actions.push(appConfig.routes.modalPicker, {
-      data: this.state.requestTypes,
-      title: 'Chọn loại phản ánh',
-      onSelect: this.onSelectRequestType,
-      selectedLabel: this.state.selectedRequestType.title,
-      selectedValue: this.state.selectedRequestType.id,
-      defaultValue: this.state.requestTypes[0].id,
-      onClose: () => this.forceTouchFormData(FORM_DATA.REQUEST_TYPE.name)
+      data: this.state.sources,
+      title: 'Lĩnh vực kinh doanh',
+      onSelect: this.onSelectSource,
+      selectedLabel: this.state.selectedSource.name,
+      selectedValue: this.state.selectedSource.id,
+      defaultValue: this.state.sources[0].id,
+      onClose: () => this.forceTouchFormData(FORM_DATA.SOURCE.name)
     });
   };
 
   onInputFocus = type => {
     switch (type) {
-      case FORM_DATA.REQUEST_TYPE.name:
-        this.goToRequestTypeSelection();
+      case FORM_DATA.SOURCE.name:
+        this.goToSourcesSelection();
         break;
     }
   };
@@ -320,33 +229,17 @@ class Creation extends Component {
       const { label, name, type } = FORM_DATA[key];
       let extraProps = null;
       switch (name) {
-        case FORM_DATA.REQUEST_TYPE.name:
+        case FORM_DATA.SOURCE.name:
           return (
             <MyInputTouchable
               label={label}
               name={name}
               type={type}
-              onFocus={() => this.onInputFocus(FORM_DATA.REQUEST_TYPE.name)}
-              onPress={this.goToRequestTypeSelection}
-              value={this.state.selectedRequestType.title}
+              onFocus={() => this.onInputFocus(FORM_DATA.SOURCE.name)}
+              onPress={this.goToSourcesSelection}
+              value={this.state.selectedSource.name}
             />
           );
-        case FORM_DATA.IMAGES.name:
-          return (
-            <Images
-              images={this.state.images}
-              onOpenImageSelector={() =>
-                this.takePicture(FORM_DATA.IMAGES.name, values)
-              }
-              uploadImageLoading={this.state.uploadImageLoading}
-            />
-          );
-        case FORM_DATA.CONTENT.name:
-          extraProps = {
-            multiline: true,
-            inputContainerStyle: { height: 60 },
-            inputStyle: { paddingBottom: 10 }
-          };
         default:
           return (
             <MyInput
@@ -386,7 +279,7 @@ class Creation extends Component {
                   </ScrollView>
 
                   <Button
-                    title="Tạo phản ánh"
+                    title="Đăng ký ngay"
                     onPress={props.handleSubmit}
                     disabled={disabled}
                     btnContainerStyle={disabled && styles.btnDisabled}
@@ -455,7 +348,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation()(Creation);
+export default withTranslation()(RegisterStore);
 
 const MyInputTouchable = ({
   onPress,

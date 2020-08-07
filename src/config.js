@@ -138,7 +138,8 @@ const config = Object.freeze({
     requestDetail: 'requestDetail',
     requestCreation: 'requestCreation',
     members: 'members',
-    memberModal: 'memberModal'
+    memberModal: 'memberModal',
+    registerStore: 'registerStore'
   }
 });
 

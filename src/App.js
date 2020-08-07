@@ -159,6 +159,7 @@ import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
 import { MultiTaskView } from './components/MultiTaskView/MultiTaskView';
 import { ListRoom } from './containers/Room';
+import RegisterStore from './containers/RegisterStore';
 
 /**
  * Not allow font scaling
@@ -514,8 +515,8 @@ class App extends Component {
 
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
-        <MultiTaskView />
-        {/* {this.state.header}
+        {/* <MultiTaskView /> */}
+        {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
@@ -535,7 +536,7 @@ class App extends Component {
           closeOnHardwareBackPress={false}
           showCancelButton={false}
           showConfirmButton={false}
-        /> */}
+        />
       </View>
     );
   }
@@ -816,23 +817,34 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* ================ MAIN VOUCHER ================ */}
-                <Stack key={appConfig.routes.mainVoucher}>
+                {/* ================ BILLS TRANSFER INFO ================ */}
+                <Stack key={appConfig.routes.transferInfo}>
                   <Scene
-                    key={`${appConfig.routes.mainVoucher}_1`}
-                    title={t('screen.voucher.mainTitle')}
-                    component={VoucherContainer}
+                    key={`${appConfig.routes.transferInfo}_1`}
+                    title={t('screen.transferInfo.mainTitle')}
+                    component={BillsTransferInfo}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ CREATE STORE ================ */}
+                <Stack key={appConfig.routes.registerStore}>
+                  <Scene
+                    key={`${appConfig.routes.registerStore}_1`}
+                    title={t('screen.registerStore.mainTitle')}
+                    component={RegisterStore}
                     {...navBarConfig}
                     back
                   />
                 </Stack>
 
                 {/* ================ MAIN VOUCHER ================ */}
-                <Stack key={appConfig.routes.transferInfo}>
+                <Stack key={appConfig.routes.mainVoucher}>
                   <Scene
-                    key={`${appConfig.routes.transferInfo}_1`}
-                    title={t('screen.transferInfo.mainTitle')}
-                    component={BillsTransferInfo}
+                    key={`${appConfig.routes.mainVoucher}_1`}
+                    title={t('screen.voucher.mainTitle')}
+                    component={VoucherContainer}
                     {...navBarConfig}
                     back
                   />

@@ -123,7 +123,12 @@ class ModalPicker extends PureComponent {
   };
 
   onSelectPress = () => {
-    this.props.onSelect(this.state.selectedValue || this.props.defaultValue);
+    const value =
+      this.state.selectedValue !== undefined &&
+      this.state.selectedValue !== null
+        ? this.state.selectedValue
+        : this.props.defaultValue;
+    this.props.onSelect(value);
     this.onCancelPress();
   };
 
