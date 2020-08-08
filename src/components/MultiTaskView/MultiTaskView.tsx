@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView, StyleProp, ViewStyle } from 'react-native';
 import Animated, {
   interpolate,
   Extrapolate,
@@ -31,12 +31,15 @@ import Animated, {
   lessThan,
   abs,
   round,
-  onChange
+  onChange,
+  max,
+  log,
+  greaterOrEq
 } from 'react-native-reanimated';
 import appConfig from 'app-config';
 import { RectButton, PanGestureHandler, State } from 'react-native-gesture-handler';
 
-import { useValue, useClock, usePanGestureHandler, translate, withOffset, withDecay, diffClamp, multiplyTo, between, clamp } from 'react-native-redash';
+import { useValue, useClock, usePanGestureHandler, translate, withOffset, withDecay, diffClamp, multiplyTo, between, clamp, delay, withSpring, withSpringTransition, transformOrigin } from 'react-native-redash';
 const StyleGuide = {
   spacing: 8,
   palette: {
@@ -97,9 +100,10 @@ const StyleGuide = {
   },
 };
 const { width, height } = appConfig.device;
-export const CARD_WIDTH = width * 0.8;
-export const CARD_HEIGHT = CARD_WIDTH / 2;
-const MARGIN = 16;
+const CARD_WIDTH = width * .8;
+const CARD_HEIGHT = height * .7 * .9;
+const CARD_MARGIN_SPACE = (width - CARD_WIDTH) / 2;
+const MARGIN = 0;
 const HEIGHT = CARD_HEIGHT + MARGIN * 2;
 
 const styles = StyleSheet.create({
@@ -109,101 +113,159 @@ const styles = StyleSheet.create({
   },
   card: {
     marginVertical: MARGIN,
+    borderRadius: 20,
   },
 });
 
+const springConfig = {
+  damping: 1200,
+  mass: 1,
+  stiffness: 1200,
+  overshootClamping: true,
+  restSpeedThreshold: 0.01,
+  restDisplacementThreshold: 0.001,
+}
+
 const MultiTaskView = () => {
   const [containerHeight, setContainerHeight] = useState(height);
+  const [containerWidth, setContainerWidth] = useState(width);
   const [cardsHeight, setCardsHeight] = useState(0);
   const { gestureHandler, translation, state, velocity, position } = usePanGestureHandler();
-  // const translateX = diffClamp(
-  //   withDecay({ value: translation.x, velocity: velocity.x, state }),
-  //   -(cardsHeight - containerHeight),
-  //   0
-  // );
-  const translateY = diffClamp(
-    withDecay({ value: translation.y, velocity: velocity.y, state }),
-    -(cardsHeight - containerHeight),
-    0
-  );
-  const translateX = new Value(0);
-  // const translateY = interpolate(y, {
-  //   inputRange: [0, Math.abs(cardsHeight - containerHeight)],
-  //   outputRange: [0, Math.abs(cardsHeight - containerHeight)],
-  //   extrapolate: Extrapolate.CLAMP
-  // })
-
-  const root = 0, A = 50, clock = useClock();
-
-  function translating(index: number) {
-    let A = new Value(getRandomArbitrary(25, 200)), breakpoint1 = new Value(0), breakpoint2 = new Value(0), isResetA = new Value(0);
-
-    return translate({
-      x: block([
-        cond(eq(state, State.BEGAN), [
-          set(A, multiply(modulo(abs(translateY), A), 2)),
-          call([A], ([a]) => index === 3 && console.log(a)),
-          set(breakpoint1, multiply(A, .25)),
-          set(breakpoint2, multiply(A, .75)),
-        ]),
-        cond(between(translateY, -Math.abs(cardsHeight - containerHeight), root, false),
-          cond(between(modulo(abs(translateY), A), breakpoint1, breakpoint2),
-            [
-              // call([A], ([a]) => console.log(a)),
-              interpolate(modulo(abs(translateY), A), {
-                inputRange: [breakpoint1, breakpoint2],
-                outputRange: [breakpoint1, multiply(breakpoint1, -1)],
-                extrapolate: Extrapolate.CLAMP
+  const cardsWidth = CARD_WIDTH * cards.length + CARD_MARGIN_SPACE * 2;
+  const translateX =
+    withSpring(
+      {
+        value:
+          withDecay({
+            value:
+              interpolate(translation.x, {
+                inputRange: [-getSwipableWidth(), 0],
+                outputRange: [
+                  translation.x,
+                  cond(greaterOrEq(translation.x, 1), divide(translation.x, 7))
+                ],
+                extrapolateRight: Extrapolate.CLAMP
               })
-            ],
-            interpolate(modulo(abs(translateY), A), {
-              inputRange: [root, breakpoint1, breakpoint2, A],
-              outputRange: [root, breakpoint1, multiply(breakpoint1, -1), root],
-              extrapolate: Extrapolate.CLAMP
-            }),
-          ),
-          root
-        )
-      ]),
-      y: 0
+            , velocity: velocity.x, state, deceleration:.997
+          })
+        ,
+        velocity: velocity.x,
+        state,
+        snapPoints: getSnapPoints(),
+        config: springConfig
+      }
+    );
+
+  function getSnapPoints() {
+    const snapPoints = [0];
+    cards.forEach((card: string, index: number) => {
+      if (index < cards.length - 1) {
+        snapPoints.push(-CARD_WIDTH * index - CARD_WIDTH);
+      }
     })
+
+    return snapPoints;
   }
 
-  function getRandomArbitrary(min: number, max: number) {
-    const random = Math.random() * (max - min) + min;
-    console.log(random)
-    return random;
+  function getSwipableWidth() {
+    return CARD_MARGIN_SPACE + (cards.length - 1) * CARD_WIDTH
   }
 
+  console.log(CARD_WIDTH)
   return (
     <View
       style={styles.container}
       onLayout={({
         nativeEvent: {
-          layout: { height: h },
+          layout: { height, width },
         },
-      }) => setContainerHeight(h)}
+      }) => {
+        setContainerHeight(height);
+        setContainerWidth(width);
+      }}
     >
       <PanGestureHandler {...gestureHandler}>
         <Animated.View
           onLayout={({
             nativeEvent: {
-              layout: { height: h },
+              layout: { height, width },
             },
-          }) => setCardsHeight(h)}
+          }) => {
+            setCardsHeight(height);
+          }}
           style={{
-            transform: [{ translateY }]
+            width: cardsWidth,
+            flexDirection: 'row',
+            alignItems: 'center',
+            alignSelf: 'flex-start',
+            justifyContent: 'flex-start',
+            flex: 1,
+            paddingHorizontal: CARD_MARGIN_SPACE
           }}
         >
           {cards.map((card, index) => {
+            const SCALE_ARG = .9;
+            const onRightEnd = -CARD_WIDTH * (index) + CARD_MARGIN_SPACE + CARD_WIDTH / 3;
+            const onLeftEnd = -((CARD_WIDTH) * index) - CARD_MARGIN_SPACE;
+
+            let extrapolate = {};
+            if (index === 0) {
+              extrapolate = { extrapolateLeft: Extrapolate.CLAMP };
+            } else if (index < cards.length - 1) {
+              extrapolate = { extrapolate: Extrapolate.CLAMP };
+            } else {
+              extrapolate = { extrapolate: Extrapolate.CLAMP };
+            }
             return (
               <Animated.View
                 key={index}
                 style={[styles.card, {
-                  transform: translating(index)
+                  // backgroundColor: '#999',
+                  transform: [{
+                    translateX: block([
+                      withSpringTransition(
+                        interpolate(translateX, {
+                          inputRange: [-((CARD_WIDTH) * index) - CARD_MARGIN_SPACE, CARD_WIDTH * index],
+                          outputRange: [-((CARD_WIDTH) * index) - CARD_MARGIN_SPACE - CARD_WIDTH * (1 - SCALE_ARG) / 2, (CARD_WIDTH + CARD_MARGIN_SPACE) * index * 2 / 3],
+                          ...extrapolate
+                        }),
+                        springConfig,
+                        velocity.x,
+                        state
+                      )
+                    ])
+                  }],
                 }]}
               >
-                <Card {...{ card }} />
+                <Animated.View
+                  key={index}
+                  style={[styles.card, {
+                    opacity: index !== cards.length - 1
+                      ? interpolate(
+                        translateX,
+                        {
+                          inputRange: [onLeftEnd - CARD_WIDTH, onLeftEnd - CARD_WIDTH + CARD_MARGIN_SPACE / 2],
+                          outputRange: [0.6, 1],
+                          extrapolate: Extrapolate.CLAMP
+                        })
+                      : 1,
+                    transform: [{
+                      scale: interpolate(
+                        translateX,
+                        {
+                          inputRange: [onLeftEnd, onLeftEnd + 10, onRightEnd],
+                          outputRange: [SCALE_ARG, .94, 1],
+                          extrapolate: Extrapolate.CLAMP
+                        })
+
+                    }]
+                  }]}
+                >
+                  <Card
+                    index={index}
+                    {...{ card }
+                    } />
+                </Animated.View>
               </Animated.View>
             );
           })}
@@ -231,6 +293,7 @@ const cardstyles = StyleSheet.create({
   card: {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
+    borderRadius: 15
   },
 });
 
@@ -254,10 +317,21 @@ export const cards = [
 
 interface CardProps {
   card: Cards;
+  index?: number;
+  style?: StyleProp<ViewStyle>
 }
 
-const Card = ({ card }: CardProps) => {
-  return <View style={[cardstyles.card, { backgroundColor: card }]} />;
+const Card = ({ card, index, style }: CardProps) => {
+
+  return <Animated.View style={[cardstyles.card,
+  {
+    backgroundColor: card,
+    zIndex: index,
+    // @ts-ignore
+    ...elevationShadowStyle(15)
+  },
+    style
+  ]} />;
 };
 
 
