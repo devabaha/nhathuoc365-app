@@ -688,7 +688,7 @@ class RootRouter extends Component {
                   {/**
                    ************************ Tab 3 ************************
                    */}
-                  <Stack
+                  {/* <Stack
                     key={appConfig.routes.listBuilding}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab3.title')}
@@ -701,7 +701,7 @@ class RootRouter extends Component {
                       title={t('screen.listBuilding.mainTitle')}
                       component={ListBuilding}
                     />
-                  </Stack>
+                  </Stack> */}
 
                   {/**
                    ************************ Tab 4 ************************

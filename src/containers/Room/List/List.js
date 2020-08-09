@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import {
   View,
   SafeAreaView,
@@ -10,7 +10,8 @@ import {
   Easing,
   RefreshControl,
   TouchableHighlight,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated
 } from 'react-native';
 import Loading from '../../../components/Loading';
 import { Actions } from 'react-native-router-flux';
@@ -157,7 +158,7 @@ class List extends Component {
         onClosed={this.onClosed}
         animationDuration={200}
         useNativeDriver
-        swipeToClose={true}
+        swipeToClose={false}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}
       >
@@ -211,14 +212,15 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#eee',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     overflow: 'hidden'
   },
   close: {
     zIndex: 1,
-    left: 15
+    left: 15,
+    alignSelf: 'flex-start'
   },
   leftIcon: {
     color: '#666',
@@ -227,7 +229,7 @@ const styles = StyleSheet.create({
   header: {
     zIndex: 1,
     paddingTop: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f0f0',
     borderBottomColor: appConfig.colors.primary,
     borderBottomWidth: 3
   },
@@ -319,25 +321,42 @@ export default withTranslation()(List);
 
 const bgRowColor = hexToRgbA(appConfig.colors.primary, 0.3);
 
-const Row = ({ selected, avatar, cover, title, subTitle, onPress }) => (
-  <TouchableHighlight onPress={onPress} underlayColor={bgRowColor}>
-    <ImageBackground
-      blurRadius={2}
-      style={styles.rowContainer}
-      imageStyle={{ opacity: 0.5 }}
-      source={{ uri: cover }}
-    >
-      <View style={styles.mask} />
-      {selected && <View style={styles.selected} />}
-      <View style={styles.row}>
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: avatar }} style={styles.image} />
-        </View>
-        <View style={styles.mainContent}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subTitle}>{subTitle}</Text>
-        </View>
-      </View>
-    </ImageBackground>
-  </TouchableHighlight>
-);
+const Row = ({ selected, avatar, cover, title, subTitle, onPress }) => {
+  const [animatedOpacity] = useState(new Animated.Value(0));
+  useEffect(() => {
+    startShowUpAnimation();
+  }, []);
+
+  function startShowUpAnimation() {
+    Animated.timing(animatedOpacity, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true
+    }).start();
+  }
+
+  return (
+    <Animated.View style={{ opacity: animatedOpacity }}>
+      <TouchableHighlight onPress={onPress} underlayColor={bgRowColor}>
+        <ImageBackground
+          blurRadius={2}
+          style={[styles.rowContainer]}
+          imageStyle={{ opacity: 0.5 }}
+          source={{ uri: cover }}
+        >
+          <View style={styles.mask} />
+          {selected && <View style={styles.selected} />}
+          <View style={styles.row}>
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: avatar }} style={styles.image} />
+            </View>
+            <View style={styles.mainContent}>
+              <Text style={styles.title}>{title}</Text>
+              <Text style={styles.subTitle}>{subTitle}</Text>
+            </View>
+          </View>
+        </ImageBackground>
+      </TouchableHighlight>
+    </Animated.View>
+  );
+};
