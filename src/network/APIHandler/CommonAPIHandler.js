@@ -479,25 +479,16 @@ class CommonAPIHandler extends BaseHandler {
    * Load conversations
    */
   site_load_conversations(store_id, data = {}) {
-    const cancelInstance = this.getCancelInstance();
+    const api = url_for(API.SITE_CONVERSATIONS + '/' + store_id);
 
-    var api = url_for(API.SITE_CONVERSATIONS + '/' + store_id);
-    return [
-      cancelInstance,
-      () =>
-        this.postAPI(api, data, {
-          cancelToken: cancelInstance.token
-        })
-    ];
+    return this.postCancelableAPI(api, data);
   }
 
   /**
    * Load chat - new
    */
   site_load_conversation(store_id, user_id, last_mesage_id) {
-    const cancelInstance = this.getCancelInstance();
-
-    var api = url_for(
+    const api = url_for(
       API.SITE_CONVERSATION +
         '/' +
         store_id +
@@ -506,13 +497,8 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         last_mesage_id
     );
-    return [
-      cancelInstance,
-      () =>
-        this.getAPI(api, {
-          cancelToken: cancelInstance.token
-        })
-    ];
+
+    return this.getCancelableAPI(api);
   }
 
   /**
