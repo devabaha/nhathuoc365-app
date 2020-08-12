@@ -9,7 +9,7 @@ import {
   RefreshControl,
   Animated,
   SafeAreaView,
-  StatusBar
+  TouchableOpacity
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
@@ -22,17 +22,17 @@ import appConfig from 'app-config';
 import IconFeather from 'react-native-vector-icons/Feather';
 import { willUpdateState } from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
-import StoreNavBar from './StoreNavBar';
+import StoreNavBarHomeID from './StoreNavBarHomeID';
 import HeaderStoreHomeID from './HeaderStoreHomeID';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const BANNER_ABSOLUTE_HEIGHT =
-  appConfig.device.height / 3 - appConfig.device.bottomSpace;
+  appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
 const STATUS_BAR_HEIGHT = appConfig.device.isIOS
   ? appConfig.device.isIphoneX
     ? 50
     : 20
-  : StatusBar.currentHeight;
+  : 0;
 const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW =
@@ -90,13 +90,6 @@ class Stores extends Component {
     setTimeout(() => {
       const { t } = this.props;
       Actions.refresh({
-        right: this._renderRightButton(),
-        renderTitle: appConfig.device.isIOS ? (
-          <StoreNavBar
-            onPressSearch={this.handleSearchInStore}
-            placeholder={t('navBar.placeholder')}
-          />
-        ) : null,
         title: ''
       });
     });
@@ -238,14 +231,6 @@ class Stores extends Component {
     }
   };
 
-  _renderRightButton() {
-    return (
-      <View style={[styles.right_btn_box]}>
-        <RightButtonOrders tel={store.store_data.tel} />
-      </View>
-    );
-  }
-
   _changeCategory(item, index, nav_only) {
     this.setState({ flatListHeight: this.flatListPagesHeight[index] });
     if (this.refs_category_nav) {
@@ -386,12 +371,10 @@ class Stores extends Component {
     const { t } = this.props;
     return (
       <SafeAreaView style={[styles.container]}>
-        {appConfig.device.isAndroid && (
-          <StoreNavBar
-            onPressSearch={this.handleSearchInStore}
-            placeholder={t('navBar.placeholder')}
-          />
-        )}
+        <StoreNavBarHomeID
+          onPressSearch={this.handleSearchInStore}
+          placeholder={t('navBar.placeholder')}
+        />
 
         <HeaderStoreHomeID
           active={this.state.siteNotify.favor_flag}

@@ -6,8 +6,8 @@ import {
   RefreshControl,
   View
 } from 'react-native';
-import Loading from 'app-components/Loading';
-import NoResult from 'app-components/NoResult';
+import Loading from '../../../../components/Loading';
+import NoResult from '../../../../components/NoResult';
 import Receipt from './Receipt';
 
 const NoResultComp = (

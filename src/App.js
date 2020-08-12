@@ -1038,14 +1038,11 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.store} navTransparent>
-                  <Scene
-                    key={`${appConfig.routes.store}_1`}
-                    component={StoreContainer}
-                    {...navBarConfig}
-                    back={appConfig.device.isIOS}
-                  />
-                </Stack>
+                <Scene
+                  key={appConfig.routes.store}
+                  component={StoreContainer}
+                  navBar={null}
+                />
 
                 <Stack key={appConfig.routes.supplierStore}>
                   <Scene

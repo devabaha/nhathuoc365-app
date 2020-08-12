@@ -63,7 +63,7 @@ class HeaderStoreHomeID extends Component {
       nextProps.imageBgStyle !== this.props.imageBgStyle ||
       nextProps.infoContainerStyle !== this.props.infoContainerStyle ||
       nextProps.bannerUrl !== this.props.bannerUrl ||
-      nextProsp.avatarUrl !== this.props.avatarUrl ||
+      nextProps.avatarUrl !== this.props.avatarUrl ||
       nextProps.title !== this.props.title ||
       nextProps.subTitle !== this.props.subTitle ||
       nextProps.description !== this.props.description ||
@@ -204,8 +204,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     alignSelf: 'center',
     justifyContent: 'center',
-    alignItems: 'flex-end',
-    paddingBottom: 50
+    alignItems: 'flex-end'
+    // paddingBottom: 50
   },
   headerInfoWrapper: {
     flexDirection: 'row',

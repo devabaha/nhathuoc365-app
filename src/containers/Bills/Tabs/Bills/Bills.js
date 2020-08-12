@@ -6,9 +6,9 @@ import {
   Easing,
   Animated
 } from 'react-native';
-import Loading from 'app-components/Loading';
-import NoResult from 'app-components/NoResult';
-import HomeCardList from 'app-components/Home/component/HomeCardList';
+import Loading from '../../../../components/Loading';
+import NoResult from '../../../../components/NoResult';
+import HomeCardList from '../../../../components/Home/component/HomeCardList';
 import Bill, { QuickPayment } from './Bill';
 
 class Bills extends Component {

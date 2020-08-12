@@ -179,7 +179,8 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
     paddingLeft: 8,
     paddingRight: 4,
-    paddingTop: 2
+    paddingTop: 2,
+    ...elevationShadowStyle(7)
   },
   right_btn_box: {
     flexDirection: 'row'

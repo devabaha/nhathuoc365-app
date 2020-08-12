@@ -12,7 +12,7 @@ import { Actions } from 'react-native-router-flux';
 
 import appConfig from 'app-config';
 import Loading from '../../../../components/Loading';
-import NoResult from 'app-components/NoResult';
+import NoResult from '../../../../components/NoResult';
 import { Bill } from '../../../Bills';
 import Button from '../../../../components/Button';
 import { CheckBox } from 'react-native-elements';
