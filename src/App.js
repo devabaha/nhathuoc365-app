@@ -639,6 +639,7 @@ class RootRouter extends Component {
                   >
                     <Scene
                       key={`${appConfig.routes.roomTab}_1`}
+                      title="HomeID"
                       component={Room}
                       hideNavBar
                     />
@@ -721,6 +722,15 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ BUILDING ================ */}
+                <Scene
+                  key={appConfig.routes.listBuilding}
+                  title={t('screen.listBuilding.mainTitle')}
+                  component={ListBuilding}
+                  {...navBarConfig}
+                  back
+                />
 
                 {/* ================ BUILDING ================ */}
                 <Scene

@@ -130,12 +130,20 @@ class Home extends Component {
   get hasProducts() {
     return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
+
   get hasProduct_groups() {
     let array_product_groups = Object.keys(this.props.product_groups);
     return (
       Array.isArray(array_product_groups) && array_product_groups.length > 0
     );
   }
+
+  get hasServices() {
+    return (
+      Array.isArray(this.props.listService) && this.props.listService.lenth > 0
+    );
+  }
+
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
     `${appConfig.routes.homeTab}_1`,
     68
@@ -204,56 +212,15 @@ class Home extends Component {
             />
           </View>
 
-          <ListServices
-            services={this.props.services}
-            listService={this.props.listService}
-            notify={this.props.notify}
-            onItemPress={this.props.onPressService}
-          />
+          {this.hasServices && (
+            <ListServices
+              listService={this.props.listService}
+              notify={this.props.notify}
+              onItemPress={this.props.onPressService}
+            />
+          )}
 
           <View style={styles.contentWrapper}>
-            {this.hasRooms && (
-              <HomeCardList
-                data={this.props.rooms}
-                onShowAll={null}
-                title={
-                  this.props.title_rooms
-                    ? this.props.title_rooms
-                    : 'Căn hộ của tôi'
-                }
-                extraComponent={this.props.rooms.length === 0 && <NoRoom />}
-              >
-                {({ item, index }) => (
-                  <HomeCardItem
-                    title={item.title}
-                    isShowSubTitle={true}
-                    subTitle={item.address}
-                    iconSubTitle={<Icon name="map-marker" />}
-                    imageUrl={item.image_url}
-                    onPress={() => this.props.onPressRoomItem(item)}
-                    last={this.props.rooms.length - 1 === index}
-                  />
-                )}
-              </HomeCardList>
-            )}
-            {this.hasRoomNews && (
-              <HomeCardList
-                onShowAll={null}
-                data={this.props.room_news}
-                title={this.props.title_room_news}
-              >
-                {({ item, index }) => (
-                  <HomeCardItem
-                    title={item.title}
-                    iconSubTitle={<Icon name="building" />}
-                    subTitle={item.shop_name}
-                    imageUrl={item.image_url}
-                    onPress={() => this.props.onPressRoomNews(item)}
-                    last={this.props.room_news.length - 1 === index}
-                  />
-                )}
-              </HomeCardList>
-            )}
             {this.hasSites && (
               <HomeCardList
                 onShowAll={null}
@@ -308,6 +275,51 @@ class Home extends Component {
                 }}
               </HomeCardList>
             )}
+
+            {this.hasRooms && (
+              <HomeCardList
+                data={this.props.rooms}
+                onShowAll={null}
+                title={
+                  this.props.title_rooms
+                    ? this.props.title_rooms
+                    : 'Căn hộ của tôi'
+                }
+                extraComponent={this.props.rooms.length === 0 && <NoRoom />}
+              >
+                {({ item, index }) => (
+                  <HomeCardItem
+                    title={item.title}
+                    isShowSubTitle={true}
+                    subTitle={item.address}
+                    iconSubTitle={<Icon name="map-marker" />}
+                    imageUrl={item.image_url}
+                    onPress={() => this.props.onPressRoomItem(item)}
+                    last={this.props.rooms.length - 1 === index}
+                  />
+                )}
+              </HomeCardList>
+            )}
+
+            {this.hasRoomNews && (
+              <HomeCardList
+                onShowAll={null}
+                data={this.props.room_news}
+                title={this.props.title_room_news}
+              >
+                {({ item, index }) => (
+                  <HomeCardItem
+                    title={item.title}
+                    iconSubTitle={<Icon name="building" />}
+                    subTitle={item.shop_name}
+                    imageUrl={item.image_url}
+                    onPress={() => this.props.onPressRoomNews(item)}
+                    last={this.props.room_news.length - 1 === index}
+                  />
+                )}
+              </HomeCardList>
+            )}
+
             {this.hasProduct_groups &&
               Object.keys(this.props.product_groups).map((key, index) => {
                 let { products, title } = this.props.product_groups[key];
@@ -364,7 +376,7 @@ const styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.48,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.height / 4.8,
+    top: -(appConfig.device.width * 3) + appConfig.device.height / 5.2,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden'

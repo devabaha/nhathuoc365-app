@@ -15,8 +15,9 @@ const styles = StyleSheet.create({
         borderColor: '#eee'
     },
     title: {
+        flex: 1,
         color: '#333',
-        width: '100%',
+        // width: '100%',
     },
     last: {
         borderBottomWidth: 0
@@ -39,7 +40,7 @@ const AwesomeComboItem = ({
             onPress={onPress}
         >
             <View style={[styles.container, last && styles.last]}>
-                <Text style={styles.title}>{title}</Text>
+                <Text numberOfLines={1} style={styles.title}>{title}</Text>
             </View>
         </TouchableOpacity>
     )

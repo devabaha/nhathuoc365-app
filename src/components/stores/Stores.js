@@ -57,6 +57,7 @@ class Stores extends Component {
       categories_data: null,
       selected_category: { id: 0, name: '' },
       scrollY: new Animated.Value(0),
+      moreOptions: [],
       flatListHeight: undefined,
       siteNotify: {
         favor_flag: 0,
@@ -171,7 +172,8 @@ class Stores extends Component {
     this.setState(
       {
         categories_data: response.data.categories,
-        promotions: response.data.promotions
+        promotions: response.data.promotions,
+        moreOptions: response.data.more_options
       },
       () =>
         this.state.categories_data.map((item, index) => {
@@ -374,6 +376,7 @@ class Stores extends Component {
         <StoreNavBarHomeID
           onPressSearch={this.handleSearchInStore}
           placeholder={t('navBar.placeholder')}
+          moreOptions={this.state.moreOptions}
         />
 
         <HeaderStoreHomeID

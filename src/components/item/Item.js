@@ -6,7 +6,8 @@ import {
   StyleSheet,
   ScrollView,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  UIManager
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
@@ -178,6 +179,13 @@ class Item extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         // delay append data
         setTimeout(() => {
+          if (
+            appConfig.device.isAndroid &&
+            UIManager.setLayoutAnimationEnabledExperimental
+          ) {
+            UIManager.setLayoutAnimationEnabledExperimental(true);
+            layoutAnimation();
+          }
           if (isIOS) {
             layoutAnimation();
           }
@@ -661,6 +669,7 @@ class Item extends Component {
                   }
                   img {
                     max-width: 100% !important;
+                    height: auto!important
                   }`}
               />
             ) : (

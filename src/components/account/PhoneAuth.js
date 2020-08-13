@@ -298,6 +298,9 @@ class PhoneAuth extends Component {
       });
     } else {
       Actions.replace(config.routes.primaryTabbar);
+      if (response.data.room) {
+        Actions.jump(appConfig.routes.roomTab);
+      }
     }
   };
 

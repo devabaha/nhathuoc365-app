@@ -6,7 +6,8 @@ import {
   ScrollView,
   RefreshControl,
   View,
-  Text
+  Text,
+  UIManager
 } from 'react-native';
 import HeaderStore from '../../components/stores/HeaderStore';
 import appConfig from 'app-config';
@@ -174,6 +175,17 @@ class Room extends Component {
       siteId,
       roomId,
       data => {
+        if (
+          appConfig.device.isAndroid &&
+          UIManager.setLayoutAnimationEnabledExperimental
+        ) {
+          UIManager.setLayoutAnimationEnabledExperimental(true);
+          layoutAnimation();
+        }
+        if (isIOS) {
+          layoutAnimation();
+        }
+
         this.setState({
           list_service: data.list_service,
           room: data.room,
@@ -716,6 +728,7 @@ class Room extends Component {
             />
 
             <ScrollView
+              contentContainerStyle={{ flexGrow: 1 }}
               refreshControl={
                 appConfig.device.isIOS ? (
                   <RefreshControl
@@ -727,7 +740,7 @@ class Room extends Component {
             >
               {this.isDataEmpty && !loading ? (
                 <NoResult
-                  containerStyle={{ paddingTop: '30%' }}
+                  containerStyle={{ paddingTop: '30%', paddingHorizontal: 15 }}
                   icon={
                     <BuildingSVG
                       width={appConfig.device.width / 3}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Platform, LayoutAnimation } from 'react-native';
+import { View, Platform, LayoutAnimation, Image } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import getTickUniqueID from '../util/getTickUniqueID';
 import appConfig from 'app-config';
@@ -444,4 +444,22 @@ global.numberFormat = (target, n, x) => {
  */
 global.vndCurrencyFormat = (target, n, x) => {
   return numberFormat(target, n, x) + 'đ';
+};
+
+/**
+ * @todo prefetch images
+ * @param {Array<string>} images
+ * @returns {Promise}
+ */
+global.prefetchImages = images => {
+  return Promise.all(
+    images.map(image => {
+      let img = {
+        ...Image.resolveAssetSource(image),
+        cache: 'force-cache'
+      };
+
+      return Image.prefetch(img);
+    })
+  );
 };

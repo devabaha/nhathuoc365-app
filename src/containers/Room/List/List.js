@@ -18,12 +18,15 @@ import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/AntDesign';
 import appConfig from 'app-config';
+const ROOM_EMPTY_1 = require('../../../images/room_empty/1.jpg');
+const ROOM_EMPTY_2 = require('../../../images/room_empty/2.jpg');
+const ROOM_EMPTY_3 = require('../../../images/room_empty/3.jpg');
 
 class List extends Component {
   state = {
     loading: true,
     refreshing: false,
-    rooms: null,
+    rooms: [],
     contentHeight: undefined
   };
   unmounted = false;
@@ -31,6 +34,7 @@ class List extends Component {
 
   componentDidMount() {
     this.getListRoom();
+
     setTimeout(() =>
       Actions.refresh({
         onBack: () => {
@@ -183,19 +187,33 @@ class List extends Component {
 
           {this.state.loading && <Loading center />}
 
-          {!!this.state.rooms && (
-            <FlatList
-              data={this.state.rooms}
-              renderItem={this.renderRoom}
-              refreshControl={
-                <RefreshControl
-                  refreshing={this.state.refreshing}
-                  onRefresh={this.onRefresh}
-                />
-              }
-              keyExtractor={(item, index) => index.toString()}
-            />
-          )}
+          <FlatList
+            contentContainerStyle={{ flexGrow: 1 }}
+            data={this.state.rooms}
+            renderItem={this.renderRoom}
+            refreshControl={
+              <RefreshControl
+                style={{ zIndex: 1 }}
+                tintColor="#fff"
+                refreshing={this.state.refreshing}
+                onRefresh={this.onRefresh}
+              />
+            }
+            keyExtractor={(item, index) => index.toString()}
+            ListEmptyComponent={
+              !this.state.loading && (
+                <>
+                  <RoomEmpty
+                    absoluteTop
+                    showMessage={false}
+                    source={ROOM_EMPTY_1}
+                  />
+                  <RoomEmpty source={ROOM_EMPTY_2} />
+                  <RoomEmpty source={ROOM_EMPTY_3} />
+                </>
+              )
+            }
+          />
         </View>
       </Modal>
     );
@@ -204,7 +222,7 @@ class List extends Component {
 
 const styles = StyleSheet.create({
   modal: {
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(0,0,0,.6)',
     maxHeight: '70%',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
@@ -212,7 +230,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#eee',
+    // backgroundColor: hexToRgbA(appConfig.colors.primary, 1),
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     overflow: 'hidden'
@@ -228,7 +246,8 @@ const styles = StyleSheet.create({
   },
   header: {
     zIndex: 1,
-    paddingTop: 15,
+    paddingTop: 20,
+    paddingBottom: 5,
     backgroundColor: '#f0f0f0',
     borderBottomColor: appConfig.colors.primary,
     borderBottomWidth: 3
@@ -357,6 +376,78 @@ const Row = ({ selected, avatar, cover, title, subTitle, onPress }) => {
           </View>
         </ImageBackground>
       </TouchableHighlight>
+    </Animated.View>
+  );
+};
+
+const roomEmptyStyles = StyleSheet.create({
+  image: {
+    width: '100%',
+    height: '100%'
+  },
+  mask: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.08)
+  },
+  messageContainer: {
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.6),
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    padding: 20
+  },
+  message: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+    color: '#fff',
+    ...elevationShadowStyle(2),
+    letterSpacing: 2
+  },
+  absoluteTop: {
+    top: '-100%',
+    position: 'absolute',
+    width: '100%',
+    height: '100%'
+  }
+});
+
+const RoomEmpty = ({
+  containerStyle,
+  source,
+  showMessage = true,
+  absoluteTop
+}) => {
+  const animatedOpacity = new Animated.Value(0);
+
+  useEffect(() => {
+    Animated.timing(animatedOpacity, {
+      toValue: 1,
+      duration: 100,
+      delay: 200,
+      useNativeDriver: true
+    }).start();
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        { opacity: animatedOpacity },
+        absoluteTop && roomEmptyStyles.absoluteTop,
+        containerStyle
+      ]}
+    >
+      <ImageBackground source={source} style={roomEmptyStyles.image}>
+        <View style={roomEmptyStyles.mask} />
+        {showMessage && (
+          <View style={roomEmptyStyles.messageContainer}>
+            <Text style={roomEmptyStyles.message}>Bạn chưa có căn hộ</Text>
+          </View>
+        )}
+      </ImageBackground>
     </Animated.View>
   );
 };

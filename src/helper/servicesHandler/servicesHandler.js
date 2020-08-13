@@ -65,7 +65,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
 
     /** BEEHOME */
     case SERVICES_TYPE.BEEHOME_SERVICE_TYPE:
-      Actions.jump(appConfig.routes.listBuilding);
+      Actions.push(appConfig.routes.listBuilding);
       break;
     case SERVICES_TYPE.BEEHOME_BUILDING:
       Actions.push(appConfig.routes.building, {

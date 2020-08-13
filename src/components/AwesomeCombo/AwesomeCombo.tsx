@@ -22,11 +22,13 @@ import Animated, {
     concat
 } from 'react-native-reanimated';
 import AwesomeComboItem from './AwesomeComboItem';
+import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
     wrapper: {
         position: 'absolute',
         zIndex: 999,
+        maxWidth: appConfig.device.width * .6
     },
     container: {
         backgroundColor: '#fff',
@@ -53,6 +55,13 @@ type AwesomeComboPosition = {
 type AwesomeComboProps = {
     data: Array<AwesomeComboItem>,
     show: boolean,
+    /**
+     * [Android] Require props collapsable={false} or implement onLayout 
+     * in the View or parent component to make `measure()` return values 
+     * otherwise `measure()` will return undefined.
+     * 
+     * @see collapsable {@link https://reactnative.dev/docs/view#collapsable}
+     */
     parentRef: MutableRefObject<any>,
     position: AwesomeComboPosition,
     onSelect: (item: AwesomeComboItem) => void
@@ -99,10 +108,7 @@ function AwesomeCombo({
     const [opacityClock, heightClock] = useClocks(2);
 
     useCode(
-        () => block([
-            set(isShow, show ? 1 : 0),
-            call([animatedHeight], ([a]) => console.log(a))
-        ]),
+        () => set(isShow, show ? 1 : 0),
         [show]
     );
 
@@ -150,7 +156,7 @@ function AwesomeCombo({
                 height: number,
                 pageX: number,
                 pageY: number) => {
-
+                
                 if (pageX + containerWidth > appWidth - PADDING_STANDARD) {
                     setContainerPosition({
                         x: pageX - (containerWidth - (appWidth - pageX)) - PADDING_STANDARD,

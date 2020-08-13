@@ -9,8 +9,7 @@ import {
   TextInput,
   TouchableHighlight,
   TouchableOpacity,
-  TouchableNativeFeedback,
-  TouchableWithoutFeedback
+  TouchableNativeFeedback
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { ifIphoneX } from 'react-native-iphone-x-helper';
@@ -20,27 +19,9 @@ import Button from 'react-native-button';
 import RightButtonOrders from '../RightButtonOrders';
 import AwesomeCombo from '../AwesomeCombo';
 import store from 'app-store';
+import { servicesHandler } from '../../helper/servicesHandler';
 
 const defaultListener = () => {};
-const data = [
-  {
-    title: 'test 123 456',
-    value: 'a'
-  },
-  {
-    title: 'alo kcof fds',
-    value: 'b'
-  },
-  {
-    title: 'hihif f ',
-    value: 'b'
-  },
-  {
-    title: 'good',
-    value: 'b'
-  }
-];
-
 class StoreNavBarHomeID extends Component {
   static propTypes = {
     onCancel: PropTypes.func,
@@ -63,6 +44,10 @@ class StoreNavBarHomeID extends Component {
   };
   moreBtnRef = React.createRef();
 
+  get isShowMoreOptions() {
+    return !!this.props.moreOptions && this.props.moreOptions.length > 0;
+  }
+
   onToggleMore = () => {
     this.setState(prevState => ({
       showMoreCombo: !prevState.showMoreCombo
@@ -70,7 +55,7 @@ class StoreNavBarHomeID extends Component {
   };
 
   handleSelectMoreOption = option => {
-    // servicesHandler(option.service);
+    servicesHandler(option.service);
     this.onToggleMore();
   };
 
@@ -165,11 +150,13 @@ class StoreNavBarHomeID extends Component {
     return (
       <View style={[styles.right_btn_box]}>
         <RightButtonOrders tel={store.store_data.tel} />
-        <View ref={this.moreBtnRef}>
-          <TouchableOpacity onPress={this.onToggleMore}>
-            <Icon name="more-horizontal" style={styles.iconMore} />
-          </TouchableOpacity>
-        </View>
+        {this.isShowMoreOptions && (
+          <View collapsable={false} ref={this.moreBtnRef}>
+            <TouchableOpacity onPress={this.onToggleMore}>
+              <Icon name="more-horizontal" style={styles.iconMore} />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   }
@@ -184,12 +171,14 @@ class StoreNavBarHomeID extends Component {
             {this.renderRight()}
           </View>
         </SafeAreaView>
-        <AwesomeCombo
-          parentRef={this.moreBtnRef}
-          data={data}
-          show={this.state.showMoreCombo}
-          onSelect={this.handleSelectMoreOption}
-        />
+        {this.isShowMoreOptions && (
+          <AwesomeCombo
+            parentRef={this.moreBtnRef}
+            data={this.props.moreOptions}
+            show={this.state.showMoreCombo}
+            onSelect={this.handleSelectMoreOption}
+          />
+        )}
       </>
     );
   }
