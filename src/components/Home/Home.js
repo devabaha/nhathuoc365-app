@@ -140,7 +140,7 @@ class Home extends Component {
 
   get hasServices() {
     return (
-      Array.isArray(this.props.listService) && this.props.listService.lenth > 0
+      Array.isArray(this.props.listService) && this.props.listService.length > 0
     );
   }
 
