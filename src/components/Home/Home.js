@@ -153,7 +153,7 @@ class Home extends Component {
     const { t } = this.props;
     return (
       <View style={styles.container}>
-        {this.props.apiFetching && <LoadingComponent loading />}
+        <LoadingComponent loading={this.props.apiFetching} />
 
         <View style={styles.headerBackground}>
           {this.props.site && this.props.site.app_event_banner_image && (

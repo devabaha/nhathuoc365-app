@@ -53,6 +53,8 @@ const MAX_PIN = 9;
 const defaultListener = () => {};
 class TickidChat extends Component {
   static propTypes = {
+    showAllUserName: PropTypes.bool,
+    showMainUserName: PropTypes.bool,
     useModalGallery: PropTypes.bool,
     listHeaderComponent: PropTypes.node,
     listFooterComponent: PropTypes.node,
@@ -93,6 +95,8 @@ class TickidChat extends Component {
   };
 
   static defaultProps = {
+    showAllUserName: false,
+    showMainUserName: false,
     useModalGallery: !isIos,
     listFooterComponent: null,
     listHeaderComponent: null,
@@ -991,10 +995,32 @@ class TickidChat extends Component {
     const isImage = !!props.currentMessage.image;
     const bgColor_left = isImage ? 'transparent' : '#e5e5ea';
     const bgColor_right = isImage ? 'transparent' : '#198bfe';
+    let bottomContainerStyle = {};
+    if (this.props.showAllUserName) {
+      bottomContainerStyle = {
+        left: {
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        },
+        right: {
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        }
+      };
+    }
+    if (this.props.showMainUserName) {
+      bottomContainerStyle = {
+        right: {
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        }
+      };
+    }
 
     return (
       <Bubble
         {...props}
+        bottomContainerStyle={bottomContainerStyle}
         wrapperStyle={{
           left: { backgroundColor: bgColor_left },
           right: { backgroundColor: bgColor_right }
@@ -1007,18 +1033,40 @@ class TickidChat extends Component {
     const isImage = !!props.currentMessage.image;
     const color_left = '#aaa';
     const color_right = isImage ? '#aaa' : '#fff';
+
     return (
-      <Time
-        {...props}
-        timeTextStyle={{
-          left: {
-            color: color_left
-          },
-          right: {
-            color: color_right
-          }
-        }}
-      />
+      <>
+        {this.props.giftedChatProps &&
+          (this.props.showAllUserName ||
+            (this.props.showMainUserName &&
+              props.currentMessage.user._id ===
+                this.props.giftedChatProps.user._id)) && (
+            <View style={styles.userNameContainer}>
+              <Text
+                style={[
+                  styles.userName,
+                  {
+                    color: props.position === 'left' ? color_left : color_right
+                  }
+                ]}
+              >
+                {props.currentMessage.user.name}
+              </Text>
+            </View>
+          )}
+
+        <Time
+          {...props}
+          timeTextStyle={{
+            left: {
+              color: color_left
+            },
+            right: {
+              color: color_right
+            }
+          }}
+        />
+      </>
     );
   };
 
@@ -1268,6 +1316,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#fff',
     fontWeight: 'bold'
+  },
+  userNameContainer: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 5
+  },
+  userName: {
+    fontSize: 12,
+    textAlign: 'left'
   }
 });
 

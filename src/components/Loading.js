@@ -24,7 +24,7 @@ export default class Loading extends Component {
             this.props.center ? styles.center : {}
           ]}
           color={this.props.color}
-          size="large"
+          size={this.props.size || 'large'}
         />
       </View>
     );

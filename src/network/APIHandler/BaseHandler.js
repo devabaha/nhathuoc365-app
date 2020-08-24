@@ -11,6 +11,7 @@ const CancelToken = axios.CancelToken;
  *
  * @class
  * @mixin
+ *
  */
 class BaseHandler {
   // API = API;
@@ -26,17 +27,71 @@ class BaseHandler {
   }
 
   /**
-   * Gửi yêu cầu phương thức GET
+   * @todo Gửi yêu cầu phương thức GET
+   *
+   * @param {string} api
+   * @returns {import('network/Entity/APIRequest/APIRequest').Request}
+   */
+  getCancelableAPI(api) {
+    this._networkIndicator();
+    const cancelInstance = this.getCancelInstance();
+
+    return {
+      cancel: () => cancelInstance.cancel(),
+      promise: () =>
+        axios(api)
+          .then(response => this.processError(response))
+          .catch(err => console.log('getCancelableAPI', err))
+    };
+  }
+
+  /**
+   * @todo Gửi yêu cầu phương thức POST
+   *
+   * @param {string} api
+   * @param {Object} data
+   * @returns {import('network/Entity/APIRequest/APIRequest').Request}
+   */
+  postCancelableAPI(api, data) {
+    this._networkIndicator();
+    const cancelInstance = this.getCancelInstance();
+
+    return {
+      cancel: () => cancelInstance.cancel(),
+      promise: () =>
+        axios
+          .post(api, encodeQueryData(data))
+          .then(response => this.processError(response))
+          .catch(err => console.log('postCancelableAPI', err))
+    };
+  }
+
+  /**
+   * @deprecated since 2020-08-10.
+   *
+   * This method doesn't initialize a cancel-er to cancel request.
+   *
+   * Every old request handler using kind of "isMounted" anti-pattern.
+   *
+   * @see getCancelableAPI
+   * @todo Gửi yêu cầu phương thức GET
    */
   async getAPI(api) {
     this._networkIndicator();
 
     var response = await axios(api);
-    return await this.processError(response);
+    return this.processError(response);
   }
 
   /**
-   * Gửi yêu cầu phương thức POST
+   * @deprecated since 2020-08-10.
+   *
+   * This method doesn't initialize a cancel-er to cancel request.
+   *
+   * Every old request handler using kind of "isMounted" anti-pattern.
+   *
+   * @see postCancelableAPI
+   * @todo Gửi yêu cầu phương thức POST
    */
   async postAPI(api, data) {
     this._networkIndicator();
@@ -44,13 +99,13 @@ class BaseHandler {
     return axios
       .post(api, encodeQueryData(data))
       .then(response => this.processError(response))
-      .catch(err => err);
+      .catch(err => console.log('postAPI', err));
   }
 
   /**
-   * Xử lý ngoại lệ
+   * @todo Xử lý ngoại lệ
    */
-  async processError(response) {
+  processError(response) {
     this._networkIndicator(false);
 
     if (response.status != HTTP_SUCCESS) {
