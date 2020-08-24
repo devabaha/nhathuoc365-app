@@ -89,6 +89,7 @@ class Body extends Component {
                 subTitle={item.content}
                 description={item.created}
                 status={item.status}
+                adminName={item.admin_name}
                 bgColor={item.color}
                 textColor={item.textColor}
                 type={item.request_type}

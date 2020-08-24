@@ -22,7 +22,7 @@ const Header = ({ title, subTitle, type }) => {
 
 const styles = StyleSheet.create({
   header: {
-    padding: 20
+    padding: 15
   },
   badge: {
     position: 'absolute',
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     textAlign: 'center',
-    color: '#666'
+    color: '#666',
+    fontSize: 12
   }
 });
 

@@ -179,13 +179,6 @@ class Item extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         // delay append data
         setTimeout(() => {
-          if (
-            appConfig.device.isAndroid &&
-            UIManager.setLayoutAnimationEnabledExperimental
-          ) {
-            UIManager.setLayoutAnimationEnabledExperimental(true);
-            layoutAnimation();
-          }
           if (isIOS) {
             layoutAnimation();
           }

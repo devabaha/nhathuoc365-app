@@ -124,6 +124,14 @@ class Card extends Component {
     }
   };
 
+  handleConfirmChangeStatus = status => {
+    this.props.onUpdateStatus(status);
+  };
+
+  onContainerLayout(e) {
+    this.props.onContainerLayout(e);
+  }
+
   render() {
     const {
       title,
@@ -134,8 +142,12 @@ class Card extends Component {
       images,
       request_type,
       color: bgColor,
-      textColor
+      textColor,
+      user,
+      room_code,
+      admin_name
     } = this.props.request;
+
     const toggleValue = this.state.isExpanded
       ? COLLAPSE_MESSAGE
       : EXTEND_MESSAGE;
@@ -176,7 +188,7 @@ class Card extends Component {
     return (
       <>
         <Animated.View
-          onLayout={this.props.onContainerLayout}
+          onLayout={this.onContainerLayout.bind(this)}
           style={[showUpStyle, this.props.containerStyle]}
           pointerEvents="box-none"
         >
@@ -184,20 +196,31 @@ class Card extends Component {
             <View
               pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}
             >
-              <Header type={request_type} title={title} subTitle={department} />
-
-              <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
+              <Header type={request_type} title={title} subTitle={created} />
+            </View>
+            <Row label="Trạng thái" value={status} valueStyle={statusStyle} />
+            <View
+              pointerEvents={this.state.isKeyboardOpening ? 'none' : 'auto'}
+            >
               <Reanimated.View
                 onLayout={this.handleLayoutAnimatedArea}
                 style={animatedHeight}
               >
-                <Row label="Thời gian yêu cầu" value={created} />
+                <Row label="Nhân viên tiếp nhận" value={admin_name} />
+                {/* <Row label="Thời gian yêu cầu" value={created} /> */}
                 <Row
                   isColumn
                   label="Nội dung"
                   labelStyle={{ marginBottom: 10 }}
                   value={content}
+                  valueContainerProps={{
+                    bounces: false,
+                    style: {
+                      height: 50
+                    }
+                  }}
                   extraComponent={<Images images={images} />}
+                  scrollable
                 />
               </Reanimated.View>
             </View>
@@ -234,4 +257,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Card;
+export default withTranslation()(Card);

@@ -33,10 +33,10 @@ class Comments extends Component {
   }
 
   get giftedChatProps() {
-    this.giftedChatExtraProps.user = { _id: this.props.user._id };
+    this.giftedChatExtraProps.user = { ...this.props.user };
     this.giftedChatExtraProps.locale =
-      languages[this.props.i18n.languages].locale;
-    this.giftedChatExtraProps.renderAvatar = null;
+      languages[this.props.i18n.language].locale;
+    this.giftedChatExtraProps.showUserAvatar = true;
 
     return this.giftedChatExtraProps;
   }
@@ -48,7 +48,7 @@ class Comments extends Component {
 
     if (
       nextProps.user !== this.props.user ||
-      nextProps.headerData !== this.props.headerData ||
+      nextProps.request !== this.props.request ||
       nextProps.loading !== this.props.loading ||
       nextProps.comments !== this.props.comments
     ) {
@@ -97,12 +97,12 @@ class Comments extends Component {
       ]
     };
 
-    return this.props.headerData ? (
+    return this.props.request ? (
       <DetailCard
         onFinishLayout={this.handleFinishLayout}
         onContainerLayout={this.handleHeaderLayout}
         containerStyle={[styles.header, animatedHeaderStyle]}
-        request={this.props.headerData}
+        request={this.props.request}
         forceCloseKeyboard={this.handleForceCloseKeyboard}
         onPressLayout={() => {
           if (this.refTickidChat) {
@@ -126,6 +126,7 @@ class Comments extends Component {
         {comments !== null ? (
           <TickidChat
             // Root props
+            showAllUserName
             renderEmpty={() => null}
             setHeader={this.props.setHeader}
             defaultStatusBarColor={appConfig.colors.primary}

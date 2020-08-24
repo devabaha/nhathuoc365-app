@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Button from 'react-native-button';
 import { View, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import { DiscountBadge, NotiBadge } from '../../../components/Badges';
 
 class Request extends Component {
@@ -28,24 +28,39 @@ class Request extends Component {
           ]}
         >
           <View style={[styles.extraWrapper, extraStyle]}>
-            <DiscountBadge
-              containerStyle={styles.badge}
-              tailSpace={4}
-              right
-              label={this.props.type}
-            />
-            {!!this.props.status && (
-              <View
-                style={[
-                  styles.statusContainer,
-                  { backgroundColor: this.props.bgColor || 'transparent' }
-                ]}
-              >
-                <Text style={[styles.status, statusStyle]}>
-                  {this.props.status}
-                </Text>
-              </View>
-            )}
+            <View style={styles.headerContainer}>
+              {!!this.props.status && (
+                <View
+                  style={[
+                    styles.statusContainer,
+                    { backgroundColor: this.props.bgColor || 'transparent' }
+                  ]}
+                >
+                  <Text style={[styles.status, statusStyle]}>
+                    {this.props.status}
+                  </Text>
+                </View>
+              )}
+              {!!this.props.adminName && (
+                <View style={styles.adminWrapper}>
+                  <View style={[styles.statusContainer, styles.adminContainer]}>
+                    <Text
+                      numberOfLines={1}
+                      style={[styles.status, styles.admin]}
+                    >
+                      <Icon name="user-tie" style={styles.user} />{' '}
+                      {this.props.adminName}
+                    </Text>
+                  </View>
+                </View>
+              )}
+              <DiscountBadge
+                containerStyle={styles.badge}
+                tailSpace={4}
+                right
+                label={this.props.type}
+              />
+            </View>
             <View style={[styles.container, this.props.containerStyle]}>
               <View style={styles.titleContainer}>
                 {!!this.props.title && (
@@ -53,7 +68,7 @@ class Request extends Component {
                     {this.props.title}
                   </Text>
                 )}
-                {!!notiMess && (
+                {!!notiMess && notiMess !== '0' && (
                   <NotiBadge
                     label={notiMess}
                     containerStyle={styles.notiMess}
@@ -68,7 +83,7 @@ class Request extends Component {
 
               {!!this.props.description && (
                 <Text style={styles.description}>
-                  <Icon name="clock-o" /> {this.props.description}
+                  <Icon name="clock" /> {this.props.description}
                 </Text>
               )}
             </View>
@@ -83,23 +98,30 @@ const styles = StyleSheet.create({
   containerBtn: {
     marginLeft: 16,
     marginVertical: 5,
-    borderRadius: 4
+    borderRadius: 4,
+    width: 280
   },
   extraWrapper: {
     backgroundColor: '#f7f6d5',
     borderRadius: 4,
-    padding: 15,
-    paddingTop: 0,
+    paddingHorizontal: 15,
+    paddingBottom: 15,
     paddingLeft: 8,
     ...elevationShadowStyle(3)
   },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginRight: -15,
+    marginBottom: 10,
+    flexWrap: 'wrap'
+  },
   badge: {
-    position: 'absolute',
     width: null,
-    zIndex: 1
+    right: -4
   },
   container: {
-    width: 205
+    // width: 205,
   },
   titleContainer: {
     borderBottomWidth: 0.5,
@@ -121,10 +143,18 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     lineHeight: 20
   },
+  subDescription: {
+    letterSpacing: 0.1,
+    fontSize: 11,
+    color: '#555',
+    fontWeight: '500',
+    marginBottom: 3
+  },
   description: {
-    fontSize: 12,
-    textAlign: 'right',
+    fontSize: 11,
     color: '#666',
+    flex: 1,
+    textAlign: 'right',
     marginTop: 10
   },
   statusContainer: {
@@ -135,6 +165,16 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingLeft: 8
   },
+  adminWrapper: {
+    flex: 1,
+    marginLeft: 16,
+    marginRight: 5
+  },
+  adminContainer: {
+    borderBottomLeftRadius: 4,
+    backgroundColor: '#9c9c9c'
+  },
+  admin: {},
   status: {
     fontSize: 11,
     color: '#fff'

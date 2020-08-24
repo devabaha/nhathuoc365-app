@@ -7,7 +7,7 @@ import {
   View,
   TouchableHighlight
 } from 'react-native';
-
+import PropTypes from 'prop-types';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/AntDesign';
 
@@ -18,18 +18,25 @@ import Loading from '../../components/Loading';
 import NoResult from '../../components/NoResult';
 import Button from '../../components/Button';
 
-const NoResultComp = (
-  <View style={{ marginTop: '50%' }}>
-    <NoResult message="Danh sách phản ánh đang trống" />
-  </View>
-);
-
+/**
+ * A list of all request of this site
+ *
+ * @version 1.0.1
+ * @author [Nguyễn Hoàng Minh](https://github.com/minhnguyenit14)
+ */
+Request.propTypes = {
+  siteId: PropTypes.string.isRequired
+};
 class Requests extends Component {
   state = {
     loading: true,
     refreshing: false,
     requests: null
   };
+  /**
+   * @todo will true when component unmount
+   * @todo prevent setState or doing anything when component unmounted
+   */
   unmounted = false;
 
   componentDidMount() {
@@ -125,9 +132,11 @@ class Requests extends Component {
         title={request.title}
         subTitle={request.content}
         status={request.status}
+        adminName={request.admin_name}
         bgColor={request.color}
         textColor={request.textColor}
         description={request.created}
+        subDescription={request.room_code}
         type={request.request_type}
         noti={request.unread}
         onPress={() => this.handlePressRequest(request)}
@@ -183,11 +192,10 @@ const styles = StyleSheet.create({
   requestItemWrapper: {
     flex: 1,
     marginRight: 16,
-    marginBottom: 15
+    marginBottom: 15,
+    width: undefined
   },
-  requestItemContainer: {
-    width: '100%'
-  },
+  requestItemContainer: {},
   icon: {
     fontSize: 18,
     color: '#fff',
@@ -196,3 +204,12 @@ const styles = StyleSheet.create({
 });
 
 export default withTranslation()(Requests);
+
+/**
+ * Component for no requests display
+ */
+const NoResultComp = (
+  <View style={{ marginTop: '50%' }}>
+    <NoResult message="Danh sách phản ánh đang trống" />
+  </View>
+);

@@ -6,8 +6,7 @@ import {
   ScrollView,
   RefreshControl,
   View,
-  Text,
-  UIManager
+  Text
 } from 'react-native';
 import HeaderStore from '../../components/stores/HeaderStore';
 import appConfig from 'app-config';
@@ -175,14 +174,7 @@ class Room extends Component {
       siteId,
       roomId,
       data => {
-        if (
-          appConfig.device.isAndroid &&
-          UIManager.setLayoutAnimationEnabledExperimental
-        ) {
-          UIManager.setLayoutAnimationEnabledExperimental(true);
-          layoutAnimation();
-        }
-        if (isIOS) {
+        if (appConfig.device.isIOS) {
           layoutAnimation();
         }
 

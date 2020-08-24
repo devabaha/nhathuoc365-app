@@ -204,7 +204,7 @@ class Detail extends Component {
         {this.state.loading && <Loading center />}
         <Comments
           loading={this.state.loading}
-          headerData={this.state.request}
+          request={this.state.request}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}

@@ -1,5 +1,11 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Text,
+  ScrollView
+} from 'react-native';
 
 const Row = ({
   isColumn = false,
@@ -8,26 +14,39 @@ const Row = ({
   labelStyle,
   value,
   valueComponent,
+  valueContainerStyle,
   valueStyle,
   extraComponent,
-  onPressValue
+  onPressValue,
+  renderRow,
+  scrollable = false,
+  valueContainerProps
 }) => {
+  const Wrapper = scrollable ? ScrollView : View;
   return (
     <View style={[styles.rowItem]}>
-      <View style={[isColumn || styles.row]}>
-        {!!label && <Text style={[styles.rowLabel, labelStyle]}>{label}</Text>}
-        {(!!value || !!valueComponent) && (
-          <TouchableOpacity
-            disabled={disabled}
-            onPress={onPressValue}
-            hitSlop={HIT_SLOP}
-          >
-            {valueComponent || (
-              <Text style={[styles.rowValue, valueStyle]}>{value}</Text>
+      {renderRow || (
+        <View style={[isColumn || styles.row]}>
+          {!!label && (
+            <Text style={[styles.rowLabel, labelStyle]}>{label}</Text>
+          )}
+          <Wrapper {...valueContainerProps}>
+            {(!!value || !!valueComponent) && (
+              <TouchableOpacity
+                disabled={disabled}
+                onPress={onPressValue}
+                hitSlop={HIT_SLOP}
+              >
+                {valueComponent || (
+                  <View style={valueContainerStyle}>
+                    <Text style={[styles.rowValue, valueStyle]}>{value}</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
             )}
-          </TouchableOpacity>
-        )}
-      </View>
+          </Wrapper>
+        </View>
+      )}
       {extraComponent}
     </View>
   );
