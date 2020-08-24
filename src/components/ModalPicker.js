@@ -17,6 +17,9 @@ import LinearGradient from 'react-native-linear-gradient';
 
 class ModalPicker extends PureComponent {
   static defaultProps = {
+    cancelTitle: 'Hủy',
+    selectTitle: 'Chọn',
+    onClose: () => {},
     swipeToClose: false
   };
 
