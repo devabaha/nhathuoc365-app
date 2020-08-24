@@ -53,7 +53,16 @@ const MAX_PIN = 9;
 const defaultListener = () => {};
 class TickidChat extends Component {
   static propTypes = {
+    showAllUserName: PropTypes.bool,
+    showMainUserName: PropTypes.bool,
+    useModalGallery: PropTypes.bool,
+    listHeaderComponent: PropTypes.node,
+    listFooterComponent: PropTypes.node,
+    renderEmpty: PropTypes.any,
     galleryVisible: PropTypes.bool,
+    renderScrollComponent: PropTypes.any,
+    onListScroll: PropTypes.func,
+    onListLayout: PropTypes.func,
     setHeader: PropTypes.func,
     expandedGallery: PropTypes.func,
     expandingGallery: PropTypes.func,
@@ -67,6 +76,8 @@ class TickidChat extends Component {
     onUploadedImage: PropTypes.func,
     onScrollOffsetTop: PropTypes.func,
     containerStyle: ViewPropTypes.style,
+    listContainerStyle: ViewPropTypes.style,
+    listContentContainerStyle: ViewPropTypes.style,
     durationShowGallery: PropTypes.number,
     bottomOffsetGallery: PropTypes.number,
     scrollOffsetTop: PropTypes.number,
@@ -79,10 +90,21 @@ class TickidChat extends Component {
     pinListNotify: PropTypes.object,
     giftedChatProps: PropTypes.any,
     defaultStatusBarColor: PropTypes.string,
+    placeholder: PropTypes.string,
     extraData: PropTypes.any
   };
 
   static defaultProps = {
+    showAllUserName: false,
+    showMainUserName: false,
+    useModalGallery: !isIos,
+    listFooterComponent: null,
+    listHeaderComponent: null,
+    renderEmpty: null,
+    galleryVisible: true,
+    onListScroll: defaultListener,
+    onListLayout: defaultListener,
+    renderScrollComponent: null,
     setHeader: defaultListener,
     expandedGallery: defaultListener,
     expandingGallery: defaultListener,
@@ -96,6 +118,8 @@ class TickidChat extends Component {
     onScrollOffsetTop: defaultListener,
     refGiftedChat: defaultListener,
     containerStyle: {},
+    listContainerStyle: {},
+    listContentContainerStyle: {},
     durationShowGallery: DURATION_SHOW_GALLERY,
     bottomOffsetGallery: BOTTOM_OFFSET_GALLERY,
     animatedTypeComposerBtn: ANIMATED_TYPE_COMPOSER_BTN,
@@ -105,7 +129,8 @@ class TickidChat extends Component {
     pinList: [],
     pinNotify: 0,
     pinListNotify: {},
-    extraData: null
+    extraData: null,
+    placeholder: 'Nhập nội dung chat...'
   };
 
   state = {
@@ -193,7 +218,10 @@ class TickidChat extends Component {
       nextProps.uploadURL !== this.props.uploadURL ||
       nextProps.giftedChatProps !== this.props.giftedChatProps ||
       nextProps.defaultStatusBarColor !== this.props.defaultStatusBarColor ||
-      nextProps.extraData !== this.props.extraData
+      nextProps.extraData !== this.props.extraData ||
+      nextProps.listContainerStyle !== this.props.listContainerStyle ||
+      nextProps.listContentContainerStyle !==
+        this.props.listContentContainerStyle
     ) {
       return true;
     }
@@ -346,28 +374,33 @@ class TickidChat extends Component {
   };
 
   openLibrary = () => {
-    this.closeModal();
     ImageCropPicker.openPicker({
       includeExif: true,
       multiple: true,
       includeBase64: true,
       mediaType: 'photo'
-    }).then(images => {
-      const selectedImages = this.nomarlizeImages(images);
-      console.log(selectedImages);
-      this.setState(
-        {
-          selectedImages
-        },
-        () => {
-          this.handleSendMessage();
-        }
-      );
-    });
+    })
+      .then(images => {
+        console.log(images);
+        this.closeModal();
+        const selectedImages = this.nomarlizeImages(images);
+        console.log(selectedImages);
+        this.setState(
+          {
+            selectedImages
+          },
+          () => {
+            this.handleSendMessage();
+          }
+        );
+      })
+      .catch(err => {
+        console.log('open_picker_err', err);
+        this.closeModal();
+      });
   };
 
   openCamera = () => {
-    this.closeModal();
     const options = {
       rotation: 360,
       storageOptions: {
@@ -378,10 +411,13 @@ class TickidChat extends Component {
     ImagePicker.launchCamera(options, response => {
       if (response.error) {
         console.log(response.error);
+        this.closeModal();
       } else if (response.didCancel) {
         console.log(response);
+        this.closeModal();
       } else {
         // console.log(response);
+        this.closeModal();
         response.path = response.uri;
         const selectedImages = this.nomarlizeImages([response]);
         console.log(selectedImages);
@@ -421,6 +457,7 @@ class TickidChat extends Component {
       }
       if (img.data) {
         img.uploadPath = img.data;
+        img.isBase64 = true;
       }
       return img;
     });
@@ -448,7 +485,7 @@ class TickidChat extends Component {
       case COMPONENT_TYPE.GALLERY.id:
         Keyboard.dismiss();
         this.handlePressGallery(state);
-        if (!isIos) {
+        if (this.props.useModalGallery) {
           state.selectedType = COMPONENT_TYPE._NONE;
           state.showToolBar = false;
           state.editable = false;
@@ -727,7 +764,7 @@ class TickidChat extends Component {
         {...props}
         editable={this.state.editable}
         onTyping={this.onTyping}
-        placeholder="Nhập nội dung chat..."
+        placeholder={this.props.placeholder}
         value={this.state.text}
       />
     );
@@ -812,99 +849,105 @@ class TickidChat extends Component {
             flexDirection: 'row'
           }}
         >
-          {/* <Animated.View
-            style={[
-              styles.center,
-              styles.sendBtn,
-              {
-                opacity: this.state.animatedBtnSendValue.interpolate({
-                  inputRange: [0, BTN_IMAGE_WIDTH],
-                  outputRange: [1, 0]
-                }),
-                transform: [
-                  {
-                    scale: this.state.animatedBtnSendValue.interpolate({
-                      inputRange: [0, BTN_IMAGE_WIDTH],
-                      outputRange: [1, 2]
-                    })
-                  }
-                ]
-              }
-            ]}
-          >
-            <TouchableOpacity
-              onPress={() => this.handlePressComposerButton(COMPONENT_TYPE.PIN)}
-              hitSlop={HIT_SLOP}
-              style={[styles.fullCenter, { flex: 1 }]}
-            >
-              <IconAntDesign
-                size={23}
-                name="paperclip"
-                color={
-                  this.state.selectedType === COMPONENT_TYPE.PIN
-                    ? config.focusColor
-                    : config.blurColor
+          {this.props.pinListVisible && (
+            <Animated.View
+              style={[
+                styles.center,
+                styles.sendBtn,
+                {
+                  opacity: this.state.animatedBtnSendValue.interpolate({
+                    inputRange: [0, BTN_IMAGE_WIDTH],
+                    outputRange: [1, 0]
+                  }),
+                  transform: [
+                    {
+                      scale: this.state.animatedBtnSendValue.interpolate({
+                        inputRange: [0, BTN_IMAGE_WIDTH],
+                        outputRange: [1, 2]
+                      })
+                    }
+                  ]
                 }
-              />
-              <Animated.View
-                style={[
-                  styles.badge,
-                  {
-                    opacity: this.state.animatedNotification.interpolate({
-                      inputRange: [0, 0.1, 1],
-                      outputRange: [0, 1, 1]
-                    }),
-                    transform: [{ scale: this.state.animatedNotification }]
-                  }
-                ]}
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() =>
+                  this.handlePressComposerButton(COMPONENT_TYPE.PIN)
+                }
+                hitSlop={HIT_SLOP}
+                style={[styles.fullCenter, { flex: 1 }]}
               >
-                <Text style={styles.badgeText}>
-                  {this.props.pinNotify > MAX_PIN
-                    ? `${MAX_PIN}+`
-                    : this.props.pinNotify}
-                </Text>
-              </Animated.View>
-            </TouchableOpacity>
-          </Animated.View> */}
-
-          <Animated.View
-            style={[
-              styles.center,
-              styles.sendBtn,
-              {
-                opacity: this.state.animatedBtnSendValue.interpolate({
-                  inputRange: [0, BTN_IMAGE_WIDTH],
-                  outputRange: [1, 0]
-                }),
-                transform: [
-                  {
-                    scale: this.state.animatedBtnSendValue.interpolate({
-                      inputRange: [0, BTN_IMAGE_WIDTH],
-                      outputRange: [1, 2]
-                    })
+                <IconAntDesign
+                  size={23}
+                  name="paperclip"
+                  color={
+                    this.state.selectedType === COMPONENT_TYPE.PIN
+                      ? config.focusColor
+                      : config.blurColor
                   }
-                ]
-              }
-            ]}
-          >
-            <TouchableOpacity
-              hitSlop={HIT_SLOP}
-              onPress={() =>
-                this.handlePressComposerButton(COMPONENT_TYPE.GALLERY)
-              }
-              style={[styles.fullCenter]}
-            >
-              <IconAntDesign
-                size={25}
-                name="picture"
-                color={
-                  this.state.selectedType === COMPONENT_TYPE.GALLERY
-                    ? config.focusColor
-                    : config.blurColor
+                />
+                <Animated.View
+                  style={[
+                    styles.badge,
+                    {
+                      opacity: this.state.animatedNotification.interpolate({
+                        inputRange: [0, 0.1, 1],
+                        outputRange: [0, 1, 1]
+                      }),
+                      transform: [{ scale: this.state.animatedNotification }]
+                    }
+                  ]}
+                >
+                  <Text style={styles.badgeText}>
+                    {this.props.pinNotify > MAX_PIN
+                      ? `${MAX_PIN}+`
+                      : this.props.pinNotify}
+                  </Text>
+                </Animated.View>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
+          {(this.props.galleryVisible || this.props.useModalGallery) && (
+            <Animated.View
+              style={[
+                styles.center,
+                styles.sendBtn,
+                {
+                  opacity: this.state.animatedBtnSendValue.interpolate({
+                    inputRange: [0, BTN_IMAGE_WIDTH],
+                    outputRange: [1, 0]
+                  }),
+                  transform: [
+                    {
+                      scale: this.state.animatedBtnSendValue.interpolate({
+                        inputRange: [0, BTN_IMAGE_WIDTH],
+                        outputRange: [1, 2]
+                      })
+                    }
+                  ]
                 }
-              />
-            </TouchableOpacity>
-          </Animated.View>
+              ]}
+            >
+              <TouchableOpacity
+                hitSlop={HIT_SLOP}
+                onPress={() =>
+                  this.handlePressComposerButton(COMPONENT_TYPE.GALLERY)
+                }
+                style={[styles.fullCenter]}
+              >
+                <IconAntDesign
+                  size={25}
+                  name="picture"
+                  color={
+                    this.state.selectedType === COMPONENT_TYPE.GALLERY
+                      ? config.focusColor
+                      : config.blurColor
+                  }
+                />
+              </TouchableOpacity>
+            </Animated.View>
+          )}
         </View>
       </View>
     );
@@ -952,10 +995,32 @@ class TickidChat extends Component {
     const isImage = !!props.currentMessage.image;
     const bgColor_left = isImage ? 'transparent' : '#e5e5ea';
     const bgColor_right = isImage ? 'transparent' : '#198bfe';
+    let bottomContainerStyle = {};
+    if (this.props.showAllUserName) {
+      bottomContainerStyle = {
+        left: {
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        },
+        right: {
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        }
+      };
+    }
+    if (this.props.showMainUserName) {
+      bottomContainerStyle = {
+        right: {
+          justifyContent: 'space-between',
+          alignItems: 'flex-end'
+        }
+      };
+    }
 
     return (
       <Bubble
         {...props}
+        bottomContainerStyle={bottomContainerStyle}
         wrapperStyle={{
           left: { backgroundColor: bgColor_left },
           right: { backgroundColor: bgColor_right }
@@ -968,18 +1033,40 @@ class TickidChat extends Component {
     const isImage = !!props.currentMessage.image;
     const color_left = '#aaa';
     const color_right = isImage ? '#aaa' : '#fff';
+
     return (
-      <Time
-        {...props}
-        timeTextStyle={{
-          left: {
-            color: color_left
-          },
-          right: {
-            color: color_right
-          }
-        }}
-      />
+      <>
+        {this.props.giftedChatProps &&
+          (this.props.showAllUserName ||
+            (this.props.showMainUserName &&
+              props.currentMessage.user._id ===
+                this.props.giftedChatProps.user._id)) && (
+            <View style={styles.userNameContainer}>
+              <Text
+                style={[
+                  styles.userName,
+                  {
+                    color: props.position === 'left' ? color_left : color_right
+                  }
+                ]}
+              >
+                {props.currentMessage.user.name}
+              </Text>
+            </View>
+          )}
+
+        <Time
+          {...props}
+          timeTextStyle={{
+            left: {
+              color: color_left
+            },
+            right: {
+              color: color_right
+            }
+          }}
+        />
+      </>
     );
   };
 
@@ -1015,9 +1102,11 @@ class TickidChat extends Component {
           onPressCamera={this.openCamera}
           onPressLibrary={this.openLibrary}
         />
-        {!!this.props.messages && this.props.messages.length === 0 && (
-          <EmptyChat onPress={this.onListViewPress} />
-        )}
+        {!!this.props.messages &&
+          this.props.messages.length === 0 &&
+          (this.props.renderEmpty || (
+            <EmptyChat onPress={this.onListViewPress} />
+          ))}
         <View style={{ flex: 1 }} onLayout={this.handleContainerLayout}>
           <TouchableWithoutFeedback
             style={styles.touchWrapper}
@@ -1072,9 +1161,20 @@ class TickidChat extends Component {
                 // alwaysShowSend={true}
                 isKeyboardInternallyHandled={!isIos}
                 listViewProps={{
-                  contentContainerStyle: styles.giftedChatContainer,
-                  style: [styles.flex, extraChatViewStyle]
-                  // ListEmptyComponent: EmptyChat
+                  contentContainerStyle: [
+                    styles.giftedChatContainer,
+                    this.props.listContentContainerStyle
+                  ],
+                  style: [
+                    styles.flex,
+                    this.props.listContainerStyle,
+                    extraChatViewStyle
+                  ],
+                  ListHeaderComponent: this.props.listHeaderComponent,
+                  ListFooterComponent: this.props.listFooterComponent,
+                  renderScrollComponent: this.props.renderScrollComponent,
+                  // onScroll: this.props.onListScroll,
+                  onLayout: this.props.onListLayout
                 }}
                 scrollToBottom
                 scrollToBottomComponent={this.renderScrollBottomComponent}
@@ -1216,6 +1316,15 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: '#fff',
     fontWeight: 'bold'
+  },
+  userNameContainer: {
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 5
+  },
+  userName: {
+    fontSize: 12,
+    textAlign: 'left'
   }
 });
 
