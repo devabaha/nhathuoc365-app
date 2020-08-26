@@ -262,6 +262,10 @@ class Prepay extends Component {
             keyboardType={this.props.keyboardType}
           />
 
+          {!!this.currentService.note && (
+            <Text style={styles.note}>{this.currentService.note}</Text>
+          )}
+
           <SelectCardValueComponent
             data={this.currentCards}
             cardValueType={this.state.cardValueType}
@@ -302,6 +306,9 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     marginLeft: 16,
     marginTop: 24
+  },
+  note: {
+    padding: 15
   }
 });
 
