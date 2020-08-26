@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Button from 'react-native-button';
 import getNetworkImage from '../../helper/getNetworkImage';
 import moreImage from '../../assets/images/more.png';
 import config from '../../config';
+import { SERVICE_TYPE } from '../../constants';
 
 const defaultListener = () => {};
 
 class CardItem extends Component {
   static propTypes = {
     cardId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    image: PropTypes.string,
+    type: PropTypes.string,
+    package: PropTypes.string,
     networkType: PropTypes.string,
     networkName: PropTypes.string,
     statusView: PropTypes.string,
@@ -25,11 +29,15 @@ class CardItem extends Component {
     onOpenMoreMenu: PropTypes.func,
     onCopyCardCode: PropTypes.func,
     onSendCard: PropTypes.func,
-    onUseNow: PropTypes.func
+    onUseNow: PropTypes.func,
+    onPressService: PropTypes.func
   };
 
   static defaultProps = {
     cardId: '',
+    image: '',
+    type: '',
+    package: '',
     networkType: '',
     networkName: '',
     statusView: '',
@@ -44,12 +52,14 @@ class CardItem extends Component {
     onOpenMoreMenu: defaultListener,
     onCopyCardCode: defaultListener,
     onSendCard: defaultListener,
-    onUseNow: defaultListener
+    onUseNow: defaultListener,
+    onPressService: defaultListener
   };
 
   render() {
     return (
-      <View
+      <TouchableOpacity
+        onPress={this.props.onPressService}
         style={[
           styles.container,
           this.props.isUsed && styles.isUsed,
@@ -57,10 +67,12 @@ class CardItem extends Component {
         ]}
       >
         <View style={styles.cardInfoWrapper}>
-          <Image
-            style={styles.cardImage}
-            source={getNetworkImage(this.props.networkType)}
-          />
+          {!!this.props.image && (
+            <Image
+              style={styles.cardImage}
+              source={{ uri: this.props.image }}
+            />
+          )}
           <View style={styles.cardInfoBox}>
             <Text style={styles.networkName}>{this.props.networkName}</Text>
             <Text style={styles.cardValue}>
@@ -70,10 +82,16 @@ class CardItem extends Component {
             <Text style={styles.cardBuyTime}>{this.props.buyTime}</Text>
           </View>
         </View>
-
-        {!!this.props.cardCode && (
+        {!this.props.isBuyCard && (
+          <Text style={styles.statusView}>
+            {this.props.isPay ? 'Thẻ đã thanh toán' : this.props.statusView}
+          </Text>
+        )}
+        {!!this.props.cardCode && this.props.type === SERVICE_TYPE.PHONE_CARD && (
           <View style={styles.codeBox}>
-            <Text style={styles.cardCode}>{this.props.cardCode}</Text>
+            <Text style={styles.cardCode}>
+              {this.props.cardCode} {this.props.package}
+            </Text>
             <Button
               style={styles.copyText}
               containerStyle={styles.copyBtn}
@@ -86,12 +104,6 @@ class CardItem extends Component {
 
         {!!this.props.cardSeri && (
           <Text style={styles.cardSeri}>Số seri: {this.props.cardSeri}</Text>
-        )}
-
-        {!this.props.isBuyCard && (
-          <Text style={styles.statusView}>
-            {this.props.isPay ? 'Thẻ đã thanh toán' : this.props.statusView}
-          </Text>
         )}
 
         {this.props.isBuyCard && (
@@ -133,22 +145,23 @@ class CardItem extends Component {
         {(this.props.isUsed || this.props.isPay) && (
           <View style={styles.usedOverlay} />
         )}
-      </View>
+      </TouchableOpacity>
     );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ccc',
     minHeight: 90,
     marginTop: 16,
     marginHorizontal: 16,
     borderRadius: 8,
-    position: 'relative',
+    justifyContent: 'center',
     overflow: 'hidden',
-    paddingTop: 10,
+    paddingVertical: 10,
     paddingHorizontal: 8
   },
   isUsed: {
@@ -171,7 +184,8 @@ const styles = StyleSheet.create({
     height: 60
   },
   cardInfoBox: {
-    marginLeft: 8
+    marginLeft: 8,
+    flex: 1
   },
   networkName: {
     color: '#333',
@@ -231,7 +245,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   sendCardBtn: {
-    paddingVertical: 16
+    paddingTop: 16
   },
   useNowText: {
     fontSize: 15,
@@ -240,7 +254,7 @@ const styles = StyleSheet.create({
     marginLeft: 24
   },
   useNowBtn: {
-    paddingVertical: 16
+    paddingTop: 16
   },
   moreText: {},
   moreImage: {
@@ -257,8 +271,11 @@ const styles = StyleSheet.create({
   statusView: {
     fontSize: 13,
     fontWeight: '400',
-    position: 'absolute',
-    bottom: 8,
+    flex: 1,
+    alignSelf: 'flex-end',
+    textAlign: 'right',
+    // position: 'absolute',
+    // bottom: 4,
     right: 10,
     color: config.colors.primary
   }

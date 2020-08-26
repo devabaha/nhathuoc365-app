@@ -24,7 +24,7 @@ import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
 import { languages } from '../../i18n/constants';
 import { setAppLanguage } from '../../i18n/i18n';
-
+import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 class Account extends Component {
   constructor(props) {
     super(props);
@@ -78,6 +78,27 @@ class Account extends Component {
                 title: t('common:screen.myVoucher.mainTitle'),
                 from: 'home'
               }),
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#F35022'
+              }
+            ],
+            iconColor: '#ffffff'
+          },
+          {
+            key: '-3',
+            icon: 'receipt',
+            iconType: 'MaterialCommunityIcons',
+            label: 'Đơn dịch vụ của tôi',
+            desc: 'Quản lý đơn dịch vụ',
+            rightIcon: <IconAngleRight />,
+            onPress: () => {
+              const service = {
+                type: SERVICES_TYPE.SERVICE_ORDERS
+              };
+              servicesHandler(service);
+            },
             boxIconStyle: [
               styles.boxIconStyle,
               {

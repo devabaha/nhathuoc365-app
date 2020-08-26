@@ -43,7 +43,20 @@ export function handleCategoryPress(item, t) {
 export function handleOrderHistoryPress(item, t) {
   Actions.push('tickidRadaOrderHistory', {
     category: item,
-    title: t('common:screen.radaOrderHistory.mainTitle')
+    title: t('common:screen.radaOrderHistory.mainTitle'),
+    onPressItem: serviceOrder => {
+      const cart_data = {
+        cart_code: serviceOrder.id,
+        shop_logo_url: serviceOrder.image,
+        shop_name: serviceOrder.name,
+        status: serviceOrder.status,
+        status_view: serviceOrder.status_view,
+        orders_time: serviceOrder.created,
+        total_selected: serviceOrder.price_label
+      };
+
+      Actions.push(appConfig.routes.serviceFeedback, { cart_data });
+    }
   });
 }
 

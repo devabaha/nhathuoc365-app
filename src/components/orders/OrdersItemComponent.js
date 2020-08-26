@@ -84,6 +84,7 @@ class OrdersItemComponent extends Component {
   }
 
   _goStoreOrders(item) {
+    if (this.props.disableGoStore) return;
     store.setStoreData(item.site);
     Actions.store_orders({
       store_id: item.site_id,
@@ -176,7 +177,7 @@ class OrdersItemComponent extends Component {
               )}
 
               <View style={styles.orders_item_row}>
-                {Object.keys(item.products).length > 0 && (
+                {item.products && Object.keys(item.products).length > 0 && (
                   <View style={styles.orders_item_content_text}>
                     <Text style={styles.orders_item_content_value}>
                       {(() => {
@@ -348,9 +349,11 @@ class OrdersItemComponent extends Component {
             )}
 
             <View style={[styles.orders_item_row, styles.row_payment]}>
-              <Text style={styles.orders_item_content_label}>
-                {t('item.totalSelected', { total: item.count_selected })}
-              </Text>
+              {!!item.count_selected && (
+                <Text style={styles.orders_item_content_label}>
+                  {t('item.totalSelected', { total: item.count_selected })}
+                </Text>
+              )}
               <View style={styles.orders_status_box}>
                 <Text style={styles.orders_item_content_value}>
                   {`${t('item.totalPaymentMessage')}: `}

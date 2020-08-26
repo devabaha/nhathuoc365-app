@@ -57,6 +57,16 @@ export const NETWORKS = {
   }
 };
 
+export const SERVICE_TYPE = {
+  DATA_4G_PAID: 'data_4g_paid',
+  PHONE_CARD: 'phone_card',
+  PHONE_PAID: 'phone_paid',
+  INTERNET_PAID: 'internet_paid',
+  KPLUS_PAID: 'kplus_paid',
+  GAME_PAID: 'game_paid',
+  SERVICE_BILL: 'vat_bill'
+};
+
 export const CARD_10K = 'card10k';
 export const CARD_20K = 'card20k';
 export const CARD_30K = 'card30k';

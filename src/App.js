@@ -101,7 +101,7 @@ import {
   SearchChatNavBar
 } from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
-import { default as ServiceOrders } from './components/services/Orders';
+import { ServiceOrders, ServiceFeedback } from './components/services';
 import TabIcon from './components/TabIcon';
 import {
   initialize as initializeRadaModule,
@@ -158,6 +158,7 @@ import {
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
 import { MultiTaskView } from './components/MultiTaskView/MultiTaskView';
+import { ListBeeLand } from './containers/BeeLand';
 import { ListRoom } from './containers/Room';
 import RegisterStore from './containers/RegisterStore';
 
@@ -243,6 +244,9 @@ initializeVoucherModule({
  * Initializes config for Rada module
  */
 initializeRadaModule({
+  colors: {
+    primary: appConfig.colors.primary
+  },
   private: {
     partnerAuthorization: appConfig.radaModule.partnerAuthorization,
     webhookUrl: null,
@@ -516,6 +520,7 @@ class App extends Component {
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {/* <MultiTaskView /> */}
+        {/* <TableBooking /> */}
         {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
@@ -583,13 +588,42 @@ const styles = StyleSheet.create({
 export default withTranslation()(codePush(App));
 
 class RootRouter extends Component {
-  state = {};
+  state = {
+    tabVisible: {
+      [appConfig.routes.roomTab]: true,
+      [appConfig.routes.listBeeLand]: false
+    }
+  };
 
   shouldComponentUpdate(nextProps, nextState) {
+    const isTabVisbleChange = Object.keys(nextState.tabVisible).some(
+      nextKey => {
+        return Object.keys(this.state.tabVisible).some(currentKey => {
+          return (
+            nextKey === currentKey &&
+            nextState.tabVisible[nextKey] !== this.state.tabVisible[currentKey]
+          );
+        });
+      }
+    );
+
+    if (isTabVisbleChange) {
+      return true;
+    }
+
     if (nextProps.appLanguage !== this.props.appLanguage) {
       return true;
     }
     return false;
+  }
+
+  setTabVisible(tabVisible) {
+    this.setState(prev => ({
+      tabVisible: {
+        ...prev.tabVisible,
+        ...tabVisible
+      }
+    }));
   }
 
   setHeader(header) {
@@ -619,6 +653,7 @@ class RootRouter extends Component {
                   appLanguage={this.props.appLanguage}
                   key={appConfig.routes.launch}
                   component={LaunchContainer}
+                  setTabVisible={this.setTabVisible.bind(this)}
                 />
                 <Tabs
                   showLabel={false}
@@ -630,20 +665,22 @@ class RootRouter extends Component {
                   {...navBarConfig}
                 >
                   {/* ================ Tab 1 ================ */}
-                  <Stack
-                    key={appConfig.routes.roomTab}
-                    icon={TabIcon}
-                    iconLabel={t('appTab.tab1.title')}
-                    iconName="sofa"
-                    iconSize={24}
-                  >
-                    <Scene
-                      key={`${appConfig.routes.roomTab}_1`}
-                      title="HomeID"
-                      component={Room}
-                      hideNavBar
-                    />
-                  </Stack>
+                  {this.state.tabVisible[appConfig.routes.roomTab] && (
+                    <Stack
+                      key={appConfig.routes.roomTab}
+                      icon={TabIcon}
+                      iconLabel={t('appTab.tab1.title')}
+                      iconName="sofa"
+                      iconSize={24}
+                    >
+                      <Scene
+                        key={`${appConfig.routes.roomTab}_1`}
+                        title="HomeID"
+                        component={Room}
+                        hideNavBar
+                      />
+                    </Stack>
+                  )}
 
                   {/**
                    ************************ Tab 2 ************************
@@ -689,20 +726,21 @@ class RootRouter extends Component {
                   {/**
                    ************************ Tab 3 ************************
                    */}
-                  {/* <Stack
-                    key={appConfig.routes.listBuilding}
-                    icon={TabIcon}
-                    iconLabel={t('appTab.tab3.title')}
-                    iconName="office-building"
-                    iconSize={24}
-                    notifyKey="customer_card_wallet"
-                  >
-                    <Scene
-                      key={`${appConfig.routes.listBuilding}_1`}
-                      title={t('screen.listBuilding.mainTitle')}
-                      component={ListBuilding}
-                    />
-                  </Stack> */}
+                  {this.state.tabVisible[appConfig.routes.listBeeLand] && (
+                    <Stack
+                      key={appConfig.routes.listBeeLand}
+                      icon={TabIcon}
+                      iconLabel={t('appTab.tab3.title')}
+                      iconName="office-building"
+                      iconSize={24}
+                    >
+                      <Scene
+                        key={`${appConfig.routes.listBeeLand}_1`}
+                        title={t('screen.listBeeLand.mainTitle')}
+                        component={ListBeeLand}
+                      />
+                    </Stack>
+                  )}
 
                   {/**
                    ************************ Tab 4 ************************
@@ -724,13 +762,15 @@ class RootRouter extends Component {
                 </Tabs>
 
                 {/* ================ BUILDING ================ */}
-                <Scene
-                  key={appConfig.routes.listBuilding}
-                  title={t('screen.listBuilding.mainTitle')}
-                  component={ListBuilding}
-                  {...navBarConfig}
-                  back
-                />
+                <Stack key={appConfig.routes.listBuilding}>
+                  <Scene
+                    key={`${appConfig.routes.listBuilding}_1`}
+                    title={t('screen.listBuilding.mainTitle')}
+                    component={ListBuilding}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ BUILDING ================ */}
                 <Scene
@@ -995,6 +1035,7 @@ class RootRouter extends Component {
                     key="phone_auth_1"
                     hideNavBar
                     component={PhoneAuth}
+                    setTabVisible={this.setTabVisible.bind(this)}
                     {...navBarConfig}
                   />
                 </Stack>
@@ -1484,6 +1525,16 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.serviceOrders}_1`}
                     title="Đơn dịch vụ"
                     component={ServiceOrders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.serviceFeedback}>
+                  <Scene
+                    key={`${appConfig.routes.serviceFeedback}_1`}
+                    title={t('screen.feedback.mainTitle')}
+                    component={ServiceFeedback}
                     {...navBarConfig}
                     back
                   />

@@ -14,7 +14,7 @@
       "title": "Tiện ích"
     },
     "tab3": {
-      "title": "Dự án"
+      "title": "Dự án BĐS"
     },
     "tab4": {
       "title": "Đơn hàng"
@@ -134,6 +134,9 @@
     },
     "registerStore": {
       "mainTitle": "Đăng ký cửa hàng"
+    },
+    "listBeeLand": {
+      "mainTitle": "Danh sách dự án"
     }
   },
 
