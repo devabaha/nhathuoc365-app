@@ -52,7 +52,12 @@ class Launch extends Component {
         Actions.replace(appConfig.routes.primaryTabbar);
         if (user.room) {
           Actions.jump(appConfig.routes.roomTab);
+        } else {
         }
+        this.props.setTabVisible({
+          [appConfig.routes.roomTab]: !!response.data.room,
+          [appConfig.routes.listBeeLand]: response.data.view_beeland
+        });
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);

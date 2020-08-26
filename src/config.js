@@ -107,6 +107,7 @@ const config = Object.freeze({
 
     itemAttribute: 'itemAttribute',
     serviceOrders: 'serviceOrders',
+    serviceFeedback: 'serviceFeedback',
 
     // Schedule
     schedule: 'schedule',
@@ -139,7 +140,10 @@ const config = Object.freeze({
     requestCreation: 'requestCreation',
     members: 'members',
     memberModal: 'memberModal',
-    registerStore: 'registerStore'
+    registerStore: 'registerStore',
+
+    // BeeLand
+    listBeeLand: 'listBeeLand'
   }
 });
 

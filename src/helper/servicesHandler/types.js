@@ -21,6 +21,9 @@ export const SERVICES_TYPE = {
   BEEHOME_ROOM_CHAT: 'beehome_room_chat',
   BEEHOME_ROOM_USER: 'beehome_room_user',
 
+  /** BEELAND */
+  BEELAND_BUILDING: 'beeland_building',
+
   /** EXTERNAL LINK */
   EXTERNAL_LINK: 'external_link',
 
@@ -71,5 +74,8 @@ export const SERVICES_TYPE = {
   PRODUCT_DETAIL: 'product_detail',
 
   /** AFFILIATE */
-  AFFILIATE: 'affiliate'
+  AFFILIATE: 'affiliate',
+
+  /** SERVICE ORDERS */
+  SERVICE_ORDERS: 'service_orders'
 };

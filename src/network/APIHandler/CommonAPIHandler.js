@@ -804,6 +804,13 @@ class CommonAPIHandler extends BaseHandler {
     var api = url_for(API.SERVICE_ORDERS);
     return await this.getAPI(api);
   }
+  /**
+   *
+   */
+  async service_rating(order_id, data) {
+    var api = url_for(API.SERVICE_RATING + '/' + order_id);
+    return await this.postAPI(api, data);
+  }
 
   /**
    * Lấy danh sách hình thức thanh toán

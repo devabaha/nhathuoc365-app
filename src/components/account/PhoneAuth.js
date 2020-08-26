@@ -301,6 +301,10 @@ class PhoneAuth extends Component {
       if (response.data.room) {
         Actions.jump(appConfig.routes.roomTab);
       }
+      this.props.setTabVisible({
+        [appConfig.routes.roomTab]: !!response.data.room,
+        [appConfig.routes.listBeeLand]: response.data.view_beeland
+      });
     }
   };
 

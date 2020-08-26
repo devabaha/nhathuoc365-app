@@ -2,6 +2,9 @@ import React, { PureComponent } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native';
 import Loading from '../Loading';
 import CardItem from '../../packages/tickid-phone-card/component/CardItem';
+import NoResult from '../NoResult';
+import { Actions } from 'react-native-router-flux';
+import appConfig from 'app-config';
 
 class Orders extends PureComponent {
   state = {
@@ -43,9 +46,26 @@ class Orders extends PureComponent {
     }
   };
 
+  goToFeedbackService(serviceOrder) {
+    const cart_data = {
+      site_id: serviceOrder.site_id,
+      cart_code: serviceOrder.id,
+      shop_logo_url: serviceOrder.image,
+      shop_name: serviceOrder.name,
+      status: serviceOrder.status,
+      status_view: serviceOrder.status_view,
+      orders_time: serviceOrder.created,
+      total_selected: serviceOrder.price_label
+    };
+
+    Actions.push(appConfig.routes.serviceFeedback, { cart_data });
+  }
+
   renderServiceOrder = ({ item: serviceOrder }) => {
     return (
       <CardItem
+        onPressService={() => this.goToFeedbackService(serviceOrder)}
+        image={serviceOrder.image}
         cardId={serviceOrder.id}
         networkType={serviceOrder.type}
         networkName={serviceOrder.name}
@@ -68,7 +88,7 @@ class Orders extends PureComponent {
       <SafeAreaView style={styles.container}>
         {this.state.loading ? (
           <Loading center />
-        ) : (
+        ) : this.state.serviceOrders.length !== 0 ? (
           <View style={styles.container}>
             <FlatList
               data={this.state.serviceOrders}
@@ -77,6 +97,8 @@ class Orders extends PureComponent {
               ListFooterComponent={<View style={styles.bottomList} />}
             />
           </View>
+        ) : (
+          <NoResult iconName="alert-circle" message="Bạn chưa có đơn dịch vụ" />
         )}
       </SafeAreaView>
     );

@@ -7,7 +7,7 @@
   "emptyMessage": "空订单",
   "encourageMessage": "立即逛街",
   "item": {
-    "title": " Đơn hàng #{{code}}",
+    "title": " Đơn #{{code}}",
     "next": "下一步",
     "edit": "编辑",
     "note": "备注",

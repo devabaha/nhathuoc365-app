@@ -130,6 +130,11 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       });
       break;
 
+    /** BEELAND */
+    case SERVICES_TYPE.BEELAND_BUILDING:
+      Actions.jump(appConfig.routes.listBeeLand);
+      break;
+
     /** EXTERNAL LINK */
     case SERVICES_TYPE.EXTERNAL_LINK:
       Linking.openURL(service.link).catch(err => {
@@ -309,6 +314,11 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     /** AFFILIATE */
     case SERVICES_TYPE.AFFILIATE:
       store.setReferCode(service.refer_code);
+      break;
+
+    /** SERVICE ORDERS */
+    case SERVICES_TYPE.SERVICE_ORDERS:
+      Actions.push(appConfig.routes.serviceOrders);
       break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
