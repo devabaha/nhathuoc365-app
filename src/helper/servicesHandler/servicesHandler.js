@@ -243,6 +243,11 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     case SERVICES_TYPE.AFFILIATE:
       store.setReferCode(service.refer_code);
       break;
+
+    /** SERVICE ORDERS */
+    case SERVICES_TYPE.SERVICE_ORDERS:
+      Actions.push(appConfig.routes.serviceOrders);
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }

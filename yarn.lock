@@ -1046,12 +1046,16 @@
     react-native-button "^2.4.0"
 
 "@tickid/tickid-rada@^2.1.6":
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.1.7.tgz#41a0794fe54b5d96dfe430c4c9f142966c4b09a5"
-  integrity sha512-DLFHDxK7qV2k6QnMor/AaKyVP618fLW9/hQsuCt3UFliCAvTlflCj5MgwYoOJIHoWyRYihrNC1w4TWpWmnpdOg==
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.2.5.tgz#b5a34f470f45800263592717d59014c75745abe3"
+  integrity sha512-9IHRygEXU7rVQTm9fWzqaprd2NJ+k2Y4ri+zgqDJN+FUaLEkJ4EnWgt3p7Altulskj09wTdKbI6h7SrjhFijoQ==
   dependencies:
     prop-types "^15.7.2"
-    react-native-render-html "^4.1.2"
+    react-native-google-places-autocomplete "^1.4.1"
+    react-native-modalbox "^1.4.2"
+    react-native-tab-view "^2.10.0"
+    react-native-vector-icons "^6.5.0"
+    react-native-webview "9.1.1"
 
 "@tickid/tickid-rn-loading@^1.0.0":
   version "1.0.1"

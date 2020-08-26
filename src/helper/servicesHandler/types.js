@@ -60,5 +60,8 @@ export const SERVICES_TYPE = {
   PRODUCT_DETAIL: 'product_detail',
 
   /** AFFILIATE */
-  AFFILIATE: 'affiliate'
+  AFFILIATE: 'affiliate',
+
+  /** SERVICE ORDERS */
+  SERVICE_ORDERS: 'service_orders'
 };

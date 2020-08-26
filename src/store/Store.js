@@ -2,6 +2,7 @@ import { reaction, observable, action, toJS } from 'mobx';
 import autobind from 'autobind-decorator';
 import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
 
 @autobind
 class Store {
@@ -85,6 +86,7 @@ class Store {
             this.setRefreshNews(this.refresh_news + 1);
           }
           const { user, ...notifies } = response.data;
+          this.initConfigRadaModule(user);
           this.setUserInfo(user);
           this.setNotify(notifies);
         })();
@@ -96,29 +98,47 @@ class Store {
     }
   };
 
+  @observable radaConfig = { name: '', tel: '' };
+  @action initConfigRadaModule(user) {
+    if (
+      user &&
+      (user.name || user.tel) &&
+      (user.name !== this.radaConfig.name || user.tel !== this.radaConfig.tel)
+    ) {
+      this.radaConfig.name = user.name;
+      this.radaConfig.tel = user.tel;
+      initializeRadaModule({
+        defaultContactName: user.name,
+        defaultContactPhone: user.tel
+      });
+    }
+  }
+
   newVersionChecking(notifies) {
     const appStoreName = Platform.OS === 'ios' ? 'App Store' : 'Play Store';
     if (notifies && notifies.updating_version == 1) {
-      Alert.alert(
-        `Phiên bản mới ${notifies.new_version}!`,
-        'Đã có bản cập nhật mới, bạn vui lòng cập nhật ứng dụng để có trải nghiệm tốt nhất.',
-        [
-          {
-            text: 'Lúc khác',
-            style: 'cancel'
-          },
-          {
-            text: 'Cập nhật',
-            onPress: () =>
-              Linking.openURL(notifies.url_update).catch(error => {
-                console.log('update_app', error);
-                Alert.alert(
-                  'Có lỗi xảy ra',
-                  `Bạn có thể truy cập ${appStoreName} để thử lại.`
-                );
-              })
-          }
-        ]
+      setTimeout(() =>
+        Alert.alert(
+          `Phiên bản mới ${notifies.new_version}!`,
+          'Đã có bản cập nhật mới, bạn vui lòng cập nhật ứng dụng để có trải nghiệm tốt nhất.',
+          [
+            {
+              text: 'Lúc khác'
+            },
+            {
+              text: 'Cập nhật',
+              style: 'cancel',
+              onPress: () =>
+                Linking.openURL(notifies.url_update).catch(error => {
+                  console.log('update_app', error);
+                  Alert.alert(
+                    'Có lỗi xảy ra',
+                    `Bạn có thể truy cập ${appStoreName} để thử lại.`
+                  );
+                })
+            }
+          ]
+        )
       );
     }
   }

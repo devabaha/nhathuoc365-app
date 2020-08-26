@@ -99,7 +99,7 @@ import {
   SearchChatNavBar
 } from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
-import { default as ServiceOrders } from './components/services/Orders';
+import { ServiceOrders, ServiceFeedback } from './components/services';
 import TabIcon from './components/TabIcon';
 import {
   initialize as initializeRadaModule,
@@ -223,6 +223,9 @@ initializeVoucherModule({
  * Initializes config for Rada module
  */
 initializeRadaModule({
+  colors: {
+    primary: appConfig.colors.primary
+  },
   private: {
     partnerAuthorization: appConfig.radaModule.partnerAuthorization,
     webhookUrl: null,
@@ -562,13 +565,39 @@ const styles = StyleSheet.create({
 export default withTranslation()(codePush(App));
 
 class RootRouter extends Component {
-  state = {};
+  state = {
+    tabVisible: {}
+  };
 
   shouldComponentUpdate(nextProps, nextState) {
+    const isTabVisbleChange = Object.keys(nextState.tabVisible).some(
+      nextKey => {
+        return Object.keys(this.state.tabVisible).some(currentKey => {
+          return (
+            nextKey === currentKey &&
+            nextState.tabVisible[nextKey] !== this.state.tabVisible[currentKey]
+          );
+        });
+      }
+    );
+
+    if (isTabVisbleChange) {
+      return true;
+    }
+
     if (nextProps.appLanguage !== this.props.appLanguage) {
       return true;
     }
     return false;
+  }
+
+  setTabVisible(tabVisible) {
+    this.setState(prev => ({
+      tabVisible: {
+        ...prev.tabVisible,
+        ...tabVisible
+      }
+    }));
   }
 
   setHeader(header) {
@@ -1303,6 +1332,16 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.serviceOrders}_1`}
                     title="Đơn dịch vụ"
                     component={ServiceOrders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.serviceFeedback}>
+                  <Scene
+                    key={`${appConfig.routes.serviceFeedback}_1`}
+                    title={t('screen.feedback.mainTitle')}
+                    component={ServiceFeedback}
                     {...navBarConfig}
                     back
                   />

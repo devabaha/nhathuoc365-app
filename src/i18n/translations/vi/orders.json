@@ -7,7 +7,7 @@
   "emptyMessage": "Chưa có đơn hàng nào",
   "encourageMessage": "Mua sắm ngay",
   "item": {
-    "title": " Đơn hàng #{{code}}",
+    "title": " Đơn #{{code}}",
     "next": "Tiếp tục",
     "edit": "Sửa đơn",
     "note": "Ghi chú",

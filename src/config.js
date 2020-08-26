@@ -105,6 +105,7 @@ const config = Object.freeze({
 
     itemAttribute: 'itemAttribute',
     serviceOrders: 'serviceOrders',
+    serviceFeedback: 'serviceFeedback',
 
     // Schedule
     schedule: 'schedule',
