@@ -302,7 +302,7 @@ class PhoneAuth extends Component {
         Actions.jump(appConfig.routes.roomTab);
       }
       this.props.setTabVisible({
-        [appConfig.routes.roomTab]: !!response.data.room,
+        [appConfig.routes.roomTab]: !!response.data.view_beehome,
         [appConfig.routes.listBeeLand]: response.data.view_beeland
       });
     }
