@@ -287,18 +287,6 @@ class Home extends Component {
     const { t } = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
-    } else if (service.type === 'rada_service') {
-      Actions.push('tickidRada', {
-        service_type: service.type,
-        service_id: service.id,
-        title: t('common:screen.rada.mainTitle'),
-        onPressItem: item => {
-          this.handleCategoryPress(item);
-        },
-        onPressOrderHistory: item => {
-          this.handleOrderHistoryPress(item);
-        }
-      });
     } else {
       servicesHandler(service, t);
     }

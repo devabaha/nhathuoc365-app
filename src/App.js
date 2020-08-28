@@ -140,6 +140,7 @@ import { servicesHandler, SERVICES_TYPE } from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
+import AllServices from './containers/AllServices';
 
 /**
  * Not allow font scaling
@@ -1385,6 +1386,17 @@ class RootRouter extends Component {
                     title={t('screen.scheduleConfirm.mainTitle')}
                     component={ScheduleConfirm}
                     {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ ALL SERVICES ================ */}
+                <Stack key={appConfig.routes.allServices}>
+                  <Scene
+                    key={`${appConfig.routes.allServices}_1`}
+                    component={AllServices}
+                    title={t('screen.allServices.mainTitle')}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>

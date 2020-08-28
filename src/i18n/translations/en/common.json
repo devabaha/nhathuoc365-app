@@ -109,6 +109,9 @@
     },
     "resetPassword": {
       "mainTitle": "Reset Password"
+    },
+    "allServices": {
+      "mainTitle": "Service list"
     }
   },
 

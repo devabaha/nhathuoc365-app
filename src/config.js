@@ -118,7 +118,10 @@ const config = Object.freeze({
     modalRateApp: 'modalRateApp',
 
     //  Reset password
-    resetPassword: 'resetPassword'
+    resetPassword: 'resetPassword',
+
+    // All serives
+    allServices: 'allServices'
   }
 });
 

@@ -117,28 +117,30 @@ class Store {
   newVersionChecking(notifies) {
     const appStoreName = Platform.OS === 'ios' ? 'App Store' : 'Play Store';
     if (notifies && notifies.updating_version == 1) {
-      setTimeout(() =>
-        Alert.alert(
-          `Phiên bản mới ${notifies.new_version}!`,
-          'Đã có bản cập nhật mới, bạn vui lòng cập nhật ứng dụng để có trải nghiệm tốt nhất.',
-          [
-            {
-              text: 'Lúc khác'
-            },
-            {
-              text: 'Cập nhật',
-              style: 'cancel',
-              onPress: () =>
-                Linking.openURL(notifies.url_update).catch(error => {
-                  console.log('update_app', error);
-                  Alert.alert(
-                    'Có lỗi xảy ra',
-                    `Bạn có thể truy cập ${appStoreName} để thử lại.`
-                  );
-                })
-            }
-          ]
-        )
+      setTimeout(
+        () =>
+          Alert.alert(
+            `Phiên bản mới ${notifies.new_version}!`,
+            'Đã có bản cập nhật mới, bạn vui lòng cập nhật ứng dụng để có trải nghiệm tốt nhất.',
+            [
+              {
+                text: 'Lúc khác'
+              },
+              {
+                text: 'Cập nhật',
+                style: 'cancel',
+                onPress: () =>
+                  Linking.openURL(notifies.url_update).catch(error => {
+                    console.log('update_app', error);
+                    Alert.alert(
+                      'Có lỗi xảy ra',
+                      `Bạn có thể truy cập ${appStoreName} để thử lại.`
+                    );
+                  })
+              }
+            ]
+          ),
+        1000
       );
     }
   }

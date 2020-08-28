@@ -1,6 +1,5 @@
 /**
- * @module APIRequest
- * @class APIRequest
+ * @class
  *
  * @callback cancelRequest
  * @returns {void}
@@ -18,12 +17,15 @@ class APIRequest {
    *
    * @param {Request} data
    */
-  constructor({ cancel = () => {}, promise = () => {} } = {}) {
+  constructor({ cancel = () => {}, promise = () => {}, testID = 'init' } = {}) {
+    this.id = new Date().getTime();
     this.cancel = cancel;
     this.promise = promise;
+    this.testID = testID;
   }
 
-  set data({ cancel, promise }) {
+  set data({ testID = 'init', cancel, promise }) {
+    this.testID = testID;
     this.updateCancel = cancel;
     this.updatePromise = promise;
   }

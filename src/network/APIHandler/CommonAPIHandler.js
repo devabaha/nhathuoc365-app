@@ -782,6 +782,11 @@ class CommonAPIHandler extends BaseHandler {
     var api = url_for(API.SERVICE_RATING + '/' + order_id);
     return await this.postAPI(api, data);
   }
+
+  user_get_services() {
+    const api = url_for(API.USER_GET_SERVICES);
+    return this.getCancelableAPI(api);
+  }
 }
 
 export default CommonAPIHandler;
