@@ -66,5 +66,8 @@ export const SERVICES_TYPE = {
   SERVICE_ORDERS: 'service_orders',
 
   /** LIST SERVICE */
-  ALL_SERVICES: 'all_services'
+  ALL_SERVICES: 'all_services',
+
+  /** PAYMENT */
+  PAYMENT_METHOD: 'payment_method'
 };

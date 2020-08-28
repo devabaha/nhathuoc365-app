@@ -253,6 +253,26 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
     case SERVICES_TYPE.ALL_SERVICES:
       Actions.push(appConfig.routes.allServices);
       break;
+
+    /** PAYMENT */
+    case SERVICES_TYPE.PAYMENT_METHOD:
+      const selectedMethod =
+        service.default_payment_method_id !== undefined
+          ? {
+              id: service.default_payment_method_id,
+              type: service.default_payment_method_type
+            }
+          : null;
+      Actions.push(appConfig.routes.paymentMethod, {
+        onConfirm: (method, extraData) => callBack(true, method, extraData),
+        selectedMethod: selectedMethod,
+        price: service.total_before_view,
+        totalPrice: service.total_selected,
+        extraFee: service.item_fee,
+        showPrice: service.showPrice,
+        showSubmit: service.showSubmit,
+        onUpdatePaymentMethod: data => callBack(false, data)
+      });
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }
