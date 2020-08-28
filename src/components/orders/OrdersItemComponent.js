@@ -377,13 +377,13 @@ OrdersItemComponent.propTypes = {
 
 const styles = StyleSheet.create({
   cart_section_box: {
-    width: '100%',
-    height: 40,
+    flex: 1,
     alignItems: 'center',
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     borderBottomWidth: Util.pixel,
     borderColor: '#dddddd',
+    paddingVertical: 8,
     marginBottom: 8
   },
   cart_section_image: {
@@ -394,6 +394,7 @@ const styles = StyleSheet.create({
     borderRadius: 13
   },
   cart_section_title: {
+    flex: 1,
     color: '#000000',
     fontSize: 14,
     paddingLeft: 8,

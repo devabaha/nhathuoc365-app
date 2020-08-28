@@ -133,6 +133,7 @@ exports.USER_SEARCH_FAVOR_SITES = MY_FOOD_API + 'apiUser/search_favor_sites';
 exports.USER_UPDATE_FAVOR_SITE = MY_FOOD_API + 'apiUser/update_favor_site';
 exports.USER_RESET_PASSWORD = MY_FOOD_API + 'apiUser/reset_pass';
 exports.USER_RATE_APP = MY_FOOD_API + 'apiUser/rate_app';
+exports.USER_GET_SERVICES = MY_FOOD_API + 'apiUser/get_services';
 
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';

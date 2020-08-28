@@ -53,8 +53,19 @@ class TransferInfo extends Component {
             onPress={() => this.copyAccountNumber(info.account_no)}
           />
           <RowItem label="Tên tài khoản" value={info.account_name} />
-          <RowItem label="Số tiền" value={amount} rightValue highlight />
+          <RowItem
+            containerStyle={{ borderTopWidth: 0.5, borderColor: '#d9d9d9' }}
+            label="Số tiền"
+            value={amount}
+            rightValue
+            highlight
+          />
           <Text style={styles.note}>{this.props.note}</Text>
+          <Text style={styles.specialNote}>
+            Quý khách vui lòng chuyển khoản đúng số tiền trên. Chuyển sai số
+            tiền ngân hàng sẽ báo lỗi: Kết nối tạm thời gián đoạn hoặc không
+            giao dịch được.
+          </Text>
         </ScrollView>
 
         <Button title="Quay về" onPress={this.handleConfirm} />
@@ -79,6 +90,15 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     paddingVertical: 15,
     paddingHorizontal: 15
+  },
+  specialNote: {
+    backgroundColor: '#fafafa',
+    fontWeight: '600',
+    color: '#242424',
+    lineHeight: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    letterSpacing: 0.5
   },
 
   /** RowItem */
@@ -117,10 +137,11 @@ const RowItem = ({
   value,
   highlight = false,
   rightValue = false,
-  onPress = null
+  onPress = null,
+  containerStyle
 }) => {
   return (
-    <View style={styles.rowContainer}>
+    <View style={[styles.rowContainer, containerStyle]}>
       <Text style={styles.label}>{label}</Text>
 
       <Text

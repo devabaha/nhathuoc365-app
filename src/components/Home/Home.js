@@ -149,6 +149,15 @@ class Home extends Component {
     68
   );
 
+  onWalletPress = () => {
+    const service = {
+      showPrice: false,
+      showSubmit: false,
+      type: SERVICES_TYPE.PAYMENT_METHOD
+    };
+    this.props.onActionPress(service);
+  };
+
   render() {
     const { t } = this.props;
     return (
@@ -209,6 +218,7 @@ class Home extends Component {
               onScanPress={() =>
                 this.props.onActionPress({ type: SERVICES_TYPE.QRCODE_SCAN })
               }
+              onWalletPress={this.onWalletPress}
             />
           </View>
 
@@ -376,7 +386,7 @@ const styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.48,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.height / 5.2,
+    top: -(appConfig.device.width * 3) + appConfig.device.height / 6,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden'

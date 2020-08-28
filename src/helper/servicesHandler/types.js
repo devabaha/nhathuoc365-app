@@ -77,5 +77,11 @@ export const SERVICES_TYPE = {
   AFFILIATE: 'affiliate',
 
   /** SERVICE ORDERS */
-  SERVICE_ORDERS: 'service_orders'
+  SERVICE_ORDERS: 'service_orders',
+
+  /** LIST SERVICE */
+  ALL_SERVICES: 'all_services',
+
+  /** PAYMENT */
+  PAYMENT_METHOD: 'payment_method'
 };

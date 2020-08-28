@@ -143,7 +143,10 @@ const config = Object.freeze({
     registerStore: 'registerStore',
 
     // BeeLand
-    listBeeLand: 'listBeeLand'
+    listBeeLand: 'listBeeLand',
+
+    // All serives
+    allServices: 'allServices'
   }
 });
 

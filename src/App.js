@@ -161,6 +161,7 @@ import { MultiTaskView } from './components/MultiTaskView/MultiTaskView';
 import { ListBeeLand } from './containers/BeeLand';
 import { ListRoom } from './containers/Room';
 import RegisterStore from './containers/RegisterStore';
+import AllServices from './containers/AllServices';
 
 /**
  * Not allow font scaling
@@ -1578,6 +1579,17 @@ class RootRouter extends Component {
                     title={t('screen.scheduleConfirm.mainTitle')}
                     component={ScheduleConfirm}
                     {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ ALL SERVICES ================ */}
+                <Stack key={appConfig.routes.allServices}>
+                  <Scene
+                    key={`${appConfig.routes.allServices}_1`}
+                    component={AllServices}
+                    title={t('screen.allServices.mainTitle')}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>

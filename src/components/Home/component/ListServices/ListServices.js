@@ -69,7 +69,6 @@ function ListServices({ scrollEnabled = false, ...props }) {
 
 ListServices.propTypes = {
   data: PropTypes.array,
-  services: PropTypes.array,
   listService: PropTypes.array,
   notify: PropTypes.object,
   onItemPress: PropTypes.func
@@ -77,7 +76,6 @@ ListServices.propTypes = {
 
 ListServices.defaultProps = {
   data: [],
-  services: [],
   listService: [],
   notify: {},
   onItemPress: () => {}

@@ -137,6 +137,9 @@
     },
     "listBeeLand": {
       "mainTitle": "List project"
+    },
+    "allServices": {
+      "mainTitle": "Service list"
     }
   },
 

@@ -109,12 +109,13 @@ class Method extends Component {
     }
   };
 
-  async createEpayTransfer() {
+  async createTransfer() {
     this.setState({ loading: true });
     const { t } = this.props;
     const data = {
       bill_ids: this.props.ids,
-      amount: this.totalPriceView.value
+      amount: this.totalPriceView.value,
+      user_fee: this.transferFeeView.value
     };
     try {
       const response = await APIHandler.site_transfer_pay_va(
@@ -172,7 +173,7 @@ class Method extends Component {
   handleConfirm = async () => {
     switch (this.state.selectedMethod.type) {
       case PAYMENT_METHOD_TYPES.EPAY:
-        this.createEpayTransfer();
+        this.createTransfer();
         break;
       default:
         Actions.popTo(this.props.rootSceneKey, {

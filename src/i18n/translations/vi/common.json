@@ -137,6 +137,9 @@
     },
     "listBeeLand": {
       "mainTitle": "Danh sách dự án"
+    },
+    "allServices": {
+      "mainTitle": "Danh sách dịch vụ"
     }
   },
 

@@ -13,6 +13,10 @@ import History from './History';
 import Info from './Info';
 import appConfig from 'app-config';
 import Loading from '../../Loading';
+import {
+  servicesHandler,
+  SERVICES_TYPE
+} from '../../../helper/servicesHandler';
 
 class VndWallet extends Component {
   constructor(props) {
@@ -63,6 +67,15 @@ class VndWallet extends Component {
       wallet: this.state.wallet,
       address: this.state.wallet.address
     });
+  }
+
+  _goPaymentMethod() {
+    const service = {
+      type: SERVICES_TYPE.PAYMENT_METHOD,
+      showPrice: false,
+      showSubmit: false
+    };
+    servicesHandler(service);
   }
 
   _goQRCode() {
@@ -150,15 +163,17 @@ class VndWallet extends Component {
           </TouchableHighlight>
 
           <TouchableHighlight
-            onPress={this._goTransfer.bind(this)}
+            onPress={this._goPaymentMethod.bind(this)}
             underlayColor="transparent"
             style={styles.add_store_action_btn}
           >
             <View style={styles.add_store_action_btn_box}>
-              <Icon name="minus-square-o" size={30} color="#333333" />
-              <Text style={styles.add_store_action_label}>
-                {t('common:screen.transfer.mainTitle')}
-              </Text>
+              <Icon
+                name="plus-circle"
+                size={30}
+                color={appConfig.colors.primary}
+              />
+              <Text style={styles.add_store_action_label}>Nạp điểm</Text>
             </View>
           </TouchableHighlight>
 

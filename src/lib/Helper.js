@@ -463,3 +463,25 @@ global.prefetchImages = images => {
     })
   );
 };
+
+/** @todo format number to sale form
+ * @example 25 -> -25%
+ */
+global.saleFormat = sale => {
+  return `-${sale}%`;
+};
+
+/**
+ * @todo cancel all APIRequest() request(s)
+ *
+ * @param {Function[] | Function} requests
+ */
+global.cancelRequests = requests => {
+  if (Array.isArray(requests)) {
+    requests.forEach(request => {
+      request.cancel();
+    });
+  } else {
+    requests.cancel();
+  }
+};

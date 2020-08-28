@@ -1053,9 +1053,9 @@
     react-native-button "^2.4.0"
 
 "@tickid/tickid-rada@^2.1.6":
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.2.4.tgz#5e552b1407b310473419af1dfbdfa9ee69159c4a"
-  integrity sha512-dgbiZHI8RZBOUVuV+MRek4/52jWL4Gv4R+0EpTJysQNXdPA+C/Yki/odTXLNaKnRDMbv98Rjwb5ESUNXXNc7fA==
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@tickid/tickid-rada/-/tickid-rada-2.2.5.tgz#b5a34f470f45800263592717d59014c75745abe3"
+  integrity sha512-9IHRygEXU7rVQTm9fWzqaprd2NJ+k2Y4ri+zgqDJN+FUaLEkJ4EnWgt3p7Altulskj09wTdKbI6h7SrjhFijoQ==
   dependencies:
     prop-types "^15.7.2"
     react-native-google-places-autocomplete "^1.4.1"
