@@ -144,6 +144,7 @@ const config = Object.freeze({
 
     // BeeLand
     listBeeLand: 'listBeeLand',
+    projectBeeLand: 'projectBeeLand',
 
     // All serives
     allServices: 'allServices'

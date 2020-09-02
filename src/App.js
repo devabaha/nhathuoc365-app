@@ -158,7 +158,7 @@ import {
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
 import { MultiTaskView } from './components/MultiTaskView/MultiTaskView';
-import { ListBeeLand } from './containers/BeeLand';
+import { ListBeeLand, ProjectBeeLand } from './containers/BeeLand';
 import { ListRoom } from './containers/Room';
 import RegisterStore from './containers/RegisterStore';
 import AllServices from './containers/AllServices';
@@ -521,8 +521,8 @@ class App extends Component {
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {/* <MultiTaskView /> */}
-        {/* <TableBooking /> */}
-        {this.state.header}
+        <ProjectBeeLand />
+        {/* {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
@@ -542,7 +542,7 @@ class App extends Component {
           closeOnHardwareBackPress={false}
           showCancelButton={false}
           showConfirmButton={false}
-        />
+        /> */}
       </View>
     );
   }
@@ -874,6 +874,16 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.transferInfo}_1`}
                     title={t('screen.transferInfo.mainTitle')}
                     component={BillsTransferInfo}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BEELAND PROJECT ================ */}
+                <Stack key={appConfig.routes.projectBeeLand}>
+                  <Scene
+                    key={`${appConfig.routes.projectBeeLand}_1`}
+                    component={ProjectBeeLand}
                     {...navBarConfig}
                     back
                   />
