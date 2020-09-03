@@ -1,5 +1,12 @@
 import React, { Component, useState } from 'react';
-import { View, StyleSheet, ScrollView, Text, Dimensions } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Text,
+  Dimensions,
+  StatusBar
+} from 'react-native';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import {
@@ -38,6 +45,51 @@ const styles = StyleSheet.create({
 const headingData = [
   {
     data: [
+      [
+        { value: 0 },
+        { value: 1 },
+        { value: 2 },
+        { value: 3 },
+        { value: 4 },
+        { value: 5 },
+        { value: 6 },
+        { value: 7 }
+      ],
+      [
+        {
+          value: 0,
+          cellProps: {
+            style: { width: '100%' },
+            containerStyle: { width: '100%', transform: [{ translateX: 0 }] }
+          }
+        }
+      ]
+    ],
+    position: 'top'
+    // cellsProps: { disabled: true },
+    // containerStyle: {flex: 1}
+    // style
+  },
+  {
+    data: [
+      { value: 0 },
+      { value: 1 },
+      { value: 2 },
+      { value: 3 },
+      { value: 4 },
+      { value: 5 },
+      { value: 6 },
+      { value: 7 },
+      { value: 8 },
+      { value: 9 }
+    ],
+    position: 'left'
+    // cellsProps: { disabled: true }
+    // containerStyle
+    // style
+  },
+  {
+    data: [
       { value: 0 },
       { value: 1 },
       { value: 2 },
@@ -47,30 +99,26 @@ const headingData = [
       { value: 6 },
       { value: 7 }
     ],
-    position: 'top',
-    cellsProps: { disabled: true },
-    cellStyle: { height: 50 }
+    position: 'bottom'
+    // cellsProps: { disabled: true }
     // containerStyle
     // style
   },
   {
-    data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    position: 'left',
-    cellsProps: { disabled: true }
-    // containerStyle
-    // style
-  },
-  {
-    data: [0, 1, 2, 3, 4, 5, 6, 7],
-    position: 'bottom',
-    cellsProps: { disabled: true }
-    // containerStyle
-    // style
-  },
-  {
-    data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-    position: 'right',
-    cellsProps: { disabled: true }
+    data: [
+      { value: 1 },
+      { value: 2 },
+      { value: 3 },
+      { value: 4 },
+      { value: 5 },
+      { value: 6 },
+      { value: 7 },
+      { value: 8 },
+      { value: 9 },
+      { value: 10 }
+    ],
+    position: 'right'
+    // cellsProps: { disabled: true },
     // containerStyle
     // style
   }
@@ -78,87 +126,103 @@ const headingData = [
 
 const cellData = [
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
   [
-    { data: 1 },
-    { data: 2 },
-    { data: 3 },
-    { data: 4 },
-    { data: 5 },
-    { data: 6 }
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
   ],
-  [{ data: 1 }, { data: 2 }, { data: 3 }, { data: 4 }, { data: 5 }, { data: 6 }]
+  [
+    { data: { value: 1 } },
+    { data: { value: 2 } },
+    { data: { value: 3 } },
+    { data: { value: 4 } },
+    { data: { value: 5 } },
+    { data: { value: 6 } }
+  ]
 ];
-
+const appDimensions = Dimensions.get('screen');
 class Project extends Component {
   state = {};
 
   renderHeadingItem(heading, index) {
     return (
-      <View key={index} style={{ borderWidth: 1, flex: 1 }}>
-        <Text>{heading.value !== undefined ? heading.value : heading}</Text>
+      <View
+        key={index}
+        style={{
+          borderWidth: 1,
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100%'
+        }}
+      >
+        <Text>{heading.value}</Text>
         <Icon name="plus" />
       </View>
     );
@@ -167,7 +231,7 @@ class Project extends Component {
   renderCellItem(cell, index) {
     return (
       <View key={index} style={{ borderWidth: 1, flex: 1 }}>
-        <Text>{cell.data}</Text>
+        <Text>{cell.data.value}</Text>
         <Icon name="minus" />
       </View>
     );

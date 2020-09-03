@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import {
     StyleSheet,
     Dimensions,
-    LayoutChangeEvent
+    LayoutChangeEvent,
+    StatusBar
 } from 'react-native';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
@@ -20,9 +21,10 @@ const styles = StyleSheet.create({
 const { width: appWidth, height: appHeight } = Dimensions.get('screen');
 
 const ScheduleTable = ({
+    panGestureHandlerProps,
     headingData,
     cellDimensions = { width: 100, height: 100 },
-    wrapperDimensions = { width: appWidth, height: appHeight },
+    wrapperDimensions = { width: appWidth, height: appHeight - (StatusBar.currentHeight || 0) },
     cellData,
     renderHeadingItem,
     renderHeading,
@@ -84,29 +86,36 @@ const ScheduleTable = ({
         const heading = getHeadingByPosition(position);
 
         if (heading) {
-            let headingStyle = {};
+            let headingCellStyle = {};
+            let headingWrapperStyle = {};
             switch (position) {
                 case "top":
-                    headingStyle = { transform: [{ translateX }], zIndex: 4 }
+                    headingCellStyle = { transform: [{ translateX }] };
+                    headingWrapperStyle = {
+                        zIndex: 4
+                    };
                     break;
                 case "bottom":
-                    headingStyle = {
-                        postion: 'absolute',
+                    headingCellStyle = { transform: [{ translateX }] };
+                    headingWrapperStyle = {
+                        position: 'absolute',
                         bottom: Math.abs(wrapperDimensions.height - containerDimensions.height),
-                        transform: [{ translateX }],
                         zIndex: 2
-                    }
+                    };
                     break;
                 case "left":
-                    headingStyle = { transform: [{ translateY }], zIndex: 1, backgroundColor: 'red' }
+                    headingCellStyle = { transform: [{ translateY }] };
+                    headingWrapperStyle = {
+                        zIndex: 1
+                    };
                     break;
                 case "right":
-                    headingStyle = {
+                    headingCellStyle = { transform: [{ translateY }] };
+                    headingWrapperStyle = {
                         position: 'absolute',
                         right: 0,
-                        transform: [{ translateY }],
-                        zindex: 3
-                    }
+                        zIndex: 3
+                    };
                     break;
             }
 
@@ -114,7 +123,8 @@ const ScheduleTable = ({
                 <Heading
                     {...heading}
                     onLayout={e => handleHeadingLayout(e, position)}
-                    containerStyle={[heading.containerStyle, headingStyle]}
+                    wrapperStyle={[headingWrapperStyle, heading.wrapperStyle]}
+                    cellContainerStyle={[headingCellStyle, heading.cellContainerStyle]}
                     cellDimensions={cellDimensions}
                     renderHeadingItem={renderHeadingItem}
                     renderHeading={renderHeading}
@@ -135,7 +145,12 @@ const ScheduleTable = ({
 
 
     return (
-        <PanGestureHandler {...gestureHandler}>
+        <PanGestureHandler
+            minDeltaX={5}
+            minDeltaY={5}
+            {...gestureHandler}
+            {...panGestureHandlerProps}
+        >
             <Animated.View onLayout={handleContainerLayout}>
                 {renderHeadingByPosition("top")}
                 <Animated.View
@@ -146,7 +161,7 @@ const ScheduleTable = ({
                         onLayout={handleMainContentLayout}
                         data={cellData}
                         cellDimensions={cellDimensions}
-                        containerStyle={{ transform: [{ translateX, translateY }] }}
+                        cellContainerStyle={{ transform: [{ translateX, translateY }] }}
                         renderCellItem={renderCellItem}
                         renderCell={renderCell}
                     />

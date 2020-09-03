@@ -1,6 +1,5 @@
 import React, { } from 'react';
 import {
-    View,
     StyleSheet
 } from 'react-native';
 import Animated from 'react-native-reanimated';
@@ -19,6 +18,7 @@ const styles = StyleSheet.create({
 const MainContent: React.SFC<MainContentProps> = ({
     data,
     containerStyle,
+    cellContainerStyle,
     renderCell,
     renderCellItem,
     cellDimensions,
@@ -35,6 +35,7 @@ const MainContent: React.SFC<MainContentProps> = ({
                             key={cellIndex}
                             cellDimensions={cellDimensions}
                             {...cell}
+                            containerStyle={[cellContainerStyle, cell.containerStyle]}
                             renderCellItem={
                                 renderCellItem
                                     ? () => renderCellItem(cell, cellIndex, row, rowIndex)
