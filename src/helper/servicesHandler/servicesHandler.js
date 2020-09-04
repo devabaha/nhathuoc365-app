@@ -275,6 +275,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         store_id: service.storeId,
         title: service.title
       });
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }
