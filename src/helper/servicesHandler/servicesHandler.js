@@ -335,7 +335,6 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
               type: service.default_payment_method_type
             }
           : null;
-      console.log(service);
       Actions.push(appConfig.routes.paymentMethod, {
         onConfirm: (method, extraData) => callBack(true, method, extraData),
         selectedMethod: selectedMethod,
