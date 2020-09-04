@@ -149,15 +149,6 @@ class Home extends Component {
     68
   );
 
-  onWalletPress = () => {
-    const service = {
-      showPrice: false,
-      showSubmit: false,
-      type: SERVICES_TYPE.PAYMENT_METHOD
-    };
-    this.props.onActionPress(service);
-  };
-
   render() {
     const { t } = this.props;
     return (
@@ -218,7 +209,6 @@ class Home extends Component {
               onScanPress={() =>
                 this.props.onActionPress({ type: SERVICES_TYPE.QRCODE_SCAN })
               }
-              onWalletPress={this.onWalletPress}
             />
           </View>
 

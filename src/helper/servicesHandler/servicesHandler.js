@@ -335,6 +335,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
               type: service.default_payment_method_type
             }
           : null;
+      console.log(service);
       Actions.push(appConfig.routes.paymentMethod, {
         onConfirm: (method, extraData) => callBack(true, method, extraData),
         selectedMethod: selectedMethod,
@@ -343,7 +344,9 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         extraFee: service.item_fee,
         showPrice: service.showPrice,
         showSubmit: service.showSubmit,
-        onUpdatePaymentMethod: data => callBack(false, data)
+        onUpdatePaymentMethod: data => callBack(false, data),
+        store_id: service.storeId,
+        title: service.title
       });
       break;
     default:

@@ -5,7 +5,7 @@ import appConfig from 'app-config';
 import Button from 'react-native-button';
 import getImageRatio from 'app-packages/tickid-util/getImageRatio';
 import imageIconNext from '../../../../images/next.png';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import PointRechargeButton from './PointRechargeButton';
 
 class PrimaryActions extends Component {
   render() {
@@ -15,9 +15,7 @@ class PrimaryActions extends Component {
     return (
       <View style={styles.container}>
         <View style={[styles.actionsWrapper, actionsWrapper]}>
-          <Button onPress={this.props.onWalletPress}>
-            <Icon name="plus-circle" style={styles.scanIcon} />
-          </Button>
+          <PointRechargeButton iconStyle={styles.scanIcon} />
           <Button
             containerStyle={{ width: '100%', flex: 1 }}
             onPress={() => this.props.onSurplusNext()}
@@ -135,10 +133,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   scanIcon: {
-    top: 3,
     fontSize: 36,
     color: appConfig.colors.primary,
-    fontWeight: 'bold',
     paddingRight: 15
   },
   iconNextWrapper: {

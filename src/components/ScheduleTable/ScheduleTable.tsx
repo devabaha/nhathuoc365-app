@@ -99,7 +99,7 @@ const ScheduleTable = ({
                     headingCellStyle = { transform: [{ translateX }] };
                     headingWrapperStyle = {
                         position: 'absolute',
-                        bottom: Math.abs(wrapperDimensions.height - containerDimensions.height),
+                        top: Math.abs(wrapperDimensions.height - headingLayout.bottom.height),
                         zIndex: 2
                     };
                     break;

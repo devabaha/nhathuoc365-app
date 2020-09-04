@@ -13,10 +13,7 @@ import History from './History';
 import Info from './Info';
 import appConfig from 'app-config';
 import Loading from '../../Loading';
-import {
-  servicesHandler,
-  SERVICES_TYPE
-} from '../../../helper/servicesHandler';
+import PointRechargeButton from '../../Home/component/PrimaryActions/PointRechargeButton';
 
 class VndWallet extends Component {
   constructor(props) {
@@ -67,15 +64,6 @@ class VndWallet extends Component {
       wallet: this.state.wallet,
       address: this.state.wallet.address
     });
-  }
-
-  _goPaymentMethod() {
-    const service = {
-      type: SERVICES_TYPE.PAYMENT_METHOD,
-      showPrice: false,
-      showSubmit: false
-    };
-    servicesHandler(service);
   }
 
   _goQRCode() {
@@ -162,20 +150,10 @@ class VndWallet extends Component {
             </View>
           </TouchableHighlight>
 
-          <TouchableHighlight
-            onPress={this._goPaymentMethod.bind(this)}
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
-            <View style={styles.add_store_action_btn_box}>
-              <Icon
-                name="plus-circle"
-                size={30}
-                color={appConfig.colors.primary}
-              />
-              <Text style={styles.add_store_action_label}>Nạp điểm</Text>
-            </View>
-          </TouchableHighlight>
+          <PointRechargeButton
+            label="Nạp điểm"
+            containerStyle={styles.add_store_action_btn_box}
+          />
 
           <TouchableHighlight
             // onPress={() => Actions.vnd_wallet({})}

@@ -14,7 +14,8 @@ class PaymentMethod extends Component {
   static defaultProps = {
     onUpdatePaymentMethod: () => {},
     showPrice: true,
-    showSubmit: true
+    showSubmit: true,
+    store_id: store.store_id
   };
 
   state = {
@@ -26,6 +27,13 @@ class PaymentMethod extends Component {
   unmounted = false;
 
   componentDidMount() {
+    setTimeout(() => {
+      Actions.refresh({
+        title:
+          this.props.title ||
+          this.props.t('common:screen.paymentMethod.mainTitle')
+      });
+    });
     this.getPaymentMethod();
   }
 
@@ -36,7 +44,7 @@ class PaymentMethod extends Component {
   getPaymentMethod = async () => {
     const { t } = this.props;
     try {
-      const response = await APIHandler.payment_method(store.store_id);
+      const response = await APIHandler.payment_method(this.props.store_id);
 
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {

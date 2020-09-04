@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import { Alert, Linking } from 'react-native';
-
-import OneSignal from 'react-native-onesignal';
 
 import store from 'app-store';
 import appConfig from 'app-config';
@@ -61,6 +58,7 @@ class Home extends Component {
 
     try {
       const response = await APIHandler.user_site_home();
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
@@ -69,6 +67,7 @@ class Home extends Component {
         }
         action(() => {
           store.setStoreData(response.data.site);
+          store.setAppData(response.data.site);
         })();
         this.setState({
           site: response.data.site,

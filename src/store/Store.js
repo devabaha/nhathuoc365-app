@@ -230,6 +230,8 @@ class Store {
   @observable user_info = null;
   @observable store_id = null;
   @observable store_data = null;
+  @observable app_id = null;
+  @observable app_data = null;
   @observable deep_link_data = null;
   @observable stores_finish = false;
 
@@ -248,6 +250,11 @@ class Store {
   @action setStoreData(data) {
     this.store_data = data;
     this.store_id = data.id;
+  }
+
+  @action setAppData(data) {
+    this.app_data = data;
+    this.app_id = data.id;
   }
 
   @action setDeepLinkData(data) {

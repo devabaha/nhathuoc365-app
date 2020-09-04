@@ -521,8 +521,8 @@ class App extends Component {
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {/* <MultiTaskView /> */}
-        <ProjectBeeLand />
-        {/* {this.state.header}
+        {/* <ProjectBeeLand /> */}
+        {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
@@ -542,7 +542,7 @@ class App extends Component {
           closeOnHardwareBackPress={false}
           showCancelButton={false}
           showConfirmButton={false}
-        /> */}
+        />
       </View>
     );
   }
@@ -1014,7 +1014,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.paymentMethod}>
                   <Scene
                     key={`${appConfig.routes.paymentMethod}_1`}
-                    title={t('screen.paymentMethod.mainTitle')}
                     component={PaymentMethod}
                     {...navBarConfig}
                     back
