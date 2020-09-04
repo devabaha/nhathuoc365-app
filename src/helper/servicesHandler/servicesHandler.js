@@ -271,7 +271,9 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         extraFee: service.item_fee,
         showPrice: service.showPrice,
         showSubmit: service.showSubmit,
-        onUpdatePaymentMethod: data => callBack(false, data)
+        onUpdatePaymentMethod: data => callBack(false, data),
+        store_id: service.storeId,
+        title: service.title
       });
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [

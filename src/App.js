@@ -818,7 +818,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.paymentMethod}>
                   <Scene
                     key={`${appConfig.routes.paymentMethod}_1`}
-                    title={t('screen.paymentMethod.mainTitle')}
                     component={PaymentMethod}
                     {...navBarConfig}
                     back
