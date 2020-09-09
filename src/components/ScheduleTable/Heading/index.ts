@@ -3,7 +3,8 @@ import { ScheduleTableStyle } from '..';
 import {
     ViewStyle,
     ViewProps,
-    StyleProp
+    StyleProp,
+    GestureResponderEvent
 } from 'react-native';
 export { default } from './Heading';
 
@@ -35,7 +36,8 @@ export interface HeadingProps extends ViewProps {
     cellContainerStyle?: ScheduleTableStyle
     cellStyle?: ScheduleTableStyle
     style?: ScheduleTableStyle
-    renderHeadingItem?: (item: HeadingItem, index: number) => React.ReactNode
-    renderHeading?: (item: HeadingItem, index: number) => React.ReactNode
+    renderHeadingItem?: (item: HeadingItem, index: number, position: HeadingPosition, cellDimensions: CellDimensions) => React.ReactNode
+    renderHeading?: (item: HeadingItem, index: number, position: HeadingPosition, cellDimensions: CellDimensions) => React.ReactNode
     cellsProps?: CellProps
+    onHeadingPress?: (heading: HeadingItem, index: number, e: GestureResponderEvent) => void
 }

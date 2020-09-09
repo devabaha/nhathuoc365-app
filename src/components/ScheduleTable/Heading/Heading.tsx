@@ -3,7 +3,8 @@ import {
     View,
     StyleSheet,
     StyleProp,
-    ViewStyle
+    ViewStyle,
+    GestureResponderEvent
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { HeadingProps, HeadingItem } from '.';
@@ -25,9 +26,15 @@ const Heading: React.SFC<HeadingProps> = ({
     cellStyle,
     renderHeadingItem,
     renderHeading,
-    cellsProps = {},
+    cellsProps = { onPress: () => { } },
+    onHeadingPress = () => { },
     ...viewProps
 }) => {
+
+    function handlePressCell(heading: HeadingItem, index: number, e: GestureResponderEvent) {
+        onHeadingPress(heading, index, e);
+        cellsProps.onPress(e);
+    }
 
     function isMultiHeadingData() {
         return Array.isArray(data) && Array.isArray(data[0]);
@@ -49,7 +56,7 @@ const Heading: React.SFC<HeadingProps> = ({
 
     function renderHeadingCell(item: HeadingItem, index: number) {
         return renderHeading
-            ? renderHeading(item, index)
+            ? renderHeading(item, index, position, cellDimensions)
             : (
                 <Cell
                     key={index}
@@ -57,11 +64,12 @@ const Heading: React.SFC<HeadingProps> = ({
                     cellDimensions={cellDimensions}
                     {...cellsProps}
                     {...item.cellProps}
+                    onPress={(e: GestureResponderEvent) => handlePressCell(item, index, e)}
                     containerStyle={[cellContainerStyle, cellsProps.containerStyle, item.cellProps && item.cellProps.containerStyle]}
                     style={[cellStyle, cellsProps.style, item.style, item.cellProps && item.cellProps.style]}
                     renderCellItem={
                         renderHeadingItem
-                            ? () => renderHeadingItem(item, index)
+                            ? () => renderHeadingItem(item, index, position, cellDimensions)
                             : undefined}
                 />
             )

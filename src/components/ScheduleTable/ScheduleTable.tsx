@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     StyleSheet,
     Dimensions,
@@ -14,6 +14,9 @@ import MainContent from './MainContent';
 import { ScheduleTableProps } from '.';
 
 const styles = StyleSheet.create({
+    wrapper: {
+        overflow: 'hidden'
+    },
     container: {
         flexDirection: 'row',
     }
@@ -24,12 +27,17 @@ const ScheduleTable = ({
     panGestureHandlerProps,
     headingData,
     cellDimensions = { width: 100, height: 100 },
-    wrapperDimensions = { width: appWidth, height: appHeight - (StatusBar.currentHeight || 0) },
+    wrapperDimensions: propsWrapperDimensions,
     cellData,
     renderHeadingItem,
     renderHeading,
     renderCell,
-    renderCellItem
+    renderCellItem,
+    containerStyle,
+    wrapperStyle,
+    mainContentContainerStyle,
+    onHeadingPress = () => { },
+    onCellPress = () => { },
 }: ScheduleTableProps) => {
     const [headingLayout, setHeadingLayout] = useState({
         "top": { width: 0, height: 0 },
@@ -37,7 +45,9 @@ const ScheduleTable = ({
         "right": { width: 0, height: 0 },
         "left": { width: 0, height: 0 },
     })
+    const [wrapperDimensions, setWrapperDimensions] = useState({ width: appWidth, height: appHeight - (StatusBar.currentHeight || 0) });
     const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
+    const [mainContentWrapperDimensions, setMainContentWrapperDimensions] = useState({ width: 0, height: 0 });
     const [mainContentDimensions, setMainContentDimensions] = useState({ width: 0, height: 0 });
     const {
         gestureHandler,
@@ -54,7 +64,34 @@ const ScheduleTable = ({
         value: translation.y,
         velocity: velocity.y,
         state
-    }), wrapperDimensions.height - mainContentDimensions.height - headingLayout.top.height - headingLayout.bottom.height, 0);
+    }), getLowBoundingTranslateY(), 0);
+
+    function getLowBoundingTranslateY() {
+        const diffComponentWithAppHeight =
+            wrapperDimensions.height - mainContentDimensions.height >= 0
+                ? 0
+                : wrapperDimensions.height - mainContentDimensions.height - headingLayout.top.height;
+        return diffComponentWithAppHeight - headingLayout.bottom.height
+    }
+
+    useEffect(() => {
+        if (propsWrapperDimensions) {
+            let updateable = false;
+            const newWrapperDimensions = { ...wrapperDimensions };
+            if (propsWrapperDimensions.width &&
+                propsWrapperDimensions.width !== wrapperDimensions.width) {
+                newWrapperDimensions.width = propsWrapperDimensions.width;
+                updateable = true;
+            }
+            if (propsWrapperDimensions.height &&
+                propsWrapperDimensions.height !== wrapperDimensions.height) {
+                newWrapperDimensions.height = propsWrapperDimensions.height;
+                updateable = true;
+
+            }
+            updateable && setWrapperDimensions(newWrapperDimensions);
+        }
+    }, [propsWrapperDimensions]);
 
     function getHeadingByPosition(position: HeadingPosition) {
         return headingData.find((heading: HeadingProps) =>
@@ -62,18 +99,33 @@ const ScheduleTable = ({
         );
     }
 
+    function handleWrapperLayout(e: LayoutChangeEvent) {
+        const { width, height } = e.nativeEvent.layout;
+        // console.log('wrapperLayout', width, height);
+        setWrapperDimensions({ width, height });
+    }
+
     function handleContainerLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
+        // console.log('containerLayout', width, height);
         setContainerDimensions({ width, height });
+    }
+
+    function handleMainContentWrapperLayout(e: LayoutChangeEvent) {
+        const { width, height } = e.nativeEvent.layout;
+        // console.log('mainContentWrapperLayout', width, height);
+        setMainContentWrapperDimensions({ width, height });
     }
 
     function handleMainContentLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
+        // console.log('mainContentLayout', width, height);
         setMainContentDimensions({ width, height });
     }
 
     function handleHeadingLayout(e: LayoutChangeEvent, position: HeadingPosition) {
         const { width, height } = e.nativeEvent.layout;
+        // console.log('headingLayout', width, height);
         setHeadingLayout({
             ...headingLayout,
             [position]: {
@@ -99,7 +151,7 @@ const ScheduleTable = ({
                     headingCellStyle = { transform: [{ translateX }] };
                     headingWrapperStyle = {
                         position: 'absolute',
-                        top: Math.abs(wrapperDimensions.height - headingLayout.bottom.height),
+                        bottom: 0,
                         zIndex: 2
                     };
                     break;
@@ -122,6 +174,7 @@ const ScheduleTable = ({
             return (
                 <Heading
                     {...heading}
+                    onHeadingPress={onHeadingPress}
                     onLayout={e => handleHeadingLayout(e, position)}
                     wrapperStyle={[headingWrapperStyle, heading.wrapperStyle]}
                     cellContainerStyle={[headingCellStyle, heading.cellContainerStyle]}
@@ -131,6 +184,7 @@ const ScheduleTable = ({
                 />
             )
         } else {
+            /** Reset heading layout for disapeared heading */
             if (headingLayout[position].width !== 0 ||
                 headingLayout[position].height !== 0) {
                 setHeadingLayout({
@@ -143,34 +197,66 @@ const ScheduleTable = ({
         }
     }
 
+    /** [MUST HAVE STYLE] for content to be scrollable correctly */
+    function getCoreStyleByWrapperDimensions() {
+        // console.log(wrapperDimensions.height)
+        return {
+            flex: mainContentDimensions.height > appHeight ? 1 : undefined
+        }
+    }
 
     return (
-        <PanGestureHandler
-            minDeltaX={5}
-            minDeltaY={5}
-            {...gestureHandler}
-            {...panGestureHandlerProps}
+        <Animated.View
+            onLayout={handleWrapperLayout}
+            style={[styles.wrapper, getCoreStyleByWrapperDimensions(), wrapperStyle]}
         >
-            <Animated.View onLayout={handleContainerLayout}>
-                {renderHeadingByPosition("top")}
+            <PanGestureHandler
+                minDeltaX={5}
+                minDeltaY={5}
+                {...gestureHandler}
+                {...panGestureHandlerProps}
+            >
                 <Animated.View
-                    style={styles.container}
+                    style={[getCoreStyleByWrapperDimensions(), containerStyle]}
+                    onLayout={handleContainerLayout}
                 >
-                    {renderHeadingByPosition("left")}
-                    <MainContent
-                        onLayout={handleMainContentLayout}
-                        data={cellData}
-                        cellDimensions={cellDimensions}
-                        cellContainerStyle={{ transform: [{ translateX, translateY }] }}
-                        renderCellItem={renderCellItem}
-                        renderCell={renderCell}
-                    />
-                    {renderHeadingByPosition("right")}
+                    {renderHeadingByPosition("top")}
+                    <Animated.View
+                        style={styles.container}
+                        onLayout={handleMainContentWrapperLayout}
+                    >
+                        {renderHeadingByPosition("left")}
+                        <MainContent
+                            onCellPress={onCellPress}
+                            onLayout={handleMainContentLayout}
+                            data={cellData}
+                            cellDimensions={cellDimensions}
+                            cellContainerStyle={{ transform: [{ translateX, translateY }] }}
+                            renderCellItem={renderCellItem}
+                            renderCell={renderCell}
+                            containerStyle={mainContentContainerStyle}
+                        />
+                        {renderHeadingByPosition("right")}
+                    </Animated.View>
+                    {renderHeadingByPosition("bottom")}
                 </Animated.View>
-                {renderHeadingByPosition("bottom")}
-            </Animated.View>
-        </PanGestureHandler>
+            </PanGestureHandler>
+        </Animated.View>
     );
 }
 
-export default ScheduleTable;
+function areEqual(prevProps: ScheduleTableProps, nextProps: ScheduleTableProps) {
+    if (nextProps.cellData !== prevProps.cellData ||
+        nextProps.cellDimensions !== prevProps.cellDimensions ||
+        nextProps.headingData !== prevProps.headingData ||
+        nextProps.mainContentContainerStyle !== prevProps.mainContentContainerStyle ||
+        nextProps.containerStyle !== prevProps.containerStyle ||
+        nextProps.wrapperStyle !== prevProps.wrapperStyle ||
+        nextProps.wrapperDimensions !== prevProps.wrapperDimensions
+    ) {
+        return false;
+    }
+    return true;
+}
+
+export default React.memo(ScheduleTable, areEqual);

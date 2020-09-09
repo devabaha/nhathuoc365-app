@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, StyleSheet, RefreshControl } from 'react-native';
+import { SafeAreaView, StyleSheet, RefreshControl, Alert } from 'react-native';
 import Loading from '../../../components/Loading';
 import NoResult from '../../../components/NoResult';
 import HomeCardList, {
@@ -11,6 +11,8 @@ import {
   servicesHandler,
   SERVICES_TYPE
 } from '../../../helper/servicesHandler';
+import Communications from 'react-native-communications';
+import WebviewProjectFooter from './WebviewProjectFooter';
 
 const IMAGE_HEIGHT = (appConfig.device.width - 32) / 2;
 
@@ -58,17 +60,41 @@ class ListProject extends Component {
   };
 
   onPressBuilding(building) {
-    const service = {
-      type: SERVICES_TYPE.BEEHOME_BUILDING,
-      id: building.id
-    };
-    servicesHandler(service);
+    // const service = {
+    //   type: SERVICES_TYPE.BEEHOME_BUILDING,
+    //   id: building.id
+    // };
+    // servicesHandler(service);
+    Actions.webview({
+      title: building.name,
+      url: building.link_web,
+      renderAfter: () => this.renderProjectFooter(building)
+    });
   }
+
+  goToProductTable = building => {
+    Actions.push(appConfig.routes.projectProductBeeLand, {
+      projectCode: building.code,
+      title: building.name
+    });
+  };
 
   onRefresh = () => {
     this.setState({ refreshing: true });
     this.getListBuilding();
   };
+
+  renderProjectFooter(building) {
+    return (
+      <WebviewProjectFooter
+        onPhonePress={() => Communications.phonecall(building.hotline, true)}
+        onChatPress={() =>
+          Alert.alert('Đang phát triển', 'Tính năng đang được phát triển.')
+        }
+        onCheckPress={() => this.goToProductTable(building)}
+      />
+    );
+  }
 
   renderBuilding(building) {
     const imageStyle = {

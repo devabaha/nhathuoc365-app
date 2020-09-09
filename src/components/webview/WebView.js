@@ -7,7 +7,8 @@ import Loading from '../Loading';
 
 export default class WebViewClass extends Component {
   static propTypes = {
-    url: Proptypes.string.isRequired
+    url: Proptypes.string.isRequired,
+    renderAfter: Proptypes.node
   };
 
   constructor(props) {
@@ -42,6 +43,8 @@ export default class WebViewClass extends Component {
         />
 
         {this.state.showLoading == true && <Loading center />}
+        {typeof this.props.renderAfter === 'function' &&
+          this.props.renderAfter()}
       </View>
     );
   }

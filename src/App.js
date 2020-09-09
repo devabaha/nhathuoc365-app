@@ -162,6 +162,7 @@ import { ListBeeLand, ProjectBeeLand } from './containers/BeeLand';
 import { ListRoom } from './containers/Room';
 import RegisterStore from './containers/RegisterStore';
 import AllServices from './containers/AllServices';
+import ProjectProductBeeLand from './containers/BeeLand/ProjectProductBeeLand';
 
 /**
  * Not allow font scaling
@@ -884,6 +885,16 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.projectBeeLand}_1`}
                     component={ProjectBeeLand}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BEELAND PROJECT PRODUCT ================ */}
+                <Stack key={appConfig.routes.projectProductBeeLand}>
+                  <Scene
+                    key={`${appConfig.routes.projectProductBeeLand}_1`}
+                    component={ProjectProductBeeLand}
                     {...navBarConfig}
                     back
                   />

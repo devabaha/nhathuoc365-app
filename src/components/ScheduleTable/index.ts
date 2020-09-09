@@ -1,7 +1,7 @@
-import { ViewStyle, StyleProp } from 'react-native';
+import { ViewStyle, StyleProp, GestureResponderEvent } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { HeadingProps, HeadingItem } from './Heading';
-import { CellProps } from './Cell';
+import { HeadingProps, HeadingItem, HeadingPosition } from './Heading';
+import { CellProps, CellDimensions } from './Cell';
 export { default } from './ScheduleTable';
 import { PanGestureHandlerProperties } from 'react-native-gesture-handler';
 
@@ -18,9 +18,13 @@ export interface ScheduleTableProps {
     cellData: Array<Array<CellProps>>
     cellDimensions?: Dimensions,
     wrapperDimensions?: Dimensions,
+    wrapperStyle?: ScheduleTableStyle,
     containerStyle?: ScheduleTableStyle,
-    renderHeadingItem?: (item: HeadingItem, index: number) => React.ReactNode
-    renderHeading?: (item: HeadingItem, index: number) => React.ReactNode
+    mainContentContainerStyle?: ScheduleTableStyle,
+    renderHeadingItem?: (item: HeadingItem, index: number, position: HeadingPosition, cellDimensions: CellDimensions) => React.ReactNode
+    renderHeading?: (item: HeadingItem, index: number, position: HeadingPosition, cellDimensions: CellDimensions) => React.ReactNode
     renderCellItem?: (cell: CellProps, cellIndex: number, row: Array<CellProps>, rowIndex: number) => React.ReactNode
     renderCell?: (cell: CellProps, cellIndex: number, row: Array<CellProps>, rowIndex: number) => React.ReactNode
+    onHeadingPress?: (heading: HeadingItem, index: number, e: GestureResponderEvent) => void
+    onCellPress?: (cell: CellProps, cellIndex: number, row: Array<CellProps>, rowIndex: number, e: GestureResponderEvent) => void
 }
