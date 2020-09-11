@@ -1,24 +1,18 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Animated
-} from 'react-native';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import appConfig from 'app-config';
+import BuildingButton from './BuildingButton';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const HEADING_BACKGROUND_COLOR = LightenColor(appConfig.colors.primary, -20);
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 15,
-    backgroundColor: HEADING_BACKGROUND_COLOR,
+    // backgroundColor: HEADING_BACKGROUND_COLOR,
     borderColor: '#fff',
-    borderBottomWidth: 2
+    borderBottomWidth: 1
   },
   titleWrapper: {
     justifyContent: 'center',
@@ -36,16 +30,17 @@ const styles = StyleSheet.create({
   mask1: {
     position: 'absolute',
     top: -5,
-    left: -5,
+    left: -7,
     backgroundColor: hexToRgbA(LightenColor(HEADING_BACKGROUND_COLOR, 30), 0.5)
   },
   mask2: {
     position: 'absolute',
     bottom: -5,
-    right: -5,
+    right: -7,
     backgroundColor: hexToRgbA(LightenColor(HEADING_BACKGROUND_COLOR, 30), 0.5)
   },
   title: {
+    padding: 3,
     backgroundColor: hexToRgbA(HEADING_BACKGROUND_COLOR, 0.3),
     paddingHorizontal: 15,
     textAlign: 'center',
@@ -57,45 +52,60 @@ const styles = StyleSheet.create({
   buildingWrapper: {
     minWidth: appConfig.device.width / 3.5,
     borderRadius: 8,
-    marginHorizontal: 10,
+    margin: 10,
     backgroundColor: '#fff',
-    overflow: 'hidden'
+    ...elevationShadowStyle(5)
   },
   buildingContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 15
+    padding: 15,
+    overflow: 'hidden'
   },
   buildingIcon: {
     fontSize: 36,
-    color: hexToRgbA(appConfig.colors.primary, 0.15),
+    color: hexToRgbA(appConfig.colors.primary, 0.1),
+    borderRightWidth: 1,
+    borderRightColor: appConfig.colors.primary,
     position: 'absolute',
-    bottom: '-5%',
-    left: '5%'
+    bottom: '-70%',
+    left: '10%'
   },
   buildingText: {
     fontWeight: 'bold',
     letterSpacing: 1,
-    color: '#242424'
+    color: '#242424',
+    backgroundColor: hexToRgbA('#fff', 0.2)
   },
   suggestionContainer: {
+    top: -5,
+    width: '100%',
+    position: 'absolute',
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
-    paddingTop: 5
+    paddingBottom: 5
   },
   suggestionIcon: {
-    color: '#ddd',
-    fontSize: 14
+    opacity: 0,
+    color: '#fff',
+    fontSize: 12,
+    ...elevationShadowStyle(3)
   }
 });
+const BUILDING_BUTTON_WIDTH = appConfig.device.width / 3;
 
 class BuildingSelector extends Component {
+  static defaultProps = {
+    onPress: () => {}
+  };
+
   state = {
     titleLayout: {},
     buildingLayout: null
   };
   scrollX = new Animated.Value(0);
+  refListBuilding = React.createRef();
 
   get isScrollable() {
     return this.state.buildingLayout
@@ -104,10 +114,8 @@ class BuildingSelector extends Component {
   }
 
   get scrollArea() {
-    return this.state.buildingLayout
-      ? this.state.buildingLayout.width - appConfig.device.width > 0
-        ? this.state.buildingLayout.width - appConfig.device.width
-        : 0
+    return this.isScrollable
+      ? this.state.buildingLayout.width - appConfig.device.width
       : 0;
   }
 
@@ -117,25 +125,17 @@ class BuildingSelector extends Component {
     }
   };
 
-  handleBuildingLayout = e => {
-    this.setState({ buildingLayout: e.nativeEvent.layout });
+  handleBuildingsLayout = (width, height) => {
+    this.setState({ buildingLayout: { width, height } });
   };
 
-  renderBuilding() {
-    return this.props.buildings.map((building, index) => {
-      return (
-        <TouchableOpacity
-          key={index}
-          activeOpacity={0.8}
-          style={styles.buildingWrapper}
-        >
-          <Icon name="building" style={styles.buildingIcon} />
-          <View style={styles.buildingContainer}>
-            <Text style={styles.buildingText}>{building.name}</Text>
-          </View>
-        </TouchableOpacity>
-      );
-    });
+  handlePressBuilding(building, index) {
+    this.props.onPress(building);
+    if (this.refListBuilding) {
+      this.refListBuilding.current
+        .getNode()
+        .scrollToOffset({ offset: (index - 1) * BUILDING_BUTTON_WIDTH });
+    }
   }
 
   renderSuggestion() {
@@ -162,6 +162,22 @@ class BuildingSelector extends Component {
           style={[styles.suggestionIcon, rightAnimation]}
         />
       </View>
+    );
+  }
+
+  renderBuilding({ item: building, index }) {
+    const isSelected = building.code === this.props.selectedCode;
+    return (
+      <BuildingButton
+        containerStyle={{ width: BUILDING_BUTTON_WIDTH }}
+        wrapperStyle={{
+          borderBottomWidth: isSelected ? 2 : 0,
+          borderColor: '#b77a48'
+        }}
+        title={building.name}
+        active={isSelected}
+        onPress={() => this.handlePressBuilding(building, index)}
+      />
     );
   }
 
@@ -192,31 +208,39 @@ class BuildingSelector extends Component {
             <Text style={styles.title}>Tòa nhà</Text>
           </View>
         </View>
-        <Animated.ScrollView
-          scrollEventThrottle={16}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    x: this.scrollX
+        <View>
+          {!!this.props.buildings && (
+            <Animated.FlatList
+              ref={this.refListBuilding}
+              onScroll={Animated.event(
+                [
+                  {
+                    nativeEvent: {
+                      contentOffset: {
+                        x: this.scrollX
+                      }
+                    }
                   }
-                }
-              }
-            ],
-            { useNativeDriver: true }
+                ],
+                { useNativeDriver: true }
+              )}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              onContentSizeChange={this.handleBuildingsLayout}
+              getItemLayout={(data, index) => {
+                return {
+                  length: BUILDING_BUTTON_WIDTH,
+                  offset: BUILDING_BUTTON_WIDTH * index,
+                  index
+                };
+              }}
+              data={this.props.buildings}
+              renderItem={this.renderBuilding.bind(this)}
+              keyExtractor={(item, index) => index.toString()}
+            />
           )}
-        >
-          <View
-            style={{ flexDirection: 'row' }}
-            onLayout={this.handleBuildingLayout}
-          >
-            {this.renderBuilding()}
-          </View>
-        </Animated.ScrollView>
-        {this.renderSuggestion()}
+          {this.renderSuggestion()}
+        </View>
       </View>
     );
   }

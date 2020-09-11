@@ -1,24 +1,58 @@
 import React, { Component } from 'react';
 import ScheduleTable from '../../../components/ScheduleTable';
-import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
-import NoResult from '../../../components/Loading';
+import {
+  View,
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  ImageBackground
+} from 'react-native';
+
+import NoResult from '../../../components/NoResult';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import APIHandler from '../../../network/APIHandler';
 import { APIRequest } from '../../../network/Entity';
 import Loading from '../../../components/Loading';
 import appConfig from 'app-config';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import BuildingSelector from './BuildingSelector/BuildingSelector';
+import BuildingSelector from './BuildingSelector';
+import ListRoomStatus from './ListRoomStatus';
+import ImgBackground from './ImgBackground';
 
 const styles = StyleSheet.create({
   container: {
+    ...Platform.select({
+      ios: {
+        paddingTop: 64 + 10
+      },
+      android: {
+        paddingTop: 54 + 10
+      },
+      windows: {
+        paddingTop: 54 + 10
+      }
+    }),
     flex: 1
   },
-  noResult: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
+  loading: {
+    backgroundColor: '#fafafa',
+    borderRadius: 15,
+    padding: 25
+  },
+  noResultWrapper: {
+    top: '-5%',
+    padding: 20,
+    borderRadius: 20,
+    backgroundColor: hexToRgbA('#242424', 0.85)
+  },
+  noResultTxt: {
+    fontSize: 16,
+    letterSpacing: 1,
+    color: '#ccc',
+    paddingBottom: 0
+  },
+  scheduleTableAreaContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,.6)'
   },
   scheduleTableWrapper: {
     borderBottomColor: '#aaa',
@@ -40,8 +74,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 7
   },
+  cellIcon: {
+    color: '#ddd',
+    fontSize: 20
+  },
   cellText: {
-    color: '#333'
+    color: '#333',
+    textAlign: 'center',
+    fontSize: 10
   }
 });
 
@@ -210,7 +250,7 @@ const cellData = [
   ]
 ];
 
-const CELL_WIDTH = (CELL_HEIGHT = 100);
+const CELL_WIDTH = (CELL_HEIGHT = 60);
 const CELL_DIMENSIONS = { width: CELL_WIDTH, height: CELL_HEIGHT };
 const TOP_HEADING_DIMENSIONS = { width: CELL_WIDTH, height: CELL_HEIGHT / 2 };
 const LEFT_HEADING_DIMENSIONS = { width: CELL_WIDTH / 2, height: CELL_HEIGHT };
@@ -222,37 +262,51 @@ const TOP_LEFT_CORNER_HEADING_DIMENSIONS = {
 class ProjectProductBeeLand extends Component {
   state = {
     loading: true,
-    heading: headingData,
+    selectedBuildingCode: undefined,
 
-    buildingCode: null,
     listBuilding: null,
     listHeadingData: null,
-    listCellData: null
+    listCellData: null,
+    listStatus: null,
+
+    isBackgroundAnimating: true
   };
   getListRoomRequest = new APIRequest();
   requests = [this.getListRoomRequest];
 
+  get hasScheduleTableData() {
+    return (
+      Array.isArray(this.state.listHeadingData) &&
+      this.state.listHeadingData.length !== 0 &&
+      Array.isArray(this.state.listCellData) &&
+      this.state.listCellData.length !== 0
+    );
+  }
+
   componentDidMount() {
-    this.getListRoom();
+    this.getListRoom(this.state.selectedBuildingCode);
   }
 
   componentWillUnmount() {
     cancelRequests(this.requests);
   }
 
-  async getListRoom() {
+  async getListRoom(selectedBuildingCode) {
     const { t } = this.props;
     const data = {
       project_code: this.props.projectCode,
-      building_code: this.state.buildingCode
+      building_code: selectedBuildingCode,
+      id_code: this.props.staff.id_code,
+      company_name: this.props.staff.company_name
     };
     try {
+      this.getListRoomRequest.cancel();
       this.getListRoomRequest.data = APIHandler.user_list_room_beeland(data);
       const response = await this.getListRoomRequest.promise();
       console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
-          this.handleListRoomResponseData(response.data);
+          this.handleListRoomResponseData(response.data, selectedBuildingCode);
         } else {
           flashShowMessage({
             type: 'danger',
@@ -273,12 +327,13 @@ class ProjectProductBeeLand extends Component {
       });
     } finally {
       this.setState({
-        loading: false
+        loading: false,
+        isBackgroundAnimating: false
       });
     }
   }
 
-  handleListRoomResponseData(data) {
+  handleListRoomResponseData(data, selectedBuildingCode) {
     const listHeadingData = this.normalizeHeadingData(
       [
         {
@@ -294,12 +349,19 @@ class ProjectProductBeeLand extends Component {
     );
     const listCellData = this.normalizeCellData(Object.values(data.list_room));
     const listBuilding = Object.values(data.list_building);
-    this.setState({
-      buildingCode: listBuilding[0] ? listBuilding[0].code : null,
-      listBuilding: Object.values(data.list_building),
+
+    this.setState(prevState => ({
+      selectedBuildingCode:
+        prevState.selectedBuildingCode === undefined
+          ? listBuilding[0]
+            ? listBuilding[0].code
+            : undefined
+          : selectedBuildingCode,
+      listBuilding,
       listHeadingData,
-      listCellData
-    });
+      listCellData,
+      listStatus: data.list_status
+    }));
   }
 
   normalizeHeadingData(topData, rightData, bottomData, leftData) {
@@ -373,6 +435,18 @@ class ProjectProductBeeLand extends Component {
     return data;
   }
 
+  handleBuildingPress = building => {
+    this.setState(
+      {
+        selectedBuildingCode: building.code,
+        loading: true
+      },
+      () => {
+        this.getListRoom(building.code);
+      }
+    );
+  };
+
   handleCellPress = (cell, cellIndex, row, rowIndex, e) => {};
 
   handleHeadingPress = (heading, index, e) => {
@@ -406,31 +480,84 @@ class ProjectProductBeeLand extends Component {
           backgroundColor: cell.data.color || '#eee'
         }}
       >
-        <Text style={styles.cellText}>{cell.data.room_name}</Text>
+        {Object.keys(cell.data).length === 0 ? (
+          <Icon name="lock" style={styles.cellIcon} />
+        ) : (
+          <Text style={styles.cellText}>{cell.data.status}</Text>
+        )}
       </View>
+    );
+  }
+
+  renderScheduleLoading() {
+    return (
+      <Loading
+        center
+        containerStyle={styles.loading}
+        color="#666"
+        message="Đang xử lý..."
+      />
     );
   }
 
   render() {
     return (
-      <SafeAreaView style={styles.container}>
-        {this.state.loading && <Loading center />}
-        {!!this.state.listBuilding && (
-          <BuildingSelector buildings={this.state.listBuilding} />
-        )}
-        {!!this.state.listHeadingData && !!this.state.listCellData && (
-          <ScheduleTable
-            wrapperStyle={styles.scheduleTableWrapper}
-            cellDimensions={CELL_DIMENSIONS}
-            headingData={this.state.listHeadingData}
-            cellData={this.state.listCellData}
-            renderHeadingItem={this.renderHeadingItem.bind(this)}
-            renderCellItem={this.renderCellItem.bind(this)}
-            onCellPress={this.handleCellPress}
-            onHeadingPress={this.handleHeadingPress}
+      <>
+        <ImgBackground
+          source={require('../../../images/building_view.jpg')}
+          blurRadius={this.state.loading && !this.state.listCellData ? 5 : 0}
+          isAnimating={this.state.isBackgroundAnimating}
+        />
+        {this.state.loading && (
+          <Loading
+            wrapperStyle={{
+              backgroundColor: 'rgba(0,0,0,.6)'
+            }}
+            center
+            containerStyle={styles.loading}
+            color="#666"
+            message="Đang tải..."
           />
         )}
-      </SafeAreaView>
+        <SafeAreaView style={styles.container}>
+          {!!this.state.listBuilding && (
+            <BuildingSelector
+              buildings={this.state.listBuilding}
+              selectedCode={this.state.selectedBuildingCode}
+              onPress={this.handleBuildingPress}
+            />
+          )}
+          {!!this.state.listStatus && (
+            <ListRoomStatus data={this.state.listStatus} />
+          )}
+          {this.hasScheduleTableData ? (
+            <ScheduleTable
+              wrapperStyle={styles.scheduleTableWrapper}
+              cellDimensions={CELL_DIMENSIONS}
+              headingData={this.state.listHeadingData}
+              cellData={this.state.listCellData}
+              renderHeadingItem={this.renderHeadingItem.bind(this)}
+              renderCellItem={this.renderCellItem.bind(this)}
+              renderLoading={this.renderScheduleLoading}
+              onCellPress={this.handleCellPress}
+              onHeadingPress={this.handleHeadingPress}
+            />
+          ) : (
+            !this.state.loading && (
+              <View style={styles.scheduleTableAreaContainer}>
+                <NoResult
+                  wrapperStyle={styles.noResultWrapper}
+                  icon={
+                    <Icon name="exclamation-circle" size={72} color="#ccc" />
+                  }
+                  message="Không có dữ liệu"
+                  textStyle={styles.noResultTxt}
+                />
+              </View>
+            )
+          )}
+        </SafeAreaView>
+      </>
     );
   }
 }

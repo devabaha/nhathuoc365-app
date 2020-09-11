@@ -1,17 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     StyleSheet,
     Dimensions,
     LayoutChangeEvent,
     StatusBar
 } from 'react-native';
-import { PanGestureHandler } from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
-import { usePanGestureHandler, diffClamp, withDecay } from 'react-native-redash';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import Animated, { block, set, call, useCode, cond, eq } from 'react-native-reanimated';
+import { useValue, useValues, usePanGestureHandler, diffClamp, withDecay, timing } from 'react-native-redash';
 
 import Heading, { HeadingProps, HeadingPosition } from './Heading';
 import MainContent from './MainContent';
 import { ScheduleTableProps } from '.';
+
+import Loading from '../Loading';
+
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -25,44 +28,53 @@ const { width: appWidth, height: appHeight } = Dimensions.get('screen');
 
 const ScheduleTable = ({
     panGestureHandlerProps,
-    headingData,
+    headingData = [],
     cellDimensions = { width: 100, height: 100 },
     wrapperDimensions: propsWrapperDimensions,
-    cellData,
+    cellData = [],
     renderHeadingItem,
     renderHeading,
     renderCell,
     renderCellItem,
+    renderLoading,
     containerStyle,
     wrapperStyle,
     mainContentContainerStyle,
     onHeadingPress = () => { },
     onCellPress = () => { },
 }: ScheduleTableProps) => {
+    let refContainer = useRef();
     const [headingLayout, setHeadingLayout] = useState({
         "top": { width: 0, height: 0 },
         "bottom": { width: 0, height: 0 },
         "right": { width: 0, height: 0 },
         "left": { width: 0, height: 0 },
     })
+    const [isLoading, setLoading] = useState(true);
+    const [isShowingUp, setShowingUp] = useState(false);
+
     const [wrapperDimensions, setWrapperDimensions] = useState({ width: appWidth, height: appHeight - (StatusBar.currentHeight || 0) });
+    const [wrapperOffset, setWrapperOffset] = useState({ x: 0, y: 0 });
     const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
     const [mainContentWrapperDimensions, setMainContentWrapperDimensions] = useState({ width: 0, height: 0 });
     const [mainContentDimensions, setMainContentDimensions] = useState({ width: 0, height: 0 });
+
+    const showingUpAnimated = useValue(0);
     const {
         gestureHandler,
-        translation,
-        velocity,
+        translation: { x, y },
+        velocity: { x: vx, y: vy },
         state
     } = usePanGestureHandler();
+    // const [x, y, vx, vy, state] = useValues(0, 0, 0, 0, State.UNDETERMINED);
     const translateX = diffClamp(withDecay({
-        value: translation.x,
-        velocity: velocity.x,
+        value: x,
+        velocity: vx,
         state
     }), wrapperDimensions.width - mainContentDimensions.width - headingLayout.right.width - headingLayout.left.width, 0);
     const translateY = diffClamp(withDecay({
-        value: translation.y,
-        velocity: velocity.y,
+        value: y,
+        velocity: vy,
         state
     }), getLowBoundingTranslateY(), 0);
 
@@ -73,6 +85,22 @@ const ScheduleTable = ({
                 : wrapperDimensions.height - mainContentDimensions.height - headingLayout.top.height;
         return diffComponentWithAppHeight - headingLayout.bottom.height
     }
+
+    useCode(() => {
+        return block([
+            set(state, State.ACTIVE),
+            set(x, 0),
+            set(y, 0),
+        ])
+    }, [cellData]);
+
+    useCode(() => {
+        return !isLoading && set(showingUpAnimated, timing({
+            from: 0,
+            to: 1,
+            duration: 300,
+        }))
+    }, [isLoading]);
 
     useEffect(() => {
         if (propsWrapperDimensions) {
@@ -101,26 +129,43 @@ const ScheduleTable = ({
 
     function handleWrapperLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
-        // console.log('wrapperLayout', width, height);
-        setWrapperDimensions({ width, height });
+        if (width !== wrapperDimensions.width || height !== wrapperDimensions.height) {
+            if (refContainer.current) {
+                //@ts-ignore
+                refContainer.current.getNode().measure((x, y, width, height) => {
+                    setWrapperOffset({ x, y });
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, 200);
+                })
+            }
+            console.log('wrapperLayout', width, height);
+            setWrapperDimensions({ width, height });
+        }
     }
 
     function handleContainerLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
-        // console.log('containerLayout', width, height);
-        setContainerDimensions({ width, height });
+        if (width !== containerDimensions.width || height !== containerDimensions.height) {
+            console.log('containerLayout', width, height);
+            setContainerDimensions({ width, height });
+        }
     }
 
     function handleMainContentWrapperLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
-        // console.log('mainContentWrapperLayout', width, height);
-        setMainContentWrapperDimensions({ width, height });
+        if (width !== mainContentDimensions.width || height !== mainContentDimensions.height) {
+            console.log('mainContentWrapperLayout', width, height);
+            setMainContentWrapperDimensions({ width, height });
+        }
     }
 
     function handleMainContentLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
-        // console.log('mainContentLayout', width, height);
-        setMainContentDimensions({ width, height });
+        if (width !== mainContentDimensions.width || height !== mainContentDimensions.height) {
+            console.log('mainContentLayout', width, height);
+            setMainContentDimensions({ width, height });
+        }
     }
 
     function handleHeadingLayout(e: LayoutChangeEvent, position: HeadingPosition) {
@@ -152,7 +197,7 @@ const ScheduleTable = ({
                     headingWrapperStyle = {
                         position: 'absolute',
                         bottom: 0,
-                        zIndex: 2
+                        zIndex: 2,
                     };
                     break;
                 case "left":
@@ -200,48 +245,122 @@ const ScheduleTable = ({
     /** [MUST HAVE STYLE] for content to be scrollable correctly */
     function getCoreStyleByWrapperDimensions() {
         // console.log(wrapperDimensions.height)
+        // console.log(mainContentDimensions.height, wrapperOffset.y, appHeight)
         return {
-            flex: mainContentDimensions.height > appHeight ? 1 : undefined
+            /** flex: 
+             * 1 - for list has content's height crossing the screen area 
+             * undefined - for list has content's height inside the screen area
+            */
+            flex: mainContentDimensions.height + wrapperOffset.y + headingLayout.top.height > appHeight ? 1 : undefined,
+
+            /** alignSelf:
+             * `auto` - for list has content's width crossing the screen area
+             * `flex-start` - for list has content's width inside the screen area
+            */
+            alignSelf: mainContentDimensions.width + wrapperOffset.x + headingLayout.left.width > appWidth ? 'auto' : 'flex-start'
         }
     }
 
+    const handlePan = Animated.event(
+        [{
+            nativeEvent: {
+                translationX: x,
+                translationY: y,
+                velocityX: vx,
+                velocityY: vy,
+                state,
+            },
+        }],
+        { useNativeDriver: true },
+    )
+    // Animated.event([{
+    //     nativeEvent: ({ translationX, translationY, state, velocityX, velocityY }) => {
+    //         return block([set(x, translateX),
+    //         set(y, translateY),
+    //         set(vx, velocityX),
+    //         set(vy, velocityY),
+    //         set(state, state)
+    //         ])
+    //     }
+    // }], { useNativeDriver: true })
+
     return (
-        <Animated.View
-            onLayout={handleWrapperLayout}
-            style={[styles.wrapper, getCoreStyleByWrapperDimensions(), wrapperStyle]}
-        >
-            <PanGestureHandler
-                minDeltaX={5}
-                minDeltaY={5}
-                {...gestureHandler}
-                {...panGestureHandlerProps}
+        <>
+            {isLoading && (renderLoading
+                ? renderLoading()
+                : <Loading center />)
+            }
+            <Animated.View
+                //@ts-ignore
+                ref={refContainer}
+                onLayout={handleWrapperLayout}
+                style={[
+                    styles.wrapper,
+                    getCoreStyleByWrapperDimensions(), wrapperStyle]}
             >
-                <Animated.View
-                    style={[getCoreStyleByWrapperDimensions(), containerStyle]}
-                    onLayout={handleContainerLayout}
+
+                <PanGestureHandler
+                    enabled={!isLoading}
+                    minDeltaX={30}
+                    minDeltaY={30}
+                    {...gestureHandler}
+                    // onGestureEvent={handlePan}
+                    // onHandlerStateChange={handlePan}
+                    {...panGestureHandlerProps}
                 >
-                    {renderHeadingByPosition("top")}
                     <Animated.View
-                        style={styles.container}
-                        onLayout={handleMainContentWrapperLayout}
+                        style={[{
+                            transform: [
+                                {
+                                    translateY: showingUpAnimated.interpolate({
+                                        inputRange: [0, 1],
+                                        outputRange: [200, 0]
+                                    })
+                                }
+                            ],
+                            opacity: showingUpAnimated.interpolate({
+                                inputRange: [0.7, 1],
+                                outputRange: [0.3, 1]
+                            })
+                        }, getCoreStyleByWrapperDimensions(), containerStyle]}
+                        onLayout={handleContainerLayout}
                     >
-                        {renderHeadingByPosition("left")}
-                        <MainContent
-                            onCellPress={onCellPress}
-                            onLayout={handleMainContentLayout}
-                            data={cellData}
-                            cellDimensions={cellDimensions}
-                            cellContainerStyle={{ transform: [{ translateX, translateY }] }}
-                            renderCellItem={renderCellItem}
-                            renderCell={renderCell}
-                            containerStyle={mainContentContainerStyle}
-                        />
-                        {renderHeadingByPosition("right")}
+                        {renderHeadingByPosition("top")}
+                        <Animated.View
+                            style={[styles.container]}
+                        // onLayout={handleMainContentWrapperLayout}
+                        >
+                            {renderHeadingByPosition("left")}
+                            <Animated.View style={
+                                {
+                                    transform: [{
+                                        translateX,
+                                        translateY
+                                    }]
+                                }}>
+                                <MainContent
+                                    onCellPress={onCellPress}
+                                    onLayout={handleMainContentLayout}
+                                    data={cellData}
+                                    cellDimensions={cellDimensions}
+                                    // cellContainerStyle={{
+                                    //     transform: [{
+                                    //         translateX,
+                                    //         translateY
+                                    //     }]
+                                    // }}
+                                    renderCellItem={renderCellItem}
+                                    renderCell={renderCell}
+                                    containerStyle={mainContentContainerStyle}
+                                />
+                            </Animated.View>
+                            {renderHeadingByPosition("right")}
+                        </Animated.View>
+                        {renderHeadingByPosition("bottom")}
                     </Animated.View>
-                    {renderHeadingByPosition("bottom")}
-                </Animated.View>
-            </PanGestureHandler>
-        </Animated.View>
+                </PanGestureHandler>
+            </Animated.View >
+        </>
     );
 }
 

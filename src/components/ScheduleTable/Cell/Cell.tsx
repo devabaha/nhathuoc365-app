@@ -70,4 +70,4 @@ const Cell: React.SFC<CellProps> = ({
     );
 }
 
-export default Cell;
+export default React.memo(Cell);

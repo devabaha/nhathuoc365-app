@@ -25,6 +25,7 @@ export interface ScheduleTableProps {
     renderHeading?: (item: HeadingItem, index: number, position: HeadingPosition, cellDimensions: CellDimensions) => React.ReactNode
     renderCellItem?: (cell: CellProps, cellIndex: number, row: Array<CellProps>, rowIndex: number) => React.ReactNode
     renderCell?: (cell: CellProps, cellIndex: number, row: Array<CellProps>, rowIndex: number) => React.ReactNode
+    renderLoading?: () => JSX.Element
     onHeadingPress?: (heading: HeadingItem, index: number, e: GestureResponderEvent) => void
     onCellPress?: (cell: CellProps, cellIndex: number, row: Array<CellProps>, rowIndex: number, e: GestureResponderEvent) => void
 }

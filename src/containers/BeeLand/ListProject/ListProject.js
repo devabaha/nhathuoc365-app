@@ -75,7 +75,8 @@ class ListProject extends Component {
   goToProductTable = building => {
     Actions.push(appConfig.routes.projectProductBeeLand, {
       projectCode: building.code,
-      title: building.name
+      title: building.name,
+      staff: building.staff
     });
   };
 

@@ -522,7 +522,7 @@ class App extends Component {
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {/* <MultiTaskView /> */}
-        {/* <ProjectBeeLand /> */}
+        {/* <ProjectProductBeeLand /> */}
         {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
@@ -896,6 +896,7 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.projectProductBeeLand}_1`}
                     component={ProjectProductBeeLand}
                     {...navBarConfig}
+                    navTransparent
                     back
                   />
                 </Stack>

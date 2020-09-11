@@ -12,7 +12,6 @@ import Cell from '../Cell';
 
 const styles = StyleSheet.create({
     container: {
-
     }
 })
 
@@ -33,7 +32,7 @@ const Heading: React.SFC<HeadingProps> = ({
 
     function handlePressCell(heading: HeadingItem, index: number, e: GestureResponderEvent) {
         onHeadingPress(heading, index, e);
-        cellsProps.onPress(e);
+        cellsProps.onPress ? cellsProps.onPress(e) : null;
     }
 
     function isMultiHeadingData() {
@@ -121,6 +120,7 @@ const Heading: React.SFC<HeadingProps> = ({
         <Animated.View
             {...viewProps}
             style={[
+                styles.container,
                 getHeadingMainStyle(),
                 wrapperStyle
             ]}>

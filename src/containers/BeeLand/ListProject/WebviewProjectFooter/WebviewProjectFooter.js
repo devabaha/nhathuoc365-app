@@ -7,8 +7,7 @@ const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
     bottom: 0,
-    width: '100%',
-    padding: 15
+    width: '100%'
   },
   container: {
     flexDirection: 'row',

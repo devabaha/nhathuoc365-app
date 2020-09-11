@@ -7,7 +7,7 @@ const DEFAULT_COLOR = '#909090';
 const NoResult = props => {
   return (
     <View style={[styles.container, props.containerStyle]}>
-      <View style={styles.wrapper}>
+      <View style={[styles.wrapper, props.wrapperStyle]}>
         {props.icon || (
           <Icon
             name={props.iconName || 'file-remove'}
@@ -15,7 +15,7 @@ const NoResult = props => {
             color={DEFAULT_COLOR}
           />
         )}
-        <Text style={styles.text}>{props.message}</Text>
+        <Text style={[styles.text, props.textStyle]}>{props.message}</Text>
       </View>
     </View>
   );

@@ -71,4 +71,16 @@ const MainContent: React.SFC<MainContentProps> = ({
     );
 }
 
-export default MainContent;
+function areEqual(prevProps: MainContentProps, nextProps: MainContentProps) {
+    if (
+        nextProps.data !== prevProps.data ||
+        nextProps.cellDimensions !== prevProps.cellDimensions ||
+        nextProps.containerStyle !== prevProps.containerStyle ||
+        nextProps.cellContainerStyle !== prevProps.cellContainerStyle
+    ) {
+        return false;
+    }
+    return true;
+}
+
+export default React.memo(MainContent, areEqual);
