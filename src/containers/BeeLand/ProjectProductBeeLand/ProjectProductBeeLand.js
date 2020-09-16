@@ -1,12 +1,6 @@
 import React, { Component } from 'react';
 import ScheduleTable from '../../../components/ScheduleTable';
-import {
-  View,
-  StyleSheet,
-  Text,
-  SafeAreaView,
-  ImageBackground
-} from 'react-native';
+import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
 
 import NoResult from '../../../components/NoResult';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,23 +8,19 @@ import APIHandler from '../../../network/APIHandler';
 import { APIRequest } from '../../../network/Entity';
 import Loading from '../../../components/Loading';
 import appConfig from 'app-config';
+import store from 'app-store';
 import BuildingSelector from './BuildingSelector';
 import ListRoomStatus from './ListRoomStatus';
 import ImgBackground from './ImgBackground';
+import { Actions } from 'react-native-router-flux';
+import NavBar from './NavBar';
+import SkeletonLoading from '../../../components/SkeletonLoading';
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1
+  },
   container: {
-    ...Platform.select({
-      ios: {
-        paddingTop: 64 + 10
-      },
-      android: {
-        paddingTop: 54 + 10
-      },
-      windows: {
-        paddingTop: 54 + 10
-      }
-    }),
     flex: 1
   },
   loading: {
@@ -72,16 +62,36 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 7
+    borderRadius: 7,
+    overflow: 'hidden'
   },
   cellIcon: {
-    color: '#ddd',
+    color: '#ccc',
     fontSize: 20
   },
   cellText: {
     color: '#333',
     textAlign: 'center',
     fontSize: 10
+  },
+  mask: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    backgroundColor: 'transparent'
+  },
+  maskStatus: {
+    position: 'absolute',
+    borderRadius: 4,
+    paddingHorizontal: 3,
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 1),
+    top: 0,
+    right: 0
+  },
+  maskStatusText: {
+    fontSize: 8,
+    color: '#fff',
+    ...elevationShadowStyle(5)
   }
 });
 
@@ -273,6 +283,7 @@ class ProjectProductBeeLand extends Component {
   };
   getListRoomRequest = new APIRequest();
   requests = [this.getListRoomRequest];
+  isForcingReloadFromStore = store.isProjectProductBeeLandReload;
 
   get hasScheduleTableData() {
     return (
@@ -303,6 +314,7 @@ class ProjectProductBeeLand extends Component {
       this.getListRoomRequest.cancel();
       this.getListRoomRequest.data = APIHandler.user_list_room_beeland(data);
       const response = await this.getListRoomRequest.promise();
+      store.forceReloadProjectProductBeeLand(false);
       console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
@@ -416,7 +428,7 @@ class ProjectProductBeeLand extends Component {
         position: 'left'
       });
     }
-    console.log(data, headingData);
+    // console.log(data, headingData);
 
     return data;
   }
@@ -430,7 +442,7 @@ class ProjectProductBeeLand extends Component {
         };
       });
     });
-    console.log(data, cellData);
+    // console.log(data, cellData);
 
     return data;
   }
@@ -447,11 +459,33 @@ class ProjectProductBeeLand extends Component {
     );
   };
 
-  handleCellPress = (cell, cellIndex, row, rowIndex, e) => {};
+  handleCellPress = (cell, cellIndex, row, rowIndex, e) => {
+    Actions.push(appConfig.routes.projectBeeLand, {
+      siteId: this.props.siteId,
+      room: cell.data,
+      staff: this.props.staff,
+      title: cell.data.room_name,
+      tel: this.props.tel,
+      buildingName: this.props.title
+    });
+  };
 
   handleHeadingPress = (heading, index, e) => {
-    console.log({ heading, index, e });
+    // console.log({ heading, index, e });
   };
+
+  handleForcingReloadFromStore() {
+    if (
+      this.isProjectProductBeeLandReload !==
+        store.isProjectProductBeeLandReload &&
+      store.isProjectProductBeeLandReload
+    ) {
+      this.isProjectProductBeeLandReload = store.isProjectProductBeeLandReload;
+      this.getListRoom(this.state.selectedBuildingCode);
+    }
+
+    this.isProjectProductBeeLandReload = store.isProjectProductBeeLandReload;
+  }
 
   renderHeadingItem(heading, index, position) {
     return (
@@ -473,6 +507,7 @@ class ProjectProductBeeLand extends Component {
   }
 
   renderCellItem(cell, cellIndex, row, rowIndex) {
+    const disabled = cell.disabled;
     return (
       <View
         style={{
@@ -480,10 +515,11 @@ class ProjectProductBeeLand extends Component {
           backgroundColor: cell.data.color || '#eee'
         }}
       >
+        <SkeletonLoading loading={!disabled} style={styles.mask} />
         {Object.keys(cell.data).length === 0 ? (
           <Icon name="lock" style={styles.cellIcon} />
         ) : (
-          <Text style={styles.cellText}>{cell.data.status}</Text>
+          <Text style={styles.cellText}>{cell.data.price_billion_view}</Text>
         )}
       </View>
     );
@@ -501,11 +537,18 @@ class ProjectProductBeeLand extends Component {
   }
 
   render() {
+    this.handleForcingReloadFromStore();
     return (
       <>
         <ImgBackground
           source={require('../../../images/building_view.jpg')}
-          blurRadius={this.state.loading && !this.state.listCellData ? 5 : 0}
+          blurRadius={
+            this.state.loading && !this.state.listCellData
+              ? appConfig.device.isAndroid
+                ? 1
+                : 5
+              : 0
+          }
           isAnimating={this.state.isBackgroundAnimating}
         />
         {this.state.loading && (
@@ -519,47 +562,50 @@ class ProjectProductBeeLand extends Component {
             message="Đang tải..."
           />
         )}
-        <SafeAreaView style={styles.container}>
-          {!!this.state.listBuilding && (
-            <BuildingSelector
-              buildings={this.state.listBuilding}
-              selectedCode={this.state.selectedBuildingCode}
-              onPress={this.handleBuildingPress}
-            />
-          )}
-          {!!this.state.listStatus && (
-            <ListRoomStatus data={this.state.listStatus} />
-          )}
-          {this.hasScheduleTableData ? (
-            <ScheduleTable
-              wrapperStyle={styles.scheduleTableWrapper}
-              cellDimensions={CELL_DIMENSIONS}
-              headingData={this.state.listHeadingData}
-              cellData={this.state.listCellData}
-              renderHeadingItem={this.renderHeadingItem.bind(this)}
-              renderCellItem={this.renderCellItem.bind(this)}
-              renderLoading={this.renderScheduleLoading}
-              onCellPress={this.handleCellPress}
-              onHeadingPress={this.handleHeadingPress}
-            />
-          ) : (
-            !this.state.loading && (
-              <View style={styles.scheduleTableAreaContainer}>
-                <NoResult
-                  wrapperStyle={styles.noResultWrapper}
-                  icon={
-                    <Icon name="exclamation-circle" size={72} color="#ccc" />
-                  }
-                  message="Không có dữ liệu"
-                  textStyle={styles.noResultTxt}
-                />
-              </View>
-            )
-          )}
+        <SafeAreaView style={styles.wrapper}>
+          <NavBar title={this.props.title} />
+          <View style={styles.container}>
+            {!!this.state.listBuilding && (
+              <BuildingSelector
+                buildings={this.state.listBuilding}
+                selectedCode={this.state.selectedBuildingCode}
+                onPress={this.handleBuildingPress}
+              />
+            )}
+            {!!this.state.listStatus && (
+              <ListRoomStatus data={this.state.listStatus} />
+            )}
+            {this.hasScheduleTableData ? (
+              <ScheduleTable
+                wrapperStyle={styles.scheduleTableWrapper}
+                cellDimensions={CELL_DIMENSIONS}
+                headingData={this.state.listHeadingData}
+                cellData={this.state.listCellData}
+                renderHeadingItem={this.renderHeadingItem.bind(this)}
+                renderCellItem={this.renderCellItem.bind(this)}
+                renderLoading={this.renderScheduleLoading}
+                onCellPress={this.handleCellPress}
+                onHeadingPress={this.handleHeadingPress}
+              />
+            ) : (
+              !this.state.loading && (
+                <View style={styles.scheduleTableAreaContainer}>
+                  <NoResult
+                    wrapperStyle={styles.noResultWrapper}
+                    icon={
+                      <Icon name="exclamation-circle" size={72} color="#ccc" />
+                    }
+                    message="Không có dữ liệu"
+                    textStyle={styles.noResultTxt}
+                  />
+                </View>
+              )
+            )}
+          </View>
         </SafeAreaView>
       </>
     );
   }
 }
 
-export default withTranslation()(ProjectProductBeeLand);
+export default withTranslation()(observer(ProjectProductBeeLand));

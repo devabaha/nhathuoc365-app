@@ -44,12 +44,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     letterSpacing: 1,
     color: '#242424',
-    backgroundColor: hexToRgbA('#fff', 0.2)
+    backgroundColor: hexToRgbA('#fff', 0.2),
+    textAlign: 'center'
   }
 });
 
 const BuildingButton = ({
   title,
+  titleStyle,
   containerStyle,
   wrapperStyle,
   iconStyle,
@@ -94,7 +96,7 @@ const BuildingButton = ({
                 ),
                 opacity: iconAnimated.interpolate({
                   inputRange: [0, 0.8],
-                  outputRange: [0.1, 0.5],
+                  outputRange: [0.3, 1],
                   extrapolate: Extrapolate.CLAMP
                 }),
                 transform: [
@@ -122,7 +124,7 @@ const BuildingButton = ({
             ]}
           />
           <View style={styles.buildingTextContainer}>
-            <Text numberOfLines={2} style={styles.buildingText}>
+            <Text numberOfLines={2} style={[styles.buildingText, titleStyle]}>
               {title}
             </Text>
           </View>

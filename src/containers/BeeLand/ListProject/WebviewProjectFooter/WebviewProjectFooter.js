@@ -1,22 +1,23 @@
 import React from 'react';
-import { SafeAreaView, View, StyleSheet } from 'react-native';
+import { SafeAreaView, View, StyleSheet, Alert } from 'react-native';
+import Communications from 'react-native-communications';
 import Icon from 'react-native-vector-icons/AntDesign';
+
 import Button from '../../../../components/Button';
+import {
+  servicesHandler,
+  SERVICES_TYPE
+} from '../../../../helper/servicesHandler';
 
 const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    bottom: 0,
-    width: '100%'
-  },
+  wrapper: {},
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fafafa',
-    flex: 1,
-    margin: 15,
-    borderRadius: 8,
-    ...elevationShadowStyle(7)
+    borderTopWidth: 0.5,
+    borderTopColor: '#eee',
+    ...elevationShadowStyle(7, 0, -2)
   },
   box: {
     flex: 1,
@@ -54,35 +55,67 @@ const styles = StyleSheet.create({
 });
 
 const WebviewProjectFooter = ({
+  submitIconName = 'home',
+  phoneTitle = 'Liên hệ',
+  chatTitle = 'Chat tư vấn',
+  submitTitle = 'Check căn',
+  tel,
+  siteId,
+  name,
+  userId,
+  onChatPress,
   onPhonePress = () => {},
-  onChatPress = () => {},
   onCheckPress = () => {}
 }) => {
+  function handlePhone() {
+    !!tel && Communications.phonecall(tel, true);
+    onPhonePress();
+  }
+
+  function handleChat() {
+    if (!siteId || !userId) {
+      return;
+    }
+    if (onChatPress) {
+      onChatPress();
+    } else {
+      const service = {
+        type: SERVICES_TYPE.BEEHOME_ROOM_CHAT,
+        user_id: userId,
+        site_id: siteId,
+        tel,
+        site_name: name
+      };
+
+      servicesHandler(service);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.container}>
         <View style={styles.box}>
           <Button
-            title="Liên hệ"
+            title={phoneTitle}
             iconLeft={<Icon name="phone" style={styles.icon} />}
             containerStyle={styles.btnContainer}
             btnContainerStyle={styles.btn}
             titleStyle={styles.btnTitle}
-            onPress={onPhonePress}
+            onPress={handlePhone}
           />
           <Button
-            title="Chat tư vấn"
+            title={chatTitle}
             iconLeft={<Icon name="message1" style={styles.icon} />}
             containerStyle={styles.btnContainer}
             btnContainerStyle={styles.btn}
             titleStyle={styles.btnTitle}
-            onPress={onChatPress}
+            onPress={handleChat}
           />
         </View>
 
         <Button
-          title="Check căn"
-          iconLeft={<Icon name="home" style={styles.mainIcon} />}
+          title={submitTitle}
+          iconLeft={<Icon name={submitIconName} style={styles.mainIcon} />}
           containerStyle={styles.mainBtnContainer}
           onPress={onCheckPress}
         />

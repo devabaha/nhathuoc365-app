@@ -137,6 +137,12 @@
     },
     "listBeeLand": {
       "mainTitle": "Danh sách dự án"
+    },
+    "customerInfo": {
+      "mainTitle": "Thông tin bên mua"
+    },
+    "confirmBooking": {
+      "mainTitle": "Xác nhận thông tin"
     }
   },
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { SafeAreaView, StyleSheet, RefreshControl, Alert } from 'react-native';
+import { SafeAreaView, StyleSheet, RefreshControl } from 'react-native';
 import Loading from '../../../components/Loading';
 import NoResult from '../../../components/NoResult';
 import HomeCardList, {
@@ -7,11 +7,7 @@ import HomeCardList, {
 } from '../../../components/Home/component/HomeCardList';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
-import {
-  servicesHandler,
-  SERVICES_TYPE
-} from '../../../helper/servicesHandler';
-import Communications from 'react-native-communications';
+import store from 'app-store';
 import WebviewProjectFooter from './WebviewProjectFooter';
 
 const IMAGE_HEIGHT = (appConfig.device.width - 32) / 2;
@@ -33,6 +29,7 @@ class ListProject extends Component {
   }
 
   getListBuilding = async () => {
+    const { t } = this.props;
     try {
       const response = await APIHandler.user_list_beeland();
       console.log(response);
@@ -60,12 +57,8 @@ class ListProject extends Component {
   };
 
   onPressBuilding(building) {
-    // const service = {
-    //   type: SERVICES_TYPE.BEEHOME_BUILDING,
-    //   id: building.id
-    // };
-    // servicesHandler(service);
     Actions.webview({
+      showLoading: false,
       title: building.name,
       url: building.link_web,
       renderAfter: () => this.renderProjectFooter(building)
@@ -74,9 +67,11 @@ class ListProject extends Component {
 
   goToProductTable = building => {
     Actions.push(appConfig.routes.projectProductBeeLand, {
+      siteId: building.site_id,
       projectCode: building.code,
       title: building.name,
-      staff: building.staff
+      staff: building.staff,
+      tel: building.hotline
     });
   };
 
@@ -88,10 +83,10 @@ class ListProject extends Component {
   renderProjectFooter(building) {
     return (
       <WebviewProjectFooter
-        onPhonePress={() => Communications.phonecall(building.hotline, true)}
-        onChatPress={() =>
-          Alert.alert('Đang phát triển', 'Tính năng đang được phát triển.')
-        }
+        tel={building.hotline}
+        siteId={building.site_id}
+        userId={store.user_info.id}
+        name={building.name}
         onCheckPress={() => this.goToProductTable(building)}
       />
     );
@@ -147,6 +142,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   buildingWrapper: {
+    flex: 1,
     paddingVertical: 0,
     paddingBottom: 0,
     marginTop: 0
@@ -168,4 +164,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ListProject;
+export default withTranslation()(ListProject);

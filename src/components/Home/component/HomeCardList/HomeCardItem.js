@@ -45,7 +45,7 @@ class HomeCardItem extends Component {
             style={[styles.image, props.imageStyle]}
             source={{ uri: props.imageUrl }}
           >
-            {this.state.loading && <Loading style={styles.loading} />}
+            {this.state.loading && <Loading containerStyle={styles.loading} />}
           </ImageBackground>
           <View style={[styles.titleWrapper, props.textWrapperStyle]}>
             <Text numberOfLines={2} style={styles.title}>

@@ -163,6 +163,11 @@ import { ListRoom } from './containers/Room';
 import RegisterStore from './containers/RegisterStore';
 import AllServices from './containers/AllServices';
 import ProjectProductBeeLand from './containers/BeeLand/ProjectProductBeeLand';
+import {
+  ConfirmBookingBeeLand,
+  CustomerInfoBeeLand,
+  DepositPaymentBeeLand
+} from './containers/BeeLand/Booking/';
 
 /**
  * Not allow font scaling
@@ -819,7 +824,6 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.billsPaymentMethod}_1`}
                     component={BillsPaymentMethod}
-                    title={t('screen.bills.paymentMethodTitle')}
                     {...navBarConfig}
                     back
                   />
@@ -896,7 +900,29 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.projectProductBeeLand}_1`}
                     component={ProjectProductBeeLand}
                     {...navBarConfig}
-                    navTransparent
+                    hideNavBar
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BEELAND CUSTOMER INFO BOOKING ================ */}
+                <Stack key={appConfig.routes.customerInfoBookingBeeLand}>
+                  <Scene
+                    key={`${appConfig.routes.customerInfoBookingBeeLand}_1`}
+                    component={CustomerInfoBeeLand}
+                    title={t('screen.customerInfo.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BEELAND CONFIRM BOOKING ================ */}
+                <Stack key={appConfig.routes.confirmBookingBeeLand}>
+                  <Scene
+                    key={`${appConfig.routes.confirmBookingBeeLand}_1`}
+                    component={ConfirmBookingBeeLand}
+                    title={t('screen.confirmBooking.mainTitle')}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>

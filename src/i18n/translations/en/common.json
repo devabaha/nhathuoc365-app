@@ -140,6 +140,12 @@
     },
     "allServices": {
       "mainTitle": "Service list"
+    },
+    "customerInfo": {
+      "mainTitle": "Buyer info"
+    },
+    "confirmBooking": {
+      "mainTitle": "Confirm information"
     }
   },
 

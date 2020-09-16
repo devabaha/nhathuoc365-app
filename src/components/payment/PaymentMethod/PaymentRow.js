@@ -356,8 +356,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   paymentMethodTextContainer: {
-    flex: 1,
-    flexWrap: 'wrap'
+    flex: 1
+    // flexWrap: 'wrap'
   },
   paymentMethodLabel: {
     fontSize: 15,

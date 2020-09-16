@@ -11,8 +11,8 @@ import AsyncStorage from '@react-native-community/async-storage';
 import * as RNLocalize from 'react-native-localize';
 import moment from 'moment';
 
-import 'moment/locale/vi';
 import 'moment/locale/zh-cn';
+import 'moment/locale/vi';
 
 const saveAppLanguage = async (asyncStorageLanguage, callback = () => {}) => {
   AsyncStorage.setItem(

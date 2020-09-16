@@ -13,6 +13,8 @@ import appConfig from 'app-config';
 import Button from '../../../../components/Button';
 
 class TransferInfo extends Component {
+  static defaultProps = {};
+
   state = {
     loading: true,
     info: {}
@@ -24,6 +26,10 @@ class TransferInfo extends Component {
   };
 
   handleConfirm = () => {
+    if (this.props.onSubmit) {
+      this.props.onSubmit();
+      return;
+    }
     Actions.popTo(this.props.rootSceneKey, {
       room_id: this.props.room_id,
       site_id: this.props.site_id
@@ -44,6 +50,7 @@ class TransferInfo extends Component {
     );
     return (
       <SafeAreaView style={styles.container}>
+        {this.props.headerComponent}
         <ScrollView style={styles.container}>
           <Text style={styles.title}>{this.props.heading}</Text>
           <RowItem label="Tên ngân hàng" value={info.bank_name} />

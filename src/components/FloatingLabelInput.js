@@ -46,6 +46,11 @@ class FloatingLabelInput extends Component {
     }
 
     if (nextProps !== this.props) {
+      if (this.refInput && nextProps.value !== this.props.value) {
+        if (!this.refInput.isFocused() && !nextProps.value) {
+          this.state.animatedFloating.setValue(nextState.inputContainerHeight);
+        }
+      }
       return true;
     }
 

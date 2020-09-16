@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   titleWrapper: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: 10,
     paddingHorizontal: 15
   },
   dash: {
@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     textTransform: 'uppercase',
-    letterSpacing: 2
+    letterSpacing: 3,
+    fontSize: 12
   },
   buildingWrapper: {
     minWidth: appConfig.device.width / 3.5,
@@ -172,8 +173,16 @@ class BuildingSelector extends Component {
         containerStyle={{ width: BUILDING_BUTTON_WIDTH }}
         wrapperStyle={{
           borderBottomWidth: isSelected ? 2 : 0,
-          borderColor: '#b77a48'
+          backgroundColor: isSelected ? appConfig.colors.primary : '#fff',
+          borderBottomWidth: 0
         }}
+        iconStyle={isSelected && { color: '#fff' }}
+        titleStyle={
+          isSelected && {
+            color: '#fff',
+            backgroundColor: hexToRgbA(appConfig.colors.primary, 0.5)
+          }
+        }
         title={building.name}
         active={isSelected}
         onPress={() => this.handlePressBuilding(building, index)}
@@ -184,7 +193,7 @@ class BuildingSelector extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.titleWrapper}>
+        {/* <View style={styles.titleWrapper}>
           <View style={styles.dash} />
           <View onLayout={this.handleTitleLayout} style={styles.titleContainer}>
             <View
@@ -207,7 +216,7 @@ class BuildingSelector extends Component {
             />
             <Text style={styles.title}>Tòa nhà</Text>
           </View>
-        </View>
+        </View> */}
         <View>
           {!!this.props.buildings && (
             <Animated.FlatList

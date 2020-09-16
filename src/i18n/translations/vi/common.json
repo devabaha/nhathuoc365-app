@@ -140,6 +140,12 @@
     },
     "allServices": {
       "mainTitle": "Danh sách dịch vụ"
+    },
+    "customerInfo": {
+      "mainTitle": "Thông tin bên mua"
+    },
+    "confirmBooking": {
+      "mainTitle": "Xác nhận thông tin"
     }
   },
 

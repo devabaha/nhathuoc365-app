@@ -41,8 +41,8 @@ class Method extends Component {
     const currentFee = this.state.selectedMethod.user_fee || '0';
     if (currentFee) {
       const [fee, percentTag] = currentFee.split('%');
-      if (percentTag) {
-        transferFee = currentFee * (fee / 100);
+      if (percentTag !== undefined) {
+        transferFee = this.priceView.value * (fee / 100);
       } else {
         transferFee = +fee;
       }
@@ -64,6 +64,7 @@ class Method extends Component {
 
   get totalPriceView() {
     let totalPrice = this.transferFeeView.value + this.priceView.value;
+
     return {
       value: totalPrice,
       view: vndCurrencyFormat(totalPrice)
@@ -71,6 +72,11 @@ class Method extends Component {
   }
 
   componentDidMount() {
+    setTimeout(() =>
+      Actions.refresh({
+        title: this.props.title || t('common:screen.bills.paymentMethodTitle')
+      })
+    );
     this.getPaymentMethod();
   }
 
@@ -115,7 +121,10 @@ class Method extends Component {
     const data = {
       bill_ids: this.props.ids,
       amount: this.totalPriceView.value,
-      user_fee: this.transferFeeView.value
+      user_fee: this.transferFeeView.value,
+
+      id_code: this.props.id_code || null,
+      company_name: this.props.company_name || null
     };
     try {
       const response = await APIHandler.site_transfer_pay_va(
@@ -127,10 +136,12 @@ class Method extends Component {
       if (!this.unmounted && response) {
         if (response.data && response.status === STATUS_SUCCESS) {
           Actions.push(appConfig.routes.transferInfo, {
+            headerComponent: this.props.transferInfoHeaderComponent,
             info: response.data.va_info,
             heading: this.state.selectedMethod.name,
             note: this.state.selectedMethod.content,
-            rootSceneKey: this.props.rootSceneKey
+            rootSceneKey: this.props.rootSceneKey,
+            onSubmit: this.props.onSubmit
           });
         } else {
           flashShowMessage({
@@ -176,6 +187,10 @@ class Method extends Component {
         this.createTransfer();
         break;
       default:
+        if (this.props.onSubmit) {
+          this.props.onSubmit();
+          return;
+        }
         Actions.popTo(this.props.rootSceneKey, {
           room_id: this.props.room_id,
           site_id: this.props.site_id
@@ -214,6 +229,7 @@ class Method extends Component {
 
     return (
       <SafeAreaView style={styles.container}>
+        {this.props.headerComponent}
         <ScrollView>
           <View style={styles.box}>
             {this.state.loading && <Loading loading />}

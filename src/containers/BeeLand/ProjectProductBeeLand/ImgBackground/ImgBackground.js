@@ -77,9 +77,7 @@ const ImgBackground = ({ blurRadius = 0, source, isAnimating = true }) => {
   }, [isAnimating]);
 
   return (
-    <AnimatedImageBackground
-      source={source}
-      resizeMode="cover"
+    <Animated.View
       style={[
         styles.imageBackground,
         {
@@ -91,20 +89,33 @@ const ImgBackground = ({ blurRadius = 0, source, isAnimating = true }) => {
               })
             },
             {
-              rotate: interpolate(animatedBreathing, {
-                inputRange: [0, 1],
-                outputRange: [concat(0, 'deg'), concat(0.05, 'deg')],
-                extrapolate: Extrapolate.CLAMP
-              })
+              rotate: concat(
+                interpolate(animatedBreathing, {
+                  inputRange: [0, 1],
+                  outputRange: [0, 3],
+                  extrapolate: Extrapolate.CLAMP
+                }),
+                'deg'
+              )
             }
           ]
         }
       ]}
-      blurRadius={blurRadius}
     >
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.3)' }} />
-    </AnimatedImageBackground>
+      <AnimatedImageBackground
+        source={source}
+        resizeMode="cover"
+        style={[styles.imageBackground]}
+        blurRadius={blurRadius}
+      >
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.3)' }} />
+      </AnimatedImageBackground>
+    </Animated.View>
   );
 };
 
-export default ImgBackground;
+function areEqual(prevProps, nextProps) {
+  return prevProps.isAnimating === nextProps.isAnimating;
+}
+
+export default React.memo(ImgBackground, areEqual);

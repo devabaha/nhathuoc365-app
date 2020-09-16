@@ -461,6 +461,12 @@ class Store {
   @action updateHomeLoaded(isHomeLoaded) {
     this.isHomeLoaded = isHomeLoaded;
   }
+
+  @observable isProjectProductBeeLandReload = false;
+
+  @action forceReloadProjectProductBeeLand(isProjectProductBeeLandReload) {
+    this.isProjectProductBeeLandReload = isProjectProductBeeLandReload;
+  }
 }
 
 export default new Store();

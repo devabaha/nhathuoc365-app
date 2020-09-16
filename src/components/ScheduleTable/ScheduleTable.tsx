@@ -51,7 +51,6 @@ const ScheduleTable = ({
         "left": { width: 0, height: 0 },
     })
     const [isLoading, setLoading] = useState(true);
-    const [isShowingUp, setShowingUp] = useState(false);
 
     const [wrapperDimensions, setWrapperDimensions] = useState({ width: appWidth, height: appHeight - (StatusBar.currentHeight || 0) });
     const [wrapperOffset, setWrapperOffset] = useState({ x: 0, y: 0 });
@@ -66,7 +65,7 @@ const ScheduleTable = ({
         velocity: { x: vx, y: vy },
         state
     } = usePanGestureHandler();
-    // const [x, y, vx, vy, state] = useValues(0, 0, 0, 0, State.UNDETERMINED);
+
     const translateX = diffClamp(withDecay({
         value: x,
         velocity: vx,
@@ -98,7 +97,7 @@ const ScheduleTable = ({
         return !isLoading && set(showingUpAnimated, timing({
             from: 0,
             to: 1,
-            duration: 300,
+            duration: 200,
         }))
     }, [isLoading]);
 
@@ -139,7 +138,7 @@ const ScheduleTable = ({
                     }, 200);
                 })
             }
-            console.log('wrapperLayout', width, height);
+            // console.log('wrapperLayout', width, height);
             setWrapperDimensions({ width, height });
         }
     }
@@ -147,7 +146,7 @@ const ScheduleTable = ({
     function handleContainerLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
         if (width !== containerDimensions.width || height !== containerDimensions.height) {
-            console.log('containerLayout', width, height);
+            // console.log('containerLayout', width, height);
             setContainerDimensions({ width, height });
         }
     }
@@ -155,7 +154,7 @@ const ScheduleTable = ({
     function handleMainContentWrapperLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
         if (width !== mainContentDimensions.width || height !== mainContentDimensions.height) {
-            console.log('mainContentWrapperLayout', width, height);
+            // console.log('mainContentWrapperLayout', width, height);
             setMainContentWrapperDimensions({ width, height });
         }
     }
@@ -163,7 +162,7 @@ const ScheduleTable = ({
     function handleMainContentLayout(e: LayoutChangeEvent) {
         const { width, height } = e.nativeEvent.layout;
         if (width !== mainContentDimensions.width || height !== mainContentDimensions.height) {
-            console.log('mainContentLayout', width, height);
+            // console.log('mainContentLayout', width, height);
             setMainContentDimensions({ width, height });
         }
     }
@@ -244,8 +243,7 @@ const ScheduleTable = ({
 
     /** [MUST HAVE STYLE] for content to be scrollable correctly */
     function getCoreStyleByWrapperDimensions() {
-        // console.log(wrapperDimensions.height)
-        // console.log(mainContentDimensions.height, wrapperOffset.y, appHeight)
+        // console.log(mainContentDimensions.height, wrapperOffset.y, appHeight, 'aaa')
         return {
             /** flex: 
              * 1 - for list has content's height crossing the screen area 
@@ -261,29 +259,6 @@ const ScheduleTable = ({
         }
     }
 
-    const handlePan = Animated.event(
-        [{
-            nativeEvent: {
-                translationX: x,
-                translationY: y,
-                velocityX: vx,
-                velocityY: vy,
-                state,
-            },
-        }],
-        { useNativeDriver: true },
-    )
-    // Animated.event([{
-    //     nativeEvent: ({ translationX, translationY, state, velocityX, velocityY }) => {
-    //         return block([set(x, translateX),
-    //         set(y, translateY),
-    //         set(vx, velocityX),
-    //         set(vy, velocityY),
-    //         set(state, state)
-    //         ])
-    //     }
-    // }], { useNativeDriver: true })
-
     return (
         <>
             {isLoading && (renderLoading
@@ -296,7 +271,23 @@ const ScheduleTable = ({
                 onLayout={handleWrapperLayout}
                 style={[
                     styles.wrapper,
-                    getCoreStyleByWrapperDimensions(), wrapperStyle]}
+                    {
+                        transform: [
+                            {
+                                translateY: showingUpAnimated.interpolate({
+                                    inputRange: [0, 1],
+                                    outputRange: [100, 0]
+                                })
+                            }
+                        ],
+                        opacity: showingUpAnimated.interpolate({
+                            inputRange: [0, 0.7, 1],
+                            outputRange: [0, 0.3, 1]
+                        })
+                    },
+                    getCoreStyleByWrapperDimensions(),
+                    wrapperStyle
+                ]}
             >
 
                 <PanGestureHandler
@@ -304,25 +295,13 @@ const ScheduleTable = ({
                     minDeltaX={30}
                     minDeltaY={30}
                     {...gestureHandler}
-                    // onGestureEvent={handlePan}
-                    // onHandlerStateChange={handlePan}
                     {...panGestureHandlerProps}
                 >
                     <Animated.View
-                        style={[{
-                            transform: [
-                                {
-                                    translateY: showingUpAnimated.interpolate({
-                                        inputRange: [0, 1],
-                                        outputRange: [200, 0]
-                                    })
-                                }
-                            ],
-                            opacity: showingUpAnimated.interpolate({
-                                inputRange: [0.7, 1],
-                                outputRange: [0.3, 1]
-                            })
-                        }, getCoreStyleByWrapperDimensions(), containerStyle]}
+                        style={[
+                            getCoreStyleByWrapperDimensions(),
+                            containerStyle
+                        ]}
                         onLayout={handleContainerLayout}
                     >
                         {renderHeadingByPosition("top")}
@@ -331,16 +310,17 @@ const ScheduleTable = ({
                         // onLayout={handleMainContentWrapperLayout}
                         >
                             {renderHeadingByPosition("left")}
-                            <Animated.View style={
-                                {
-                                    transform: [{
-                                        translateX,
-                                        translateY
-                                    }]
-                                }}>
+                            <Animated.View
+                                onLayout={handleMainContentLayout}
+                                style={
+                                    {
+                                        transform: [{
+                                            translateX,
+                                            translateY
+                                        }]
+                                    }}>
                                 <MainContent
                                     onCellPress={onCellPress}
-                                    onLayout={handleMainContentLayout}
                                     data={cellData}
                                     cellDimensions={cellDimensions}
                                     // cellContainerStyle={{
@@ -359,7 +339,7 @@ const ScheduleTable = ({
                         {renderHeadingByPosition("bottom")}
                     </Animated.View>
                 </PanGestureHandler>
-            </Animated.View >
+            </Animated.View>
         </>
     );
 }
