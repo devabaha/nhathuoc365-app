@@ -50,7 +50,7 @@ class Promotion extends Component {
         style={[styles.promotionItem, this.props.promotionItemStyle]}
       >
         <TouchableHighlight
-          onPress={() => this.props.onPress(promotion)}
+          onPress={() => this.props.onPress(promotion, index)}
           underlayColor="transparent"
         >
           <CachedImage
