@@ -16,7 +16,7 @@ export default class ListHeader extends Component {
           }
         ]}
       >
-        <Text style={styles.store_heading_title}>{title}</Text>
+        {!!title && <Text style={styles.store_heading_title}>{title}</Text>}
       </View>
     );
   }
@@ -25,12 +25,12 @@ export default class ListHeader extends Component {
 const styles = StyleSheet.create({
   store_heading_box: {
     width: '100%',
-    height: 32,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 15
   },
   store_heading_title: {
+    paddingTop: 7,
     fontSize: 14,
     color: '#333333'
   }

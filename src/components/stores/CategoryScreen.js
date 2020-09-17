@@ -312,12 +312,13 @@ class CategoryScreen extends Component {
                 </Swiper>
               )}
 
-            <ListHeader title={header_title} />
+            {/* <ListHeader title={header_title} /> */}
 
             <View
               style={{
                 flexDirection: 'row',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                paddingTop: 7
               }}
             >
               {items_data.map((item, index) => (

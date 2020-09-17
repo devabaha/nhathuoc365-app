@@ -124,6 +124,7 @@ class Stores extends Component {
     if (!this.props.categoryId) {
       response.data.categories.unshift({ id: 0, name: t('tabs.store.title') });
     }
+
     this.setState(
       {
         categories_data: response.data.categories,
@@ -245,49 +246,52 @@ class Stores extends Component {
     const { t } = this.props;
     return (
       <View style={styles.container}>
-        <View style={styles.categories_nav}>
-          {this.state.categories_data != null ? (
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              ref={ref => (this.refs_category_nav = ref)}
-              onScrollToIndexFailed={() => {}}
-              data={this.state.categories_data}
-              extraData={this.state.category_nav_index}
-              keyExtractor={item => `${item.id}`}
-              horizontal={true}
-              style={styles.categories_nav}
-              renderItem={({ item, index }) => {
-                let active = this.state.category_nav_index == index;
-                return (
-                  <TouchableHighlight
-                    onPress={() => this._changeCategory(item, index)}
-                    underlayColor="transparent"
-                  >
-                    <View style={styles.categories_nav_items}>
-                      <Text
-                        style={[
-                          styles.categories_nav_items_title,
-                          active
-                            ? styles.categories_nav_items_title_active
-                            : null
-                        ]}
+        {this.state.categories_data != null &&
+          this.state.categories_data.length > 1 && (
+            <View style={styles.categories_nav}>
+              {this.state.categories_data != null ? (
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+                  ref={ref => (this.refs_category_nav = ref)}
+                  onScrollToIndexFailed={() => {}}
+                  data={this.state.categories_data}
+                  extraData={this.state.category_nav_index}
+                  keyExtractor={item => `${item.id}`}
+                  horizontal={true}
+                  style={styles.categories_nav}
+                  renderItem={({ item, index }) => {
+                    let active = this.state.category_nav_index == index;
+                    return (
+                      <TouchableHighlight
+                        onPress={() => this._changeCategory(item, index)}
+                        underlayColor="transparent"
                       >
-                        {item.name}
-                      </Text>
+                        <View style={styles.categories_nav_items}>
+                          <Text
+                            style={[
+                              styles.categories_nav_items_title,
+                              active
+                                ? styles.categories_nav_items_title_active
+                                : null
+                            ]}
+                          >
+                            {item.name}
+                          </Text>
 
-                      {active && (
-                        <View style={styles.categories_nav_items_active} />
-                      )}
-                    </View>
-                  </TouchableHighlight>
-                );
-              }}
-            />
-          ) : (
-            <Indicator size="small" />
+                          {active && (
+                            <View style={styles.categories_nav_items_active} />
+                          )}
+                        </View>
+                      </TouchableHighlight>
+                    );
+                  }}
+                />
+              ) : (
+                <Indicator size="small" />
+              )}
+            </View>
           )}
-        </View>
 
         {this.state.categories_data != null ? (
           <FlatList

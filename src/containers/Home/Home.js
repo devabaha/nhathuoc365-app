@@ -56,6 +56,7 @@ class Home extends Component {
 
     try {
       const response = await APIHandler.user_site_home();
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
