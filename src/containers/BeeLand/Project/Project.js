@@ -15,6 +15,7 @@ import Promotion from '../../../components/Home/component/Promotion';
 import WebviewProjectFooter from '../ListProject/WebviewProjectFooter';
 import appConfig from 'app-config';
 import store from 'app-store';
+import Loading from '../../../components/Loading';
 
 const IMAGE_WIDTH = appConfig.device.width;
 const IMAGE_HEIGHT = appConfig.device.width / 2;
@@ -69,6 +70,7 @@ const styles = StyleSheet.create({
 
 class Project extends Component {
   state = {
+    loadingImages: true,
     images: null,
     room: null
   };
@@ -104,7 +106,7 @@ class Project extends Component {
     const { t } = this.props;
     const data = {
       // product_code: this.props.room.product_code,
-      product_code: '73847',
+      product_code: '106680',
       id_code: this.props.staff.id_code,
       company_name: this.props.staff.company_name
     };
@@ -134,6 +136,10 @@ class Project extends Component {
       flashShowMessage({
         type: 'danger',
         message: t('api.error.message')
+      });
+    } finally {
+      this.setState({
+        loadingImages: false
       });
     }
   }
@@ -214,20 +220,24 @@ class Project extends Component {
     return (
       <>
         <View style={styles.imagesWrapper}>
-          {!!this.state.images && this.state.images.length !== 0 ? (
-            <Promotion
-              data={this.state.images}
-              containerStyle={styles.imagesContainer}
-              ratio="2:1"
-              padding={0}
-              containerSlideStyle={styles.imagesSlideContainer}
-              onPress={this.handlePressImage.bind(this)}
-            />
+          {!this.state.loadingImages ? (
+            !!this.state.images && this.state.images.length !== 0 ? (
+              <Promotion
+                data={this.state.images}
+                containerStyle={styles.imagesContainer}
+                ratio="2:1"
+                padding={0}
+                containerSlideStyle={styles.imagesSlideContainer}
+                onPress={this.handlePressImage.bind(this)}
+              />
+            ) : (
+              <CachedImage
+                source={require('../../../images/logo-640x410.jpg')}
+                style={styles.image}
+              />
+            )
           ) : (
-            <CachedImage
-              source={require('../../../images/logo-640x410.jpg')}
-              style={styles.image}
-            />
+            <Loading center />
           )}
         </View>
         <ProjectHeader
