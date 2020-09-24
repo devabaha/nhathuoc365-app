@@ -107,6 +107,7 @@ const config = Object.freeze({
 
     itemAttribute: 'itemAttribute',
     serviceOrders: 'serviceOrders',
+    serviceFeedback: 'serviceFeedback',
 
     // Schedule
     schedule: 'schedule',
@@ -122,7 +123,10 @@ const config = Object.freeze({
     modalRateApp: 'modalRateApp',
 
     //  Reset password
-    resetPassword: 'resetPassword'
+    resetPassword: 'resetPassword',
+
+    // All serives
+    allServices: 'allServices'
   }
 });
 

@@ -12,7 +12,10 @@ const DEFAULT_OBJECT = { id: -1 };
 
 class PaymentMethod extends Component {
   static defaultProps = {
-    onUpdatePaymentMethod: () => {}
+    onUpdatePaymentMethod: () => {},
+    showPrice: true,
+    showSubmit: true,
+    store_id: store.store_id
   };
 
   state = {
@@ -24,6 +27,13 @@ class PaymentMethod extends Component {
   unmounted = false;
 
   componentDidMount() {
+    setTimeout(() => {
+      Actions.refresh({
+        title:
+          this.props.title ||
+          this.props.t('common:screen.paymentMethod.mainTitle')
+      });
+    });
     this.getPaymentMethod();
   }
 
@@ -34,7 +44,7 @@ class PaymentMethod extends Component {
   getPaymentMethod = async () => {
     const { t } = this.props;
     try {
-      const response = await APIHandler.payment_method(store.store_id);
+      const response = await APIHandler.payment_method(this.props.store_id);
 
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
@@ -184,27 +194,35 @@ class PaymentMethod extends Component {
             />
           </View>
 
-          <View style={[styles.box, { paddingVertical: 7 }]}>
-            <View style={styles.priceInfoRow}>
-              <Text style={styles.priceLabel}>{t('payment.tempPrice')}</Text>
-              <Text style={styles.priceValue}>{this.props.price}</Text>
+          {this.props.showPrice && (
+            <View style={[styles.box, { paddingVertical: 7 }]}>
+              <View style={styles.priceInfoRow}>
+                <Text style={styles.priceLabel}>{t('payment.tempPrice')}</Text>
+                <Text style={styles.priceValue}>{this.props.price}</Text>
+              </View>
+              {Object.keys(extraFee).map(key => {
+                return (
+                  <View style={styles.priceInfoRow}>
+                    <Text style={styles.priceLabel}>{key}</Text>
+                    <Text style={styles.priceValue}>{extraFee[key]}</Text>
+                  </View>
+                );
+              })}
             </View>
-            {Object.keys(extraFee).map(key => {
-              return (
-                <View style={styles.priceInfoRow}>
-                  <Text style={styles.priceLabel}>{key}</Text>
-                  <Text style={styles.priceValue}>{extraFee[key]}</Text>
-                </View>
-              );
-            })}
-          </View>
+          )}
         </ScrollView>
-        <Button
-          renderBefore={<TotalPrice t={t} value={this.props.totalPrice} />}
-          containerStyle={styles.confirmContainer}
-          title={t('confirm')}
-          onPress={this.handleConfirm}
-        />
+        {this.props.showSubmit && (
+          <Button
+            renderBefore={
+              this.props.showPrice && (
+                <TotalPrice t={t} value={this.props.totalPrice} />
+              )
+            }
+            containerStyle={styles.confirmContainer}
+            title={t('confirm')}
+            onPress={this.handleConfirm}
+          />
+        )}
       </SafeAreaView>
     );
   }

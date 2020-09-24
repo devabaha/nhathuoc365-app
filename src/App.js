@@ -101,7 +101,7 @@ import {
   SearchChatNavBar
 } from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
-import { default as ServiceOrders } from './components/services/Orders';
+import { ServiceOrders, ServiceFeedback } from './components/services';
 import TabIcon from './components/TabIcon';
 import {
   initialize as initializeRadaModule,
@@ -139,10 +139,11 @@ import ModalPicker from './components/ModalPicker';
 import ModalList from './components/ModalList';
 import StoreLocation from './containers/StoreLocation/StoreLocation';
 import PlacesAutoComplete from './containers/PlacesAutoComplete';
-import { servicesHandler } from './helper/servicesHandler';
+import { servicesHandler, SERVICES_TYPE } from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
+import AllServices from './containers/AllServices';
 
 /**
  * Not allow font scaling
@@ -226,6 +227,9 @@ initializeVoucherModule({
  * Initializes config for Rada module
  */
 initializeRadaModule({
+  colors: {
+    primary: appConfig.colors.primary
+  },
   private: {
     partnerAuthorization: appConfig.radaModule.partnerAuthorization,
     webhookUrl: null,
@@ -326,14 +330,10 @@ class App extends Component {
       try {
         console.log('APP', params, this.props);
         if (params['+clicked_branch_link']) {
-          if (store.isHomeLoaded) {
+          if (store.isHomeLoaded || params.type === SERVICES_TYPE.AFFILIATE) {
             servicesHandler(params, t);
           } else {
-            if (params.type === 'affiliate') {
-              servicesHandler(params, t);
-            } else {
-              store.setTempBranchIOSubcribeData({ params, t });
-            }
+            store.setTempDeepLinkData({ params, t });
           }
         }
       } catch (err) {
@@ -343,6 +343,24 @@ class App extends Component {
     });
 
     store.branchIOSubcribe(branchIOSubcribe);
+  };
+
+  handleAddListenerOpenedOneSignal = () => {
+    OneSignal.addEventListener('opened', this.handleOpenningNotification);
+  };
+
+  handleRemoveListenerOpenedOneSignal = () => {
+    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
+  };
+
+  handleOpenningNotification = openResult => {
+    const { t } = this.props;
+    const params = openResult.notification.payload.additionalData;
+    if (store.isHomeLoaded) {
+      servicesHandler(params, t);
+    } else {
+      store.setTempDeepLinkData({ params, t });
+    }
   };
 
   localizeListener = () => {
@@ -456,12 +474,12 @@ class App extends Component {
     if (_.isObject(device)) {
       const push_token = device.pushToken;
       const player_id = device.userId;
-
       try {
         await APIHandler.add_push_token({
           push_token,
           player_id
         });
+        this.handleAddListenerOpenedOneSignal();
       } catch (error) {
         console.log(error);
       }
@@ -551,13 +569,39 @@ const styles = StyleSheet.create({
 export default withTranslation()(codePush(App));
 
 class RootRouter extends Component {
-  state = {};
+  state = {
+    tabVisible: {}
+  };
 
   shouldComponentUpdate(nextProps, nextState) {
+    const isTabVisbleChange = Object.keys(nextState.tabVisible).some(
+      nextKey => {
+        return Object.keys(this.state.tabVisible).some(currentKey => {
+          return (
+            nextKey === currentKey &&
+            nextState.tabVisible[nextKey] !== this.state.tabVisible[currentKey]
+          );
+        });
+      }
+    );
+
+    if (isTabVisbleChange) {
+      return true;
+    }
+
     if (nextProps.appLanguage !== this.props.appLanguage) {
       return true;
     }
     return false;
+  }
+
+  setTabVisible(tabVisible) {
+    this.setState(prev => ({
+      tabVisible: {
+        ...prev.tabVisible,
+        ...tabVisible
+      }
+    }));
   }
 
   setHeader(header) {
@@ -777,7 +821,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.paymentMethod}>
                   <Scene
                     key={`${appConfig.routes.paymentMethod}_1`}
-                    title={t('screen.paymentMethod.mainTitle')}
                     component={PaymentMethod}
                     {...navBarConfig}
                     back
@@ -1307,6 +1350,16 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack key={appConfig.routes.serviceFeedback}>
+                  <Scene
+                    key={`${appConfig.routes.serviceFeedback}_1`}
+                    title={t('screen.feedback.mainTitle')}
+                    component={ServiceFeedback}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 <Stack key={appConfig.routes.resetPassword}>
                   <Scene
                     key={`${appConfig.routes.resetPassword}_1`}
@@ -1345,6 +1398,17 @@ class RootRouter extends Component {
                     title={t('screen.scheduleConfirm.mainTitle')}
                     component={ScheduleConfirm}
                     {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ ALL SERVICES ================ */}
+                <Stack key={appConfig.routes.allServices}>
+                  <Scene
+                    key={`${appConfig.routes.allServices}_1`}
+                    component={AllServices}
+                    title={t('screen.allServices.mainTitle')}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>

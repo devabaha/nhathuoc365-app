@@ -1,9 +1,8 @@
-'use strict';
-
 /**
- * Name: API v0
- * Docs: https://docs.google.com/spreadsheets/d/1TmJAnrADprIjgkn1MWv5PFiUpTSmaKAVkfMCPKZ9L7A/edit#gid=0
- * E.g: in components dir import {USER_INFO, USER_LOGIN} from '../../network/api';
+ * Common/old API
+ * @author Nguyễn Hoàng Minh <minhnguyenit14@gmail.com>
+ *
+ * @module CommonAPI
  */
 
 // Sites
@@ -55,7 +54,6 @@ exports.SITE_CART_NOTE = MY_FOOD_API + 'apiCart/note';
 exports.SITE_CART_RATING = MY_FOOD_API + 'apiCart/rating';
 exports.SITE_CART_SHOW = MY_FOOD_API + 'apiCart/show';
 exports.SITE_CART_CANCELING = MY_FOOD_API + 'apiCart/cancel';
-
 exports.SITE_CART_ADDING = MY_FOOD_API + 'apiSite/cartadding';
 exports.SITE_CART = MY_FOOD_API + 'apiSite/cart';
 exports.SITE_CART_DOWN = MY_FOOD_API + 'apiSite/cartdown';
@@ -73,7 +71,6 @@ exports.CART_SITE_UPDATE = MY_FOOD_API + 'apiSite/site_cart_update';
 // Address
 exports.SITE_CART_ADD_ADDRESS = MY_FOOD_API + 'apiCart/add_address';
 exports.SITE_CART_CHANGE_ADDRESS = MY_FOOD_API + 'apiCart/change_address';
-
 exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';
 exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiUser/add_address';
 exports.SITE_ADD_ADDRESS = MY_FOOD_API + 'apiSite/add_address';
@@ -82,7 +79,6 @@ exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
 
 // Orders
 exports.SITE_CART_INDEX = MY_FOOD_API + 'apiCart/index';
-
 exports.SITE_CART_LIST = MY_FOOD_API + 'apiSite/cart_list';
 exports.USER_CART_LIST = MY_FOOD_API + 'apiUser/cart_list';
 //get_cart_code
@@ -113,7 +109,6 @@ exports.USER_NOTIFY = MY_FOOD_API + 'apiUser/notify';
 exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';
 
 // Users
-
 exports.USER_REGISTER = MY_FOOD_API + 'apiUser/register';
 exports.USER_OP_REGISTER = MY_FOOD_API + 'apiUser/op_register';
 exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
@@ -139,11 +134,13 @@ exports.USER_GET_INFO_BY_WALLET_ADDRESS =
 exports.USER_GET_FAVOR_SITES = MY_FOOD_API + 'apiUser/favor_sites';
 exports.USER_RESET_PASSWORD = MY_FOOD_API + 'apiUser/reset_pass';
 exports.USER_RATE_APP = MY_FOOD_API + 'apiUser/rate_app';
+exports.USER_GET_SERVICES = MY_FOOD_API + 'apiUser/get_services';
 
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';
 exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';
 exports.SERVICE_ORDERS = MY_FOOD_API + 'apiService/orders';
+exports.SERVICE_RATING = MY_FOOD_API + 'apiService/rating';
 
 // Voucher
 exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + 'apiVoucher/my_voucher';

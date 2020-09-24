@@ -9,6 +9,8 @@ import {
 
 import { isEmpty, isFunction } from 'lodash';
 import DatePicker from 'react-native-datepicker';
+import appConfig from 'app-config';
+import { Actions } from 'react-native-router-flux';
 
 export default class HorizontalInfoItem extends Component {
   constructor(props) {
@@ -19,25 +21,75 @@ export default class HorizontalInfoItem extends Component {
     };
   }
 
-  _renderRightView = (id, input, select, value, defaultValue, specialColor) => {
+  goToMap() {
+    Actions.push(appConfig.routes.modalSearchPlaces, {
+      onCloseModal: Actions.pop,
+      onPressItem: this._onChangeInputValue
+    });
+  }
+
+  _renderRightView = (
+    id,
+    input,
+    select,
+    value,
+    defaultValue,
+    specialColor,
+    multiline,
+    mapField,
+    inputProps,
+    detailTitleStyle
+  ) => {
     if (!input && !select) {
       return (
         <Text
           style={[
             styles.detailTitle,
-            { color: specialColor ? specialColor : 'black' }
+            { color: specialColor ? specialColor : 'black' },
+            detailTitleStyle,
+            this.props.detailTitleStyle
           ]}
+          {...inputProps}
         >
           {value}
         </Text>
       );
     } else if (input) {
+      if (mapField) {
+        return (
+          <TouchableOpacity
+            style={{ flex: 1, width: '100%' }}
+            onPress={this.goToMap.bind(this)}
+          >
+            <View pointerEvents="none">
+              <TextInput
+                style={[
+                  styles.detailTitle,
+                  detailTitleStyle,
+                  this.props.detailTitleStyle
+                ]}
+                value={value}
+                placeholder={defaultValue}
+                multiline={multiline}
+                onChangeText={this._onChangeInputValue}
+                {...inputProps}
+              />
+            </View>
+          </TouchableOpacity>
+        );
+      }
       return (
         <TextInput
-          style={styles.detailTitle}
+          style={[
+            styles.detailTitle,
+            detailTitleStyle,
+            this.props.detailTitleStyle
+          ]}
           value={value}
           placeholder={defaultValue}
+          multiline={multiline}
           onChangeText={this._onChangeInputValue}
+          {...inputProps}
         />
       );
     } else if (select) {
@@ -91,6 +143,7 @@ export default class HorizontalInfoItem extends Component {
                 fontSize: 14,
                 color: isEmpty(value) ? '#989898' : 'black'
               }}
+              {...inputProps}
             >
               {isEmpty(value) ? defaultValue : value}
             </Text>
@@ -124,24 +177,40 @@ export default class HorizontalInfoItem extends Component {
         input,
         select,
         defaultValue,
-        specialColor
-      }
+        specialColor,
+        multiline,
+        mapField,
+        columnView
+      },
+      inputProps
     } = this.props;
+    const extraContainerStyle = columnView && styles.columnViewContainer;
+    const extraTitleStyle = columnView && styles.columnViewTitle;
+    const extraDetailTitleStyle = columnView && styles.columnViewValue;
+
     return (
       <View
         style={[
           styles.container,
-          { backgroundColor: disable ? '#EAF0F6' : '#ffffff' }
+          extraContainerStyle,
+          { backgroundColor: disable ? '#EAF0F6' : '#ffffff' },
+          this.props.containerStyle
         ]}
       >
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, extraTitleStyle, this.props.titleStyle]}>
+          {title}
+        </Text>
         {this._renderRightView(
           id,
           input,
           select,
           value,
           defaultValue,
-          specialColor
+          specialColor,
+          multiline,
+          mapField,
+          inputProps,
+          extraDetailTitleStyle
         )}
       </View>
     );
@@ -159,17 +228,18 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 14,
-    color: '#989898',
+    color: '#888',
     marginLeft: 20,
     textAlign: 'left',
-    flex: 0.4
+    flex: 0.5
   },
 
   detailTitle: {
-    flex: 0.6,
+    flex: 0.5,
     fontSize: 14,
-    color: 'black',
+    color: '#242424',
     marginRight: 20,
+    paddingLeft: 0,
     textAlign: 'right'
   },
 
@@ -178,5 +248,23 @@ const styles = StyleSheet.create({
     marginRight: 20,
     justifyContent: 'center',
     alignItems: 'flex-end'
+  },
+  columnViewContainer: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    paddingVertical: 10,
+    height: null,
+    paddingHorizontal: 20
+  },
+  columnViewTitle: {
+    flex: 0,
+    marginLeft: 0,
+    marginBottom: 10
+  },
+  columnViewValue: {
+    textAlign: 'left',
+    marginRight: 0,
+    flex: 1,
+    color: '#242244'
   }
 });

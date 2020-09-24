@@ -405,3 +405,48 @@ global.LightenColor = (color, percent) => {
       .slice(1)
   );
 };
+
+/**
+ * @todo format number to standard format
+ * @example 1000 -> 1.000
+ * @param {!number} target
+ * @param {number} n
+ * @param {number} x
+ * @returns {string}
+ */
+global.numberFormat = (target, n, x) => {
+  var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\,' : '$') + ')';
+  return target.toFixed(Math.max(0, ~~n)).replace(new RegExp(re, 'g'), '$&.');
+};
+
+/**
+ * @todo format standard number to vnđ currency
+ * @example 1.000 -> 1.000đ
+ * @see numberFormat
+ */
+global.vndCurrencyFormat = (target, n, x) => {
+  return numberFormat(target, n, x) + 'đ';
+};
+
+/**
+ * @todo format number to sale form
+ * @example 25 -> -25%
+ */
+global.saleFormat = sale => {
+  return `-${sale}%`;
+};
+
+/**
+ * @todo cancel all APIRequest() request(s)
+ *
+ * @param {Function[] | Function} requests
+ */
+global.cancelRequests = requests => {
+  if (Array.isArray(requests)) {
+    requests.forEach(request => {
+      request.cancel();
+    });
+  } else {
+    requests.cancel();
+  }
+};

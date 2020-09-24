@@ -7,6 +7,8 @@ import appConfig from 'app-config';
 import TickidChat from '../../packages/tickid-chat/container/TickidChat/TickidChat';
 import RightButtonCall from '../RightButtonCall';
 import { servicesHandler } from '../../helper/servicesHandler';
+import { languages } from '../../i18n/constants';
+import { APIRequest } from '../../network/Entity';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -49,13 +51,17 @@ class Chat extends Component {
     this.refListMessages = null;
     this.refGiftedChat = null;
     this.refTickidChat = null;
-    this.source = null;
     this.isLoadFirstTime = true;
     this.giftedChatExtraProps = {};
+
+    this.getMessagesAPI = new APIRequest();
   }
 
   get giftedChatProps() {
     this.giftedChatExtraProps.user = { _id: this.state.user_id };
+    this.giftedChatExtraProps.locale =
+      languages[this.props.i18n.language].locale;
+
     return this.giftedChatExtraProps;
   }
 
@@ -125,9 +131,7 @@ class Chat extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
-    if (this.source) {
-      this.source.cancel();
-    }
+    this.getMessagesAPI.cancel();
     clearTimeout(this.timerGetChat);
   }
 
@@ -156,82 +160,77 @@ class Chat extends Component {
   };
 
   _getMessages = async (delay = 0) => {
-    if (!this.unmounted) {
-      let { site_id, user_id } = this.props;
+    let { site_id, user_id } = this.props;
 
-      //specify for tick/quan_ly_cua_hang
-      // const main_user = site_id;
-      //specify for tick/tickid
-      const main_user = user_id;
-      user_id = 0;
+    //specify for tick/quan_ly_cua_hang
+    // const main_user = site_id;
+    //specify for tick/tickid
+    const main_user = user_id;
+    user_id = 0;
 
-      try {
-        const [source, callable] = APIHandler.site_load_conversation(
-          site_id,
-          user_id,
-          this._lastID
-        );
-        this.source = source;
-        const response = await callable();
+    try {
+      this.getMessagesAPI.data = APIHandler.site_load_conversation(
+        site_id,
+        user_id,
+        this._lastID
+      );
 
-        if (!this.unmounted) {
-          if (response && response.status == STATUS_SUCCESS && response.data) {
-            if (response.data.receiver) {
-              if (this.state.phoneNumber !== response.data.receiver.phone) {
-                Actions.refresh({
-                  right: this.renderRight(response.data.receiver.phone)
-                });
-              }
-              this.setState({
-                phoneNumber: response.data.receiver.phone,
-                guestName: response.data.receiver.name
-              });
-            }
-            if (response.data.list) {
-              if (this.state.messages) {
-                this._appendMessages(response.data.list);
-              } else {
-                this.setState({
-                  messages: response.data.list,
-                  user_id: main_user
-                });
-              }
-              this._calculatorLastID(response.data.list);
-            }
-            if (response.data.pin_notify) {
-              this.setState({
-                pinNotify: response.data.pin_notify
-              });
-            }
-            if (response.data.pin_list_notify) {
-              const condition =
-                JSON.stringify(response.data.pin_list_notify) !==
-                JSON.stringify(this.state.pinListNotify);
-
-              if (condition) {
-                this.setState({
-                  pinListNotify: response.data.pin_list_notify
-                });
-              }
-            }
-          } else if (this.isLoadFirstTime) {
+      const response = await this.getMessagesAPI.promise();
+      if (response && response.status == STATUS_SUCCESS && response.data) {
+        if (response.data.receiver) {
+          if (this.state.phoneNumber !== response.data.receiver.phone) {
+            Actions.refresh({
+              right: this.renderRight(response.data.receiver.phone)
+            });
+          }
+          this.setState({
+            phoneNumber: response.data.receiver.phone,
+            guestName: response.data.receiver.name
+          });
+        }
+        if (response.data.list) {
+          if (this.state.messages) {
+            this._appendMessages(response.data.list);
+          } else {
             this.setState({
-              messages: [],
+              messages: response.data.list,
               user_id: main_user
             });
           }
-          this.timerGetChat = setTimeout(
-            () => this._getMessages(),
-            DELAY_GET_CONVERSATION
-          );
+          this._calculatorLastID(response.data.list);
         }
-      } catch (e) {
-        console.warn(e + ' site_load_chat');
+        if (response.data.pin_notify) {
+          this.setState({
+            pinNotify: response.data.pin_notify
+          });
+        }
+        if (response.data.pin_list_notify) {
+          const condition =
+            JSON.stringify(response.data.pin_list_notify) !==
+            JSON.stringify(this.state.pinListNotify);
 
-        store.addApiQueue('site_load_chat', this._getMessages);
-      } finally {
-        this.isLoadFirstTime = false;
+          if (condition) {
+            this.setState({
+              pinListNotify: response.data.pin_list_notify
+            });
+          }
+        }
+      } else if (this.isLoadFirstTime) {
+        this.setState({
+          messages: [],
+          user_id: main_user
+        });
       }
+      this.timerGetChat = setTimeout(
+        () => this._getMessages(),
+        DELAY_GET_CONVERSATION
+      );
+    } catch (e) {
+      console.warn(e + ' site_load_chat');
+
+      store.addApiQueue('site_load_chat', this._getMessages);
+    } finally {
+      this.isLoadFirstTime = false;
     }
   };
 

@@ -115,6 +115,9 @@
     },
     "resetPassword": {
       "mainTitle": "Đặt lại mật khẩu"
+    },
+    "allServices": {
+      "mainTitle": "Danh sách dịch vụ"
     }
   },
 

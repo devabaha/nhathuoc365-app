@@ -16,6 +16,13 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 
 class ModalPicker extends PureComponent {
+  static defaultProps = {
+    cancelTitle: 'Hủy',
+    selectTitle: 'Chọn',
+    onClose: () => {},
+    swipeToClose: false
+  };
+
   state = {
     selectedValue: this.props.selectedValue,
     headerHeight: 0
@@ -92,8 +99,8 @@ class ModalPicker extends PureComponent {
   }
 
   renderLanguages() {
-    return this.props.data.map(lang => (
-      <Picker.Item label={lang.label} value={lang.value} />
+    return this.props.data.map((lang, index) => (
+      <Picker.Item key={index} label={lang.label} value={lang.value} />
     ));
   }
 
@@ -129,7 +136,7 @@ class ModalPicker extends PureComponent {
         onClosed={this.onClosed}
         animationDuration={200}
         useNativeDriver
-        swipeToClose={true}
+        swipeToClose={this.props.swipeToClose}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}
       >

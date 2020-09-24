@@ -261,7 +261,7 @@ class Cart extends Component {
               store.setCartItemIndex(store.cart_item_index - 1);
             }
             flashShowMessage({
-              type: 'info',
+              type: 'success',
               message: response.message
             });
           })();

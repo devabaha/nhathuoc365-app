@@ -661,6 +661,7 @@ class Item extends Component {
                   }
                   img {
                     max-width: 100% !important;
+                    height: auto !important;
                   }`}
               />
             ) : (
@@ -842,7 +843,7 @@ class Item extends Component {
             }
             flashShowMessage({
               message: response.message,
-              type: 'info'
+              type: 'success'
             });
           })();
         }, 450);

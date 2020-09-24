@@ -13,6 +13,7 @@ import ChatRow from './ChatRow';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import { setStater } from '../../packages/tickid-chat/helper';
+import { APIRequest } from '../../network/Entity';
 
 @observer
 class List extends Component {
@@ -26,7 +27,8 @@ class List extends Component {
   unmounted = false;
   isLoadMore = false;
   timeoutGetListCustomer = null;
-  source = null;
+
+  getListCustomerAPI = new APIRequest();
 
   componentDidMount() {
     this.setState({
@@ -39,10 +41,8 @@ class List extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.getListCustomerAPI.cancel();
     clearTimeout(this.timeoutGetListCustomer);
-    if (this.source) {
-      this.source.cancel();
-    }
   }
 
   handleSearch() {
@@ -76,11 +76,14 @@ class List extends Component {
         this.source.cancel();
       }
 
-      const [source, callable] = APIHandler.site_load_conversations(site_id, {
-        ...data
-      });
-      this.source = source;
-      const response = await callable();
+      this.getListCustomerAPI.data = APIHandler.site_load_conversations(
+        site_id,
+        {
+          ...data
+        }
+      );
+
+      const response = await this.getListCustomerAPI.promise();
 
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {

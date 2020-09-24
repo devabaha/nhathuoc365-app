@@ -921,7 +921,7 @@ class Account extends Component {
           store.resetAsyncStorage();
           flashShowMessage({
             message: t('signOut.successMessage'),
-            type: 'info'
+            type: 'success'
           });
           Actions.reset(appConfig.routes.sceneWrapper);
           break;

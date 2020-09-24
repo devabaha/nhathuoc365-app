@@ -50,7 +50,7 @@ class Promotion extends Component {
         style={[styles.promotionItem, this.props.promotionItemStyle]}
       >
         <TouchableHighlight
-          onPress={() => this.props.onPress(promotion)}
+          onPress={() => this.props.onPress(promotion, index)}
           underlayColor="transparent"
         >
           <CachedImage
@@ -86,6 +86,7 @@ class Promotion extends Component {
   }
 
   renderPagination = (index, total) => {
+    if (this.props.data && this.props.data.length <= 1) return null;
     this.handleAnimation(index, total);
 
     return (
@@ -101,14 +102,6 @@ class Promotion extends Component {
             />
           );
         })}
-        {/* <Animated.View
-          style={[
-            styles.paginationActive,
-            {
-              left: this.state.paginationLeft
-            }
-          ]}
-        /> */}
         <AnimatedIcon
           name="circle"
           style={[styles.paginationActive, { left: this.state.paginationLeft }]}

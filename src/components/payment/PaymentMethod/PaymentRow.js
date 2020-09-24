@@ -322,7 +322,7 @@ class PaymentRow extends Component {
                     />
                   </View>
                 )}
-                <View>
+                <View style={styles.paymentMethodTextContainer}>
                   <Text style={styles.paymentMethodLabel}>
                     {this.props.title}
                   </Text>
@@ -354,6 +354,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center'
+  },
+  paymentMethodTextContainer: {
+    flex: 1
+    // flexWrap: 'wrap'
   },
   paymentMethodLabel: {
     fontSize: 15,

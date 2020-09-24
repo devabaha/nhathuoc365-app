@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
-
-import OneSignal from 'react-native-onesignal';
 
 import store from 'app-store';
 import appConfig from 'app-config';
@@ -40,29 +37,15 @@ class Home extends Component {
   }
 
   componentWillUnmount() {
-    this.homeDataLoaded && this.handleRemoveListenerOneSignal();
+    store.updateHomeLoaded(false);
   }
 
-  handleAddListenerOneSignal = () => {
-    OneSignal.addEventListener('opened', this.handleOpenningNotification);
-  };
-
-  handleRemoveListenerOneSignal = () => {
-    OneSignal.removeEventListener('opened', this.handleOpenningNotification);
-  };
-
-  handleExecuteTempBranchIO() {
-    if (store.tempBranchIOData) {
-      servicesHandler(store.tempBranchIOData.params, store.tempBranchIOData.t);
-      store.setTempBranchIOSubcribeData(null);
+  handleExecuteTempDeepLink() {
+    if (store.tempDeepLinkData) {
+      servicesHandler(store.tempDeepLinkData.params, store.tempDeepLinkData.t);
+      store.setTempDeepLinkData(null);
     }
   }
-
-  handleOpenningNotification = openResult => {
-    const { t } = this.props;
-    const data = openResult.notification.payload.additionalData;
-    servicesHandler(data, t);
-  };
 
   getHomeDataFromApi = async (showLoading = true) => {
     if (showLoading) {
@@ -73,6 +56,7 @@ class Home extends Component {
 
     try {
       const response = await APIHandler.user_site_home();
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
@@ -81,6 +65,7 @@ class Home extends Component {
         }
         action(() => {
           store.setStoreData(response.data.site);
+          store.setAppData(response.data.site);
         })();
         this.setState({
           site: response.data.site,
@@ -100,9 +85,8 @@ class Home extends Component {
 
         if (!this.homeDataLoaded) {
           this.homeDataLoaded = true;
-          this.handleAddListenerOneSignal();
-          this.handleExecuteTempBranchIO();
           store.updateHomeLoaded(true);
+          this.handleExecuteTempDeepLink();
         }
       }
     } catch (error) {
@@ -145,175 +129,12 @@ class Home extends Component {
     });
   };
 
-  handleCategoryPress(item) {
-    Actions.push('tickidRadaListService', {
-      category: item,
-      title: item.name,
-      onPressItem: item => {
-        this.handleServicePress(item);
-      },
-      onPressCartImage: item => {
-        this.handleCartImagePress(item);
-      }
-    });
-  }
-
-  handleOrderHistoryPress(item) {
-    const { t } = this.props;
-    Actions.push('tickidRadaOrderHistory', {
-      category: item,
-      title: t('common:screen.radaOrderHistory.mainTitle')
-    });
-  }
-
-  handleServicePress(item) {
-    Actions.push('tickidRadaServiceDetail', {
-      service: item,
-      title: item.name,
-      onPressOrder: item => {
-        this.handleOrderButtonPress(item);
-      }
-    });
-  }
-
-  handleCartImagePress(item) {
-    this.handleOrderButtonPress(item);
-  }
-
-  handleOrderButtonPress(service) {
-    Actions.push('tickidRadaBooking', {
-      service: service,
-      title: service.name || '',
-      customerName: '',
-      phone: '',
-      address: '',
-      onBookingSuccess: response => {
-        this.handleBookingSuccess(response);
-      },
-      onBookingFail: err => {
-        this.handleBookingFail(err);
-      },
-      onCallWebHookSuccess: response => {
-        this.handleCallWebHookSuccess(response);
-      },
-      onCallWebHookFail: err => {
-        this.handleCallWebHookFail(err);
-      }
-    });
-  }
-
-  handleBookingSuccess(response) {
-    const { t } = this.props;
-    return Alert.alert(
-      t('booking.success.title'),
-      t('booking.success.message'),
-      [{ text: t('booking.success.accept'), onPress: () => Actions.homeTab() }],
-      { cancelable: false }
-    );
-  }
-
-  handleBookingFail(err) {
-    const { t } = this.props;
-    if (err && err.data) {
-      if (err.data.customer.length != 0) {
-        return Alert.alert(
-          t('booking.fail.title'),
-          err.data.customer[0],
-          [{ text: t('booking.fail.accept') }],
-          { cancelable: false }
-        );
-      } else {
-        return Alert.alert(
-          t('booking.fail.title'),
-          err.message || '',
-          [{ text: t('booking.fail.accept') }],
-          { cancelable: false }
-        );
-      }
-    } else if (err.message) {
-      return Alert.alert(
-        t('booking.fail.title'),
-        err.message,
-        [{ text: t('booking.fail.accept') }],
-        {
-          cancelable: false
-        }
-      );
-    } else {
-      return Alert.alert(
-        t('booking.fail.title'),
-        t('booking.fail.message'),
-        [{ text: t('booking.fail.accept') }],
-        { cancelable: false }
-      );
-    }
-  }
-
-  handleCallWebHookSuccess(response) {
-    const { t } = this.props;
-    return Alert.alert(
-      t('web.success.title'),
-      t('web.success.message'),
-      [{ text: t('web.success.accept'), onPress: () => Actions.homeTab() }],
-      { cancelable: false }
-    );
-  }
-
-  handleCallWebHookFail(err) {
-    const { t } = this.props;
-    if (err && err.data) {
-      if (err.data.customer.length != 0) {
-        return Alert.alert(
-          t('web.fail.title'),
-          err.data.customer[0],
-          [{ text: t('web.fail.accept') }],
-          { cancelable: false }
-        );
-      } else {
-        return Alert.alert(
-          t('web.fail.title'),
-          err.message || '',
-          [{ text: t('web.fail.accept') }],
-          { cancelable: false }
-        );
-      }
-    } else if (err.message) {
-      return Alert.alert(
-        t('web.fail.title'),
-        err.message,
-        [{ text: t('web.fail.accept') }],
-        {
-          cancelable: false
-        }
-      );
-    } else {
-      return Alert.alert(
-        t('web.fail.title'),
-        t('web.fail.message'),
-        [{ text: t('web.fail.accept') }],
-        { cancelable: false }
-      );
-    }
-  }
-
   handleShowAllVouchers = () => {};
 
   handlePressService = service => {
     const { t } = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
-    } else if (service.type === 'rada_service') {
-      Actions.push('tickidRada', {
-        service_type: service.type,
-        service_id: service.id,
-        title: t('common:screen.rada.mainTitle'),
-        onPressItem: item => {
-          this.handleCategoryPress(item);
-        },
-        onPressOrderHistory: item => {
-          this.handleOrderHistoryPress(item);
-        }
-      });
     } else {
       servicesHandler(service, t);
     }

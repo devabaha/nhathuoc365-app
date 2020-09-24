@@ -15,7 +15,8 @@ class FloatingLabelInput extends Component {
     onInputContainerLayout: defaultFunc,
     onChangeText: defaultFunc,
     onBlur: defaultFunc,
-    onFocus: defaultFunc
+    onFocus: defaultFunc,
+    inputRef: defaultFunc
   };
   state = {
     animatedFloating: new Animated.Value(0),
@@ -23,6 +24,7 @@ class FloatingLabelInput extends Component {
     inputContainerHeight: undefined
   };
   refLabel = React.createRef();
+  refInput = null;
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.inputContainerHeight !== this.state.inputContainerHeight) {
@@ -35,11 +37,20 @@ class FloatingLabelInput extends Component {
       }
     }
 
+    if (nextProps.value) {
+      this.state.animatedFloating.setValue(0);
+    }
+
     if (nextState !== this.state) {
       return true;
     }
 
     if (nextProps !== this.props) {
+      if (this.refInput && nextProps.value !== this.props.value) {
+        if (!this.refInput.isFocused() && !nextProps.value) {
+          this.state.animatedFloating.setValue(nextState.inputContainerHeight);
+        }
+      }
       return true;
     }
 
@@ -47,17 +58,24 @@ class FloatingLabelInput extends Component {
   }
 
   componentDidMount() {
-    this.state.animatedFloating.addListener(this.floatingListener.bind(this));
+    this.state.animatedFloating.addListener(this.floatingListener);
   }
 
   componentWillUnmount() {
-    this.state.animatedFloating.removeListener(
-      this.floatingListener.bind(this)
-    );
+    this.state.animatedFloating.removeListener(this.floatingListener);
   }
 
-  floatingListener({ value }) {
+  floatingListener = ({ value }) => {
     if (this.refLabel.current) {
+      if (!this.state.inputContainerHeight) {
+        this.refLabel.current.setNativeProps({
+          style: {
+            color: '#888'
+          }
+        });
+        return;
+      }
+
       if (value >= (this.state.inputContainerHeight * 9) / 10) {
         this.refLabel.current.setNativeProps({
           style: {
@@ -72,7 +90,7 @@ class FloatingLabelInput extends Component {
         });
       }
     }
-  }
+  };
 
   onInputContainerLayout = e => {
     this.setState({ inputContainerHeight: e.nativeEvent.layout.height });
@@ -82,6 +100,12 @@ class FloatingLabelInput extends Component {
   onChangeText(text) {
     this.props.onChangeText(text);
   }
+
+  focus = () => {
+    if (this.refInput) {
+      this.refInput.focus();
+    }
+  };
 
   onFocus() {
     if (!this.props.value) {
@@ -114,6 +138,7 @@ class FloatingLabelInput extends Component {
       error,
       errorStyle,
       containerStyle,
+      inputContainerStyle,
       inputStyle,
       onFocus,
       onBlur,
@@ -144,9 +169,13 @@ class FloatingLabelInput extends Component {
           </View>
           <View
             onLayout={this.onInputContainerLayout}
-            style={[styles.inputContainer]}
+            style={[styles.inputContainer, inputContainerStyle]}
           >
             <TextInput
+              ref={inst => {
+                this.refInput = inst;
+                this.props.inputRef(inst);
+              }}
               style={[styles.input, extraInputStyle, inputStyle]}
               onFocus={this.onFocus.bind(this)}
               onBlur={this.onBlur.bind(this)}
@@ -183,6 +212,7 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingVertical: 0,
+    padding: 0,
     height: '100%',
     fontSize: 16,
     color: '#444'

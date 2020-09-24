@@ -109,7 +109,7 @@ class OpRegister extends Component {
           if (response) {
             flashShowMessage({
               message: response.message,
-              type: 'info'
+              type: response.status == STATUS_SUCCESS ? 'success' : 'danger'
             });
           }
         } catch (e) {

@@ -1,7 +1,8 @@
 import { reaction, observable, action, toJS } from 'mobx';
 import autobind from 'autobind-decorator';
-import { Keyboard } from 'react-native';
+import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
 
 @autobind
 class Store {
@@ -45,6 +46,7 @@ class Store {
     this.getNotifyFlag = true;
     this.getNotifyChatFlag = true;
     this.updateNotifyFlag = true;
+    this.notifyReceived = false;
 
     // Get notice repeat
     clearInterval(this._timeGetNotify);
@@ -76,10 +78,15 @@ class Store {
       const response = await APIHandler.user_notify();
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
+          if (!this.notifyReceived) {
+            this.notifyReceived = true;
+            this.newVersionChecking(response.data);
+          }
           if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
           }
           const { user, ...notifies } = response.data;
+          this.initConfigRadaModule(user);
           this.setUserInfo(user);
           this.setNotify(notifies);
         })();
@@ -90,6 +97,53 @@ class Store {
       this.getNotifyFlag = true;
     }
   };
+
+  @observable radaConfig = { name: '', tel: '' };
+  @action initConfigRadaModule(user) {
+    if (
+      user &&
+      (user.name || user.tel) &&
+      (user.name !== this.radaConfig.name || user.tel !== this.radaConfig.tel)
+    ) {
+      this.radaConfig.name = user.name;
+      this.radaConfig.tel = user.tel;
+      initializeRadaModule({
+        defaultContactName: user.name,
+        defaultContactPhone: user.tel
+      });
+    }
+  }
+
+  newVersionChecking(notifies) {
+    const appStoreName = Platform.OS === 'ios' ? 'App Store' : 'Play Store';
+    if (notifies && notifies.updating_version == 1) {
+      setTimeout(
+        () =>
+          Alert.alert(
+            `Phiên bản mới ${notifies.new_version}!`,
+            'Đã có bản cập nhật mới, bạn vui lòng cập nhật ứng dụng để có trải nghiệm tốt nhất.',
+            [
+              {
+                text: 'Lúc khác'
+              },
+              {
+                text: 'Cập nhật',
+                style: 'cancel',
+                onPress: () =>
+                  Linking.openURL(notifies.url_update).catch(error => {
+                    console.log('update_app', error);
+                    Alert.alert(
+                      'Có lỗi xảy ra',
+                      `Bạn có thể truy cập ${appStoreName} để thử lại.`
+                    );
+                  })
+              }
+            ]
+          ),
+        1000
+      );
+    }
+  }
 
   storeUnMount = {};
 
@@ -175,6 +229,8 @@ class Store {
   @observable user_info = null;
   @observable store_id = null;
   @observable store_data = null;
+  @observable app_id = null;
+  @observable app_data = null;
   @observable deep_link_data = null;
   @observable stores_finish = false;
 
@@ -193,6 +249,11 @@ class Store {
   @action setStoreData(data) {
     this.store_data = data;
     this.store_id = data.id;
+  }
+
+  @action setAppData(data) {
+    this.app_data = data;
+    this.app_id = data.id;
   }
 
   @action setDeepLinkData(data) {
@@ -388,10 +449,10 @@ class Store {
     }
   }
 
-  @observable tempBranchIOData = null;
+  @observable tempDeepLinkData = null;
 
-  @action setTempBranchIOSubcribeData(tempBranchIOData) {
-    this.tempBranchIOData = tempBranchIOData;
+  @action setTempDeepLinkData(tempDeepLinkData) {
+    this.tempDeepLinkData = tempDeepLinkData;
   }
 
   @observable isHomeLoaded = false;
