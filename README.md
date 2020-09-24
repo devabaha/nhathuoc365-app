@@ -37,8 +37,8 @@ code-push app add tick-huongcang-android android react-native
 ├────────────┼──────────────────────────────────────────────────────────────────┤
 │ Staging    │  │Ekl91GWSUVXNB4brJzJxUNWNy7ZBnTrFIsQCn
 └────────────┴──────────────────────────────────────────────────────────────────┘
-code-push release-react tick-huongcang-ios ios -d "Production" -m --description "fix primary type"
-code-push release-react tick-huongcang-android android -d "Production" -m --description "fix primary type"
+code-push release-react tick-huongcang-ios ios -d "Production" -m --description "new app"
+code-push release-react tick-huongcang-android android -d "Production" -m --description "new app"
 
 
 FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase.
