@@ -6,19 +6,19 @@ import {
 } from 'react-native-iphone-x-helper';
 
 const config = Object.freeze({
-  appName: 'FoodHub',
+  appName: 'HuongCang',
   namespace: 'app',
-  defaultSiteId: 28, // @NOTE: id cửa hàng ở menu
+  defaultSiteId: 1803, // @NOTE: id cửa hàng ở menu
   reduxLoggerEnable: false,
   voucherModule: {
-    appKey: 'mydinhhubkey',
-    secretKey: '0406mydinhhubjfsdfd1414h52'
+    appKey: 'huongcangkey',
+    secretKey: 'jkh234huongcangkey2342k7'
   },
   radaModule: {
     partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
   },
   oneSignal: {
-    appKey: 'c437636c-1e52-489c-b3bd-e64616fe2735'
+    appKey: '490c05c5-ddb5-4bfd-adf9-a58e78f7982a'
   },
   device: Object.freeze({
     isIphoneX: isIphoneX(),
@@ -32,12 +32,12 @@ const config = Object.freeze({
     bottomSpace: getBottomSpace()
   }),
   colors: {
-    primary: '#14964d',
     logo: {
-      main: '#14964d',
-      sub: '#ffffff',
-      addition: '#14964d'
+      main: '#f41820',
+      sub: '#FFF',
+      addition: '#000'
     },
+    primary: '#f41820',
     white: '#fff',
     black: '#000',
     text: '#333',

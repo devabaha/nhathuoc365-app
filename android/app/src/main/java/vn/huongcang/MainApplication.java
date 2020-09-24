@@ -1,4 +1,4 @@
-package vn.foodhub;
+package vn.huongcang;
 
 import android.app.Application;
 

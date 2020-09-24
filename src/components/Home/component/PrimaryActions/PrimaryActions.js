@@ -1,62 +1,77 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, Image, StyleSheet, Platform } from 'react-native';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import getImageRatio from 'app-packages/tickid-util/getImageRatio';
 import imageIconNext from '../../../../images/next.png';
+import PointRechargeButton from './PointRechargeButton';
 
-function PrimaryActions(props) {
-  const actionsWrapper = !props.primaryActions && {
-    height: null
-  };
-  return (
-    <View style={styles.container}>
-      <View style={[styles.actionsWrapper, actionsWrapper]}>
-        <Button onPress={() => props.onSurplusNext()}>
-          <View style={styles.walletInfoWrapper}>
-            <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+class PrimaryActions extends Component {
+  render() {
+    const props = this.props;
+    const actionsWrapper = !props.primaryActions && {
+      height: null
+    };
+    return (
+      <View style={styles.container}>
+        <View style={[styles.actionsWrapper, actionsWrapper]}>
+          <View style={styles.mainContentWrapper}>
+            <PointRechargeButton
+              wrapperStyle={{
+                paddingVertical: 10
+              }}
+              iconStyle={styles.scanIcon}
+            />
+            <Button
+              containerStyle={{ width: '100%', flex: 1, paddingVertical: 10 }}
+              onPress={() => props.onSurplusNext()}
+            >
+              <View style={styles.walletInfoWrapper}>
+                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
 
-            <View style={styles.walletLabelRight}>
-              <Text style={styles.surplus}>{props.surplus}</Text>
-            </View>
-            <View style={styles.iconNextWrapper}>
-              <Image style={styles.iconNext} source={imageIconNext} />
-            </View>
-          </View>
-        </Button>
-        {props.primaryActions && (
-          <View style={styles.walletAction}>
-            {props.primaryActions.map(action => (
-              <Button
-                key={action.type}
-                onPress={() => props.onPressItem(action)}
-                containerStyle={styles.actionButton}
-              >
-                <View style={styles.actionWrapper}>
-                  <Image
-                    source={{ uri: action.icon }}
-                    style={[
-                      styles.actionIcon,
-                      {
-                        ...getImageRatio(
-                          action.iconOriginSize.width,
-                          action.iconOriginSize.height,
-                          undefined,
-                          35
-                        )
-                      }
-                    ]}
-                  />
-                  <Text style={styles.actionTitle}>{action.title}</Text>
+                <View style={styles.walletLabelRight}>
+                  <Text style={styles.surplus}>{props.surplus}</Text>
                 </View>
-              </Button>
-            ))}
+                <View style={styles.iconNextWrapper}>
+                  <Image style={styles.iconNext} source={imageIconNext} />
+                </View>
+              </View>
+            </Button>
           </View>
-        )}
+          {props.primaryActions && (
+            <View style={styles.walletAction}>
+              {props.primaryActions.map(action => (
+                <Button
+                  key={action.type}
+                  onPress={() => props.onPressItem(action)}
+                  containerStyle={styles.actionButton}
+                >
+                  <View style={styles.actionWrapper}>
+                    <Image
+                      source={{ uri: action.icon }}
+                      style={[
+                        styles.actionIcon,
+                        {
+                          ...getImageRatio(
+                            action.iconOriginSize.width,
+                            action.iconOriginSize.height,
+                            undefined,
+                            35
+                          )
+                        }
+                      ]}
+                    />
+                    <Text style={styles.actionTitle}>{action.title}</Text>
+                  </View>
+                </Button>
+              ))}
+            </View>
+          )}
+        </View>
       </View>
-    </View>
-  );
+    );
+  }
 }
 
 const defaultListener = () => {};
@@ -82,10 +97,9 @@ const styles = StyleSheet.create({
   actionsWrapper: {
     width: appConfig.device.width - 32,
     marginHorizontal: 16,
-    flexDirection: 'column',
     backgroundColor: '#fff',
     borderRadius: 8,
-    height: 140,
+    // height: 140,
     ...Platform.select({
       ios: {
         shadowOffset: { width: 0, height: 3 },
@@ -99,27 +113,37 @@ const styles = StyleSheet.create({
       }
     })
   },
-  walletInfoWrapper: {
+  mainContentWrapper: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingHorizontal: 16
+  },
+  walletInfoWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+    paddingLeft: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16
+    borderLeftWidth: 0.5,
+    borderColor: '#ccc'
   },
   walletAction: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderTopWidth: 1,
+    borderTopWidth: 0.5,
     borderTopColor: '#ebebeb',
-    paddingTop: 16
+    paddingVertical: 15
   },
   walletLabelRight: {
-    flex: 1,
+    paddingLeft: 5,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     fontWeight: 'bold'
+  },
+  scanIcon: {
+    fontSize: 36,
+    color: appConfig.colors.primary,
+    paddingRight: 15
   },
   iconNextWrapper: {
     fontSize: 20,
@@ -134,6 +158,8 @@ const styles = StyleSheet.create({
     resizeMode: 'cover'
   },
   walletNameLabel: {
+    flex: 1,
+    paddingRight: 10,
     color: '#042C5C',
     fontSize: 16,
     fontWeight: '500'

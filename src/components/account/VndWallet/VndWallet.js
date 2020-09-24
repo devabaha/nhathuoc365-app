@@ -13,6 +13,7 @@ import History from './History';
 import Info from './Info';
 import appConfig from 'app-config';
 import Loading from '../../Loading';
+import PointRechargeButton from '../../Home/component/PrimaryActions/PointRechargeButton';
 
 class VndWallet extends Component {
   constructor(props) {
@@ -149,7 +150,7 @@ class VndWallet extends Component {
             </View>
           </TouchableHighlight>
 
-          <TouchableHighlight
+          {/* <TouchableHighlight
             onPress={this._goTransfer.bind(this)}
             underlayColor="transparent"
             style={styles.add_store_action_btn}
@@ -160,7 +161,11 @@ class VndWallet extends Component {
                 {t('common:screen.transfer.mainTitle')}
               </Text>
             </View>
-          </TouchableHighlight>
+          </TouchableHighlight> */}
+          <PointRechargeButton
+            label="Nạp điểm"
+            containerStyle={styles.add_store_action_btn_box}
+          />
 
           <TouchableHighlight
             // onPress={() => Actions.vnd_wallet({})}

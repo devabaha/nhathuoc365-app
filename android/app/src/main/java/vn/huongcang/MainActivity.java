@@ -1,4 +1,4 @@
-package vn.foodhub;
+package vn.huongcang;
 
 import com.facebook.react.ReactActivity;
 import io.branch.rnbranch.*; // <-- add this

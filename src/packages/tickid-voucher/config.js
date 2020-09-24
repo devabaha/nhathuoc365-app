@@ -40,7 +40,7 @@ const config = {
     voucherShowBarcode: 'voucherShowBarcode'
   },
   rest: {
-    endpoint: () => 'https://api.foodhub.vn',
+    endpoint: () => 'https://apiapp.abaha.vn',
     listCampaigns: () => '/apiVoucher/list_campaign',
     myVouchers: () => '/apiVoucher/my_voucher',
     myVouchersBySiteId: siteId => `/apiVoucher/my_voucher/${siteId}`,
@@ -60,7 +60,7 @@ const config = {
     success: 200
   },
   colors: {
-    primary: '#14964d',
+    primary: '#f41820',
     white: '#fff',
     black: '#000',
     red: 'red'

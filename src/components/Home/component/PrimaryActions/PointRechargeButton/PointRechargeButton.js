@@ -42,7 +42,7 @@ const PointRechargeButton = ({
       showPrice: false,
       showSubmit: false,
       storeId: store.app_id,
-      title: 'Hướng dẫn nạp điểm HomeID'
+      title: 'Hướng dẫn nạp'
     };
     onPress(service);
     servicesHandler(service);

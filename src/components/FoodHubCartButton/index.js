@@ -31,15 +31,15 @@ const styles = StyleSheet.create({
     // width: 44,
     // height: 44,
     // borderRadius: 22,
-    overflow: 'hidden',
+    // overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center'
   },
   icon: {
     position: 'relative',
-    top: -2,
-    width: 50,
-    height: 50
+    // top: -2,
+    width: 45,
+    height: 45
   }
 });
 

@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="vn.foodhub">
+  package="vn.huongcang">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
@@ -36,7 +36,7 @@
 
         <!-- Branch URI scheme -->
             <intent-filter>
-                <data android:scheme="tickid" android:host="open" />
+                <data android:scheme="huongcang" android:host="open" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -47,14 +47,14 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="foodhubvn.app.link" />
+                <data android:scheme="https" android:host="huongcang.app.link" />
             </intent-filter>
       </activity>
 
-      <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FF14964d" />
+      <meta-data android:name="com.onesignal.NotificationAccentColor.DEFAULT" android:value="FFee1b34" />
 
       <!-- Branch init -->
-        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_lcLJNvmbOflzOcPH3bHINakgtvd14VeI" />
+        <meta-data android:name="io.branch.sdk.BranchKey" android:value="key_live_pdTYGpWpmOwoEkoevPP5ShilDCplZcG4" />
         <!-- Branch testing (TestMode "true" to simulate fresh installs on dev environment) -->
         <meta-data android:name="io.branch.sdk.TestMode" android:value="false" />
  

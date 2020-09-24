@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>1006062787830-l8jen6dbohotijhbi0j585sdhkihhvmj.apps.googleusercontent.com</string>
+	<string>44679388662-hr24gj8pqdmkpm822t3v7har17m7773b.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.1006062787830-l8jen6dbohotijhbi0j585sdhkihhvmj</string>
+	<string>com.googleusercontent.apps.44679388662-hr24gj8pqdmkpm822t3v7har17m7773b</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>44679388662-ep8d7h8gr07fihiepcgvmj2nv22gt888.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBNpSF-lkBKG5HPqhKRCw-0erPzx2MLWig</string>
+	<string>AIzaSyCg7RdnVskBc_EWHtL3WmxiaRpUDdLyqcM</string>
 	<key>GCM_SENDER_ID</key>
-	<string>1006062787830</string>
+	<string>44679388662</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>vn.foodhub</string>
+	<string>vn.huongcang</string>
 	<key>PROJECT_ID</key>
-	<string>foodhub-e9a20</string>
+	<string>huongcang-81d3b</string>
 	<key>STORAGE_BUCKET</key>
-	<string>foodhub-e9a20.appspot.com</string>
+	<string>huongcang-81d3b.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:1006062787830:ios:8fadf42e8a0b77729820d7</string>
+	<string>1:44679388662:ios:f33af3ddb98a8e9603bbd7</string>
 	<key>DATABASE_URL</key>
-	<string>https://foodhub-e9a20.firebaseio.com</string>
+	<string>https://huongcang-81d3b.firebaseio.com</string>
 </dict>
 </plist>

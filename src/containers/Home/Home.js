@@ -154,7 +154,7 @@ class Home extends Component {
   };
 
   handleShowAllNews = () => {
-    Actions.jump(appConfig.routes.newsTab);
+    Actions.push(appConfig.routes.newsTab);
   };
 
   handlePressSiteItem = site => {

@@ -652,7 +652,7 @@ class RootRouter extends Component {
                   >
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
-                      title="FoodHub"
+                      title={APP_NAME_SHOW}
                       component={HomeContainer}
                       hideNavBar
                     />
@@ -662,17 +662,17 @@ class RootRouter extends Component {
                    ************************ Tab 2 ************************
                    */}
                   <Stack
-                    key={appConfig.routes.customerCardWallet}
+                    key={appConfig.routes.mainVoucher}
                     icon={TabIcon}
-                    iconLabel={t('appTab.tab3.title')}
-                    iconName="filter-vintage"
+                    iconLabel={t('appTab.tab2.title')}
+                    iconName="ticket"
                     iconSize={24}
-                    notifyKey="customer_card_wallet"
+                    notifyKey=""
                   >
                     <Scene
-                      key={`${appConfig.routes.customerCardWallet}_1`}
-                      title={t('screen.cardWallet.mainTitle')}
-                      component={CustomerCardWallet}
+                      key={`${appConfig.routes.mainVoucher}_1`}
+                      title={t('screen.voucher.mainTitle')}
+                      component={VoucherContainer}
                     />
                   </Stack>
 
@@ -693,7 +693,7 @@ class RootRouter extends Component {
                     icon={TabIcon}
                     iconSize={24}
                     iconLabel={t('appTab.tab4.title')}
-                    iconName="shopping-cart"
+                    iconName="cart"
                     notifyKey="notify_cart"
                   >
                     <Scene
@@ -721,6 +721,17 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ NEWS ================ */}
+                <Stack key={appConfig.routes.newsTab}>
+                  <Scene
+                    key={`${appConfig.routes.newsTab}_1`}
+                    title={t('screen.news.mainTitle')}
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ MAIN VOUCHER ================ */}
                 <Stack key={appConfig.routes.mainVoucher}>

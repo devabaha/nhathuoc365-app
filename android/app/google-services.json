@@ -1,50 +1,50 @@
 {
   "project_info": {
-    "project_number": "1006062787830",
-    "firebase_url": "https://foodhub-e9a20.firebaseio.com",
-    "project_id": "foodhub-e9a20",
-    "storage_bucket": "foodhub-e9a20.appspot.com"
+    "project_number": "44679388662",
+    "firebase_url": "https://huongcang-81d3b.firebaseio.com",
+    "project_id": "huongcang-81d3b",
+    "storage_bucket": "huongcang-81d3b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1006062787830:android:0a08b958df2f48aa9820d7",
+        "mobilesdk_app_id": "1:44679388662:android:c55c941c7df11cd903bbd7",
         "android_client_info": {
-          "package_name": "vn.foodhub"
+          "package_name": "vn.huongcang"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1006062787830-0o8u2ijb58ioncupa602fbsekmh7npu1.apps.googleusercontent.com",
+          "client_id": "44679388662-ep8d7h8gr07fihiepcgvmj2nv22gt888.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "vn.foodhub",
-            "certificate_hash": "500610543b83f876e505cc90767d228602a01a58"
+            "package_name": "vn.huongcang",
+            "certificate_hash": "0531e1904fbb0286d342aa6e7de984acc4a9a9e7"
           }
         },
         {
-          "client_id": "1006062787830-qddvdk3mecs7seqdo1n5s41hikr5udt8.apps.googleusercontent.com",
+          "client_id": "44679388662-ua3b3ibpqbp5srn5hnb59ssq0as08c4r.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBQIg3us9zPRKVCOUUArFnwg2KIZGYTDrk"
+          "current_key": "AIzaSyAPfKNHtrE19mzGTxlk2pCwyvENLjSy0pU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1006062787830-qddvdk3mecs7seqdo1n5s41hikr5udt8.apps.googleusercontent.com",
+              "client_id": "44679388662-ua3b3ibpqbp5srn5hnb59ssq0as08c4r.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "1006062787830-l8jen6dbohotijhbi0j585sdhkihhvmj.apps.googleusercontent.com",
+              "client_id": "44679388662-hr24gj8pqdmkpm822t3v7har17m7773b.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "vn.foodhub",
-                "app_store_id": "1395643569"
+                "bundle_id": "vn.huongcang",
+                "app_store_id": "1531049930"
               }
             }
           ]

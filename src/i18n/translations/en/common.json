@@ -11,7 +11,7 @@
       "title": "Home"
     },
     "tab2": {
-      "title": "News"
+      "title": "Voucher"
     },
     "tab3": {
       "title": "Farms"
@@ -68,7 +68,7 @@
       "mainTitle": "Order management"
     },
     "voucher": {
-      "mainTitle": "TickID Voucher"
+      "mainTitle": "Hương Cảng Voucher"
     },
     "myVoucher": {
       "mainTitle": "My Voucher"

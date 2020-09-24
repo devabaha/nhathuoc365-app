@@ -27,7 +27,7 @@ const config = {
     bottomSpace: getBottomSpace()
   },
   rest: {
-    endpoint: () => 'https://api.foodhub.vn', //http://localhost:8000/
+    endpoint: () => 'https://apiapp.abaha.vn', //http://localhost:8000/
     phoneCardService: () => '/apiService/info/',
     book: () => '/apiService/book',
     password: () => '/apiUser/change_pass',
@@ -49,7 +49,7 @@ const config = {
     success: 200
   },
   colors: {
-    primary: '#812384',
+    primary: '#f41820',
     white: '#fff',
     black: '#000',
     red: 'red'
