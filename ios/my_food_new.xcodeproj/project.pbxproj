@@ -15,6 +15,7 @@
 		00E356F31AD99517003FC87E /* my_food_newTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* my_food_newTests.m */; };
 		04529F90BDCE4C3EA5751588 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 83F383E3194847F7B969684F /* Entypo.ttf */; };
 		050EADCA2BB546CAB2015BB7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F815A3C0772E4792810D5B6A /* libz.tbd */; };
+		065772D5251CADD1002F004E /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A482F10233CA0A90036AF7F /* libRNCamera.a */; };
 		06C095C123D2C95900F81C1F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C0957E23D2C95900F81C1F /* CoreGraphics.framework */; };
 		06C095C323D2C98200F81C1F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C095C223D2C98200F81C1F /* WebKit.framework */; };
 		0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD6E73A42137404B84C1637D /* libRNGestureHandler.a */; };
@@ -38,7 +39,6 @@
 		1C2070A922F54D6E00CF6BEA /* push2.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1C2070A722F54D6E00CF6BEA /* push2.wav */; };
 		1CCF9C3D241E94E3003F661A /* libReactNativePermissions.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CF7B92723BB4F8A006028BC /* libReactNativePermissions.a */; };
 		2664C4A2E0804B65A40E7934 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F79089108AC545DAB0E37C6F /* FontAwesome5_Brands.ttf */; };
-		3D84A85626634AABBFE313C1 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D1EED20F556419BBFFFFA7C /* libRNCamera.a */; };
 		471ABEE51E754FD49DB80A02 /* libCodePush.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 10E68EE2F8C54F8089797626 /* libCodePush.a */; };
 		53DB888730CB467B9296576E /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 522B66F1BB0B4588ADF85CB1 /* FontAwesome5_Solid.ttf */; };
 		5E722F5CF0DA499BB51F97C9 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AA42326B273F475F83C28005 /* FontAwesome.ttf */; };
@@ -647,6 +647,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				065772D5251CADD1002F004E /* libRNCamera.a in Frameworks */,
 				1CCF9C3D241E94E3003F661A /* libReactNativePermissions.a in Frameworks */,
 				1C07FFCE241DE4400019FDB1 /* libRNReactNativeHapticFeedback.a in Frameworks */,
 				8A3FB2FF236160AF0076A3DA /* libRCTContacts.a in Frameworks */,
@@ -673,7 +674,6 @@
 				DE64931BEBBF45C6869B6174 /* libRCTOneSignal.a in Frameworks */,
 				471ABEE51E754FD49DB80A02 /* libCodePush.a in Frameworks */,
 				050EADCA2BB546CAB2015BB7 /* libz.tbd in Frameworks */,
-				3D84A85626634AABBFE313C1 /* libRNCamera.a in Frameworks */,
 				764CD18B05AF4BC48742AF76 /* libRNReanimated.a in Frameworks */,
 				0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */,
 				B42DD41E63ED48F48B0B94C8 /* libRCTContacts.a in Frameworks */,

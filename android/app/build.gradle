@@ -121,7 +121,7 @@ android {
         versionCode 1
         versionName "1.0.1"
         multiDexEnabled true
-        missingDimensionStrategy 'react-native-camera', 'general'
+        missingDimensionStrategy 'react-native-camera', 'mlkit'
         resConfigs "en", "vi"
         
         // react-native-image-crop-picker

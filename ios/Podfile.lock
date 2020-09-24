@@ -199,6 +199,7 @@ DEPENDENCIES:
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-screen-brightness (from `../node_modules/react-native-screen-brightness`)
+  - React/Core (from `../node_modules/react-native`)
   - React/RCTImage (from `../node_modules/react-native`)
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -291,8 +292,8 @@ SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
   Branch: 6e7421e1f3c0adebdf80008a40a74969b2603cf8
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
-  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
-  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
+  Crashlytics: 9220f5bc89e7a618df411b4f639389dbfb0e03d2
+  Fabric: ea977e3cd9c20425516d3dafd3bf8c941c51223f
   Firebase: f378c80340dd41c0ad0914af740c021eb282a04b
   FirebaseAnalytics: a1a0b3327ceb5cd5b4bacffdb293f6c909aa087d
   FirebaseAuth: a6da11d78dfd956b7f7af3222a0f0b1c93ef8fc9
@@ -337,6 +338,6 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: a02e5792770ce35af804a03809c4cb7e0616fdfa
+PODFILE CHECKSUM: f70a898d22495631d6f112506302c56881ddb496
 
 COCOAPODS: 1.9.1
