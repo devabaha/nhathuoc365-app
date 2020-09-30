@@ -3,7 +3,6 @@
 target 'my_food_new' do
   # Comment the next line if you don't want to use dynamic frameworks
  
-  pod 'Firebase/Core'
   pod 'Firebase/Analytics'
   pod 'Firebase/Auth'
   pod 'GoogleSignIn'
@@ -16,14 +15,7 @@ target 'my_food_new' do
   
   pod 'RNFS', :path => '../node_modules/react-native-fs'
   pod 'React', :path => '../node_modules/react-native', :subspecs => [
-    'Core',
-    'CxxBridge', # Include this for RN >= 0.47
-    'DevSupport', # Include this to enable In-App Devmenu if RN >= 0.43
-    'RCTText',
-    'RCTNetwork',
-    'RCTWebSocket', # Needed for debugging
-    'RCTAnimation', # Needed for FlatList and animations running on native UI thread
-    # Add any other subspecs you want to use in your project
+#    'Core',
     'RCTImage' # <- Add this line
   ]
   pod 'yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
@@ -59,10 +51,8 @@ target 'my_food_new' do
 
   pod 'RNImageCropPicker', :path => '../node_modules/react-native-image-crop-picker'
 
-  pod 'react-native-camera', :path => '../node_modules/react-native-camera', subspecs: [
-    'FaceDetectorMLKit'
-  ]
-  
+  pod 'react-native-geolocation', :path => '../node_modules/@react-native-community/geolocation'
+
   target 'my_food_newTests' do
     inherit! :search_paths
     # Pods for testing

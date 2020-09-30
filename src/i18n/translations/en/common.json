@@ -118,6 +118,9 @@
     },
     "allServices": {
       "mainTitle": "Service list"
+    },
+    "gpsStoreLocation": {
+      "mainTitle": "List of store"
     }
   },
 

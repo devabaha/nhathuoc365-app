@@ -59,7 +59,7 @@ function ListServices(props) {
             notify: props.notify
           })
         }
-        keyExtractor={item => item.type}
+        keyExtractor={(item, index) => index.toString()}
         numColumns={4}
       />
     </View>

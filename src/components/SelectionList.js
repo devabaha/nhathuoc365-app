@@ -18,6 +18,7 @@ class SelectionList extends Component {
 
     return (
       <FlatList
+        keyExtractor={(item, index) => index.toString()}
         ItemSeparatorComponent={() => <View style={styles.separator}></View>}
         data={data}
         style={[styles.profile_list_opt, containerStyle]}

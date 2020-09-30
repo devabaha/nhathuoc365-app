@@ -24,6 +24,7 @@ import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
 import { languages } from '../../i18n/constants';
 import { setAppLanguage } from '../../i18n/i18n';
+import { APIRequest } from '../../network/Entity';
 
 class Account extends Component {
   constructor(props) {
@@ -33,11 +34,15 @@ class Account extends Component {
       refreshing: false,
       logout_loading: false,
       sticker_flag: false,
-      avatar_loading: false,
-      scrollTop: 0
+      avatar_loading: false
     };
-
+    this.uploadFaceIDRequest = new APIRequest();
+    this.requests = [this.uploadFaceIDRequest];
     reaction(() => store.user_info, this.initial);
+  }
+
+  componentWillUnmount() {
+    cancelRequests(this.requests);
   }
 
   initial = callback => {
@@ -49,38 +54,38 @@ class Account extends Component {
     this.setState(
       {
         options: [
-          // {
-          //   key: '0',
-          //   leftIcon: (
-          //     <View>
-          //       <IconMaterialCommunity
-          //         name="store"
-          //         style={{ fontSize: 15, left: -3, top: 2, color: '#fff' }}
-          //       />
-          //       <Icon
-          //         name="map-marker"
-          //         style={{
-          //           fontSize: 16,
-          //           color: '#fff',
-          //           position: 'absolute',
-          //           right: -3,
-          //           top: 0,
-          //           backgroundColor: 'transparent'
-          //         }}
-          //       />
-          //     </View>
-          //   ),
-          //   label: t('options.changeStoreLocation.label'),
-          //   desc: store.store_data.name,
-          //   rightIcon: <IconAngleRight />,
-          //   onPress: () => Actions.push(appConfig.routes.storeLocation),
-          //   boxIconStyle: [
-          //     styles.boxIconStyle,
-          //     {
-          //       backgroundColor: '#f66'
-          //     }
-          //   ]
-          // },
+          {
+            key: '0',
+            leftIcon: (
+              <View>
+                <IconMaterialCommunity
+                  name="store"
+                  style={{ fontSize: 15, left: -3, top: 2, color: '#fff' }}
+                />
+                <Icon
+                  name="map-marker"
+                  style={{
+                    fontSize: 16,
+                    color: '#fff',
+                    position: 'absolute',
+                    right: -3,
+                    top: 0,
+                    backgroundColor: 'transparent'
+                  }}
+                />
+              </View>
+            ),
+            label: t('options.changeStoreLocation.label'),
+            desc: store.store_data.name,
+            rightIcon: <IconAngleRight />,
+            onPress: () => Actions.push(appConfig.routes.gpsStoreLocation),
+            boxIconStyle: [
+              styles.boxIconStyle,
+              {
+                backgroundColor: '#f66'
+              }
+            ]
+          },
           {
             key: '0',
             label: t('options.myVoucher.label'),
@@ -278,6 +283,8 @@ class Account extends Component {
     const { t } = this.props;
 
     const options = {
+      cameraType: 'front',
+      rotation: 360,
       title: t('avatarPicker.title'),
       cancelButtonTitle: t('avatarPicker.cancelTitle'),
       takePhotoButtonTitle: t('avatarPicker.takePhotoTitle'),
@@ -288,16 +295,44 @@ class Account extends Component {
       }
     };
 
-    ImagePicker.showImagePicker(options, response => {
+    ImagePicker.launchCamera(options, response => {
       if (response.error) {
         console.log(response.error);
       } else if (response.didCancel) {
         console.log(response);
       } else {
         // console.log(response);
-        this.uploadAvatar(response);
+        // this.uploadAvatar(response);
+        this.uploadFaceID(response);
       }
     });
+  }
+
+  async uploadFaceID(image) {
+    this.setState({ avatar_loading: true });
+    const siteId = this.props.siteId || store.store_id;
+    const uploadImageBase64 = 'data:' + image.type + ';base64,' + image.data;
+    const data = {
+      image1: uploadImageBase64,
+      image2: uploadImageBase64,
+      image3: uploadImageBase64
+    };
+    try {
+      this.uploadFaceIDRequest.data = APIHandler.site_upload_image_faceID(
+        siteId,
+        data
+      );
+      const response = await this.uploadFaceIDRequest.promise();
+      // console.log(response);
+      flashShowMessage({
+        type: response.status === STATUS_SUCCESS,
+        message: response.message
+      });
+    } catch (err) {
+      console.log('upload faceid', err);
+    } finally {
+      this.setState({ avatar_loading: false });
+    }
   }
 
   uploadAvatar(response) {
@@ -400,12 +435,6 @@ class Account extends Component {
     return (
       <View style={styles.container}>
         <ScrollView
-          scrollEventThrottle={16}
-          onScroll={event => {
-            this.setState({
-              scrollTop: event.nativeEvent.contentOffset.y
-            });
-          }}
           ref={ref => (this.refs_account = ref)}
           refreshControl={
             <RefreshControl
@@ -428,31 +457,56 @@ class Account extends Component {
                 <>
                   <TouchableHighlight
                     onPress={this.onTapAvatar.bind(this)}
-                    style={styles.profile_avatar_box}
+                    style={styles.profile_avatar_box_container}
                     underlayColor="transparent"
                   >
-                    {avatar_loading ? (
-                      <View style={{ width: '100%', height: '100%' }}>
-                        <Indicator size="small" />
+                    <>
+                      <View style={styles.profile_avatar_box}>
+                        {avatar_loading ? (
+                          <View style={{ width: '100%', height: '100%' }}>
+                            <Indicator size="small" />
+                          </View>
+                        ) : (
+                          <CachedImage
+                            mutable
+                            style={styles.profile_avatar}
+                            source={{
+                              uri: store.user_info ? store.user_info.img : ''
+                            }}
+                          />
+                        )}
                       </View>
-                    ) : (
-                      <View>
-                        <CachedImage
-                          mutable
-                          style={styles.profile_avatar}
-                          source={{
-                            uri: store.user_info ? store.user_info.img : ''
-                          }}
+
+                      {!!user_info.is_verified ? (
+                        <IconMaterialCommunity
+                          name="check-decagram"
+                          style={[
+                            styles.verifiedIcon,
+                            {
+                              color: '#499108'
+                            }
+                          ]}
                         />
-                      </View>
-                    )}
+                      ) : (
+                        <Icon
+                          name="exclamation-circle"
+                          style={[
+                            styles.verifiedIcon,
+                            {
+                              color: '#ea8e0c'
+                            }
+                          ]}
+                        />
+                      )}
+                    </>
                   </TouchableHighlight>
 
                   <View
                     style={{
                       flexDirection: 'row',
                       flex: 1,
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      paddingRight: 25
                     }}
                   >
                     <View>
@@ -479,6 +533,21 @@ class Account extends Component {
                       >
                         {user_info.tel}
                       </Text>
+                      {!!!user_info.is_verified && (
+                        <Text
+                          style={[
+                            styles.profile_list_small_label,
+                            {
+                              fontSize: 10,
+                              marginTop: 5,
+                              fontStyle: 'italic'
+                            }
+                          ]}
+                        >
+                          Tài khoản của bạn chưa được xác thực, vui lòng cập
+                          nhật ảnh đại diện để xác thực!
+                        </Text>
+                      )}
                     </View>
 
                     {
@@ -720,7 +789,9 @@ class Account extends Component {
                   title: t('common:screen.affiliate.mainTitle'),
                   aff_content: store.store_data
                     ? store.store_data.aff_content
-                    : t('affiliateMarketingProgram', { appName: APP_NAME_SHOW })
+                    : t('affiliateMarketingProgram', {
+                        appName: APP_NAME_SHOW
+                      })
                 })
               }
             >
@@ -957,21 +1028,29 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingLeft: 15
   },
+  profile_avatar_box_container: {
+    marginRight: 15
+  },
   profile_avatar_box: {
     width: 60,
     height: 60,
     backgroundColor: '#f0f0f0',
     borderRadius: 30,
-    marginRight: 15,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden'
   },
   profile_avatar: {
-    width: 60,
-    height: 60,
-    borderRadius: 28
-    // resizeMode: 'cover'
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover'
+  },
+  verifiedIcon: {
+    fontSize: 15,
+    position: 'absolute',
+    bottom: -2,
+    right: 0,
+    ...elevationShadowStyle(1)
   },
 
   point_icon: {

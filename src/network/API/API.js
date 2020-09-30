@@ -5,3 +5,4 @@
  * @module API
  */
 export * from './CommonAPI';
+export * from './IViewAPI';

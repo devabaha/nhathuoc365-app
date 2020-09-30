@@ -118,6 +118,9 @@
     },
     "allServices": {
       "mainTitle": "Danh sách dịch vụ"
+    },
+    "gpsStoreLocation": {
+      "mainTitle": "Danh sách cửa hàng"
     }
   },
 

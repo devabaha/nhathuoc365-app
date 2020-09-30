@@ -16,9 +16,11 @@ export const SERVICES_TYPE = {
   /** QRBARCODE */
   ACCUMULATE_POINTS: 'ACCUMULATE_POINTS_TYPE',
   QRCODE_SCAN: 'qrscan',
+  QRCODE_SCAN_TYPE: 'QRCODE_SCAN_TYPE',
 
   /** VOUCHER */
   LIST_VOUCHER: 'list_voucher',
+  MY_VOUCHER_TYPE: 'MY_VOUCHER_TYPE',
   MY_VOUCHER: 'my_voucher',
   MY_VOUCHER_DETAIL: 'my_voucher_detail',
   VOUCHER_DETAIL: 'voucher_detail',

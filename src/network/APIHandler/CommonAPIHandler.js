@@ -840,6 +840,15 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.USER_GET_SERVICES);
     return this.getCancelableAPI(api);
   }
+
+  /**
+   * @todo Lấy danh sách cửa hàng gần nhất
+   */
+  user_list_gps_store_location(data) {
+    const api = url_for(API.USER_LIST_GPS_STORE_LOCATION);
+    // const api = "http://192.168.10.145:8000/ApiUser/list_gps_store_location?device_id=TICKID-CBB15BE6-5123-4F0C-BD78-2E42B050A0D8&app_key=homeidkey&os=ios&os_version=12.2&store=&device_type=Apple&app_version=1.2&timestamp=1560660341236&hash_token=04e6c6811a85c3cbb2c46bca5f8ef353"
+    return this.postCancelableAPI(api, data);
+  }
 }
 
 export default CommonAPIHandler;

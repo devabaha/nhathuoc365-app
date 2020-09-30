@@ -49,7 +49,16 @@ class PaymentMethod extends Component {
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
           if (response.data) {
-            this.setState({ paymentMethod: response.data || [] });
+            let selectedMethod = null;
+            if (Array.isArray(response.data)) {
+              selectedMethod = response.data.find(
+                item => item.default_flag === 1
+              );
+            }
+            this.setState({
+              paymentMethod: response.data || [],
+              selectedMethod: selectedMethod || this.state.selectedMethod
+            });
           }
         } else {
           flashShowMessage({

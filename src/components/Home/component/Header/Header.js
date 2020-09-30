@@ -34,7 +34,9 @@ function Header(props) {
                 t('stores:search.placeholder.prefix') +
                 ' ' +
                 // (store.store_data ? store.store_data.name : '') +
-                APP_NAME_SHOW +
+                (store.store_data
+                  ? store.store_data.name || APP_NAME_SHOW
+                  : APP_NAME_SHOW) +
                 '...'
               }
               placeholderTextColor="#ccc"

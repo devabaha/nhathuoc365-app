@@ -144,6 +144,9 @@ import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
+import CameraView from './components/CameraView/CameraView';
+import { CaptureFaceID } from './containers/IView';
+import GPSStoreLocation from './containers/GPSStoreLocation';
 
 /**
  * Not allow font scaling
@@ -502,6 +505,7 @@ class App extends Component {
 
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
+        {/* <GPSStoreLocation /> */}
         {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
@@ -721,6 +725,17 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ CAPTURE FACEID ================ */}
+                <Stack key={appConfig.routes.captureFaceID}>
+                  <Scene
+                    key={`${appConfig.routes.captureFaceID}_1`}
+                    // title={t("screen.news.mainTitle")}
+                    component={CaptureFaceID}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ NEWS ================ */}
                 <Stack key={appConfig.routes.newsTab}>
@@ -1361,6 +1376,16 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack key={appConfig.routes.gpsStoreLocation}>
+                  <Scene
+                    key={`${appConfig.routes.gpsStoreLocation}_1`}
+                    title={t('screen.gpsStoreLocation.mainTitle')}
+                    component={GPSStoreLocation}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 <Stack key={appConfig.routes.serviceFeedback}>
                   <Scene
                     key={`${appConfig.routes.serviceFeedback}_1`}
@@ -1506,6 +1531,15 @@ class RootRouter extends Component {
               <Scene
                 key={`${appConfig.routes.transferResult}_1`}
                 component={TransferResult}
+                hideNavBar
+              />
+            </Stack>
+
+            {/* ================ MODAL CAMERAVIEW ================ */}
+            <Stack key={appConfig.routes.modalCameraView}>
+              <Scene
+                key={`${appConfig.routes.modalCameraView}_1`}
+                component={CameraView}
                 hideNavBar
               />
             </Stack>

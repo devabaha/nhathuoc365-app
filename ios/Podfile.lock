@@ -134,6 +134,8 @@ PODS:
     - SDWebImage/WebP (~> 4)
   - react-native-fingerprint-scanner (4.0.0):
     - React
+  - react-native-geolocation (2.0.2):
+    - React
   - react-native-image-picker (2.3.1):
     - React
   - react-native-screen-brightness (1.0.1):
@@ -197,9 +199,9 @@ DEPENDENCIES:
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - react-native-fast-image (from `../node_modules/react-native-fast-image`)
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
+  - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-screen-brightness (from `../node_modules/react-native-screen-brightness`)
-  - React/Core (from `../node_modules/react-native`)
   - React/RCTImage (from `../node_modules/react-native`)
   - ReactNativeExceptionHandler (from `../node_modules/react-native-exception-handler/ReactNativeExceptionHandler.podspec`)
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
@@ -263,6 +265,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-fast-image"
   react-native-fingerprint-scanner:
     :path: "../node_modules/react-native-fingerprint-scanner"
+  react-native-geolocation:
+    :path: "../node_modules/@react-native-community/geolocation"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-screen-brightness:
@@ -323,6 +327,7 @@ SPEC CHECKSUMS:
   react-native-cameraroll: 463aff54e37cff27ea76eb792e6f1fa43b876320
   react-native-fast-image: 7278563726f2455ed3ba6e04dea472345173278c
   react-native-fingerprint-scanner: 03f3d966edacf2f515e361595b6778d3502db4fb
+  react-native-geolocation: c956aeb136625c23e0dce0467664af2c437888c9
   react-native-image-picker: 6a850c41f57f0848d918c2a77aedd7aa272ffa30
   react-native-screen-brightness: 07a615629827593d3ac8bb0a3498088416cadd32
   ReactNativeExceptionHandler: 8025d98049c25f186835a3af732dd7c9974d6dce
@@ -338,6 +343,6 @@ SPEC CHECKSUMS:
   SDWebImage: 783af2c3fa36291a250030c4752ee370a9a51d13
   yoga: 03ff42a6f223fb88deeaed60249020d80c3091ee
 
-PODFILE CHECKSUM: f70a898d22495631d6f112506302c56881ddb496
+PODFILE CHECKSUM: ae6322c298cea5f011e9da64573eaaaee18a01eb
 
 COCOAPODS: 1.9.1

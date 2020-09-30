@@ -34,6 +34,8 @@ exports.USER_INVITE_HISTORY = MY_FOOD_API + 'apiUser/invite_history';
 exports.USER_CHECK_ADDRESS = MY_FOOD_API + 'apiUser/check_address';
 exports.USER_UPDATE_PROFILE = MY_FOOD_API + 'apiUser/update';
 exports.USER_LIST_STORE_LOCATION = MY_FOOD_API + 'apiUser/list_store_location';
+exports.USER_LIST_GPS_STORE_LOCATION =
+  MY_FOOD_API + 'apiUser/list_gps_store_location';
 exports.USER_CHOOSE_STORE_LOCATION =
   MY_FOOD_API + 'apiUser/choose_store_location';
 

@@ -25,7 +25,7 @@ class Home extends Component {
       services: [],
       products: [],
       listService: [],
-      primaryActions: [],
+      primaryActions: null,
       product_groups: {}
     };
   }
@@ -56,7 +56,6 @@ class Home extends Component {
 
     try {
       const response = await APIHandler.user_site_home();
-      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
@@ -65,7 +64,7 @@ class Home extends Component {
         }
         action(() => {
           store.setStoreData(response.data.site);
-          store.setAppData(response.data.site);
+          store.setAppData(response.data.app);
         })();
         this.setState({
           site: response.data.site,
@@ -248,7 +247,7 @@ class Home extends Component {
     this.setState({ apiFetching: true });
 
     this.getStore(
-      appConfig.defaultSiteId,
+      store.store_id || appConfig.defaultSiteId,
       response => {
         if (response.status == STATUS_SUCCESS && response.data) {
           store.setStoreData(response.data);

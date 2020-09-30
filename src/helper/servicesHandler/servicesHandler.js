@@ -77,6 +77,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         title: t('common:screen.qrBarCode.mainTitle')
       });
       break;
+    case SERVICES_TYPE.QRCODE_SCAN_TYPE:
     case SERVICES_TYPE.QRCODE_SCAN:
       Actions.push(appConfig.routes.qrBarCode, {
         index: 1,
@@ -91,6 +92,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         from: 'home'
       });
       break;
+    case SERVICES_TYPE.MY_VOUCHER_TYPE:
     case SERVICES_TYPE.MY_VOUCHER:
       Actions.push(appConfig.routes.myVoucher, {
         title: t('common:screen.myVoucher.mainTitle'),

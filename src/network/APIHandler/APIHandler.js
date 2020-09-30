@@ -1,5 +1,6 @@
 import BaseHandler from './BaseHandler';
 import CommonAPIHandler from './CommonAPIHandler';
+import IViewAPIHandler from './IViewAPIHandler';
 import { aggregation } from '../helper';
 
 /**
@@ -12,9 +13,13 @@ import { aggregation } from '../helper';
  * @class
  * @mixes BaseHandler
  * @mixes CommonAPIHandler
- * @mixes HomeIDAPIHandler
+ * @mixes IViewAPIHandler
  */
 
-const APIHandler = new (aggregation(BaseHandler, CommonAPIHandler))();
+const APIHandler = new (aggregation(
+  BaseHandler,
+  CommonAPIHandler,
+  IViewAPIHandler
+))();
 
 export default APIHandler;

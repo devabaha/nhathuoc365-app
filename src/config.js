@@ -115,18 +115,23 @@ const config = Object.freeze({
 
     // Store Location
     storeLocation: 'storeLocation',
+    gpsStoreLocation: 'gpsStoreLocation',
 
     // Modal
     modalPicker: 'modalPicker',
     modalList: 'modalList',
     modalSearchPlaces: 'modalSearchPlaces',
     modalRateApp: 'modalRateApp',
+    modalCameraView: 'modalCameraView',
 
     //  Reset password
     resetPassword: 'resetPassword',
 
     // All serives
-    allServices: 'allServices'
+    allServices: 'allServices',
+
+    // iView
+    captureFaceID: 'captureFaceID'
   }
 });
 
