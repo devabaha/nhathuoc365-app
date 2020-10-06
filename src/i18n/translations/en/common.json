@@ -146,6 +146,12 @@
     },
     "confirmBooking": {
       "mainTitle": "Confirm information"
+    },
+    "customerSearching": {
+      "mainTitle": "Customer"
+    },
+    "orderManagement": {
+      "mainTitle": "Order management"
     }
   },
 

@@ -148,6 +148,8 @@ const config = Object.freeze({
     projectProductBeeLand: 'projectProductBeeLand',
     customerInfoBookingBeeLand: 'customerInfoBookingBeeLand',
     confirmBookingBeeLand: 'confirmBookingBeeLand',
+    customerSearchingBeeLand: 'customerSearchingBeeLand',
+    orderManagementBeeLand: 'orderManagementBeeLand',
 
     // All serives
     allServices: 'allServices'

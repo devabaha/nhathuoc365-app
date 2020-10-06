@@ -293,8 +293,8 @@ SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
   Branch: 6e7421e1f3c0adebdf80008a40a74969b2603cf8
   BVLinearGradient: e3aad03778a456d77928f594a649e96995f1c872
-  Crashlytics: 540b7e5f5da5a042647227a5e3ac51d85eed06df
-  Fabric: 706c8b8098fff96c33c0db69cbf81f9c551d0d74
+  Crashlytics: 9220f5bc89e7a618df411b4f639389dbfb0e03d2
+  Fabric: ea977e3cd9c20425516d3dafd3bf8c941c51223f
   Firebase: 585ae467b3edda6a5444e788fda6888f024d8d6f
   FirebaseAnalytics: 558f7a03d19de451093032c806f39d5f9dff096e
   FirebaseAuth: e50319ecc114acf93c2b9581e15d6604ddd7eeb2

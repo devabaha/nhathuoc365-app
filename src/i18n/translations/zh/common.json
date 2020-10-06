@@ -143,6 +143,12 @@
     },
     "confirmBooking": {
       "mainTitle": "Xác nhận thông tin"
+    },
+    "customerSearching": {
+      "mainTitle": "Khách hàng"
+    },
+    "orderManagement": {
+      "mainTitle": "Quản lý đơn hàng"
     }
   },
 

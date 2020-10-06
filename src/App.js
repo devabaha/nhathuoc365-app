@@ -158,7 +158,12 @@ import {
 import Members from './containers/Members';
 import MemberModal from './containers/Members/MemberModal';
 import { MultiTaskView } from './components/MultiTaskView/MultiTaskView';
-import { ListBeeLand, ProjectBeeLand } from './containers/BeeLand';
+import {
+  CustomerSearchingBeeLand,
+  ListBeeLand,
+  OrderManagementBeeLand,
+  ProjectBeeLand
+} from './containers/BeeLand';
 import { ListRoom } from './containers/Room';
 import RegisterStore from './containers/RegisterStore';
 import AllServices from './containers/AllServices';
@@ -922,6 +927,28 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.confirmBookingBeeLand}_1`}
                     component={ConfirmBookingBeeLand}
                     title={t('screen.confirmBooking.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BEELAND CUSTOMER SEARCHING ================ */}
+                <Stack key={appConfig.routes.customerSearchingBeeLand}>
+                  <Scene
+                    key={`${appConfig.routes.customerSearchingBeeLand}_1`}
+                    component={CustomerSearchingBeeLand}
+                    title={t('screen.customerSearching.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BEELAND LIST ORDER ================ */}
+                <Stack key={appConfig.routes.orderManagementBeeLand}>
+                  <Scene
+                    key={`${appConfig.routes.orderManagementBeeLand}_1`}
+                    component={OrderManagementBeeLand}
+                    title={t('screen.orderManagement.mainTitle')}
                     {...navBarConfig}
                     back
                   />

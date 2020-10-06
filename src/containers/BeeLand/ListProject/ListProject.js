@@ -9,6 +9,7 @@ import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from 'app-store';
 import WebviewProjectFooter from './WebviewProjectFooter';
+import Header from './Header';
 
 const IMAGE_HEIGHT = (appConfig.device.width - 32) / 2;
 
@@ -114,6 +115,7 @@ class ListProject extends Component {
     return (
       <SafeAreaView style={styles.container}>
         {this.state.loading && <Loading center />}
+        <Header />
         {!!this.isBuildingEmpty ? (
           <NoResult />
         ) : (
@@ -139,7 +141,8 @@ class ListProject extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#fff'
   },
   buildingWrapper: {
     flex: 1,
