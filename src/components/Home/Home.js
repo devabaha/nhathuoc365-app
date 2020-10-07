@@ -50,6 +50,7 @@ class Home extends Component {
     onShowAllNews: PropTypes.func,
     onPressProduct: PropTypes.func,
     onPressSiteItem: PropTypes.func,
+    onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
     onPressNewItem: PropTypes.func,
     onPressNoti: PropTypes.func,
@@ -83,6 +84,7 @@ class Home extends Component {
     onShowAllCampaigns: defaultListener,
     onShowAllNews: defaultListener,
     onPressProduct: defaultListener,
+    onPressSiteItem: defaultListener,
     onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
     onPressNewItem: defaultListener,
@@ -210,6 +212,9 @@ class Home extends Component {
               >
                 {({ item, index }) => (
                   <HomeCardItem
+                    selfRequest={callBack =>
+                      this.props.onPressSiteItem(item, callBack)
+                    }
                     title={item.title}
                     imageUrl={item.image_url}
                     onPress={() => this.props.onPressSiteItem(item)}

@@ -11,7 +11,7 @@
     "next": "Tiếp tục",
     "edit": "Sửa đơn",
     "note": "Ghi chú",
-    "cancel": "Huỷ đơn",
+    "cancel": "Hủy đơn",
     "totalSelected": "{{total}} sản phẩm",
     "totalPaymentMessage": "Tổng thanh toán"
   },
@@ -76,7 +76,7 @@
     "addMoreItems": "Chọn thêm mặt hàng",
     "rebuy": "Mua lại",
     "edit": "Sửa đơn",
-    "cancel": "Huỷ đơn",
+    "cancel": "Hủy đơn",
     "unitName": "sản phẩm",
     "change": "Thay đổi",
     "copy": {

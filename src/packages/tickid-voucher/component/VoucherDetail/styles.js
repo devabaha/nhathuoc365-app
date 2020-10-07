@@ -15,20 +15,24 @@ const styles = StyleSheet.create({
   },
   topImageWrapper: {
     position: 'relative',
-    zIndex: 1
+    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   topImage: {
-    height: 180
+    width: '100%',
+    height: config.device.width / 2
+  },
+  avatarContainer: {
+    position: 'absolute',
+    bottom: -15,
+    width: 60,
+    height: 60,
+    ...elevationShadowStyle(2)
   },
   avatar: {
-    position: 'absolute',
-    top: 138,
-    left: screenWidth / 2 - 29,
-    width: 58,
-    height: 58,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: config.colors.white
+    width: '100%',
+    height: '100%'
   },
   headerWrapper: {
     backgroundColor: '#ffffff',

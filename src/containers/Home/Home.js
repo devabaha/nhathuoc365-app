@@ -5,7 +5,7 @@ import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import HomeComponent from '../../components/Home';
 import { executeJobs } from '../../helper/jobsOnReset';
-import { servicesHandler } from '../../helper/servicesHandler';
+import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 
 class Home extends Component {
   constructor(props) {
@@ -25,7 +25,7 @@ class Home extends Component {
       services: [],
       products: [],
       listService: [],
-      primaryActions: [],
+      primaryActions: null,
       product_groups: {}
     };
   }
@@ -152,14 +152,12 @@ class Home extends Component {
     Actions.jump(appConfig.routes.newsTab);
   };
 
-  handlePressSiteItem = site => {
-    action(() => {
-      store.setStoreData(site);
-      Actions.push(appConfig.routes.store, {
-        title: site.name
-        // goCategory: category_id
-      });
-    })();
+  handlePressSiteItem = (store, callBack) => {
+    servicesHandler(
+      { type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id },
+      this.props.t,
+      callBack
+    );
   };
 
   handlePressCampaignItem = campaign => {
