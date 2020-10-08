@@ -141,6 +141,7 @@ import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
+import QRPaymentInfo from './components/payment/QRPaymentInfo';
 
 /**
  * Not allow font scaling
@@ -1110,6 +1111,16 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.transfer}_1`}
                     component={Transfer}
                     title={t('screen.transfer.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.qrPaymentInfo}>
+                  <Scene
+                    key={`${appConfig.routes.qrPaymentInfo}_1`}
+                    component={QRPaymentInfo}
+                    title={t('screen.qrPaymentInfo.mainTitle')}
                     {...navBarConfig}
                     back
                   />

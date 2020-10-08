@@ -112,6 +112,9 @@
     },
     "allServices": {
       "mainTitle": "Service list"
+    },
+    "qrPaymentInfo": {
+      "mainTitle": "Payment acceptance"
     }
   },
 

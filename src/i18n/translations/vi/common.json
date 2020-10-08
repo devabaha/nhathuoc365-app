@@ -112,6 +112,9 @@
     },
     "allServices": {
       "mainTitle": "Danh sách dịch vụ"
+    },
+    "qrPaymentInfo": {
+      "mainTitle": "Chấp nhận thanh toán"
     }
   },
 
