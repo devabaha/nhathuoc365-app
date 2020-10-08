@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   },
   item_add_cart_btn: {
     position: 'absolute',
-    bottom: 0,
+    top: 0,
     right: 0,
     // width: 50,
     // height: 50,
