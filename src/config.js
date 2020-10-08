@@ -60,6 +60,7 @@ const config = Object.freeze({
     vndWallet: 'vnd_wallet',
     payWallet: 'pay_wallet',
     transfer: 'transfer',
+    qrPaymentInfo: 'qrPaymentInfo',
     transferPayment: 'transfer_payment',
     transferConfirm: 'transfer_confirm',
     transferResult: 'transfer_result',

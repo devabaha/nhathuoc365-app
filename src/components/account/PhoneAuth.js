@@ -451,6 +451,7 @@ class PhoneAuth extends Component {
             onChangeText={text => {
               if (text.length <= 13) this.setState({ phoneNumber: text });
             }}
+            onSubmitEditing={this.signIn}
           />
         </View>
         <TouchableOpacity
@@ -568,6 +569,7 @@ class PhoneAuth extends Component {
               keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
               style={styles.txtCode}
               maxLength={6}
+              onSubmitEditing={this.confirmCode}
             />
           </View>
           <TouchableOpacity
@@ -629,8 +631,9 @@ class PhoneAuth extends Component {
         keyboardShouldPersistTaps="handled"
         bounces={false}
         style={styles.container}
+        contentContainerStyle={{ flexGrow: 1 }}
       >
-        {isShowIndicator && <Loading center style={{ marginBottom: 64 }} />}
+        {isShowIndicator && <Loading center />}
         {modalVisible && this.renderCountryPicker()}
         {!user && !confirmResult && this.renderPhoneNumberInput()}
         {!user && confirmResult && this.renderVerificationCodeInput()}

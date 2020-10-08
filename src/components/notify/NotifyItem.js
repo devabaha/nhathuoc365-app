@@ -342,8 +342,7 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   notify_image_box: {
-    width: '100%',
-    height: Util.size.height / 3,
+    height: appConfig.device.width / 2,
     backgroundColor: '#cccccc'
   },
   notify_image: {

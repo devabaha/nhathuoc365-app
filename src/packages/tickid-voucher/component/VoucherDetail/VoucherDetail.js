@@ -214,10 +214,12 @@ class VoucherDetail extends Component {
                 resizeMode="cover"
                 source={{ uri: campaign.data.image_url }}
               />
-              <Image
-                source={{ uri: campaign.data.shop_logo_url }}
-                style={styles.avatar}
-              />
+              <View style={styles.avatarContainer}>
+                <Image
+                  source={{ uri: campaign.data.shop_logo_url }}
+                  style={styles.avatar}
+                />
+              </View>
             </View>
 
             <View style={[styles.row, styles.headerWrapper]}>

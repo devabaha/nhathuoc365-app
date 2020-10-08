@@ -121,6 +121,9 @@
     },
     "gpsStoreLocation": {
       "mainTitle": "List of store"
+    },
+    "qrPaymentInfo": {
+      "mainTitle": "Payment acceptance"
     }
   },
 

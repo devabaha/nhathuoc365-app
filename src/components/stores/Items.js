@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
+import { DiscountBadge } from '../../components/Badges';
 
 class Items extends Component {
   constructor(props) {
@@ -288,28 +289,90 @@ class Items extends Component {
             {!!item.image && (
               <Image style={styles.item_image} source={{ uri: item.image }} />
             )}
+            <TouchableHighlight
+              style={styles.item_add_cart_btn}
+              underlayColor="transparent"
+              onPress={() => this._addCart(item)}
+            >
+              <View
+                style={{
+                  width: '100%',
+                  height: '100%'
+                }}
+              >
+                <View style={styles.item_add_cart_box}>
+                  {this.state.buying ? (
+                    <View
+                      style={{
+                        width: 24,
+                        height: 24
+                      }}
+                    >
+                      <Indicator size="small" />
+                    </View>
+                  ) : item.book_flag == 1 ? (
+                    <Icon
+                      name="cart-arrow-down"
+                      size={22}
+                      color={DEFAULT_COLOR}
+                    />
+                  ) : (
+                    <Icon name="cart-plus" size={22} color={'#0eac24'} />
+                  )}
+                  {item.book_flag == 1 ? (
+                    <Text style={styles.item_add_book_title}>
+                      {t('product:shopTitle.preOrder')}
+                    </Text>
+                  ) : (
+                    <Text style={styles.item_add_cart_title}>
+                      {t('product:shopTitle.buy')}
+                    </Text>
+                  )}
+
+                  {quantity > 0 && (
+                    <View style={styles.quantity_box}>
+                      <Text style={styles.quantity_value}>{quantity}</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+            </TouchableHighlight>
+
+            {item.discount_percent > 0 && (
+              <DiscountBadge
+                containerStyle={styles.item_safe_off}
+                label={saleFormat(item.discount_percent)}
+              />
+            )}
           </View>
 
           <View style={styles.item_info_box}>
-            <View style={styles.item_info_made}>
-              {item.made_in != '' && (
+            <View>
+              <View style={styles.item_info_made}>
                 <View style={styles.directionRow}>
-                  <Icon name="map-marker" size={12} color="#666666" />
+                  {item.made_in != '' && (
+                    <>
+                      <Icon name="map-marker" size={12} color="#666666" />
+                      <Text
+                        numberOfLines={2}
+                        style={styles.item_info_made_title}
+                      >
+                        {item.made_in}
+                      </Text>
+                    </>
+                  )}
+                </View>
+
+                <View style={styles.item_info_weight}>
                   <Text style={styles.item_info_made_title}>
-                    {item.made_in}
+                    {item.unit_name_view}
                   </Text>
                 </View>
-              )}
-
-              <View style={styles.item_info_weight}>
-                <Text style={styles.item_info_made_title}>
-                  {item.unit_name_view}
-                </Text>
               </View>
+              <Text style={styles.item_info_name} numberOfLines={2}>
+                {item.name}
+              </Text>
             </View>
-            <Text style={styles.item_info_name} numberOfLines={2}>
-              {item.name}
-            </Text>
             <View style={styles.price_box}>
               {item.discount_percent > 0 && (
                 <Text style={styles.item_safe_off_price}>
@@ -321,7 +384,9 @@ class Items extends Component {
                 style={[
                   styles.item_info_price,
                   {
-                    color: item.discount_percent > 0 ? '#fa7f50' : DEFAULT_COLOR
+                    color:
+                      // item.discount_percent > 0 ? "#fa7f50" :
+                      DEFAULT_COLOR
                   }
                 ]}
               >
@@ -329,65 +394,6 @@ class Items extends Component {
               </Text>
             </View>
           </View>
-
-          <TouchableHighlight
-            style={styles.item_add_cart_btn}
-            underlayColor="transparent"
-            onPress={() => this._addCart(item)}
-          >
-            <View
-              style={{
-                width: '100%',
-                height: '100%'
-              }}
-            >
-              <View style={styles.item_add_cart_box}>
-                {this.state.buying ? (
-                  <View
-                    style={{
-                      width: 24,
-                      height: 24
-                    }}
-                  >
-                    <Indicator size="small" />
-                  </View>
-                ) : item.book_flag == 1 ? (
-                  <Icon
-                    name="cart-arrow-down"
-                    size={22}
-                    color={DEFAULT_COLOR}
-                  />
-                ) : (
-                  <Icon name="cart-plus" size={22} color={DEFAULT_COLOR_RED} />
-                )}
-                {item.book_flag == 1 ? (
-                  <Text style={styles.item_add_book_title}>
-                    {t('product:shopTitle.preOrder')}
-                  </Text>
-                ) : (
-                  <Text style={styles.item_add_cart_title}>
-                    {t('product:shopTitle.buy')}
-                  </Text>
-                )}
-
-                {quantity > 0 && (
-                  <View style={styles.quantity_box}>
-                    <Text style={styles.quantity_value}>{quantity}</Text>
-                  </View>
-                )}
-              </View>
-            </View>
-          </TouchableHighlight>
-
-          {item.discount_percent > 0 && (
-            <View style={styles.item_safe_off}>
-              <View style={styles.item_safe_off_percent}>
-                <Text style={styles.item_safe_off_percent_val}>
-                  -{item.discount_percent}%
-                </Text>
-              </View>
-            </View>
-          )}
         </View>
       </TouchableHighlight>
     );
@@ -400,14 +406,15 @@ Items.propTypes = {
   onPress: PropTypes.func.isRequired
 };
 
-const ITEM_WIDTH = ~~(Util.size.width / 2 - 12);
-const ITEM_HEIGHT = ~~((Util.size.width / 2) * 1.333);
-const ITEM_IMG_HEIGHT = ~~((Util.size.width / 2) * 1.333 * 0.666);
+const ITEM_WIDTH = Util.size.width / 2 - 12;
+const ITEM_HEIGHT = (Util.size.width / 2) * 1.333;
+const ITEM_IMG_HEIGHT = (Util.size.width / 2) * 1.333 * 0.666;
 
 const styles = StyleSheet.create({
   item_box: {
+    flex: 1,
     width: ITEM_WIDTH,
-    height: ITEM_HEIGHT,
+    // height: ITEM_HEIGHT,
     // borderWidth: Util.pixel,
     // borderWidth: Util.pixel,
     // borderColor: "#dddddd",
@@ -415,70 +422,81 @@ const styles = StyleSheet.create({
     marginBottom: 8
   },
   directionRow: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center'
   },
   item_image_box: {
-    width: '100%',
-    height: ~~((Util.size.width / 2) * 1.333 * 0.666)
+    width: ITEM_WIDTH,
+    height: ITEM_WIDTH
   },
   item_image: {
+    zIndex: 1,
     width: '100%',
     height: '100%',
     resizeMode: 'cover'
   },
   item_info_box: {
-    width: '100%',
-    minHeight: '34%',
+    flex: 1,
+    backgroundColor: 'red',
+    // minHeight: "34%",
     paddingHorizontal: 8,
-    paddingTop: 4,
-    paddingBottom: 2,
-    position: 'absolute',
-    left: 0,
-    bottom: 0,
+    paddingVertical: 7,
+    // position: "absolute",
+    // left: 0,
+    // bottom: 0,
+    justifyContent: 'space-between',
     backgroundColor: 'rgba(255,255,255,0.7)'
   },
   item_info_made: {
     flexDirection: 'row'
   },
   item_info_made_title: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#666666',
+    fontSize: 9,
+    // fontWeight: "600",
+    fontWeight: appConfig.device.isIOS ? '400' : '300',
+    color: '#444',
     paddingHorizontal: 8
   },
   item_info_weight: {
-    flex: 1,
+    // flex: 1,
+    marginLeft: 5,
     alignItems: 'flex-end'
   },
   item_info_name: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 13,
+    fontWeight: appConfig.device.isIOS ? '500' : '400',
     color: '#404040',
-    marginTop: 2
+    marginTop: 2,
+    marginBottom: 7,
+    lineHeight: 18
   },
   item_info_price: {
     fontSize: 15,
     fontWeight: '600',
-    color: DEFAULT_COLOR,
-    marginLeft: 4
+    color: DEFAULT_COLOR
   },
   item_add_cart_btn: {
     position: 'absolute',
-    top: 0,
+    bottom: 0,
     right: 0,
-    width: 50,
-    height: 60,
+    // width: 50,
+    // height: 50,
     zIndex: 2
   },
   item_add_cart_box: {
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: hexToRgbA('#ffffff', 0.8),
-    paddingVertical: 2
+    // backgroundColor: hexToRgbA("#0eac24", .6),
+    paddingVertical: 2,
+    // borderTopLeftRadius: 15,
+    // padding: 10,
+    width: 50,
+    height: 45
   },
   item_add_cart_title: {
-    color: DEFAULT_COLOR_RED,
+    color: '#0eac24',
     fontSize: 8
   },
 
@@ -488,6 +506,7 @@ const styles = StyleSheet.create({
   },
 
   item_safe_off: {
+    zIndex: 1,
     position: 'absolute',
     left: 0,
     right: 0,
@@ -498,11 +517,13 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   item_safe_off_percent: {
-    backgroundColor: '#fa7f50',
+    // backgroundColor: "#fa7f50",
+    backgroundColor: 'yellow',
     paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
+    ...elevationShadowStyle(3)
   },
   item_safe_off_percent_val: {
     color: '#ffffff',
@@ -511,7 +532,8 @@ const styles = StyleSheet.create({
   item_safe_off_price: {
     color: '#404040',
     fontSize: 11,
-    textDecorationLine: 'line-through'
+    textDecorationLine: 'line-through',
+    marginRight: 4
   },
 
   quantity_box: {

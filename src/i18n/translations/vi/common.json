@@ -121,6 +121,9 @@
     },
     "gpsStoreLocation": {
       "mainTitle": "Danh sách cửa hàng"
+    },
+    "qrPaymentInfo": {
+      "mainTitle": "Chấp nhận thanh toán"
     }
   },
 
