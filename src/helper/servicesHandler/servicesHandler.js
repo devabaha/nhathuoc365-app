@@ -33,6 +33,7 @@ import {
  * @callback callBack - a trigger when needed for specific case.
  */
 export const servicesHandler = (service, t, callBack = () => {}) => {
+  if (!service) return;
   switch (service.type) {
     /** RADA */
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
