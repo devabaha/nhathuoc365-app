@@ -142,6 +142,7 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
+import VerticalCategory from './components/stores/VerticalCategory';
 
 /**
  * Not allow font scaling
@@ -500,7 +501,8 @@ class App extends Component {
 
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
-        {this.state.header}
+        <VerticalCategory />
+        {/* {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
@@ -520,7 +522,7 @@ class App extends Component {
           closeOnHardwareBackPress={false}
           showCancelButton={false}
           showConfirmButton={false}
-        />
+        /> */}
       </View>
     );
   }
