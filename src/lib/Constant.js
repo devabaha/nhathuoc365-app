@@ -14,7 +14,7 @@ global.HOTLINE = '+84983962301';
 global.CPDK = {
   ios: 'U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY',
   android: '5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr',
-  version: 1 // huongcang - version 1
+  version: 1
 };
 
 // width, height of screen

@@ -1,0 +1,212 @@
+#!/bin/bash
+
+# cp old-file-path new-file-path
+# mv old-folder-path new-folder-path
+# perl -pi -w -e 's/SEARCH_FOR/REPLACE_WITH/g;' *.txt
+
+# declare root_path="~/Users/minhnguyen/Workspace/tickidapp"
+copy_file () {
+    cp "$1" "$2"
+}
+
+replace_folder_name () {
+    mv "$1" "$2"
+}
+replace_string () {
+    if [ $# -lt 3 ]; then
+        echo "Only $# param(s) passed. Must be at least 3"
+        return 1
+    fi
+    args=("$@")
+    for i in ${!args[@]}
+    do
+        if [ $i -gt 1 ]; then
+            perl -pi -w -e "s/$1/$2/g;" ${args[$i]}
+        fi
+    done
+}
+declare root_path="."
+
+# ------------ PARAMS ------------ #
+# replace
+declare version_code_id="2"
+declare version_name_id="1.0.2"
+declare version_code="versionCode $version_code_id"
+declare version_name="versionName \"$version_name_id\""
+
+declare bundle_prefix="vn"
+declare bundle_name="abaha"
+declare bundle_id="$bundle_prefix.$bundle_name"
+declare development_team_id="BAL5QMGVC3"
+declare development_team="DEVELOPMENT_TEAM = $development_team_id"
+declare marketing_version_id="1.0.2"
+declare marketing_version="MARKETING_VERSION = $marketing_version_id"
+declare project_version_id="2"
+declare project_version="CURRENT_PROJECT_VERSION = $project_version_id"
+
+declare app_key="abahakey"
+declare secret_key="1805abahakey89iujfhj"
+declare app_name_value="Abaha"
+declare email="abaha\@gmail.com"
+declare app_config_name_value="Abaha"
+declare app_name="APP_NAME = '$app_config_name_value'"
+declare app_config_name="appName: '$app_config_name_value'"
+declare app_config_name_simple="abaha"
+declare app_name_show="APP_NAME_SHOW = '$app_name_value'"
+declare hotline="\+8412345678"
+declare app_fanpage="https:\/\/www.facebook.com\/abaha\/"
+declare app_info="https:\/\/abaha.vn"
+declare primary_color_value="ffffff" #fill full 6 characters for HEX format
+declare primary_color="#$primary_color_value"
+declare default_color="DEFAULT_COLOR = '$primary_color'"
+declare noti_accent_color="FF$primary_color_value"
+declare logo_sub_color_code="#000"
+declare logo_sub_color="sub: '$logo_sub_color_code'"
+declare logo_addition_color_code="#ccc"
+declare logo_addition_color="addition: '$logo_addition_color_code'"
+
+declare oneSignal_key="test-onesignal"
+
+declare branchIO_key="test_key_live"
+
+declare firebase_reversed_client_id="test_fire_base"
+
+declare code_push_ios_key="test_cp_ios"
+declare code_push_android_key="test_cp_android"
+declare app_code_push_version_code="test1"
+declare app_code_push_version="version: $app_code_push_version_code"
+
+# current
+declare current_version_code_id="1"
+declare current_version_name_id="1.0.1"
+declare current_version_code="versionCode $current_version_code_id"
+declare current_version_name="versionName \"$current_version_name_id\""
+
+declare current_bundle_prefix="vn"
+declare current_bundle_name="huongcang"
+declare current_bundle_id="$current_bundle_prefix.$current_bundle_name"
+declare current_development_team_id="HE24EA8C23"
+declare current_development_team="DEVELOPMENT_TEAM = $current_development_team_id"
+declare current_marketing_version_id="1.0.1"
+declare current_marketing_version="MARKETING_VERSION = $current_marketing_version_id"
+declare current_project_version_id="1"
+declare current_project_version="CURRENT_PROJECT_VERSION = $current_project_version_id"
+
+declare current_app_key="huongcangkey"
+declare current_secret_key="jkh234huongcangkey2342k7"
+declare current_app_name_value="Hương Cảng"
+declare current_email="thuc.lehuy\@gmail.com"
+declare current_app_config_name_value="HuongCang"
+declare current_app_name="APP_NAME = '$current_app_config_name_value'"
+declare current_app_config_name="appName: '$current_app_config_name_value'"
+declare current_app_config_name_simple="huongcang"
+declare current_app_name_show="APP_NAME_SHOW = '$current_app_name_value'"
+declare current_hotline="\+84983962301"
+declare current_app_fanpage="''"
+declare current_app_info="https:\/\/huongcang.vn"
+declare current_primary_color_value="f41820"
+declare current_primary_color="#$current_primary_color_value"
+declare current_default_color="DEFAULT_COLOR = '$current_primary_color'"
+declare current_noti_accent_color="FF$current_primary_color_value"
+declare current_logo_sub_color_code="#FFF"
+declare current_logo_sub_color="sub: '$current_logo_sub_color_code'"
+declare current_logo_addition_color_code="#000"
+declare current_logo_addition_color="addition: '$current_logo_addition_color_code'"
+
+declare current_oneSignal_key="490c05c5-ddb5-4bfd-adf9-a58e78f7982a"
+
+declare current_branchIO_key="key_live_pdTYGpWpmOwoEkoevPP5ShilDCplZcG4"
+
+declare current_firebase_reversed_client_id="com.googleusercontent.apps.44679388662-hr24gj8pqdmkpm822t3v7har17m7773b"
+
+declare current_code_push_ios_key="U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY"
+declare current_code_push_android_key="5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr"
+declare current_app_code_push_version_code="1"
+declare current_app_code_push_version="version: $current_app_code_push_version_code"
+
+#_____ A.N.D.R.O.I.D
+declare gradle_properties_path="$root_path/android/gradle.properties"
+declare buck_path="$root_path/android/app/BUCK"
+declare app_gradle_build_path="$root_path/android/app/build.gradle"
+declare manifest_path="$root_path/android/app/src/main/AndroidManifest.xml"
+declare java_path="$root_path/android/app/src/main/java"
+declare main_activity_path="$java_path/$current_bundle_prefix/$current_bundle_name/MainActivity.java"
+declare main_application_path="$java_path/$current_bundle_prefix/$current_bundle_name/MainApplication.java"
+declare values_string_path="android/app/src/main/res/values/strings.xml"
+
+
+#_____ I.O.S
+declare info_plist_path="$root_path/ios/my_food_new/Info.plist"
+declare entitlements_path="$root_path/ios/my_food_new/my_food_new.entitlements"
+declare xcodeproj_path="$root_path/ios/my_food_new.xcodeproj/project.pbxproj"
+
+
+#_____ J.S
+#_ deprecated
+declare ndt_history_path="$root_path/src/components/account/Ndt/NdtHistory.js"
+#_ deprecated
+declare recharge_path="$root_path/src/components/account/VndWallet/Recharge.js"
+#__________ i18n
+declare i18n_vi_path="$root_path/src/i18n/translations/vi/common.json"
+declare i18n_en_path="$root_path/src/i18n/translations/en/common.json"
+#---------- end i18n
+declare constant_path="$root_path/src/lib/Constant.js"
+declare config_path="$root_path/src/config.js"
+declare tickid_phone_card_config="$root_path/src/packages/tickid-phone-card/config.js"
+declare tickid_voucher_config="$root_path/src/packages/tickid-voucher/config.js"
+
+
+#_____ README
+declare readme_path="$root_path/README.md"
+
+#_____ ICON
+declare icon_name="icon.jpg"
+declare image_logo_name="logo-640x410.jpg"
+declare icon_path="$root_path/$icon_name"
+declare images_path="$root_path/src/images"
+declare image_logo_path="$images_path/$image_logo_name"
+
+
+######################################################
+# RUN
+
+replace_string "$current_development_team" "$development_team" "$xcodeproj_path"
+replace_string "$current_marketing_version" "$marketing_version" "$xcodeproj_path"
+replace_string "$current_project_version" "$project_version" "$xcodeproj_path"
+
+replace_string "$current_version_code" "$version_code" "$app_gradle_build_path"
+replace_string "$current_version_name" "$version_name" "$app_gradle_build_path"
+
+replace_string "$current_bundle_id" "$bundle_id" "$gradle_properties_path" "$buck_path" "$app_gradle_build_path" "$manifest_path" "$main_activity_path" "$main_application_path" "$info_plist_path" "$xcodeproj_path"
+
+replace_string "$current_app_name_value" "$app_name_value" "$values_string_path" "$info_plist_path" "$ndt_history_path" "$recharge_path" "$i18n_vi_path" "$i18n_en_path"
+replace_string "$current_app_name_show" "$app_name_show" "$constant_path"
+replace_string "$current_app_name" "$app_name" "$constant_path"
+replace_string "$current_email" "$email" "$constant_path"
+replace_string "$current_hotline" "$hotline" "$constant_path"
+replace_string "$current_app_fanpage" "$app_fanpage" "$constant_path"
+replace_string "$current_app_info" "$app_info" "$constant_path"
+replace_string "$current_default_color" "$default_color" "$constant_path"
+replace_string "$current_code_push_ios_key" "$code_push_ios_key" "$constant_path"
+replace_string "$current_code_push_android_key" "$code_push_android_key" "$constant_path"
+replace_string "$current_app_code_push_version" "$app_code_push_version" "$constant_path"
+
+replace_string "$current_app_config_name_simple" "$app_config_name_simple" "$readme_path" "$manifest_path" "$info_plist_path" "$entitlements_path"
+
+replace_string "$current_app_config_name" "$app_config_name" "$config_path"
+replace_string "$current_app_key" "$app_key" "$config_path"
+replace_string "$current_secret_key" "$secret_key" "$config_path"
+replace_string "$current_oneSignal_key" "$oneSignal_key" "$config_path"
+replace_string "$current_primary_color" "$primary_color" "$config_path"
+replace_string "$current_primary_color" "$primary_color" "$tickid_phone_card_config"
+replace_string "$current_primary_color" "$primary_color" "$tickid_voucher_config"
+replace_string "$current_logo_sub_color" "$logo_sub_color" "$config_path"
+replace_string "$current_logo_addition_color" "$logo_addition_color" "$config_path"
+
+replace_string "$current_noti_accent_color" "$noti_accent_color" "$manifest_path"
+
+replace_string "$current_firebase_reversed_client_id" "$firebase_reversed_client_id" "$info_plist_path"
+
+replace_folder_name "$java_path/$current_bundle_prefix/$current_bundle_name" "$java_path/$bundle_prefix/$bundle_name"
+
+copy_file "$icon_path" "$image_logo_path"
