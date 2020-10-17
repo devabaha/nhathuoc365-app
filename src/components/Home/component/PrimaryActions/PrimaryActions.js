@@ -6,6 +6,10 @@ import Button from 'react-native-button';
 import getImageRatio from 'app-packages/tickid-util/getImageRatio';
 import imageIconNext from '../../../../images/next.png';
 import PointRechargeButton from './PointRechargeButton';
+import {
+  isActivePackageOptionConfig,
+  PACKAGE_OPTIONS_TYPE
+} from '../../../../helper/packageOptionsHandler';
 
 class PrimaryActions extends Component {
   render() {
@@ -16,29 +20,31 @@ class PrimaryActions extends Component {
     return (
       <View style={styles.container}>
         <View style={[styles.actionsWrapper, actionsWrapper]}>
-          <View style={styles.mainContentWrapper}>
-            <PointRechargeButton
-              wrapperStyle={{
-                paddingVertical: 10
-              }}
-              iconStyle={styles.scanIcon}
-            />
-            <Button
-              containerStyle={{ width: '100%', flex: 1, paddingVertical: 10 }}
-              onPress={() => props.onSurplusNext()}
-            >
-              <View style={styles.walletInfoWrapper}>
-                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+          {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.CASHBACK) && (
+            <View style={styles.mainContentWrapper}>
+              <PointRechargeButton
+                wrapperStyle={{
+                  paddingVertical: 10
+                }}
+                iconStyle={styles.scanIcon}
+              />
+              <Button
+                containerStyle={{ width: '100%', flex: 1, paddingVertical: 10 }}
+                onPress={() => props.onSurplusNext()}
+              >
+                <View style={styles.walletInfoWrapper}>
+                  <Text style={styles.walletNameLabel}>{props.walletName}</Text>
 
-                <View style={styles.walletLabelRight}>
-                  <Text style={styles.surplus}>{props.surplus}</Text>
+                  <View style={styles.walletLabelRight}>
+                    <Text style={styles.surplus}>{props.surplus}</Text>
+                  </View>
+                  <View style={styles.iconNextWrapper}>
+                    <Image style={styles.iconNext} source={imageIconNext} />
+                  </View>
                 </View>
-                <View style={styles.iconNextWrapper}>
-                  <Image style={styles.iconNext} source={imageIconNext} />
-                </View>
-              </View>
-            </Button>
-          </View>
+              </Button>
+            </View>
+          )}
           {props.primaryActions && (
             <View style={styles.walletAction}>
               {props.primaryActions.map(action => (
@@ -115,7 +121,9 @@ const styles = StyleSheet.create({
   },
   mainContentWrapper: {
     flexDirection: 'row',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ebebeb'
   },
   walletInfoWrapper: {
     flex: 1,
@@ -130,8 +138,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderTopWidth: 0.5,
-    borderTopColor: '#ebebeb',
     paddingVertical: 15
   },
   walletLabelRight: {
@@ -188,4 +194,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PrimaryActions;
+export default observer(PrimaryActions);

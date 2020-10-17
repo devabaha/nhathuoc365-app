@@ -133,10 +133,8 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.ORDERS:
-      Actions.jump(appConfig.routes.ordersTab);
-      break;
     case SERVICES_TYPE.ORDERS_TAB:
-      Actions.jump(appConfig.routes.ordersTab);
+      Actions.push(appConfig.routes.ordersTab);
       break;
     case SERVICES_TYPE.ORDER_DETAIL:
       store.setDeepLinkData({ id: service.id });
@@ -173,7 +171,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
 
     /** NEWS */
     case SERVICES_TYPE.NEWS:
-      Actions.jump(appConfig.routes.newsTab);
+      Actions.push(appConfig.routes.newsTab);
       break;
     case SERVICES_TYPE.NEWS_DETAIL:
       Actions.notify_item({

@@ -667,17 +667,17 @@ class RootRouter extends Component {
                    ************************ Tab 2 ************************
                    */}
                   <Stack
-                    key={appConfig.routes.mainVoucher}
+                    key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
-                    iconName="ticket"
+                    iconName="bell"
                     iconSize={24}
                     notifyKey=""
                   >
                     <Scene
-                      key={`${appConfig.routes.mainVoucher}_1`}
-                      title={t('screen.voucher.mainTitle')}
-                      component={VoucherContainer}
+                      key={`${appConfig.routes.newsTab}_1`}
+                      title={t('screen.news.mainTitle')}
+                      component={Notify}
                     />
                   </Stack>
 
@@ -744,6 +744,17 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.newsTab}_1`}
                     title={t('screen.news.mainTitle')}
                     component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ ORDERS ================ */}
+                <Stack key={appConfig.routes.ordersTab}>
+                  <Scene
+                    key={`${appConfig.routes.ordersTab}_1`}
+                    title={t('screen.orders.mainTitle')}
+                    component={Orders}
                     {...navBarConfig}
                     back
                   />

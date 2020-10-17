@@ -3,6 +3,7 @@ import autobind from 'autobind-decorator';
 import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
+import { SERVICES_TYPE } from '../helper/servicesHandler';
 
 @autobind
 class Store {
@@ -193,7 +194,17 @@ class Store {
     new_totals: 0,
     updating_version: 0,
     new_version: '',
-    url_update: ''
+    url_update: '',
+    // get list values of SERVICE_TYPE to format {[value]: 0, ...}
+    ...Object.values(SERVICES_TYPE)
+      .map(type => ({
+        [type]: 0
+      }))
+      .reduce(function(result, item) {
+        const key = Object.keys(item)[0];
+        result[key] = item[key];
+        return result;
+      }, {})
   };
   @observable notify_chat = {};
   @observable notify_admin_chat = {};
@@ -203,8 +214,13 @@ class Store {
   }
 
   @action setNotify(data) {
-    this.notify = data || {};
-    Events.trigger(CALLBACK_APP_UPDATING, data);
+    if (!!data && typeof data === 'object') {
+      this.notify = {
+        ...this.notify,
+        data
+      };
+      Events.trigger(CALLBACK_APP_UPDATING, data);
+    }
   }
 
   @action setNotifyChat(data) {
@@ -459,6 +475,15 @@ class Store {
 
   @action updateHomeLoaded(isHomeLoaded) {
     this.isHomeLoaded = isHomeLoaded;
+  }
+
+  /**
+   * Danh sách tắt/ bật cấu hình theo gói sản phẩm.
+   */
+  @observable packageOptions = {};
+
+  @action setPackageOptions(packageOptions) {
+    this.packageOptions = packageOptions;
   }
 }
 

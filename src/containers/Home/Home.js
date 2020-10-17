@@ -62,9 +62,11 @@ class Home extends Component {
             cart_data: response.data.vote_cart
           });
         }
+
         action(() => {
           store.setStoreData(response.data.site);
           store.setAppData(response.data.app);
+          store.setPackageOptions(response.data.package_options);
         })();
         this.setState({
           site: response.data.site,

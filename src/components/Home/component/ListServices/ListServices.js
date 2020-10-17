@@ -10,6 +10,8 @@ function renderService({ item, data, app, notify, onPress }) {
     onPress(item);
   };
 
+  const notifyCount = notify[item.type];
+
   return (
     <Button onPress={handleOnPress} containerStyle={styles.buttonWrapper}>
       <View style={styles.itemWrapper}>
@@ -29,16 +31,22 @@ function renderService({ item, data, app, notify, onPress }) {
         </View>
         <Text style={styles.title}>{item.title}</Text>
 
-        {notify.notify_chat > 0 && item.type === 'chat' && (
+        {notifyCount > 0 && (
+          <View style={styles.notifyWrapper}>
+            <Text style={styles.notify}>{notifyCount}</Text>
+          </View>
+        )}
+
+        {/* {notify.notify_chat > 0 && item.type === "chat" && (
           <View style={styles.notifyWrapper}>
             <Text style={styles.notify}>{notify.notify_chat}</Text>
           </View>
         )}
-        {notify.notify_list_chat > 0 && item.type === 'list_chat' && (
+        {notify.notify_list_chat > 0 && item.type === "list_chat" && (
           <View style={styles.notifyWrapper}>
             <Text style={styles.notify}>{notify.notify_list_chat}</Text>
           </View>
-        )}
+        )} */}
       </View>
     </Button>
   );
@@ -46,23 +54,26 @@ function renderService({ item, data, app, notify, onPress }) {
 
 function ListServices(props) {
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={props.listService}
-        extraData={props.notify}
-        renderItem={({ item, index }) =>
-          renderService({
-            item,
-            index,
-            onPress: props.onItemPress,
-            data: props.data,
-            notify: props.notify
-          })
-        }
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={4}
-      />
-    </View>
+    Array.isArray(props.listService) &&
+    props.listService.length !== 0 && (
+      <View style={styles.container}>
+        <FlatList
+          data={props.listService}
+          extraData={props.notify}
+          renderItem={({ item, index }) =>
+            renderService({
+              item,
+              index,
+              onPress: props.onItemPress,
+              data: props.data,
+              notify: props.notify
+            })
+          }
+          keyExtractor={(item, index) => index.toString()}
+          numColumns={4}
+        />
+      </View>
+    )
   );
 }
 
