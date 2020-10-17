@@ -151,7 +151,11 @@
       "mainTitle": "Khách hàng"
     },
     "orderManagement": {
-      "mainTitle": "Quản lý đơn hàng"
+      "mainTitle": "Quản lý giao dịch"
+    },
+    "customerProfile": {
+      "mainTitle": "Thông tin khách hàng",
+      "editTitle": "Sửa khách hàng"
     }
   },
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import appConfig from 'app-config';
 
@@ -30,6 +30,10 @@ const styles = StyleSheet.create({
   subTitle: {
     marginTop: 5,
     color: '#888'
+  },
+  rightIcon: {
+    fontSize: 16,
+    color: '#ccc'
   }
 });
 
@@ -37,8 +41,8 @@ class CustomerRow extends Component {
   state = {};
   render() {
     return (
-      <View style={styles.wrapper}>
-        <TouchableOpacity onPress={this.props.onPress}>
+      <TouchableHighlight underlayColor="#ddd" onPress={this.props.onPress}>
+        <View style={styles.wrapper}>
           <View style={styles.container}>
             {/* <View style={styles.avatarContainer}>
           <Icon name="user-circle" style={styles.avatarIcon} />
@@ -47,9 +51,12 @@ class CustomerRow extends Component {
               <Text style={styles.title}>{this.props.name}</Text>
               <Text style={styles.subTitle}>{this.props.tel}</Text>
             </View>
+            <View style={styles.rightContainer}>
+              <Icon name="chevron-right" style={styles.rightIcon} />
+            </View>
           </View>
-        </TouchableOpacity>
-      </View>
+        </View>
+      </TouchableHighlight>
     );
   }
 }

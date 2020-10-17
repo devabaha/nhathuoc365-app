@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -16,6 +16,8 @@ import { APIRequest } from '../../../network/Entity';
 import { HeaderBeeLand } from '../components';
 import CustomerRow from './CustomerRow';
 import appConfig from 'app-config';
+import { Actions } from 'react-native-router-flux';
+import LinearGradient from 'react-native-linear-gradient';
 
 const styles = StyleSheet.create({
   container: {
@@ -50,6 +52,36 @@ const styles = StyleSheet.create({
   },
   footerLoading: {
     height: '100%'
+  },
+  floatingBtnWrapper: {
+    position: 'absolute',
+    zIndex: 999,
+    bottom: 45,
+    right: 40,
+    borderRadius: 30,
+    backgroundColor: '#fff',
+    ...elevationShadowStyle(10)
+  },
+  floatingBtnContainer: {
+    flex: 1,
+    width: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 30,
+    borderWidth: 0.5,
+    borderColor: '#888',
+    overflow: 'hidden'
+  },
+  floatingBtnBackground: {
+    position: 'absolute',
+    flex: 1,
+    width: '100%',
+    height: '100%'
+  },
+  floatingBtnIcon: {
+    fontSize: 30,
+    color: '#fff'
   }
 });
 
@@ -119,7 +151,7 @@ class CustomerSearching extends Component {
       if (newListCustomer.length === 0) {
         this.offset -= this.limit;
       } else {
-        customers = [...this.state.customers].concat(newListCustomer);
+        customers = this.state.customers;
       }
     } else {
       customers = newListCustomer;
@@ -149,7 +181,14 @@ class CustomerSearching extends Component {
     });
   }
 
-  handleCustomerPress(customer) {}
+  handleCustomerPress(customer) {
+    Actions.push(appConfig.routes.customerProfileBeeLand, {
+      title: this.props.t('screen.customerProfile.editTitle'),
+      isEdit: true,
+      customer,
+      reloadData: () => this.onRefresh()
+    });
+  }
 
   onRefresh() {
     this.offset = 0;
@@ -164,6 +203,13 @@ class CustomerSearching extends Component {
         this.getListCustomer(true);
       });
     }
+  }
+
+  goToAddCustomer() {
+    Actions.push(appConfig.routes.customerProfileBeeLand, {
+      title: this.props.t('screen.customerProfile.mainTitle'),
+      reloadData: () => this.onRefresh()
+    });
   }
 
   renderCustomer({ item: customer, index }) {
@@ -230,6 +276,8 @@ class CustomerSearching extends Component {
               )
             }
           />
+
+          <FloatingButton onPress={this.goToAddCustomer.bind(this)} />
         </SafeAreaView>
       </View>
     );
@@ -237,3 +285,28 @@ class CustomerSearching extends Component {
 }
 
 export default withTranslation()(CustomerSearching);
+
+class FloatingButton extends PureComponent {
+  render() {
+    return (
+      <View style={styles.floatingBtnWrapper}>
+        <View style={styles.floatingBtnContainer}>
+          <LinearGradient
+            colors={[
+              LightenColor(appConfig.colors.primary, -20),
+              appConfig.colors.primary,
+              LightenColor(appConfig.colors.primary, 5)
+            ]}
+            locations={[0.2, 0.7, 0.9]}
+            useAngle
+            angle={-135}
+            style={styles.floatingBtnBackground}
+          />
+          <TouchableOpacity activeOpacity={0.6} onPress={this.props.onPress}>
+            <Icon name="plus" style={styles.floatingBtnIcon} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+}

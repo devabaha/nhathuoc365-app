@@ -151,7 +151,11 @@
       "mainTitle": "Customer"
     },
     "orderManagement": {
-      "mainTitle": "Order management"
+      "mainTitle": "Transaction management"
+    },
+    "customerProfile": {
+      "mainTitle": "Customer information",
+      "editTitle": "Edit customer"
     }
   },
 

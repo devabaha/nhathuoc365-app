@@ -150,6 +150,7 @@ const config = Object.freeze({
     confirmBookingBeeLand: 'confirmBookingBeeLand',
     customerSearchingBeeLand: 'customerSearchingBeeLand',
     orderManagementBeeLand: 'orderManagementBeeLand',
+    customerProfileBeeLand: 'customerProfileBeeLand',
 
     // All serives
     allServices: 'allServices'

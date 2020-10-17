@@ -117,6 +117,20 @@ class BeeLandAPIHandler extends BaseHandler {
     const api = url_for(API.USER_LIST_RESERVATION_BEELAND);
     return this.postCancelableAPI(api, data);
   }
+
+  /**
+   * @todo Tạo, sửa thông tin khách hàng
+   *
+   * @param {Object} data
+   * @param {string} data.name
+   * @param {string} data.tel
+   * @param {string} data.email
+   * @param {string} data.address
+   */
+  user_create_update_customer_beeland(data) {
+    const api = url_for(API.USER_CREATE_UPDATE_CUSTOMER_BEELAND);
+    return this.postCancelableAPI(api, data);
+  }
 }
 
 export default BeeLandAPIHandler;

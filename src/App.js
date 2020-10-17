@@ -173,6 +173,7 @@ import {
   CustomerInfoBeeLand,
   DepositPaymentBeeLand
 } from './containers/BeeLand/Booking/';
+import { ProfileBeeLand } from './containers/BeeLand/CustomerProfile';
 
 /**
  * Not allow font scaling
@@ -845,7 +846,7 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* ================ REQUEST CREATION================ */}
+                {/* ================ REQUEST CREATION ================ */}
                 <Stack key={appConfig.routes.requestCreation}>
                   <Scene
                     key={`${appConfig.routes.requestCreation}_1`}
@@ -949,6 +950,16 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.orderManagementBeeLand}_1`}
                     component={OrderManagementBeeLand}
                     title={t('screen.orderManagement.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ BEELAND CUSTOMER PROFILE ================ */}
+                <Stack key={appConfig.routes.customerProfileBeeLand}>
+                  <Scene
+                    key={`${appConfig.routes.customerProfileBeeLand}_1`}
+                    component={ProfileBeeLand}
                     {...navBarConfig}
                     back
                   />

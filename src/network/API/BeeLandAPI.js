@@ -18,3 +18,5 @@ exports.USER_LIST_CUSTOMER_BEELAND =
   MY_FOOD_API + 'apiUser/list_customer_beeland';
 exports.USER_LIST_RESERVATION_BEELAND =
   MY_FOOD_API + 'apiUser/list_reservation_beeland';
+exports.USER_CREATE_UPDATE_CUSTOMER_BEELAND =
+  MY_FOOD_API + 'apiUser/create_update_customer_beeland';
