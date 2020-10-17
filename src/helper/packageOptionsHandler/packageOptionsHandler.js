@@ -13,5 +13,5 @@ export const isActivePackageOptionConfig = type => {
   }
 
   // default option
-  return false;
+  return store.isHomeLoaded;
 };

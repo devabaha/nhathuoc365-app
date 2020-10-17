@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -15,66 +15,70 @@ import { ifIphoneX } from 'react-native-iphone-x-helper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import store from 'app-store';
 
-function Header(props) {
-  const { t } = useTranslation(['home', 'stores']);
-  return (
-    <View style={styles.container}>
-      <View style={styles.userNameWrapper}>
-        <TouchableOpacity onPress={props.goToSearch}>
-          <View pointerEvents="none" style={styles.searchWrapper}>
-            <Ionicons
-              size={20}
-              color="#ccc"
-              style={styles.searchIcon}
-              name="ios-search"
-            />
-            <TextInput
-              style={styles.searchInput}
-              placeholder={
-                t('stores:search.placeholder.prefix') +
-                ' ' +
-                // (store.store_data ? store.store_data.name : '') +
-                (store.store_data
-                  ? store.store_data.name || APP_NAME_SHOW
-                  : APP_NAME_SHOW) +
-                '...'
-              }
-              placeholderTextColor="#ccc"
-              numberOfLines={1}
-            />
-          </View>
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.notificationWrapper}>
-        <Button
-          containerStyle={styles.notificationBtn}
-          onPress={props.onPressNoti}
-        >
-          <Icon
-            style={styles.iconNotication}
-            name="bell"
-            size={24}
-            color="#fff"
-            solid
-          />
-          {props.notify.notify_chat > 0 && (
-            <View style={styles.notifyWrapper}>
-              <Text style={styles.notify}>{props.notify.notify_chat}</Text>
+class Header extends Component {
+  render() {
+    const { t, ...props } = this.props;
+    return (
+      <View style={styles.container}>
+        <View style={styles.userNameWrapper}>
+          <TouchableOpacity onPress={props.goToSearch}>
+            <View pointerEvents="none" style={styles.searchWrapper}>
+              <Ionicons
+                size={20}
+                color="#ccc"
+                style={styles.searchIcon}
+                name="ios-search"
+              />
+              <TextInput
+                style={styles.searchInput}
+                placeholder={
+                  t('stores:search.placeholder.prefix') +
+                  ' ' +
+                  // (store.store_data ? store.store_data.name : '') +
+                  (store.isHomeLoaded
+                    ? store.store_data
+                      ? store.store_data.name || APP_NAME_SHOW
+                      : APP_NAME_SHOW
+                    : '') +
+                  '...'
+                }
+                placeholderTextColor="#ccc"
+                numberOfLines={1}
+              />
             </View>
-          )}
-        </Button>
-      </View>
+          </TouchableOpacity>
+        </View>
 
-      {/* DEMO SCHEDULE FUNCTION */}
-      {/* <Button
+        <View style={styles.notificationWrapper}>
+          <Button
+            containerStyle={styles.notificationBtn}
+            onPress={props.onPressNoti}
+          >
+            <Icon
+              style={styles.iconNotication}
+              name="bell"
+              size={24}
+              color="#fff"
+              solid
+            />
+            {props.notify.notify_chat > 0 && (
+              <View style={styles.notifyWrapper}>
+                <Text style={styles.notify}>{props.notify.notify_chat}</Text>
+              </View>
+            )}
+          </Button>
+        </View>
+
+        {/* DEMO SCHEDULE FUNCTION */}
+        {/* <Button
         containerStyle={{ position: 'absolute', right: 70, top: 40 }}
         onPress={() => Actions.push(appConfig.routes.schedule)}
       >
         <Text style={{ color: '#fff', fontWeight: 'bold' }}> Đặt lịch</Text>
       </Button> */}
-    </View>
-  );
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -161,4 +165,4 @@ Header.defaultProps = {
   notify: {}
 };
 
-export default Header;
+export default withTranslation(['home', 'stores'])(observer(Header));

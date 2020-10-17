@@ -450,3 +450,22 @@ global.cancelRequests = requests => {
     requests.cancel();
   }
 };
+
+/**
+ * @todo check if 1-level obj is updated
+ *
+ * @param oldObj old-state object
+ * @param newObj new-state object
+ */
+global.is1LevelObjectUpdated = (oldObj, newObj) => {
+  if (!oldObj || !newObj) return oldObj !== newObj;
+
+  const oldKeys = Object.keys(oldObj);
+  const newKeys = Object.keys(newObj);
+
+  if (oldKeys.length !== newKeys.length) {
+    return true;
+  }
+
+  return oldKeys.some(key => oldObj[key] !== newObj[key]);
+};
