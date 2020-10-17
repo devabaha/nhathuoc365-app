@@ -45,35 +45,36 @@ class PrimaryActions extends Component {
               </Button>
             </View>
           )}
-          {props.primaryActions && (
-            <View style={styles.walletAction}>
-              {props.primaryActions.map(action => (
-                <Button
-                  key={action.type}
-                  onPress={() => props.onPressItem(action)}
-                  containerStyle={styles.actionButton}
-                >
-                  <View style={styles.actionWrapper}>
-                    <Image
-                      source={{ uri: action.icon }}
-                      style={[
-                        styles.actionIcon,
-                        {
-                          ...getImageRatio(
-                            action.iconOriginSize.width,
-                            action.iconOriginSize.height,
-                            undefined,
-                            35
-                          )
-                        }
-                      ]}
-                    />
-                    <Text style={styles.actionTitle}>{action.title}</Text>
-                  </View>
-                </Button>
-              ))}
-            </View>
-          )}
+          {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS) &&
+            props.primaryActions && (
+              <View style={styles.walletAction}>
+                {props.primaryActions.map(action => (
+                  <Button
+                    key={action.type}
+                    onPress={() => props.onPressItem(action)}
+                    containerStyle={styles.actionButton}
+                  >
+                    <View style={styles.actionWrapper}>
+                      <Image
+                        source={{ uri: action.icon }}
+                        style={[
+                          styles.actionIcon,
+                          {
+                            ...getImageRatio(
+                              action.iconOriginSize.width,
+                              action.iconOriginSize.height,
+                              undefined,
+                              35
+                            )
+                          }
+                        ]}
+                      />
+                      <Text style={styles.actionTitle}>{action.title}</Text>
+                    </View>
+                  </Button>
+                ))}
+              </View>
+            )}
         </View>
       </View>
     );
