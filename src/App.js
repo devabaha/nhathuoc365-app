@@ -142,7 +142,7 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
-import VerticalCategory from './components/stores/VerticalCategory';
+import MultiLevelCategory from './components/stores/MultiLevelCategory';
 
 /**
  * Not allow font scaling
@@ -501,8 +501,7 @@ class App extends Component {
 
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
-        <VerticalCategory />
-        {/* {this.state.header}
+        {this.state.header}
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
@@ -522,7 +521,7 @@ class App extends Component {
           closeOnHardwareBackPress={false}
           showCancelButton={false}
           showConfirmButton={false}
-        /> */}
+        />
       </View>
     );
   }
@@ -721,6 +720,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ MULTI LEVEL CATEGORY ================ */}
+                <Stack key={appConfig.routes.multiLevelCategory}>
+                  <Scene
+                    key={`${appConfig.routes.multiLevelCategory}_1`}
+                    component={MultiLevelCategory}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ MAIN VOUCHER ================ */}
                 <Stack key={appConfig.routes.mainVoucher}>

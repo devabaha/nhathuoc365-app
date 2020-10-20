@@ -32,6 +32,7 @@ exports.USER_GET_WALLET = MY_FOOD_API + 'apiUser/user_get_wallet';
 exports.USER_INVITE_HISTORY = MY_FOOD_API + 'apiUser/invite_history';
 exports.USER_CHECK_ADDRESS = MY_FOOD_API + 'apiUser/check_address';
 exports.USER_UPDATE_PROFILE = MY_FOOD_API + 'apiUser/update';
+exports.SITE_GET_TREE_CATEGORIES = MY_FOOD_API + 'apiSite/get_tree_categories';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';

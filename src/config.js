@@ -122,7 +122,10 @@ const config = Object.freeze({
     resetPassword: 'resetPassword',
 
     // All serives
-    allServices: 'allServices'
+    allServices: 'allServices',
+
+    // multi-level category
+    multiLevelCategory: 'multiLevelCategory'
   }
 });
 

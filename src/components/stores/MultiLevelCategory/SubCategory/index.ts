@@ -1,4 +1,4 @@
-import { StyleProp, ViewProps } from "react-native";
+import { GestureResponderEvent, StyleProp, ViewProps } from "react-native";
 import { Category } from "./..";
 
 export { default } from "./SubCategory";
@@ -8,7 +8,7 @@ export interface SubCategoryProps {
   image?: string;
   title?: string;
   loading?: string;
-  onPress?: Function;
+  onPressTitle?: (e: GestureResponderEvent) => void;
   /**
    * mode scroll all category for subCategory
    */

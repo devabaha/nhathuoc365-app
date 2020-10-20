@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Text } from 'react-native';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Animated, { Easing, timing, concat } from 'react-native-reanimated';
 import { RowProps } from '.';
-import { TouchableOpacity } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
@@ -36,7 +34,8 @@ const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 class Row extends Component<RowProps> {
     static defaultProps = {
         defaultOpenChild: false,
-        disabledOpenChild: false
+        disabledOpenChild: false,
+        onPressTitle: () => { }
     }
     state = {
         isOpen: this.props.defaultOpenChild,
@@ -50,7 +49,7 @@ class Row extends Component<RowProps> {
                 inputRange: [0, 1],
                 outputRange: [0, this.props.totalHeight]
             })
-        } : { };
+        } : {};
     }
 
     get animatedIconStyle() {
@@ -77,7 +76,17 @@ class Row extends Component<RowProps> {
             this.setState({ isOpen: nextProps.defaultOpenChild })
         }
 
-        return true;
+        if (nextState !== this.state) {
+            return true;
+        }
+
+        const isUpdateProps = Object.keys(nextProps).some(key => nextProps[key] !== this.props[key] && key !== "children")
+
+        if (isUpdateProps) {
+            return true;
+        }
+
+        return false;
     }
 
     onToggle() {
@@ -91,7 +100,10 @@ class Row extends Component<RowProps> {
         return (
             <View style={[styles.container, this.props.containerStyle]}>
                 <View style={[styles.header, this.props.headerContainerStyle]}>
-                    <TouchableOpacity style={[styles.layoutContainer, { flex: !!this.props.totalHeight ? 0 : 1 }]}>
+                    <TouchableOpacity
+                        style={[styles.layoutContainer, { flex: !!this.props.totalHeight ? 0 : 1 }]}
+                        onPress={this.props.onPressTitle}
+                    >
                         <Text>{this.props.title}</Text>
                     </TouchableOpacity>
                     {isShowDirectionIcon && <TouchableOpacity

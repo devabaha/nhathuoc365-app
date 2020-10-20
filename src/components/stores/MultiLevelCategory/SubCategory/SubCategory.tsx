@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Image } from 'react-native';
-import { ScrollView, View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { SubCategoryProps } from '.';
 import Category from '../Category';
 import Row from './Row';
@@ -62,26 +62,17 @@ class SubCategory extends Component<SubCategoryProps> {
         image: "",
         title: "",
         loading: false,
-        onPress: () => { },
+        onPressTitle: () => { },
         fullScroll: false
     }
 
     state = {
-        categorySize: null,
+        categorySize: {
+            width: 0,
+            height: 0
+        },
         itemsPerRow: 3
     };
-
-    shouldComponentUpdate(nextProps: SubCategoryProps, nextState: any) {
-        if (nextState !== this.state) {
-            return true;
-        }
-
-        if (nextProps !== this.props) {
-            return true;
-        }
-
-        return false;
-    }
 
     handleCategoriesLayout(e) {
         const { width: bodyWidth } = e.nativeEvent.layout;
@@ -90,6 +81,7 @@ class SubCategory extends Component<SubCategoryProps> {
             width: bodyWidth / itemsPerRow,
             height: bodyWidth / itemsPerRow,
         }
+
         this.setState({
             categorySize,
             itemsPerRow
@@ -115,6 +107,7 @@ class SubCategory extends Component<SubCategoryProps> {
                                     styles.categoryContainer,
                                     extraStyle
                                 ]}
+                                onPress={() => this.props.onPressTitle(childCate)}
                             >
                                 {/* {!isLast && <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#fff', position: 'absolute', bottom: 0, right: 0 }} />} */}
                             </Category>
@@ -140,6 +133,7 @@ class SubCategory extends Component<SubCategoryProps> {
                         totalHeight={contentHeight}
                         defaultOpenChild={this.props.fullData}
                         fullMode={this.props.fullData}
+                        onPressTitle={() => this.props.onPressTitle(category)}
                     >
                         {this.renderSubCategories(category)}
                     </Row>
@@ -155,9 +149,11 @@ class SubCategory extends Component<SubCategoryProps> {
                     <View style={styles.bannerContainer}>
                         <Image style={styles.banner} source={{ uri: this.props.image }} />
                     </View>
-                    <Text style={styles.title}>
-                        {this.props.title}
-                    </Text>
+                    <TouchableOpacity onPress={() => this.props.onPressTitle(null)}>
+                        <Text style={styles.title}>
+                            {this.props.title}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
                 <View
                     onLayout={this.handleCategoriesLayout.bind(this)}

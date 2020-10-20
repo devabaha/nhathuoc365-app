@@ -1,11 +1,29 @@
+/**
+ * @class Multi-Level Category
+ * 
+ * @version 1.0
+ * @author Nguyen Hoang Minh
+ * 
+ * @summary Category with multi-level. 2 options for layout.
+ * @description current for 2-3 level.
+ * 
+ * @example Category of Beemart, Clingme (others app on store).
+ */
 import * as React from "react";
-import { ScrollView } from "react-native";
-import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
+import { SafeAreaView, View, StyleSheet, FlatList, RefreshControl, ScrollView } from "react-native";
+import IconFeather from 'react-native-vector-icons/Feather';
+import Button from 'react-native-button';
+import RightButtonChat from '../../RightButtonChat';
 import Category from "./Category";
 import SubCategory from "./SubCategory";
 //@ts-ignore
 import appConfig from 'app-config';
-import { VerticalCategoryProps } from ".";
+//@ts-ignore
+import store from 'app-store';
+import { MultiLevelCategoryProps } from ".";
+import { APIRequest } from "../../../network/Entity";
+import APIHandler from "../../../network/APIHandler";
+import { Actions } from "react-native-router-flux";
 
 const styles = StyleSheet.create({
     container: {
@@ -20,12 +38,20 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         borderRightColor: '#aaa',
         borderRightWidth: .5
-    }
+    },
+    right_btn_box: {
+        flexDirection: 'row'
+    },
 })
 
-const CATEGORY_TYPE = {
+const CATEGORY_POSITION_TYPE = {
     MAIN: 0,
     SUB: 1
+}
+
+const CATEGORY_TYPE = {
+    BEE_MART: 'multi-level1',
+    CLING_ME: 'multi-level2'
 }
 
 const categories = [
@@ -33,24 +59,35 @@ const categories = [
         id: 1,
         name: "Kem, bơ, sữa, phomai",
         image: "https://imgs.vietnamnet.vn/Images/2017/09/07/09/20170907092930-pho-mai-2.jpg",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
+        list: [
+            {
+                name: "Nguyên liệu nấu ăn",
+                image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
+                list: [
+                    {
+                        name: "Máy móc thiết bị",
+                        image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
+                    },
+                    {
+                        name: "Nguyên liệu nấu ăn",
+                        image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
+                    },
+                    {
+                        name: "Sản phẩm/ dịch vụ khác",
+                        image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
+                    }
+                ]
+            },
+            {
+                name: "Nguyên liệu nấu ăn 1",
+                image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
+                list: []
+            },
+            {
+                name: "Nguyên liệu nấu ăn 2",
+                image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
+                list: []
+            }]
     },
     {
         id: 2,
@@ -285,31 +322,144 @@ const categories = [
 ];
 
 
-class VerticalCategory extends React.Component<VerticalCategoryProps> {
+class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     static defaultProps = {
-        fullData: true
+        type: CATEGORY_TYPE.BEE_MART,
+        siteId: store.store_id
     }
 
     state = {
-        categories: categories,
-        selectedMainCategory: categories[0],
+        categories: [],
+        selectedMainCategory: {
+            id: -1,
+            name: "",
+            list: []
+        },
         mainCategoryDataPosition: {},
         subCategoryDataPosition: {},
-        isScrollByMainCategoryPressing: false
+        isScrollByMainCategoryPressing: false,
+        loading: true,
+        refreshing: false,
+        type: this.props.type
     };
     refMainCategory = React.createRef<any>();
     refSubCategory = React.createRef<any>();
+    getMultiLevelCategoriesRequest = new APIRequest();
+    requests = [this.getMultiLevelCategoriesRequest];
 
-    isFinishSetStateWhileScrolling = true;
+    shouldComponentUpdate(nextProps: MultiLevelCategoryProps, nextState: any) {
+        if (nextProps.type !== this.state.type) {
+            this.setState({
+                type: nextProps.type
+            })
+        }
+        return true;
+    }
+
+    get isFullData() {
+        return this.state.type === CATEGORY_TYPE.CLING_ME;
+    }
+
+    get hasCategories() {
+        return Array.isArray(this.state.categories)
+    }
+
+    get hasSelectedMainCategory() {
+        return !!(this.state.selectedMainCategory)
+    }
+
+    componentDidMount() {
+        this.getMultiLevelCategories();
+
+        setTimeout(() => {
+            Actions.refresh({
+                right: this._renderRightButton()
+            });
+        });
+        //@ts-ignore
+        EventTracker.logEvent('multi_level_category');
+    }
+
+    _renderRightButton() {
+        return (
+            <View style={[styles.right_btn_box]}>
+                {/* <RightButtonOrders tel={store.store_data.tel} /> */}
+                <Button
+                    onPress={() => {
+                        Actions.push(appConfig.routes.searchStore, {
+                            categories: this.state.categories,
+                            category_id: this.state.selectedMainCategory.id,
+                            category_name:
+                                this.state.selectedMainCategory.id !== 0
+                                    ? this.state.selectedMainCategory.name
+                                    : ''
+                        });
+                    }}
+                >
+                    <IconFeather size={26} color={appConfig.colors.white} name="search" />
+                </Button>
+                <RightButtonChat tel={store.store_data.tel} />
+            </View>
+        );
+    }
+
+    async getMultiLevelCategories() {
+        //@ts-ignore
+        const { t } = this.props;
+        try {
+            this.getMultiLevelCategoriesRequest.data =
+                APIHandler.site_get_tree_categories(this.props.siteId);
+
+            const response: any = await this.getMultiLevelCategoriesRequest.promise();
+            console.log(response);
+
+            if (response) {
+                //@ts-ignore
+                if (response.status === STATUS_SUCCESS) {
+                    const selectedMainCategory = { ...this.state.selectedMainCategory };
+                    // this.setState({
+                    //     categories: categories,
+                    //     selectedMainCategory: categories[0]
+                    // })
+                    this.setState({
+                        categories: response.data.categories,
+                        selectedMainCategory: selectedMainCategory.id === -1
+                            ? response.data.categories[0]
+                            : selectedMainCategory
+                    })
+                } else {
+                    //@ts-ignore
+                    flashShowMessage({
+                        type: 'danger',
+                        message: response.data || t('api.error.message')
+                    })
+                }
+            } else {
+                //@ts-ignore
+                flashShowMessage({
+                    type: 'danger',
+                    message: t('api.error.message')
+                })
+            }
+
+        } catch (err) {
+            console.log('%cget_multi_level_categories', 'color: red', err);
+        } finally {
+            this.setState({
+                loading: false,
+                refreshing: false
+            })
+        }
+    }
 
     onPressMainCategory(category) {
-        if (!this.props.fullData) return;
         this.setState({
             selectedMainCategory: category
         }, () => {
             this.scrollMainCategoryToIndex(category)
         })
 
+        if (!this.isFullData) return;
         if (this.refSubCategory.current) {
             this.setState({
                 isScrollByMainCategoryPressing: true
@@ -321,12 +471,21 @@ class VerticalCategory extends React.Component<VerticalCategoryProps> {
         }
     }
 
+    goToStore(category) {
+        Actions.push(appConfig.routes.store, {
+            title: category.name,
+            categoryId: category.id,
+            extraCategoryId: Array.isArray(category.list) && category.list.length !== 0 && category.id,
+            extraCategoryName: category.name,
+        })
+    }
+
     handleMainCategoryScrolling(e) {
 
     }
 
     handleSubCategoriesScrolling(e) {
-        if (!this.props.fullData) return;
+        if (!this.isFullData) return;
         if (this.state.isScrollByMainCategoryPressing) return;
         const {
             contentOffset: { y },
@@ -379,10 +538,10 @@ class VerticalCategory extends React.Component<VerticalCategoryProps> {
         const { y } = e.nativeEvent.layout;
 
         switch (type) {
-            case CATEGORY_TYPE.MAIN:
+            case CATEGORY_POSITION_TYPE.MAIN:
                 this.mapMainCategoryPosition(category, y)
                 break;
-            case CATEGORY_TYPE.SUB:
+            case CATEGORY_POSITION_TYPE.SUB:
                 this.mapSubCategoryPosition(category, y)
                 break;
         }
@@ -401,17 +560,24 @@ class VerticalCategory extends React.Component<VerticalCategoryProps> {
 
     mapSubCategoryPosition(category, y) {
         if (this.state.subCategoryDataPosition[category.id] !== y) {
-            this.setState((prevState: any) => ({
-                subCategoryDataPosition: {
-                    ...prevState.subCategoryDataPosition,
-                    [category.id]: y
+            this.setState((prevState: any) => {
+                return {
+                    subCategoryDataPosition: {
+                        ...prevState.subCategoryDataPosition,
+                        [category.id]: y
+                    }
                 }
-            }))
+            })
         }
     }
 
+    onRefresh() {
+        this.setState({ refreshing: true });
+        this.getMultiLevelCategories();
+    }
+
     handleSubCategoryMomentumScrollEnd(e) {
-        if (!this.props.fullData) return;
+        if (!this.isFullData) return;
         if (this.state.isScrollByMainCategoryPressing) {
             this.setState({
                 isScrollByMainCategoryPressing: false
@@ -423,7 +589,7 @@ class VerticalCategory extends React.Component<VerticalCategoryProps> {
         const isSelected = category.id === this.state.selectedMainCategory.id;
         const extraStyle = isSelected
             //@ts-ignore
-            ? { backgroundColor: hexToRgbA(appConfig.colors.primary, .9) }
+            ? { backgroundColor: appConfig.colors.primary, borderTopWidth: .5, borderColor: '#fff' }
             : {};
         const extraTitleStyle = isSelected ? { color: "#fff" } : {};
         return (
@@ -440,17 +606,23 @@ class VerticalCategory extends React.Component<VerticalCategoryProps> {
     }
 
     renderSubCategories() {
+        const categories = this.hasSelectedMainCategory
+            ? this.isFullData
+                ? this.state.categories
+                : [this.state.selectedMainCategory]
+            : [];
         return (
-            this.state.categories.map((category, index) => {
+            categories.map((category, index) => {
                 return (
                     <View
                         key={index}
-                        onLayout={this.handleMappingDataPosition.bind(this, category, CATEGORY_TYPE.SUB)}>
+                        onLayout={this.handleMappingDataPosition.bind(this, category, CATEGORY_POSITION_TYPE.SUB)}>
                         <SubCategory
                             categories={category.list}
                             image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQLN3yGu2SdG8D0_HCgx_MBHGglHyaPoypdJA&usqp=CAU"
                             title={category.name}
-                            fullData={this.props.fullData}
+                            fullData={this.isFullData}
+                            onPressTitle={(cate) => this.goToStore(cate || category)}
                         />
                     </View>
                 )
@@ -471,6 +643,7 @@ class VerticalCategory extends React.Component<VerticalCategoryProps> {
                             showsVerticalScrollIndicator={false}
                             data={this.state.categories}
                             renderItem={this.renderMainCategory.bind(this)}
+                            keyExtractor={(item, index) => index.toString()}
                         />
                     </View>
 
@@ -479,20 +652,18 @@ class VerticalCategory extends React.Component<VerticalCategoryProps> {
                         scrollEventThrottle={16}
                         onScroll={this.handleSubCategoriesScrolling.bind(this)}
                         onMomentumScrollEnd={this.handleSubCategoryMomentumScrollEnd.bind(this)}
+                        refreshControl={<RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh.bind(this)}
+                        />}
                     >
                         {this.renderSubCategories()}
-                        {/* <SubCategory
-                            categories={this.state.selectedMainCategory.list}
-                            image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQLN3yGu2SdG8D0_HCgx_MBHGglHyaPoypdJA&usqp=CAU"
-                            title="Danh mục"
-                        /> */}
                     </ScrollView>
-
-
                 </SafeAreaView>
             </View>
         );
     }
 }
 
-export default VerticalCategory;
+//@ts-ignore
+export default withTranslation()(MultiLevelCategory);
