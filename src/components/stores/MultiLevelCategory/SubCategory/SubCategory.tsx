@@ -13,13 +13,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff'
     },
     header: {
-        padding: 10,
+        paddingHorizontal: 10,
         borderBottomWidth: 2,
         borderBottomColor: appConfig.colors.primary
     },
     bannerContainer: {
+        marginTop: 10,
         width: '100%',
-        height: 150
+        height:0
     },
     banner: {
         width: '100%',
@@ -27,8 +28,11 @@ const styles = StyleSheet.create({
     },
     title: {
         marginTop: 15,
+        marginBottom: 10,
         fontSize: 18,
         fontWeight: 'bold',
+        textTransform: 'uppercase',
+        letterSpacing: .3
     },
     body: {
         backgroundColor: '#fafafa'
@@ -71,8 +75,34 @@ class SubCategory extends Component<SubCategoryProps> {
             width: 0,
             height: 0
         },
+        bannerLayout: {
+            width: 0,
+            height: 0
+        },
         itemsPerRow: 3
     };
+
+    shouldComponentUpdate(nextProps: SubCategoryProps, nextState: any) {
+        if (nextState !== this.state) {
+            return true;
+        }
+
+        if (nextProps !== this.props) {
+            return true;
+        }
+
+        return false;
+    }
+
+    handleBannerLayout(e) {
+        const { width: bannerWidth } = e.nativeEvent.layout;
+        this.setState({
+            bannerLayout: {
+                width: bannerWidth,
+                height: bannerWidth / 2
+            }
+        })
+    }
 
     handleCategoriesLayout(e) {
         const { width: bodyWidth } = e.nativeEvent.layout;
@@ -134,6 +164,7 @@ class SubCategory extends Component<SubCategoryProps> {
                         defaultOpenChild={this.props.fullData}
                         fullMode={this.props.fullData}
                         onPressTitle={() => this.props.onPressTitle(category)}
+                        image={category.image}
                     >
                         {this.renderSubCategories(category)}
                     </Row>
@@ -143,12 +174,21 @@ class SubCategory extends Component<SubCategoryProps> {
     }
 
     render() {
+        const bannerLayout = this.state.bannerLayout.width && {
+            width: this.state.bannerLayout.width,
+            height: this.state.bannerLayout.height,
+        };
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <View style={styles.bannerContainer}>
-                        <Image style={styles.banner} source={{ uri: this.props.image }} />
-                    </View>
+                    {!!this.props.image &&
+                        <View onLayout={this.handleBannerLayout.bind(this)} style={[
+                            styles.bannerContainer,
+                            bannerLayout
+                        ]}>
+                            <Image style={styles.banner} source={{ uri: this.props.image }} />
+                        </View>
+                    }
                     <TouchableOpacity onPress={() => this.props.onPressTitle(null)}>
                         <Text style={styles.title}>
                             {this.props.title}
@@ -161,7 +201,7 @@ class SubCategory extends Component<SubCategoryProps> {
                 >
                     {this.renderCategories()}
                 </View>
-            </View>
+            </View >
         );
     }
 }

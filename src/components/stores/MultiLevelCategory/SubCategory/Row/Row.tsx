@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import Animated, { Easing, timing, concat } from 'react-native-reanimated';
 import { RowProps } from '.';
@@ -8,13 +8,30 @@ const styles = StyleSheet.create({
     container: {
     },
     layoutContainer: {
-        paddingVertical: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
         paddingHorizontal: 15,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
+    },
+    imageContainer: {
+        width: 35,
+        height: 35,
+        marginRight: 10,
+        borderRadius: 4,
+        overflow: 'hidden',
+        backgroundColor: '#eee'
+    },
+    image: {
+        width: '100%',
+        height: '100%'
+    },
+    title: {
+        flex: 1,
     },
     contentContainer: {
         overflow: 'hidden',
@@ -104,7 +121,15 @@ class Row extends Component<RowProps> {
                         style={[styles.layoutContainer, { flex: !!this.props.totalHeight ? 0 : 1 }]}
                         onPress={this.props.onPressTitle}
                     >
-                        <Text>{this.props.title}</Text>
+                        {!!this.props.image &&
+                            <View style={styles.imageContainer}>
+                                <Image
+                                    source={{ uri: this.props.image }}
+                                    style={styles.image}
+                                />
+                            </View>
+                        }
+                        <Text style={styles.title}>{this.props.title}</Text>
                     </TouchableOpacity>
                     {isShowDirectionIcon && <TouchableOpacity
                         onPress={this.onToggle.bind(this)}

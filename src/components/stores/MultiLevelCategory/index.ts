@@ -5,7 +5,7 @@ export type Category = {
   image?: string;
 };
 
-export type CategoryType = "multi-level1" | "multi-level2";
+export type CategoryType = "fix" | "scroll";
 
 export interface MultiLevelCategoryProps {
   /**

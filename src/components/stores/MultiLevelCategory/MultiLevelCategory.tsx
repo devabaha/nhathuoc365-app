@@ -50,8 +50,8 @@ const CATEGORY_POSITION_TYPE = {
 }
 
 const CATEGORY_TYPE = {
-    BEE_MART: 'multi-level1',
-    CLING_ME: 'multi-level2'
+    BEE_MART: 'fix',
+    CLING_ME: 'scroll'
 }
 
 const categories = [
@@ -348,7 +348,8 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     requests = [this.getMultiLevelCategoriesRequest];
 
     shouldComponentUpdate(nextProps: MultiLevelCategoryProps, nextState: any) {
-        if (nextProps.type !== this.state.type) {
+        if (nextProps.type !== this.props.type &&
+            nextProps.type !== this.state.type) {
             this.setState({
                 type: nextProps.type
             })
@@ -358,6 +359,10 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 
     get isFullData() {
         return this.state.type === CATEGORY_TYPE.CLING_ME;
+    }
+
+    getFormattedCategoryIDForPositionData(categoryID) {
+        return categoryID + " ";
     }
 
     get hasCategories() {
@@ -411,7 +416,6 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                 APIHandler.site_get_tree_categories(this.props.siteId);
 
             const response: any = await this.getMultiLevelCategoriesRequest.promise();
-            console.log(response);
 
             if (response) {
                 //@ts-ignore
@@ -421,12 +425,13 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     //     categories: categories,
                     //     selectedMainCategory: categories[0]
                     // })
-                    this.setState({
+                    this.setState((prevState: any) => ({
+                        type: response.data.type || prevState.type,
                         categories: response.data.categories,
                         selectedMainCategory: selectedMainCategory.id === -1
                             ? response.data.categories[0]
                             : selectedMainCategory
-                    })
+                    }))
                 } else {
                     //@ts-ignore
                     flashShowMessage({
@@ -465,7 +470,9 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                 isScrollByMainCategoryPressing: true
             }, () =>
                 this.refSubCategory.current.scrollTo({
-                    y: this.state.subCategoryDataPosition[category.id]
+                    y: this.state.subCategoryDataPosition[
+                        this.getFormattedCategoryIDForPositionData(category.id)
+                    ]
                 })
             )
         }
@@ -484,6 +491,12 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 
     }
 
+    /**
+     * @todo auto update main selected category by scrolling sub category screen
+     * 
+     * @description only support for CLING_ME mode. 
+     * Not work if sub category scrolled by main category pressing.
+     */
     handleSubCategoriesScrolling(e) {
         if (!this.isFullData) return;
         if (this.state.isScrollByMainCategoryPressing) return;
@@ -494,23 +507,41 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         } = e.nativeEvent;
         const dataMappingIDs = Object.keys(this.state.subCategoryDataPosition);
         const scrollOverCategoriesID = dataMappingIDs.filter(categoryID => {
-            return this.state.subCategoryDataPosition[categoryID] <= y + 15
+            return this.state.subCategoryDataPosition[categoryID] <= y
         });
 
         if (scrollOverCategoriesID.length !== 0) {
-            const nearestCategoryID = scrollOverCategoriesID[scrollOverCategoriesID.length - 1];
+            const nearestCategoryID = scrollOverCategoriesID[scrollOverCategoriesID.length - 1].trim();
             const nearestCategory = this.state.categories
                 .find(cate => String(cate.id) === nearestCategoryID);
-            const lastCategory = this.state.categories[this.state.categories.length - 1];
+            const nearestCategoryIndex = this.state.categories
+                .findIndex(cate => String(cate.id) === nearestCategoryID);
+            const nextCategoryIndex = nearestCategoryIndex + 1;
+            const nextCategory = this.state.categories[nextCategoryIndex];
 
-            if (y + layoutHeight >= Math.floor(contentHeight)) {
-                if (this.state.selectedMainCategory.id !== lastCategory.id) {
-                    this.setState({
-                        selectedMainCategory: lastCategory,
-                    });
-                    this.scrollMainCategoryToIndex(lastCategory);
+
+            if (nextCategory) {
+                const nearestCategoryPosition = this.state.subCategoryDataPosition[
+                    this.getFormattedCategoryIDForPositionData(nearestCategoryID)];
+                const nextCategoryPosition = this.state.subCategoryDataPosition[
+                    this.getFormattedCategoryIDForPositionData(nextCategory.id)];
+                if (y < (nextCategoryPosition - nearestCategoryPosition) / 2) {
+                    return;
                 }
-            } else if (nearestCategoryID !== String(this.state.selectedMainCategory.id)) {
+            }
+
+            // if (y + layoutHeight >= Math.floor(contentHeight)) {
+            //     if (!nextCategory) return;
+            //     if (this.state.selectedMainCategory.id !== nextCategory.id) {
+            //         this.setState({
+            //             selectedMainCategory: nextCategory,
+            //         });
+            //         this.scrollMainCategoryToIndex(nextCategory);
+            //     }
+            // } else 
+            
+            if (nearestCategoryID !== String(this.state.selectedMainCategory.id)) {
+
                 this.setState({
                     selectedMainCategory: nearestCategory
                 });
@@ -560,13 +591,21 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 
     mapSubCategoryPosition(category, y) {
         if (this.state.subCategoryDataPosition[category.id] !== y) {
-            this.setState((prevState: any) => {
-                return {
-                    subCategoryDataPosition: {
-                        ...prevState.subCategoryDataPosition,
-                        [category.id]: y
-                    }
-                }
+            const subCategoryDataPosition = {
+                ...this.state.subCategoryDataPosition,
+                [this.getFormattedCategoryIDForPositionData(category.id)]: y
+            }
+
+            const subCategoryDataPositionOrderedByValue = {};
+            Object.keys(subCategoryDataPosition).sort(
+                (a: any, b: any) => Number(subCategoryDataPosition[a]) - Number(subCategoryDataPosition[b]))
+                .forEach((key: any) => {
+
+                    // prevent auto ordering of JS obj
+                    subCategoryDataPositionOrderedByValue[key] = subCategoryDataPosition[key];
+                });
+            this.setState({
+                subCategoryDataPosition: subCategoryDataPositionOrderedByValue
             })
         }
     }
@@ -587,19 +626,15 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 
     renderMainCategory({ item: category }) {
         const isSelected = category.id === this.state.selectedMainCategory.id;
-        const extraStyle = isSelected
-            //@ts-ignore
-            ? { backgroundColor: appConfig.colors.primary, borderTopWidth: .5, borderColor: '#fff' }
-            : {};
-        const extraTitleStyle = isSelected ? { color: "#fff" } : {};
         return (
             <View onLayout={this.mapMainCategoryPosition.bind(this, category)}>
                 <Category
+                    isActive={isSelected}
                     image={category.image}
                     title={category.name}
                     onPress={this.onPressMainCategory.bind(this, category)}
-                    containerStyle={extraStyle}
-                    titleStyle={[extraTitleStyle, { fontWeight: '600' }]}
+                    containerStyle={{ borderTopColor: '#fff', borderTopWidth: .5 }}
+                    titleStyle={{ fontWeight: '600' }}
                 />
             </View>
         )
@@ -609,7 +644,9 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         const categories = this.hasSelectedMainCategory
             ? this.isFullData
                 ? this.state.categories
-                : [this.state.selectedMainCategory]
+                : this.state.selectedMainCategory.id !== -1
+                    ? [this.state.selectedMainCategory]
+                    : []
             : [];
         return (
             categories.map((category, index) => {
@@ -619,7 +656,8 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                         onLayout={this.handleMappingDataPosition.bind(this, category, CATEGORY_POSITION_TYPE.SUB)}>
                         <SubCategory
                             categories={category.list}
-                            image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQLN3yGu2SdG8D0_HCgx_MBHGglHyaPoypdJA&usqp=CAU"
+                            image={category.banner}
+                            // image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQLN3yGu2SdG8D0_HCgx_MBHGglHyaPoypdJA&usqp=CAU"
                             title={category.name}
                             fullData={this.isFullData}
                             onPressTitle={(cate) => this.goToStore(cate || category)}
