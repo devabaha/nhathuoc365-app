@@ -39,6 +39,9 @@ const styles = StyleSheet.create({
         borderRightColor: '#aaa',
         borderRightWidth: .5
     },
+    mainCategoryTitle: {
+        fontWeight: '600'
+    },
     right_btn_box: {
         flexDirection: 'row'
     },
@@ -539,7 +542,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             //         this.scrollMainCategoryToIndex(nextCategory);
             //     }
             // } else 
-            
+
             if (nearestCategoryID !== String(this.state.selectedMainCategory.id)) {
 
                 this.setState({
@@ -626,6 +629,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 
     renderMainCategory({ item: category }) {
         const isSelected = category.id === this.state.selectedMainCategory.id;
+
         return (
             <View onLayout={this.mapMainCategoryPosition.bind(this, category)}>
                 <Category
@@ -634,7 +638,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     title={category.name}
                     onPress={this.onPressMainCategory.bind(this, category)}
                     containerStyle={{ borderTopColor: '#fff', borderTopWidth: .5 }}
-                    titleStyle={{ fontWeight: '600' }}
+                    titleStyle={styles.mainCategoryTitle}
                 />
             </View>
         )

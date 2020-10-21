@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
-import { Image, Text, View, StyleSheet, Animated, Easing, TouchableHighlight } from 'react-native';
+import {
+    Image, Text, View, StyleSheet,
+    // Animated, Easing,
+    TouchableHighlight
+} from 'react-native';
+import Animated, { Easing, Extrapolate, interpolate } from 'react-native-reanimated';
 import { CategoryProps } from '.';
 //@ts-ignore
 import appConfig from 'app-config';
@@ -41,6 +46,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#333',
         fontWeight: '500'
+    },
+    maskTitle: {
+        position: 'absolute'
     }
 })
 
@@ -57,7 +65,16 @@ class Category extends Component<CategoryProps> {
         if (nextProps.isActive !== this.props.isActive) {
             this.animateActive(nextProps.isActive ? 1 : 0);
         }
-        return true;
+
+        if (nextState !== this.state) {
+            return true;
+        }
+
+        if (nextProps !== this.props) {
+            return true;
+        }
+
+        return false;
     }
 
     componentDidMount() {
@@ -67,23 +84,34 @@ class Category extends Component<CategoryProps> {
     animateActive(toValue) {
         Animated.timing(this.animatedActiveValue, {
             toValue,
-            duration: 150,
+            duration: 200,
             easing: Easing.quad,
-            useNativeDriver: true
+            // useNativeDriver: true
         }).start();
     }
 
     render() {
+        // const activeContainerStyle = {
+        //     opacity: this.animatedActiveValue,
+        //     transform: [{
+        //         scale: this.animatedActiveValue.interpolate({
+        //             inputRange: [0, 1],
+        //             outputRange: [0, 1.5]
+        //         })
+        //     }]
+        // };
         const activeContainerStyle = {
             opacity: this.animatedActiveValue,
             transform: [{
-                scale: this.animatedActiveValue.interpolate({
+                scale: interpolate(this.animatedActiveValue, {
                     inputRange: [0, 1],
-                    outputRange: [0, 1.5]
+                    outputRange: [0, 1.5],
+                    // extrapolate: Extrapolate.CLAMP
                 })
             }]
         };
-        const activeTitleStyle = this.props.isActive && {
+        const activeTitleStyle = {
+            opacity: this.animatedActiveValue,
             color: '#fff'
         };
         return (
@@ -101,11 +129,21 @@ class Category extends Component<CategoryProps> {
                             </View>
                         }
                         {!!this.props.title &&
-                            <Text numberOfLines={2} style={[
-                                styles.title,
-                                activeTitleStyle,
-                                this.props.titleStyle
-                            ]}>{this.props.title}</Text>}
+                            <View>
+                                <Text numberOfLines={2} style={[
+                                    styles.title,
+                                    // activeTitleStyle,
+                                    this.props.titleStyle
+                                ]}>{this.props.title}</Text>
+                                <Animated.Text numberOfLines={2} style={[
+                                    styles.maskTitle,
+                                    styles.title,
+                                    activeTitleStyle,
+                                    this.props.titleStyle
+                                ]}>
+                                    {this.props.title}
+                                </Animated.Text>
+                            </View>}
                         {this.props.children}
                     </View>
                 </>
