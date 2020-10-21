@@ -849,6 +849,16 @@ class CommonAPIHandler extends BaseHandler {
     // const api = "http://192.168.10.145:8000/ApiUser/list_gps_store_location?device_id=TICKID-CBB15BE6-5123-4F0C-BD78-2E42B050A0D8&app_key=homeidkey&os=ios&os_version=12.2&store=&device_type=Apple&app_version=1.2&timestamp=1560660341236&hash_token=04e6c6811a85c3cbb2c46bca5f8ef353"
     return this.postCancelableAPI(api, data);
   }
+
+  /* @todo get multi-level category
+   *
+   * @param site_id
+   * @returns {categories: {name: string, id: number, image:string, list: []}[], type: string}
+   */
+  site_get_tree_categories(site_id) {
+    const api = url_for(API.SITE_GET_TREE_CATEGORIES + '/' + site_id);
+    return this.getCancelableAPI(api);
+  }
 }
 
 export default CommonAPIHandler;

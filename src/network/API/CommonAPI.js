@@ -38,6 +38,7 @@ exports.USER_LIST_GPS_STORE_LOCATION =
   MY_FOOD_API + 'apiUser/list_gps_store_location';
 exports.USER_CHOOSE_STORE_LOCATION =
   MY_FOOD_API + 'apiUser/choose_store_location';
+exports.SITE_GET_TREE_CATEGORIES = MY_FOOD_API + 'apiSite/get_tree_categories';
 
 // Item
 exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';

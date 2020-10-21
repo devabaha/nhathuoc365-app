@@ -111,6 +111,8 @@
     "@babel/plugin-proposal-decorators": "^7.4.4",
     "@babel/preset-flow": "^7.0.0",
     "@babel/runtime": "^7.4.5",
+    "@types/react": "^16.9.52",
+    "@types/react-native": "^0.63.25",
     "babel-jest": "^24.8.0",
     "babel-plugin-module-resolver": "^3.2.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
@@ -121,7 +123,8 @@
     "lint-staged": "^9.2.5",
     "metro-react-native-babel-preset": "^0.54.1",
     "prettier": "^1.18.2",
-    "react-test-renderer": "16.8.3"
+    "react-test-renderer": "16.8.3",
+    "typescript": "^4.0.3"
   },
   "jest": {
     "preset": "react-native"

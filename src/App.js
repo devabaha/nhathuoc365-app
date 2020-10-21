@@ -148,6 +148,7 @@ import CameraView from './components/CameraView/CameraView';
 import { CaptureFaceID } from './containers/IView';
 import GPSStoreLocation from './containers/GPSStoreLocation';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
+import MultiLevelCategory from './components/stores/MultiLevelCategory';
 
 /**
  * Not allow font scaling
@@ -755,6 +756,16 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.ordersTab}_1`}
                     title={t('screen.orders.mainTitle')}
                     component={Orders}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MULTI LEVEL CATEGORY ================ */}
+                <Stack key={appConfig.routes.multiLevelCategory}>
+                  <Scene
+                    key={`${appConfig.routes.multiLevelCategory}_1`}
+                    component={MultiLevelCategory}
                     {...navBarConfig}
                     back
                   />

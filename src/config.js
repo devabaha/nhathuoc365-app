@@ -132,7 +132,10 @@ const config = Object.freeze({
     allServices: 'allServices',
 
     // iView
-    captureFaceID: 'captureFaceID'
+    captureFaceID: 'captureFaceID',
+
+    // multi-level category
+    multiLevelCategory: 'multiLevelCategory'
   }
 });
 

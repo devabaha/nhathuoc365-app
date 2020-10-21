@@ -121,8 +121,11 @@ class Stores extends Component {
 
   parseDataCategories(response) {
     const { t } = this.props;
-    if (!this.props.categoryId) {
-      response.data.categories.unshift({ id: 0, name: t('tabs.store.title') });
+    if (!this.props.categoryId || this.props.extraCategoryId) {
+      response.data.categories.unshift({
+        id: this.props.extraCategoryId || 0,
+        name: this.props.extraCategoryName || t('tabs.store.title')
+      });
     }
 
     this.setState(
@@ -142,11 +145,9 @@ class Stores extends Component {
   }
 
   _getCategoriesNavFromServer = async () => {
+    const site_id = this.props.siteId || store.store_id;
     try {
-      var response = await APIHandler.site_info(
-        store.store_id,
-        this.props.categoryId
-      );
+      var response = await APIHandler.site_info(site_id, this.props.categoryId);
       if (response && response.status == STATUS_SUCCESS) {
         setTimeout(
           () =>

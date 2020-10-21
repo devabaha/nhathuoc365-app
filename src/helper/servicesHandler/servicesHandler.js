@@ -209,10 +209,17 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
           if (response && response.status == STATUS_SUCCESS) {
             action(() => {
               store.setStoreData(response.data);
-              Actions.push(appConfig.routes.store, {
-                title: service.name || response.data.name,
-                categoryId: service.categoryId || 0
-              });
+              if (response.data.config_menu_categories) {
+                Actions.push(appConfig.routes.multiLevelCategory, {
+                  title: service.name || response.data.name,
+                  siteId: service.siteId
+                });
+              } else {
+                Actions.push(appConfig.routes.store, {
+                  title: service.name || response.data.name,
+                  categoryId: service.categoryId || 0
+                });
+              }
             })();
           }
         })
