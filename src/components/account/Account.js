@@ -50,6 +50,11 @@ class Account extends Component {
     const isAdmin = store.user_info.admin_flag == 1;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
+    const codePushVersion = store.codePushMetaData
+      ? // replace non-digit character in codePush label (format of codePush label is `v[number]`)
+        `-${store.codePushMetaData.label.replace(/\D+/, '')}`
+      : '';
+
     return [
       {
         key: 'store',
@@ -230,7 +235,7 @@ class Account extends Component {
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
-          appVersion: DeviceInfo.getVersion() + '-' + CPDK.version
+          appVersion: DeviceInfo.getVersion() + codePushVersion
         }),
         rightIcon: <IconAngleRight />,
         onPress: () => {},

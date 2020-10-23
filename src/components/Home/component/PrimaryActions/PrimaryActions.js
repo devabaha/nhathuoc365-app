@@ -22,14 +22,19 @@ class PrimaryActions extends Component {
         <View style={[styles.actionsWrapper, actionsWrapper]}>
           {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.CASHBACK) && (
             <View style={styles.mainContentWrapper}>
-              <PointRechargeButton
-                wrapperStyle={{
-                  paddingVertical: 10
-                }}
-                iconStyle={styles.scanIcon}
-              />
+              {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TOP_UP) && (
+                <View style={styles.pointRechargeBtnContainer}>
+                  <PointRechargeButton
+                    wrapperStyle={styles.pointRechargeBtn}
+                    iconStyle={styles.scanIcon}
+                  />
+                  <View style={styles.pointRechargeBtnSeparatorContainer}>
+                    <View style={styles.pointRechargeBtnSeparator} />
+                  </View>
+                </View>
+              )}
               <Button
-                containerStyle={{ width: '100%', flex: 1, paddingVertical: 10 }}
+                containerStyle={styles.surplusContainer}
                 onPress={() => props.onSurplusNext()}
               >
                 <View style={styles.walletInfoWrapper}>
@@ -106,6 +111,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     backgroundColor: '#fff',
     borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: '#ddd',
+    overflow: 'hidden',
     // height: 140,
     ...Platform.select({
       ios: {
@@ -129,11 +137,29 @@ const styles = StyleSheet.create({
   walletInfoWrapper: {
     flex: 1,
     flexDirection: 'row',
-    paddingLeft: 15,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderLeftWidth: 0.5,
-    borderColor: '#ccc'
+    justifyContent: 'center'
+  },
+  pointRechargeBtnContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 15
+  },
+  pointRechargeBtn: {
+    paddingVertical: 10
+  },
+  pointRechargeBtnSeparatorContainer: {
+    paddingVertical: 10
+  },
+  pointRechargeBtnSeparator: {
+    flex: 1,
+    width: 0.5,
+    backgroundColor: '#ccc'
+  },
+  surplusContainer: {
+    width: '100%',
+    flex: 1,
+    paddingVertical: 18
   },
   walletAction: {
     flex: 1,

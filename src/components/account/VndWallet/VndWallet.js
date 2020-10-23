@@ -14,6 +14,10 @@ import Info from './Info';
 import appConfig from 'app-config';
 import Loading from '../../Loading';
 import PointRechargeButton from '../../Home/component/PrimaryActions/PointRechargeButton';
+import {
+  isActivePackageOptionConfig,
+  PACKAGE_OPTIONS_TYPE
+} from '../../../helper/packageOptionsHandler';
 
 class VndWallet extends Component {
   constructor(props) {
@@ -137,20 +141,21 @@ class VndWallet extends Component {
     return (
       <View>
         <View style={styles.add_store_actions_box}>
-          <TouchableHighlight
-            onPress={this._goQRCode.bind(this)}
-            underlayColor="transparent"
-            style={styles.add_store_action_btn}
-          >
-            <View style={styles.add_store_action_btn_box}>
-              <Icon name="qrcode" size={30} color="#333333" />
-              <Text style={styles.add_store_action_label}>
-                {t('common:screen.qrBarCode.walletAddressTitle')}
-              </Text>
-            </View>
-          </TouchableHighlight>
+          <View style={styles.row}>
+            <TouchableHighlight
+              onPress={this._goQRCode.bind(this)}
+              underlayColor="transparent"
+              style={styles.add_store_action_btn}
+            >
+              <View style={styles.add_store_action_btn_box}>
+                <Icon name="qrcode" size={30} color="#333333" />
+                <Text style={styles.add_store_action_label}>
+                  {t('common:screen.qrBarCode.walletAddressTitle')}
+                </Text>
+              </View>
+            </TouchableHighlight>
 
-          {/* <TouchableHighlight
+            {/* <TouchableHighlight
             onPress={this._goTransfer.bind(this)}
             underlayColor="transparent"
             style={styles.add_store_action_btn}
@@ -162,11 +167,15 @@ class VndWallet extends Component {
               </Text>
             </View>
           </TouchableHighlight> */}
-          <PointRechargeButton
-            label="Nạp điểm"
-            containerStyle={styles.add_store_action_btn_box}
-          />
-
+            {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TOP_UP) && (
+              <View style={styles.add_store_action_btn}>
+                <PointRechargeButton
+                  label="Nạp điểm"
+                  containerStyle={styles.add_store_action_btn_box}
+                />
+              </View>
+            )}
+          </View>
           <TouchableHighlight
             // onPress={() => Actions.vnd_wallet({})}
             underlayColor="transparent"
@@ -188,7 +197,8 @@ class VndWallet extends Component {
                   }
                 ]}
               >
-                <Icon name={wallet.icon} size={16} color={wallet.color} />
+                <Icon name={wallet.icon} size={16} color={wallet.color} />{' '}
+                {'  '}
                 {t('header.balance')}
               </Text>
               <Text
@@ -494,19 +504,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: Util.pixel,
     borderColor: '#dddddd'
   },
+  row: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
   add_store_action_btn: {
-    paddingVertical: 4
+    flex: 1,
+    paddingVertical: 4,
+    justifyContent: 'flex-start'
   },
   add_store_action_btn_box: {
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
-    width: ~~(Util.size.width / 4),
+    // width: ~~(Util.size.width / 4),
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
   add_store_action_btn_box_balance: {
-    alignItems: 'center',
-    width: ~~(Util.size.width / 2),
+    flex: 1,
     borderRightWidth: Util.pixel,
     borderRightColor: '#ebebeb'
   },
@@ -525,7 +541,8 @@ const styles = StyleSheet.create({
     fontSize: 19,
     marginTop: 5,
     color: '#51A9FF',
-    fontWeight: '800'
+    fontWeight: '800',
+    flex: 1
   },
   tabStyle: {
     flex: 1,

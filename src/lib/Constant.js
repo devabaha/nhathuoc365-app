@@ -13,8 +13,7 @@ global.HOTLINE = '+84983962301';
 // codepush deployment keys (production)
 global.CPDK = {
   ios: 'U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY',
-  android: '5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr',
-  version: 1
+  android: '5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr'
 };
 
 // width, height of screen

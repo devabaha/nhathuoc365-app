@@ -121,7 +121,11 @@ class Category extends Component<CategoryProps> {
                 onPress={this.props.onPress}
             >
                 <>
-                    <Animated.View style={[styles.activeMask, activeContainerStyle]} />
+                    <Animated.View style={[
+                        styles.activeMask,
+                        //@ts-ignore
+                        activeContainerStyle
+                    ]} />
                     <View style={[styles.container, this.props.containerStyle]}>
                         {!!this.props.image &&
                             <View style={styles.imageContainer}>

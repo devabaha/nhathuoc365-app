@@ -81,7 +81,7 @@ class Store {
         action(() => {
           if (!this.notifyReceived) {
             this.notifyReceived = true;
-            this.newVersionChecking(response.data);
+            // this.newVersionChecking(response.data);
           }
           if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
@@ -491,6 +491,12 @@ class Store {
 
   @action setPackageOptions(packageOptions) {
     this.packageOptions = packageOptions;
+  }
+
+  @observable codePushMetaData = null;
+
+  @action setCodePushMetaData(codePushMetaData) {
+    this.codePushMetaData = codePushMetaData;
   }
 }
 

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   icon: {
-    fontSize: 30,
+    fontSize: 28,
     color: appConfig.colors.primary
   }
 });
