@@ -143,7 +143,8 @@ import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
-
+import ProgressBar from 'react-native-animated-progress';
+import AppCodePush from '../AppCodePush';
 /**
  * Not allow font scaling
  */
@@ -290,11 +291,22 @@ class App extends Component {
       header: null,
       restartAllowed: true,
       progress: null,
-      appLanguage: props.i18n.language
+      appLanguage: props.i18n.language,
+      isOpenCodePushModal: false,
+      codePushUpdateProgress: 0,
+      codePushUpdatePackage: null,
+      codePushLocalPackage: null,
+      titleUpdateCodePushModal: 'Đã có bản cập nhật mới!',
+      descriptionUpdateCodePushModal:
+        'Hệ thống đang cập nhật.\r\nBạn vui lòng chờ trong giây lát...'
     };
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    if (nextState !== this.state) {
+      return true;
+    }
+
     if (nextProps.i18n.language !== nextState.appLanguage) {
       this.setState({
         appLanguage: nextProps.i18n.language
@@ -305,11 +317,13 @@ class App extends Component {
   }
 
   componentDidMount() {
+    // codePush.clearUpdates();
+    this.codePushSyncManually();
+    this.codePushGetMetaData();
     this.handleSubcribeBranchIO();
     this.handleAddListenerOneSignal();
-    this.syncImmediate();
-    this.toggleAllowRestart();
-    this.getUpdateMetadata();
+    // this.syncImmediate();
+    // this.getUpdateMetadata();
     // RNLocalize.addEventListener('change', this.localizeListener);
   }
 
@@ -373,59 +387,45 @@ class App extends Component {
   codePushStatusDidChange(syncStatus) {
     switch (syncStatus) {
       case codePush.SyncStatus.CHECKING_FOR_UPDATE:
-        this.setState({ syncMessage: 'Kiểm tra cập nhât.' });
+        this.setState({ descriptionUpdateCodePushModal: 'Kiểm tra cập nhât.' });
         break;
       case codePush.SyncStatus.DOWNLOADING_PACKAGE:
-        this.setState({ syncMessage: 'Đang tải...' });
+        this.setState({ descriptionUpdateCodePushModal: 'Đang tải...' });
         break;
       case codePush.SyncStatus.AWAITING_USER_ACTION:
-        this.setState({ syncMessage: 'Chờ người dùng cho phép.' });
+        this.setState({
+          descriptionUpdateCodePushModal: 'Chờ người dùng cho phép.'
+        });
         break;
       case codePush.SyncStatus.INSTALLING_UPDATE:
-        this.setState({ syncMessage: 'Đang cài đặt...' });
+        this.setState({ descriptionUpdateCodePushModal: 'Đang cài đặt...' });
         break;
       case codePush.SyncStatus.UP_TO_DATE:
-        this.setState({ syncMessage: 'Cập nhật ứng dụng.', progress: false });
+        this.setState({
+          descriptionUpdateCodePushModal: 'Cập nhật ứng dụng.',
+          progress: false
+        });
         break;
       case codePush.SyncStatus.UPDATE_IGNORED:
-        this.setState({ syncMessage: 'Bỏ qua cập nhật.', progress: false });
+        this.setState({
+          descriptionUpdateCodePushModal: 'Bỏ qua cập nhật.',
+          progress: false
+        });
         break;
       case codePush.SyncStatus.UPDATE_INSTALLED:
         this.setState({
-          syncMessage: 'Đã cài đặt\r\nMở lại ứng dụng để cập nhật',
+          descriptionUpdateCodePushModal:
+            'Đã cài đặt\r\nMở lại ứng dụng để cập nhật',
           progress: false
         });
         break;
       case codePush.SyncStatus.UNKNOWN_ERROR:
-        this.setState({ syncMessage: 'Có lỗi xảy ra.', progress: false });
-        break;
-    }
-  }
-
-  codePushDownloadDidProgress(progress) {
-    this.setState({ progress });
-  }
-
-  toggleAllowRestart() {
-    this.state.restartAllowed
-      ? codePush.disallowRestart()
-      : codePush.allowRestart();
-
-    this.setState({ restartAllowed: !this.state.restartAllowed });
-  }
-
-  getUpdateMetadata() {
-    codePush.getUpdateMetadata(codePush.UpdateState.RUNNING).then(
-      metadata => {
         this.setState({
-          syncMessage: metadata ? JSON.stringify(metadata) : '...',
+          descriptionUpdateCodePushModal: 'Có lỗi xảy ra.',
           progress: false
         });
-      },
-      error => {
-        this.setState({ syncMessage: 'Lỗi: ' + error, progress: false });
-      }
-    );
+        break;
+    }
   }
 
   /** Update is downloaded silently, and applied on restart (recommended) */
@@ -441,10 +441,14 @@ class App extends Component {
   syncImmediate() {
     codePush.sync(
       {
+        deploymentKey: CPDK[Platform.OS],
         installMode: codePush.InstallMode.IMMEDIATE,
         updateDialog: {
           optionalIgnoreButtonLabel: 'Bỏ qua',
           optionalInstallButtonLabel: 'Cập nhật',
+          mandatoryContinueButtonLabel: 'Cập nhật ngay',
+          mandatoryUpdateMessage:
+            'Đã có bản cập nhât mới. Bạn vui lòng cập nhật để có trải nghiệm tốt nhất!',
           optionalUpdateMessage:
             'Đã có bản cập nhât mới. Bạn có muốn cài đặt không?',
           title: 'Cập nhật ứng dụng'
@@ -453,6 +457,103 @@ class App extends Component {
       this.codePushStatusDidChange.bind(this),
       this.codePushDownloadDidProgress.bind(this)
     );
+  }
+
+  codePushGetMetaData() {
+    codePush.getUpdateMetadata().then(localPackage => {
+      store.setCodePushMetaData(localPackage);
+    });
+  }
+
+  codePushSyncManually() {
+    codePush.checkForUpdate(CPDK[Platform.OS]).then(update => {
+      if (!update) {
+        console.log('The app is up to date!');
+      } else {
+        console.log('An update is available! Should we download it?');
+        this.setState(
+          {
+            isOpenCodePushModal: true,
+            codePushUpdatePackage: update,
+            titleUpdateCodePushModal: 'Cập nhật ' + update.label
+          },
+          () => {
+            this.codePushDownloadUpdate();
+          }
+        );
+      }
+    });
+  }
+
+  codePushDownloadDidProgress(progress) {
+    this.setState({
+      codePushUpdateProgress: Math.round(
+        (progress.receivedBytes / progress.totalBytes) * 100
+      )
+    });
+  }
+
+  codePushDownloadUpdate() {
+    if (!this.state.codePushUpdatePackage) {
+      this.closeCodePushModal();
+      return;
+    }
+
+    this.state.codePushUpdatePackage
+      .download(progress => this.codePushDownloadDidProgress(progress))
+      .then(localPackage => {
+        this.setState({
+          codePushLocalPackage: localPackage
+        });
+        setTimeout(() => this.codePushInstallUpdate(localPackage), 1000);
+        console.log(localPackage);
+      })
+      .catch(err => {
+        console.log('%cdownload_update_codepush', 'color:red', err);
+        Alert.alert(
+          'Lỗi cập nhật',
+          'Tải cập nhật thất bại! Bạn vui lòng thử lại sau.',
+          [
+            {
+              text: 'OK',
+              onPress: () => this.closeCodePushModal()
+            }
+          ]
+        );
+      });
+  }
+
+  codePushInstallUpdate(
+    codePushLocalPackage = this.state.codePushLocalPackage
+  ) {
+    if (!codePushLocalPackage) {
+      this.closeCodePushModal();
+      return;
+    }
+
+    codePushLocalPackage
+      .install(codePush.InstallMode.IMMEDIATE)
+      .then(() => {
+        this.closeCodePushModal();
+        codePush.notifyAppReady();
+      })
+      .catch(err => {
+        console.log('%cinstall_update_codepush', 'color:red', err);
+        Alert.alert(
+          'Lỗi cập nhật',
+          'Cài đặt cập nhật thất bại! Bạn vui lòng thử lại sau.',
+          [
+            {
+              text: 'OK',
+              onPress: () => this.closeCodePushModal()
+            }
+          ]
+        );
+      });
+  }
+
+  closeCodePushModal() {
+    this.setState({ isOpenCodePushModal: false });
   }
 
   setHeader(header) {
@@ -486,19 +587,6 @@ class App extends Component {
   };
 
   render() {
-    let loadingPercent;
-    let title;
-
-    if (this.state.progress) {
-      loadingPercent = Math.round(
-        (this.state.progress.receivedBytes / this.state.progress.totalBytes) *
-          100
-      );
-      title = `${this.state.syncMessage} ${
-        loadingPercent < 100 ? loadingPercent + '%' : ''
-      }`;
-    }
-
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
@@ -509,18 +597,26 @@ class App extends Component {
         />
         <FlashMessage icon={'auto'} />
         <AwesomeAlert
-          show={
-            this.state.progress &&
-            this.state.progress.receivedBytes > 0 &&
-            loadingPercent > 0 &&
-            loadingPercent < 100
-          }
-          showProgress={true}
-          title={title}
+          useNativeDriver
+          show={this.state.isOpenCodePushModal}
+          modalProps={{
+            animated: !this.state.codePushUpdateProgress
+          }}
           closeOnTouchOutside={false}
           closeOnHardwareBackPress={false}
           showCancelButton={false}
           showConfirmButton={false}
+          // contentContainerStyle={{ }}
+          customView={
+            <AppCodePush
+              title={this.state.titleUpdateCodePushModal}
+              description={this.state.descriptionUpdateCodePushModal}
+              btnTitle="Cập nhật ngay"
+              showConfirmBtn={false}
+              progress={this.state.codePushUpdateProgress}
+              // onPressConfirm={this.codePushDownloadUpdate.bind(this)}
+            />
+          }
         />
       </View>
     );
@@ -565,7 +661,9 @@ const styles = StyleSheet.create({
 });
 
 // wrap App with codepush HOC
-export default withTranslation()(codePush(App));
+export default withTranslation()(
+  codePush({ checkFrequency: codePush.CheckFrequency.MANUAL })(App)
+);
 
 class RootRouter extends Component {
   state = {

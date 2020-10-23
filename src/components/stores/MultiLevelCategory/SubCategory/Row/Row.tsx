@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
     },
     header: {
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center'
@@ -31,14 +32,14 @@ const styles = StyleSheet.create({
         height: '100%'
     },
     title: {
-        flex: 1,
+        // flex: 1,
     },
     contentContainer: {
         overflow: 'hidden',
     },
     iconContainer: {
         flex: 1,
-        paddingLeft: 15,
+        paddingHorizontal: 15,
     },
     icon: {
         alignSelf: 'flex-end',
@@ -60,13 +61,13 @@ class Row extends Component<RowProps> {
     };
 
     get animatedContentStyle() {
-        return !this.props.fullMode ? {
+        return {
             opacity: this.state.animatedCoreValue,
             height: this.state.animatedCoreValue.interpolate({
                 inputRange: [0, 1],
                 outputRange: [0, this.props.totalHeight]
             })
-        } : {};
+        };
     }
 
     get animatedIconStyle() {
@@ -93,6 +94,16 @@ class Row extends Component<RowProps> {
             this.setState({ isOpen: nextProps.defaultOpenChild })
         }
 
+        if (nextProps.fullMode !== this.props.fullMode) {
+            timing(this.state.animatedCoreValue, {
+                toValue: nextProps.fullMode ? 1 : 0,
+                duration: 200,
+                easing: Easing.quad
+            }).start();
+
+            this.setState({ isOpen: nextProps.fullMode ? true : false })
+        }
+
         if (nextState !== this.state) {
             return true;
         }
@@ -114,11 +125,12 @@ class Row extends Component<RowProps> {
 
     render() {
         const isShowDirectionIcon = !this.props.fullMode && !!this.props.totalHeight;
+
         return (
             <View style={[styles.container, this.props.containerStyle]}>
                 <View style={[styles.header, this.props.headerContainerStyle]}>
                     <TouchableOpacity
-                        style={[styles.layoutContainer, { flex: !!this.props.totalHeight ? 0 : 1 }]}
+                        style={[styles.layoutContainer, { flex: !!this.props.totalHeight ? 1 : 1 }]}
                         onPress={this.props.onPressTitle}
                     >
                         {!!this.props.image &&
@@ -131,15 +143,17 @@ class Row extends Component<RowProps> {
                         }
                         <Text style={styles.title}>{this.props.title}</Text>
                     </TouchableOpacity>
-                    {isShowDirectionIcon && <TouchableOpacity
-                        onPress={this.onToggle.bind(this)}
-                        style={[styles.layoutContainer, styles.iconContainer]}
-                    >
-                        <AnimatedIcon
-                            name="chevron-down"
-                            style={[styles.icon, this.animatedIconStyle]}
-                        />
-                    </TouchableOpacity>}
+                    {isShowDirectionIcon &&
+                        <TouchableOpacity
+                            onPress={this.onToggle.bind(this)}
+                            style={[styles.iconContainer]}
+                        >
+                            <AnimatedIcon
+                                name="chevron-down"
+                                style={[styles.icon, this.animatedIconStyle]}
+                            />
+                        </TouchableOpacity>
+                    }
                 </View>
 
                 <Animated.View

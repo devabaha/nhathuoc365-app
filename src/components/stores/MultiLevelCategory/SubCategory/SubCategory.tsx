@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     bannerContainer: {
         marginTop: 10,
         width: '100%',
-        height:0
+        height: 0
     },
     banner: {
         width: '100%',

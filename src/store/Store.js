@@ -454,6 +454,12 @@ class Store {
   @action updateHomeLoaded(isHomeLoaded) {
     this.isHomeLoaded = isHomeLoaded;
   }
+
+  @observable codePushMetaData = null;
+
+  @action setCodePushMetaData(codePushMetaData) {
+    this.codePushMetaData = codePushMetaData;
+  }
 }
 
 export default new Store();

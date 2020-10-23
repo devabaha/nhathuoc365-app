@@ -23,22 +23,22 @@ code-push app add tick-tickid-ios ios react-native
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │  │
+│ Production │  zKau4OSqcixQbDDYbGat7wRm2CMCF8k7yt_LmU
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Staging    │  │
+│ Staging    │  _w4VwxRJU0tFtIiKKDhlEW-ECSsahwyTqiOcq
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
 code-push app add tick-tickid-android android react-native
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │  │
+│ Production │  ZOE-wJXeK71IN8yBLILM326oY0PvzAVxRiXC0W
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Staging    │  │
+│ Staging    │  G1WZATenLpDMaLKHsPAmTHqRWz1OPthMxoz-t
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-foodhub-ios ios -d "Production" -m --description "Sua loi crash app khi login"
-code-push release-react tick-foodhub-android android -d "Production" -m --description "Nang cap 08 11 2019"
+code-push release-react tick-tickid-ios ios -d "Production" -m --description "test codepush"
+code-push release-react tick-tickid-android android -d "Production" -m --description "test codepush"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
