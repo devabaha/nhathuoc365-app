@@ -14,4 +14,5 @@ export interface MultiLevelCategoryProps {
    */
   type?: CategoryType;
   siteId?: string | number;
+  categoryId?: string;
 }

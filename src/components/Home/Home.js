@@ -128,6 +128,12 @@ class Home extends Component {
 
   render() {
     const { t } = this.props;
+    const name = this.props.userInfo
+      ? this.props.userInfo.name
+        ? this.props.userInfo.name
+        : t('welcome.defaultUserName')
+      : t('welcome.defaultUserName');
+
     return (
       <View style={styles.container}>
         <LoadingComponent loading={this.props.apiFetching} />
@@ -155,22 +161,18 @@ class Home extends Component {
         >
           <Header
             notify={this.props.notify}
-            name={
-              this.props.userInfo
-                ? this.props.userInfo.name
-                  ? this.props.userInfo.name
-                  : t('welcome.defaultUserName')
-                : t('welcome.defaultUserName')
-            }
+            name={name}
             onPressNoti={this.props.onPressNoti}
+            goToSearch={this.props.goToSearch}
           />
 
           <View style={styles.primaryActionsWrapper}>
             <PrimaryActions
               walletName={
-                this.props.userInfo && this.props.userInfo.default_wallet
-                  ? this.props.userInfo.default_wallet.name
-                  : ''
+                // this.props.userInfo && this.props.userInfo.default_wallet
+                //   ? this.props.userInfo.default_wallet.name
+                //   : ''
+                name
               }
               surplus={
                 this.props.userInfo && this.props.userInfo.default_wallet
@@ -200,9 +202,29 @@ class Home extends Component {
               />
             )}
 
+            {this.hasProduct_groups &&
+              Object.keys(this.props.product_groups).map((key, index) => {
+                let { products, title } = this.props.product_groups[key];
+                return (
+                  <ListProducts data={products} title={title} key={index}>
+                    {({ item: product, index }) => (
+                      <ProductItem
+                        name={product.name}
+                        image={product.image}
+                        discount_view={product.discount_view}
+                        discount_percent={product.discount_percent}
+                        price_view={product.price_view}
+                        onPress={() => this.props.onPressProduct(product)}
+                        last={this.props.products.length - 1 === index}
+                      />
+                    )}
+                  </ListProducts>
+                );
+              })}
+
             {this.hasSites && (
               <HomeCardList
-                onShowAll={false} //this.props.onShowAllSites
+                onShowAll={this.props.onShowAllSites}
                 data={this.props.sites}
                 title={
                   this.props.title_sites
@@ -245,25 +267,7 @@ class Home extends Component {
                 }}
               </HomeCardList>
             )}
-            {this.hasProduct_groups &&
-              Object.keys(this.props.product_groups).map((key, index) => {
-                let { products, title } = this.props.product_groups[key];
-                return (
-                  <ListProducts data={products} title={title} key={index}>
-                    {({ item: product, index }) => (
-                      <ProductItem
-                        name={product.name}
-                        image={product.image}
-                        discount_view={product.discount_view}
-                        discount_percent={product.discount_percent}
-                        price_view={product.price_view}
-                        onPress={() => this.props.onPressProduct(product)}
-                        last={this.props.products.length - 1 === index}
-                      />
-                    )}
-                  </ListProducts>
-                );
-              })}
+
             {this.hasNews && (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
@@ -301,7 +305,7 @@ const styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.48,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.height / 4.8,
+    top: -(appConfig.device.width * 3) + appConfig.device.height / 5.3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden'

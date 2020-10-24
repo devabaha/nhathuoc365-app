@@ -78,6 +78,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         title: t('common:screen.qrBarCode.mainTitle')
       });
       break;
+    case SERVICES_TYPE.QRCODE_SCAN_TYPE:
     case SERVICES_TYPE.QRCODE_SCAN:
       Actions.push(appConfig.routes.qrBarCode, {
         index: 1,
@@ -92,6 +93,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         from: 'home'
       });
       break;
+    case SERVICES_TYPE.MY_VOUCHER_TYPE:
     case SERVICES_TYPE.MY_VOUCHER:
       Actions.push(appConfig.routes.myVoucher, {
         title: t('common:screen.myVoucher.mainTitle'),
@@ -131,10 +133,8 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
       });
       break;
     case SERVICES_TYPE.ORDERS:
-      Actions.jump(appConfig.routes.ordersTab);
-      break;
     case SERVICES_TYPE.ORDERS_TAB:
-      Actions.jump(appConfig.routes.ordersTab);
+      Actions.push(appConfig.routes.ordersTab);
       break;
     case SERVICES_TYPE.ORDER_DETAIL:
       store.setDeepLinkData({ id: service.id });
@@ -171,7 +171,7 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
 
     /** NEWS */
     case SERVICES_TYPE.NEWS:
-      Actions.jump(appConfig.routes.newsTab);
+      Actions.push(appConfig.routes.newsTab);
       break;
     case SERVICES_TYPE.NEWS_DETAIL:
       Actions.notify_item({
@@ -211,8 +211,9 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
               store.setStoreData(response.data);
               if (response.data.config_menu_categories) {
                 Actions.push(appConfig.routes.multiLevelCategory, {
-                  title: service.name || response.data.name,
-                  siteId: service.siteId
+                  title: response.data.name,
+                  siteId: service.siteId,
+                  categoryId: service.categoryId || 0
                 });
               } else {
                 Actions.push(appConfig.routes.store, {

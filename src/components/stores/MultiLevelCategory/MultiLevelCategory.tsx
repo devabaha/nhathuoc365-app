@@ -24,6 +24,7 @@ import { MultiLevelCategoryProps } from ".";
 import { APIRequest } from "../../../network/Entity";
 import APIHandler from "../../../network/APIHandler";
 import { Actions } from "react-native-router-flux";
+import Loading from "../../Loading";
 
 const styles = StyleSheet.create({
     container: {
@@ -328,13 +329,14 @@ const categories = [
 class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     static defaultProps = {
         type: CATEGORY_TYPE.BEE_MART,
-        siteId: store.store_id
+        siteId: store.store_id,
+        categoryId: 0,
     }
 
     state = {
         categories: [],
         selectedMainCategory: {
-            id: -1,
+            id: this.props.categoryId || -1,
             name: "",
             list: []
         },
@@ -364,16 +366,16 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         return this.state.type === CATEGORY_TYPE.CLING_ME;
     }
 
-    getFormattedCategoryIDForPositionData(categoryID) {
-        return categoryID + " ";
-    }
-
     get hasCategories() {
         return Array.isArray(this.state.categories)
     }
 
     get hasSelectedMainCategory() {
         return !!(this.state.selectedMainCategory)
+    }
+
+    getFormattedCategoryIDForPositionData(categoryID) {
+        return categoryID + " ";
     }
 
     componentDidMount() {
@@ -394,11 +396,18 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                 {/* <RightButtonOrders tel={store.store_data.tel} /> */}
                 <Button
                     onPress={() => {
+                        //@ts-ignore
+                        const { t } = this.props;
+                        const categories = [...this.state.categories];
+                        categories.unshift({
+                            name: t('stores:tabs.store.title'),
+                            id: 0
+                        })
                         Actions.push(appConfig.routes.searchStore, {
-                            categories: this.state.categories,
+                            categories: categories,
                             category_id: this.state.selectedMainCategory.id,
                             category_name:
-                                this.state.selectedMainCategory.id !== 0
+                                this.state.selectedMainCategory.id !== -1
                                     ? this.state.selectedMainCategory.name
                                     : ''
                         });
@@ -423,7 +432,10 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             if (response) {
                 //@ts-ignore
                 if (response.status === STATUS_SUCCESS) {
-                    const selectedMainCategory = { ...this.state.selectedMainCategory };
+                    const selectedMainCategory = this.state.selectedMainCategory.id === -1
+                        ? response.data.categories[0]
+                        : (response.data.categories.find(cate => cate.id === this.state.selectedMainCategory.id)
+                            || response.data.categories[0]);
                     // this.setState({
                     //     categories: categories,
                     //     selectedMainCategory: categories[0]
@@ -431,22 +443,20 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     this.setState((prevState: any) => ({
                         type: response.data.type || prevState.type,
                         categories: response.data.categories,
-                        selectedMainCategory: selectedMainCategory.id === -1
-                            ? response.data.categories[0]
-                            : selectedMainCategory
+                        selectedMainCategory
                     }))
                 } else {
                     //@ts-ignore
                     flashShowMessage({
                         type: 'danger',
-                        message: response.data || t('api.error.message')
+                        message: response.data || t('common:api.error.message')
                     })
                 }
             } else {
                 //@ts-ignore
                 flashShowMessage({
                     type: 'danger',
-                    message: t('api.error.message')
+                    message: t('common:api.error.message')
                 })
             }
 
@@ -673,6 +683,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     }
 
     render() {
+        if (this.state.loading) return <Loading center />;
         return (
             <View style={styles.container}>
                 <SafeAreaView style={styles.mainContainer}>
@@ -708,4 +719,4 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 }
 
 //@ts-ignore
-export default withTranslation()(MultiLevelCategory);
+export default withTranslation(['stores, common'])(MultiLevelCategory);
