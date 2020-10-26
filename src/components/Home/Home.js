@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.48,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.height / 4.8,
+    top: -(appConfig.device.width * 3) + appConfig.device.height / 5.3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden'

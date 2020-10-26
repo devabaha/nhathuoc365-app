@@ -25,9 +25,9 @@ const styles = StyleSheet.create({
         height: appConfig.device.width / 4,
         justifyContent: 'center',
         alignItems: 'center',
-        padding: '7%',
+        padding: '10%',
         borderBottomColor: '#ddd',
-        borderBottomWidth: .5
+        borderBottomWidth: .5,
     },
     imageContainer: {
         width: '55%',
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     title: {
-        marginTop: 10,
+        marginTop: '5%',
         fontSize: 12,
         letterSpacing: .5,
         textAlign: 'center',

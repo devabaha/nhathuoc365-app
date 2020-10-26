@@ -211,8 +211,9 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
               store.setStoreData(response.data);
               if (response.data.config_menu_categories) {
                 Actions.push(appConfig.routes.multiLevelCategory, {
-                  title: service.name || response.data.name,
-                  siteId: service.siteId
+                  title: response.data.name,
+                  siteId: service.siteId,
+                  categoryId: service.categoryId || 0
                 });
               } else {
                 Actions.push(appConfig.routes.store, {
@@ -283,6 +284,22 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         store_id: service.storeId,
         title: service.title
       });
+      break;
+
+    /** POPUP */
+    case SERVICES_TYPE.POP_UP:
+      setTimeout(
+        () =>
+          Actions.push(appConfig.routes.modalPopup, {
+            image: service.image,
+            onPressImage: () => {
+              callBack && callBack();
+              Actions.pop();
+              servicesHandler(service.data, t);
+            }
+          }),
+        service.delay
+      );
       break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [

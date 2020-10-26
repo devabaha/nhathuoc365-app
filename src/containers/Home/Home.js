@@ -47,7 +47,7 @@ class Home extends Component {
     }
   }
 
-  getHomeDataFromApi = async (showLoading = true) => {
+  async getHomeDataFromApi(showLoading = true) {
     if (showLoading) {
       this.setState({
         apiFetching: true
@@ -68,6 +68,22 @@ class Home extends Component {
           store.setAppData(response.data.app);
           store.setPackageOptions(response.data.package_options);
         })();
+        if (
+          Array.isArray(response.data.popups) &&
+          response.data.popups.length > 0
+        ) {
+          const popup = response.data.popups[0];
+          if (store.popupClickedID !== popup.modified) {
+            const popupService = {
+              type: SERVICES_TYPE.POP_UP,
+              image: popup.image_url,
+              delay: popup.delay !== undefined ? popup.delay : 3000,
+              data: popup
+            };
+            servicesHandler(popupService, this.props.t);
+            store.setPopupClickedID(popup.modified);
+          }
+        }
         this.setState({
           site: response.data.site,
           sites: response.data.sites,
@@ -101,7 +117,7 @@ class Home extends Component {
         executeJobs
       );
     }
-  };
+  }
 
   handlePullToRefresh = () => {
     this.setState({ refreshing: true });

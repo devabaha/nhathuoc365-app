@@ -12,6 +12,24 @@ import {
 } from '../../../../helper/packageOptionsHandler';
 
 class PrimaryActions extends Component {
+  get isActiveCashBack() {
+    return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.CASHBACK);
+  }
+
+  get isActivePrimaryActions() {
+    return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
+  }
+
+  get isActiveTopUp() {
+    return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TOP_UP);
+  }
+
+  get hasContent() {
+    return isActivePackageOptionConfig(
+      PACKAGE_OPTIONS_TYPE.CASHBACK,
+      PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS
+    );
+  }
   render() {
     const props = this.props;
     const actionsWrapper = !props.primaryActions && {
@@ -19,39 +37,41 @@ class PrimaryActions extends Component {
     };
     return (
       <View style={styles.container}>
-        <View style={[styles.actionsWrapper, actionsWrapper]}>
-          {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.CASHBACK) && (
-            <View style={styles.mainContentWrapper}>
-              {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.TOP_UP) && (
-                <View style={styles.pointRechargeBtnContainer}>
-                  <PointRechargeButton
-                    wrapperStyle={styles.pointRechargeBtn}
-                    iconStyle={styles.scanIcon}
-                  />
-                  <View style={styles.pointRechargeBtnSeparatorContainer}>
-                    <View style={styles.pointRechargeBtnSeparator} />
+        {this.hasContent && (
+          <View style={[styles.actionsWrapper, actionsWrapper]}>
+            {this.isActiveCashBack && (
+              <View style={styles.mainContentWrapper}>
+                {this.isActiveTopUp && (
+                  <View style={styles.pointRechargeBtnContainer}>
+                    <PointRechargeButton
+                      wrapperStyle={styles.pointRechargeBtn}
+                      iconStyle={styles.scanIcon}
+                    />
+                    <View style={styles.pointRechargeBtnSeparatorContainer}>
+                      <View style={styles.pointRechargeBtnSeparator} />
+                    </View>
                   </View>
-                </View>
-              )}
-              <Button
-                containerStyle={styles.surplusContainer}
-                onPress={() => props.onSurplusNext()}
-              >
-                <View style={styles.walletInfoWrapper}>
-                  <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+                )}
+                <Button
+                  containerStyle={styles.surplusContainer}
+                  onPress={() => props.onSurplusNext()}
+                >
+                  <View style={styles.walletInfoWrapper}>
+                    <Text style={styles.walletNameLabel}>
+                      {props.walletName}
+                    </Text>
 
-                  <View style={styles.walletLabelRight}>
-                    <Text style={styles.surplus}>{props.surplus}</Text>
+                    <View style={styles.walletLabelRight}>
+                      <Text style={styles.surplus}>{props.surplus}</Text>
+                    </View>
+                    <View style={styles.iconNextWrapper}>
+                      <Image style={styles.iconNext} source={imageIconNext} />
+                    </View>
                   </View>
-                  <View style={styles.iconNextWrapper}>
-                    <Image style={styles.iconNext} source={imageIconNext} />
-                  </View>
-                </View>
-              </Button>
-            </View>
-          )}
-          {isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS) &&
-            props.primaryActions && (
+                </Button>
+              </View>
+            )}
+            {this.isActivePrimaryActions && props.primaryActions && (
               <View style={styles.walletAction}>
                 {props.primaryActions.map(action => (
                   <Button
@@ -80,7 +100,8 @@ class PrimaryActions extends Component {
                 ))}
               </View>
             )}
-        </View>
+          </View>
+        )}
       </View>
     );
   }
@@ -112,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     borderWidth: 0.5,
-    borderColor: '#ddd',
+    borderColor: '#ebebeb',
     overflow: 'hidden',
     // height: 140,
     ...Platform.select({

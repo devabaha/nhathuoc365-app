@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15
   },
   store_heading_title: {
-    paddingTop: 7,
     fontSize: 14,
-    color: '#333333'
+    color: '#333333',
+    marginVertical: 15
   }
 });

@@ -11,8 +11,8 @@ const config = Object.freeze({
   defaultSiteId: 1803, // @NOTE: id cửa hàng ở menu
   reduxLoggerEnable: false,
   voucherModule: {
-    appKey: 'myuulttykey',
-    secretKey: '1805myuulttykeyathucom1'
+    appKey: 'thuchuylekey',
+    secretKey: '6QAfthuchuylekeyVus5po'
   },
   radaModule: {
     partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
@@ -124,6 +124,7 @@ const config = Object.freeze({
     modalSearchPlaces: 'modalSearchPlaces',
     modalRateApp: 'modalRateApp',
     modalCameraView: 'modalCameraView',
+    modalPopup: 'modalPopup',
 
     //  Reset password
     resetPassword: 'resetPassword',

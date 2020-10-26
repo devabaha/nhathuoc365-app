@@ -8,6 +8,7 @@ import {
   TextInput
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
@@ -54,9 +55,9 @@ class Header extends Component {
             containerStyle={styles.notificationBtn}
             onPress={props.onPressNoti}
           >
-            <Icon
+            <AntDesignIcon
               style={styles.iconNotication}
-              name="bell"
+              name="message1"
               size={24}
               color="#fff"
               solid
@@ -85,8 +86,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 15,
     flexDirection: 'row',
-    paddingTop: appConfig.device.isIphoneX ? 35 : 25,
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingTop: appConfig.device.isIphoneX
+      ? 35
+      : appConfig.device.isIOS
+      ? 25
+      : 15
   },
   notificationWrapper: {
     alignItems: 'flex-end',
@@ -97,7 +102,8 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingLeft: 8,
     paddingBottom: 8,
-    position: 'relative'
+    position: 'relative',
+    ...elevationShadowStyle(5)
   },
   iconNotication: {},
   userNameWrapper: {
