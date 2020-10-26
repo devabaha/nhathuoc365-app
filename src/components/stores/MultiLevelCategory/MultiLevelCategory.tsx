@@ -25,6 +25,9 @@ import { APIRequest } from "../../../network/Entity";
 import APIHandler from "../../../network/APIHandler";
 import { Actions } from "react-native-router-flux";
 import Loading from "../../Loading";
+//@ts-ignore
+import SVGEmptyBoxOpen from '../../../images/empty-box-open.svg';
+import NoResult from "../../NoResult";
 
 const styles = StyleSheet.create({
     container: {
@@ -371,7 +374,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     }
 
     get hasSelectedMainCategory() {
-        return !!(this.state.selectedMainCategory)
+        return !!(this.state.selectedMainCategory) && (Object.keys(this.state.selectedMainCategory).length !== 0)
     }
 
     getFormattedCategoryIDForPositionData(categoryID) {
@@ -432,10 +435,12 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             if (response) {
                 //@ts-ignore
                 if (response.status === STATUS_SUCCESS) {
+                    response.data.categories = [];
+                    const defaultSelectedCategory = response.data.categories[0] || this.state.selectedMainCategory;
                     const selectedMainCategory = this.state.selectedMainCategory.id === -1
-                        ? response.data.categories[0]
+                        ? defaultSelectedCategory
                         : (response.data.categories.find(cate => cate.id === this.state.selectedMainCategory.id)
-                            || response.data.categories[0]);
+                            || defaultSelectedCategory);
                     // this.setState({
                     //     categories: categories,
                     //     selectedMainCategory: categories[0]
@@ -542,16 +547,6 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     return;
                 }
             }
-
-            // if (y + layoutHeight >= Math.floor(contentHeight)) {
-            //     if (!nextCategory) return;
-            //     if (this.state.selectedMainCategory.id !== nextCategory.id) {
-            //         this.setState({
-            //             selectedMainCategory: nextCategory,
-            //         });
-            //         this.scrollMainCategoryToIndex(nextCategory);
-            //     }
-            // } else 
 
             if (nearestCategoryID !== String(this.state.selectedMainCategory.id)) {
 
@@ -701,6 +696,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     </View>
 
                     <ScrollView
+                        contentContainerStyle={styles.container}
                         ref={this.refSubCategory}
                         scrollEventThrottle={16}
                         onScroll={this.handleSubCategoriesScrolling.bind(this)}
@@ -710,7 +706,20 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                             onRefresh={this.onRefresh.bind(this)}
                         />}
                     >
-                        {this.renderSubCategories()}
+                        {(Array.isArray(this.state.categories) &&
+                            this.state.categories.length !== 0)
+                            ? this.renderSubCategories()
+                            : <NoResult
+                                containerStyle={styles.container}
+                                icon={
+                                    <SVGEmptyBoxOpen
+                                        fill="#aaa"
+                                        width="100"
+                                        height="100"
+                                    />
+                                }
+                                message="Chưa có danh mục"
+                            />}
                     </ScrollView>
                 </SafeAreaView>
             </View>

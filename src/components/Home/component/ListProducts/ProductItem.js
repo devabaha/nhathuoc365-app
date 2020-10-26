@@ -57,6 +57,7 @@ class ProductItem extends Component {
 const styles = StyleSheet.create({
   container: {
     width: 130,
+    flex: 1,
     marginLeft: 16
   },
   image: {
@@ -65,10 +66,12 @@ const styles = StyleSheet.create({
     borderRadius: 8
   },
   infoWrapper: {
+    flex: 1,
     marginTop: 8,
     alignItems: 'flex-start'
   },
   name: {
+    flex: 1,
     fontSize: 14,
     lineHeight: 18,
     fontWeight: '500'

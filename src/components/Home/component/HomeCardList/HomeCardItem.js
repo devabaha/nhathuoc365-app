@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
   },
   specialSubTitle: {
     fontWeight: '600',
+    fontSize: 15,
     color: '#00b140'
   },
   subTitle: {
