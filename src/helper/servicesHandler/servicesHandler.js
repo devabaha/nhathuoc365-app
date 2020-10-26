@@ -32,7 +32,7 @@ import {
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t, callBack = () => {}) => {
+export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
   if (!service) return;
   switch (service.type) {
     /** RADA */
@@ -234,18 +234,29 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
 
     /** PRODUCT */
     case SERVICES_TYPE.PRODUCT_DETAIL:
-      APIHandler.site_info(service.siteId).then(response => {
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setDeepLinkData({ id: service.productId });
-            store.setStoreData(response.data);
-            Actions.push(appConfig.routes.store, {
-              title: service.name || response.data.name,
-              goCategory: service.categoryId || 0
-            });
-          })();
-        }
-      });
+      APIHandler.site_product(service.siteId, service.productId)
+        .then(response => {
+          if (response && response.status == STATUS_SUCCESS) {
+            const item = response.data;
+            if (item) {
+              Actions.item({
+                title: item.name,
+                item
+              });
+            }
+          } else {
+            throw Error(
+              response ? response.message : t('common:api.error.message')
+            );
+          }
+        })
+        .catch(e => {
+          console.log(e + ' deep_link_site_product');
+          flashShowMessage({
+            type: 'danger',
+            message: e.message || t('common:api.error.message')
+          });
+        });
       break;
 
     /** AFFILIATE */
@@ -284,6 +295,22 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
         store_id: service.storeId,
         title: service.title
       });
+      break;
+
+    /** POPUP */
+    case SERVICES_TYPE.POP_UP:
+      setTimeout(
+        () =>
+          Actions.push(appConfig.routes.modalPopup, {
+            image: service.image,
+            onPressImage: () => {
+              callBack && callBack();
+              Actions.pop();
+              servicesHandler(service.data, t);
+            }
+          }),
+        service.delay
+      );
       break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [

@@ -143,8 +143,8 @@ import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
-import ProgressBar from 'react-native-animated-progress';
 import AppCodePush from '../AppCodePush';
+import ModalPopup from './components/ModalPopup';
 /**
  * Not allow font scaling
  */
@@ -1562,6 +1562,9 @@ class RootRouter extends Component {
 
               {/* ================ MODAL RATE APP ================ */}
               <Stack key={appConfig.routes.modalRateApp} component={RateApp} />
+
+              {/* ================ MODAL POPUP ================ */}
+              <Stack key={appConfig.routes.modalPopup} component={ModalPopup} />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}

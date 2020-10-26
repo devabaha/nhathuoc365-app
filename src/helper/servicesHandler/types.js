@@ -69,5 +69,8 @@ export const SERVICES_TYPE = {
   ALL_SERVICES: 'all_services',
 
   /** PAYMENT */
-  PAYMENT_METHOD: 'payment_method'
+  PAYMENT_METHOD: 'payment_method',
+
+  /** POPUP */
+  POP_UP: 'popup'
 };

@@ -10,8 +10,8 @@ const config = Object.freeze({
   namespace: 'app',
   reduxLoggerEnable: false,
   voucherModule: {
-    appKey: 'tickidkey',
-    secretKey: '0011tickidkey001122private'
+    appKey: 'thuchuylekey',
+    secretKey: '6QAfthuchuylekeyVus5po'
   },
   radaModule: {
     partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
@@ -117,6 +117,7 @@ const config = Object.freeze({
     modalList: 'modalList',
     modalSearchPlaces: 'modalSearchPlaces',
     modalRateApp: 'modalRateApp',
+    modalPopup: 'modalPopup',
 
     //  Reset password
     resetPassword: 'resetPassword',
