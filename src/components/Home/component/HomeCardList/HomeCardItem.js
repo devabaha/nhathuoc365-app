@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     fontSize: 12,
-    marginTop: 3,
+    marginTop: 5,
     color: '#444'
   },
   loading: {

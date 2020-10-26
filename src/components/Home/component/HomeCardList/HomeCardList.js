@@ -37,7 +37,8 @@ function HomeCardList(props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 8
+    marginTop: 8,
+    paddingBottom: 15
   },
   content: {
     paddingHorizontal: 16,

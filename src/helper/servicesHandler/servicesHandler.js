@@ -234,18 +234,29 @@ export const servicesHandler = (service, t, callBack = () => {}) => {
 
     /** PRODUCT */
     case SERVICES_TYPE.PRODUCT_DETAIL:
-      APIHandler.site_info(service.siteId).then(response => {
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setDeepLinkData({ id: service.productId });
-            store.setStoreData(response.data);
-            Actions.push(appConfig.routes.store, {
-              title: service.name || response.data.name,
-              goCategory: service.categoryId || 0
-            });
-          })();
-        }
-      });
+      APIHandler.site_product(service.siteId, service.productId)
+        .then(response => {
+          if (response && response.status == STATUS_SUCCESS) {
+            const item = response.data;
+            if (item) {
+              Actions.item({
+                title: item.name,
+                item
+              });
+            }
+          } else {
+            throw Error(
+              response ? response.message : t('common:api.error.message')
+            );
+          }
+        })
+        .catch(e => {
+          console.log(e + ' deep_link_site_product');
+          flashShowMessage({
+            type: 'danger',
+            message: e.message || t('common:api.error.message')
+          });
+        });
       break;
 
     /** AFFILIATE */
