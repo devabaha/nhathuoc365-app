@@ -18,6 +18,8 @@ import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
 import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
+import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
+import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 
 const defaultListener = () => {};
 
@@ -136,7 +138,7 @@ class Home extends Component {
 
     return (
       <View style={styles.container}>
-        <LoadingComponent loading={this.props.apiFetching} />
+        {/* <LoadingComponent loading={this.props.apiFetching} /> */}
 
         <View style={styles.headerBackground}>
           {this.props.site && this.props.site.app_event_banner_image && (
@@ -188,9 +190,7 @@ class Home extends Component {
           </View>
 
           <ListServices
-            services={this.props.services}
             listService={this.props.listService}
-            notify={this.props.notify}
             onItemPress={this.props.onPressService}
           />
 
@@ -202,7 +202,7 @@ class Home extends Component {
               />
             )}
 
-            {this.hasProduct_groups &&
+            {this.hasProduct_groups ? (
               Object.keys(this.props.product_groups).map((key, index) => {
                 let { products, title } = this.props.product_groups[key];
                 return (
@@ -220,7 +220,10 @@ class Home extends Component {
                     )}
                   </ListProducts>
                 );
-              })}
+              })
+            ) : this.props.apiFetching ? (
+              <ListProductSkeleton />
+            ) : null}
 
             {this.hasSites && (
               <HomeCardList
@@ -268,7 +271,7 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.hasNews && (
+            {this.hasNews ? (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
@@ -283,7 +286,9 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
-            )}
+            ) : this.props.apiFetching ? (
+              <HomeCardListSkeleton />
+            ) : null}
           </View>
         </ScrollView>
 

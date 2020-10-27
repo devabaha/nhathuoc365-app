@@ -78,7 +78,6 @@ class Category extends Component<CategoryProps> {
     }
 
     componentDidMount() {
-        console.log(this.props.title, this.props.isActive)
         this.animateActive(this.props.isActive ? 1 : 0);
     }
 
