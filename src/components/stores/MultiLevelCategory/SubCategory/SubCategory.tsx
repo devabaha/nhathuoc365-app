@@ -36,9 +36,14 @@ const styles = StyleSheet.create({
         letterSpacing: .3
     },
     body: {
-        backgroundColor: '#fafafa'
+        backgroundColor: '#fcfcfc'
+    },
+    categoryWrapper: {
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     categoryContainer: {
+        borderRadius: 8,
         borderBottomWidth: 0,
         padding: 10,
     },
@@ -120,28 +125,41 @@ class SubCategory extends Component<SubCategoryProps> {
     }
 
     renderSubCategories(category) {
-        const extraStyle = this.state.categorySize ? {
+        const containerStyle = this.state.categorySize ? {
             width: this.state.categorySize.width,
-            height: this.state.categorySize.height,
+            height: this.state.categorySize.height
         } : {};
+        const extraStyle = {
+            width: this.state.categorySize.width * .8,
+            height: this.state.categorySize.height * .8,
+        };
         return (
             Array.isArray(category.list) ?
                 <View style={styles.subCategoriesContainer}>
                     {category.list.map((childCate, index) => {
                         const isLast = (index + 1) % this.state.itemsPerRow === 0;
+                        if (!childCate.image) {
+                            //@ts-ignore
+                            extraStyle.backgroundColor = '#eee';
+                            //@ts-ignore
+                            extraStyle.padding = 0;
+                        }
+
                         return (
-                            <Category
-                                key={index}
-                                title={childCate.name}
-                                image={childCate.image}
-                                containerStyle={[
-                                    styles.categoryContainer,
-                                    extraStyle
-                                ]}
-                                onPress={() => this.props.onPressTitle(childCate)}
-                            >
-                                {/* {!isLast && <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#fff', position: 'absolute', bottom: 0, right: 0 }} />} */}
-                            </Category>
+                            <View style={[styles.categoryWrapper, containerStyle]}>
+                                <Category
+                                    key={index}
+                                    title={childCate.name}
+                                    image={childCate.image}
+                                    containerStyle={[
+                                        styles.categoryContainer,
+                                        extraStyle
+                                    ]}
+                                    onPress={() => this.props.onPressTitle(childCate)}
+                                >
+                                    {/* {!isLast && <View style={{ width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#fff', position: 'absolute', bottom: 0, right: 0 }} />} */}
+                                </Category>
+                            </View>
                         )
                     })}
                 </View>
@@ -186,12 +204,14 @@ class SubCategory extends Component<SubCategoryProps> {
             <View style={styles.container}>
                 <View style={styles.header}>
                     {!!this.props.image &&
-                        <View onLayout={this.handleBannerLayout.bind(this)} style={[
-                            styles.bannerContainer,
-                            bannerLayout
-                        ]}>
-                            <Image style={styles.banner} source={{ uri: this.props.image }} />
-                        </View>
+                        <TouchableOpacity onPress={() => this.props.onPressBanner()}>
+                            <View onLayout={this.handleBannerLayout.bind(this)} style={[
+                                styles.bannerContainer,
+                                bannerLayout
+                            ]}>
+                                <Image style={styles.banner} source={{ uri: this.props.image }} />
+                            </View>
+                        </TouchableOpacity>
                     }
                     <TouchableOpacity onPress={() => this.props.onPressTitle(null)}>
                         <Text style={styles.title}>

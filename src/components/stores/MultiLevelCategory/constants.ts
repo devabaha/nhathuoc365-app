@@ -13,6 +13,7 @@ export const TEMP_CATEGORIES = [
   {
     id: 1,
     name: "Kem, bơ, sữa, phomai",
+    banner: "https://imgs.vietnamnet.vn/Images/2017/09/07/09/20170907092930-pho-mai-2.jpg",
     image:
       "https://imgs.vietnamnet.vn/Images/2017/09/07/09/20170907092930-pho-mai-2.jpg",
     list: [

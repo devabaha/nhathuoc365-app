@@ -10,6 +10,7 @@ export interface SubCategoryProps {
   title?: string;
   loading?: string;
   onPressTitle?: (e: GestureResponderEvent) => void;
+  onPressBanner?: () => void,
   /**
    * mode scroll all category for subCategory
    */

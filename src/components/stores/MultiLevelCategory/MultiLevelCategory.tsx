@@ -29,6 +29,7 @@ import Loading from "../../Loading";
 import SVGEmptyBoxOpen from '../../../images/empty-box-open.svg';
 import NoResult from "../../NoResult";
 import { CATEGORY_POSITION_TYPE, CATEGORY_TYPE, TEMP_CATEGORIES } from "./constants";
+import { servicesHandler } from "../../../helper/servicesHandler";
 
 const styles = StyleSheet.create({
     container: {
@@ -164,7 +165,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                         : (response.data.categories.find(cate => cate.id === this.state.selectedMainCategory.id)
                             || defaultSelectedCategory);
                     // this.setState({
-                    //     type: CATEGORY_TYPE.FULL_SCROLL,
+                    //     type: CATEGORY_TYPE.FIX_3_LEVEL,
                     //     categories: TEMP_CATEGORIES,
                     //     selectedMainCategory: TEMP_CATEGORIES[0]
                     // })
@@ -216,6 +217,14 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     ]
                 })
             )
+        }
+    }
+
+    onPressBanner(category) {
+        if (category.service) {
+            servicesHandler(category.service);
+        } else {
+            this.goToStore(category);
         }
     }
 
@@ -397,6 +406,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                             title={category.name}
                             fullData={this.isFullData}
                             onPressTitle={(cate) => this.goToStore(cate || category)}
+                            onPressBanner={() => this.onPressBanner(category)}
                         />
                     </View>
                 )
