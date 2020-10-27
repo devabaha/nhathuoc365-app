@@ -28,6 +28,7 @@ import Loading from "../../Loading";
 //@ts-ignore
 import SVGEmptyBoxOpen from '../../../images/empty-box-open.svg';
 import NoResult from "../../NoResult";
+import { CATEGORY_POSITION_TYPE, CATEGORY_TYPE, TEMP_CATEGORIES } from "./constants";
 
 const styles = StyleSheet.create({
     container: {
@@ -51,287 +52,9 @@ const styles = StyleSheet.create({
     },
 })
 
-const CATEGORY_POSITION_TYPE = {
-    MAIN: 0,
-    SUB: 1
-}
-
-const CATEGORY_TYPE = {
-    BEE_MART: 'fix',
-    CLING_ME: 'scroll'
-}
-
-const categories = [
-    {
-        id: 1,
-        name: "Kem, bơ, sữa, phomai",
-        image: "https://imgs.vietnamnet.vn/Images/2017/09/07/09/20170907092930-pho-mai-2.jpg",
-        list: [
-            {
-                name: "Nguyên liệu nấu ăn",
-                image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-                list: [
-                    {
-                        name: "Máy móc thiết bị",
-                        image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                    },
-                    {
-                        name: "Nguyên liệu nấu ăn",
-                        image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                    },
-                    {
-                        name: "Sản phẩm/ dịch vụ khác",
-                        image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                    }
-                ]
-            },
-            {
-                name: "Nguyên liệu nấu ăn 1",
-                image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-                list: []
-            },
-            {
-                name: "Nguyên liệu nấu ăn 2",
-                image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-                list: []
-            }]
-    },
-    {
-        id: 2,
-        name: "Nguyên liệu làm bánh",
-        image: "https://blog.beemart.vn/wp-content/uploads/2020/06/nguyen-lieu-lam-banh-kem-co-ban-nhat-cho-nguoi-moi-bat-dau.jpg",
-        list: [{
-            name: "Đồ làm bánh",
-            image: "https://shopquangchau.vn/images/uploaded/tin-tuc/anh%202222/dung-cu-lam-banh2.jpg",
-            list: [
-                {
-                    name: "Đồ dinh dưỡng",
-                    image: "https://wedeliver.vn/images/Di%CC%A3ch-vu%CC%A3-giao-cha%CC%81o-dinh-d%C6%B0%C6%A1%CC%83ng-ta%CC%A3i-nha%CC%80-%C6%A1%CC%89-tphcm-1.jpg",
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 3,
-        name: "Nguyên liệu pha chế",
-        image: "https://lacdavang.com/wp-content/uploads/2015/08/siro-monin.jpg",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 4,
-        name: "Đồ làm bánh",
-        image: "https://shopquangchau.vn/images/uploaded/tin-tuc/anh%202222/dung-cu-lam-banh2.jpg",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 5,
-        name: "Đồ dinh dưỡng",
-        image: "https://wedeliver.vn/images/Di%CC%A3ch-vu%CC%A3-giao-cha%CC%81o-dinh-d%C6%B0%C6%A1%CC%83ng-ta%CC%A3i-nha%CC%80-%C6%A1%CC%89-tphcm-1.jpg",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 6,
-        name: "Đồ nhà bếp",
-        image: "https://giakedegon.com/wp-content/uploads/2018/03/1.png",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 7,
-        name: "Đồ pha chế",
-        image: "https://salt.tikicdn.com/cache/280x280/ts/product/87/eb/f8/874642072236761db29239cefcc32f11.jpg",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 8,
-        name: "Túi, hộp đựng thực phẩm",
-        image: "https://storage.googleapis.com/cdn_staless/Uploads/2018/11/5-2.jpg",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 9,
-        name: "Máy móc thiết bị",
-        image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 10,
-        name: "Nguyên liệu nấu ăn",
-        image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    },
-    {
-        id: 11,
-        name: "Sản phẩm/ dịch vụ khác",
-        image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png",
-        list: [{
-            name: "Nguyên liệu nấu ăn",
-            image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg",
-            list: [
-                {
-                    name: "Máy móc thiết bị",
-                    image: "https://lh3.googleusercontent.com/proxy/YjrFqpvatBmLn6_hRg5MPq_JH1-JKcdCgsjXf1Bgi8Wq_X-EMKzi3NQq4lq0dWiFRW7hx9r0GChBVrrykQwKeCQ9PqvUw9DSR0C5yyJ9B_evDXDt6vKzN6CCCbvIHbGXI9pFhi2lnYSmutA7zr8d"
-                },
-                {
-                    name: "Nguyên liệu nấu ăn",
-                    image: "https://media.cooky.vn/images/blog-2016/ten-tieng-anh-cac-nguyen-lieu-dung-cu-trong-nau-an-lam-banh%201.jpg"
-                },
-                {
-                    name: "Sản phẩm/ dịch vụ khác",
-                    image: "https://www.vietguys.biz/wp-content/uploads/2017/11/icon-06-1.png"
-                }
-            ]
-        }]
-    }
-];
-
-
 class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     static defaultProps = {
-        type: CATEGORY_TYPE.BEE_MART,
+        type: CATEGORY_TYPE.FIX_3_LEVEL,
         siteId: store.store_id,
         categoryId: 0,
     }
@@ -366,7 +89,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     }
 
     get isFullData() {
-        return this.state.type === CATEGORY_TYPE.CLING_ME;
+        return this.state.type === CATEGORY_TYPE.FULL_SCROLL;
     }
 
     get hasCategories() {
@@ -435,15 +158,15 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             if (response) {
                 //@ts-ignore
                 if (response.status === STATUS_SUCCESS) {
-                    response.data.categories = [];
                     const defaultSelectedCategory = response.data.categories[0] || this.state.selectedMainCategory;
                     const selectedMainCategory = this.state.selectedMainCategory.id === -1
                         ? defaultSelectedCategory
                         : (response.data.categories.find(cate => cate.id === this.state.selectedMainCategory.id)
                             || defaultSelectedCategory);
                     // this.setState({
-                    //     categories: categories,
-                    //     selectedMainCategory: categories[0]
+                    //     type: CATEGORY_TYPE.FULL_SCROLL,
+                    //     categories: TEMP_CATEGORIES,
+                    //     selectedMainCategory: TEMP_CATEGORIES[0]
                     // })
                     this.setState((prevState: any) => ({
                         type: response.data.type || prevState.type,
@@ -512,7 +235,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     /**
      * @todo auto update main selected category by scrolling sub category screen
      * 
-     * @description only support for CLING_ME mode. 
+     * @description only support for FULL_SCROLL mode. 
      * Not work if sub category scrolled by main category pressing.
      */
     handleSubCategoriesScrolling(e) {
@@ -543,7 +266,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     this.getFormattedCategoryIDForPositionData(nearestCategoryID)];
                 const nextCategoryPosition = this.state.subCategoryDataPosition[
                     this.getFormattedCategoryIDForPositionData(nextCategory.id)];
-                if (y < (nextCategoryPosition - nearestCategoryPosition) / 2) {
+                if (y < (nextCategoryPosition - nearestCategoryPosition) / 4) {
                     return;
                 }
             }
@@ -659,12 +382,16 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             : [];
         return (
             categories.map((category, index) => {
+                const childCategories = this.state.type === CATEGORY_TYPE.FIX_2_LEVEL
+                    ? categories
+                    : category.list
                 return (
                     <View
                         key={index}
                         onLayout={this.handleMappingDataPosition.bind(this, category, CATEGORY_POSITION_TYPE.SUB)}>
                         <SubCategory
-                            categories={category.list}
+                            type={this.state.type}
+                            categories={childCategories}
                             image={category.banner}
                             // image="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcQLN3yGu2SdG8D0_HCgx_MBHGglHyaPoypdJA&usqp=CAU"
                             title={category.name}
@@ -696,7 +423,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     </View>
 
                     <ScrollView
-                        contentContainerStyle={styles.container}
+                        contentContainerStyle={{ flexGrow: 1 }}
                         ref={this.refSubCategory}
                         scrollEventThrottle={16}
                         onScroll={this.handleSubCategoriesScrolling.bind(this)}

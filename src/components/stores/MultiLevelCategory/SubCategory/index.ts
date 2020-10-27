@@ -1,9 +1,10 @@
 import { GestureResponderEvent, StyleProp, ViewProps } from "react-native";
-import { Category } from "./..";
+import { Category, CategoryType } from "./..";
 
 export { default } from "./SubCategory";
 
 export interface SubCategoryProps {
+  type: CategoryType;
   categories: Array<Category>;
   image?: string;
   title?: string;

@@ -6,6 +6,8 @@
 	<string>key_live_ndMKBvSauLP0JPd3Cf0JqjaczAffd33K</string>
 	<key>branch_app_domain</key>
 	<string>tickid.app.link</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

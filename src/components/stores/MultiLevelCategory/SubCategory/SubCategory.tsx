@@ -6,6 +6,7 @@ import Category from '../Category';
 import Row from './Row';
 //@ts-ignore
 import appConfig from 'app-config';
+import { CATEGORY_TYPE } from '../constants';
 
 const styles = StyleSheet.create({
     container: {
@@ -155,6 +156,9 @@ class SubCategory extends Component<SubCategoryProps> {
                     ? Math.ceil(category.list.length / this.state.itemsPerRow) *
                     this.state.categorySize.height
                     : 0;
+                if (this.props.type === CATEGORY_TYPE.FIX_2_LEVEL) {
+                    return this.renderSubCategories(category);
+                }
                 return (
                     <Row
                         key={index}
