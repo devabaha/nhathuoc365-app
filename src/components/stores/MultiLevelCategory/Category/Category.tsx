@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import {
     Image, Text, View, StyleSheet,
-    // Animated, Easing,
+    Animated, Easing,
     TouchableHighlight
 } from 'react-native';
-import Animated, { Easing, Extrapolate, interpolate } from 'react-native-reanimated';
+// import Animated, { Easing, interpolate } from 'react-native-reanimated';
 import { CategoryProps } from '.';
 //@ts-ignore
 import appConfig from 'app-config';
@@ -78,6 +78,7 @@ class Category extends Component<CategoryProps> {
     }
 
     componentDidMount() {
+        console.log(this.props.title, this.props.isActive)
         this.animateActive(this.props.isActive ? 1 : 0);
     }
 
@@ -86,30 +87,30 @@ class Category extends Component<CategoryProps> {
             toValue,
             duration: 200,
             easing: Easing.quad,
-            // useNativeDriver: true
+            useNativeDriver: true
         }).start();
     }
 
     render() {
-        // const activeContainerStyle = {
-        //     opacity: this.animatedActiveValue,
-        //     transform: [{
-        //         scale: this.animatedActiveValue.interpolate({
-        //             inputRange: [0, 1],
-        //             outputRange: [0, 1.5]
-        //         })
-        //     }]
-        // };
         const activeContainerStyle = {
             opacity: this.animatedActiveValue,
             transform: [{
-                scale: interpolate(this.animatedActiveValue, {
+                scale: this.animatedActiveValue.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, 1.5],
-                    // extrapolate: Extrapolate.CLAMP
+                    outputRange: [0, 1.5]
                 })
             }]
         };
+        // const activeContainerStyle = {
+        //     opacity: this.animatedActiveValue,
+        //     transform: [{
+        //         scale: interpolate(this.animatedActiveValue, {
+        //             inputRange: [0, 1],
+        //             outputRange: [0, 1.5],
+        //             // extrapolate: Extrapolate.CLAMP
+        //         })
+        //     }]
+        // };
         const activeTitleStyle = {
             opacity: this.animatedActiveValue,
             color: '#fff'

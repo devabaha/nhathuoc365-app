@@ -32,7 +32,7 @@ import {
  * @param {Object} t - i18n data
  * @callback callBack - a trigger when needed for specific case.
  */
-export const servicesHandler = (service, t, callBack = () => {}) => {
+export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
   if (!service) return;
   switch (service.type) {
     /** RADA */
