@@ -6,6 +6,8 @@ import HomeCardListSkeleton from '../HomeCardList/HomeCardListSkeleton';
 const styles = StyleSheet.create({
     itemContainer: {
         width: 130,
+    },
+    main: {
         height: 116
     }
 });
@@ -16,6 +18,7 @@ class ListProductSkeleton extends Component {
         return (
             <HomeCardListSkeleton 
                 itemContainerStyle={styles.itemContainer}
+                mainStyle={styles.main}
             />
         );
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from 'react-native-button';
 import { IMAGE_ICON_TYPE } from '../../constants';
@@ -11,10 +11,59 @@ import {
 } from './constants';
 import appConfig from 'app-config';
 import { NotiBadge } from '../../../Badges';
-import RowIndicator from './RowIndicator';
+import HorizontalIndicator from './HorizontalIndicator';
 import Animated, { event, divide, Easing } from 'react-native-reanimated';
 import store from 'app-store';
-import ListServiceSkeleton from './ListServiceSkeleton';
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 6,
+    backgroundColor: '#fff'
+  },
+  buttonWrapper: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    alignItems: 'center'
+  },
+  itemWrapper: {
+    alignItems: 'center'
+  },
+  iconWrapper: {
+    width: 45,
+    height: 45,
+    borderRadius: 16,
+    backgroundColor: '#eee',
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  icon: {
+    width: '80%',
+    height: '80%'
+  },
+  title: {
+    textAlign: 'center',
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#333',
+    marginTop: 6
+  },
+  notifyWrapper: {
+    right: -8,
+    top: -8,
+    minWidth: 20,
+    height: 20
+  },
+  notifyLabel: {
+    fontSize: 12
+  },
+  horizontalIndicator: {
+    width: INDICATOR_HORIZONTAL_WIDTH,
+    alignSelf: 'center',
+    marginTop: 8,
+    marginBottom: 5
+  }
+});
 
 class ListServices extends Component {
   static propTypes = {
@@ -25,9 +74,9 @@ class ListServices extends Component {
     onItemPress: PropTypes.func
   };
   static defaultProps = {
-    type: LIST_SERVICE_TYPE.HORIZONTAL,
+    type: LIST_SERVICE_TYPE.VERTICAL,
     listService: [],
-    itemsPerRow: 6,
+    itemsPerRow: MIN_ITEMS_PER_ROW,
     onItemPress: () => {}
   };
 
@@ -36,20 +85,7 @@ class ListServices extends Component {
     horizontalContentWidth: undefined
   };
   scrollX = new Animated.Value(0);
-  isHomeDataLoaded = false;
   animatedVisibleValue = new Animated.Value(0);
-
-  shouldComponentUpdate(nextProps, nextState) {
-    if (nextState !== this.state) {
-      return true;
-    }
-
-    if (nextProps !== this.props) {
-      return true;
-    }
-
-    return false;
-  }
 
   get hasServices() {
     return (
@@ -76,6 +112,18 @@ class ListServices extends Component {
     }
 
     return serviceStyle;
+  }
+
+  get isHorizontal() {
+    return this.props.type === LIST_SERVICE_TYPE.HORIZONTAL;
+  }
+
+  componentDidMount() {
+    Animated.timing(this.animatedVisibleValue, {
+      toValue: 1,
+      duration: 200,
+      easing: Easing.quad
+    }).start();
   }
 
   renderListService() {
@@ -110,6 +158,10 @@ class ListServices extends Component {
   }
 
   renderListHorizontal() {
+    return this.renderServiceLayout();
+  }
+
+  renderHorizontalIndicator() {
     const indicatorWidth =
       this.state.horizontalContainerWidth && this.state.horizontalContentWidth
         ? (this.state.horizontalContainerWidth /
@@ -122,50 +174,25 @@ class ListServices extends Component {
           this.state.horizontalContainerWidth) /
         (INDICATOR_HORIZONTAL_WIDTH - indicatorWidth)
       : 1;
+
     const indicatorStyle = {
       transform: [
         {
-          translateX: divide(this.scrollX, indicatorRatio)
+          translateX: divide(this.scrollX, indicatorRatio || 1)
         }
       ]
     };
 
     return (
-      <View>
-        <Animated.ScrollView
-          scrollEventThrottle={1}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          onLayout={this.handleLayoutHorizontalContainer.bind(this)}
-          onScroll={event([
-            {
-              nativeEvent: {
-                contentOffset: {
-                  x: this.scrollX
-                }
-              }
-            }
-          ])}
-        >
-          <View onLayout={this.handleLayoutHorizontalContent.bind(this)}>
-            {this.renderHorizontalService()}
-          </View>
-        </Animated.ScrollView>
-        <RowIndicator
-          containerStyle={{
-            width: INDICATOR_HORIZONTAL_WIDTH,
-            alignSelf: 'center',
-            marginTop: 8,
-            marginBottom: 5
-          }}
-          indicatorStyle={indicatorStyle}
-          indicatorWidth={indicatorWidth}
-        />
-      </View>
+      <HorizontalIndicator
+        containerStyle={styles.horizontalIndicator}
+        indicatorStyle={indicatorStyle}
+        indicatorWidth={indicatorWidth}
+      />
     );
   }
 
-  renderHorizontalService() {
+  renderServiceLayout() {
     let result = [],
       rowData = [];
     this.props.listService.forEach((service, index) => {
@@ -191,22 +218,7 @@ class ListServices extends Component {
   }
 
   renderListVertical() {
-    return (
-      <FlatList
-        scrollEnabled={false}
-        data={this.props.listService}
-        extraData={this.props.notify}
-        renderItem={({ item, index }) =>
-          this.renderService({
-            item,
-            notify: this.props.notify,
-            onPress: this.props.onItemPress
-          })
-        }
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={this.props.itemsPerRow}
-      />
-    );
+    return this.renderServiceLayout();
   }
 
   renderService({ item, notify = store.notify, onPress }) {
@@ -220,52 +232,49 @@ class ListServices extends Component {
         containerStyle={[styles.buttonWrapper, this.serviceStyle]}
       >
         <View style={styles.itemWrapper}>
-          <View
-            style={[
-              styles.iconWrapper,
-              {
-                backgroundColor: item.bgrColor
-              }
-            ]}
-          >
-            {item.iconType === IMAGE_ICON_TYPE ? (
-              <Image style={styles.icon} source={{ uri: item.icon }} />
-            ) : (
-              <MaterialCommunityIcons name={item.icon} color="#fff" size={32} />
-            )}
+          <View>
+            <View
+              style={[
+                styles.iconWrapper,
+                {
+                  width:
+                    this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+                      ? 45 + (45 * (this.props.itemsPerRow * 35)) / 100
+                      : 45,
+                  height:
+                    this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+                      ? 45 + (45 * (this.props.itemsPerRow * 35)) / 100
+                      : 45,
+                  backgroundColor: item.bgrColor
+                }
+              ]}
+            >
+              {item.iconType === IMAGE_ICON_TYPE ? (
+                <Image style={styles.icon} source={{ uri: item.icon }} />
+              ) : (
+                <MaterialCommunityIcons
+                  name={item.icon}
+                  color="#fff"
+                  size={32}
+                />
+              )}
+            </View>
+            <NotiBadge
+              containerStyle={styles.notifyWrapper}
+              labelStyle={styles.notifyLabel}
+              label={notify[`list_service_${item.type}`]}
+              show={notify[`list_service_${item.type}`]}
+              alert
+              animation
+            />
           </View>
           <Text style={styles.title}>{item.title}</Text>
-
-          {notify.notify_chat > 0 && item.type === 'chat' && (
-            <NotiBadge
-              containerStyle={styles.notifyWrapper}
-              label={notify.notify_chat}
-            />
-          )}
-          {notify.notify_list_chat > 0 && item.type === 'list_chat' && (
-            <NotiBadge
-              containerStyle={styles.notifyWrapper}
-              label={notify.notify_list_chat}
-            />
-          )}
         </View>
       </Button>
     );
   }
 
-  checkVisible() {
-    if (store.isHomeLoaded !== this.isHomeDataLoaded) {
-      Animated.timing(this.animatedVisibleValue, {
-        toValue: store.isHomeLoaded ? 1 : 0,
-        duration: 200,
-        easing: Easing.quad
-      }).start();
-    }
-    this.isHomeDataLoaded = store.isHomeLoaded;
-  }
-
   render() {
-    this.checkVisible();
     const visibleStyle = {
       opacity: this.animatedVisibleValue,
       transform: [
@@ -277,51 +286,33 @@ class ListServices extends Component {
         }
       ]
     };
-    return this.hasServices ? (
+    return (
       <Animated.View style={[styles.container, visibleStyle]}>
-        {this.renderListService()}
+        <Animated.ScrollView
+          scrollEventThrottle={1}
+          scrollEnabled={this.isHorizontal}
+          horizontal={this.isHorizontal}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          onLayout={this.handleLayoutHorizontalContainer.bind(this)}
+          onScroll={event([
+            {
+              nativeEvent: {
+                contentOffset: {
+                  x: this.scrollX
+                }
+              }
+            }
+          ])}
+        >
+          <View onLayout={this.handleLayoutHorizontalContent.bind(this)}>
+            {this.renderListService()}
+          </View>
+        </Animated.ScrollView>
+        {this.isHorizontal && this.renderHorizontalIndicator()}
       </Animated.View>
-    ) : (
-      !store.isHomeLoaded && <ListServiceSkeleton />
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 6,
-    backgroundColor: '#fff'
-  },
-  buttonWrapper: {
-    paddingVertical: 10,
-    paddingHorizontal: 8
-  },
-  itemWrapper: {
-    alignItems: 'center'
-  },
-  iconWrapper: {
-    width: 45,
-    height: 45,
-    borderRadius: 16,
-    backgroundColor: '#eee',
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  icon: {
-    width: 45,
-    height: 45
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '400',
-    color: '#333',
-    marginTop: 6
-  },
-  notifyWrapper: {
-    right: 16
-  }
-});
 
 export default observer(ListServices);

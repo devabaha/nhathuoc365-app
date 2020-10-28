@@ -6,29 +6,28 @@ import SkeletonLoading from '../../../SkeletonLoading';
 import { SKELETON_COLOR } from '../../constants';
 
 export interface HomeCardListSkeletonProps {
-    itemContainerStyle: StyleProp<ViewStyle>
+    itemContainerStyle?: StyleProp<ViewStyle>;
+    mainStyle?: StyleProp<ViewStyle>; 
 }
 
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#fff',
-        marginTop: 8,
+        marginTop: 10,
         paddingBottom: 15
     },
     content: {
         paddingLeft: 16,
-        paddingVertical: 4,
     },
     title: {
         width: '23%',
         backgroundColor: SKELETON_COLOR,
-        lineHeight: 20,
-        marginTop: 12,
-        marginBottom: 6
+        height: 12,
+        marginVertical: 15,
+        borderRadius: 8
     },
     itemContainer: {
         width: 210,
-        height: 120,
         marginRight: 16,
         justifyContent: 'space-between'
     },
@@ -36,11 +35,13 @@ const styles = StyleSheet.create({
         backgroundColor: SKELETON_COLOR,
         borderRadius: 8,
         width: '100%',
-        height: '80%',
+        height: 120,
     },
     itemSub: {
+        marginTop: 15,
         width: '50%',
-        height: '10%',
+        height: 10,
+        borderRadius: 8,
         backgroundColor: SKELETON_COLOR
     },
     skeletonContainer: {
@@ -57,7 +58,7 @@ class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
         return (
             <View style={styles.container}>
                 <View style={styles.content}>
-                    <Text style={styles.title}></Text>
+                    <View style={styles.title} />
                 </View>
 
                 <FlatList
@@ -71,7 +72,7 @@ class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
                     renderItem={() => {
                         return (
                             <View style={[styles.itemContainer, this.props.itemContainerStyle]} >
-                                <View style={styles.itemMain} />
+                                <View style={[styles.itemMain, this.props.mainStyle]} />
                                 <View style={styles.itemSub} />
                             </View>
                         )

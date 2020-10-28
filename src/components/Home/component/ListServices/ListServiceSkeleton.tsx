@@ -9,21 +9,29 @@ import { SKELETON_COLOR } from '../../constants';
 
 const styles = StyleSheet.create({
     container: {
-        alignItems: "center"
+        alignItems: "center",
+        paddingVertical: 8
     },
     itemContainer: {
         justifyContent: "center",
         alignItems: "center",
-        width: appConfig.device.width / MIN_ITEMS_PER_ROW,
-        height: appConfig.device.width / MIN_ITEMS_PER_ROW,
+        width: (appConfig.device.width - 32) / MIN_ITEMS_PER_ROW,
+        height: (appConfig.device.width - 32) / MIN_ITEMS_PER_ROW,
     },
-    item: {
+    main: {
         borderRadius: 16,
         backgroundColor: SKELETON_COLOR,
         width: "50%",
         height: "50%",
         minWidth: 60,
         minHeight: 60,
+    },
+    sub: {
+        marginTop: 8,
+        height: 8,
+        borderRadius: 4,
+        width: '45%',
+        backgroundColor: SKELETON_COLOR,
     },
     skeletonContainer: {
         backgroundColor: "rgba(0,0,0,0)",
@@ -47,8 +55,9 @@ class ListServiceSkeleton extends PureComponent {
                                 style={styles.itemContainer}
                             >
                                 <View
-                                    style={styles.item}
+                                    style={styles.main}
                                 />
+                                <View style={styles.sub} />
                             </View>
                         );
                     }}

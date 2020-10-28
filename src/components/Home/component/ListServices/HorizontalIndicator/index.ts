@@ -1,7 +1,7 @@
-export { default } from "./RowIndicator";
+export { default } from "./HorizontalIndicator";
 import { StyleProp, ViewStyle } from "react-native";
 
-export interface RowIndicatorProps {
+export interface HorizontalIndicatorProps {
   containerStyle?: StyleProp<ViewStyle>;
   indicatorStyle?: StyleProp<ViewStyle>;
   color?: string;

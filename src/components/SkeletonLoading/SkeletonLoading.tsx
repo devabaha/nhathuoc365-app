@@ -62,7 +62,7 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#ddd'
+        backgroundColor: '#eff1f2'
     }
 });
 

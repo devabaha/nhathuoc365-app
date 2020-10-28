@@ -42,7 +42,7 @@ class ListProducts extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 8,
+    marginTop: 10,
     paddingBottom: 18
   },
   headingWrapper: {

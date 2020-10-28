@@ -20,6 +20,7 @@ import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
+import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
 
 const defaultListener = () => {};
 
@@ -93,6 +94,12 @@ class Home extends Component {
     onPressNoti: defaultListener,
     product_groups: {}
   };
+
+  get hasServices() {
+    return (
+      Array.isArray(this.props.listService) && this.props.listService.length > 0
+    );
+  }
 
   get hasPromotion() {
     return (
@@ -189,10 +196,16 @@ class Home extends Component {
             />
           </View>
 
-          <ListServices
-            listService={this.props.listService}
-            onItemPress={this.props.onPressService}
-          />
+          {this.hasServices ? (
+            <ListServices
+              listService={this.props.listService}
+              type={this.props.listServiceType}
+              itemsPerRow={this.props.listServiceItemsPerRow}
+              onItemPress={this.props.onPressService}
+            />
+          ) : this.props.apiFetching ? (
+            <ListServiceSkeleton />
+          ) : null}
 
           <View style={styles.contentWrapper}>
             {this.hasPromotion && (

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
-import { RowIndicatorProps } from '.';
+import { HorizontalIndicatorProps } from '.';
 //@ts-ignore
 import appConfig from 'app-config';
 
@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     }
 })
 
-class RowIndicator extends PureComponent<RowIndicatorProps> {
+class HorizontalIndicator extends PureComponent<HorizontalIndicatorProps> {
     static defaultProps = {
         color: appConfig.colors.primary,
     }
@@ -59,4 +59,4 @@ class RowIndicator extends PureComponent<RowIndicatorProps> {
     }
 }
 
-export default RowIndicator;
+export default HorizontalIndicator;
