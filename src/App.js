@@ -318,7 +318,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    codePush.clearUpdates();
+    // codePush.clearUpdates();
     this.codePushSyncManually();
     this.codePushGetMetaData();
     this.handleSubcribeBranchIO();
