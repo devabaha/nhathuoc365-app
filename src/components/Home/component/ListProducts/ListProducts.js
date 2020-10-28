@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
+import ListProductSkeleton from './ListProductSkeleton';
+import store from 'app-store';
 
 class ListProducts extends Component {
   static propTypes = {
@@ -13,8 +15,12 @@ class ListProducts extends Component {
     title: ''
   };
 
+  get hasProducts() {
+    return Array.isArray(this.props.data) && this.props.data.length !== 0;
+  }
+
   render() {
-    return (
+    return this.hasProducts ? (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
           <Text style={styles.heading}>{this.props.title}</Text>
@@ -27,14 +33,16 @@ class ListProducts extends Component {
           renderItem={this.props.children}
         />
       </View>
-    );
+    ) : !store.isHomeLoaded ? (
+      <ListProductSkeleton />
+    ) : null;
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 8,
+    marginTop: 10,
     paddingBottom: 18
   },
   headingWrapper: {
@@ -50,4 +58,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ListProducts;
+export default observer(ListProducts);

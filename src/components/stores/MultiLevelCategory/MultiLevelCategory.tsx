@@ -30,6 +30,9 @@ import SVGEmptyBoxOpen from '../../../images/empty-box-open.svg';
 import NoResult from "../../NoResult";
 import { CATEGORY_POSITION_TYPE, CATEGORY_TYPE, TEMP_CATEGORIES } from "./constants";
 import { servicesHandler } from "../../../helper/servicesHandler";
+import RightButtonOrders from "../../RightButtonOrders";
+import RightButtonNavBar from "../../RightButtonNavBar";
+import { RIGHT_BUTTON_TYPE } from "../../RightButtonNavBar/constants";
 
 const styles = StyleSheet.create({
     container: {
@@ -142,7 +145,9 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                 >
                     <IconFeather size={26} color={appConfig.colors.white} name="search" />
                 </Button>
-                <RightButtonChat tel={store.store_data.tel} />
+                <RightButtonNavBar
+                    type="shopping_cart"
+                />
             </View>
         );
     }

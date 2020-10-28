@@ -6,6 +6,10 @@ import { Actions } from 'react-native-router-flux';
 import HomeComponent from '../../components/Home';
 import { executeJobs } from '../../helper/jobsOnReset';
 import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
+import {
+  LIST_SERVICE_TYPE,
+  MIN_ITEMS_PER_ROW
+} from '../../components/Home/component/ListServices/constants';
 
 class Home extends Component {
   constructor(props) {
@@ -25,6 +29,10 @@ class Home extends Component {
       services: [],
       products: [],
       listService: [],
+      listServiceConfig: {
+        type: LIST_SERVICE_TYPE.VERTICAL,
+        items_per_row: MIN_ITEMS_PER_ROW
+      },
       primaryActions: null,
       product_groups: {}
     };
@@ -77,14 +85,15 @@ class Home extends Component {
             const popupService = {
               type: SERVICES_TYPE.POP_UP,
               image: popup.image_url,
-              delay: popup.delay !== undefined ? popup.delay : 3000,
+              // image: "https://www.erevollution.com/public/upload/citizen/48526.jpg",
+              delay: popup.delay !== undefined ? popup.delay : 2000,
               data: popup
             };
             servicesHandler(popupService, this.props.t);
             store.setPopupClickedID(popup.modified);
           }
         }
-        this.setState({
+        this.setState(prevState => ({
           site: response.data.site,
           sites: response.data.sites,
           title_sites: response.data.title_sites,
@@ -95,10 +104,16 @@ class Home extends Component {
           products: response.data.products,
           promotions: response.data.promotions,
           listService: response.data.list_service,
+          listServiceConfig: response.data.list_service_config
+            ? {
+                ...prevState.listServiceConfig,
+                ...response.data.list_service_config
+              }
+            : prevState.listServiceConfig,
           primaryActions: response.data.primary_actions,
           showPrimaryActions: response.data.showPrimaryActions,
           product_groups: response.data.product_groups
-        });
+        }));
 
         if (!this.homeDataLoaded) {
           this.homeDataLoaded = true;
@@ -301,6 +316,8 @@ class Home extends Component {
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         listService={this.state.listService}
+        listServiceType={this.state.listServiceConfig.type}
+        listServiceItemsPerRow={this.state.listServiceConfig.items_per_row}
         primaryActions={this.state.primaryActions}
         showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}

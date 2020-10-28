@@ -1,6 +1,14 @@
 import React, { PureComponent } from 'react';
-import { View, StyleSheet, Image, GestureResponderEvent, Easing, Animated } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {
+    View,
+    StyleSheet,
+    Image,
+    GestureResponderEvent,
+    Easing,
+    Animated,
+    TouchableOpacity,
+    TouchableHighlight
+} from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/AntDesign';
 //@ts-ignore
@@ -45,7 +53,7 @@ const styles = StyleSheet.create({
         // padding: 10,
     },
     icon: {
-        fontSize: 40,
+        fontSize: 36,
         color: '#fff'
     },
     imageContainer: {
@@ -56,6 +64,10 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         resizeMode: 'contain',
+    },
+    maskPressing: {
+        position: 'absolute',
+        zIndex: 999
     }
 })
 
@@ -74,7 +86,11 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
         imageDimension: {
             width: undefined,
             height: undefined
-        }
+        },
+        imgRealDimension: {
+            width: undefined,
+            height: undefined
+        },
     };
     refPopupContainer = React.createRef<any>();
     refPopup = React.createRef<any>();
@@ -118,13 +134,21 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                     let left = width;
                     let top = height;
 
-                    if (width > IMAGE_WIDTH_CONTAINER || height > IMAGE_HEIGHT_CONTAINER) {
-                        /**
-                         * Get ratio of width & height of image dimension with origin container dimension
-                         */
-                        const ratioWidth = width / IMAGE_WIDTH_CONTAINER;
-                        const ratioHeight = height / IMAGE_HEIGHT_CONTAINER;
+                    /**
+                     * img dimension that shown on screen.
+                     */
+                    let shownScreenImgWidth = width;
+                    let shownScreenImgHeight = height;
 
+                    /**
+                     * Get ratio of width & height of image dimension with origin container dimension
+                    */
+                    let ratioWidth = IMAGE_WIDTH_CONTAINER / width;
+                    let ratioHeight = IMAGE_HEIGHT_CONTAINER / height;
+
+                    if (width > IMAGE_WIDTH_CONTAINER || height > IMAGE_HEIGHT_CONTAINER) {
+                        ratioWidth = 1 / ratioWidth;
+                        ratioHeight = 1 / ratioHeight;
                         /**
                          * If container width smaller than image width
                          * resize image by width dimension.
@@ -136,6 +160,7 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                             left = IMAGE_WIDTH_CONTAINER;
                             top = height / ratioWidth;
                         }
+
                         /**
                          * After resized by width dimension, 
                          * if height still larger than origin container
@@ -148,6 +173,11 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                             left = width / ratioHeight;
                             top = IMAGE_HEIGHT_CONTAINER;
                         }
+
+
+                        shownScreenImgWidth = left;
+                        shownScreenImgHeight = top;
+
                         /**
                          * adding offsetX of origin container 
                          * including a half of difference of origin container width with left.
@@ -158,6 +188,19 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                         left += ((IMAGE_WIDTH_CONTAINER - left) / 2) + offsetX;
                         top = ((IMAGE_HEIGHT_CONTAINER - top) / 2) + offsetY;
                     } else {
+
+                        /**
+                         * if width, height of real img smaller than container
+                         * shown screen width img will full fill the container 
+                         * (because current style is width: '100%)
+                         * and height will resize by width resize ratio.
+                         */
+                        width = IMAGE_WIDTH_CONTAINER;
+                        height *= ratioWidth;
+
+                        shownScreenImgWidth = width;
+                        shownScreenImgHeight = height;
+
                         /**
                          * Sum of image width with offsetX and a half of 
                          * difference of origin container width with image width.
@@ -173,6 +216,10 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                     left -= MARGIN_LEFT_CLOSE_BTN;
 
                     this.setState({
+                        imgRealDimension: {
+                            width: shownScreenImgWidth,
+                            height: shownScreenImgHeight
+                        },
                         closeBtnPosition: {
                             left,
                             top
@@ -197,6 +244,22 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                 this.updateCloseBtnPosition(px, py);
             })
         }
+    }
+
+    /**
+     * @todo Create a press-able mask that overlaying on exactly 
+     * position of real image shown on screen.
+     */
+    renderMaskPressing() {
+        return (
+            <TouchableHighlight
+                style={[styles.maskPressing, this.state.imgRealDimension]}
+                underlayColor="rgba(0,0,0,.08)"
+                onPress={this.props.onPressImage}
+            >
+                <View style={{ flex: 1 }} />
+            </TouchableHighlight >
+        )
     }
 
     render() {
@@ -230,9 +293,10 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                         onPress={this.handleClose.bind(this)}
                         style={styles.iconContainer}
                     >
-                        <Icon name="closecircleo" style={styles.icon} />
+                        <Icon name="close" style={styles.icon} />
                     </TouchableOpacity>
                 </View>
+
                 <Animated.View
                     style={[
                         styles.imageContainer,
@@ -240,17 +304,14 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                     ]}
                     onLayout={this.handleImageLayout.bind(this)}
                 >
-                    <TouchableOpacity
-                        activeOpacity={.9}
-                        onPress={this.props.onPressImage}
-                    >
-                        <Image
-                            ref={this.refPopup}
-                            source={{ uri: this.props.image }}
-                            style={styles.image}
-                        />
-                    </TouchableOpacity>
+                    <Image
+                        ref={this.refPopup}
+                        source={{ uri: this.props.image }}
+                        style={styles.image}
+                    />
                 </Animated.View>
+
+                {this.renderMaskPressing()}
             </View>
         );
     }

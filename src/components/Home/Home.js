@@ -18,6 +18,9 @@ import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
 import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
+import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
+import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
+import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
 
 const defaultListener = () => {};
 
@@ -92,6 +95,12 @@ class Home extends Component {
     product_groups: {}
   };
 
+  get hasServices() {
+    return (
+      Array.isArray(this.props.listService) && this.props.listService.length > 0
+    );
+  }
+
   get hasPromotion() {
     return (
       Array.isArray(this.props.promotions) && this.props.promotions.length > 0
@@ -136,7 +145,7 @@ class Home extends Component {
 
     return (
       <View style={styles.container}>
-        <LoadingComponent loading={this.props.apiFetching} />
+        {/* <LoadingComponent loading={this.props.apiFetching} /> */}
 
         <View style={styles.headerBackground}>
           {this.props.site && this.props.site.app_event_banner_image && (
@@ -187,12 +196,16 @@ class Home extends Component {
             />
           </View>
 
-          <ListServices
-            services={this.props.services}
-            listService={this.props.listService}
-            notify={this.props.notify}
-            onItemPress={this.props.onPressService}
-          />
+          {this.hasServices ? (
+            <ListServices
+              listService={this.props.listService}
+              type={this.props.listServiceType}
+              itemsPerRow={this.props.listServiceItemsPerRow}
+              onItemPress={this.props.onPressService}
+            />
+          ) : this.props.apiFetching ? (
+            <ListServiceSkeleton />
+          ) : null}
 
           <View style={styles.contentWrapper}>
             {this.hasPromotion && (
@@ -202,7 +215,7 @@ class Home extends Component {
               />
             )}
 
-            {this.hasProduct_groups &&
+            {this.hasProduct_groups ? (
               Object.keys(this.props.product_groups).map((key, index) => {
                 let { products, title } = this.props.product_groups[key];
                 return (
@@ -220,7 +233,10 @@ class Home extends Component {
                     )}
                   </ListProducts>
                 );
-              })}
+              })
+            ) : this.props.apiFetching ? (
+              <ListProductSkeleton />
+            ) : null}
 
             {this.hasSites && (
               <HomeCardList
@@ -268,7 +284,7 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.hasNews && (
+            {this.hasNews ? (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
@@ -283,7 +299,9 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
-            )}
+            ) : this.props.apiFetching ? (
+              <HomeCardListSkeleton />
+            ) : null}
           </View>
         </ScrollView>
 

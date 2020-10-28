@@ -1,43 +1,46 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-function HomeCardList(props) {
-  const { t } = useTranslation('home');
-  return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.title}>{props.title}</Text>
+class HomeCardList extends Component {
+  render() {
+    const props = this.props;
+    const { t } = props;
+    return (
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Text style={styles.title}>{props.title}</Text>
 
-        {props.onShowAll ? (
-          <Button
-            containerStyle={styles.showAllBtn}
-            underlayColor="transparent"
-            onPress={props.onShowAll}
-          >
-            <Text style={styles.viewAll}>{t('viewAll')}</Text>
-          </Button>
-        ) : (
-          <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
-        )}
+          {props.onShowAll ? (
+            <Button
+              containerStyle={styles.showAllBtn}
+              underlayColor="transparent"
+              onPress={props.onShowAll}
+            >
+              <Text style={styles.viewAll}>{t('viewAll')}</Text>
+            </Button>
+          ) : (
+            <View style={[styles.showAllBtn, styles.showAllBtnEmpty]} />
+          )}
+        </View>
+
+        <FlatList
+          horizontal
+          data={props.data}
+          showsHorizontalScrollIndicator={false}
+          renderItem={props.children}
+          keyExtractor={item => `${item.id}`}
+        />
       </View>
-
-      <FlatList
-        horizontal
-        data={props.data}
-        showsHorizontalScrollIndicator={false}
-        renderItem={props.children}
-        keyExtractor={item => `${item.id}`}
-      />
-    </View>
-  );
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 8,
+    marginTop: 10,
     paddingBottom: 15
   },
   content: {
@@ -80,4 +83,4 @@ HomeCardList.defaultProps = {
   children: defaultListener
 };
 
-export default HomeCardList;
+export default withTranslation('home')(HomeCardList);
