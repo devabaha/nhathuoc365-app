@@ -15,6 +15,11 @@ import HorizontalIndicator from './HorizontalIndicator';
 import Animated, { event, divide, Easing } from 'react-native-reanimated';
 import store from 'app-store';
 
+const BASE_SERVICE_DIMENSION = 45;
+const BASE_TITLE_MARGIN = 6;
+const SERVICE_DIMENSION_INCREMENT_PERCENTAGE = 20;
+const TITLE_MARGIN_INCREMENT_PERCENTAGE = 30;
+
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 6,
@@ -29,8 +34,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   iconWrapper: {
-    width: 45,
-    height: 45,
+    width: BASE_SERVICE_DIMENSION,
+    height: BASE_SERVICE_DIMENSION,
     borderRadius: 16,
     backgroundColor: '#eee',
     overflow: 'hidden',
@@ -46,7 +51,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '400',
     color: '#333',
-    marginTop: 6
+    marginTop: BASE_TITLE_MARGIN
   },
   notifyWrapper: {
     right: -8,
@@ -100,7 +105,7 @@ class ListServices extends Component {
       case LIST_SERVICE_TYPE.HORIZONTAL:
         serviceStyle.width =
           appConfig.device.width /
-          (this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+          (this.props.itemsPerRow <= MIN_ITEMS_PER_ROW
             ? this.props.itemsPerRow
             : MIN_ITEMS_PER_ROW + 0.5);
         break;
@@ -116,6 +121,13 @@ class ListServices extends Component {
 
   get isHorizontal() {
     return this.props.type === LIST_SERVICE_TYPE.HORIZONTAL;
+  }
+
+  get scrollEnabled() {
+    return (
+      this.isHorizontal &&
+      this.state.horizontalContentWidth !== this.state.horizontalContainerWidth
+    );
   }
 
   componentDidMount() {
@@ -162,6 +174,12 @@ class ListServices extends Component {
   }
 
   renderHorizontalIndicator() {
+    if (
+      this.state.horizontalContainerWidth === this.state.horizontalContentWidth
+    ) {
+      return;
+    }
+
     const indicatorWidth =
       this.state.horizontalContainerWidth && this.state.horizontalContentWidth
         ? (this.state.horizontalContainerWidth /
@@ -221,10 +239,40 @@ class ListServices extends Component {
     return this.renderServiceLayout();
   }
 
+  calculateIncrementDimensionByPercentage(baseValue, incrementValue) {
+    return (
+      baseValue +
+      (baseValue *
+        (Math.abs(MIN_ITEMS_PER_ROW - this.props.itemsPerRow) *
+          incrementValue)) /
+        100
+    );
+  }
+
   renderService({ item, notify = store.notify, onPress }) {
     const handleOnPress = () => {
       onPress(item);
     };
+
+    const serviceAutoIncrementDimension = this.calculateIncrementDimensionByPercentage(
+      BASE_SERVICE_DIMENSION,
+      SERVICE_DIMENSION_INCREMENT_PERCENTAGE
+    );
+
+    const serviceDimension =
+      this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+        ? serviceAutoIncrementDimension
+        : BASE_SERVICE_DIMENSION;
+
+    const titleAutoIncrementMarginTop = this.calculateIncrementDimensionByPercentage(
+      BASE_TITLE_MARGIN,
+      TITLE_MARGIN_INCREMENT_PERCENTAGE
+    );
+
+    const titleMarginTop =
+      this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+        ? titleAutoIncrementMarginTop
+        : BASE_TITLE_MARGIN;
 
     return (
       <Button
@@ -237,14 +285,8 @@ class ListServices extends Component {
               style={[
                 styles.iconWrapper,
                 {
-                  width:
-                    this.props.itemsPerRow < MIN_ITEMS_PER_ROW
-                      ? 45 + (45 * (this.props.itemsPerRow * 35)) / 100
-                      : 45,
-                  height:
-                    this.props.itemsPerRow < MIN_ITEMS_PER_ROW
-                      ? 45 + (45 * (this.props.itemsPerRow * 35)) / 100
-                      : 45,
+                  width: serviceDimension,
+                  height: serviceDimension,
                   backgroundColor: item.bgrColor
                 }
               ]}
@@ -268,7 +310,9 @@ class ListServices extends Component {
               animation
             />
           </View>
-          <Text style={styles.title}>{item.title}</Text>
+          <Text style={[styles.title, { marginTop: titleMarginTop }]}>
+            {item.title}
+          </Text>
         </View>
       </Button>
     );
@@ -290,7 +334,7 @@ class ListServices extends Component {
       <Animated.View style={[styles.container, visibleStyle]}>
         <Animated.ScrollView
           scrollEventThrottle={1}
-          scrollEnabled={this.isHorizontal}
+          scrollEnabled={this.scrollEnabled}
           horizontal={this.isHorizontal}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
@@ -309,7 +353,7 @@ class ListServices extends Component {
             {this.renderListService()}
           </View>
         </Animated.ScrollView>
-        {this.isHorizontal && this.renderHorizontalIndicator()}
+        {this.scrollEnabled && this.renderHorizontalIndicator()}
       </Animated.View>
     );
   }
