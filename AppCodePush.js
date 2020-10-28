@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import ProgressBar from 'react-native-animated-progress';
+import ProgressBar from './src/components/ProgressBar';
 import appConfig from 'app-config';
 import Button from './src/components/Button';
 import SVGRocket from './src/images/rocket.svg';
@@ -74,7 +74,8 @@ class AppCodePush extends Component {
             <ProgressBar
               progress={this.props.progress}
               height={7}
-              backgroundColor="#4a0072"
+              backgroundColor={appConfig.colors.primary}
+              onCompletion={this.props.onProgressComplete}
             />
           </View>
         )}

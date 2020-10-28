@@ -145,6 +145,7 @@ import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
+import { call } from 'react-native-reanimated';
 /**
  * Not allow font scaling
  */
@@ -317,7 +318,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // codePush.clearUpdates();
+    codePush.clearUpdates();
     this.codePushSyncManually();
     this.codePushGetMetaData();
     this.handleSubcribeBranchIO();
@@ -502,10 +503,15 @@ class App extends Component {
     this.state.codePushUpdatePackage
       .download(progress => this.codePushDownloadDidProgress(progress))
       .then(localPackage => {
-        this.setState({
-          codePushLocalPackage: localPackage
-        });
-        setTimeout(() => this.codePushInstallUpdate(localPackage), 1000);
+        this.setState(
+          {
+            codePushLocalPackage: localPackage
+          },
+          () => {
+            // this.codePushInstallUpdate(localPackage);
+          }
+        );
+        // setTimeout(() => this.codePushInstallUpdate(localPackage), 1000);
         console.log(localPackage);
       })
       .catch(err => {
@@ -526,15 +532,9 @@ class App extends Component {
   codePushInstallUpdate(
     codePushLocalPackage = this.state.codePushLocalPackage
   ) {
-    if (!codePushLocalPackage) {
-      this.closeCodePushModal();
-      return;
-    }
-
     codePushLocalPackage
       .install(codePush.InstallMode.IMMEDIATE)
       .then(() => {
-        this.closeCodePushModal();
         codePush.notifyAppReady();
       })
       .catch(err => {
@@ -552,8 +552,16 @@ class App extends Component {
       });
   }
 
-  closeCodePushModal() {
-    this.setState({ isOpenCodePushModal: false });
+  handleCodePushProgressComplete() {
+    if (this.state.codePushLocalPackage) {
+      this.closeCodePushModal(() => {
+        this.codePushInstallUpdate();
+      });
+    }
+  }
+
+  closeCodePushModal(callBack = () => {}) {
+    this.setState({ isOpenCodePushModal: false }, () => callBack());
   }
 
   setHeader(header) {
@@ -596,28 +604,30 @@ class App extends Component {
           setHeader={this.setHeader.bind(this)}
         />
         <FlashMessage icon={'auto'} />
-        <AwesomeAlert
-          useNativeDriver
-          show={this.state.isOpenCodePushModal}
-          modalProps={{
-            animated: !this.state.codePushUpdateProgress
-          }}
-          closeOnTouchOutside={false}
-          closeOnHardwareBackPress={false}
-          showCancelButton={false}
-          showConfirmButton={false}
-          // contentContainerStyle={{ }}
-          customView={
-            <AppCodePush
-              title={this.state.titleUpdateCodePushModal}
-              description={this.state.descriptionUpdateCodePushModal}
-              btnTitle="Cập nhật ngay"
-              showConfirmBtn={false}
-              progress={this.state.codePushUpdateProgress}
-              // onPressConfirm={this.codePushDownloadUpdate.bind(this)}
-            />
-          }
-        />
+        {this.state.isOpenCodePushModal && (
+          <AwesomeAlert
+            useNativeDriver
+            show={this.state.isOpenCodePushModal}
+            closeOnTouchOutside={false}
+            closeOnHardwareBackPress={false}
+            showCancelButton={false}
+            showConfirmButton={false}
+            // contentContainerStyle={{ }}
+            customView={
+              <AppCodePush
+                title={this.state.titleUpdateCodePushModal}
+                description={this.state.descriptionUpdateCodePushModal}
+                btnTitle="Cập nhật ngay"
+                showConfirmBtn={false}
+                progress={this.state.codePushUpdateProgress}
+                onProgressComplete={this.handleCodePushProgressComplete.bind(
+                  this
+                )}
+                // onPressConfirm={this.codePushDownloadUpdate.bind(this)}
+              />
+            }
+          />
+        )}
       </View>
     );
   }
