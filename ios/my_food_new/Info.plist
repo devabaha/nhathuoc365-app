@@ -116,5 +116,7 @@
 	<string>homeid.app.link</string>
 	<key>branch_key</key>
 	<string>key_live_fgS5jf8yiaqZECmlBl7uugckBtgRwCc6</string>
+	<key>UIUserInterfaceStyle</key>
+	<string>Light</string>
 </dict>
 </plist>

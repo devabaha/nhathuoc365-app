@@ -116,9 +116,12 @@ class Profile extends Component {
     if (this.props.isEdit && this.props.customer) {
       data = {
         ...data,
-        code: this.props.customer.code
+        code: this.props.customer.code,
+        id_code: this.props.customer.id_code,
+        company_name: this.props.customer.company_name
       };
     }
+    console.log(data);
     try {
       this.updateCustomerRequest.data = APIHandler.user_create_update_customer_beeland(
         data

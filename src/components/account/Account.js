@@ -40,229 +40,236 @@ class Account extends Component {
     reaction(() => store.user_info, this.initial);
   }
 
+  get options() {
+    const { t, i18n } = this.props;
+    const isAdmin = store.user_info.admin_flag == 1;
+    var notify = store.notify;
+    const isUpdate = notify.updating_version == 1;
+    const codePushVersion = store.codePushMetaData
+      ? // replace non-digit character in codePush label (format of codePush label is `v[number]`)
+        `-${store.codePushMetaData.label.replace(/\D+/, '')}`
+      : '';
+
+    return [
+      {
+        key: '1',
+        icon: 'map-marker',
+        label: t('options.myAdress.label'),
+        desc: t('options.myAdress.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.myAddress, {
+            from_page: 'account'
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#fcb309'
+          }
+        ],
+        iconColor: '#ffffff'
+      },
+      {
+        key: '2',
+        icon: 'tags',
+        label: t('options.myVoucher.label'),
+        desc: t('options.myVoucher.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.myVoucher, {
+            title: t('common:screen.myVoucher.mainTitle'),
+            from: 'home'
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#F35022'
+          }
+        ],
+        iconColor: '#ffffff'
+      },
+      {
+        key: '-3',
+        icon: 'receipt',
+        iconType: 'MaterialCommunityIcons',
+        label: 'Đơn dịch vụ của tôi',
+        desc: 'Quản lý đơn dịch vụ',
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          const service = {
+            type: SERVICES_TYPE.SERVICE_ORDERS
+          };
+          servicesHandler(service);
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#F35022'
+          }
+        ],
+        iconColor: '#ffffff'
+      },
+      {
+        key: '-1',
+        icon: 'shopping-cart',
+        label: 'Đơn hàng của tôi',
+        desc: 'Quản lý đơn hàng đặt tới cửa hàng',
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.ordersTab, {
+            title: 'Đơn hàng của tôi',
+            from: 'home'
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#03A5F0'
+          }
+        ],
+        iconColor: '#ffffff'
+      },
+      {
+        key: '-2',
+        icon: 'store',
+        label: 'Đăng ký cửa hàng trên HomeID',
+        desc: 'Tạo nhanh 1 cửa hàng online',
+        iconType: 'MaterialCommunityIcons',
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.registerStore),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#846faa'
+          }
+        ],
+        iconColor: '#ffffff'
+      },
+
+      {
+        key: '6',
+        icon: 'lock-reset',
+        label: t('options.resetPassword.label'),
+        desc: t('options.resetPassword.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          Actions.push(appConfig.routes.resetPassword);
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#888'
+          }
+        ],
+        iconColor: '#fff',
+        iconSize: 18,
+        iconType: 'MaterialCommunityIcons',
+        isHidden: !store.user_info || !store.user_info.tel
+      },
+      // {
+      //   key: '7',
+      //   icon: 'language',
+      //   label: t('options.language.label'),
+      //   desc: languages[i18n.language].label,
+      //   marginTop: !store.user_info || !store.user_info.tel,
+      //   rightIcon: <View></View>,
+      //   onPress: () => {
+      //     Actions.push(appConfig.routes.modalPicker, {
+      //       title: t('options.language.label'),
+      //       cancelTitle: t('options.language.cancel'),
+      //       selectTitle: t('options.language.select'),
+      //       selectedValue: this.props.i18n.language,
+      //       selectedLabel: languages[this.props.i18n.language].label,
+      //       data: Object.values(languages),
+      //       onSelect: this.handleConfirmChangeAppLanguage
+      //     });
+      //   },
+      //   boxIconStyle: [
+      //     styles.boxIconStyle,
+      //     {
+      //       backgroundColor: '#175189'
+      //     }
+      //   ],
+      //   iconColor: '#ffffff'
+      // },
+      {
+        key: '3',
+        icon: 'handshake-o',
+        label: t('options.termOfUse.label', { appName: APP_NAME_SHOW }),
+        desc: t('options.termOfUse.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.webview({
+            title: t('options.termOfUse.webViewTitle', {
+              appName: APP_NAME_SHOW
+            }),
+            url: APP_INFO
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: DEFAULT_COLOR
+          }
+        ],
+        iconColor: '#ffffff',
+        marginTop: true
+      },
+      {
+        key: '4',
+        icon: 'question-circle',
+        label: t('options.appInformation.label'),
+        desc: t('options.appInformation.desc', {
+          appName: APP_NAME_SHOW,
+          appVersion: DeviceInfo.getVersion() + codePushVersion
+        }),
+        rightIcon: <IconAngleRight />,
+        onPress: () => {},
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#688efb'
+          }
+        ],
+        iconColor: '#ffffff',
+        hideAngle: true,
+        marginTop: true
+      },
+      {
+        key: '5',
+        isHidden: !isUpdate,
+        icon: 'cloud-download',
+        label: t('options.appUpdate.label'),
+        desc: t('options.appUpdate.desc', {
+          newVersion: notify.new_version
+        }),
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          if (notify.url_update) {
+            Communications.web(notify.url_update);
+          }
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#dd4b39'
+          }
+        ],
+        notify: 'updating_version',
+        iconColor: '#ffffff'
+      }
+    ];
+  }
+
   initial = callback => {
     const { t, i18n } = this.props;
     const isAdmin = store.user_info.admin_flag == 1;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
 
-    this.setState(
-      {
-        options: [
-          {
-            key: '1',
-            icon: 'map-marker',
-            label: t('options.myAdress.label'),
-            desc: t('options.myAdress.desc'),
-            rightIcon: <IconAngleRight />,
-            onPress: () =>
-              Actions.push(appConfig.routes.myAddress, {
-                from_page: 'account'
-              }),
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#fcb309'
-              }
-            ],
-            iconColor: '#ffffff'
-          },
-          {
-            key: '2',
-            icon: 'tags',
-            label: t('options.myVoucher.label'),
-            desc: t('options.myVoucher.desc'),
-            rightIcon: <IconAngleRight />,
-            onPress: () =>
-              Actions.push(appConfig.routes.myVoucher, {
-                title: t('common:screen.myVoucher.mainTitle'),
-                from: 'home'
-              }),
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#F35022'
-              }
-            ],
-            iconColor: '#ffffff'
-          },
-          {
-            key: '-3',
-            icon: 'receipt',
-            iconType: 'MaterialCommunityIcons',
-            label: 'Đơn dịch vụ của tôi',
-            desc: 'Quản lý đơn dịch vụ',
-            rightIcon: <IconAngleRight />,
-            onPress: () => {
-              const service = {
-                type: SERVICES_TYPE.SERVICE_ORDERS
-              };
-              servicesHandler(service);
-            },
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#F35022'
-              }
-            ],
-            iconColor: '#ffffff'
-          },
-          {
-            key: '-1',
-            icon: 'shopping-cart',
-            label: 'Đơn hàng của tôi',
-            desc: 'Quản lý đơn hàng đặt tới cửa hàng',
-            rightIcon: <IconAngleRight />,
-            onPress: () =>
-              Actions.push(appConfig.routes.ordersTab, {
-                title: 'Đơn hàng của tôi',
-                from: 'home'
-              }),
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#03A5F0'
-              }
-            ],
-            iconColor: '#ffffff'
-          },
-          {
-            key: '-2',
-            icon: 'store',
-            label: 'Đăng ký cửa hàng trên HomeID',
-            desc: 'Tạo nhanh 1 cửa hàng online',
-            iconType: 'MaterialCommunityIcons',
-            rightIcon: <IconAngleRight />,
-            onPress: () => Actions.push(appConfig.routes.registerStore),
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#846faa'
-              }
-            ],
-            iconColor: '#ffffff'
-          },
-
-          {
-            key: '6',
-            icon: 'lock-reset',
-            label: t('options.resetPassword.label'),
-            desc: t('options.resetPassword.desc'),
-            rightIcon: <IconAngleRight />,
-            onPress: () => {
-              Actions.push(appConfig.routes.resetPassword);
-            },
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#888'
-              }
-            ],
-            iconColor: '#fff',
-            iconSize: 18,
-            iconType: 'MaterialCommunityIcons',
-            isHidden: !store.user_info || !store.user_info.tel
-          },
-          // {
-          //   key: '7',
-          //   icon: 'language',
-          //   label: t('options.language.label'),
-          //   desc: languages[i18n.language].label,
-          //   marginTop: !store.user_info || !store.user_info.tel,
-          //   rightIcon: <View></View>,
-          //   onPress: () => {
-          //     Actions.push(appConfig.routes.modalPicker, {
-          //       title: t('options.language.label'),
-          //       cancelTitle: t('options.language.cancel'),
-          //       selectTitle: t('options.language.select'),
-          //       selectedValue: this.props.i18n.language,
-          //       selectedLabel: languages[this.props.i18n.language].label,
-          //       data: Object.values(languages),
-          //       onSelect: this.handleConfirmChangeAppLanguage
-          //     });
-          //   },
-          //   boxIconStyle: [
-          //     styles.boxIconStyle,
-          //     {
-          //       backgroundColor: '#175189'
-          //     }
-          //   ],
-          //   iconColor: '#ffffff'
-          // },
-          {
-            key: '3',
-            icon: 'handshake-o',
-            label: t('options.termOfUse.label', { appName: APP_NAME_SHOW }),
-            desc: t('options.termOfUse.desc'),
-            rightIcon: <IconAngleRight />,
-            onPress: () =>
-              Actions.webview({
-                title: t('options.termOfUse.webViewTitle', {
-                  appName: APP_NAME_SHOW
-                }),
-                url: APP_INFO
-              }),
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: DEFAULT_COLOR
-              }
-            ],
-            iconColor: '#ffffff',
-            marginTop: true
-          },
-
-          {
-            key: '4',
-            icon: 'question-circle',
-            label: t('options.appInformation.label'),
-            desc: t('options.appInformation.desc', {
-              appName: APP_NAME_SHOW,
-              appVersion: DeviceInfo.getVersion() + '-' + CPDK.version
-            }),
-            rightIcon: <IconAngleRight />,
-            onPress: () => {},
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#688efb'
-              }
-            ],
-            iconColor: '#ffffff',
-            hideAngle: true,
-            marginTop: true
-          },
-          {
-            key: '5',
-            isHidden: !isUpdate,
-            icon: 'cloud-download',
-            label: t('options.appUpdate.label'),
-            desc: t('options.appUpdate.desc', {
-              newVersion: notify.new_version
-            }),
-            rightIcon: <IconAngleRight />,
-            onPress: () => {
-              if (notify.url_update) {
-                Communications.web(notify.url_update);
-              }
-            },
-            boxIconStyle: [
-              styles.boxIconStyle,
-              {
-                backgroundColor: '#dd4b39'
-              }
-            ],
-            notify: 'updating_version',
-            iconColor: '#ffffff'
-          }
-        ]
-      },
-      () => {
-        if (typeof callback == 'function') {
-          callback();
-        }
+    this.setState({}, () => {
+      if (typeof callback == 'function') {
+        callback();
       }
-    );
+    });
   };
 
   handleShowLanguagePicker = () => {
@@ -359,7 +366,7 @@ class Account extends Component {
 
   componentDidMount() {
     this.initial(() => {
-      this.key_add_new = this.state.options.length;
+      this.key_add_new = this.options.length;
       store.is_stay_account = true;
       store.parentTab = '_account';
     });
@@ -732,12 +739,12 @@ class Account extends Component {
             </View>
           )}
 
-          {this.state.options && (
+          {this.options && (
             <SelectionList
               containerStyle={{
                 marginVertical: 8
               }}
-              data={this.state.options}
+              data={this.options}
             />
           )}
         </ScrollView>

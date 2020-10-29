@@ -5,7 +5,6 @@ import Items from './Items';
 import ListHeader from './ListHeader';
 import store from 'app-store';
 import { Actions } from 'react-native-router-flux';
-import appConfig from 'app-config';
 import NoResult from '../NoResult';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
@@ -170,8 +169,8 @@ class CategoryScreen extends Component {
 
   async _getItemByCateIdFromServer(category_id, delay, loadmore) {
     var store_category_key =
-      STORE_CATEGORY_KEY + this.store_id + category_id + store.user_info.id;
-
+      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
+    const site_id = this.props.site_id || store.store_id;
     if (loadmore) {
       this.state.page += 1;
     } else {
@@ -179,11 +178,11 @@ class CategoryScreen extends Component {
     }
     try {
       var response = await APIHandler.site_category_product(
-        this.store_id,
+        site_id,
         category_id,
         this.state.page
       );
-
+      console.log(response, site_id, category_id);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           // delay append data
@@ -226,6 +225,7 @@ class CategoryScreen extends Component {
         } else {
           this.setState({
             loading: false,
+            fetched: true,
             refreshing: false,
             fetched: true,
             items_data: this.state.items_data_bak
@@ -267,97 +267,92 @@ class CategoryScreen extends Component {
       );
     }
 
-    const { items_data, header_title, fetched } = this.state;
-
-    if (items_data == null) {
-      return (
-        <View style={styles.containerScreen}>
-          {fetched && (
-            <NoResult iconName="cart" message={`${t('noProduct')} :(`} />
-          )}
-        </View>
-      );
-    }
+    const { items_data, header_title, fetched, loading } = this.state;
 
     return (
-      <ScrollView
-        style={styles.containerScreen}
-        contentContainerStyle={{ flexGrow: 1 }}
-        scrollEnabled={this.props.scrollEnabled}
-        // removeClippedSubviews={appConfig.device.isAndroid}
-        refreshControl={
-          appConfig.device.isIOS && (
+      <View style={styles.containerScreen}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          scrollEventThrottle={16}
+          refreshControl={
             <RefreshControl
-              refreshing={this.props.refreshing}
+              refreshing={this.state.refreshing}
               onRefresh={this._onRefresh.bind(this)}
             />
-          )
-        }
-      >
-        {items_data && (
-          <View
-            style={{ minHeight: this.props.minHeight }}
-            onLayout={this.props.onLayout}
-          >
-            {this.state.isAll &&
-              this.state.promotions &&
-              this.state.promotions.length > 0 && (
-                <Swiper
-                  style={{
-                    marginVertical: 8
-                  }}
-                  width={Util.size.width}
-                  height={Util.size.width * 0.96 * (50 / 320) + 16}
-                  autoplayTimeout={3}
-                  showsPagination={false}
-                  horizontal
-                  autoplay
-                >
-                  {this.state.promotions.map((banner, i) => {
-                    return (
-                      <View
-                        key={i}
+          }
+        >
+          {this.state.isAll &&
+            this.state.promotions &&
+            this.state.promotions.length > 0 && (
+              <Swiper
+                style={{
+                  marginVertical: 8
+                }}
+                width={Util.size.width}
+                height={Util.size.width * 0.96 * (50 / 320) + 16}
+                autoplayTimeout={3}
+                showsPagination={false}
+                horizontal
+                autoplay
+              >
+                {this.state.promotions.map((banner, i) => {
+                  return (
+                    <View
+                      key={i}
+                      style={{
+                        width: Util.size.width,
+                        alignItems: 'center'
+                      }}
+                    >
+                      <CachedImage
+                        source={{ uri: banner.banner }}
                         style={{
-                          width: Util.size.width,
-                          alignItems: 'center'
+                          width: Util.size.width * 0.96,
+                          height: Util.size.width * 0.96 * (50 / 320)
                         }}
-                      >
-                        <CachedImage
-                          source={{ uri: banner.banner }}
-                          style={{
-                            width: Util.size.width * 0.96,
-                            height: Util.size.width * 0.96 * (50 / 320)
-                          }}
-                        />
-                      </View>
-                    );
-                  })}
-                </Swiper>
-              )}
+                      />
+                    </View>
+                  );
+                })}
+              </Swiper>
+            )}
 
-            <View
-              style={{
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                paddingTop: 7
-              }}
-            >
-              {items_data.map((item, index) => (
-                <Items
-                  key={index}
-                  item={item}
-                  index={index}
-                  onPress={
-                    item.type != 'loadmore'
-                      ? this._goItem.bind(this, item)
-                      : this._loadMore.bind(this)
-                  }
-                />
-              ))}
-            </View>
+          {/* <ListHeader title={header_title} /> */}
+
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              paddingTop: 7
+            }}
+          >
+            {items_data != null
+              ? items_data.map((item, index) => (
+                  <Items
+                    key={index}
+                    item={item}
+                    index={index}
+                    onPress={
+                      item.type != 'loadmore'
+                        ? this._goItem.bind(this, item)
+                        : this._loadMore.bind(this)
+                    }
+                  />
+                ))
+              : null}
           </View>
-        )}
-      </ScrollView>
+          {items_data == null ? (
+            <View style={[styles.containerScreen]}>
+              {fetched && (
+                <NoResult
+                  iconName="cart-off"
+                  message={`${t('noProduct')} :(`}
+                />
+              )}
+            </View>
+          ) : null}
+        </ScrollView>
+      </View>
     );
   }
 }

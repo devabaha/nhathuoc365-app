@@ -840,6 +840,17 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.USER_GET_SERVICES);
     return this.getCancelableAPI(api);
   }
+
+  /**
+   * @todo get multi-level category
+   *
+   * @param site_id
+   * @returns {categories: {name: string, id: number, image:string, list: []}[], type: string}
+   */
+  site_get_tree_categories(site_id) {
+    const api = url_for(API.SITE_GET_TREE_CATEGORIES + '/' + site_id);
+    return this.getCancelableAPI(api);
+  }
 }
 
 export default CommonAPIHandler;

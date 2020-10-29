@@ -15,12 +15,15 @@ const styles = StyleSheet.create({
   },
   topImageWrapper: {
     position: 'relative',
-    zIndex: 1
+    zIndex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   topImage: {
-    height: 180
+    width: '100%',
+    height: config.device.width / 2
   },
-  avatar: {
+  avatarContainer: {
     position: 'absolute',
     top: 138,
     left: screenWidth / 2 - 29,

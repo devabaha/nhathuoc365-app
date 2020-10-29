@@ -156,6 +156,9 @@
     "customerProfile": {
       "mainTitle": "Thông tin khách hàng",
       "editTitle": "Sửa khách hàng"
+    },
+    "qrPaymentInfo": {
+      "mainTitle": "Chấp nhận thanh toán"
     }
   },
 

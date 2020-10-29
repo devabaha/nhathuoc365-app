@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import { View, Text, StyleSheet, Animated } from 'react-native';
@@ -45,8 +45,8 @@ function HomeCardList({ horizontal = true, ...props }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginTop: 8,
-    paddingBottom: 16
+    marginTop: 10,
+    paddingBottom: 15
   },
   content: {
     paddingHorizontal: 16,
@@ -88,4 +88,4 @@ HomeCardList.defaultProps = {
   children: defaultListener
 };
 
-export default HomeCardList;
+export default withTranslation('home')(HomeCardList);

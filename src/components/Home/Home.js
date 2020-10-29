@@ -21,6 +21,9 @@ import ListProducts, { ProductItem } from './component/ListProducts';
 import appConfig from 'app-config';
 import { SERVICES_TYPE } from '../../helper/servicesHandler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
+import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
+import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
 
 const defaultListener = () => {};
 
@@ -54,6 +57,7 @@ class Home extends Component {
     onShowAllCampaigns: PropTypes.func,
     onShowAllNews: PropTypes.func,
     onPressProduct: PropTypes.func,
+    onPressSiteItem: PropTypes.func,
     onPressSiteItem: PropTypes.func,
     onPressCampaignItem: PropTypes.func,
     onPressNewItem: PropTypes.func,
@@ -91,11 +95,18 @@ class Home extends Component {
     onShowAllNews: defaultListener,
     onPressProduct: defaultListener,
     onPressSiteItem: defaultListener,
+    onPressSiteItem: defaultListener,
     onPressCampaignItem: defaultListener,
     onPressNewItem: defaultListener,
     onPressNoti: defaultListener,
     product_groups: {}
   };
+
+  get hasServices() {
+    return (
+      Array.isArray(this.props.listService) && this.props.listService.length > 0
+    );
+  }
 
   get hasPromotion() {
     return (
@@ -151,9 +162,15 @@ class Home extends Component {
 
   render() {
     const { t } = this.props;
+    const name = this.props.userInfo
+      ? this.props.userInfo.name
+        ? this.props.userInfo.name
+        : t('welcome.defaultUserName')
+      : t('welcome.defaultUserName');
+
     return (
       <View style={styles.container}>
-        <LoadingComponent loading={this.props.apiFetching} />
+        {/* <LoadingComponent loading={this.props.apiFetching} /> */}
 
         <View style={styles.headerBackground}>
           {this.props.site && this.props.site.app_event_banner_image && (
@@ -179,22 +196,18 @@ class Home extends Component {
         >
           <Header
             notify={this.props.notify}
-            name={
-              this.props.userInfo
-                ? this.props.userInfo.name
-                  ? this.props.userInfo.name
-                  : t('welcome.defaultUserName')
-                : t('welcome.defaultUserName')
-            }
+            name={name}
             onPressNoti={this.props.onPressNoti}
+            goToSearch={this.props.goToSearch}
           />
 
           <View style={styles.primaryActionsWrapper}>
             <PrimaryActions
               walletName={
-                this.props.userInfo && this.props.userInfo.default_wallet
-                  ? this.props.userInfo.default_wallet.name
-                  : ''
+                // this.props.userInfo && this.props.userInfo.default_wallet
+                //   ? this.props.userInfo.default_wallet.name
+                //   : ''
+                name
               }
               surplus={
                 this.props.userInfo && this.props.userInfo.default_wallet
@@ -212,19 +225,51 @@ class Home extends Component {
             />
           </View>
 
-          {this.hasServices && (
+          {this.hasServices ? (
             <ListServices
               listService={this.props.listService}
-              notify={this.props.notify}
+              type={this.props.listServiceType}
+              itemsPerRow={this.props.listServiceItemsPerRow}
               onItemPress={this.props.onPressService}
             />
-          )}
+          ) : this.props.apiFetching ? (
+            <ListServiceSkeleton />
+          ) : null}
 
           <View style={styles.contentWrapper}>
+            {this.hasPromotion && (
+              <Promotion
+                data={this.props.promotions}
+                onPress={this.props.onPromotionPressed}
+              />
+            )}
+
+            {this.hasProduct_groups ? (
+              Object.keys(this.props.product_groups).map((key, index) => {
+                let { products, title } = this.props.product_groups[key];
+                return (
+                  <ListProducts data={products} title={title} key={index}>
+                    {({ item: product, index }) => (
+                      <ProductItem
+                        name={product.name}
+                        image={product.image}
+                        discount_view={product.discount_view}
+                        discount_percent={product.discount_percent}
+                        price_view={product.price_view}
+                        onPress={() => this.props.onPressProduct(product)}
+                        last={this.props.products.length - 1 === index}
+                      />
+                    )}
+                  </ListProducts>
+                );
+              })
+            ) : this.props.apiFetching ? (
+              <ListProductSkeleton />
+            ) : null}
+
             {this.hasSites && (
               <HomeCardList
-                onShowAll={null}
-                // onShowAll={this.props.onShowAllSites}
+                onShowAll={this.props.onShowAllSites}
                 data={this.props.sites}
                 title={
                   this.props.title_sites
@@ -339,7 +384,7 @@ class Home extends Component {
                   </ListProducts>
                 );
               })}
-            {this.hasNews && (
+            {this.hasNews ? (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
@@ -354,7 +399,9 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
-            )}
+            ) : this.props.apiFetching ? (
+              <HomeCardListSkeleton />
+            ) : null}
           </View>
         </ScrollView>
 
@@ -376,7 +423,7 @@ const styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.48,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.height / 6,
+    top: -(appConfig.device.width * 3) + appConfig.device.height / 5.3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden'

@@ -1,35 +1,120 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text } from 'react-native';
+import React, { PureComponent } from 'react';
+import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
 
-class Notification extends Component {
+class Notification extends PureComponent {
+  static defaultProps = {
+    animation: false,
+    show: false,
+    alert: false
+  };
   state = {};
-  render() {
+  animatedShowValue = new Animated.Value(0);
+  animatedNotifyValue = new Animated.Value(0);
+
+  componentDidUpdate(prevProps, prevState) {
+    Animated.parallel([
+      Animated.timing(this.animatedShowValue, {
+        toValue: this.props.show ? 1 : 0,
+        duration: 300,
+        easing: Easing.quad,
+        useNativeDriver: true
+      }),
+      Animated.sequence([
+        Animated.timing(this.animatedNotifyValue, {
+          toValue: !!this.props.label ? 1 : 0,
+          duration: 700,
+          easing: Easing.quad,
+          useNativeDriver: true
+        }),
+        Animated.timing(this.animatedNotifyValue, {
+          toValue: 0,
+          duration: 0,
+          useNativeDriver: true
+        })
+      ])
+    ]).start();
+  }
+
+  renderAlert() {
+    if (!this.props.alert) return;
+    const animatedAlerting = {
+      opacity: this.animatedNotifyValue.interpolate({
+        inputRange: [0, 1],
+        outputRange: [1, 0]
+      }),
+      transform: [
+        {
+          scale: this.animatedNotifyValue.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 4]
+          })
+        }
+      ]
+    };
+
     return (
-      <View style={[styles.container, this.props.containerStyle]}>
-        <Text style={[styles.label, this.props.labelStyle]}>
-          {this.props.label}
-        </Text>
-      </View>
+      <Animated.View style={[styles.alertContainer, animatedAlerting]}>
+        <Animated.View />
+      </Animated.View>
+    );
+  }
+
+  render() {
+    const extraStyle = {
+      opacity: this.animatedShowValue,
+      transform: [
+        {
+          scale: this.animatedShowValue
+        },
+        {
+          translateY: this.animatedNotifyValue.interpolate({
+            inputRange: [0, 0.25, 0.5, 0.75, 1],
+            outputRange: [0, -5, 0, -3, 0]
+          })
+        }
+      ]
+    };
+    return (
+      <Animated.View style={[styles.wrapper, extraStyle]}>
+        <Animated.View style={[styles.container, this.props.containerStyle]}>
+          {this.renderAlert()}
+          <Text style={[styles.label, this.props.labelStyle]}>
+            {this.props.label}
+          </Text>
+        </Animated.View>
+      </Animated.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     position: 'absolute',
+    top: 0,
+    right: 0
+  },
+  container: {
     top: -5,
     right: 0,
-    borderRadius: 15,
     paddingHorizontal: 3,
-    height: 15,
-    minWidth: 15,
+    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
+    height: 15,
+    minWidth: 15,
     backgroundColor: 'red'
   },
   label: {
     color: '#fff',
     fontSize: 10
+  },
+  alertContainer: {
+    position: 'absolute',
+    width: 10,
+    height: 10,
+    borderColor: 'red',
+    borderWidth: 0.5,
+    borderRadius: 5
   }
 });
 

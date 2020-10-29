@@ -4,10 +4,12 @@ import appConfig from 'app-config';
 
 class Discount extends Component {
   static defaultProps = {
+    label: '',
     left: true,
     right: false,
     tailSpace: 0,
-    containerStyle: {}
+    containerStyle: {},
+    contentContainerStyle: {}
   };
   state = {};
   render() {
@@ -25,7 +27,9 @@ class Discount extends Component {
 
     return (
       <View style={[styles.container, extraStyle, this.props.containerStyle]}>
-        <View style={styles.content_wrapper}>
+        <View
+          style={[styles.content_wrapper, this.props.contentContainerStyle]}
+        >
           <Text style={styles.content}>{this.props.label}</Text>
         </View>
         <View style={[styles.tail, tailStyle]} />

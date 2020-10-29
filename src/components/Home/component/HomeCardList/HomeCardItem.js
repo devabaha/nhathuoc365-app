@@ -73,14 +73,16 @@ const styles = StyleSheet.create({
     marginLeft: 16
   },
   container: {
-    width: 205
+    width: 210
   },
   image: {
     backgroundColor: '#ebebeb',
     width: '100%',
-    height: 116,
+    height: 120,
     borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   titleWrapper: {
     marginTop: 10
@@ -91,11 +93,12 @@ const styles = StyleSheet.create({
   },
   specialSubTitle: {
     fontWeight: '600',
+    fontSize: 15,
     color: '#00b140'
   },
   subTitle: {
     fontSize: 12,
-    marginTop: 3,
+    marginTop: 5,
     color: '#444'
   },
   loading: {

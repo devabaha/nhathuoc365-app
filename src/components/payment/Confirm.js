@@ -1392,7 +1392,7 @@ class Confirm extends Component {
                   underlayColor="transparent"
                 >
                   <View style={styles.boxButtonAction}>
-                    <Icon name="comments-o" size={16} color="#333333" />
+                    <Icon name="times" size={16} color="#555" />
                     <Text style={styles.buttonActionTitle}>
                       {t('confirm.cancel')}
                     </Text>

@@ -156,6 +156,9 @@
     "customerProfile": {
       "mainTitle": "Customer information",
       "editTitle": "Edit customer"
+    },
+    "qrPaymentInfo": {
+      "mainTitle": "Payment acceptance"
     }
   },
 

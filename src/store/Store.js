@@ -467,6 +467,22 @@ class Store {
   @action forceReloadProjectProductBeeLand(isProjectProductBeeLandReload) {
     this.isProjectProductBeeLandReload = isProjectProductBeeLandReload;
   }
+
+  @observable codePushMetaData = null;
+
+  @action setCodePushMetaData(codePushMetaData) {
+    this.codePushMetaData = codePushMetaData;
+  }
+
+  @observable popupClickedID = '';
+
+  /**
+   * @todo Save the clicked id (date modified) of popup clicked.
+   * Prevent re-show this popup in current session.
+   */
+  @action setPopupClickedID(popupClickedID) {
+    this.popupClickedID = popupClickedID;
+  }
 }
 
 export default new Store();

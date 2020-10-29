@@ -60,6 +60,7 @@ const config = Object.freeze({
     vndWallet: 'vnd_wallet',
     payWallet: 'pay_wallet',
     transfer: 'transfer',
+    qrPaymentInfo: 'qrPaymentInfo',
     transferPayment: 'transfer_payment',
     transferConfirm: 'transfer_confirm',
     transferResult: 'transfer_result',
@@ -118,6 +119,7 @@ const config = Object.freeze({
     modalList: 'modalList',
     modalSearchPlaces: 'modalSearchPlaces',
     modalRateApp: 'modalRateApp',
+    modalPopup: 'modalPopup',
 
     //  Reset password
     resetPassword: 'resetPassword',
@@ -153,7 +155,10 @@ const config = Object.freeze({
     customerProfileBeeLand: 'customerProfileBeeLand',
 
     // All serives
-    allServices: 'allServices'
+    allServices: 'allServices',
+
+    // multi-level category
+    multiLevelCategory: 'multiLevelCategory'
   }
 });
 
