@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
         height: '55%',
         borderRadius: 8,
         overflow: 'hidden',
-        backgroundColor: '#f0f0f0'
     },
     image: {
         flex: 1
