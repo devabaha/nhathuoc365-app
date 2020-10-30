@@ -298,13 +298,13 @@ class QRBarCode extends Component {
                   loading: false
                 },
                 () => {
-                  // Actions.push(appConfig.routes.payWallet, {
-                  //   title: 'Chuyển khoản',
-                  //   wallet: response.data.wallet,
-                  //   address: data[0],
-                  //   type: ActionConst.REPLACE
-                  // });
-                  // Toast.show(response.message, Toast.SHORT);
+                  Actions.push(appConfig.routes.payWallet, {
+                    title: 'Chuyển khoản',
+                    wallet: response.data.wallet,
+                    address: data[0],
+                    type: ActionConst.REPLACE
+                  });
+                  Toast.show(response.message, Toast.SHORT);
                 }
               );
             })();
@@ -546,11 +546,9 @@ class QRBarCode extends Component {
         setTimeout(() => {
           this._getCartByCartcode(text_result);
         }, 450);
-      }
-      // if (isWalletAddressWithZoneCode(text_result)) {
-      //   this._getWalletByAddressAndZoneCode(text_result);
-      // } else
-      else {
+      } else if (isWalletAddressWithZoneCode(text_result)) {
+        this._getWalletByAddressAndZoneCode(text_result);
+      } else {
         this._search_store(text_result);
       }
     }
