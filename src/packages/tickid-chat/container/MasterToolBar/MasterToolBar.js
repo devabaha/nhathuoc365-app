@@ -220,7 +220,7 @@ class MasterToolBar extends Component {
             expandContent={this.state.expandContent}
             //---outsideProps-function
             setHeader={galleryProps.setHeader}
-            defaultStatusBarColor={galleryProps.defaultStatusBarColor}
+            defaultStatusBarColor={this.props.defaultStatusBarColor}
             onSendImage={this.handleSendImage}
             onToggleImage={galleryProps.onToggleImage}
             onCollapsingBodyContent={this.handleCollapsingGesture}

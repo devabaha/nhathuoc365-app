@@ -5,95 +5,133 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Platform,
+  StatusBar
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/AntDesign';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
-import { Actions } from 'react-native-router-flux';
-import { ifIphoneX } from 'react-native-iphone-x-helper';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import store from 'app-store';
+import RightButtonOrders from '../../../RightButtonOrders';
+import Animated from 'react-native-reanimated';
+import RightButtonChat from '../../../RightButtonChat';
+import RightButtonNavBar from '../../../RightButtonNavBar';
+import { RIGHT_BUTTON_TYPE } from '../../../RightButtonNavBar/constants';
+
+const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 class Header extends Component {
   render() {
-    const { t, ...props } = this.props;
+    const { t } = this.props;
     return (
-      <View style={styles.container}>
-        <View style={styles.userNameWrapper}>
-          <TouchableOpacity onPress={props.goToSearch}>
-            <View pointerEvents="none" style={styles.searchWrapper}>
-              <Ionicons
-                size={20}
-                color="#ccc"
-                style={styles.searchIcon}
-                name="ios-search"
+      <Animated.View style={[styles.wrapper, this.props.wrapperStyle]}>
+        <Animated.View style={[styles.maskMain, this.props.maskMainStyle]} />
+        <Animated.View style={[styles.maskSub, this.props.maskSubStyle]} />
+        <View style={[styles.container, this.props.containerStyle]}>
+          <View style={styles.userNameWrapper}>
+            <TouchableOpacity onPress={this.props.goToSearch}>
+              <Animated.View style={[styles.searchWrapper, styles.maskSub]} />
+              <Animated.View
+                style={[
+                  styles.searchWrapper,
+                  styles.maskMain,
+                  this.props.maskSearchWrapperStyle
+                ]}
               />
-              <TextInput
-                style={styles.searchInput}
-                placeholder={
-                  t('stores:search.placeholder.prefix') +
-                  ' ' +
-                  // (store.store_data ? store.store_data.name : '') +
-                  (store.isHomeLoaded
-                    ? store.store_data
-                      ? store.store_data.name || APP_NAME_SHOW
-                      : APP_NAME_SHOW
-                    : '') +
-                  '...'
-                }
-                placeholderTextColor="#ccc"
-                numberOfLines={1}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.notificationWrapper}>
-          <Button
-            containerStyle={styles.notificationBtn}
-            onPress={props.onPressNoti}
-          >
-            <AntDesignIcon
-              style={styles.iconNotication}
-              name="message1"
-              size={24}
-              color="#fff"
-              solid
-            />
-            {props.notify.notify_chat > 0 && (
-              <View style={styles.notifyWrapper}>
-                <Text style={styles.notify}>{props.notify.notify_chat}</Text>
+              <View pointerEvents="none" style={styles.searchWrapper}>
+                <Ionicons
+                  size={20}
+                  color="#ccc"
+                  style={styles.searchIcon}
+                  name="ios-search"
+                />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder={
+                    t('stores:search.placeholder.prefix') +
+                    ' ' +
+                    (store.store_data ? store.store_data.name : '') +
+                    '...'
+                  }
+                  placeholderTextColor={appConfig.colors.primary}
+                  numberOfLines={1}
+                />
               </View>
-            )}
-          </Button>
-        </View>
+            </TouchableOpacity>
+          </View>
 
-        {/* DEMO SCHEDULE FUNCTION */}
-        {/* <Button
-        containerStyle={{ position: 'absolute', right: 70, top: 40 }}
-        onPress={() => Actions.push(appConfig.routes.schedule)}
-      >
-        <Text style={{ color: '#fff', fontWeight: 'bold' }}> Đặt lịch</Text>
-      </Button> */}
-      </View>
+          <RightButtonNavBar
+            type={RIGHT_BUTTON_TYPE.SHOPPING_CART}
+            icon={
+              <View>
+                <AnimatedIcon
+                  style={[styles.icon, styles.iconMask]}
+                  name="shoppingcart"
+                  size={25}
+                />
+                <AnimatedIcon
+                  style={[styles.icon, this.props.iconStyle]}
+                  name="shoppingcart"
+                  size={25}
+                />
+              </View>
+            }
+          />
+          <RightButtonNavBar
+            onPress={this.props.onPressNoti}
+            type={RIGHT_BUTTON_TYPE.CHAT}
+            style={styles.chatIconStyle}
+            icon={
+              <View>
+                <AnimatedIcon
+                  style={[styles.icon, styles.iconMask]}
+                  name="message1"
+                  size={23}
+                />
+                <AnimatedIcon
+                  style={[styles.icon, this.props.iconStyle]}
+                  name="message1"
+                  size={23}
+                />
+              </View>
+            }
+          />
+        </View>
+      </Animated.View>
     );
   }
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    // position: 'absolute',
+    // top: 0,
+    // width: '100%'
+  },
   container: {
     padding: 15,
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: appConfig.device.isIphoneX
-      ? 35
-      : appConfig.device.isIOS
-      ? 25
-      : 15
+    paddingTop: Platform.select({
+      android: StatusBar.currentHeight,
+      ios: appConfig.device.statusBarHeight * 1.5
+    }),
+    alignItems: 'center'
+  },
+  maskMain: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute'
+  },
+  maskSub: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+    backgroundColor: appConfig.colors.white
   },
   notificationWrapper: {
+    top: -2,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     fontWeight: 'bold'
@@ -102,12 +140,15 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingLeft: 8,
     paddingBottom: 8,
-    position: 'relative',
-    ...elevationShadowStyle(5)
+    position: 'relative'
   },
-  iconNotication: {},
+  icon: {
+    color: '#fff'
+  },
+  iconMask: {
+    position: 'absolute'
+  },
   userNameWrapper: {
-    // marginTop: 16,
     flex: 1
   },
   userName: {
@@ -123,13 +164,13 @@ const styles = StyleSheet.create({
     minWidth: 16,
     paddingHorizontal: 2,
     height: 16,
-    backgroundColor: 'red',
     top: -8,
     right: -8,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 8,
+    backgroundColor: 'red'
   },
   notify: {
     fontSize: 10,
@@ -137,27 +178,19 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   },
   searchWrapper: {
-    flex: 1,
     paddingHorizontal: 10,
-    borderRadius: 15,
+    borderRadius: 4,
     alignItems: 'center',
-    flexDirection: 'row',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    ...ifIphoneX(
-      {
-        marginTop: 4,
-        marginBottom: 8
-      },
-      {
-        marginVertical: appConfig.device.isIOS === 'ios' ? 6 : 8
-      }
-    )
+    flexDirection: 'row'
   },
   searchInput: {
     flex: 1,
     paddingHorizontal: 8,
-    paddingVertical: 8,
+    paddingVertical: isAndroid ? 5 : 10,
     color: appConfig.colors.white
+  },
+  chatIconStyle: {
+    marginRight: 0
   }
 });
 
@@ -171,4 +204,4 @@ Header.defaultProps = {
   notify: {}
 };
 
-export default withTranslation(['home', 'stores'])(observer(Header));
+export default withTranslation(['home', 'stores'])(Header);

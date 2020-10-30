@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableHighlight, View, Animated, Easing } from 'react-native';
+import { StyleSheet, TouchableHighlight, View } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import appConfig from '../../config';
@@ -20,20 +20,21 @@ const styles = StyleSheet.create({
     },
     notiContainer: {
         right: 5,
-        top: appConfig.device.isAndroid ? -2 : -4
+        top: appConfig.device.isAndroid ? -2 : -4,
     }
 });
 
-const AnimatedNoti = Animated.createAnimatedComponent(NotiBadge);
-
 class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     state = {
-        noti: store.cart_data ? store.cart_data.count : 0,
-        animatedNoti: new Animated.Value(0),
-        animatedNotiBounce: new Animated.Value(0)
+        noti: 0,
     };
 
+    componentDidMount() {
+        this.updateNoti();
+    }
+
     get icon() {
+        if (this.props.icon) return this.props.icon;
         let Icon = null, name = "", extraStyle = {};
         switch (this.props.type) {
             case RIGHT_BUTTON_TYPE.SHOPPING_CART:
@@ -73,97 +74,9 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                     (!store.cart_data && this.state.noti)
                 ) {
                     this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
-                    this.activeNotiAnimation();
                 }
                 break;
         }
-    }
-
-    activeNotiAnimation() {
-        Animated.parallel(
-            [
-                Animated.sequence([
-                    Animated.timing(this.state.animatedNoti, {
-                        toValue: 1,
-                        duration: 100,
-                        easing: Easing.quad,
-                        useNativeDriver: true
-                    }),
-                    Animated.delay(200),
-                    Animated.timing(this.state.animatedNoti, {
-                        toValue: -1,
-                        duration: 200,
-                        easing: Easing.elastic(0.5),
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(this.state.animatedNoti, {
-                        toValue: 1,
-                        duration: 200,
-                        easing: Easing.elastic(0.5),
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(this.state.animatedNoti, {
-                        toValue: 0,
-                        duration: 100,
-                        easing: Easing.elastic(0.5),
-                        useNativeDriver: true
-                    })
-                ]),
-
-                Animated.sequence([
-                    Animated.timing(this.state.animatedNotiBounce, {
-                        toValue: -1,
-                        duration: 200,
-                        easing: Easing.quad,
-                        useNativeDriver: true
-                    }),
-                    Animated.delay(50),
-                    Animated.timing(this.state.animatedNotiBounce, {
-                        toValue: 1,
-                        duration: 200,
-                        easing: Easing.quad,
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(this.state.animatedNotiBounce, {
-                        toValue: 2,
-                        duration: 200,
-                        easing: Easing.elastic(0.5),
-                        useNativeDriver: true
-                    }),
-                    Animated.timing(this.state.animatedNotiBounce, {
-                        toValue: 0,
-                        duration: 200,
-                        easing: Easing.quad,
-                        useNativeDriver: true
-                    })
-                ])
-            ],
-            { stopTogether: false }
-        ).start(({ finished }) => {
-            if (finished) {
-                this.state.animatedNoti.setValue(0);
-                this.state.animatedNotiBounce.setValue(0);
-            }
-        });
-    }
-
-    animatedNoti() {
-        return {
-            transform: [
-                {
-                    scaleX: this.state.animatedNoti.interpolate({
-                        inputRange: [-1, 0, 1],
-                        outputRange: [0.8, 1, 1.25]
-                    })
-                },
-                {
-                    translateY: this.state.animatedNotiBounce.interpolate({
-                        inputRange: [-1, 0, 1, 2],
-                        outputRange: [2, 0, -3, 2]
-                    })
-                }
-            ]
-        };
     }
 
     render() {
@@ -179,14 +92,12 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                     this.props.containerStyle
                 ]}>
                     {this.icon}
-                    {!!this.state.noti && (
-                        <AnimatedNoti
-                            label={this.state.noti}
-                            containerStyle={styles.notiContainer}
-                            style={this.animatedNoti()}
-                        />
-                    )}
-
+                    <NotiBadge
+                        animation
+                        show={this.state.noti}
+                        label={this.state.noti}
+                        containerStyle={styles.notiContainer}
+                    />
                 </View>
             </TouchableHighlight>
         );

@@ -5,8 +5,11 @@ import {
   Image,
   StyleSheet,
   RefreshControl,
-  ScrollView
+  Platform,
+  StatusBar
+  // ScrollView,
 } from 'react-native';
+import Animated from 'react-native-reanimated';
 import StatusBarBackground, {
   showBgrStatusIfOffsetTop
 } from 'app-packages/tickid-bgr-status-bar';
@@ -23,6 +26,22 @@ import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton'
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
 
 const defaultListener = () => {};
+const STATUS_BAR_STYLE = {
+  LIGHT: 'light-content',
+  DARK: 'dark-content'
+};
+const {
+  set,
+  Extrapolate,
+  ScrollView,
+  color,
+  interpolate,
+  Value,
+  block,
+  call,
+  event
+} = Animated;
+const EXTRAPOLATE_RANGE = 100;
 
 class Home extends Component {
   static propTypes = {
@@ -95,6 +114,37 @@ class Home extends Component {
     product_groups: {}
   };
 
+  state = {
+    animatedHeaderValue: new Value(0),
+    statusBarStyle: STATUS_BAR_STYLE.LIGHT,
+    showShadow: false,
+    headerHeight: undefined
+  };
+
+  handleAnimatedScroll = ({ value }) => {
+    value = Math.round(value);
+    if (value <= 0 && this.state.showShadow) {
+      this.setState({
+        showShadow: false,
+        statusBarStyle: STATUS_BAR_STYLE.LIGHT
+      });
+      if (appConfig.device.isAndroid) {
+        StatusBar.setBackgroundColor(appConfig.colors.primary);
+      }
+      return;
+    }
+
+    if (value >= EXTRAPOLATE_RANGE * 0.7 && !this.state.showShadow) {
+      this.setState({
+        showShadow: true,
+        statusBarStyle: STATUS_BAR_STYLE.DARK
+      });
+      if (appConfig.device.isAndroid) {
+        StatusBar.setBackgroundColor('transparent');
+      }
+    }
+  };
+
   get hasServices() {
     return (
       Array.isArray(this.props.listService) && this.props.listService.length > 0
@@ -130,8 +180,18 @@ class Home extends Component {
       Array.isArray(array_product_groups) && array_product_groups.length > 0
     );
   }
+
+  handleHeaderLayout(e) {
+    const { height } = e.nativeEvent.layout;
+    if (height !== this.state.headerHeight) {
+      this.setState({
+        headerHeight: height
+      });
+    }
+  }
+
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
-    `${appConfig.routes.homeTab}_1`,
+    appConfig.routes.homeTab,
     68
   );
 
@@ -143,9 +203,88 @@ class Home extends Component {
         : t('welcome.defaultUserName')
       : t('welcome.defaultUserName');
 
+    let wrapperAnimatedStyle = {
+      opacity: interpolate(this.state.animatedHeaderValue, {
+        inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
+        outputRange: [0, 1],
+        extrapolate: Extrapolate.CLAMP
+      }),
+      ...elevationShadowStyle(3),
+      elevation: interpolate(this.state.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 5],
+        extrapolate: Extrapolate.CLAMP
+      }),
+      shadowOpacity: interpolate(this.state.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 0.15],
+        extrapolate: Extrapolate.CLAMP
+      }),
+      backgroundColor: color(
+        255,
+        255,
+        255,
+        interpolate(this.state.animatedHeaderValue, {
+          inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+          outputRange: [0, 0, 1],
+          extrapolate: Extrapolate.CLAMP
+        })
+      )
+    };
+
+    // if (this.state.showShadow) {
+    //   wrapperAnimatedStyle = {
+    //     ...wrapperAnimatedStyle,
+    //     ...elevationShadowStyle(3),
+    //   }
+    // }
+
+    const headerAnimatedStyle = {
+      opacity: interpolate(this.state.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE],
+        outputRange: [0, 1],
+        extrapolate: Extrapolate.CLAMP
+      })
+    };
+
+    const [r, g, b] = hexToRgbA(appConfig.colors.primary)
+      .replace('rgba(', '')
+      .replace(')', '')
+      .split(',');
+
+    const headerIconStyle = {
+      color: color(
+        Number(r),
+        Number(g),
+        Number(b),
+        interpolate(this.state.animatedHeaderValue, {
+          inputRange: [0, EXTRAPOLATE_RANGE],
+          outputRange: [0, 1],
+          extrapolate: Extrapolate.CLAMP
+        })
+      )
+    };
+
+    const searchWrapperStyle = {
+      backgroundColor: color(
+        245,
+        245,
+        245,
+        interpolate(this.state.animatedHeaderValue, {
+          inputRange: [0, EXTRAPOLATE_RANGE],
+          outputRange: [0, 1],
+          extrapolate: Extrapolate.CLAMP
+        })
+      )
+    };
+
     return (
       <View style={styles.container}>
         {/* <LoadingComponent loading={this.props.apiFetching} /> */}
+        <StatusBar
+          barStyle={this.state.statusBarStyle}
+          backgroundColor={appConfig.colors.primary}
+        />
 
         <View style={styles.headerBackground}>
           {this.props.site && this.props.site.app_event_banner_image && (
@@ -156,8 +295,45 @@ class Home extends Component {
           )}
         </View>
 
+        <View
+          onLayout={this.handleHeaderLayout.bind(this)}
+          style={styles.headerContainerStyle}
+        >
+          <Header
+            wrapperStyle={wrapperAnimatedStyle}
+            maskSearchWrapperStyle={searchWrapperStyle}
+            maskSubStyle={headerAnimatedStyle}
+            iconStyle={headerIconStyle}
+            notify={this.props.notify}
+            name={name}
+            onPressNoti={this.props.onPressNoti}
+            goToSearch={this.props.goToSearch}
+          />
+        </View>
+
         <ScrollView
-          onScroll={this.showBgrStatusIfOffsetTop}
+          // onScroll={this.showBgrStatusIfOffsetTop}
+          onScroll={event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: y =>
+                      block([
+                        set(this.state.animatedHeaderValue, y),
+                        call([y], ([offsetY]) =>
+                          this.handleAnimatedScroll({ value: offsetY })
+                        )
+                      ])
+                  }
+                }
+              }
+            ],
+            {
+              useNativeDriver: true
+            }
+          )}
+          contentContainerStyle={{ paddingTop: this.state.headerHeight || 80 }}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
@@ -168,12 +344,12 @@ class Home extends Component {
             />
           }
         >
-          <Header
+          {/* <Header
             notify={this.props.notify}
             name={name}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
-          />
+          /> */}
 
           <View style={styles.primaryActionsWrapper}>
             <PrimaryActions
@@ -341,6 +517,12 @@ const styles = StyleSheet.create({
   },
   primaryActionsWrapper: {
     paddingBottom: 8
+  },
+  headerContainerStyle: {
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    zIndex: 9999
   }
 });
 

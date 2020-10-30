@@ -89,6 +89,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                 type: nextProps.type
             })
         }
+
         return true;
     }
 
@@ -146,7 +147,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     <IconFeather size={26} color={appConfig.colors.white} name="search" />
                 </Button>
                 <RightButtonNavBar
-                    type="shopping_cart"
+                    type={RIGHT_BUTTON_TYPE.SHOPPING_CART}
                 />
             </View>
         );
@@ -178,7 +179,10 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                         type: response.data.type || prevState.type,
                         categories: response.data.categories,
                         selectedMainCategory
-                    }))
+                    }),
+                        () => {
+                            setTimeout(() => this.onPressMainCategory(selectedMainCategory, false))
+                        })
                 } else {
                     //@ts-ignore
                     flashShowMessage({
@@ -204,12 +208,16 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         }
     }
 
-    onPressMainCategory(category) {
-        this.setState({
-            selectedMainCategory: category
-        }, () => {
+    onPressMainCategory(category, isUpdate = true) {
+        if (isUpdate) {
+            this.setState({
+                selectedMainCategory: category
+            }, () => {
+                this.scrollMainCategoryToIndex(category)
+            })
+        } else {
             this.scrollMainCategoryToIndex(category)
-        })
+        }
 
         if (!this.isFullData) return;
         if (this.refSubCategory.current) {
@@ -328,7 +336,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             this.setState((prevState: any) => ({
                 mainCategoryDataPosition: {
                     ...prevState.mainCategoryDataPosition,
-                    [category.id]: y
+                    [category.id]: y,
                 }
             }))
         }
@@ -420,9 +428,9 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     }
 
     render() {
-        if (this.state.loading) return <Loading center />;
         return (
             <View style={styles.container}>
+                {this.state.loading && <Loading center />}
                 <SafeAreaView style={styles.mainContainer}>
                     <View style={styles.mainCategories}>
                         <FlatList
@@ -434,6 +442,12 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                             data={this.state.categories}
                             renderItem={this.renderMainCategory.bind(this)}
                             keyExtractor={(item, index) => index.toString()}
+                            onScrollToIndexFailed={() => { }}
+                            getItemLayout={(data, index) => ({
+                                index,
+                                length: appConfig.device.width / 4,
+                                offset: appConfig.device.width / 4 * index
+                            })}
                         />
                     </View>
 
@@ -451,7 +465,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                         {(Array.isArray(this.state.categories) &&
                             this.state.categories.length !== 0)
                             ? this.renderSubCategories()
-                            : <NoResult
+                            : !this.state.loading && <NoResult
                                 containerStyle={styles.container}
                                 icon={
                                     <SVGEmptyBoxOpen

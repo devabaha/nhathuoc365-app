@@ -1186,10 +1186,10 @@ class TickidChat extends Component {
           <MasterToolBar
             ref={this.refMasterToolBar}
             selectedType={this.state.selectedType}
+            defaultStatusBarColor={this.props.defaultStatusBarColor}
             galleryProps={{
               visible: this.props.galleryVisible,
               setHeader: this.props.setHeader,
-              defaultStatusBarColor: this.props.defaultStatusBarColor,
               onExpandedBodyContent: this.handleExpandedGallery,
               onCollapsedBodyContent: this.handleCollapsedGallery,
               onCollapsingBodyContent: this.handleCollapsingGallery,
