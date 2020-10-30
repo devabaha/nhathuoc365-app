@@ -129,20 +129,25 @@ class SubCategory extends Component<SubCategoryProps> {
             width: this.state.categorySize.width,
             height: this.state.categorySize.height
         } : {};
-        const extraStyle = {
-            width: this.state.categorySize.width * .8,
-            height: this.state.categorySize.height * .8,
-        };
+
         return (
             Array.isArray(category.list) ?
                 <View style={styles.subCategoriesContainer}>
                     {category.list.map((childCate, index) => {
                         const isLast = (index + 1) % this.state.itemsPerRow === 0;
+                        let extraStyle = {
+                            width: this.state.categorySize.width * .8,
+                            height: this.state.categorySize.height * .8,
+                        };
+
                         if (!childCate.image) {
-                            //@ts-ignore
-                            extraStyle.backgroundColor = '#eee';
-                            //@ts-ignore
-                            extraStyle.padding = 0;
+                            extraStyle = {
+                                ...extraStyle,
+                                //@ts-ignore
+                                backgroundColor: '#eee',
+                                //@ts-ignore
+                                padding: 0
+                            }
                         }
 
                         return (

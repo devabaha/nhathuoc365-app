@@ -66,34 +66,24 @@ class Home extends Component {
 
     try {
       const response = await APIHandler.user_site_home();
-      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
             cart_data: response.data.vote_cart
           });
         }
-        action(() => {
-          store.setStoreData(response.data.site);
-          store.setAppData(response.data.site);
-        })();
+
+        store.setStoreData(response.data.site);
+        store.setAppData(response.data.site);
+
         if (
           Array.isArray(response.data.popups) &&
           response.data.popups.length > 0
         ) {
           const popup = response.data.popups[0];
-          if (store.popupClickedID !== popup.modified) {
-            const popupService = {
-              type: SERVICES_TYPE.POP_UP,
-              image: popup.image_url,
-              // image: "https://www.erevollution.com/public/upload/citizen/48526.jpg",
-              delay: popup.delay !== undefined ? popup.delay : 2000,
-              data: popup
-            };
-            servicesHandler(popupService, this.props.t);
-            store.setPopupClickedID(popup.modified);
-          }
+          this.handlePopup(popup);
         }
+
         this.setState(prevState => ({
           site: response.data.site,
           sites: response.data.sites,
@@ -121,11 +111,8 @@ class Home extends Component {
           product_groups: response.data.product_groups
         }));
 
-        if (!this.homeDataLoaded) {
-          this.homeDataLoaded = true;
-          store.updateHomeLoaded(true);
-          this.handleExecuteTempDeepLink();
-        }
+        this.executeDeepLink();
+        this.getCartData();
       }
     } catch (error) {
       console.log(error);
@@ -139,6 +126,42 @@ class Home extends Component {
       );
     }
   }
+
+  handlePopup(popup) {
+    if (store.popupClickedID !== popup.modified) {
+      const popupService = {
+        type: SERVICES_TYPE.POP_UP,
+        image: popup.image_url,
+        // image: "https://www.erevollution.com/public/upload/citizen/48526.jpg",
+        delay: popup.delay !== undefined ? popup.delay : 2000,
+        data: popup
+      };
+      servicesHandler(popupService, this.props.t);
+      store.setPopupClickedID(popup.modified);
+    }
+  }
+
+  executeDeepLink() {
+    if (!this.homeDataLoaded) {
+      this.homeDataLoaded = true;
+      store.updateHomeLoaded(true);
+      this.handleExecuteTempDeepLink();
+    }
+  }
+
+  getCartData = async () => {
+    try {
+      const response = await APIHandler.site_cart_show(store.store_id);
+
+      if (response && response.status == STATUS_SUCCESS) {
+        store.setCartData(response.data);
+      } else {
+        store.resetCartData();
+      }
+    } catch (e) {
+      console.log('home_site_cart_show' + e);
+    }
+  };
 
   handlePullToRefresh = () => {
     this.setState({ refreshing: true });

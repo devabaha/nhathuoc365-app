@@ -126,7 +126,7 @@ class ListServices extends Component {
   get scrollEnabled() {
     return (
       this.isHorizontal &&
-      this.state.horizontalContentWidth !== this.state.horizontalContainerWidth
+      this.state.horizontalContentWidth > this.state.horizontalContainerWidth
     );
   }
 
