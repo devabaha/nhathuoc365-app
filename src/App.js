@@ -553,11 +553,15 @@ class App extends Component {
   }
 
   handleCodePushProgressComplete() {
-    if (this.state.codePushLocalPackage) {
-      this.closeCodePushModal(() => {
-        this.codePushInstallUpdate();
-      });
-    }
+    let intervalCheckingLocalPackage = null;
+    intervalCheckingLocalPackage = setInterval(() => {
+      if (this.state.codePushLocalPackage) {
+        clearInterval(intervalCheckingLocalPackage);
+        this.closeCodePushModal(() => {
+          this.codePushInstallUpdate();
+        });
+      }
+    }, 500);
   }
 
   closeCodePushModal(callBack = () => {}) {
