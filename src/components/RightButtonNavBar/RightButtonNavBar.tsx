@@ -59,10 +59,20 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     }
 
     handlePressCart() {
-        if (store.cart_data) {
-            Actions.push(appConfig.routes.paymentConfirm);
+        if (store.cart_data && store.cart_products) {
+            if (store.cart_data.address_id != 0) {
+                Actions.push(appConfig.routes.paymentConfirm, {
+                    goConfirm: true
+                });
+            } else {
+                Actions.create_address({
+                    redirect: 'confirm'
+                });
+            }
         } else {
-            Actions.push(appConfig.routes.storeOrders);
+            Actions.push(appConfig.routes.store, {
+                title: store.store_data
+            });
         }
     }
 
