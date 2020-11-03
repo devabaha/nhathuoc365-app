@@ -71,6 +71,18 @@ class CommonAPIHandler extends BaseHandler {
     var api = url_for(API.USER_GET_WALLET + '/' + zone_code);
     return await this.getAPI(api);
   }
+
+  /**
+   * process QR code
+   *
+   * @param object data
+   * @param string data.qrcode
+   */
+  async user_process_qrcode(data) {
+    var api = url_for(API.USER_PROCESS_QRCODE);
+    return await this.postAPI(api, data);
+  }
+
   //check_address
   async user_check_address(address) {
     var api = url_for(API.USER_CHECK_ADDRESS + '/' + address);
