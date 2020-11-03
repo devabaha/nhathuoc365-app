@@ -1,5 +1,4 @@
 export const PACKAGE_OPTIONS_TYPE = {
-  CASHBACK: 'package_option_cashback',
   TOP_UP: 'package_option_topup',
 
   CHAIN_STORE: 'package_option_chainStore',

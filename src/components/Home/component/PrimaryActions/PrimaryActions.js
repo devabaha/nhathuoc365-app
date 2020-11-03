@@ -12,10 +12,6 @@ import {
 } from '../../../../helper/packageOptionsHandler';
 
 class PrimaryActions extends Component {
-  get isActiveCashBack() {
-    return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.CASHBACK);
-  }
-
   get isActivePrimaryActions() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
   }
@@ -26,7 +22,7 @@ class PrimaryActions extends Component {
 
   get hasContent() {
     return isActivePackageOptionConfig(
-      PACKAGE_OPTIONS_TYPE.CASHBACK,
+      PACKAGE_OPTIONS_TYPE.TOP_UP,
       PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS
     );
   }
@@ -37,71 +33,66 @@ class PrimaryActions extends Component {
     };
     return (
       <View style={styles.container}>
-        {this.hasContent && (
-          <View style={[styles.actionsWrapper, actionsWrapper]}>
-            {this.isActiveCashBack && (
-              <View style={styles.mainContentWrapper}>
-                {this.isActiveTopUp && (
-                  <View style={styles.pointRechargeBtnContainer}>
-                    <PointRechargeButton
-                      wrapperStyle={styles.pointRechargeBtn}
-                      iconStyle={styles.scanIcon}
-                    />
-                    <View style={styles.pointRechargeBtnSeparatorContainer}>
-                      <View style={styles.pointRechargeBtnSeparator} />
-                    </View>
-                  </View>
-                )}
-                <Button
-                  containerStyle={styles.surplusContainer}
-                  onPress={() => props.onSurplusNext()}
-                >
-                  <View style={styles.walletInfoWrapper}>
-                    <Text style={styles.walletNameLabel}>
-                      {props.walletName}
-                    </Text>
+        <View style={[styles.actionsWrapper, actionsWrapper]}>
+          <View style={styles.mainContentWrapper}>
+            {this.isActiveTopUp && (
+              <View style={styles.pointRechargeBtnContainer}>
+                <PointRechargeButton
+                  wrapperStyle={styles.pointRechargeBtn}
+                  iconStyle={styles.scanIcon}
+                />
+                <View style={styles.pointRechargeBtnSeparatorContainer}>
+                  <View style={styles.pointRechargeBtnSeparator} />
+                </View>
+              </View>
+            )}
 
-                    <View style={styles.walletLabelRight}>
-                      <Text style={styles.surplus}>{props.surplus}</Text>
-                    </View>
-                    <View style={styles.iconNextWrapper}>
-                      <Image style={styles.iconNext} source={imageIconNext} />
-                    </View>
+            <Button
+              containerStyle={styles.surplusContainer}
+              onPress={() => props.onSurplusNext()}
+            >
+              <View style={styles.walletInfoWrapper}>
+                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+
+                <View style={styles.walletLabelRight}>
+                  <Text style={styles.surplus}>{props.surplus}</Text>
+                </View>
+                <View style={styles.iconNextWrapper}>
+                  <Image style={styles.iconNext} source={imageIconNext} />
+                </View>
+              </View>
+            </Button>
+          </View>
+          {this.isActivePrimaryActions && props.primaryActions && (
+            <View style={styles.walletAction}>
+              {props.primaryActions.map(action => (
+                <Button
+                  key={action.type}
+                  onPress={() => props.onPressItem(action)}
+                  containerStyle={styles.actionButton}
+                >
+                  <View style={styles.actionWrapper}>
+                    <Image
+                      source={{ uri: action.icon }}
+                      style={[
+                        styles.actionIcon,
+                        {
+                          ...getImageRatio(
+                            action.iconOriginSize.width,
+                            action.iconOriginSize.height,
+                            undefined,
+                            35
+                          )
+                        }
+                      ]}
+                    />
+                    <Text style={styles.actionTitle}>{action.title}</Text>
                   </View>
                 </Button>
-              </View>
-            )}
-            {this.isActivePrimaryActions && props.primaryActions && (
-              <View style={styles.walletAction}>
-                {props.primaryActions.map(action => (
-                  <Button
-                    key={action.type}
-                    onPress={() => props.onPressItem(action)}
-                    containerStyle={styles.actionButton}
-                  >
-                    <View style={styles.actionWrapper}>
-                      <Image
-                        source={{ uri: action.icon }}
-                        style={[
-                          styles.actionIcon,
-                          {
-                            ...getImageRatio(
-                              action.iconOriginSize.width,
-                              action.iconOriginSize.height,
-                              undefined,
-                              35
-                            )
-                          }
-                        ]}
-                      />
-                      <Text style={styles.actionTitle}>{action.title}</Text>
-                    </View>
-                  </Button>
-                ))}
-              </View>
-            )}
-          </View>
-        )}
+              ))}
+            </View>
+          )}
+        </View>
       </View>
     );
   }

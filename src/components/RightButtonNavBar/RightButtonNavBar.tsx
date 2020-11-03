@@ -11,7 +11,8 @@ import { NotiBadge } from '../Badges';
 const styles = StyleSheet.create({
     right_btn_add_store: {
         paddingVertical: 1,
-        paddingHorizontal: 12,
+        paddingLeft: 10,
+        paddingRight: 5,
         paddingTop: appConfig.device.isAndroid ? 4 : 0
     },
     icon: {
@@ -70,9 +71,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                 });
             }
         } else {
-            Actions.push(appConfig.routes.store, {
-                title: store.store_data
-            });
+            Actions.push(appConfig.routes.ordersTab);
         }
     }
 
