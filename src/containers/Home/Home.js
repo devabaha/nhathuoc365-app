@@ -142,7 +142,7 @@ class Home extends Component {
     }
   }
 
-  getCartData = async () => {
+  async getCartData() {
     try {
       const response = await APIHandler.site_cart_show(store.store_id);
 
@@ -154,7 +154,7 @@ class Home extends Component {
     } catch (e) {
       console.log('home_site_cart_show' + e);
     }
-  };
+  }
 
   handlePullToRefresh = () => {
     this.setState({ refreshing: true });

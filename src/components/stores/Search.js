@@ -70,8 +70,7 @@ class Search extends Component {
   }
 
   getPlaceholder(name = '') {
-    return `Tìm kiếm trong ${name && `${name} - `}${store.store_data.name ||
-      'cửa hàng'}...`;
+    return `${name && `${name} - `}${store.store_data.name || 'cửa hàng'}`;
   }
 
   componentDidMount() {
