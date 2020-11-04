@@ -2,7 +2,7 @@ import * as React from 'react';
 import { PureComponent } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import SkeletonLoading from '../../../SkeletonLoading';
-import { MIN_ITEMS_PER_ROW } from './constants';
+import { MIN_ITEMS_PER_ROW } from '../../constants';
 //@ts-ignore
 import appConfig from 'app-config';
 import { SKELETON_COLOR } from '../../constants';
