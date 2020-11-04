@@ -8,7 +8,7 @@ import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW,
   INDICATOR_HORIZONTAL_WIDTH
-} from './constants';
+} from '../../constants';
 import appConfig from 'app-config';
 import { NotiBadge } from '../../../Badges';
 import HorizontalIndicator from './HorizontalIndicator';

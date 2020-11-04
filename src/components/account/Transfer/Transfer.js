@@ -76,7 +76,9 @@ class Transfer extends Component {
     if (displayPhone.trim()) {
       let receiverTel = displayPhone.replace(/ /g, '');
       receiverTel = receiverTel.split('+84').join('0');
-      receiverTel = receiverTel.split('84').join('0');
+      if (receiverTel.slice(0, 2) === '84') {
+        receiverTel = receiverTel.replace('84', '0');
+      }
 
       if (receiverTel !== store.user_info.tel) {
         this.setState({

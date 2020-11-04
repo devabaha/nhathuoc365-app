@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import {
   View,
   ScrollView,
@@ -122,13 +122,14 @@ class Payment extends Component {
 
     return (
       <>
-        <Text style={styles.shortContactName}>{shortTitle}</Text>
-        {!!this.props.receiver.avatar && (
+        {!!this.props.receiver.avatar ? (
           <Image
             style={styles.avatar}
             source={{ uri: this.props.receiver.avatar }}
             resizeMode="cover"
           />
+        ) : (
+          <Text style={styles.shortContactName}>{shortTitle}</Text>
         )}
       </>
     );
@@ -136,6 +137,7 @@ class Payment extends Component {
 
   render() {
     const { t } = this.props;
+    const extraStyle = this.props.showWallet && { top: -60 };
     return (
       <KeyboardAvoidingView
         style={styles.container}
@@ -147,7 +149,15 @@ class Payment extends Component {
             contentContainerStyle={styles.contentContainerStyle}
             keyboardShouldPersistTaps="handled"
           >
-            <View style={styles.box}>
+            {!!this.props.showWallet && (
+              <PaymentWallet
+                sourceTitle="Nguồn tiền"
+                sourceValue={this.props.wallet.name}
+                balanceTitle="Số dư"
+                balanceValue={this.props.wallet.balance_view}
+              />
+            )}
+            <View style={[styles.box, extraStyle]}>
               <View style={styles.user}>
                 <View style={styles.avatarContainer}>
                   {this.renderAvatar()}
@@ -156,6 +166,11 @@ class Payment extends Component {
                 <View style={styles.informationContainer}>
                   <Text style={styles.title}>{this.props.receiver.name}</Text>
                   <Text style={styles.subTitle}>{this.props.receiver.tel}</Text>
+                  {!!this.props.receiver.address && (
+                    <Text style={styles.subTitle}>
+                      {this.props.receiver.address}
+                    </Text>
+                  )}
                 </View>
               </View>
 
@@ -248,13 +263,71 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop: 15,
-    fontSize: 18
+    marginBottom: 5,
+    fontSize: 20
   },
   subTitle: {
     marginTop: 5,
-    color: '#a5a5a5',
+    color: '#8e8e8e',
     fontSize: 16
   }
 });
 
 export default withTranslation('payment')(observer(Payment));
+
+class PaymentWallet extends PureComponent {
+  render() {
+    return (
+      <View style={paymentWalletStyles.container}>
+        <View style={paymentWalletStyles.left}>
+          <Text style={paymentWalletStyles.title}>
+            {this.props.sourceTitle}
+          </Text>
+          <Text style={paymentWalletStyles.value}>
+            {this.props.sourceValue}
+          </Text>
+        </View>
+        <View style={paymentWalletStyles.right}>
+          <Text style={paymentWalletStyles.title}>
+            {this.props.balanceTitle}
+          </Text>
+          <Text style={paymentWalletStyles.value}>
+            {this.props.balanceValue}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+}
+
+const paymentWalletStyles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    paddingVertical: 15,
+    paddingBottom: 50,
+    backgroundColor: '#fafafa'
+  },
+  left: {
+    flex: 1,
+    borderRightWidth: 0.5,
+    borderRightColor: '#ccc',
+    paddingHorizontal: 15
+  },
+  right: {
+    flex: 1,
+    alignItems: 'flex-end',
+    paddingHorizontal: 15
+  },
+  title: {
+    marginBottom: 10,
+    color: '#888',
+    fontSize: 13
+  },
+  value: {
+    fontWeight: '500',
+    fontSize: 15,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    color: '#333'
+  }
+});

@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import { View, Text, Image, StyleSheet } from 'react-native';
 
-class ProductItem extends Component {
+class ProductItem extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
     image: PropTypes.string,
@@ -28,12 +28,18 @@ class ProductItem extends Component {
     return (
       <Button
         onPress={this.props.onPress}
-        containerStyle={{
-          marginRight: this.props.last ? 16 : 0
-        }}
+        containerStyle={[
+          {
+            marginRight: this.props.last ? 16 : 0
+          },
+          this.props.wrapperStyle
+        ]}
       >
-        <View style={styles.container}>
-          <Image style={styles.image} source={{ uri: this.props.image }} />
+        <View style={[styles.container, this.props.containerStyle]}>
+          <Image
+            style={[styles.image, this.props.imageStyle]}
+            source={{ uri: this.props.image }}
+          />
           <View style={styles.infoWrapper}>
             <Text style={styles.name} numberOfLines={2}>
               {this.props.name}
@@ -56,12 +62,12 @@ class ProductItem extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: 130,
+    width: 150,
     flex: 1,
     marginLeft: 16
   },
   image: {
-    height: 116,
+    height: 120,
     resizeMode: 'cover',
     borderRadius: 8
   },

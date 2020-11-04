@@ -138,6 +138,7 @@ exports.USER_GET_FAVOR_SITES = MY_FOOD_API + 'apiUser/favor_sites';
 exports.USER_RESET_PASSWORD = MY_FOOD_API + 'apiUser/reset_pass';
 exports.USER_RATE_APP = MY_FOOD_API + 'apiUser/rate_app';
 exports.USER_GET_SERVICES = MY_FOOD_API + 'apiUser/get_services';
+exports.USER_PROCESS_QRCODE = MY_FOOD_API + 'apiUser/process_qrcode';
 
 // Service
 exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';

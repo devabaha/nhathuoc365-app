@@ -9,7 +9,7 @@ import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW
-} from '../../components/Home/component/ListServices/constants';
+} from '../../components/Home/constants';
 
 class Home extends Component {
   constructor(props) {

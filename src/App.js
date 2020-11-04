@@ -177,6 +177,9 @@ initializePhoneCardModule({
     osVersion: DeviceInfo.getSystemVersion(),
     store: ''
   },
+  rest: {
+    endpoint: () => MY_FOOD_API
+  },
   route: {
     push: Actions.push,
     pop: Actions.pop,

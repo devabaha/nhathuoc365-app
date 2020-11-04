@@ -393,21 +393,19 @@ class Home extends Component {
 
             {this.hasProduct_groups ? (
               Object.keys(this.props.product_groups).map((key, index) => {
-                let { products, title } = this.props.product_groups[key];
+                let {
+                  products,
+                  title,
+                  display_type
+                } = this.props.product_groups[key];
                 return (
-                  <ListProducts data={products} title={title} key={index}>
-                    {({ item: product, index }) => (
-                      <ProductItem
-                        name={product.name}
-                        image={product.image}
-                        discount_view={product.discount_view}
-                        discount_percent={product.discount_percent}
-                        price_view={product.price_view}
-                        onPress={() => this.props.onPressProduct(product)}
-                        last={this.props.products.length - 1 === index}
-                      />
-                    )}
-                  </ListProducts>
+                  <ListProducts
+                    key={index}
+                    type={display_type}
+                    data={products}
+                    title={title}
+                    onPressProduct={this.props.onPressProduct}
+                  />
                 );
               })
             ) : this.props.apiFetching ? (
