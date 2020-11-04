@@ -191,8 +191,8 @@ class Home extends Component {
   }
 
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
-    appConfig.routes.homeTab,
-    68
+    `${appConfig.routes.homeTab}_1`,
+    EXTRAPOLATE_RANGE / 2
   );
 
   render() {
@@ -282,7 +282,7 @@ class Home extends Component {
       <View style={styles.container}>
         {/* <LoadingComponent loading={this.props.apiFetching} /> */}
         <StatusBar
-          barStyle={this.state.statusBarStyle}
+          // barStyle={this.state.statusBarStyle}
           backgroundColor={appConfig.colors.primary}
         />
 
@@ -321,9 +321,12 @@ class Home extends Component {
                     y: y =>
                       block([
                         set(this.state.animatedHeaderValue, y),
-                        call([y], ([offsetY]) =>
-                          this.handleAnimatedScroll({ value: offsetY })
-                        )
+                        call([y], ([offsetY]) => {
+                          this.showBgrStatusIfOffsetTop({
+                            nativeEvent: { contentOffset: { y: offsetY } }
+                          });
+                          this.handleAnimatedScroll({ value: offsetY });
+                        })
                       ])
                   }
                 }

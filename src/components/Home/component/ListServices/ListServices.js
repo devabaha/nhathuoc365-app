@@ -43,8 +43,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   icon: {
-    width: '80%',
-    height: '80%'
+    width: '100%',
+    height: '100%'
   },
   title: {
     textAlign: 'center',
@@ -105,15 +105,15 @@ class ListServices extends Component {
       case LIST_SERVICE_TYPE.HORIZONTAL:
         serviceStyle.width =
           appConfig.device.width /
-          (this.props.itemsPerRow <= MIN_ITEMS_PER_ROW
-            ? this.props.itemsPerRow
+          (this.itemsPerRow <= MIN_ITEMS_PER_ROW
+            ? this.itemsPerRow
             : MIN_ITEMS_PER_ROW + 0.5);
         break;
       case LIST_SERVICE_TYPE.VERTICAL:
-        serviceStyle.width = appConfig.device.width / this.props.itemsPerRow;
+        serviceStyle.width = appConfig.device.width / this.itemsPerRow;
         break;
       default:
-        serviceStyle.width = appConfig.device.width / this.props.itemsPerRow;
+        serviceStyle.width = appConfig.device.width / this.itemsPerRow;
     }
 
     return serviceStyle;
@@ -128,6 +128,18 @@ class ListServices extends Component {
       this.isHorizontal &&
       this.state.horizontalContentWidth !== this.state.horizontalContainerWidth
     );
+  }
+
+  get itemsPerRow() {
+    if (!this.hasServices) return;
+    switch (this.props.type) {
+      case LIST_SERVICE_TYPE.HORIZONTAL:
+        return Math.ceil(
+          this.props.listService.length / this.props.itemsPerRow
+        );
+      default:
+        return this.props.itemsPerRow;
+    }
   }
 
   componentDidMount() {
@@ -223,7 +235,7 @@ class ListServices extends Component {
       );
 
       if (
-        (index + 1) % this.props.itemsPerRow === 0 ||
+        (index + 1) % this.itemsPerRow === 0 ||
         index === this.props.listService.length - 1
       ) {
         result.push(
@@ -243,8 +255,7 @@ class ListServices extends Component {
     return (
       baseValue +
       (baseValue *
-        (Math.abs(MIN_ITEMS_PER_ROW - this.props.itemsPerRow) *
-          incrementValue)) /
+        (Math.abs(MIN_ITEMS_PER_ROW - this.itemsPerRow) * incrementValue)) /
         100
     );
   }
@@ -260,7 +271,7 @@ class ListServices extends Component {
     );
 
     const serviceDimension =
-      this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+      this.itemsPerRow < MIN_ITEMS_PER_ROW
         ? serviceAutoIncrementDimension
         : BASE_SERVICE_DIMENSION;
 
@@ -270,7 +281,7 @@ class ListServices extends Component {
     );
 
     const titleMarginTop =
-      this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+      this.itemsPerRow < MIN_ITEMS_PER_ROW
         ? titleAutoIncrementMarginTop
         : BASE_TITLE_MARGIN;
 

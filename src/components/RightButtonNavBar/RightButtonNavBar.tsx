@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { StyleSheet, TouchableHighlight, View } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import appConfig from '../../config';
 import store from '../../store';
 import { RightButtonNavBarProps } from '.';
@@ -20,8 +21,14 @@ const styles = StyleSheet.create({
         fontSize: 26
     },
     notiContainer: {
-        right: 5,
+        right: -4,
         top: appConfig.device.isAndroid ? -2 : -4,
+        borderColor: '#fff',
+        borderWidth: .5,
+        height: 16,
+        minWidth: 16
+        //@ts-ignore
+        // ...elevationShadowStyle(2)
     }
 });
 
@@ -39,8 +46,12 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         let Icon = null, name = "", extraStyle = {};
         switch (this.props.type) {
             case RIGHT_BUTTON_TYPE.SHOPPING_CART:
-                name = "ios-cart";
-                Icon = Ionicons;
+                name = "shoppingcart";
+                Icon = AntDesign;
+                break;
+            case RIGHT_BUTTON_TYPE.CHAT:
+                name = "message1";
+                Icon = AntDesign;
                 break;
         }
 
@@ -83,6 +94,12 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                     (!store.cart_data && this.state.noti)
                 ) {
                     this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
+                }
+                break;
+            case RIGHT_BUTTON_TYPE.CHAT:
+                if ((store.notify && store.notify.notify_chat !== this.state.noti) ||
+                    (!store.notify && this.state.noti)) {
+                    this.setState({ noti: store.notify ? store.notify.notify_chat : 0 });
                 }
                 break;
         }

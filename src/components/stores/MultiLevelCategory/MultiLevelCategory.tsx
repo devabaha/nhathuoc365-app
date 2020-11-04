@@ -52,7 +52,8 @@ const styles = StyleSheet.create({
         fontWeight: '600'
     },
     right_btn_box: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginRight: 12
     },
 })
 

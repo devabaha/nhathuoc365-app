@@ -36,6 +36,7 @@ export default class ChooseLocation extends Component {
     if (response) {
       if (response.status == STATUS_SUCCESS) {
         action(() => {
+          store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setRefreshNews(store.refresh_news + 1);
         })();

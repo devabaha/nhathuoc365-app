@@ -71,8 +71,7 @@ class Search extends Component {
 
   getPlaceholder(name = '') {
     const { t } = this.props;
-    return `${t('search.placeholder.prefix')} ${name && `${name} - `}${store
-      .store_data.name || 'cửa hàng'}...`;
+    return `${name && `${name} - `}${store.store_data.name || 'cửa hàng'}`;
   }
 
   componentDidMount() {

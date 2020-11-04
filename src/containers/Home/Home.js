@@ -74,7 +74,7 @@ class Home extends Component {
         action(() => {
           store.setStoreData(response.data.site);
           store.setAppData(response.data.app);
-          store.setPackageOptions(response.data.package_options);
+          store.setPackageOptions(response.data.package_options || {});
         })();
 
         if (
@@ -145,7 +145,7 @@ class Home extends Component {
     }
   }
 
-  getCartData = async () => {
+  async getCartData() {
     try {
       const response = await APIHandler.site_cart_show(store.store_id);
 
@@ -157,7 +157,7 @@ class Home extends Component {
     } catch (e) {
       console.log('home_site_cart_show' + e);
     }
-  };
+  }
 
   handlePullToRefresh = () => {
     this.setState({ refreshing: true });

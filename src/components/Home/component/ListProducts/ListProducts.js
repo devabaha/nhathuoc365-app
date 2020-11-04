@@ -127,19 +127,16 @@ const styles = StyleSheet.create({
   itemVerticalWrapper: {
     width: appConfig.device.width / 2,
     paddingVertical: 15,
-    justifyContent: 'center',
     borderBottomWidth: 0.5,
     borderColor: '#eee'
   },
   itemVerticalContainer: {
     width: undefined,
     marginLeft: 0,
-    paddingHorizontal: 15
+    paddingHorizontal: 12
   },
   itemVerticalImage: {
-    height: (appConfig.device.width / 2) * 0.618,
-    marginBottom: 7,
-    borderRadius: 0
+    height: (appConfig.device.width / 2) * 0.75
   }
 });
 

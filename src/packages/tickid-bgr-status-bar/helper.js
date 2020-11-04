@@ -16,13 +16,13 @@ export const showBgrStatusIfOffsetTop = (currentScene, offsetTop = 0) => {
     if (yOffset > offsetTop) {
       if (config.statusBarState[currentScene] !== config.mode.dark) {
         config.statusBarState[currentScene] = config.mode.dark;
-        show();
+        // show();
       }
       StatusBar.setBarStyle('dark-content', true);
     } else {
       if (config.statusBarState[currentScene] !== config.mode.light) {
         config.statusBarState[currentScene] = config.mode.light;
-        hide();
+        // hide();
       }
       StatusBar.setBarStyle('light-content', true);
     }

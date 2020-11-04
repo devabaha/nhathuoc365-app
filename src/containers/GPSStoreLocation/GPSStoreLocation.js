@@ -433,6 +433,7 @@ class GPSStoreLocation extends Component {
       );
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
+          store.resetCartData();
           Actions.reset(appConfig.routes.sceneWrapper);
         }
       }

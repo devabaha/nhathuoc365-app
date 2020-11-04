@@ -49,12 +49,7 @@ class Header extends Component {
                 />
                 <TextInput
                   style={styles.searchInput}
-                  placeholder={
-                    t('stores:search.placeholder.prefix') +
-                    ' ' +
-                    (store.store_data ? store.store_data.name : '') +
-                    '...'
-                  }
+                  placeholder={store.store_data ? store.store_data.name : ''}
                   placeholderTextColor={appConfig.colors.primary}
                   numberOfLines={1}
                 />

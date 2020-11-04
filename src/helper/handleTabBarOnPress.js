@@ -1,6 +1,7 @@
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import store from '../store';
+import { servicesHandler, SERVICES_TYPE } from './servicesHandler';
 
 const touchedTabs = {};
 let productOpening = false;
@@ -12,20 +13,28 @@ export default function handleTabBarOnPress(props) {
       if (productOpening) return;
       productOpening = true;
 
-      APIHandler.site_info(store.store_id || appConfig.defaultSiteId)
-        .then(response => {
-          if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
-              store.setStoreData(response.data);
-              Actions.push(appConfig.routes.store, {
-                title: response.data.name
-              });
-            })();
-          }
-        })
-        .finally(() => {
-          productOpening = false;
-        });
+      const service = {
+        type: SERVICES_TYPE.OPEN_SHOP,
+        siteId: store.store_id || appConfig.defaultSiteId
+      };
+      servicesHandler(service, null, () => {
+        productOpening = false;
+      });
+
+      // APIHandler.site_info(store.store_id || appConfig.defaultSiteId)
+      //   .then(response => {
+      //     if (response && response.status == STATUS_SUCCESS) {
+      //       action(() => {
+      //         store.setStoreData(response.data);
+      //         Actions.push(appConfig.routes.store, {
+      //           title: response.data.name
+      //         });
+      //       })();
+      //     }
+      //   })
+      //   .finally(() => {
+      //     productOpening = false;
+      //   });
       break;
     default:
       props.defaultHandler();
