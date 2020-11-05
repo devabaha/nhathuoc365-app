@@ -128,9 +128,6 @@ class Home extends Component {
         showShadow: false,
         statusBarStyle: STATUS_BAR_STYLE.LIGHT
       });
-      if (appConfig.device.isAndroid) {
-        StatusBar.setBackgroundColor(appConfig.colors.primary);
-      }
       return;
     }
 
@@ -139,9 +136,6 @@ class Home extends Component {
         showShadow: true,
         statusBarStyle: STATUS_BAR_STYLE.DARK
       });
-      if (appConfig.device.isAndroid) {
-        StatusBar.setBackgroundColor('transparent');
-      }
     }
   };
 
@@ -281,10 +275,10 @@ class Home extends Component {
     return (
       <View style={styles.container}>
         {/* <LoadingComponent loading={this.props.apiFetching} /> */}
-        <StatusBar
+        {/* <StatusBar
           // barStyle={this.state.statusBarStyle}
           backgroundColor={appConfig.colors.primary}
-        />
+        /> */}
 
         <View style={styles.headerBackground}>
           {this.props.site && this.props.site.app_event_banner_image && (
