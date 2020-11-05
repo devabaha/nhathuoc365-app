@@ -4,6 +4,7 @@ import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
 import { SERVICES_TYPE } from '../helper/servicesHandler';
+import appConfig from 'app-config';
 
 @autobind
 class Store {
@@ -507,6 +508,19 @@ class Store {
    */
   @action setPopupClickedID(popupClickedID) {
     this.popupClickedID = popupClickedID;
+  }
+
+  @observable homeStatusBar = {
+    barStyle: 'light-content',
+    backgroundColor: appConfig.colors.primary
+  };
+
+  @action setHomeBarStyle(barStyle) {
+    this.homeStatusBar.barStyle = barStyle;
+  }
+
+  @action setHomeBarBackgroundColor(backgroundColor) {
+    this.homeStatusBar.backgroundColor = backgroundColor;
   }
 }
 

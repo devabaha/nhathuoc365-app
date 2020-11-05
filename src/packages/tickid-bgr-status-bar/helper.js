@@ -1,6 +1,7 @@
 import config from './config';
 import { Platform, StatusBar } from 'react-native';
 import appConfig from 'app-config';
+import store from '../../store';
 
 export const show = () => {
   config.methods.show();
@@ -22,6 +23,7 @@ export const showBgrStatusIfOffsetTop = (currentScene, offsetTop = 0) => {
         StatusBar.setBarStyle('dark-content', true);
       } else {
         StatusBar.setBackgroundColor('#000');
+        store.setHomeBarBackgroundColor('#000');
       }
     } else {
       if (Platform.OS === 'ios') {
@@ -32,6 +34,7 @@ export const showBgrStatusIfOffsetTop = (currentScene, offsetTop = 0) => {
         StatusBar.setBarStyle('light-content', true);
       } else {
         StatusBar.setBackgroundColor(appConfig.colors.primary);
+        store.setHomeBarBackgroundColor(appConfig.colors.primary);
       }
     }
   };

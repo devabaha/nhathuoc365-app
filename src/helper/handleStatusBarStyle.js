@@ -2,6 +2,7 @@ import { StatusBar } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { config as bgrStatusBarConfig } from 'app-packages/tickid-bgr-status-bar';
 import appConfig from 'app-config';
+import store from 'app-store';
 
 export default function handleStatusBarStyle(prevState, newState, action) {
   const darkStatusBarScenes = [
@@ -45,6 +46,10 @@ export default function handleStatusBarStyle(prevState, newState, action) {
         }
       } else {
         if (appConfig.device.isAndroid) {
+          if (Actions.currentScene === `${appConfig.routes.homeTab}_1`) {
+            StatusBar.setBackgroundColor(store.homeStatusBar.backgroundColor);
+            return;
+          }
           StatusBar.setBackgroundColor(appConfig.colors.primary);
         } else {
           StatusBar.setBarStyle('light-content', true);
