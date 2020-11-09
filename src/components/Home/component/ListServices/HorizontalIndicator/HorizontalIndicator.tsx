@@ -28,19 +28,23 @@ class HorizontalIndicator extends Component<HorizontalIndicatorProps> {
     animatedIndicatorWidth = new Animated.Value(0);
 
     componentDidMount() {
-        Animated.timing(this.animatedIndicatorWidth, {
-            toValue: this.props.indicatorWidth,
-            easing: Easing.quad,
-            duration: 200
-        }).start();
+        setTimeout(() =>
+            Animated.timing(this.animatedIndicatorWidth, {
+                toValue: this.props.indicatorWidth,
+                easing: Easing.quad,
+                duration: 200
+            }).start()
+        );
     }
 
     componentDidUpdate() {
-        Animated.timing(this.animatedIndicatorWidth, {
-            toValue: this.props.indicatorWidth,
-            easing: Easing.quad,
-            duration: 200
-        }).start();
+        setTimeout(() =>
+            Animated.timing(this.animatedIndicatorWidth, {
+                toValue: this.props.indicatorWidth,
+                easing: Easing.quad,
+                duration: 200
+            }).start()
+        );
     }
 
     get containerStyle() {
