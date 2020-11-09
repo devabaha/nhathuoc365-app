@@ -322,7 +322,11 @@ class App extends Component {
 
   componentDidMount() {
     // codePush.clearUpdates();
-    this.codePushSyncManually();
+    if (__DEV__) {
+      console.log('DEVELOPMENT');
+    } else {
+      this.codePushSyncManually();
+    }
     this.codePushGetMetaData();
     this.handleSubcribeBranchIO();
     this.handleAddListenerOneSignal();
