@@ -39,12 +39,12 @@ function Header(props) {
       </View>
 
       {/* DEMO SCHEDULE FUNCTION */}
-      {/* <Button
+      <Button
         containerStyle={{ position: 'absolute', right: 70, top: 40 }}
         onPress={() => Actions.push(appConfig.routes.schedule)}
       >
         <Text style={{ color: '#fff', fontWeight: 'bold' }}> Đặt lịch</Text>
-      </Button> */}
+      </Button>
     </View>
   );
 }
