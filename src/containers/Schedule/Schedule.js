@@ -32,12 +32,49 @@ const SLOTS = [
 class Schedule extends Component {
   static defaultProps = {
     slots: SLOTS,
-    slotMessage: 'Tất cả thời gian đều thuộc giờ Đông Dương (from server)'
+    slotMessage: ''
   };
   state = {
     selectedDate: moment().format(DATE_FORMAT),
     titleSlotPicker: this.getTitleSlotPicker(moment().format(DATE_FORMAT))
   };
+
+  diffTime(time1, time2 = moment()) {
+    if (!moment(time1).diff(time2)) return '';
+    let diffMess = '';
+    const yearsDiff = moment(time1).diff(time2, 'years');
+    const monthsDiff = moment(time1).diff(time2, 'months');
+    const weeksDiff = moment(time1).diff(time2, 'weeks');
+    const daysDiff = moment(time1).diff(time2, 'days');
+    const hoursDiff = moment(time1).diff(time2, 'hours');
+    const minutesDiff = moment(time1).diff(time2, 'minutes');
+
+    if (yearsDiff) {
+      diffMess = yearsDiff + ' năm từ ';
+    } else if (monthsDiff) {
+      diffMess = monthsDiff + ' tháng từ ';
+    } else if (weeksDiff) {
+      diffMess = weeksDiff + ' tuần từ ';
+    } else if (daysDiff) {
+      diffMess = daysDiff + ' ngày từ ';
+    } else if (hoursDiff) {
+      diffMess = hoursDiff + ' giờ từ ';
+    } else {
+      diffMess = minutesDiff + ' phút từ ';
+    }
+
+    if (diffMess) {
+      const [diffTime, affix] = diffMess.split(' ');
+      if (diffTime < 0) {
+        diffMess = `Đã trễ ${Math.abs(diffTime)} ${affix}`;
+      } else {
+        diffMess += 'bây giờ';
+      }
+    } else {
+      diffMess = 'bây giờ';
+    }
+    return diffMess;
+  }
 
   capitalizeFirstLetter(string) {
     let newString = '';
@@ -86,13 +123,14 @@ class Schedule extends Component {
   handlePressSlot(slot) {
     Actions.push(appConfig.routes.scheduleConfirm, {
       date: this.state.titleSlotPicker,
-      dateDescription: '1 giờ từ bây giờ (from server - FS)',
-      timeRange: '16:15 - 16:45 (FS)',
-      timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
+      // dateDescription: '1 giờ từ bây giờ (from server - FS)',
+      dateDescription: this.diffTime(`${this.state.selectedDate} ${slot}`),
+      timeRange: slot,
+      // timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
       appointmentName: 'Tick ID',
-      description:
-        'Tick ID sẽ nhìn thấy tên tài khoản của bạn để có thể liên hệ với bạn. (FS)',
-      btnMessage: 'Doanh nghiệp thường trả lời trong vòng vài phút (FS)'
+      description: ''
+      // 'Tick ID sẽ nhìn thấy tên tài khoản của bạn để có thể liên hệ với bạn. (FS)',
+      // btnMessage: 'Doanh nghiệp thường trả lời trong vòng vài phút (FS)'
     });
   }
 
@@ -133,10 +171,10 @@ class Schedule extends Component {
           // date-format: YYYY-MM-DD
           selectedDate={this.state.selectedDate}
           // startDate (today) - (margin-left)
-          startDate={'2020-03-07'}
+          startDate={'2020-11-01'}
           // endDate - (margin-right)
-          endDate={'2020-05-01'}
-          // disabledDates (flexile)
+          endDate={'2020-11-20'}
+          // disabledDates (flexible)
           disabledDates={[
             { start: '2020-04-03', end: '2020-04-06' },
             '2020-04-10',
@@ -156,7 +194,8 @@ class Schedule extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: '#fff'
   },
   dateTimePicker: {
     borderBottomWidth: 0.5,
@@ -165,7 +204,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10
   },
   slotPicker: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    backgroundColor: '#f5f5f5'
   },
   extraMessageTitle: {
     color: '#555'

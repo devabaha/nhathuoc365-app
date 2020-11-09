@@ -10,17 +10,17 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '../../../components/Button';
 import appConfig from 'app-config';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
 
 class Confirm extends Component {
   static defaultProps = {
-    date: 'Hôm nay, 24 tháng 3',
+    date: '',
     dateSubTitle: '',
-    timeRange: '16:15 - 16:45',
+    timeRange: '',
     noteTitle: 'Ghi chú về cuộc hẹn',
-    appointmentName: 'Tick ID',
-    description:
-      'Tick ID sẽ nhìn thấy tên tài khoản của bạn để có thể liên hệ với bạn.',
-    btnMessage: 'Doanh nghiệp thường trả lời trong vòng vài phút'
+    appointmentName: '',
+    description: '',
+    btnMessage: ''
   };
 
   state = {};
@@ -82,13 +82,17 @@ class Confirm extends Component {
         <Button
           containerStyle={styles.btnContainerStyle}
           renderBefore={
-            <View style={styles.btnMessageContainer}>
-              <Icon name="cube-send" style={styles.btnIcon} />
-              <Text style={styles.rowSubTitle}>{this.props.btnMessage}</Text>
-            </View>
+            !!this.props.btnMessage && (
+              <View style={styles.btnMessageContainer}>
+                <Icon name="cube-send" style={styles.btnIcon} />
+                <Text style={styles.rowSubTitle}>{this.props.btnMessage}</Text>
+              </View>
+            )
           }
           title={t('confirm.requestAppointment')}
         />
+
+        {appConfig.device.isIOS && <KeyboardSpacer />}
       </SafeAreaView>
     );
   }
@@ -119,7 +123,7 @@ const styles = StyleSheet.create({
     height: 100,
     borderColor: '#555',
     borderWidth: 0.5,
-    backgroundColor: '#555'
+    backgroundColor: '#fff'
   },
   heading: {
     color: '#242424',
@@ -128,32 +132,39 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
   bodyContainer: {
-    paddingTop: 15,
+    paddingVertical: 15,
     paddingHorizontal: 15
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 7
+    marginVertical: 7
   },
   rowIcon: {
     color: '#aaa',
-    fontSize: 24,
-    padding: 10
+    fontSize: 30,
+    paddingVertical: 10,
+    paddingRight: 20
   },
   rowInfo: {
     flex: 1
   },
   rowTitle: {
     color: '#333',
-    marginBottom: 5
+    fontWeight: '500',
+    fontSize: 16
   },
   rowSubTitle: {
     color: '#888',
-    fontSize: 13
+    marginTop: 5
+    // fontSize: 13
   },
   input: {
-    fontSize: 13
+    // fontSize: 13
+    marginTop: 5,
+    paddingBottom: 7,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#aaa'
   },
   descriptionContainer: {
     marginTop: 5,
@@ -194,7 +205,9 @@ const ConfirmRow = props => {
             placeholderTextColor={appConfig.colors.placeholder}
           />
         ) : (
-          <Text style={styles.rowSubTitle}>{props.subTitle}</Text>
+          !!props.subTitle && (
+            <Text style={styles.rowSubTitle}>{props.subTitle}</Text>
+          )
         )}
       </View>
     </View>

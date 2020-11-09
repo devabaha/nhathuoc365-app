@@ -469,3 +469,33 @@ global.is1LevelObjectUpdated = (oldObj, newObj) => {
 
   return oldKeys.some(key => oldObj[key] !== newObj[key]);
 };
+
+/**
+ * @todo cancel all timeouts passed in.
+ *
+ * @param {(typeof setTimeout)[] | typeof setTimeout} timeouts
+ */
+global.clearTimeouts = timeouts => {
+  if (Array.isArray(timeouts)) {
+    timeouts.forEach(timeout => {
+      timeout.cancel();
+    });
+  } else {
+    timeout.cancel();
+  }
+};
+
+/**
+ * @todo cancel all intervals passed in.
+ *
+ * @param {(typeof setInterval)[] | typeof setInterval} intervals
+ */
+global.clearIntervals = intervals => {
+  if (Array.isArray(intervals)) {
+    intervals.forEach(interval => {
+      clearInterval(interval);
+    });
+  } else {
+    clearInterval(intervals);
+  }
+};
