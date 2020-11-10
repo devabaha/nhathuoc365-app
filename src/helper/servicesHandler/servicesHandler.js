@@ -312,6 +312,13 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         service.delay
       );
       break;
+
+    /** SCHEDULE BOOKING */
+    case SERVICES_TYPE.SCHEDULE_BOOKING:
+      Actions.push(appConfig.routes.schedule, {
+        serviceId: service.id
+      });
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }
