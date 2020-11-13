@@ -5,6 +5,7 @@ import BaseContainer from '../BaseContainer';
 import ScanScreenComponent from '../../component/ScanScreen';
 import { internalFetch } from '../../helper/apiFetch';
 import { showMessage } from '../../constants';
+import EventTracker from '../../../../helper/EventTracker';
 
 class ScanScreen extends BaseContainer {
   static propTypes = {
@@ -25,6 +26,15 @@ class ScanScreen extends BaseContainer {
     this.state = {
       showLoading: false
     };
+    this.eventTracker = new EventTracker();
+  }
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handlePressEnterCode = ({ onSendCode }) => {

@@ -145,7 +145,7 @@ import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
-import { call } from 'react-native-reanimated';
+import { ANALYTICS_EVENTS_NAME } from './constants';
 /**
  * Not allow font scaling
  */
@@ -825,7 +825,7 @@ class RootRouter extends Component {
                    ************************ Tab 4 ************************
                    */}
                   <Stack
-                    key="myTab5"
+                    key={appConfig.routes.accountTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab5.title')}
                     iconName="account-circle"
@@ -833,12 +833,32 @@ class RootRouter extends Component {
                     iconSize={24}
                   >
                     <Scene
-                      key="_account"
+                      key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}
                     />
                   </Stack>
                 </Tabs>
+
+                <Stack key={appConfig.routes.ordersTab}>
+                  <Scene
+                    key={`${appConfig.routes.ordersTab}_1`}
+                    title={t('screen.orders.mainTitle')}
+                    {...navBarConfig}
+                    component={Orders}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.newsTab}>
+                  <Scene
+                    key={`${appConfig.routes.newsTab}_1`}
+                    title={t('screen.news.mainTitle')}
+                    {...navBarConfig}
+                    component={Notify}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ MULTI LEVEL CATEGORY ================ */}
                 <Stack key={appConfig.routes.multiLevelCategory}>
@@ -993,9 +1013,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="forget_verify">
+                <Stack key={appConfig.routes.forgetVerify}>
                   <Scene
-                    key="forget_verify_1"
+                    key={`${appConfig.routes.forgetVerify}_1`}
                     title="Lấy lại mật khẩu"
                     component={ForgetVerify}
                     {...navBarConfig}
@@ -1003,9 +1023,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="forget_active">
+                <Stack key={appConfig.routes.forgetActive}>
                   <Scene
-                    key="forget_active_1"
+                    key={`${appConfig.routes.forgetActive}_1`}
                     title="Kích hoạt tài khoản"
                     component={ForgetActive}
                     {...navBarConfig}
@@ -1013,9 +1033,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="new_pass">
+                <Stack key={appConfig.routes.newPass}>
                   <Scene
-                    key="new_pass_1"
+                    key={`${appConfig.routes.newPass}_1`}
                     title="Tạo mật khẩu mới"
                     component={NewPass}
                     {...navBarConfig}
@@ -1302,9 +1322,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="profile_detail">
+                <Stack key={appConfig.routes.profileDetail}>
                   <Scene
-                    key="profile_detail_1"
+                    key={`${appConfig.routes.profileDetail}_1`}
                     title={t('screen.account.myAccountTitle')}
                     component={ProfileDetail}
                     {...navBarConfig}
@@ -1312,9 +1332,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="edit_profile">
+                <Stack key={appConfig.routes.editProfile}>
                   <Scene
-                    key="edit_profile_1"
+                    key={`${appConfig.routes.editProfile}_1`}
                     title={t('screen.account.editAccountTitle')}
                     component={EditProfile}
                     {...navBarConfig}
@@ -1322,9 +1342,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="detail_history_payment">
+                <Stack key={appConfig.routes.detailHistoryPayment}>
                   <Scene
-                    key="detail_history_payment_1"
+                    key={`${appConfig.routes.detailHistoryPayment}_1`}
                     title="Tích điểm"
                     component={DetailHistoryPayment}
                     {...navBarConfig}
@@ -1523,7 +1543,6 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.scheduleConfirm}>
                   <Scene
                     key={`${appConfig.routes.scheduleConfirm}_1`}
-                    title={t('screen.scheduleConfirm.mainTitle')}
                     component={ScheduleConfirm}
                     {...whiteNavBarConfig}
                     back

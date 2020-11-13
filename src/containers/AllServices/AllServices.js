@@ -7,6 +7,7 @@ import { servicesHandler } from '../../helper/servicesHandler';
 import { APIRequest } from '../../network/Entity';
 import ListServices from '../../components/Home/component/ListServices';
 import Loading from '../../components/Loading';
+import EventTracker from '../../helper/EventTracker';
 
 const styles = StyleSheet.create({
   container: {
@@ -32,13 +33,16 @@ class AllServices extends Component {
   };
   getServicesRequest = new APIRequest();
   requests = [this.getServicesRequest];
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     this.getServices();
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     cancelRequests(requests);
+    this.eventTracker.clearTracking();
   }
 
   async getServices() {

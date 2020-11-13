@@ -23,6 +23,7 @@ import ContactItemComponent from '../../component/ContactItem';
 import AsyncStorage from '@react-native-community/async-storage';
 import ModalAllowPermisson from '../../component/ModalAllowPermisson';
 import AndroidOpenSettings from 'react-native-android-open-settings';
+import EventTracker from '../../../../helper/EventTracker';
 
 const INIT_PAGE = 1;
 const CONTACTS_PER_PAGE = 20;
@@ -62,6 +63,7 @@ class Contact extends Component {
       currentPage: INIT_PAGE,
       searchText: ''
     };
+    this.eventTracker = new EventTracker();
   }
 
   get hasSearchResult() {
@@ -78,7 +80,12 @@ class Contact extends Component {
     } else {
       this.handleCheckPermissonAndroid();
     }
-    EventTracker.logEvent('contact_page');
+
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handleCheckPermissonAndroid = () => {

@@ -1,4 +1,4 @@
-package id.tick;
+package id.tickid;
 
 import android.app.Application;
 

@@ -16,19 +16,25 @@ import {
 import store from '../../store/Store';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 export default class AddRef extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {
       pageNum: 0,
       stores_data: null
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    EventTracker.logEvent('add_ref_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _onFinish() {

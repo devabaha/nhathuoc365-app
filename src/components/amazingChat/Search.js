@@ -13,7 +13,7 @@ import { Actions } from 'react-native-router-flux';
 import { debounce } from 'lodash';
 import store from '../../store';
 import ChatRow from './ChatRow';
-
+import EventTracker from '../../helper/EventTracker';
 const { width: WIDTH, height: HEIGHT } = Dimensions.get('screen');
 
 class Search extends Component {
@@ -24,6 +24,7 @@ class Search extends Component {
     searchValue: ''
   };
   unmounted = false;
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     this.handleChangeSearch('');
@@ -32,12 +33,13 @@ class Search extends Component {
         onChangeSearch: this.handleChangeSearch.bind(this)
       })
     );
-    EventTracker.logEvent('search_chat_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.setState({ loading: false });
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   searchCustomer = debounce(async (search = '') => {

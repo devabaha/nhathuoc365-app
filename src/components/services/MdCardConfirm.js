@@ -5,33 +5,30 @@ import {
   View,
   Text,
   StyleSheet,
-  TextInput,
   TouchableHighlight,
-  Switch,
-  Keyboard,
   ScrollView,
-  Alert,
-  Image,
-  FlatList,
-  Platform
+  Alert
 } from 'react-native';
 
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class MdCardConfirm extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
 
     this.state = {};
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    console.log();
-    EventTracker.logEvent('md_card_confirm_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {}

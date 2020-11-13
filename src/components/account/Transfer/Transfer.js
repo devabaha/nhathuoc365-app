@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Communications from 'react-native-communications';
 import Modal from './Payment/Modal';
 import store from 'app-store';
+import EventTracker from '../../../helper/EventTracker';
 
 class Transfer extends Component {
   state = {
@@ -27,6 +28,15 @@ class Transfer extends Component {
     modalVisible: false,
     loading: false
   };
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   goToScanQR = () => {
     const { t } = this.props;

@@ -5,12 +5,16 @@ import {
   SafeAreaView,
   View,
   Text,
-  TextInput
+  TextInput,
+  Image
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '../../../components/Button';
 import appConfig from 'app-config';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import { APIRequest } from '../../../network/Entity';
+import EventTracker from '../../../helper/EventTracker';
+import { Actions } from 'react-native-router-flux';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -23,7 +27,90 @@ class Confirm extends Component {
     btnMessage: ''
   };
 
-  state = {};
+  state = {
+    note: ''
+  };
+  bookServiceRequest = new APIRequest();
+  requests = [this.bookServiceRequest];
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    setTimeout(() =>
+      Actions.refresh({
+        title:
+          this.props.title ||
+          this.props.t('common:screen.scheduleConfirm.mainTitle')
+      })
+    );
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    cancelRequests(this.requests);
+    this.eventTracker.clearTracking();
+  }
+
+  async bookService() {
+    this.setState({ loading: true });
+    const { t } = this.props;
+    const errMess = t('common:api.error.message');
+    try {
+      const data = {
+        service_id: this.props.serviceId,
+        note: this.state.note,
+        date: this.props.date,
+        time: this.props.timeRange
+      };
+      this.bookServiceRequest.data = APIHandler.service_book(
+        this.props.siteId,
+        data
+      );
+      const response = await this.bookServiceRequest.promise();
+      console.log(this.props.serviceId, data);
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          if (response.data) {
+            flashShowMessage({
+              type: 'success',
+              message: response.message
+            });
+            Actions.pop();
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || errMess
+            });
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || errMess
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: errMess
+        });
+      }
+    } catch (err) {
+      console.log('%cbook_schedule_service', 'color:red', err);
+      flashShowMessage({
+        type: 'danger',
+        message: errMess
+      });
+    } finally {
+      this.setState({
+        loading: false
+      });
+    }
+  }
+
+  handleChangeText(row, text) {
+    this.setState({
+      [row.id]: text
+    });
+  }
 
   renderRows(rows) {
     return rows.map((row, indx) => (
@@ -34,6 +121,9 @@ class Confirm extends Component {
         iconName={row.iconName}
         editable={row.editable}
         placeholder={row.placeholder}
+        onChangeText={text => {
+          this.handleChangeText(row, text);
+        }}
       />
     ));
   }
@@ -43,7 +133,7 @@ class Confirm extends Component {
     const rows = [
       {
         iconName: 'calendar-star',
-        title: this.props.date,
+        title: this.props.dateView,
         subTitle: this.props.dateDescription
       },
       {
@@ -52,6 +142,7 @@ class Confirm extends Component {
         subTitle: this.props.timeRangeDescription
       },
       {
+        id: 'note',
         iconName: 'pencil',
         title: t('confirm.note.title'),
         editable: true,
@@ -64,8 +155,21 @@ class Confirm extends Component {
           <View style={styles.header}>
             <View style={styles.bgHeader}></View>
             <View style={styles.infoContainer}>
-              <View style={styles.logo} />
-              <Text style={styles.heading}>{this.props.appointmentName}</Text>
+              <View style={styles.logoContainer}>
+                <Image
+                  source={{ uri: this.props.image }}
+                  style={styles.logo}
+                  resizeMode="contain"
+                />
+              </View>
+              {!!this.props.appointmentName && (
+                <Text style={styles.heading}>{this.props.appointmentName}</Text>
+              )}
+              {!!this.props.appointmentDescription && (
+                <Text style={styles.subHeading}>
+                  {this.props.appointmentDescription}
+                </Text>
+              )}
             </View>
           </View>
 
@@ -80,11 +184,12 @@ class Confirm extends Component {
         </ScrollView>
 
         <Button
+          onPress={this.bookService.bind(this)}
           containerStyle={styles.btnContainerStyle}
           renderBefore={
             !!this.props.btnMessage && (
               <View style={styles.btnMessageContainer}>
-                <Icon name="cube-send" style={styles.btnIcon} />
+                {/* <Icon name="cube-send" style={styles.btnIcon} /> */}
                 <Text style={styles.rowSubTitle}>{this.props.btnMessage}</Text>
               </View>
             )
@@ -104,7 +209,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff'
   },
   bgHeader: {
-    backgroundColor: '#aaa',
+    backgroundColor: '#888',
     width: '100%',
     height: 100,
     position: 'absolute'
@@ -118,18 +223,28 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: '#aaa'
   },
-  logo: {
+  logoContainer: {
     width: 100,
     height: 100,
     borderColor: '#555',
     borderWidth: 0.5,
     backgroundColor: '#fff'
   },
+  logo: {
+    width: '100%',
+    height: '100%'
+  },
   heading: {
     color: '#242424',
     marginTop: 15,
     fontSize: 22,
-    fontWeight: '500'
+    fontWeight: '500',
+    letterSpacing: 0.5
+  },
+  subHeading: {
+    color: '#888',
+    marginTop: 7,
+    fontSize: 15
   },
   bodyContainer: {
     paddingVertical: 15,
@@ -161,10 +276,10 @@ const styles = StyleSheet.create({
   },
   input: {
     // fontSize: 13
-    marginTop: 5,
+    marginTop: 7,
     paddingBottom: 7,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#aaa'
+    borderBottomColor: '#ccc'
   },
   descriptionContainer: {
     marginTop: 5,
@@ -190,7 +305,7 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation('schedule')(Confirm);
+export default withTranslation(['schedule', 'common'])(Confirm);
 
 const ConfirmRow = props => {
   return (
@@ -203,6 +318,7 @@ const ConfirmRow = props => {
             style={styles.input}
             placeholder={props.placeholder}
             placeholderTextColor={appConfig.colors.placeholder}
+            onChangeText={props.onChangeText}
           />
         ) : (
           !!props.subTitle && (

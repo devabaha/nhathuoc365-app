@@ -1,11 +1,22 @@
 import React, { Component } from 'react';
-import { SafeAreaView, StyleSheet, View, ScrollView, Text } from 'react-native';
+import {
+  SafeAreaView,
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  RefreshControl
+} from 'react-native';
 import { ScheduleDateTimePicker } from '../../components/Schedule';
 import SlotPicker from '../../components/Schedule/SlotPicker/SlotPicker';
 import moment from 'moment';
 import { DATE_FORMAT } from '../../components/Schedule/constants';
 import { Actions } from 'react-native-router-flux';
+import { APIRequest } from '../../network/Entity';
 import appConfig from 'app-config';
+import Loading from '../../components/Loading';
+import NoResult from '../../components/NoResult';
+import EventTracker from '../../helper/EventTracker';
 
 const SLOTS = [
   '9:00',
@@ -31,13 +42,104 @@ const SLOTS = [
 ];
 class Schedule extends Component {
   static defaultProps = {
-    slots: SLOTS,
-    slotMessage: ''
+    serviceId: '508'
   };
   state = {
+    serviceTitle: '',
+    serviceId: this.props.serviceId,
     selectedDate: moment().format(DATE_FORMAT),
-    titleSlotPicker: this.getTitleSlotPicker(moment().format(DATE_FORMAT))
+    titleSlotPicker: this.getTitleSlotPicker(moment().format(DATE_FORMAT)),
+    disabledDates: [],
+    // [
+    //   { start: "2020-04-03", end: "2020-04-06" },
+    //   "2020-04-10",
+    //   { start: "2020-04-11", end: "2020-04-12" },
+    // ]
+    confirmNote: '',
+    startDate: '',
+    endDate: '',
+    slots: [],
+    slotsMessage: '',
+    user: {},
+    loading: true,
+    refreshing: false
   };
+  getScheduleDataRequest = new APIRequest();
+  requests = [this.getScheduleDataRequest];
+  eventTracker = new EventTracker();
+
+  get hasDateData() {
+    return !!this.state.startDate;
+  }
+
+  get hasSlotsData() {
+    return Array.isArray(this.state.slots) && this.state.slots.length !== 0;
+  }
+
+  componentDidMount() {
+    this.getScheduleData();
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    cancelRequests(this.requests);
+    this.eventTracker.clearTracking();
+  }
+
+  async getScheduleData() {
+    const { t } = this.props;
+    const errMess = t('common:api.error.message');
+    try {
+      const serviceId = this.props.serviceId;
+      this.getScheduleDataRequest.data = APIHandler.get_service_info(serviceId);
+      const response = await this.getScheduleDataRequest.promise();
+      console.log(response);
+
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          if (response.data) {
+            this.setState({
+              disabledDates: response.data.disabled_dates,
+              startDate: response.data.start_date,
+              endDate: response.data.end_date,
+              slots: response.data.slots,
+              slotsMessage: response.data.note,
+              site: response.data.site,
+              serviceId,
+              confirmNote: response.data.content,
+              serviceTitle: response.data.name
+            });
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || errMess
+            });
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || errMess
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: errMess
+        });
+      }
+    } catch (err) {
+      console.log('%cget_schedule_data', 'color:red', err);
+      flashShowMessage({
+        type: 'danger',
+        message: errMess
+      });
+    } finally {
+      this.setState({
+        loading: false,
+        refreshing: false
+      });
+    }
+  }
 
   diffTime(time1, time2 = moment()) {
     if (!moment(time1).diff(time2)) return '';
@@ -122,16 +224,25 @@ class Schedule extends Component {
 
   handlePressSlot(slot) {
     Actions.push(appConfig.routes.scheduleConfirm, {
-      date: this.state.titleSlotPicker,
-      // dateDescription: '1 giờ từ bây giờ (from server - FS)',
+      title: this.state.serviceTitle,
+      siteId: this.state.siteId,
+      serviceId: this.state.serviceId,
+
+      dateView: this.state.titleSlotPicker,
+      date: this.state.selectedDate,
       dateDescription: this.diffTime(`${this.state.selectedDate} ${slot}`),
       timeRange: slot,
       // timeRangeDescription: 'Khoảng thời gian không cố định (FS)',
-      appointmentName: 'Tick ID',
-      description: ''
-      // 'Tick ID sẽ nhìn thấy tên tài khoản của bạn để có thể liên hệ với bạn. (FS)',
-      // btnMessage: 'Doanh nghiệp thường trả lời trong vòng vài phút (FS)'
+      appointmentName: this.state.site.name,
+      appointmentDescription: this.state.site.address,
+      image: this.state.site.logo_url,
+      description: this.state.confirmNote
     });
+  }
+
+  onRefresh() {
+    this.setState({ refreshing: true });
+    this.getScheduleData();
   }
 
   renderExtraMessage() {
@@ -151,13 +262,15 @@ class Schedule extends Component {
 
   renderSlotPicker() {
     return (
-      this.props.slots.length !== 0 && (
-        <SlotPicker
-          title={this.state.titleSlotPicker}
-          slots={this.props.slots}
-          message={this.props.slotMessage}
-          onPress={this.handlePressSlot.bind(this)}
-        />
+      this.state.slots.length !== 0 && (
+        <View>
+          <SlotPicker
+            title={this.state.titleSlotPicker}
+            slots={this.state.slots}
+            message={this.state.slotsMessage}
+            onPress={this.handlePressSlot.bind(this)}
+          />
+        </View>
       )
     );
   }
@@ -165,27 +278,42 @@ class Schedule extends Component {
   render() {
     return (
       <SafeAreaView style={styles.container}>
-        <ScheduleDateTimePicker
-          containerStyle={styles.dateTimePicker}
-          onPress={this.handlePressDate}
-          // date-format: YYYY-MM-DD
-          selectedDate={this.state.selectedDate}
-          // startDate (today) - (margin-left)
-          startDate={'2020-11-01'}
-          // endDate - (margin-right)
-          endDate={'2020-11-20'}
-          // disabledDates (flexible)
-          disabledDates={[
-            { start: '2020-04-03', end: '2020-04-06' },
-            '2020-04-10',
-            { start: '2020-04-11', end: '2020-04-12' }
-          ]}
-        />
+        {this.state.loading && <Loading center />}
+        {this.hasDateData && (
+          <ScheduleDateTimePicker
+            containerStyle={styles.dateTimePicker}
+            onPress={this.handlePressDate}
+            // date-format: YYYY-MM-DD
+            selectedDate={this.state.selectedDate}
+            // startDate (today) - (margin-left)
+            startDate={this.state.startDate}
+            // endDate - (margin-right)
+            endDate={this.state.endDate}
+            // disabledDates (flexible)
+            disabledDates={this.state.disabledDates}
+          />
+        )}
 
-        <ScrollView style={styles.slotPicker}>
+        <ScrollView
+          style={styles.slotPicker}
+          contentContainerStyle={{ flexGrow: 1 }}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh.bind(this)}
+            />
+          }
+        >
           {this.renderExtraMessage()}
 
-          {this.renderSlotPicker()}
+          {this.hasSlotsData
+            ? this.renderSlotPicker()
+            : !this.state.loading && (
+                <NoResult
+                  iconName="calendar-remove-outline"
+                  message="Chưa có khung giờ cho ngày này."
+                />
+              )}
         </ScrollView>
       </SafeAreaView>
     );
@@ -205,7 +333,7 @@ const styles = StyleSheet.create({
   },
   slotPicker: {
     paddingHorizontal: 15,
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f8f8f8'
   },
   extraMessageTitle: {
     color: '#555'
@@ -216,4 +344,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation('schedule')(Schedule);
+export default withTranslation(['schedule', 'common'])(Schedule);

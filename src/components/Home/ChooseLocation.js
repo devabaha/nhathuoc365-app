@@ -19,16 +19,22 @@ import Items from '../stores/Items';
 import ItemList from './ItemList';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 export default class ChooseLocation extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {};
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    EventTracker.logEvent('choose_location_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   async onPressLocation(item) {

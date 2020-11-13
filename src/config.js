@@ -17,7 +17,7 @@ const config = Object.freeze({
     partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
   },
   oneSignal: {
-    appKey: 'e2e80243-08c0-405a-9a36-5d060ba0af12'
+    appKey: '81c68653-e1e3-4ec7-baa4-5a8e89541e29'
   },
   device: Object.freeze({
     isIphoneX: isIphoneX(),
@@ -43,6 +43,12 @@ const config = Object.freeze({
     placeholder: '#c7c7cd'
   },
   routes: {
+    // ?deprecated
+    forgetActive: 'forget_active',
+    forgetVerify: 'forget_verify',
+    newPass: 'new_pass',
+    // ----
+
     sceneWrapper: 'sceneWrapper',
     launch: 'launch',
 
@@ -50,11 +56,13 @@ const config = Object.freeze({
 
     homeTab: 'homeTab',
     newsTab: 'newsTab',
+    accountTab: 'accountTab',
     deepLinkNewsTab: 'deepLinkNewsTab',
     scanQrCodeTab: 'scanQrCodeTab',
     ordersTab: 'ordersTab',
     deepLinkOrdersTab: 'deepLinkOrdersTab',
 
+    news: 'news',
     vndWallet: 'vnd_wallet',
     payWallet: 'pay_wallet',
     transfer: 'transfer',
@@ -67,6 +75,11 @@ const config = Object.freeze({
     qrBarCode: 'qrBarCode',
 
     notifies: 'notifies',
+
+    detailHistoryPayment: 'detail_history_payment',
+
+    profileDetail: 'profile_detail',
+    editProfile: 'edit_profile',
 
     store: 'store',
     searchStore: 'searchStore',

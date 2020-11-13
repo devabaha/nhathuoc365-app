@@ -499,8 +499,8 @@ class DateTimePicker extends Component {
       opacity: this.state.animatedPrevious.interpolate({
         inputRange: [0, 0.618, 1],
         outputRange: [0, 1, 0]
-      }),
-      right: -14
+      })
+      // right: -14
     };
 
     const extraNextStyle = {
@@ -508,8 +508,8 @@ class DateTimePicker extends Component {
       opacity: this.state.animatedNext.interpolate({
         inputRange: [0, 0.618, 1],
         outputRange: [0, 1, 0]
-      }),
-      left: -14
+      })
+      // left: -14
     };
 
     return (
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   iconDisabled: {
-    color: '#999'
+    color: '#aaa'
   },
   btnContainer: {
     justifyContent: 'center',

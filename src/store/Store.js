@@ -3,6 +3,7 @@ import autobind from 'autobind-decorator';
 import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
+import { analytics } from 'react-native-firebase';
 
 @autobind
 class Store {
@@ -469,6 +470,19 @@ class Store {
    */
   @action setPopupClickedID(popupClickedID) {
     this.popupClickedID = popupClickedID;
+  }
+
+  @observable analyticsUserID = '';
+  @observable analyst = analytics();
+
+  @action setAnalyticsUser(user) {
+    this.analyticsUserID = user.id;
+    this.analyst.setUserId(this.analyticsUserID);
+  }
+
+  @action removeAnalytics() {
+    this.analyticsUserID = '';
+    this.analyst.setUserId('');
   }
 }
 

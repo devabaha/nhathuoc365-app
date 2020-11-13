@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import BaseContainer from '../BaseContainer';
 import { internalFetch } from '../../helper/apiFetch';
 import SelectProvinceComponent from '../../component/SelectProvince';
+import EventTracker from '../../../../helper/EventTracker';
 
 const defaultListener = () => {};
 
@@ -26,11 +27,17 @@ class SelectProvince extends BaseContainer {
     this.state = {
       listCities: []
     };
+
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this.getListCities();
-    EventTracker.logEvent('voucher_select_province_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   getListCities = async () => {

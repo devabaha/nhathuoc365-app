@@ -12,6 +12,7 @@ import SiteEntity from '../../entity/SiteEntity';
 import { internalFetch } from '../../helper/apiFetch';
 import { isLatitude, isLongitude } from '../../helper/validator';
 import openMap from 'react-native-open-maps';
+import EventTracker from '../../../../helper/EventTracker';
 
 const defaultFn = () => {};
 
@@ -62,6 +63,8 @@ class VoucherDetail extends BaseContainer {
     ) {
       throw new Error('Need to pass 1 of 2 props campaignId or voucherId');
     }
+
+    this.eventTracker = new EventTracker();
   }
 
   get isFromHome() {
@@ -100,7 +103,12 @@ class VoucherDetail extends BaseContainer {
     } else if (this.props.campaignId) {
       this.getCampaignById(this.props.campaignId);
     }
-    EventTracker.logEvent('voucher_detail_page');
+
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handlePressCampaignProvider = store => {

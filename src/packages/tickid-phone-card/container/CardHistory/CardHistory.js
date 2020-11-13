@@ -12,6 +12,7 @@ import NoResult from '../../component/NoResult';
 import Loading from '@tickid/tickid-rn-loading';
 import CardItem from '../CardItem';
 import config from '../../config';
+import EventTracker from '../../../../helper/EventTracker';
 
 class CardHistory extends Component {
   constructor(props) {
@@ -22,6 +23,7 @@ class CardHistory extends Component {
       refreshing: false,
       isReady: false
     };
+    this.eventTracker = new EventTracker();
   }
 
   get hasOrders() {
@@ -30,7 +32,11 @@ class CardHistory extends Component {
 
   componentDidMount() {
     this.getOrders(this.props.serviceId);
-    EventTracker.logEvent('card_history_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   onRefresh = () => {

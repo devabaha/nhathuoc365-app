@@ -19,6 +19,7 @@ import { internalFetch } from '../../helper/apiFetch';
 import Loading from '@tickid/tickid-rn-loading';
 import config from '../../config';
 import { showMessage } from '../../constants';
+import EventTracker from '../../../../helper/EventTracker';
 
 const PASSWORD_STORAGE_KEY = 'PASSWORD_STORAGE_KEY';
 const PASSWORD_LENGTH = 4;
@@ -112,6 +113,7 @@ class BuyCardConfirm extends Component {
       isSensorAvailable: false,
       showLoading: false
     };
+    this.eventTracker = new EventTracker();
   }
 
   get passwordValue() {
@@ -141,7 +143,11 @@ class BuyCardConfirm extends Component {
     //   .catch(error => this.setState({ errorMessage: error.message }));
 
     this.loadStoredPassword();
-    EventTracker.logEvent('buy_card_confirm_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   loadStoredPassword = async () => {

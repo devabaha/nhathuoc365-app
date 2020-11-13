@@ -12,6 +12,7 @@ import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import OrdersItemComponent from '../orders/OrdersItemComponent';
+import EventTracker from '../../helper/EventTracker';
 
 const DEFAULT_RATING_MSG =
   'Đánh giá, góp ý của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn!';
@@ -33,11 +34,12 @@ class Rating extends Component {
       rating_selection: [],
       comment: ''
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this.getSiteDetailData();
-    EventTracker.logEvent('rating_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillMount() {
@@ -54,6 +56,7 @@ class Rating extends Component {
   componentWillUnmount() {
     this.keyboardDidShowListener.remove();
     this.keyboardDidHideListener.remove();
+    this.eventTracker.clearTracking();
   }
 
   keyboardDidShow = e => {

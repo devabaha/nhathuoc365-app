@@ -810,6 +810,21 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.SITE_GET_TREE_CATEGORIES + '/' + site_id);
     return this.getCancelableAPI(api);
   }
+
+  get_service_info(service_id) {
+    const api = url_for(API.SERVICE_INFO + '/' + service_id);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * @todo book service
+   *
+   * @param {string|number} service_id
+   */
+  service_book(service_id, data) {
+    const api = url_for(API.SERVICE_BOOK + '/' + service_id);
+    return this.postCancelableAPI(api, data);
+  }
 }
 
 export default CommonAPIHandler;

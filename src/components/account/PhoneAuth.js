@@ -28,6 +28,7 @@ import Loading from '../Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 const timer = require('react-timer-mixin');
 
 const loginMode = {
@@ -58,6 +59,7 @@ class PhoneAuth extends Component {
       currentCountry: countries.filter(country => country.cca2 == 'VN'),
       requestNewOtpCounter: requestSeconds
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -65,10 +67,12 @@ class PhoneAuth extends Component {
       this.signIn(this.state.phoneNumber);
     }
     this.startCountDown();
-    EventTracker.logEvent('phone_auth_page');
+    this.eventTracker.logCurrentView();
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   signIn = phoneNumber => {
     if (typeof phoneNumber == 'object') {
@@ -287,7 +291,7 @@ class PhoneAuth extends Component {
 
   _verifyResponse = response => {
     store.setUserInfo(response.data);
-    EventTracker.setUserId(response.data.id);
+    store.setAnalyticsUser(response.data);
     store.resetCartData();
     const { t } = this.props;
     if (response.data && response.data.fill_info_user) {

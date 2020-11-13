@@ -18,6 +18,7 @@ import appConfig from '../../config';
 import IconFeather from 'react-native-vector-icons/Feather';
 import { willUpdateState } from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
+import EventTracker from '../../helper/EventTracker';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
@@ -45,6 +46,8 @@ class Stores extends Component {
     action(() => {
       store.setStoresFinish(false);
     })();
+
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -63,11 +66,12 @@ class Stores extends Component {
         right: this._renderRightButton()
       });
     });
-    EventTracker.logEvent('stores_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   componentWillReceiveProps(nextProps) {

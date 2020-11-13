@@ -12,6 +12,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 class Address extends Component {
   constructor(props) {
@@ -28,6 +29,7 @@ class Address extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -36,11 +38,12 @@ class Address extends Component {
     });
     // this.props.i18n.changeLanguage('en')
     this._getData();
-    EventTracker.logEvent('address_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   // render button trên navbar

@@ -1,22 +1,25 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableHighlight
-} from 'react-native';
+import { View, StyleSheet, TouchableHighlight } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Modal from 'react-native-modalbox';
-import store from '../../store/Store';
+import { Actions } from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import EventTracker from '../../helper/EventTracker';
 
 export default class ItemImageViewer extends Component {
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
+
   render() {
     var { images } = this.props;
 

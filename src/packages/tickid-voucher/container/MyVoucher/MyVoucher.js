@@ -7,6 +7,7 @@ import { internalFetch } from '../../helper/apiFetch';
 import MyVoucherComponent from '../../component/MyVoucher';
 import CampaignEntity from '../../entity/CampaignEntity';
 import store from 'app-store';
+import EventTracker from '../../../../helper/EventTracker';
 
 const defaultFn = () => {};
 
@@ -39,6 +40,7 @@ class MyVoucher extends BaseContainer {
       apiFetching: false,
       campaigns: []
     };
+    this.eventTracker = new EventTracker();
   }
 
   get isUseOnlineMode() {
@@ -48,7 +50,11 @@ class MyVoucher extends BaseContainer {
   componentDidMount() {
     const showLoading = true;
     this.getMyVouchers(showLoading, this.props.siteId);
-    EventTracker.logEvent('my_voucher_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handlePressVoucher = voucher => {

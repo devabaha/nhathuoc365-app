@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Modal from 'react-native-modalbox';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class Register extends Component {
@@ -39,6 +40,8 @@ export default class Register extends Component {
         verify_loadding: false
       };
     }
+
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -56,6 +59,12 @@ export default class Register extends Component {
         this._onSave();
       }, 500);
     }
+
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {

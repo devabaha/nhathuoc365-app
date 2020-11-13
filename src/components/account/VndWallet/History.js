@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 
 import Loading from '../../Loading';
+import appConfig from 'app-config';
 
 const History = props => {
   const { t } = props;
@@ -88,7 +89,7 @@ export default withTranslation('vndWallet')(History);
 
 const HistoryRow = props => {
   _onShowHistoryDetail = () => {
-    Actions.detail_history_payment({
+    Actions.push(appConfig.routes.detailHistoryPayment, {
       transaction_hash: props.id,
       created: props.date,
       content: props.title,

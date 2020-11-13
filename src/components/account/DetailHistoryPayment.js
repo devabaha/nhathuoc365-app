@@ -1,17 +1,8 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SectionList,
-  TouchableHighlight
-} from 'react-native';
+import { View, StyleSheet, SectionList } from 'react-native';
 
-import store from '../../store/Store';
-import { reaction } from 'mobx';
 import HorizontalInfoItem from './HorizontalInfoItem';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import Moment from 'moment';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class DetailHistoryPayment extends Component {
@@ -58,10 +49,15 @@ export default class DetailHistoryPayment extends Component {
         }
       ]
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    EventTracker.logEvent('detail_payment_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _renderSectionSeparator = () => {

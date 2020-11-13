@@ -5,6 +5,7 @@ import CardItem from '../../packages/tickid-phone-card/component/CardItem';
 import NoResult from '../NoResult';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 class Orders extends PureComponent {
   state = {
@@ -12,13 +13,16 @@ class Orders extends PureComponent {
     serviceOrders: []
   };
   unmounted = false;
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     this.getServiceOrders();
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   getServiceOrders = async () => {

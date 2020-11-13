@@ -24,10 +24,6 @@ class Items extends Component {
   }
   unmounted = false;
 
-  componentDidMount() {
-    EventTracker.logEvent('stores_items_page');
-  }
-
   componentWillUnmount() {
     this.unmounted = true;
   }

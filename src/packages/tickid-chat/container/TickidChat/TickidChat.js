@@ -252,7 +252,6 @@ class TickidChat extends Component {
         this.animatedShowUpListener
       );
     }
-    EventTracker.logEvent('tickid_chat_page');
   }
 
   componentWillUnmount() {

@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd.apps.googleusercontent.com</string>
+	<string>54109172898-nliapc9abh42f03h7bm2u2bd6cuqmq50.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.709287585426-kp6p71lg3lm8nc1lnatmsqamj6pe4phd</string>
+	<string>com.googleusercontent.apps.54109172898-nliapc9abh42f03h7bm2u2bd6cuqmq50</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>709287585426-en2jqmlap5400nv5o6avjs5apck7eghl.apps.googleusercontent.com</string>
+	<string>54109172898-n84vefi6kcb2kggmlevgmi0hpjema38h.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyDxVo3t3WIC4x-c7LwDAhLf6y1PPPXY1K8</string>
+	<string>AIzaSyBQTUERzUW3gpX4PKFiV6LbTUsFogWsx8M</string>
 	<key>GCM_SENDER_ID</key>
-	<string>709287585426</string>
+	<string>54109172898</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>id.tick</string>
+	<string>id.tickid</string>
 	<key>PROJECT_ID</key>
-	<string>tickid</string>
+	<string>tickid-vn</string>
 	<key>STORAGE_BUCKET</key>
-	<string>tickid.appspot.com</string>
+	<string>tickid-vn.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:709287585426:ios:2d4e9621fc6526c8cd284b</string>
+	<string>1:54109172898:ios:0a4efb05599967093553fb</string>
 	<key>DATABASE_URL</key>
-	<string>https://tickid.firebaseio.com</string>
+	<string>https://tickid-vn.firebaseio.com</string>
 </dict>
 </plist>

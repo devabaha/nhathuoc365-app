@@ -4,6 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 import Loading from '../Loading';
+import EventTracker from '../../helper/EventTracker';
 
 export default class WebViewClass extends Component {
   static propTypes = {
@@ -22,6 +23,15 @@ export default class WebViewClass extends Component {
     this.state = {
       showLoading: false
     };
+    this.eventTracker = new EventTracker();
+  }
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   onLoadStart() {

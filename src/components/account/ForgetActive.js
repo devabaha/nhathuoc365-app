@@ -10,6 +10,7 @@ import {
   Alert
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 import store from '../../store/Store';
 
 // components
@@ -28,6 +29,7 @@ export default class ForgetActive extends Component {
       sticker_flag: false,
       count_down: 0
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -46,7 +48,11 @@ export default class ForgetActive extends Component {
     }
 
     this.registerMsgBar();
-    EventTracker.logEvent('forget_active_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   registerMsgBar = () => {};

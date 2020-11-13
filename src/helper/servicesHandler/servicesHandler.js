@@ -316,7 +316,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** SCHEDULE BOOKING */
     case SERVICES_TYPE.SCHEDULE_BOOKING:
       Actions.push(appConfig.routes.schedule, {
-        serviceId: service.id
+        serviceId: service.service_id
       });
       break;
     default:

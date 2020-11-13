@@ -1,4 +1,4 @@
-package id.tick;
+package id.tickid;
 
 import com.facebook.react.ReactActivity;
 import io.branch.rnbranch.*; // <-- add this

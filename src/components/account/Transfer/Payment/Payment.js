@@ -14,6 +14,7 @@ import { Actions } from 'react-native-router-flux';
 import Input from './Input';
 import Button from '../../../Button';
 import { formatMoney } from './helper';
+import EventTracker from '../../../../helper/EventTracker';
 
 const MAX_NOTE_LENGTH = 160;
 
@@ -38,9 +39,15 @@ class Payment extends Component {
   moneyInput = React.createRef();
   noteInput = React.createRef();
   unmounted = false;
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   onNoteChange = (e, note) => {

@@ -21,7 +21,6 @@ class Launch extends Component {
   componentDidMount() {
     this.handleAuthorization();
     this.animateLoading();
-    EventTracker.logEvent('launch_page');
   }
 
   handleAuthorization = async () => {
@@ -48,12 +47,12 @@ class Launch extends Component {
     switch (response.status) {
       case STATUS_SUCCESS:
         store.setUserInfo(user);
-        EventTracker.setUserId(user.id);
+        store.setAnalyticsUser(user);
         Actions.replace(appConfig.routes.primaryTabbar);
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
-        EventTracker.setUserId(user.id);
+        store.setAnalyticsUser(user);
         Actions.replace('op_register', {
           title: 'Đăng ký thông tin',
           name_props: user.name,
