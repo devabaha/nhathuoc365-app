@@ -78,22 +78,26 @@ class PhoneAuth extends Component {
     if (typeof phoneNumber == 'object') {
       var { phoneNumber } = this.state;
     }
-    if (phoneNumber == '0912345678') {
-      this.loginMode = loginMode.SMS_BRAND_NAME;
-    }
-    switch (this.loginMode) {
-      case loginMode.FIREBASE:
-        this.firebaseSignIn();
-        break;
-      case loginMode.SMS_BRAND_NAME:
-        this.smsBrandNameSendCode(phoneNumber);
-        break;
-      default:
-        break;
-    }
+    this.firebaseSignIn();
+
+    // if (phoneNumber == '0912345678') {
+    //   this.loginMode = loginMode.SMS_BRAND_NAME;
+    // }
+    // switch (this.loginMode) {
+    //   case loginMode.FIREBASE:
+    //     this.firebaseSignIn();
+    //     break;
+    //   case loginMode.SMS_BRAND_NAME:
+    //     this.smsBrandNameSendCode(phoneNumber);
+    //     break;
+    //   default:
+    //     break;
+    // }
   };
 
   confirmCode = () => {
+    this.firebaseConfirmCode();
+    return;
     switch (this.loginMode) {
       case loginMode.FIREBASE:
         this.firebaseConfirmCode();
@@ -220,14 +224,15 @@ class PhoneAuth extends Component {
       firebase
         .auth()
         .signInWithPhoneNumber(countryCode + phoneAuth)
-        .then(confirmResult =>
+        .then(confirmResult => {
+          console.log(confirmResult);
           this.setState({
             confirmResult,
             message: '',
             isShowIndicator: false,
             requestNewOtpCounter: requestSeconds
-          })
-        )
+          });
+        })
         .catch(error => {
           this.loginMode = loginMode.SMS_BRAND_NAME;
           this.signIn(countryCode + phoneAuth);
@@ -244,6 +249,7 @@ class PhoneAuth extends Component {
       confirmResult
         .confirm(codeInput)
         .then(user => {
+          console.log(user);
           if (user) {
             this.setState({
               user: user.toJSON(),
@@ -256,6 +262,7 @@ class PhoneAuth extends Component {
                 const response = await APIHandler.login_firebase_vertify({
                   token: idToken
                 });
+                console.log(response);
                 if (response && response.status == STATUS_SUCCESS) {
                   this.setState(
                     {
