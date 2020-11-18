@@ -10,6 +10,7 @@ import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW
 } from '../../components/Home/constants';
+import EventTracker from '../../helper/EventTracker';
 
 class Home extends Component {
   constructor(props) {
@@ -36,16 +37,18 @@ class Home extends Component {
       primaryActions: null,
       product_groups: {}
     };
+    this.eventTracker = new EventTracker();
   }
   homeDataLoaded = false;
 
   componentDidMount() {
     this.getHomeDataFromApi();
-    EventTracker.logEvent('home_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     store.updateHomeLoaded(false);
+    this.eventTracker.clearTracking();
   }
 
   handleExecuteTempDeepLink() {
@@ -148,7 +151,6 @@ class Home extends Component {
   async getCartData() {
     try {
       const response = await APIHandler.site_cart_show(store.store_id);
-
       if (response && response.status == STATUS_SUCCESS) {
         store.setCartData(response.data);
       } else {
@@ -188,14 +190,14 @@ class Home extends Component {
 
   handleShowAllVouchers = () => {};
 
-  handlePressService = service => {
+  handlePressService(service) {
     const { t } = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
       servicesHandler(service, t);
     }
-  };
+  }
 
   handleShowAllSites = () => {};
 
@@ -346,13 +348,13 @@ class Home extends Component {
         primaryActions={this.state.primaryActions}
         showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}
-        onActionPress={this.handlePressService}
+        onActionPress={this.handlePressService.bind(this)}
         onPressProduct={this.handlePressProduct}
         onSurplusNext={this.handlePressedSurplusNext}
         onPromotionPressed={this.handlePromotionPressed}
         onVoucherPressed={this.handleVoucherPressed}
         onShowAllVouchers={this.handleShowAllVouchers}
-        onPressService={this.handlePressService}
+        onPressService={this.handlePressService.bind(this)}
         onPullToRefresh={this.handlePullToRefresh}
         onShowAllSites={this.handleShowAllSites}
         onShowAllCampaigns={this.handleShowAllCampaigns}

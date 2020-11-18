@@ -14,11 +14,12 @@ import Modal from 'react-native-modalbox';
 import { Button } from 'react-native-elements';
 import store from '../../store/Store';
 import ItemList from '../Home/ItemList';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class StoresList extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       stores_data: null,
       refreshing: false,
@@ -31,6 +32,8 @@ export default class StoresList extends Component {
     this._goSearchStore = this._goSearchStore.bind(this);
     this._goListStore = this._goListStore.bind(this);
     this._getData = this._getData.bind(this);
+
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -55,7 +58,11 @@ export default class StoresList extends Component {
       KEY_EVENTS_STORE + 'ID',
       this._getData.bind(this)
     );
-    EventTracker.logEvent('store_list_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {

@@ -7,6 +7,7 @@ import Button from '../Button';
 import Input from '../account/Transfer/Payment/Input';
 import { Actions } from 'react-native-router-flux';
 import { formatMoney } from '../account/Transfer/Payment/helper';
+import EventTracker from '../../helper/EventTracker';
 
 export interface QRPaymentInfoProps {
     logoUrl: string
@@ -117,6 +118,15 @@ class QRPaymentInfo extends Component<QRPaymentInfoProps> {
         moneyError: ''
     };
     moneyInput = React.createRef<any>();
+    eventTracker = new EventTracker();
+
+    componentDidMount() {
+        this.eventTracker.logCurrentView();
+    }
+
+    componentWillUnmount() {
+        this.eventTracker.clearTracking();
+    }
 
     goToConfirm = () => {
         if (this.moneyInput.current) {

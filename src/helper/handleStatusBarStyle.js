@@ -6,6 +6,8 @@ import store from 'app-store';
 
 export default function handleStatusBarStyle(prevState, newState, action) {
   const darkStatusBarScenes = [
+    appConfig.routes.phoneAuth,
+    appConfig.routes.authConfirm,
     appConfig.routes.qrBarCode,
 
     appConfig.routes.myVoucher,

@@ -40,10 +40,10 @@ const config = {
     pushToMain: () => {}
   },
   routes: {
-    contact: 'tickid-phone-card-contact',
-    cardHistory: 'tickid-phone-card-history',
-    buyCardConfirm: 'tickid-phone-card-buy-card-confirm',
-    buyCardSuccess: 'tickid-phone-card-buy-card-success'
+    contact: 'tickid_phone_card_contact',
+    cardHistory: 'tickid_phone_card_history',
+    buyCardConfirm: 'tickid_phone_card_buy_card_confirm',
+    buyCardSuccess: 'tickid_phone_card_buy_card_success'
   },
   httpCode: {
     success: 200

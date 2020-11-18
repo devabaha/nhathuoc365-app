@@ -29,6 +29,7 @@ import {
   isActivePackageOptionConfig,
   PACKAGE_OPTIONS_TYPE
 } from '../../helper/packageOptionsHandler';
+import EventTracker from '../../helper/EventTracker';
 
 class Account extends Component {
   constructor(props) {
@@ -43,6 +44,7 @@ class Account extends Component {
     this.uploadFaceIDRequest = new APIRequest();
     this.requests = [this.uploadFaceIDRequest];
     reaction(() => store.user_info, this.initial);
+    this.eventTracker = new EventTracker();
   }
 
   get options() {
@@ -418,9 +420,13 @@ class Account extends Component {
   componentDidMount() {
     this.initial(() => {
       store.is_stay_account = true;
-      store.parentTab = '_account';
+      store.parentTab = `${appConfig.routes.accountTab}_1`;
     });
-    EventTracker.logEvent('account_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   login = async delay => {
@@ -445,17 +451,13 @@ class Account extends Component {
   };
 
   handleShowProfileDetail = () => {
-    Actions.profile_detail({
+    Actions.push(appConfig.routes.profileDetail, {
       userInfo: store.user_info
     });
   };
 
   handleLogin = () => {
-    Actions.push('phone_auth', {
-      loginMode: store.store_data.loginMode
-        ? store.store_data.loginMode
-        : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
-    });
+    Actions.push(appConfig.routes.phoneAuth);
   };
 
   handleConfirmChangeAppLanguage = languageValue => {
@@ -1026,7 +1028,7 @@ class Account extends Component {
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
-          EventTracker.removeUserId();
+          store.removeAnalytics();
           store.setUserInfo(response.data);
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);

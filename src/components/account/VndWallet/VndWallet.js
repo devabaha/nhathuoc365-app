@@ -18,6 +18,7 @@ import {
   isActivePackageOptionConfig,
   PACKAGE_OPTIONS_TYPE
 } from '../../../helper/packageOptionsHandler';
+import EventTracker from '../../../helper/EventTracker';
 
 class VndWallet extends Component {
   constructor(props) {
@@ -31,14 +32,20 @@ class VndWallet extends Component {
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentWillMount() {
     this._getWallet();
   }
 
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   async _getWallet() {
@@ -105,7 +112,7 @@ class VndWallet extends Component {
   };
 
   _onShowDetailHistory = item => {
-    Actions.detail_history_payment({
+    Actions.push(appConfig.routes.detailHistoryPayment, {
       data: item
     });
   };

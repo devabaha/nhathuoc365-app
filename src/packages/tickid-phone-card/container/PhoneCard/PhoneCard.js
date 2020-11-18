@@ -9,6 +9,7 @@ import config from '../../config';
 import { internalFetch } from '../../helper/apiFetch';
 import { normalize } from '../../helper/normalizer';
 import Loading from '@tickid/tickid-rn-loading';
+import EventTracker from '../../../../helper/EventTracker';
 
 class PhoneCard extends BaseContainer {
   static defaultProps = {
@@ -25,11 +26,17 @@ class PhoneCard extends BaseContainer {
       isReady: false,
       refreshing: false
     };
+
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this.getPhoneCardServices();
-    EventTracker.logEvent('phone_card_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   getPhoneCardServices = () => {

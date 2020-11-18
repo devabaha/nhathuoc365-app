@@ -148,9 +148,8 @@ global.layoutAnimation = animate => {
   }
 };
 
-import EventTracker from '../helper/EventTracker';
-global.EventTracker = EventTracker;
-
+// import EventTracker from "../helper/EventTracker";
+// global.EventTracker = new EventTracker();
 /**
  * Flash message
  */

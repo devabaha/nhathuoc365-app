@@ -17,6 +17,7 @@ import SubmitButton from '../../component/SubmitButton';
 import { FieldItemWrapper, FieldItem } from '../../component/FieldItem';
 import CardItem from '../CardItem';
 import config from '../../config';
+import EventTracker from '../../../../helper/EventTracker';
 
 BuyCardSuccess.propTypes = {
   isBuyCard: PropTypes.bool,
@@ -31,14 +32,19 @@ function BuyCardSuccess({
   historyTitle = 'Lịch sử nạp',
   serviceId = undefined
 }) {
+  const eventTracker = new EventTracker();
+
   useEffect(() => {
     function backHandlerListener() {
       return true;
     }
     BackHandler.addEventListener('hardwareBackPress', backHandlerListener);
+    eventTracker.logCurrentView();
 
-    return () =>
+    return () => {
       BackHandler.removeEventListener('hardwareBackPress', backHandlerListener);
+      eventTracker.clearTracking();
+    };
   });
 
   const pushToCardBuyed = () => {

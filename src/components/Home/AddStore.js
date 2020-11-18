@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
+import EventTracker from '../../helper/EventTracker';
 // import appConfig from 'app-config';
 
 @observer
@@ -27,9 +28,16 @@ export default class AddStore extends Component {
       coppy_sticker_flag: false,
       fromIntro: props.fromIntro
     };
+    this.eventTracker = new EventTracker();
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   // onchange text value for typing
   _onChangeSearch(text) {

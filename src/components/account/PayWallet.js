@@ -13,6 +13,7 @@ import {
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EventTracker from '../../helper/EventTracker';
 import store from '../../store/Store';
 
 class PayWallet extends Component {
@@ -26,6 +27,15 @@ class PayWallet extends Component {
       loading: false,
       amount: 0
     };
+    this.eventTracker = new EventTracker();
+  }
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   componentWillMount() {}

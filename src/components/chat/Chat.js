@@ -15,6 +15,7 @@ import { FormInput } from 'react-native-elements';
 import RightButtonCall from '../RightButtonCall';
 import store from '../../store/Store';
 import appConfig from '../../config';
+import EventTracker from '../../helper/EventTracker';
 
 const _CHAT_KEY = 'ChatKeysStorage';
 
@@ -41,6 +42,11 @@ class Chat extends Component {
 
     this._getData = this._getData.bind(this);
     this._scrollToEnd = this._scrollToEnd.bind(this);
+    this.eventTracker = new EventTracker();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {
@@ -145,6 +151,7 @@ class Chat extends Component {
     Events.on(KEY_BOARD_HIDE, KEY_BOARD_HIDE, () => {
       this._scrollToEnd();
     });
+    this.eventTracker.logCurrentView();
   }
 
   _autoUpdate() {

@@ -26,6 +26,8 @@ import { CheckBox } from 'react-native-elements';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import { USE_ONLINE } from 'app-packages/tickid-voucher';
+import EventTracker from '../../helper/EventTracker';
+import { ANALYTICS_EVENTS_NAME } from '../../constants';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -44,13 +46,14 @@ class Confirm extends Component {
       data: null,
       noteOffset: 0,
       suggest_register: false,
-      name_register: store.cart_data ? store.cart_data.address.name : '',
-      tel_register: store.cart_data ? store.cart_data.address.tel : '',
+      name_register: '',
+      tel_register: '',
       pass_register: '',
       paymentMethod: {}
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -74,7 +77,7 @@ class Confirm extends Component {
         right: this._renderRightButton()
       })
     );
-    EventTracker.logEvent('payment_confirm_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
@@ -256,7 +259,11 @@ class Confirm extends Component {
                 });
 
                 Events.trigger(RELOAD_STORE_ORDERS);
-                EventTracker.logEvent('add_to_cart');
+                this.eventTracker.logEvent(ANALYTICS_EVENTS_NAME.cart.order, {
+                  params: {
+                    id: response.data.id
+                  }
+                });
 
                 // update cart data
                 // update cart
@@ -1808,7 +1815,7 @@ class Confirm extends Component {
   }
 
   _onRegister() {
-    Actions.push('phone_auth', {
+    Actions.push(appConfig.routes.phoneAuth, {
       tel: store.cart_data.address.tel
     });
   }

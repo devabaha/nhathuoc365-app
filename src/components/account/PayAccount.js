@@ -1,28 +1,13 @@
 /* @flow */
 
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TouchableHighlight,
-  TouchableWithoutFeedback,
-  StyleSheet,
-  FlatList,
-  ImageBackground,
-  RefreshControl,
-  ScrollView,
-  Alert,
-  TextInput,
-  Platform
-} from 'react-native';
+import { View, Text, TouchableHighlight, StyleSheet } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/MaterialCommunityIcons';
+import EventTracker from '../../helper/EventTracker';
 
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { reaction } from 'mobx';
 import store from '../../store/Store';
 
 @observer
@@ -39,6 +24,15 @@ export default class PayAccount extends Component {
       loading: false,
       amount: props.amount ? props.amount : 0
     };
+    this.eventTracker = new EventTracker();
+  }
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   componentWillMount() {}

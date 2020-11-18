@@ -22,6 +22,7 @@ import ModernList from 'app-packages/tickid-modern-list';
 import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
 import Animated, { Easing } from 'react-native-reanimated';
 import { debounce } from 'lodash';
+import EventTracker from '../../helper/EventTracker';
 
 const { interpolate } = Animated;
 const START_DEG = new Animated.Value(0);
@@ -50,6 +51,8 @@ class Search extends Component {
     this.getHistory = this.getHistory.bind(this);
     this.unmounted = false;
     this.categoriesCollapsed = false;
+
+    this.eventTracker = new EventTracker();
   }
 
   get categories() {
@@ -123,11 +126,12 @@ class Search extends Component {
         }
       });
     });
-    EventTracker.logEvent('store_search_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   getCategories = async () => {

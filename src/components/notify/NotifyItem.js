@@ -16,6 +16,7 @@ import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import store from '../../store/Store';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -27,11 +28,15 @@ class NotifyItem extends Component {
       item_data: null,
       refreshing: false
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this._getData();
-    EventTracker.logEvent('notify_item_page');
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _onRefresh() {
@@ -63,6 +68,14 @@ class NotifyItem extends Component {
           var response = await APIHandler.user_news(this.state.item.id);
 
           if (response && response.status == STATUS_SUCCESS) {
+            if (!this.state.item_data) {
+              this.eventTracker.logCurrentView({
+                params: {
+                  id: response.data.id,
+                  name: response.data.title
+                }
+              });
+            }
             action(() => {
               store.setStoreId(response.data.site_id);
             })();
@@ -173,26 +186,28 @@ class NotifyItem extends Component {
             )}
           </View>
 
-          {item_data != null && item_data.related && (
-            <FlatList
-              onEndReached={num => {}}
-              onEndReachedThreshold={0}
-              style={[styles.items_box]}
-              ListHeaderComponent={() => (
-                <ListHeader title={`—  ${t('relatedItems')}  —`} />
-              )}
-              data={item_data.related}
-              renderItem={({ item, index }) => (
-                <Items
-                  item={item}
-                  index={index}
-                  onPress={this._goItem.bind(this, item)}
-                />
-              )}
-              keyExtractor={item => item.id}
-              numColumns={2}
-            />
-          )}
+          {item_data != null &&
+            item_data.related &&
+            item_data.related.length !== 0 && (
+              <FlatList
+                onEndReached={num => {}}
+                onEndReachedThreshold={0}
+                style={[styles.items_box]}
+                ListHeaderComponent={() => (
+                  <ListHeader title={`—  ${t('relatedItems')}  —`} />
+                )}
+                data={item_data.related}
+                renderItem={({ item, index }) => (
+                  <Items
+                    item={item}
+                    index={index}
+                    onPress={this._goItem.bind(this, item)}
+                  />
+                )}
+                keyExtractor={item => item.id}
+                numColumns={2}
+              />
+            )}
         </ScrollView>
 
         {item_data != null && item_data.related && (

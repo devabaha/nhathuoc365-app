@@ -11,6 +11,7 @@ import {
   PASSWORD_LENGTH,
   OTP_LENGTH
 } from '../../components/ResetPassword/constants';
+import EventTracker from '../../helper/EventTracker';
 const timer = require('react-timer-mixin');
 
 class ResetPassword extends Component {
@@ -35,10 +36,16 @@ class ResetPassword extends Component {
   refScrollView = React.createRef();
   refOTP = React.createRef();
   unmounted = false;
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
 
   componentWillUnmount() {
     this.unmounted = true;
     timer.clearInterval(this.timerID);
+    this.eventTracker.clearTracking();
   }
 
   onBack() {

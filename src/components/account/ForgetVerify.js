@@ -10,6 +10,7 @@ import {
   Alert
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
 
@@ -26,6 +27,7 @@ export default class ForgetVerify extends Component {
       verify_loadding: false,
       sticker_flag: false
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -44,7 +46,11 @@ export default class ForgetVerify extends Component {
     }
 
     this.registerMsgBar();
-    EventTracker.logEvent('forget_verify_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   registerMsgBar = () => {

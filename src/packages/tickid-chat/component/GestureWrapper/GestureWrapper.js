@@ -348,7 +348,6 @@ class GestureWrapper extends Component {
     this.state.animatedTranslateYScrollView.addListener(
       this.onAnimatedValueChange.bind(this)
     );
-    EventTracker.logEvent('gesture_page');
   }
 
   componentWillUnmount() {

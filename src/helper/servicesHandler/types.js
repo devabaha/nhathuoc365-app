@@ -74,5 +74,8 @@ export const SERVICES_TYPE = {
   PAYMENT_METHOD: 'payment_method',
 
   /** POPUP */
-  POP_UP: 'popup'
+  POP_UP: 'popup',
+
+  /** SCHEDULE BOOKING */
+  SCHEDULE_BOOKING: 'schedule_booking'
 };

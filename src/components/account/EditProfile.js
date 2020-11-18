@@ -6,12 +6,11 @@ import {
   StyleSheet,
   SectionList,
   TouchableHighlight,
-  Keyboard,
-  KeyboardAvoidingView
+  Keyboard
 } from 'react-native';
 
 import HorizontalInfoItem from './HorizontalInfoItem';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import ActionSheet from 'react-native-actionsheet';
 import { isEmpty } from 'lodash';
@@ -19,6 +18,8 @@ import Loading from '../Loading';
 import Button from '../Button';
 import appConfig from 'app-config';
 import store from 'app-store';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import EventTracker from '../../helper/EventTracker';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -82,10 +83,15 @@ class EditProfile extends Component {
         }
       ]
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    EventTracker.logEvent('edit_profile_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _renderRightButton = () => {
@@ -178,7 +184,7 @@ class EditProfile extends Component {
         this.setState({ loading: false });
 
         if (response && response.status == STATUS_SUCCESS) {
-          Actions._account({ type: ActionConst.REFRESH });
+          Actions.pop();
         }
 
         if (response) {
@@ -260,41 +266,37 @@ class EditProfile extends Component {
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAvoidingView
-          style={styles.container}
-          behavior={appConfig.device.isIOS ? 'padding' : null}
-        >
-          <KeyboardAwareScrollView style={styles.mainScroll}>
-            <SectionList
-              style={{ flex: 1 }}
-              renderItem={this._renderItems}
-              SectionSeparatorComponent={this._renderSectionSeparator}
-              ItemSeparatorComponent={this._renderItemSeparator}
-              sections={this.state.sections}
-              keyExtractor={(item, index) => `${item.title}-${index}`}
-            />
-          </KeyboardAwareScrollView>
-          <ActionSheet
-            ref={ref => (this.actionSheet = ref)}
-            options={[
-              t('sections.gender.female'),
-              t('sections.gender.male'),
-              t('sections.gender.cancel')
-            ]}
-            cancelButtonIndex={2}
-            onPress={index => {
-              if (index !== 2) {
-                this._onChangeGender(
-                  index === 1
-                    ? t('sections.gender.male')
-                    : t('sections.gender.female')
-                );
-              }
-            }}
+        <KeyboardAwareScrollView style={styles.mainScroll}>
+          <SectionList
+            style={{ flex: 1 }}
+            renderItem={this._renderItems}
+            SectionSeparatorComponent={this._renderSectionSeparator}
+            ItemSeparatorComponent={this._renderItemSeparator}
+            sections={this.state.sections}
+            keyExtractor={(item, index) => `${item.title}-${index}`}
           />
-          {this.state.loading == true && <Loading center />}
-          <Button title={t('saveChanges')} onPress={this._onSaveProfile} />
-        </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
+        <ActionSheet
+          ref={ref => (this.actionSheet = ref)}
+          options={[
+            t('sections.gender.female'),
+            t('sections.gender.male'),
+            t('sections.gender.cancel')
+          ]}
+          cancelButtonIndex={2}
+          onPress={index => {
+            if (index !== 2) {
+              this._onChangeGender(
+                index === 1
+                  ? t('sections.gender.male')
+                  : t('sections.gender.female')
+              );
+            }
+          }}
+        />
+        {this.state.loading == true && <Loading center />}
+        <Button title={t('saveChanges')} onPress={this._onSaveProfile} />
+        {appConfig.device.isIOS && <KeyboardSpacer />}
       </SafeAreaView>
     );
   }

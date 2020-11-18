@@ -13,9 +13,10 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
-class NewPass extends Component {
+export default class NewPass extends Component {
   constructor(props) {
     super(props);
 
@@ -28,6 +29,7 @@ class NewPass extends Component {
       verify_loadding: false,
       sticker_flag: false
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -44,7 +46,11 @@ class NewPass extends Component {
         this.refs_name.focus();
       }, 450);
     }
-    EventTracker.logEvent('new_pass_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {

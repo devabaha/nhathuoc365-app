@@ -9,10 +9,20 @@ import {
 } from 'react-native';
 import { default as ModalBox } from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EventTracker from '../helper/EventTracker';
 
 class Modal extends PureComponent {
   state = {};
   ref_modal = React.createRef();
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   onClose = () => {
     if (this.ref_modal.current) {

@@ -25,6 +25,7 @@ import Modal from '../../components/account/Transfer/Payment/Modal';
 import appConfig from 'app-config';
 import store from 'app-store';
 import { APIRequest } from '../../network/Entity';
+import EventTracker from '../../helper/EventTracker';
 
 const styles = StyleSheet.create({
   safeView: {
@@ -156,6 +157,7 @@ class GPSStoreLocation extends Component {
   appState = 'active';
   watchID = '';
   timeoutUpdateLocation = null;
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     AppState.addEventListener('change', this.handleAppStateChange);
@@ -165,7 +167,7 @@ class GPSStoreLocation extends Component {
     //     onChangeSearch: this.handleChangeSearch.bind(this),
     //   })
     // );
-    EventTracker.logEvent('skv_search_member');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {

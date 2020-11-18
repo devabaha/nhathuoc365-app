@@ -13,6 +13,7 @@ import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
 import StoreSuggest from './StoreSuggest';
+import EventTracker from '../../helper/EventTracker';
 // import appConfig from 'app-config';
 
 @observer
@@ -27,6 +28,7 @@ export default class ListStore extends Component {
       coppy_sticker_flag: false,
       loading: true
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -44,7 +46,11 @@ export default class ListStore extends Component {
     this.start_time = time();
 
     this._getData();
-    EventTracker.logEvent('list_store_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   // thời gian trễ khi chuyển màn hình

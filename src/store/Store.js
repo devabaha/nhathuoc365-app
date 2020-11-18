@@ -3,8 +3,8 @@ import autobind from 'autobind-decorator';
 import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
-import { SERVICES_TYPE } from '../helper/servicesHandler';
 import appConfig from 'app-config';
+import { analytics } from 'react-native-firebase';
 
 @autobind
 class Store {
@@ -521,6 +521,19 @@ class Store {
 
   @action setHomeBarBackgroundColor(backgroundColor) {
     this.homeStatusBar.backgroundColor = backgroundColor;
+  }
+
+  @observable analyticsUserID = '';
+  @observable analyst = analytics();
+
+  @action setAnalyticsUser(user) {
+    this.analyticsUserID = user.id;
+    this.analyst.setUserId(this.analyticsUserID);
+  }
+
+  @action removeAnalytics() {
+    this.analyticsUserID = '';
+    this.analyst.setUserId('');
   }
 }
 

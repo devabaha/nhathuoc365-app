@@ -13,6 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 class OpRegister extends Component {
   constructor(props) {
@@ -25,6 +26,7 @@ class OpRegister extends Component {
       loading: false,
       referCodeEditable: true
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -42,7 +44,11 @@ class OpRegister extends Component {
         this._onSave();
       }, 500);
     }
-    EventTracker.logEvent('register_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {

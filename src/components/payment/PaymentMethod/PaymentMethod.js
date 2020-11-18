@@ -7,6 +7,7 @@ import appConfig from 'app-config';
 import Button from '../../Button';
 import store from 'app-store';
 import PaymentRow from './PaymentRow';
+import EventTracker from '../../../helper/EventTracker';
 
 const DEFAULT_OBJECT = { id: -1 };
 
@@ -25,6 +26,7 @@ class PaymentMethod extends Component {
     loading: true
   };
   unmounted = false;
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     setTimeout(() => {
@@ -35,10 +37,12 @@ class PaymentMethod extends Component {
       });
     });
     this.getPaymentMethod();
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   getPaymentMethod = async () => {

@@ -44,19 +44,30 @@ const config = Object.freeze({
     placeholder: '#c7c7cd'
   },
   routes: {
+    // ?deprecated
+    forgetActive: 'forget_active',
+    forgetVerify: 'forget_verify',
+    newPass: 'new_pass',
+    // ----
+
     sceneWrapper: 'sceneWrapper',
     launch: 'launch',
+
+    phoneAuth: 'phone_auth',
+    countryPicker: 'countryPicker',
 
     primaryTabbar: 'primaryTabbar',
 
     homeTab: 'homeTab',
     newsTab: 'newsTab',
+    accountTab: 'accountTab',
     deepLinkNewsTab: 'deepLinkNewsTab',
     scanQrCodeTab: 'scanQrCodeTab',
     customerCardWallet: 'customer_card_wallet',
     ordersTab: 'ordersTab',
     deepLinkOrdersTab: 'deepLinkOrdersTab',
 
+    news: 'news',
     vndWallet: 'vnd_wallet',
     payWallet: 'pay_wallet',
     transfer: 'transfer',
@@ -69,6 +80,11 @@ const config = Object.freeze({
     qrBarCode: 'qrBarCode',
 
     notifies: 'notifies',
+
+    detailHistoryPayment: 'detail_history_payment',
+
+    profileDetail: 'profile_detail',
+    editProfile: 'edit_profile',
 
     store: 'store',
     searchStore: 'searchStore',

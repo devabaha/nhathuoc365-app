@@ -15,6 +15,7 @@ import appConfig from 'app-config';
 import PropTypes from 'prop-types';
 import Svg, { Circle } from 'react-native-svg';
 import { Actions } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 const NUM_COLUMS = 3;
 const LIST_BANK = [
@@ -80,6 +81,15 @@ class InternetBankingModal extends PureComponent {
     text: '',
     searchData: null
   };
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   onChangeText = text => {
     this.setState({ text });

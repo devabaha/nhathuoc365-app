@@ -10,6 +10,7 @@ import { reaction } from 'mobx';
 
 // components
 import NewItemComponent from './NewItemComponent';
+import EventTracker from '../../helper/EventTracker';
 
 class Notify extends Component {
   constructor(props) {
@@ -24,6 +25,7 @@ class Notify extends Component {
     };
 
     reaction(() => store.refresh_news, () => this._getData());
+    this.eventTracker = new EventTracker();
   }
 
   _setOptionList() {
@@ -67,7 +69,11 @@ class Notify extends Component {
     this._getData();
 
     store.getNoitify();
-    EventTracker.logEvent('notify_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   async _getData(delay) {

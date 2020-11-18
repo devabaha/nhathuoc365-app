@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class MdCard extends Component {
@@ -31,11 +32,16 @@ export default class MdCard extends Component {
       loading: true,
       text_tel: ''
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this._getData();
-    EventTracker.logEvent('md_card_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   async _getData(delay) {

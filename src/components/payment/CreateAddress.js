@@ -15,6 +15,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 class CreateAddress extends Component {
   constructor(props) {
@@ -56,6 +57,7 @@ class CreateAddress extends Component {
     }
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -77,11 +79,12 @@ class CreateAddress extends Component {
         this.refs_name.focus();
       }, 450);
     }
-    EventTracker.logEvent('create_address_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {
@@ -236,7 +239,7 @@ class CreateAddress extends Component {
             this._reloadParent();
 
             if (this.props.redirect == 'confirm') {
-              Actions.push(appConfig.routes.paymentConfirm, {
+              Actions.replace(appConfig.routes.paymentConfirm, {
                 type: ActionConst.REPLACE
               });
             } else {

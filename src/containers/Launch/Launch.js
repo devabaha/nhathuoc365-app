@@ -29,7 +29,6 @@ class Launch extends Component {
   componentDidMount() {
     this.handleAuthorization();
     this.animateLoading();
-    EventTracker.logEvent('launch_page');
   }
 
   handleAuthorization = async () => {
@@ -56,13 +55,13 @@ class Launch extends Component {
     switch (response.status) {
       case STATUS_SUCCESS:
         store.setUserInfo(user);
-        EventTracker.setUserId(user.id);
+        store.setAnalyticsUser(user);
         Actions.replace(appConfig.routes.primaryTabbar);
         Actions.replace(appConfig.routes.homeTab);
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
-        EventTracker.setUserId(user.id);
+        store.setAnalyticsUser(user);
         Actions.replace('op_register', {
           title: 'Đăng ký thông tin',
           name_props: user.name,
@@ -70,7 +69,7 @@ class Launch extends Component {
         });
         break;
       case STATUS_UNDEFINE_USER:
-        Actions.replace('phone_auth', {
+        Actions.replace(appConfig.routes.phoneAuth, {
           loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
         });
         break;

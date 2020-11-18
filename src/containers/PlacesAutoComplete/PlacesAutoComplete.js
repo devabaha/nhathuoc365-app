@@ -16,6 +16,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Row from './Row';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 const API_KEYS = 'AIzaSyBZfS1WyeCgdWk9D6RVMT65RXl5ZOptJAQ';
 
@@ -37,6 +38,7 @@ class PlacesAutoComplete extends Component {
   };
   refAutoComplete = React.createRef();
   ref_modal = React.createRef();
+  eventTracker = new EventTracker();
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextState.showResult !== this.state.showResult) {
@@ -54,6 +56,14 @@ class PlacesAutoComplete extends Component {
     }
 
     return false;
+  }
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handleChangeText(textSearch) {

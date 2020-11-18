@@ -11,6 +11,7 @@ import appConfig from 'app-config';
 import PropTypes from 'prop-types';
 import Button from '../../../Button';
 import { Actions } from 'react-native-router-flux';
+import EventTracker from '../../../../helper/EventTracker';
 
 const defaultListener = () => {};
 
@@ -38,12 +39,14 @@ class Result extends Component {
   };
 
   state = {};
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     BackHandler.addEventListener(
       'hardwareBackPress',
       this.backHandlerListener.bind(this)
     );
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
@@ -51,6 +54,7 @@ class Result extends Component {
       'hardwareBackPress',
       this.backHandlerListener.bind(this)
     );
+    this.eventTracker.clearTracking();
   }
 
   backHandlerListener() {

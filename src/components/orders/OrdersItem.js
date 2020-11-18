@@ -20,10 +20,6 @@ class OrdersItem extends Component {
     }
   }
 
-  componentDidMount() {
-    EventTracker.logEvent('orders_item_page');
-  }
-
   render() {
     return (
       <View style={styles.container}>

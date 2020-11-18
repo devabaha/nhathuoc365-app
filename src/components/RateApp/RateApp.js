@@ -7,6 +7,7 @@ import Button from '../Button';
 import APIHandler from '../../network/APIHandler';
 import Loading from '../Loading';
 import store from 'app-store';
+import EventTracker from '../../helper/EventTracker';
 
 const PLATFROM_STORE = appConfig.device.isIOS ? 'App Store' : 'Play Store';
 const BACKGROUND_IMAGE = require('../../images/thanks.jpg');
@@ -17,6 +18,15 @@ class RateApp extends PureComponent {
   };
   ref_modal = React.createRef();
   unmounted = false;
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   rateApp = async () => {
     const { t } = this.props;

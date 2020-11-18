@@ -25,6 +25,7 @@ import appConfig from 'app-config';
 import timer from 'react-native-timer';
 import Button from 'react-native-button';
 import store from 'app-store';
+import EventTracker from '../../helper/EventTracker';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
@@ -51,6 +52,7 @@ class QRBarCode extends Component {
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -60,7 +62,7 @@ class QRBarCode extends Component {
     }
 
     this.handleBrightness();
-    EventTracker.logEvent('qrbarcode_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -71,6 +73,7 @@ class QRBarCode extends Component {
     this.unmounted = true;
     timer.clearTimeout(this, 'barcodeupdate');
     ScreenBrightness.setBrightness(this.state.originLuminous);
+    this.eventTracker.clearTracking();
   }
 
   async checkPermissions() {

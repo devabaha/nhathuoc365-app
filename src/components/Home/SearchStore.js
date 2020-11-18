@@ -12,6 +12,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class SearchStore extends Component {
@@ -26,6 +27,7 @@ export default class SearchStore extends Component {
       fromIntro: props.fromIntro,
       suggest_data: null
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -107,7 +109,11 @@ export default class SearchStore extends Component {
         }
       );
     }
-    EventTracker.logEvent('search_store_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   // onchange text value for typing

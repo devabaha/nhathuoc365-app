@@ -4,6 +4,7 @@ import config from '../../config';
 import Button from 'react-native-button';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import Header from './Header';
+import EventTracker from '../../../../helper/EventTracker';
 
 const ANIMATION_TIME = 250;
 const ANIMATION_CLOSE_TIME = 150;
@@ -32,12 +33,17 @@ class AlreadyVoucher extends Component {
       opacity: new Animated.Value(0),
       bottom: new Animated.Value(-20)
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this.startAnimation(this.state.opacity, 1, ANIMATION_TIME);
     this.startAnimation(this.state.bottom, 0, ANIMATION_TIME);
-    EventTracker.logEvent('voucher_already_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   startAnimation(animation, toValue, duration) {

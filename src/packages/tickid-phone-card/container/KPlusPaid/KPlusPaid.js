@@ -14,6 +14,7 @@ import ChangeNetworkModal from '../../component/ChangeNetwork';
 import SelectCardValueComponent from '../../component/SelectCardValue';
 import SubmitButton from '../../component/SubmitButton';
 import replaceAll from '../../helper/replaceAll';
+import EventTracker from '../../../../helper/EventTracker';
 
 class KPlusPaid extends Component {
   static propTypes = {
@@ -64,6 +65,7 @@ class KPlusPaid extends Component {
       kPlusData: [],
       totalPrice: ''
     };
+    this.eventTracker = new EventTracker();
   }
 
   get currentService() {
@@ -137,7 +139,11 @@ class KPlusPaid extends Component {
       subCardValue: options[0].type,
       totalPrice: currentCards[0].total_price
     });
-    EventTracker.logEvent('kplus_paid_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handleOpenContact = () => {
