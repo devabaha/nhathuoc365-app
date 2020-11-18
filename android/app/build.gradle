@@ -11,6 +11,7 @@ apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'
 
 apply plugin: "com.android.application"
 apply plugin: "io.fabric"
+apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
 
 import com.android.build.OutputFile
 
@@ -229,5 +230,3 @@ allprojects {
         }
     }
 }
-
-apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin

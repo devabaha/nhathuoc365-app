@@ -635,8 +635,8 @@ class CommonAPIHandler extends BaseHandler {
     return await this.postAPI(api, data);
   }
 
-  async login_firebase_vertify(data) {
-    var api = url_for(API.LOGIN_FIREBASE_VERTIFY);
+  async login_firebase_verify(data) {
+    var api = url_for(API.LOGIN_FIREBASE_VERIFY);
     return await this.postAPI(api, data);
   }
   /**
@@ -824,6 +824,16 @@ class CommonAPIHandler extends BaseHandler {
   service_book(service_id, data) {
     const api = url_for(API.SERVICE_BOOK + '/' + service_id);
     return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * @todo send error firebase to slack
+   *
+   * @param {object} payload JSON object
+   */
+  slack_error_firebase(data) {
+    const api = API.SLACK_ERROR_FIREBASE;
+    return this.postCancelableAPI(api, data, false);
   }
 }
 

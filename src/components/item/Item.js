@@ -649,7 +649,7 @@ class Item extends Component {
                 onLoadStart={() => console.log('on load start')}
                 onLoadEnd={() => console.log('on load end')}
                 onShouldStartLoadWithRequest={result => {
-                  console.log(result);
+                  // console.log(result);
                   return true;
                 }}
                 style={{

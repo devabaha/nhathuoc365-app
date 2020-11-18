@@ -1,5 +1,16 @@
-import { ANALYTICS_EVENTS_NAME, formatViewEvents } from './eventsName';
+import {
+  ANALYTICS_EVENTS_NAME,
+  formatViewEvents,
+  formatCartEvents,
+  formatErrorEvents
+} from './eventsName';
 
 const ANALYTICS_DELAY_LOG_EVENT = 1200;
 
-export { ANALYTICS_EVENTS_NAME, formatViewEvents, ANALYTICS_DELAY_LOG_EVENT };
+export {
+  ANALYTICS_EVENTS_NAME,
+  ANALYTICS_DELAY_LOG_EVENT,
+  formatViewEvents,
+  formatCartEvents,
+  formatErrorEvents
+};

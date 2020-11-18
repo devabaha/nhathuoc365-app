@@ -78,26 +78,23 @@ class PhoneAuth extends Component {
     if (typeof phoneNumber == 'object') {
       var { phoneNumber } = this.state;
     }
-    this.firebaseSignIn();
 
-    // if (phoneNumber == '0912345678') {
-    //   this.loginMode = loginMode.SMS_BRAND_NAME;
-    // }
-    // switch (this.loginMode) {
-    //   case loginMode.FIREBASE:
-    //     this.firebaseSignIn();
-    //     break;
-    //   case loginMode.SMS_BRAND_NAME:
-    //     this.smsBrandNameSendCode(phoneNumber);
-    //     break;
-    //   default:
-    //     break;
-    // }
+    if (phoneNumber == '0912345678') {
+      this.loginMode = loginMode.SMS_BRAND_NAME;
+    }
+    switch (this.loginMode) {
+      case loginMode.FIREBASE:
+        this.firebaseSignIn();
+        break;
+      case loginMode.SMS_BRAND_NAME:
+        this.smsBrandNameSendCode(phoneNumber);
+        break;
+      default:
+        break;
+    }
   };
 
   confirmCode = () => {
-    this.firebaseConfirmCode();
-    return;
     switch (this.loginMode) {
       case loginMode.FIREBASE:
         this.firebaseConfirmCode();
@@ -235,7 +232,13 @@ class PhoneAuth extends Component {
         })
         .catch(error => {
           this.loginMode = loginMode.SMS_BRAND_NAME;
-          this.signIn(countryCode + phoneAuth);
+          // this.signIn(countryCode + phoneAuth);
+          console.log('%cphone_auth_error', 'color:red', error);
+        })
+        .finally(() => {
+          this.setState({
+            isShowIndicator: false
+          });
         });
     }, 300);
   };
@@ -259,7 +262,7 @@ class PhoneAuth extends Component {
             user
               .getIdToken(true)
               .then(async idToken => {
-                const response = await APIHandler.login_firebase_vertify({
+                const response = await APIHandler.login_firebase_verify({
                   token: idToken
                 });
                 console.log(response);

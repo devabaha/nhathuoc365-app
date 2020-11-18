@@ -2,6 +2,7 @@ import appConfig from '../../config';
 
 export const ANALYTICS_VIEW_PREFIX = 'view_';
 export const ANALYTICS_CART_PREFIX = 'cart_';
+export const ANALYTICS_ERROR_PREFIX = 'error_';
 
 export const ANALYTICS_RAW_EVENTS_NAME = {
   view: {
@@ -9,11 +10,16 @@ export const ANALYTICS_RAW_EVENTS_NAME = {
   },
   cart: {
     order: 'orderCart'
+  },
+  error: {
+    phoneAuthFirebase: 'phoneAuthFirebase'
   }
 };
 
 export const formatViewEvents = eventName => ANALYTICS_VIEW_PREFIX + eventName;
 export const formatCartEvents = eventName => ANALYTICS_CART_PREFIX + eventName;
+export const formatErrorEvents = eventName =>
+  ANALYTICS_ERROR_PREFIX + eventName;
 
 const formatEventsName = () => {
   const formattedEventsName = { ...ANALYTICS_RAW_EVENTS_NAME };
@@ -28,6 +34,10 @@ const formatEventsName = () => {
           break;
         case 'cart':
           replaceObj[childKey] = formatCartEvents(
+            formattedEventsName[key][childKey]
+          );
+        case 'error':
+          replaceObj[childKey] = formatErrorEvents(
             formattedEventsName[key][childKey]
           );
           break;

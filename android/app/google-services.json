@@ -8,17 +8,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:54109172898:android:b2d18a5b81b72fae3553fb",
+        "mobilesdk_app_id": "1:54109172898:android:f8757310694125e53553fb",
         "android_client_info": {
-          "package_name": "tick.tickid"
+          "package_name": "id.tickid"
         }
       },
       "oauth_client": [
         {
-          "client_id": "54109172898-n84vefi6kcb2kggmlevgmi0hpjema38h.apps.googleusercontent.com",
+          "client_id": "54109172898-h6bi9fpnpvb2jem3op5tvt4q7ol8ou3t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "tick.tickid",
+            "package_name": "id.tickid",
             "certificate_hash": "aaee16d114d9e872ba39abb8e2f756a6f5030e6f"
           }
         },

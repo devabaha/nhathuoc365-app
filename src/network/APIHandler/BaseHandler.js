@@ -52,15 +52,15 @@ class BaseHandler {
    * @param {Object} data
    * @returns {import('network/Entity/APIRequest/APIRequest').Request}
    */
-  postCancelableAPI(api, data) {
+  postCancelableAPI(api, data, isEncoding = true) {
     this._networkIndicator();
     const cancelInstance = this.getCancelInstance();
-
+    data = isEncoding ? encodeQueryData(data) : data;
     return {
       cancel: () => cancelInstance.cancel(),
       promise: () =>
         axios
-          .post(api, encodeQueryData(data))
+          .post(api, data)
           .then(response => this.processError(response))
           .catch(err => console.log('postCancelableAPI', err))
     };

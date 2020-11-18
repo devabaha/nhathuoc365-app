@@ -148,7 +148,6 @@ class Home extends Component {
   async getCartData() {
     try {
       const response = await APIHandler.site_cart_show(store.store_id);
-      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         store.setCartData(response.data);
       } else {

@@ -16,6 +16,7 @@ import Button from '../Button';
 import appConfig from 'app-config';
 import Loading from '../Loading';
 import EventTracker from '../../helper/EventTracker';
+import firebase from 'react-native-firebase';
 
 class ProfileDetail extends Component {
   constructor(props) {
@@ -144,6 +145,11 @@ class ProfileDetail extends Component {
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
           store.resetAsyncStorage();
+
+          const isFirebaseSignedIn = !!firebase.auth().currentUser;
+          if (isFirebaseSignedIn) {
+            firebase.auth().signOut();
+          }
           flashShowMessage({
             message: t('signOut.successMessage'),
             type: 'success'

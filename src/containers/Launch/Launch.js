@@ -60,7 +60,7 @@ class Launch extends Component {
         });
         break;
       case STATUS_UNDEFINE_USER:
-        Actions.replace('phone_auth', {
+        Actions.replace(appConfig.routes.phoneAuth, {
           loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
         });
         break;

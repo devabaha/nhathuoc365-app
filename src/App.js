@@ -1,3 +1,4 @@
+console.disableYellowBox = true;
 import React, { Component } from 'react';
 import './lib/Constant';
 import './lib/Helper';
@@ -44,7 +45,8 @@ import Orders from './components/orders/Orders';
 import StoreOrders from './components/orders/StoreOrders';
 import Account from './components/account/Account';
 import Register from './components/account/Register';
-import PhoneAuth from './components/account/PhoneAuth';
+// import PhoneAuth from './components/account/PhoneAuth';
+import PhoneAuth from './containers/PhoneAuth';
 import OpRegister from './components/account/OpRegister';
 import ForgetVerify from './components/account/ForgetVerify';
 import ForgetActive from './components/account/ForgetActive';
@@ -146,6 +148,7 @@ import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
 import { ANALYTICS_EVENTS_NAME } from './constants';
+import CountryPicker from './components/CountryPicker';
 /**
  * Not allow font scaling
  */
@@ -995,9 +998,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="phone_auth">
+                <Stack key={appConfig.routes.phoneAuth}>
                   <Scene
-                    key="phone_auth_1"
+                    key={`${appConfig.routes.phoneAuth}_1`}
                     hideNavBar
                     component={PhoneAuth}
                     {...navBarConfig}
@@ -1605,6 +1608,12 @@ class RootRouter extends Component {
 
               {/* ================ MODAL POPUP ================ */}
               <Stack key={appConfig.routes.modalPopup} component={ModalPopup} />
+
+              {/* ================ COUNTRY PICKER ================ */}
+              <Stack
+                key={appConfig.routes.countryPicker}
+                component={CountryPicker}
+              />
             </Lightbox>
 
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}

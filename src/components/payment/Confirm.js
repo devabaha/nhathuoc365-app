@@ -1815,7 +1815,7 @@ class Confirm extends Component {
   }
 
   _onRegister() {
-    Actions.push('phone_auth', {
+    Actions.push(appConfig.routes.phoneAuth, {
       tel: store.cart_data.address.tel
     });
   }

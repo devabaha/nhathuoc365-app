@@ -52,6 +52,9 @@ const config = Object.freeze({
     sceneWrapper: 'sceneWrapper',
     launch: 'launch',
 
+    phoneAuth: 'phone_auth',
+    countryPicker: 'countryPicker',
+
     primaryTabbar: 'primaryTabbar',
 
     homeTab: 'homeTab',
