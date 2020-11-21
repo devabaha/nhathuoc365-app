@@ -9,8 +9,7 @@ import {
   Easing
 } from 'react-native';
 import { default as NetInfo } from '@react-native-community/netinfo';
-import SVGNoWifi from '../../images/no_wifi.svg';
-import SVGLowWifi from '../../images/low_wifi.svg';
+import FeatherIcon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
@@ -27,8 +26,12 @@ const styles = StyleSheet.create({
     flex: 1
   },
   iconContainer: {
-    width: 40,
-    marginRight: 15
+    marginRight: 15,
+    justifyContent: 'center'
+  },
+  icon: {
+    fontSize: 26,
+    color: appConfig.colors.primary
   },
   mainContent: {
     padding: 10,
@@ -49,14 +52,18 @@ const styles = StyleSheet.create({
     marginTop: 3,
     fontStyle: 'italic'
   },
+  btnContainer: {
+    marginLeft: 15,
+    borderRadius: 4,
+    alignSelf: 'center',
+    overflow: 'hidden'
+  },
   btn: {
-    padding: 5,
+    padding: 7,
     paddingHorizontal: 10,
     backgroundColor: appConfig.colors.primary,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 4,
-    marginLeft: 15
+    justifyContent: 'center'
   },
   btnText: {
     color: '#fff'
@@ -66,7 +73,6 @@ const styles = StyleSheet.create({
 class NetWorkInfo extends Component {
   state = {
     isConnected: true,
-    isWeakConnection: false,
     visible: false
   };
   unsubscribe = () => {};
@@ -106,9 +112,9 @@ class NetWorkInfo extends Component {
 
   get icon() {
     if (!this.state.isConnected) {
-      return <SVGNoWifi width="100%" height="100%" />;
+      return <FeatherIcon name="wifi-off" style={styles.icon} />;
     } else if (this.state.isWeakConnection) {
-      return <SVGLowWifi width="100%" height="100%" />;
+      return null;
     } else {
       return null;
     }
@@ -127,15 +133,17 @@ class NetWorkInfo extends Component {
       return false;
     }
 
-    return true;
+    if (nextState !== this.state) {
+      return true;
+    }
+
+    return false;
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.unsubscribe = NetInfo.addEventListener(
-        this.handleNetWorkState.bind(this)
-      );
-    }, 3000);
+    this.unsubscribe = NetInfo.addEventListener(
+      this.handleNetWorkState.bind(this)
+    );
   }
 
   componentWillUnmount() {
@@ -143,14 +151,10 @@ class NetWorkInfo extends Component {
   }
 
   handleNetWorkState(state) {
-    let isWeakConnection = false;
-    const { details, isConnected } = state;
-    if (details) {
-      isWeakConnection = !!details.isConnectionExpensive;
-    }
-    const visible = !!!isConnected || !!isWeakConnection;
+    const { isConnected } = state;
+    const visible = !!!isConnected;
 
-    this.setState({ visible, isConnected, isWeakConnection });
+    this.setState({ visible, isConnected });
   }
 
   onOk() {
@@ -162,32 +166,32 @@ class NetWorkInfo extends Component {
       transform: [{ translateY: this.animatedTranslateY }]
     };
     return (
-      this.state.visible && (
-        <Animated.View style={[styles.wrapper, extraStyle]}>
-          <SafeAreaView
-            style={[
-              styles.container,
-              {
-                backgroundColor: this.backgroundColor
-              }
-            ]}
-          >
-            {appConfig.device.isAndroid && (
-              <View
-                style={[
-                  styles.androidDivider,
-                  {
-                    backgroundColor: this.backgroundColor
-                  }
-                ]}
-              />
-            )}
-            <View style={styles.mainContent}>
-              <View style={styles.iconContainer}>{this.icon}</View>
-              <View style={styles.messageContainer}>
-                <Text style={styles.title}>{this.title}</Text>
-                <Text style={styles.description}>{this.message}</Text>
-              </View>
+      <Animated.View style={[styles.wrapper, extraStyle]}>
+        <SafeAreaView
+          style={[
+            styles.container,
+            {
+              backgroundColor: this.backgroundColor
+            }
+          ]}
+        >
+          {appConfig.device.isAndroid && (
+            <View
+              style={[
+                styles.androidDivider,
+                {
+                  backgroundColor: this.backgroundColor
+                }
+              ]}
+            />
+          )}
+          <View style={styles.mainContent}>
+            <View style={styles.iconContainer}>{this.icon}</View>
+            <View style={styles.messageContainer}>
+              <Text style={styles.title}>{this.title}</Text>
+              <Text style={styles.description}>{this.message}</Text>
+            </View>
+            <View style={styles.btnContainer}>
               <TouchableOpacity
                 style={styles.btn}
                 onPress={this.onOk.bind(this)}
@@ -195,9 +199,9 @@ class NetWorkInfo extends Component {
                 <Text style={styles.btnText}>OK</Text>
               </TouchableOpacity>
             </View>
-          </SafeAreaView>
-        </Animated.View>
-      )
+          </View>
+        </SafeAreaView>
+      </Animated.View>
     );
   }
 }
