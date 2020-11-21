@@ -187,12 +187,13 @@ class Home extends Component {
 
   handleShowAllVouchers = () => {};
 
-  handlePressService(service) {
+  handlePressService(service, callBack) {
+    console.log(service);
     const { t } = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
-      servicesHandler(service, t);
+      servicesHandler(service, t, callBack);
     }
   }
 
@@ -245,32 +246,13 @@ class Home extends Component {
 
   productOpening;
 
-  handlePressProduct = product => {
-    if (this.productOpening) return;
-    this.productOpening = true;
-
-    this.setState({
-      showLoading: true
-    });
-
-    APIHandler.site_info(product.site_id)
-      .then(response => {
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setStoreData(response.data);
-            Actions.item({
-              title: product.name,
-              item: product
-            });
-          })();
-        }
-      })
-      .finally(() => {
-        this.productOpening = false;
-        this.setState({
-          showLoading: false
-        });
-      });
+  handlePressProduct = (product, callBack) => {
+    const service = {
+      type: SERVICES_TYPE.PRODUCT_DETAIL,
+      siteId: product.site_id,
+      productId: product.id
+    };
+    servicesHandler(service, this.props.t, callBack);
   };
 
   render() {

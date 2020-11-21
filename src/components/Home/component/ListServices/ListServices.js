@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Button from 'react-native-button';
-import { IMAGE_ICON_TYPE } from '../../constants';
+import { View, StyleSheet } from 'react-native';
 import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW,
   INDICATOR_HORIZONTAL_WIDTH
 } from '../../constants';
 import appConfig from 'app-config';
-import { NotiBadge } from '../../../Badges';
 import HorizontalIndicator from './HorizontalIndicator';
 import Animated, { event, divide, Easing } from 'react-native-reanimated';
 import store from 'app-store';
-
-const BASE_SERVICE_DIMENSION = 45;
-const BASE_TITLE_MARGIN = 6;
-const SERVICE_DIMENSION_INCREMENT_PERCENTAGE = 20;
-const TITLE_MARGIN_INCREMENT_PERCENTAGE = 30;
+import {
+  BASE_SERVICE_DIMENSION,
+  BASE_TITLE_MARGIN,
+  SERVICE_DIMENSION_INCREMENT_PERCENTAGE,
+  TITLE_MARGIN_INCREMENT_PERCENTAGE
+} from './constants';
+import Service from './Service';
 
 const styles = StyleSheet.create({
   container: {
@@ -229,8 +227,7 @@ class ListServices extends Component {
       rowData.push(
         this.renderService({
           item: service,
-          notify: this.props.notify,
-          onPress: this.props.onItemPress
+          notify: this.props.notify
         })
       );
 
@@ -260,11 +257,7 @@ class ListServices extends Component {
     );
   }
 
-  renderService({ item, notify = store.notify, onPress }) {
-    const handleOnPress = () => {
-      onPress(item);
-    };
-
+  renderService({ item, notify = store.notify }) {
     const serviceAutoIncrementDimension = this.calculateIncrementDimensionByPercentage(
       BASE_SERVICE_DIMENSION,
       SERVICE_DIMENSION_INCREMENT_PERCENTAGE
@@ -285,47 +278,25 @@ class ListServices extends Component {
         ? titleAutoIncrementMarginTop
         : BASE_TITLE_MARGIN;
 
+    const serviceMainStyle = {
+      width: serviceDimension,
+      height: serviceDimension,
+      backgroundColor: item.bgrColor
+    };
+
+    const titleStyle = { marginTop: titleMarginTop };
+
     return (
-      <Button
-        onPress={handleOnPress}
-        containerStyle={[styles.buttonWrapper, this.serviceStyle]}
-      >
-        <View style={styles.itemWrapper}>
-          <View>
-            <View
-              style={[
-                styles.iconWrapper,
-                {
-                  width: serviceDimension,
-                  height: serviceDimension,
-                  backgroundColor: item.bgrColor
-                }
-              ]}
-            >
-              {item.iconType === IMAGE_ICON_TYPE ? (
-                <Image style={styles.icon} source={{ uri: item.icon }} />
-              ) : (
-                <MaterialCommunityIcons
-                  name={item.icon}
-                  color="#fff"
-                  size={32}
-                />
-              )}
-            </View>
-            <NotiBadge
-              containerStyle={styles.notifyWrapper}
-              labelStyle={styles.notifyLabel}
-              label={notify[`list_service_${item.type}`]}
-              show={notify[`list_service_${item.type}`]}
-              alert
-              animation
-            />
-          </View>
-          <Text style={[styles.title, { marginTop: titleMarginTop }]}>
-            {item.title}
-          </Text>
-        </View>
-      </Button>
+      <Service
+        selfRequest={this.props.selfRequest}
+        service={item}
+        onPress={item => this.props.onItemPress(item)}
+        containerStyle={this.serviceStyle}
+        itemStyle={serviceMainStyle}
+        titleStyle={titleStyle}
+        notiLabel={notify[`list_service_${item.type}`]}
+        isShowNoti={notify[`list_service_${item.type}`]}
+      />
     );
   }
 

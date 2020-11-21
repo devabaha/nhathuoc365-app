@@ -33,7 +33,7 @@ import {
  * @callback callBack - a trigger when needed for specific case.
  */
 export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
-  if (!service) return;
+  if (!service || !service.type) return;
   switch (service.type) {
     /** RADA */
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
@@ -207,22 +207,31 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       APIHandler.site_info(service.siteId)
         .then(response => {
           if (response && response.status == STATUS_SUCCESS) {
-            action(() => {
-              store.setStoreData(response.data);
-              if (response.data.config_menu_categories) {
-                Actions.push(appConfig.routes.multiLevelCategory, {
-                  title: response.data.name,
-                  siteId: service.siteId,
-                  categoryId: service.categoryId || 0
-                });
-              } else {
-                Actions.push(appConfig.routes.store, {
-                  title: service.name || response.data.name,
-                  categoryId: service.categoryId || 0
-                });
-              }
-            })();
+            store.setStoreData(response.data);
+            if (response.data.config_menu_categories) {
+              Actions.push(appConfig.routes.multiLevelCategory, {
+                title: response.data.name,
+                siteId: service.siteId,
+                categoryId: service.categoryId || 0
+              });
+            } else {
+              Actions.push(appConfig.routes.store, {
+                title: service.name || response.data.name,
+                categoryId: service.categoryId || 0
+              });
+            }
+          } else {
+            throw Error(
+              response ? response.message : t('common:api.error.message')
+            );
           }
+        })
+        .catch(err => {
+          console.log('open_shop', err);
+          flashShowMessage({
+            type: 'danger',
+            message: err.message || t('common:api.error.message')
+          });
         })
         .finally(callBack);
       break;
@@ -256,7 +265,8 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
             type: 'danger',
             message: e.message || t('common:api.error.message')
           });
-        });
+        })
+        .finally(callBack);
       break;
 
     /** AFFILIATE */

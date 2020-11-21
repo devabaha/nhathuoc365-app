@@ -145,5 +145,16 @@
     "error": {
       "message": "Không mở được link"
     }
+  },
+
+  "networkInfo": {
+    "notConnected": {
+      "title": "Không có kết nối internet",
+      "message": "Vui lòng kiểm tra lại cài đặt internet của bạn."
+    },
+    "weakConnection": {
+      "title": "Kết nối internet yếu",
+      "message": "Bạn có thể phải đợi khi trải nghiệm ứng dụng này."
+    }
   }
 }

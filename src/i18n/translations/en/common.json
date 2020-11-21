@@ -145,5 +145,16 @@
     "error": {
       "message": "Can't open the link"
     }
+  },
+
+  "networkInfo": {
+    "notConnected": {
+      "title": "No internet connection",
+      "message": "Please check your internet settings."
+    },
+    "weakConnection": {
+      "title": "Low internet connection",
+      "message": "You may have to wait while experiencing the app."
+    }
   }
 }

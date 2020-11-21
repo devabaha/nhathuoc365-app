@@ -149,6 +149,7 @@ import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
 import { ANALYTICS_EVENTS_NAME } from './constants';
 import CountryPicker from './components/CountryPicker';
+import NetWorkInfo from './components/NetWorkInfo';
 /**
  * Not allow font scaling
  */
@@ -612,6 +613,7 @@ class App extends Component {
     return (
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {this.state.header}
+        <NetWorkInfo />
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}

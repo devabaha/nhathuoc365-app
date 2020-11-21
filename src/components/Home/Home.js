@@ -198,6 +198,9 @@ class Home extends Component {
 
           {this.hasServices ? (
             <ListServices
+              selfRequest={(service, callBack) =>
+                this.props.onPressService(service, callBack)
+              }
               listService={this.props.listService}
               type={this.props.listServiceType}
               itemsPerRow={this.props.listServiceItemsPerRow}
