@@ -5,151 +5,368 @@
  * @module CommonAPI
  */
 
-// Sites
-exports.USER_LOGIN = MY_FOOD_API + 'apiUser/login';
-exports.SITE_LIKE = MY_FOOD_API + 'apiSite/like';
+import BaseAPI from './BaseAPI';
 
-// Home
-exports.USER_HOME = MY_FOOD_API + 'apiUser/home';
-exports.USER_SITE_HOME = MY_FOOD_API + 'apiUser/site_home';
+class CommonAPI {
+  // Sites
+  get USER_LOGIN() {
+    return BaseAPI.apiDomain + 'apiUser/login';
+  }
+  get SITE_LIKE() {
+    return BaseAPI.apiDomain + 'apiSite/like';
+  }
 
-// Store
-exports.USER_SEARCH_SITE = MY_FOOD_API + 'apiUser/search_site';
-exports.USER_SEARCH_SITES = MY_FOOD_API + 'apiUser/search_sites';
-exports.USER_ADD_SITE = MY_FOOD_API + 'apiUser/add_site';
-exports.USER_LIST_SITE = MY_FOOD_API + 'apiUser/list_site';
-exports.USER_LIST_SUGGEST_SITE = MY_FOOD_API + 'apiUser/list_suggest_site';
-exports.SITE_INFO = MY_FOOD_API + 'apiSite/info';
-exports.SITE_DETAIL = MY_FOOD_API + 'apiSite/detail';
-exports.SITE_CATEGORY_PRODUCT = MY_FOOD_API + 'apiSite/category_product';
-exports.SEARCH_PRODUCT = MY_FOOD_API + 'apiSite/search_product';
-exports.USER_SITES = MY_FOOD_API + 'apiUser/sites';
-exports.USER_BARCODE = MY_FOOD_API + 'apiUser/user_barcode';
-exports.USER_FROM_BARCODE = MY_FOOD_API + 'apiUser/user_from_barcode';
-exports.USER_REMOVE_SITE = MY_FOOD_API + 'apiUser/remove_site';
-exports.USER_ADD_REF = MY_FOOD_API + 'apiUser/add_ctv';
-exports.USER_GET_WALLET = MY_FOOD_API + 'apiUser/user_get_wallet';
-exports.USER_INVITE_HISTORY = MY_FOOD_API + 'apiUser/invite_history';
-exports.USER_CHECK_ADDRESS = MY_FOOD_API + 'apiUser/check_address';
-exports.USER_UPDATE_PROFILE = MY_FOOD_API + 'apiUser/update';
-exports.SITE_GET_TREE_CATEGORIES = MY_FOOD_API + 'apiSite/get_tree_categories';
+  // Home
+  get USER_HOME() {
+    return BaseAPI.apiDomain + 'apiUser/home';
+  }
+  get USER_SITE_HOME() {
+    return BaseAPI.apiDomain + 'apiUser/site_home';
+  }
 
-// Item
-exports.SITE_PRODUCT = MY_FOOD_API + 'apiSite/product';
-exports.SITE_PRODUCT_ATTRIBUTES = MY_FOOD_API + 'apiSite/product_attr';
+  // Store
+  get USER_SEARCH_SITES() {
+    return BaseAPI.apiDomain + 'apiUser/search_sites';
+  }
+  get USER_SEARCH_SITE() {
+    return BaseAPI.apiDomain + 'apiUser/search_site';
+  }
+  get USER_ADD_SITE() {
+    return BaseAPI.apiDomain + 'apiUser/add_site';
+  }
+  get USER_LIST_SITE() {
+    return BaseAPI.apiDomain + 'apiUser/list_site';
+  }
+  get USER_LIST_SUGGEST_SITE() {
+    return BaseAPI.apiDomain + 'apiUser/list_suggest_site';
+  }
+  get SITE_INFO() {
+    return BaseAPI.apiDomain + 'apiSite/info';
+  }
+  get SITE_DETAIL() {
+    return BaseAPI.apiDomain + 'apiSite/detail';
+  }
+  get SITE_CATEGORY_PRODUCT() {
+    return BaseAPI.apiDomain + 'apiSite/category_product';
+  }
+  get SEARCH_PRODUCT() {
+    return BaseAPI.apiDomain + 'apiSite/search_product';
+  }
+  get USER_SITES() {
+    return BaseAPI.apiDomain + 'apiUser/sites';
+  }
+  get USER_BARCODE() {
+    return BaseAPI.apiDomain + 'apiUser/user_barcode';
+  }
+  get USER_FROM_BARCODE() {
+    return BaseAPI.apiDomain + 'apiUser/user_from_barcode';
+  }
+  get USER_REMOVE_SITE() {
+    return BaseAPI.apiDomain + 'apiUser/remove_site';
+  }
+  get USER_ADD_REF() {
+    return BaseAPI.apiDomain + 'apiUser/add_ctv';
+  }
+  get USER_GET_WALLET() {
+    return BaseAPI.apiDomain + 'apiUser/user_get_wallet';
+  }
+  get USER_INVITE_HISTORY() {
+    return BaseAPI.apiDomain + 'apiUser/invite_history';
+  }
+  get USER_CHECK_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiUser/check_address';
+  }
+  get USER_UPDATE_PROFILE() {
+    return BaseAPI.apiDomain + 'apiUser/update';
+  }
+  get SITE_GET_TREE_CATEGORIES() {
+    return BaseAPI.apiDomain + 'apiSite/get_tree_categories';
+  }
 
-// Cart
-exports.SITE_CART_PLUS = MY_FOOD_API + 'apiCart/plus';
-exports.SITE_CART_MINUS = MY_FOOD_API + 'apiCart/minus';
-exports.SITE_CART_UPDATE_ORDERING =
-  MY_FOOD_API + 'apiCart/update_cart_ordering';
-exports.SITE_CART_SELECTED = MY_FOOD_API + 'apiCart/selected';
-exports.SITE_CART_UNSELECTED = MY_FOOD_API + 'apiCart/unselected';
-exports.SITE_CART_ORDER = MY_FOOD_API + 'apiCart/order';
-exports.SITE_CART_UPDATE = MY_FOOD_API + 'apiCart/update';
-exports.SITE_CART_NOTE = MY_FOOD_API + 'apiCart/note';
-exports.SITE_CART_RATING = MY_FOOD_API + 'apiCart/rating';
-exports.SITE_CART_SHOW = MY_FOOD_API + 'apiCart/show';
-exports.SITE_CART_CANCELING = MY_FOOD_API + 'apiCart/cancel';
-exports.SITE_CART_ADDING = MY_FOOD_API + 'apiSite/cartadding';
-exports.SITE_CART = MY_FOOD_API + 'apiSite/cart';
-exports.SITE_CART_DOWN = MY_FOOD_API + 'apiSite/cartdown';
-exports.SITE_CART_UP = MY_FOOD_API + 'apiSite/cartup';
-exports.SITE_CART_REMOVE = MY_FOOD_API + 'apiSite/cartremove';
-exports.SITE_CART_SELECT = MY_FOOD_API + 'apiSite/cartselect';
-exports.SITE_CART_UNSELECT = MY_FOOD_API + 'apiSite/cartunselect';
-exports.SITE_CART_NODE = MY_FOOD_API + 'apiSite/cartnote';
-exports.SITE_CART_ORDERS = MY_FOOD_API + 'apiSite/cartorder';
-exports.SITE_CART_CANCEL = MY_FOOD_API + 'apiSite/cartcancel';
-exports.SITE_CART_REORDER = MY_FOOD_API + 'apiSite/cart_reorder';
-exports.SITE_CART_EDIT = MY_FOOD_API + 'apiSite/cart_edit';
-exports.CART_SITE_UPDATE = MY_FOOD_API + 'apiSite/site_cart_update';
+  // Item
+  get SITE_PRODUCT() {
+    return BaseAPI.apiDomain + 'apiSite/product';
+  }
+  get SITE_PRODUCT_ATTRIBUTES() {
+    return BaseAPI.apiDomain + 'apiSite/product_attr';
+  }
 
-// Address
-exports.SITE_CART_ADD_ADDRESS = MY_FOOD_API + 'apiCart/add_address';
-exports.SITE_CART_CHANGE_ADDRESS = MY_FOOD_API + 'apiCart/change_address';
-exports.USER_ADDRESS = MY_FOOD_API + 'apiUser/address';
-exports.USER_ADD_ADDRESS = MY_FOOD_API + 'apiUser/add_address';
-exports.SITE_ADD_ADDRESS = MY_FOOD_API + 'apiSite/add_address';
-exports.SITE_CART_ADDRESS = MY_FOOD_API + 'apiSite/cartaddress';
-exports.USER_DELETE_ADDRESS = MY_FOOD_API + 'apiUser/delete_address';
+  // Cart
+  get SITE_CART_PLUS() {
+    return BaseAPI.apiDomain + 'apiCart/plus';
+  }
+  get SITE_CART_MINUS() {
+    return BaseAPI.apiDomain + 'apiCart/minus';
+  }
+  get SITE_CART_UPDATE_ORDERING() {
+    return BaseAPI.apiDomain + 'apiCart/update_cart_ordering';
+  }
+  get SITE_CART_SELECTED() {
+    return BaseAPI.apiDomain + 'apiCart/selected';
+  }
+  get SITE_CART_UNSELECTED() {
+    return BaseAPI.apiDomain + 'apiCart/unselected';
+  }
+  get SITE_CART_ORDER() {
+    return BaseAPI.apiDomain + 'apiCart/order';
+  }
+  get SITE_CART_UPDATE() {
+    return BaseAPI.apiDomain + 'apiCart/update';
+  }
+  get SITE_CART_NOTE() {
+    return BaseAPI.apiDomain + 'apiCart/note';
+  }
+  get SITE_CART_RATING() {
+    return BaseAPI.apiDomain + 'apiCart/rating';
+  }
+  get SITE_CART_SHOW() {
+    return BaseAPI.apiDomain + 'apiCart/show';
+  }
+  get SITE_CART_CANCELING() {
+    return BaseAPI.apiDomain + 'apiCart/cancel';
+  }
+  get SITE_CART_ADDING() {
+    return BaseAPI.apiDomain + 'apiSite/cartadding';
+  }
+  get SITE_CART() {
+    return BaseAPI.apiDomain + 'apiSite/cart';
+  }
+  get SITE_CART_DOWN() {
+    return BaseAPI.apiDomain + 'apiSite/cartdown';
+  }
+  get SITE_CART_UP() {
+    return BaseAPI.apiDomain + 'apiSite/cartup';
+  }
+  get SITE_CART_REMOVE() {
+    return BaseAPI.apiDomain + 'apiSite/cartremove';
+  }
+  get SITE_CART_SELECT() {
+    return BaseAPI.apiDomain + 'apiSite/cartselect';
+  }
+  get SITE_CART_UNSELECT() {
+    return BaseAPI.apiDomain + 'apiSite/cartunselect';
+  }
+  get SITE_CART_NODE() {
+    return BaseAPI.apiDomain + 'apiSite/cartnote';
+  }
+  get SITE_CART_ORDERS() {
+    return BaseAPI.apiDomain + 'apiSite/cartorder';
+  }
+  get SITE_CART_CANCEL() {
+    return BaseAPI.apiDomain + 'apiSite/cartcancel';
+  }
+  get SITE_CART_REORDER() {
+    return BaseAPI.apiDomain + 'apiSite/cart_reorder';
+  }
+  get SITE_CART_EDIT() {
+    return BaseAPI.apiDomain + 'apiSite/cart_edit';
+  }
+  get CART_SITE_UPDATE() {
+    return BaseAPI.apiDomain + 'apiSite/site_cart_update';
+  }
 
-// Orders
-exports.SITE_CART_INDEX = MY_FOOD_API + 'apiCart/index';
-exports.SITE_CART_LIST = MY_FOOD_API + 'apiSite/cart_list';
-exports.USER_CART_LIST = MY_FOOD_API + 'apiUser/cart_list';
-//get_cart_code
-exports.USER_CART_CODE = MY_FOOD_API + 'apiUser/get_cart_code';
+  // Address
+  get SITE_CART_ADD_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiCart/add_address';
+  }
+  get SITE_CART_CHANGE_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiCart/change_address';
+  }
+  get USER_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiUser/address';
+  }
+  get USER_ADD_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiUser/add_address';
+  }
+  get SITE_ADD_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiSite/add_address';
+  }
+  get SITE_CART_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiSite/cartaddress';
+  }
+  get USER_DELETE_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiUser/delete_address';
+  }
 
-// Chat
-exports.SITE_SEND_CHAT = MY_FOOD_API + 'apiSite/send_chat';
-exports.SITE_LOAD_CHAT = MY_FOOD_API + 'apiSite/load_chat';
-exports.SITE_NOTIFY_CHAT = MY_FOOD_API + 'apiSite/notify_chat';
-exports.USER_NOTIFY_CHAT = MY_FOOD_API + 'apiUser/notify_chat';
-exports.SITE_CONVERSATIONS = MY_FOOD_API + 'apiChat/conversations';
-exports.SITE_CONVERSATION = MY_FOOD_API + 'apiChat/conversation';
-exports.SITE_SEND_MESSAGE = MY_FOOD_API + 'apiChat/send';
-exports.SITE_SEARCH_CONVERSATIONS = MY_FOOD_API + 'apiChat/search';
-exports.SITE_PIN_LIST = MY_FOOD_API + 'apiSite/pin_list';
+  // Orders
+  get SITE_CART_INDEX() {
+    return BaseAPI.apiDomain + 'apiCart/index';
+  }
+  get SITE_CART_LIST() {
+    return BaseAPI.apiDomain + 'apiSite/cart_list';
+  }
+  get USER_CART_LIST() {
+    return BaseAPI.apiDomain + 'apiUser/cart_list';
+  }
+  //get_cart_code
+  get USER_CART_CODE() {
+    return BaseAPI.apiDomain + 'apiUser/get_cart_code';
+  }
 
-// News
-exports.USER_NEWS_LIST = MY_FOOD_API + 'apiUser/news_list';
-exports.USER_NEWS = MY_FOOD_API + 'apiUser/news';
+  // Chat
+  get SITE_SEND_CHAT() {
+    return BaseAPI.apiDomain + 'apiSite/send_chat';
+  }
+  get SITE_LOAD_CHAT() {
+    return BaseAPI.apiDomain + 'apiSite/load_chat';
+  }
+  get SITE_NOTIFY_CHAT() {
+    return BaseAPI.apiDomain + 'apiSite/notify_chat';
+  }
+  get USER_NOTIFY_CHAT() {
+    return BaseAPI.apiDomain + 'apiUser/notify_chat';
+  }
+  get SITE_CONVERSATIONS() {
+    return BaseAPI.apiDomain + 'apiChat/conversations';
+  }
+  get SITE_CONVERSATION() {
+    return BaseAPI.apiDomain + 'apiChat/conversation';
+  }
+  get SITE_SEND_MESSAGE() {
+    return BaseAPI.apiDomain + 'apiChat/send';
+  }
+  get SITE_SEARCH_CONVERSATIONS() {
+    return BaseAPI.apiDomain + 'apiChat/search';
+  }
+  get SITE_PIN_LIST() {
+    return BaseAPI.apiDomain + 'apiSite/pin_list';
+  }
 
-// Notices
-exports.USER_NOTICE = MY_FOOD_API + 'apiUser/notice';
+  // News
+  get USER_NEWS_LIST() {
+    return BaseAPI.apiDomain + 'apiUser/news_list';
+  }
+  get USER_NEWS() {
+    return BaseAPI.apiDomain + 'apiUser/news';
+  }
 
-// Notify
-exports.USER_NOTIFY = MY_FOOD_API + 'apiUser/notify';
+  // Notices
+  get USER_NOTICE() {
+    return BaseAPI.apiDomain + 'apiUser/notice';
+  }
 
-// Push Notification
-exports.ADD_PUSH_TOKEN = MY_FOOD_API + 'api/add_push_token';
+  // Notify
+  get USER_NOTIFY() {
+    return BaseAPI.apiDomain + 'apiUser/notify';
+  }
 
-// Users
-exports.USER_REGISTER = MY_FOOD_API + 'apiUser/register';
-exports.USER_OP_REGISTER = MY_FOOD_API + 'apiUser/op_register';
-exports.USER_VERIFY_OTP = MY_FOOD_API + 'apiUser/verify_otp';
-exports.USER_LOGIN_PASSWORD = MY_FOOD_API + 'apiUser/login_password';
-exports.USER_LOGIN_SMS = MY_FOOD_API + 'apiUser/login_sms';
-exports.LOGIN_SMS_VERIFY = MY_FOOD_API + 'apiUser/login_sms_verify';
-exports.LOGIN_FBAK_VERIFY = MY_FOOD_API + 'apiUser/login_fbak_verify';
-exports.USER_LOGOUT = MY_FOOD_API + 'apiUser/logout';
-exports.USER_ADD_AVATAR = PHOTO_MY_FOOD_API + 'apiUser/add_avatar';
-exports.UPLOAD_IMAGE = PHOTO_MY_FOOD_API + 'photos/upload_image';
-exports.USER_FORGET_PASSWORD = MY_FOOD_API + 'apiUser/forget_password';
-exports.USER_FORGET_PASSWORD_VERIFY =
-  MY_FOOD_API + 'apiUser/forget_password_verify';
-exports.USER_FORGET_NEW_PASSWORD = MY_FOOD_API + 'apiUser/forget_new_password';
-exports.USER_CHOOSE_LOCATION = MY_FOOD_API + 'apiUser/choose_site';
-exports.USER_COINS_WALLET = MY_FOOD_API + 'apiUser/point_history';
-exports.USER_TRANSFER_BALANCE = MY_FOOD_API + 'apiUser/transfer_balance';
-exports.USER_WALLET_HISTORY = MY_FOOD_API + 'apiUser/wallet_history';
-exports.USER_GET_INFO_BY_PHONE_NUMBER =
-  MY_FOOD_API + 'apiUser/get_info_user_by_phone';
-exports.USER_GET_INFO_BY_WALLET_ADDRESS =
-  MY_FOOD_API + 'apiUser/get_info_user_by_wallet_address';
-exports.USER_RESET_PASSWORD = MY_FOOD_API + 'apiUser/reset_pass';
-exports.USER_RATE_APP = MY_FOOD_API + 'apiUser/rate_app';
-exports.USER_GET_SERVICES = MY_FOOD_API + 'apiUser/get_services';
-exports.USER_PROCESS_QRCODE = MY_FOOD_API + 'apiUser/process_qrcode';
+  // Push Notification
+  get ADD_PUSH_TOKEN() {
+    return BaseAPI.apiDomain + 'api/add_push_token';
+  }
 
-// Service
-exports.SERVICE_INFO = MY_FOOD_API + 'apiService/info';
-exports.SERVICE_DETAIL = MY_FOOD_API + 'apiService/detail';
-exports.SERVICE_ORDERS = MY_FOOD_API + 'apiService/orders';
-exports.SERVICE_RATING = MY_FOOD_API + 'apiService/rating';
-exports.SERVICE_BOOK = MY_FOOD_API + 'apiService/book';
+  // Users
+  get USER_REGISTER() {
+    return BaseAPI.apiDomain + 'apiUser/register';
+  }
+  get USER_OP_REGISTER() {
+    return BaseAPI.apiDomain + 'apiUser/op_register';
+  }
+  get USER_VERIFY_OTP() {
+    return BaseAPI.apiDomain + 'apiUser/verify_otp';
+  }
+  get USER_LOGIN_PASSWORD() {
+    return BaseAPI.apiDomain + 'apiUser/login_password';
+  }
+  get USER_LOGIN_SMS() {
+    return BaseAPI.apiDomain + 'apiUser/login_sms';
+  }
+  get LOGIN_SMS_VERIFY() {
+    return BaseAPI.apiDomain + 'apiUser/login_sms_verify';
+  }
+  get LOGIN_FBAK_VERIFY() {
+    return BaseAPI.apiDomain + 'apiUser/login_fbak_verify';
+  }
+  get USER_LOGOUT() {
+    return BaseAPI.apiDomain + 'apiUser/logout';
+  }
+  get USER_ADD_AVATAR() {
+    return BaseAPI.imageDomain + 'apiUser/add_avatar';
+  }
+  get UPLOAD_IMAGE() {
+    return BaseAPI.imageDomain + 'photos/upload_image';
+  }
+  get USER_FORGET_PASSWORD() {
+    return BaseAPI.apiDomain + 'apiUser/forget_password';
+  }
+  get USER_FORGET_PASSWORD_VERIFY() {
+    return BaseAPI.apiDomain + 'apiUser/forget_password_verify';
+  }
+  get USER_FORGET_NEW_PASSWORD() {
+    return BaseAPI.apiDomain + 'apiUser/forget_new_password';
+  }
+  get USER_CHOOSE_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/choose_site';
+  }
+  get USER_COINS_WALLET() {
+    return BaseAPI.apiDomain + 'apiUser/point_history';
+  }
+  get USER_TRANSFER_BALANCE() {
+    return BaseAPI.apiDomain + 'apiUser/transfer_balance';
+  }
+  get USER_WALLET_HISTORY() {
+    return BaseAPI.apiDomain + 'apiUser/wallet_history';
+  }
+  get USER_GET_INFO_BY_PHONE_NUMBER() {
+    return BaseAPI.apiDomain + 'apiUser/get_info_user_by_phone';
+  }
+  get USER_GET_INFO_BY_WALLET_ADDRESS() {
+    return BaseAPI.apiDomain + 'apiUser/get_info_user_by_wallet_address';
+  }
+  get USER_RESET_PASSWORD() {
+    return BaseAPI.apiDomain + 'apiUser/reset_pass';
+  }
+  get USER_RATE_APP() {
+    return BaseAPI.apiDomain + 'apiUser/rate_app';
+  }
+  get USER_GET_SERVICES() {
+    return BaseAPI.apiDomain + 'apiUser/get_services';
+  }
+  get USER_PROCESS_QRCODE() {
+    return BaseAPI.apiDomain + 'apiUser/process_qrcode';
+  }
 
-// Voucher
-exports.GET_MY_VOUCHER_BY_SITE = MY_FOOD_API + 'apiVoucher/my_voucher';
+  // Service
+  get SERVICE_INFO() {
+    return BaseAPI.apiDomain + 'apiService/info';
+  }
+  get SERVICE_DETAIL() {
+    return BaseAPI.apiDomain + 'apiService/detail';
+  }
+  get SERVICE_ORDERS() {
+    return BaseAPI.apiDomain + 'apiService/orders';
+  }
+  get SERVICE_RATING() {
+    return BaseAPI.apiDomain + 'apiService/rating';
+  }
+  get SERVICE_BOOK() {
+    return BaseAPI.apiDomain + 'apiService/book';
+  }
 
-// Login Firebase
-exports.LOGIN_FIREBASE_VERIFY = MY_FOOD_API + 'apiUser/login_firebase_verify';
+  // Voucher
+  get GET_MY_VOUCHER_BY_SITE() {
+    return BaseAPI.apiDomain + 'apiVoucher/my_voucher';
+  }
 
-// Payment
-exports.PAYMENT_METHOD = MY_FOOD_API + 'apiSite/payment';
-exports.ADD_PAYMENT_METHOD = MY_FOOD_API + 'apiSite/add_payment_method_cart';
+  // Login Firebase
+  get LOGIN_FIREBASE_VERIFY() {
+    return BaseAPI.apiDomain + 'apiUser/login_firebase_verify';
+  }
 
-// SLACK - Error Firebase
-exports.SLACK_ERROR_FIREBASE =
-  'https://hooks.slack.com/services/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';
+  // Payment
+  get PAYMENT_METHOD() {
+    return BaseAPI.apiDomain + 'apiSite/payment';
+  }
+  get ADD_PAYMENT_METHOD() {
+    return BaseAPI.apiDomain + 'apiSite/add_payment_method_cart';
+  }
+
+  // SLACK - Error Firebase
+  get SLACK_ERROR_FIREBASE() {
+    return 'https://hooks.slack.com/services/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';
+  }
+}
+
+export default new CommonAPI();
+
+export { CommonAPI };

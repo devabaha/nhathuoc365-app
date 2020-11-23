@@ -147,9 +147,9 @@ import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
-import { ANALYTICS_EVENTS_NAME } from './constants';
 import CountryPicker from './components/CountryPicker';
 import NetWorkInfo from './components/NetWorkInfo';
+import BaseAPI from './network/API/BaseAPI';
 /**
  * Not allow font scaling
  */
@@ -176,7 +176,7 @@ initializePhoneCardModule({
     store: ''
   },
   rest: {
-    endpoint: () => MY_FOOD_API
+    endpoint: () => BaseAPI.apiDomain
   },
   route: {
     push: Actions.push,
@@ -204,7 +204,7 @@ initializeVoucherModule({
     store: ''
   },
   rest: {
-    endpoint: () => MY_FOOD_API
+    endpoint: () => BaseAPI.apiDomain
   },
   route: {
     push: Actions.push,
