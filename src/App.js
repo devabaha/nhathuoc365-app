@@ -150,6 +150,7 @@ import ModalPopup from './components/ModalPopup';
 import CountryPicker from './components/CountryPicker';
 import NetWorkInfo from './components/NetWorkInfo';
 import BaseAPI from './network/API/BaseAPI';
+import DomainSelector from './containers/DomainSelector';
 /**
  * Not allow font scaling
  */
@@ -844,6 +845,14 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                <Stack key={appConfig.routes.domainSelector}>
+                  <Scene
+                    key={`${appConfig.routes.domainSelector}_1`}
+                    component={DomainSelector}
+                    hideNavBar
+                  />
+                </Stack>
 
                 <Stack key={appConfig.routes.ordersTab}>
                   <Scene

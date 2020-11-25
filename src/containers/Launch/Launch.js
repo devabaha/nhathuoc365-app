@@ -5,6 +5,7 @@ import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
 import { languages } from '../../i18n/constants';
+import BaseAPI, { ORIGIN_API_DOMAIN } from '../../network/API/BaseAPI';
 
 class Launch extends Component {
   constructor(props) {
@@ -39,8 +40,26 @@ class Launch extends Component {
     }
   };
 
+  handleTestDevice(isTestDevice) {
+    if (
+      !store.ignoreChangeDomain &&
+      isTestDevice &&
+      BaseAPI.apiDomain === ORIGIN_API_DOMAIN
+    ) {
+      Actions.replace(appConfig.routes.domainSelector);
+      return true;
+    }
+    return false;
+  }
+
   handleAuthWithResponse = response => {
     const user = response.data;
+    const { is_test_device } = user;
+    const isTestDevice = this.handleTestDevice(is_test_device);
+
+    if (isTestDevice) {
+      return;
+    }
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
     // phoneCardConfig.defaultContactPhone = user.tel;
@@ -59,7 +78,7 @@ class Launch extends Component {
           hideBackImage: true
         });
         break;
-      case STATUS_UNDEFINE_USER:
+      case STATUS_UNDEFINED_USER:
         Actions.replace(appConfig.routes.phoneAuth, {
           loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
         });

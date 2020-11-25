@@ -5,10 +5,13 @@
  * @module API
  */
 
+export const ORIGIN_API_DOMAIN = 'http://apiapp.tickid.vn/';
+export const ORIGIN_IMAGE_DOMAIN = 'https://img.tickid.vn/';
+
 class BaseAPI {
   constructor(
-    apiDomain = 'http://apiapp.tickid.vn/',
-    imageDomain = 'https://img.tickid.vn/'
+    apiDomain = ORIGIN_API_DOMAIN,
+    imageDomain = ORIGIN_IMAGE_DOMAIN
   ) {
     this._apiDomain = apiDomain;
     this._imageDomain = imageDomain;

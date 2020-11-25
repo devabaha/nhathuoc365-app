@@ -7,6 +7,8 @@ export default function handleStatusBarStyle(prevState, newState, action) {
   if (appConfig.device.isAndroid) return;
 
   const darkStatusBarScenes = [
+    appConfig.routes.domainSelector,
+
     appConfig.routes.phoneAuth,
     appConfig.routes.authConfirm,
     appConfig.routes.qrBarCode,

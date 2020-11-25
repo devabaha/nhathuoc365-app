@@ -9,18 +9,32 @@ import {
   Keyboard,
   TouchableOpacity
 } from 'react-native';
-import Button from '../../components/Button';
-import appConfig from 'app-config';
+import { Actions } from 'react-native-router-flux';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AsyncStorage from '@react-native-community/async-storage';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+import Button from '../../components/Button';
+import appConfig from 'app-config';
+import store from 'app-store';
 import BaseAPI from '../../network/API/BaseAPI';
-import { Actions } from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff'
+  },
+  iconBackWrapper: {
+    // left: 10,
+    position: 'absolute',
+    zIndex: 9999
+  },
+  iconBackContainer: {
+    padding: 15
+  },
+  iconBack: {
+    fontSize: 30,
+    color: '#555'
   },
   mainContent: {
     flex: 1,
@@ -31,13 +45,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#444',
     fontSize: 30,
-    marginTop: '20%',
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-    marginBottom: '10%'
+    marginTop: '7%',
+    letterSpacing: 8,
+    left: 4,
+    textTransform: 'uppercase'
+  },
+  subHeading: {
+    color: '#888',
+    textAlign: 'center',
+    marginTop: 5,
+    marginBottom: '7%',
+    textTransform: 'lowercase'
   },
   textInput: {
-    paddingVertical: 15,
+    paddingVertical: appConfig.device.isIOS ? 15 : 7,
     paddingHorizontal: 10,
     borderWidth: 1,
     borderRadius: 4,
@@ -57,7 +78,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 5,
     justifyContent: 'flex-end'
   },
   saveTxt: {
@@ -122,15 +143,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: appConfig.colors.primary
   },
-  btnContainer: {
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    paddingVertical: 15,
+  comboBtnContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     backgroundColor: '#fff',
-    ...elevationShadowStyle(5)
+    ...elevationShadowStyle(24, 0, 0, 0.5, appConfig.colors.primary)
+  },
+  ignoreContainer: {
+    width: undefined,
+    alignSelf: 'center'
+  },
+  ignoreBtn: {
+    width: undefined,
+    paddingHorizontal: 10,
+    marginRight: -15,
+    backgroundColor: '#999'
+  },
+  btnContainer: {
+    paddingVertical: 15,
+    flex: 1
   },
   noteContainer: {
-    marginTop: 30
+    marginTop: 10
   },
   noteHeading: {
     marginBottom: 10
@@ -142,11 +176,10 @@ const styles = StyleSheet.create({
 });
 
 const DOMAIN_STORAGE_KEY = 'dynamic_domain_2020_11_24-minh_nguyen';
-const DOMAIN_REGEX = /(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]/g;
 const NOTES = [
   `• Nhập "hs " để gõ nhanh "https://"`,
-  `• Nhập "ht " để gõ nhanh "http://"`,
-  `• Domain phải kết thúc bằng dấu "/" \r\n  (vd: https://domain.com/)`
+  `• Nhập "ht " để gõ nhanh "http://"`
+  //   `• Domain phải kết thúc bằ ng dấu "/" \r\n  (vd: https://domain.com/)`,
 ];
 
 class DomainSelector extends Component {
@@ -179,15 +212,21 @@ class DomainSelector extends Component {
   }
 
   async loadDomain() {
-    let domainNames = await AsyncStorage.getItem(DOMAIN_STORAGE_KEY, err => {
-      console.log('%cerror_load_domain', 'color:red', err);
-    });
+    let domainNames = await AsyncStorage.getItem(
+      DOMAIN_STORAGE_KEY,
+      (error, result) => {
+        if (error) {
+          console.log('%cerror_load_domain', 'color:red', error);
+        }
+      }
+    );
     if (domainNames) {
       domainNames = JSON.parse(domainNames);
-      console.log(domainNames);
+
       if (Array.isArray(domainNames)) {
+        const autoSelectedDomainName = domainNames[0];
         this.setState({ domainNames });
-        this.onChangeDomainName(domainNames[0]);
+        this.onChangeDomainName(autoSelectedDomainName);
       }
     }
   }
@@ -223,6 +262,11 @@ class DomainSelector extends Component {
     });
   }
 
+  ignoreDomainChanging() {
+    store.setIgnoreChangeDomain(true);
+    this.applyDomain(BaseAPI.apiDomain);
+  }
+
   changeDomain() {
     if (this.isDisabled) return;
     Keyboard.dismiss();
@@ -233,8 +277,12 @@ class DomainSelector extends Component {
       this.saveDomain(domainName);
     }
 
+    this.applyDomain(domainName);
+  }
+
+  applyDomain(domainName) {
     BaseAPI.updateAPIDomain = domainName;
-    Actions.replace(appConfig.routes.primaryTabbar);
+    Actions.reset(appConfig.routes.sceneWrapper);
   }
 
   checkSave() {
@@ -309,23 +357,36 @@ class DomainSelector extends Component {
 
   render() {
     return (
-      <>
+      <View style={styles.container}>
+        {this.props.back && (
+          <SafeAreaView style={styles.iconBackWrapper}>
+            <TouchableOpacity
+              style={styles.iconBackContainer}
+              onPress={Actions.pop}
+            >
+              <Icon name="keyboard-backspace" style={styles.iconBack} />
+            </TouchableOpacity>
+          </SafeAreaView>
+        )}
+
         <ScrollView
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
           bounces={false}
-          style={styles.container}
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <SafeAreaView style={styles.container}>
             <View style={styles.mainContent}>
               <Text style={styles.heading}>Domains</Text>
+              <Text style={styles.subHeading}>
+                Change API - change your life
+              </Text>
 
               <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                 <TextInput
                   style={styles.textInput}
                   onChangeText={this.onChangeDomainName.bind(this)}
-                  onSubmitEditing={this.onChangeDomainName.bind(this)}
+                  onSubmitEditing={this.changeDomain.bind(this)}
                   value={this.state.domainName}
                   placeholder="Nhập domain..."
                 />
@@ -364,14 +425,23 @@ class DomainSelector extends Component {
             </View>
           </SafeAreaView>
         </ScrollView>
-        <Button
-          containerStyle={styles.btnContainer}
-          title="Thay đổi"
-          disabled={this.isDisabled}
-          onPress={this.changeDomain.bind(this)}
-        />
+
+        <View style={styles.comboBtnContainer}>
+          <Button
+            containerStyle={styles.ignoreContainer}
+            btnContainerStyle={styles.ignoreBtn}
+            title="Bỏ qua"
+            onPress={this.ignoreDomainChanging.bind(this)}
+          />
+          <Button
+            containerStyle={styles.btnContainer}
+            title="Thay đổi"
+            disabled={this.isDisabled}
+            onPress={this.changeDomain.bind(this)}
+          />
+        </View>
         {appConfig.device.isIOS && <KeyboardSpacer />}
-      </>
+      </View>
     );
   }
 }

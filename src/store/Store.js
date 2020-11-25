@@ -484,6 +484,11 @@ class Store {
     this.analyticsUserID = '';
     this.analyst.setUserId('');
   }
+
+  ignoreChangeDomain = false;
+  @action setIgnoreChangeDomain(ignoreChangeDomain) {
+    this.ignoreChangeDomain = ignoreChangeDomain;
+  }
 }
 
 export default new Store();

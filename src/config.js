@@ -179,7 +179,10 @@ class Config {
       allServices: 'allServices',
 
       // multi-level category
-      multiLevelCategory: 'multiLevelCategory'
+      multiLevelCategory: 'multiLevelCategory',
+
+      //dynamic domain
+      domainSelector: 'domainSelector'
     };
   }
 }
