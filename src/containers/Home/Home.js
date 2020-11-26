@@ -19,6 +19,7 @@ class Home extends Component {
     this.state = {
       refreshing: false,
       apiFetching: false,
+      storeFetching: false,
       isDarkStatusBar: false,
       site: null,
       sites: null,
@@ -280,6 +281,34 @@ class Home extends Component {
     servicesHandler(service, this.props.t, callBack);
   };
 
+  goToSearch = () => {
+    const { t } = this.props;
+    this.setState({ storeFetching: true });
+
+    this.getStore(
+      store.store_id || appConfig.defaultSiteId,
+      response => {
+        if (response.status == STATUS_SUCCESS && response.data) {
+          store.setStoreData(response.data);
+          Actions.push(appConfig.routes.searchStore, {
+            categories: null,
+            category_id: 0,
+            category_name: ''
+          });
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || t('common:api.error.message')
+          });
+        }
+      },
+      error => {},
+      () => {
+        setTimeout(() => this.setState({ storeFetching: false }), 400);
+      }
+    );
+  };
+
   render() {
     return (
       <HomeComponent
@@ -300,6 +329,7 @@ class Home extends Component {
         primaryActions={this.state.primaryActions}
         showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}
+        storeFetching={this.state.storeFetching}
         onActionPress={this.handlePressService.bind(this)}
         onPressProduct={this.handlePressProduct}
         onSurplusNext={this.handlePressedSurplusNext}

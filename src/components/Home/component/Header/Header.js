@@ -19,10 +19,15 @@ import Animated from 'react-native-reanimated';
 import RightButtonChat from '../../../RightButtonChat';
 import RightButtonNavBar from '../../../RightButtonNavBar';
 import { RIGHT_BUTTON_TYPE } from '../../../RightButtonNavBar/constants';
+import Loading from '../../../Loading';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 class Header extends Component {
+  static defaultProps = {
+    loading: false
+  };
+
   render() {
     const { t } = this.props;
     return (
@@ -31,7 +36,10 @@ class Header extends Component {
         <Animated.View style={[styles.maskSub, this.props.maskSubStyle]} />
         <View style={[styles.container, this.props.containerStyle]}>
           <View style={styles.userNameWrapper}>
-            <TouchableOpacity onPress={this.props.goToSearch}>
+            <TouchableOpacity
+              disabled={this.props.loading}
+              onPress={this.props.goToSearch}
+            >
               <Animated.View style={[styles.searchWrapper, styles.maskSub]} />
               <Animated.View
                 style={[
@@ -53,6 +61,9 @@ class Header extends Component {
                   placeholderTextColor={appConfig.colors.primary}
                   numberOfLines={1}
                 />
+                {this.props.loading && (
+                  <Loading wrapperStyle={styles.loading} size="small" />
+                )}
               </View>
             </TouchableOpacity>
           </View>
@@ -186,6 +197,9 @@ const styles = StyleSheet.create({
   },
   chatIconStyle: {
     marginRight: 0
+  },
+  loading: {
+    position: 'relative'
   }
 });
 

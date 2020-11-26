@@ -301,6 +301,7 @@ class Home extends Component {
             name={name}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
+            loading={this.props.storeFetching}
           />
         </View>
 
