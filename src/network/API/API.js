@@ -4,5 +4,11 @@
  *
  * @module API
  */
-export * from './CommonAPI';
-export * from './IViewAPI';
+
+import { CommonAPI } from './CommonAPI';
+import { IViewAPI } from './IViewAPI';
+import { aggregation } from '../helper';
+
+const API = new (aggregation(CommonAPI, IViewAPI))();
+
+export default API;

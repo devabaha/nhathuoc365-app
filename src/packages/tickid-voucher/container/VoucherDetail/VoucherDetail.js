@@ -13,6 +13,7 @@ import { internalFetch } from '../../helper/apiFetch';
 import { isLatitude, isLongitude } from '../../helper/validator';
 import openMap from 'react-native-open-maps';
 import EventTracker from '../../../../helper/EventTracker';
+import store from 'app-store';
 
 const defaultFn = () => {};
 
@@ -313,8 +314,9 @@ class VoucherDetail extends BaseContainer {
     });
 
     try {
+      const siteId = this.props.siteId || store.store_id;
       const response = await internalFetch(
-        config.rest.useVoucherOnline(voucher.data.site_id, voucher.data.id)
+        config.rest.useVoucherOnline(siteId, voucher.data.id)
       );
       if (response.status === config.httpCode.success) {
         showMessage({
@@ -541,4 +543,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation('voucher')(VoucherDetail);
+export default withTranslation('voucher')(observer(VoucherDetail));

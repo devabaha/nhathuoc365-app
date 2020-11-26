@@ -11,7 +11,7 @@ class HomeCardItem extends Component {
   unmounted = false;
 
   handlePress = () => {
-    if (this.props.selfRequest) {
+    if (!!this.props.selfRequest) {
       this.setState({
         loading: true
       });

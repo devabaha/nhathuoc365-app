@@ -264,7 +264,7 @@ class GPSStoreLocation extends Component {
     this.appState = nextAppState;
   };
 
-  handleSaveLocation(position, loading = false) {
+  handleSaveLocation = debounce((position, loading = false) => {
     if (!this.unmounted) {
       const { coords } = position;
       if (coords) {
@@ -284,7 +284,7 @@ class GPSStoreLocation extends Component {
         );
       }
     }
-  }
+  }, 500);
 
   handleChangeSearch = debounce(
     (searchValue = '', professionIds, loading = true) => {
@@ -306,7 +306,6 @@ class GPSStoreLocation extends Component {
         data
       );
       const response = await this.getListGPSStoreRequest.promise();
-
       this.setState({
         stores: response.data.stores || []
       });

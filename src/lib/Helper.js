@@ -376,10 +376,11 @@ global.elevationShadowStyle = (
   elevation,
   width = 0,
   height = 0,
-  shadowOpacity = 0.25
+  shadowOpacity = 0.25,
+  shadowColor = 'black'
 ) => ({
   elevation,
-  shadowColor: 'black',
+  shadowColor,
   shadowOffset: { width: width, height: height || 0.5 * elevation },
   shadowOpacity,
   shadowRadius: 0.8 * elevation

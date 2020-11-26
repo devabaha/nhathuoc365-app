@@ -154,6 +154,9 @@ import MultiLevelCategory from './components/stores/MultiLevelCategory';
 import AppCodePush from '../AppCodePush';
 import ModalPopup from './components/ModalPopup';
 import CountryPicker from './components/CountryPicker';
+import NetWorkInfo from './components/NetWorkInfo';
+import BaseAPI from './network/API/BaseAPI';
+import DomainSelector from './containers/DomainSelector';
 /**
  * Not allow font scaling
  */
@@ -180,7 +183,7 @@ initializePhoneCardModule({
     store: ''
   },
   rest: {
-    endpoint: () => MY_FOOD_API
+    endpoint: () => BaseAPI.apiDomain
   },
   route: {
     push: Actions.push,
@@ -208,7 +211,7 @@ initializeVoucherModule({
     store: ''
   },
   rest: {
-    endpoint: () => MY_FOOD_API
+    endpoint: () => BaseAPI.apiDomain
   },
   route: {
     push: Actions.push,
@@ -618,6 +621,7 @@ class App extends Component {
       <View style={{ overflow: 'scroll', flex: 1 }}>
         {/* <GPSStoreLocation /> */}
         {this.state.header}
+        <NetWorkInfo />
         <RootRouter
           appLanguage={this.state.appLanguage}
           t={this.props.t}
@@ -848,6 +852,14 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                <Stack key={appConfig.routes.domainSelector}>
+                  <Scene
+                    key={`${appConfig.routes.domainSelector}_1`}
+                    component={DomainSelector}
+                    hideNavBar
+                  />
+                </Stack>
 
                 {/* ================ CAPTURE FACEID ================ */}
                 <Stack key={appConfig.routes.captureFaceID}>

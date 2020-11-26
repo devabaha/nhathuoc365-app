@@ -1,6 +1,6 @@
-import * as API from './API';
-import * as CommonAPI from './CommonAPI';
-import * as IViewAPI from './IViewAPI';
+import API from './API';
+import CommonAPI from './CommonAPI';
+import IViewAPI from './IViewAPI';
 
 export default API;
 export { CommonAPI, IViewAPI };

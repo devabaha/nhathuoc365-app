@@ -50,6 +50,7 @@ class Account extends Component {
   get options() {
     const { t } = this.props;
     const isAdmin = store.user_info.admin_flag == 1;
+    const isTestDevice = !!store.user_info.is_test_device;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
     const codePushVersion = store.codePushMetaData
@@ -58,6 +59,26 @@ class Account extends Component {
       : '';
 
     return [
+      {
+        key: '-99',
+        icon: 'web',
+        label: 'Domain',
+        desc: 'Thay đổi api domain cho app',
+        isHidden: !isTestDevice,
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.domainSelector, {
+            back: true
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#333'
+          }
+        ],
+        iconColor: '#ffffff',
+        iconType: 'MaterialCommunityIcons'
+      },
       {
         key: 'store',
         isHidden: !isActivePackageOptionConfig(

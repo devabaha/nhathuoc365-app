@@ -73,7 +73,7 @@ class Home extends Component {
             cart_data: response.data.vote_cart
           });
         }
-
+        console.log(response.data);
         action(() => {
           store.setStoreData(response.data.site);
           store.setAppData(response.data.app);
@@ -190,12 +190,13 @@ class Home extends Component {
 
   handleShowAllVouchers = () => {};
 
-  handlePressService(service) {
+  handlePressService(service, callBack) {
+    console.log(service);
     const { t } = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
-      servicesHandler(service, t);
+      servicesHandler(service, t, callBack);
     }
   }
 
@@ -270,62 +271,13 @@ class Home extends Component {
 
   productOpening;
 
-  handlePressProduct = product => {
-    if (this.productOpening) return;
-    this.productOpening = true;
-
-    this.setState({
-      showLoading: true
-    });
-    this.getStore(
-      product.site_id,
-      response => {
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setStoreData(response.data);
-            Actions.item({
-              title: product.name,
-              item: product
-            });
-          })();
-        }
-      },
-      error => {},
-      () => {
-        this.productOpening = false;
-        this.setState({
-          showLoading: false
-        });
-      }
-    );
-  };
-
-  goToSearch = () => {
-    const { t } = this.props;
-    this.setState({ apiFetching: true });
-
-    this.getStore(
-      store.store_id || appConfig.defaultSiteId,
-      response => {
-        if (response.status == STATUS_SUCCESS && response.data) {
-          store.setStoreData(response.data);
-          Actions.push(appConfig.routes.searchStore, {
-            categories: null,
-            category_id: 0,
-            category_name: ''
-          });
-        } else {
-          flashShowMessage({
-            type: 'danger',
-            message: response.message || t('common:api.error.message')
-          });
-        }
-      },
-      error => {},
-      () => {
-        this.setState({ apiFetching: false });
-      }
-    );
+  handlePressProduct = (product, callBack) => {
+    const service = {
+      type: SERVICES_TYPE.PRODUCT_DETAIL,
+      siteId: product.site_id,
+      productId: product.id
+    };
+    servicesHandler(service, this.props.t, callBack);
   };
 
   render() {

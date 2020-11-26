@@ -26,24 +26,20 @@ class ListProducts extends Component {
   }
 
   renderListVertical() {
+    const extraProps = {
+      containerStyle: styles.itemVerticalContainer,
+      imageStyle: styles.itemVerticalImage
+    };
     return (
       <View style={styles.listVertical}>
         {this.props.data.map((product, index) => {
           const extraStyle = {
             borderRightWidth: index % 2 === 0 ? 0.5 : 0
           };
+
           return (
             <View style={[styles.itemVerticalWrapper, extraStyle]} key={index}>
-              <ProductItem
-                containerStyle={styles.itemVerticalContainer}
-                imageStyle={styles.itemVerticalImage}
-                name={product.name}
-                image={product.image}
-                discount_view={product.discount_view}
-                discount_percent={product.discount_percent}
-                price_view={product.price_view}
-                onPress={() => this.props.onPressProduct(product)}
-              />
+              {this.renderProduct(product, extraProps)}
             </View>
           );
         })}
@@ -64,15 +60,23 @@ class ListProducts extends Component {
   }
 
   renderItemHorizontal({ item: product, index }) {
+    const extraProps = {
+      last: this.props.data.length - 1 === index
+    };
+    return this.renderProduct(product, extraProps);
+  }
+
+  renderProduct(product, extraProps) {
     return (
       <ProductItem
+        selfRequest={callBack => this.props.onPressProduct(product, callBack)}
         name={product.name}
         image={product.image}
         discount_view={product.discount_view}
         discount_percent={product.discount_percent}
         price_view={product.price_view}
         onPress={() => this.props.onPressProduct(product)}
-        last={this.props.data.length - 1 === index}
+        {...extraProps}
       />
     );
   }

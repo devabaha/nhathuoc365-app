@@ -17,9 +17,8 @@ import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
 import HomeCardList, { HomeCardItem } from './component/HomeCardList';
-import LoadingComponent from '@tickid/tickid-rn-loading';
 import ListServices from './component/ListServices';
-import ListProducts, { ProductItem } from './component/ListProducts';
+import ListProducts from './component/ListProducts';
 import appConfig from 'app-config';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
@@ -371,6 +370,9 @@ class Home extends Component {
 
           {this.hasServices ? (
             <ListServices
+              selfRequest={(service, callBack) =>
+                this.props.onPressService(service, callBack)
+              }
               listService={this.props.listService}
               type={this.props.listServiceType}
               itemsPerRow={this.props.listServiceItemsPerRow}

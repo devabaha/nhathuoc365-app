@@ -5,5 +5,15 @@
  * @module IViewAPI
  */
 
-// Sites
-exports.SITE_UPLOAD_IMAGE_FACEID = MY_FOOD_API + 'apiSite/upload_image_faceid';
+import BaseAPI from './BaseAPI';
+
+class IViewAPI {
+  // Sites
+  get SITE_UPLOAD_IMAGE_FACEID() {
+    return BaseAPI.apiDomain + 'apiSite/upload_image_faceid';
+  }
+}
+
+export default new IViewAPI();
+
+export { IViewAPI };

@@ -1,7 +1,8 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
+import Loading from '../../../Loading';
 
 class ProductItem extends PureComponent {
   static propTypes = {
@@ -24,10 +25,32 @@ class ProductItem extends PureComponent {
     last: false
   };
 
+  state = {
+    loading: false
+  };
+  unmounted = false;
+
+  handlePress = () => {
+    if (!!this.props.selfRequest) {
+      this.setState({
+        loading: true
+      });
+      this.handleSelfRequest();
+    } else {
+      this.props.onPress();
+    }
+  };
+
+  handleSelfRequest = () => {
+    this.props.selfRequest(() => {
+      !this.unmounted && this.setState({ loading: false });
+    });
+  };
+
   render() {
     return (
       <Button
-        onPress={this.props.onPress}
+        onPress={this.handlePress}
         containerStyle={[
           {
             marginRight: this.props.last ? 16 : 0
@@ -36,10 +59,14 @@ class ProductItem extends PureComponent {
         ]}
       >
         <View style={[styles.container, this.props.containerStyle]}>
-          <Image
+          <ImageBackground
             style={[styles.image, this.props.imageStyle]}
             source={{ uri: this.props.image }}
-          />
+          >
+            {this.state.loading && (
+              <Loading color="#fff" containerStyle={styles.loading} />
+            )}
+          </ImageBackground>
           <View style={styles.infoWrapper}>
             <Text style={styles.name} numberOfLines={2}>
               {this.props.name}
@@ -69,7 +96,8 @@ const styles = StyleSheet.create({
   image: {
     height: 120,
     resizeMode: 'cover',
-    borderRadius: 8
+    borderRadius: 8,
+    overflow: 'hidden'
   },
   infoWrapper: {
     flex: 1,
@@ -101,6 +129,10 @@ const styles = StyleSheet.create({
   },
   price: {
     color: '#fff'
+  },
+  loading: {
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,.12)'
   }
 });
 
