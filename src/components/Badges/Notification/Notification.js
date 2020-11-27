@@ -11,7 +11,15 @@ class Notification extends PureComponent {
   animatedShowValue = new Animated.Value(0);
   animatedNotifyValue = new Animated.Value(0);
 
+  componentDidMount() {
+    this.animating();
+  }
+
   componentDidUpdate(prevProps, prevState) {
+    this.animating();
+  }
+
+  animating() {
     Animated.parallel([
       Animated.timing(this.animatedShowValue, {
         toValue: this.props.show ? 1 : 0,
