@@ -21,6 +21,7 @@ import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonOrders from '../RightButtonOrders';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -41,11 +42,11 @@ class Item extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this._initial(this.props);
-    EventTracker.logEvent('item_page');
   }
 
   componentWillReceiveProps(nextProps) {
@@ -70,6 +71,19 @@ class Item extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
+  }
+
+  logEventTracking(rootData) {
+    if (rootData && !this.state.item_data) {
+      const options = {
+        params: {
+          id: rootData.id,
+          name: rootData.name
+        }
+      };
+      this.eventTracker.logCurrentView(options);
+    }
   }
 
   _initial(props) {
@@ -153,6 +167,8 @@ class Item extends Component {
             });
           }
 
+          this.logEventTracking(data);
+
           this.setState({
             item_data: data,
             images: images,
@@ -192,6 +208,8 @@ class Item extends Component {
               });
             });
           }
+
+          this.logEventTracking(response.data);
 
           this.setState(
             {
@@ -632,7 +650,7 @@ class Item extends Component {
                 onLoadStart={() => console.log('on load start')}
                 onLoadEnd={() => console.log('on load end')}
                 onShouldStartLoadWithRequest={result => {
-                  console.log(result);
+                  // console.log(result);
                   return true;
                 }}
                 style={{

@@ -5,6 +5,7 @@ import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
 import { languages } from '../../i18n/constants';
+import BaseAPI, { ORIGIN_API_DOMAIN } from '../../network/API/BaseAPI';
 
 class Launch extends Component {
   constructor(props) {
@@ -21,7 +22,6 @@ class Launch extends Component {
   componentDidMount() {
     this.animateLoading();
     this.handleAuthorization();
-    EventTracker.logEvent('launch_page');
   }
 
   handleAuthorization = async () => {
@@ -40,15 +40,33 @@ class Launch extends Component {
     }
   };
 
+  handleTestDevice(isTestDevice) {
+    if (
+      !store.ignoreChangeDomain &&
+      isTestDevice &&
+      BaseAPI.apiDomain === ORIGIN_API_DOMAIN
+    ) {
+      Actions.replace(appConfig.routes.domainSelector);
+      return true;
+    }
+    return false;
+  }
+
   handleAuthWithResponse = response => {
     const user = response.data;
+    const { is_test_device } = user;
+    const isTestDevice = this.handleTestDevice(is_test_device);
+
+    if (isTestDevice) {
+      return;
+    }
     // @NOTE: set default name and phone for phone card package
     // phoneCardConfig.defaultContactName = user.name;
     // phoneCardConfig.defaultContactPhone = user.tel;
     switch (response.status) {
       case STATUS_SUCCESS:
         store.setUserInfo(user);
-        EventTracker.setUserId(user.id);
+        store.setAnalyticsUser(user);
         Actions.replace(appConfig.routes.primaryTabbar);
         if (user.room) {
           Actions.jump(appConfig.routes.roomTab);
@@ -61,15 +79,15 @@ class Launch extends Component {
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
-        EventTracker.setUserId(user.id);
+        store.setAnalyticsUser(user);
         Actions.replace('op_register', {
           title: 'Đăng ký thông tin',
           name_props: user.name,
           hideBackImage: true
         });
         break;
-      case STATUS_UNDEFINE_USER:
-        Actions.replace('phone_auth', {
+      case STATUS_UNDEFINED_USER:
+        Actions.replace(appConfig.routes.phoneAuth, {
           loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
         });
         break;

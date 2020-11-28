@@ -9,6 +9,7 @@ import RightButtonCall from '../RightButtonCall';
 import { servicesHandler } from '../../helper/servicesHandler';
 import { languages } from '../../i18n/constants';
 import { APIRequest } from '../../network/Entity';
+import EventTracker from '../../helper/EventTracker';
 
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
@@ -55,6 +56,8 @@ class Chat extends Component {
     this.giftedChatExtraProps = {};
 
     this.getMessagesAPI = new APIRequest();
+
+    this.eventTracker = new EventTracker();
   }
 
   get giftedChatProps() {
@@ -91,6 +94,7 @@ class Chat extends Component {
 
     return false;
   }
+
   i = 0;
   componentDidMount() {
     setTimeout(() => {
@@ -110,7 +114,7 @@ class Chat extends Component {
     // }, 3000)
     this._getMessages();
     this._getPinList();
-    EventTracker.logEvent('chat_page');
+    this.eventTracker.logCurrentView();
   }
 
   renderRight = (tel = this.state.phoneNumber) => {
@@ -133,6 +137,7 @@ class Chat extends Component {
     this.unmounted = true;
     this.getMessagesAPI.cancel();
     clearTimeout(this.timerGetChat);
+    this.eventTracker.clearTracking();
   }
 
   _getPinList = async (delay = 0) => {

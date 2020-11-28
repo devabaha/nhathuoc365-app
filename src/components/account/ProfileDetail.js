@@ -15,6 +15,8 @@ import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIc
 import Button from '../Button';
 import appConfig from 'app-config';
 import Loading from '../Loading';
+import EventTracker from '../../helper/EventTracker';
+import firebase from 'react-native-firebase';
 
 class ProfileDetail extends Component {
   constructor(props) {
@@ -23,6 +25,7 @@ class ProfileDetail extends Component {
     this.state = {
       logout_loading: false
     };
+    this.eventTracker = new EventTracker();
   }
 
   get sectionData() {
@@ -82,7 +85,11 @@ class ProfileDetail extends Component {
         right: this._renderRightButton
       })
     );
-    EventTracker.logEvent('profile_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _renderRightButton = () => {
@@ -98,7 +105,7 @@ class ProfileDetail extends Component {
   };
 
   _onShowEditProfile = () => {
-    Actions.edit_profile({
+    Actions.push(appConfig.routes.editProfile, {
       userInfo: this.props.userInfo
     });
   };
@@ -138,6 +145,11 @@ class ProfileDetail extends Component {
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setOrdersKeyChange(store.orders_key_change + 1);
           store.resetAsyncStorage();
+
+          const isFirebaseSignedIn = !!firebase.auth().currentUser;
+          if (isFirebaseSignedIn) {
+            firebase.auth().signOut();
+          }
           flashShowMessage({
             message: t('signOut.successMessage'),
             type: 'success'

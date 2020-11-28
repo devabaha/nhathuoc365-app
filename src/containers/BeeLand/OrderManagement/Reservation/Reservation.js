@@ -17,6 +17,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center'
   },
+  header: {
+    paddingBottom: 10
+  },
   body: {
     paddingVertical: 10,
     alignItems: 'flex-start'
@@ -83,7 +86,9 @@ class Reservation extends PureComponent {
         <View style={[styles.row, styles.header]}>
           <View style={styles.mainBlock}>
             <Text style={styles.label}>Mã đơn: {this.props.code}</Text>
-            <Text style={styles.note}>{this.props.date}</Text>
+            {!!this.props.date && (
+              <Text style={styles.note}>{this.props.date}</Text>
+            )}
           </View>
           <Text style={[styles.label, { color: this.props.statusColor }]}>
             {this.props.status}

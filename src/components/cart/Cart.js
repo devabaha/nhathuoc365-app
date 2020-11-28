@@ -13,6 +13,7 @@ import { CheckBox } from 'react-native-elements';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 
 class Cart extends Component {
   constructor(props) {
@@ -25,12 +26,15 @@ class Cart extends Component {
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentWillMount() {
+    this.unmounted = true;
     Actions.refresh({
       renderRightButton: this._renderRightButton.bind(this)
     });
+    this.eventTracker.clearTracking();
   }
 
   componentDidMount() {
@@ -51,11 +55,8 @@ class Cart extends Component {
         });
       }, this._delay());
     }
-    EventTracker.logEvent('cart_page');
-  }
 
-  componentWillUnmount() {
-    this.unmounted = true;
+    this.eventTracker.logCurrentView();
   }
 
   // lấy thông tin giỏ hàng

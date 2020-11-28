@@ -33,6 +33,7 @@ import { servicesHandler } from "../../../helper/servicesHandler";
 import RightButtonOrders from "../../RightButtonOrders";
 import RightButtonNavBar from "../../RightButtonNavBar";
 import { RIGHT_BUTTON_TYPE } from "../../RightButtonNavBar/constants";
+import EventTracker from "../../../helper/EventTracker";
 
 const styles = StyleSheet.create({
     container: {
@@ -52,7 +53,8 @@ const styles = StyleSheet.create({
         fontWeight: '600'
     },
     right_btn_box: {
-        flexDirection: 'row'
+        flexDirection: 'row',
+        marginRight: 12
     },
 })
 
@@ -81,6 +83,8 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     refSubCategory = React.createRef<any>();
     getMultiLevelCategoriesRequest = new APIRequest();
     requests = [this.getMultiLevelCategoriesRequest];
+
+    eventTracker = new EventTracker();
 
     shouldComponentUpdate(nextProps: MultiLevelCategoryProps, nextState: any) {
         if (nextProps.type !== this.props.type &&
@@ -117,8 +121,11 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                 right: this._renderRightButton()
             });
         });
-        //@ts-ignore
-        EventTracker.logEvent('multi_level_category');
+        this.eventTracker.logCurrentView();
+    }
+
+    componentWillUnmount() {
+        this.eventTracker.clearTracking();
     }
 
     _renderRightButton() {

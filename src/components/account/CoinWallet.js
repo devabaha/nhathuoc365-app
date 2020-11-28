@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import { reaction } from 'mobx';
 import store from '../../store/Store';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class CoinWallet extends Component {
@@ -28,10 +29,20 @@ export default class CoinWallet extends Component {
     this.state = {
       historiesData: null
     };
+
+    this.eventTracker = new EventTracker();
   }
 
   componentWillMount() {
     this._getWallet();
+  }
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   async _getWallet() {

@@ -11,6 +11,7 @@ import {
   servicesHandler,
   SERVICES_TYPE
 } from '../../../helper/servicesHandler';
+import EventTracker from '../../../helper/EventTracker';
 
 const IMAGE_HEIGHT = (appConfig.device.width - 32) / 2;
 
@@ -20,6 +21,7 @@ class List extends Component {
     buildings: null
   };
   unmounted = false;
+  eventTracker = new EventTracker();
 
   get isBuildingEmpty() {
     return this.state.buildings && this.state.buildings.length === 0;
@@ -27,7 +29,7 @@ class List extends Component {
 
   componentDidMount() {
     this.getListBuilding();
-    EventTracker.logEvent('list_building');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {

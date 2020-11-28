@@ -14,6 +14,7 @@ import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
 import { setStater } from '../../packages/tickid-chat/helper';
 import { APIRequest } from '../../network/Entity';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 class List extends Component {
@@ -29,6 +30,7 @@ class List extends Component {
   timeoutGetListCustomer = null;
 
   getListCustomerAPI = new APIRequest();
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     this.setState({
@@ -36,13 +38,14 @@ class List extends Component {
     });
 
     this.getListCustomer();
-    EventTracker.logEvent('list_chat_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.getListCustomerAPI.cancel();
     clearTimeout(this.timeoutGetListCustomer);
+    this.eventTracker.clearTracking();
   }
 
   handleSearch() {

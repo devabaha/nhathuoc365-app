@@ -23,6 +23,7 @@ import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import ListServices from '../../components/Home/component/ListServices';
+import EventTracker from '../../helper/EventTracker';
 
 const BANNER_ABSOLUTE_HEIGHT =
   appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
@@ -63,6 +64,7 @@ class Room extends Component {
   };
   unmounted = false;
   refTempScrollView = React.createRef();
+  eventTracker = new EventTracker();
 
   get isDataEmpty() {
     const { room, sites, newses } = this.state;
@@ -94,7 +96,7 @@ class Room extends Component {
         title: this.room.name
       });
     }
-    EventTracker.logEvent('building_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {

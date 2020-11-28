@@ -37,8 +37,8 @@ code-push app add tick-homeid-android android react-native
 │ Staging    │  │aqlsT8KPGWOwEfreKXCL65hTd9KBLYPGxP_7f
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-homeid-ios ios -d "Production" -m --description "add create/update customer"
-code-push release-react tick-homeid-android android -d "Production" -m --description "add create/update customer"
+code-push release-react tick-homeid-ios ios -d "Production" -m --description "upgrade app"
+code-push release-react tick-homeid-android android -d "Production" -m --description "upgrade app"
 
 1. FBAK: sử dụng key FBAK đang có của homeid. Sẽ thay thế bằng Firebase. 
 

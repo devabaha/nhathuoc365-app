@@ -24,6 +24,7 @@ import { willUpdateState } from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
 import StoreNavBarHomeID from './StoreNavBarHomeID';
 import HeaderStoreHomeID from './HeaderStoreHomeID';
+import EventTracker from '../../helper/EventTracker';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const BANNER_ABSOLUTE_HEIGHT =
@@ -73,6 +74,8 @@ class Stores extends Component {
     action(() => {
       store.setStoresFinish(false);
     })();
+
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -94,12 +97,13 @@ class Stores extends Component {
         title: ''
       });
     });
-    EventTracker.logEvent('stores_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.state.scrollY.removeListener(this.scrollListener);
+    this.eventTracker.clearTracking();
   }
 
   scrollListener = ({ value }) => {

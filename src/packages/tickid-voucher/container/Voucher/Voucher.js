@@ -7,6 +7,7 @@ import CampaignEntity from '../../entity/CampaignEntity';
 import { internalFetch } from '../../helper/apiFetch';
 import store from 'app-store';
 import { showMessage } from '../../constants';
+import EventTracker from '../../../../helper/EventTracker';
 
 class Voucher extends BaseContainer {
   static propTypes = {
@@ -27,6 +28,7 @@ class Voucher extends BaseContainer {
       campaigns: [],
       newVoucherNum: 0
     };
+    this.eventTracker = new EventTracker();
   }
 
   get isFromHome() {
@@ -35,7 +37,11 @@ class Voucher extends BaseContainer {
 
   componentDidMount() {
     this.getListCampaigns();
-    EventTracker.logEvent('vouchers_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handlePressVoucher = campaign => {

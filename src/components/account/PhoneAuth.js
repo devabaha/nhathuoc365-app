@@ -28,6 +28,7 @@ import Loading from '../Loading';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import appConfig from 'app-config';
+import EventTracker from '../../helper/EventTracker';
 const timer = require('react-timer-mixin');
 
 const loginMode = {
@@ -58,6 +59,7 @@ class PhoneAuth extends Component {
       currentCountry: countries.filter(country => country.cca2 == 'VN'),
       requestNewOtpCounter: requestSeconds
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -65,15 +67,18 @@ class PhoneAuth extends Component {
       this.signIn(this.state.phoneNumber);
     }
     this.startCountDown();
-    EventTracker.logEvent('phone_auth_page');
+    this.eventTracker.logCurrentView();
   }
 
-  componentWillUnmount() {}
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   signIn = phoneNumber => {
     if (typeof phoneNumber == 'object') {
       var { phoneNumber } = this.state;
     }
+
     if (phoneNumber == '0912345678') {
       this.loginMode = loginMode.SMS_BRAND_NAME;
     }
@@ -216,17 +221,24 @@ class PhoneAuth extends Component {
       firebase
         .auth()
         .signInWithPhoneNumber(countryCode + phoneAuth)
-        .then(confirmResult =>
+        .then(confirmResult => {
+          console.log(confirmResult);
           this.setState({
             confirmResult,
             message: '',
             isShowIndicator: false,
             requestNewOtpCounter: requestSeconds
-          })
-        )
+          });
+        })
         .catch(error => {
           this.loginMode = loginMode.SMS_BRAND_NAME;
-          this.signIn(countryCode + phoneAuth);
+          // this.signIn(countryCode + phoneAuth);
+          console.log('%cphone_auth_error', 'color:red', error);
+        })
+        .finally(() => {
+          this.setState({
+            isShowIndicator: false
+          });
         });
     }, 300);
   };
@@ -240,6 +252,7 @@ class PhoneAuth extends Component {
       confirmResult
         .confirm(codeInput)
         .then(user => {
+          console.log(user);
           if (user) {
             this.setState({
               user: user.toJSON(),
@@ -249,9 +262,10 @@ class PhoneAuth extends Component {
             user
               .getIdToken(true)
               .then(async idToken => {
-                const response = await APIHandler.login_firebase_vertify({
+                const response = await APIHandler.login_firebase_verify({
                   token: idToken
                 });
+                console.log(response);
                 if (response && response.status == STATUS_SUCCESS) {
                   this.setState(
                     {
@@ -287,7 +301,7 @@ class PhoneAuth extends Component {
 
   _verifyResponse = response => {
     store.setUserInfo(response.data);
-    EventTracker.setUserId(response.data.id);
+    store.setAnalyticsUser(response.data);
     store.resetCartData();
     const { t } = this.props;
     if (response.data && response.data.fill_info_user) {

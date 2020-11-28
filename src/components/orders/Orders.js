@@ -15,6 +15,7 @@ import PopupConfirm from '../PopupConfirm';
 import { Actions } from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EventTracker from '../../helper/EventTracker';
 
 class Orders extends Component {
   constructor(props) {
@@ -35,18 +36,20 @@ class Orders extends Component {
 
     // refresh
     reaction(() => store.orders_key_change, this._getData);
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this._getData();
 
     store.is_stay_orders = true;
-    store.parentTab = '_orders';
-    EventTracker.logEvent('orders_page');
+    store.parentTab = `${appConfig.routes.newsTab}_1`;
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   componentWillReceiveProps() {

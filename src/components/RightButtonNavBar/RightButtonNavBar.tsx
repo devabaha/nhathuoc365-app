@@ -11,7 +11,8 @@ import { NotiBadge } from '../Badges';
 const styles = StyleSheet.create({
     right_btn_add_store: {
         paddingVertical: 1,
-        paddingHorizontal: 12,
+        paddingLeft: 10,
+        paddingRight: 5,
         paddingTop: appConfig.device.isAndroid ? 4 : 0
     },
     icon: {
@@ -19,8 +20,14 @@ const styles = StyleSheet.create({
         fontSize: 26
     },
     notiContainer: {
-        right: 5,
+        right: -4,
         top: appConfig.device.isAndroid ? -2 : -4,
+        borderColor: '#fff',
+        borderWidth: .5,
+        height: 16,
+        minWidth: 16
+        //@ts-ignore
+        // ...elevationShadowStyle(2)
     }
 });
 
@@ -59,10 +66,18 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     }
 
     handlePressCart() {
-        if (store.cart_data) {
-            Actions.push(appConfig.routes.paymentConfirm);
+        if (store.cart_data && store.cart_products) {
+            if (store.cart_data.address_id != 0) {
+                Actions.push(appConfig.routes.paymentConfirm, {
+                    goConfirm: true
+                });
+            } else {
+                Actions.create_address({
+                    redirect: 'confirm'
+                });
+            }
         } else {
-            Actions.push(appConfig.routes.storeOrders);
+            Actions.push(appConfig.routes.ordersTab);
         }
     }
 
@@ -76,12 +91,18 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                     this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
                 }
                 break;
+            case RIGHT_BUTTON_TYPE.CHAT:
+                if ((store.notify && store.notify.notify_chat !== this.state.noti) ||
+                    (!store.notify && this.state.noti)) {
+                    this.setState({ noti: store.notify ? store.notify.notify_chat : 0 });
+                }
+                break;
         }
     }
 
     render() {
         this.updateNoti();
-
+        
         return (
             <TouchableHighlight
                 underlayColor="transparent"

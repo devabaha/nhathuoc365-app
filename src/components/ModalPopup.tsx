@@ -13,6 +13,7 @@ import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/AntDesign';
 //@ts-ignore
 import appConfig from 'app-config';
+import EventTracker from '../helper/EventTracker';
 
 const IMAGE_WIDTH_CONTAINER = appConfig.device.width * .8;
 const IMAGE_HEIGHT_CONTAINER = appConfig.device.height * .6;
@@ -94,7 +95,8 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
     };
     refPopupContainer = React.createRef<any>();
     refPopup = React.createRef<any>();
-    animatedBackgroundValue = new Animated.Value(0)
+    animatedBackgroundValue = new Animated.Value(0);
+    eventTracker = new EventTracker();
 
     componentDidMount() {
         Animated.timing(this.animatedBackgroundValue, {
@@ -103,6 +105,12 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
             easing: Easing.quad,
             useNativeDriver: true
         }).start();
+
+        this.eventTracker.logCurrentView();
+    }
+
+    componentWillUnmount() {
+        this.eventTracker.clearTracking();
     }
 
     handleClose() {

@@ -11,6 +11,7 @@ import {
   Keyboard
 } from 'react-native';
 import Header from './Header';
+import EventTracker from '../../../../helper/EventTracker';
 
 const ANIMATION_TIME = 250;
 const ANIMATION_CLOSE_TIME = 150;
@@ -43,12 +44,13 @@ class EnterCodeManual extends Component {
       keyboardShow: false,
       code: ''
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this.startAnimation(this.state.opacity, 1, ANIMATION_TIME);
     this.startAnimation(this.state.bottom, 0, ANIMATION_TIME);
-    EventTracker.logEvent('voucher_enter_code_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillMount() {
@@ -60,6 +62,7 @@ class EnterCodeManual extends Component {
       'keyboardWillHide',
       this.keyboardWillHide
     );
+    this.eventTracker.clearTracking();
   }
 
   componentWillUnmount() {

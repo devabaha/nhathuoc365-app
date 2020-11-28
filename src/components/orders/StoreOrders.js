@@ -16,6 +16,7 @@ import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
 import appConfig from 'app-config';
 import { setStater } from '../../packages/tickid-chat/helper';
+import EventTracker from '../../helper/EventTracker';
 
 class StoreOrders extends Component {
   constructor(props) {
@@ -34,6 +35,7 @@ class StoreOrders extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -59,11 +61,12 @@ class StoreOrders extends Component {
 
     // Listenner
     Events.on(RELOAD_STORE_ORDERS, RELOAD_STORE_ORDERS + 'ID', this._getData);
-    EventTracker.logEvent('store_order_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {

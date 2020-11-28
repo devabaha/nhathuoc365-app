@@ -338,7 +338,6 @@ class ImageGallery extends Component {
       CAMERA_PERMISSIONS_TYPE.CHECK
     );
     AppState.addEventListener('change', this._handleAppStateChange);
-    EventTracker.logEvent('image_gallery_page');
   }
 
   componentDidUpdate(prevProps, prevState) {

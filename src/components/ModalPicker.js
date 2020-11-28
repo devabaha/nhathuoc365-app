@@ -14,6 +14,7 @@ import Modal from 'react-native-modalbox';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
+import EventTracker from '../helper/EventTracker';
 
 class ModalPicker extends PureComponent {
   static defaultProps = {
@@ -31,6 +32,15 @@ class ModalPicker extends PureComponent {
     headerHeight: 0
   };
   refModal = React.createRef();
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   onHeaderLayout = e => {
     this.setState({ headerHeight: e.nativeEvent.layout.height });

@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 import { HorizontalIndicatorProps } from '.';
@@ -20,19 +20,31 @@ const styles = StyleSheet.create({
     }
 })
 
-class HorizontalIndicator extends PureComponent<HorizontalIndicatorProps> {
+class HorizontalIndicator extends Component<HorizontalIndicatorProps> {
     static defaultProps = {
         color: appConfig.colors.primary,
     }
     state = {};
     animatedIndicatorWidth = new Animated.Value(0);
 
-    componentDidUpdate(){
-        Animated.timing(this.animatedIndicatorWidth, {
-            toValue: this.props.indicatorWidth,
-            easing: Easing.quad,
-            duration: 200
-        }).start();
+    componentDidMount() {
+        setTimeout(() =>
+            Animated.timing(this.animatedIndicatorWidth, {
+                toValue: this.props.indicatorWidth,
+                easing: Easing.quad,
+                duration: 200
+            }).start()
+        );
+    }
+
+    componentDidUpdate() {
+        setTimeout(() =>
+            Animated.timing(this.animatedIndicatorWidth, {
+                toValue: this.props.indicatorWidth,
+                easing: Easing.quad,
+                duration: 200
+            }).start()
+        );
     }
 
     get containerStyle() {

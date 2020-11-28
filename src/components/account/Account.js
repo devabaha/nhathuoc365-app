@@ -25,6 +25,8 @@ import appConfig from 'app-config';
 import { languages } from '../../i18n/constants';
 import { setAppLanguage } from '../../i18n/i18n';
 import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
+import EventTracker from '../../helper/EventTracker';
+
 class Account extends Component {
   constructor(props) {
     super(props);
@@ -38,11 +40,13 @@ class Account extends Component {
     };
 
     reaction(() => store.user_info, this.initial);
+    this.eventTracker = new EventTracker();
   }
 
   get options() {
     const { t, i18n } = this.props;
     const isAdmin = store.user_info.admin_flag == 1;
+    const isTestDevice = !!store.user_info.is_test_device;
     var notify = store.notify;
     const isUpdate = notify.updating_version == 1;
     const codePushVersion = store.codePushMetaData
@@ -51,6 +55,27 @@ class Account extends Component {
       : '';
 
     return [
+      {
+        key: '-99',
+        icon: 'web',
+        label: 'Domain',
+        desc: 'Thay đổi api domain cho app',
+        isHidden: !isTestDevice,
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.domainSelector, {
+            back: true
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#333'
+          }
+        ],
+        iconColor: '#ffffff',
+        iconType: 'MaterialCommunityIcons'
+      },
+
       {
         key: '1',
         icon: 'map-marker',
@@ -368,9 +393,13 @@ class Account extends Component {
     this.initial(() => {
       this.key_add_new = this.options.length;
       store.is_stay_account = true;
-      store.parentTab = '_account';
+      store.parentTab = `${appConfig.routes.accountTab}_1`;
     });
-    EventTracker.logEvent('account_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   login = async delay => {
@@ -395,17 +424,13 @@ class Account extends Component {
   };
 
   handleShowProfileDetail = () => {
-    Actions.profile_detail({
+    Actions.push(appConfig.routes.profileDetail, {
       userInfo: store.user_info
     });
   };
 
   handleLogin = () => {
-    Actions.push('phone_auth', {
-      loginMode: store.store_data.loginMode
-        ? store.store_data.loginMode
-        : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
-    });
+    Actions.push(appConfig.routes.phoneAuth);
   };
 
   handleConfirmChangeAppLanguage = languageValue => {
@@ -784,7 +809,7 @@ class Account extends Component {
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
-          EventTracker.removeUserId();
+          store.removeAnalytics();
           store.setUserInfo(response.data);
           store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);

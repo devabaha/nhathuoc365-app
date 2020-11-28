@@ -12,7 +12,7 @@
   "phoneConfirmMessage": "Tiếp tục",
 
   "verifyCodeInputTitle": "Nhập OTP gửi qua tin nhắn - cuộc gọi tới số:",
-  "verifyCodeInputPlaceholder": "Nhập mã code...",
+  "verifyCodeInputPlaceholder": "Nhập mã OTP...",
   "verifyCodeInputConfirmMessage": "Tiếp tục",
 
   "notReceiveCode": "Mã Không nhận được mã hoặc mã nhập bị lỗi? Vui lòng yêu cầu mã mới.",

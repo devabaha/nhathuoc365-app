@@ -19,16 +19,22 @@ import Items from '../stores/Items';
 import ItemList from './ItemList';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 export default class ChooseLocation extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {};
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    EventTracker.logEvent('choose_location_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   async onPressLocation(item) {
@@ -36,6 +42,7 @@ export default class ChooseLocation extends Component {
     if (response) {
       if (response.status == STATUS_SUCCESS) {
         action(() => {
+          store.resetCartData();
           store.setRefreshHomeChange(store.refresh_home_change + 1);
           store.setRefreshNews(store.refresh_news + 1);
         })();

@@ -1,7 +1,7 @@
-import * as API from './API';
-import * as CommonAPI from './CommonAPI';
-import * as HomeIDAPI from './HomeIDAPI';
-import * as BeeLandAPI from './BeeLandAPI';
+import API from './API';
+import CommonAPI from './CommonAPI';
+import HomeIDAPI from './HomeIDAPI';
+import BeeLandAPI from './BeeLandAPI';
 
 export default API;
 export { CommonAPI, HomeIDAPI, BeeLandAPI };

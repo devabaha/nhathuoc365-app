@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Communications from 'react-native-communications';
 import Modal from './Payment/Modal';
 import store from 'app-store';
+import EventTracker from '../../../helper/EventTracker';
 
 class Transfer extends Component {
   state = {
@@ -27,6 +28,15 @@ class Transfer extends Component {
     modalVisible: false,
     loading: false
   };
+  eventTracker = new EventTracker();
+
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
+  }
 
   goToScanQR = () => {
     const { t } = this.props;
@@ -76,7 +86,9 @@ class Transfer extends Component {
     if (displayPhone.trim()) {
       let receiverTel = displayPhone.replace(/ /g, '');
       receiverTel = receiverTel.split('+84').join('0');
-      receiverTel = receiverTel.split('84').join('0');
+      if (receiverTel.slice(0, 2) === '84') {
+        receiverTel = receiverTel.replace('84', '0');
+      }
 
       if (receiverTel !== store.user_info.tel) {
         this.setState({

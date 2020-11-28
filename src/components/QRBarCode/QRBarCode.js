@@ -25,6 +25,7 @@ import appConfig from 'app-config';
 import timer from 'react-native-timer';
 import Button from 'react-native-button';
 import store from 'app-store';
+import EventTracker from '../../helper/EventTracker';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
@@ -51,6 +52,7 @@ class QRBarCode extends Component {
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -60,7 +62,7 @@ class QRBarCode extends Component {
     }
 
     this.handleBrightness();
-    EventTracker.logEvent('qrbarcode_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -71,6 +73,7 @@ class QRBarCode extends Component {
     this.unmounted = true;
     timer.clearTimeout(this, 'barcodeupdate');
     ScreenBrightness.setBrightness(this.state.originLuminous);
+    this.eventTracker.clearTracking();
   }
 
   async checkPermissions() {
@@ -285,29 +288,56 @@ class QRBarCode extends Component {
       },
       async () => {
         try {
-          var data = isWalletAddressWithZoneCode(barcode);
-          var response = await APIHandler.user_get_wallet(data[1]);
+          // const data = isWalletAddressWithZoneCode(barcode);
+          const data = { qrcode: barcode };
+          const response = await APIHandler.user_process_qrcode(data);
+          console.log(response);
           if (
             response &&
             response.data.wallet &&
             response.status == STATUS_SUCCESS
           ) {
-            action(() => {
-              this.setState(
-                {
-                  loading: false
-                },
-                () => {
-                  Actions.push(appConfig.routes.payWallet, {
-                    title: 'Chuyển khoản',
-                    wallet: response.data.wallet,
-                    address: data[0],
-                    type: ActionConst.REPLACE
-                  });
-                  Toast.show(response.message, Toast.SHORT);
+            this.setState(
+              {
+                loading: false
+              },
+              () => {
+                const { t } = this.props;
+                const { wallet, to_wallet, site: receiverInfo } = response.data;
+                let receiverTel = receiverInfo.tel;
+                receiverTel = receiverTel.split('+84').join('0');
+                if (receiverTel.slice(0, 2) === '84') {
+                  receiverTel = receiverTel.replace('84', '0');
                 }
-              );
-            })();
+                Actions.pop();
+                console.log(response.data);
+                Actions.push(appConfig.routes.transferPayment, {
+                  title: t('transfer:transferPaymentTitle', {
+                    walletName: receiverInfo.name
+                  }),
+                  wallet,
+                  showWallet: true,
+                  receiver: {
+                    id: receiverInfo.id,
+                    walletAddress: receiverInfo.wallet_address,
+                    name: receiverInfo.name,
+                    walletName: receiverInfo.name,
+                    tel: receiverTel,
+                    originTel: receiverInfo.tel,
+                    avatar: receiverInfo.logo_url,
+                    address: receiverInfo.address,
+                    notInContact: true
+                  }
+                });
+                // Actions.push(appConfig.routes.payWallet, {
+                //   title: "Chuyển khoản",
+                //   wallet: response.data.wallet,
+                //   address: data[0],
+                //   type: ActionConst.REPLACE,
+                // });
+                Toast.show(response.message, Toast.SHORT);
+              }
+            );
           } else {
             this._search_store(barcode);
           }
@@ -881,4 +911,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default withTranslation(['qrBarCode', 'common'])(QRBarCode);
+export default withTranslation(['qrBarCode', 'transfer', 'common'])(QRBarCode);

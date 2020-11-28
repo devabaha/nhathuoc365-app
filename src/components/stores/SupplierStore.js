@@ -20,6 +20,7 @@ import { willUpdateState } from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
 import HeaderStore from './HeaderStore';
 import Loading from '../Loading';
+import EventTracker from '../../helper/EventTracker';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const BANNER_ABSOLUTE_HEIGHT = 140 - appConfig.device.bottomSpace;
@@ -60,6 +61,7 @@ class SupplierStore extends Component {
     this.flatListPagesHeight = [];
     this.refScrollView = React.createRef();
     this.refCategories = [];
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
@@ -67,7 +69,7 @@ class SupplierStore extends Component {
     this._initial(this.props);
     this.state.scrollY.addListener(this.scrollListener);
 
-    EventTracker.logEvent('supplier_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {

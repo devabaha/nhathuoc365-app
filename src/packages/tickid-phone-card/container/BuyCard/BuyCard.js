@@ -14,6 +14,7 @@ import SelectCardValueComponent from '../../component/SelectCardValue';
 import SelectCardHistoryComponent from '../../component/SelectCardHistory';
 // import ChooseQuantityComponent from '../../component/ChooseQuantity';
 import SubmitButton from '../../component/SubmitButton';
+import EventTracker from '../../../../helper/EventTracker';
 
 class BuyCard extends Component {
   static propTypes = {
@@ -44,6 +45,7 @@ class BuyCard extends Component {
       networkType: this.currentNetworks[0].type,
       orders: []
     };
+    this.eventTracker = new EventTracker();
   }
 
   get hasOrders() {
@@ -82,7 +84,11 @@ class BuyCard extends Component {
     });
 
     this.getOrders(this.currentService.id);
-    EventTracker.logEvent('buy_card_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   getOrders = serviceId => {

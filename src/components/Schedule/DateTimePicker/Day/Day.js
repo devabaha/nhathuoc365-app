@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Animated
 } from 'react-native';
+import appConfig from 'app-config';
 
 class Day extends Component {
   state = {
@@ -36,7 +37,7 @@ class Day extends Component {
   render() {
     const extraBgStyle = {
       backgroundColor: this.props.isToday
-        ? this.props.isSelected && 'blue'
+        ? this.props.isSelected && appConfig.colors.primary
         : this.props.isSelected && '#000',
       ...(this.props.disabled && styles.bgDisabled),
       transform: [
@@ -54,7 +55,7 @@ class Day extends Component {
       color: this.props.isToday
         ? this.props.isSelected
           ? '#fff'
-          : 'blue'
+          : appConfig.colors.primary
         : this.props.isSelected
         ? '#fff'
         : '#242424',

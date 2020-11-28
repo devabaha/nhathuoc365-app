@@ -18,6 +18,7 @@ import Communications from 'react-native-communications';
 import History from './History';
 import Info from './Info';
 import Loading from '../../Loading';
+import EventTracker from '../../../helper/EventTracker';
 
 class Affiliate extends Component {
   constructor(props) {
@@ -33,14 +34,17 @@ class Affiliate extends Component {
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
     this._getInviteList();
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   async _getInviteList() {

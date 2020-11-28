@@ -14,6 +14,7 @@ import ChangeNetworkModal from '../../component/ChangeNetwork';
 import SelectCardValueComponent from '../../component/SelectCardValue';
 import SubmitButton from '../../component/SubmitButton';
 import replaceAll from '../../helper/replaceAll';
+import EventTracker from '../../../../helper/EventTracker';
 
 class Prepay extends Component {
   static propTypes = {
@@ -57,6 +58,7 @@ class Prepay extends Component {
       contactPhone: config.defaultContactPhone,
       networkType: this.currentNetworks[0].type
     };
+    this.eventTracker = new EventTracker();
   }
 
   get prefixNetWorksPhoneNumber() {
@@ -103,7 +105,11 @@ class Prepay extends Component {
     this.setState({
       cardValueType: this.currentCards[0].type
     });
-    EventTracker.logEvent('phone_card_prepay_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   handleOpenContact = () => {

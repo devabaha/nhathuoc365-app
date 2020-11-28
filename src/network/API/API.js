@@ -4,5 +4,12 @@
  *
  * @module API
  */
-export * from './CommonAPI';
-export * from './HomeIDAPI';
+
+import { CommonAPI } from './CommonAPI';
+import { HomeIDAPI } from './HomeIDAPI';
+import { BeeLandAPI } from './BeeLandAPI';
+import { aggregation } from '../helper';
+
+const API = new (aggregation(CommonAPI, HomeIDAPI, BeeLandAPI))();
+
+export default API;

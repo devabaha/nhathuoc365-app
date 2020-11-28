@@ -11,7 +11,7 @@ class HomeCardItem extends Component {
   unmounted = false;
 
   handlePress = () => {
-    if (this.props.selfRequest) {
+    if (!!this.props.selfRequest) {
       this.setState({
         loading: true
       });
@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
+    color: '#333'
   },
   specialSubTitle: {
     fontWeight: '600',
@@ -97,9 +98,9 @@ const styles = StyleSheet.create({
     color: '#00b140'
   },
   subTitle: {
-    fontSize: 12,
+    fontSize: 11,
     marginTop: 5,
-    color: '#444'
+    color: '#666'
   },
   loading: {
     height: '100%',

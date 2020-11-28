@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
+import Loading from '../../../Loading';
 
-class ProductItem extends Component {
+class ProductItem extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
     image: PropTypes.string,
@@ -24,16 +25,48 @@ class ProductItem extends Component {
     last: false
   };
 
+  state = {
+    loading: false
+  };
+  unmounted = false;
+
+  handlePress = () => {
+    if (!!this.props.selfRequest) {
+      this.setState({
+        loading: true
+      });
+      this.handleSelfRequest();
+    } else {
+      this.props.onPress();
+    }
+  };
+
+  handleSelfRequest = () => {
+    this.props.selfRequest(() => {
+      !this.unmounted && this.setState({ loading: false });
+    });
+  };
+
   render() {
     return (
       <Button
-        onPress={this.props.onPress}
-        containerStyle={{
-          marginRight: this.props.last ? 16 : 0
-        }}
+        onPress={this.handlePress}
+        containerStyle={[
+          {
+            marginRight: this.props.last ? 16 : 0
+          },
+          this.props.wrapperStyle
+        ]}
       >
-        <View style={styles.container}>
-          <Image style={styles.image} source={{ uri: this.props.image }} />
+        <View style={[styles.container, this.props.containerStyle]}>
+          <ImageBackground
+            style={[styles.image, this.props.imageStyle]}
+            source={{ uri: this.props.image }}
+          >
+            {this.state.loading && (
+              <Loading color="#fff" containerStyle={styles.loading} />
+            )}
+          </ImageBackground>
           <View style={styles.infoWrapper}>
             <Text style={styles.name} numberOfLines={2}>
               {this.props.name}
@@ -56,14 +89,15 @@ class ProductItem extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    width: 130,
+    width: 150,
     flex: 1,
     marginLeft: 16
   },
   image: {
-    height: 116,
+    height: 120,
     resizeMode: 'cover',
-    borderRadius: 8
+    borderRadius: 8,
+    overflow: 'hidden'
   },
   infoWrapper: {
     flex: 1,
@@ -95,6 +129,10 @@ const styles = StyleSheet.create({
   },
   price: {
     color: '#fff'
+  },
+  loading: {
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,.12)'
   }
 });
 

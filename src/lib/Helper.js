@@ -148,9 +148,8 @@ global.layoutAnimation = animate => {
   }
 };
 
-import EventTracker from '../helper/EventTracker';
-global.EventTracker = EventTracker;
-
+// import EventTracker from "../helper/EventTracker";
+// global.EventTracker = new EventTracker();
 /**
  * Flash message
  */
@@ -379,9 +378,15 @@ global.setStater = (context, isUnmounted, state, callback = () => {}) => {
   }
 };
 
-global.elevationShadowStyle = (elevation, width = 0, height = 0) => ({
+global.elevationShadowStyle = (
   elevation,
-  shadowColor: 'black',
+  width = 0,
+  height = 0,
+  shadowOpacity = 0.25,
+  shadowColor = 'black'
+) => ({
+  elevation,
+  shadowColor,
   shadowOffset: { width: width, height: height || 0.5 * elevation },
   shadowOpacity: 0.25,
   shadowRadius: 0.8 * elevation
@@ -483,5 +488,35 @@ global.cancelRequests = requests => {
     });
   } else {
     requests.cancel();
+  }
+};
+
+/**
+ * @todo cancel all timeouts passed in.
+ *
+ * @param {(typeof setTimeout)[] | typeof setTimeout} timeouts
+ */
+global.clearTimeouts = timeouts => {
+  if (Array.isArray(timeouts)) {
+    timeouts.forEach(timeout => {
+      timeout.cancel();
+    });
+  } else {
+    timeout.cancel();
+  }
+};
+
+/**
+ * @todo cancel all intervals passed in.
+ *
+ * @param {(typeof setInterval)[] | typeof setInterval} intervals
+ */
+global.clearIntervals = intervals => {
+  if (Array.isArray(intervals)) {
+    intervals.forEach(interval => {
+      clearInterval(interval);
+    });
+  } else {
+    clearInterval(intervals);
   }
 };

@@ -69,7 +69,6 @@ class ImageMessageChat extends Component {
     if (this.props.isUploadData && this.props.image) {
       this.uploadImage();
     }
-    EventTracker.logEvent('image_message_page');
   }
 
   componentWillUnmount() {

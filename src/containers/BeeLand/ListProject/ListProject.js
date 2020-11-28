@@ -10,6 +10,7 @@ import appConfig from 'app-config';
 import store from 'app-store';
 import WebviewProjectFooter from './WebviewProjectFooter';
 import Header from './Header';
+import EventTracker from '../../../helper/EventTracker';
 
 const IMAGE_HEIGHT = (appConfig.device.width - 32) / 2;
 
@@ -19,6 +20,7 @@ class ListProject extends Component {
     buildings: null
   };
   unmounted = false;
+  eventTracker = new EventTracker();
 
   get isBuildingEmpty() {
     return this.state.buildings && this.state.buildings.length === 0;
@@ -26,7 +28,7 @@ class ListProject extends Component {
 
   componentDidMount() {
     this.getListBuilding();
-    EventTracker.logEvent('list_building');
+    this.eventTracker.logCurrentView();
   }
 
   getListBuilding = async () => {

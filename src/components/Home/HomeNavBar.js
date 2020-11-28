@@ -1,23 +1,14 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  View,
-  TextInput
-} from 'react-native';
-import PropTypes from 'prop-types';
+import { StyleSheet, Text, View } from 'react-native';
 
 // library
-import { Actions } from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/Ionicons';
 import Communications from 'react-native-communications';
 
 import NavButton from './NavButton';
 
 export default class HomeNavBar extends Component {
   constructor(props) {
-    super();
+    super(props);
   }
 
   render() {

@@ -22,6 +22,7 @@ import NumberSelection from './NumberSelection';
 import Button from '../Button';
 import Loading from '@tickid/tickid-rn-loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import EventTracker from '../../helper/EventTracker';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -49,13 +50,16 @@ class ItemAttribute extends PureComponent {
   };
   refModal = React.createRef();
   unmounted = false;
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     this.getAttrs();
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   getAttrs = async () => {

@@ -1,8 +1,4 @@
-export const LIST_SERVICE_TYPE = {
-  HORIZONTAL: 'horizontal',
-  VERTICAL: 'vertical'
-};
-
-export const MIN_ITEMS_PER_ROW = 4;
-
-export const INDICATOR_HORIZONTAL_WIDTH = 50;
+export const BASE_SERVICE_DIMENSION = 45;
+export const BASE_TITLE_MARGIN = 6;
+export const SERVICE_DIMENSION_INCREMENT_PERCENTAGE = 20;
+export const TITLE_MARGIN_INCREMENT_PERCENTAGE = 30;

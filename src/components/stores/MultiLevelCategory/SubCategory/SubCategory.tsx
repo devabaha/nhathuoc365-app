@@ -146,7 +146,7 @@ class SubCategory extends Component<SubCategoryProps> {
                                 //@ts-ignore
                                 backgroundColor: '#eee',
                                 //@ts-ignore
-                                padding: 0
+                                padding: 7
                             }
                         }
 

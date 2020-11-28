@@ -22,6 +22,7 @@ import ModernList from 'app-packages/tickid-modern-list';
 import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
 import Animated, { Easing } from 'react-native-reanimated';
 import { debounce } from 'lodash';
+import EventTracker from '../../helper/EventTracker';
 
 const { interpolate } = Animated;
 const START_DEG = new Animated.Value(0);
@@ -50,6 +51,8 @@ class Search extends Component {
     this.getHistory = this.getHistory.bind(this);
     this.unmounted = false;
     this.categoriesCollapsed = false;
+
+    this.eventTracker = new EventTracker();
   }
 
   get categories() {
@@ -70,9 +73,7 @@ class Search extends Component {
   }
 
   getPlaceholder(name = '') {
-    const { t } = this.props;
-    return `${t('search.navBar.prefix')} ${name && `${name} - `}${store
-      .store_data.name || t('search.navBar.suffix')}...`;
+    return `${name && `${name} - `}${store.store_data.name || 'cửa hàng'}`;
   }
 
   componentDidMount() {
@@ -121,11 +122,12 @@ class Search extends Component {
         }
       });
     });
-    EventTracker.logEvent('store_search_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   getHistory(categoryId = this.state.selectedCategory.id) {

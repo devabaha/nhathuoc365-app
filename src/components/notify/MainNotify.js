@@ -15,6 +15,7 @@ import SelectionList from '../SelectionList';
 import { Actions } from 'react-native-router-flux';
 import NotifyItemComponent from './NotifyItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 class MainNotify extends Component {
@@ -36,6 +37,7 @@ class MainNotify extends Component {
         this._setOptionList();
       }
     );
+    this.eventTracker = new EventTracker();
   }
 
   _setOptionList() {
@@ -89,7 +91,11 @@ class MainNotify extends Component {
     store.is_stay_main_notify = true;
 
     store.parentTab = '_main_notify';
-    EventTracker.logEvent('main_notify_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   componentWillReceiveProps() {

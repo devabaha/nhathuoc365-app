@@ -1,24 +1,22 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Button from 'react-native-button';
-import { IMAGE_ICON_TYPE } from '../../constants';
+import { View, StyleSheet } from 'react-native';
 import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW,
   INDICATOR_HORIZONTAL_WIDTH
-} from './constants';
+} from '../../constants';
 import appConfig from 'app-config';
-import { NotiBadge } from '../../../Badges';
 import HorizontalIndicator from './HorizontalIndicator';
 import Animated, { event, divide, Easing } from 'react-native-reanimated';
 import store from 'app-store';
-
-const BASE_SERVICE_DIMENSION = 45;
-const BASE_TITLE_MARGIN = 6;
-const SERVICE_DIMENSION_INCREMENT_PERCENTAGE = 20;
-const TITLE_MARGIN_INCREMENT_PERCENTAGE = 30;
+import {
+  BASE_SERVICE_DIMENSION,
+  BASE_TITLE_MARGIN,
+  SERVICE_DIMENSION_INCREMENT_PERCENTAGE,
+  TITLE_MARGIN_INCREMENT_PERCENTAGE
+} from './constants';
+import Service from './Service';
 
 const styles = StyleSheet.create({
   container: {
@@ -105,15 +103,15 @@ class ListServices extends Component {
       case LIST_SERVICE_TYPE.HORIZONTAL:
         serviceStyle.width =
           appConfig.device.width /
-          (this.props.itemsPerRow <= MIN_ITEMS_PER_ROW
-            ? this.props.itemsPerRow
+          (this.itemsPerRow <= MIN_ITEMS_PER_ROW
+            ? this.itemsPerRow
             : MIN_ITEMS_PER_ROW + 0.5);
         break;
       case LIST_SERVICE_TYPE.VERTICAL:
-        serviceStyle.width = appConfig.device.width / this.props.itemsPerRow;
+        serviceStyle.width = appConfig.device.width / this.itemsPerRow;
         break;
       default:
-        serviceStyle.width = appConfig.device.width / this.props.itemsPerRow;
+        serviceStyle.width = appConfig.device.width / this.itemsPerRow;
     }
 
     return serviceStyle;
@@ -126,8 +124,20 @@ class ListServices extends Component {
   get scrollEnabled() {
     return (
       this.isHorizontal &&
-      this.state.horizontalContentWidth > this.state.horizontalContainerWidth
+      this.state.horizontalContentWidth !== this.state.horizontalContainerWidth
     );
+  }
+
+  get itemsPerRow() {
+    if (!this.hasServices) return;
+    switch (this.props.type) {
+      case LIST_SERVICE_TYPE.HORIZONTAL:
+        return Math.ceil(
+          this.props.listService.length / this.props.itemsPerRow
+        );
+      default:
+        return this.props.itemsPerRow;
+    }
   }
 
   componentDidMount() {
@@ -217,13 +227,12 @@ class ListServices extends Component {
       rowData.push(
         this.renderService({
           item: service,
-          notify: this.props.notify,
-          onPress: this.props.onItemPress
+          notify: this.props.notify
         })
       );
 
       if (
-        (index + 1) % this.props.itemsPerRow === 0 ||
+        (index + 1) % this.itemsPerRow === 0 ||
         index === this.props.listService.length - 1
       ) {
         result.push(
@@ -243,24 +252,19 @@ class ListServices extends Component {
     return (
       baseValue +
       (baseValue *
-        (Math.abs(MIN_ITEMS_PER_ROW - this.props.itemsPerRow) *
-          incrementValue)) /
+        (Math.abs(MIN_ITEMS_PER_ROW - this.itemsPerRow) * incrementValue)) /
         100
     );
   }
 
-  renderService({ item, notify = store.notify, onPress }) {
-    const handleOnPress = () => {
-      onPress(item);
-    };
-
+  renderService({ item, notify = store.notify }) {
     const serviceAutoIncrementDimension = this.calculateIncrementDimensionByPercentage(
       BASE_SERVICE_DIMENSION,
       SERVICE_DIMENSION_INCREMENT_PERCENTAGE
     );
 
     const serviceDimension =
-      this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+      this.itemsPerRow < MIN_ITEMS_PER_ROW
         ? serviceAutoIncrementDimension
         : BASE_SERVICE_DIMENSION;
 
@@ -270,51 +274,29 @@ class ListServices extends Component {
     );
 
     const titleMarginTop =
-      this.props.itemsPerRow < MIN_ITEMS_PER_ROW
+      this.itemsPerRow < MIN_ITEMS_PER_ROW
         ? titleAutoIncrementMarginTop
         : BASE_TITLE_MARGIN;
 
+    const serviceMainStyle = {
+      width: serviceDimension,
+      height: serviceDimension,
+      backgroundColor: item.bgrColor
+    };
+
+    const titleStyle = { marginTop: titleMarginTop };
+
     return (
-      <Button
-        onPress={handleOnPress}
-        containerStyle={[styles.buttonWrapper, this.serviceStyle]}
-      >
-        <View style={styles.itemWrapper}>
-          <View>
-            <View
-              style={[
-                styles.iconWrapper,
-                {
-                  width: serviceDimension,
-                  height: serviceDimension,
-                  backgroundColor: item.bgrColor
-                }
-              ]}
-            >
-              {item.iconType === IMAGE_ICON_TYPE ? (
-                <Image style={styles.icon} source={{ uri: item.icon }} />
-              ) : (
-                <MaterialCommunityIcons
-                  name={item.icon}
-                  color="#fff"
-                  size={32}
-                />
-              )}
-            </View>
-            <NotiBadge
-              containerStyle={styles.notifyWrapper}
-              labelStyle={styles.notifyLabel}
-              label={notify[`list_service_${item.type}`]}
-              show={notify[`list_service_${item.type}`]}
-              alert
-              animation
-            />
-          </View>
-          <Text style={[styles.title, { marginTop: titleMarginTop }]}>
-            {item.title}
-          </Text>
-        </View>
-      </Button>
+      <Service
+        selfRequest={this.props.selfRequest}
+        service={item}
+        onPress={item => this.props.onItemPress(item)}
+        containerStyle={this.serviceStyle}
+        itemStyle={serviceMainStyle}
+        titleStyle={titleStyle}
+        notiLabel={notify[`list_service_${item.type}`]}
+        isShowNoti={notify[`list_service_${item.type}`]}
+      />
     );
   }
 

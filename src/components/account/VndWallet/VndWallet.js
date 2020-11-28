@@ -14,6 +14,7 @@ import Info from './Info';
 import appConfig from 'app-config';
 import Loading from '../../Loading';
 import PointRechargeButton from '../../Home/component/PrimaryActions/PointRechargeButton';
+import EventTracker from '../../../helper/EventTracker';
 
 class VndWallet extends Component {
   constructor(props) {
@@ -27,14 +28,20 @@ class VndWallet extends Component {
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   componentWillMount() {
     this._getWallet();
   }
 
+  componentDidMount() {
+    this.eventTracker.logCurrentView();
+  }
+
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   async _getWallet() {
@@ -101,7 +108,7 @@ class VndWallet extends Component {
   };
 
   _onShowDetailHistory = item => {
-    Actions.detail_history_payment({
+    Actions.push(appConfig.routes.detailHistoryPayment, {
       data: item
     });
   };

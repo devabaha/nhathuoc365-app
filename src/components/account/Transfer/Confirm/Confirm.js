@@ -24,6 +24,7 @@ import config from 'app-packages/tickid-phone-card/config';
 import store from 'app-store';
 import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
+import EventTracker from '../../../../helper/EventTracker';
 
 const PASSWORD_LENGTH = 4;
 
@@ -70,6 +71,7 @@ class Confirm extends Component {
     };
 
     this.unmounted = false;
+    this.eventTracker = new EventTracker();
   }
 
   get passwordValue() {
@@ -99,11 +101,12 @@ class Confirm extends Component {
     //   .catch(error => this.setState({ errorMessage: error.message }));
 
     this.loadStoredPassword();
-    EventTracker.logEvent('transfer_confirm_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.eventTracker.clearTracking();
   }
 
   loadStoredPassword = async () => {

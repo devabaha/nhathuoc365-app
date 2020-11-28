@@ -18,6 +18,7 @@ import SkeletonLoading from '../../components/SkeletonLoading';
 import BuildingSVG from '../../images/building.svg';
 import NoResult from '../../components/NoResult';
 import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
+import EventTracker from '../../helper/EventTracker';
 
 const BANNER_ABSOLUTE_HEIGHT =
   appConfig.device.height / 3.2 - appConfig.device.bottomSpace;
@@ -50,12 +51,12 @@ class Building extends Component {
   };
   unmounted = false;
   refTempScrollView = React.createRef();
+  eventTracker = new EventTracker();
 
   componentDidMount() {
     this.getBuilding(this.props.siteId);
     this.state.scrollY.addListener(this.scrollListener);
-
-    EventTracker.logEvent('building_page');
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {

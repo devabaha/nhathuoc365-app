@@ -10,7 +10,7 @@ import {
 import PropTypes from 'prop-types';
 
 import moment from 'moment';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import appConfig from 'app-config';
 import { DAY_NAME_IN_WEEK, DATE_FORMAT } from '../constants';
 import Day from './Day';
@@ -499,8 +499,8 @@ class DateTimePicker extends Component {
       opacity: this.state.animatedPrevious.interpolate({
         inputRange: [0, 0.618, 1],
         outputRange: [0, 1, 0]
-      }),
-      right: -14
+      })
+      // right: -14
     };
 
     const extraNextStyle = {
@@ -508,8 +508,8 @@ class DateTimePicker extends Component {
       opacity: this.state.animatedNext.interpolate({
         inputRange: [0, 0.618, 1],
         outputRange: [0, 1, 0]
-      }),
-      left: -14
+      })
+      // left: -14
     };
 
     return (
@@ -522,7 +522,7 @@ class DateTimePicker extends Component {
           <View style={styles.btnContainer}>
             <Animated.View style={[styles.bgBtn, extraPrevStyle]} />
             <Icon
-              name="angle-left"
+              name="pan-left"
               style={[styles.icon, disabledPrevious && styles.iconDisabled]}
             />
           </View>
@@ -540,7 +540,7 @@ class DateTimePicker extends Component {
           <View style={styles.btnContainer}>
             <Animated.View style={[styles.bgBtn, extraNextStyle]} />
             <Icon
-              name="angle-right"
+              name="pan-right"
               style={[styles.icon, disabledNext && styles.iconDisabled]}
             />
           </View>
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 30,
-    color: '#242424'
+    color: '#555'
   },
   bodyContainer: {},
   title: {
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   iconDisabled: {
-    color: '#999'
+    color: '#aaa'
   },
   btnContainer: {
     justifyContent: 'center',

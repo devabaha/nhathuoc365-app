@@ -15,6 +15,7 @@ import {
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 class ViewOrdersItem extends Component {
   constructor(props) {
@@ -30,10 +31,15 @@ class ViewOrdersItem extends Component {
       name_register: props.data.address ? props.data.address.name : '',
       tel_register: props.tel
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    EventTracker.logEvent('view_orders_item_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _showSticker() {

@@ -19,6 +19,7 @@ import {
 // library
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
+import EventTracker from '../../helper/EventTracker';
 
 @observer
 export default class NapTKCConfirm extends Component {
@@ -27,11 +28,15 @@ export default class NapTKCConfirm extends Component {
     console.log(props);
 
     this.state = {};
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    console.log();
-    EventTracker.logEvent('naptkc_confirm_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _unMount() {}

@@ -4,7 +4,6 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  Image,
   ImageBackground,
   StyleSheet,
   TouchableHighlight,
@@ -12,23 +11,27 @@ import {
 } from 'react-native';
 
 // library
-import { Actions, ActionConst } from 'react-native-router-flux';
-import store from '../../store/Store';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import EventTracker from '../../helper/EventTracker';
 
 const images = [{ key: 1, image: require('../../images/slide/image_3.png') }];
 
 export default class Intro extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {
       pageNum: 0
     };
+    this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    EventTracker.logEvent('intro_page');
+    this.eventTracker.logCurrentView();
+  }
+
+  componentWillUnmount() {
+    this.eventTracker.clearTracking();
   }
 
   _renderImage({ item, index }) {

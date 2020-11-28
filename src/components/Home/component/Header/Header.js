@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -7,46 +7,48 @@ import Button from 'react-native-button';
 import appConfig from 'app-config';
 import { Actions } from 'react-native-router-flux';
 
-function Header(props) {
-  const { t } = useTranslation('home');
-  return (
-    <View style={styles.container}>
-      <Text style={styles.userNameWrapper}>
-        <Text style={styles.userName}>{t('welcome.message')}</Text>
-        <Text style={[styles.userName, styles.userNameBold]}>
-          {props.name ? `, ${props.name}` : ''}
+class Header extends Component {
+  render() {
+    const { t, ...props } = this.props;
+    return (
+      <View style={styles.container}>
+        <Text style={styles.userNameWrapper}>
+          <Text style={styles.userName}>{t('welcome.message')}</Text>
+          <Text style={[styles.userName, styles.userNameBold]}>
+            {props.name ? `, ${props.name}` : ''}
+          </Text>
         </Text>
-      </Text>
 
-      <View style={styles.notificationWrapper}>
-        <Button
-          containerStyle={styles.notificationBtn}
-          onPress={props.onPressNoti}
-        >
-          <AntDesignIcon
-            style={styles.iconNotication}
-            name="message1"
-            size={24}
-            color="#fff"
-            solid
-          />
-          {props.notify.notify_chat > 0 && (
-            <View style={styles.notifyWrapper}>
-              <Text style={styles.notify}>{props.notify.notify_chat}</Text>
-            </View>
-          )}
-        </Button>
-      </View>
+        <View style={styles.notificationWrapper}>
+          <Button
+            containerStyle={styles.notificationBtn}
+            onPress={props.onPressNoti}
+          >
+            <AntDesignIcon
+              style={styles.iconNotication}
+              name="message1"
+              size={24}
+              color="#fff"
+              solid
+            />
+            {props.notify.notify_chat > 0 && (
+              <View style={styles.notifyWrapper}>
+                <Text style={styles.notify}>{props.notify.notify_chat}</Text>
+              </View>
+            )}
+          </Button>
+        </View>
 
-      {/* DEMO SCHEDULE FUNCTION */}
-      {/* <Button
+        {/* DEMO SCHEDULE FUNCTION */}
+        {/* <Button
         containerStyle={{ position: 'absolute', right: 70, top: 40 }}
         onPress={() => Actions.push(appConfig.routes.schedule)}
       >
         <Text style={{ color: '#fff', fontWeight: 'bold' }}> Đặt lịch</Text>
       </Button> */}
-    </View>
-  );
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -114,4 +116,4 @@ Header.defaultProps = {
   notify: {}
 };
 
-export default Header;
+export default withTranslation('home')(Header);
