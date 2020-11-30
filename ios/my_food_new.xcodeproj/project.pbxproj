@@ -1218,11 +1218,11 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = HE24EA8C23;
+						DevelopmentTeam = 6WXJD4GU8C;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = HE24EA8C23;
+						DevelopmentTeam = 6WXJD4GU8C;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -1234,7 +1234,7 @@
 					};
 					1C206E2622F1ACCE00CF6BEA = {
 						CreatedOnToolsVersion = 10.2.1;
-						DevelopmentTeam = HE24EA8C23;
+						DevelopmentTeam = 6WXJD4GU8C;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -1974,7 +1974,7 @@
 			baseConfigurationReference = 61E45BC86248D89A93E6378C /* Pods-my_food_newTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = HE24EA8C23;
+				DEVELOPMENT_TEAM = 6WXJD4GU8C;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -2019,7 +2019,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = HE24EA8C23;
+				DEVELOPMENT_TEAM = 6WXJD4GU8C;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
@@ -2064,7 +2064,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 11;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = HE24EA8C23;
+				DEVELOPMENT_TEAM = 6WXJD4GU8C;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2112,7 +2112,7 @@
 				CODE_SIGN_ENTITLEMENTS = my_food_new/my_food_new.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 11;
-				DEVELOPMENT_TEAM = HE24EA8C23;
+				DEVELOPMENT_TEAM = 6WXJD4GU8C;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -2164,7 +2164,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 11;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = HE24EA8C23;
+				DEVELOPMENT_TEAM = 6WXJD4GU8C;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-onesignal/ios/**";
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
@@ -2195,7 +2195,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 11;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = HE24EA8C23;
+				DEVELOPMENT_TEAM = 6WXJD4GU8C;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-onesignal/ios/**";
 				INFOPLIST_FILE = OneSignalNotificationServiceExtension/Info.plist;
