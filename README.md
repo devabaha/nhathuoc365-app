@@ -1,3 +1,18 @@
+##### Tag Version
+
+# r10.0.0
+
+**r** presented for Retail app.
+
+##### Tag Description
+
+- Firebase Analytics.
+- Firebase Phone Authentication.
+- Popup Homepage.
+- Package Options.
+
+---
+
 Tạo nhánh mới tick/vn.tickid từ tick/tickid
 Steps:
 
@@ -22,34 +37,31 @@ Tạo Google Analytic: Tạo GA cho web
 Code Push: chạy các lệnh sau, thay thế bằng
 code-push app add tick-huongcang-ios ios react-native
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
-│ Name       │ Deployment Key                                                   │
+│ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │  │U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY
+│ Production │ │U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Staging    │  │TmwoHNrS7cd8FiguTU7fL6MmPR-U85Lf8keAJ
+│ Staging │ │TmwoHNrS7cd8FiguTU7fL6MmPR-U85Lf8keAJ
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
 code-push app add tick-huongcang-android android react-native
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
-│ Name       │ Deployment Key                                                   │
+│ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Production │  │5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr
+│ Production │ │5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr
 ├────────────┼──────────────────────────────────────────────────────────────────┤
-│ Staging    │  │Ekl91GWSUVXNB4brJzJxUNWNy7ZBnTrFIsQCn
+│ Staging │ │Ekl91GWSUVXNB4brJzJxUNWNy7ZBnTrFIsQCn
 └────────────┴──────────────────────────────────────────────────────────────────┘
 code-push release-react tick-huongcang-ios ios -d "Production" -m --description "new app"
 code-push release-react tick-huongcang-android android -d "Production" -m --description "new app"
 
-
 FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase.
-
 
 Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
 Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets
 yo rn-toolbox:assets --icon icon.png --splash splash.png --store
 yo rn-toolbox:assets --icon icon-android.png --android
 yo rn-toolbox:assets --android-notification-icon icon-android.png
-
 
 Build App iOS
 Chạy Xcode, sửa lại version và version code cho App và Onesignal
@@ -64,18 +76,17 @@ Lỗi AndroidX: Chạy lệnh:
 npx jetify
 Sửa tên App
 
-
 Các lệnh build trong Android
 ./gradlew clean
-./gradlew assembleRelease	-> tạo ra file Apk
-./gradlew bundleRelease		-> tạo file aab, nên dùng
+./gradlew assembleRelease -> tạo ra file Apk
+./gradlew bundleRelease -> tạo file aab, nên dùng
 Đăng ký App Signing để tạo file aab
 Chạy lệnh tạo file pem
 java -jar ../pepk.jar --keystore=android/app/vn.tickid.keystore --alias=vn.tickid --output=android/app/vn.tickid.pem --encryptionkey=xxx
 
 Build file apk from aab
 java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar" build-apks --bundle="app/build/outputs/bundle/release/app.aab" --output="app/build/outputs/bundle/release/app01.apks" --ks="app/vn.cocosoul.keystore" --ks-pass="pass:123456" --ks-key-alias="vn.cocosoul" --key-pass="pass:123456"
-java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar"  install-apks --apks=
+java -jar "/Users/thuclh/apps/bundletool-all-0.13.3.jar" install-apks --apks=
 Sửa cấu hình:
 defaultConfig
 resConfigs "en", "vi"

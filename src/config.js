@@ -10,6 +10,17 @@ class Config {
     this._primaryColor = '#f41820';
   }
 
+  get tagVersion() {
+    return 'r10.0.0';
+  }
+
+  get tagDescription() {
+    return `- Firebase Analytics.
+- Firebase Phone Authentication.
+- Popup Homepage.
+- Package Options.`;
+  }
+
   get appName() {
     return 'HuongCang';
   }
