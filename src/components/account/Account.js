@@ -25,6 +25,7 @@ import appConfig from 'app-config';
 import { languages } from '../../i18n/constants';
 import { setAppLanguage } from '../../i18n/i18n';
 import EventTracker from '../../helper/EventTracker';
+import SkeletonLoading from '../SkeletonLoading';
 
 class Account extends Component {
   constructor(props) {
@@ -52,6 +53,19 @@ class Account extends Component {
       ? // replace non-digit character in codePush label (format of codePush label is `v[number]`)
         `-${store.codePushMetaData.label.replace(/\D+/, '')}`
       : '';
+    const user_info = store.user_info || {};
+    const default_wallet = user_info.default_wallet || {};
+    const {
+      premium,
+      premium_name = 'Kim cương',
+      premium_info = 'Bạn cần tích lũy thêm 200 điểm để thăng hạng thành viên Bạch Kim',
+      premium_point_unit = 'điểm',
+      premium_color = '#80AB82',
+      // #fafafa, #95acc5, #80AB82, #d2d2e4, #f0b64a, #1eb7dc,
+      premium_point = 10000,
+      next_premium_point = 15000
+    } = user_info;
+    const isShowPremium = premium !== undefined;
 
     return [
       {
@@ -65,14 +79,125 @@ class Account extends Component {
           Actions.push(appConfig.routes.domainSelector, {
             back: true
           }),
+        boxIconStyle: [styles.boxIconStyle, styles.boxIconDomainSelector],
+        iconColor: '#ffffff',
+        iconType: 'MaterialCommunityIcons'
+      },
+
+      {
+        key: 'premium',
+        icon: 'crown',
+        iconType: 'MaterialCommunityIcons',
+        label: premium_name,
+        labelStyle: [
+          styles.premiumLabel,
+          {
+            color: premium_color
+          }
+        ],
+        desc: premium_info,
+        descStyle: {
+          color: '#ccc'
+        },
+        rightIcon: this.renderRightPremium(premium_point, premium_point_unit),
+        renderAfter: () =>
+          this.renderProgressPremium(
+            premium_point,
+            next_premium_point,
+            premium_color
+          ),
+        onPress: () => Actions.push(appConfig.routes.premiumInfo),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#333'
+            backgroundColor: '#fff',
+            borderWidth: 0.5,
+            borderColor: '#ccc'
           }
         ],
-        iconColor: '#ffffff',
-        iconType: 'MaterialCommunityIcons'
+        iconColor: '#2fc5c5',
+        iconSize: 20,
+        containerStyle: styles.premiumContainer,
+        isHidden: !isShowPremium
+      },
+
+      {
+        key: 'default_wallet',
+        icon: default_wallet.icon,
+        label: (
+          <Text style={styles.profile_list_label}>
+            {default_wallet.name}:{' '}
+            <Text
+              style={[
+                styles.profile_list_label_balance,
+                { color: default_wallet.color }
+              ]}
+            >
+              {default_wallet.balance_view}
+            </Text>
+          </Text>
+        ),
+        isHidden: !user_info.default_wallet,
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          Actions.push(appConfig.routes.vndWallet, {
+            title: default_wallet.name,
+            wallet: default_wallet
+          });
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: default_wallet.color
+          }
+        ],
+        iconColor: '#fff',
+        iconType: default_wallet.iconType,
+        marginTop: isShowPremium
+      },
+
+      {
+        key: 'wallets',
+        isHidden: !!!user_info.wallets,
+        render: this.renderWallets
+      },
+      {
+        key: 'ext_wallets',
+        isHidden: !!!user_info.ext_wallets,
+        render: this.renderExtWallets
+      },
+
+      {
+        key: 'affiliate',
+        icon: 'commenting-o',
+        label: (
+          <Text style={styles.profile_list_label}>
+            {`${t('referralCode')}: `}
+            <Text style={styles.profile_list_label_invite_id}>
+              {user_info.username}
+            </Text>
+          </Text>
+        ),
+        desc: user_info.text_invite,
+        isHidden: !user_info.username,
+        rightIcon: <IconAngleRight />,
+        onPress: () => {
+          Actions.affiliate({
+            title: t('common:screen.affiliate.mainTitle'),
+            aff_content: store.store_data
+              ? store.store_data.aff_content
+              : t('affiliateMarketingProgram', {
+                  appName: APP_NAME_SHOW
+                })
+          });
+        },
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#51A9FF'
+          }
+        ],
+        iconColor: '#fff'
       },
 
       {
@@ -91,7 +216,8 @@ class Account extends Component {
             backgroundColor: '#fcb309'
           }
         ],
-        iconColor: '#ffffff'
+        iconColor: '#ffffff',
+        marginTop: !!premium_name
       },
 
       {
@@ -385,8 +511,140 @@ class Account extends Component {
     setAppLanguage(this.props.i18n, selectedLanguage);
   };
 
+  renderWallets() {
+    const user_info = store.user_info || { wallets: [] };
+    return (
+      <View
+        style={{
+          // marginTop: 7,
+          borderTopWidth: 0,
+          borderColor: '#dddddd'
+        }}
+      >
+        <View style={styles.add_store_actions_box}>
+          {user_info.wallets.map((wallet, index) => (
+            <TouchableHighlight
+              key={index}
+              onPress={
+                wallet.address
+                  ? () =>
+                      Actions.push(appConfig.routes.vndWallet, {
+                        title: wallet.name,
+                        wallet: wallet
+                      })
+                  : () => {}
+              }
+              underlayColor="transparent"
+              style={styles.add_store_action_btn}
+            >
+              <View style={styles.add_store_action_btn_box}>
+                <View style={styles.add_store_action_wallet}>
+                  <Text style={styles.add_store_action_wallet_text}>
+                    <Icon name={wallet.icon} size={16} color={wallet.color} />{' '}
+                    {wallet.name}
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    styles.add_store_action_wallet_content,
+                    { color: wallet.color }
+                  ]}
+                >
+                  {wallet.balance_view}
+                </Text>
+              </View>
+            </TouchableHighlight>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  renderExtWallets() {
+    const user_info = store.user_info || { ext_wallets: [] };
+    return (
+      <View>
+        <View style={styles.add_store_actions_box}>
+          {user_info.ext_wallets.map((wallet, index) => (
+            <TouchableHighlight
+              key={index}
+              onPress={
+                wallet.address
+                  ? () =>
+                      Actions.push(appConfig.routes.vndWallet, {
+                        title: wallet.name,
+                        wallet: wallet
+                      })
+                  : () => Actions.view_ndt_list()
+              }
+              underlayColor="transparent"
+              style={styles.add_store_action_btn}
+            >
+              <View style={styles.add_store_action_btn_box}>
+                <View style={styles.add_store_action_wallet}>
+                  <Text style={styles.add_store_action_wallet_text}>
+                    <Icon name={wallet.icon} size={16} color={wallet.color} />{' '}
+                    {wallet.name}
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    styles.add_store_action_wallet_content,
+                    { color: wallet.color }
+                  ]}
+                >
+                  {wallet.balance_view}
+                </Text>
+              </View>
+            </TouchableHighlight>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
+  renderRightPremium(point, unit) {
+    return (
+      <View style={styles.rightPremiumContainer}>
+        <View>
+          <Text style={styles.rightPremiumLabel}>
+            <Text style={styles.rightPremiumHighlight}>
+              {numberFormat(+point)}
+            </Text>{' '}
+            {unit}
+          </Text>
+        </View>
+        <IconAngleRight />
+      </View>
+    );
+  }
+
+  renderProgressPremium(point, nextPoint, backgroundColor) {
+    const premiumRatio = point / nextPoint;
+    const width = premiumRatio >= 1 ? '100%' : `${premiumRatio * 100}%`;
+    return (
+      <View style={styles.premiumProgressContainer}>
+        <View style={{ width, height: '100%', ...elevationShadowStyle(7) }}>
+          <SkeletonLoading
+            highlightOpacity={0.8}
+            highlightMainDuration={2000}
+            highlightColor={LightenColor(backgroundColor, 40)}
+            style={{
+              backgroundColor,
+              borderTopRightRadius: 3,
+              borderBottomRightRadius: 3
+            }}
+            width="100%"
+            height="100%"
+            loading
+          />
+        </View>
+      </View>
+    );
+  }
+
   render() {
-    const { user_info } = store;
+    const { user_info = {} } = store;
     const is_login =
       store.user_info != null && store.user_info.username != null;
     const { avatar_loading, logout_loading } = this.state;
@@ -423,7 +681,7 @@ class Account extends Component {
                 <>
                   <TouchableHighlight
                     onPress={this.onTapAvatar.bind(this)}
-                    style={styles.profile_avatar_box}
+                    style={[styles.profile_avatar_box]}
                     underlayColor="transparent"
                   >
                     {avatar_loading ? (
@@ -475,18 +733,15 @@ class Account extends Component {
                         {user_info.tel}
                       </Text>
                     </View>
-
-                    {
-                      <View
-                        style={[
-                          styles.profile_list_icon_box,
-                          styles.profile_list_icon_box_angle,
-                          { marginRight: 0 }
-                        ]}
-                      >
-                        <IconAngleRight />
-                      </View>
-                    }
+                    <View
+                      style={[
+                        styles.profile_list_icon_box,
+                        styles.profile_list_icon_box_angle,
+                        { marginRight: 0 }
+                      ]}
+                    >
+                      <IconAngleRight />
+                    </View>
                   </View>
                 </>
               </TouchableHighlight>
@@ -537,12 +792,12 @@ class Account extends Component {
             )}
           </>
 
-          {user_info.default_wallet && ( //vnd_wallet
+          {/* {user_info.default_wallet && ( //vnd_wallet
             <View
               style={{
                 marginTop: 1,
                 borderTopWidth: 0,
-                borderColor: '#dddddd'
+                borderColor: "#dddddd",
               }}
             >
               <TouchableHighlight
@@ -550,7 +805,7 @@ class Account extends Component {
                 onPress={() =>
                   Actions.push(appConfig.routes.vndWallet, {
                     title: user_info.default_wallet.name,
-                    wallet: user_info.default_wallet
+                    wallet: user_info.default_wallet,
                   })
                 }
               >
@@ -560,8 +815,8 @@ class Account extends Component {
                     {
                       marginTop: 0,
                       borderTopWidth: 0,
-                      borderColor: '#dddddd'
-                    }
+                      borderColor: "#dddddd",
+                    },
                   ]}
                 >
                   <View
@@ -569,8 +824,8 @@ class Account extends Component {
                       styles.profile_list_icon_box,
                       styles.boxIconStyle,
                       {
-                        backgroundColor: user_info.default_wallet.color
-                      }
+                        backgroundColor: user_info.default_wallet.color,
+                      },
                     ]}
                   >
                     <Icon
@@ -582,11 +837,11 @@ class Account extends Component {
 
                   <View>
                     <Text style={styles.profile_list_label}>
-                      {user_info.default_wallet.name}:{' '}
+                      {user_info.default_wallet.name}:{" "}
                       <Text
                         style={[
                           styles.profile_list_label_balance,
-                          { color: user_info.default_wallet.color }
+                          { color: user_info.default_wallet.color },
                         ]}
                       >
                         {user_info.default_wallet.balance_view}
@@ -598,7 +853,7 @@ class Account extends Component {
                     <View
                       style={[
                         styles.profile_list_icon_box,
-                        styles.profile_list_icon_box_angle
+                        styles.profile_list_icon_box_angle,
                       ]}
                     >
                       <IconAngleRight />
@@ -607,62 +862,13 @@ class Account extends Component {
                 </View>
               </TouchableHighlight>
             </View>
-          )}
-          {user_info.wallets && (
-            <View
-              style={{
-                marginTop: 7,
-                borderTopWidth: 0,
-                borderColor: '#dddddd'
-              }}
-            >
-              <View style={styles.add_store_actions_box}>
-                {user_info.wallets.map((wallet, index) => (
-                  <TouchableHighlight
-                    key={index}
-                    onPress={
-                      wallet.address
-                        ? () =>
-                            Actions.push(appConfig.routes.vndWallet, {
-                              title: wallet.name,
-                              wallet: wallet
-                            })
-                        : () => {}
-                    }
-                    underlayColor="transparent"
-                    style={styles.add_store_action_btn}
-                  >
-                    <View style={styles.add_store_action_btn_box}>
-                      <View style={styles.add_store_action_wallet}>
-                        <Text style={styles.add_store_action_wallet_text}>
-                          <Icon
-                            name={wallet.icon}
-                            size={16}
-                            color={wallet.color}
-                          />{' '}
-                          {wallet.name}
-                        </Text>
-                      </View>
-                      <Text
-                        style={[
-                          styles.add_store_action_wallet_content,
-                          { color: wallet.color }
-                        ]}
-                      >
-                        {wallet.balance_view}
-                      </Text>
-                    </View>
-                  </TouchableHighlight>
-                ))}
-              </View>
-            </View>
-          )}
-          {user_info.ext_wallets && (
+          )} */}
+          {/* {user_info.ext_wallets && (
             <View
               style={{
                 marginTop: 1,
                 borderTopWidth: 0,
-                borderColor: '#dddddd'
+                borderColor: "#dddddd",
               }}
             >
               <View style={styles.add_store_actions_box}>
@@ -674,7 +880,7 @@ class Account extends Component {
                         ? () =>
                             Actions.push(appConfig.routes.vndWallet, {
                               title: wallet.name,
-                              wallet: wallet
+                              wallet: wallet,
                             })
                         : () => Actions.view_ndt_list()
                     }
@@ -688,14 +894,14 @@ class Account extends Component {
                             name={wallet.icon}
                             size={16}
                             color={wallet.color}
-                          />{' '}
+                          />{" "}
                           {wallet.name}
                         </Text>
                       </View>
                       <Text
                         style={[
                           styles.add_store_action_wallet_content,
-                          { color: wallet.color }
+                          { color: wallet.color },
                         ]}
                       >
                         {wallet.balance_view}
@@ -705,19 +911,19 @@ class Account extends Component {
                 ))}
               </View>
             </View>
-          )}
+          )} */}
 
-          {!!user_info.username && (
+          {/* {!!user_info.username && (
             <TouchableHighlight
               underlayColor="transparent"
               onPress={() =>
                 Actions.affiliate({
-                  title: t('common:screen.affiliate.mainTitle'),
+                  title: t("common:screen.affiliate.mainTitle"),
                   aff_content: store.store_data
                     ? store.store_data.aff_content
-                    : t('affiliateMarketingProgram', {
-                        appName: APP_NAME_SHOW
-                      })
+                    : t("affiliateMarketingProgram", {
+                        appName: APP_NAME_SHOW,
+                      }),
                 })
               }
             >
@@ -727,8 +933,8 @@ class Account extends Component {
                   {
                     marginTop: 1,
                     borderTopWidth: 0,
-                    borderColor: '#dddddd'
-                  }
+                    borderColor: "#dddddd",
+                  },
                 ]}
               >
                 <View
@@ -736,8 +942,8 @@ class Account extends Component {
                     styles.profile_list_icon_box,
                     styles.boxIconStyle,
                     {
-                      backgroundColor: '#51A9FF'
-                    }
+                      backgroundColor: "#51A9FF",
+                    },
                   ]}
                 >
                   <Icon name="commenting-o" size={16} color="#ffffff" />
@@ -745,7 +951,7 @@ class Account extends Component {
 
                 <View>
                   <Text style={styles.profile_list_label}>
-                    {`${t('referralCode')}: `}
+                    {`${t("referralCode")}: `}
                     <Text style={styles.profile_list_label_invite_id}>
                       {user_info.username}
                     </Text>
@@ -758,117 +964,19 @@ class Account extends Component {
                 <View
                   style={[
                     styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle
+                    styles.profile_list_icon_box_angle,
                   ]}
                 >
                   <IconAngleRight />
                 </View>
               </View>
             </TouchableHighlight>
-          )}
+          )} */}
 
-          {user_info.view_tab_ndt && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() => Actions.view_ndt_list()}
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 7,
-                    borderTopWidth: 0,
-                    borderColor: '#dddddd'
-                  }
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: '#1fa67a'
-                    }
-                  ]}
-                >
-                  <Icon name="share-alt" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    {t('accountInvestor')}
-                  </Text>
-                  <Text style={styles.profile_list_small_label}>
-                    {t('investorSyncingMessage')}
-                  </Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle
-                  ]}
-                >
-                  <IconAngleRight />
-                </View>
-              </View>
-            </TouchableHighlight>
-          )}
-          {user_info.view_tab_invite && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={() =>
-                Actions._add_ref({
-                  title: t('referralCodeInput')
-                })
-              }
-            >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: 1,
-                    borderTopWidth: 0,
-                    borderColor: '#dddddd'
-                  }
-                ]}
-              >
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.boxIconStyle,
-                    {
-                      backgroundColor: '#688efb'
-                    }
-                  ]}
-                >
-                  <Icon name="globe" size={16} color="#ffffff" />
-                </View>
-
-                <View>
-                  <Text style={styles.profile_list_label}>
-                    {t('referralCodeInput')}
-                  </Text>
-                  <Text style={styles.profile_list_small_label}>
-                    {t('cashbackSystemInviteMessage')}
-                  </Text>
-                </View>
-
-                <View
-                  style={[
-                    styles.profile_list_icon_box,
-                    styles.profile_list_icon_box_angle
-                  ]}
-                >
-                  <IconAngleRight />
-                </View>
-              </View>
-            </TouchableHighlight>
-          )}
           {this.options && (
             <SelectionList
               containerStyle={{
-                marginVertical: 8
+                paddingVertical: 8
               }}
               data={this.options}
             />
@@ -949,7 +1057,7 @@ const styles = StyleSheet.create({
   profile_user_container: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: 7,
+    // marginBottom: 7,
     height: null,
     paddingVertical: 15,
     paddingLeft: 15
@@ -1121,7 +1229,7 @@ const styles = StyleSheet.create({
     // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
-    borderRightColor: '#ebebeb'
+    borderRightColor: '#ddd'
   },
   add_store_action_label: {
     fontSize: 12,
@@ -1145,6 +1253,48 @@ const styles = StyleSheet.create({
     // paddingVertical: 8,
     paddingHorizontal: 8
     // marginRight: 8
+  },
+  premiumContainer: {
+    height: null,
+    backgroundColor: '#242424',
+    paddingVertical: 12,
+    ...elevationShadowStyle(4)
+  },
+  premiumLabel: {
+    fontFamily: 'SairaStencilOne-Regular',
+    textTransform: 'uppercase',
+    fontSize: 20,
+    letterSpacing: 1
+  },
+  rightPremiumContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingRight: 15,
+    paddingVertical: 3,
+    backgroundColor: '#f6f6f6',
+    borderTopLeftRadius: 20,
+    borderBottomLeftRadius: 20,
+    marginLeft: 10,
+    marginRight: -15
+  },
+  rightPremiumLabel: {
+    marginHorizontal: 10,
+    color: '#242424',
+    fontSize: 10
+  },
+  rightPremiumHighlight: {
+    fontWeight: '500',
+    fontSize: 12
+  },
+  boxIcon_domainSelector: {
+    backgroundColor: '#333'
+  },
+  premiumProgressContainer: {
+    width: '100%',
+    backgroundColor: '#555',
+    height: 5,
+    position: 'absolute',
+    bottom: 0
   }
 });
 

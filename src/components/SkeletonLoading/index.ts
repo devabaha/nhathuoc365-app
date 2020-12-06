@@ -10,4 +10,7 @@ export interface SkeletonLoadingProps {
   loading?: boolean;
   backgroundColor?: string;
   foregroundColor?: string;
+  highlightMainDuration?: number;
+  highlightColor?: string;
+  highlightOpacity?: number;
 }

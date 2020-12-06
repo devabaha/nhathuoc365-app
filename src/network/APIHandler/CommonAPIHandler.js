@@ -835,6 +835,15 @@ class CommonAPIHandler extends BaseHandler {
     const api = API.SLACK_ERROR_FIREBASE;
     return this.postCancelableAPI(api, data, false);
   }
+
+  /**
+   * @todo get list premium by siteID
+   *
+   */
+  get_premiums(siteId) {
+    const api = url_for(API.GET_PREMIUMS + '/' + siteId);
+    return this.getCancelableAPI(api);
+  }
 }
 
 export default CommonAPIHandler;

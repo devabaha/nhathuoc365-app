@@ -10,6 +10,7 @@ import {
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import store from '../store/Store';
+import SkeletonLoading from './SkeletonLoading/SkeletonLoading';
 
 @observer
 class SelectionList extends Component {
@@ -24,6 +25,10 @@ class SelectionList extends Component {
         renderItem={({ item }) => {
           if (item.isHidden) {
             return null;
+          }
+
+          if (typeof item.render === 'function') {
+            return item.render();
           }
 
           var notifyCount = 0;
@@ -43,54 +48,72 @@ class SelectionList extends Component {
               underlayColor="transparent"
               onPress={item.onPress}
             >
-              <View
-                style={[
-                  styles.profile_list_opt_btn,
-                  {
-                    marginTop: item.marginTop ? 8 : 0,
-                    borderTopWidth: item.marginTop ? Util.pixel : 0,
-                    borderColor: '#dddddd'
-                  }
-                ]}
-              >
-                <View style={[styles.profile_list_icon_box, item.boxIconStyle]}>
-                  <Icon
-                    name={item.icon}
-                    size={item.iconSize || 16}
-                    color={item.iconColor || '#999999'}
-                  />
-                </View>
+              <>
+                <View
+                  style={[
+                    styles.profile_list_opt_btn,
+                    {
+                      marginTop: item.marginTop ? 8 : 0,
+                      borderTopWidth: item.marginTop ? Util.pixel : 0,
+                      borderColor: '#dddddd'
+                    },
+                    item.containerStyle
+                  ]}
+                >
+                  <View
+                    style={[styles.profile_list_icon_box, item.boxIconStyle]}
+                  >
+                    <Icon
+                      name={item.icon}
+                      size={item.iconSize || 16}
+                      color={item.iconColor || '#999999'}
+                    />
+                  </View>
 
-                <View>
-                  <Text style={styles.profile_list_label}>{item.label}</Text>
-                  {!!item.desc && (
-                    <Text style={styles.profile_list_small_label}>
-                      {item.desc}
+                  <View style={styles.labelContainer}>
+                    <Text
+                      {...item.labelProps}
+                      style={[styles.profile_list_label, item.labelStyle]}
+                    >
+                      {item.label}
                     </Text>
+                    {!!item.desc && (
+                      <Text
+                        {...item.desProps}
+                        style={[
+                          styles.profile_list_small_label,
+                          item.descStyle
+                        ]}
+                      >
+                        {item.desc}
+                      </Text>
+                    )}
+                  </View>
+
+                  {!item.hideAngle && (
+                    <View
+                      style={[
+                        styles.profile_list_icon_box,
+                        styles.profile_list_icon_box_angle
+                      ]}
+                    >
+                      {item.rightIcon || (
+                        <Icon name="angle-right" size={16} color="#999999" />
+                      )}
+                    </View>
+                  )}
+
+                  {notifyCount > 0 && (
+                    <View style={styles.stores_info_action_notify}>
+                      <Text style={styles.stores_info_action_notify_value}>
+                        {notifyCount}
+                      </Text>
+                    </View>
                   )}
                 </View>
 
-                {!item.hideAngle && (
-                  <View
-                    style={[
-                      styles.profile_list_icon_box,
-                      styles.profile_list_icon_box_angle
-                    ]}
-                  >
-                    {item.rightIcon || (
-                      <Icon name="angle-right" size={16} color="#999999" />
-                    )}
-                  </View>
-                )}
-
-                {notifyCount > 0 && (
-                  <View style={styles.stores_info_action_notify}>
-                    <Text style={styles.stores_info_action_notify_value}>
-                      {notifyCount}
-                    </Text>
-                  </View>
-                )}
-              </View>
+                {typeof item.renderAfter === 'function' && item.renderAfter()}
+              </>
             </TouchableHighlight>
           );
         }}
@@ -105,9 +128,9 @@ SelectionList.propTypes = {
 
 const styles = StyleSheet.create({
   profile_list_opt: {
-    borderTopWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    // borderTopWidth: Util.pixel,
+    // borderBottomWidth: Util.pixel,
+    // borderColor: '#dddddd'
   },
   profile_list_opt_btn: {
     width: Util.size.width,
@@ -126,10 +149,12 @@ const styles = StyleSheet.create({
     marginLeft: 4,
     marginRight: 4
   },
+  labelContainer: {
+    flex: 1
+  },
   profile_list_icon_box_angle: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
+    paddingRight: 7,
+    width: undefined,
     height: '100%'
   },
   profile_list_label: {

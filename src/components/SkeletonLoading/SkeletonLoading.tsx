@@ -28,6 +28,9 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
             foregroundColor,
             start,
             end,
+            highlightMainDuration,
+            highlightColor,
+            highlightOpacity,
             ...props
         } = this.props;
 
@@ -49,6 +52,9 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
                                 height="100%"
                                 start={-highlightWidth}
                                 end={width + highlightWidth}
+                                highlightMainDuration={highlightMainDuration}
+                                highlightColor={highlightColor}
+                                highlightOpacity={highlightOpacity}
                             />
                         )}
                     </View>
@@ -62,7 +68,8 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#eff1f2'
+        backgroundColor: '#eff1f2',
+        overflow: 'hidden'
     }
 });
 
@@ -75,12 +82,29 @@ class Highlight extends Component<SkeletonLoadingProps> {
     state = {
         highlightAnimated: new Animated.Value(this.props.start)
     };
+
+    get highlightColor() {
+        const color = this.props.highlightColor || "#fff";
+        const opacity = this.props.highlightOpacity || .4;
+        return [
+            //@ts-ignore
+            hexToRgbA(color, 0),
+            //@ts-ignore
+            hexToRgbA(color, opacity),
+            //@ts-ignore
+            hexToRgbA(color, opacity),
+            //@ts-ignore
+            hexToRgbA(color, 0),
+        ]
+    }
+
     componentDidMount() {
+        const speed = this.props.highlightMainDuration;
         Animated.loop(
             Animated.sequence([
                 Animated.timing(this.state.highlightAnimated, {
                     toValue: this.props.end,
-                    duration: 800,
+                    duration: speed,
                     easing: Easing.cubic,
                     useNativeDriver: true
                 }),
@@ -91,7 +115,7 @@ class Highlight extends Component<SkeletonLoadingProps> {
                 }),
                 Animated.timing(this.state.highlightAnimated, {
                     toValue: this.props.end,
-                    duration: 600,
+                    duration: speed * .75,
                     easing: Easing.cubic,
                     useNativeDriver: true
                 }),
@@ -106,20 +130,16 @@ class Highlight extends Component<SkeletonLoadingProps> {
     }
 
     render() {
-        const { width, height, style, start, end } = this.props;
+        const { width, height, style, highlightColor } = this.props;
         const animatedStyle = {
             transform: [{ translateX: this.state.highlightAnimated }]
         };
         const containerStyle = [{ width, height }, style, animatedStyle];
+
         return (
             <AnimatedLinearGradient
                 style={containerStyle}
-                colors={[
-                    'rgba(255,255,255,0)',
-                    'rgba(255,255,255,.4)',
-                    'rgba(255,255,255,.4)',
-                    'rgba(255,255,255,0)'
-                ]}
+                colors={this.highlightColor}
                 locations={[0.15, 0.45, 0.55, 0.85]}
                 useAngle
                 angle={90}

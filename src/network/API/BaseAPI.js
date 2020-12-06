@@ -5,7 +5,7 @@
  * @module API
  */
 
-export const ORIGIN_API_DOMAIN = 'http://apiapp.tickid.vn/';
+export const ORIGIN_API_DOMAIN = 'http://apiapp.tickid.top/';
 export const ORIGIN_IMAGE_DOMAIN = 'https://img.tickid.vn/';
 
 class BaseAPI {

@@ -115,6 +115,9 @@
     },
     "qrPaymentInfo": {
       "mainTitle": "Payment acceptance"
+    },
+    "premiumInfo": {
+      "mainTitle": "Tier benefits"
     }
   },
 

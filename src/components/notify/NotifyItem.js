@@ -94,6 +94,12 @@ class NotifyItem extends Component {
     );
   }
 
+  getHeaderInfo(infoKey) {
+    const item = this.state.item || {};
+    const item_data = this.state.item_data || {};
+    return item[infoKey] || item_data[infoKey];
+  }
+
   render() {
     var { item, item_data } = this.state;
     const { t } = this.props;
@@ -113,7 +119,7 @@ class NotifyItem extends Component {
             <CachedImage
               mutable
               style={styles.notify_image}
-              source={{ uri: item.image_url }}
+              source={{ uri: this.getHeaderInfo('image_url') }}
             />
           </View>
 
@@ -124,20 +130,22 @@ class NotifyItem extends Component {
             }}
           >
             <View style={styles.notify_content}>
-              <Text style={styles.notify_heading}>{item.title}</Text>
+              <Text style={styles.notify_heading}>
+                {this.getHeaderInfo('title')}
+              </Text>
 
               <View style={styles.notify_time_box}>
                 <Text style={styles.notify_time}>
                   <Icon name="clock-o" size={11} color="#666666" />
-                  {' ' + item.created + '    '}
+                  {' ' + this.getHeaderInfo('created') + '    '}
                   <Icon name="map-marker" size={12} color="#666666" />
-                  {' ' + item.shop_name}
+                  {' ' + this.getHeaderInfo('shop_name')}
                 </Text>
               </View>
 
               <View style={styles.notify_sort_content_box}>
                 <Text style={styles.notify_sort_content}>
-                  {item.short_content}
+                  {this.getHeaderInfo('short_content')}
                 </Text>
               </View>
             </View>

@@ -115,6 +115,7 @@ class Config {
       qrBarCode: 'qrBarCode',
 
       notifies: 'notifies',
+      notifyDetail: 'notify_item',
 
       detailHistoryPayment: 'detail_history_payment',
 
@@ -182,7 +183,10 @@ class Config {
       multiLevelCategory: 'multiLevelCategory',
 
       //dynamic domain
-      domainSelector: 'domainSelector'
+      domainSelector: 'domainSelector',
+
+      // Premium
+      premiumInfo: 'premiumInfo'
     };
   }
 }

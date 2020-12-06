@@ -17,6 +17,7 @@
 		050EADCA2BB546CAB2015BB7 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = F815A3C0772E4792810D5B6A /* libz.tbd */; };
 		06C095C123D2C95900F81C1F /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C0957E23D2C95900F81C1F /* CoreGraphics.framework */; };
 		06C095C323D2C98200F81C1F /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06C095C223D2C98200F81C1F /* WebKit.framework */; };
+		06F207AC25773AE000EE38F3 /* fonts in Resources */ = {isa = PBXBuildFile; fileRef = 06F2076D25773AE000EE38F3 /* fonts */; };
 		0F4BFB726E464E14973E763A /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD6E73A42137404B84C1637D /* libRNGestureHandler.a */; };
 		11664DB068BF4996A690450F /* libRNVectorIcons.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2306C35B3D9446EF93D15C2A /* libRNVectorIcons.a */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
@@ -553,6 +554,7 @@
 		06C63EAF23FE397A004290DC /* RNReactNativeHapticFeedback.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNReactNativeHapticFeedback.xcodeproj; path = "../node_modules/react-native-haptic-feedback/ios/RNReactNativeHapticFeedback.xcodeproj"; sourceTree = "<group>"; };
 		06C63FAA23FE8580004290DC /* RNDeviceInfo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RNDeviceInfo.xcodeproj; path = "../node_modules/react-native-device-info/ios/RNDeviceInfo.xcodeproj"; sourceTree = "<group>"; };
 		06C642C624052C8E004290DC /* libRNDeviceInfo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libRNDeviceInfo.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		06F2076D25773AE000EE38F3 /* fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = fonts; sourceTree = "<group>"; };
 		0B2D8C6FFCDD475689ECAAA0 /* libRNCNetInfo.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNCNetInfo.a; sourceTree = "<group>"; };
 		10BE72D939CA4150A6E6FF06 /* RNVectorIcons.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNVectorIcons.xcodeproj; path = "../node_modules/react-native-vector-icons/RNVectorIcons.xcodeproj"; sourceTree = "<group>"; };
 		10E68EE2F8C54F8089797626 /* libCodePush.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libCodePush.a; sourceTree = "<group>"; };
@@ -994,6 +996,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				06F2076D25773AE000EE38F3 /* fonts */,
 				13B07FAE1A68108700A75B9A /* my_food_new */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* my_food_newTests */,
@@ -1869,6 +1872,7 @@
 				FC36BD30A4FE49A49EEC07E8 /* MaterialCommunityIcons.ttf in Resources */,
 				8F7C22401BE74A7CBE52B040 /* MaterialIcons.ttf in Resources */,
 				88EE2B8B23A341FA0073E518 /* GoogleService-Info.plist in Resources */,
+				06F207AC25773AE000EE38F3 /* fonts in Resources */,
 				CCCAE5EDF74D40E492349AFA /* Octicons.ttf in Resources */,
 				EE57C7A6C7C748A0BFD7DE6E /* SimpleLineIcons.ttf in Resources */,
 				1926FC5280E543DEAC3D5FAD /* Zocial.ttf in Resources */,

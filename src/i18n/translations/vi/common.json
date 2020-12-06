@@ -115,6 +115,9 @@
     },
     "qrPaymentInfo": {
       "mainTitle": "Chấp nhận thanh toán"
+    },
+    "premiumInfo": {
+      "mainTitle": "Ưu đãi hạng"
     }
   },
 

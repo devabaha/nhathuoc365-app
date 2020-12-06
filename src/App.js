@@ -151,6 +151,7 @@ import CountryPicker from './components/CountryPicker';
 import NetWorkInfo from './components/NetWorkInfo';
 import BaseAPI from './network/API/BaseAPI';
 import DomainSelector from './containers/DomainSelector';
+import PremiumInfo from './containers/PremiumInfo';
 /**
  * Not allow font scaling
  */
@@ -870,6 +871,17 @@ class RootRouter extends Component {
                     title={t('screen.news.mainTitle')}
                     {...navBarConfig}
                     component={Notify}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ PREMIUM INFO ================ */}
+                <Stack key={appConfig.routes.premiumInfo}>
+                  <Scene
+                    key={`${appConfig.routes.premiumInfo}_1`}
+                    title={t('screen.premiumInfo.mainTitle')}
+                    component={PremiumInfo}
+                    {...whiteNavBarConfig}
                     back
                   />
                 </Stack>
