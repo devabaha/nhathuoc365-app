@@ -15,9 +15,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    alignItems: 'center',
-    // backgroundColor: "#f7f7f7",
-    backgroundColor: appConfig.colors.primary
+    alignItems: 'center'
+  },
+  staticBackground: {
+    transform: [{ rotate: '-45deg' }]
   },
   overlay: {
     position: 'absolute'
@@ -42,16 +43,21 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    color: '#777'
+    color: '#777',
+    ...elevationShadowStyle(5)
   },
   txtContainer: {
     paddingRight: 15
   },
   title: {
-    color: '#555',
+    color: appConfig.colors.primary,
     fontSize: 15,
-    // fontWeight: '300',
+    fontWeight: '500',
     textTransform: 'uppercase'
+  },
+  titleActive: {
+    color: '#888',
+    position: 'absolute'
   },
   desc: {
     color: '#888',
@@ -78,9 +84,10 @@ class BenefitRow extends Component {
 
   activeAnimating() {
     Animated.sequence([
+      Animated.delay(200),
       Animated.timing(this.activeRotateAnimated, {
         toValue: 0.6,
-        duration: 600,
+        duration: 400,
         easing: Easing.bezier(0.45, 0, 0.55, 1),
         useNativeDriver: true
       }),
@@ -93,13 +100,13 @@ class BenefitRow extends Component {
         }),
         Animated.timing(this.activeTranslateAnimated, {
           toValue: 1,
-          duration: 600,
+          duration: 400,
           easing: Easing.quad,
           useNativeDriver: true
         }),
         Animated.timing(this.activeOpacityAnimated, {
           toValue: 1,
-          duration: 600,
+          duration: 400,
           easing: Easing.quad,
           useNativeDriver: true
         })
@@ -143,15 +150,59 @@ class BenefitRow extends Component {
         inputRange: [0, 0.3],
         outputRange: [1, 0],
         extrapolate: 'clamp'
-      })
+      }),
+      transform: [
+        {
+          scale: this.activeOpacityAnimated.interpolate({
+            inputRange: [0, 0.2],
+            outputRange: [1, 3],
+            extrapolate: 'clamp'
+          })
+        }
+      ]
     };
+
     const activeStyle = {
       opacity: this.activeOpacityAnimated,
       color: '#f7f7f7'
     };
+
+    const extraTitleActiveStyle = {
+      opacity: this.activeOpacityAnimated.interpolate({
+        inputRange: [0, 0.3],
+        outputRange: [1, 0],
+        extrapolate: 'clamp'
+      }),
+      transform: [
+        {
+          scale: this.activeOpacityAnimated.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 1.8],
+            extrapolate: 'clamp'
+          })
+        }
+      ]
+    };
+
     return (
       <Container row style={styles.container}>
         <View style={styles.iconContainer}>
+          <View style={[styles.background, styles.staticBackground]}>
+            <Animated.View
+              style={[
+                styles.background,
+                styles.leftDoor,
+                { backgroundColor: appConfig.colors.primary }
+              ]}
+            />
+            <Animated.View
+              style={[
+                styles.background,
+                styles.rightDoor,
+                { backgroundColor: LightenColor(appConfig.colors.primary, 15) }
+              ]}
+            />
+          </View>
           <Animated.View style={[styles.background, extraBackgroundLockStyle]}>
             <Animated.View
               style={[styles.background, styles.leftDoor, extraLeftDoorStyle]}
@@ -171,7 +222,14 @@ class BenefitRow extends Component {
         </View>
         <Container.Item flex style={styles.txtContainer}>
           <Text style={styles.title}>{this.props.title}</Text>
-          <Text style={styles.desc}>{this.props.description}</Text>
+          <Animated.Text
+            style={[styles.title, styles.titleActive, extraTitleActiveStyle]}
+          >
+            {this.props.title}
+          </Animated.Text>
+          {!!this.props.description && (
+            <Text style={styles.desc}>{this.props.description}</Text>
+          )}
         </Container.Item>
       </Container>
     );

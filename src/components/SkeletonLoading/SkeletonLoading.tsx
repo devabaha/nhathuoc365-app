@@ -6,6 +6,10 @@ import { SkeletonLoadingProps } from '.';
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 class SkeletonLoading extends Component<SkeletonLoadingProps> {
+    static defaultProps = {
+        loading: true
+    };
+    
     state = {
         width: 0,
         height: 0

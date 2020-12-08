@@ -75,5 +75,8 @@ export const SERVICES_TYPE = {
   POP_UP: 'popup',
 
   /** SCHEDULE BOOKING */
-  SCHEDULE_BOOKING: 'schedule_booking'
+  SCHEDULE_BOOKING: 'schedule_booking',
+
+  /** PREMIUMS */
+  PREMIUM_INFO: 'PREMIUM_INFO'
 };

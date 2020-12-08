@@ -17,6 +17,7 @@ import BenefitRow from './BenefitRow';
 import Container from '../../components/Layout/Container';
 import { Actions } from 'react-native-router-flux';
 import Loading from '../../components/Loading';
+import PremiumInfoSkeleton from './PremiumInfoSkeleton';
 
 const premiums = [
   {
@@ -219,7 +220,6 @@ class PremiumInfo extends Component {
     try {
       this.getPremiumsRequest.data = APIHandler.get_premiums(siteId);
       const response = await this.getPremiumsRequest.promise();
-      console.log(response);
 
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
@@ -309,9 +309,28 @@ class PremiumInfo extends Component {
   renderPremiumBenefit({ item: benefit }) {
     return (
       <BenefitRow
-        active={true}
+        active={benefit.unlock}
         title={benefit.name}
         description={benefit.describe}
+      />
+    );
+  }
+
+  renderTabBar(props) {
+    const numberOfTabs = this.state.routes.length;
+    const tabWidth =
+      numberOfTabs <= MAX_TAB_ITEMS_PER_ROW
+        ? appConfig.device.width / numberOfTabs
+        : appConfig.device.width / MAX_TAB_ITEMS_PER_ROW;
+
+    return (
+      <TabBar
+        {...props}
+        renderLabel={this.renderTabBarLabel.bind(this)}
+        indicatorStyle={styles.indicatorStyle}
+        style={styles.tabBarStyle}
+        tabStyle={{ width: tabWidth }}
+        scrollEnabled
       />
     );
   }
@@ -346,38 +365,24 @@ class PremiumInfo extends Component {
   }
 
   render() {
-    const numberOfTabs = this.state.routes.length;
-    const tabWidth =
-      numberOfTabs <= MAX_TAB_ITEMS_PER_ROW
-        ? appConfig.device.width / numberOfTabs
-        : appConfig.device.width / MAX_TAB_ITEMS_PER_ROW;
     return (
-      <View style={styles.container}>
-        <SafeAreaView style={styles.container}>
-          {this.state.loading && <Loading center />}
-          {!!this.state.routes && (
-            <TabView
-              navigationState={this.state}
-              renderTabBar={props => {
-                return (
-                  <TabBar
-                    {...props}
-                    renderLabel={this.renderTabBarLabel.bind(this)}
-                    indicatorStyle={styles.indicatorStyle}
-                    style={styles.tabBarStyle}
-                    tabStyle={{ width: tabWidth }}
-                    scrollEnabled
-                  />
-                );
-              }}
-              renderScene={this.renderScene.bind(this)}
-              onIndexChange={index => this.setState({ index })}
-              initialLayout={{ width: appConfig.device.width }}
-              style={styles.tabBarContainer}
-            />
-          )}
-        </SafeAreaView>
-      </View>
+      <PremiumInfoSkeleton loading={this.state.loading}>
+        <View style={styles.container}>
+          <SafeAreaView style={styles.container}>
+            {this.state.loading && <Loading center />}
+            {!!this.state.routes && (
+              <TabView
+                navigationState={this.state}
+                renderTabBar={this.renderTabBar.bind(this)}
+                renderScene={this.renderScene.bind(this)}
+                onIndexChange={index => this.setState({ index })}
+                initialLayout={{ width: appConfig.device.width }}
+                style={styles.tabBarContainer}
+              />
+            )}
+          </SafeAreaView>
+        </View>
+      </PremiumInfoSkeleton>
     );
   }
 }

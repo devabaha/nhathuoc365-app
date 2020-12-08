@@ -10,7 +10,6 @@ import {
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import store from '../store/Store';
-import SkeletonLoading from './SkeletonLoading/SkeletonLoading';
 
 @observer
 class SelectionList extends Component {

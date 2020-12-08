@@ -329,6 +329,14 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         serviceId: service.service_id
       });
       break;
+
+    /** PREMIUMS */
+    case SERVICES_TYPE.PREMIUM_INFO:
+      if (Actions.currentScene === `${appConfig.routes.premiumInfo}_1`) {
+        Actions.jump(appConfig.routes.accountTab);
+      }
+      Actions.push(appConfig.routes.premiumInfo);
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }

@@ -636,7 +636,6 @@ class Account extends Component {
             }}
             width="100%"
             height="100%"
-            loading
           />
         </View>
       </View>
@@ -1261,7 +1260,8 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(4)
   },
   premiumLabel: {
-    fontFamily: 'SairaStencilOne-Regular',
+    // fontFamily: 'SairaStencilOne-Regular',
+    fontWeight: 'bold',
     textTransform: 'uppercase',
     fontSize: 20,
     letterSpacing: 1

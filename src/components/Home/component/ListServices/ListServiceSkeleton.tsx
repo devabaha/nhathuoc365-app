@@ -68,7 +68,6 @@ class ListServiceSkeleton extends PureComponent {
                     style={styles.skeletonContainer}
                     width="100%"
                     height="100%"
-                    loading
                 />
             </View>
         );
