@@ -182,7 +182,10 @@ class Config {
       multiLevelCategory: 'multiLevelCategory',
 
       //dynamic domain
-      domainSelector: 'domainSelector'
+      domainSelector: 'domainSelector',
+
+      // Item detail
+      item: 'item'
     };
   }
 }

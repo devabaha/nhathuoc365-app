@@ -1096,8 +1096,14 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="item">
-                  <Scene key="item_1" component={Item} {...navBarConfig} back />
+                <Stack key={appConfig.routes.item}>
+                  <Scene
+                    key={`${appConfig.routes.item}_1`}
+                    component={Item}
+                    {...navBarConfig}
+                    hideNavBar
+                    back
+                  />
                 </Stack>
 
                 <Stack key="item_image_viewer">

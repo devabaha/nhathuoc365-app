@@ -4,9 +4,10 @@ import {
   Text,
   TouchableHighlight,
   StyleSheet,
-  ScrollView,
+  Animated,
   FlatList,
-  RefreshControl
+  RefreshControl,
+  StatusBar
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
@@ -21,6 +22,8 @@ import RightButtonChat from '../RightButtonChat';
 import RightButtonOrders from '../RightButtonOrders';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
+import Header from './Header';
+import { DiscountBadge } from '../Badges';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -36,9 +39,11 @@ class Item extends Component {
       loading: true,
       buying: false,
       like_loading: true,
-      like_flag: 0
+      like_flag: 0,
+      scrollY: 0
     };
 
+    this.animatedScrollY = new Animated.Value(0);
     this._getData = this._getData.bind(this);
     this.unmounted = false;
     this.eventTracker = new EventTracker();
@@ -386,8 +391,30 @@ class Item extends Component {
 
     return (
       <View style={styles.container}>
-        <ScrollView
+        <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+        <Header
+          title={this.props.title}
+          animatedValue={this.animatedScrollY}
+          item={item_data || item}
+        />
+
+        <Animated.ScrollView
           ref={ref => (this.refs_body_item = ref)}
+          contentContainerStyle={{
+            paddingTop: 30
+          }}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: this.animatedScrollY
+                  }
+                }
+              }
+            ],
+            { useNativeDriver: true }
+          )}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -395,50 +422,52 @@ class Item extends Component {
             />
           }
         >
-          {item_data == null ? (
-            <View
-              style={{
-                width: Util.size.width,
-                height: Util.size.width * 0.6
-              }}
-            >
-              <Indicator size="small" />
-            </View>
-          ) : (
-            <Swiper
-              showsButtons={item_data.img.length > 1}
-              showsPagination={false}
-              paginationStyle={{ marginTop: 100 }}
-              width={Util.size.width}
-              height={Util.size.width * 0.6}
-              containerStyle={{
-                flex: 0
-              }}
-            >
-              {item_data.img.map((item, index) => {
-                return (
-                  <TouchableHighlight
-                    underlayColor="transparent"
-                    onPress={() => {
-                      Actions.item_image_viewer({
-                        images: this.state.images
-                      });
-                    }}
-                    key={index}
-                  >
-                    <View>
-                      <CachedImage
-                        mutable
-                        style={styles.swiper_image}
-                        source={{ uri: item.image }}
-                        key={index}
-                      />
-                    </View>
-                  </TouchableHighlight>
-                );
-              })}
-            </Swiper>
-          )}
+          <View>
+            {item_data == null ? (
+              <View
+                style={{
+                  width: Util.size.width,
+                  height: Util.size.width * 0.6
+                }}
+              >
+                <Indicator size="small" />
+              </View>
+            ) : (
+              <Swiper
+                showsButtons={item_data.img.length > 1}
+                showsPagination={false}
+                paginationStyle={{ marginTop: 100 }}
+                width={Util.size.width}
+                height={Util.size.width * 0.6}
+                containerStyle={{
+                  flex: 0
+                }}
+              >
+                {item_data.img.map((item, index) => {
+                  return (
+                    <TouchableHighlight
+                      underlayColor="transparent"
+                      onPress={() => {
+                        Actions.item_image_viewer({
+                          images: this.state.images
+                        });
+                      }}
+                      key={index}
+                    >
+                      <View>
+                        <CachedImage
+                          mutable
+                          style={styles.swiper_image}
+                          source={{ uri: item.image }}
+                          key={index}
+                        />
+                      </View>
+                    </TouchableHighlight>
+                  );
+                })}
+              </Swiper>
+            )}
+          </View>
 
           <View style={styles.item_heading_box}>
             <Text style={styles.item_heading_title}>
@@ -454,6 +483,12 @@ class Item extends Component {
               <Text style={styles.item_heading_price}>
                 {item_data ? item_data.price_view : item.price_view}
               </Text>
+              {item.discount_percent > 0 && (
+                <DiscountBadge
+                  containerStyle={styles.discountBadge}
+                  label={`-${item.discount_percent}%`}
+                />
+              )}
             </View>
 
             <Text style={styles.item_heading_qnt}>
@@ -708,7 +743,7 @@ class Item extends Component {
             />
           )}
 
-          {item.discount_percent > 0 && (
+          {/* {item.discount_percent > 0 && (
             <View style={styles.item_safe_off}>
               <View style={styles.item_safe_off_percent}>
                 <Text style={styles.item_safe_off_percent_val}>
@@ -716,7 +751,7 @@ class Item extends Component {
                 </Text>
               </View>
             </View>
-          )}
+          )} */}
           <View style={styles.boxButtonActions}>
             <TouchableHighlight
               style={styles.buttonAction}
@@ -747,7 +782,7 @@ class Item extends Component {
               </View>
             </TouchableHighlight>
           </View>
-        </ScrollView>
+        </Animated.ScrollView>
 
         {this.state.loading == false && (
           <CartFooter
@@ -914,7 +949,10 @@ const styles = StyleSheet.create({
   },
   item_heading_price_box: {
     flexDirection: 'row',
-    marginTop: 4
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 4,
+    flexWrap: 'wrap'
   },
   item_heading_safe_off_value: {
     fontSize: 20,
@@ -1068,6 +1106,10 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginLeft: 4,
     fontSize: 14
+  },
+  discountBadge: {
+    left: 20,
+    width: null
   }
 });
 
