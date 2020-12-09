@@ -2,6 +2,15 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Animated, Easing } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { SkeletonLoadingProps } from '.';
+import { SKELETON_COLOR } from './constants';
+
+
+const styles = StyleSheet.create({
+    container: {
+        backgroundColor: SKELETON_COLOR,
+        overflow: 'hidden'
+    }
+});
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
@@ -69,13 +78,6 @@ class SkeletonLoading extends Component<SkeletonLoadingProps> {
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        backgroundColor: '#eff1f2',
-        overflow: 'hidden'
-    }
-});
 
 export default SkeletonLoading;
 

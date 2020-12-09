@@ -17,11 +17,6 @@ export const HOME_CARD_TYPE = {
   VERTICAL: 'vertical'
 };
 
-/**
- * SKELETON_LOADING CONST
- */
-export const SKELETON_COLOR = '#d3dce2';
-
 export const STATUS_BAR_STYLE = {
   LIGHT: 'light-content',
   DARK: 'dark-content'
