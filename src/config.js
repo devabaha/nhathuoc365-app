@@ -186,7 +186,10 @@ class Config {
       domainSelector: 'domainSelector',
 
       // Premium
-      premiumInfo: 'premiumInfo'
+      premiumInfo: 'premiumInfo',
+
+      // Item detail
+      item: 'item'
     };
   }
 }

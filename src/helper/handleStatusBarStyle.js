@@ -30,7 +30,9 @@ export default function handleStatusBarStyle(prevState, newState, action) {
 
     appConfig.routes.resetPassword,
 
-    appConfig.routes.premiumInfo
+    appConfig.routes.premiumInfo,
+
+    appConfig.routes.item
   ];
 
   switch (action.type) {

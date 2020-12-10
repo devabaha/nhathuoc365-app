@@ -5,7 +5,8 @@ import {
   StyleSheet,
   Text,
   FlatList,
-  TouchableOpacity
+  TouchableOpacity,
+  RefreshControl
 } from 'react-native';
 import { TabView, TabBar } from 'react-native-tab-view';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -226,13 +227,13 @@ class PremiumInfo extends Component {
           const routes = this.routesFormatter(response.data.premiums);
           const currentPremium =
             routes.find(route => !!route.active) || this.state.indexTab;
-          const index = currentPremium
-            ? currentPremium.id - 1
+          const currentIndex = currentPremium
+            ? routes.findIndex(route => route.id === currentPremium.id)
             : this.state.index;
 
           this.setState({
             routes,
-            index,
+            index: currentIndex,
             currentPremium
           });
         } else {
@@ -261,7 +262,7 @@ class PremiumInfo extends Component {
     }
   }
 
-  routesFormatter(premiums) {
+  routesFormatter(premiums = []) {
     return premiums.map(premium => ({
       key: premium.id,
       title: premium.name,
@@ -337,10 +338,19 @@ class PremiumInfo extends Component {
 
   renderScene({ route: premium }) {
     const benefits = premium.benefits || [];
+
     return (
       <FlatList
         extraData={benefits}
         contentContainerStyle={styles.sceneContainer}
+        data={benefits}
+        renderItem={this.renderPremiumBenefit.bind(this)}
+        refreshControl={
+          <RefreshControl
+            refreshing={this.state.refreshing}
+            onRefresh={this.handleRefresh.bind(this)}
+          />
+        }
         ListHeaderComponent={this.renderPremiumBenefitsHeader(premium)}
         ListFooterComponent={
           <TouchableOpacity onPress={this.goToNews.bind(this)}>
@@ -357,8 +367,6 @@ class PremiumInfo extends Component {
             </Container>
           </TouchableOpacity>
         }
-        data={benefits}
-        renderItem={this.renderPremiumBenefit.bind(this)}
         keyExtractor={(item, index) => index.toString()}
       />
     );

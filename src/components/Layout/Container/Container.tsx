@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Animated, StyleSheet } from 'react-native';
 import { ContainerProps } from '.';
 import Item from './Item';
 
@@ -82,9 +82,9 @@ class Container extends Component<ContainerProps> {
         const { style, ...props } = this.props;
         const extraStyle = this.containerStyle;
         return (
-            <View {...props} style={[styles.container, extraStyle, style]}>
+            <Animated.View {...props} style={[styles.container, extraStyle, style]}>
                 {this.props.children}
-            </View>
+            </Animated.View>
         );
     }
 }
