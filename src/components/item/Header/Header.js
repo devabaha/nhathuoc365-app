@@ -111,7 +111,7 @@ class Header extends Component {
           }
         ]
       };
-      console.log(this.props.item);
+
       return (
         <Animated.View key={index} style={narrowRightGapStyle}>
           <RightButtonNavBar
@@ -155,7 +155,6 @@ class Header extends Component {
       ]
     };
 
-    // const titleStyle
     return (
       <Container style={styles.container}>
         <Animated.View style={[styles.background, backgroundStyle]} />

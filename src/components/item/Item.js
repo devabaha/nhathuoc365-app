@@ -7,7 +7,8 @@ import {
   Animated,
   FlatList,
   RefreshControl,
-  StatusBar
+  StatusBar,
+  SafeAreaView
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
@@ -398,203 +399,208 @@ class Item extends Component {
           item={item_data || item}
         />
 
-        <Animated.ScrollView
-          ref={ref => (this.refs_body_item = ref)}
-          contentContainerStyle={{
-            paddingTop: 30
-          }}
-          onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: this.animatedScrollY
+        <SafeAreaView style={styles.container}>
+          <Animated.ScrollView
+            ref={ref => (this.refs_body_item = ref)}
+            contentContainerStyle={{
+              paddingTop: 15
+            }}
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: this.animatedScrollY
+                    }
                   }
                 }
-              }
-            ],
-            { useNativeDriver: true }
-          )}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
-        >
-          <View>
-            {item_data == null ? (
-              <View
-                style={{
-                  width: Util.size.width,
-                  height: Util.size.width * 0.6
-                }}
-              >
-                <Indicator size="small" />
-              </View>
-            ) : (
-              <Swiper
-                showsButtons={item_data.img.length > 1}
-                showsPagination={false}
-                paginationStyle={{ marginTop: 100 }}
-                width={Util.size.width}
-                height={Util.size.width * 0.6}
-                containerStyle={{
-                  flex: 0
-                }}
-              >
-                {item_data.img.map((item, index) => {
-                  return (
-                    <TouchableHighlight
-                      underlayColor="transparent"
-                      onPress={() => {
-                        Actions.item_image_viewer({
-                          images: this.state.images
-                        });
-                      }}
-                      key={index}
-                    >
-                      <View>
-                        <CachedImage
-                          mutable
-                          style={styles.swiper_image}
-                          source={{ uri: item.image }}
-                          key={index}
-                        />
-                      </View>
-                    </TouchableHighlight>
-                  );
-                })}
-              </Swiper>
+              ],
+              { useNativeDriver: true }
             )}
-          </View>
-
-          <View style={styles.item_heading_box}>
-            <Text style={styles.item_heading_title}>
-              {item_data ? item_data.name : item.name}
-            </Text>
-
-            <View style={styles.item_heading_price_box}>
-              {item.discount_percent > 0 && (
-                <Text style={styles.item_heading_safe_off_value}>
-                  {item_data ? item_data.discount : item.discount}
-                </Text>
-              )}
-              <Text style={styles.item_heading_price}>
-                {item_data ? item_data.price_view : item.price_view}
-              </Text>
-              {item.discount_percent > 0 && (
-                <DiscountBadge
-                  containerStyle={styles.discountBadge}
-                  label={`-${item.discount_percent}%`}
-                />
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+          >
+            <View>
+              {item_data == null ? (
+                <View
+                  style={{
+                    width: Util.size.width,
+                    height: Util.size.width * 0.6
+                  }}
+                >
+                  <Indicator size="small" />
+                </View>
+              ) : (
+                <Swiper
+                  showsButtons={item_data.img.length > 1}
+                  showsPagination={false}
+                  paginationStyle={{ marginTop: 100 }}
+                  width={Util.size.width}
+                  height={Util.size.width * 0.6}
+                  containerStyle={{
+                    flex: 0
+                  }}
+                >
+                  {item_data.img.map((item, index) => {
+                    return (
+                      <TouchableHighlight
+                        underlayColor="transparent"
+                        onPress={() => {
+                          Actions.item_image_viewer({
+                            images: this.state.images
+                          });
+                        }}
+                        key={index}
+                      >
+                        <View>
+                          <CachedImage
+                            mutable
+                            style={styles.swiper_image}
+                            source={{ uri: item.image }}
+                            key={index}
+                          />
+                        </View>
+                      </TouchableHighlight>
+                    );
+                  })}
+                </Swiper>
               )}
             </View>
 
-            <Text style={styles.item_heading_qnt}>
-              {item_data ? item_data.unit_name_view : item.unit_name_view}
-            </Text>
+            <View style={styles.item_heading_box}>
+              <Text style={styles.item_heading_title}>
+                {item_data ? item_data.name : item.name}
+              </Text>
 
-            <View style={styles.item_actions_box}>
-              <TouchableHighlight
-                onPress={this._likeHandler.bind(this, item)}
-                underlayColor="transparent"
-              >
-                <View
-                  style={[
-                    styles.item_actions_btn,
-                    styles.item_actions_btn_chat,
-                    {
-                      borderColor: is_like ? '#e31b23' : DEFAULT_COLOR,
-                      width: 126
-                    }
-                  ]}
+              <View style={styles.item_heading_price_box}>
+                {item.discount_percent > 0 && (
+                  <Text style={styles.item_heading_safe_off_value}>
+                    {item_data ? item_data.discount : item.discount}
+                  </Text>
+                )}
+                <Text style={styles.item_heading_price}>
+                  {item_data ? item_data.price_view : item.price_view}
+                </Text>
+                {item.discount_percent > 0 && (
+                  <DiscountBadge
+                    containerStyle={styles.discountBadge}
+                    label={`-${item.discount_percent}%`}
+                  />
+                )}
+              </View>
+
+              <Text style={styles.item_heading_qnt}>
+                {item_data ? item_data.unit_name_view : item.unit_name_view}
+              </Text>
+
+              <View style={styles.item_actions_box}>
+                <TouchableHighlight
+                  onPress={this._likeHandler.bind(this, item)}
+                  underlayColor="transparent"
                 >
                   <View
-                    style={{
-                      height: '100%',
-                      minWidth: 20,
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {like_loading ? (
-                      <Indicator size="small" />
-                    ) : (
-                      <Icon
-                        name="heart"
-                        size={20}
-                        color={is_like ? '#e31b23' : DEFAULT_COLOR}
-                      />
-                    )}
-                  </View>
-                  <Text
                     style={[
-                      styles.item_actions_title,
-                      styles.item_actions_title_chat,
+                      styles.item_actions_btn,
+                      styles.item_actions_btn_chat,
                       {
-                        color: is_like ? '#e31b23' : DEFAULT_COLOR
+                        borderColor: is_like ? '#e31b23' : DEFAULT_COLOR,
+                        width: 126
                       }
                     ]}
                   >
-                    {is_like ? t('liked') : t('like')}
-                  </Text>
-                </View>
-              </TouchableHighlight>
+                    <View
+                      style={{
+                        height: '100%',
+                        minWidth: 20,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {like_loading ? (
+                        <Indicator size="small" />
+                      ) : (
+                        <Icon
+                          name="heart"
+                          size={20}
+                          color={is_like ? '#e31b23' : DEFAULT_COLOR}
+                        />
+                      )}
+                    </View>
+                    <Text
+                      style={[
+                        styles.item_actions_title,
+                        styles.item_actions_title_chat,
+                        {
+                          color: is_like ? '#e31b23' : DEFAULT_COLOR
+                        }
+                      ]}
+                    >
+                      {is_like ? t('liked') : t('like')}
+                    </Text>
+                  </View>
+                </TouchableHighlight>
 
-              <TouchableHighlight
-                onPress={() => this._addCart(item_data ? item_data : item)}
-                underlayColor="transparent"
-              >
-                <View
-                  style={[
-                    styles.item_actions_btn,
-                    styles.item_actions_btn_add_cart
-                  ]}
+                <TouchableHighlight
+                  onPress={() => this._addCart(item_data ? item_data : item)}
+                  underlayColor="transparent"
                 >
                   <View
-                    style={{
-                      height: '100%',
-                      minWidth: 24,
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
+                    style={[
+                      styles.item_actions_btn,
+                      styles.item_actions_btn_add_cart
+                    ]}
                   >
-                    {buying ? (
-                      <Indicator size="small" color="#ffffff" />
-                    ) : item.book_flag == 1 ? (
-                      <Icon name="cart-arrow-down" size={24} color="#ffffff" />
+                    <View
+                      style={{
+                        height: '100%',
+                        minWidth: 24,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      {buying ? (
+                        <Indicator size="small" color="#ffffff" />
+                      ) : item.book_flag == 1 ? (
+                        <Icon
+                          name="cart-arrow-down"
+                          size={24}
+                          color="#ffffff"
+                        />
+                      ) : (
+                        <Icon name="cart-plus" size={24} color="#ffffff" />
+                      )}
+                    </View>
+                    {item.book_flag == 1 ? (
+                      <Text
+                        style={[
+                          styles.item_actions_title,
+                          styles.item_actions_title_book_cart
+                        ]}
+                      >
+                        {t('shopTitle.preOrder')}
+                      </Text>
                     ) : (
-                      <Icon name="cart-plus" size={24} color="#ffffff" />
+                      <Text
+                        style={[
+                          styles.item_actions_title,
+                          styles.item_actions_title_add_cart
+                        ]}
+                      >
+                        {t('shopTitle.buy')}
+                      </Text>
                     )}
                   </View>
-                  {item.book_flag == 1 ? (
-                    <Text
-                      style={[
-                        styles.item_actions_title,
-                        styles.item_actions_title_book_cart
-                      ]}
-                    >
-                      {t('shopTitle.preOrder')}
-                    </Text>
-                  ) : (
-                    <Text
-                      style={[
-                        styles.item_actions_title,
-                        styles.item_actions_title_add_cart
-                      ]}
-                    >
-                      {t('shopTitle.buy')}
-                    </Text>
-                  )}
-                </View>
-              </TouchableHighlight>
+                </TouchableHighlight>
+              </View>
             </View>
-          </View>
 
-          {item != null && (
-            <View style={styles.item_content_box}>
-              {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
+            {item != null && (
+              <View style={styles.item_content_box}>
+                {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
                 <View style={styles.item_content_icon_box}>
                   <Icon name="clock-o" size={16} color="#999999" />
                 </View>
@@ -605,65 +611,65 @@ class Item extends Component {
                 <Text style={[styles.item_content_item_value, {color: DEFAULT_COLOR}]}>Trong 1 giờ</Text>
               </View>*/}
 
-              {item.brand != null && item.brand != '' && (
-                <View
-                  style={[
-                    styles.item_content_item,
-                    styles.item_content_item_left
-                  ]}
-                >
-                  <View style={styles.item_content_icon_box}>
-                    <Icon name="user" size={16} color="#999999" />
+                {item.brand != null && item.brand != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_left
+                    ]}
+                  >
+                    <View style={styles.item_content_icon_box}>
+                      <Icon name="user" size={16} color="#999999" />
+                    </View>
+                    <Text style={styles.item_content_item_title}>
+                      {t('information.brands')}
+                    </Text>
                   </View>
-                  <Text style={styles.item_content_item_title}>
-                    {t('information.brands')}
-                  </Text>
-                </View>
-              )}
+                )}
 
-              {item.brand != null && item.brand != '' && (
-                <View
-                  style={[
-                    styles.item_content_item,
-                    styles.item_content_item_right
-                  ]}
-                >
-                  <Text style={styles.item_content_item_value}>
-                    {item.brand}
-                  </Text>
-                </View>
-              )}
-
-              {item.made_in != null && item.made_in != '' && (
-                <View
-                  style={[
-                    styles.item_content_item,
-                    styles.item_content_item_left
-                  ]}
-                >
-                  <View style={styles.item_content_icon_box}>
-                    <Icon name="map-marker" size={16} color="#999999" />
+                {item.brand != null && item.brand != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_right
+                    ]}
+                  >
+                    <Text style={styles.item_content_item_value}>
+                      {item.brand}
+                    </Text>
                   </View>
-                  <Text style={styles.item_content_item_title}>
-                    {t('information.origin')}
-                  </Text>
-                </View>
-              )}
+                )}
 
-              {item.made_in != null && item.made_in != '' && (
-                <View
-                  style={[
-                    styles.item_content_item,
-                    styles.item_content_item_right
-                  ]}
-                >
-                  <Text style={styles.item_content_item_value}>
-                    {item.made_in}
-                  </Text>
-                </View>
-              )}
+                {item.made_in != null && item.made_in != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_left
+                    ]}
+                  >
+                    <View style={styles.item_content_icon_box}>
+                      <Icon name="map-marker" size={16} color="#999999" />
+                    </View>
+                    <Text style={styles.item_content_item_title}>
+                      {t('information.origin')}
+                    </Text>
+                  </View>
+                )}
 
-              {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
+                {item.made_in != null && item.made_in != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_right
+                    ]}
+                  >
+                    <Text style={styles.item_content_item_value}>
+                      {item.made_in}
+                    </Text>
+                  </View>
+                )}
+
+                {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
                 <View style={styles.item_content_icon_box}>
                   <Icon name="usd" size={16} color="#999999" />
                 </View>
@@ -673,33 +679,33 @@ class Item extends Component {
               <View style={[styles.item_content_item, styles.item_content_item_right]}>
                 <Text style={styles.item_content_item_value}>Bằng giá cửa hàng</Text>
               </View>*/}
-            </View>
-          )}
+              </View>
+            )}
 
-          <View style={styles.item_content_text}>
-            {item_data != null ? (
-              <AutoHeightWebView
-                onError={() => console.log('on error')}
-                onLoad={() => console.log('on load')}
-                onLoadStart={() => console.log('on load start')}
-                onLoadEnd={() => console.log('on load end')}
-                onShouldStartLoadWithRequest={result => {
-                  // console.log(result);
-                  return true;
-                }}
-                style={{
-                  paddingHorizontal: 6,
-                  marginHorizontal: 15,
-                  width: appConfig.device.width - 30
-                }}
-                onHeightUpdated={height => this.setState({ height })}
-                source={{ html: item_data.content }}
-                zoomable={false}
-                scrollEnabled={false}
-                customScript={`
+            <View style={styles.item_content_text}>
+              {item_data != null ? (
+                <AutoHeightWebView
+                  onError={() => console.log('on error')}
+                  onLoad={() => console.log('on load')}
+                  onLoadStart={() => console.log('on load start')}
+                  onLoadEnd={() => console.log('on load end')}
+                  onShouldStartLoadWithRequest={result => {
+                    // console.log(result);
+                    return true;
+                  }}
+                  style={{
+                    paddingHorizontal: 6,
+                    marginHorizontal: 15,
+                    width: appConfig.device.width - 30
+                  }}
+                  onHeightUpdated={height => this.setState({ height })}
+                  source={{ html: item_data.content }}
+                  zoomable={false}
+                  scrollEnabled={false}
+                  customScript={`
 
                   `}
-                customStyle={`
+                  customStyle={`
                   * {
                     font-family: 'arial';
                   }
@@ -716,34 +722,34 @@ class Item extends Component {
                     max-width: 100% !important;
                     height: auto !important;
                   }`}
-              />
-            ) : (
-              <Indicator size="small" />
-            )}
-          </View>
-
-          {item_data != null && item_data.related && (
-            <FlatList
-              onEndReached={num => {}}
-              onEndReachedThreshold={0}
-              style={[styles.items_box]}
-              ListHeaderComponent={() => (
-                <ListHeader title={`— ${t('relatedItems')} —`} />
-              )}
-              data={item_data.related}
-              renderItem={({ item, index }) => (
-                <Items
-                  item={item}
-                  index={index}
-                  onPress={this._itemRefresh.bind(this, item)}
                 />
+              ) : (
+                <Indicator size="small" />
               )}
-              keyExtractor={item => item.id}
-              numColumns={2}
-            />
-          )}
+            </View>
 
-          {/* {item.discount_percent > 0 && (
+            {item_data != null && item_data.related && (
+              <FlatList
+                onEndReached={num => {}}
+                onEndReachedThreshold={0}
+                style={[styles.items_box]}
+                ListHeaderComponent={() => (
+                  <ListHeader title={`— ${t('relatedItems')} —`} />
+                )}
+                data={item_data.related}
+                renderItem={({ item, index }) => (
+                  <Items
+                    item={item}
+                    index={index}
+                    onPress={this._itemRefresh.bind(this, item)}
+                  />
+                )}
+                keyExtractor={item => item.id}
+                numColumns={2}
+              />
+            )}
+
+            {/* {item.discount_percent > 0 && (
             <View style={styles.item_safe_off}>
               <View style={styles.item_safe_off_percent}>
                 <Text style={styles.item_safe_off_percent_val}>
@@ -752,45 +758,45 @@ class Item extends Component {
               </View>
             </View>
           )} */}
-          <View style={styles.boxButtonActions}>
-            <TouchableHighlight
-              style={styles.buttonAction}
-              onPress={this._goStores.bind(this, this.state.store_data)}
-              underlayColor="transparent"
-            >
-              <View
-                style={[
-                  styles.boxButtonAction,
-                  {
-                    width: Util.size.width - 30,
-                    backgroundColor: '#fa7f50',
-                    borderColor: '#999999'
-                  }
-                ]}
+            <View style={styles.boxButtonActions}>
+              <TouchableHighlight
+                style={styles.buttonAction}
+                onPress={this._goStores.bind(this, this.state.store_data)}
+                underlayColor="transparent"
               >
-                <Icon name="plus" size={16} color="#ffffff" />
-                <Text
+                <View
                   style={[
-                    styles.buttonActionTitle,
+                    styles.boxButtonAction,
                     {
-                      color: '#ffffff'
+                      width: Util.size.width - 30,
+                      backgroundColor: '#fa7f50',
+                      borderColor: '#999999'
                     }
                   ]}
                 >
-                  {t('goToStore')}
-                </Text>
-              </View>
-            </TouchableHighlight>
-          </View>
-        </Animated.ScrollView>
+                  <Icon name="plus" size={16} color="#ffffff" />
+                  <Text
+                    style={[
+                      styles.buttonActionTitle,
+                      {
+                        color: '#ffffff'
+                      }
+                    ]}
+                  >
+                    {t('goToStore')}
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            </View>
+          </Animated.ScrollView>
 
-        {this.state.loading == false && (
-          <CartFooter
-            perfix="item"
-            confirmRemove={this._confirmRemoveCartItem.bind(this)}
-          />
-        )}
-
+          {this.state.loading == false && (
+            <CartFooter
+              perfix="item"
+              confirmRemove={this._confirmRemoveCartItem.bind(this)}
+            />
+          )}
+        </SafeAreaView>
         <PopupConfirm
           ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
           title={t('cart:popup.remove.message')}
@@ -916,7 +922,6 @@ class Item extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: appConfig.device.bottomSpace,
     backgroundColor: '#ffffff'
   },
   right_btn_box: {

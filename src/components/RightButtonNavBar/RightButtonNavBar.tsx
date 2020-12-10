@@ -53,7 +53,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                 Icon = Ionicons;
                 break;
             case RIGHT_BUTTON_TYPE.SHARE:
-                name = "ios-share-social";
+                name = "ios-redo";
                 Icon = Ionicons;
                 break;
         }

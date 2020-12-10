@@ -17,6 +17,9 @@ import PopupConfirm from '../PopupConfirm';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
+import RightButtonNavBar from '../RightButtonNavBar';
+import { RIGHT_BUTTON_TYPE } from '../RightButtonNavBar/constants';
+import Container from '../Layout/Container';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -31,8 +34,17 @@ class NotifyItem extends Component {
     this.eventTracker = new EventTracker();
   }
 
+  get notify() {
+    return this.state.item_data || this.state.item || {};
+  }
+
   componentDidMount() {
     this._getData();
+    setTimeout(() =>
+      Actions.refresh({
+        right: this.renderRightButton.bind(this)
+      })
+    );
   }
 
   componentWillUnmount() {
@@ -79,18 +91,37 @@ class NotifyItem extends Component {
             action(() => {
               store.setStoreId(response.data.site_id);
             })();
+
             setTimeout(() => {
-              this.setState({
-                item_data: response.data,
-                refreshing: false,
-                loading: false
-              });
+              this.setState(
+                {
+                  item_data: response.data,
+                  refreshing: false,
+                  loading: false
+                },
+                () =>
+                  Actions.refresh({
+                    right: this.renderRightButton.bind(this)
+                  })
+              );
             }, delay || 0);
           }
         } catch (e) {
           console.log(e + ' user_news');
         }
       }
+    );
+  }
+
+  renderRightButton() {
+    return (
+      <Container row style={styles.rightButtonNavBarContainer}>
+        <RightButtonNavBar
+          type={RIGHT_BUTTON_TYPE.SHARE}
+          shareTitle={this.notify.title}
+          shareURL={this.notify.url}
+        />
+      </Container>
     );
   }
 
@@ -369,6 +400,9 @@ const styles = StyleSheet.create({
     // marginBottom: 69,
     marginTop: 20,
     backgroundColor: '#f1f1f1'
+  },
+  rightButtonNavBarContainer: {
+    marginRight: 5
   }
 });
 
