@@ -1308,7 +1308,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#555',
     height: 5,
     position: 'absolute',
-    bottom: 0
+    bottom: 0,
+    elevation: 4
   }
 });
 

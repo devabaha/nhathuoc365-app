@@ -183,8 +183,9 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(5)
   },
   tabBarLabel: {
+    minWidth: '100%',
     color: '#333',
-    paddingHorizontal: 4
+    textAlign: 'center'
   },
   tabBarLabelActive: {
     fontWeight: 'bold',
@@ -328,14 +329,6 @@ class PremiumInfo extends Component {
     this.getPremiums();
   }
 
-  renderTabBarLabel({ focused, route: { title } }) {
-    return (
-      <Text style={[styles.tabBarLabel, focused && styles.tabBarLabelActive]}>
-        {title}
-      </Text>
-    );
-  }
-
   renderPremiumBenefitsHeader(premium) {
     const message =
       premium.point && premium.point > (this.userInfo.premium_point || 0)
@@ -353,6 +346,17 @@ class PremiumInfo extends Component {
         title={benefit.name}
         description={benefit.describe}
       />
+    );
+  }
+
+  renderTabBarLabel({ focused, route: { title } }) {
+    return (
+      <Text
+        numberOfLines={2}
+        style={[styles.tabBarLabel, focused && styles.tabBarLabelActive]}
+      >
+        {title}
+      </Text>
     );
   }
 
