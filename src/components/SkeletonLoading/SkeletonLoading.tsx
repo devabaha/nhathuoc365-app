@@ -104,29 +104,49 @@ class Highlight extends Component<SkeletonLoadingProps> {
         ]
     }
 
+    shouldComponentUpdate(nextProps: SkeletonLoadingProps, nextState) {
+        if(nextProps.width !== this.props.width){
+            this.state.highlightAnimated.stopAnimation();
+            this.animate(nextProps);
+        }
+
+        return true;
+    }
+
     componentDidMount() {
-        const speed = this.props.highlightMainDuration;
+        this.animate();
+    }
+
+    // componentDidUpdate(prevProps: SkeletonLoadingProps, prevState) {
+    //     if(prevProps.width !== this.props.width){
+    //         this.state.highlightAnimated.stopAnimation();
+    //         this.animate();
+    //     }
+    // }
+
+    animate(props = this.props){
+        const speed = props.highlightMainDuration;
         Animated.loop(
             Animated.sequence([
                 Animated.timing(this.state.highlightAnimated, {
-                    toValue: this.props.end,
+                    toValue: props.end,
                     duration: speed,
                     easing: Easing.cubic,
                     useNativeDriver: true
                 }),
                 Animated.timing(this.state.highlightAnimated, {
-                    toValue: this.props.start,
+                    toValue: props.start,
                     duration: 0,
                     useNativeDriver: true
                 }),
                 Animated.timing(this.state.highlightAnimated, {
-                    toValue: this.props.end,
+                    toValue: props.end,
                     duration: speed * .75,
                     easing: Easing.cubic,
                     useNativeDriver: true
                 }),
                 Animated.timing(this.state.highlightAnimated, {
-                    toValue: this.props.start,
+                    toValue: props.start,
                     duration: 0,
                     useNativeDriver: true
                 }),

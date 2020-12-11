@@ -28,7 +28,41 @@ const premiums = [
     describe: 'Hạng mặc định',
     point: 0,
     point_view: '0 điểm',
-    benefit: [
+    benefits: [
+      {
+        id: 1,
+        site_id: 28,
+        name: 'Ưu đãi chăm sóc KH',
+        describe:
+          'Đây là ưu đãi dành cho tất cả các KH khi trở thành thành viên của ABAHA'
+      }
+    ]
+  },
+  {
+    id: 9,
+    site_id: 28,
+    name: 'Thành viên',
+    describe: 'Hạng mặc định',
+    point: 0,
+    point_view: '0 điểm',
+    benefits: [
+      {
+        id: 1,
+        site_id: 28,
+        name: 'Ưu đãi chăm sóc KH',
+        describe:
+          'Đây là ưu đãi dành cho tất cả các KH khi trở thành thành viên của ABAHA'
+      }
+    ]
+  },
+  {
+    id: 7,
+    site_id: 28,
+    name: 'Thành viên',
+    describe: 'Hạng mặc định',
+    point: 0,
+    point_view: '0 điểm',
+    benefits: [
       {
         id: 1,
         site_id: 28,
@@ -45,7 +79,7 @@ const premiums = [
     describe: 'Hạng KH bạc',
     point: 500,
     point_view: '500 điểm',
-    benefit: [
+    benefits: [
       {
         id: 1,
         site_id: 28,
@@ -70,7 +104,7 @@ const premiums = [
     describe: 'Hạng KH vàng',
     point: 1500,
     point_view: '1500 điểm',
-    benefit: [
+    benefits: [
       {
         id: 1,
         site_id: 28,
@@ -221,21 +255,28 @@ class PremiumInfo extends Component {
     try {
       this.getPremiumsRequest.data = APIHandler.get_premiums(siteId);
       const response = await this.getPremiumsRequest.promise();
-
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           const routes = this.routesFormatter(response.data.premiums);
           const currentPremium =
-            routes.find(route => !!route.active) || this.state.indexTab;
+            routes.find(route => !!route.active) || this.state.index;
           const currentIndex = currentPremium
             ? routes.findIndex(route => route.id === currentPremium.id)
             : this.state.index;
 
-          this.setState({
-            routes,
-            index: currentIndex,
-            currentPremium
-          });
+          this.setState(
+            {
+              routes,
+              currentPremium
+            },
+            () => {
+              setTimeout(() =>
+                this.setState({
+                  index: currentIndex
+                })
+              );
+            }
+          );
         } else {
           flashShowMessage({
             type: 'danger',
@@ -272,7 +313,6 @@ class PremiumInfo extends Component {
 
   goToNews() {
     const userInfo = store.user_info || {};
-    console.log(userInfo);
     Actions.push(appConfig.routes.notifyDetail, {
       data: {
         id: userInfo.premium_post_id
@@ -297,7 +337,6 @@ class PremiumInfo extends Component {
   }
 
   renderPremiumBenefitsHeader(premium) {
-    //   console.log(premium, this.userInfo, 'aaa')
     const message =
       premium.point && premium.point > (this.userInfo.premium_point || 0)
         ? `Mở khóa hạng khi đạt đủ ${premium.point_view}`

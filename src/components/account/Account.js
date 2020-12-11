@@ -57,9 +57,9 @@ class Account extends Component {
     const default_wallet = user_info.default_wallet || {};
     const {
       premium,
-      premium_name = 'Kim cương',
-      premium_info = 'Bạn cần tích lũy thêm 200 điểm để thăng hạng thành viên Bạch Kim',
-      premium_point_unit = 'điểm',
+      premium_name,
+      premium_info,
+      premium_point_unit,
       premium_color = '#80AB82',
       // #fafafa, #95acc5, #80AB82, #d2d2e4, #f0b64a, #1eb7dc,
       premium_point = 10000,
@@ -604,40 +604,49 @@ class Account extends Component {
   }
 
   renderRightPremium(point, unit) {
+    const isShowPoint = point !== undefined && point !== null;
+
     return (
       <View style={styles.rightPremiumContainer}>
-        <View>
+        {isShowPoint && (
           <Text style={styles.rightPremiumLabel}>
             <Text style={styles.rightPremiumHighlight}>
               {numberFormat(+point)}
             </Text>{' '}
             {unit}
           </Text>
+        )}
+        <View style={styles.rightPremiumIconContainer}>
+          <IconAngleRight />
         </View>
-        <IconAngleRight />
       </View>
     );
   }
 
   renderProgressPremium(point, nextPoint, backgroundColor) {
     const premiumRatio = point / nextPoint;
-    const width = premiumRatio >= 1 ? '100%' : `${premiumRatio * 100}%`;
+    const isMax = premiumRatio >= 1;
+    const width = isMax ? '100%' : `${premiumRatio * 100}%`;
+    const extraStyle = isMax
+      ? {}
+      : {
+          borderTopRightRadius: 3,
+          borderBottomRightRadius: 3
+        };
+
     return (
       <View style={styles.premiumProgressContainer}>
-        <View style={{ width, height: '100%', ...elevationShadowStyle(7) }}>
-          <SkeletonLoading
-            highlightOpacity={0.8}
-            highlightMainDuration={2000}
-            highlightColor={LightenColor(backgroundColor, 40)}
-            style={{
-              backgroundColor,
-              borderTopRightRadius: 3,
-              borderBottomRightRadius: 3
-            }}
-            width="100%"
-            height="100%"
-          />
-        </View>
+        <SkeletonLoading
+          highlightOpacity={0.8}
+          highlightMainDuration={2000}
+          highlightColor={LightenColor(backgroundColor, 40)}
+          style={{
+            backgroundColor,
+            ...extraStyle
+          }}
+          width={width}
+          height="100%"
+        />
       </View>
     );
   }
@@ -1255,6 +1264,7 @@ const styles = StyleSheet.create({
   },
   premiumContainer: {
     height: null,
+    minHeight: 80,
     backgroundColor: '#242424',
     paddingVertical: 12,
     ...elevationShadowStyle(4)
@@ -1278,13 +1288,17 @@ const styles = StyleSheet.create({
     marginRight: -15
   },
   rightPremiumLabel: {
-    marginHorizontal: 10,
+    marginLeft: 10,
+    marginRight: -5,
     color: '#242424',
     fontSize: 10
   },
   rightPremiumHighlight: {
     fontWeight: '500',
     fontSize: 12
+  },
+  rightPremiumIconContainer: {
+    marginLeft: 15
   },
   boxIcon_domainSelector: {
     backgroundColor: '#333'
