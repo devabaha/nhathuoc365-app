@@ -11,14 +11,11 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r10.0.0';
+    return 'r10.1.1';
   }
 
   get tagDescription() {
-    return `- Firebase Analytics.
-- Firebase Phone Authentication.
-- Popup Homepage.
-- Package Options.`;
+    return `- Premium`;
   }
 
   get appName() {

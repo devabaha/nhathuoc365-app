@@ -1,15 +1,22 @@
 ##### Tag Version
 
-# r10.0.0
+# r10.1.1
 
 **r** presented for Retail app.
 
 ##### Tag Description
 
+###### Old Features
 - Firebase Analytics.
 - Firebase Phone Authentication.
 - Popup Homepage.
 - Package Options.
+
+###### New Features
+- Premium.
+
+###### Patch
+- Fix multi categories show 1 column on some android device.
 
 ---
 
