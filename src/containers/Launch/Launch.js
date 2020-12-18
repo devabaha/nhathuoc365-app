@@ -61,10 +61,10 @@ class Launch extends Component {
   }
 
   handleAuthWithResponse = response => {
-    const user = response.data;
+    const user = response.data || {};
     const { is_test_device } = user;
     const isTestDevice = this.handleTestDevice(is_test_device);
-
+    console.log(response);
     if (isTestDevice) {
       return;
     }

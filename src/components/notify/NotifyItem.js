@@ -17,6 +17,9 @@ import PopupConfirm from '../PopupConfirm';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
+import RightButtonNavBar from '../RightButtonNavBar';
+import { RIGHT_BUTTON_TYPE } from '../RightButtonNavBar/constants';
+import Container from '../Layout/Container';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -31,8 +34,17 @@ class NotifyItem extends Component {
     this.eventTracker = new EventTracker();
   }
 
+  get notify() {
+    return this.state.item_data || this.state.item || {};
+  }
+
   componentDidMount() {
     this._getData();
+    setTimeout(() =>
+      Actions.refresh({
+        right: this.renderRightButton.bind(this)
+      })
+    );
   }
 
   componentWillUnmount() {
@@ -79,18 +91,43 @@ class NotifyItem extends Component {
             action(() => {
               store.setStoreId(response.data.site_id);
             })();
+
             setTimeout(() => {
-              this.setState({
-                item_data: response.data,
-                refreshing: false,
-                loading: false
-              });
+              this.setState(
+                {
+                  item_data: response.data,
+                  refreshing: false,
+                  loading: false
+                },
+                () =>
+                  Actions.refresh({
+                    right: this.renderRightButton.bind(this)
+                  })
+              );
             }, delay || 0);
           }
         } catch (e) {
           console.log(e + ' user_news');
         }
       }
+    );
+  }
+
+  getHeaderInfo(infoKey) {
+    const item = this.state.item || {};
+    const item_data = this.state.item_data || {};
+    return item[infoKey] || item_data[infoKey];
+  }
+
+  renderRightButton() {
+    return (
+      <Container row style={styles.rightButtonNavBarContainer}>
+        <RightButtonNavBar
+          type={RIGHT_BUTTON_TYPE.SHARE}
+          shareTitle={this.notify.title}
+          shareURL={this.notify.url}
+        />
+      </Container>
     );
   }
 
@@ -113,7 +150,7 @@ class NotifyItem extends Component {
             <CachedImage
               mutable
               style={styles.notify_image}
-              source={{ uri: item.image_url }}
+              source={{ uri: this.getHeaderInfo('image_url') }}
             />
           </View>
 
@@ -124,20 +161,22 @@ class NotifyItem extends Component {
             }}
           >
             <View style={styles.notify_content}>
-              <Text style={styles.notify_heading}>{item.title}</Text>
+              <Text style={styles.notify_heading}>
+                {this.getHeaderInfo('title')}
+              </Text>
 
               <View style={styles.notify_time_box}>
                 <Text style={styles.notify_time}>
                   <Icon name="clock-o" size={11} color="#666666" />
-                  {' ' + item.created + '    '}
+                  {' ' + this.getHeaderInfo('created') + '    '}
                   <Icon name="map-marker" size={12} color="#666666" />
-                  {' ' + item.shop_name}
+                  {' ' + this.getHeaderInfo('shop_name')}
                 </Text>
               </View>
 
               <View style={styles.notify_sort_content_box}>
                 <Text style={styles.notify_sort_content}>
-                  {item.short_content}
+                  {this.getHeaderInfo('short_content')}
                 </Text>
               </View>
             </View>
@@ -369,6 +408,9 @@ const styles = StyleSheet.create({
     // marginBottom: 69,
     marginTop: 20,
     backgroundColor: '#f1f1f1'
+  },
+  rightButtonNavBarContainer: {
+    marginRight: 5
   }
 });
 

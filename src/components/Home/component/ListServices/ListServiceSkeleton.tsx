@@ -5,7 +5,7 @@ import SkeletonLoading from '../../../SkeletonLoading';
 import { MIN_ITEMS_PER_ROW } from '../../constants';
 //@ts-ignore
 import appConfig from 'app-config';
-import { SKELETON_COLOR } from '../../constants';
+import { SKELETON_COLOR } from '../../../SkeletonLoading/constants';
 
 const styles = StyleSheet.create({
     container: {
@@ -68,7 +68,6 @@ class ListServiceSkeleton extends PureComponent {
                     style={styles.skeletonContainer}
                     width="100%"
                     height="100%"
-                    loading
                 />
             </View>
         );

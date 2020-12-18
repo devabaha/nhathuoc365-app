@@ -380,6 +380,11 @@ class CommonAPI {
   get SLACK_ERROR_FIREBASE() {
     return 'https://hooks.slack.com/services/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';
   }
+
+  // Premium
+  get GET_PREMIUMS() {
+    return BaseAPI.apiDomain + 'apiPremiums/index';
+  }
 }
 
 export default new CommonAPI();

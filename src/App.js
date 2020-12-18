@@ -157,6 +157,7 @@ import CountryPicker from './components/CountryPicker';
 import NetWorkInfo from './components/NetWorkInfo';
 import BaseAPI from './network/API/BaseAPI';
 import DomainSelector from './containers/DomainSelector';
+import PremiumInfo from './containers/PremiumInfo';
 /**
  * Not allow font scaling
  */
@@ -894,6 +895,17 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                {/* ================ PREMIUM INFO ================ */}
+                <Stack key={appConfig.routes.premiumInfo}>
+                  <Scene
+                    key={`${appConfig.routes.premiumInfo}_1`}
+                    title={t('screen.premiumInfo.mainTitle')}
+                    component={PremiumInfo}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ MULTI LEVEL CATEGORY ================ */}
                 <Stack key={appConfig.routes.multiLevelCategory}>
                   <Scene
@@ -1116,8 +1128,14 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="item">
-                  <Scene key="item_1" component={Item} {...navBarConfig} back />
+                <Stack key={appConfig.routes.item}>
+                  <Scene
+                    key={`${appConfig.routes.item}_1`}
+                    component={Item}
+                    {...navBarConfig}
+                    hideNavBar
+                    back
+                  />
                 </Stack>
 
                 <Stack key="item_image_viewer">
