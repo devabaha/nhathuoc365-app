@@ -113,8 +113,12 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         try {
             const message = this.props.shareTitle;
             const url = this.props.shareURL;
-            const shareContent = url ? { url, message: url } : { message };
-            const result = await Share.share(shareContent);
+            const shareContent = url ? { url, message: `Xem ${message} tại ${url}` } : { message };
+
+            const result = await Share.share(shareContent, {
+                dialogTitle: message,
+                tintColor: appConfig.colors.primary
+            });
 
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
