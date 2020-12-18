@@ -85,6 +85,7 @@ class SubCategory extends Component<SubCategoryProps> {
             width: 0,
             height: 0
         },
+        subCategoriesWidth: 0,
         itemsPerRow: 3
     };
 
@@ -120,7 +121,8 @@ class SubCategory extends Component<SubCategoryProps> {
 
         this.setState({
             categorySize,
-            itemsPerRow
+            itemsPerRow,
+            subCategoriesWidth: bodyWidth
         })
     }
 
@@ -132,7 +134,7 @@ class SubCategory extends Component<SubCategoryProps> {
 
         return (
             Array.isArray(category.list) ?
-                <View style={styles.subCategoriesContainer}>
+                <View style={[styles.subCategoriesContainer, { minWidth: this.state.subCategoriesWidth }]}>
                     {category.list.map((childCate, index) => {
                         const isLast = (index + 1) % this.state.itemsPerRow === 0;
                         let extraStyle = {
