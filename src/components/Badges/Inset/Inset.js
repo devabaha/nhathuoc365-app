@@ -1,4 +1,4 @@
-import React, { Component } from 'React';
+import React, { Component } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 
 class Inset extends Component {
