@@ -16,7 +16,6 @@ import { setStater } from '../../packages/tickid-chat/helper';
 import { APIRequest } from '../../network/Entity';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
 class List extends Component {
   state = {
     loading: false,
@@ -267,4 +266,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default List;
+export default observer(List);

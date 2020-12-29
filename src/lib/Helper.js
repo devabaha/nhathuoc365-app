@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Platform, LayoutAnimation } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import getTickUniqueID from '../util/getTickUniqueID';
 import appConfig from 'app-config';
 import Events from './Events';
@@ -499,3 +499,29 @@ global.clearIntervals = intervals => {
     clearInterval(intervals);
   }
 };
+
+
+
+
+//-----react-native-exception-handler------
+import {
+  setJSExceptionHandler,
+  setNativeExceptionHandler,
+} from 'react-native-exception-handler';
+
+const errorHandler = (error, isFatal) => {
+  if (isFatal) {
+    Toast.show('Tính năng đang xảy ra sự cố ngoài ý muốn', Toast.LONG);
+    console.log('fatal_exception', error);
+  } else {
+    console.log('exception', error); // So that we can see it in the ADB logs in case of Android if needed
+  }
+};
+
+setJSExceptionHandler((error, isFatal) => {
+  errorHandler(error, isFatal);
+}, true);
+
+setNativeExceptionHandler((exceptionString) => {
+  console.log('native_exception', error);
+});

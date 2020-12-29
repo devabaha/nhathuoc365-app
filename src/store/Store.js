@@ -4,7 +4,7 @@ import { Keyboard, Platform, Linking, Alert } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
 import appConfig from 'app-config';
-import { analytics } from 'react-native-firebase';
+import firebaseAnalytics from '@react-native-firebase/analytics';
 
 @autobind
 class Store {
@@ -461,15 +461,15 @@ class Store {
     this.refer_code = refer_code;
   }
 
-  @observable branchIOSubcriber = null;
+  @observable branchIOSubscriber = null;
 
-  @action branchIOSubcribe(branchIOSubcriber) {
-    this.branchIOSubcriber = branchIOSubcriber;
+  @action branchIOSubscribe(branchIOSubscriber) {
+    this.branchIOSubscriber = branchIOSubscriber;
   }
 
-  @action branchIOUnsubcribe() {
-    if (this.branchIOSubcriber) {
-      this.branchIOSubcriber();
+  @action branchIOUnsubscribe() {
+    if (this.branchIOSubscriber) {
+      this.branchIOSubscriber();
     }
   }
 
@@ -524,7 +524,7 @@ class Store {
   }
 
   @observable analyticsUserID = '';
-  @observable analyst = analytics();
+  @observable analyst = firebaseAnalytics();
 
   @action setAnalyticsUser(user) {
     this.analyticsUserID = user.id;

@@ -16,8 +16,7 @@ import store from '../../store/Store';
 // components
 import Sticker from '../Sticker';
 
-@observer
-export default class ForgetActive extends Component {
+class ForgetActive extends Component {
   constructor(props) {
     super(props);
 
@@ -398,3 +397,5 @@ const styles = StyleSheet.create({
     marginLeft: 8
   }
 });
+
+export default observer(ForgetActive);

@@ -38,11 +38,6 @@ class Rating extends Component {
   }
 
   componentDidMount() {
-    this.getSiteDetailData();
-    this.eventTracker.logCurrentView();
-  }
-
-  componentWillMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       this.keyboardDidShow
@@ -51,6 +46,8 @@ class Rating extends Component {
       'keyboardDidHide',
       this.keyboardDidHide
     );
+    this.getSiteDetailData();
+    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {

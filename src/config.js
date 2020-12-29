@@ -11,15 +11,15 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r10.1.1';
+    return 'r11.0.0';
   }
 
   get tagDescription() {
-    return `- Premium`;
+    return `- New source rn-0.63.4`;
   }
 
   get appName() {
-    return 'HuongCang';
+    return 'ABAHAGLOBAL';
   }
 
   get namespace() {
@@ -36,8 +36,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'thuchuylekey',
-      secretKey: '6QAfthuchuylekeyVus5po'
+      appKey: 'abahaglobalkeywoxBg',
+      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh'
     };
   }
 
@@ -49,7 +49,7 @@ class Config {
 
   get oneSignal() {
     return {
-      appKey: '490c05c5-ddb5-4bfd-adf9-a58e78f7982a'
+      appKey: '437375e6-9a46-42fd-836e-30d3b1c28cd1'
     };
   }
 
@@ -82,6 +82,7 @@ class Config {
         sub: '#FFF',
         addition: '#000'
       },
+      sceneBackground: '#e9e9ee',
       primary: this.primaryColor,
       white: '#fff',
       black: '#000',

@@ -74,7 +74,8 @@ class Promotion extends Component {
     const animationConfig = {
       toValue:
         index * (PAGINATION_WIDTH + (index !== 0 ? PAGINATION_SPACE : 0)),
-      duration: 250
+      duration: 250,
+      useNativeDriver: false
     };
     Animated.timing(this.state.paginationLeft, animationConfig).start();
   };

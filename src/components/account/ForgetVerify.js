@@ -14,8 +14,7 @@ import EventTracker from '../../helper/EventTracker';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
 
-@observer
-export default class ForgetVerify extends Component {
+class ForgetVerify extends Component {
   constructor(props) {
     super(props);
 
@@ -319,3 +318,5 @@ const styles = StyleSheet.create({
     marginLeft: 8
   }
 });
+
+export default observer(ForgetVerify);

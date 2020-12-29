@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,9 @@ import {
   RefreshControl,
   Alert,
   Picker,
-  Easing
+  Easing,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
 import Communications from 'react-native-communications';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -19,7 +19,7 @@ import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIc
 import store from '../../store/Store';
 import RNFetchBlob from 'rn-fetch-blob';
 import Sticker from '../Sticker';
-import { reaction } from 'mobx';
+import {reaction} from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
 import { languages } from '../../i18n/constants';
@@ -49,7 +49,7 @@ class Account extends Component {
   }
 
   get options() {
-    const { t } = this.props;
+    const {t, i18n} = this.props;
     const isAdmin = store.user_info.admin_flag == 1;
     const isTestDevice = !!store.user_info.is_test_device;
     var notify = store.notify;
@@ -68,7 +68,7 @@ class Account extends Component {
       premium_color = '#80AB82',
       // #fafafa, #95acc5, #80AB82, #d2d2e4, #f0b64a, #1eb7dc,
       premium_point = 10000,
-      next_premium_point = 15000
+      next_premium_point = 15000,
     } = user_info;
     const isShowPremium = premium !== undefined;
 
@@ -82,11 +82,11 @@ class Account extends Component {
         rightIcon: <IconAngleRight />,
         onPress: () =>
           Actions.push(appConfig.routes.domainSelector, {
-            back: true
+            back: true,
           }),
         boxIconStyle: [styles.boxIconStyle, styles.boxIconDomainSelector],
         iconColor: '#ffffff',
-        iconType: 'MaterialCommunityIcons'
+        iconType: 'MaterialCommunityIcons',
       },
 
       {
@@ -97,19 +97,19 @@ class Account extends Component {
         labelStyle: [
           styles.premiumLabel,
           {
-            color: premium_color
-          }
+            color: premium_color,
+          },
         ],
         desc: premium_info,
         descStyle: {
-          color: '#ccc'
+          color: '#ccc',
         },
         rightIcon: this.renderRightPremium(premium_point, premium_point_unit),
         renderAfter: () =>
           this.renderProgressPremium(
             premium_point,
             next_premium_point,
-            premium_color
+            premium_color,
           ),
         onPress: () => Actions.push(appConfig.routes.premiumInfo),
         boxIconStyle: [
@@ -117,13 +117,13 @@ class Account extends Component {
           {
             backgroundColor: '#fff',
             borderWidth: 0.5,
-            borderColor: '#ccc'
-          }
+            borderColor: '#ccc',
+          },
         ],
         iconColor: '#2fc5c5',
         iconSize: 20,
         containerStyle: styles.premiumContainer,
-        isHidden: !isShowPremium
+        isHidden: !isShowPremium,
       },
 
       {
@@ -135,9 +135,8 @@ class Account extends Component {
             <Text
               style={[
                 styles.profile_list_label_balance,
-                { color: default_wallet.color }
-              ]}
-            >
+                {color: default_wallet.color},
+              ]}>
               {default_wallet.balance_view}
             </Text>
           </Text>
@@ -147,29 +146,29 @@ class Account extends Component {
         onPress: () => {
           Actions.push(appConfig.routes.vndWallet, {
             title: default_wallet.name,
-            wallet: default_wallet
+            wallet: default_wallet,
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: default_wallet.color
-          }
+            backgroundColor: default_wallet.color,
+          },
         ],
         iconColor: '#fff',
         iconType: default_wallet.iconType,
-        marginTop: isShowPremium
+        marginTop: isShowPremium,
       },
 
       {
         key: 'wallets',
         isHidden: !!!user_info.wallets,
-        render: this.renderWallets
+        render: this.renderWallets,
       },
       {
         key: 'ext_wallets',
         isHidden: !!!user_info.ext_wallets,
-        render: this.renderExtWallets
+        render: this.renderExtWallets,
       },
 
       {
@@ -192,17 +191,17 @@ class Account extends Component {
             aff_content: store.store_data
               ? store.store_data.aff_content
               : t('affiliateMarketingProgram', {
-                  appName: APP_NAME_SHOW
-                })
+                  appName: APP_NAME_SHOW,
+                }),
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#51A9FF'
-          }
+            backgroundColor: '#51A9FF',
+          },
         ],
-        iconColor: '#fff'
+        iconColor: '#fff',
       },
       {
         key: 'store',
@@ -274,56 +273,56 @@ class Account extends Component {
         rightIcon: <IconAngleRight />,
         onPress: () =>
           Actions.push(appConfig.routes.myAddress, {
-            from_page: 'account'
+            from_page: 'account',
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#fcb309'
-          }
+            backgroundColor: '#fcb309',
+          },
         ],
         iconColor: '#ffffff',
-        marginTop: !!premium_name
+        marginTop: !!premium_name,
       },
 
       {
         key: 'fanpage',
         isHidden: !APP_FANPAGE,
         icon: 'facebook-square',
-        label: t('options.fanpage.label', { appName: APP_NAME_SHOW }),
+        label: t('options.fanpage.label', {appName: APP_NAME_SHOW}),
         desc: t('options.fanpage.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () => Communications.web(APP_FANPAGE),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#4267b2'
-          }
+            backgroundColor: '#4267b2',
+          },
         ],
         iconColor: '#ffffff',
-        marginTop: !isAdmin
+        marginTop: !isAdmin,
       },
 
       {
         key: 'about',
         icon: 'handshake-o',
-        label: t('options.termOfUse.label', { appName: APP_NAME_SHOW }),
+        label: t('options.termOfUse.label', {appName: APP_NAME_SHOW}),
         desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
           Actions.webview({
             title: t('options.termOfUse.webViewTitle', {
-              appName: APP_NAME_SHOW
+              appName: APP_NAME_SHOW,
             }),
-            url: APP_INFO
+            url: APP_INFO,
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: DEFAULT_COLOR
-          }
+            backgroundColor: DEFAULT_COLOR,
+          },
         ],
-        iconColor: '#ffffff'
+        iconColor: '#ffffff',
         // marginTop: true
       },
 
@@ -369,8 +368,8 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#888'
-          }
+            backgroundColor: '#888',
+          },
         ],
         iconColor: '#fff',
         iconSize: 18,
@@ -384,19 +383,19 @@ class Account extends Component {
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
-          appVersion: DeviceInfo.getVersion() + codePushVersion
+          appVersion: DeviceInfo.getVersion() + codePushVersion,
         }),
         rightIcon: <IconAngleRight />,
         onPress: () => {},
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#688efb'
-          }
+            backgroundColor: '#688efb',
+          },
         ],
         iconColor: '#ffffff',
         hideAngle: true,
-        marginTop: true
+        marginTop: true,
       },
       {
         key: 'app_update',
@@ -404,7 +403,7 @@ class Account extends Component {
         icon: 'cloud-download',
         label: t('options.appUpdate.label'),
         desc: t('options.appUpdate.desc', {
-          newVersion: notify.new_version
+          newVersion: notify.new_version,
         }),
         rightIcon: <IconAngleRight />,
         onPress: () => {
@@ -415,12 +414,12 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#dd4b39'
-          }
+            backgroundColor: '#dd4b39',
+          },
         ],
         notify: 'updating_version',
-        iconColor: '#ffffff'
-      }
+        iconColor: '#ffffff',
+      },
     ];
   }
 
@@ -428,7 +427,7 @@ class Account extends Component {
     cancelRequests(this.requests);
   }
 
-  initial = callback => {
+  initial = (callback) => {
     const { t, i18n } = this.props;
     const isAdmin = store.user_info.admin_flag == 1;
     var notify = store.notify;
@@ -442,15 +441,15 @@ class Account extends Component {
   };
 
   handleShowLanguagePicker = () => {
-    this.setState({ showLanguagePicker: true });
+    this.setState({showLanguagePicker: true});
   };
 
   handleCloseLanguagePicker = () => {
-    this.setState({ showLanguagePicker: false });
+    this.setState({showLanguagePicker: false});
   };
 
   onRefresh() {
-    this.setState({ refreshing: true }, () => {
+    this.setState({refreshing: true}, () => {
       this.login(1000);
     });
   }
@@ -458,20 +457,20 @@ class Account extends Component {
   showSticker() {
     this.setState(
       {
-        sticker_flag: true
+        sticker_flag: true,
       },
       () => {
         setTimeout(() => {
           this.setState({
-            sticker_flag: false
+            sticker_flag: false,
           });
         }, 2000);
-      }
+      },
     );
   }
 
   onTapAvatar() {
-    const { t } = this.props;
+    const {t} = this.props;
 
     const options = {
       cameraType: 'front',
@@ -482,12 +481,11 @@ class Account extends Component {
       chooseFromLibraryButtonTitle: t('avatarPicker.chooseFromLibraryTitle'),
       storageOptions: {
         skipBackup: true,
-        path: 'images'
-      }
+        path: 'images',
+      },
     };
 
-    // use ImagePicker.launchCamera for FaceID
-    ImagePicker.showImagePicker(options, response => {
+    ImagePicker.showImagePicker(options, (response) => {
       if (response.error) {
         console.log(response.error);
       } else if (response.didCancel) {
@@ -530,37 +528,37 @@ class Account extends Component {
   uploadAvatar(response) {
     this.setState(
       {
-        avatar_loading: true
+        avatar_loading: true,
       },
       () => {
         const avatar = {
           name: 'avatar',
           filename: response.fileName,
-          data: response.data
+          data: response.data,
         };
         // call api post my form data
         RNFetchBlob.fetch(
           'POST',
           APIHandler.url_user_add_avatar(),
           {
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data',
           },
-          [avatar]
+          [avatar],
         )
-          .then(resp => {
-            var { data } = resp;
+          .then((resp) => {
+            var {data} = resp;
             var response = JSON.parse(data);
             if (response && response.status == STATUS_SUCCESS) {
               this.showSticker();
               this.setState({
-                avatar_loading: false
+                avatar_loading: false,
               });
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log(error);
           });
-      }
+      },
     );
   }
 
@@ -576,10 +574,10 @@ class Account extends Component {
     this.eventTracker.clearTracking();
   }
 
-  login = async delay => {
+  login = async (delay) => {
     try {
       var response = await APIHandler.user_login({
-        fb_access_token: ''
+        fb_access_token: '',
       });
 
       if (response && response.status == STATUS_SUCCESS) {
@@ -588,7 +586,7 @@ class Account extends Component {
           store.setOrdersKeyChange(store.orders_key_change + 1);
 
           this.setState({
-            refreshing: false
+            refreshing: false,
           });
         }, delay || 0);
       }
@@ -599,7 +597,7 @@ class Account extends Component {
 
   handleShowProfileDetail = () => {
     Actions.push(appConfig.routes.profileDetail, {
-      userInfo: store.user_info
+      userInfo: store.user_info,
     });
   };
 
@@ -607,25 +605,24 @@ class Account extends Component {
     Actions.push(appConfig.routes.phoneAuth);
   };
 
-  handleConfirmChangeAppLanguage = languageValue => {
+  handleConfirmChangeAppLanguage = (languageValue) => {
     const selectedLanguage = {
       languageTag: languages[languageValue].value,
       isRTL: languages[languageValue].isRTL,
-      locale: languages[languageValue].locale
+      locale: languages[languageValue].locale,
     };
     setAppLanguage(this.props.i18n, selectedLanguage);
   };
 
   renderWallets() {
-    const user_info = store.user_info || { wallets: [] };
+    const user_info = store.user_info || {wallets: []};
     return (
       <View
         style={{
           // marginTop: 7,
           borderTopWidth: 0,
-          borderColor: '#dddddd'
-        }}
-      >
+          borderColor: '#dddddd',
+        }}>
         <View style={styles.add_store_actions_box}>
           {user_info.wallets.map((wallet, index) => (
             <TouchableHighlight
@@ -635,13 +632,12 @@ class Account extends Component {
                   ? () =>
                       Actions.push(appConfig.routes.vndWallet, {
                         title: wallet.name,
-                        wallet: wallet
+                        wallet: wallet,
                       })
                   : () => {}
               }
               underlayColor="transparent"
-              style={styles.add_store_action_btn}
-            >
+              style={styles.add_store_action_btn}>
               <View style={styles.add_store_action_btn_box}>
                 <View style={styles.add_store_action_wallet}>
                   <Text style={styles.add_store_action_wallet_text}>
@@ -652,9 +648,8 @@ class Account extends Component {
                 <Text
                   style={[
                     styles.add_store_action_wallet_content,
-                    { color: wallet.color }
-                  ]}
-                >
+                    {color: wallet.color},
+                  ]}>
                   {wallet.balance_view}
                 </Text>
               </View>
@@ -666,7 +661,7 @@ class Account extends Component {
   }
 
   renderExtWallets() {
-    const user_info = store.user_info || { ext_wallets: [] };
+    const user_info = store.user_info || {ext_wallets: []};
     return (
       <View>
         <View style={styles.add_store_actions_box}>
@@ -678,13 +673,12 @@ class Account extends Component {
                   ? () =>
                       Actions.push(appConfig.routes.vndWallet, {
                         title: wallet.name,
-                        wallet: wallet
+                        wallet: wallet,
                       })
                   : () => Actions.view_ndt_list()
               }
               underlayColor="transparent"
-              style={styles.add_store_action_btn}
-            >
+              style={styles.add_store_action_btn}>
               <View style={styles.add_store_action_btn_box}>
                 <View style={styles.add_store_action_wallet}>
                   <Text style={styles.add_store_action_wallet_text}>
@@ -695,9 +689,8 @@ class Account extends Component {
                 <Text
                   style={[
                     styles.add_store_action_wallet_content,
-                    { color: wallet.color }
-                  ]}
-                >
+                    {color: wallet.color},
+                  ]}>
                   {wallet.balance_view}
                 </Text>
               </View>
@@ -736,7 +729,7 @@ class Account extends Component {
       ? {}
       : {
           borderTopRightRadius: 3,
-          borderBottomRightRadius: 3
+          borderBottomRightRadius: 3,
         };
 
     return (
@@ -747,7 +740,7 @@ class Account extends Component {
           highlightColor={LightenColor(backgroundColor, 40)}
           style={{
             backgroundColor,
-            ...extraStyle
+            ...extraStyle,
           }}
           width={width}
           height="100%"
@@ -757,11 +750,11 @@ class Account extends Component {
   }
 
   render() {
-    const { user_info = {} } = store;
+    const {user_info = {}} = store;
     const is_login =
       store.user_info != null && store.user_info.username != null;
-    const { avatar_loading, logout_loading } = this.state;
-    const { t } = this.props;
+    const {avatar_loading, logout_loading} = this.state;
+    const {t} = this.props;
 
     return (
       <View style={styles.container}>
@@ -772,8 +765,7 @@ class Account extends Component {
               refreshing={this.state.refreshing}
               onRefresh={this.onRefresh.bind(this)}
             />
-          }
-        >
+          }>
           <>
             {is_login ? (
               <TouchableHighlight
@@ -781,10 +773,9 @@ class Account extends Component {
                 style={[
                   styles.profile_list_opt_btn,
                   styles.profile_user_container,
-                  { flex: 1, flexDirection: 'row' }
+                  {flex: 1, flexDirection: 'row'},
                 ]}
-                underlayColor="rgba(255,255,255,.7)"
-              >
+                underlayColor="rgba(255,255,255,.7)">
                 <>
                   <TouchableHighlight
                     onPress={this.onTapAvatar.bind(this)}
@@ -848,11 +839,10 @@ class Account extends Component {
                         style={[
                           styles.profile_list_label,
                           {
-                            fontSize: 18
-                          }
+                            fontSize: 18,
+                          },
                         ]}
-                        numberOfLines={1}
-                      >
+                        numberOfLines={1}>
                         {user_info.name}
                       </Text>
 
@@ -861,10 +851,9 @@ class Account extends Component {
                           styles.profile_list_small_label,
                           {
                             fontSize: 14,
-                            marginTop: 5
-                          }
-                        ]}
-                      >
+                            marginTop: 5,
+                          },
+                        ]}>
                         {user_info.tel}
                       </Text>
                       {/* {!!!user_info.is_verified && (
@@ -887,9 +876,8 @@ class Account extends Component {
                       style={[
                         styles.profile_list_icon_box,
                         styles.profile_list_icon_box_angle,
-                        { marginRight: 0 }
-                      ]}
-                    >
+                        {marginRight: 0},
+                      ]}>
                       <IconAngleRight />
                     </View>
                   </View>
@@ -903,13 +891,12 @@ class Account extends Component {
                     flexDirection: 'row',
                     backgroundColor: '#ffffff',
                     paddingVertical: 10,
-                    paddingBottom: 0
-                  }
+                    paddingBottom: 0,
+                  },
                 ]}
                 underlayColor="rgba(255,255,255,.7)"
-                onPress={this.handleLogin}
-              >
-                <View style={{ flex: 1, flexDirection: 'row' }}>
+                onPress={this.handleLogin}>
+                <View style={{flex: 1, flexDirection: 'row'}}>
                   <IconMaterialCommunity
                     name="account-circle"
                     size={55}
@@ -919,10 +906,9 @@ class Account extends Component {
                     style={[
                       styles.profile_button_login_box,
                       {
-                        backgroundColor: 'transparent'
-                      }
-                    ]}
-                  >
+                        backgroundColor: 'transparent',
+                      },
+                    ]}>
                     <Text style={[styles.profile_button_title]}>
                       {t('signIn')}
                     </Text>
@@ -934,7 +920,7 @@ class Account extends Component {
                     style={{
                       position: 'absolute',
                       right: 15,
-                      alignSelf: 'center'
+                      alignSelf: 'center',
                     }}
                   />
                 </View>
@@ -1125,8 +1111,9 @@ class Account extends Component {
 
           {this.options && (
             <SelectionList
+              useList={false}
               containerStyle={{
-                paddingVertical: 8
+                paddingVertical: 8,
               }}
               data={this.options}
             />
@@ -1148,21 +1135,21 @@ class Account extends Component {
       [
         {
           text: t('signOut.cancel'),
-          onPress: () => {}
+          onPress: () => {},
         },
         {
           text: t('signOut.accept'),
           onPress: this.logout,
-          style: 'destructive'
-        }
+          style: 'destructive',
+        },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   }
 
   logout = async () => {
     this.setState({
-      logout_loading: true
+      logout_loading: true,
     });
     try {
       const response = await APIHandler.user_logout();
@@ -1176,7 +1163,7 @@ class Account extends Component {
           store.resetAsyncStorage();
           flashShowMessage({
             message: t('signOut.successMessage'),
-            type: 'success'
+            type: 'success',
           });
           Actions.reset(appConfig.routes.sceneWrapper);
           break;
@@ -1187,7 +1174,7 @@ class Account extends Component {
       console.log(error);
     } finally {
       this.setState({
-        logout_loading: false
+        logout_loading: false,
       });
     }
   };
@@ -1196,13 +1183,12 @@ class Account extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f1f1'
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
     marginRight: 10,
     marginLeft: 6,
-    borderRadius: 15
+    borderRadius: 15,
   },
   profile_user_container: {
     width: '100%',
@@ -1210,7 +1196,7 @@ const styles = StyleSheet.create({
     // marginBottom: 7,
     height: null,
     paddingVertical: 15,
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   profile_avatar_box_container: {
     marginRight: 15
@@ -1222,7 +1208,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   profile_avatar: {
     width: '100%',
@@ -1239,12 +1225,12 @@ const styles = StyleSheet.create({
 
   point_icon: {
     width: 30,
-    height: 30
+    height: 30,
   },
   profile_button_box: {
     bottom: 42,
     right: 0,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   profile_button_login_box: {
     backgroundColor: appConfig.colors.primary,
@@ -1253,17 +1239,17 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
-    marginRight: 15
+    marginRight: 15,
   },
   profile_button_title: {
     fontSize: 16,
     color: DEFAULT_COLOR,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   profile_list_opt: {
     borderTopWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   profile_list_opt_btn: {
     width: Util.size.width,
@@ -1271,7 +1257,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 4
+    paddingHorizontal: 4,
   },
   profile_list_icon_box: {
     flexDirection: 'row',
@@ -1280,7 +1266,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginLeft: 4,
-    marginRight: 4
+    marginRight: 4,
   },
 
   profile_list_icon_box_small: {
@@ -1290,51 +1276,51 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     marginLeft: 3,
-    marginRight: 0
+    marginRight: 0,
   },
   profile_list_icon_box_angle: {
     position: 'absolute',
     top: 0,
     right: 0,
-    height: '100%'
+    height: '100%',
   },
   profile_list_label: {
     fontSize: 16,
     color: '#000000',
-    fontWeight: '400'
+    fontWeight: '400',
   },
   profile_list_label_balance: {
     fontSize: 18,
     color: '#922B21',
     fontWeight: '600',
-    left: 20
+    left: 20,
   },
   profile_list_label_address: {
     fontSize: 16,
     color: '#0E6655',
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   profile_list_label_point: {
     fontSize: 16,
     color: '#e31b23',
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   profile_list_label_invite_id: {
     fontSize: 16,
     color: '#51A9FF',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   profile_list_small_label: {
     fontSize: 12,
     color: '#666666',
-    marginTop: 2
+    marginTop: 2,
   },
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
 
   stores_info_action_notify: {
@@ -1348,12 +1334,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 8,
   },
   stores_info_action_notify_value: {
     fontSize: 10,
     color: '#ffffff',
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   profile_list_balance_box: {
@@ -1363,12 +1349,12 @@ const styles = StyleSheet.create({
     width: 130,
     height: 30,
     marginLeft: 4,
-    marginRight: 4
+    marginRight: 4,
   },
   profile_list_balance_box_angle: {
     position: 'absolute',
     top: 0,
-    right: 20
+    right: 20,
   },
 
   add_store_actions_box: {
@@ -1377,54 +1363,55 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   add_store_action_btn: {
-    paddingVertical: 4
+    paddingVertical: 4,
   },
   add_store_action_btn_box: {
     alignItems: 'center',
     // width: ~~((Util.size.width - 16) / 2),
     width: ~~(Util.size.width / 2),
     borderRightWidth: Util.pixel,
-    borderRightColor: '#ddd'
+    borderRightColor: '#ddd',
   },
   add_store_action_label: {
     fontSize: 12,
     color: '#404040',
-    marginTop: 4
+    marginTop: 4,
   },
   add_store_action_wallet_text: {
     fontSize: 14,
     color: '#404040',
     marginLeft: 0,
-    marginTop: 3
+    marginTop: 3,
   },
   add_store_action_wallet_content: {
     fontSize: 16,
     color: '#333333',
-    fontWeight: '700'
+    fontWeight: '700',
   },
   add_store_action_wallet: {
     flexDirection: 'row',
     alignItems: 'stretch',
     // paddingVertical: 8,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
     // marginRight: 8
   },
   premiumContainer: {
     height: null,
     minHeight: 80,
     backgroundColor: '#242424',
-    paddingVertical: 12,
-    ...elevationShadowStyle(4)
+    paddingTop: 12,
+    paddingBottom: 15,
+    ...elevationShadowStyle(4),
   },
   premiumLabel: {
-    // fontFamily: 'SairaStencilOne-Regular',
-    fontWeight: 'bold',
+    fontFamily: 'SairaStencilOne-Regular',
+    // fontWeight: 'bold',
     textTransform: 'uppercase',
     fontSize: 20,
-    letterSpacing: 1
+    letterSpacing: 1,
   },
   rightPremiumContainer: {
     flexDirection: 'row',
@@ -1435,23 +1422,23 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderBottomLeftRadius: 20,
     marginLeft: 10,
-    marginRight: -15
+    marginRight: -15,
   },
   rightPremiumLabel: {
     marginLeft: 10,
     marginRight: -5,
     color: '#242424',
-    fontSize: 10
+    fontSize: 10,
   },
   rightPremiumHighlight: {
     fontWeight: '500',
-    fontSize: 12
+    fontSize: 12,
   },
   rightPremiumIconContainer: {
-    marginLeft: 15
+    marginLeft: 15,
   },
   boxIcon_domainSelector: {
-    backgroundColor: '#333'
+    backgroundColor: '#333',
   },
   premiumProgressContainer: {
     width: '100%',
@@ -1459,8 +1446,8 @@ const styles = StyleSheet.create({
     height: 5,
     position: 'absolute',
     bottom: 0,
-    elevation: 4
-  }
+    elevation: 4,
+  },
 });
 
 export default withTranslation(['account', 'common'])(observer(Account));

@@ -16,8 +16,7 @@ import Sticker from '../Sticker';
 import EventTracker from '../../helper/EventTracker';
 // import appConfig from 'app-config';
 
-@observer
-export default class AddStore extends Component {
+class AddStore extends Component {
   constructor(props) {
     super(props);
 
@@ -271,8 +270,9 @@ export default class AddStore extends Component {
   }
 }
 
+export default observer(AddStore);
+
 /* @flow */
-@observer
 class StoreItem extends Component {
   constructor(props) {
     super(props);

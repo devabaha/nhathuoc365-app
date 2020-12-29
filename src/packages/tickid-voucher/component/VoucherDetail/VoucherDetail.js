@@ -172,7 +172,7 @@ class VoucherDetail extends Component {
       >
         <HTML
           html={campaign.data.content || '<span></span>'}
-          imagesMaxWidth={screenWidth - 32}
+          computeEmbeddedMaxWidth={(availableWidth) => availableWidth - 32}
         />
       </Tab>
     ];

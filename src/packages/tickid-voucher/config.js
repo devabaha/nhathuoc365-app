@@ -63,7 +63,8 @@ const config = {
     primary: '#f41820',
     white: '#fff',
     black: '#000',
-    red: 'red'
+    red: 'red',
+    sceneBackground: '#f1f1f1'
   }
 };
 

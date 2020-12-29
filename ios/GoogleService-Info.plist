@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>44679388662-hr24gj8pqdmkpm822t3v7har17m7773b.apps.googleusercontent.com</string>
+	<string>728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.44679388662-hr24gj8pqdmkpm822t3v7har17m7773b</string>
+	<string>com.googleusercontent.apps.728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>44679388662-ep8d7h8gr07fihiepcgvmj2nv22gt888.apps.googleusercontent.com</string>
+	<string>728365043840-77epm0787athao5u5cipc410f4vdl84t.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCg7RdnVskBc_EWHtL3WmxiaRpUDdLyqcM</string>
+	<string>AIzaSyAr9RudDCXVfpc4YnMsXqmcwlw5XERHuXU</string>
 	<key>GCM_SENDER_ID</key>
-	<string>44679388662</string>
+	<string>728365043840</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>vn.huongcang</string>
+	<string>vn.abahaglobal</string>
 	<key>PROJECT_ID</key>
-	<string>huongcang-81d3b</string>
+	<string>abaha-global</string>
 	<key>STORAGE_BUCKET</key>
-	<string>huongcang-81d3b.appspot.com</string>
+	<string>abaha-global.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:44679388662:ios:f33af3ddb98a8e9603bbd7</string>
-	<key>DATABASE_URL</key>
-	<string>https://huongcang-81d3b.firebaseio.com</string>
+	<string>1:728365043840:ios:50dc150b5c23de4ec61665</string>
 </dict>
 </plist>

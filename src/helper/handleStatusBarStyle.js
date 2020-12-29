@@ -9,7 +9,6 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.domainSelector,
 
     appConfig.routes.phoneAuth,
-    appConfig.routes.authConfirm,
     appConfig.routes.qrBarCode,
 
     appConfig.routes.myVoucher,
@@ -31,10 +30,11 @@ export default function handleStatusBarStyle(prevState, newState, action) {
 
     appConfig.routes.premiumInfo,
 
-    appConfig.routes.item
+    appConfig.routes.item,
   ];
 
   switch (action.type) {
+    case 'Navigation/JUMP_TO':
     case 'Navigation/PUSH':
     case 'Navigation/BACK':
     case 'Navigation/NAVIGATE':

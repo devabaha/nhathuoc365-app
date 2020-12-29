@@ -311,7 +311,7 @@ class Stores extends Component {
             pagingEnabled
             onMomentumScrollEnd={this._onScrollEnd.bind(this)}
             style={{
-              backgroundColor: BGR_SCREEN_COLOR,
+              // backgroundColor: BGR_SCREEN_COLOR,
               width: Util.size.width
             }}
             getItemLayout={(data, index) => {

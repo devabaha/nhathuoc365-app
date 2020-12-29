@@ -1,12 +1,12 @@
-import firebase from 'react-native-firebase';
+import firebaseAuth from '@react-native-firebase/auth';
 import DeviceInfo from 'react-native-device-info';
-import { LOGIN_MODE, LOGIN_STEP } from '../constants';
-import { formatErrorEvents } from '../constants/analytics';
-import { ANALYTICS_RAW_EVENTS_NAME } from '../constants/analytics/eventsName';
+import {LOGIN_MODE, LOGIN_STEP} from '../constants';
+import {formatErrorEvents} from '../constants/analytics';
+import {ANALYTICS_RAW_EVENTS_NAME} from '../constants/analytics/eventsName';
 import EventTracker from './EventTracker';
 import store from 'app-store';
 import appConfig from 'app-config';
-import { APIRequest } from '../network/Entity';
+import {APIRequest} from '../network/Entity';
 
 class PhoneAuthenticate {
   constructor(
@@ -21,7 +21,7 @@ class PhoneAuthenticate {
     confirmResult = null,
     isCancel = false,
     eventTracker = new EventTracker(),
-    slackErrorFirebaseRequest = new APIRequest()
+    slackErrorFirebaseRequest = new APIRequest(),
   ) {
     this.loginMode = loginMode;
     this.phoneNumber = phoneNumber;
@@ -37,13 +37,14 @@ class PhoneAuthenticate {
     this.slackErrorFirebaseRequest = slackErrorFirebaseRequest;
 
     this.isFirebaseVerifying = false;
-    this.firebaseAuthStateChangedListener = firebase
-      .auth()
-      .onAuthStateChanged(user => {
-        if (user) {
+    this.firebaseAuthStateChangedListener = firebaseAuth().onAuthStateChanged(
+      (user) => {
+        console.log(user);
+        if (user && this.phoneNumber) {
           this.getFirebaseUserIdToken(user, true);
         }
-      });
+      },
+    );
 
     this.phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
   }
@@ -51,7 +52,6 @@ class PhoneAuthenticate {
   isValidPhoneNumberForRegion(p, c) {
     const number = this.phoneUtil.parseAndKeepRawInput(p, c);
     const isValid = this.phoneUtil.isValidNumberForRegion(number, c);
-    console.log(isValid);
     return isValid;
   }
 
@@ -81,7 +81,7 @@ class PhoneAuthenticate {
     countryCode = '+84',
     callBackSuccess = () => {},
     callBackFailure = () => {},
-    callBackFinally = () => {}
+    callBackFinally = () => {},
   ) {
     this.loginMode = loginMode;
     this.phoneNumber = phoneNumber;
@@ -96,7 +96,7 @@ class PhoneAuthenticate {
     callBackFailure = () => {},
     callBackFinally = () => {},
     code = '',
-    confirmResult = null
+    confirmResult = null,
   ) {
     this.callBackSuccess = callBackSuccess;
     this.callBackFailure = callBackFailure;
@@ -107,7 +107,7 @@ class PhoneAuthenticate {
 
   formatPhoneNumber(
     phoneNumber = this.phoneNumber,
-    countryCode = this.countryCode
+    countryCode = this.countryCode,
   ) {
     if (phoneNumber.substring(0, 2) === countryCode.replace('+', '')) {
       phoneNumber = phoneNumber.substr(2);
@@ -138,14 +138,13 @@ class PhoneAuthenticate {
     this.loginMode = LOGIN_MODE.FIREBASE;
     const formattedPhoneNumber = this.formattedPhoneNumber;
 
-    firebase
-      .auth()
+    firebaseAuth()
       .signInWithPhoneNumber(formattedPhoneNumber)
-      .then(confirmResult => {
+      .then((confirmResult) => {
         if (this.isCancel) return;
         this.callBackSuccess(confirmResult);
       })
-      .catch(error => {
+      .catch((error) => {
         console.log('%cphone_auth_error', 'color:red', error);
         this.handleErrorFirebase(error, LOGIN_STEP.REGISTER);
         this.callBackFailure(error);
@@ -161,7 +160,7 @@ class PhoneAuthenticate {
       let formattedPhoneNumber = this.formattedPhoneNumber;
 
       const formData = {
-        username: formattedPhoneNumber
+        username: formattedPhoneNumber,
       };
 
       const response = await APIHandler.user_login_sms(formData);
@@ -193,7 +192,7 @@ class PhoneAuthenticate {
     try {
       const formData = {
         username: this.confirmResult,
-        otp: this.code
+        otp: this.code,
       };
       const response = await APIHandler.login_sms_verify(formData);
       if (this.isCancel) return;
@@ -210,10 +209,10 @@ class PhoneAuthenticate {
       try {
         this.confirmResult
           .confirm(this.code)
-          .then(user => {
+          .then(({user}) => {
             this.getFirebaseUserIdToken(user);
           })
-          .catch(error => {
+          .catch((error) => {
             console.log('error_firebase_get_user', error);
             this.handleErrorFirebase(error, LOGIN_STEP.CONFIRM);
             if (this.isCancel) return;
@@ -228,17 +227,21 @@ class PhoneAuthenticate {
   }
 
   getFirebaseUserIdToken(user, isInstantVerified = false) {
+    console.log('1', this.isCancel, this.isFirebaseVerifying);
     if (this.isCancel || this.isFirebaseVerifying) return;
+    console.log('user', user);
     this.isFirebaseVerifying = true;
     try {
       if (user) {
         user
           .getIdToken(true)
-          .then(async idToken => {
+          .then(async (idToken) => {
+            console.log('2', this.isCancel, this.isFirebaseVerifying, );
             if (this.isCancel) return;
             const response = await APIHandler.login_firebase_verify({
-              token: idToken
+              token: idToken,
             });
+            console.log('response', response, this.isCancel, isInstantVerified)
             if (this.isCancel) return;
             this.isFirebaseVerifying = false;
 
@@ -248,7 +251,7 @@ class PhoneAuthenticate {
               this.callBackSuccess(response);
             }
           })
-          .catch(error => {
+          .catch((error) => {
             console.log('error_firebase_confirm_user', error);
             this.handleErrorFirebase(error, LOGIN_STEP.GET_USER);
             if (this.isCancel) return;
@@ -272,7 +275,8 @@ class PhoneAuthenticate {
 
   async handleErrorFirebase(error, step) {
     const errMess = error.message;
-    let errMessForSlack = (errMessForFirebase = errMess);
+    let errMessForSlack = errMess,
+      errMessForFirebase = errMess;
     if (typeof errMess === 'string') {
       errMessForFirebase = errMess.substring(0, 30);
     } else {
@@ -283,9 +287,9 @@ class PhoneAuthenticate {
       formatErrorEvents(ANALYTICS_RAW_EVENTS_NAME.error.phoneAuthFirebase),
       {
         params: {
-          message: errMess
-        }
-      }
+          message: errMess,
+        },
+      },
     );
     const storeId = store && store.store_id ? `[${store.store_id}] ` : '';
     const brand = DeviceInfo.getBrand();
@@ -300,14 +304,14 @@ class PhoneAuthenticate {
       type: 'section',
       text: {
         type: 'plain_text',
-        text: errMessForSlack
-      }
+        text: errMessForSlack,
+      },
     };
     if (store && store.store_data && store.store_data.logo_url) {
       errMessBlock.accessory = {
         type: 'image',
         image_url: store.store_data.logo_url,
-        alt_text: 'logo app'
+        alt_text: 'logo app',
       };
     }
     const attachments = [
@@ -318,15 +322,15 @@ class PhoneAuthenticate {
             type: 'header',
             text: {
               type: 'plain_text',
-              text: step
-            }
+              text: step,
+            },
           },
           {
-            type: 'divider'
+            type: 'divider',
           },
-          { ...errMessBlock }
-        ]
-      }
+          {...errMessBlock},
+        ],
+      },
     ];
 
     const data = {
@@ -336,11 +340,11 @@ class PhoneAuthenticate {
           type: 'section',
           text: {
             type: 'plain_text',
-            text: deviceInfo
-          }
-        }
+            text: deviceInfo,
+          },
+        },
       ],
-      attachments
+      attachments,
     };
 
     this.slackErrorFirebaseRequest.data = APIHandler.slack_error_firebase(data);

@@ -9,14 +9,13 @@ import {
   ScrollView,
   Alert
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import Sticker from '../Sticker';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class NewPass extends Component {
+class NewPass extends Component {
   constructor(props) {
     super(props);
 
@@ -382,3 +381,5 @@ const styles = StyleSheet.create({
     marginLeft: 8
   }
 });
+
+export default observer(NewPass);

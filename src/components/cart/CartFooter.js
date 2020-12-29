@@ -1,16 +1,17 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  Alert
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from '../../store/Store';
+import Shimmer from 'react-native-shimmer';
 
 class CartFooter extends Component {
   constructor(props) {
@@ -22,13 +23,13 @@ class CartFooter extends Component {
       loading: true,
       increment_loading: false,
       decrement_loading: false,
-      perfix: props.perfix || ''
+      perfix: props.perfix || '',
     };
   }
   unmounted = false;
 
   componentDidMount() {
-    var { cart_data, cart_products, store_id } = store;
+    var {cart_data, cart_products, store_id} = store;
 
     var is_change_store = store.cart_store_id != store_id;
     if (is_change_store) {
@@ -39,11 +40,11 @@ class CartFooter extends Component {
       this._getCart();
     } else {
       this.setState({
-        loading: false
+        loading: false,
       });
     }
 
-    Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.perfix, data => {
+    Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.perfix, (data) => {
       this._goTopIndex(data.index);
     });
   }
@@ -53,7 +54,7 @@ class CartFooter extends Component {
   }
 
   async _getCart() {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.site_cart_show(store.store_id);
 
@@ -68,12 +69,12 @@ class CartFooter extends Component {
       console.log(e + ' site_cart_show');
       flashShowMessage({
         type: 'danger',
-        message: t('common:api.error.message')
+        message: t('common:api.error.message'),
       });
     } finally {
       !this.unmounted &&
         this.setState({
-          loading: false
+          loading: false,
         });
     }
   }
@@ -91,20 +92,20 @@ class CartFooter extends Component {
   _item_qnt_decrement(item) {
     this.setState(
       {
-        decrement_loading: true
+        decrement_loading: true,
       },
       async () => {
-        const { t } = this.props;
+        const {t} = this.props;
         try {
           const data = {
             quantity: 1,
-            model: item.model
+            model: item.model,
           };
 
           const response = await APIHandler.site_cart_minus(
             store.store_id,
             item.id,
-            data
+            data,
           );
 
           if (response && response.status == STATUS_SUCCESS) {
@@ -112,47 +113,47 @@ class CartFooter extends Component {
 
             flashShowMessage({
               type: 'success',
-              message: response.message
+              message: response.message,
             });
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || t('common:api.error.message')
+              message: response.message || t('common:api.error.message'),
             });
           }
         } catch (e) {
           console.log(e + ' site_cart_minus');
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         } finally {
           !this.unmounted &&
             this.setState({
-              decrement_loading: false
+              decrement_loading: false,
             });
         }
-      }
+      },
     );
   }
 
   _item_qnt_increment(item) {
     this.setState(
       {
-        increment_loading: true
+        increment_loading: true,
       },
       async () => {
-        const { t } = this.props;
+        const {t} = this.props;
         try {
           const data = {
             quantity: 1,
-            model: item.model
+            model: item.model,
           };
 
           const response = await APIHandler.site_cart_plus(
             store.store_id,
             item.id,
-            data
+            data,
           );
 
           if (!this.unmounted) {
@@ -161,12 +162,12 @@ class CartFooter extends Component {
 
               flashShowMessage({
                 type: 'success',
-                message: response.message
+                message: response.message,
               });
             } else {
               flashShowMessage({
                 type: 'danger',
-                message: response.message || t('common:api.error.message')
+                message: response.message || t('common:api.error.message'),
               });
             }
           }
@@ -174,15 +175,15 @@ class CartFooter extends Component {
           console.warn(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         } finally {
           !this.unmounted &&
             this.setState({
-              increment_loading: false
+              increment_loading: false,
             });
         }
-      }
+      },
     );
   }
 
@@ -193,7 +194,7 @@ class CartFooter extends Component {
 
     var index = store.cart_item_index - 1;
     store.setCartItemIndex(index);
-    Events.trigger(NEXT_PREV_CART, { index });
+    Events.trigger(NEXT_PREV_CART, {index});
   }
 
   _store_cart_next() {
@@ -203,7 +204,7 @@ class CartFooter extends Component {
 
     var index = store.cart_item_index + 1;
     store.setCartItemIndex(index);
-    Events.trigger(NEXT_PREV_CART, { index });
+    Events.trigger(NEXT_PREV_CART, {index});
   }
 
   _goTopIndex(index) {
@@ -214,57 +215,43 @@ class CartFooter extends Component {
       index = 0;
     }
     if (this.refs_store_cart) {
-      this.refs_store_cart.scrollToIndex({ index, animated: true });
+      this.refs_store_cart.scrollToIndex({index, animated: true});
     }
   }
 
-  renderItems({ item }) {
+  renderItems({item}) {
     return (
       <View style={styles.store_cart_item}>
         <View style={styles.store_cart_item_image_box}>
           <CachedImage
             mutable
             style={styles.store_cart_item_image}
-            source={{ uri: item.image }}
+            source={{uri: item.image}}
           />
         </View>
         <View style={styles.store_cart_item_title_box}>
           <Text style={styles.store_cart_item_title}>
             {sub_string(item.name, 32)}
           </Text>
-          <Text
-            style={[
-              styles.store_cart_item_price,
-              {
-                position: 'absolute',
-                right: 0,
-                top: 18
-              }
-            ]}
-          >
-            {item.price_view}
-          </Text>
-
           {!!item.classification && (
             <Text numberOfLines={1} style={[styles.store_cart_item_sub_title]}>
               {item.classification}
             </Text>
           )}
+          <Text style={[styles.store_cart_item_price]}>{item.price_view}</Text>
         </View>
 
         <View
           style={[
             styles.store_cart_calculator,
             {
-              bottom: !!item.classification ? -4 : 0
-            }
-          ]}
-        >
+              bottom: !!item.classification ? -4 : 0,
+            },
+          ]}>
           <TouchableHighlight
             onPress={this._item_qnt_decrement_handler.bind(this, item)}
             underlayColor="transparent"
-            style={styles.p8}
-          >
+            style={styles.p8}>
             <View style={styles.store_cart_item_qnt_change}>
               {this.state.decrement_loading ? (
                 <Indicator size="small" />
@@ -279,8 +266,7 @@ class CartFooter extends Component {
           <TouchableHighlight
             onPress={this._item_qnt_increment.bind(this, item)}
             underlayColor="transparent"
-            style={styles.p8}
-          >
+            style={styles.p8}>
             <View style={styles.store_cart_item_qnt_change}>
               {this.state.increment_loading ? (
                 <Indicator size="small" />
@@ -313,8 +299,8 @@ class CartFooter extends Component {
         </View>
       );
     }
-    const { t } = this.props;
-    var { cart_data, cart_products } = store;
+    const {t} = this.props;
+    var {cart_data, cart_products} = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
     if (isset_cart) {
@@ -324,7 +310,7 @@ class CartFooter extends Component {
             <FlatList
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              ref={ref => (this.refs_store_cart = ref)}
+              ref={(ref) => (this.refs_store_cart = ref)}
               data={cart_products}
               pagingEnabled
               onMomentumScrollEnd={this._onScrollEnd.bind(this)}
@@ -334,11 +320,11 @@ class CartFooter extends Component {
                 return {
                   length: Util.size.width - 140,
                   offset: (Util.size.width - 140) * index,
-                  index
+                  index,
                 };
               }}
               renderItem={this.renderItems.bind(this)}
-              keyExtractor={item => item.id}
+              keyExtractor={(item) => item.id}
               horizontal={true}
             />
           </View>
@@ -346,16 +332,14 @@ class CartFooter extends Component {
           <TouchableHighlight
             style={[styles.store_cart_btn, styles.store_cart_btn_left]}
             underlayColor="#f1efef"
-            onPress={this._store_cart_prev.bind(this)}
-          >
+            onPress={this._store_cart_prev.bind(this)}>
             <Icon name="angle-left" size={36} color="rgba(0,0,0,.3)" />
           </TouchableHighlight>
 
           <TouchableHighlight
             style={[styles.store_cart_btn, styles.store_cart_btn_right]}
             underlayColor="#f1efef"
-            onPress={this._store_cart_next.bind(this)}
-          >
+            onPress={this._store_cart_next.bind(this)}>
             <Icon name="angle-right" size={36} color="rgba(0,0,0,.3)" />
           </TouchableHighlight>
         </View>
@@ -373,15 +357,15 @@ class CartFooter extends Component {
     if (store.cart_data && store.cart_products) {
       if (store.cart_data.address_id != 0) {
         Actions.push(appConfig.routes.paymentConfirm, {
-          goConfirm: true
+          goConfirm: true,
         });
       } else {
         Actions.create_address({
-          redirect: 'confirm'
+          redirect: 'confirm',
         });
       }
     } else {
-      const { t } = this.props;
+      const {t} = this.props;
       return Alert.alert(
         t('notification.noItemSelected.title'),
         t('notification.noItemSelected.message'),
@@ -392,17 +376,17 @@ class CartFooter extends Component {
               if (this.props.add_new) {
                 this.props.add_new();
               }
-            }
-          }
+            },
+          },
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
     }
   }
 
   render() {
-    const { t } = this.props;
-    var { cart_data, cart_products } = store;
+    const {t} = this.props;
+    var {cart_data, cart_products} = store;
     var isset_cart = !(cart_data == null || cart_products == null);
 
     if (!isset_cart) {
@@ -412,58 +396,59 @@ class CartFooter extends Component {
     return (
       <View
         style={[
-          styles.store_cart_box,
-          {
-            height: cart_data.promotions && cart_data.promotions.title ? 93 : 75
-          }
-        ]}
-      >
+          styles.store_cart_box
+        ]}>
         {cart_data.promotions && cart_data.promotions.title && (
-          <View
-            style={{
-              width: Util.size.width,
-              height: 18,
-              backgroundColor: 'brown',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
+        <View
+          style={{
+            width: Util.size.width,
+            paddingVertical: 5,
+            paddingHorizontal: 20,
+            backgroundColor: hexToRgbA(appConfig.colors.primary, .08),
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Shimmer
+            pauseDuration={5000}
+            opacity={1}
+            animationOpacity={0.6}
+            highlightLength={0.5}
+            animating>
             <Text
               style={{
                 fontSize: 10,
-                color: '#ffffff'
-              }}
-            >
+                fontWeight: '500',
+                color: appConfig.colors.primary,
+                textAlign: 'center'
+              }}>
               {cart_data.promotions.title} {`${t('discount')} `}
               {cart_data.promotions.discount_text}
             </Text>
-          </View>
+          </Shimmer>
+        </View>
         )}
 
         <View
           style={{
+            height: 80,
             flexDirection: 'row',
-            height: 75,
             borderTopWidth: Util.pixel,
-            borderTopColor: '#dddddd'
-          }}
-        >
+            borderTopColor: '#dddddd',
+          }}>
           {this._renderContent.call(this)}
 
           <TouchableHighlight
             onPress={this._goPayment.bind(this)}
             style={styles.checkout_btn}
-            underlayColor="transparent"
-          >
+            underlayColor="transparent">
             <View
               style={{
                 width: '100%',
                 height: '100%',
                 justifyContent: 'center',
                 alignItems: 'center',
-                backgroundColor: DEFAULT_COLOR
-              }}
-            >
+                backgroundColor: DEFAULT_COLOR,
+              }}>
               <View style={styles.checkout_box}>
                 <Icon name="shopping-cart" size={22} color="#ffffff" />
                 <Text style={styles.checkout_title}>
@@ -483,16 +468,14 @@ class CartFooter extends Component {
                       justifyContent: 'center',
                       alignItems: 'center',
                       overflow: 'hidden',
-                      paddingHorizontal: 2
-                    }}
-                  >
+                      paddingHorizontal: 2,
+                    }}>
                     <Text
                       style={{
                         fontSize: 10,
                         color: '#ffffff',
-                        fontWeight: '600'
-                      }}
-                    >
+                        fontWeight: '600',
+                      }}>
                       {cart_data.count}
                     </Text>
                   </View>
@@ -504,9 +487,8 @@ class CartFooter extends Component {
                   style={{
                     fontSize: 14,
                     color: '#ffffff',
-                    fontWeight: '600'
-                  }}
-                >
+                    fontWeight: '600',
+                  }}>
                   {cart_data.total_selected}
                 </Text>
               )}
@@ -520,19 +502,16 @@ class CartFooter extends Component {
 
 const styles = StyleSheet.create({
   store_cart_box: {
-    // position: 'absolute',
-    // left: 0,
-    // right: 0,
-    // bottom: 0,
     alignItems: 'center',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    ...elevationShadowStyle(5, 0, 0),
   },
   store_cart_container: {
     width: Util.size.width - 100,
     height: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   store_cart_btn: {
     height: '100%',
@@ -542,17 +521,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     top: 0,
-    bottom: 0
+    bottom: 0,
   },
   store_cart_btn_left: {
-    left: 0
+    left: 0,
   },
   store_cart_btn_right: {
-    right: 0
+    right: 0,
   },
   checkout_btn: {
     width: 100,
-    height: '100%'
+    height: '100%',
   },
   checkout_box: {
     width: '100%',
@@ -560,52 +539,52 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   checkout_title: {
     color: '#ffffff',
     fontSize: 12,
     fontWeight: '500',
-    paddingLeft: 4
+    paddingLeft: 4,
   },
   store_cart_content: {
     width: Util.size.width - 140,
-    height: '100%'
+    height: '100%',
   },
   store_cart_item: {
     width: Util.size.width - 140,
     height: '100%',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   store_cart_item_image_box: {
     width: 66,
-    height: 66,
-    marginTop: 4,
+    height: '100%',
+    paddingVertical: 4,
     overflow: 'hidden',
-    marginHorizontal: 4
+    marginHorizontal: 4,
   },
   store_cart_item_image: {
     height: '100%',
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   store_cart_item_title_box: {
-    flex: 1
+    flex: 1,
   },
   store_cart_item_title: {
     color: '#404040',
     fontSize: 12,
     marginTop: 4,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   store_cart_item_sub_title: {
     color: '#555',
     fontSize: 10,
-    marginTop: 4
   },
   store_cart_item_price: {
     fontSize: 12,
     color: '#fa7f50',
-    fontWeight: '500'
+    fontWeight: '500',
+    marginTop: 4,
   },
   store_cart_calculator: {
     position: 'absolute',
@@ -615,7 +594,7 @@ const styles = StyleSheet.create({
     width: Util.size.width - 232,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   store_cart_item_qnt_change: {
     width: 20,
@@ -624,21 +603,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: Util.pixel,
     borderColor: '#404040',
-    borderRadius: 3
+    borderRadius: 3,
   },
   store_cart_item_qnt: {
     fontWeight: '600',
     color: '#404040',
     fontSize: 16,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
 
   p8: {
     height: '100%',
     width: 36,
     alignItems: 'center',
-    justifyContent: 'center'
-  }
+    justifyContent: 'center',
+  },
 });
 
 export default withTranslation(['cart', 'common'])(observer(CartFooter));

@@ -19,9 +19,6 @@ export default class NotifyItemComponent extends Component {
     super(props);
 
     this.state = {};
-  }
-
-  componentWillMount() {
     this.animatedValue = new Animated.Value(0);
   }
 

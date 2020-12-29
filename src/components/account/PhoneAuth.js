@@ -1,7 +1,6 @@
-import { empty } from '../../util/stringHelper';
+import {empty} from '../../util/stringHelper';
 
-console.disableYellowBox = true;
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   StyleSheet,
@@ -16,29 +15,28 @@ import {
   FlatList,
   SafeAreaView,
   Dimensions,
-  ScrollView
+  ScrollView,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import firebase from 'react-native-firebase';
+import {Actions} from 'react-native-router-flux';
+import auth from '@react-native-firebase/auth';
 import config from '../../config';
 import countries from 'world-countries';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import store from '../../store/Store';
 import Loading from '../Loading';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
-const timer = require('react-timer-mixin');
 
 const loginMode = {
   FIREBASE: 'FIREBASE',
-  SMS_BRAND_NAME: 'SMS_BRAND_NAME'
+  SMS_BRAND_NAME: 'SMS_BRAND_NAME',
 };
 
 class PhoneAuth extends Component {
   static defaultProps = {
-    onCloseOTP: () => {}
+    onCloseOTP: () => {},
   };
 
   constructor(props) {
@@ -56,10 +54,11 @@ class PhoneAuth extends Component {
       confirmResult: this.props.showOTP || null,
       isShowIndicator: false,
       modalVisible: false,
-      currentCountry: countries.filter(country => country.cca2 == 'VN'),
-      requestNewOtpCounter: requestSeconds
+      currentCountry: countries.filter((country) => country.cca2 == 'VN'),
+      requestNewOtpCounter: requestSeconds,
     };
     this.eventTracker = new EventTracker();
+    this.timer = null;
   }
 
   componentDidMount() {
@@ -72,11 +71,12 @@ class PhoneAuth extends Component {
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+    clearInterval(this.timer);
   }
 
-  signIn = phoneNumber => {
+  signIn = (phoneNumber) => {
     if (typeof phoneNumber == 'object') {
-      var { phoneNumber } = this.state;
+      var {phoneNumber} = this.state;
     }
 
     if (phoneNumber == '0912345678') {
@@ -107,17 +107,17 @@ class PhoneAuth extends Component {
     }
   };
 
-  smsBrandNameSendCode = async phoneNumber => {
-    const { t } = this.props;
+  smsBrandNameSendCode = async (phoneNumber) => {
+    const {t} = this.props;
 
     try {
       this.setState({
         message: '',
-        isShowIndicator: true
+        isShowIndicator: true,
       });
       let formData;
       if (typeof phoneNumber == 'object') {
-        let { phoneNumber, currentCountry } = this.state;
+        let {phoneNumber, currentCountry} = this.state;
         let countryCode = '';
         if (currentCountry[0].idd.root) {
           countryCode += currentCountry[0].idd.root;
@@ -134,11 +134,11 @@ class PhoneAuth extends Component {
         }
         phoneNumber = countryCode + phoneAuth;
         formData = {
-          username: phoneNumber
+          username: phoneNumber,
         };
       } else {
         formData = {
-          username: phoneNumber
+          username: phoneNumber,
         };
       }
 
@@ -148,62 +148,62 @@ class PhoneAuth extends Component {
           confirmResult: phoneNumber,
           message: '',
           isShowIndicator: false,
-          requestNewOtpCounter: requestSeconds
+          requestNewOtpCounter: requestSeconds,
         });
       } else {
         console.log('errr', error);
         this.setState({
           message: t('smsBrandNameSendCodeFailMessage'),
-          isShowIndicator: false
+          isShowIndicator: false,
         });
       }
     } catch (error) {
       console.log('errr', error);
       this.setState({
         message: t('smsBrandNameSendCodeFailMessage'),
-        isShowIndicator: false
+        isShowIndicator: false,
       });
     }
   };
 
   smsBrandNameVerify = async () => {
-    const { t } = this.props;
+    const {t} = this.props;
 
     try {
-      this.setState({ isShowIndicator: true });
-      const { codeInput, confirmResult } = this.state;
+      this.setState({isShowIndicator: true});
+      const {codeInput, confirmResult} = this.state;
       const formData = {
         username: confirmResult,
-        otp: codeInput
+        otp: codeInput,
       };
       const response = await APIHandler.login_sms_verify(formData);
       if (response && response.status == STATUS_SUCCESS) {
         this.setState(
           {
             message: ``,
-            isShowIndicator: false
+            isShowIndicator: false,
           },
-          () => this._verifyResponse(response)
+          () => this._verifyResponse(response),
         );
       } else {
         this.setState({
           message: response.message,
-          isShowIndicator: false
+          isShowIndicator: false,
         });
       }
     } catch (err) {
       console.log('error', error);
       this.setState({
         message: t('smsBrandNameVerifyFailMessage'),
-        isShowIndicator: false
+        isShowIndicator: false,
       });
     }
   };
 
   firebaseSignIn = () => {
     Keyboard.dismiss();
-    this.setState({ isShowIndicator: true });
-    const { phoneNumber, currentCountry } = this.state;
+    this.setState({isShowIndicator: true});
+    const {phoneNumber, currentCountry} = this.state;
     var countryCode = '';
     if (currentCountry[0].idd.root) {
       countryCode += currentCountry[0].idd.root;
@@ -218,97 +218,96 @@ class PhoneAuth extends Component {
       phoneAuth = phoneAuth.substr(1);
     }
     setTimeout(() => {
-      firebase
-        .auth()
+      auth()
         .signInWithPhoneNumber(countryCode + phoneAuth)
-        .then(confirmResult => {
+        .then((confirmResult) => {
           console.log(confirmResult);
           this.setState({
             confirmResult,
             message: '',
             isShowIndicator: false,
-            requestNewOtpCounter: requestSeconds
+            requestNewOtpCounter: requestSeconds,
           });
         })
-        .catch(error => {
+        .catch((error) => {
           this.loginMode = loginMode.SMS_BRAND_NAME;
           // this.signIn(countryCode + phoneAuth);
           console.log('%cphone_auth_error', 'color:red', error);
         })
         .finally(() => {
           this.setState({
-            isShowIndicator: false
+            isShowIndicator: false,
           });
         });
     }, 300);
   };
 
   firebaseConfirmCode = () => {
-    const { codeInput, confirmResult } = this.state;
-    const { t } = this.props;
+    const {codeInput, confirmResult} = this.state;
+    const {t} = this.props;
     Keyboard.dismiss();
     if (confirmResult && codeInput.length) {
-      this.setState({ isShowIndicator: true });
+      this.setState({isShowIndicator: true});
       confirmResult
         .confirm(codeInput)
-        .then(user => {
+        .then((user) => {
           console.log(user);
           if (user) {
             this.setState({
               user: user.toJSON(),
               message: ``,
-              isShowIndicator: false
+              isShowIndicator: false,
             });
             user
               .getIdToken(true)
-              .then(async idToken => {
+              .then(async (idToken) => {
                 const response = await APIHandler.login_firebase_verify({
-                  token: idToken
+                  token: idToken,
                 });
                 console.log(response);
                 if (response && response.status == STATUS_SUCCESS) {
                   this.setState(
                     {
                       message: response.message,
-                      isShowIndicator: false
+                      isShowIndicator: false,
                     },
-                    () => this._verifyResponse(response)
+                    () => this._verifyResponse(response),
                   );
                 } else {
                   this.setState({
                     message: response.message,
-                    isShowIndicator: false
+                    isShowIndicator: false,
                   });
                 }
               })
-              .catch(error => {
+              .catch((error) => {
                 this.setState({
                   message: t('firebaseConfirmCodeFailMessage01'),
-                  isShowIndicator: false
+                  isShowIndicator: false,
                 });
               });
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log('error', error);
           this.setState({
             message: t('firebaseConfirmCodeFailMessage02'),
-            isShowIndicator: false
+            isShowIndicator: false,
           });
         });
     }
   };
 
-  _verifyResponse = response => {
+  _verifyResponse = (response) => {
     store.setUserInfo(response.data);
     store.setAnalyticsUser(response.data);
     store.resetCartData();
-    const { t } = this.props;
+    const {t} = this.props;
     if (response.data && response.data.fill_info_user) {
       //hien thi chon site
       Actions.replace('op_register', {
         title: t('common:screen.register.mainTitle'),
-        name_props: response.data.name
+        name_props: response.data.name,
       });
     } else {
       Actions.replace(config.routes.primaryTabbar);
@@ -316,34 +315,32 @@ class PhoneAuth extends Component {
   };
 
   _onPressPickCountry() {
-    this.setState({ modalVisible: !this.state.modalVisible });
+    this.setState({modalVisible: !this.state.modalVisible});
   }
 
   _onPressChooseCountry(item) {
     this.setState({
       modalVisible: !this.state.modalVisible,
-      currentCountry: [item]
+      currentCountry: [item],
     });
   }
 
   _onPressCloseCountryPicker() {
-    this.setState({ modalVisible: !this.state.modalVisible });
+    this.setState({modalVisible: !this.state.modalVisible});
   }
 
-  _renderItem = ({ item }) => {
+  _renderItem = ({item}) => {
     return (
       <TouchableWithoutFeedback
-        onPress={this._onPressChooseCountry.bind(this, item)}
-      >
+        onPress={this._onPressChooseCountry.bind(this, item)}>
         <View
           style={{
             flexDirection: 'row',
             borderBottomWidth: 0.5,
             borderBottomColor: 'lightgray',
-            alignItems: 'center'
-          }}
-        >
-          <Text style={{ fontSize: 25, marginHorizontal: 10 }}>
+            alignItems: 'center',
+          }}>
+          <Text style={{fontSize: 25, marginHorizontal: 10}}>
             {item.flag || ''}
           </Text>
           <Text
@@ -351,9 +348,8 @@ class PhoneAuth extends Component {
               fontSize: 16,
               marginLeft: 10,
               marginRight: 10,
-              marginVertical: 10
-            }}
-          >
+              marginVertical: 10,
+            }}>
             {item.name.common || ''}
           </Text>
         </View>
@@ -362,28 +358,24 @@ class PhoneAuth extends Component {
   };
 
   renderCountryPicker() {
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <Modal
         animationType="slide"
         transparent={false}
-        visible={this.state.modalVisible}
-      >
+        visible={this.state.modalVisible}>
         <SafeAreaView
-          style={{ backgroundColor: DEFAULT_COLOR, paddingBottom: 30 }}
-        >
+          style={{backgroundColor: DEFAULT_COLOR, paddingBottom: 30}}>
           <View
             style={{
               width: '100%',
               height: headerHeight.height,
-              backgroundColor: 'transparent'
-            }}
-          >
-            <View style={{ flex: 1 }} />
-            <View style={{ marginLeft: 10, marginBottom: 10 }}>
+              backgroundColor: 'transparent',
+            }}>
+            <View style={{flex: 1}} />
+            <View style={{marginLeft: 10, marginBottom: 10}}>
               <TouchableWithoutFeedback
-                onPress={this._onPressCloseCountryPicker.bind(this)}
-              >
+                onPress={this._onPressCloseCountryPicker.bind(this)}>
                 <Icon name="close" size={30} color="#ffffff" />
               </TouchableWithoutFeedback>
               <Text style={[styles.title]}>{t('countrySelectionTitle')}</Text>
@@ -392,9 +384,9 @@ class PhoneAuth extends Component {
           <View
             style={{
               backgroundColor: '#ffffff',
-              height: deviceHeight - headerHeight.height - (isIPhoneX ? 70 : 20)
-            }}
-          >
+              height:
+                deviceHeight - headerHeight.height - (isIPhoneX ? 70 : 20),
+            }}>
             <FlatList data={countries} renderItem={this._renderItem} />
           </View>
         </SafeAreaView>
@@ -403,16 +395,15 @@ class PhoneAuth extends Component {
   }
 
   renderPhoneNumberInput() {
-    const { phoneNumber, currentCountry, message } = this.state;
-    const { t } = this.props;
+    const {phoneNumber, currentCountry, message} = this.state;
+    const {t} = this.props;
 
     return (
       <ScrollView
         keyboardShouldPersistTaps="handled"
         bounces={false}
-        style={{ paddingHorizontal: 16 }}
-        contentContainerStyle={{ paddingTop: 115 }}
-      >
+        style={{paddingHorizontal: 16}}
+        contentContainerStyle={{paddingTop: 115}}>
         <Image
           resizeMode="contain"
           style={styles.image}
@@ -420,10 +411,9 @@ class PhoneAuth extends Component {
         />
         <Text style={styles.welcomeText}>{t('phoneWelcomeMessage')}</Text>
         <Text style={styles.desText}>{t('phoneDescription')}</Text>
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{flexDirection: 'row'}}>
           <TouchableWithoutFeedback
-            onPress={this._onPressPickCountry.bind(this)}
-          >
+            onPress={this._onPressPickCountry.bind(this)}>
             <View
               style={{
                 flexDirection: 'row',
@@ -431,13 +421,12 @@ class PhoneAuth extends Component {
                 backgroundColor: '#dddddd',
                 justifyContent: 'center',
                 alignItems: 'center',
-                padding: 8
-              }}
-            >
-              <Text style={{ fontSize: 25 }}>
+                padding: 8,
+              }}>
+              <Text style={{fontSize: 25}}>
                 {currentCountry ? currentCountry[0].flag : ''}
               </Text>
-              <Text style={{ fontSize: 15 }}>
+              <Text style={{fontSize: 15}}>
                 {currentCountry
                   ? (currentCountry[0].idd.root
                       ? currentCountry[0].idd.root
@@ -457,13 +446,13 @@ class PhoneAuth extends Component {
               fontSize: 25,
               padding: 5,
               marginLeft: 10,
-              fontWeight: 'bold'
+              fontWeight: 'bold',
             }}
             value={this.state.phoneNumber}
             keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
             placeholder={t('phonePlaceholder')}
-            onChangeText={text => {
-              if (text.length <= 13) this.setState({ phoneNumber: text });
+            onChangeText={(text) => {
+              if (text.length <= 13) this.setState({phoneNumber: text});
             }}
             onSubmitEditing={this.signIn}
           />
@@ -471,14 +460,12 @@ class PhoneAuth extends Component {
         <TouchableOpacity
           activeOpacity={0.5}
           onPress={this.signIn}
-          disabled={empty(phoneNumber)}
-        >
+          disabled={empty(phoneNumber)}>
           <Text
             style={[
               styles.continueText,
-              { color: !empty(phoneNumber) ? 'black' : 'lightgray' }
-            ]}
-          >
+              {color: !empty(phoneNumber) ? 'black' : 'lightgray'},
+            ]}>
             {t('phoneConfirmMessage')}
           </Text>
         </TouchableOpacity>
@@ -490,20 +477,20 @@ class PhoneAuth extends Component {
   _onPressRequestNewOtp(username) {
     this.loginMode = loginMode.SMS_BRAND_NAME;
     this.signIn(username);
-    this.setState({ requestNewOtpCounter: requestSeconds });
+    this.setState({requestNewOtpCounter: requestSeconds});
   }
 
   _onPressBackToPhoneInput() {
     this.props.onCloseOTP();
     // this.loginMode = loginMode.FIREBASE;
-    this.setState({ confirmResult: null, message: '' });
+    this.setState({confirmResult: null, message: ''});
   }
 
   startCountDown() {
-    timer.setInterval(() => {
-      const { requestNewOtpCounter, confirmResult } = this.state;
+    this.timer = setInterval(() => {
+      const {requestNewOtpCounter, confirmResult} = this.state;
       if (requestNewOtpCounter > 0 && confirmResult) {
-        this.setState({ requestNewOtpCounter: requestNewOtpCounter - 1 });
+        this.setState({requestNewOtpCounter: requestNewOtpCounter - 1});
       }
     }, 1000);
   }
@@ -522,7 +509,7 @@ class PhoneAuth extends Component {
       phoneNumber,
       currentCountry,
       requestNewOtpCounter,
-      message
+      message,
     } = this.state;
     let countryCode = '';
     if (currentCountry[0].idd.root) {
@@ -537,7 +524,7 @@ class PhoneAuth extends Component {
     } else if (phoneAuth.substring(0, 1) === '0') {
       phoneAuth = phoneAuth.substr(1);
     }
-    const { t } = this.props;
+    const {t} = this.props;
 
     return (
       <ScrollView bounces={false} keyboardShouldPersistTaps="handled">
@@ -545,20 +532,18 @@ class PhoneAuth extends Component {
           style={{
             width: '100%',
             height: headerHeight.height + (isIPhoneX ? 40 : 20),
-            backgroundColor: 'transparent'
-          }}
-        >
-          <View style={{ flex: 1 }} />
-          <View style={{ marginLeft: 10, marginBottom: 10 }}>
+            backgroundColor: 'transparent',
+          }}>
+          <View style={{flex: 1}} />
+          <View style={{marginLeft: 10, marginBottom: 10}}>
             <TouchableWithoutFeedback
-              onPress={this._onPressBackToPhoneInput.bind(this)}
-            >
+              onPress={this._onPressBackToPhoneInput.bind(this)}>
               <Icon name="chevron-left" size={30} color="black" />
             </TouchableWithoutFeedback>
           </View>
         </View>
-        <View style={{ paddingHorizontal: 16, marginTop: 20 }}>
-          <Text style={[styles.desText, { marginBottom: 10, fontSize: 15 }]}>
+        <View style={{paddingHorizontal: 16, marginTop: 20}}>
+          <Text style={[styles.desText, {marginBottom: 10, fontSize: 15}]}>
             {t('verifyCodeInputTitle')}
           </Text>
           <Text
@@ -568,16 +553,15 @@ class PhoneAuth extends Component {
                 fontSize: 17,
                 fontWeight: '500',
                 marginTop: 0,
-                marginBottom: 20
-              }
-            ]}
-          >
+                marginBottom: 20,
+              },
+            ]}>
             {countryCode + phoneAuth}
           </Text>
-          <View style={{ backgroundColor: '#fff', borderRadius: 5 }}>
+          <View style={{backgroundColor: '#fff', borderRadius: 5}}>
             <TextInput
               autoFocus
-              onChangeText={value => this.setState({ codeInput: value })}
+              onChangeText={(value) => this.setState({codeInput: value})}
               placeholder={t('verifyCodeInputPlaceholder')}
               value={codeInput}
               keyboardType={Platform.OS === 'ios' ? 'number-pad' : 'numeric'}
@@ -589,14 +573,12 @@ class PhoneAuth extends Component {
           <TouchableOpacity
             activeOpacity={0.5}
             onPress={this.confirmCode}
-            disabled={empty(codeInput)}
-          >
+            disabled={empty(codeInput)}>
             <Text
               style={[
                 styles.continueText,
-                { color: !empty(codeInput) ? 'black' : 'lightgray' }
-              ]}
-            >
+                {color: !empty(codeInput) ? 'black' : 'lightgray'},
+              ]}>
               {t('verifyCodeInputConfirmMessage')}
             </Text>
           </TouchableOpacity>
@@ -606,29 +588,26 @@ class PhoneAuth extends Component {
               fontSize: 17,
               fontWeight: '200',
               color: 'black',
-              marginTop: 20
-            }}
-          >
+              marginTop: 20,
+            }}>
             {t('notReceiveCode')}
           </Text>
           <TouchableOpacity
             onPress={this._onPressRequestNewOtp.bind(
               this,
-              countryCode + phoneAuth
+              countryCode + phoneAuth,
             )}
-            disabled={requestNewOtpCounter > 0}
-          >
+            disabled={requestNewOtpCounter > 0}>
             <Text
               style={{
                 fontSize: 17,
                 color: '#528BC5',
                 fontWeight: '700',
-                marginTop: 8
-              }}
-            >
+                marginTop: 8,
+              }}>
               {requestNewOtpCounter > 0
                 ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
-                    requestNewOtpCounter
+                    requestNewOtpCounter,
                   )}`
                 : t('requestNewCode')}
             </Text>
@@ -639,14 +618,13 @@ class PhoneAuth extends Component {
   }
 
   render() {
-    const { user, confirmResult, modalVisible, isShowIndicator } = this.state;
+    const {user, confirmResult, modalVisible, isShowIndicator} = this.state;
     return (
       <KeyboardAwareScrollView
         keyboardShouldPersistTaps="handled"
         bounces={false}
         style={styles.container}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
+        contentContainerStyle={{flexGrow: 1}}>
         {isShowIndicator && <Loading center />}
         {modalVisible && this.renderCountryPicker()}
         {!user && !confirmResult && this.renderPhoneNumberInput()}
@@ -661,37 +639,37 @@ const requestSeconds = 30;
 const deviceHeight = Dimensions.get('window').height;
 const headerHeight = Platform.select({
   ios: {
-    height: 44
+    height: 44,
   },
   android: {
-    height: 54
+    height: 54,
   },
   windows: {
-    height: 54
-  }
+    height: 54,
+  },
 });
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   image: {
     width: 128,
     height: 82,
-    top: -30
+    top: -30,
   },
   welcomeText: {
     color: 'black',
     fontSize: 26,
-    fontWeight: '800'
+    fontWeight: '800',
   },
   desText: {
     color: 'black',
     fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
-    fontWeight: '300'
+    fontWeight: '300',
   },
   phoneTextInput: {
     backgroundColor: 'black',
@@ -699,29 +677,29 @@ const styles = StyleSheet.create({
     fontSize: 20,
     borderRadius: 5,
     flex: 1,
-    marginRight: 15
+    marginRight: 15,
   },
   flagStyle: {
     width: 40,
     height: 40,
     borderRadius: 5,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   continueText: {
     color: 'black',
     fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   txtNote: {
     color: 'red',
-    marginTop: 20
+    marginTop: 20,
   },
   txtCode: {
     fontWeight: '800',
     fontSize: 20,
-    padding: 10
+    padding: 10,
   },
   title: {
     position: 'absolute',
@@ -729,8 +707,8 @@ const styles = StyleSheet.create({
     bottom: 0,
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 export default withTranslation(['phoneAuth', 'common'])(PhoneAuth);

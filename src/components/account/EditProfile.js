@@ -266,7 +266,6 @@ class EditProfile extends Component {
 
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAwareScrollView style={styles.mainScroll}>
           <SectionList
             style={{ flex: 1 }}
             renderItem={this._renderItems}
@@ -275,7 +274,6 @@ class EditProfile extends Component {
             sections={this.state.sections}
             keyExtractor={(item, index) => `${item.title}-${index}`}
           />
-        </KeyboardAwareScrollView>
         <ActionSheet
           ref={ref => (this.actionSheet = ref)}
           options={[
@@ -294,7 +292,7 @@ class EditProfile extends Component {
             }
           }}
         />
-        {this.state.loading == true && <Loading center />}
+        {this.state.loading && <Loading center />}
         <Button title={t('saveChanges')} onPress={this._onSaveProfile} />
         {appConfig.device.isIOS && <KeyboardSpacer />}
       </SafeAreaView>

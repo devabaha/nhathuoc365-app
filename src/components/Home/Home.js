@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
     bottom: 0
   },
   contentWrapper: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: appConfig.colors.sceneBackground,
     marginBottom: 32
   },
   primaryActionsWrapper: {

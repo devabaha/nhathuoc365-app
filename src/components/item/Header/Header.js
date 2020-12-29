@@ -94,7 +94,7 @@ class Header extends Component {
       },
       {
         type: RIGHT_BUTTON_TYPE.SHARE,
-        iconName: 'ios-redo'
+        iconName: 'ios-share-social'
       }
     ];
 

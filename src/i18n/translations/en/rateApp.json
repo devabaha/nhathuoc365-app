@@ -5,7 +5,7 @@
     "accept": "Feedback"
   },
   "message": {
-    "first": "Thank you for using {{appName}}, rate and feedback us on $ {{storeName}}!",
+    "first": "Thank you for using {{appName}}, rate and feedback us on {{storeName}}!",
     "second": "Your suggestions will help us upgrade and improve."
   }
 }

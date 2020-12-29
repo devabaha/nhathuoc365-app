@@ -19,7 +19,6 @@ import EventTracker from '../../helper/EventTracker';
 
 const _CHAT_KEY = 'ChatKeysStorage';
 
-@observer
 class Chat extends Component {
   static propTypes = {
     store_id: PropTypes.string
@@ -542,4 +541,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default Chat;
+export default observer(Chat);

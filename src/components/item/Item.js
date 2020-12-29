@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,10 @@ import {
   FlatList,
   RefreshControl,
   StatusBar,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import store from '../../store/Store';
@@ -24,7 +24,7 @@ import RightButtonOrders from '../RightButtonOrders';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
 import Header from './Header';
-import { DiscountBadge } from '../Badges';
+import {DiscountBadge} from '../Badges';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -41,7 +41,7 @@ class Item extends Component {
       buying: false,
       like_loading: true,
       like_flag: 0,
-      scrollY: 0
+      scrollY: 0,
     };
 
     this.animatedScrollY = new Animated.Value(0);
@@ -65,11 +65,11 @@ class Item extends Component {
           loading: true,
           buying: false,
           like_loading: true,
-          like_flag: 0
+          like_flag: 0,
         },
         () => {
           this._initial(nextProps);
-        }
+        },
       );
     }
   }
@@ -84,8 +84,8 @@ class Item extends Component {
       const options = {
         params: {
           id: rootData.id,
-          name: rootData.name
-        }
+          name: rootData.name,
+        },
       };
       this.eventTracker.logCurrentView(options);
     }
@@ -102,7 +102,7 @@ class Item extends Component {
           return Actions.push(appConfig.routes.searchStore, {
             title: `Tìm kiếm tại ${store.store_data.name}`,
             from_item: true,
-            itemRefresh: this._itemRefresh.bind(this)
+            itemRefresh: this._itemRefresh.bind(this),
           });
         },
         right: this._renderRightButton,
@@ -110,8 +110,8 @@ class Item extends Component {
           this._unMount();
 
           Actions.pop();
-        }
-      })
+        },
+      }),
     );
 
     this.start_time = time();
@@ -136,13 +136,13 @@ class Item extends Component {
       Actions.pop();
     } else {
       Actions.push(appConfig.routes.store, {
-        title: store.store_data.name
+        title: store.store_data.name,
       });
     }
   }
   // Lấy chi tiết sản phẩm
   _getData(delay) {
-    var { item } = this.state;
+    var {item} = this.state;
     var item_key = ITEM_KEY + item.id + store.user_info.id;
 
     // load
@@ -153,10 +153,10 @@ class Item extends Component {
         syncInBackground: true,
         syncParams: {
           extraFetchOptions: {},
-          someFlag: true
-        }
+          someFlag: true,
+        },
       })
-      .then(data => {
+      .then((data) => {
         setTimeout(() => {
           if (isIOS) {
             layoutAnimation();
@@ -165,9 +165,9 @@ class Item extends Component {
           var images = [];
 
           if (data && data.img) {
-            data.img.map(item => {
+            data.img.map((item) => {
               images.push({
-                url: item.image
+                url: item.image,
               });
             });
           }
@@ -180,20 +180,20 @@ class Item extends Component {
             like_flag: data.like_flag,
             loading: false,
             refreshing: false,
-            like_loading: false
+            like_loading: false,
           });
         }, delay || this._delay());
       })
-      .catch(err => {
+      .catch((err) => {
         this._getDataFromServer(delay);
       });
   }
 
   async _getDataFromServer(delay) {
-    var { item } = this.state;
+    var {item} = this.state;
     var item_key = ITEM_KEY + item.id + store.user_info.id;
     // alert(store.store_id +' - '+ item.id);
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.site_product(store.store_id, item.id);
 
@@ -207,9 +207,9 @@ class Item extends Component {
           var images = [];
 
           if (response.data && response.data.img) {
-            response.data.img.map(item => {
+            response.data.img.map((item) => {
               images.push({
-                url: item.image
+                url: item.image,
               });
             });
           }
@@ -223,16 +223,16 @@ class Item extends Component {
               like_flag: response.data.like_flag,
               loading: false,
               refreshing: false,
-              like_loading: false
+              like_loading: false,
             },
             () => {
               // cache in five minutes
               storage.save({
                 key: item_key,
                 data: this.state.item_data,
-                expires: ITEM_CACHE
+                expires: ITEM_CACHE,
               });
-            }
+            },
           );
         }, delay || this._delay());
       }
@@ -240,7 +240,7 @@ class Item extends Component {
       console.log(e + ' site_product');
       flashShowMessage({
         type: 'danger',
-        message: t('common:api.error.message')
+        message: t('common:api.error.message'),
       });
     }
   }
@@ -255,7 +255,7 @@ class Item extends Component {
   }
 
   _onRefresh() {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
 
     this._getDataFromServer(1000);
   }
@@ -264,19 +264,19 @@ class Item extends Component {
   _addCart = (item, quantity = 1, model = '') => {
     this.setState(
       {
-        buying: true
+        buying: true,
       },
       async () => {
         const data = {
           quantity,
-          model
+          model,
         };
-        const { t } = this.props;
+        const {t} = this.props;
         try {
           const response = await APIHandler.site_cart_plus(
             store.store_id,
             item.id,
-            data
+            data,
           );
 
           if (!this.unmounted) {
@@ -285,7 +285,7 @@ class Item extends Component {
                 Actions.push(appConfig.routes.itemAttribute, {
                   itemId: item.id,
                   onSubmit: (quantity, modal_key) =>
-                    this._addCart(item, quantity, modal_key)
+                    this._addCart(item, quantity, modal_key),
                 });
               } else {
                 store.setCartData(response.data);
@@ -308,18 +308,18 @@ class Item extends Component {
 
                 if (index !== null && index < length) {
                   store.setCartItemIndex(index);
-                  Events.trigger(NEXT_PREV_CART, { index });
+                  Events.trigger(NEXT_PREV_CART, {index});
                 }
 
                 flashShowMessage({
                   message: response.message,
-                  type: 'success'
+                  type: 'success',
                 });
               }
             } else {
               flashShowMessage({
                 message: response.message || t('common:api.error.message'),
-                type: 'danger'
+                type: 'danger',
               });
             }
           }
@@ -327,29 +327,29 @@ class Item extends Component {
           console.log(e + ' site_cart_plus');
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         } finally {
           !this.unmounted &&
             this.setState({
-              buying: false
+              buying: false,
             });
         }
-      }
+      },
     );
   };
 
   _likeHandler(item) {
     this.setState(
       {
-        like_loading: true
+        like_loading: true,
       },
       async () => {
         try {
           var response = await APIHandler.site_like(
             store.store_id,
             item.id,
-            this.state.like_flag == 1 ? 0 : 1
+            this.state.like_flag == 1 ? 0 : 1,
           );
 
           if (response && response.status == STATUS_SUCCESS) {
@@ -358,37 +358,37 @@ class Item extends Component {
             this.setState(
               {
                 like_flag,
-                like_loading: false
+                like_loading: false,
               },
               () => {
                 this.state.item_data.like_flag = like_flag;
 
                 // cache in five minutes
-                var { item } = this.state;
+                var {item} = this.state;
                 var item_key = ITEM_KEY + item.id + store.user_info.id;
                 storage.save({
                   key: item_key,
                   data: this.state.item_data,
-                  expires: ITEM_CACHE
+                  expires: ITEM_CACHE,
                 });
-              }
+              },
             );
           }
         } catch (e) {
           console.log(e + ' site_like');
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         }
-      }
+      },
     );
   }
 
   render() {
-    var { item, item_data, buying, like_loading, like_flag } = this.state;
+    var {item, item_data, buying, like_loading, like_flag} = this.state;
     var is_like = like_flag == 1;
-    const { t } = this.props;
+    const {t} = this.props;
 
     return (
       <View style={styles.container}>
@@ -401,66 +401,62 @@ class Item extends Component {
 
         <SafeAreaView style={styles.container}>
           <Animated.ScrollView
-            ref={ref => (this.refs_body_item = ref)}
+            ref={(ref) => (this.refs_body_item = ref)}
             contentContainerStyle={{
-              paddingTop: 15
+              paddingTop: 15,
             }}
             onScroll={Animated.event(
               [
                 {
                   nativeEvent: {
                     contentOffset: {
-                      y: this.animatedScrollY
-                    }
-                  }
-                }
+                      y: this.animatedScrollY,
+                    },
+                  },
+                },
               ],
-              { useNativeDriver: true }
+              {useNativeDriver: true},
             )}
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
                 onRefresh={this._onRefresh.bind(this)}
               />
-            }
-          >
+            }>
             <View>
               {item_data == null ? (
                 <View
                   style={{
                     width: Util.size.width,
-                    height: Util.size.width * 0.6
-                  }}
-                >
+                    height: Util.size.width * 0.6,
+                  }}>
                   <Indicator size="small" />
                 </View>
               ) : (
                 <Swiper
                   showsButtons={item_data.img.length > 1}
                   showsPagination={false}
-                  paginationStyle={{ marginTop: 100 }}
+                  paginationStyle={{marginTop: 100}}
                   width={Util.size.width}
                   height={Util.size.width * 0.6}
                   containerStyle={{
-                    flex: 0
-                  }}
-                >
+                    flex: 0,
+                  }}>
                   {item_data.img.map((item, index) => {
                     return (
                       <TouchableHighlight
                         underlayColor="transparent"
                         onPress={() => {
                           Actions.item_image_viewer({
-                            images: this.state.images
+                            images: this.state.images,
                           });
                         }}
-                        key={index}
-                      >
+                        key={index}>
                         <View>
                           <CachedImage
                             mutable
                             style={styles.swiper_image}
-                            source={{ uri: item.image }}
+                            source={{uri: item.image}}
                             key={index}
                           />
                         </View>
@@ -500,26 +496,23 @@ class Item extends Component {
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
                   onPress={this._likeHandler.bind(this, item)}
-                  underlayColor="transparent"
-                >
+                  underlayColor="transparent">
                   <View
                     style={[
                       styles.item_actions_btn,
                       styles.item_actions_btn_chat,
                       {
                         borderColor: is_like ? '#e31b23' : DEFAULT_COLOR,
-                        width: 126
-                      }
-                    ]}
-                  >
+                        width: 126,
+                      },
+                    ]}>
                     <View
                       style={{
                         height: '100%',
                         minWidth: 20,
                         alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
+                        justifyContent: 'center',
+                      }}>
                       {like_loading ? (
                         <Indicator size="small" />
                       ) : (
@@ -535,10 +528,9 @@ class Item extends Component {
                         styles.item_actions_title,
                         styles.item_actions_title_chat,
                         {
-                          color: is_like ? '#e31b23' : DEFAULT_COLOR
-                        }
-                      ]}
-                    >
+                          color: is_like ? '#e31b23' : DEFAULT_COLOR,
+                        },
+                      ]}>
                       {is_like ? t('liked') : t('like')}
                     </Text>
                   </View>
@@ -546,22 +538,19 @@ class Item extends Component {
 
                 <TouchableHighlight
                   onPress={() => this._addCart(item_data ? item_data : item)}
-                  underlayColor="transparent"
-                >
+                  underlayColor="transparent">
                   <View
                     style={[
                       styles.item_actions_btn,
-                      styles.item_actions_btn_add_cart
-                    ]}
-                  >
+                      styles.item_actions_btn_add_cart,
+                    ]}>
                     <View
                       style={{
                         height: '100%',
                         minWidth: 24,
                         alignItems: 'center',
-                        justifyContent: 'center'
-                      }}
-                    >
+                        justifyContent: 'center',
+                      }}>
                       {buying ? (
                         <Indicator size="small" color="#ffffff" />
                       ) : item.book_flag == 1 ? (
@@ -578,18 +567,16 @@ class Item extends Component {
                       <Text
                         style={[
                           styles.item_actions_title,
-                          styles.item_actions_title_book_cart
-                        ]}
-                      >
+                          styles.item_actions_title_book_cart,
+                        ]}>
                         {t('shopTitle.preOrder')}
                       </Text>
                     ) : (
                       <Text
                         style={[
                           styles.item_actions_title,
-                          styles.item_actions_title_add_cart
-                        ]}
-                      >
+                          styles.item_actions_title_add_cart,
+                        ]}>
                         {t('shopTitle.buy')}
                       </Text>
                     )}
@@ -615,9 +602,8 @@ class Item extends Component {
                   <View
                     style={[
                       styles.item_content_item,
-                      styles.item_content_item_left
-                    ]}
-                  >
+                      styles.item_content_item_left,
+                    ]}>
                     <View style={styles.item_content_icon_box}>
                       <Icon name="user" size={16} color="#999999" />
                     </View>
@@ -631,9 +617,8 @@ class Item extends Component {
                   <View
                     style={[
                       styles.item_content_item,
-                      styles.item_content_item_right
-                    ]}
-                  >
+                      styles.item_content_item_right,
+                    ]}>
                     <Text style={styles.item_content_item_value}>
                       {item.brand}
                     </Text>
@@ -644,9 +629,8 @@ class Item extends Component {
                   <View
                     style={[
                       styles.item_content_item,
-                      styles.item_content_item_left
-                    ]}
-                  >
+                      styles.item_content_item_left,
+                    ]}>
                     <View style={styles.item_content_icon_box}>
                       <Icon name="map-marker" size={16} color="#999999" />
                     </View>
@@ -660,9 +644,8 @@ class Item extends Component {
                   <View
                     style={[
                       styles.item_content_item,
-                      styles.item_content_item_right
-                    ]}
-                  >
+                      styles.item_content_item_right,
+                    ]}>
                     <Text style={styles.item_content_item_value}>
                       {item.made_in}
                     </Text>
@@ -689,17 +672,17 @@ class Item extends Component {
                   onLoad={() => console.log('on load')}
                   onLoadStart={() => console.log('on load start')}
                   onLoadEnd={() => console.log('on load end')}
-                  onShouldStartLoadWithRequest={result => {
+                  onShouldStartLoadWithRequest={(result) => {
                     // console.log(result);
                     return true;
                   }}
                   style={{
                     paddingHorizontal: 6,
                     marginHorizontal: 15,
-                    width: appConfig.device.width - 30
+                    width: appConfig.device.width - 30,
                   }}
-                  onHeightUpdated={height => this.setState({ height })}
-                  source={{ html: item_data.content }}
+                  onHeightUpdated={(height) => this.setState({height})}
+                  source={{html: item_data.content}}
                   zoomable={false}
                   scrollEnabled={false}
                   customScript={`
@@ -729,24 +712,36 @@ class Item extends Component {
             </View>
 
             {item_data != null && item_data.related && (
-              <FlatList
-                onEndReached={num => {}}
-                onEndReachedThreshold={0}
-                style={[styles.items_box]}
-                ListHeaderComponent={() => (
-                  <ListHeader title={`— ${t('relatedItems')} —`} />
-                )}
-                data={item_data.related}
-                renderItem={({ item, index }) => (
-                  <Items
-                    item={item}
-                    index={index}
-                    onPress={this._itemRefresh.bind(this, item)}
-                  />
-                )}
-                keyExtractor={item => item.id}
-                numColumns={2}
-              />
+              <View style={[styles.items_box, {flexDirection: 'row', flexWrap: 'wrap', width: appConfig.device.width}]}>
+                <ListHeader title={`— ${t('relatedItems')} —`} />
+                {item_data.related.map((item, index) => {
+                  return (
+                    <Items
+                      key={index}
+                      item={item}
+                      index={index}
+                      onPress={this._itemRefresh.bind(this, item)}
+                    />
+                  );
+                })}
+              </View>
+              // <FlatList
+              //   onEndReached={num => {}}
+              //   onEndReachedThreshold={0}
+              //   ListHeaderComponent={() => (
+              //     <ListHeader title={`— ${t('relatedItems')} —`} />
+              //   )}
+              //   data={item_data.related}
+              //   renderItem={({ item, index }) => (
+              //     <Items
+              //       item={item}
+              //       index={index}
+              //       onPress={this._itemRefresh.bind(this, item)}
+              //     />
+              //   )}
+              //   keyExtractor={item => item.id}
+              //   numColumns={2}
+              // />
             )}
 
             {/* {item.discount_percent > 0 && (
@@ -762,27 +757,24 @@ class Item extends Component {
               <TouchableHighlight
                 style={styles.buttonAction}
                 onPress={this._goStores.bind(this, this.state.store_data)}
-                underlayColor="transparent"
-              >
+                underlayColor="transparent">
                 <View
                   style={[
                     styles.boxButtonAction,
                     {
                       width: Util.size.width - 30,
                       backgroundColor: '#fa7f50',
-                      borderColor: '#999999'
-                    }
-                  ]}
-                >
+                      borderColor: '#999999',
+                    },
+                  ]}>
                   <Icon name="plus" size={16} color="#ffffff" />
                   <Text
                     style={[
                       styles.buttonActionTitle,
                       {
-                        color: '#ffffff'
-                      }
-                    ]}
-                  >
+                        color: '#ffffff',
+                      },
+                    ]}>
                     {t('goToStore')}
                   </Text>
                 </View>
@@ -798,7 +790,7 @@ class Item extends Component {
           )}
         </SafeAreaView>
         <PopupConfirm
-          ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
           title={t('cart:popup.remove.message')}
           height={110}
           otherClose={false}
@@ -821,14 +813,13 @@ class Item extends Component {
               zIndex: 999,
               borderWidth: 1,
               borderColor: DEFAULT_COLOR,
-              overflow: 'hidden'
-            }}
-          >
+              overflow: 'hidden',
+            }}>
             {store.cart_fly_image && (
               <CachedImage
                 style={{
                   width: store.cart_fly_position.width,
-                  height: store.cart_fly_position.height
+                  height: store.cart_fly_position.height,
                 }}
                 source={store.cart_fly_image}
               />
@@ -855,7 +846,7 @@ class Item extends Component {
     // );
     Actions.item({
       title: item.name,
-      item
+      item,
     });
   }
 
@@ -877,17 +868,17 @@ class Item extends Component {
     }
 
     var item = this.cartItemConfirmRemove;
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const data = {
         quantity: 0,
-        model: item.model
+        model: item.model,
       };
 
       var response = await APIHandler.site_cart_update(
         store.store_id,
         item.id,
-        data
+        data,
       );
 
       if (response && response.status == STATUS_SUCCESS) {
@@ -898,11 +889,11 @@ class Item extends Component {
             if (isAndroid && store.cart_item_index > 0) {
               var index = store.cart_item_index - 1;
               store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, { index });
+              Events.trigger(NEXT_PREV_CART, {index});
             }
             flashShowMessage({
               message: response.message,
-              type: 'success'
+              type: 'success',
             });
           })();
         }, 450);
@@ -913,7 +904,7 @@ class Item extends Component {
       console.log(e + ' site_cart_update');
       flashShowMessage({
         type: 'danger',
-        message: t('common:api.error.message')
+        message: t('common:api.error.message'),
       });
     }
   }
@@ -922,22 +913,22 @@ class Item extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
 
   wrapper_swiper: {
-    alignItems: 'center'
+    alignItems: 'center',
     // height: Util.size.width * 0.6,
   },
   content_swiper: {
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   swiper_image: {
     height: Util.size.width * 0.6,
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
 
   item_heading_box: {
@@ -945,43 +936,43 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 4,
     alignItems: 'center',
-    marginTop: 8
+    marginTop: 8,
   },
   item_heading_title: {
     fontSize: 20,
     color: '#404040',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   item_heading_price_box: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 4,
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   item_heading_safe_off_value: {
     fontSize: 20,
     color: '#cccccc',
     textDecorationLine: 'line-through',
-    paddingRight: 4
+    paddingRight: 4,
   },
   item_heading_price: {
     fontSize: 20,
     color: DEFAULT_COLOR,
     fontWeight: '600',
-    paddingLeft: 4
+    paddingLeft: 4,
   },
   item_heading_qnt: {
     color: '#666666',
     fontSize: 12,
-    marginTop: 4
+    marginTop: 4,
   },
   item_actions_box: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   item_actions_btn: {
     borderWidth: Util.pixel,
@@ -990,24 +981,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
-    height: 40
+    height: 40,
   },
   item_actions_btn_chat: {
-    marginRight: 8
+    marginRight: 8,
   },
   item_actions_btn_add_cart: {
     marginLeft: 8,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   item_actions_title: {
     color: DEFAULT_COLOR_RED,
-    marginLeft: 8
+    marginLeft: 8,
   },
   item_actions_title_add_cart: {
-    color: '#fff'
+    color: '#fff',
   },
   item_actions_title_book_cart: {
-    color: '#ffffff'
+    color: '#ffffff',
   },
 
   item_safe_off: {
@@ -1018,18 +1009,18 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 20,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   item_safe_off_percent: {
     backgroundColor: '#fa7f50',
     paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
   },
   item_safe_off_percent_val: {
     color: '#ffffff',
-    fontSize: 12
+    fontSize: 12,
   },
 
   item_content_box: {
@@ -1039,7 +1030,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: Util.pixel,
     borderTopWidth: Util.pixel,
     borderColor: '#dddddd',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   item_content_item: {
     height: 24,
@@ -1048,45 +1039,45 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
   item_content_item_left: {
-    width: '45%'
+    width: '45%',
   },
   item_content_item_right: {
-    width: '55%'
+    width: '55%',
   },
   item_content_icon_box: {
     width: 24,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   item_content_item_title: {
     fontSize: 12,
     color: '#999999',
-    paddingLeft: 4
+    paddingLeft: 4,
   },
   item_content_item_value: {
     fontSize: 14,
     fontWeight: '600',
     color: '#404040',
-    marginLeft: 4
+    marginLeft: 4,
   },
 
   item_content_text: {
     width: '100%',
-    paddingTop: 16
+    paddingTop: 16,
   },
   item_content_desc: {
     fontSize: 16,
     color: '#404040',
     lineHeight: 24,
-    marginTop: 4
+    marginTop: 4,
   },
 
   items_box: {
     // marginBottom: 69,
     marginTop: 20,
-    backgroundColor: '#f1f1f1'
+    backgroundColor: appConfig.colors.sceneBackground,
   },
 
   boxButtonActions: {
@@ -1094,7 +1085,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 7
+    paddingVertical: 7,
   },
   boxButtonAction: {
     flexDirection: 'row',
@@ -1105,17 +1096,17 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: Util.size.width / 2 - 24,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   buttonActionTitle: {
     color: '#333333',
     marginLeft: 4,
-    fontSize: 14
+    fontSize: 14,
   },
   discountBadge: {
     left: 20,
-    width: null
-  }
+    width: null,
+  },
 });
 
 export default withTranslation(['product', 'cart', 'common'])(observer(Item));

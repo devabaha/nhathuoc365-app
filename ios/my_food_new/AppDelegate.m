@@ -1,25 +1,52 @@
-/**
- * Copyright (c) Facebook, Inc. and its affiliates.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
 #import "AppDelegate.h"
-#import <CodePush/CodePush.h>
 
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-#import <react-native-branch/RNBranch/RNBranch.h>
-@import UIKit;
-@import Firebase;
+
+#ifdef FB_SONARKIT_ENABLED
+#import <FlipperKit/FlipperClient.h>
+#import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
+#import <FlipperKitUserDefaultsPlugin/FKUserDefaultsPlugin.h>
+#import <FlipperKitNetworkPlugin/FlipperKitNetworkPlugin.h>
+#import <SKIOSNetworkPlugin/SKIOSNetworkAdapter.h>
+#import <FlipperKitReactPlugin/FlipperKitReactPlugin.h>
+
+#import <RNBranch/RNBranch.h>
+#import <CodePush/CodePush.h>
+//Add the header file
+#import "ReactNativeExceptionHandler.h"
+#import <Firebase.h>
+
+static void InitializeFlipper(UIApplication *application) {
+  FlipperClient *client = [FlipperClient sharedClient];
+  SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
+  [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]];
+  [client addPlugin:[[FKUserDefaultsPlugin alloc] initWithSuiteName:nil]];
+  [client addPlugin:[FlipperKitReactPlugin new]];
+  [client addPlugin:[[FlipperKitNetworkPlugin alloc] initWithNetworkAdapter:[SKIOSNetworkAdapter new]]];
+  [client start];
+}
+#endif
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [FIRApp configure];
+#ifdef FB_SONARKIT_ENABLED
+  InitializeFlipper(application);
+#endif
+
+  // Branch IO
+  [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES];
+  //--end
+  
+  // Add me --- \/
+  if ([FIRApp defaultApp] == nil) {
+    [FIRApp configure];
+  }
+  // Add me --- /\
+  
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"my_food_new"
@@ -32,10 +59,43 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  
+  
+  // Exception Handler Custom UI
+  [ReactNativeExceptionHandler replaceNativeExceptionHandlerBlock:^(NSException *exception, NSString *readeableException){
 
-  // Uncomment this line to use the test key instead of the live one.
-    // [RNBranch useTestInstance];
-    [RNBranch initSessionWithLaunchOptions:launchOptions isReferrable:YES]; // <-- add this
+    // THE CODE YOU WRITE HERE WILL REPLACE THE EXISTING NATIVE POPUP THAT COMES WITH THIS MODULE.
+    //We create an alert box
+    UIAlertController* alert = [UIAlertController
+                                alertControllerWithTitle:@"Critical error occurred"
+                                message: [NSString stringWithFormat:@"%@\n%@",
+                                          @"Apologies..The app will close now \nPlease restart the app\n",
+                                          readeableException]
+                                preferredStyle:UIAlertControllerStyleAlert];
+
+    // We show the alert box using the rootViewController
+    [rootViewController presentViewController:alert animated:YES completion:nil];
+
+    // THIS IS THE IMPORTANT PART
+    // By default when an exception is raised we will show an alert box as per our code.
+    // But since our buttons wont work because our click handlers wont work.
+    // to close the app or to remove the UI lockup on exception.
+    // we need to call this method
+    // [ReactNativeExceptionHandler releaseExceptionHold]; // to release the lock and let the app crash.
+
+    // Hence we set a timer of 4 secs and then call the method releaseExceptionHold to quit the app after
+    // 4 secs of showing the popup
+    [NSTimer scheduledTimerWithTimeInterval:4.0
+                                     target:[ReactNativeExceptionHandler class]
+                                   selector:@selector(releaseExceptionHold)
+                                   userInfo:nil
+                                    repeats:NO];
+
+    // or  you can call
+    // [ReactNativeExceptionHandler releaseExceptionHold]; when you are done to release the UI lock.
+  }];
+  //--end
+  
   return YES;
 }
 
@@ -50,29 +110,12 @@
     return [RNBranch continueUserActivity:userActivity];
 }
 
-- (void)application:(UIApplication *)application
-    didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
-  // Pass device token to auth.
-  [[FIRAuth auth] setAPNSToken:deviceToken type:FIRAuthAPNSTokenTypeUnknown];
-  // Further handling of the device token if needed by the app.
-}
-
-- (void)application:(UIApplication *)application
-    didReceiveRemoteNotification:(NSDictionary *)notification
-          fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler {
-  // Pass notification to auth and check if they can handle it.
-  if ([[FIRAuth auth] canHandleNotification:notification]) {
-    completionHandler(UIBackgroundFetchResultNoData);
-    return;
-  }
-  // This notification is not auth related, developer should handle it.
-}
-
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
 #else
+  // return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
   return [CodePush bundleURL];
 #endif
 }

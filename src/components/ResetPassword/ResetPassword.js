@@ -82,7 +82,7 @@ const ResetPassword = props => {
               style={styles.backBtn}
               onPress={props.onBack}
             >
-              <Ionicons name="ios-arrow-round-back" style={styles.backIcon} />
+              <Ionicons name="ios-arrow-back" style={styles.backIcon} />
             </TouchableOpacity>
           </View>
         </View>

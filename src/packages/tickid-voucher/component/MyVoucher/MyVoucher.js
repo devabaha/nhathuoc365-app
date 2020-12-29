@@ -107,7 +107,7 @@ class MyVoucher extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: config.colors.sceneBackground,
     marginBottom: config.device.bottomSpace
   },
   getVoucherWrapper: {
