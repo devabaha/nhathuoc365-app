@@ -3,23 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>54109172898-nliapc9abh42f03h7bm2u2bd6cuqmq50.apps.googleusercontent.com</string>
+	<string>728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.54109172898-nliapc9abh42f03h7bm2u2bd6cuqmq50</string>
+	<string>com.googleusercontent.apps.728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>54109172898-h6bi9fpnpvb2jem3op5tvt4q7ol8ou3t.apps.googleusercontent.com</string>
+	<string>728365043840-77epm0787athao5u5cipc410f4vdl84t.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBQTUERzUW3gpX4PKFiV6LbTUsFogWsx8M</string>
+	<string>AIzaSyAr9RudDCXVfpc4YnMsXqmcwlw5XERHuXU</string>
 	<key>GCM_SENDER_ID</key>
-	<string>54109172898</string>
+	<string>728365043840</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>id.tickid</string>
+	<string>vn.abahaglobal</string>
 	<key>PROJECT_ID</key>
-	<string>tickid-vn</string>
+	<string>abaha-global</string>
 	<key>STORAGE_BUCKET</key>
-	<string>tickid-vn.appspot.com</string>
+	<string>abaha-global.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -31,8 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:54109172898:ios:0a4efb05599967093553fb</string>
-	<key>DATABASE_URL</key>
-	<string>https://tickid-vn.firebaseio.com</string>
+	<string>1:728365043840:ios:50dc150b5c23de4ec61665</string>
 </dict>
 </plist>

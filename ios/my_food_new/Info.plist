@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>TickID</string>
+	<string>Abaha</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.1</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -27,15 +27,15 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.54109172898-nliapc9abh42f03h7bm2u2bd6cuqmq50</string>
-				<string>id.tickid</string>
+				<string>com.googleusercontent.apps.728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh</string>
+				<string>vn.abahaglobal</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>CodePushDeploymentKey</key>
-	<string>_jaoHsAy6EW4tIHabsFFZ0uHTG8hf87a6e14-8df5-40b0-b8e4-7ff15b6db3a7</string>
+	<string>DeploymentKey</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -79,25 +79,30 @@
 	<string>Cho phép ứng dụng truy cập Thư viện ảnh để chuyển ảnh khi chat</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Cho phép sử dụng nhận biết lời nói</string>
+	<key>OneSignal_disable_badge_clearing</key>
+	<false/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
 		<string>Feather.ttf</string>
 		<string>FontAwesome.ttf</string>
-		<string>Foundation.ttf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>Octicons.ttf</string>
-		<string>SimpleLineIcons.ttf</string>
-		<string>Zocial.ttf</string>
-		<string>AntDesign.ttf</string>
 		<string>FontAwesome5_Brands.ttf</string>
 		<string>FontAwesome5_Regular.ttf</string>
 		<string>FontAwesome5_Solid.ttf</string>
+		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>MaterialIcons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
-		<string>fonts/SairaStencilOne-Regular.ttf</string>
+		<string>SairaStencilOne-Regular.ttf</string>
+		<string>Roboto_medium.ttf</string>
+		<string>Roboto.ttf</string>
+		<string>rubicon-icon-font.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
@@ -116,8 +121,8 @@
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
 	<key>branch_app_domain</key>
-	<string>tickidvn.app.link</string>
+	<string>abahavn.app.link</string>
 	<key>branch_key</key>
-	<string>key_live_ahRZ1PcggL8QBi45k45XOfmjABjO6CkM</string>
+	<string>key_live_foZpplSsblvX2B7t9NAHXhhmtsdYTtL9</string>
 </dict>
 </plist>
