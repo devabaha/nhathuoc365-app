@@ -1,50 +1,57 @@
 {
   "project_info": {
-    "project_number": "54109172898",
-    "firebase_url": "https://tickid-vn.firebaseio.com",
-    "project_id": "tickid-vn",
-    "storage_bucket": "tickid-vn.appspot.com"
+    "project_number": "728365043840",
+    "project_id": "abaha-global",
+    "storage_bucket": "abaha-global.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:54109172898:android:f8757310694125e53553fb",
+        "mobilesdk_app_id": "1:728365043840:android:1a218a859edd3239c61665",
         "android_client_info": {
-          "package_name": "id.tickid"
+          "package_name": "vn.abahaglobal"
         }
       },
       "oauth_client": [
         {
-          "client_id": "54109172898-h6bi9fpnpvb2jem3op5tvt4q7ol8ou3t.apps.googleusercontent.com",
+          "client_id": "728365043840-77epm0787athao5u5cipc410f4vdl84t.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "id.tickid",
-            "certificate_hash": "aaee16d114d9e872ba39abb8e2f756a6f5030e6f"
+            "package_name": "vn.abahaglobal",
+            "certificate_hash": "b3770f9a046511bfae3cca6e4fb14dec71981706"
           }
         },
         {
-          "client_id": "54109172898-efr7r3uk3388l58v0vo3hu3dbrvgglb7.apps.googleusercontent.com",
+          "client_id": "728365043840-b4vnofv1v3g4kn7o3ofndn1a7vt94cee.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.abahaglobal",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "728365043840-4cq33849i62ij05m6npp6fd86gteog0r.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDIyccHdruczwWmCemwKiYw2-ucyfOqtas"
+          "current_key": "AIzaSyAUqOXHxWEs1wDsDmKORL0-xhx_cSJmuoo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "54109172898-efr7r3uk3388l58v0vo3hu3dbrvgglb7.apps.googleusercontent.com",
+              "client_id": "728365043840-4cq33849i62ij05m6npp6fd86gteog0r.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "54109172898-nliapc9abh42f03h7bm2u2bd6cuqmq50.apps.googleusercontent.com",
+              "client_id": "728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "id.tickid",
-                "app_store_id": "1540067814"
+                "bundle_id": "vn.abahaglobal",
+                "app_store_id": "1545103650"
               }
             }
           ]
