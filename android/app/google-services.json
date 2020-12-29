@@ -7,26 +7,26 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:728365043840:android:1a218a859edd3239c61665",
+        "mobilesdk_app_id": "1:728365043840:android:5a57fabaf9f4b33bc61665",
         "android_client_info": {
           "package_name": "vn.abahaglobal"
         }
       },
       "oauth_client": [
         {
-          "client_id": "728365043840-77epm0787athao5u5cipc410f4vdl84t.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "vn.abahaglobal",
-            "certificate_hash": "b3770f9a046511bfae3cca6e4fb14dec71981706"
-          }
-        },
-        {
-          "client_id": "728365043840-b4vnofv1v3g4kn7o3ofndn1a7vt94cee.apps.googleusercontent.com",
+          "client_id": "728365043840-80abphq5lr9jf7ajnj0emsppbb9ikjtr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "vn.abahaglobal",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "728365043840-cup4iuhii5irbajjtr5hfour73064ved.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "vn.abahaglobal",
+            "certificate_hash": "e238bb7fa6d0205f819d32e9e7e5117c9adf992e"
           }
         },
         {
@@ -50,7 +50,7 @@
               "client_id": "728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "vn.abahaglobal",
+                "bundle_id": "vn.abaha",
                 "app_store_id": "1545103650"
               }
             }

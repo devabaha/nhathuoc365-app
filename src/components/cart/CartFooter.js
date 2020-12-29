@@ -7,12 +7,17 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import store from '../../store/Store';
 import Shimmer from 'react-native-shimmer';
+import {NotiBadge} from '../Badges';
+import LinearGradient from 'react-native-linear-gradient';
 
+const ORDER_BTN_WIDTH = 100;
+const WHITE_SPACE = 40;
+const CART_ITEM_WIDTH = appConfig.device.width - ORDER_BTN_WIDTH - WHITE_SPACE;
 class CartFooter extends Component {
   constructor(props) {
     super(props);
@@ -230,51 +235,49 @@ class CartFooter extends Component {
           />
         </View>
         <View style={styles.store_cart_item_title_box}>
-          <Text style={styles.store_cart_item_title}>
-            {sub_string(item.name, 32)}
-          </Text>
-          {!!item.classification && (
-            <Text numberOfLines={1} style={[styles.store_cart_item_sub_title]}>
-              {item.classification}
+          <View style={{flex: 1}}>
+            <Text numberOfLines={2} style={styles.store_cart_item_title}>
+              {item.name}
             </Text>
-          )}
-          <Text style={[styles.store_cart_item_price]}>{item.price_view}</Text>
-        </View>
+            {!!item.classification && (
+              <Text
+                numberOfLines={1}
+                style={[styles.store_cart_item_sub_title]}>
+                {item.classification}
+              </Text>
+            )}
+            <Text style={styles.store_cart_item_price}>{item.price_view}</Text>
+          </View>
 
-        <View
-          style={[
-            styles.store_cart_calculator,
-            {
-              bottom: !!item.classification ? -4 : 0,
-            },
-          ]}>
-          <TouchableHighlight
-            onPress={this._item_qnt_decrement_handler.bind(this, item)}
-            underlayColor="transparent"
-            style={styles.p8}>
-            <View style={styles.store_cart_item_qnt_change}>
-              {this.state.decrement_loading ? (
-                <Indicator size="small" />
-              ) : (
-                <Icon name="minus" size={16} color="#404040" />
-              )}
-            </View>
-          </TouchableHighlight>
+          <View style={styles.store_cart_calculator}>
+            <TouchableHighlight
+              onPress={this._item_qnt_decrement_handler.bind(this, item)}
+              underlayColor="transparent"
+              style={styles.p8}>
+              <View style={styles.store_cart_item_qnt_change}>
+                {this.state.decrement_loading ? (
+                  <Indicator size="small" />
+                ) : (
+                  <AntDesignIcon name="minus" size={16} color="#404040" />
+                )}
+              </View>
+            </TouchableHighlight>
 
-          <Text style={styles.store_cart_item_qnt}>{item.quantity_view}</Text>
+            <Text style={styles.store_cart_item_qnt}>{item.quantity_view}</Text>
 
-          <TouchableHighlight
-            onPress={this._item_qnt_increment.bind(this, item)}
-            underlayColor="transparent"
-            style={styles.p8}>
-            <View style={styles.store_cart_item_qnt_change}>
-              {this.state.increment_loading ? (
-                <Indicator size="small" />
-              ) : (
-                <Icon name="plus" size={16} color="#404040" />
-              )}
-            </View>
-          </TouchableHighlight>
+            <TouchableHighlight
+              onPress={this._item_qnt_increment.bind(this, item)}
+              underlayColor="transparent"
+              style={styles.p8}>
+              <View style={styles.store_cart_item_qnt_change}>
+                {this.state.increment_loading ? (
+                  <Indicator size="small" />
+                ) : (
+                  <AntDesignIcon name="plus" size={16} color="#404040" />
+                )}
+              </View>
+            </TouchableHighlight>
+          </View>
         </View>
       </View>
     );
@@ -310,38 +313,39 @@ class CartFooter extends Component {
             <FlatList
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingVertical: 7,
+              }}
               ref={(ref) => (this.refs_store_cart = ref)}
               data={cart_products}
+              decelerationRate="fast"
               pagingEnabled
+              snapToInterval={CART_ITEM_WIDTH}
               onMomentumScrollEnd={this._onScrollEnd.bind(this)}
               extraData={cart_products}
               initialScrollIndex={store.cart_item_index}
               getItemLayout={(data, index) => {
                 return {
-                  length: Util.size.width - 140,
-                  offset: (Util.size.width - 140) * index,
+                  length: CART_ITEM_WIDTH,
+                  offset: CART_ITEM_WIDTH * index,
                   index,
                 };
               }}
               renderItem={this.renderItems.bind(this)}
               keyExtractor={(item) => item.id}
-              horizontal={true}
+              horizontal
             />
+
+            <View pointerEvents="none" style={styles.maskContainer}>
+              <LinearGradient
+                style={styles.maskLinear}
+                colors={['rgba(255,255,255,0)', 'rgba(255,255,255,.5)']}
+                angle={90}
+                useAngle
+                locations={[0.3, 1]}
+              />
+            </View>
           </View>
-
-          <TouchableHighlight
-            style={[styles.store_cart_btn, styles.store_cart_btn_left]}
-            underlayColor="#f1efef"
-            onPress={this._store_cart_prev.bind(this)}>
-            <Icon name="angle-left" size={36} color="rgba(0,0,0,.3)" />
-          </TouchableHighlight>
-
-          <TouchableHighlight
-            style={[styles.store_cart_btn, styles.store_cart_btn_right]}
-            underlayColor="#f1efef"
-            onPress={this._store_cart_next.bind(this)}>
-            <Icon name="angle-right" size={36} color="rgba(0,0,0,.3)" />
-          </TouchableHighlight>
         </View>
       );
     } else {
@@ -394,43 +398,39 @@ class CartFooter extends Component {
     }
 
     return (
-      <View
-        style={[
-          styles.store_cart_box
-        ]}>
+      <View style={[styles.store_cart_box]}>
         {cart_data.promotions && cart_data.promotions.title && (
-        <View
-          style={{
-            width: Util.size.width,
-            paddingVertical: 5,
-            paddingHorizontal: 20,
-            backgroundColor: hexToRgbA(appConfig.colors.primary, .08),
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Shimmer
-            pauseDuration={5000}
-            opacity={1}
-            animationOpacity={0.6}
-            highlightLength={0.5}
-            animating>
-            <Text
-              style={{
-                fontSize: 10,
-                fontWeight: '500',
-                color: appConfig.colors.primary,
-                textAlign: 'center'
-              }}>
-              {cart_data.promotions.title} {`${t('discount')} `}
-              {cart_data.promotions.discount_text}
-            </Text>
-          </Shimmer>
-        </View>
+          <View
+            style={{
+              width: Util.size.width,
+              paddingVertical: 5,
+              paddingHorizontal: 20,
+              backgroundColor: hexToRgbA(appConfig.colors.primary, 0.08),
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Shimmer
+              pauseDuration={5000}
+              opacity={1}
+              animationOpacity={0.6}
+              highlightLength={0.5}
+              animating>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontWeight: '500',
+                  color: appConfig.colors.primary,
+                  textAlign: 'center',
+                }}>
+                {cart_data.promotions.title} {`${t('discount')} `}
+                {cart_data.promotions.discount_text}
+              </Text>
+            </Shimmer>
+          </View>
         )}
 
         <View
           style={{
-            height: 80,
             flexDirection: 'row',
             borderTopWidth: Util.pixel,
             borderTopColor: '#dddddd',
@@ -443,43 +443,30 @@ class CartFooter extends Component {
             underlayColor="transparent">
             <View
               style={{
-                width: '100%',
-                height: '100%',
+                flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: DEFAULT_COLOR,
               }}>
               <View style={styles.checkout_box}>
-                <Icon name="shopping-cart" size={22} color="#ffffff" />
+                <View>
+                  <AntDesignIcon
+                    name="shoppingcart"
+                    size={22}
+                    color="#ffffff"
+                  />
+                  {isset_cart && (
+                    <NotiBadge
+                      containerStyle={{right: '-50%'}}
+                      label={cart_data.count}
+                      show={!!cart_data.count}
+                      animation
+                    />
+                  )}
+                </View>
                 <Text style={styles.checkout_title}>
                   {isset_cart ? t('payment.order') : t('payment.cart')}
                 </Text>
-
-                {isset_cart && (
-                  <View
-                    style={{
-                      position: 'absolute',
-                      left: 18,
-                      top: 0,
-                      backgroundColor: 'red',
-                      minWidth: 16,
-                      height: 16,
-                      borderRadius: 8,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                      paddingHorizontal: 2,
-                    }}>
-                    <Text
-                      style={{
-                        fontSize: 10,
-                        color: '#ffffff',
-                        fontWeight: '600',
-                      }}>
-                      {cart_data.count}
-                    </Text>
-                  </View>
-                )}
               </View>
 
               {isset_cart && (
@@ -488,6 +475,7 @@ class CartFooter extends Component {
                     fontSize: 14,
                     color: '#ffffff',
                     fontWeight: '600',
+                    marginTop: 5,
                   }}>
                   {cart_data.total_selected}
                 </Text>
@@ -507,64 +495,49 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(5, 0, 0),
   },
   store_cart_container: {
-    width: Util.size.width - 100,
-    height: '100%',
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   store_cart_btn: {
-    height: '100%',
-    width: 24,
-    backgroundColor: 'transparent',
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
+    paddingHorizontal: 4,
   },
-  store_cart_btn_left: {
-    left: 0,
-  },
-  store_cart_btn_right: {
-    right: 0,
-  },
+  store_cart_btn_left: {},
+  store_cart_btn_right: {},
   checkout_btn: {
-    width: 100,
-    height: '100%',
+    width: ORDER_BTN_WIDTH,
   },
   checkout_box: {
-    width: '100%',
-    height: '56%',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    overflow: 'hidden',
   },
   checkout_title: {
     color: '#ffffff',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '500',
-    paddingLeft: 4,
+    marginLeft: 10,
   },
   store_cart_content: {
-    width: Util.size.width - 140,
-    height: '100%',
+    flex: 1,
   },
   store_cart_item: {
-    width: Util.size.width - 140,
-    height: '100%',
+    width: CART_ITEM_WIDTH,
     flexDirection: 'row',
+    borderRightWidth: 0.5,
+    borderColor: '#eee',
   },
   store_cart_item_image_box: {
     width: 66,
-    height: '100%',
-    paddingVertical: 4,
+    height: 85,
     overflow: 'hidden',
-    marginHorizontal: 4,
   },
   store_cart_item_image: {
-    height: '100%',
+    flex: 1,
     resizeMode: 'contain',
   },
   store_cart_item_title_box: {
@@ -573,32 +546,28 @@ const styles = StyleSheet.create({
   store_cart_item_title: {
     color: '#404040',
     fontSize: 12,
-    marginTop: 4,
     fontWeight: '500',
   },
   store_cart_item_sub_title: {
     color: '#555',
     fontSize: 10,
+    marginTop: 2,
   },
   store_cart_item_price: {
     fontSize: 12,
     color: '#fa7f50',
     fontWeight: '500',
-    marginTop: 4,
+    marginTop: appConfig.device.isIOS ? 2 : 0,
   },
   store_cart_calculator: {
-    position: 'absolute',
-    height: '52%',
-    bottom: -4,
-    right: 0,
-    width: Util.size.width - 232,
+    marginTop: 7,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
   },
   store_cart_item_qnt_change: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: Util.pixel,
@@ -609,14 +578,23 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#404040',
     fontSize: 16,
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
   },
 
   p8: {
-    height: '100%',
-    width: 36,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+
+  maskContainer: {
+    width: WHITE_SPACE,
+    height: '100%',
+    position: 'absolute',
+    right: 0,
+  },
+  maskLinear: {
+    width: WHITE_SPACE,
+    height: '100%',
   },
 });
 

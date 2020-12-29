@@ -11,7 +11,6 @@ import {
   SafeAreaView,
   Text,
   Dimensions,
-  PermissionsAndroid,
 } from 'react-native';
 import {GiftedChat, Message, Day, Bubble, Time} from 'react-native-gifted-chat';
 import {ImageMessageChat, CustomComposer} from '../../component';
@@ -396,27 +395,12 @@ class TickidChat extends Component {
 
   openCamera = async () => {
     const options = {
-      // rotation: 360,
-      // storageOptions: {
-      //   skipBackup: true,
-      //   path: 'images',
-      // },
+      rotation: 360,
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
     };
-    // let granted = await PermissionsAndroid.check(
-    //   PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    // );
-    // if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //   console.log('You can use the camera');
-    // } else {
-    //   granted = await PermissionsAndroid.request(
-    //     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-    //   );
-    //   if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    //     console.log('You can use the camera');
-    //   } else {
-    //     return;
-    //   }
-    // }
     ImagePicker.launchCamera(options, (response) => {
       if (response.error) {
         console.log(response);
