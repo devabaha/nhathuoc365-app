@@ -16,8 +16,7 @@ import StoreSuggest from './StoreSuggest';
 import EventTracker from '../../helper/EventTracker';
 // import appConfig from 'app-config';
 
-@observer
-export default class ListStore extends Component {
+class ListStore extends Component {
   constructor(props) {
     super(props);
 
@@ -434,3 +433,5 @@ const styles = StyleSheet.create({
     color: '#ffffff'
   }
 });
+
+export default observer(ListStore);

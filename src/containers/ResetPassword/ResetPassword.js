@@ -12,7 +12,6 @@ import {
   OTP_LENGTH
 } from '../../components/ResetPassword/constants';
 import EventTracker from '../../helper/EventTracker';
-const timer = require('react-timer-mixin');
 
 class ResetPassword extends Component {
   state = {
@@ -32,7 +31,7 @@ class ResetPassword extends Component {
       error: ''
     }
   };
-  timerID = 0;
+  timer = null;
   refScrollView = React.createRef();
   refOTP = React.createRef();
   unmounted = false;
@@ -44,7 +43,7 @@ class ResetPassword extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
-    timer.clearInterval(this.timerID);
+    clearInterval(this.timer);
     this.eventTracker.clearTracking();
   }
 
@@ -205,12 +204,12 @@ class ResetPassword extends Component {
   }
 
   startCountDown() {
-    this.timerID = timer.setInterval(() => {
+    this.timer = setInterval(() => {
       const { requestNewOtpCounter } = this.state;
       if (requestNewOtpCounter > 0) {
         this.setState({ requestNewOtpCounter: requestNewOtpCounter - 1 });
       } else {
-        timer.clearInterval(this.timerID);
+        clearInterval(this.timer);
       }
     }, 1000);
   }

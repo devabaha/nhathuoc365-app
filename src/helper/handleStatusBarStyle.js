@@ -1,7 +1,7 @@
 import appConfig from '../config';
-import { StatusBar } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { config as bgrStatusBarConfig } from 'app-packages/tickid-bgr-status-bar';
+import {StatusBar} from 'react-native';
+import {Actions} from 'react-native-router-flux';
+import {config as bgrStatusBarConfig} from 'app-packages/tickid-bgr-status-bar';
 
 export default function handleStatusBarStyle(prevState, newState, action) {
   if (appConfig.device.isAndroid) return;
@@ -10,7 +10,6 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.domainSelector,
 
     appConfig.routes.phoneAuth,
-    appConfig.routes.authConfirm,
     appConfig.routes.qrBarCode,
 
     appConfig.routes.myVoucher,
@@ -32,10 +31,11 @@ export default function handleStatusBarStyle(prevState, newState, action) {
 
     appConfig.routes.premiumInfo,
 
-    appConfig.routes.item
+    appConfig.routes.item,
   ];
 
   switch (action.type) {
+    case 'Navigation/JUMP_TO':
     case 'Navigation/PUSH':
     case 'Navigation/BACK':
     case 'Navigation/NAVIGATE':
@@ -43,15 +43,27 @@ export default function handleStatusBarStyle(prevState, newState, action) {
       const statusBarInState =
         bgrStatusBarConfig.statusBarState[Actions.currentScene];
       const isDark =
-        !!darkStatusBarScenes.some(
-          sceneName => `${Actions.currentScene}`.indexOf(sceneName) !== -1
-        ) || statusBarInState === bgrStatusBarConfig.mode.dark;
+        darkStatusBarScenes.some((sceneName) => {
+          let stackName = sceneName;
+          const suffix = Actions.currentScene.substring(
+            Actions.currentScene.length - 2,
+          );
+          if (suffix === '_1') {
+            stackName = Actions.currentScene.substring(
+              0,
+              Actions.currentScene.length - 2,
+            );
+          }
+          return sceneName === stackName;
+        }) || statusBarInState === bgrStatusBarConfig.mode.dark;
 
-      if (isDark) {
-        StatusBar.setBarStyle('dark-content', true);
-      } else {
-        StatusBar.setBarStyle('light-content', true);
-      }
+      setTimeout(() => {
+        if (isDark) {
+          StatusBar.setBarStyle('dark-content', true);
+        } else {
+          StatusBar.setBarStyle('light-content', true);
+        }
+      });
       break;
   }
 }

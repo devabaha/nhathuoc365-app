@@ -30,11 +30,8 @@ class VndWallet extends Component {
     this.eventTracker = new EventTracker();
   }
 
-  componentWillMount() {
-    this._getWallet();
-  }
-
   componentDidMount() {
+    this._getWallet();
     this.eventTracker.logCurrentView();
   }
 

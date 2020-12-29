@@ -6,8 +6,7 @@ import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 
-@observer
-export default class ItemGrid extends Component {
+class ItemGrid extends Component {
   constructor(props) {
     super(props);
 
@@ -199,3 +198,5 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+export default observer(ItemGrid);

@@ -16,8 +16,7 @@ import store from '../../store/Store';
 import ItemList from '../Home/ItemList';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class StoresList extends Component {
+class StoresList extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -426,3 +425,5 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   }
 });
+
+export default observer(StoresList);

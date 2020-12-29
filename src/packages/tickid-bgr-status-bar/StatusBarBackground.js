@@ -19,14 +19,16 @@ function StatusBarBackground(props) {
   const show = () => {
     Animated.timing(opacity, {
       toValue: SHOW_FLAG,
-      duration: DURATION
+      duration: DURATION,
+      useNativeDriver: true
     }).start();
   };
 
   const hide = () => {
     Animated.timing(opacity, {
       toValue: HIDE_FLAG,
-      duration: DURATION
+      duration: DURATION,
+      useNativeDriver: true
     }).start();
   };
 

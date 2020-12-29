@@ -189,7 +189,7 @@ class Voucher extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: config.colors.sceneBackground,
     position: 'relative',
     marginBottom: config.device.bottomSpace
   },

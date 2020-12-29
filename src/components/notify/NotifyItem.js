@@ -353,7 +353,6 @@ const styles = StyleSheet.create({
     flex: 1,
 
     marginBottom: 0,
-    backgroundColor: '#f1f1f1'
   },
   notify_container: {
     // paddingBottom: 8,
@@ -407,7 +406,6 @@ const styles = StyleSheet.create({
   items_box: {
     // marginBottom: 69,
     marginTop: 20,
-    backgroundColor: '#f1f1f1'
   },
   rightButtonNavBarContainer: {
     marginRight: 5

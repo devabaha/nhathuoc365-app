@@ -1,5 +1,5 @@
-console.disableYellowBox = true;
-import React, { Component } from 'react';
+LogBox.ignoreAllLogs();
+import React, {Component} from 'react';
 import './lib/Constant';
 import './lib/Helper';
 import appConfig from './config';
@@ -10,7 +10,8 @@ import {
   View,
   Alert,
   Text,
-  TextInput
+  TextInput,
+  LogBox,
 } from 'react-native';
 import {
   Scene,
@@ -20,17 +21,12 @@ import {
   Tabs,
   Stack,
   Modal,
-  Lightbox
+  Lightbox,
 } from 'react-native-router-flux';
-import firebaseConfig from 'react-native-firebase';
-import {
-  setJSExceptionHandler,
-  setNativeExceptionHandler
-} from 'react-native-exception-handler';
 import OneSignal from 'react-native-onesignal';
-import codePush, { LocalPackage } from 'react-native-code-push';
-import TickIdScaningButton from '@tickid/tickid-scaning-button';
-import { CloseButton } from 'app-packages/tickid-navbar';
+import codePush, {LocalPackage} from 'react-native-code-push';
+// import TickIdScaningButton from '@tickid/tickid-scaning-button';
+import {CloseButton} from 'app-packages/tickid-navbar';
 import handleStatusBarStyle from './helper/handleStatusBarStyle';
 import handleTabBarOnPress from './helper/handleTabBarOnPress';
 import getTransitionConfig from './helper/getTransitionConfig';
@@ -83,7 +79,7 @@ import DetailHistoryPayment from './components/account/DetailHistoryPayment';
 import Transfer, {
   Payment as TransferPayment,
   Confirm as TransferConfirm,
-  Result as TransferResult
+  Result as TransferResult,
 } from './components/account/Transfer';
 import PhoneCardContainer, {
   config as phoneCardConfig,
@@ -91,17 +87,17 @@ import PhoneCardContainer, {
   Contact as PhoneCardContactContainer,
   CardHistory as PhoneCardCardHistoryContainer,
   BuyCardConfirm as PhoneCardBuyCardConfirmContainer,
-  BuyCardSuccess as PhoneCardBuyCardSuccessContainer
+  BuyCardSuccess as PhoneCardBuyCardSuccessContainer,
 } from 'app-packages/tickid-phone-card';
 import {
   default as AmazingChat,
   ListChat,
   ListChatNavBar,
   SearchChat,
-  SearchChatNavBar
+  SearchChatNavBar,
 } from './components/amazingChat';
 import MdCardConfirm from './components/services/MdCardConfirm';
-import { ServiceOrders, ServiceFeedback } from './components/services';
+import {ServiceOrders, ServiceFeedback} from './components/services';
 import TabIcon from './components/TabIcon';
 import {
   initialize as initializeRadaModule,
@@ -109,7 +105,7 @@ import {
   ListService,
   ServiceDetail,
   Booking,
-  OrderHistory
+  OrderHistory,
 } from '@tickid/tickid-rada';
 import {
   initialize as initializeVoucherModule,
@@ -120,25 +116,23 @@ import {
   MyVoucher as MyVoucherContainer,
   Voucher as VoucherContainer,
   VoucherDetail as VoucherDetailContainer,
-  ScanScreen as VoucherScanScreenContainer
+  ScanScreen as VoucherScanScreenContainer,
 } from './packages/tickid-voucher';
 import DeviceInfo from 'react-native-device-info';
 import getTickUniqueID from 'app-util/getTickUniqueID';
-import { navBarConfig, whiteNavBarConfig } from './navBarConfig';
-import { addJob } from './helper/jobsOnReset';
-import { Image } from 'react-native';
-import FastImage from 'react-native-fast-image';
+import {navBarConfig, whiteNavBarConfig, routerConfig} from './navBarConfig';
+import {addJob} from './helper/jobsOnReset';
 import ItemAttribute from './components/stores/ItemAttribute';
 import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Schedule from './containers/Schedule';
-import { ScheduleConfirm } from './containers/Schedule/Confirm';
+import {ScheduleConfirm} from './containers/Schedule/Confirm';
 import * as RNLocalize from 'react-native-localize';
-import { arrayLanguages } from './i18n/constants';
+import {arrayLanguages} from './i18n/constants';
 import ModalPicker from './components/ModalPicker';
 import ModalList from './components/ModalList';
 import PlacesAutoComplete from './containers/PlacesAutoComplete';
-import { servicesHandler, SERVICES_TYPE } from './helper/servicesHandler';
+import {servicesHandler, SERVICES_TYPE} from './helper/servicesHandler';
 import branch from 'react-native-branch';
 import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
@@ -152,6 +146,7 @@ import NetWorkInfo from './components/NetWorkInfo';
 import BaseAPI from './network/API/BaseAPI';
 import DomainSelector from './containers/DomainSelector';
 import PremiumInfo from './containers/PremiumInfo';
+
 /**
  * Not allow font scaling
  */
@@ -167,7 +162,7 @@ initializePhoneCardModule({
   appName: APP_NAME_SHOW,
   private: {
     appKey: appConfig.voucherModule.appKey,
-    secretKey: appConfig.voucherModule.secretKey
+    secretKey: appConfig.voucherModule.secretKey,
   },
   device: {
     appVersion: DeviceInfo.getVersion(),
@@ -175,18 +170,18 @@ initializePhoneCardModule({
     deviceType: DeviceInfo.getBrand(),
     os: Platform.OS,
     osVersion: DeviceInfo.getSystemVersion(),
-    store: ''
+    store: '',
   },
   rest: {
-    endpoint: () => BaseAPI.apiDomain
+    endpoint: () => BaseAPI.apiDomain,
   },
   route: {
     push: Actions.push,
     pop: Actions.pop,
     pushToMain: () => {
       Actions.reset(appConfig.routes.primaryTabbar);
-    }
-  }
+    },
+  },
 });
 
 /**
@@ -195,7 +190,7 @@ initializePhoneCardModule({
 initializeVoucherModule({
   private: {
     appKey: appConfig.voucherModule.appKey,
-    secretKey: appConfig.voucherModule.secretKey
+    secretKey: appConfig.voucherModule.secretKey,
   },
   device: {
     appVersion: DeviceInfo.getVersion(),
@@ -203,33 +198,33 @@ initializeVoucherModule({
     deviceType: DeviceInfo.getBrand(),
     os: Platform.OS,
     osVersion: DeviceInfo.getSystemVersion(),
-    store: ''
+    store: '',
   },
   rest: {
-    endpoint: () => BaseAPI.apiDomain
+    endpoint: () => BaseAPI.apiDomain,
   },
   route: {
     push: Actions.push,
     pop: Actions.pop,
-    backToMainAndOpenShop: siteData => {
+    backToMainAndOpenShop: (siteData) => {
       addJob(() => {
         action(() => {
           store.setStoreData(siteData);
           Actions.push(appConfig.routes.store, {
-            title: siteData.name
+            title: siteData.name,
           });
         })();
       });
       Actions.reset(appConfig.routes.primaryTabbar);
     },
-    pushToStoreBySiteData: siteData => {
+    pushToStoreBySiteData: (siteData) => {
       action(() => {
         store.setStoreData(siteData);
         Actions.push(appConfig.routes.store, {
-          title: siteData.name
+          title: siteData.name,
         });
       })();
-    }
+    },
   }
 });
 
@@ -238,14 +233,14 @@ initializeVoucherModule({
  */
 initializeRadaModule({
   colors: {
-    primary: appConfig.colors.primary
+    primary: appConfig.colors.primary,
   },
   private: {
     partnerAuthorization: appConfig.radaModule.partnerAuthorization,
     webhookUrl: null,
     defaultLocation: '37.33233141,-122.0312186',
     appKey: appConfig.voucherModule.appKey,
-    secretKey: appConfig.voucherModule.secretKey
+    secretKey: appConfig.voucherModule.secretKey,
   },
   device: {
     appVersion: DeviceInfo.getVersion(),
@@ -253,44 +248,8 @@ initializeRadaModule({
     deviceType: DeviceInfo.getBrand(),
     os: Platform.OS,
     osVersion: DeviceInfo.getSystemVersion(),
-    store: ''
-  }
-});
-
-const preloadImages = [require('./images/logo-640x410.jpg')];
-const uris = preloadImages.map(image => ({
-  uri: Image.resolveAssetSource(image).uri
-}));
-
-FastImage.preload(uris);
-//-----react-native-exception-handler------
-const errorHandler = (error, isFatal) => {
-  if (isFatal) {
-    const messageLog = `Error: ${isFatal ? 'Fatal:' : ''} ${
-      error.name
-    } ${JSON.stringify(error.message)}`;
-    Alert.alert('Thông báo', `Tác vụ chưa được thực hiện. Vui lòng thử lại!`, [
-      {
-        text: 'Đồng ý'
-      }
-    ]);
-    console.log(error, isFatal);
-    firebaseConfig.crashlytics().log(messageLog);
-    firebaseConfig.crashlytics().recordError(101, messageLog);
-  } else {
-    console.log(error); // So that we can see it in the ADB logs in case of Android if needed
-  }
-};
-
-setJSExceptionHandler((error, isFatal) => {
-  errorHandler(error, isFatal);
-}, true);
-
-setNativeExceptionHandler(exceptionString => {
-  console.log(error);
-  const messageLog = `Error native: ${exceptionString}`;
-  firebaseConfig.crashlytics().log(messageLog);
-  firebaseConfig.crashlytics().recordError(102, messageLog);
+    store: '',
+  },
 });
 
 class App extends Component {
@@ -308,7 +267,7 @@ class App extends Component {
       codePushLocalPackage: null,
       titleUpdateCodePushModal: 'Đã có bản cập nhật mới!',
       descriptionUpdateCodePushModal:
-        'Hệ thống đang cập nhật.\r\nBạn vui lòng chờ trong giây lát...'
+        'Hệ thống đang cập nhật.\r\nBạn vui lòng chờ trong giây lát...',
     };
   }
 
@@ -319,7 +278,7 @@ class App extends Component {
 
     if (nextProps.i18n.language !== nextState.appLanguage) {
       this.setState({
-        appLanguage: nextProps.i18n.language
+        appLanguage: nextProps.i18n.language,
       });
     }
 
@@ -334,7 +293,7 @@ class App extends Component {
       this.codePushSyncManually();
     }
     this.codePushGetMetaData();
-    this.handleSubcribeBranchIO();
+    this.handleSubscribeBranchIO();
     this.handleAddListenerOneSignal();
     // this.syncImmediate();
     // this.getUpdateMetadata();
@@ -343,12 +302,12 @@ class App extends Component {
 
   componentWillUnmount() {
     this.handleRemoveListenerOneSignal();
-    store.branchIOUnsubcribe();
+    store.branchIOUnsubscribe();
   }
 
-  handleSubcribeBranchIO = () => {
-    const { t } = this.props;
-    const branchIOSubcribe = branch.subscribe(({ error, params }) => {
+  handleSubscribeBranchIO = () => {
+    const {t} = this.props;
+    const branchIOSubscribe = branch.subscribe(({error, params}) => {
       if (error) {
         console.error('Error from APP Branch: ' + error);
         return;
@@ -360,7 +319,7 @@ class App extends Component {
           if (store.isHomeLoaded || params.type === SERVICES_TYPE.AFFILIATE) {
             servicesHandler(params, t);
           } else {
-            store.setTempDeepLinkData({ params, t });
+            store.setTempDeepLinkData({params, t});
           }
         }
       } catch (err) {
@@ -369,7 +328,7 @@ class App extends Component {
       // params will never be null if error is null
     });
 
-    store.branchIOSubcribe(branchIOSubcribe);
+    store.branchIOSubscribe(branchIOSubscribe);
   };
 
   handleAddListenerOpenedOneSignal = () => {
@@ -380,19 +339,20 @@ class App extends Component {
     OneSignal.removeEventListener('opened', this.handleOpenningNotification);
   };
 
-  handleOpenningNotification = openResult => {
-    const { t } = this.props;
+  handleOpenningNotification = (openResult) => {
+    const {t} = this.props;
     const params = openResult.notification.payload.additionalData;
+    console.log(params);
     if (store.isHomeLoaded) {
       servicesHandler(params, t);
     } else {
-      store.setTempDeepLinkData({ params, t });
+      store.setTempDeepLinkData({params, t});
     }
   };
 
   localizeListener = () => {
     const selectedLanguage = RNLocalize.findBestAvailableLanguage(
-      arrayLanguages
+      arrayLanguages,
     );
     console.log(selectedLanguage, 'rere');
     setAppLanguage(this.props.i18n, selectedLanguage);
@@ -401,42 +361,42 @@ class App extends Component {
   codePushStatusDidChange(syncStatus) {
     switch (syncStatus) {
       case codePush.SyncStatus.CHECKING_FOR_UPDATE:
-        this.setState({ descriptionUpdateCodePushModal: 'Kiểm tra cập nhât.' });
+        this.setState({descriptionUpdateCodePushModal: 'Kiểm tra cập nhât.'});
         break;
       case codePush.SyncStatus.DOWNLOADING_PACKAGE:
-        this.setState({ descriptionUpdateCodePushModal: 'Đang tải...' });
+        this.setState({descriptionUpdateCodePushModal: 'Đang tải...'});
         break;
       case codePush.SyncStatus.AWAITING_USER_ACTION:
         this.setState({
-          descriptionUpdateCodePushModal: 'Chờ người dùng cho phép.'
+          descriptionUpdateCodePushModal: 'Chờ người dùng cho phép.',
         });
         break;
       case codePush.SyncStatus.INSTALLING_UPDATE:
-        this.setState({ descriptionUpdateCodePushModal: 'Đang cài đặt...' });
+        this.setState({descriptionUpdateCodePushModal: 'Đang cài đặt...'});
         break;
       case codePush.SyncStatus.UP_TO_DATE:
         this.setState({
           descriptionUpdateCodePushModal: 'Cập nhật ứng dụng.',
-          progress: false
+          progress: false,
         });
         break;
       case codePush.SyncStatus.UPDATE_IGNORED:
         this.setState({
           descriptionUpdateCodePushModal: 'Bỏ qua cập nhật.',
-          progress: false
+          progress: false,
         });
         break;
       case codePush.SyncStatus.UPDATE_INSTALLED:
         this.setState({
           descriptionUpdateCodePushModal:
             'Đã cài đặt\r\nMở lại ứng dụng để cập nhật',
-          progress: false
+          progress: false,
         });
         break;
       case codePush.SyncStatus.UNKNOWN_ERROR:
         this.setState({
           descriptionUpdateCodePushModal: 'Có lỗi xảy ra.',
-          progress: false
+          progress: false,
         });
         break;
     }
@@ -447,7 +407,7 @@ class App extends Component {
     codePush.sync(
       {},
       this.codePushStatusDidChange.bind(this),
-      this.codePushDownloadDidProgress.bind(this)
+      this.codePushDownloadDidProgress.bind(this),
     );
   }
 
@@ -465,22 +425,22 @@ class App extends Component {
             'Đã có bản cập nhât mới. Bạn vui lòng cập nhật để có trải nghiệm tốt nhất!',
           optionalUpdateMessage:
             'Đã có bản cập nhât mới. Bạn có muốn cài đặt không?',
-          title: 'Cập nhật ứng dụng'
-        }
+          title: 'Cập nhật ứng dụng',
+        },
       },
       this.codePushStatusDidChange.bind(this),
-      this.codePushDownloadDidProgress.bind(this)
+      this.codePushDownloadDidProgress.bind(this),
     );
   }
 
   codePushGetMetaData() {
-    codePush.getUpdateMetadata().then(localPackage => {
+    codePush.getUpdateMetadata().then((localPackage) => {
       store.setCodePushMetaData(localPackage);
     });
   }
 
   codePushSyncManually() {
-    codePush.checkForUpdate(CPDK[Platform.OS]).then(update => {
+    codePush.checkForUpdate(CPDK[Platform.OS]).then((update) => {
       if (!update) {
         console.log('The app is up to date!');
       } else {
@@ -489,11 +449,11 @@ class App extends Component {
           {
             isOpenCodePushModal: true,
             codePushUpdatePackage: update,
-            titleUpdateCodePushModal: 'Cập nhật ' + update.label
+            titleUpdateCodePushModal: 'Cập nhật ' + update.label,
           },
           () => {
             this.codePushDownloadUpdate();
-          }
+          },
         );
       }
     });
@@ -502,8 +462,8 @@ class App extends Component {
   codePushDownloadDidProgress(progress) {
     this.setState({
       codePushUpdateProgress: Math.round(
-        (progress.receivedBytes / progress.totalBytes) * 100
-      )
+        (progress.receivedBytes / progress.totalBytes) * 100,
+      ),
     });
   }
 
@@ -514,20 +474,20 @@ class App extends Component {
     }
 
     this.state.codePushUpdatePackage
-      .download(progress => this.codePushDownloadDidProgress(progress))
-      .then(localPackage => {
+      .download((progress) => this.codePushDownloadDidProgress(progress))
+      .then((localPackage) => {
         this.setState(
           {
-            codePushLocalPackage: localPackage
+            codePushLocalPackage: localPackage,
           },
           () => {
             // this.codePushInstallUpdate(localPackage);
-          }
+          },
         );
         // setTimeout(() => this.codePushInstallUpdate(localPackage), 1000);
         console.log(localPackage);
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('%cdownload_update_codepush', 'color:red', err);
         Alert.alert(
           'Lỗi cập nhật',
@@ -535,22 +495,22 @@ class App extends Component {
           [
             {
               text: 'OK',
-              onPress: () => this.closeCodePushModal()
-            }
-          ]
+              onPress: () => this.closeCodePushModal(),
+            },
+          ],
         );
       });
   }
 
   codePushInstallUpdate(
-    codePushLocalPackage = this.state.codePushLocalPackage
+    codePushLocalPackage = this.state.codePushLocalPackage,
   ) {
     codePushLocalPackage
       .install(codePush.InstallMode.IMMEDIATE)
       .then(() => {
         codePush.notifyAppReady();
       })
-      .catch(err => {
+      .catch((err) => {
         console.log('%cinstall_update_codepush', 'color:red', err);
         Alert.alert(
           'Lỗi cập nhật',
@@ -558,9 +518,9 @@ class App extends Component {
           [
             {
               text: 'OK',
-              onPress: () => this.closeCodePushModal()
-            }
-          ]
+              onPress: () => this.closeCodePushModal(),
+            },
+          ],
         );
       });
   }
@@ -578,11 +538,11 @@ class App extends Component {
   }
 
   closeCodePushModal(callBack = () => {}) {
-    this.setState({ isOpenCodePushModal: false }, () => callBack());
+    this.setState({isOpenCodePushModal: false}, () => callBack());
   }
 
   setHeader(header) {
-    this.setState({ header });
+    this.setState({header});
   }
 
   handleAddListenerOneSignal = () => {
@@ -595,14 +555,14 @@ class App extends Component {
     OneSignal.removeEventListener('ids', this.handleAddPushToken);
   };
 
-  handleAddPushToken = async device => {
+  handleAddPushToken = async (device) => {
     if (_.isObject(device)) {
       const push_token = device.pushToken;
       const player_id = device.userId;
       try {
         await APIHandler.add_push_token({
           push_token,
-          player_id
+          player_id,
         });
         this.handleAddListenerOpenedOneSignal();
       } catch (error) {
@@ -613,7 +573,7 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{ overflow: 'scroll', flex: 1 }}>
+      <View style={{overflow: 'scroll', flex: 1}}>
         {this.state.header}
         <NetWorkInfo />
         <RootRouter
@@ -639,7 +599,7 @@ class App extends Component {
                 showConfirmBtn={false}
                 progress={this.state.codePushUpdateProgress}
                 onProgressComplete={this.handleCodePushProgressComplete.bind(
-                  this
+                  this,
                 )}
                 // onPressConfirm={this.codePushDownloadUpdate.bind(this)}
               />
@@ -654,7 +614,7 @@ class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   tabBarStyle: {
     borderTopWidth: Util.pixel,
@@ -664,11 +624,11 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowRadius: 10,
     shadowOpacity: 0.3,
-    elevation: 2
+    elevation: 2,
   },
   content: {
     width: Util.size.width,
@@ -676,38 +636,39 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFD2D2',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: isIOS ? 20 : 0
+    marginTop: isIOS ? 20 : 0,
   },
   message: {
     color: '#D8000C',
-    fontSize: 14
+    fontSize: 14,
   },
   safeArea: {
     flex: 1,
-    backgroundColor: appConfig.colors.primary
-  }
+    backgroundColor: appConfig.colors.primary,
+  },
 });
 
 // wrap App with codepush HOC
+// export default App;
 export default withTranslation()(
-  codePush({ checkFrequency: codePush.CheckFrequency.MANUAL })(App)
+  codePush({checkFrequency: codePush.CheckFrequency.MANUAL})(App),
 );
 
 class RootRouter extends Component {
   state = {
-    tabVisible: {}
+    tabVisible: {},
   };
 
   shouldComponentUpdate(nextProps, nextState) {
     const isTabVisbleChange = Object.keys(nextState.tabVisible).some(
-      nextKey => {
-        return Object.keys(this.state.tabVisible).some(currentKey => {
+      (nextKey) => {
+        return Object.keys(this.state.tabVisible).some((currentKey) => {
           return (
             nextKey === currentKey &&
             nextState.tabVisible[nextKey] !== this.state.tabVisible[currentKey]
           );
         });
-      }
+      },
     );
 
     if (isTabVisbleChange) {
@@ -721,11 +682,11 @@ class RootRouter extends Component {
   }
 
   setTabVisible(tabVisible) {
-    this.setState(prev => ({
+    this.setState((prev) => ({
       tabVisible: {
         ...prev.tabVisible,
-        ...tabVisible
-      }
+        ...tabVisible,
+      },
     }));
   }
 
@@ -734,7 +695,7 @@ class RootRouter extends Component {
   }
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <Router
         store={store}
@@ -742,16 +703,15 @@ class RootRouter extends Component {
         onStateChange={(prevState, newState, action) => {
           handleStatusBarStyle(prevState, newState, action);
         }}
-      >
+        {...routerConfig}>
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
               <Scene
                 key="root"
-                titleStyle={{ alignSelf: 'center' }}
+                titleStyle={{alignSelf: 'center'}}
                 headerLayoutPreset="center"
-                hideNavBar
-              >
+                hideNavBar>
                 <Scene
                   appLanguage={this.props.appLanguage}
                   key={appConfig.routes.launch}
@@ -764,17 +724,15 @@ class RootRouter extends Component {
                   tabBarStyle={styles.tabBarStyle}
                   activeBackgroundColor="#ffffff"
                   inactiveBackgroundColor="#ffffff"
-                  tabBarOnPress={props => handleTabBarOnPress({ ...props, t })}
-                  {...navBarConfig}
-                >
+                  tabBarOnPress={(props) => handleTabBarOnPress({...props, t})}
+                  {...navBarConfig}>
                   {/* ================ HOME TAB ================ */}
                   <Stack
                     key={appConfig.routes.homeTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab1.title')}
                     iconName="store"
-                    iconSize={24}
-                  >
+                    iconSize={24}>
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
                       title="TickID"
@@ -792,8 +750,7 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab2.title')}
                     iconName="notifications"
                     iconSize={24}
-                    notifyKey="new_totals"
-                  >
+                    notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
                       title={t('screen.news.mainTitle')}
@@ -802,13 +759,13 @@ class RootRouter extends Component {
                   </Stack>
 
                   {/* ================ SCAN QR TAB ================ */}
-                  <Stack
+                  {/* <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={TickIdScaningButton}
                     primaryColor={appConfig.colors.primary} // optional for TickIdScaningButton
                   >
                     <Scene component={() => null} />
-                  </Stack>
+                  </Stack> */}
 
                   {/**
                    ************************ Tab 3 ************************
@@ -819,8 +776,7 @@ class RootRouter extends Component {
                     iconSize={24}
                     iconLabel={t('appTab.tab4.title')}
                     iconName="shopping-cart"
-                    notifyKey="notify_cart"
-                  >
+                    notifyKey="notify_cart">
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
                       title={t('screen.orders.mainTitle')}
@@ -837,8 +793,7 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab5.title')}
                     iconName="account-circle"
                     notifyKey="notify_account"
-                    iconSize={24}
-                  >
+                    iconSize={24}>
                     <Scene
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
@@ -1189,9 +1144,9 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key="notify_item">
+                <Stack key={appConfig.routes.notifyDetail}>
                   <Scene
-                    key="notify_item_1"
+                    key={`${appConfig.routes.notifyDetail}_1`}
                     title={t('screen.newsDetail.mainTitle')}
                     component={NotifyItem}
                     {...navBarConfig}
@@ -1406,8 +1361,7 @@ class RootRouter extends Component {
 
                 <Stack
                   key={phoneCardConfig.routes.buyCardSuccess}
-                  panHandlers={null}
-                >
+                  panHandlers={null}>
                   <Scene
                     key={`${phoneCardConfig.routes.buyCardSuccess}_1`}
                     component={PhoneCardBuyCardSuccessContainer}

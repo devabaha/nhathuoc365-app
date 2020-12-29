@@ -1,7 +1,7 @@
 module.exports = {
-  presets: ['module:metro-react-native-babel-preset', '@babel/preset-flow'],
+  presets: ['module:metro-react-native-babel-preset'],
   plugins: [
-    ['@babel/plugin-proposal-decorators', { legacy: true }],
+    ['@babel/plugin-proposal-decorators', {legacy: true}],
     [
       'module-resolver',
       {
@@ -10,14 +10,14 @@ module.exports = {
           'app-util': './src/util',
           'app-store': './src/store',
           'app-config': './src/config',
-          'app-packages': './src/packages'
-        }
-      }
-    ]
+          'app-packages': './src/packages',
+        },
+      },
+    ],
   ],
   env: {
     production: {
-      plugins: ['transform-remove-console']
-    }
+      plugins: ['transform-remove-console'],
+    },
   }
 };

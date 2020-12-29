@@ -21,8 +21,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class PhoneCardConfirm extends Component {
+class PhoneCardConfirm extends Component {
   constructor(props) {
     super(props);
     console.log(props);
@@ -404,3 +403,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(225,225,225)'
   }
 });
+
+export default observer(PhoneCardConfirm);

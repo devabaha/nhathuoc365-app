@@ -24,8 +24,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'thuchuylekey',
-      secretKey: '6QAfthuchuylekeyVus5po'
+      appKey: 'abahaglobalkeywoxBg',
+      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh'
     };
   }
 
@@ -37,7 +37,7 @@ class Config {
 
   get oneSignal() {
     return {
-      appKey: '81c68653-e1e3-4ec7-baa4-5a8e89541e29'
+      appKey: '437375e6-9a46-42fd-836e-30d3b1c28cd1'
     };
   }
 
@@ -70,6 +70,7 @@ class Config {
         sub: '#f5bb4b',
         addition: '#f18c21'
       },
+      sceneBackground: '#e9e9ee',
       primary: this.primaryColor,
       white: '#fff',
       black: '#000',

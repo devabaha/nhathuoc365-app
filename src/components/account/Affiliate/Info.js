@@ -1,7 +1,7 @@
 /* @flow */
 
 import React from 'react';
-import { ScrollView, View, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 const Info = props => {
   return (

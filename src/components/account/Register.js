@@ -15,8 +15,7 @@ import store from '../../store/Store';
 import Modal from 'react-native-modalbox';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class Register extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
 
@@ -579,3 +578,5 @@ const styles = StyleSheet.create({
     marginLeft: 8
   }
 });
+
+export default observer(Register);

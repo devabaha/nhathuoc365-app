@@ -42,19 +42,16 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 
     get icon() {
         if (this.props.icon) return this.props.icon;
-        let Icon = null, name = "", extraStyle = {};
+        let Icon = Ionicons, name = "", extraStyle = {};
         switch (this.props.type) {
             case RIGHT_BUTTON_TYPE.SHOPPING_CART:
                 name = "ios-cart";
-                Icon = Ionicons;
                 break;
             case RIGHT_BUTTON_TYPE.CHAT:
                 name = "ios-chatbubles";
-                Icon = Ionicons;
                 break;
             case RIGHT_BUTTON_TYPE.SHARE:
-                name = "ios-redo";
-                Icon = Ionicons;
+                name = "ios-share-social";
                 break;
         }
 

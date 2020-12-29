@@ -10,8 +10,7 @@ import EventTracker from '../../helper/EventTracker';
 
 import store from '../../store/Store';
 
-@observer
-export default class PayAccount extends Component {
+class PayAccount extends Component {
   constructor(props) {
     super(props);
 
@@ -34,8 +33,6 @@ export default class PayAccount extends Component {
   componentWillUnmount() {
     this.eventTracker.clearTracking();
   }
-
-  componentWillMount() {}
 
   renderTopLabelCoin() {
     var { wallet, account, barcode } = this.state;
@@ -343,3 +340,5 @@ const styles = StyleSheet.create({
     fontSize: 14
   }
 });
+
+export default observer(PayAccount);

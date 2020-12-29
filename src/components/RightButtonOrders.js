@@ -1,15 +1,14 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import React, {Component} from 'react';
+import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 
 // librarys
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import {Actions, ActionConst} from 'react-native-router-flux';
 import store from '../store/Store';
 
-@observer
-export default class RightButtonOrders extends Component {
+class RightButtonOrders extends Component {
   render() {
     return (
       <TouchableHighlight
@@ -19,10 +18,9 @@ export default class RightButtonOrders extends Component {
             store_id: this.props.store_id || undefined,
             title: this.props.title || undefined,
             tel: this.props.tel || undefined,
-            hideContinue: true
+            hideContinue: true,
           });
-        }}
-      >
+        }}>
         <View style={styles.right_btn_add_store}>
           <Icon name="shopping-cart" size={20} color="#ffffff" />
         </View>
@@ -35,10 +33,10 @@ const styles = StyleSheet.create({
   right_btn_add_store: {
     paddingVertical: 1,
     paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0
+    paddingTop: isAndroid ? 4 : 0,
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   stores_info_action_notify: {
     position: 'absolute',
@@ -51,11 +49,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     borderRadius: 8,
-    paddingHorizontal: 2
+    paddingHorizontal: 2,
   },
   stores_info_action_notify_value: {
     fontSize: 10,
     color: '#ffffff',
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
+
+export default observer(RightButtonOrders);

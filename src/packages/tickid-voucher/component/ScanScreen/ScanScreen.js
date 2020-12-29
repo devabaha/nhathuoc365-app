@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
     marginBottom: config.device.bottomSpace
   },
   containerStyle: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: config.colors.sceneBackground,
     flex: 1
   },
   topContent: {

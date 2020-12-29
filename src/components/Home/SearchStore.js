@@ -14,8 +14,7 @@ import Sticker from '../Sticker';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class SearchStore extends Component {
+class SearchStore extends Component {
   constructor(props) {
     super(props);
 
@@ -297,8 +296,9 @@ export default class SearchStore extends Component {
   }
 }
 
+export default observer(SearchStore);
+
 /* @flow */
-@observer
 class StoreItem extends Component {
   constructor(props) {
     super(props);

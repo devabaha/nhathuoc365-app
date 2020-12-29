@@ -14,7 +14,7 @@ import SubmitButton from '../../component/SubmitButton';
 import FingerprintScanner from 'react-native-fingerprint-scanner';
 import AuthenKeyboardModal from 'app-packages/tickid-authen-keyboard';
 import { FieldItemWrapper, FieldItem } from '../../component/FieldItem';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { internalFetch } from '../../helper/apiFetch';
 import Loading from '@tickid/tickid-rn-loading';
 import config from '../../config';
