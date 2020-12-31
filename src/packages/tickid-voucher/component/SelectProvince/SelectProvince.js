@@ -54,7 +54,7 @@ class SelectProvince extends Component {
     this.startAnimation(this.state.bottom, 0, ANIMATION_TIME);
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.keyboardWillShowListener = Keyboard.addListener(
       'keyboardWillShow',
       this.keyboardWillShow

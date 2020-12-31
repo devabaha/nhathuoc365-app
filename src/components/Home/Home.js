@@ -238,7 +238,7 @@ class Home extends Component {
               <ListProductSkeleton />
             ) : null}
 
-            {this.hasSites && (
+            {/* {this.hasSites && (
               <HomeCardList
                 onShowAll={this.props.onShowAllSites}
                 data={this.props.sites}
@@ -301,7 +301,7 @@ class Home extends Component {
               </HomeCardList>
             ) : this.props.apiFetching ? (
               <HomeCardListSkeleton />
-            ) : null}
+            ) : null} */}
           </View>
         </ScrollView>
 

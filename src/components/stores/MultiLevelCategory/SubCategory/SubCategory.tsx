@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import { Image } from 'react-native';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import Shimmer from 'react-native-shimmer';
+
 import { SubCategoryProps } from '.';
 import Category from '../Category';
 import Row from './Row';
 //@ts-ignore
 import appConfig from 'app-config';
 import { CATEGORY_TYPE } from '../constants';
+import Container from '../../../Layout/Container';
 
 const styles = StyleSheet.create({
     container: {
@@ -27,13 +31,16 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%'
     },
-    title: {
+    titleContainer: {
         marginTop: 15,
-        marginBottom: 10,
+        marginBottom: 12,
+    },
+    title: {
         fontSize: 18,
         fontWeight: 'bold',
         textTransform: 'uppercase',
-        letterSpacing: .3
+        letterSpacing: .3,
+        flex: 1
     },
     body: {
         backgroundColor: '#fcfcfc'
@@ -61,6 +68,10 @@ const styles = StyleSheet.create({
     },
     contentContainerStyle: {
         // backgroundColor: 'red'
+    },
+    icon: {
+        fontSize: 16,
+        color: '#777'
     }
 })
 
@@ -221,9 +232,14 @@ class SubCategory extends Component<SubCategoryProps> {
                         </TouchableOpacity>
                     }
                     <TouchableOpacity onPress={() => this.props.onPressTitle(null)}>
-                        <Text style={styles.title}>
-                            {this.props.title}
-                        </Text>
+                        <Container row center style={styles.titleContainer}>
+                            <Text style={styles.title}>
+                                {this.props.title}
+                            </Text>
+                            <Shimmer opacity={1} animationOpacity={.3} pauseDuration={3000}>
+                                <FontAwesomeIcon name="angle-double-right" style={styles.icon} />
+                            </Shimmer>
+                        </Container>
                     </TouchableOpacity>
                 </View>
                 <View

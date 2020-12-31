@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 import {
   View,
   Text,
-  Image,
+  // Image,
   TouchableHighlight,
   StyleSheet
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import store from '../../store/Store';
 import { Actions } from 'react-native-router-flux';
+import FastImage from 'react-native-fast-image';
+
 import appConfig from 'app-config';
 import { DiscountBadge } from '../../components/Badges';
 
@@ -174,7 +176,7 @@ class Items extends Component {
               style={styles.item_image_box}
             >
               {!!item.logo_url && (
-                <Image
+                <FastImage
                   style={styles.item_image}
                   source={{ uri: item.logo_url }}
                 />
@@ -205,7 +207,7 @@ class Items extends Component {
               style={styles.item_image_box}
             >
               {!!item.image && (
-                <Image style={styles.item_image} source={{ uri: item.image }} />
+                <FastImage style={styles.item_image} source={{ uri: item.image }} />
               )}
             </View>
           </View>
@@ -283,7 +285,7 @@ class Items extends Component {
             style={styles.item_image_box}
           >
             {!!item.image && (
-              <Image style={styles.item_image} source={{ uri: item.image }} />
+              <FastImage style={styles.item_image} source={{ uri: item.image }} />
             )}
             <TouchableHighlight
               style={styles.item_add_cart_btn}

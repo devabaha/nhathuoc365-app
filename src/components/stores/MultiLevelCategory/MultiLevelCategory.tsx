@@ -13,7 +13,6 @@ import * as React from "react";
 import { SafeAreaView, View, StyleSheet, FlatList, RefreshControl, ScrollView } from "react-native";
 import IconFeather from 'react-native-vector-icons/Feather';
 import Button from 'react-native-button';
-import RightButtonChat from '../../RightButtonChat';
 import Category from "./Category";
 import SubCategory from "./SubCategory";
 //@ts-ignore
@@ -30,7 +29,6 @@ import SVGEmptyBoxOpen from '../../../images/empty-box-open.svg';
 import NoResult from "../../NoResult";
 import { CATEGORY_POSITION_TYPE, CATEGORY_TYPE, TEMP_CATEGORIES } from "./constants";
 import { servicesHandler } from "../../../helper/servicesHandler";
-import RightButtonOrders from "../../RightButtonOrders";
 import RightButtonNavBar from "../../RightButtonNavBar";
 import { RIGHT_BUTTON_TYPE } from "../../RightButtonNavBar/constants";
 import EventTracker from "../../../helper/EventTracker";
@@ -93,8 +91,11 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                 type: nextProps.type
             })
         }
+        if (nextState !== this.state) {
+            return true;
+        }
 
-        return true;
+        return false;
     }
 
     get isFullData() {
@@ -160,6 +161,10 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         );
     }
 
+    formatCategories(categories = []) {
+        return categories.map((category, index) => ({ ...category, index }));
+    }
+
     async getMultiLevelCategories() {
         //@ts-ignore
         const { t } = this.props;
@@ -172,10 +177,11 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
             if (response) {
                 //@ts-ignore
                 if (response.status === STATUS_SUCCESS) {
-                    const defaultSelectedCategory = response.data.categories[0] || this.state.selectedMainCategory;
+                    const categories = this.formatCategories(response.data.categories);
+                    const defaultSelectedCategory = categories[0] || this.state.selectedMainCategory;
                     const selectedMainCategory = this.state.selectedMainCategory.id === -1
                         ? defaultSelectedCategory
-                        : (response.data.categories.find(cate => cate.id === this.state.selectedMainCategory.id)
+                        : (categories.find(cate => cate.id === this.state.selectedMainCategory.id)
                             || defaultSelectedCategory);
                     // this.setState({
                     //     type: CATEGORY_TYPE.FIX_3_LEVEL,
@@ -184,7 +190,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     // })
                     this.setState((prevState: any) => ({
                         type: response.data.type || prevState.type,
-                        categories: response.data.categories,
+                        categories,
                         selectedMainCategory
                     }),
                         () => {
@@ -270,6 +276,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     handleSubCategoriesScrolling(e) {
         if (!this.isFullData) return;
         if (this.state.isScrollByMainCategoryPressing) return;
+
         const {
             contentOffset: { y },
             layoutMeasurement: { height: layoutHeight },
@@ -282,25 +289,25 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
 
         if (scrollOverCategoriesID.length !== 0) {
             const nearestCategoryID = scrollOverCategoriesID[scrollOverCategoriesID.length - 1].trim();
-            const nearestCategory = this.state.categories
-                .find(cate => String(cate.id) === nearestCategoryID);
-            const nearestCategoryIndex = this.state.categories
-                .findIndex(cate => String(cate.id) === nearestCategoryID);
-            const nextCategoryIndex = nearestCategoryIndex + 1;
-            const nextCategory = this.state.categories[nextCategoryIndex];
-
-
-            if (nextCategory) {
-                const nearestCategoryPosition = this.state.subCategoryDataPosition[
-                    this.getFormattedCategoryIDForPositionData(nearestCategoryID)];
-                const nextCategoryPosition = this.state.subCategoryDataPosition[
-                    this.getFormattedCategoryIDForPositionData(nextCategory.id)];
-                if (y < (nextCategoryPosition - nearestCategoryPosition) / 4) {
-                    return;
-                }
-            }
-
             if (nearestCategoryID !== String(this.state.selectedMainCategory.id)) {
+
+                const nearestCategory = this.state.categories
+                    .find(cate => String(cate.id) === nearestCategoryID);
+                const nearestCategoryIndex = nearestCategory.index;
+                const nextCategoryIndex = nearestCategoryIndex + 1;
+                const nextCategory = this.state.categories[nextCategoryIndex];
+
+
+                if (nextCategory) {
+                    const nearestCategoryPosition = this.state.subCategoryDataPosition[
+                        this.getFormattedCategoryIDForPositionData(nearestCategoryID)];
+                    const nextCategoryPosition = this.state.subCategoryDataPosition[
+                        this.getFormattedCategoryIDForPositionData(nextCategory.id)];
+                    if (y < (nextCategoryPosition - nearestCategoryPosition) / 4) {
+                        return;
+                    }
+                }
+
 
                 this.setState({
                     selectedMainCategory: nearestCategory
@@ -313,32 +320,29 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
     scrollMainCategoryToIndex(category) {
         const offsetTarget = 2;
         if (this.refMainCategory.current) {
-            const nextMainCategoryIndex = this.state.categories
-                .findIndex(cate => cate.id === category.id)
-            if (nextMainCategoryIndex !== -1) {
-                let index = nextMainCategoryIndex - offsetTarget;
-                if (index < 0) {
-                    index = 0;
-                }
-                this.refMainCategory.current.scrollToIndex({ index })
+            let index = category.index - offsetTarget;
+            if (index < 0) {
+                index = 0;
             }
+            this.refMainCategory.current.scrollToIndex({ index })
         }
     }
 
     handleMappingDataPosition(category, type, e) {
-        const { y } = e.nativeEvent.layout;
 
         switch (type) {
             case CATEGORY_POSITION_TYPE.MAIN:
-                this.mapMainCategoryPosition(category, y)
+                this.mapMainCategoryPosition(category, e)
                 break;
             case CATEGORY_POSITION_TYPE.SUB:
-                this.mapSubCategoryPosition(category, y)
+                if (!this.isFullData) return;
+                this.mapSubCategoryPosition(category, e)
                 break;
         }
     }
 
-    mapMainCategoryPosition(category, y) {
+    mapMainCategoryPosition(category, e) {
+        const { y } = e.nativeEvent.layout;
         if (this.state.mainCategoryDataPosition[category.id] !== y) {
             this.setState((prevState: any) => ({
                 mainCategoryDataPosition: {
@@ -349,7 +353,8 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
         }
     }
 
-    mapSubCategoryPosition(category, y) {
+    mapSubCategoryPosition(category, e) {
+        const { y } = e.nativeEvent.layout;
         if (this.state.subCategoryDataPosition[category.id] !== y) {
             const subCategoryDataPosition = {
                 ...this.state.subCategoryDataPosition,
@@ -364,6 +369,7 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                     // prevent auto ordering of JS obj
                     subCategoryDataPositionOrderedByValue[key] = subCategoryDataPosition[key];
                 });
+
             this.setState({
                 subCategoryDataPosition: subCategoryDataPositionOrderedByValue
             })

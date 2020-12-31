@@ -1,42 +1,34 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {
-  View,
-  TouchableHighlight,
-  StyleSheet,
-  Animated,
-  Easing
-} from 'react-native';
+import {View, TouchableHighlight, StyleSheet, Animated, Easing} from 'react-native';
+// import Animated, {Easing} from 'react-native-reanimated';
 import Swiper from 'react-native-swiper';
 import appConfig from 'app-config';
 import Icon from 'react-native-vector-icons/Entypo';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
-const PROMOTION_WIDTH = appConfig.device.width - 32;
-const PAGINATION_WIDTH = 8;
+const PAGINATION_WIDTH = 10;
 const PAGINATION_SPACE = 8;
 
 class Promotion extends Component {
   static propTypes = {
     data: PropTypes.array.isRequired,
     ratio: PropTypes.string,
-    padding: PropTypes.number
+    padding: PropTypes.number,
   };
 
   static defaultProps = {
     data: [],
     ratio: '3:1',
-    padding: 16
+    padding: 16,
   };
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      paginationLeft: new Animated.Value(0),
-      paginationInactive: new Animated.Value(0)
-    };
+    this.state = {};
     this.index = 0;
+    this.paginationLeft = new Animated.Value(0);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -47,18 +39,16 @@ class Promotion extends Component {
     return (
       <View
         key={index}
-        style={[styles.promotionItem, this.props.promotionItemStyle]}
-      >
+        style={[styles.promotionItem, this.props.promotionItemStyle]}>
         <TouchableHighlight
           onPress={() => this.props.onPress(promotion, index)}
-          underlayColor="transparent"
-        >
+          underlayColor="transparent">
           <CachedImage
-            source={{ uri: promotion.banner }}
+            source={{uri: promotion.banner}}
             style={[
               styles.bannerImage,
               dimensionStyle,
-              this.props.bannerImageStyle
+              this.props.bannerImageStyle,
             ]}
           />
         </TouchableHighlight>
@@ -75,9 +65,10 @@ class Promotion extends Component {
       toValue:
         index * (PAGINATION_WIDTH + (index !== 0 ? PAGINATION_SPACE : 0)),
       duration: 250,
+      easing: Easing.ease,
       useNativeDriver: false
     };
-    Animated.timing(this.state.paginationLeft, animationConfig).start();
+    Animated.timing(this.paginationLeft, animationConfig).start();
   };
 
   getRatio() {
@@ -98,14 +89,15 @@ class Promotion extends Component {
               key={index}
               active={index === this.index}
               style={{
-                ...(index !== 0 && { marginLeft: PAGINATION_SPACE })
+                ...(index !== 0 && {marginLeft: PAGINATION_SPACE}),
               }}
             />
           );
         })}
+
         <AnimatedIcon
           name="circle"
-          style={[styles.paginationActive, { left: this.state.paginationLeft }]}
+          style={[styles.paginationActive, {left: this.paginationLeft}]}
         />
       </View>
     );
@@ -115,7 +107,7 @@ class Promotion extends Component {
     const [width, height] = this.getRatio();
     const dimensionStyle = {
       width,
-      height
+      height,
     };
     return (
       <View style={[styles.container, this.props.containerStyle]}>
@@ -129,12 +121,11 @@ class Promotion extends Component {
           containerStyle={[
             styles.slideContainerStyle,
             dimensionStyle,
-            this.props.containerSlideStyle
+            this.props.containerSlideStyle,
           ]}
-          style={styles.slideStyle}
-        >
+          style={styles.slideStyle}>
           {this.props.data.map((promotion, index) =>
-            this.renderItem(promotion, index, dimensionStyle)
+            this.renderItem(promotion, index, dimensionStyle),
           )}
         </Swiper>
       </View>
@@ -144,18 +135,18 @@ class Promotion extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   slideContainerStyle: {
     position: 'relative',
     marginTop: 8,
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 8,
   },
   slideStyle: {},
   bannerImage: {},
   promotionItem: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   paginationWrapper: {
     flexDirection: 'row',
@@ -165,28 +156,27 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     position: 'absolute',
     bottom: 15,
-    borderRadius: 8
+    borderRadius: 8,
   },
   pagination: {
     height: 1,
     width: PAGINATION_WIDTH,
     backgroundColor: '#fff',
-    ...elevationShadowStyle(1)
+    ...elevationShadowStyle(2, 0, 0, 0.6),
   },
   paginationActive: {
     fontSize: PAGINATION_WIDTH + 1,
     color: '#fff',
     position: 'absolute',
-    ...elevationShadowStyle(2)
-  }
+    ...elevationShadowStyle(3, 0, 0, 0.6),
+  },
 });
 
 export default Promotion;
 
 class Pagination extends Component {
-  state = {
-    animatedShow: new Animated.Value(this.animatedValue)
-  };
+  state = {};
+  animatedShow = new Animated.Value(this.animatedValue);
 
   get animatedValue() {
     if (this.props.active) {
@@ -198,11 +188,11 @@ class Pagination extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.active !== this.props.active) {
-      Animated.timing(this.state.animatedShow, {
+      Animated.timing(this.animatedShow, {
         toValue: nextProps.active ? 0 : 1,
         easing: Easing.quad,
         duration: 200,
-        useNativeDriver: true
+        useNativeDriver: false
       }).start();
     }
 
@@ -211,7 +201,7 @@ class Pagination extends Component {
 
   render() {
     const animatedStyle = {
-      opacity: this.state.animatedShow
+      opacity: this.animatedShow,
     };
 
     return (
