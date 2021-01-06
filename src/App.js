@@ -590,7 +590,6 @@ class App extends Component {
             closeOnHardwareBackPress={false}
             showCancelButton={false}
             showConfirmButton={false}
-            // contentContainerStyle={{ }}
             customView={
               <AppCodePush
                 title={this.state.titleUpdateCodePushModal}
@@ -601,7 +600,6 @@ class App extends Component {
                 onProgressComplete={this.handleCodePushProgressComplete.bind(
                   this,
                 )}
-                // onPressConfirm={this.codePushDownloadUpdate.bind(this)}
               />
             }
           />

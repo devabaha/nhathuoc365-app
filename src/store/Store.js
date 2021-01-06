@@ -1,8 +1,8 @@
-import { reaction, observable, action, toJS } from 'mobx';
+import {reaction, observable, action, toJS} from 'mobx';
 import autobind from 'autobind-decorator';
-import { Keyboard, Platform, Linking, Alert } from 'react-native';
+import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import { initialize as initializeRadaModule } from '@tickid/tickid-rada';
+import {initialize as initializeRadaModule} from '@tickid/tickid-rada';
 import firebaseAnalytics from '@react-native-firebase/analytics';
 
 @autobind
@@ -17,7 +17,7 @@ class Store {
         if (!this.store_data) {
           this._getStoreInfo();
         }
-      }
+      },
     );
 
     reaction(
@@ -26,7 +26,7 @@ class Store {
         if (this.isConnected) {
           var queue = Object.keys(this.apiQueue);
           if (queue.length > 0) {
-            queue.map(key => {
+            queue.map((key) => {
               let queueFunc = this.apiQueue[key];
               if (typeof queueFunc == 'function') {
                 queueFunc();
@@ -36,7 +36,7 @@ class Store {
 
           this.apiQueue = {};
         }
-      }
+      },
     );
 
     // Keyboard handler
@@ -86,7 +86,7 @@ class Store {
           if (response.data.new_totals > 0) {
             this.setRefreshNews(this.refresh_news + 1);
           }
-          const { user, ...notifies } = response.data;
+          const {user, ...notifies} = response.data;
           this.initConfigRadaModule(user);
           this.setUserInfo(user);
           this.setNotify(notifies);
@@ -99,7 +99,7 @@ class Store {
     }
   };
 
-  @observable radaConfig = { name: '', tel: '' };
+  @observable radaConfig = {name: '', tel: ''};
   @action initConfigRadaModule(user) {
     if (
       user &&
@@ -110,7 +110,7 @@ class Store {
       this.radaConfig.tel = user.tel;
       initializeRadaModule({
         defaultContactName: user.name,
-        defaultContactPhone: user.tel
+        defaultContactPhone: user.tel,
       });
     }
   }
@@ -125,23 +125,23 @@ class Store {
             'Đã có bản cập nhật mới, bạn vui lòng cập nhật ứng dụng để có trải nghiệm tốt nhất.',
             [
               {
-                text: 'Lúc khác'
+                text: 'Lúc khác',
               },
               {
                 text: 'Cập nhật',
                 style: 'cancel',
                 onPress: () =>
-                  Linking.openURL(notifies.url_update).catch(error => {
+                  Linking.openURL(notifies.url_update).catch((error) => {
                     console.log('update_app', error);
                     Alert.alert(
                       'Có lỗi xảy ra',
-                      `Bạn có thể truy cập ${appStoreName} để thử lại.`
+                      `Bạn có thể truy cập ${appStoreName} để thử lại.`,
                     );
-                  })
-              }
-            ]
+                  }),
+              },
+            ],
           ),
-        1000
+        1000,
       );
     }
   }
@@ -149,7 +149,7 @@ class Store {
   storeUnMount = {};
 
   runStoreUnMount() {
-    Object.keys(this.storeUnMount).map(key => {
+    Object.keys(this.storeUnMount).map((key) => {
       let unMount = this.storeUnMount[key];
 
       if (typeof unMount == 'function') {
@@ -188,7 +188,7 @@ class Store {
     new_totals: 0,
     updating_version: 0,
     new_version: '',
-    url_update: ''
+    url_update: '',
   };
   @observable notify_chat = {};
   @observable notify_admin_chat = {};
@@ -323,7 +323,7 @@ class Store {
     if (data && Object.keys(data.products).length > 0) {
       var cart_products = [],
         cart_products_confirm = [];
-      Object.keys(data.products).map(key => {
+      Object.keys(data.products).map((key) => {
         let product = data.products[key];
         cart_products.push(product);
         // if (product.selected == 1) {
@@ -362,7 +362,7 @@ class Store {
       data[attrName] = res.data;
       this.ndt_history.push({
         mcc_investor_username: res.mcc_investor_username,
-        data
+        data,
       });
     }
   }
@@ -370,8 +370,8 @@ class Store {
   @action getNdtHistory(mcc_investor_username) {
     return toJS(
       this.ndt_history.find(
-        n => n.mcc_investor_username === mcc_investor_username
-      )
+        (n) => n.mcc_investor_username === mcc_investor_username,
+      ),
     );
   }
 
@@ -421,8 +421,8 @@ class Store {
 
   //-----reset asyncStorage-----
   @action resetAsyncStorage() {
-    AsyncStorage.removeItem(PASSWORD_STORAGE_KEY, err =>
-      console.log('reset asyncStorage', err)
+    AsyncStorage.removeItem(PASSWORD_STORAGE_KEY, (err) =>
+      console.log('reset asyncStorage', err),
     );
   }
 
@@ -485,9 +485,14 @@ class Store {
     this.analyst.setUserId('');
   }
 
-  ignoreChangeDomain = false;
+  @observable ignoreChangeDomain = false;
   @action setIgnoreChangeDomain(ignoreChangeDomain) {
     this.ignoreChangeDomain = ignoreChangeDomain;
+  }
+
+  @observable apiDomain = '';
+  @action setBaseAPIDomain(apiDomain) {
+    this.apiDomain = apiDomain;
   }
 }
 
