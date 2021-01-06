@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     container: {
     },
     layoutContainer: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 12,
@@ -133,9 +134,9 @@ class Row extends Component<RowProps> {
         return (
             <View style={[styles.container, this.props.containerStyle]}>
                 <View style={[styles.header, this.props.headerContainerStyle]}>
-                    <View>
+                    <View style={{ flex: !isShowDirectionIcon ? 1 : undefined }}>
                         <TouchableOpacity
-                            style={[styles.layoutContainer, { flex: !!this.props.totalHeight ? 1 : 1 }]}
+                            style={[styles.layoutContainer]}
                             onPress={this.props.onPressTitle}
                         >
                             {!!this.props.image &&

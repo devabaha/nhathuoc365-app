@@ -1,13 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
   Text,
   StyleSheet,
   TouchableHighlight,
-  FlatList
+  FlatList,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
+import Animated from 'react-native-reanimated';
 import store from '../../store/Store';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
@@ -16,7 +17,7 @@ import RightButtonOrders from '../RightButtonOrders';
 import Button from 'react-native-button';
 import appConfig from '../../config';
 import IconFeather from 'react-native-vector-icons/Feather';
-import { willUpdateState } from '../../packages/tickid-chat/helper';
+import {willUpdateState} from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
 import EventTracker from '../../helper/EventTracker';
 
@@ -24,11 +25,11 @@ const CATE_AUTO_LOAD = 'CateAutoLoad';
 
 class Stores extends Component {
   static propTypes = {
-    categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
 
   static defaultProps = {
-    categoryId: 0
+    categoryId: 0,
   };
 
   constructor(props) {
@@ -38,7 +39,7 @@ class Stores extends Component {
       loading: true,
       category_nav_index: 0,
       categories_data: null,
-      selected_category: { id: 0, name: '' }
+      selected_category: {id: 0, name: ''},
     };
 
     this.unmounted = false;
@@ -48,6 +49,8 @@ class Stores extends Component {
     })();
 
     this.eventTracker = new EventTracker();
+    this.animatedScrollY = new Animated.Value(0);
+    this.animatedContentOffsetY = new Animated.Value(0);
   }
 
   componentDidMount() {
@@ -57,13 +60,13 @@ class Stores extends Component {
     var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
     storage.save({
       key: key_tutorial,
-      data: { finish: true },
-      expires: null
+      data: {finish: true},
+      expires: null,
     });
 
     setTimeout(() => {
       Actions.refresh({
-        right: this._renderRightButton()
+        right: this._renderRightButton(),
       });
     });
     this.eventTracker.logCurrentView();
@@ -84,11 +87,11 @@ class Stores extends Component {
         {
           loading: true,
           category_nav_index: 0,
-          categories_data: null
+          categories_data: null,
         },
         () => {
           this._initial(nextProps);
-        }
+        },
       );
     }
   }
@@ -124,18 +127,18 @@ class Stores extends Component {
   }
 
   parseDataCategories(response) {
-    const { t } = this.props;
+    const {t} = this.props;
     if (!this.props.categoryId || this.props.extraCategoryId) {
       response.data.categories.unshift({
         id: this.props.extraCategoryId || 0,
-        name: this.props.extraCategoryName || t('tabs.store.title')
+        name: this.props.extraCategoryName || t('tabs.store.title'),
       });
     }
 
     this.setState(
       {
         categories_data: response.data.categories,
-        promotions: response.data.promotions
+        promotions: response.data.promotions,
       },
       () =>
         this.state.categories_data.map((item, index) => {
@@ -144,7 +147,7 @@ class Stores extends Component {
             this._changeCategory(item, index);
             return;
           }
-        })
+        }),
     );
   }
 
@@ -156,9 +159,9 @@ class Stores extends Component {
         setTimeout(
           () =>
             willUpdateState(this.unmounted, () =>
-              this.parseDataCategories(response)
+              this.parseDataCategories(response),
             ),
-          this._delay()
+          this._delay(),
         );
       }
     } catch (e) {
@@ -194,10 +197,9 @@ class Stores extends Component {
               category_name:
                 this.state.selected_category.id !== 0
                   ? this.state.selected_category.name
-                  : ''
+                  : '',
             });
-          }}
-        >
+          }}>
           <IconFeather size={26} color={appConfig.colors.white} name="search" />
         </Button>
         <RightButtonChat tel={store.store_data.tel} />
@@ -216,39 +218,39 @@ class Stores extends Component {
           if (index > 0 && end_of_list) {
             this.refs_category_nav.scrollToIndex({
               index: index - 1,
-              animated: true
+              animated: true,
             });
           } else if (!end_of_list) {
             this.refs_category_nav.scrollToEnd();
           } else if (index == 0) {
-            this.refs_category_nav.scrollToIndex({ index, animated: true });
+            this.refs_category_nav.scrollToIndex({index, animated: true});
           }
 
           if (this.refs_category_screen && !nav_only) {
             this.refs_category_screen.scrollToIndex({
               index: index,
-              animated: true
+              animated: true,
             });
           }
-        })
+        }),
       );
 
       if (item) {
         this.setState({
           category_nav_index: index,
-          selected_category: item
+          selected_category: item,
         });
       } else if (nav_only) {
         this.setState({
           category_nav_index: index,
-          selected_category: this.state.categories_data[index]
+          selected_category: this.state.categories_data[index],
         });
       }
     }
   }
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <View style={styles.container}>
         {this.state.categories_data != null &&
@@ -258,29 +260,27 @@ class Stores extends Component {
                 <FlatList
                   showsHorizontalScrollIndicator={false}
                   showsVerticalScrollIndicator={false}
-                  ref={ref => (this.refs_category_nav = ref)}
+                  ref={(ref) => (this.refs_category_nav = ref)}
                   onScrollToIndexFailed={() => {}}
                   data={this.state.categories_data}
                   extraData={this.state.category_nav_index}
-                  keyExtractor={item => `${item.id}`}
+                  keyExtractor={(item) => `${item.id}`}
                   horizontal={true}
                   style={styles.categories_nav}
-                  renderItem={({ item, index }) => {
+                  renderItem={({item, index}) => {
                     let active = this.state.category_nav_index == index;
                     return (
                       <TouchableHighlight
                         onPress={() => this._changeCategory(item, index)}
-                        underlayColor="transparent"
-                      >
+                        underlayColor="transparent">
                         <View style={styles.categories_nav_items}>
                           <Text
                             style={[
                               styles.categories_nav_items_title,
                               active
                                 ? styles.categories_nav_items_title_active
-                                : null
-                            ]}
-                          >
+                                : null,
+                            ]}>
                             {item.name}
                           </Text>
 
@@ -300,33 +300,35 @@ class Stores extends Component {
 
         {this.state.categories_data != null ? (
           <FlatList
+            scrollEnabled={this.state.categories_data.length > 1}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
-            ref={ref => (this.refs_category_screen = ref)}
+            ref={(ref) => (this.refs_category_screen = ref)}
             onScrollToIndexFailed={() => {}}
             data={this.state.categories_data}
             extraData={this.state.category_nav_index}
-            keyExtractor={item => `${item.id}`}
-            horizontal={true}
+            keyExtractor={(item) => `${item.id}`}
+            horizontal
             pagingEnabled
             onMomentumScrollEnd={this._onScrollEnd.bind(this)}
             style={{
-              // backgroundColor: BGR_SCREEN_COLOR,
-              width: Util.size.width
+              width: Util.size.width,
             }}
             getItemLayout={(data, index) => {
               return {
                 length: Util.size.width,
                 offset: Util.size.width * index,
-                index
+                index,
               };
             }}
-            renderItem={({ item, index }) => (
+            renderItem={({item, index}) => (
               <CategoryScreen
                 item={item}
                 index={index}
                 cate_index={this.state.category_nav_index}
                 that={this}
+                animatedScrollY={this.animatedScrollY}
+                animatedContentOffsetY={this.animatedContentOffsetY}
               />
             )}
           />
@@ -338,11 +340,14 @@ class Stores extends Component {
           <CartFooter
             perfix="stores"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
+            animatedScrollY={this.animatedScrollY}
+            animatedContentOffsetY={this.animatedContentOffsetY}
+            animating
           />
         )}
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
           title={t('cart:popup.remove.message')}
           height={110}
           noConfirm={this._closePopup.bind(this)}
@@ -361,14 +366,13 @@ class Stores extends Component {
               zIndex: 999,
               borderWidth: 1,
               borderColor: DEFAULT_COLOR,
-              overflow: 'hidden'
-            }}
-          >
+              overflow: 'hidden',
+            }}>
             {store.cart_fly_image && (
               <CachedImage
                 style={{
                   width: store.cart_fly_position.width,
-                  height: store.cart_fly_position.height
+                  height: store.cart_fly_position.height,
                 }}
                 source={store.cart_fly_image}
               />
@@ -415,13 +419,13 @@ class Stores extends Component {
     try {
       const data = {
         quantity: 0,
-        model: item.model
+        model: item.model,
       };
 
       var response = await APIHandler.site_cart_update(
         store.store_id,
         item.id,
-        data
+        data,
       );
 
       if (response && response.status == STATUS_SUCCESS) {
@@ -432,14 +436,14 @@ class Stores extends Component {
             if (isAndroid && store.cart_item_index > 0) {
               var index = store.cart_item_index - 1;
               store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, { index });
+              Events.trigger(NEXT_PREV_CART, {index});
             }
           })();
         }, 450);
 
         flashShowMessage({
           message: response.message,
-          type: 'success'
+          type: 'success',
         });
       }
 
@@ -453,34 +457,34 @@ class Stores extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: appConfig.device.bottomSpace
+    marginBottom: appConfig.device.bottomSpace,
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
 
   items_box: {
-    width: Util.size.width
+    width: Util.size.width,
   },
 
   categories_nav: {
     backgroundColor: '#ffffff',
     height: 40,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd'
+    borderBottomColor: '#dddddd',
   },
   categories_nav_items: {
     justifyContent: 'center',
-    height: '100%'
+    height: '100%',
   },
   categories_nav_items_title: {
     paddingHorizontal: 10,
     fontSize: 14,
     fontWeight: '500',
-    color: '#666666'
+    color: '#666666',
   },
   categories_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   categories_nav_items_active: {
     position: 'absolute',
@@ -488,8 +492,8 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 3,
-    backgroundColor: DEFAULT_COLOR
-  }
+    backgroundColor: DEFAULT_COLOR,
+  },
 });
 
 export default withTranslation(['stores', 'cart'])(observer(Stores));

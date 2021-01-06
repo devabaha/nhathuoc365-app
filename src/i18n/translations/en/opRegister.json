@@ -11,9 +11,17 @@
       "title": "Name",
       "placeholder": "Enter your full name"
     },
+    "birthdate": {
+      "title": "Date of birth",
+      "defaultValue": "Pick your date of birth"
+    },
     "referCode": {
       "title": "Referral code",
       "placeholder": "Enter the phone number of the referrer"
+    },
+    "province": {
+      "title": "Province/City",
+      "placeholder": "Touch to select"
     }
   },
   "encourageMessage": "Enter the phone number of the referrer, enjoy together at {{appName}}!",

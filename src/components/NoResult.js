@@ -15,7 +15,7 @@ const NoResult = props => {
             color={NO_RESULT_COLOR}
           />
         )}
-        <Text style={styles.text}>{props.message}</Text>
+        <Text style={[styles.text, props.textStyle]}>{props.message}</Text>
       </View>
     </View>
   );

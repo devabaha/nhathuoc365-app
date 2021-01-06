@@ -7,7 +7,6 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
-  Pressable,
 } from 'react-native';
 import {TabView, TabBar} from 'react-native-tab-view';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
@@ -20,7 +19,7 @@ import Container from '../../components/Layout/Container';
 import {Actions} from 'react-native-router-flux';
 import Loading from '../../components/Loading';
 import PremiumInfoSkeleton from './PremiumInfoSkeleton';
-import {get} from 'lodash';
+import Button from 'react-native-button';
 
 const premiums = [
   {
@@ -185,9 +184,13 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(5),
   },
   tabBarLabel: {
-    minWidth: '10%',
+    minWidth: '100%',
+    flex: appConfig.device.isIOS ? undefined : 1,
     color: '#333',
+    textAlignVertical: 'center',
     textAlign: 'center',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
   tabBarLabelActive: {
     fontWeight: 'bold',
@@ -257,11 +260,13 @@ class PremiumInfo extends Component {
       if (response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           const routes = this.routesFormatter(response.data.premiums);
-          const currentPremium =
-            routes.find((route) => !!route.active) || this.state.index;
-          const currentIndex = currentPremium
-            ? routes.findIndex((route) => route.id === currentPremium.id)
-            : this.state.index;
+          const currentPremium = routes.find((route) => !!route.active) || {
+            id: this.state.index,
+          };
+          const currentIndex =
+            currentPremium && currentPremium.id
+              ? routes.findIndex((route) => route.id === currentPremium.id)
+              : this.state.index;
 
           this.setState(
             {
@@ -332,7 +337,10 @@ class PremiumInfo extends Component {
     );
   }
 
-  renderTabBarLabel({focused, route: {title}}) {
+  renderTabBarLabel(props) {
+    const {route: {title, key}} = props;
+    const focused = key === this.state.index;
+    
     return (
       <Text
         numberOfLines={2}
@@ -348,28 +356,21 @@ class PremiumInfo extends Component {
       numberOfTabs <= MAX_TAB_ITEMS_PER_ROW
         ? appConfig.device.width / numberOfTabs
         : appConfig.device.width / MAX_TAB_ITEMS_PER_ROW;
-
     return (
       <TabBar
         {...props}
-        // renderLabel={this.renderTabBarLabel.bind(this)}
         renderTabBarItem={(props) => {
           return (
-            <Pressable
+            <Button
               onPress={() => this.setState({index: props.route.key})}
-              android_ripple={{color: '#eee'}}
-              style={{
+              containerStyle={{
                 minHeight: 48,
                 width: tabWidth,
-
-                paddingHorizontal: 5,
-                paddingVertical: 10,
-
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
               {this.renderTabBarLabel(props)}
-            </Pressable>
+            </Button>
           );
         }}
         indicatorStyle={styles.indicatorStyle}
@@ -387,7 +388,7 @@ class PremiumInfo extends Component {
     const benefits = premium.benefits || [];
 
     return (
-      <Test
+      <Scene
         benefits={benefits}
         premium={premium}
         currentPremium={this.state.currentPremium}
@@ -430,11 +431,8 @@ const areEquals = (prevProps, nextProps) => {
     nextProps.refreshing === prevProps.refreshing
   );
 };
-const Test = React.memo(
+const Scene = React.memo(
   ({benefits, currentPremium, premium, handleRefresh, refreshing}) => {
-    React.useEffect(() => {
-      console.log('abc');
-    });
     const userInfo = store.user_info || {};
 
     const goToNews = () => {

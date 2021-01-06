@@ -1,10 +1,25 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {View, TouchableHighlight, StyleSheet, Animated, Easing} from 'react-native';
+import {
+  View,
+  TouchableHighlight,
+  StyleSheet,
+  Animated,
+  Easing,
+} from 'react-native';
 // import Animated, {Easing} from 'react-native-reanimated';
 import Swiper from 'react-native-swiper';
 import appConfig from 'app-config';
 import Icon from 'react-native-vector-icons/Entypo';
+import Svg, {
+  Circle,
+  Defs,
+  Mask,
+  RadialGradient,
+  Rect,
+  Stop,
+  Use,
+} from 'react-native-svg';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const PAGINATION_WIDTH = 10;
@@ -66,7 +81,7 @@ class Promotion extends Component {
         index * (PAGINATION_WIDTH + (index !== 0 ? PAGINATION_SPACE : 0)),
       duration: 250,
       easing: Easing.ease,
-      useNativeDriver: false
+      useNativeDriver: false,
     };
     Animated.timing(this.paginationLeft, animationConfig).start();
   };
@@ -95,10 +110,75 @@ class Promotion extends Component {
           );
         })}
 
-        <AnimatedIcon
-          name="circle"
-          style={[styles.paginationActive, {left: this.paginationLeft}]}
-        />
+        {appConfig.device.isIOS ? (
+          <AnimatedIcon
+            name="circle"
+            style={[styles.paginationActive, {left: this.paginationLeft}]}
+          />
+        ) : (
+          <Animated.View
+            style={{
+              width: PAGINATION_WIDTH+1,
+              height: PAGINATION_WIDTH+1,
+              borderRadius: (PAGINATION_WIDTH) / 2,
+              overflow: 'hidden',
+              position: 'absolute',
+
+              ...{left: this.paginationLeft},
+            }}>
+            <Svg>
+              <Defs>
+                <RadialGradient
+                  id="Gradient"
+                  gradientUnits="userSpaceOnUse"
+                  cx={(PAGINATION_WIDTH) / 2}
+                  cy={(PAGINATION_WIDTH) / 2}
+                  rx={(PAGINATION_WIDTH) / 2}
+                  ry={(PAGINATION_WIDTH) / 2}>
+                  <Stop offset="0.3" stopColor="#fff" stopOpacity="0" />
+                  <Stop offset="1" stopColor="#fff" stopOpacity="1" />
+                </RadialGradient>
+                <Mask
+                  id="Mask"
+                  maskUnits="userSpaceOnUse"
+                  x="0"
+                  y="0"
+                  width="100%"
+                  height="100%">
+                  <Circle
+                    cx={(PAGINATION_WIDTH) / 2}
+                    cy={(PAGINATION_WIDTH) / 2}
+                    r={(PAGINATION_WIDTH+1) / 2}
+                    width="100%"
+                    height="100%"
+                    fill="url(#Gradient)"
+                  />
+                </Mask>
+                <Circle
+                  id="Text"
+                  cx={(PAGINATION_WIDTH + 1) / 2}
+                  cy={(PAGINATION_WIDTH + 1) / 2}
+                  r={(PAGINATION_WIDTH) / 2}
+                  strokeWidth="4"
+                  stroke="rgba(0,0,0,.2)"
+                />
+              </Defs>
+              <Use href="#Text" fill="#000" mask="url(#Mask)" />
+            </Svg>
+            <Svg
+              width={PAGINATION_WIDTH}
+              height={PAGINATION_WIDTH}
+              style={{position: 'absolute'}}>
+              <Circle
+                cx={(PAGINATION_WIDTH + 1) / 2}
+                cy={(PAGINATION_WIDTH + 1) / 2}
+                r={(PAGINATION_WIDTH - 2) / 2}
+                strokeWidth="1"
+                stroke="#fff"
+              />
+            </Svg>
+          </Animated.View>
+        )}
       </View>
     );
   };
@@ -168,7 +248,7 @@ const styles = StyleSheet.create({
     fontSize: PAGINATION_WIDTH + 1,
     color: '#fff',
     position: 'absolute',
-    ...elevationShadowStyle(3, 0, 0, 0.6),
+    ...elevationShadowStyle(2, 0, 0, 0.6),
   },
 });
 
@@ -192,7 +272,7 @@ class Pagination extends Component {
         toValue: nextProps.active ? 0 : 1,
         easing: Easing.quad,
         duration: 200,
-        useNativeDriver: false
+        useNativeDriver: false,
       }).start();
     }
 

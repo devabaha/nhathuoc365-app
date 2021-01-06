@@ -1,58 +1,83 @@
-import React, { Component } from 'react';
-import { StyleSheet, Animated, SafeAreaView } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import React, {Component} from 'react';
+import {
+  StyleSheet,
+  SafeAreaView,
+} from 'react-native';
+import {Actions} from 'react-native-router-flux';
+import Animated, {Easing, interpolate} from 'react-native-reanimated';
 
 import appConfig from 'app-config';
 
 import Container from '../../Layout/Container';
 import OverlayIconButton from './OverlayIconButton';
 import RightButtonNavBar from '../../RightButtonNavBar';
-import { RIGHT_BUTTON_TYPE } from '../../RightButtonNavBar/constants';
+import {RIGHT_BUTTON_TYPE} from '../../RightButtonNavBar/constants';
 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     width: '100%',
-    zIndex: 999
+    zIndex: 999,
   },
   background: {
     position: 'absolute',
     width: '100%',
     height: '100%',
     backgroundColor: '#fff',
-    ...elevationShadowStyle(3)
+    ...elevationShadowStyle(3),
   },
   mainWrapper: {
     width: '100%',
-    elevation: 4
+    elevation: 4,
   },
   mainContainer: {
     paddingHorizontal: 15,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   backIcon: {
-    fontSize: 30
-    //   color: '#fff'
+    fontSize: 30,
   },
   title: {
     color: '#333',
     fontWeight: '500',
-    fontSize: 15
+    fontSize: 16,
+    paddingLeft: 15,
+    paddingRight: 10,
+    position: 'absolute',
   },
   containerIconStyle: {
     marginLeft: -5,
-    marginRight: -5
-  }
+    marginRight: -5,
+  },
 });
 
 const ACTIVE_OFFSET_TOP = 100;
+const RIGHT_BUTTONS = [
+  {
+    type: RIGHT_BUTTON_TYPE.CHAT,
+    iconName: 'ios-chatbubbles',
+  },
+  {
+    type: RIGHT_BUTTON_TYPE.SHOPPING_CART,
+    iconName: 'ios-cart',
+  },
+  {
+    type: RIGHT_BUTTON_TYPE.SHARE,
+    iconName: 'ios-share-social',
+  },
+];
 
 class Header extends Component {
   static defaultProps = {
-    item: {}
+    item: {},
   };
 
-  state = {};
+  state = {
+    titleOriginWidth: 0,
+  };
+  animatedOpacity = new Animated.Value(0);
+  animatedTranslate = new Animated.Value(0);
+  animatedScale = new Animated.Value(1);
 
   get iconName() {
     return appConfig.device.isIOS ? 'ios-arrow-back' : 'md-arrow-back';
@@ -60,56 +85,97 @@ class Header extends Component {
 
   get iconBackgroundStyle() {
     return {
-      opacity: this.props.animatedValue.interpolate({
-        inputRange: [0, ACTIVE_OFFSET_TOP],
+      opacity: interpolate(this.animatedOpacity, {
+        inputRange: [0, 1],
         outputRange: [1, 0],
-        extrapolate: 'clamp'
-      })
+      }),
     };
   }
 
   get iconStyle() {
     return {
-      transform: [
-        {
-          scale: this.props.animatedValue.interpolate({
-            inputRange: [0, ACTIVE_OFFSET_TOP],
-            outputRange: [1, 1.2],
-            extrapolate: 'clamp'
-          })
-        }
-      ]
+      opacity: this.animatedOpacity,
     };
   }
 
-  renderRightButtons() {
-    const rightButtons = [
-      {
-        type: RIGHT_BUTTON_TYPE.CHAT,
-        iconName: 'ios-chatbubbles'
-      },
-      {
-        type: RIGHT_BUTTON_TYPE.SHOPPING_CART,
-        iconName: 'ios-cart'
-      },
-      {
-        type: RIGHT_BUTTON_TYPE.SHARE,
-        iconName: 'ios-share-social'
-      }
-    ];
+  get iconOverlayStyle() {
+    return {
+      transform: [
+        {
+          scale: interpolate(this.animatedScale, {
+            inputRange: [0, 1],
+            outputRange: [1, 1.1],
+          }),
+          // scale: this.animatedScale.interpolate({
+          //   inputRange: [0, 1],
+          //   outputRange: [1, 1.1],
+          // }),
+        },
+      ],
+    };
+  }
 
-    return rightButtons.map((btn, index) => {
-      const isLast = index === rightButtons.length - 1;
+  componentDidMount() {
+    this.props.animatedValue.addListener(this.scrollListener);
+  }
+
+  componentWillUnmount() {
+    this.props.animatedValue.removeListener(this.scrollListener);
+  }
+
+  animatingScrollDown = false;
+  animatingScrollUp = false;
+  animationDuration = 250;
+  scrollListener = ({value}) => {
+    if (value > ACTIVE_OFFSET_TOP) {
+      if (this.animatingScrollDown) return;
+      this.animatingScrollDown = true;
+      this.animatingScrollUp = false;
+      this.animating(true);
+    } else {
+      if (this.animatingScrollUp) return;
+      this.animatingScrollDown = false;
+      this.animatingScrollUp = true;
+      this.animating(false);
+    }
+  };
+
+  animating = (isShow) => {
+    Animated.timing(this.animatedOpacity, {
+      toValue: isShow ? 1 : 0,
+      duration: this.animationDuration,
+      easing: Easing.quad,
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(this.animatedTranslate, {
+      toValue: isShow ? 1 : 0,
+      duration: this.animationDuration,
+      easing: Easing.quad,
+      useNativeDriver: true,
+    }).start();
+    Animated.timing(this.animatedScale, {
+      toValue: isShow ? 0 : 1,
+      duration: this.animationDuration,
+      easing: Easing.quad,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  handleTitleContainerLayout = (e) => {
+    this.setState({
+      titleOriginWidth: e.nativeEvent.layout.width,
+    });
+  };
+
+  renderRightButtons() {
+    return RIGHT_BUTTONS.map((btn, index) => {
+      const isLast = index === RIGHT_BUTTONS.length - 1;
+
       const narrowRightGapStyle = {
-        transform: [
-          {
-            translateX: this.props.animatedValue.interpolate({
-              inputRange: [0, ACTIVE_OFFSET_TOP],
-              outputRange: [0, 7 * (rightButtons.length - index)],
-              extrapolate: 'clamp'
-            })
-          }
-        ]
+        left: interpolate(this.animatedTranslate, {
+          inputRange: [0, 1],
+          outputRange: [0, 7 * (RIGHT_BUTTONS.length - index)],
+        }),
       };
 
       return (
@@ -124,7 +190,11 @@ class Header extends Component {
                 iconName={btn.iconName}
                 containerStyle={!isLast && styles.containerIconStyle}
                 backgroundStyle={this.iconBackgroundStyle}
-                contentOverlayStyle={[this.iconBackgroundStyle, this.iconStyle]}
+                contentOverlayStyle={[
+                  this.iconBackgroundStyle,
+                  this.iconOverlayStyle,
+                ]}
+                iconStyle={this.iconStyle}
                 disabled
               />
             }
@@ -136,24 +206,29 @@ class Header extends Component {
 
   render() {
     const backgroundStyle = {
-      opacity: this.props.animatedValue.interpolate({
-        inputRange: [0, ACTIVE_OFFSET_TOP],
-        outputRange: [0, 1],
-        extrapolate: 'clamp'
-      })
+      opacity: this.animatedOpacity,
     };
-
     const narrowLeftGapStyle = {
-      transform: [
-        {
-          translateX: this.props.animatedValue.interpolate({
-            inputRange: [0, ACTIVE_OFFSET_TOP],
-            outputRange: [0, -15],
-            extrapolate: 'clamp'
-          })
-        }
-      ]
+      left: interpolate(this.animatedTranslate, {
+        inputRange: [0, 1],
+        outputRange: [0, -15],
+      }),
     };
+    const titleStyle = [
+      {
+        opacity: interpolate(this.animatedOpacity, {
+          inputRange: [0, 0.8, 1],
+          outputRange: [0, 0, 1],
+        }),
+        width: interpolate(this.animatedTranslate, {
+          inputRange: [0, 1],
+          outputRange: [
+            this.state.titleOriginWidth,
+            this.state.titleOriginWidth + (15 + 7) * (RIGHT_BUTTONS.length - 1),
+          ],
+        }),
+      },
+    ];
 
     return (
       <Container style={styles.container}>
@@ -163,16 +238,19 @@ class Header extends Component {
             <OverlayIconButton
               iconName={this.iconName}
               backgroundStyle={this.iconBackgroundStyle}
-              contentOverlayStyle={[this.iconBackgroundStyle, this.iconStyle]}
-              containerStyle={narrowLeftGapStyle}
+              contentOverlayStyle={[
+                this.iconBackgroundStyle,
+                this.iconOverlayStyle,
+              ]}
+              iconStyle={this.iconStyle}
+              wrapperStyle={narrowLeftGapStyle}
               onPress={Actions.pop}
             />
 
-            <Container flex>
+            <Container flex center onLayout={this.handleTitleContainerLayout}>
               <Animated.Text
-                style={[styles.title, backgroundStyle]}
-                numberOfLines={2}
-              >
+                style={[styles.title, titleStyle]}
+                numberOfLines={2}>
                 {this.props.title}
               </Animated.Text>
             </Container>

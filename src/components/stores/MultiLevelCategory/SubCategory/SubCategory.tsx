@@ -11,10 +11,14 @@ import Row from './Row';
 import appConfig from 'app-config';
 import { CATEGORY_TYPE } from '../constants';
 import Container from '../../../Layout/Container';
+//@ts-ignore
+import SVGEmptyBoxOpen from '../../../../images/empty-box-open.svg';
+import NoResult from '../../../NoResult';
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        minHeight: '100%',
         backgroundColor: '#fff'
     },
     header: {
@@ -43,6 +47,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     body: {
+        flex: 1,
         backgroundColor: '#fcfcfc'
     },
     categoryWrapper: {
@@ -72,6 +77,11 @@ const styles = StyleSheet.create({
     icon: {
         fontSize: 16,
         color: '#777'
+    },
+    noResult: {
+    },
+    noResultTxt: {
+        fontSize: 18
     }
 })
 
@@ -186,6 +196,25 @@ class SubCategory extends Component<SubCategoryProps> {
     }
 
     renderCategories() {
+        if (!this.props.categories || this.props.categories.length === 0) {
+            return (
+                <View style={{flex :1}}>
+                    <NoResult
+                        containerStyle={styles.noResult}
+                        textStyle={styles.noResultTxt}
+                        icon={
+                            <SVGEmptyBoxOpen
+                                fill="#aaa"
+                                width="80"
+                                height="80"
+                            />
+                        }
+                        message="Chưa có danh mục"
+                    />
+                </View>
+            )
+        }
+
         return (
             this.props.categories.map((category: any, index) => {
                 const contentHeight = Array.isArray(category.list) && this.state.categorySize
@@ -218,6 +247,7 @@ class SubCategory extends Component<SubCategoryProps> {
             width: this.state.bannerLayout.width,
             height: this.state.bannerLayout.height,
         };
+
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -242,13 +272,14 @@ class SubCategory extends Component<SubCategoryProps> {
                         </Container>
                     </TouchableOpacity>
                 </View>
+                    
                 <View
                     onLayout={this.handleCategoriesLayout.bind(this)}
                     style={styles.body}
                 >
                     {this.renderCategories()}
                 </View>
-            </View >
+            </View>
         );
     }
 }

@@ -150,7 +150,7 @@ class Home extends Component {
           {this.props.site && this.props.site.app_event_banner_image && (
             <Image
               style={styles.headerImage}
-              source={{ uri: this.props.site.app_event_banner_image }}
+              source={{ uri: this.props.site.app_event_banner_image}}
             />
           )}
         </View>
@@ -321,19 +321,19 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     width: appConfig.device.width * 3,
     height: appConfig.device.width * 3,
-    borderRadius: appConfig.device.width * 3 * 0.48,
+    borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.height / 5.3,
+    top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden'
   },
   headerImage: {
-    height: appConfig.device.width / 2,
+    height: appConfig.device.width / 3,
     resizeMode: 'cover',
     width: appConfig.device.width,
     position: 'absolute',
-    bottom: 0
+    bottom: 0,
   },
   contentWrapper: {
     backgroundColor: appConfig.colors.sceneBackground,
