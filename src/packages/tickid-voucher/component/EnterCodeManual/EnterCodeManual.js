@@ -53,7 +53,7 @@ class EnterCodeManual extends Component {
     this.eventTracker.logCurrentView();
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.keyboardWillShowListener = Keyboard.addListener(
       'keyboardWillShow',
       this.keyboardWillShow

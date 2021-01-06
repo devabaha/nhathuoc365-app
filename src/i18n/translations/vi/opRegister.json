@@ -11,9 +11,17 @@
       "title": "Tên của bạn",
       "placeholder": "Điền họ và tên"
     },
+    "birthdate": {
+      "title": "Ngày sinh",
+      "defaultValue": "Chọn ngày sinh"
+    },
     "referCode": {
       "title": "Mã giới thiệu",
       "placeholder": "Điền số điện thoại người giới thiệu"
+    },
+    "province": {
+      "title": "Tỉnh/Thành phố",
+      "placeholder": "Chạm để chọn"
     }
   },
   "encourageMessage": "Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại {{appName}} nhé!",

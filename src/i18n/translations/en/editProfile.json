@@ -7,8 +7,8 @@
       "title": "Phone number"
     },
     "birthdate": {
-      "title": "Birthdate",
-      "defaultValue": "Pick your birthdate"
+      "title": "Date of birth",
+      "defaultValue": "Pick your date of birth"
     },
     "gender": {
       "title": "Gender",
@@ -22,6 +22,9 @@
     },
     "address": {
       "title": "Address"
+    },
+    "city": {
+      "title": "Province/City"
     }
   },
 

@@ -385,8 +385,12 @@ class CommonAPI {
   get GET_PREMIUMS() {
     return BaseAPI.apiDomain + 'apiPremiums/index';
   }
+
+  get USER_SITE_CITY() {
+    return BaseAPI.apiDomain + 'apiUser/site_city';
+  }
 }
 
 export default new CommonAPI();
 
-export { CommonAPI };
+export {CommonAPI};

@@ -752,7 +752,6 @@ class QRBarCode extends Component {
             : this.renderQRCodeScanner()}
         </View>
         <View style={styles.bottomView}>
-          <View style={styles.lineView} />
           <TouchableOpacity
             style={styles.bottomButton}
             onPress={() => this.onPressTabButton(0)}
@@ -820,20 +819,15 @@ const styles = StyleSheet.create({
     height: Util.size.height - 49 - global.NAV_HEIGHT
   },
   bottomView: {
+    backgroundColor: '#fff',
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 49,
-    flexDirection: 'row'
-  },
-  lineView: {
-    position: 'absolute',
-    bottom: 50,
-    left: 0,
-    right: 0,
-    height: 0.5,
-    backgroundColor: 'gray'
+    flexDirection: 'row',
+    paddingVertical: 15,
+    borderTopWidth: .5,
+    borderColor: '#eee'
   },
   bottomButton: {
     flex: 1,
@@ -843,7 +837,8 @@ const styles = StyleSheet.create({
   },
   titleBottomButton: {
     color: '#000',
-    fontSize: 14
+    fontSize: 14,
+    marginTop: 2
   },
   headerText: {
     fontSize: 15,

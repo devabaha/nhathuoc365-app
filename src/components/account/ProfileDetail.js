@@ -17,6 +17,7 @@ import appConfig from 'app-config';
 import Loading from '../Loading';
 import EventTracker from '../../helper/EventTracker';
 import firebaseAuth from '@react-native-firebase/auth';
+import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
 
 class ProfileDetail extends Component {
   constructor(props) {
@@ -73,6 +74,12 @@ class ProfileDetail extends Component {
             id: 'dia_chi',
             title: t('sections.address.title'),
             value: store.user_info.address,
+          },
+          {
+            id: 'thanh_pho',
+            title: t('sections.city.title'),
+            value: store.user_info.city,
+            isHidden: !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY)
           },
         ],
       },

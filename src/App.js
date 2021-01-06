@@ -596,7 +596,6 @@ class App extends Component {
             closeOnHardwareBackPress={false}
             showCancelButton={false}
             showConfirmButton={false}
-            // contentContainerStyle={{ }}
             customView={
               <AppCodePush
                 title={this.state.titleUpdateCodePushModal}
@@ -607,7 +606,6 @@ class App extends Component {
                 onProgressComplete={this.handleCodePushProgressComplete.bind(
                   this,
                 )}
-                // onPressConfirm={this.codePushDownloadUpdate.bind(this)}
               />
             }
           />
@@ -765,13 +763,13 @@ class RootRouter extends Component {
                   </Stack>
 
                   {/* ================ SCAN QR TAB ================ */}
-                  {/* <Stack
+                  <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={FoodHubCartButton}
                     primaryColor={appConfig.colors.primary}
                   >
                     <Scene component={() => null} />
-                  </Stack> */}
+                  </Stack>
 
                   {/**
                    ************************ Tab 3 ************************

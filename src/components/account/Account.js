@@ -31,6 +31,7 @@ import {
 } from '../../helper/packageOptionsHandler';
 import EventTracker from '../../helper/EventTracker';
 import SkeletonLoading from '../SkeletonLoading';
+import BaseAPI from '../../network/API/BaseAPI';
 
 class Account extends Component {
   constructor(props) {
@@ -77,7 +78,7 @@ class Account extends Component {
         key: '-99',
         icon: 'web',
         label: 'Domain',
-        desc: 'Thay đổi api domain cho app',
+        desc: BaseAPI.apiDomain,
         isHidden: !isTestDevice,
         rightIcon: <IconAngleRight />,
         onPress: () =>

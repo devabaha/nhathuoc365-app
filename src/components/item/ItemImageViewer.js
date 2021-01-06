@@ -1,15 +1,18 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import { View, StyleSheet, TouchableHighlight } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, TouchableHighlight} from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
 
 export default class ItemImageViewer extends Component {
+  static defaultProps = {
+    index: 0,
+  };
   eventTracker = new EventTracker();
 
   componentDidMount() {
@@ -21,11 +24,11 @@ export default class ItemImageViewer extends Component {
   }
 
   render() {
-    var { images } = this.props;
+    var {images} = this.props;
 
     return (
       <View style={styles.container}>
-        <ImageViewer imageUrls={images} />
+        <ImageViewer imageUrls={images} index={this.props.index} />
 
         <TouchableHighlight
           onPress={() => {
@@ -38,9 +41,8 @@ export default class ItemImageViewer extends Component {
             width: 60,
             height: 50,
             justifyContent: 'center',
-            alignItems: 'center'
-          }}
-        >
+            alignItems: 'center',
+          }}>
           <Icon name="times-circle" size={32} color="#ffffff" />
         </TouchableHighlight>
       </View>
@@ -50,6 +52,6 @@ export default class ItemImageViewer extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
-  }
+    flex: 1,
+  },
 });

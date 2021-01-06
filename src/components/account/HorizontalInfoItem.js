@@ -38,7 +38,7 @@ export default class HorizontalInfoItem extends Component {
     multiline,
     mapField,
     inputProps,
-    detailTitleStyle
+    detailTitleStyle,
   ) => {
     if (!input && !select) {
       return (
@@ -114,7 +114,7 @@ export default class HorizontalInfoItem extends Component {
                 },
                 placeholderText: {
                   fontSize: 14,
-                  color: '#989898',
+                  color: appConfig.colors.placeholder,
                   position: 'absolute',
                   right: 0
                 },
@@ -180,10 +180,14 @@ export default class HorizontalInfoItem extends Component {
         specialColor,
         multiline,
         mapField,
-        columnView
+        columnView,
+        isHidden
       },
       inputProps
     } = this.props;
+
+    if(isHidden) return null;
+
     const extraContainerStyle = columnView && styles.columnViewContainer;
     const extraTitleStyle = columnView && styles.columnViewTitle;
     const extraDetailTitleStyle = columnView && styles.columnViewValue;
@@ -193,7 +197,7 @@ export default class HorizontalInfoItem extends Component {
         style={[
           styles.container,
           extraContainerStyle,
-          { backgroundColor: disable ? '#EAF0F6' : '#ffffff' },
+          { backgroundColor: disable ? '#eeF0F4' : '#ffffff' },
           this.props.containerStyle
         ]}
       >
@@ -210,7 +214,7 @@ export default class HorizontalInfoItem extends Component {
           multiline,
           mapField,
           inputProps,
-          extraDetailTitleStyle
+          extraDetailTitleStyle,
         )}
       </View>
     );

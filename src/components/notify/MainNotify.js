@@ -80,7 +80,7 @@ class MainNotify extends Component {
     });
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this._setOptionList();
   }
 

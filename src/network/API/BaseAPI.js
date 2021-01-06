@@ -4,8 +4,10 @@
  *
  * @module API
  */
+import store from 'app-store';
 
 export const ORIGIN_API_DOMAIN = 'https://apiapp.abaha.vn/';
+export const ORIGIN_DEV_API_DOMAIN = 'https://apiapp.tickid.top/';
 export const ORIGIN_IMAGE_DOMAIN = 'https://img.abaha.vn/';
 
 class BaseAPI {
@@ -15,6 +17,7 @@ class BaseAPI {
   ) {
     this._apiDomain = apiDomain;
     this._imageDomain = imageDomain;
+    store.setBaseAPIDomain(apiDomain);
   }
 
   get apiDomain() {
@@ -27,6 +30,7 @@ class BaseAPI {
 
   set updateAPIDomain(apiDomain) {
     this._apiDomain = apiDomain;
+    store.setBaseAPIDomain(apiDomain);
   }
 
   set updateImageDomain(imageDomain) {

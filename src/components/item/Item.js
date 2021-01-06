@@ -5,7 +5,6 @@ import {
   TouchableHighlight,
   StyleSheet,
   Animated,
-  FlatList,
   RefreshControl,
   StatusBar,
   SafeAreaView,
@@ -20,11 +19,12 @@ import ListHeader from '../stores/ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import RightButtonChat from '../RightButtonChat';
-import RightButtonOrders from '../RightButtonOrders';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
 import Header from './Header';
 import {DiscountBadge} from '../Badges';
+import Button from '../../components/Button';
+import FastImage from 'react-native-fast-image';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -385,6 +385,38 @@ class Item extends Component {
     );
   }
 
+  renderPagination = (index, total, context) => {
+    return (
+      <View style={styles.paginationContainer}>
+        <Text style={styles.paginationText}>
+          {index + 1}/{total}
+        </Text>
+      </View>
+    );
+  };
+
+  renderNextButton() {
+    return (
+      <View style={styles.swipeControlBtn}>
+        <Icon
+          name="angle-right"
+          style={[styles.iconSwipeControl, styles.iconSwipeControlRight]}
+        />
+      </View>
+    );
+  }
+
+  renderPrevButton() {
+    return (
+      <View style={styles.swipeControlBtn}>
+        <Icon
+          name="angle-left"
+          style={[styles.iconSwipeControl, styles.iconSwipeControlLeft]}
+        />
+      </View>
+    );
+  }
+
   render() {
     var {item, item_data, buying, like_loading, like_flag} = this.state;
     var is_like = like_flag == 1;
@@ -415,7 +447,9 @@ class Item extends Component {
                   },
                 },
               ],
-              {useNativeDriver: true},
+              {
+                useNativeDriver: true,
+              },
             )}
             refreshControl={
               <RefreshControl
@@ -435,8 +469,9 @@ class Item extends Component {
               ) : (
                 <Swiper
                   showsButtons={item_data.img.length > 1}
-                  showsPagination={false}
-                  paginationStyle={{marginTop: 100}}
+                  renderPagination={this.renderPagination}
+                  nextButton={this.renderNextButton()}
+                  prevButton={this.renderPrevButton()}
                   width={Util.size.width}
                   height={Util.size.width * 0.6}
                   containerStyle={{
@@ -449,15 +484,15 @@ class Item extends Component {
                         onPress={() => {
                           Actions.item_image_viewer({
                             images: this.state.images,
+                            index,
                           });
                         }}
                         key={index}>
                         <View>
-                          <CachedImage
-                            mutable
+                          <FastImage
+                            // mutable
                             style={styles.swiper_image}
                             source={{uri: item.image}}
-                            key={index}
                           />
                         </View>
                       </TouchableHighlight>
@@ -712,7 +747,15 @@ class Item extends Component {
             </View>
 
             {item_data != null && item_data.related && (
-              <View style={[styles.items_box, {flexDirection: 'row', flexWrap: 'wrap', width: appConfig.device.width}]}>
+              <View
+                style={[
+                  styles.items_box,
+                  {
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    width: appConfig.device.width,
+                  },
+                ]}>
                 <ListHeader title={`— ${t('relatedItems')} —`} />
                 {item_data.related.map((item, index) => {
                   return (
@@ -754,7 +797,12 @@ class Item extends Component {
             </View>
           )} */}
             <View style={styles.boxButtonActions}>
-              <TouchableHighlight
+              <Button
+                btnContainerStyle={styles.goToStoreBtn}
+                titleStyle={styles.goToStoreTxt}
+                title={t('goToStore')}
+              />
+              {/* <TouchableHighlight
                 style={styles.buttonAction}
                 onPress={this._goStores.bind(this, this.state.store_data)}
                 underlayColor="transparent">
@@ -778,7 +826,7 @@ class Item extends Component {
                     {t('goToStore')}
                   </Text>
                 </View>
-              </TouchableHighlight>
+              </TouchableHighlight> */}
             </View>
           </Animated.ScrollView>
 
@@ -933,10 +981,11 @@ const styles = StyleSheet.create({
 
   item_heading_box: {
     width: '100%',
+    marginVertical: 15,
     paddingHorizontal: 15,
-    paddingVertical: 4,
+    paddingVertical: 24,
     alignItems: 'center',
-    marginTop: 8,
+    backgroundColor: '#fcfcfc'
   },
   item_heading_title: {
     fontSize: 20,
@@ -1026,7 +1075,6 @@ const styles = StyleSheet.create({
   item_content_box: {
     width: '100%',
     flexDirection: 'row',
-    marginTop: 20,
     borderLeftWidth: Util.pixel,
     borderTopWidth: Util.pixel,
     borderColor: '#dddddd',
@@ -1077,11 +1125,10 @@ const styles = StyleSheet.create({
   items_box: {
     // marginBottom: 69,
     marginTop: 20,
-    backgroundColor: appConfig.colors.sceneBackground,
+    backgroundColor: '#f5f5f5',
   },
 
   boxButtonActions: {
-    // backgroundColor: "#ffffff",
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1098,6 +1145,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  goToStoreBtn: {
+    paddingVertical: 10,
+    borderRadius: 6,
+  },
+  goToStoreTxt: {
+    fontSize: 14,
+    letterSpacing: 1,
+  },
   buttonActionTitle: {
     color: '#333333',
     marginLeft: 4,
@@ -1106,6 +1161,40 @@ const styles = StyleSheet.create({
   discountBadge: {
     left: 20,
     width: null,
+  },
+
+  paginationContainer: {
+    borderRadius: 20,
+    position: 'absolute',
+    bottom: 10,
+    right: 15,
+    backgroundColor: 'rgba(255,255,255,.6)',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  paginationText: {
+    fontSize: 12,
+    color: '#444',
+  },
+
+  swipeControlBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  iconSwipeControl: {
+    fontSize: 30,
+    color: '#444',
+    bottom: 1,
+  },
+  iconSwipeControlLeft: {
+    left: -2,
+  },
+  iconSwipeControlRight: {
+    left: 2,
   },
 });
 

@@ -904,6 +904,15 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.GET_PREMIUMS + '/' + siteId);
     return this.getCancelableAPI(api);
   }
+
+  /**
+   * @todo get list city
+   *
+   */
+  user_site_city() {
+    const api = url_for(API.USER_SITE_CITY);
+    return this.getCancelableAPI(api);
+  }
 }
 
 export default CommonAPIHandler;

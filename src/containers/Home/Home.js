@@ -192,7 +192,6 @@ class Home extends Component {
   handleShowAllVouchers = () => {};
 
   handlePressService(service, callBack) {
-    console.log(service);
     const { t } = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);

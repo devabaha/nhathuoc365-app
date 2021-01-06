@@ -1,7 +1,9 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import { View, Text, Image, StyleSheet, ImageBackground } from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
+
+import ImageBackground from '../../../ImageBg';
 import Loading from '../../../Loading';
 
 class ProductItem extends PureComponent {
@@ -12,7 +14,7 @@ class ProductItem extends PureComponent {
     discount_percent: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     price_view: PropTypes.string,
     onPress: PropTypes.func,
-    last: PropTypes.bool
+    last: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -22,18 +24,18 @@ class ProductItem extends PureComponent {
     discount_percent: 0,
     price_view: '',
     onPress: () => {},
-    last: false
+    last: false,
   };
 
   state = {
-    loading: false
+    loading: false,
   };
   unmounted = false;
 
   handlePress = () => {
     if (!!this.props.selfRequest) {
       this.setState({
-        loading: true
+        loading: true,
       });
       this.handleSelfRequest();
     } else {
@@ -43,7 +45,7 @@ class ProductItem extends PureComponent {
 
   handleSelfRequest = () => {
     this.props.selfRequest(() => {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     });
   };
 
@@ -52,17 +54,13 @@ class ProductItem extends PureComponent {
       <Button
         onPress={this.handlePress}
         containerStyle={[
-          {
-            marginRight: this.props.last ? 16 : 0
-          },
-          this.props.wrapperStyle
-        ]}
-      >
+          styles.wrapper,
+          this.props.wrapperStyle,
+        ]}>
         <View style={[styles.container, this.props.containerStyle]}>
           <ImageBackground
             style={[styles.image, this.props.imageStyle]}
-            source={{ uri: this.props.image }}
-          >
+            source={{uri: this.props.image}}>
             {this.state.loading && (
               <Loading color="#fff" containerStyle={styles.loading} />
             )}
@@ -88,52 +86,53 @@ class ProductItem extends PureComponent {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  wrapper: {
     width: 150,
+    paddingHorizontal: 15,
+  },
+  container: {
     flex: 1,
-    marginLeft: 16
   },
   image: {
     height: 120,
-    resizeMode: 'cover',
     borderRadius: 8,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   infoWrapper: {
     flex: 1,
     marginTop: 8,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   name: {
     flex: 1,
     fontSize: 14,
     lineHeight: 18,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   priceWrapper: {
     width: '100%',
     alignItems: 'flex-start',
-    marginTop: 4
+    marginTop: 4,
   },
   discount: {
     color: '#404040',
     fontSize: 13,
-    textDecorationLine: 'line-through'
+    textDecorationLine: 'line-through',
   },
   priceBox: {
     marginTop: 4,
     paddingVertical: 2,
     paddingHorizontal: 4,
     borderRadius: 4,
-    backgroundColor: 'rgba(85, 185, 71, 1)'
+    backgroundColor: 'rgba(85, 185, 71, 1)',
   },
   price: {
-    color: '#fff'
+    color: '#fff',
   },
   loading: {
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.12)'
-  }
+    backgroundColor: 'rgba(0,0,0,.12)',
+  },
 });
 
 export default ProductItem;
