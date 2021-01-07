@@ -137,22 +137,24 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     }
 
     updateNoti() {
-        switch (this.props.type) {
-            case RIGHT_BUTTON_TYPE.SHOPPING_CART:
-                if (
-                    (store.cart_data && (store.cart_data.count !== this.state.noti)) ||
-                    (!store.cart_data && this.state.noti)
-                ) {
-                    this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
-                }
-                break;
-            case RIGHT_BUTTON_TYPE.CHAT:
-                if ((store.notify && store.notify.notify_chat !== this.state.noti) ||
-                    (!store.notify && this.state.noti)) {
-                    this.setState({ noti: store.notify ? store.notify.notify_chat : 0 });
-                }
-                break;
-        }
+        setTimeout(() => {
+            switch (this.props.type) {
+                case RIGHT_BUTTON_TYPE.SHOPPING_CART:
+                    if (
+                        (store.cart_data && (store.cart_data.count !== this.state.noti)) ||
+                        (!store.cart_data && this.state.noti)
+                    ) {
+                        this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
+                    }
+                    break;
+                case RIGHT_BUTTON_TYPE.CHAT:
+                    if ((store.notify && store.notify.notify_chat !== this.state.noti) ||
+                        (!store.notify && this.state.noti)) {
+                        this.setState({ noti: store.notify ? store.notify.notify_chat : 0 });
+                    }
+                    break;
+            }
+        });
     }
 
     render() {

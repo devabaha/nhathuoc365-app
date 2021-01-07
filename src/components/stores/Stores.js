@@ -275,9 +275,6 @@ class Stores extends Component {
                         onPress={() => this._changeCategory(item, index)}
                         underlayColor="transparent">
                         <View
-                          onLayout={(e) =>
-                            this.handlePositionCategories(e, item)
-                          }
                           style={styles.categories_nav_items}>
                           <Text
                             numberOfLines={2}
