@@ -11,11 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.0.0';
-  }
-
-  get tagDescription() {
-    return `- New source rn-0.63.4`;
+    return 'r11.1.0';
   }
 
   get appName() {

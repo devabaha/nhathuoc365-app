@@ -157,11 +157,16 @@ class OpRegister extends Component {
     try {
       this.getUserCityRequest.data = APIHandler.user_site_city();
       const response = await this.getUserCityRequest.promise();
-      console.log(response);
+      
       if (response.data && response.status === STATUS_SUCCESS) {
         let provinceSelected = this.state.provinceSelected;
         if (!this.state.provinceSelected && response.data.length > 0) {
           provinceSelected = response.data[0];
+        } else {
+          provinceSelected =
+            response.data.cities.find(
+              (city) => city.id === provinceSelected.id,
+            ) || {};
         }
         this.setState({
           provinceSelected,
@@ -203,7 +208,7 @@ class OpRegister extends Component {
   onPressSelectProvince = async () => {
     Keyboard.dismiss();
     Actions.push(appConfig.routes.voucherSelectProvince, {
-      provinceSelected: this.state.provinceSelected,
+      provinceSelected: this.state.provinceSelected.name,
       onSelectProvince: (provinceSelected) => {
         this.setState({provinceSelected});
       },
@@ -247,24 +252,23 @@ class OpRegister extends Component {
 
   renderCity() {
     if (this.isActiveCity) {
-      return (
-        <View style={styles.input_box}>
-          <Text style={styles.input_label}>
-            {this.props.t('data.province.title')}
-          </Text>
+      const cityData = {
+        title: this.props.t('data.province.title'),
+        value: this.state.provinceSelected
+          ? this.state.provinceSelected.name
+          : this.props.t('data.province.placeholder'),
+        select: true,
+        isHidden: !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY),
+        disable: !this.state.cities || this.state.cities.length === 0,
+      };
 
-          <View style={styles.input_text_box}>
-            <Button onPress={this.onPressSelectProvince}>
-              <View style={styles.placeNameWrapper}>
-                <Text style={styles.placeName}>
-                  {this.state.provinceSelected
-                    ? this.state.provinceSelected.name
-                    : this.props.t('data.province.placeholder')}
-                </Text>
-              </View>
-            </Button>
-          </View>
-        </View>
+      return (
+        <HorizontalInfoItem
+          titleStyle={[styles.input_label, styles.dobTitle]}
+          containerStyle={styles.dob}
+          data={cityData}
+          onSelectedValue={this.onPressSelectProvince}
+        />
       );
     }
 

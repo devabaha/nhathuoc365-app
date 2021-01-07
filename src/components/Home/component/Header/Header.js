@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -29,7 +29,8 @@ class Header extends Component {
   };
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
+    const {notify} = store;
     return (
       <Animated.View style={[styles.wrapper, this.props.wrapperStyle]}>
         <Animated.View style={[styles.maskMain, this.props.maskMainStyle]} />
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     top: -2,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   notificationBtn: {
     paddingTop: 12,
@@ -160,10 +161,10 @@ const styles = StyleSheet.create({
   userName: {
     fontWeight: '500',
     fontSize: 16,
-    color: '#FAFAFA'
+    color: '#FAFAFA',
   },
   userNameBold: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   notifyWrapper: {
     position: 'absolute',
@@ -205,12 +206,12 @@ const styles = StyleSheet.create({
 
 Header.propTypes = {
   name: PropTypes.string,
-  notify: PropTypes.object
+  notify: PropTypes.object,
 };
 
 Header.defaultProps = {
   name: '',
-  notify: {}
+  notify: {},
 };
 
 export default withTranslation(['home', 'stores'])(Header);

@@ -1,6 +1,6 @@
 ##### Tag Version
 
-# r10.1.1
+# r11.1.0
 
 **r** presented for Retail app.
 
@@ -13,7 +13,11 @@
 - Package Options.
 
 ###### New Features
+- React native 0.63.4.
 - Premium.
+- New UI cart footer.
+- Fix many bugs.
+- Improve performance.
 
 ###### Patch
 - Fix multi categories show 1 column on some android device.

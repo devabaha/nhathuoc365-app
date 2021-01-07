@@ -55,7 +55,6 @@ class Home extends Component {
     listService: PropTypes.array,
     primaryActions: PropTypes.array,
     showPrimaryActions: PropTypes.bool,
-    notify: PropTypes.object,
     userInfo: PropTypes.object,
     refreshing: PropTypes.bool,
     apiFetching: PropTypes.bool,
@@ -90,7 +89,6 @@ class Home extends Component {
     listService: [],
     primaryActions: [],
     showPrimaryActions: true,
-    notify: {},
     userInfo: undefined,
     refreshing: false,
     apiFetching: false,
@@ -342,7 +340,6 @@ class Home extends Component {
           }
         >
           {/* <Header
-            notify={this.props.notify}
             name={name}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
@@ -412,7 +409,7 @@ class Home extends Component {
               <ListProductSkeleton />
             ) : null}
 
-            {/* {this.hasSites && (
+            {this.hasSites && (
               <HomeCardList
                 onShowAll={this.props.onShowAllSites}
                 data={this.props.sites}
@@ -475,7 +472,7 @@ class Home extends Component {
               </HomeCardList>
             ) : this.props.apiFetching ? (
               <HomeCardListSkeleton />
-            ) : null} */}
+            ) : null}
           </View>
         </ScrollView>
 

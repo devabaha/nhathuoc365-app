@@ -318,7 +318,6 @@ class Home extends Component {
         notices={this.state.notices}
         services={this.state.services}
         userInfo={store.user_info}
-        notify={store.notify}
         products={this.state.products}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}

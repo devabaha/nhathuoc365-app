@@ -40,6 +40,7 @@ class Stores extends Component {
       category_nav_index: 0,
       categories_data: null,
       selected_category: {id: 0, name: ''},
+      categoriesPosition: [],
     };
 
     this.unmounted = false;
@@ -273,8 +274,10 @@ class Stores extends Component {
                       <TouchableHighlight
                         onPress={() => this._changeCategory(item, index)}
                         underlayColor="transparent">
-                        <View style={styles.categories_nav_items}>
+                        <View
+                          style={styles.categories_nav_items}>
                           <Text
+                            numberOfLines={2}
                             style={[
                               styles.categories_nav_items_title,
                               active
