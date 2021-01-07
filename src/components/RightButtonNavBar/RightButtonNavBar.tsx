@@ -155,7 +155,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                     }
                     break;
             }
-        })
+        });
     }
 
     render() {

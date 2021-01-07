@@ -384,7 +384,7 @@ class Account extends Component {
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
-          appVersion: DeviceInfo.getVersion() + codePushVersion + " - " + appConfig.tagVersion,
+          appVersion: DeviceInfo.getVersion() + codePushVersion + "-" + appConfig.tagVersion,
         }),
         rightIcon: <IconAngleRight />,
         onPress: () => {},

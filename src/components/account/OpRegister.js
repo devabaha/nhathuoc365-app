@@ -252,14 +252,15 @@ class OpRegister extends Component {
 
   renderCity() {
     if (this.isActiveCity) {
+      const disable = !this.state.cities || this.state.cities.length === 0;
       const cityData = {
         title: this.props.t('data.province.title'),
         value: this.state.provinceSelected
           ? this.state.provinceSelected.name
           : this.props.t('data.province.placeholder'),
-        select: true,
+        select: !disable,
         isHidden: !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY),
-        disable: !this.state.cities || this.state.cities.length === 0,
+        disable,
       };
 
       return (
@@ -355,9 +356,9 @@ class OpRegister extends Component {
                   />
                 </View>
               </View>
-              <Text style={styles.disclaimerText}>
+              {/* <Text style={styles.disclaimerText}>
                 {t('encourageMessage', {appName: APP_NAME_SHOW})}
-              </Text>
+              </Text> */}
             </>
           )}
         </ScrollView>
