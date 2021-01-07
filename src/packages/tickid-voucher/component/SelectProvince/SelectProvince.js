@@ -129,7 +129,7 @@ class SelectProvince extends Component {
         ]}
         style={styles.provinceItem}
         onPress={() => this.onSelect(province)}>
-        <Text style={styles.provinceItem}>{displayProvince}</Text>
+        <Text numberOfLines={2} style={[styles.provinceItem]}>{displayProvince}</Text>
         {isActive && <Image style={styles.iconChecked} source={iconChecked} />}
       </Button>
     );
@@ -158,7 +158,9 @@ class SelectProvince extends Component {
         );
       } else {
         contentStyle.height = Math.floor(
-          config.device.height - this.state.keyboardHeight - config.device.statusBarHeight,
+          config.device.height -
+            this.state.keyboardHeight -
+            config.device.statusBarHeight,
         );
       }
     } else {
@@ -185,6 +187,18 @@ class SelectProvince extends Component {
 
   get hasResult() {
     return Array.isArray(this.listCities) && this.listCities.length > 0;
+  }
+
+  get defaultIndex() {
+    if (this.hasResult) {
+      let index = this.listCities.findIndex(
+        (city) => city.name === this.props.provinceSelected,
+      );
+      index === -1 && (index = 0);
+      return index;
+    }
+
+    return 0;
   }
 
   render() {
@@ -219,6 +233,14 @@ class SelectProvince extends Component {
               data={this.listCities}
               keyExtractor={(item, index) => index.toString()}
               renderItem={this.renderProvince}
+              initialScrollIndex={this.defaultIndex}
+              getItemLayout={(data, index) => {
+                return {
+                  length: 50,
+                  offset: 50 * index,
+                  index
+                };
+              }}
             />
           ) : (
             <View style={styles.noResultWrapper}>
@@ -288,16 +310,19 @@ const styles = StyleSheet.create({
   provinceItemWrap: {
     justifyContent: 'space-between',
     borderColor: '#fafafa',
+    height: 50
   },
   provinceItem: {
     fontSize: 15,
     fontWeight: '400',
     color: '#444',
     padding: 15,
+    flex: 1
   },
   iconChecked: {
     width: 20,
     height: 20,
+    marginRight: 15,
   },
   noResultWrapper: {
     marginHorizontal: 16,

@@ -1452,7 +1452,6 @@ class Confirm extends Component {
                     style={[
                       styles.boxButtonAction,
                       {
-                        width: Util.size.width - 30,
                         backgroundColor: '#fa7f50',
                         borderColor: '#999999'
                       }
@@ -1483,7 +1482,6 @@ class Confirm extends Component {
                     style={[
                       styles.boxButtonAction,
                       {
-                        width: Util.size.width - 30,
                         backgroundColor: '#fa7f50',
                         borderColor: '#999999'
                       }
@@ -1528,7 +1526,6 @@ class Confirm extends Component {
                   style={[
                     styles.boxButtonAction,
                     {
-                      width: Util.size.width - 160,
                       backgroundColor: DEFAULT_COLOR,
                       borderColor: '#999999'
                     }
@@ -1733,14 +1730,14 @@ class Confirm extends Component {
           otherClose={false}
         />
 
-        {/* <PopupConfirm
+        <PopupConfirm
           ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-        /> */}
+        />
 
         <PopupConfirm
           ref_popup={ref => (this.refs_edit_cart = ref)}
@@ -2613,16 +2610,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16
+    paddingVertical: 16,
+    paddingHorizontal: 30
+  },
+  buttonAction: {
+    flex: 1,
   },
   boxButtonAction: {
+    flex: 1,
     flexDirection: 'row',
     borderWidth: Util.pixel,
     borderColor: '#666666',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 5,
-    width: Util.size.width / 2 - 24,
+    // width: Util.size.width / 2 - 24,
     alignItems: 'center',
     justifyContent: 'center'
   },

@@ -1,15 +1,15 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import {View, Text, StyleSheet} from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
-import { Actions } from 'react-native-router-flux';
+import store from 'app-store';
 
 class Header extends Component {
   render() {
-    const { t, ...props } = this.props;
+    const {t, ...props} = this.props;
+    const {notify} = store;
     return (
       <View style={styles.container}>
         <Text style={styles.userNameWrapper}>
@@ -22,8 +22,7 @@ class Header extends Component {
         <View style={styles.notificationWrapper}>
           <Button
             containerStyle={styles.notificationBtn}
-            onPress={props.onPressNoti}
-          >
+            onPress={props.onPressNoti}>
             <AntDesignIcon
               style={styles.iconNotication}
               name="message1"
@@ -31,9 +30,9 @@ class Header extends Component {
               color="#fff"
               solid
             />
-            {props.notify.notify_chat > 0 && (
+            {notify.notify_chat > 0 && (
               <View style={styles.notifyWrapper}>
-                <Text style={styles.notify}>{props.notify.notify_chat}</Text>
+                <Text style={styles.notify}>{notify.notify_chat}</Text>
               </View>
             )}
           </Button>
@@ -59,32 +58,32 @@ const styles = StyleSheet.create({
       ? 35
       : appConfig.device.isIOS
       ? 25
-      : 15
+      : 15,
   },
   notificationWrapper: {
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   notificationBtn: {
     paddingTop: 12,
     paddingLeft: 8,
     paddingBottom: 8,
     position: 'relative',
-    ...elevationShadowStyle(5)
+    ...elevationShadowStyle(5),
   },
   iconNotication: {},
   userNameWrapper: {
     marginTop: 16,
-    flex: 1
+    flex: 1,
   },
   userName: {
     fontWeight: '500',
     fontSize: 16,
-    color: '#FAFAFA'
+    color: '#FAFAFA',
   },
   userNameBold: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   notifyWrapper: {
     position: 'absolute',
@@ -97,23 +96,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 8,
   },
   notify: {
     fontSize: 10,
     color: '#ffffff',
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
 
 Header.propTypes = {
   name: PropTypes.string,
-  notify: PropTypes.object
+  notify: PropTypes.object,
 };
 
 Header.defaultProps = {
   name: '',
-  notify: {}
+  notify: {},
 };
 
-export default withTranslation('home')(Header);
+export default withTranslation('home')(observer(Header));

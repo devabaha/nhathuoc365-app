@@ -220,14 +220,14 @@ class StoreOrders extends Component {
           otherClose={false}
         />
 
-        {/* <PopupConfirm
+        <PopupConfirm
           ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-        /> */}
+        />
 
         <PopupConfirm
           ref_popup={ref => (this.refs_edit_cart = ref)}

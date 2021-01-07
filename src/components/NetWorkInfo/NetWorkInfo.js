@@ -194,7 +194,7 @@ class NetWorkInfo extends Component {
       return (
         <SafeAreaView pointerEvents="none" style={styles.devServerWaterMarkWrapper}>
           <View style={styles.devServerWaterMarkContainer}>
-            <Text style={styles.devServerWaterMarkLabel}>ON SERVER DEV</Text>
+            <Text style={styles.devServerWaterMarkLabel}>ON DEV SERVER</Text>
           </View>
         </SafeAreaView>
       );

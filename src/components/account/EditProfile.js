@@ -29,6 +29,7 @@ class EditProfile extends Component {
 
     this.state = {
       loading: false,
+      cityLoading: true,
       sections: this.sections,
       provinceSelected: {
         name: store.user_info ? store.user_info.city : '',
@@ -41,6 +42,7 @@ class EditProfile extends Component {
   }
 
   get sections() {
+    console.log(this.state);
     return [
       {
         id: 'id_section_1',
@@ -96,11 +98,7 @@ class EditProfile extends Component {
           {
             id: 'thanh_pho',
             title: this.props.t('sections.city.title'),
-            value:
-              store.user_info.city ||
-              this.props.t('opRegister:data.province.title'),
             select: true,
-            isHidden: true,
           },
         ],
       },
@@ -109,7 +107,7 @@ class EditProfile extends Component {
 
   componentDidMount() {
     this.eventTracker.logCurrentView();
-    this.getCities();
+    isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) && this.getCities();
   }
 
   componentWillUnmount() {
@@ -157,16 +155,6 @@ class EditProfile extends Component {
         }
       });
     });
-
-    // if (isEmpty(name)) {
-    //   errorMessage = 'Hãy điền tên của bạn';
-    // } else if (isEmpty(email)) {
-    //   errorMessage = 'Hãy điền email của bạn';
-    // } else if (!this._is_email(email)) {
-    //   errorMessage = 'Email của bạn không đúng định dạng';
-    // } else if (isEmpty(address)) {
-    //   errorMessage = 'Hãy điền địa chỉ của bạn';
-    // }
 
     if (
       name === userInfo.name &&
@@ -229,7 +217,7 @@ class EditProfile extends Component {
 
   getCities = async () => {
     Keyboard.dismiss();
-    this.setState({loading: true});
+    this.setState({cityLoading: true});
     const {t} = this.props;
     try {
       this.getUserCityRequest.data = APIHandler.user_site_city();
@@ -238,23 +226,16 @@ class EditProfile extends Component {
       if (response.data && response.status === STATUS_SUCCESS) {
         let provinceSelected = this.state.provinceSelected;
         if (!this.state.provinceSelected.id && response.data.length > 0) {
-          provinceSelected = response.data[0];
+          provinceSelected = response.data.cities[0];
+        } else {
+          provinceSelected =
+            response.data.cities.find(
+              (city) => city.id === provinceSelected.id,
+            ) || {};
         }
 
-        this._onUpdateSections(
-          'thanh_pho',
-          undefined,
-          ['isHidden', 'name'],
-          [
-            !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) ||
-              !response.data.cities ||
-              response.data.cities.length === 0,
-            provinceSelected.name,
-          ],
-        );
-
         this.setState({
-          cities: response.data.cities,
+          cities: response.data.cities || [],
           provinceSelected,
         });
       } else {
@@ -270,15 +251,13 @@ class EditProfile extends Component {
         message: t('common:api.error.message'),
       });
     } finally {
-      if (!this.unmounted) {
-        this.setState({loading: false});
-      }
+      this.setState({cityLoading: false});
     }
   };
 
   onPressProvince = () => {
     Actions.push(appConfig.routes.voucherSelectProvince, {
-      provinceSelected: this.state.provinceSelected,
+      provinceSelected: this.state.provinceSelected.name,
       onSelectProvince: (provinceSelected) => {
         this.setState({provinceSelected});
         this._onUpdateSections('thanh_pho', provinceSelected.name);
@@ -308,6 +287,14 @@ class EditProfile extends Component {
   };
 
   _renderItems = ({item, index, section}) => {
+    if (item.id === 'thanh_pho') {
+      item.value =
+        this.state.provinceSelected.name ||
+        this.props.t('opRegister:data.province.title');
+      item.isHidden = !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY);
+      item.isLoading = this.state.cityLoading;
+      item.disable = !this.state.cities || this.state.cities.length === 0;
+    }
     return (
       <HorizontalInfoItem
         data={item}

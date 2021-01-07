@@ -11,7 +11,7 @@ class Config {
   }
 
   get appName() {
-    return 'TICKID';
+    return 'ABAHAGLOBAL';
   }
 
   get namespace() {

@@ -1,30 +1,31 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 
-import { isEmpty, isFunction } from 'lodash';
+import {isEmpty, isFunction} from 'lodash';
 import DatePicker from 'react-native-datepicker';
 import appConfig from 'app-config';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
+import Loading from '../Loading';
 
 export default class HorizontalInfoItem extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      selectedDate: null
+      selectedDate: null,
     };
   }
 
   goToMap() {
     Actions.push(appConfig.routes.modalSearchPlaces, {
       onCloseModal: Actions.pop,
-      onPressItem: this._onChangeInputValue
+      onPressItem: this._onChangeInputValue,
     });
   }
 
@@ -39,18 +40,28 @@ export default class HorizontalInfoItem extends Component {
     mapField,
     inputProps,
     detailTitleStyle,
+    isLoading,
   ) => {
+    if (isLoading) {
+      return (
+        <View style={styles.loadingContainer}>
+          <Loading
+            wrapperStyle={styles.loading}
+            size="small"
+          />
+        </View>
+      );
+    }
     if (!input && !select) {
       return (
         <Text
           style={[
             styles.detailTitle,
-            { color: specialColor ? specialColor : 'black' },
+            {color: specialColor ? specialColor : 'black'},
             detailTitleStyle,
-            this.props.detailTitleStyle
+            this.props.detailTitleStyle,
           ]}
-          {...inputProps}
-        >
+          {...inputProps}>
           {value}
         </Text>
       );
@@ -58,15 +69,14 @@ export default class HorizontalInfoItem extends Component {
       if (mapField) {
         return (
           <TouchableOpacity
-            style={{ flex: 1, width: '100%' }}
-            onPress={this.goToMap.bind(this)}
-          >
+            style={{flex: 1, width: '100%'}}
+            onPress={this.goToMap.bind(this)}>
             <View pointerEvents="none">
               <TextInput
                 style={[
                   styles.detailTitle,
                   detailTitleStyle,
-                  this.props.detailTitleStyle
+                  this.props.detailTitleStyle,
                 ]}
                 value={value}
                 placeholder={defaultValue}
@@ -83,7 +93,7 @@ export default class HorizontalInfoItem extends Component {
           style={[
             styles.detailTitle,
             detailTitleStyle,
-            this.props.detailTitleStyle
+            this.props.detailTitleStyle,
           ]}
           value={value}
           placeholder={defaultValue}
@@ -97,7 +107,7 @@ export default class HorizontalInfoItem extends Component {
         return (
           <View style={styles.btnSelect}>
             <DatePicker
-              style={{ flex: 1, justifyContent: 'center' }}
+              style={{flex: 1, justifyContent: 'center'}}
               date={value || this.state.selectedDate}
               mode="date"
               placeholder={defaultValue}
@@ -110,20 +120,20 @@ export default class HorizontalInfoItem extends Component {
                   fontSize: 14,
                   color: 'black',
                   position: 'absolute',
-                  right: 0
+                  right: 0,
                 },
                 placeholderText: {
                   fontSize: 14,
                   color: appConfig.colors.placeholder,
                   position: 'absolute',
-                  right: 0
+                  right: 0,
                 },
                 dateInput: {
-                  borderColor: 'transparent'
-                }
+                  borderColor: 'transparent',
+                },
               }}
-              onDateChange={date => {
-                this.setState({ selectedDate: date }, () => {
+              onDateChange={(date) => {
+                this.setState({selectedDate: date}, () => {
                   if (isFunction(this.props.onSelectedDate)) {
                     this.props.onSelectedDate(date);
                   }
@@ -136,15 +146,13 @@ export default class HorizontalInfoItem extends Component {
         return (
           <TouchableOpacity
             style={styles.btnSelect}
-            onPress={this._onSelectValue}
-          >
+            onPress={this._onSelectValue}>
             <Text
               style={{
                 fontSize: 14,
-                color: isEmpty(value) ? '#989898' : 'black'
+                color: isEmpty(value) ? '#989898' : 'black',
               }}
-              {...inputProps}
-            >
+              {...inputProps}>
               {isEmpty(value) ? defaultValue : value}
             </Text>
           </TouchableOpacity>
@@ -155,7 +163,7 @@ export default class HorizontalInfoItem extends Component {
     }
   };
 
-  _onChangeInputValue = value => {
+  _onChangeInputValue = (value) => {
     if (isFunction(this.props.onChangeInputValue)) {
       this.props.onChangeInputValue(this.props.data, value);
     }
@@ -181,12 +189,14 @@ export default class HorizontalInfoItem extends Component {
         multiline,
         mapField,
         columnView,
-        isHidden
+        isHidden,
+        renderRight,
+        isLoading,
       },
-      inputProps
+      inputProps,
     } = this.props;
 
-    if(isHidden) return null;
+    if (isHidden) return null;
 
     const extraContainerStyle = columnView && styles.columnViewContainer;
     const extraTitleStyle = columnView && styles.columnViewTitle;
@@ -197,25 +207,27 @@ export default class HorizontalInfoItem extends Component {
         style={[
           styles.container,
           extraContainerStyle,
-          { backgroundColor: disable ? '#eeF0F4' : '#ffffff' },
-          this.props.containerStyle
-        ]}
-      >
+          {backgroundColor: disable ? '#eeF0F4' : '#ffffff'},
+          this.props.containerStyle,
+        ]}>
         <Text style={[styles.title, extraTitleStyle, this.props.titleStyle]}>
           {title}
         </Text>
-        {this._renderRightView(
-          id,
-          input,
-          select,
-          value,
-          defaultValue,
-          specialColor,
-          multiline,
-          mapField,
-          inputProps,
-          extraDetailTitleStyle,
-        )}
+        {renderRight
+          ? renderRight()
+          : this._renderRightView(
+              id,
+              input,
+              select,
+              value,
+              defaultValue,
+              specialColor,
+              multiline,
+              mapField,
+              inputProps,
+              extraDetailTitleStyle,
+              isLoading,
+            )}
       </View>
     );
   }
@@ -225,7 +237,7 @@ const styles = StyleSheet.create({
   container: {
     minHeight: 50,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
     // paddingTop: 15,
     // paddingBottom: 15
   },
@@ -235,7 +247,7 @@ const styles = StyleSheet.create({
     color: '#888',
     marginLeft: 20,
     textAlign: 'left',
-    flex: 0.5
+    flex: 0.5,
   },
 
   detailTitle: {
@@ -244,31 +256,40 @@ const styles = StyleSheet.create({
     color: '#242424',
     marginRight: 20,
     paddingLeft: 0,
-    textAlign: 'right'
+    textAlign: 'right',
   },
 
   btnSelect: {
     flex: 0.6,
     marginRight: 20,
     justifyContent: 'center',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
   },
   columnViewContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
     paddingVertical: 10,
     height: null,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   columnViewTitle: {
     flex: 0,
     marginLeft: 0,
-    marginBottom: 10
+    marginBottom: 10,
   },
   columnViewValue: {
     textAlign: 'left',
     marginRight: 0,
     flex: 1,
-    color: '#242244'
+    color: '#242244',
+  },
+
+  loadingContainer: {
+    flex: 1, 
+    alignItems: 'flex-end', 
+    paddingRight: 15
+  },
+  loading: {
+    position: undefined
   }
 });
