@@ -288,12 +288,14 @@ class EditProfile extends Component {
 
   _renderItems = ({item, index, section}) => {
     if (item.id === 'thanh_pho') {
+      const disable = !this.state.cities || this.state.cities.length === 0;
       item.value =
         this.state.provinceSelected.name ||
         this.props.t('opRegister:data.province.title');
       item.isHidden = !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY);
       item.isLoading = this.state.cityLoading;
-      item.disable = !this.state.cities || this.state.cities.length === 0;
+      item.disable = disable;
+      item.select = !disable;
     }
     return (
       <HorizontalInfoItem
