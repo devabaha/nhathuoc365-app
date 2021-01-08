@@ -104,7 +104,8 @@ class ProfileDetail extends Component {
       <TouchableHighlight
         style={styles.rightBtnEdit}
         underlayColor="transparent"
-        onPress={this._onShowEditProfile}>
+        onPress={this._onShowEditProfile}
+        hitSlop={HIT_SLOP}>
         <Icon name="edit" size={24} color="#ffffff" />
       </TouchableHighlight>
     );
@@ -259,7 +260,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#EFEFF4',
   },
   rightBtnEdit: {
-    right: 10,
+    padding: 10,
   },
 });
 

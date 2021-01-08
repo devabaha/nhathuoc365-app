@@ -225,12 +225,12 @@ class EditProfile extends Component {
 
       if (response.data && response.status === STATUS_SUCCESS) {
         let provinceSelected = this.state.provinceSelected;
-        if (!this.state.provinceSelected.id && response.data.length > 0) {
+        if (!this.state.provinceSelected.id && response.data.cities.length > 0) {
           provinceSelected = response.data.cities[0];
         } else {
           provinceSelected =
             response.data.cities.find(
-              (city) => city.id === provinceSelected.id,
+              (city) => city.id == provinceSelected.id,
             ) || {};
         }
 
