@@ -44,6 +44,7 @@ class Stores extends Component {
     };
 
     this.unmounted = false;
+    this.refCates = [];
 
     action(() => {
       store.setStoresFinish(false);
@@ -217,21 +218,19 @@ class Stores extends Component {
         willUpdateState(this.unmounted, () => {
           // nav
           if (index > 0 && end_of_list) {
-            this.refs_category_nav.scrollToIndex({
-              index: index - 1,
-              animated: true,
+            this.refs_category_nav.scrollToOffset({
+              offset: this.refCates[index - 1].offsetX,
             });
           } else if (!end_of_list) {
             this.refs_category_nav.scrollToEnd();
           } else if (index == 0) {
-            this.refs_category_nav.scrollToIndex({index, animated: true});
+            this.refs_category_nav.scrollToOffset({
+              offset: this.refCates[index].offsetX,
+            });
           }
 
           if (this.refs_category_screen && !nav_only) {
-            this.refs_category_screen.scrollToIndex({
-              index: index,
-              animated: true,
-            });
+            this.refs_category_screen.scrollToIndex({index});
           }
         }),
       );
@@ -249,6 +248,18 @@ class Stores extends Component {
       }
     }
   }
+
+  measureCategoriesLayout = (ref, category, index) => {
+    if (ref && (!this.refCates[index] || !this.refCates[index].width)) {
+      ref.measure((x, y, width, height, pageX, pageY) => {
+        this.refCates[index] = {
+          offsetX: pageX,
+          width,
+          index,
+        };
+      });
+    }
+  };
 
   render() {
     const {t} = this.props;
@@ -275,6 +286,9 @@ class Stores extends Component {
                         onPress={() => this._changeCategory(item, index)}
                         underlayColor="transparent">
                         <View
+                          ref={(inst) =>
+                            this.measureCategoriesLayout(inst, item, index)
+                          }
                           style={styles.categories_nav_items}>
                           <Text
                             numberOfLines={2}

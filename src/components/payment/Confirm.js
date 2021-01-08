@@ -735,7 +735,7 @@ class Confirm extends Component {
                 // marginBottom: single ? store.keyboardTop + 60 : 0
               },
             ]}
-            contentContainerStyle={{paddingTop: 60}}>
+            contentContainerStyle={{paddingTop: single ? 60 : 0}}>
             <View
               style={[
                 styles.rows,

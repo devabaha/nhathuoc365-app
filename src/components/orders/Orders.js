@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -6,13 +6,13 @@ import {
   StyleSheet,
   FlatList,
   RefreshControl,
-  ScrollView
+  ScrollView,
 } from 'react-native';
-import { reaction } from 'mobx';
+import {reaction} from 'mobx';
 import appConfig from 'app-config';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
@@ -28,7 +28,7 @@ class Orders extends Component {
       loading: true,
       empty: false,
       finish: false,
-      scrollTop: 0
+      scrollTop: 0,
     };
 
     this._getData = this._getData.bind(this);
@@ -71,12 +71,12 @@ class Orders extends Component {
 
   _scrollToTop(top = 0) {
     if (this.refs_orders) {
-      this.refs_orders.scrollTo({ x: 0, y: top, animated: true });
+      this.refs_orders.scrollTo({x: 0, y: top, animated: true});
 
       clearTimeout(this._scrollTimer);
       this._scrollTimer = setTimeout(() => {
         this.setState({
-          scrollTop: top
+          scrollTop: top,
         });
       }, 500);
     }
@@ -85,37 +85,37 @@ class Orders extends Component {
   _scrollOverTopAndReload() {
     this.setState(
       {
-        refreshing: true
+        refreshing: true,
       },
       () => {
         this._scrollToTop(-60);
 
         this._getData(1000);
-      }
+      },
     );
   }
 
   async _getData(delay, noScroll = false) {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.user_cart_list();
 
       if (response && response.status == STATUS_SUCCESS) {
         if (store.deep_link_data) {
           const item = response.data.find(
-            order => order.id === store.deep_link_data.id
+            (order) => order.id === store.deep_link_data.id,
           );
           if (item) {
             store.setStoreData(item.site);
             Actions.orders_item({
               data: item,
               title: `#${item.cart_code}`,
-              tel: item.tel
+              tel: item.tel,
             });
           } else {
             flashShowMessage({
               type: 'danger',
-              message: t('getOrders.error.notFoundMessage')
+              message: t('getOrders.error.notFoundMessage'),
             });
           }
         }
@@ -126,7 +126,7 @@ class Orders extends Component {
             refreshing: false,
             loading: false,
             empty: false,
-            finish: true
+            finish: true,
           });
 
           if (!noScroll) {
@@ -138,7 +138,7 @@ class Orders extends Component {
           this.setState({
             loading: false,
             data: null,
-            refreshing: false
+            refreshing: false,
           });
         }, delay || 0);
       }
@@ -159,22 +159,22 @@ class Orders extends Component {
   _onRefresh() {
     this.setState(
       {
-        refreshing: true
+        refreshing: true,
       },
-      this._getData.bind(this, 1000)
+      this._getData.bind(this, 1000),
     );
   }
 
   render() {
-    const { loading, data } = this.state;
-    const { t } = this.props;
+    const {loading, data} = this.state;
+    const {t} = this.props;
     if (loading) {
       return <Indicator />;
     }
 
     return (
       <View style={styles.container}>
-        <ScrollView
+        {/* <ScrollView
           scrollEventThrottle={16}
           onScroll={event => {
             this.setState({
@@ -197,27 +197,56 @@ class Orders extends Component {
             />
           }
         >
-          {data != null ? (
-            <FlatList
-              ItemSeparatorComponent={() => (
-                <View style={styles.separator}></View>
-              )}
-              style={styles.items_box}
-              data={data}
-              extraData={this.state}
-              renderItem={({ item, index }) => {
-                return (
-                  <OrdersItemComponent
-                    confirmCancelCart={this.confirmCancelCart.bind(this)}
-                    confirmCoppyCart={this.confirmCoppyCart.bind(this)}
-                    confirmEditCart={this.confirmEditCart.bind(this)}
-                    item={item}
-                  />
-                );
-              }}
-              keyExtractor={item => item.id}
+          {data != null ? ( */}
+        <FlatList
+          ItemSeparatorComponent={() => <View style={styles.separator}></View>}
+          style={styles.items_box}
+          contentContainerStyle={{flexGrow: 1}}
+          data={data || []}
+          extraData={this.state}
+          ListEmptyComponent={
+            data != null && (
+              <View style={styles.empty_box}>
+                <Icon
+                  name="shopping-basket"
+                  size={32}
+                  color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+                />
+                <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
+
+                <TouchableHighlight
+                  onPress={() => {
+                    Actions.jump(appConfig.routes.homeTab);
+                  }}
+                  underlayColor="transparent">
+                  <View style={styles.empty_box_btn}>
+                    <Text style={styles.empty_box_btn_title}>
+                      {t('encourageMessage')}
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            )
+          }
+          renderItem={({item, index}) => {
+            return (
+              <OrdersItemComponent
+                confirmCancelCart={this.confirmCancelCart.bind(this)}
+                confirmCoppyCart={this.confirmCoppyCart.bind(this)}
+                confirmEditCart={this.confirmEditCart.bind(this)}
+                item={item}
+              />
+            );
+          }}
+          keyExtractor={(item) => item.id}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this._onRefresh.bind(this)}
             />
-          ) : (
+          }
+        />
+        {/* ) : (
             <View style={styles.empty_box}>
               <Icon
                 name="shopping-basket"
@@ -240,10 +269,10 @@ class Orders extends Component {
               </TouchableHighlight>
             </View>
           )}
-        </ScrollView>
+        </ScrollView> */}
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_cancel_cart = ref)}
+          ref_popup={(ref) => (this.refs_cancel_cart = ref)}
           title="Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
@@ -252,7 +281,7 @@ class Orders extends Component {
         />
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_coppy_cart = ref)}
+          ref_popup={(ref) => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
@@ -261,7 +290,7 @@ class Orders extends Component {
         />
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_edit_cart = ref)}
+          ref_popup={(ref) => (this.refs_edit_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
           height={110}
           noConfirm={this._closePopupEdit.bind(this)}
@@ -277,7 +306,7 @@ class Orders extends Component {
       try {
         var response = await APIHandler.site_cart_reorder(
           this.item_coppy.site_id,
-          this.item_coppy.id
+          this.item_coppy.id,
         );
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
@@ -288,7 +317,7 @@ class Orders extends Component {
 
           flashShowMessage({
             type: 'success',
-            message: response.message
+            message: response.message,
           });
         }
       } catch (error) {
@@ -300,12 +329,12 @@ class Orders extends Component {
   }
 
   async _editCart() {
-    const { t } = this.props;
+    const {t} = this.props;
     if (this.item_edit) {
       try {
         const response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
-          this.item_edit.id
+          this.item_edit.id,
         );
 
         if (!this.unmounted) {
@@ -313,14 +342,14 @@ class Orders extends Component {
             store.setCartData(response.data);
             flashShowMessage({
               type: 'success',
-              message: response.message
+              message: response.message,
             });
 
             this._getData();
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || t('common:api.error.message')
+              message: response.message || t('common:api.error.message'),
             });
           }
         }
@@ -345,24 +374,24 @@ class Orders extends Component {
   }
 
   async _cancelCart() {
-    const { t } = this.props;
+    const {t} = this.props;
     if (this.item_cancel) {
       try {
         const response = await APIHandler.site_cart_canceling(
           this.item_cancel.site_id,
-          this.item_cancel.id
+          this.item_cancel.id,
         );
         if (!this.unmounted) {
           if (response && response.status == STATUS_SUCCESS) {
             this._getData(450, true);
             flashShowMessage({
               type: 'success',
-              message: response.message
+              message: response.message,
             });
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || t('common:api.error.message')
+              message: response.message || t('common:api.error.message'),
             });
           }
         }
@@ -370,7 +399,7 @@ class Orders extends Component {
         console.log(error);
         flashShowMessage({
           type: 'danger',
-          message: t('common:api.error.message')
+          message: t('common:api.error.message'),
         });
       }
     }
@@ -405,15 +434,15 @@ class Orders extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   right_btn_add_store: {
     paddingVertical: 1,
     paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0
+    paddingTop: isAndroid ? 4 : 0,
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   stores_info_action_notify: {
     position: 'absolute',
@@ -426,28 +455,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    borderRadius: 8
+    borderRadius: 8,
   },
   stores_info_action_notify_value: {
     fontSize: 10,
     color: '#ffffff',
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
-
+items_box: {
+  flex: 1
+},
   empty_box: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 200
+    // marginTop: 200,
   },
   empty_box_title: {
     fontSize: 12,
     marginTop: 8,
-    color: '#404040'
+    color: '#404040',
   },
   empty_box_btn: {
     borderWidth: Util.pixel,
@@ -458,11 +491,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 12,
     borderRadius: 5,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   empty_box_btn_title: {
-    color: '#ffffff'
-  }
+    color: '#ffffff',
+  },
 });
 
 export default withTranslation(['orders', 'common'])(observer(Orders));

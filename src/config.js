@@ -34,8 +34,6 @@ class Config {
     return {
       appKey: 'abahaglobalkeywoxBg',
       secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
-      // appKey: 'weeatcleankey',
-      // secretKey: '23432weeatcleankey242343233'
     };
   }
 
