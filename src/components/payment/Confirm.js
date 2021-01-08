@@ -2499,7 +2499,7 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd',
 
     position: 'absolute',
-    zIndex: 99,
+    zIndex: 1,
   },
   payments_nav_items: {
     justifyContent: 'center',

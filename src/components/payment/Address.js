@@ -152,9 +152,8 @@ class Address extends Component {
   }
 
   _goConfirm() {
-    Actions.push(appConfig.routes.paymentConfirm, {
-      type: ActionConst.REPLACE
-    });
+    // Actions.replace(appConfig.routes.paymentConfirm);
+    Actions.pop();
   }
 
   // chọn địa chỉ cho đơn hàng
