@@ -1,12 +1,12 @@
 import React from 'react';
-import { View, Platform, LayoutAnimation } from 'react-native';
+import {View, Platform, LayoutAnimation} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import getTickUniqueID from '../util/getTickUniqueID';
 import appConfig from 'app-config';
 import Events from './Events';
 global.Events = Events;
 
-import { CachedImage, CachedImageBackground } from 'react-native-img-cache';
+import {CachedImage, CachedImageBackground} from 'react-native-img-cache';
 global.CachedImage = CachedImage;
 global.CachedImageBackground = CachedImageBackground;
 
@@ -21,19 +21,19 @@ import Indicator from '../components/Indicator';
 global.Indicator = Indicator;
 
 // action for mobx
-import { action } from 'mobx';
+import {action} from 'mobx';
 global.action = action;
 
 // observer from mobx-react
-import { observer } from 'mobx-react';
+import {observer} from 'mobx-react';
 global.observer = observer;
 
 // withTranslation from react-i18next
-import { withTranslation } from 'react-i18next';
+import {withTranslation} from 'react-i18next';
 global.withTranslation = withTranslation;
 
 // useTranslation from react-i18next
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 global.useTranslation = useTranslation;
 
 // lodash
@@ -49,7 +49,7 @@ global.defaultToastError = () => Toast.show(MESSAGE_OTHER_ERROR, Toast.SHORT);
 
 // function money format
 // add prototype for Number
-Number.prototype.formatMoney = function(c, d, t) {
+Number.prototype.formatMoney = function (c, d, t) {
   var n = this,
     c = isNaN((c = Math.abs(c))) ? 0 : c,
     d = d == undefined ? '.' : d,
@@ -70,7 +70,7 @@ Number.prototype.formatMoney = function(c, d, t) {
   );
 };
 
-String.prototype.replaceAll = function(search, replacement) {
+String.prototype.replaceAll = function (search, replacement) {
   var target = this;
   return target.replace(new RegExp(search, 'g'), replacement);
 };
@@ -81,18 +81,18 @@ function isURL(s) {
 }
 global.isURL = isURL;
 
-global.isLinkTickID = s => {
+global.isLinkTickID = (s) => {
   var regexp = /(tickid)/;
   return regexp.test(s);
 };
 
-global.isWalletAddress = address => {
+global.isWalletAddress = (address) => {
   return (
     /^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)
   );
 };
 
-global.isWalletAddressWithZoneCode = str => {
+global.isWalletAddressWithZoneCode = (str) => {
   var addresses = str.split('|');
   if (addresses[1] && isWalletAddress(addresses[0])) {
     return addresses;
@@ -102,12 +102,12 @@ global.isWalletAddressWithZoneCode = str => {
 };
 
 //Kiem tra la ma tai khoan
-global.isAccountCode = address => {
+global.isAccountCode = (address) => {
   return /^(0x)?[0-9a-z]{10}$/.test(address);
 };
 
 //Kiem tra la ma tai khoan
-global.isCartCode = address => {
+global.isCartCode = (address) => {
   return /^(00)?[0-9a-z]{9}$/.test(address);
 };
 
@@ -126,7 +126,7 @@ global.stristr = (haystack, needle, bool) => {
   }
 };
 // cut first word
-global.cutFirstWord = words => {
+global.cutFirstWord = (words) => {
   if (typeof words != 'string') return;
 
   var sortName = [];
@@ -141,7 +141,7 @@ global.cutFirstWord = words => {
 // if (isAndroid) {
 //   UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
 // }
-global.layoutAnimation = animate => {
+global.layoutAnimation = (animate) => {
   animate = typeof animate == 'undefined' ? 'easeInEaseOut' : animate;
   if (LayoutAnimation[animate]) {
     LayoutAnimation[animate]();
@@ -155,28 +155,28 @@ global.layoutAnimation = animate => {
  */
 import FlashMessage, {
   showMessage,
-  hideMessage
+  hideMessage,
 } from 'react-native-flash-message';
 global.FlashMessage = FlashMessage;
 
 global.flashMessageSuccessTheme = {
   color: 'white',
-  backgroundColor: '#007E33'
+  backgroundColor: '#007E33',
 };
 global.flashMessageDangerTheme = {
   color: 'white',
-  backgroundColor: '#CC0000'
+  backgroundColor: '#CC0000',
 };
 global.flashMessageInfoTheme = {
   color: 'white',
-  backgroundColor: '#0099CC'
+  backgroundColor: '#0099CC',
 };
 global.flashMessageWarningTheme = {
   color: 'white',
-  backgroundColor: '#FF8800'
+  backgroundColor: '#FF8800',
 };
 
-global.flashShowMessage = props => {
+global.flashShowMessage = (props) => {
   let theme = {};
   switch (props.type) {
     case 'danger':
@@ -194,7 +194,7 @@ global.flashShowMessage = props => {
     default:
       break;
   }
-  showMessage({ ...props, ...theme });
+  showMessage({...props, ...theme});
 };
 
 global.flashHideMessage = hideMessage;
@@ -226,7 +226,7 @@ var storage = new Storage({
   storageBackend: AsyncStorage,
   defaultExpires: null,
   enableCache: true,
-  sync: {}
+  sync: {},
 });
 global.storage = storage;
 
@@ -236,27 +236,27 @@ global.storage = storage;
  * Use: call md5(encode_string)
  */
 import encoding from 'react-native-md5';
-global.md5 = str => encoding.hex_md5(str);
+global.md5 = (str) => encoding.hex_md5(str);
 
-global.validateEmail = email => {
+global.validateEmail = (email) => {
   var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 };
 
 // 4 Digi Password
-global.validate4DigiPassword = password => {
+global.validate4DigiPassword = (password) => {
   var re = /^[0-9]{4}$/;
   return re.test(String(password).toLowerCase());
 };
 
 // 10 Digi
-global.validatePhonenumber = password => {
+global.validatePhonenumber = (password) => {
   var re = /^[0-9]{10}$/;
   return re.test(String(password).toLowerCase());
 };
 
 // money >= 0 && is a number
-global.validateMoney = money => {
+global.validateMoney = (money) => {
   if (!isNaN(money)) {
     return money >= 0;
   }
@@ -273,7 +273,7 @@ global.time = () => new Date().getTime();
  * encode Query Data
  * Use: encodeQueryData(object)
  */
-global.encodeQueryData = data => {
+global.encodeQueryData = (data) => {
   let ret = [];
   for (let d in data)
     ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(data[d]));
@@ -283,7 +283,7 @@ global.encodeQueryData = data => {
 /**
  * Use: url_for(my_url)
  */
-global.url_for = url => {
+global.url_for = (url, ...params) => {
   const string = url,
     substring = '?';
   const existGet = string.includes(substring);
@@ -306,7 +306,7 @@ global.url_for = url => {
       os +
       os_version +
       store +
-      timestamp
+      timestamp,
   );
 
   const data = {
@@ -318,10 +318,16 @@ global.url_for = url => {
     device_type,
     app_version,
     timestamp,
-    hash_token
+    hash_token,
   };
   const queryUrl = encodeQueryData(data);
-
+  if (params.length !== 0) {
+    params.forEach((param) => {
+      if (param !== undefined) {
+        url += '/' + param;
+      }
+    });
+  }
   return url + (existGet ? '&' : '?') + queryUrl;
 };
 
@@ -359,8 +365,8 @@ global.hexToRgbA = (hex, opacity) => {
  * Custommer tags
  * Center tag
  */
-const Center = ({ ref, style, children }) => (
-  <View ref={ref} style={[style, { alignItems: 'center' }]}>
+const Center = ({ref, style, children}) => (
+  <View ref={ref} style={[style, {alignItems: 'center'}]}>
     {children}
   </View>
 );
@@ -377,13 +383,13 @@ global.elevationShadowStyle = (
   width = 0,
   height = 0,
   shadowOpacity = 0.25,
-  shadowColor = 'black'
+  shadowColor = 'black',
 ) => ({
   elevation,
   shadowColor,
-  shadowOffset: { width: width, height: height || 0.5 * elevation },
+  shadowOffset: {width: width, height: height || 0.5 * elevation},
   shadowOpacity,
-  shadowRadius: 0.8 * elevation
+  shadowRadius: 0.8 * elevation,
 });
 
 global.LightenColor = (color, percent) => {
@@ -432,7 +438,7 @@ global.vndCurrencyFormat = (target, n, x) => {
  * @todo format number to sale form
  * @example 25 -> -25%
  */
-global.saleFormat = sale => {
+global.saleFormat = (sale) => {
   return `-${sale}%`;
 };
 
@@ -441,9 +447,9 @@ global.saleFormat = sale => {
  *
  * @param {Function[] | Function} requests
  */
-global.cancelRequests = requests => {
+global.cancelRequests = (requests) => {
   if (Array.isArray(requests)) {
-    requests.forEach(request => {
+    requests.forEach((request) => {
       request.cancel();
     });
   } else {
@@ -475,9 +481,9 @@ global.is1LevelObjectUpdated = (oldObj, newObj) => {
  *
  * @param {(typeof setTimeout)[] | typeof setTimeout} timeouts
  */
-global.clearTimeouts = timeouts => {
+global.clearTimeouts = (timeouts) => {
   if (Array.isArray(timeouts)) {
-    timeouts.forEach(timeout => {
+    timeouts.forEach((timeout) => {
       timeout.cancel();
     });
   } else {
@@ -490,18 +496,15 @@ global.clearTimeouts = timeouts => {
  *
  * @param {(typeof setInterval)[] | typeof setInterval} intervals
  */
-global.clearIntervals = intervals => {
+global.clearIntervals = (intervals) => {
   if (Array.isArray(intervals)) {
-    intervals.forEach(interval => {
+    intervals.forEach((interval) => {
       clearInterval(interval);
     });
   } else {
     clearInterval(intervals);
   }
 };
-
-
-
 
 //-----react-native-exception-handler------
 import {

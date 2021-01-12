@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.1.0';
+    return 'r11.1.1';
   }
 
   get appName() {
@@ -207,7 +207,13 @@ class Config {
       premiumInfo: 'premiumInfo',
 
       // Item detail
-      item: 'item'
+      item: 'item',
+
+      // Product schedule
+      productSchedule: 'productSchedule',
+
+      //Group product
+      groupProduct: 'groupProduct'
     };
   }
 }

@@ -65,6 +65,7 @@ class Home extends Component {
     onShowAllVouchers: PropTypes.func,
     onPressService: PropTypes.func,
     onPullToRefresh: PropTypes.func,
+    onShowAllGroupProduct: PropTypes.func,
     onShowAllSites: PropTypes.func,
     onShowAllCampaigns: PropTypes.func,
     onShowAllNews: PropTypes.func,
@@ -99,6 +100,7 @@ class Home extends Component {
     onShowAllVouchers: defaultListener,
     onPressService: defaultListener,
     onPullToRefresh: defaultListener,
+    onShowAllGroupProduct: defaultListener,
     onShowAllSites: defaultListener,
     onShowAllCampaigns: defaultListener,
     onShowAllNews: defaultListener,
@@ -391,6 +393,7 @@ class Home extends Component {
             {this.hasProduct_groups ? (
               Object.keys(this.props.product_groups).map((key, index) => {
                 let {
+                  id,
                   products,
                   title,
                   display_type
@@ -402,6 +405,7 @@ class Home extends Component {
                     data={products}
                     title={title}
                     onPressProduct={this.props.onPressProduct}
+                    onShowAll={() => this.props.onShowAllGroupProduct(this.props.product_groups[key])}
                   />
                 );
               })

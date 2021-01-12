@@ -1,4 +1,4 @@
-import { CommonAPI as API } from '../API';
+import {CommonAPI as API} from '../API';
 import BaseHandler from './BaseHandler';
 
 /**
@@ -192,7 +192,7 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         category_id +
         '/' +
-        page_num
+        page_num,
     );
     return await this.getAPI(api);
   }
@@ -231,7 +231,7 @@ class CommonAPIHandler extends BaseHandler {
 
   async site_cart_update_ordering(store_id, cart_id) {
     var api = url_for(
-      API.SITE_CART_UPDATE_ORDERING + '/' + store_id + '/' + cart_id
+      API.SITE_CART_UPDATE_ORDERING + '/' + store_id + '/' + cart_id,
     );
     return await this.getAPI(api);
   }
@@ -339,7 +339,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_cart_add_address(site_id, address_id, data) {
     var api = url_for(
-      API.SITE_CART_ADD_ADDRESS + '/' + site_id + '/' + address_id
+      API.SITE_CART_ADD_ADDRESS + '/' + site_id + '/' + address_id,
     );
     return await this.postAPI(api, data);
   }
@@ -354,7 +354,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_cart_address(store_id, address_id) {
     var api = url_for(
-      API.SITE_CART_ADDRESS + '/' + store_id + '/' + address_id
+      API.SITE_CART_ADDRESS + '/' + store_id + '/' + address_id,
     );
     return await this.getAPI(api);
   }
@@ -364,7 +364,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_cart_change_address(store_id, address_id) {
     var api = url_for(
-      API.SITE_CART_CHANGE_ADDRESS + '/' + store_id + '/' + address_id
+      API.SITE_CART_CHANGE_ADDRESS + '/' + store_id + '/' + address_id,
     );
     return await this.getAPI(api);
   }
@@ -390,7 +390,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_cart_unselect(store_id, product_id) {
     var api = url_for(
-      API.SITE_CART_UNSELECT + '/' + store_id + '/' + product_id
+      API.SITE_CART_UNSELECT + '/' + store_id + '/' + product_id,
     );
     return await this.getAPI(api);
   }
@@ -400,7 +400,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_cart_selected(store_id, product_id, data) {
     var api = url_for(
-      API.SITE_CART_SELECTED + '/' + store_id + '/' + product_id
+      API.SITE_CART_SELECTED + '/' + store_id + '/' + product_id,
     );
     return await this.postAPI(api, data);
   }
@@ -410,7 +410,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_cart_unselected(store_id, product_id, data) {
     var api = url_for(
-      API.SITE_CART_UNSELECTED + '/' + store_id + '/' + product_id
+      API.SITE_CART_UNSELECTED + '/' + store_id + '/' + product_id,
     );
     return await this.postAPI(api, data);
   }
@@ -524,7 +524,7 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         user_id +
         '/' +
-        last_mesage_id
+        last_mesage_id,
     );
 
     return this.getCancelableAPI(api);
@@ -748,7 +748,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_like(store_id, product_id, flag) {
     var api = url_for(
-      API.SITE_LIKE + '/' + store_id + '/' + product_id + '/' + flag
+      API.SITE_LIKE + '/' + store_id + '/' + product_id + '/' + flag,
     );
     return await this.getAPI(api);
   }
@@ -758,7 +758,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async site_product_attrs(store_id, product_id, data) {
     var api = url_for(
-      API.SITE_PRODUCT_ATTRIBUTES + '/' + store_id + '/' + product_id
+      API.SITE_PRODUCT_ATTRIBUTES + '/' + store_id + '/' + product_id,
     );
     return await this.postAPI(api, data);
   }
@@ -887,6 +887,16 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * @todo book service
+   *
+   * @param {string|number} service_id
+   */
+  cart_service_book(siteId, product_id, data) {
+    const api = url_for(API.CART_SERVICE_BOOK, siteId, product_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
    * @todo send error firebase to slack
    *
    * @param {object} payload JSON object
@@ -912,6 +922,24 @@ class CommonAPIHandler extends BaseHandler {
   user_site_city() {
     const api = url_for(API.USER_SITE_CITY);
     return this.getCancelableAPI(api);
+  }
+
+  /**
+   * @todo get product config
+   *
+   */
+  site_product_config(siteId, productId) {
+    const api = url_for(API.SITE_PRODUCT_CONFIG, siteId, productId);
+    return this.postCancelableAPI(api);
+  }
+
+  /**
+   * @todo get products by group
+   *
+   */
+  site_group_product(siteId, groupId) {
+    const api = url_for(API.SITE_GROUP_PRODUCT, siteId, groupId);
+    return this.getCancelableAPI(api, true);
   }
 }
 

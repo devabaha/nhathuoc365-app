@@ -531,7 +531,7 @@ class Search extends Component {
 
         {search_data != null && store.keyboardTop == 0 && (
           <CartFooter
-            perfix="search"
+            prefix="search"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
           />
         )}

@@ -6,6 +6,7 @@ import store from 'app-store';
 import {HOME_CARD_TYPE} from '../../constants';
 import appConfig from 'app-config';
 import ProductItem from './ProductItem';
+import Button from 'react-native-button';
 
 class ListProducts extends Component {
   static propTypes = {
@@ -19,6 +20,7 @@ class ListProducts extends Component {
     title: '',
     type: HOME_CARD_TYPE.HORIZONTAL,
     itemsPerRow: 3,
+    onShowAll: null,
   };
 
   get hasProducts() {
@@ -97,6 +99,13 @@ class ListProducts extends Component {
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
           <Text style={styles.heading}>{this.props.title}</Text>
+          {!!this.props.onShowAll && (
+            <Button
+              underlayColor="transparent"
+              onPress={this.props.onShowAll}>
+              <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
+            </Button>
+          )}
         </View>
         {this.renderFlatList()}
       </View>
@@ -113,23 +122,25 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   headingWrapper: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
     paddingTop: 15,
     paddingBottom: 12,
+    paddingHorizontal: 16,
+    justifyContent: 'space-between',
   },
   heading: {
     color: '#333',
     fontSize: 16,
     fontWeight: '500',
     lineHeight: 20,
-    marginLeft: 16,
   },
   listHorizontal: {
     paddingTop: 15,
     borderTopWidth: 0.5,
     borderColor: '#eee',
   },
-  contentHorizontal: {
-  },
+  contentHorizontal: {},
   listVertical: {
     flex: 1,
     flexDirection: 'row',
@@ -153,6 +164,11 @@ const styles = StyleSheet.create({
   itemVerticalImage: {
     height: (appConfig.device.width / 2) * 0.75,
   },
+  viewAll: {
+    color: '#0084ff',
+    fontSize: 15,
+    fontWeight: '500',
+  },
 });
 
-export default observer(ListProducts);
+export default withTranslation('home')(observer(ListProducts));

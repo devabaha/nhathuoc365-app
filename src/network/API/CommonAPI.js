@@ -55,6 +55,9 @@ class CommonAPI {
   get SEARCH_PRODUCT() {
     return BaseAPI.apiDomain + 'apiSite/search_product';
   }
+  get SITE_PRODUCT_CONFIG() {
+    return BaseAPI.apiDomain + 'apiSite/product_config';
+  }
   get USER_SITES() {
     return BaseAPI.apiDomain + 'apiUser/sites';
   }
@@ -388,6 +391,14 @@ class CommonAPI {
 
   get USER_SITE_CITY() {
     return BaseAPI.apiDomain + 'apiUser/site_city';
+  }
+
+  get CART_SERVICE_BOOK() {
+    return BaseAPI.apiDomain + 'apiCart/book';
+  }
+
+  get SITE_GROUP_PRODUCT() {
+    return BaseAPI.apiDomain + 'apiSite/group_product';
   }
 }
 

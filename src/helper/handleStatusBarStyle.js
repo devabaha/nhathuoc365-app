@@ -1,6 +1,6 @@
-import { StatusBar } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { config as bgrStatusBarConfig } from 'app-packages/tickid-bgr-status-bar';
+import {StatusBar} from 'react-native';
+import {Actions} from 'react-native-router-flux';
+import {config as bgrStatusBarConfig} from 'app-packages/tickid-bgr-status-bar';
 import appConfig from 'app-config';
 import store from 'app-store';
 
@@ -42,27 +42,27 @@ export default function handleStatusBarStyle(prevState, newState, action) {
       const statusBarInState =
         bgrStatusBarConfig.statusBarState[Actions.currentScene];
       const isDark =
-        !!darkStatusBarScenes.some(
-          sceneName => `${Actions.currentScene}`.indexOf(sceneName) !== -1
-        ) || statusBarInState === bgrStatusBarConfig.mode.dark;
-
-      if (isDark) {
-        if (appConfig.device.isAndroid) {
-          StatusBar.setBackgroundColor('#000');
-        } else {
-          StatusBar.setBarStyle('dark-content', true);
-        }
-      } else {
-        if (appConfig.device.isAndroid) {
-          if (Actions.currentScene === `${appConfig.routes.homeTab}_1`) {
-            StatusBar.setBackgroundColor(store.homeStatusBar.backgroundColor);
-            return;
+        darkStatusBarScenes.some((sceneName) => {
+          let stackName = sceneName;
+          const suffix = Actions.currentScene.substring(
+            Actions.currentScene.length - 2,
+          );
+          if (suffix === '_1') {
+            stackName = Actions.currentScene.substring(
+              0,
+              Actions.currentScene.length - 2,
+            );
           }
-          StatusBar.setBackgroundColor(appConfig.colors.primary);
+          return sceneName === stackName;
+        }) || statusBarInState === bgrStatusBarConfig.mode.dark;
+
+      setTimeout(() => {
+        if (isDark) {
+          StatusBar.setBarStyle('dark-content', true);
         } else {
           StatusBar.setBarStyle('light-content', true);
         }
-      }
+      });
       break;
   }
 }

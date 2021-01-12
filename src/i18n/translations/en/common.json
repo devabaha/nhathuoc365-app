@@ -127,6 +127,12 @@
     },
     "premiumInfo": {
       "mainTitle": "Tier benefits"
+    },
+    "productSchedule": {
+      "mainTitle": "Select Date & Time"
+    },
+    "groupProduct": {
+      "mainTitle": "Group product"
     }
   },
 

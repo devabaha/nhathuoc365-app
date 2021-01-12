@@ -27,6 +27,7 @@ import appConfig from 'app-config';
 import store from '../../store/Store';
 import {NotiBadge} from '../Badges';
 import {debounce} from 'lodash';
+import PopupConfirm from '../PopupConfirm';
 
 const ORDER_BTN_WIDTH = 120;
 const WHITE_SPACE = 30;
@@ -46,11 +47,13 @@ class CartFooter extends Component {
       loading: true,
       increment_loading: false,
       decrement_loading: false,
-      perfix: props.perfix || '',
+      prefix: props.prefix || '',
       containerHeight: 0,
     };
   }
   unmounted = false;
+  cartItemConfirmRemove = null;
+  refs_modal_delete_cart_item = React.createRef();
   currentAnimatedScrollY = this.props.animatedContentOffsetY;
 
   clock = new Clock();
@@ -96,7 +99,7 @@ class CartFooter extends Component {
       });
     }
 
-    Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.perfix, (data) => {
+    Events.on(NEXT_PREV_CART, NEXT_PREV_CART + this.state.prefix, (data) => {
       this._goTopIndex(data.index);
     });
   }
@@ -131,10 +134,20 @@ class CartFooter extends Component {
     }
   }
 
+  confirmRemove(item) {
+    this.cartItemConfirmRemove = item;
+
+    if (this.refs_modal_delete_cart_item.current) {
+      this.refs_modal_delete_cart_item.current.open();
+    }
+  }
+
   _item_qnt_decrement_handler(item) {
     if (item.quantity <= 1) {
       if (this.props.confirmRemove) {
         this.props.confirmRemove(item);
+      } else {
+        this.confirmRemove(item);
       }
     } else {
       this._item_qnt_decrement(item);
@@ -271,62 +284,87 @@ class CartFooter extends Component {
     }
   }
 
+  onPressCartItem = (item) => {
+    Actions.push(appConfig.routes.item, {item, title: item.name});
+  };
+
   renderItems({item}) {
     return (
-      <View style={styles.store_cart_item}>
-        <View style={styles.store_cart_item_image_box}>
-          <CachedImage
-            mutable
-            style={styles.store_cart_item_image}
-            source={{uri: item.image}}
-          />
-        </View>
-        <View style={styles.store_cart_item_title_box}>
-          <View style={{flex: 1}}>
-            <Text numberOfLines={1} style={styles.store_cart_item_title}>
-              {item.name}
-            </Text>
-            {!!item.classification && (
-              <Text
-                numberOfLines={1}
-                style={[styles.store_cart_item_sub_title]}>
-                {item.classification}
+      <TouchableHighlight
+        underlayColor="#fafafa"
+        onPress={() => this.onPressCartItem(item)}>
+        <View style={styles.store_cart_item}>
+          <View style={styles.store_cart_item_image_box}>
+            <CachedImage
+              mutable
+              style={styles.store_cart_item_image}
+              source={{uri: item.image}}
+            />
+            
+          </View>
+          <View style={styles.store_cart_item_title_box}>
+            <View style={{flex: 1}}>
+              <Text numberOfLines={1} style={styles.store_cart_item_title}>
+                {item.name}
               </Text>
-            )}
-            <Text style={styles.store_cart_item_price}>{item.price_view}</Text>
-          </View>
+              {!!item.classification && (
+                <Text
+                  numberOfLines={1}
+                  style={[styles.store_cart_item_sub_title]}>
+                  {item.classification}
+                </Text>
+              )}
+              <Text style={styles.store_cart_item_price}>
+                {item.price_view}
+              </Text>
+            </View>
+            <View style={styles.store_cart_actions}>
+              <View style={styles.store_cart_calculator}>
+                <TouchableHighlight
+                  onPress={this._item_qnt_decrement_handler.bind(this, item)}
+                  underlayColor="transparent"
+                  style={styles.p8}>
+                  <View style={styles.store_cart_item_qnt_change}>
+                    {this.state.decrement_loading ? (
+                      <Indicator size="small" />
+                    ) : (
+                      <AntDesignIcon name="minus" size={14} color="#404040" />
+                    )}
+                  </View>
+                </TouchableHighlight>
 
-          <View style={styles.store_cart_calculator}>
-            <TouchableHighlight
-              onPress={this._item_qnt_decrement_handler.bind(this, item)}
-              underlayColor="transparent"
-              style={styles.p8}>
-              <View style={styles.store_cart_item_qnt_change}>
-                {this.state.decrement_loading ? (
-                  <Indicator size="small" />
-                ) : (
-                  <AntDesignIcon name="minus" size={14} color="#404040" />
-                )}
+                <Text style={styles.store_cart_item_qnt}>
+                  {item.quantity_view}
+                </Text>
+
+                <TouchableHighlight
+                  onPress={this._item_qnt_increment.bind(this, item)}
+                  underlayColor="transparent"
+                  style={styles.p8}>
+                  <View style={styles.store_cart_item_qnt_change}>
+                    {this.state.increment_loading ? (
+                      <Indicator size="small" />
+                    ) : (
+                      <AntDesignIcon name="plus" size={14} color="#404040" />
+                    )}
+                  </View>
+                </TouchableHighlight>
               </View>
-            </TouchableHighlight>
-
-            <Text style={styles.store_cart_item_qnt}>{item.quantity_view}</Text>
-
-            <TouchableHighlight
-              onPress={this._item_qnt_increment.bind(this, item)}
-              underlayColor="transparent"
-              style={styles.p8}>
-              <View style={styles.store_cart_item_qnt_change}>
-                {this.state.increment_loading ? (
-                  <Indicator size="small" />
-                ) : (
-                  <AntDesignIcon name="plus" size={14} color="#404040" />
-                )}
-              </View>
-            </TouchableHighlight>
+              <TouchableOpacity
+              onPress={this._confirmRemoveCartItem.bind(this, item)}
+              style={[
+                styles.store_cart_item_qnt_change,
+                styles.store_cart_item_remove,
+              ]}>
+              <AntDesignIcon
+                name="close"
+                style={styles.store_cart_item_remove_icon}
+              />
+            </TouchableOpacity>
+            </View>
           </View>
         </View>
-      </View>
+      </TouchableHighlight>
     );
   }
 
@@ -360,9 +398,6 @@ class CartFooter extends Component {
             <FlatList
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{
-                paddingVertical: 7,
-              }}
               ref={(ref) => (this.refs_store_cart = ref)}
               data={cart_products}
               decelerationRate="fast"
@@ -435,6 +470,66 @@ class CartFooter extends Component {
     }
   }
 
+  _confirmRemoveCartItem(item) {
+    this.cartItemConfirmRemove = item;
+
+    if (this.refs_modal_delete_cart_item.current) {
+      this.refs_modal_delete_cart_item.current.open();
+    }
+  }
+
+  _closePopup() {
+    if (this.refs_modal_delete_cart_item.current) {
+      this.refs_modal_delete_cart_item.current.close();
+    }
+  }
+
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    this._closePopup();
+
+    const item = this.cartItemConfirmRemove;
+
+    try {
+      const data = {
+        quantity: 0,
+        model: item.model,
+      };
+
+      const response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data,
+      );
+
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            // prev item in list
+            if (isAndroid && store.cart_item_index > 0) {
+              const index = store.cart_item_index - 1;
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
+            }
+          })();
+        }, 450);
+
+        flashShowMessage({
+          message: response.message,
+          type: 'success',
+        });
+      }
+
+      this.cartItemConfirmRemove = undefined;
+    } catch (e) {
+      console.log(e + ' site_cart_update');
+    }
+  }
+
   handleContainerLayout = (e) => {
     const containerHeight = Math.round(e.nativeEvent.layout.height);
     if (containerHeight !== this.state.containerHeight) {
@@ -494,11 +589,15 @@ class CartFooter extends Component {
       }),
       height: this.state.containerHeight * 0.8,
     };
-
+    const ButtonComponent = appConfig.device.isIOS
+      ? TouchableHighlight
+      : Button;
     return (
       <Animated.View style={[styles.quickOpenCartBtnWrapper, extraStyle]}>
         <View style={styles.quickOpenCartBtnContainer}>
-          <Button onPress={this.forceShowCart}>
+          <ButtonComponent
+            underlayColor={LightenColor(appConfig.colors.primary, -10)}
+            onPress={this.forceShowCart}>
             <Animated.View style={styles.quickOpenCartBtnContentContainer}>
               <View style={[styles.checkout_box]}>
                 <View>
@@ -522,7 +621,7 @@ class CartFooter extends Component {
                 </View>
               )}
             </Animated.View>
-          </Button>
+          </ButtonComponent>
         </View>
       </Animated.View>
     );
@@ -582,7 +681,7 @@ class CartFooter extends Component {
               <TouchableHighlight
                 onPress={this._goPayment.bind(this)}
                 style={[styles.checkout_btn]}
-                underlayColor={hexToRgbA(appConfig.colors.primary, 0.1)}>
+                underlayColor={LightenColor(appConfig.colors.primary, -10)}>
                 <View style={styles.checkout_content_btn}>
                   <View style={[styles.checkout_box]}>
                     <View>
@@ -617,6 +716,15 @@ class CartFooter extends Component {
             </View>
           </Animated.View>
         </View>
+
+        <PopupConfirm
+          ref_popup={this.refs_modal_delete_cart_item}
+          title={t('cart:popup.remove.message')}
+          height={110}
+          noConfirm={this._closePopup.bind(this)}
+          yesConfirm={this._removeCartItem.bind(this)}
+          otherClose={false}
+        />
       </>
     );
   }
@@ -692,12 +800,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRightWidth: 0.5,
     borderColor: '#eee',
-    paddingHorizontal: 7,
+    padding: 7,
   },
   store_cart_item_image_box: {
     width: 75,
     height: 75,
-    overflow: 'hidden',
   },
   store_cart_item_image: {
     flex: 1,
@@ -723,8 +830,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: appConfig.device.isIOS ? 2 : 0,
   },
-  store_cart_calculator: {
+  store_cart_actions: {
+    flexDirection: 'row',
     marginTop: 7,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  store_cart_calculator: {
+    // marginTop: 7,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -743,6 +856,21 @@ const styles = StyleSheet.create({
     color: '#404040',
     fontSize: 16,
     paddingHorizontal: 16,
+  },
+  store_cart_item_remove: {
+    backgroundColor: '#cc7171',
+    borderWidth: 0,
+    position: 'absolute',
+    // top: -5,
+    // left: 0,
+    right: 0,
+    width: 20,
+    height: 20,
+    borderRadius: 5
+    // ...elevationShadowStyle(2)
+  },
+  store_cart_item_remove_icon: {
+    color: '#fff',
   },
 
   p8: {

@@ -126,7 +126,7 @@ import {addJob} from './helper/jobsOnReset';
 import ItemAttribute from './components/stores/ItemAttribute';
 import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import Schedule from './containers/Schedule';
+import Schedule, { ProductSchedule } from './containers/Schedule';
 import {ScheduleConfirm} from './containers/Schedule/Confirm';
 import * as RNLocalize from 'react-native-localize';
 import {arrayLanguages} from './i18n/constants';
@@ -151,6 +151,7 @@ import NetWorkInfo from './components/NetWorkInfo';
 import BaseAPI from './network/API/BaseAPI';
 import DomainSelector from './containers/DomainSelector';
 import PremiumInfo from './containers/PremiumInfo';
+import GroupProduct from './containers/GroupProduct';
 
 /**
  * Not allow font scaling
@@ -806,6 +807,25 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                <Stack key={appConfig.routes.groupProduct}>
+                  <Scene
+                    key={`${appConfig.routes.groupProduct}_1`}
+                    {...navBarConfig}
+                    component={GroupProduct}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.productSchedule}>
+                  <Scene
+                    key={`${appConfig.routes.productSchedule}_1`}
+                    title={t('screen.productSchedule.mainTitle')}
+                    {...navBarConfig}
+                    component={ProductSchedule}
+                    back
+                  />
+                </Stack>
 
                 <Stack key={appConfig.routes.domainSelector}>
                   <Scene

@@ -25,6 +25,8 @@ import Header from './Header';
 import {DiscountBadge} from '../Badges';
 import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
+import {PRODUCT_TYPES} from '../../constants';
+import SkeletonLoading from '../SkeletonLoading';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -45,9 +47,12 @@ class Item extends Component {
     };
 
     this.animatedScrollY = new Animated.Value(0);
-    this._getData = this._getData.bind(this);
     this.unmounted = false;
     this.eventTracker = new EventTracker();
+  }
+
+  isServiceProduct(product = {}) {
+    return product.product_type === PRODUCT_TYPES.SERVICE;
   }
 
   componentDidMount() {
@@ -260,6 +265,27 @@ class Item extends Component {
     this._getDataFromServer(1000);
   }
 
+  goToSchedule = (product) => {
+    Actions.push(appConfig.routes.productSchedule, {
+      productId: product.id,
+    });
+  };
+
+  handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
+    console.log(product);
+    switch (product.product_type) {
+      case PRODUCT_TYPES.NORMAL:
+        this._addCart(product, quantity, model);
+        break;
+      case PRODUCT_TYPES.SERVICE:
+        this.goToSchedule(product);
+        break;
+      default:
+        this.goToSchedule(product);
+        break;
+    }
+  };
+
   // add item vào giỏ hàng
   _addCart = (item, quantity = 1, model = '') => {
     this.setState(
@@ -385,513 +411,7 @@ class Item extends Component {
     );
   }
 
-  renderPagination = (index, total, context) => {
-    return (
-      <View style={styles.paginationContainer}>
-        <Text style={styles.paginationText}>
-          {index + 1}/{total}
-        </Text>
-      </View>
-    );
-  };
-
-  renderNextButton() {
-    return (
-      <View style={styles.swipeControlBtn}>
-        <Icon
-          name="angle-right"
-          style={[styles.iconSwipeControl, styles.iconSwipeControlRight]}
-        />
-      </View>
-    );
-  }
-
-  renderPrevButton() {
-    return (
-      <View style={styles.swipeControlBtn}>
-        <Icon
-          name="angle-left"
-          style={[styles.iconSwipeControl, styles.iconSwipeControlLeft]}
-        />
-      </View>
-    );
-  }
-
-  render() {
-    var {item, item_data, buying, like_loading, like_flag} = this.state;
-    var is_like = like_flag == 1;
-    const {t} = this.props;
-
-    return (
-      <View style={styles.container}>
-        <StatusBar backgroundColor="transparent" barStyle="dark-content" />
-        <Header
-          title={this.props.title}
-          animatedValue={this.animatedScrollY}
-          item={item_data || item}
-        />
-
-        <SafeAreaView style={styles.container}>
-          <Animated.ScrollView
-            ref={(ref) => (this.refs_body_item = ref)}
-            contentContainerStyle={{
-              paddingTop: 15,
-            }}
-            onScroll={Animated.event(
-              [
-                {
-                  nativeEvent: {
-                    contentOffset: {
-                      y: this.animatedScrollY,
-                    },
-                  },
-                },
-              ],
-              {
-                useNativeDriver: true,
-              },
-            )}
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={this._onRefresh.bind(this)}
-              />
-            }>
-            <View>
-              {item_data == null ? (
-                <View
-                  style={{
-                    width: Util.size.width,
-                    height: Util.size.width * 0.6,
-                  }}>
-                  <Indicator size="small" />
-                </View>
-              ) : (
-                <Swiper
-                  showsButtons={item_data.img.length > 1}
-                  renderPagination={this.renderPagination}
-                  nextButton={this.renderNextButton()}
-                  prevButton={this.renderPrevButton()}
-                  width={Util.size.width}
-                  height={Util.size.width * 0.6}
-                  containerStyle={{
-                    flex: 0,
-                  }}>
-                  {item_data.img.map((item, index) => {
-                    return (
-                      <TouchableHighlight
-                        underlayColor="transparent"
-                        onPress={() => {
-                          Actions.item_image_viewer({
-                            images: this.state.images,
-                            index,
-                          });
-                        }}
-                        key={index}>
-                        <View>
-                          <FastImage
-                            // mutable
-                            style={styles.swiper_image}
-                            source={{uri: item.image}}
-                          />
-                        </View>
-                      </TouchableHighlight>
-                    );
-                  })}
-                </Swiper>
-              )}
-            </View>
-
-            <View style={styles.item_heading_box}>
-              <Text style={styles.item_heading_title}>
-                {item_data ? item_data.name : item.name}
-              </Text>
-
-              <View style={styles.item_heading_price_box}>
-                {item.discount_percent > 0 && (
-                  <Text style={styles.item_heading_safe_off_value}>
-                    {item_data ? item_data.discount : item.discount}
-                  </Text>
-                )}
-                <Text style={styles.item_heading_price}>
-                  {item_data ? item_data.price_view : item.price_view}
-                </Text>
-                {item.discount_percent > 0 && (
-                  <DiscountBadge
-                    containerStyle={styles.discountBadge}
-                    label={`-${item.discount_percent}%`}
-                  />
-                )}
-              </View>
-
-              <Text style={styles.item_heading_qnt}>
-                {item_data ? item_data.unit_name_view : item.unit_name_view}
-              </Text>
-
-              <View style={styles.item_actions_box}>
-                <TouchableHighlight
-                  onPress={this._likeHandler.bind(this, item)}
-                  underlayColor="transparent">
-                  <View
-                    style={[
-                      styles.item_actions_btn,
-                      styles.item_actions_btn_chat,
-                      {
-                        borderColor: is_like ? '#e31b23' : DEFAULT_COLOR,
-                        width: 126,
-                      },
-                    ]}>
-                    <View
-                      style={{
-                        height: '100%',
-                        minWidth: 20,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      {like_loading ? (
-                        <Indicator size="small" />
-                      ) : (
-                        <Icon
-                          name="heart"
-                          size={20}
-                          color={is_like ? '#e31b23' : DEFAULT_COLOR}
-                        />
-                      )}
-                    </View>
-                    <Text
-                      style={[
-                        styles.item_actions_title,
-                        styles.item_actions_title_chat,
-                        {
-                          color: is_like ? '#e31b23' : DEFAULT_COLOR,
-                        },
-                      ]}>
-                      {is_like ? t('liked') : t('like')}
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  onPress={() => this._addCart(item_data ? item_data : item)}
-                  underlayColor="transparent">
-                  <View
-                    style={[
-                      styles.item_actions_btn,
-                      styles.item_actions_btn_add_cart,
-                    ]}>
-                    <View
-                      style={{
-                        height: '100%',
-                        minWidth: 24,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                      }}>
-                      {buying ? (
-                        <Indicator size="small" color="#ffffff" />
-                      ) : item.book_flag == 1 ? (
-                        <Icon
-                          name="cart-arrow-down"
-                          size={24}
-                          color="#ffffff"
-                        />
-                      ) : (
-                        <Icon name="cart-plus" size={24} color="#ffffff" />
-                      )}
-                    </View>
-                    {item.book_flag == 1 ? (
-                      <Text
-                        style={[
-                          styles.item_actions_title,
-                          styles.item_actions_title_book_cart,
-                        ]}>
-                        {t('shopTitle.preOrder')}
-                      </Text>
-                    ) : (
-                      <Text
-                        style={[
-                          styles.item_actions_title,
-                          styles.item_actions_title_add_cart,
-                        ]}>
-                        {t('shopTitle.buy')}
-                      </Text>
-                    )}
-                  </View>
-                </TouchableHighlight>
-              </View>
-            </View>
-
-            {item != null && (
-              <View style={styles.item_content_box}>
-                {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
-                <View style={styles.item_content_icon_box}>
-                  <Icon name="clock-o" size={16} color="#999999" />
-                </View>
-                <Text style={styles.item_content_item_title}>GIAO SỚM NHẤT</Text>
-              </View>
-
-              <View style={[styles.item_content_item, styles.item_content_item_right]}>
-                <Text style={[styles.item_content_item_value, {color: DEFAULT_COLOR}]}>Trong 1 giờ</Text>
-              </View>*/}
-
-                {item.brand != null && item.brand != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_left,
-                    ]}>
-                    <View style={styles.item_content_icon_box}>
-                      <Icon name="user" size={16} color="#999999" />
-                    </View>
-                    <Text style={styles.item_content_item_title}>
-                      {t('information.brands')}
-                    </Text>
-                  </View>
-                )}
-
-                {item.brand != null && item.brand != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_right,
-                    ]}>
-                    <Text style={styles.item_content_item_value}>
-                      {item.brand}
-                    </Text>
-                  </View>
-                )}
-
-                {item.made_in != null && item.made_in != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_left,
-                    ]}>
-                    <View style={styles.item_content_icon_box}>
-                      <Icon name="map-marker" size={16} color="#999999" />
-                    </View>
-                    <Text style={styles.item_content_item_title}>
-                      {t('information.origin')}
-                    </Text>
-                  </View>
-                )}
-
-                {item.made_in != null && item.made_in != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_right,
-                    ]}>
-                    <Text style={styles.item_content_item_value}>
-                      {item.made_in}
-                    </Text>
-                  </View>
-                )}
-
-                {/*<View style={[styles.item_content_item, styles.item_content_item_left]}>
-                <View style={styles.item_content_icon_box}>
-                  <Icon name="usd" size={16} color="#999999" />
-                </View>
-                <Text style={styles.item_content_item_title}>GIÁ HIỂN THỊ</Text>
-              </View>
-
-              <View style={[styles.item_content_item, styles.item_content_item_right]}>
-                <Text style={styles.item_content_item_value}>Bằng giá cửa hàng</Text>
-              </View>*/}
-              </View>
-            )}
-
-            <View style={styles.item_content_text}>
-              {item_data != null ? (
-                <AutoHeightWebView
-                  onError={() => console.log('on error')}
-                  onLoad={() => console.log('on load')}
-                  onLoadStart={() => console.log('on load start')}
-                  onLoadEnd={() => console.log('on load end')}
-                  onShouldStartLoadWithRequest={(result) => {
-                    // console.log(result);
-                    return true;
-                  }}
-                  style={{
-                    paddingHorizontal: 6,
-                    marginHorizontal: 15,
-                    width: appConfig.device.width - 30,
-                  }}
-                  onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item_data.content}}
-                  zoomable={false}
-                  scrollEnabled={false}
-                  customScript={`
-
-                  `}
-                  customStyle={`
-                  * {
-                    font-family: 'arial';
-                  }
-                  a {
-                    pointer-events:none;
-                    text-decoration: none !important;
-                    color: #404040 !important;
-                  }
-                  p {
-                    font-size: 15px;
-                    line-height: 24px
-                  }
-                  img {
-                    max-width: 100% !important;
-                    height: auto !important;
-                  }`}
-                />
-              ) : (
-                <Indicator size="small" />
-              )}
-            </View>
-
-            {item_data != null && item_data.related && (
-              <View
-                style={[
-                  styles.items_box,
-                  {
-                    flexDirection: 'row',
-                    flexWrap: 'wrap',
-                    width: appConfig.device.width,
-                  },
-                ]}>
-                <ListHeader title={`— ${t('relatedItems')} —`} />
-                {item_data.related.map((item, index) => {
-                  return (
-                    <Items
-                      key={index}
-                      item={item}
-                      index={index}
-                      onPress={this._itemRefresh.bind(this, item)}
-                    />
-                  );
-                })}
-              </View>
-              // <FlatList
-              //   onEndReached={num => {}}
-              //   onEndReachedThreshold={0}
-              //   ListHeaderComponent={() => (
-              //     <ListHeader title={`— ${t('relatedItems')} —`} />
-              //   )}
-              //   data={item_data.related}
-              //   renderItem={({ item, index }) => (
-              //     <Items
-              //       item={item}
-              //       index={index}
-              //       onPress={this._itemRefresh.bind(this, item)}
-              //     />
-              //   )}
-              //   keyExtractor={item => item.id}
-              //   numColumns={2}
-              // />
-            )}
-
-            {/* {item.discount_percent > 0 && (
-            <View style={styles.item_safe_off}>
-              <View style={styles.item_safe_off_percent}>
-                <Text style={styles.item_safe_off_percent_val}>
-                  -{item.discount_percent}%
-                </Text>
-              </View>
-            </View>
-          )} */}
-            <View style={styles.boxButtonActions}>
-              <Button
-                btnContainerStyle={styles.goToStoreBtn}
-                titleStyle={styles.goToStoreTxt}
-                title={t('goToStore')}
-              />
-              {/* <TouchableHighlight
-                style={styles.buttonAction}
-                onPress={this._goStores.bind(this, this.state.store_data)}
-                underlayColor="transparent">
-                <View
-                  style={[
-                    styles.boxButtonAction,
-                    {
-                      width: Util.size.width - 30,
-                      backgroundColor: '#fa7f50',
-                      borderColor: '#999999',
-                    },
-                  ]}>
-                  <Icon name="plus" size={16} color="#ffffff" />
-                  <Text
-                    style={[
-                      styles.buttonActionTitle,
-                      {
-                        color: '#ffffff',
-                      },
-                    ]}>
-                    {t('goToStore')}
-                  </Text>
-                </View>
-              </TouchableHighlight> */}
-            </View>
-          </Animated.ScrollView>
-
-          {this.state.loading == false && (
-            <CartFooter
-              perfix="item"
-              confirmRemove={this._confirmRemoveCartItem.bind(this)}
-            />
-          )}
-        </SafeAreaView>
-        <PopupConfirm
-          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
-          title={t('cart:popup.remove.message')}
-          height={110}
-          otherClose={false}
-          noConfirm={() => {
-            if (this.refs_modal_delete_cart_item) {
-              this.refs_modal_delete_cart_item.close();
-            }
-          }}
-          yesConfirm={this._removeCartItem.bind(this)}
-        />
-
-        {store.cart_fly_show && (
-          <View
-            style={{
-              position: 'absolute',
-              top: store.cart_fly_position.py,
-              left: store.cart_fly_position.px,
-              width: store.cart_fly_position.width,
-              height: store.cart_fly_position.height,
-              zIndex: 999,
-              borderWidth: 1,
-              borderColor: DEFAULT_COLOR,
-              overflow: 'hidden',
-            }}>
-            {store.cart_fly_image && (
-              <CachedImage
-                style={{
-                  width: store.cart_fly_position.width,
-                  height: store.cart_fly_position.height,
-                }}
-                source={store.cart_fly_image}
-              />
-            )}
-          </View>
-        )}
-      </View>
-    );
-  }
-
   _itemRefresh(item) {
-    // if (this.refs_body_item) {
-    //   this.refs_body_item.scrollTo({ x: 0, y: 0, animated: false });
-    // }
-
-    // this.setState(
-    //   {
-    //     item,
-    //     item_data: null
-    //   },
-    //   () => {
-    //     this._getData(500);
-    //   }
-    // );
     Actions.item({
       title: item.name,
       item,
@@ -956,6 +476,376 @@ class Item extends Component {
       });
     }
   }
+
+  renderPagination = (index, total, context) => {
+    return (
+      <View style={styles.paginationContainer}>
+        <Text style={styles.paginationText}>
+          {index + 1}/{total}
+        </Text>
+      </View>
+    );
+  };
+
+  renderNextButton() {
+    return (
+      <View style={styles.swipeControlBtn}>
+        <Icon
+          name="angle-right"
+          style={[styles.iconSwipeControl, styles.iconSwipeControlRight]}
+        />
+      </View>
+    );
+  }
+
+  renderPrevButton() {
+    return (
+      <View style={styles.swipeControlBtn}>
+        <Icon
+          name="angle-left"
+          style={[styles.iconSwipeControl, styles.iconSwipeControlLeft]}
+        />
+      </View>
+    );
+  }
+
+  renderProductImages(images) {
+    return images.map((image, index) => {
+      return (
+        <TouchableHighlight
+          underlayColor="rgba(0,0,0,.1)"
+          onPress={() => {
+            Actions.item_image_viewer({
+              images: this.state.images,
+              index,
+            });
+          }}
+          key={index}>
+          <View>
+            <FastImage
+              style={styles.swiper_image}
+              source={{uri: image.image}}
+              resizeMode="contain"
+            />
+          </View>
+        </TouchableHighlight>
+      );
+    });
+  }
+
+  renderProductSwiper(product) {
+    const images = product ? product.img || [] : [];
+    const hasImages = images.length;
+
+    return (
+      <View>
+        <SkeletonLoading
+          loading={product == null}
+          height={appConfig.device.width * 0.6}>
+          <Swiper
+            showsButtons={hasImages}
+            renderPagination={this.renderPagination}
+            nextButton={this.renderNextButton()}
+            prevButton={this.renderPrevButton()}
+            width={appConfig.device.width}
+            height={appConfig.device.width * 0.6}
+            containerStyle={styles.content_swiper}>
+            {this.renderProductImages(images)}
+          </Swiper>
+        </SkeletonLoading>
+      </View>
+    );
+  }
+
+  renderCartFooter(product) {
+    return (
+      this.state.loading ||
+      this.isServiceProduct(product) || (
+        <CartFooter
+          prefix="item"
+          confirmRemove={this._confirmRemoveCartItem.bind(this)}
+        />
+      )
+    );
+  }
+
+  renderMainActionBtnIcon(product) {
+    return this.state.buying ? (
+      <Indicator size="small" color="#ffffff" />
+    ) : this.isServiceProduct(product) ? (
+      <Icon name="calendar-plus-o" style={styles.item_actions_btn_icon} />
+    ) : (
+      <Icon name="cart-plus" style={styles.item_actions_btn_icon} />
+    );
+  }
+
+  render() {
+    var {item, item_data, like_loading, like_flag} = this.state;
+    var is_like = like_flag == 1;
+    const {t} = this.props;
+
+    return (
+      <View style={styles.container}>
+        <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+        <Header
+          title={this.props.title}
+          animatedValue={this.animatedScrollY}
+          item={item_data || item}
+        />
+
+        <SafeAreaView style={styles.container}>
+          <Animated.ScrollView
+            ref={(ref) => (this.refs_body_item = ref)}
+            contentContainerStyle={{
+              paddingTop: 15,
+            }}
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: this.animatedScrollY,
+                    },
+                  },
+                },
+              ],
+              {
+                useNativeDriver: true,
+              },
+            )}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }>
+            {this.renderProductSwiper(item_data)}
+
+            <View style={styles.item_heading_box}>
+              <Text style={styles.item_heading_title}>
+                {item_data ? item_data.name : item.name}
+              </Text>
+
+              <View style={styles.item_heading_price_box}>
+                {item.discount_percent > 0 && (
+                  <Text style={styles.item_heading_safe_off_value}>
+                    {item_data ? item_data.discount : item.discount}
+                  </Text>
+                )}
+                <Text style={styles.item_heading_price}>
+                  {item_data ? item_data.price_view : item.price_view}
+                </Text>
+                {item.discount_percent > 0 && (
+                  <DiscountBadge
+                    containerStyle={styles.discountBadge}
+                    label={saleFormat(item.discount_percent)}
+                  />
+                )}
+              </View>
+
+              <Text style={styles.item_heading_qnt}>
+                {item_data ? item_data.unit_name_view : item.unit_name_view}
+              </Text>
+
+              <View style={styles.item_actions_box}>
+                <TouchableHighlight
+                  onPress={this._likeHandler.bind(this, item)}
+                  underlayColor="transparent">
+                  <View
+                    style={[
+                      styles.item_actions_btn,
+                      styles.item_actions_btn_chat,
+                      {
+                        borderColor: is_like ? '#e31b23' : appConfig.colors.primary,
+                      },
+                    ]}>
+                    <View style={styles.item_actions_btn_icon_container}>
+                      {like_loading ? (
+                        <Indicator size="small" />
+                      ) : (
+                        <Icon
+                          name="heart"
+                          size={20}
+                          color={is_like ? '#e31b23' : appConfig.colors.primary}
+                        />
+                      )}
+                    </View>
+                    <Text
+                      style={[
+                        styles.item_actions_title,
+                        styles.item_actions_title_chat,
+                        {
+                          color: is_like ? '#e31b23' : appConfig.colors.primary,
+                        },
+                      ]}>
+                      {is_like ? t('liked') : t('like')}
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+
+                <TouchableHighlight
+                  onPress={() =>
+                    this.handlePressActionBtnProduct(
+                      item_data ? item_data : item,
+                    )
+                  }
+                  underlayColor="transparent">
+                  <View
+                    style={[
+                      styles.item_actions_btn,
+                      styles.item_actions_btn_add_cart,
+                    ]}>
+                    <View style={styles.item_actions_btn_icon_container}>
+                      {this.renderMainActionBtnIcon(item)}
+                    </View>
+                    <Text
+                      style={styles.item_actions_title}>
+                      {this.isServiceProduct(item)
+                        ? t('shopTitle.book')
+                        : t('shopTitle.buy')}
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            </View>
+
+            {item != null && (
+              <View style={styles.item_content_box}>
+                {item.brand != null && item.brand != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_left,
+                    ]}>
+                    <View style={styles.item_content_icon_box}>
+                      <Icon name="user" size={16} color="#999999" />
+                    </View>
+                    <Text style={styles.item_content_item_title}>
+                      {t('information.brands')}
+                    </Text>
+                  </View>
+                )}
+
+                {item.brand != null && item.brand != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_right,
+                    ]}>
+                    <Text style={styles.item_content_item_value}>
+                      {item.brand}
+                    </Text>
+                  </View>
+                )}
+
+                {item.made_in != null && item.made_in != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_left,
+                    ]}>
+                    <View style={styles.item_content_icon_box}>
+                      <Icon name="map-marker" size={16} color="#999999" />
+                    </View>
+                    <Text style={styles.item_content_item_title}>
+                      {t('information.origin')}
+                    </Text>
+                  </View>
+                )}
+
+                {item.made_in != null && item.made_in != '' && (
+                  <View
+                    style={[
+                      styles.item_content_item,
+                      styles.item_content_item_right,
+                    ]}>
+                    <Text style={styles.item_content_item_value}>
+                      {item.made_in}
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
+
+            <View style={styles.item_content_text}>
+              {item_data != null ? (
+                <AutoHeightWebView
+                  onError={() => console.log('on error')}
+                  onLoad={() => console.log('on load')}
+                  onLoadStart={() => console.log('on load start')}
+                  onLoadEnd={() => console.log('on load end')}
+                  onShouldStartLoadWithRequest={(result) => {
+                    // console.log(result);
+                    return true;
+                  }}
+                  style={styles.webview}
+                  onHeightUpdated={(height) => this.setState({height})}
+                  source={{html: item_data.content}}
+                  zoomable={false}
+                  scrollEnabled={false}
+                  customStyle={`
+                  * {
+                    font-family: 'arial';
+                  }
+                  a {
+                    pointer-events:none;
+                    text-decoration: none !important;
+                    color: #404040 !important;
+                  }
+                  p {
+                    font-size: 15px;
+                    line-height: 24px
+                  }
+                  img {
+                    max-width: 100% !important;
+                    height: auto !important;
+                  }`}
+                />
+              ) : (
+                <Indicator size="small" />
+              )}
+            </View>
+
+            {item_data != null && item_data.related && (
+              <View style={[styles.items_box]}>
+                <ListHeader title={`— ${t('relatedItems')} —`} />
+                {item_data.related.map((item, index) => {
+                  return (
+                    <Items
+                      key={index}
+                      item={item}
+                      index={index}
+                      onPress={this._itemRefresh.bind(this, item)}
+                    />
+                  );
+                })}
+              </View>
+            )}
+            <View style={styles.boxButtonActions}>
+              <Button
+                btnContainerStyle={styles.goToStoreBtn}
+                titleStyle={styles.goToStoreTxt}
+                title={t('goToStore')}
+              />
+            </View>
+          </Animated.ScrollView>
+          {this.renderCartFooter(item)}
+        </SafeAreaView>
+        <PopupConfirm
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
+          title={t('cart:popup.remove.message')}
+          height={110}
+          otherClose={false}
+          noConfirm={() => {
+            if (this.refs_modal_delete_cart_item) {
+              this.refs_modal_delete_cart_item.close();
+            }
+          }}
+          yesConfirm={this._removeCartItem.bind(this)}
+        />
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -966,13 +856,8 @@ const styles = StyleSheet.create({
   right_btn_box: {
     flexDirection: 'row',
   },
-
-  wrapper_swiper: {
-    alignItems: 'center',
-    // height: Util.size.width * 0.6,
-  },
   content_swiper: {
-    backgroundColor: '#dddddd',
+    flex: 0
   },
   swiper_image: {
     height: Util.size.width * 0.6,
@@ -985,7 +870,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 24,
     alignItems: 'center',
-    backgroundColor: '#fcfcfc'
+    backgroundColor: '#fcfcfc',
   },
   item_heading_title: {
     fontSize: 20,
@@ -1007,7 +892,7 @@ const styles = StyleSheet.create({
   },
   item_heading_price: {
     fontSize: 20,
-    color: DEFAULT_COLOR,
+    color: appConfig.colors.primary,
     fontWeight: '600',
     paddingLeft: 4,
   },
@@ -1025,51 +910,33 @@ const styles = StyleSheet.create({
   },
   item_actions_btn: {
     borderWidth: Util.pixel,
-    borderColor: DEFAULT_COLOR,
+    borderColor: appConfig.colors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 16,
     height: 40,
   },
+  item_actions_btn_icon_container: {
+    height: '100%',
+    minWidth: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  item_actions_btn_icon: {
+    fontSize: 24,
+    color: '#fff',
+  },
   item_actions_btn_chat: {
     marginRight: 8,
   },
   item_actions_btn_add_cart: {
     marginLeft: 8,
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: appConfig.colors.primary,
   },
   item_actions_title: {
-    color: DEFAULT_COLOR_RED,
     marginLeft: 8,
-  },
-  item_actions_title_add_cart: {
     color: '#fff',
-  },
-  item_actions_title_book_cart: {
-    color: '#ffffff',
-  },
-
-  item_safe_off: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 0,
-    width: '100%',
-    height: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  item_safe_off_percent: {
-    backgroundColor: '#fa7f50',
-    paddingHorizontal: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100%',
-  },
-  item_safe_off_percent_val: {
-    color: '#ffffff',
-    fontSize: 12,
   },
 
   item_content_box: {
@@ -1115,17 +982,13 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingTop: 16,
   },
-  item_content_desc: {
-    fontSize: 16,
-    color: '#404040',
-    lineHeight: 24,
-    marginTop: 4,
-  },
 
   items_box: {
-    // marginBottom: 69,
     marginTop: 20,
     backgroundColor: '#f5f5f5',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    width: appConfig.device.width,
   },
 
   boxButtonActions: {
@@ -1134,17 +997,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 7,
   },
-  boxButtonAction: {
-    flexDirection: 'row',
-    borderWidth: Util.pixel,
-    borderColor: '#666666',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 5,
-    width: Util.size.width / 2 - 24,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   goToStoreBtn: {
     paddingVertical: 10,
     borderRadius: 6,
@@ -1152,11 +1004,6 @@ const styles = StyleSheet.create({
   goToStoreTxt: {
     fontSize: 14,
     letterSpacing: 1,
-  },
-  buttonActionTitle: {
-    color: '#333333',
-    marginLeft: 4,
-    fontSize: 14,
   },
   discountBadge: {
     left: 20,
@@ -1195,6 +1042,11 @@ const styles = StyleSheet.create({
   },
   iconSwipeControlRight: {
     left: 2,
+  },
+  webview: {
+    paddingHorizontal: 6,
+    marginHorizontal: 15,
+    width: appConfig.device.width - 30,
   },
 });
 
