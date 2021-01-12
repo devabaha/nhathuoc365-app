@@ -20,6 +20,8 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import {willUpdateState} from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
 import EventTracker from '../../helper/EventTracker';
+import ListStoreProductSkeleton from './ListStoreProductSkeleton';
+import CategoriesSkeleton from './CategoriesSkeleton';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
@@ -53,6 +55,10 @@ class Stores extends Component {
     this.eventTracker = new EventTracker();
     this.animatedScrollY = new Animated.Value(0);
     this.animatedContentOffsetY = new Animated.Value(0);
+  }
+
+  get isGetFullStore() {
+    return this.props.categoryId === 0;
   }
 
   componentDidMount() {
@@ -212,7 +218,7 @@ class Stores extends Component {
   _changeCategory(item, index, nav_only) {
     if (this.refs_category_nav) {
       const categories_count = this.state.categories_data.length;
-      const end_of_list = categories_count - index - 1 >= 3;
+      const end_of_list = categories_count - index - 1 >= 1;
 
       setTimeout(() =>
         willUpdateState(this.unmounted, () => {
@@ -247,157 +253,6 @@ class Stores extends Component {
         });
       }
     }
-  }
-
-  measureCategoriesLayout = (ref, category, index) => {
-    if (ref && (!this.refCates[index] || !this.refCates[index].width)) {
-      ref.measure((x, y, width, height, pageX, pageY) => {
-        this.refCates[index] = {
-          offsetX: pageX,
-          width,
-          index,
-        };
-      });
-    }
-  };
-
-  render() {
-    const {t} = this.props;
-    return (
-      <View style={styles.container}>
-        {this.state.categories_data != null &&
-          this.state.categories_data.length > 1 && (
-            <View style={styles.categories_nav}>
-              {this.state.categories_data != null ? (
-                <FlatList
-                  showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={false}
-                  ref={(ref) => (this.refs_category_nav = ref)}
-                  onScrollToIndexFailed={() => {}}
-                  data={this.state.categories_data}
-                  extraData={this.state.category_nav_index}
-                  keyExtractor={(item) => `${item.id}`}
-                  horizontal={true}
-                  style={styles.categories_nav}
-                  renderItem={({item, index}) => {
-                    let active = this.state.category_nav_index == index;
-                    return (
-                      <TouchableHighlight
-                        onPress={() => this._changeCategory(item, index)}
-                        underlayColor="transparent">
-                        <View
-                          ref={(inst) =>
-                            this.measureCategoriesLayout(inst, item, index)
-                          }
-                          style={styles.categories_nav_items}>
-                          <Text
-                            numberOfLines={2}
-                            style={[
-                              styles.categories_nav_items_title,
-                              active
-                                ? styles.categories_nav_items_title_active
-                                : null,
-                            ]}>
-                            {item.name}
-                          </Text>
-
-                          {active && (
-                            <View style={styles.categories_nav_items_active} />
-                          )}
-                        </View>
-                      </TouchableHighlight>
-                    );
-                  }}
-                />
-              ) : (
-                <Indicator size="small" />
-              )}
-            </View>
-          )}
-
-        {this.state.categories_data != null ? (
-          <FlatList
-            scrollEnabled={this.state.categories_data.length > 1}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            ref={(ref) => (this.refs_category_screen = ref)}
-            onScrollToIndexFailed={() => {}}
-            data={this.state.categories_data}
-            extraData={this.state.category_nav_index}
-            keyExtractor={(item) => `${item.id}`}
-            horizontal
-            pagingEnabled
-            onMomentumScrollEnd={this._onScrollEnd.bind(this)}
-            style={{
-              width: Util.size.width,
-            }}
-            getItemLayout={(data, index) => {
-              return {
-                length: Util.size.width,
-                offset: Util.size.width * index,
-                index,
-              };
-            }}
-            renderItem={({item, index}) => (
-              <CategoryScreen
-                item={item}
-                index={index}
-                cate_index={this.state.category_nav_index}
-                that={this}
-                animatedScrollY={this.animatedScrollY}
-                animatedContentOffsetY={this.animatedContentOffsetY}
-              />
-            )}
-          />
-        ) : (
-          <Indicator />
-        )}
-
-        {store.stores_finish == true && (
-          <CartFooter
-            perfix="stores"
-            confirmRemove={this._confirmRemoveCartItem.bind(this)}
-            animatedScrollY={this.animatedScrollY}
-            animatedContentOffsetY={this.animatedContentOffsetY}
-            animating
-          />
-        )}
-
-        <PopupConfirm
-          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
-          title={t('cart:popup.remove.message')}
-          height={110}
-          noConfirm={this._closePopup.bind(this)}
-          yesConfirm={this._removeCartItem.bind(this)}
-          otherClose={false}
-        />
-
-        {store.cart_fly_show && (
-          <View
-            style={{
-              position: 'absolute',
-              top: store.cart_fly_position.py,
-              left: store.cart_fly_position.px,
-              width: store.cart_fly_position.width,
-              height: store.cart_fly_position.height,
-              zIndex: 999,
-              borderWidth: 1,
-              borderColor: DEFAULT_COLOR,
-              overflow: 'hidden',
-            }}>
-            {store.cart_fly_image && (
-              <CachedImage
-                style={{
-                  width: store.cart_fly_position.width,
-                  height: store.cart_fly_position.height,
-                }}
-                source={store.cart_fly_image}
-              />
-            )}
-          </View>
-        )}
-      </View>
-    );
   }
 
   _onScrollEnd(e) {
@@ -468,6 +323,129 @@ class Stores extends Component {
     } catch (e) {
       console.log(e + ' site_cart_update');
     }
+  }
+
+  measureCategoriesLayout = (ref, category, index) => {
+    if (ref && (!this.refCates[index] || !this.refCates[index].width)) {
+      ref.measure((x, y, width, height, pageX, pageY) => {
+        this.refCates[index] = {
+          offsetX: pageX,
+          width,
+          index,
+        };
+      });
+    }
+  };
+
+  render() {
+    const {t} = this.props;
+    return (
+      <View style={styles.container}>
+        {this.state.categories_data != null
+          ? this.state.categories_data.length > 1 && (
+              <View style={styles.categories_nav}>
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+                  ref={(ref) => (this.refs_category_nav = ref)}
+                  onScrollToIndexFailed={() => {}}
+                  data={this.state.categories_data}
+                  extraData={this.state.category_nav_index}
+                  keyExtractor={(item) => `${item.id}`}
+                  horizontal={true}
+                  style={styles.categories_nav}
+                  renderItem={({item, index}) => {
+                    let active = this.state.category_nav_index == index;
+                    return (
+                      <TouchableHighlight
+                        onPress={() => this._changeCategory(item, index)}
+                        underlayColor="transparent">
+                        <View
+                          ref={(inst) =>
+                            this.measureCategoriesLayout(inst, item, index)
+                          }
+                          style={styles.categories_nav_items}>
+                          <Text
+                            numberOfLines={2}
+                            style={[
+                              styles.categories_nav_items_title,
+                              active
+                                ? styles.categories_nav_items_title_active
+                                : null,
+                            ]}>
+                            {item.name}
+                          </Text>
+
+                          {active && (
+                            <View style={styles.categories_nav_items_active} />
+                          )}
+                        </View>
+                      </TouchableHighlight>
+                    );
+                  }}
+                />
+              </View>
+            )
+          : this.isGetFullStore && <CategoriesSkeleton />}
+
+        {this.state.categories_data != null ? (
+          <FlatList
+            scrollEnabled={this.state.categories_data.length > 1}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            ref={(ref) => (this.refs_category_screen = ref)}
+            onScrollToIndexFailed={() => {}}
+            data={this.state.categories_data}
+            extraData={this.state.category_nav_index}
+            keyExtractor={(item) => `${item.id}`}
+            horizontal
+            pagingEnabled
+            onMomentumScrollEnd={this._onScrollEnd.bind(this)}
+            style={{
+              width: Util.size.width,
+            }}
+            getItemLayout={(data, index) => {
+              return {
+                length: Util.size.width,
+                offset: Util.size.width * index,
+                index,
+              };
+            }}
+            renderItem={({item, index}) => (
+              <CategoryScreen
+                item={item}
+                index={index}
+                cate_index={this.state.category_nav_index}
+                promotions={this.state.promotions}
+                animatedScrollY={this.animatedScrollY}
+                animatedContentOffsetY={this.animatedContentOffsetY}
+              />
+            )}
+          />
+        ) : (
+          <ListStoreProductSkeleton />
+        )}
+
+        {store.stores_finish == true && (
+          <CartFooter
+            prefix="stores"
+            confirmRemove={this._confirmRemoveCartItem.bind(this)}
+            animatedScrollY={this.animatedScrollY}
+            animatedContentOffsetY={this.animatedContentOffsetY}
+            animating
+          />
+        )}
+
+        <PopupConfirm
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
+          title={t('cart:popup.remove.message')}
+          height={110}
+          noConfirm={this._closePopup.bind(this)}
+          yesConfirm={this._removeCartItem.bind(this)}
+          otherClose={false}
+        />
+      </View>
+    );
   }
 }
 

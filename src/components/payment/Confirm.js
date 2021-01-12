@@ -2,10 +2,8 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
-  ScrollView,
   FlatList,
   TextInput,
   Clipboard,
@@ -17,19 +15,18 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Material from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions, ActionConst} from 'react-native-router-flux';
 import store from '../../store/Store';
-import _ from 'lodash';
 import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
-import {CheckBox} from 'react-native-elements';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import {USE_ONLINE} from 'app-packages/tickid-voucher';
 import EventTracker from '../../helper/EventTracker';
 import {ANALYTICS_EVENTS_NAME} from '../../constants';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
+import CartItem from './CartItem';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1051,94 +1048,27 @@ class Confirm extends Component {
               </View>
             </View>
 
-            {single ? (
-              <FlatList
-                style={styles.items_box}
-                data={cart_products_confirm}
-                extraData={cart_products_confirm}
-                renderItem={({item, index}) => {
-                  return <ItemCartComponent parentCtx={this} item={item} />;
-                }}
-                keyExtractor={(item) => item.id}
-              />
-            ) : (
-              <FlatList
-                style={styles.items_box}
-                data={cart_products_confirm}
-                extraData={cart_products_confirm}
-                renderItem={({item, index}) => {
-                  // hide item not selected
-                  if (item.selected != 1) {
-                    return null;
-                  }
+            <FlatList
+              style={styles.items_box}
+              data={cart_products_confirm}
+              extraData={cart_products_confirm}
+              renderItem={({item, index}) => {
+                // hide item not selected
+                if (!single && item.selected != 1) {
+                  return null;
+                }
 
-                  return (
-                    <View
-                      style={[
-                        styles.cart_item_box,
-                        {
-                          height: 80,
-                        },
-                      ]}>
-                      <View
-                        style={[
-                          styles.cart_item_image_box,
-                          {
-                            marginLeft: 16,
-                          },
-                        ]}>
-                        <CachedImage
-                          mutable
-                          style={styles.cart_item_image}
-                          source={{uri: item.image}}
-                        />
-                      </View>
-
-                      <View style={styles.cart_item_info}>
-                        <View style={styles.cart_item_info_content}>
-                          <Text style={styles.cart_item_info_name}>
-                            {item.name}
-                          </Text>
-
-                          {!!item.classification && (
-                            <Text style={styles.cart_item_sub_info_name}>
-                              {item.classification}
-                            </Text>
-                          )}
-
-                          <View style={styles.cart_item_price_box}>
-                            {item.discount_percent > 0 && (
-                              <Text
-                                style={styles.cart_item_price_price_safe_off}>
-                                {item.discount}
-                              </Text>
-                            )}
-                            <Text style={styles.cart_item_price_price}>
-                              {item.price_view}
-                            </Text>
-                          </View>
-                        </View>
-                      </View>
-
-                      <Text style={styles.cart_item_weight}>
-                        {item.quantity_view}
-                      </Text>
-
-                      {item.discount_percent > 0 && (
-                        <View style={styles.item_safe_off}>
-                          <View style={styles.item_safe_off_percent}>
-                            <Text style={styles.item_safe_off_percent_val}>
-                              -{item.discount_percent}%
-                            </Text>
-                          </View>
-                        </View>
-                      )}
-                    </View>
-                  );
-                }}
-                keyExtractor={(item) => item.id}
-              />
-            )}
+                return (
+                  <CartItem
+                    parentCtx={this}
+                    item={item}
+                    onRemoveCartItem={() => this._removeItemCartConfirm(item)}
+                    noAction={!single}
+                  />
+                );
+              }}
+              keyExtractor={(item) => item.id}
+            />
 
             <View
               style={[
@@ -1873,316 +1803,6 @@ class Confirm extends Component {
   }
 }
 
-/* @flow */
-
-class ItemCartComponent extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      check_loading: false,
-      increment_loading: false,
-      decrement_loading: false,
-    };
-  }
-
-  _checkBoxHandler(item) {
-    this.setState(
-      {
-        check_loading: true,
-      },
-      async () => {
-        const {t} = this.props;
-        try {
-          const data = {
-            model: item.model,
-          };
-          let response = null;
-
-          if (item.selected == 1) {
-            response = await APIHandler.site_cart_unselected(
-              store.store_id,
-              item.id,
-              data,
-            );
-          } else {
-            response = await APIHandler.site_cart_selected(
-              store.store_id,
-              item.id,
-              data,
-            );
-          }
-
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              store.setCartData(response.data);
-              flashShowMessage({
-                message: response.message,
-                type: 'success',
-              });
-            } else {
-              flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger',
-              });
-            }
-          }
-        } catch (e) {
-          if (item.selected == 1) {
-            console.log(e + ' site_cart_unselected');
-          } else {
-            console.log(e + ' site_cart_selected');
-          }
-          flashShowMessage({
-            message: t('common:api.error.message'),
-            type: 'danger',
-          });
-        } finally {
-          !this.unmounted &&
-            this.setState({
-              check_loading: false,
-            });
-        }
-      },
-    );
-  }
-
-  // xử lý trừ số lượng, số lượng = 0 confirm xoá
-  _item_qnt_decrement_handler(item) {
-    if (item.quantity <= 1) {
-      this.props.parentCtx._removeItemCartConfirm(item);
-    } else {
-      this._item_qnt_decrement(item);
-    }
-  }
-
-  // giảm số lượng item trong giỏ hàng
-  _item_qnt_decrement(item) {
-    this.setState(
-      {
-        decrement_loading: true,
-      },
-      async () => {
-        try {
-          const {t} = this.props;
-          const data = {
-            quantity: 1,
-            model: item.model,
-          };
-
-          const response = await APIHandler.site_cart_minus(
-            store.store_id,
-            item.id,
-            data,
-          );
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              store.setCartData(response.data);
-              flashShowMessage({
-                message: response.message,
-                type: 'success',
-              });
-            } else {
-              flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger',
-              });
-            }
-          }
-        } catch (e) {
-          console.log(e + ' site_cart_minus');
-          flashShowMessage({
-            message: t('common:api.error.message'),
-            type: 'danger',
-          });
-        } finally {
-          !this.unmounted &&
-            this.setState({
-              decrement_loading: false,
-            });
-        }
-      },
-    );
-  }
-
-  // tăng số lượng sảm phẩm trong giỏ hàng
-  _item_qnt_increment(item) {
-    this.setState(
-      {
-        increment_loading: true,
-      },
-      async () => {
-        const {t} = this.props;
-        try {
-          const data = {
-            quantity: 1,
-            model: item.model,
-          };
-
-          const response = await APIHandler.site_cart_plus(
-            store.store_id,
-            item.id,
-            data,
-          );
-
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              store.setCartData(response.data);
-
-              flashShowMessage({
-                message: response.message,
-                type: 'success',
-              });
-            } else {
-              flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger',
-              });
-            }
-          }
-        } catch (e) {
-          console.log(e + ' site_cart_plus');
-          flashShowMessage({
-            message: t('common:api.error.message'),
-            type: 'danger',
-          });
-        } finally {
-          !this.unmounted &&
-            this.setState({
-              increment_loading: false,
-            });
-        }
-      },
-    );
-  }
-
-  render() {
-    var item = this.props.item;
-
-    var {check_loading, increment_loading, decrement_loading} = this.state;
-    var is_processing = check_loading || increment_loading || decrement_loading;
-
-    return (
-      <View
-        style={[
-          styles.cart_item_box,
-          {
-            minHeight: 87,
-            maxHeight: 100,
-          },
-        ]}>
-        <View style={styles.cart_item_check_box}>
-          {check_loading ? (
-            <Indicator size="small" />
-          ) : (
-            <CheckBox
-              containerStyle={styles.cart_item_check}
-              checked={item.selected == 1 ? true : false}
-              checkedColor={DEFAULT_COLOR}
-              hiddenTextElement
-              onPress={
-                is_processing ? null : this._checkBoxHandler.bind(this, item)
-              }
-            />
-          )}
-        </View>
-
-        <View style={styles.cart_item_image_box}>
-          <CachedImage
-            mutable
-            style={styles.cart_item_image}
-            source={{uri: item.image}}
-          />
-        </View>
-
-        <View style={styles.cart_item_info}>
-          <View style={styles.cart_item_info_content}>
-            <Text numberOfLines={1} style={styles.cart_item_info_name}>
-              {item.name}
-            </Text>
-
-            {!!item.classification && (
-              <Text numberOfLines={1} style={styles.cart_item_sub_info_name}>
-                {item.classification}
-              </Text>
-            )}
-
-            <View style={styles.cart_item_price_box}>
-              {item.discount_percent > 0 && (
-                <Text style={styles.cart_item_price_price_safe_off}>
-                  {item.discount}
-                </Text>
-              )}
-              <Text style={styles.cart_item_price_price}>
-                {item.price_view}
-              </Text>
-            </View>
-
-            <View style={styles.cart_item_actions}>
-              <TouchableHighlight
-                style={styles.cart_item_actions_btn}
-                underlayColor="transparent"
-                onPress={
-                  is_processing
-                    ? null
-                    : this._item_qnt_decrement_handler.bind(this, item)
-                }>
-                <View>
-                  {decrement_loading ? (
-                    <Indicator size="small" />
-                  ) : (
-                    <Text style={styles.cart_item_btn_label}>-</Text>
-                  )}
-                </View>
-              </TouchableHighlight>
-
-              <Text style={styles.cart_item_actions_quantity}>
-                {item.quantity_view}
-              </Text>
-
-              <TouchableHighlight
-                style={styles.cart_item_actions_btn}
-                underlayColor="transparent"
-                onPress={
-                  is_processing
-                    ? null
-                    : this._item_qnt_increment.bind(this, item)
-                }>
-                <View>
-                  {increment_loading ? (
-                    <Indicator size="small" />
-                  ) : (
-                    <Text style={styles.cart_item_btn_label}>+</Text>
-                  )}
-                </View>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </View>
-
-        {item.discount_percent > 0 && (
-          <View style={styles.item_safe_off}>
-            <View style={styles.item_safe_off_percent}>
-              <Text style={styles.item_safe_off_percent_val}>
-                -{item.discount_percent}%
-              </Text>
-            </View>
-          </View>
-        )}
-
-        {/*item.selected != 1 && (
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={this._checkBoxHandler.bind(this, item)}
-            style={styles.uncheckOverlay}>
-            <View></View>
-          </TouchableHighlight>
-        )*/}
-      </View>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -2333,6 +1953,14 @@ const styles = StyleSheet.create({
     borderColor: '#666666',
     borderRadius: 3,
   },
+  cart_item_remove_btn: {
+    backgroundColor: '#babbbf',
+    marginRight: 15,
+    borderWidth: 0,
+  },
+  cart_item_remove_icon: {
+    color: '#fff',
+  },
   cart_item_actions_quantity: {
     paddingHorizontal: 8,
     minWidth: '30%',
@@ -2345,18 +1973,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     lineHeight: isIOS ? 20 : 24,
   },
-  cart_item_check_box: {
-    width: 61,
-    justifyContent: 'center',
-  },
-  cart_item_check: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 0,
-    paddingRight: 0,
-    marginRight: 0,
-    backgroundColor: '#fff',
-  },
+
   cart_item_price_box: {
     flexDirection: 'row',
     alignItems: 'center',

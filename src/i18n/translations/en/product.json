@@ -1,7 +1,8 @@
 {
   "shopTitle": {
     "preOrder": "Pre-order",
-    "buy": "Add to cart"
+    "buy": "Add to cart",
+    "book": "Book"
   },
   "attr": {
     "notChooseAttrYet": "No attribute selected",

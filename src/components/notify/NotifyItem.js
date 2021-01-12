@@ -251,7 +251,7 @@ class NotifyItem extends Component {
 
         {item_data != null && item_data.related && (
           <CartFooter
-            perfix="item"
+            prefix="item"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
           />
         )}

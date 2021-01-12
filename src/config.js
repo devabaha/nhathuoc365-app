@@ -190,7 +190,13 @@ class Config {
       premiumInfo: 'premiumInfo',
 
       // Item detail
-      item: 'item'
+      item: 'item',
+
+      // Product schedule
+      productSchedule: 'productSchedule',
+
+      //Group product
+      groupProduct: 'groupProduct'
     };
   }
 }

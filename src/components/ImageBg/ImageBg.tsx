@@ -30,7 +30,7 @@ const ImageBackground = ({
                 style
             ]}>
             <FastImage
-                // {...imageProps}
+                {...imageProps}
                 source={source}
                 style={[styles.image, imageStyle]}
             />

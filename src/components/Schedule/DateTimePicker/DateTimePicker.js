@@ -1,18 +1,18 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   FlatList,
   TouchableOpacity,
   Animated,
   StyleSheet,
-  Text
+  Text,
 } from 'react-native';
 import PropTypes from 'prop-types';
 
 import moment from 'moment';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import appConfig from 'app-config';
-import { DAY_NAME_IN_WEEK, DATE_FORMAT } from '../constants';
+import {DAY_NAME_IN_WEEK, DATE_FORMAT} from '../constants';
 import Day from './Day';
 
 class DateTimePicker extends Component {
@@ -23,7 +23,7 @@ class DateTimePicker extends Component {
     selectedDate: PropTypes.string,
     startDate: PropTypes.string,
     endDate: PropTypes.string,
-    disabledDates: PropTypes.array
+    disabledDates: PropTypes.array,
   };
 
   static defaultProps = {
@@ -33,7 +33,7 @@ class DateTimePicker extends Component {
     selectedDate: moment().format(DATE_FORMAT),
     startDate: moment().format(DATE_FORMAT),
     endDate: null,
-    disabledDates: []
+    disabledDates: [],
   };
 
   state = {
@@ -41,18 +41,18 @@ class DateTimePicker extends Component {
       this.props.selectedDate,
       this.props.startDate,
       this.props.endDate,
-      this.props.disabledDates
+      this.props.disabledDates,
     ),
     dates: this.getDates(
       this.props.startDate,
       this.props.endDate,
-      this.props.disabledDates
+      this.props.disabledDates,
     ),
     factor: 0,
     selectedWeekIndex: 0,
     componentWidth: 0,
     animatedPrevious: new Animated.Value(0),
-    animatedNext: new Animated.Value(0)
+    animatedNext: new Animated.Value(0),
   };
   refDayFlatList = React.createRef();
 
@@ -65,7 +65,7 @@ class DateTimePicker extends Component {
     const diffWeek =
       momentSelectedDate.diff(
         momentStartDate.day(momentSelectedDate.weekday()),
-        'days'
+        'days',
       ) / 7;
 
     for (let i = 0; i < Math.abs(diffWeek) + 1; i++) {
@@ -74,25 +74,25 @@ class DateTimePicker extends Component {
     }
 
     const selectedWeekIndex = this.getWeekIndexByDate(dates, {
-      fullDate: selectedDate
+      fullDate: selectedDate,
     });
 
     this.setState(
       {
         dates,
         selectedWeekIndex,
-        factor
+        factor,
       },
       () => {
         setTimeout(() => {
           if (this.refDayFlatList.current) {
             this.refDayFlatList.current.scrollToIndex({
               index: selectedWeekIndex,
-              animated: true
+              animated: true,
             });
           }
-        }, 800);
-      }
+        }, 300);
+      },
     );
   }
 
@@ -101,7 +101,7 @@ class DateTimePicker extends Component {
       this.state.selectedDate.fullDate,
       this.props.startDate,
       this.props.endDate,
-      this.props.disabledDates
+      this.props.disabledDates,
     );
   }
 
@@ -117,7 +117,7 @@ class DateTimePicker extends Component {
       } else {
         const newSelectedDate = this.getClosetEnabledDate(
           nextState.dates[nextState.selectedWeekIndex],
-          nextState.selectedDate
+          nextState.selectedDate,
         );
 
         this.handlePressDate(newSelectedDate);
@@ -137,7 +137,7 @@ class DateTimePicker extends Component {
         nextProps.disabledDates,
         nextState.dates,
         nextProps.startDate !== this.props.startDate,
-        nextProps.endDate !== this.props.endDate
+        nextProps.endDate !== this.props.endDate,
       );
 
       this.setState(newState, () => {
@@ -146,7 +146,7 @@ class DateTimePicker extends Component {
           if (this.refDayFlatList.current) {
             this.refDayFlatList.current.scrollToIndex({
               index: newState.selectedWeekIndex,
-              animated: false
+              animated: false,
             });
           }
         }, 500);
@@ -159,8 +159,8 @@ class DateTimePicker extends Component {
           nextProps.selectedDate,
           nextProps.startDate,
           nextProps.endDate,
-          nextProps.disabledDates
-        )
+          nextProps.disabledDates,
+        ),
       });
     }
 
@@ -182,7 +182,7 @@ class DateTimePicker extends Component {
     stateDates,
     isUpdateStartDate,
     isUpdateEndDate,
-    today = moment().format(DATE_FORMAT)
+    today = moment().format(DATE_FORMAT),
   ) {
     let dates = [];
     let newWeekOfSelectedDate = [];
@@ -193,13 +193,13 @@ class DateTimePicker extends Component {
       const diffWeek =
         selectedDate.momentDate.diff(
           moment(startDate).day(selectedDate.dayInWeek),
-          'days'
+          'days',
         ) / 7;
       for (let i = 0; i < Math.abs(diffWeek) + 1; i++) {
         const newWeek = this.getDates(startDate, endDate, disabledDates, i)[0];
         dates.push(newWeek);
 
-        if (newWeek.find(date => date.fullDate === selectedDate.fullDate)) {
+        if (newWeek.find((date) => date.fullDate === selectedDate.fullDate)) {
           newWeekOfSelectedDate = newWeek;
         }
       }
@@ -213,11 +213,11 @@ class DateTimePicker extends Component {
           startDate,
           endDate,
           disabledDates,
-          index
+          index,
         )[0];
         dates.push(newWeek);
 
-        if (newWeek.find(date => date.fullDate === selectedDate.fullDate)) {
+        if (newWeek.find((date) => date.fullDate === selectedDate.fullDate)) {
           newWeekOfSelectedDate = newWeek;
         }
       });
@@ -228,7 +228,7 @@ class DateTimePicker extends Component {
       moment(today),
       moment(startDate),
       moment(endDate),
-      disabledDates
+      disabledDates,
     );
 
     let isSelectedDateInRange = false;
@@ -237,7 +237,7 @@ class DateTimePicker extends Component {
         selectedDate.momentDate,
         moment(startDate),
         moment(endDate),
-        disabledDates
+        disabledDates,
       );
     }
 
@@ -249,14 +249,14 @@ class DateTimePicker extends Component {
       }
       newSelectedDate = this.getClosetEnabledDate(
         newWeekOfSelectedDate,
-        selectedDate
+        selectedDate,
       );
     } else if (isTodayInRange) {
       newSelectedDate = this.createDateObj(
         today,
         startDate,
         endDate,
-        disabledDates
+        disabledDates,
       );
     } else {
       newSelectedDate = dates[0][0];
@@ -264,14 +264,14 @@ class DateTimePicker extends Component {
 
     const newSelectedWeekIndex = this.getWeekIndexByDate(
       dates,
-      newSelectedDate
+      newSelectedDate,
     );
 
     return {
       selectedDate: newSelectedDate,
       dates,
       factor: dates.length - 1,
-      selectedWeekIndex: newSelectedWeekIndex
+      selectedWeekIndex: newSelectedWeekIndex,
     };
   }
 
@@ -282,7 +282,7 @@ class DateTimePicker extends Component {
         momentDate.isBetween(momentStartDate, momentEndDate) ||
         momentDate.isSame(momentEndDate, 'day')
       ) ||
-      disabledDates.some(date => {
+      disabledDates.some((date) => {
         if (typeof date === 'object') {
           const dStart = moment(date.start);
           const dEnd = moment(date.end);
@@ -316,9 +316,9 @@ class DateTimePicker extends Component {
         momentDate,
         startDate,
         endDate,
-        disabledDates
+        disabledDates,
       ),
-      isToday: momentDate.format(DATE_FORMAT) === moment().format(DATE_FORMAT)
+      isToday: momentDate.format(DATE_FORMAT) === moment().format(DATE_FORMAT),
     };
   }
 
@@ -332,8 +332,8 @@ class DateTimePicker extends Component {
           momentDate.format(DATE_FORMAT),
           startDate,
           endDate,
-          disabledDates
-        )
+          disabledDates,
+        ),
       );
     }
     dates.push(week);
@@ -350,11 +350,11 @@ class DateTimePicker extends Component {
 
     const leftDelta = marginLeftWeekMonday.momentDate.diff(
       selectedDate.momentDate,
-      'days'
+      'days',
     );
     const rightDelta = marginRightWeekMonday.momentDate.diff(
       selectedDate.momentDate,
-      'days'
+      'days',
     );
 
     if (Math.abs(leftDelta) <= Math.abs(rightDelta)) {
@@ -382,12 +382,12 @@ class DateTimePicker extends Component {
     let weekIndex = 0;
 
     dates.some((week, index) =>
-      week.some(wDate => {
+      week.some((wDate) => {
         if (date.fullDate === wDate.fullDate) {
           weekIndex = index;
           return true;
         }
-      })
+      }),
     );
 
     return weekIndex;
@@ -413,12 +413,12 @@ class DateTimePicker extends Component {
     return this.state.selectedDate.dayInWeek;
   }
 
-  handlePressDate = selectedDate => {
+  handlePressDate = (selectedDate) => {
     this.props.onPress(selectedDate);
   };
 
-  onLayout = e => {
-    this.setState({ componentWidth: e.nativeEvent.layout.width });
+  onLayout = (e) => {
+    this.setState({componentWidth: e.nativeEvent.layout.width});
   };
 
   loadMoreDate() {
@@ -435,12 +435,12 @@ class DateTimePicker extends Component {
           this.props.endDate,
           this.props.disabledDates,
           newFactor,
-          currentDates
+          currentDates,
         );
 
         this.setState({
           factor: newFactor,
-          dates: newDates
+          dates: newDates,
         });
       }
     }
@@ -450,13 +450,13 @@ class DateTimePicker extends Component {
     if (this.refDayFlatList.current) {
       if (step >= 0) {
         Animated.spring(this.state.animatedNext, {
-          toValue: 1
+          toValue: 1,
         }).start(() => {
           this.state.animatedNext.setValue(0);
         });
       } else {
         Animated.spring(this.state.animatedPrevious, {
-          toValue: 1
+          toValue: 1,
         }).start(() => {
           this.state.animatedPrevious.setValue(0);
         });
@@ -468,10 +468,10 @@ class DateTimePicker extends Component {
       nextSelectedWeekIndex < 0 && (nextSelectedWeekIndex = 0);
       this.refDayFlatList.current.scrollToIndex({
         index: nextSelectedWeekIndex,
-        animated: true
+        animated: true,
       });
       this.setState({
-        selectedWeekIndex: nextSelectedWeekIndex
+        selectedWeekIndex: nextSelectedWeekIndex,
       });
     }
   }
@@ -481,34 +481,34 @@ class DateTimePicker extends Component {
     const targetOffset = e.nativeEvent.targetContentOffset.x;
     const selectedWeekIndex = targetOffset / elementWidth;
 
-    this.setState({ selectedWeekIndex });
+    this.setState({selectedWeekIndex});
   }
 
   renderHeader() {
     const disabledPrevious = this.state.selectedWeekIndex === 0;
     const disabledNext = this.getSpecificDay(
       this.state.selectedWeekIndex,
-      6
+      6,
     ).momentDate.isSameOrAfter(this.props.endDate);
     const extraContainerStyle = {
-      paddingHorizontal: this.props.componentPaddingHorizontal
+      paddingHorizontal: this.props.componentPaddingHorizontal,
     };
 
     const extraPrevStyle = {
-      transform: [{ scale: this.state.animatedPrevious }],
+      transform: [{scale: this.state.animatedPrevious}],
       opacity: this.state.animatedPrevious.interpolate({
         inputRange: [0, 0.618, 1],
-        outputRange: [0, 1, 0]
-      })
+        outputRange: [0, 1, 0],
+      }),
       // right: -14
     };
 
     const extraNextStyle = {
-      transform: [{ scale: this.state.animatedNext }],
+      transform: [{scale: this.state.animatedNext}],
       opacity: this.state.animatedNext.interpolate({
         inputRange: [0, 0.618, 1],
-        outputRange: [0, 1, 0]
-      })
+        outputRange: [0, 1, 0],
+      }),
       // left: -14
     };
 
@@ -517,8 +517,7 @@ class DateTimePicker extends Component {
         <TouchableOpacity
           disabled={disabledPrevious}
           hitSlop={HIT_SLOP}
-          onPress={() => this.changeDayFlatListIndex(-1)}
-        >
+          onPress={() => this.changeDayFlatListIndex(-1)}>
           <View style={styles.btnContainer}>
             <Animated.View style={[styles.bgBtn, extraPrevStyle]} />
             <Icon
@@ -535,8 +534,7 @@ class DateTimePicker extends Component {
         <TouchableOpacity
           disabled={disabledNext}
           hitSlop={HIT_SLOP}
-          onPress={() => this.changeDayFlatListIndex(1)}
-        >
+          onPress={() => this.changeDayFlatListIndex(1)}>
           <View style={styles.btnContainer}>
             <Animated.View style={[styles.bgBtn, extraNextStyle]} />
             <Icon
@@ -559,16 +557,15 @@ class DateTimePicker extends Component {
     });
   }
 
-  renderDay({ item: dates }) {
+  renderDay({item: dates}) {
     return (
       <View
         style={[
           styles.dayInWeekContainer,
           {
-            width: this.state.componentWidth
-          }
-        ]}
-      >
+            width: this.state.componentWidth,
+          },
+        ]}>
         {dates.map((date, index) => {
           return (
             <Day
@@ -587,11 +584,11 @@ class DateTimePicker extends Component {
 
   renderDate() {
     return (
-      <FlatList
+      !!this.state.componentWidth && <FlatList
         ref={this.refDayFlatList}
         contentContainerStyle={styles.dateContentContainer}
         onScrollEndDrag={this.onDayScrollEnd.bind(this)}
-        onScrollToIndexFailed={e => console.log(e)}
+        onScrollToIndexFailed={(e) => console.log(e)}
         initialNumToRender={5}
         showsHorizontalScrollIndicator={false}
         pagingEnabled
@@ -601,13 +598,18 @@ class DateTimePicker extends Component {
         keyExtractor={(item, index) => index.toString()}
         onEndReached={this.loadMoreDate.bind(this)}
         onEndReachedThreshold={0.1}
+        getItemLayout={(data, index) => ({
+          length: this.state.componentWidth,
+          offset: this.state.componentWidth * index,
+          index,
+        })}
       />
     );
   }
 
   renderCalendar() {
     const extraStyle = {
-      paddingHorizontal: this.props.componentPaddingHorizontal
+      paddingHorizontal: this.props.componentPaddingHorizontal,
     };
 
     return (
@@ -638,53 +640,53 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     flexDirection: 'row',
-    paddingVertical: 10
+    paddingVertical: 10,
   },
   icon: {
     fontSize: 30,
-    color: '#555'
+    color: '#555',
   },
   bodyContainer: {},
   title: {
     textTransform: 'uppercase',
     fontSize: 18,
-    color: appConfig.colors.text
+    color: appConfig.colors.text,
   },
   dayNameContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 5
+    paddingVertical: 5,
   },
   subTitle: {
     textTransform: 'uppercase',
     fontSize: 16,
-    color: '#555'
+    color: '#555',
   },
   dayInWeekContainer: {
     flex: 1,
     flexDirection: 'row',
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   dateContainer: {
-    paddingVertical: 7
+    paddingVertical: 7,
   },
   dateContentContainer: {
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   iconDisabled: {
-    color: '#aaa'
+    color: '#aaa',
   },
   btnContainer: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   bgBtn: {
     position: 'absolute',
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#aaa'
-  }
+    backgroundColor: '#aaa',
+  },
 });
 
 export default DateTimePicker;

@@ -118,6 +118,12 @@
     },
     "premiumInfo": {
       "mainTitle": "Ưu đãi hạng"
+    },
+    "productSchedule": {
+      "mainTitle": "Chọn ngày và giờ"
+    },
+    "groupProduct": {
+      "mainTitle": "Nhóm sản phẩm"
     }
   },
 

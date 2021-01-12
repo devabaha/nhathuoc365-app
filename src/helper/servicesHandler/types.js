@@ -60,6 +60,7 @@ export const SERVICES_TYPE = {
 
   /** PRODUCT */
   PRODUCT_DETAIL: 'product_detail',
+  GROUP_PRODUCT: 'group_product',
 
   /** AFFILIATE */
   AFFILIATE: 'affiliate',

@@ -12,6 +12,7 @@ import ListHeader from './ListHeader';
 import store from 'app-store';
 import {Actions} from 'react-native-router-flux';
 import NoResult from '../NoResult';
+import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -24,7 +25,7 @@ class CategoryScreen extends Component {
   constructor(props) {
     super(props);
 
-    const {item, that} = props;
+    const {item, promotions} = props;
     let header_title;
 
     if (item.id == 0) {
@@ -42,7 +43,7 @@ class CategoryScreen extends Component {
       items_data: null,
       items_data_bak: null,
       page: 0,
-      promotions: that.state.promotions,
+      promotions,
       isAll: item.id == 0,
       fetched: false,
     };
@@ -258,11 +259,7 @@ class CategoryScreen extends Component {
     const {t} = this.props;
     // show loading
     if (this.state.loading) {
-      return (
-        <View style={styles.containerScreen}>
-          <Indicator />
-        </View>
-      );
+      return <ListStoreProductSkeleton />;
     }
 
     const {items_data, header_title, fetched, loading} = this.state;

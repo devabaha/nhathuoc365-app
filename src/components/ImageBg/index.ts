@@ -7,7 +7,7 @@ import { FastImageProps, Source, ImageStyle } from 'react-native-fast-image';
 export interface ImageBgProps extends ViewProps {
     style?: StyleProp<ViewProps>
     imageStyle?: StyleProp<ImageStyle>
-    imageProps?: ImagePropsBase,
+    imageProps?: FastImageProps,
     // source: ImageSourcePropType,
     source: Source,
     children?: React.ReactNode
