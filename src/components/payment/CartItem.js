@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
   },
   cart_item_info_content: {
     paddingHorizontal: 7,
+    paddingLeft: 10,
   },
   cart_item_info_name: {
     color: '#000000',
@@ -350,7 +351,7 @@ class CartItem extends Component {
       return (
         <View style={styles.cart_item_quantity_container}>
           <Text style={styles.cart_item_quantity_mess}>
-            {item.quantity_view} {item.unit_name}
+            {item.quantity_view}
           </Text>
         </View>
       );

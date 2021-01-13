@@ -509,6 +509,13 @@ class Confirm extends Component {
 
   _viewOrders() {
     this._popupClose();
+    /**
+     * @todo
+     * force update props of prev screen
+     * for the case this screen pushed from Orders
+     * so Orders can refresh to update status of this cart before it shown.
+     */
+    Actions.refresh({});
 
     this._goBack();
 
@@ -601,6 +608,28 @@ class Confirm extends Component {
   };
 
   handleRemoveVoucherFailure = (response) => {};
+
+  renderCartProducts(products, single) {
+    return (
+      <View style={styles.items_box}>
+        {products.map((product) => {
+          if (!single && product.selected != 1) {
+            return null;
+          }
+
+          return (
+            <CartItem
+              key={product.id}
+              parentCtx={this}
+              item={product}
+              onRemoveCartItem={() => this._removeItemCartConfirm(product)}
+              noAction={!single}
+            />
+          );
+        })}
+      </View>
+    );
+  }
 
   render() {
     const {t} = this.props;
@@ -1048,27 +1077,7 @@ class Confirm extends Component {
               </View>
             </View>
 
-            <FlatList
-              style={styles.items_box}
-              data={cart_products_confirm}
-              extraData={cart_products_confirm}
-              renderItem={({item, index}) => {
-                // hide item not selected
-                if (!single && item.selected != 1) {
-                  return null;
-                }
-
-                return (
-                  <CartItem
-                    parentCtx={this}
-                    item={item}
-                    onRemoveCartItem={() => this._removeItemCartConfirm(item)}
-                    noAction={!single}
-                  />
-                );
-              }}
-              keyExtractor={(item) => item.id}
-            />
+            {this.renderCartProducts(cart_products_confirm, single)}
 
             <View
               style={[
@@ -1339,7 +1348,7 @@ class Confirm extends Component {
                   </TouchableHighlight>
                 )}
 
-                {is_reorder && (
+                {/* {is_reorder && (
                   <TouchableHighlight
                     style={styles.buttonAction}
                     onPress={this.confirmCoppyCart.bind(this, cart_data)}
@@ -1364,7 +1373,7 @@ class Confirm extends Component {
                       </Text>
                     </View>
                   </TouchableHighlight>
-                )}
+                )} */}
 
                 {is_paymenting && (
                   <TouchableHighlight

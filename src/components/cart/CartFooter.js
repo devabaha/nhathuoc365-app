@@ -300,7 +300,17 @@ class CartFooter extends Component {
               style={styles.store_cart_item_image}
               source={{uri: item.image}}
             />
-            
+            <TouchableOpacity
+              onPress={this._confirmRemoveCartItem.bind(this, item)}
+              style={[
+                styles.store_cart_item_qnt_change,
+                styles.store_cart_item_remove,
+              ]}>
+              <AntDesignIcon
+                name="close"
+                style={styles.store_cart_item_remove_icon}
+              />
+            </TouchableOpacity>
           </View>
           <View style={styles.store_cart_item_title_box}>
             <View style={{flex: 1}}>
@@ -350,17 +360,6 @@ class CartFooter extends Component {
                   </View>
                 </TouchableHighlight>
               </View>
-              <TouchableOpacity
-              onPress={this._confirmRemoveCartItem.bind(this, item)}
-              style={[
-                styles.store_cart_item_qnt_change,
-                styles.store_cart_item_remove,
-              ]}>
-              <AntDesignIcon
-                name="close"
-                style={styles.store_cart_item_remove_icon}
-              />
-            </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -861,13 +860,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#cc7171',
     borderWidth: 0,
     position: 'absolute',
-    // top: -5,
-    // left: 0,
-    right: 0,
+    top: -5,
+    left: 0,
+    // right: 0,
     width: 20,
     height: 20,
-    borderRadius: 5
-    // ...elevationShadowStyle(2)
+    borderRadius: 5,
+    ...elevationShadowStyle(2)
   },
   store_cart_item_remove_icon: {
     color: '#fff',

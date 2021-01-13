@@ -27,6 +27,7 @@ import Button from '../../components/Button';
 import FastImage from 'react-native-fast-image';
 import {PRODUCT_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
+import SVGPhotoBroken from '../../images/photo_broken.svg';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -281,7 +282,7 @@ class Item extends Component {
         this.goToSchedule(product);
         break;
       default:
-        this.goToSchedule(product);
+        this._addCart(product, quantity, model);
         break;
     }
   };
@@ -477,11 +478,12 @@ class Item extends Component {
     }
   }
 
-  renderPagination = (index, total, context) => {
+  renderPagination = (index, total, context, hasImages) => {
+    const pagingMess = hasImages ? `${index + 1}/${total}` : "0/0";
     return (
       <View style={styles.paginationContainer}>
         <Text style={styles.paginationText}>
-          {index + 1}/{total}
+          {pagingMess}
         </Text>
       </View>
     );
@@ -510,6 +512,13 @@ class Item extends Component {
   }
 
   renderProductImages(images) {
+    if(!images.length){
+      return (
+      <View style={styles.noImageContainer}>
+          <SVGPhotoBroken width="80" height="80" fill={appConfig.colors.primary}/>
+      </View>
+      )
+    }
     return images.map((image, index) => {
       return (
         <TouchableHighlight
@@ -534,17 +543,19 @@ class Item extends Component {
   }
 
   renderProductSwiper(product) {
-    const images = product ? product.img || [] : [];
-    const hasImages = images.length;
+    const images = product?.img || [];
+    const hasImages = !!images.length;
+    const isShowButtons = hasImages && images.length > 1;
 
     return (
       <View>
         <SkeletonLoading
-          loading={product == null}
+          loading={!product}
           height={appConfig.device.width * 0.6}>
           <Swiper
-            showsButtons={hasImages}
-            renderPagination={this.renderPagination}
+            showsButtons={isShowButtons}
+            renderPagination={(index, total, context) => 
+              this.renderPagination(index, total, context, hasImages)}
             nextButton={this.renderNextButton()}
             prevButton={this.renderPrevButton()}
             width={appConfig.device.width}
@@ -1048,6 +1059,15 @@ const styles = StyleSheet.create({
     marginHorizontal: 15,
     width: appConfig.device.width - 30,
   },
+  noImageContainer: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    opacity: .4,
+    backgroundColor: hexToRgbA(
+      LightenColor(appConfig.colors.primary, 20),
+       .5)
+      }
 });
 
 export default withTranslation(['product', 'cart', 'common'])(observer(Item));
