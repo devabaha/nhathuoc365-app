@@ -432,13 +432,12 @@ class Room extends Component {
     });
   };
 
-  handlePressService = ({ type }) => {
+  handlePressService = service => {
     if (!this.state.room) return;
-    const service = { type };
     service.site_id = this.room.siteId;
     service.room_id = this.room.roomId;
 
-    switch (type) {
+    switch (service.type) {
       case SERVICES_TYPE.BEEHOME_LIST_BILL:
         service.index = 0;
         break;
