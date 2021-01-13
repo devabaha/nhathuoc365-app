@@ -72,7 +72,7 @@ class Confirm extends Component {
           data,
         );
       default:
-        return null;
+        return APIHandler.service_book(this.props.siteId, data);
     }
   }
 

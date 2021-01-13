@@ -494,6 +494,11 @@ class Store {
   @action setBaseAPIDomain(apiDomain) {
     this.apiDomain = apiDomain;
   }
+
+  @observable isUpdateOrders = false;
+  @action setUpdateOrders(isUpdateOrders){
+    this.isUpdateOrders = isUpdateOrders;
+  }
 }
 
 export default new Store();

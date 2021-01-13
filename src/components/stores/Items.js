@@ -14,6 +14,7 @@ import FastImage from 'react-native-fast-image';
 
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../components/Badges';
+import { PRODUCT_TYPES } from '../../constants';
 class Items extends Component {
   constructor(props) {
     super(props);
@@ -25,19 +26,38 @@ class Items extends Component {
   }
   unmounted = false;
 
+  isServiceProduct(product = {}) {
+    return product.product_type === PRODUCT_TYPES.SERVICE;
+  }
+
   componentWillUnmount() {
     this.unmounted = true;
   }
+
+  handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
+    switch (product.product_type) {
+      case PRODUCT_TYPES.NORMAL:
+        this._addCart(product, quantity, model);
+        break;
+      case PRODUCT_TYPES.SERVICE:
+        this.goToSchedule(product);
+        break;
+      default:
+        this._addCart(product, quantity, model);
+        break;
+    }
+  };
+
+  goToSchedule = (product) => {
+    Actions.push(appConfig.routes.productSchedule, {
+      productId: product.id,
+    });
+  };
 
   // add item vào giỏ hàng
   _addCart = (item, quantity = 1, model = '') => {
     if (this.props.buyPress) {
       this.props.buyPress(item);
-    }
-
-    if (item.is_service) {
-      Actions.push(appConfig.routes.schedule);
-      return;
     }
 
     if (isIOS) {
@@ -291,7 +311,8 @@ class Items extends Component {
             <TouchableHighlight
               style={styles.item_add_cart_btn}
               underlayColor="transparent"
-              onPress={() => this._addCart(item)}>
+              onPress={() => this.handlePressActionBtnProduct(item)}
+              >
               <View
                 style={{
                   width: '100%',
@@ -306,24 +327,14 @@ class Items extends Component {
                       }}>
                       <Indicator size="small" />
                     </View>
-                  ) : item.is_service ? (
+                  ) : this.isServiceProduct(item) ? (
                     <Icon name="calendar-plus-o" size={22} color="#0eac24" />
-                  ) : item.book_flag == 1 ? (
-                    <Icon
-                      name="cart-arrow-down"
-                      size={22}
-                      color={DEFAULT_COLOR}
-                    />
                   ) : (
                     <Icon name="cart-plus" size={22} color={'#0eac24'} />
                   )}
-                  {item.is_service ? (
+                  {this.isServiceProduct(item)? (
                     <Text style={styles.item_add_cart_title}>
                       {t('product:shopTitle.book')}
-                    </Text>
-                  ) : item.book_flag == 1 ? (
-                    <Text style={styles.item_add_book_title}>
-                      {t('product:shopTitle.preOrder')}
                     </Text>
                   ) : (
                     <Text style={styles.item_add_cart_title}>

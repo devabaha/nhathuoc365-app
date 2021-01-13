@@ -76,6 +76,7 @@ class OrdersItemComponent extends Component {
   _goOrdersItem(item) {
     if (this.props.disableGoDetail) return;
     store.setStoreData(item.site);
+    store.setCartData(item);
     Actions.orders_item({
       data: item,
       title: `#${item.cart_code}`,

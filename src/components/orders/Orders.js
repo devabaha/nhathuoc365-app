@@ -16,6 +16,7 @@ import {Actions} from 'react-native-router-flux';
 import OrdersItemComponent from './OrdersItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
+import {StatusBar} from 'react-native';
 
 class Orders extends Component {
   constructor(props) {
@@ -52,7 +53,7 @@ class Orders extends Component {
     this.eventTracker.clearTracking();
   }
 
-  componentWillReceiveProps() {
+  UNSAFE_componentWillReceiveProps() {
     store.parentTab = '_orders';
 
     if (this.state.finish && store.is_stay_orders) {
@@ -97,6 +98,10 @@ class Orders extends Component {
 
   async _getData(delay, noScroll = false) {
     const {t} = this.props;
+
+    store.setUpdateOrders(false);
+    appConfig.device.isIOS &&
+      StatusBar.setNetworkActivityIndicatorVisible(true);
     try {
       const response = await APIHandler.user_cart_list();
 
@@ -147,6 +152,8 @@ class Orders extends Component {
     } finally {
       store.getNoitify();
       store.setDeepLinkData(null);
+      appConfig.device.isIOS &&
+        StatusBar.setNetworkActivityIndicatorVisible(false);
     }
   }
 
@@ -155,8 +162,6 @@ class Orders extends Component {
       this.refs_cancel_cart.close();
     }
   }
-
-
 
   async _coppyCart() {
     if (this.item_coppy) {
@@ -297,9 +302,17 @@ class Orders extends Component {
     );
   }
 
+  forceUpdateOrders() {
+    if (store.isUpdateOrders && !this.state.refreshing) {
+      setTimeout(() => this._getData(0, true));
+    }
+  }
+
   render() {
     const {loading, data} = this.state;
     const {t} = this.props;
+    this.forceUpdateOrders();
+
     if (loading) {
       return <Indicator />;
     }
@@ -337,28 +350,26 @@ class Orders extends Component {
           data={data || []}
           extraData={this.state}
           ListEmptyComponent={
-            data != null && (
-              <View style={styles.empty_box}>
-                <Icon
-                  name="shopping-basket"
-                  size={32}
-                  color={hexToRgbA(DEFAULT_COLOR, 0.6)}
-                />
-                <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
+            <View style={styles.empty_box}>
+              <Icon
+                name="shopping-basket"
+                size={32}
+                color={hexToRgbA(DEFAULT_COLOR, 0.6)}
+              />
+              <Text style={styles.empty_box_title}>{t('emptyMessage')}</Text>
 
-                <TouchableHighlight
-                  onPress={() => {
-                    Actions.jump(appConfig.routes.homeTab);
-                  }}
-                  underlayColor="transparent">
-                  <View style={styles.empty_box_btn}>
-                    <Text style={styles.empty_box_btn_title}>
-                      {t('encourageMessage')}
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-              </View>
-            )
+              <TouchableHighlight
+                onPress={() => {
+                  Actions.jump(appConfig.routes.homeTab);
+                }}
+                underlayColor="transparent">
+                <View style={styles.empty_box_btn}>
+                  <Text style={styles.empty_box_btn_title}>
+                    {t('encourageMessage')}
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            </View>
           }
           renderItem={({item, index}) => {
             return (
@@ -470,9 +481,9 @@ const styles = StyleSheet.create({
     height: Util.pixel,
     backgroundColor: '#dddddd',
   },
-items_box: {
-  flex: 1
-},
+  items_box: {
+    flex: 1,
+  },
   empty_box: {
     flex: 1,
     justifyContent: 'center',
