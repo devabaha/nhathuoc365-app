@@ -134,6 +134,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     lineHeight: 20,
+    flex: 1,
+    marginRight: 20,
   },
   listHorizontal: {
     paddingTop: 15,

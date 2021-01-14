@@ -12,6 +12,7 @@
   "addToCart": "Thêm vào giỏ hàng",
   "liked": "Đã thích",
   "like": "Yêu thích",
+  "productsLeft": "Kho: {{quantity}}",
   "information": {
     "brands": "NHÃN HIỆU",
     "origin": "XUẤT XỨ"

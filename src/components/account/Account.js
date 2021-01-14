@@ -29,6 +29,7 @@ import SkeletonLoading from '../SkeletonLoading';
 import BaseAPI from '../../network/API/BaseAPI';
 import { APIRequest } from '../../network/Entity';
 import Loading from '../Loading';
+import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -73,9 +74,10 @@ class Account extends Component {
       premium_point = 10000,
       next_premium_point = 15000,
       store_id,
-      store_name
+      store_name,
+      username,
     } = user_info;
-    const isShowPremium = premium !== undefined;
+    const isShowPremium = premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
 
     return [
       {
@@ -257,6 +259,7 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
+        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)
       },
 
       {
@@ -416,6 +419,7 @@ class Account extends Component {
   onRefresh() {
     this.setState({refreshing: true}, () => {
       this.login(1000);
+      this.getListWarehouse();
     });
   }
 
@@ -577,8 +581,9 @@ class Account extends Component {
 }
   }
 
-  onSelectWarehouse = (warehouse) => {
+  onSelectWarehouse = (warehouse, closeModal) => {
   this.setState({isWarehouseLoading: true});
+  closeModal();
   this.updateWarehouse(warehouse);
   }
 

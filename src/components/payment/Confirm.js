@@ -2225,6 +2225,7 @@ const styles = StyleSheet.create({
   },
   feeLabel: {
     fontSize: 16,
+    flex: 1
   },
   feeValue: {
     fontSize: 16,

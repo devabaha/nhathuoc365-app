@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import {
   FlatList,
   View,
@@ -6,9 +6,9 @@ import {
   TouchableHighlight,
   Text,
   TouchableOpacity,
-  Image
+  Image,
 } from 'react-native';
-import { default as ModalBox } from 'react-native-modalbox';
+import {default as ModalBox} from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../helper/EventTracker';
 import appConfig from 'app-config';
@@ -32,29 +32,28 @@ class Modal extends PureComponent {
     }
   };
 
-  renderItem({ item }) {
-    const extraStyle = item.id === this.props.selectedItem.id && {
-      backgroundColor: '#f5f5f5',
-      borderRightWidth: 7,
-      borderColor: appConfig.colors.primary
-    };
+  renderItem({item}) {
+    const isSelected = item.id === this.props.selectedItem.id;
+    const extraStyle = isSelected && styles.selectedItemContainer;
     return (
       <TouchableHighlight
         underlayColor="rgba(0,0,0,.1)"
         onPress={() => this.props.onPressItem(item, this.onClose)}
-        style={styles.container}
-      >
+        style={styles.container}>
         <View style={[styles.itemContainer, extraStyle]}>
-          {!!item.image && <View style={styles.itemImageContainer}>
-            <Image 
-            style={styles.itemImage} 
-            source={{uri: item.image}}
-            />
-          </View>}
-        <View style={styles.itemInfoContainer}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.description}>{item.description}</Text>
-        </View>
+          {!!item.image && (
+            <View style={styles.itemImageContainer}>
+              <Image style={styles.itemImage} source={{uri: item.image}} />
+            </View>
+          )}
+          <View style={styles.itemInfoContainer}>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.description}>{item.description}</Text>
+          </View>
+
+          {isSelected && (
+            <Icon name="dot-circle-o" style={styles.selectedIcon} />
+          )}
         </View>
       </TouchableHighlight>
     );
@@ -70,8 +69,7 @@ class Modal extends PureComponent {
         ref={this.ref_modal}
         isOpen
         onClosed={this.props.onCloseModal}
-        useNativeDriver
-      >
+        useNativeDriver>
         <View style={styles.headingContainer}>
           <TouchableOpacity onPress={this.onClose} style={styles.iconContainer}>
             <Icon name="close" style={styles.icon} />
@@ -90,12 +88,12 @@ class Modal extends PureComponent {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   modal: {
     height: '80%',
     borderTopLeftRadius: 15,
-    borderTopRightRadius: 15
+    borderTopRightRadius: 15,
   },
   iconContainer: {
     position: 'absolute',
@@ -103,24 +101,24 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     left: 15,
-    top: 15
+    top: 15,
   },
   icon: {
     fontSize: 22,
-    color: '#666'
+    color: '#666',
   },
   headingContainer: {
     padding: 30,
     borderBottomWidth: 1,
     borderStyle: 'solid',
-    borderBottomColor: '#ccc'
+    borderBottomColor: '#ccc',
   },
   heading: {
     fontSize: 30,
     fontWeight: '800',
     color: '#555',
     letterSpacing: 1.6,
-    textAlign: 'right'
+    textAlign: 'right',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -128,33 +126,40 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 15,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#eee'
+    borderBottomColor: '#eee',
+  },
+  selectedItemContainer: {
+    backgroundColor: '#f5f5f5',
   },
   itemImageContainer: {
     width: 55,
     height: 55,
     borderRadius: 8,
     overflow: 'hidden',
-    marginRight: 15
+    marginRight: 15,
   },
   itemImage: {
     width: '100%',
     height: '100%',
   },
   itemInfoContainer: {
-    flex: 1
+    flex: 1,
   },
   title: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#444',
-    letterSpacing: 1.15
+    letterSpacing: 1.15,
   },
   description: {
     fontSize: 13,
     color: '#666',
-    marginTop: 2
-  }
+    marginTop: 2,
+  },
+  selectedIcon: {
+    fontSize: 20,
+    color: appConfig.colors.primary,
+  },
 });
 
 export default Modal;

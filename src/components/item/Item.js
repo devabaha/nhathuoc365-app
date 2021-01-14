@@ -479,19 +479,17 @@ class Item extends Component {
   }
 
   renderPagination = (index, total, context, hasImages) => {
-    const pagingMess = hasImages ? `${index + 1}/${total}` : "0/0";
+    const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
     return (
       <View style={styles.paginationContainer}>
-        <Text style={styles.paginationText}>
-          {pagingMess}
-        </Text>
+        <Text style={styles.paginationText}>{pagingMess}</Text>
       </View>
     );
   };
 
   renderNextButton() {
     return (
-      <View style={styles.swipeControlBtn}>
+      <View style={[styles.swipeControlBtn, styles.swipeRightControlBtn]}>
         <Icon
           name="angle-right"
           style={[styles.iconSwipeControl, styles.iconSwipeControlRight]}
@@ -502,7 +500,7 @@ class Item extends Component {
 
   renderPrevButton() {
     return (
-      <View style={styles.swipeControlBtn}>
+      <View style={[styles.swipeControlBtn, styles.swipeLeftControlBtn]}>
         <Icon
           name="angle-left"
           style={[styles.iconSwipeControl, styles.iconSwipeControlLeft]}
@@ -512,12 +510,16 @@ class Item extends Component {
   }
 
   renderProductImages(images) {
-    if(!images.length){
+    if (!images.length) {
       return (
-      <View style={styles.noImageContainer}>
-          <SVGPhotoBroken width="80" height="80" fill={appConfig.colors.primary}/>
-      </View>
-      )
+        <View style={styles.noImageContainer}>
+          <SVGPhotoBroken
+            width="80"
+            height="80"
+            fill={appConfig.colors.primary}
+          />
+        </View>
+      );
     }
     return images.map((image, index) => {
       return (
@@ -554,8 +556,9 @@ class Item extends Component {
           height={appConfig.device.width * 0.6}>
           <Swiper
             showsButtons={isShowButtons}
-            renderPagination={(index, total, context) => 
-              this.renderPagination(index, total, context, hasImages)}
+            renderPagination={(index, total, context) =>
+              this.renderPagination(index, total, context, hasImages)
+            }
             nextButton={this.renderNextButton()}
             prevButton={this.renderPrevButton()}
             width={appConfig.device.width}
@@ -644,19 +647,20 @@ class Item extends Component {
                   </Text>
                 )}
                 <Text style={styles.item_heading_price}>
-                  {item_data ? item_data.price_view : item.price_view}
+                  {item_data ? item_data.price_view : item.price_view}/{' '}
+                  {item_data ? item_data.unit_name : item.unit_name}
                 </Text>
-                {item.discount_percent > 0 && (
+                {/* {item.discount_percent > 0 && (
                   <DiscountBadge
                     containerStyle={styles.discountBadge}
                     label={saleFormat(item.discount_percent)}
                   />
-                )}
+                )} */}
               </View>
 
-              <Text style={styles.item_heading_qnt}>
+              {/* <Text style={styles.item_heading_qnt}>
                 {item_data ? item_data.unit_name_view : item.unit_name_view}
-              </Text>
+              </Text> */}
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
@@ -667,7 +671,9 @@ class Item extends Component {
                       styles.item_actions_btn,
                       styles.item_actions_btn_chat,
                       {
-                        borderColor: is_like ? '#e31b23' : appConfig.colors.primary,
+                        borderColor: is_like
+                          ? '#e31b23'
+                          : appConfig.colors.primary,
                       },
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
@@ -709,8 +715,7 @@ class Item extends Component {
                     <View style={styles.item_actions_btn_icon_container}>
                       {this.renderMainActionBtnIcon(item)}
                     </View>
-                    <Text
-                      style={styles.item_actions_title}>
+                    <Text style={styles.item_actions_title}>
                       {this.isServiceProduct(item)
                         ? t('shopTitle.book')
                         : t('shopTitle.buy')}
@@ -718,6 +723,21 @@ class Item extends Component {
                   </View>
                 </TouchableHighlight>
               </View>
+              {item.discount_percent > 0 && (
+                <DiscountBadge
+                  containerStyle={styles.discountBadge}
+                  label={saleFormat(item.discount_percent)}
+                />
+              )}
+              {!!item.inventory && (
+                <View style={styles.productsLeftContainer}>
+                  <View style={styles.productsLeftBackground} />
+                  <View style={styles.productsLeftBackgroundTagTail} />
+                  <Text style={styles.productsLeftText}>
+                    {t('productsLeft', {quantity: item.inventory})}
+                  </Text>
+                </View>
+              )}
             </View>
 
             {item != null && (
@@ -869,7 +889,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   content_swiper: {
-    flex: 0
+    flex: 0,
   },
   swiper_image: {
     height: Util.size.width * 0.6,
@@ -1019,6 +1039,9 @@ const styles = StyleSheet.create({
   },
   discountBadge: {
     left: 20,
+    left: 0,
+    top: -5,
+    position: 'absolute',
     width: null,
   },
 
@@ -1040,9 +1063,15 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,.8)',
+    backgroundColor: 'rgba(255,255,255,.5)',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  swipeRightControlBtn: {
+    right: 7,
+  },
+  swipeLeftControlBtn: {
+    left: 7,
   },
   iconSwipeControl: {
     fontSize: 30,
@@ -1061,14 +1090,47 @@ const styles = StyleSheet.create({
     width: appConfig.device.width - 30,
   },
   noImageContainer: {
-    flex: 1, 
-    justifyContent: 'center', 
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    opacity: .4,
-    backgroundColor: hexToRgbA(
-      LightenColor(appConfig.colors.primary, 20),
-       .5)
-      }
+    opacity: 0.4,
+    backgroundColor: hexToRgbA(LightenColor(appConfig.colors.primary, 20), 0.5),
+  },
+
+  productsLeftContainer: {
+    position: 'absolute',
+    top: -5,
+    right: 0,
+    height: 22,
+    justifyContent: 'center',
+  },
+  productsLeftBackground: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#5f7d95',
+  },
+  productsLeftBackgroundTagTail: {
+    position: 'absolute',
+    right: '100%',
+    width: 0,
+    height: 0,
+    borderTopWidth: 11,
+    borderLeftWidth: 11,
+    borderBottomWidth: 11,
+    borderRightWidth: 11,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderRightColor: '#5f7d95',
+    borderLeftColor: 'transparent',
+  },
+  productsLeftText: {
+    color: '#fff',
+    fontStyle: 'italic',
+    fontSize: 12,
+    marginHorizontal: 8,
+    elevation: 3,
+  },
 });
 
 export default withTranslation(['product', 'cart', 'common'])(observer(Item));

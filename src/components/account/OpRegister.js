@@ -56,7 +56,7 @@ class OpRegister extends Component {
 
   componentDidMount() {
     isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) && this.getCities();
-    isConfigActive(CONFIG_KEY.SELECT_WAREHOUSE_KEY) && this.getListWarehouse();
+    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
     Actions.refresh({
       onBack: () => {
         this._unMount();
@@ -339,7 +339,7 @@ class OpRegister extends Component {
   }
 
   renderWarehouse() {
-    if (isConfigActive(CONFIG_KEY.SELECT_WAREHOUSE_KEY)) {
+    if (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) {
       const disable = !this.state.listWarehouse || this.state.listWarehouse.length === 0;
       const wareHouseData = {
         title: this.props.t('data.warehouse.title'),
@@ -377,7 +377,7 @@ class OpRegister extends Component {
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
       (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
-      (isConfigActive(CONFIG_KEY.SELECT_WAREHOUSE_KEY) && !warehouseSelected.id);
+      (isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && !warehouseSelected.id);
 
     return (
       <View style={styles.container}>

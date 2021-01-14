@@ -71,6 +71,7 @@ class Config {
         addition: '#f18c21'
       },
       sceneBackground: '#e9e9ee',
+      marigold: '#EEAA21',
       primary: this.primaryColor,
       white: '#fff',
       black: '#000',
