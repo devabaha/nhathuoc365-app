@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Call to action button of product.
 - Orders flow.
+- `Gotostore` button in product detail now pressable.
 
 ## [r11.1.1] - 2020-01-12
 ### Added
