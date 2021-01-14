@@ -32,7 +32,7 @@ class BaseHandler {
    * @param {string} api
    * @returns {import('network/Entity/APIRequest/APIRequest').Request}
    */
-  getCancelableAPI(api, handleManually = false) {
+  getCancelableAPI(api, autoHandleResponse = false) {
     this._networkIndicator();
     const cancelInstance = this.getCancelInstance();
 
@@ -40,7 +40,7 @@ class BaseHandler {
       cancel: () => cancelInstance.cancel(),
       promise: () =>
         axios(api)
-          .then((response) => this.processError(response, handleManually))
+          .then((response) => this.processError(response, autoHandleResponse))
           .catch((err) => console.log('getCancelableAPI', err)),
     };
   }
@@ -52,7 +52,7 @@ class BaseHandler {
    * @param {Object} data
    * @returns {import('network/Entity/APIRequest/APIRequest').Request}
    */
-  postCancelableAPI(api, data, isEncoding = true, handleManually = false) {
+  postCancelableAPI(api, data, isEncoding = true, autoHandleResponse = false) {
     this._networkIndicator();
     const cancelInstance = this.getCancelInstance();
     data = isEncoding ? encodeQueryData(data) : data;
@@ -61,7 +61,7 @@ class BaseHandler {
       promise: () =>
         axios
           .post(api, data)
-          .then((response) => this.processError(response, handleManually))
+          .then((response) => this.processError(response, autoHandleResponse))
           .catch((err) => console.log('postCancelableAPI', err)),
     };
   }
@@ -105,7 +105,7 @@ class BaseHandler {
   /**
    * @todo Xử lý ngoại lệ
    */
-  processError(response, handleManually = false) {
+  processError(response, autoHandleResponse = false) {
     this._networkIndicator(false);
 
     if (response.status != HTTP_SUCCESS) {
@@ -116,7 +116,7 @@ class BaseHandler {
       })();
     }
 
-    if (handleManually) {
+    if (autoHandleResponse) {
       return this.handleResponse(response.data);
     } else {
       return response.data;

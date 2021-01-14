@@ -40,6 +40,7 @@ export default class HorizontalInfoItem extends Component {
     mapField,
     inputProps,
     detailTitleStyle,
+    rightTextStyle,
     isLoading,
   ) => {
     if (isLoading) {
@@ -59,7 +60,7 @@ export default class HorizontalInfoItem extends Component {
             styles.detailTitle,
             {color: specialColor ? specialColor : 'black'},
             detailTitleStyle,
-            this.props.detailTitleStyle,
+            rightTextStyle,
           ]}
           {...inputProps}>
           {value}
@@ -76,7 +77,7 @@ export default class HorizontalInfoItem extends Component {
                 style={[
                   styles.detailTitle,
                   detailTitleStyle,
-                  this.props.detailTitleStyle,
+                  rightTextStyle,
                 ]}
                 value={value}
                 placeholder={defaultValue}
@@ -93,7 +94,7 @@ export default class HorizontalInfoItem extends Component {
           style={[
             styles.detailTitle,
             detailTitleStyle,
-            this.props.detailTitleStyle,
+            rightTextStyle,
           ]}
           value={value}
           placeholder={defaultValue}
@@ -121,12 +122,14 @@ export default class HorizontalInfoItem extends Component {
                   color: 'black',
                   position: 'absolute',
                   right: 0,
+                  ...rightTextStyle
                 },
                 placeholderText: {
                   fontSize: 14,
                   color: appConfig.colors.placeholder,
                   position: 'absolute',
                   right: 0,
+                  ...rightTextStyle
                 },
                 dateInput: {
                   borderColor: 'transparent',
@@ -151,6 +154,7 @@ export default class HorizontalInfoItem extends Component {
               style={{
                 fontSize: 14,
                 color: isEmpty(value) ? '#989898' : 'black',
+                ...rightTextStyle
               }}
               {...inputProps}>
               {isEmpty(value) ? defaultValue : value}
@@ -192,6 +196,7 @@ export default class HorizontalInfoItem extends Component {
         isHidden,
         renderRight,
         isLoading,
+        rightTextStyle
       },
       inputProps,
     } = this.props;
@@ -207,7 +212,11 @@ export default class HorizontalInfoItem extends Component {
         style={[
           styles.container,
           extraContainerStyle,
-          {backgroundColor: disable ? '#eeF0F4' : '#ffffff'},
+          // {backgroundColor: disable ? '#eeF0F4' : '#ffffff'},
+          {
+            backgroundColor: '#fff',
+            opacity: disable ? .6 : 1
+          },
           this.props.containerStyle,
         ]}>
         <Text style={[styles.title, extraTitleStyle, this.props.titleStyle]}>
@@ -218,7 +227,7 @@ export default class HorizontalInfoItem extends Component {
           : this._renderRightView(
               id,
               input,
-              select,
+              select && !disable,
               value,
               defaultValue,
               specialColor,
@@ -226,6 +235,7 @@ export default class HorizontalInfoItem extends Component {
               mapField,
               inputProps,
               extraDetailTitleStyle,
+              rightTextStyle,
               isLoading,
             )}
       </View>

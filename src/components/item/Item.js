@@ -834,6 +834,7 @@ class Item extends Component {
             )}
             <View style={styles.boxButtonActions}>
               <Button
+                onPress={this._goStores.bind(this, this.state.store_data)}
                 btnContainerStyle={styles.goToStoreBtn}
                 titleStyle={styles.goToStoreTxt}
                 title={t('goToStore')}

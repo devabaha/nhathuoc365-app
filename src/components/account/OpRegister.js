@@ -27,18 +27,24 @@ class OpRegister extends Component {
       // password: props.password_props || '',
       refer: props.refer_props || store.refer_code,
       loading: false,
+      isCityLoading: false,
+      isWarehouseLoading: false,
       referCodeEditable: true,
       provinceSelected: {
         name: store.user_info ? store.user_info.city : '',
         id: store.user_info ? store.user_info.city_id : '',
       },
+      warehouseSelected: {},
       licenseChecked: false,
       birth: store.user_info ? store.user_info.birth : '',
       cities: [],
+      listWarehouse: []
     };
 
     this.eventTracker = new EventTracker();
     this.getUserCityRequest = new APIRequest();
+    this.getWarehouseRequest = new APIRequest();
+    this.requests = [this.getUserCityRequest, this.getWarehouseRequest];
   }
 
   get isActiveCity() {
@@ -50,6 +56,7 @@ class OpRegister extends Component {
 
   componentDidMount() {
     isConfigActive(CONFIG_KEY.SELECT_CITY_KEY) && this.getCities();
+    isConfigActive(CONFIG_KEY.SELECT_WAREHOUSE_KEY) && this.getListWarehouse();
     Actions.refresh({
       onBack: () => {
         this._unMount();
@@ -68,7 +75,7 @@ class OpRegister extends Component {
   }
 
   componentWillUnmount() {
-    this.getUserCityRequest.cancel();
+    cancelRequests(this.requests);
     this.eventTracker.clearTracking();
   }
 
@@ -77,10 +84,11 @@ class OpRegister extends Component {
   }
 
   _onSave() {
-    let {name, refer, birth, provinceSelected} = this.state; //email, password, refer
+    let {name, refer, birth, provinceSelected, warehouseSelected} = this.state; //email, password, refer
     const {t} = this.props;
     name = name.trim();
     const city = provinceSelected.id;
+    const store_id = warehouseSelected.id;
     refer = refer.trim();
 
     if (!name) {
@@ -103,12 +111,12 @@ class OpRegister extends Component {
       return;
     }
 
-    this._op_register(name, refer, city, birth);
+    this._op_register(name, refer, city, birth, store_id);
   }
 
-  _op_register(name, refer, city, birth) {
+  _op_register(name, refer, city, birth, store_id) {
     //, password, refer
-    const data = {name, refer, city, birth};
+    const data = {name, refer, city, birth, store_id};
 
     this.setState(
       {
@@ -153,6 +161,7 @@ class OpRegister extends Component {
   }
 
   async getCities() {
+    this.setState({isCityLoading: true});
     const {t} = this.props;
     try {
       this.getUserCityRequest.data = APIHandler.user_site_city();
@@ -185,7 +194,41 @@ class OpRegister extends Component {
         message: t('common:api.error.message'),
       });
     } finally {
-      this.setState({loading: false});
+      this.setState({isCityLoading: false});
+    }
+  }
+
+  async getListWarehouse(){
+    this.setState({isWarehouseLoading: true});
+    const {t} = this.props;
+    try {
+      this.getWarehouseRequest.data = APIHandler.user_site_store();
+      const responseData = await this.getWarehouseRequest.promise();
+      const listWarehouse = responseData?.stores?.map(store => ({...store, 
+        title: store.name,
+        description: store.address,
+        image: store.image_url
+      })) || [];
+      let warehouseSelected = this.state.warehouseSelected;
+      if (!this.state.warehouseSelected.id && listWarehouse.length > 0) {
+        warehouseSelected = listWarehouse[0];
+      } else {
+        warehouseSelected = listWarehouse.find(
+            (warehouse) => warehouse.id == warehouseSelected.id,
+          ) || {};
+      }
+      this.setState({
+        warehouseSelected,
+        listWarehouse,
+      });
+    } catch (err) {
+      console.log('user get warehouse', err);
+      flashShowMessage({
+        type: 'danger',
+        message: err.message || t('common:api.error.message'),
+      });
+    } finally {
+      this.setState({isWarehouseLoading: false});
     }
   }
 
@@ -227,6 +270,26 @@ class OpRegister extends Component {
     this.setState({birth});
   };
 
+  onSelectWarehouse = (warehouseSelected, closeModal) => {
+    this.setState({warehouseSelected});
+    closeModal();
+  }
+
+  onPressWarehouse = () => {
+    Keyboard.dismiss();
+    Actions.push(appConfig.routes.modalList, {
+      heading: this.props.t('modal.warehouse.title'),
+      data: this.state.listWarehouse,
+      selectedItem: this.state.warehouseSelected,
+      onPressItem: this.onSelectWarehouse,
+      onCloseModal: Actions.pop,
+      modalStyle: {
+        height: null, 
+        maxHeight: '80%'
+      }
+    })
+  }
+
   renderDOB() {
     if (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY)) {
       const dobData = {
@@ -255,11 +318,10 @@ class OpRegister extends Component {
       const disable = !this.state.cities || this.state.cities.length === 0;
       const cityData = {
         title: this.props.t('data.province.title'),
-        value: this.state.provinceSelected
-          ? this.state.provinceSelected.name
-          : this.props.t('data.province.placeholder'),
-        select: !disable,
-        isHidden: !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY),
+        value: this.state.provinceSelected?.name
+          || this.props.t('data.province.placeholder'),
+        isLoading: this.state.isCityLoading,
+        select: true,
         disable,
       };
 
@@ -276,14 +338,46 @@ class OpRegister extends Component {
     return null;
   }
 
+  renderWarehouse() {
+    if (isConfigActive(CONFIG_KEY.SELECT_WAREHOUSE_KEY)) {
+      const disable = !this.state.listWarehouse || this.state.listWarehouse.length === 0;
+      const wareHouseData = {
+        title: this.props.t('data.warehouse.title'),
+        value: this.state.warehouseSelected?.name ||
+          this.props.t('data.warehouse.placeholder'),
+        isLoading: this.state.isWarehouseLoading,
+        select: true,
+        disable
+      };
+
+      if(!this.state.warehouseSelected?.name){
+        wareHouseData.rightTextStyle = {
+          color: appConfig.colors.placeholder
+        }
+      }
+
+      return (
+        <HorizontalInfoItem
+          titleStyle={[styles.input_label, styles.dobTitle]}
+          containerStyle={styles.dob}
+          data={wareHouseData}
+          onSelectedValue={this.onPressWarehouse}
+        />
+      );
+    }
+
+    return null;
+  }
+
   render() {
-    const {name, email, loading, refer, birth, provinceSelected} = this.state;
+    const {name, email, loading, refer, birth, provinceSelected, warehouseSelected} = this.state;
     const {t} = this.props;
     this.updateReferCode();
     const disabled =
       !name ||
       (this.isActiveCity && !provinceSelected.id) ||
-      (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth);
+      (isConfigActive(CONFIG_KEY.SELECT_BIRTH_KEY) && !birth) ||
+      (isConfigActive(CONFIG_KEY.SELECT_WAREHOUSE_KEY) && !warehouseSelected.id);
 
     return (
       <View style={styles.container}>
@@ -326,6 +420,7 @@ class OpRegister extends Component {
 
           {this.renderDOB()}
           {this.renderCity()}
+          {this.renderWarehouse()}
 
           {this.state.referCodeEditable && (
             <>

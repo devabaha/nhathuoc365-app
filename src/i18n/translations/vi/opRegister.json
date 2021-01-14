@@ -22,6 +22,10 @@
     "province": {
       "title": "Tỉnh/Thành phố",
       "placeholder": "Chạm để chọn"
+    },
+    "warehouse": {
+      "title": "Kho hàng",
+      "placeholder": "Chạm để chọn"
     }
   },
   "encourageMessage": "Nhập số điện thoại người giới thiệu, cùng nhau nhận thưởng tại {{appName}} nhé!",
@@ -31,6 +35,11 @@
     },
     "register": {
       "title": "ĐĂNG KÝ"
+    }
+  },
+  "modal": {
+    "warehouse": {
+      "title": "Chọn kho hàng"
     }
   }
 }

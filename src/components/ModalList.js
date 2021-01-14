@@ -5,11 +5,13 @@ import {
   StyleSheet,
   TouchableHighlight,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import { default as ModalBox } from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../helper/EventTracker';
+import appConfig from 'app-config';
 
 class Modal extends PureComponent {
   state = {};
@@ -31,15 +33,28 @@ class Modal extends PureComponent {
   };
 
   renderItem({ item }) {
+    const extraStyle = item.id === this.props.selectedItem.id && {
+      backgroundColor: '#f5f5f5',
+      borderRightWidth: 7,
+      borderColor: appConfig.colors.primary
+    };
     return (
       <TouchableHighlight
         underlayColor="rgba(0,0,0,.1)"
-        onPress={() => this.props.onPressItem(item)}
+        onPress={() => this.props.onPressItem(item, this.onClose)}
         style={styles.container}
       >
-        <View style={styles.itemContainer}>
+        <View style={[styles.itemContainer, extraStyle]}>
+          {!!item.image && <View style={styles.itemImageContainer}>
+            <Image 
+            style={styles.itemImage} 
+            source={{uri: item.image}}
+            />
+          </View>}
+        <View style={styles.itemInfoContainer}>
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.description}>{item.description}</Text>
+        </View>
         </View>
       </TouchableHighlight>
     );
@@ -50,7 +65,7 @@ class Modal extends PureComponent {
       <ModalBox
         entry="bottom"
         position="bottom"
-        style={[styles.modal]}
+        style={[styles.modal, this.props.modalStyle]}
         backButtonClose
         ref={this.ref_modal}
         isOpen
@@ -108,10 +123,26 @@ const styles = StyleSheet.create({
     textAlign: 'right'
   },
   itemContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '100%',
     padding: 15,
     borderBottomWidth: 0.5,
     borderBottomColor: '#eee'
+  },
+  itemImageContainer: {
+    width: 55,
+    height: 55,
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginRight: 15
+  },
+  itemImage: {
+    width: '100%',
+    height: '100%',
+  },
+  itemInfoContainer: {
+    flex: 1
   },
   title: {
     fontSize: 16,

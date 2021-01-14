@@ -881,6 +881,24 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.SITE_GROUP_PRODUCT, siteId, groupId);
     return this.getCancelableAPI(api, true);
   }
+
+  /**
+   * @todo get list warehouse
+   *
+   */
+  user_site_store() {
+    const api = url_for(API.USER_SITE_STORE);
+    return this.getCancelableAPI(api, true);
+  }
+
+  /**
+   * @todo update current warehouse
+   *
+   */
+  user_choose_store(data) {
+    const api = url_for(API.USER_CHOOSE_STORE);
+    return this.postCancelableAPI(api, data, true);
+  }
 }
 
 export default CommonAPIHandler;

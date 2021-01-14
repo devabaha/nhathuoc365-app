@@ -22,6 +22,10 @@
     "province": {
       "title": "Province/City",
       "placeholder": "Touch to select"
+    },
+    "warehouse": {
+      "title": "Warehouse",
+      "placeholder": "Touch to select"
     }
   },
   "encourageMessage": "Enter the phone number of the referrer, enjoy together at {{appName}}!",
@@ -31,6 +35,11 @@
     },
     "register": {
       "title": "REGISTER"
+    }
+  },
+  "modal": {
+    "warehouse": {
+      "title": "Select warehouse"
     }
   }
 }
