@@ -34,7 +34,7 @@ class OpRegister extends Component {
         name: store.user_info ? store.user_info.city : '',
         id: store.user_info ? store.user_info.city_id : '',
       },
-      warehouseSelected: {},
+      warehouseSelected: {id: store?.user_info?.store_id},
       licenseChecked: false,
       birth: store.user_info ? store.user_info.birth : '',
       cities: [],

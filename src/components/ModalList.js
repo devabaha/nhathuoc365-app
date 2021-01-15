@@ -159,6 +159,7 @@ const styles = StyleSheet.create({
   selectedIcon: {
     fontSize: 20,
     color: appConfig.colors.primary,
+    marginLeft: 15
   },
 });
 

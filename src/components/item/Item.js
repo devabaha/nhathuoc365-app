@@ -597,6 +597,7 @@ class Item extends Component {
     var {item, item_data, like_loading, like_flag} = this.state;
     var is_like = like_flag == 1;
     const {t} = this.props;
+    const unitName = item_data ? item_data.unit_name : item.unit_name; 
 
     return (
       <View style={styles.container}>
@@ -647,8 +648,8 @@ class Item extends Component {
                   </Text>
                 )}
                 <Text style={styles.item_heading_price}>
-                  {item_data ? item_data.price_view : item.price_view}/{' '}
-                  {item_data ? item_data.unit_name : item.unit_name}
+                  {item_data ? item_data.price_view : item.price_view}
+                  {!!unitName && <Text style={styles.item_unit_name}>/ {unitName}</Text>}
                 </Text>
                 {/* {item.discount_percent > 0 && (
                   <DiscountBadge
@@ -927,6 +928,11 @@ const styles = StyleSheet.create({
     color: appConfig.colors.primary,
     fontWeight: '600',
     paddingLeft: 4,
+  },
+  item_unit_name: { 
+    color: '#999', 
+    fontSize: 15, 
+    fontWeight: '400' 
   },
   item_heading_qnt: {
     color: '#666666',
