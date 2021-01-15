@@ -32,12 +32,16 @@ import {
 import EventTracker from '../../helper/EventTracker';
 import SkeletonLoading from '../SkeletonLoading';
 import BaseAPI from '../../network/API/BaseAPI';
+import Loading from '../Loading';
+import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
 
 class Account extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      listWarehouse: [],
+      isWarehouseLoading: true,
       refreshing: false,
       logout_loading: false,
       sticker_flag: false,
@@ -47,6 +51,9 @@ class Account extends Component {
     this.requests = [this.uploadFaceIDRequest];
     reaction(() => store.user_info, this.initial);
     this.eventTracker = new EventTracker();
+    this.getWarehouseRequest = new APIRequest();
+    this.updateWarehouseRequest = new APIRequest();
+    this.requests = [this.getWarehouseRequest];
   }
 
   get options() {
@@ -70,8 +77,11 @@ class Account extends Component {
       // #fafafa, #95acc5, #80AB82, #d2d2e4, #f0b64a, #1eb7dc,
       premium_point = 10000,
       next_premium_point = 15000,
+      store_id,
+      store_name,
+      username,
     } = user_info;
-    const isShowPremium = premium !== undefined;
+    const isShowPremium = premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
 
     return [
       {
@@ -285,6 +295,37 @@ class Account extends Component {
         iconColor: '#ffffff',
         marginTop: !!premium_name,
       },
+      {
+        key: 'warehouse',
+        icon: 'warehouse',
+        iconType: "MaterialCommunityIcons",
+        label: t('options.warehouse.label'),
+        desc: store_name,
+        disabled: this.state.isWarehouseLoading,
+        rightIcon: this.state.isWarehouseLoading 
+        ? <Loading wrapperStyle={{position: undefined, marginRight: -10}} size="small"/> 
+        : <IconAngleRight />,
+        onPress: () =>
+        Actions.push(appConfig.routes.modalList, {
+          heading: this.props.t('opRegister:modal.warehouse.title'),
+          data: this.state.listWarehouse,
+          selectedItem: {id: store_id},
+          onPressItem: this.onSelectWarehouse,
+          onCloseModal: Actions.pop,
+          modalStyle: {
+            height: null, 
+            maxHeight: '80%'
+          }
+        }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#3c6c7d',
+          },
+        ],
+        iconColor: '#ffffff',
+        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)
+      },
 
       {
         key: 'fanpage',
@@ -452,6 +493,7 @@ class Account extends Component {
   onRefresh() {
     this.setState({refreshing: true}, () => {
       this.login(1000);
+      this.getListWarehouse();
     });
   }
 
@@ -564,6 +606,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
+    this.getListWarehouse();
     this.initial(() => {
       store.is_stay_account = true;
       store.parentTab = `${appConfig.routes.accountTab}_1`;
@@ -573,6 +616,31 @@ class Account extends Component {
 
   componentWillUnmount() {
     this.eventTracker.clearTracking();
+    cancelRequests(this.requests);
+  }
+
+  async getListWarehouse(){
+    const {t} = this.props;
+    try {
+      this.getWarehouseRequest.data = APIHandler.user_site_store();
+      const responseData = await this.getWarehouseRequest.promise();
+      const listWarehouse = responseData?.stores?.map(store => ({...store, 
+        title: store.name,
+        description: store.address,
+        image: store.image_url
+      })) || [];
+      this.setState({
+        listWarehouse,
+      });
+    } catch (err) {
+      console.log('user get warehouse', err);
+      flashShowMessage({
+        type: 'danger',
+        message: err.message || t('common:api.error.message'),
+      });
+    } finally {
+      this.setState({isWarehouseLoading: false});
+    }
   }
 
   login = async (delay) => {
@@ -595,6 +663,32 @@ class Account extends Component {
       console.log('login', error);
     }
   };
+
+  async updateWarehouse(warehouse){
+    const data = {store_id: warehouse.id};
+    try{
+    this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
+    const responseData = await this.updateWarehouseRequest.promise();
+    flashShowMessage({
+      type:"success",
+      message: responseData.message
+    })
+} catch(error){
+  console.log('%cupdate_warehouse', 'color:red', error);
+  flashShowMessage({
+    type:"danger",
+    message: error.message || this.props.t('common:api.error.message')
+  })
+} finally{
+  this.setState({isWarehouseLoading: false});
+}
+  }
+
+  onSelectWarehouse = (warehouse, closeModal) => {
+  this.setState({isWarehouseLoading: true});
+  closeModal();
+  this.updateWarehouse(warehouse);
+  }
 
   handleShowProfileDetail = () => {
     Actions.push(appConfig.routes.profileDetail, {
@@ -1451,7 +1545,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['account', 'common'])(observer(Account));
+export default withTranslation(['account', 'common', 'opRegister'])(observer(Account));
 
 const IconAngleRight = () => (
   <Icon name="angle-right" size={26} color="#999999" />

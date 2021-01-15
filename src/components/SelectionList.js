@@ -39,7 +39,7 @@ class SelectionList extends Component {
 
     return (
       <>
-        <TouchableHighlight underlayColor="transparent" onPress={item.onPress}>
+        <TouchableHighlight disabled={item.disabled} underlayColor="transparent" onPress={item.onPress}>
           <>
             <View
               style={[

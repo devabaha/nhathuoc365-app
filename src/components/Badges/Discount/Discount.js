@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   content_wrapper: {
-    backgroundColor: '#efa61e',
+    backgroundColor: appConfig.colors.marigold,
     paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',

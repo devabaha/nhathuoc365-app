@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.1.2';
+    return 'r11.1.3';
   }
 
   get appName() {
@@ -79,6 +79,7 @@ class Config {
         addition: '#000'
       },
       sceneBackground: '#e9e9ee',
+      marigold: '#EEAA21',
       primary: this.primaryColor,
       white: '#fff',
       black: '#000',

@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   containerIconStyle: {
-    marginLeft: -5,
+    marginLeft: -3,
     marginRight: -5,
   },
 });
@@ -106,10 +106,6 @@ class Header extends Component {
             inputRange: [0, 1],
             outputRange: [1, 1.1],
           }),
-          // scale: this.animatedScale.interpolate({
-          //   inputRange: [0, 1],
-          //   outputRange: [1, 1.1],
-          // }),
         },
       ],
     };
@@ -188,7 +184,7 @@ class Header extends Component {
             icon={
               <OverlayIconButton
                 iconName={btn.iconName}
-                containerStyle={!isLast && styles.containerIconStyle}
+                containerStyle={styles.containerIconStyle}
                 backgroundStyle={this.iconBackgroundStyle}
                 contentOverlayStyle={[
                   this.iconBackgroundStyle,

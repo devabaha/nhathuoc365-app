@@ -5,6 +5,7 @@ import {View, Text, StyleSheet} from 'react-native';
 
 import ImageBackground from '../../../ImageBg';
 import Loading from '../../../Loading';
+import {DiscountBadge} from '../../../Badges';
 
 class ProductItem extends PureComponent {
   static propTypes = {
@@ -53,16 +54,19 @@ class ProductItem extends PureComponent {
     return (
       <Button
         onPress={this.handlePress}
-        containerStyle={[
-          styles.wrapper,
-          this.props.wrapperStyle,
-        ]}>
+        containerStyle={[styles.wrapper, this.props.wrapperStyle]}>
         <View style={[styles.container, this.props.containerStyle]}>
           <ImageBackground
             style={[styles.image, this.props.imageStyle]}
             source={{uri: this.props.image}}>
             {this.state.loading && (
               <Loading color="#fff" containerStyle={styles.loading} />
+            )}
+            {this.props.discount_percent > 0 && (
+              <DiscountBadge
+                containerStyle={styles.discountBadgeContainer}
+                label={saleFormat(this.props.discount_percent)}
+              />
             )}
           </ImageBackground>
           <View style={styles.infoWrapper}>
@@ -132,6 +136,14 @@ const styles = StyleSheet.create({
   loading: {
     height: '100%',
     backgroundColor: 'rgba(0,0,0,.12)',
+  },
+  discountBadgeContainer: {
+    top: 0,
+    height: 18,
+    position: 'absolute',
+    backgroundColor: '#fff',
+    width: undefined,
+    ...elevationShadowStyle(1),
   },
 });
 

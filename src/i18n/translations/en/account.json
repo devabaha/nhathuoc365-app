@@ -38,6 +38,9 @@
       "desc": "",
       "cancel": "Cancel",
       "select": "Change"
+    },
+    "warehouse": {
+      "label": "Warehouse"
     }
   },
   "avatarPicker": {

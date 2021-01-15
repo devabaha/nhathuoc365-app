@@ -362,7 +362,8 @@ class CartItem extends Component {
         <View style={styles.cart_item_calculations}>
           <TouchableHighlight
             style={styles.cart_item_actions_btn}
-            underlayColor="transparent"
+            underlayColor="#eee"
+            hitSlop={HIT_SLOP}
             onPress={
               is_processing
                 ? null
@@ -383,7 +384,8 @@ class CartItem extends Component {
 
           <TouchableHighlight
             style={styles.cart_item_actions_btn}
-            underlayColor="transparent"
+            underlayColor="#eee"
+            hitSlop={HIT_SLOP}
             onPress={
               is_processing ? null : this._item_qnt_increment.bind(this, item)
             }>
@@ -400,7 +402,7 @@ class CartItem extends Component {
           {check_loading ? (
             <Indicator size="small" />
           ) : (
-            <Button
+            <TouchableOpacity
               hitSlop={HIT_SLOP}
               onPress={
                 is_processing ? null : this._checkBoxHandler.bind(this, item)
@@ -409,7 +411,7 @@ class CartItem extends Component {
                 name={item.selected == 1 ? 'check-circle' : 'circle'}
                 style={styles.cart_item_check_icon}
               />
-            </Button>
+            </TouchableOpacity>
           )}
         </View>
       </View>
@@ -471,10 +473,10 @@ class CartItem extends Component {
           )}
 
           {!!!this.props.noAction && (
-            <Button
+            <TouchableOpacity
               onPress={this.props.onRemoveCartItem}
               hitSlop={HIT_SLOP}
-              containerStyle={[
+              style={[
                 styles.cart_item_actions_btn,
                 styles.cart_item_remove_btn,
               ]}>
@@ -482,7 +484,7 @@ class CartItem extends Component {
                 name="close"
                 style={styles.cart_item_remove_icon}
               />
-            </Button>
+            </TouchableOpacity>
           )}
         </View>
       </TouchableHighlight>

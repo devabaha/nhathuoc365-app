@@ -38,6 +38,9 @@
       "desc": "",
       "cancel": "Huỷ",
       "select": "Chọn"
+    },
+    "warehouse": {
+      "label": "Kho hàng"
     }
   },
   "avatarPicker": {

@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.1.3] - 2020-01-15
+### Added
+- Specific key to hide premium.
+- Inventory in product detail.
+- Discount for product in cart footer.
+- Select warehouse/ store for chain stores in .
+### Changed
+- Layout of product detail, list product in home.
+### Fixed
+- Increase hit slop of action button in CartFooter, Confirm.
+- Layout of promotion in confirm order.
+
 ## [r11.1.2] - 2020-01-13
 ### Changed
 - Default background for no images in product detail.

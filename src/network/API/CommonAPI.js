@@ -400,6 +400,14 @@ class CommonAPI {
   get SITE_GROUP_PRODUCT() {
     return BaseAPI.apiDomain + 'apiSite/group_product';
   }
+
+  get USER_SITE_STORE() {
+    return BaseAPI.apiDomain + 'apiUser/site_store';
+  }
+
+  get USER_CHOOSE_STORE() {
+    return BaseAPI.apiDomain + 'apiUser/choose_store';
+  }
 }
 
 export default new CommonAPI();
