@@ -197,7 +197,10 @@ class Config {
       productSchedule: 'productSchedule',
 
       //Group product
-      groupProduct: 'groupProduct'
+      groupProduct: 'groupProduct',
+
+      // List GPS store
+      gpsListStore: 'gpsListStore'
     };
   }
 }

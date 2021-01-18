@@ -35,7 +35,7 @@ class Home extends Component {
         items_per_row: MIN_ITEMS_PER_ROW,
       },
       primaryActions: null,
-      product_groups: {},
+      product_groups: [],
     };
     this.eventTracker = new EventTracker();
   }
@@ -278,7 +278,7 @@ class Home extends Component {
         promotions={this.state.promotions}
         listService={this.state.listService}
         listServiceType={this.state.listServiceConfig.type}
-        listServiceItemsPerRow={this.state.listServiceConfig.items_per_row}
+        listServiceItemsPerRow={Number(this.state.listServiceConfig.items_per_row)}
         primaryActions={this.state.primaryActions}
         showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}

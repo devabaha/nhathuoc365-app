@@ -56,7 +56,8 @@ class Home extends Component {
     onPressCampaignItem: PropTypes.func,
     onPressNewItem: PropTypes.func,
     onPressNoti: PropTypes.func,
-    product_groups: PropTypes.object
+    product_groups: PropTypes.array,
+    listServiceItemsPerRow: PropTypes.number
   };
 
   static defaultProps = {
@@ -91,7 +92,7 @@ class Home extends Component {
     onPressCampaignItem: defaultListener,
     onPressNewItem: defaultListener,
     onPressNoti: defaultListener,
-    product_groups: {}
+    product_groups: [],
   };
 
   get hasServices() {
@@ -124,9 +125,8 @@ class Home extends Component {
     return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
   get hasProduct_groups() {
-    let array_product_groups = Object.keys(this.props.product_groups);
     return (
-      Array.isArray(array_product_groups) && array_product_groups.length > 0
+      Array.isArray(this.props.product_groups) && this.props.product_groups.length > 0
     );
   }
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
@@ -217,21 +217,21 @@ class Home extends Component {
             )}
 
             {this.hasProduct_groups ? (
-              Object.keys(this.props.product_groups).map((key, index) => {
+              this.props.product_groups.map((productGroup, index) => {
                 let {
                   id,
                   products,
                   title,
                   display_type
-                } = this.props.product_groups[key];
+                } = productGroup;
                 return (
                   <ListProducts
-                    key={index}
+                    key={id}
                     type={display_type}
                     data={products}
                     title={title}
                     onPressProduct={this.props.onPressProduct}
-                    onShowAll={() => this.props.onShowAllGroupProduct(this.props.product_groups[key])}
+                    onShowAll={() => this.props.onShowAllGroupProduct(productGroup)}
                   />
                 );
               })

@@ -498,7 +498,7 @@ const errorHandler = (error, isFatal) => {
 
 setJSExceptionHandler((error, isFatal) => {
   errorHandler(error, isFatal);
-}, true);
+}, false);
 
 setNativeExceptionHandler((exceptionString) => {
   console.log('native_exception', error);

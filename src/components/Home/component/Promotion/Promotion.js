@@ -36,6 +36,7 @@ class Promotion extends Component {
     data: [],
     ratio: '3:1',
     padding: 16,
+    containerSlideStyle: {}
   };
 
   constructor(props) {
@@ -189,6 +190,7 @@ class Promotion extends Component {
       width,
       height,
     };
+    
     return (
       <View style={[styles.container, this.props.containerStyle]}>
         <Swiper
@@ -198,11 +200,11 @@ class Promotion extends Component {
           removeClippedSubviews={false}
           renderPagination={this.renderPagination}
           onIndexChanged={this.onIndexChanged.bind(this)}
-          containerStyle={[
-            styles.slideContainerStyle,
-            dimensionStyle,
-            this.props.containerSlideStyle,
-          ]}
+          containerStyle={{
+            ...styles.slideContainerStyle,
+            ...dimensionStyle,
+            ...this.props.containerStyle
+          }}
           style={styles.slideStyle}>
           {this.props.data.map((promotion, index) =>
             this.renderItem(promotion, index, dimensionStyle),

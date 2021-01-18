@@ -125,7 +125,7 @@ import {addJob} from './helper/jobsOnReset';
 import ItemAttribute from './components/stores/ItemAttribute';
 import InternetBankingModal from './components/payment/InternetBankingModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
-import Schedule, { ProductSchedule } from './containers/Schedule';
+import Schedule, {ProductSchedule} from './containers/Schedule';
 import {ScheduleConfirm} from './containers/Schedule/Confirm';
 import * as RNLocalize from 'react-native-localize';
 import {arrayLanguages} from './i18n/constants';
@@ -147,6 +147,7 @@ import BaseAPI from './network/API/BaseAPI';
 import DomainSelector from './containers/DomainSelector';
 import PremiumInfo from './containers/PremiumInfo';
 import GroupProduct from './containers/GroupProduct';
+import GPSListStore from './containers/GPSListStore';
 
 /**
  * Not allow font scaling
@@ -226,7 +227,7 @@ initializeVoucherModule({
         });
       })();
     },
-  }
+  },
 });
 
 /**
@@ -780,8 +781,12 @@ class RootRouter extends Component {
                       key={`${appConfig.routes.ordersTab}_1`}
                       title={t('screen.orders.mainTitle')}
                       component={Orders}
-                      onEnter={() => {store.setUpdateOrders(true)}}
-                      onExit={() => {store.setUpdateOrders(false)}}
+                      onEnter={() => {
+                        store.setUpdateOrders(true);
+                      }}
+                      onExit={() => {
+                        store.setUpdateOrders(false);
+                      }}
                     />
                   </Stack>
 
@@ -802,6 +807,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                <Stack key={appConfig.routes.gpsListStore}>
+                  <Scene
+                    key={`${appConfig.routes.gpsListStore}_1`}
+                    {...navBarConfig}
+                    title={t('screen.gpsListStore.mainTitle')}
+                    component={GPSListStore}
+                    back
+                  />
+                </Stack>
 
                 <Stack key={appConfig.routes.groupProduct}>
                   <Scene

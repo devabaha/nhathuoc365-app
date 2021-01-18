@@ -1,35 +1,35 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {
   LIST_SERVICE_TYPE,
   MIN_ITEMS_PER_ROW,
-  INDICATOR_HORIZONTAL_WIDTH
+  INDICATOR_HORIZONTAL_WIDTH,
 } from '../../constants';
 import appConfig from 'app-config';
 import HorizontalIndicator from './HorizontalIndicator';
-import Animated, { event, divide, Easing } from 'react-native-reanimated';
+import Animated, {event, divide, Easing} from 'react-native-reanimated';
 import store from 'app-store';
 import {
   BASE_SERVICE_DIMENSION,
   BASE_TITLE_MARGIN,
   SERVICE_DIMENSION_INCREMENT_PERCENTAGE,
-  TITLE_MARGIN_INCREMENT_PERCENTAGE
+  TITLE_MARGIN_INCREMENT_PERCENTAGE,
 } from './constants';
 import Service from './Service';
 
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 6,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   buttonWrapper: {
     paddingVertical: 10,
     paddingHorizontal: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   itemWrapper: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   iconWrapper: {
     width: BASE_SERVICE_DIMENSION,
@@ -38,34 +38,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     overflow: 'hidden',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   icon: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   title: {
     textAlign: 'center',
     fontSize: 12,
     fontWeight: '400',
     color: '#333',
-    marginTop: BASE_TITLE_MARGIN
+    marginTop: BASE_TITLE_MARGIN,
   },
   notifyWrapper: {
     right: -8,
     top: -8,
     minWidth: 20,
-    height: 20
+    height: 20,
   },
   notifyLabel: {
-    fontSize: 12
+    fontSize: 12,
   },
   horizontalIndicator: {
     width: INDICATOR_HORIZONTAL_WIDTH,
     alignSelf: 'center',
     marginTop: 8,
-    marginBottom: 5
-  }
+    marginBottom: 5,
+  },
 });
 
 class ListServices extends Component {
@@ -74,18 +74,18 @@ class ListServices extends Component {
     itemsPerRow: PropTypes.number,
     listService: PropTypes.array,
     notify: PropTypes.object,
-    onItemPress: PropTypes.func
+    onItemPress: PropTypes.func,
   };
   static defaultProps = {
     type: LIST_SERVICE_TYPE.VERTICAL,
     listService: [],
     itemsPerRow: MIN_ITEMS_PER_ROW,
-    onItemPress: () => {}
+    onItemPress: () => {},
   };
 
   state = {
     horizontalContainerWidth: undefined,
-    horizontalContentWidth: undefined
+    horizontalContentWidth: undefined,
   };
   scrollX = new Animated.Value(0);
   animatedVisibleValue = new Animated.Value(0);
@@ -133,7 +133,7 @@ class ListServices extends Component {
     switch (this.props.type) {
       case LIST_SERVICE_TYPE.HORIZONTAL:
         return Math.ceil(
-          this.props.listService.length / this.props.itemsPerRow
+          this.props.listService.length / this.props.itemsPerRow,
         );
       default:
         return this.props.itemsPerRow;
@@ -144,7 +144,7 @@ class ListServices extends Component {
     Animated.timing(this.animatedVisibleValue, {
       toValue: 1,
       duration: 200,
-      easing: Easing.quad
+      easing: Easing.quad,
     }).start();
   }
 
@@ -160,22 +160,22 @@ class ListServices extends Component {
   handleLayoutHorizontalContainer(e) {
     const {
       nativeEvent: {
-        layout: { width }
-      }
+        layout: {width},
+      },
     } = e;
     this.setState({
-      horizontalContainerWidth: width
+      horizontalContainerWidth: width,
     });
   }
 
   handleLayoutHorizontalContent(e) {
     const {
       nativeEvent: {
-        layout: { width }
-      }
+        layout: {width},
+      },
     } = e;
     this.setState({
-      horizontalContentWidth: width
+      horizontalContentWidth: width,
     });
   }
 
@@ -206,9 +206,9 @@ class ListServices extends Component {
     const indicatorStyle = {
       transform: [
         {
-          translateX: divide(this.scrollX, indicatorRatio || 1)
-        }
-      ]
+          translateX: divide(this.scrollX, indicatorRatio || 1),
+        },
+      ],
     };
 
     return (
@@ -227,8 +227,9 @@ class ListServices extends Component {
       rowData.push(
         this.renderService({
           item: service,
-          notify: this.props.notify
-        })
+          notify: this.props.notify,
+          index,
+        }),
       );
 
       if (
@@ -236,7 +237,9 @@ class ListServices extends Component {
         index === this.props.listService.length - 1
       ) {
         result.push(
-          <View style={{ flex: 1, flexDirection: 'row' }}>{rowData}</View>
+          <View key={index} style={{flex: 1, flexDirection: 'row'}}>
+            {rowData}
+          </View>,
         );
         rowData = [];
       }
@@ -257,10 +260,10 @@ class ListServices extends Component {
     );
   }
 
-  renderService({ item, notify = store.notify }) {
+  renderService({item, notify = store.notify, index}) {
     const serviceAutoIncrementDimension = this.calculateIncrementDimensionByPercentage(
       BASE_SERVICE_DIMENSION,
-      SERVICE_DIMENSION_INCREMENT_PERCENTAGE
+      SERVICE_DIMENSION_INCREMENT_PERCENTAGE,
     );
 
     const serviceDimension =
@@ -270,7 +273,7 @@ class ListServices extends Component {
 
     const titleAutoIncrementMarginTop = this.calculateIncrementDimensionByPercentage(
       BASE_TITLE_MARGIN,
-      TITLE_MARGIN_INCREMENT_PERCENTAGE
+      TITLE_MARGIN_INCREMENT_PERCENTAGE,
     );
 
     const titleMarginTop =
@@ -281,16 +284,17 @@ class ListServices extends Component {
     const serviceMainStyle = {
       width: serviceDimension,
       height: serviceDimension,
-      backgroundColor: item.bgrColor
+      backgroundColor: item.bgrColor,
     };
 
-    const titleStyle = { marginTop: titleMarginTop };
+    const titleStyle = {marginTop: titleMarginTop};
 
     return (
       <Service
+        key={index}
         selfRequest={this.props.selfRequest}
         service={item}
-        onPress={item => this.props.onItemPress(item)}
+        onPress={(item) => this.props.onItemPress(item)}
         containerStyle={this.serviceStyle}
         itemStyle={serviceMainStyle}
         titleStyle={titleStyle}
@@ -307,10 +311,10 @@ class ListServices extends Component {
         {
           translateY: this.animatedVisibleValue.interpolate({
             inputRange: [0, 1],
-            outputRange: [-5, 0]
-          })
-        }
-      ]
+            outputRange: [-5, 0],
+          }),
+        },
+      ],
     };
     return (
       <Animated.View style={[styles.container, visibleStyle]}>
@@ -325,12 +329,11 @@ class ListServices extends Component {
             {
               nativeEvent: {
                 contentOffset: {
-                  x: this.scrollX
-                }
-              }
-            }
-          ])}
-        >
+                  x: this.scrollX,
+                },
+              },
+            },
+          ])}>
           <View onLayout={this.handleLayoutHorizontalContent.bind(this)}>
             {this.renderListService()}
           </View>
