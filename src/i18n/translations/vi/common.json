@@ -127,6 +127,9 @@
     },
     "gpsListStore": {
       "mainTitle": "Danh sách cửa hàng"
+    },
+    "agencyInformationRegister": {
+      "mainTitle": "Thông tin NPP"
     }
   },
 

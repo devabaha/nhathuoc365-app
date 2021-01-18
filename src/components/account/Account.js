@@ -231,6 +231,26 @@ class Account extends Component {
         marginTop: !!premium_name,
       },
       {
+        key: 'gold_member',
+        icon: 'clipboard-text-multiple',
+        iconType: 'MaterialCommunityIcons',
+        iconColor: '#ffffff',
+        size: 22,
+        iconSize: 14,
+        label: t('options.agencyInformationRegister.label'),
+        desc: t('options.agencyInformationRegister.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.agencyInformationRegister),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#527c23'
+          }
+        ],
+        isHidden: isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY)
+      },
+      {
         key: 'warehouse',
         icon: 'warehouse',
         iconType: "MaterialCommunityIcons",

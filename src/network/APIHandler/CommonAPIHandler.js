@@ -899,6 +899,15 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.USER_CHOOSE_STORE);
     return this.postCancelableAPI(api, data, true);
   }
+
+  /**
+   * @todo register gold member/ store
+   * 
+   */
+  user_gold_member_register(data){
+    const api = url_for(API.USER_REGISTER_GOLD_MEMBER);
+    return this.postAPI(api, data);
+  }
 }
 
 export default CommonAPIHandler;

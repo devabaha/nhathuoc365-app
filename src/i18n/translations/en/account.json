@@ -33,6 +33,10 @@
     },
     "warehouse": {
       "label": "Warehouse"
+    },
+    "agencyInformationRegister": {
+      "label": "Distributor Information",
+      "desc": "View/ Edit distributor information"
     }
   },
   "avatarPicker": {

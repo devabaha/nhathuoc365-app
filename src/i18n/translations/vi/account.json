@@ -33,6 +33,10 @@
     },
     "warehouse": {
       "label": "Kho hàng"
+    },
+    "agencyInformationRegister": {
+      "label": "Thông tin NPP",
+      "desc": "Xem/ Nhập thông tin NPP"
     }
   },
   "avatarPicker": {

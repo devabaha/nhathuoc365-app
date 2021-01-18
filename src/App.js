@@ -148,6 +148,7 @@ import DomainSelector from './containers/DomainSelector';
 import PremiumInfo from './containers/PremiumInfo';
 import GroupProduct from './containers/GroupProduct';
 import GPSListStore from './containers/GPSListStore';
+import AgencyInformationRegister from './containers/AgencyInformationRegister';
 
 /**
  * Not allow font scaling
@@ -807,6 +808,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                <Stack key={appConfig.routes.agencyInformationRegister}>
+                  <Scene
+                    key={`${appConfig.routes.agencyInformationRegister}_1`}
+                    {...navBarConfig}
+                    title={t('screen.agencyInformationRegister.mainTitle')}
+                    component={AgencyInformationRegister}
+                    back
+                  />
+                </Stack>
 
                 <Stack key={appConfig.routes.gpsListStore}>
                   <Scene

@@ -393,6 +393,10 @@ class CommonAPI {
   get USER_CHOOSE_STORE() {
     return BaseAPI.apiDomain + 'apiUser/choose_store';
   }
+
+  get USER_REGISTER_GOLD_MEMBER(){
+    return BaseAPI.apiDomain + 'apiUser/register_gold_member';
+  }
 }
 
 export default new CommonAPI();
