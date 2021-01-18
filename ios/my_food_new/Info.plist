@@ -66,11 +66,11 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
+	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
+	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí</string>
+	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Micro</string>
 	<key>NSMotionUsageDescription</key>
@@ -124,5 +124,11 @@
 	<string>abahavn.app.link</string>
 	<key>branch_key</key>
 	<string>key_live_foZpplSsblvX2B7t9NAHXhhmtsdYTtL9</string>
+	<key>LSApplicationQueriesSchemes</key>
+    <array>
+        <string>comgooglemapsurl</string>
+        <string>comgooglemaps</string>
+        <string>comgooglemaps-x-callback</string>
+    </array>
 </dict>
 </plist>

@@ -235,6 +235,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         })
         .finally(callBack);
       break;
+    case SERVICES_TYPE.GPS_LIST_STORE:
+      Actions.push(appConfig.routes.gpsListStore);
+      break;
 
     /** COMMUNICATION */
     case SERVICES_TYPE.CALL:
@@ -272,7 +275,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.groupProduct, {
         groupId: service.groupId,
         siteId: service.siteId || store?.store_data?.id,
-        title: service.title
+        title: service.title,
       });
       break;
 

@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.1.3';
+    return 'r11.2.1';
   }
 
   get appName() {
@@ -214,7 +214,10 @@ class Config {
       productSchedule: 'productSchedule',
 
       //Group product
-      groupProduct: 'groupProduct'
+      groupProduct: 'groupProduct',
+
+      // List GPS store
+      gpsListStore: 'gpsListStore'
     };
   }
 }

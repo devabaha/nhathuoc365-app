@@ -133,6 +133,9 @@
     },
     "groupProduct": {
       "mainTitle": "Group product"
+    },
+    "gpsListStore": {
+      "mainTitle": "List of store"
     }
   },
 

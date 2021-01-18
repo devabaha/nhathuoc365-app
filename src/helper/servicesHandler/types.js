@@ -56,6 +56,7 @@ export const SERVICES_TYPE = {
 
   /** STORE */
   OPEN_SHOP: 'open_shop',
+  GPS_LIST_STORE: 'gps_list_store',
 
   /** COMMUNICATION */
   CALL: 'call',
