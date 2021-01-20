@@ -9,7 +9,7 @@ import store from 'app-store';
 import PaymentRow from './PaymentRow';
 import EventTracker from '../../../helper/EventTracker';
 
-const DEFAULT_OBJECT = {id: -1};
+const DEFAULT_OBJECT = {};
 
 class PaymentMethod extends Component {
   static defaultProps = {
@@ -61,7 +61,7 @@ class PaymentMethod extends Component {
             }
             this.setState({
               paymentMethod: response.data || [],
-              selectedMethod: selectedMethod || this.state.selectedMethod
+              selectedMethod: this.state.selectedMethod?.id ? this.state.selectedMethod : selectedMethod
             });
           }
         } else {

@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Set default value for otherData.site from response of api user_login.
-- UI LabelPrice paymentMethod
+- UI LabelPrice paymentMethod.
+- Payment method in cart will have priority by user selection (not by default_flag from server).
 
 ## [r11.1.3] - 2020-01-15
 ### Added
