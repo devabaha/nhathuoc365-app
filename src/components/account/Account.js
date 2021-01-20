@@ -248,7 +248,7 @@ class Account extends Component {
             backgroundColor: '#527c23'
           }
         ],
-        isHidden: isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY)
+        isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY)
       },
       {
         key: 'warehouse',
@@ -280,6 +280,26 @@ class Account extends Component {
         ],
         iconColor: '#ffffff',
         isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)
+      },
+
+      {
+        key: 'commission_income_statement',
+        icon: 'clipboard',
+        iconColor: '#ffffff',
+        size: 22,
+        iconSize: 14,
+        label: t('options.commissionIncomeStatement.label'),
+        desc: t('options.commissionIncomeStatement.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.push(appConfig.routes.commissionIncomeStatement),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#fd6d61'
+          }
+        ],
+        isHidden: !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY)
       },
 
       {

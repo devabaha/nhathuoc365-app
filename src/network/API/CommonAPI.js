@@ -397,6 +397,10 @@ class CommonAPI {
   get USER_REGISTER_GOLD_MEMBER(){
     return BaseAPI.apiDomain + 'apiUser/register_gold_member';
   }
+
+  get USER_SITE_CART_COMMISSION() {
+    return BaseAPI.apiDomain + 'apiUser/site_cart_commission';
+  }
 }
 
 export default new CommonAPI();

@@ -908,6 +908,15 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.USER_REGISTER_GOLD_MEMBER);
     return this.postAPI(api, data);
   }
+
+  /**
+   * @todo get commission income
+   * 
+   */
+  user_site_cart_commission(data){
+    const api = url_for(API.USER_SITE_CART_COMMISSION);
+    return this.postCancelableAPI(api, data, true);
+  }
 }
 
 export default CommonAPIHandler;

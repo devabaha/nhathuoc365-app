@@ -149,6 +149,7 @@ import PremiumInfo from './containers/PremiumInfo';
 import GroupProduct from './containers/GroupProduct';
 import GPSListStore from './containers/GPSListStore';
 import AgencyInformationRegister from './containers/AgencyInformationRegister';
+import CommissionIncomeStatement from './containers/CommissionIncomeStatement';
 
 /**
  * Not allow font scaling
@@ -808,6 +809,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                <Stack key={appConfig.routes.commissionIncomeStatement}>
+                  <Scene
+                    key={`${appConfig.routes.commissionIncomeStatement}_1`}
+                    {...navBarConfig}
+                    title={t('screen.commissionIncomeStatement.mainTitle')}
+                    component={CommissionIncomeStatement}
+                    back
+                  />
+                </Stack>
 
                 <Stack key={appConfig.routes.agencyInformationRegister}>
                   <Scene

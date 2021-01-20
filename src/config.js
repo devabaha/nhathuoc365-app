@@ -203,7 +203,10 @@ class Config {
       gpsListStore: 'gpsListStore',
 
       // Agency
-      agencyInformationRegister: "agencyInformationRegister"
+      agencyInformationRegister: "agencyInformationRegister",
+
+      // Commission
+      commissionIncomeStatement: "commissionIncomeStatement"
     };
   }
 }

@@ -82,5 +82,8 @@ export const SERVICES_TYPE = {
   SCHEDULE_BOOKING: 'schedule_booking',
 
   /** PREMIUMS */
-  PREMIUM_INFO: 'PREMIUM_INFO'
+  PREMIUM_INFO: 'PREMIUM_INFO',
+
+  /** COMMISSION */
+  COMMISSION_INCOME_STATEMENT: 'commission_income_statement'
 };

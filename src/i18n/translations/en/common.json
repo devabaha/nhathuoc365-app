@@ -130,6 +130,9 @@
     },
     "agencyInformationRegister": {
       "mainTitle": "Distributor information"
+    },
+    "commissionIncomeStatement": {
+      "mainTitle": "Commission report"
     }
   },
 

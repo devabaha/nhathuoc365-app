@@ -6,12 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.2.1] - 2020-01-18
+## [r11.2.1] - 2020-01-20
 ### Added
 - GPS list store screen for chain stores.
+- Commission report.
+- Tsconfig.json to resolve alias path.
+- YearMonthModal to pick year/month (on dev).
 
 ### Fixed
 - Set default value for otherData.site from response of api user_login.
+- UI LabelPrice paymentMethod
 
 ## [r11.1.3] - 2020-01-15
 ### Added

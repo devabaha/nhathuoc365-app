@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   priceLabel: {
+    flex: 1,
     color: '#555',
     fontSize: 16
   },
