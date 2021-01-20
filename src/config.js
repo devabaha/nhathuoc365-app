@@ -217,7 +217,13 @@ class Config {
       groupProduct: 'groupProduct',
 
       // List GPS store
-      gpsListStore: 'gpsListStore'
+      gpsListStore: 'gpsListStore',
+
+      // Agency
+      agencyInformationRegister: "agencyInformationRegister",
+
+      // Commission
+      commissionIncomeStatement: "commissionIncomeStatement"
     };
   }
 }

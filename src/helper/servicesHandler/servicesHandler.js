@@ -347,6 +347,11 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       }
       Actions.push(appConfig.routes.premiumInfo);
       break;
+
+    /** COMMISSION */
+    case SERVICES_TYPE.COMMISSION_INCOME_STATEMENT:
+      Actions.push(appConfig.routes.commissionIncomeStatement);
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }

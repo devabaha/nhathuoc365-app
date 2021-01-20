@@ -50,6 +50,8 @@ import vi_resetPassword from './vi/resetPassword.json';
 import en_resetPassword from './en/resetPassword.json';
 import vi_rateApp from './vi/rateApp.json';
 import en_rateApp from './en/rateApp.json';
+import vi_commissionIncomeStatement from './vi/commissionIncomeStatement.json';
+import en_commissionIncomeStatement from './en/commissionIncomeStatement.json';
 
 import vi_cardWallet from './vi/cardWallet.json';
 import en_cardWallet from './en/cardWallet.json';
@@ -81,7 +83,8 @@ export default {
     opRegister: vi_opRegister,
     resetPassword: vi_resetPassword,
     rateApp: vi_rateApp,
-    cardWallet: vi_cardWallet
+    cardWallet: vi_cardWallet,
+    commissionIncomeStatement: vi_commissionIncomeStatement
   },
   [languages.en.value]: {
     common: en_common,
@@ -109,6 +112,7 @@ export default {
     opRegister: en_opRegister,
     resetPassword: en_resetPassword,
     rateApp: en_rateApp,
-    cardWallet: en_cardWallet
+    cardWallet: en_cardWallet,
+    commissionIncomeStatement: en_commissionIncomeStatement
   }
 };

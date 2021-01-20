@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "baseUrl": ".",
+        /* Base directory to resolve non-absolute module names. */
+        "paths": {
+            "app-util": ["./src/util"],
+            "app-store": ["./src/store"],
+            "app-config": ["./src/config.js"],
+            "app-packages": ["./src/packages"],
+        },
+        "jsx": "react",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "checkJs": false,
+    },
+    "exclude": [
+      "node_modules"
+    ]
+}

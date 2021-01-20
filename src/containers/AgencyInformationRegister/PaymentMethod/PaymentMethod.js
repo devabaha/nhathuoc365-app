@@ -1,73 +1,59 @@
-import React, {Component} from 'react';
-import {View, ScrollView, SafeAreaView, StyleSheet, Text} from 'react-native';
+import React, { Component } from 'react';
+import { View, ScrollView, SafeAreaView, StyleSheet, Text } from 'react-native';
 import ModernList from 'app-packages/tickid-modern-list';
 import Loading from '@tickid/tickid-rn-loading';
-import {Actions} from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import appConfig from 'app-config';
-import Button from '../../Button';
+// import Button from '../../Button';
 import store from 'app-store';
 import PaymentRow from './PaymentRow';
-import EventTracker from '../../../helper/EventTracker';
 
-const DEFAULT_OBJECT = {id: -1};
+const DEFAULT_OBJECT = { id: -1 };
 
 class PaymentMethod extends Component {
   static defaultProps = {
-    onUpdatePaymentMethod: () => {},
-    showPrice: true,
-    showSubmit: true,
-    store_id: store.store_id,
+    onUpdatePaymentMethod: () => {}
   };
 
   state = {
     paymentMethod: [],
     selectedMethod: this.props.selectedMethod || DEFAULT_OBJECT,
     selectedBank: DEFAULT_OBJECT,
-    loading: true,
+    loading: true
   };
   unmounted = false;
-  eventTracker = new EventTracker();
 
   componentDidMount() {
-    setTimeout(() => {
-      Actions.refresh({
-        title:
-          this.props.title ||
-          this.props.t('common:screen.paymentMethod.mainTitle'),
-      });
-    });
     this.getPaymentMethod();
-    this.eventTracker.logCurrentView();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
-    this.eventTracker.clearTracking();
   }
 
   getPaymentMethod = async () => {
-    const {t} = this.props;
+    const { t } = this.props;
     try {
-      const response = await APIHandler.payment_method(this.props.store_id);
+      const response = await APIHandler.payment_method(store.store_id);
 
       if (!this.unmounted) {
         if (response && response.status === STATUS_SUCCESS) {
           if (response.data) {
-            let selectedMethod = null;
-            if (Array.isArray(response.data)) {
-              selectedMethod = response.data.find(
-                item => item.default_flag === 1
-              );
+            const state = { ...this.state };
+            state.paymentMethod = response.data || [];
+            const selectedMethod = response.data.find(
+              item => item.default_flag
+            );
+            console.log(response.data, selectedMethod);
+            if (selectedMethod) {
+              state.selectedMethod = selectedMethod;
             }
-            this.setState({
-              paymentMethod: response.data || [],
-              selectedMethod: selectedMethod || this.state.selectedMethod
-            });
+            this.setState(state);
           }
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('common:api.error.message'),
+            message: response.message || t('common:api.error.message')
           });
         }
       }
@@ -75,10 +61,10 @@ class PaymentMethod extends Component {
       console.log('get_payment_method', err);
       flashShowMessage({
         type: 'danger',
-        message: t('common:api.error.message'),
+        message: t('common:api.error.message')
       });
     } finally {
-      !this.unmounted && this.setState({loading: false});
+      !this.unmounted && this.setState({ loading: false });
     }
   };
 
@@ -98,18 +84,18 @@ class PaymentMethod extends Component {
       return;
     }
 
-    this.setState({loading: true});
+    this.setState({ loading: true });
 
     const data = {
       payment_type: this.state.selectedMethod.type,
-      payment_content: '',
+      payment_content: ''
     };
-    const {t} = this.props;
+    const { t } = this.props;
     try {
       const response = await APIHandler.add_payment_method(
         store.store_id,
         store.cart_data.id,
-        data,
+        data
       );
 
       if (!this.unmounted) {
@@ -119,14 +105,14 @@ class PaymentMethod extends Component {
             store.setCartData(response.data);
             flashShowMessage({
               type: 'success',
-              message: response.message,
+              message: response.message
             });
             Actions.pop();
           }
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('common:api.error.message'),
+            message: response.message || t('common:api.error.message')
           });
         }
       }
@@ -134,22 +120,22 @@ class PaymentMethod extends Component {
       console.log('get_payment_method', err);
       flashShowMessage({
         type: 'danger',
-        message: t('common:api.error.message'),
+        message: t('common:api.error.message')
       });
     } finally {
-      !this.unmounted && this.setState({loading: false});
+      !this.unmounted && this.setState({ loading: false });
     }
   };
 
-  handleBankPress = (selectedBank) => {
-    this.setState({selectedBank});
+  handleBankPress = selectedBank => {
+    this.setState({ selectedBank });
   };
 
-  onPressPaymentMethod = (item) => {
+  onPressPaymentMethod = item => {
     const isExisted =
       this.state.selectedMethod && this.state.selectedMethod.id === item.id;
     this.setState({
-      selectedMethod: isExisted ? DEFAULT_OBJECT : item,
+      selectedMethod: isExisted ? DEFAULT_OBJECT : item
     });
 
     // switch (item.type) {
@@ -185,19 +171,24 @@ class PaymentMethod extends Component {
   }
 
   render() {
-    const {t} = this.props;
+    const { t } = this.props;
     const extraData = this.state.selectedMethod.id + this.state.selectedBank.id;
     const extraFee = this.props.extraFee || {};
 
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
+          <Text style={styles.title}>
+            Để hoàn thành kích hoạt, bạn vui lòng chuyển khoản phí hội viên Gold{' '}
+            <Text style={styles.bold}>999.000đ/3 năm</Text> tới tài khoản của
+            SKV. Chúng tôi sẽ kiểm tra và kích hoạt trong vòng 24h.
+          </Text>
           <View style={styles.box}>
             {this.state.loading && <Loading loading />}
             <ModernList
               extraData={extraData}
               data={this.state.paymentMethod}
-              headerTitle={t('method.selectTitle')}
+              // headerTitle={t('method.selectTitle')}
               renderItem={this.renderPaymentMethod.bind(this)}
               listEmptyComponent={
                 !this.state.loading && (
@@ -207,35 +198,27 @@ class PaymentMethod extends Component {
             />
           </View>
 
-          {this.props.showPrice && (
-            <View style={[styles.box, {paddingVertical: 7}]}>
-              <View style={styles.priceInfoRow}>
-                <Text style={styles.priceLabel}>{t('payment.tempPrice')}</Text>
-                <Text style={styles.priceValue}>{this.props.price}</Text>
-              </View>
-              {Object.keys(extraFee).map((key) => {
-                return (
-                  <View style={styles.priceInfoRow}>
-                    <Text style={styles.priceLabel}>{key}</Text>
-                    <Text style={styles.priceValue}>{extraFee[key]}</Text>
-                  </View>
-                );
-              })}
+          {/* <View style={[styles.box, { paddingVertical: 7 }]}>
+            <View style={styles.priceInfoRow}>
+              <Text style={styles.priceLabel}>{t('payment.tempPrice')}</Text>
+              <Text style={styles.priceValue}>{this.props.price}</Text>
             </View>
-          )}
+            {Object.keys(extraFee).map(key => {
+              return (
+                <View style={styles.priceInfoRow}>
+                  <Text style={styles.priceLabel}>{key}</Text>
+                  <Text style={styles.priceValue}>{extraFee[key]}</Text>
+                </View>
+              );
+            })}
+          </View> */}
         </ScrollView>
-        {this.props.showSubmit && (
-          <Button
-            renderBefore={
-              this.props.showPrice && (
-                <TotalPrice t={t} value={this.props.totalPrice} />
-              )
-            }
-            containerStyle={styles.confirmContainer}
-            title={t('confirm')}
-            onPress={this.handleConfirm}
-          />
-        )}
+        {/* <Button
+          renderBefore={<TotalPrice t={t} value={this.props.totalPrice} />}
+          containerStyle={styles.confirmContainer}
+          title={t('confirm')}
+          onPress={this.handleConfirm}
+        /> */}
       </SafeAreaView>
     );
   }
@@ -243,91 +226,104 @@ class PaymentMethod extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
+  },
+  title: {
+    color: '#555',
+    backgroundColor: '#fff',
+    padding: 15,
+    paddingBottom: 0,
+    lineHeight: 20
+  },
+  bold: {
+    fontSize: 16,
+    color: '#242424',
+    fontWeight: 'bold',
+    letterSpacing: 1
   },
   paymentContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingVertical: 10
   },
   row: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   check: {
     fontSize: 18,
-    marginRight: 10,
+    marginRight: 10
   },
   paymentMethodLabel: {
     fontSize: 15,
     fontWeight: '500',
-    marginBottom: 3,
+    marginBottom: 3
   },
   subPaymentMethodLabel: {
     fontSize: 13,
-    color: '#8c8c8c',
+    color: '#8c8c8c'
   },
   box: {
     marginBottom: 15,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
   },
   priceInfoRow: {
     flexDirection: 'row',
     paddingHorizontal: 15,
     paddingVertical: 10,
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   priceLabel: {
     flex: 1,
     color: '#555',
-    fontSize: 16,
+    fontSize: 16
   },
   priceValue: {
     fontWeight: '500',
     color: '#242424',
-    fontSize: 16,
+    fontSize: 16
   },
   confirmContainer: {
     backgroundColor: '#fff',
     paddingVertical: 15,
-    paddingBottom: 30,
+    paddingBottom: 30
   },
   totalPriceInfoRow: {
     justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 0,
-    paddingTop: 0,
+    paddingTop: 0
   },
   totalPriceValue: {
     color: DEFAULT_COLOR,
     fontSize: 20,
-    fontWeight: '600',
+    fontWeight: '600'
   },
   bankLogoContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   bankLogo: {
     resizeMode: 'contain',
     width: 80,
-    flex: 1,
+    flex: 1
   },
   noResultContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 15,
+    padding: 15
   },
   noResultText: {
-    color: '#777',
-  },
+    color: '#777'
+  }
 });
 
 export default withTranslation(['paymentMethod', 'common'])(PaymentMethod);
 
-const TotalPrice = (props) => {
+const TotalPrice = props => {
   return (
     <View style={[styles.priceInfoRow, styles.totalPriceInfoRow]}>
       <Text style={[styles.priceLabel, styles.totalPriceText]}>
@@ -340,19 +336,19 @@ const TotalPrice = (props) => {
   );
 };
 
-const BankLogo = (props) => {
+const BankLogo = props => {
   return (
     <View style={styles.bankLogoContainer}>
       <CachedImage
         mutable
-        source={{uri: props.image}}
+        source={{ uri: props.image }}
         style={styles.bankLogo}
       />
     </View>
   );
 };
 
-const NoPaymentMethod = (props) => (
+const NoPaymentMethod = props => (
   <View style={styles.noResultContainer}>
     <Text style={styles.noResultText}>{props.message}</Text>
   </View>

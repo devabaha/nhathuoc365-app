@@ -136,6 +136,12 @@
     },
     "gpsListStore": {
       "mainTitle": "List of store"
+    },
+    "agencyInformationRegister": {
+      "mainTitle": "Distributor information"
+    },
+    "commissionIncomeStatement": {
+      "mainTitle": "Commission report"
     }
   },
 

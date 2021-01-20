@@ -41,6 +41,14 @@
     },
     "warehouse": {
       "label": "Kho hàng"
+    },
+    "agencyInformationRegister": {
+      "label": "Thông tin NPP",
+      "desc": "Xem/ Nhập thông tin NPP"
+    },
+    "commissionIncomeStatement": {
+      "label": "Báo cáo hoa hồng",
+      "desc": "Tra cứu hoa hồng theo tháng"
     }
   },
   "avatarPicker": {
