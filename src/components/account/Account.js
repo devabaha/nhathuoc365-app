@@ -373,8 +373,9 @@ class Account extends Component {
       },
 
       {
-        key: 'fanpage',
-        isHidden: !APP_FANPAGE,
+        key: 'about',
+        icon: 'handshake-o',
+        label: t('options.termOfUse.label', {appName: APP_NAME_SHOW}),
         desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
@@ -391,7 +392,28 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        // marginTop: true
+        marginTop: true,
+      },
+
+      {
+        key: 'app_info',
+        icon: 'question-circle',
+        label: t('options.appInformation.label'),
+        desc: t('options.appInformation.desc', {
+          appName: APP_NAME_SHOW,
+          appVersion: DeviceInfo.getVersion() + codePushVersion + "-" + appConfig.tagVersion,
+        }),
+        rightIcon: <IconAngleRight />,
+        onPress: () => {},
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#688efb',
+          },
+        ],
+        iconColor: '#ffffff',
+        hideAngle: true,
+        marginTop: true,
       },
 
       // {
