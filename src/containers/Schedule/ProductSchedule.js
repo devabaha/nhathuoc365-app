@@ -92,7 +92,6 @@ class ProductSchedule extends Component {
     try {
       const productId = this.state.productId;
       const siteId = store.store_data?.id;
-      console.log(productId, siteId)
       this.getProductConfigRequest.data = APIHandler.site_product_config(siteId, productId);
       const response = await this.getProductConfigRequest.promise();
       console.log(response);
