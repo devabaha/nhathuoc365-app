@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.2.2] - 2020-01-21
+### Fixed
+- Product has 1 attribute group will auto detect remaining inventory.
+
 ## [r11.2.1] - 2020-01-20
 ### Added
 - GPS list store screen for chain stores.

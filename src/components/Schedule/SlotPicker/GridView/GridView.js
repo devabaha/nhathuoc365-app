@@ -1,20 +1,20 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Text, TouchableHighlight } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
 import PropTypes from 'prop-types';
 
 class GridView extends Component {
   static propTypes = {};
 
   static defaultProps = {
-    numColumn: 3
+    numColumn: 3,
   };
 
   state = {
-    componentWidth: null
+    componentWidth: null,
   };
 
-  handleLayout = e => {
-    this.setState({ componentWidth: e.nativeEvent.layout.width });
+  handleLayout = (e) => {
+    this.setState({componentWidth: e.nativeEvent.layout.width});
   };
 
   renderSlots() {
@@ -31,16 +31,16 @@ class GridView extends Component {
             (this.state.componentWidth -
               marginRight * (this.props.numColumn - 1)) /
               this.props.numColumn -
-            3
+            3,
         };
         temp.push(
           <TouchableHighlight
+            key={index}
             onPress={() => this.props.onPress(slot)}
             underlayColor="rgba(0,0,0,.1)"
-            style={[styles.itemContainer, extraItemStyle]}
-          >
+            style={[styles.itemContainer, extraItemStyle]}>
             <Text>{slot}</Text>
-          </TouchableHighlight>
+          </TouchableHighlight>,
         );
         if (
           (index + 1) % this.props.numColumn === 0 ||
@@ -48,9 +48,9 @@ class GridView extends Component {
         ) {
           const isLastRow = index === this.props.slots.length - 1;
           const extraRowStyle = {
-            marginBottom: isLastRow ? 0 : 5
+            marginBottom: isLastRow ? 0 : 5,
           };
-          slots.push(<View style={[styles.row, extraRowStyle]}>{temp}</View>);
+          slots.push(<View key={index} style={[styles.row, extraRowStyle]}>{temp}</View>);
           temp = [];
         }
       });
@@ -63,8 +63,7 @@ class GridView extends Component {
     return (
       <View
         onLayout={this.handleLayout}
-        style={[styles.container, this.props.containerStyle]}
-      >
+        style={[styles.container, this.props.containerStyle]}>
         {this.renderSlots()}
       </View>
     );
@@ -73,7 +72,7 @@ class GridView extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   itemContainer: {
     justifyContent: 'center',
@@ -83,12 +82,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderColor: DEFAULT_COLOR,
     borderWidth: 1,
-    borderRadius: 7
+    borderRadius: 7,
   },
   row: {
     flexDirection: 'row',
-    flex: 1
-  }
+    flex: 1,
+  },
 });
 
 export default GridView;
