@@ -339,7 +339,8 @@ const GPSListStore = () => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
     return (
       <Container row style={styles.storeContainer}>
-        <FastImage source={{uri: store.image_url}} style={styles.image} />
+
+        <FastImage source={{uri: store.image_url}} style={[styles.image, !store.image_url && {backgroundColor: '#f5f5f5'}]} />
 
         <Container flex centerVertical={false} style={styles.infoContainer}>
           <Container centerVertical={false}>
