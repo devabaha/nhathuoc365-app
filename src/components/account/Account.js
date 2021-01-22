@@ -396,24 +396,25 @@ class Account extends Component {
       },
 
       {
-        key: 'app_info',
-        icon: 'question-circle',
-        label: t('options.appInformation.label'),
-        desc: t('options.appInformation.desc', {
-          appName: APP_NAME_SHOW,
-          appVersion: DeviceInfo.getVersion() + codePushVersion + "-" + appConfig.tagVersion,
-        }),
+        key: 'fanpage',
+        isHidden: !APP_FANPAGE,
+        desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => {},
+        onPress: () =>
+          Actions.webview({
+            title: t('options.termOfUse.webViewTitle', {
+              appName: APP_NAME_SHOW,
+            }),
+            url: APP_INFO,
+          }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#688efb',
+            backgroundColor: DEFAULT_COLOR,
           },
         ],
         iconColor: '#ffffff',
-        hideAngle: true,
-        marginTop: true,
+        // marginTop: true
       },
 
       // {
