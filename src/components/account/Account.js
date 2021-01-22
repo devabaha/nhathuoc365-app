@@ -372,51 +372,6 @@ class Account extends Component {
           !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
 
-      {
-        key: 'about',
-        icon: 'handshake-o',
-        label: t('options.termOfUse.label', {appName: APP_NAME_SHOW}),
-        desc: t('options.termOfUse.desc'),
-        rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.webview({
-            title: t('options.termOfUse.webViewTitle', {
-              appName: APP_NAME_SHOW,
-            }),
-            url: APP_INFO,
-          }),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: DEFAULT_COLOR,
-          },
-        ],
-        iconColor: '#ffffff',
-        marginTop: true,
-      },
-
-      {
-        key: 'fanpage',
-        isHidden: !APP_FANPAGE,
-        desc: t('options.termOfUse.desc'),
-        rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.webview({
-            title: t('options.termOfUse.webViewTitle', {
-              appName: APP_NAME_SHOW,
-            }),
-            url: APP_INFO,
-          }),
-        boxIconStyle: [
-          styles.boxIconStyle,
-          {
-            backgroundColor: DEFAULT_COLOR,
-          },
-        ],
-        iconColor: '#ffffff',
-        // marginTop: true
-      },
-
       // {
       //   key: '6',
       //   icon: 'language',
@@ -466,6 +421,48 @@ class Account extends Component {
         iconSize: 18,
         iconType: 'MaterialCommunityIcons',
         marginTop: true,
+      },
+
+
+
+      {
+        key: '2',
+        icon: 'facebook-square',
+        label: t('options.fanpage.label', {appName: APP_NAME_SHOW}),
+        desc: t('options.fanpage.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => Communications.web(APP_FANPAGE),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#4267b2',
+          },
+        ],
+        iconColor: '#ffffff',
+        marginTop: !isAdmin,
+      },
+
+      {
+        key: '3',
+        icon: 'handshake-o',
+        label: t('options.termOfUse.label', {appName: APP_NAME_SHOW}),
+        desc: t('options.termOfUse.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          Actions.webview({
+            title: t('options.termOfUse.webViewTitle', {
+              appName: APP_NAME_SHOW,
+            }),
+            url: APP_INFO,
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: DEFAULT_COLOR,
+          },
+        ],
+        iconColor: '#ffffff',
+        // marginTop: true
       },
 
       {
