@@ -22,6 +22,7 @@ import CategoryScreen from './CategoryScreen';
 import EventTracker from '../../helper/EventTracker';
 import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 import CategoriesSkeleton from './CategoriesSkeleton';
+import {findNodeHandle} from 'react-native';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
@@ -326,12 +327,12 @@ class Stores extends Component {
   }
 
   measureCategoriesLayout = (ref, category, index) => {
-    if (ref && (!this.refCates[index] || !this.refCates[index].width)) {
-      ref.measure((x, y, width, height, pageX, pageY) => {
+    if (ref&& (!this.refCates[index] || this.refCates[index].offsetX === undefined)) {
+      if (!this.refs_category_nav) return;
+
+      ref.measureLayout(findNodeHandle(this.refs_category_nav), (offsetX) => {
         this.refCates[index] = {
-          offsetX: pageX,
-          width,
-          index,
+          offsetX,
         };
       });
     }

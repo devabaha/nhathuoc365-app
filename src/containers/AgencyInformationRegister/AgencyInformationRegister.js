@@ -550,7 +550,7 @@ export default withTranslation()(AgencyInformationRegister);
 
 const MyInputTouchable = ({
   onPress,
-  key,
+  // key,
   label,
   name,
   type,

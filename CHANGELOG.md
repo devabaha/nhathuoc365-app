@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.2.3] - 2020-01-23
+### Fixed
+- Add key for item in section fake list.
+- Fix key props for MyInputTouchable in AgencyInformationRegister.
+- Fix .gitignore to commit *.keystore
 ## [r11.2.2] - 2020-01-21
 ### Add
 - Background color for empty image in GPS List Store.

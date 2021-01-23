@@ -38,7 +38,7 @@ class SelectionList extends Component {
     }
 
     return (
-      <>
+      <React.Fragment key={index}>
         <TouchableHighlight disabled={item.disabled} underlayColor="transparent" onPress={item.onPress}>
           <>
             <View
@@ -101,7 +101,7 @@ class SelectionList extends Component {
           </>
         </TouchableHighlight>
         <View style={styles.separator}></View>
-      </>
+      </React.Fragment>
     );
   }
 
