@@ -10,6 +10,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Octicons from 'react-native-vector-icons/Octicons';
 import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import AutoHeightWebView from 'react-native-autoheight-webview';
@@ -28,6 +29,7 @@ import FastImage from 'react-native-fast-image';
 import {PRODUCT_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 
 const ITEM_KEY = 'ItemKey';
 
@@ -43,6 +45,7 @@ class Item extends Component {
       loading: true,
       buying: false,
       like_loading: true,
+      is_drop_ship_loading: false,
       like_flag: 0,
       scrollY: 0,
     };
@@ -273,7 +276,6 @@ class Item extends Component {
   };
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
-    console.log(product);
     switch (product.product_type) {
       case PRODUCT_TYPES.NORMAL:
         this._addCart(product, quantity, model);
@@ -288,16 +290,19 @@ class Item extends Component {
   };
 
   // add item vào giỏ hàng
-  _addCart = (item, quantity = 1, model = '') => {
+  _addCart = (item, quantity = 1, model = '', newPrice, loading = true) => {
     this.setState(
       {
-        buying: true,
+        buying: loading,
       },
       async () => {
         const data = {
           quantity,
           model,
         };
+        if (newPrice) {
+          data.newPrice = newPrice;
+        }
         const {t} = this.props;
         try {
           const response = await APIHandler.site_cart_plus(
@@ -305,6 +310,7 @@ class Item extends Component {
             item.id,
             data,
           );
+          console.log(data);
 
           if (!this.unmounted) {
             if (response && response.status == STATUS_SUCCESS) {
@@ -360,10 +366,19 @@ class Item extends Component {
           !this.unmounted &&
             this.setState({
               buying: false,
+              is_drop_ship_loading: false,
             });
         }
       },
     );
+  };
+
+  handlePressSubAction = (product) => {
+    if (isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)) {
+      this.handleDropShip(product);
+    } else {
+      this._likeHandler(product);
+    }
   };
 
   _likeHandler(item) {
@@ -477,6 +492,21 @@ class Item extends Component {
       });
     }
   }
+
+  submitDropShip = (product, quantity, modalKey, newPrice) => {
+    this.setState({is_drop_ship_loading: true});
+    this._addCart(product, quantity, modalKey, newPrice, false);
+  };
+
+  handleDropShip = (item) => {
+    Actions.push(appConfig.routes.itemAttribute, {
+      isDropShip: true,
+      itemId: item.id,
+      product: item,
+      onSubmit: (quantity, modal_key, newPrice) =>
+        this.submitDropShip(item, quantity, modal_key, newPrice),
+    });
+  };
 
   renderPagination = (index, total, context, hasImages) => {
     const pagingMess = hasImages ? `${index + 1}/${total}` : '0/0';
@@ -593,11 +623,34 @@ class Item extends Component {
     );
   }
 
+  renderSubActionBtnIcon() {
+    const is_like = this.state.like_flag == 1;
+    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
+      this.state.is_drop_ship_loading ? (
+        <Indicator size="small" />
+      ) : (
+        <Octicons
+          name="package"
+          size={24}
+          color={is_like ? '#e31b23' : appConfig.colors.primary}
+        />
+      )
+    ) : this.state.like_loading ? (
+      <Indicator size="small" />
+    ) : (
+      <Icon
+        name="heart"
+        size={20}
+        color={is_like ? '#e31b23' : appConfig.colors.primary}
+      />
+    );
+  }
+
   render() {
-    var {item, item_data, like_loading, like_flag} = this.state;
-    var is_like = like_flag == 1;
+    var {item, item_data} = this.state;
+    const is_like = this.state.like_flag == 1;
     const {t} = this.props;
-    const unitName = item_data ? item_data.unit_name : item.unit_name; 
+    const unitName = item_data ? item_data.unit_name : item.unit_name;
 
     return (
       <View style={styles.container}>
@@ -649,7 +702,9 @@ class Item extends Component {
                 )}
                 <Text style={styles.item_heading_price}>
                   {item_data ? item_data.price_view : item.price_view}
-                  {!!unitName && <Text style={styles.item_unit_name}>/ {unitName}</Text>}
+                  {!!unitName && (
+                    <Text style={styles.item_unit_name}>/ {unitName}</Text>
+                  )}
                 </Text>
                 {/* {item.discount_percent > 0 && (
                   <DiscountBadge
@@ -665,7 +720,7 @@ class Item extends Component {
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
-                  onPress={this._likeHandler.bind(this, item)}
+                  onPress={() => this.handlePressSubAction(item_data || item)}
                   underlayColor="transparent">
                   <View
                     style={[
@@ -678,15 +733,7 @@ class Item extends Component {
                       },
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
-                      {like_loading ? (
-                        <Indicator size="small" />
-                      ) : (
-                        <Icon
-                          name="heart"
-                          size={20}
-                          color={is_like ? '#e31b23' : appConfig.colors.primary}
-                        />
-                      )}
+                      {this.renderSubActionBtnIcon()}
                     </View>
                     <Text
                       style={[
@@ -696,7 +743,11 @@ class Item extends Component {
                           color: is_like ? '#e31b23' : appConfig.colors.primary,
                         },
                       ]}>
-                      {is_like ? t('liked') : t('like')}
+                      {isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+                        ? 'Giao hộ'
+                        : is_like
+                        ? t('liked')
+                        : t('like')}
                     </Text>
                   </View>
                 </TouchableHighlight>
@@ -929,10 +980,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     paddingLeft: 4,
   },
-  item_unit_name: { 
-    color: '#999', 
-    fontSize: 15, 
-    fontWeight: '400' 
+  item_unit_name: {
+    color: '#999',
+    fontSize: 15,
+    fontWeight: '400',
   },
   item_heading_qnt: {
     color: '#666666',

@@ -150,6 +150,7 @@ import GroupProduct from './containers/GroupProduct';
 import GPSListStore from './containers/GPSListStore';
 import AgencyInformationRegister from './containers/AgencyInformationRegister';
 import CommissionIncomeStatement from './containers/CommissionIncomeStatement';
+import ModalInput from './components/ModalInput';
 
 /**
  * Not allow font scaling
@@ -1648,6 +1649,9 @@ class RootRouter extends Component {
 
               {/* ================ MODAL POPUP ================ */}
               <Stack key={appConfig.routes.modalPopup} component={ModalPopup} />
+
+              {/* ================ MODAL INPUT ================ */}
+              <Stack key={appConfig.routes.modalInput} component={ModalInput} />
 
               {/* ================ COUNTRY PICKER ================ */}
               <Stack
