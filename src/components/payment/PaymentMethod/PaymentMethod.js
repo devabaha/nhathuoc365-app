@@ -195,6 +195,7 @@ class PaymentMethod extends Component {
           <View style={styles.box}>
             {this.state.loading && <Loading loading />}
             <ModernList
+              scrollEnabled={false}
               extraData={extraData}
               data={this.state.paymentMethod}
               headerTitle={t('method.selectTitle')}
@@ -213,9 +214,9 @@ class PaymentMethod extends Component {
                 <Text style={styles.priceLabel}>{t('payment.tempPrice')}</Text>
                 <Text style={styles.priceValue}>{this.props.price}</Text>
               </View>
-              {Object.keys(extraFee).map((key) => {
+              {Object.keys(extraFee).map((key, index) => {
                 return (
-                  <View style={styles.priceInfoRow}>
+                  <View key={index} style={styles.priceInfoRow}>
                     <Text style={styles.priceLabel}>{key}</Text>
                     <Text style={styles.priceValue}>{extraFee[key]}</Text>
                   </View>
