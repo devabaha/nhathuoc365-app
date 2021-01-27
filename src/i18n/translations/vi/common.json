@@ -142,6 +142,9 @@
     },
     "commissionIncomeStatement": {
       "mainTitle": "Báo cáo hoa hồng"
+    },
+    "lotteryGame": {
+      "mainTitle": "Game đoán số"
     }
   },
 
