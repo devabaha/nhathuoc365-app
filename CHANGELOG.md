@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - DropShip in product detail.
+### Fixed
+- Get dimensions of categories nav bar in Store screen.
 ## [r11.2.3] - 2020-01-23
 ### Fixed
 - Add key for item in section fake list.
