@@ -656,7 +656,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    this.getListWarehouse();
+    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
     this.initial(() => {
       store.is_stay_account = true;
       store.parentTab = `${appConfig.routes.accountTab}_1`;
