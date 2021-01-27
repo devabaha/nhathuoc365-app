@@ -1,13 +1,17 @@
-import { Platform, Dimensions, PixelRatio } from 'react-native';
+import {Platform, Dimensions, PixelRatio} from 'react-native';
 import {
   isIphoneX,
   getStatusBarHeight,
-  getBottomSpace
+  getBottomSpace,
 } from 'react-native-iphone-x-helper';
 
 class Config {
   constructor() {
     this._primaryColor = '#812384';
+  }
+
+  get tagVersion() {
+    return 'r11.2.5';
   }
 
   get appName() {
@@ -31,13 +35,13 @@ class Config {
 
   get radaModule() {
     return {
-      partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
+      partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm',
     };
   }
 
   get oneSignal() {
     return {
-      appKey: '437375e6-9a46-42fd-836e-30d3b1c28cd1'
+      appKey: '437375e6-9a46-42fd-836e-30d3b1c28cd1',
     };
   }
 
@@ -51,7 +55,7 @@ class Config {
       width: Dimensions.get('window').width,
       height: Dimensions.get('window').height,
       statusBarHeight: getStatusBarHeight(),
-      bottomSpace: getBottomSpace()
+      bottomSpace: getBottomSpace(),
     };
   }
 
@@ -68,7 +72,7 @@ class Config {
       logo: {
         main: this.primaryColor,
         sub: '#f5bb4b',
-        addition: '#f18c21'
+        addition: '#f18c21',
       },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
@@ -76,7 +80,7 @@ class Config {
       white: '#fff',
       black: '#000',
       text: '#333',
-      placeholder: '#c7c7cd'
+      placeholder: '#c7c7cd',
     };
   }
 
@@ -204,10 +208,10 @@ class Config {
       gpsListStore: 'gpsListStore',
 
       // Agency
-      agencyInformationRegister: "agencyInformationRegister",
+      agencyInformationRegister: 'agencyInformationRegister',
 
       // Commission
-      commissionIncomeStatement: "commissionIncomeStatement"
+      commissionIncomeStatement: 'commissionIncomeStatement',
     };
   }
 }
