@@ -417,6 +417,7 @@ class Search extends Component {
             {this.state.categories.length !== 0 && (
               <ModernList
                 containerStyle={{ marginBottom: 15 }}
+                scrollEnabled={false}
                 headerTitle="Danh mục"
                 mainKey="name"
                 data={this.state.categories}

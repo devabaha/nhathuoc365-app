@@ -6,39 +6,42 @@ export const ANALYTICS_ERROR_PREFIX = 'error_';
 
 export const ANALYTICS_RAW_EVENTS_NAME = {
   view: {
-    ...appConfig.routes
+    ...appConfig.routes,
   },
   cart: {
-    order: 'orderCart'
+    order: 'orderCart',
   },
   error: {
-    phoneAuthFirebase: 'phoneAuthFirebase'
-  }
+    phoneAuthFirebase: 'phoneAuthFirebase',
+  },
 };
 
-export const formatViewEvents = eventName => ANALYTICS_VIEW_PREFIX + eventName;
-export const formatCartEvents = eventName => ANALYTICS_CART_PREFIX + eventName;
-export const formatErrorEvents = eventName =>
+export const formatViewEvents = (eventName) =>
+  ANALYTICS_VIEW_PREFIX + eventName;
+export const formatCartEvents = (eventName) =>
+  ANALYTICS_CART_PREFIX + eventName;
+export const formatErrorEvents = (eventName) =>
   ANALYTICS_ERROR_PREFIX + eventName;
 
 const formatEventsName = () => {
-  const formattedEventsName = { ...ANALYTICS_RAW_EVENTS_NAME };
-  Object.keys(formattedEventsName).forEach(key => {
-    const replaceObj = { ...formattedEventsName[key] };
-    Object.keys(formattedEventsName[key]).forEach(childKey => {
+  const formattedEventsName = {...ANALYTICS_RAW_EVENTS_NAME};
+  Object.keys(formattedEventsName).forEach((key) => {
+    const replaceObj = {...formattedEventsName[key]};
+    Object.keys(formattedEventsName[key]).forEach((childKey) => {
       switch (key) {
         case 'view':
           replaceObj[childKey] = formatViewEvents(
-            formattedEventsName[key][childKey]
+            formattedEventsName[key][childKey],
           );
           break;
         case 'cart':
           replaceObj[childKey] = formatCartEvents(
-            formattedEventsName[key][childKey]
+            formattedEventsName[key][childKey],
           );
+          break;
         case 'error':
           replaceObj[childKey] = formatErrorEvents(
-            formattedEventsName[key][childKey]
+            formattedEventsName[key][childKey],
           );
           break;
       }

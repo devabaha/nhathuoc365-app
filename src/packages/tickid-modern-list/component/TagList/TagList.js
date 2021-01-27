@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { StyleSheet, ScrollView } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, ScrollView, View} from 'react-native';
 import Tag from './Tag';
 
 class TagList extends Component {
@@ -27,20 +27,41 @@ class TagList extends Component {
     });
   }
 
-  render() {
+  renderContent() {
+    return this.props.data.length === 0 && this.props.listEmptyComponent
+      ? this.props.listEmptyComponent
+      : this.renderItem();
+  }
+
+  renderScrollView() {
     return (
       <ScrollView
         scrollEnabled={this.props.scrollEnabled}
         scrollEventThrottle={16}
         contentContainerStyle={styles.contentContainerStyle}
         keyboardDismissMode="on-drag"
-        keyboardShouldPersistTaps="always"
-      >
-        {this.props.data.length === 0 && this.props.listEmptyComponent
-          ? this.props.listEmptyComponent
-          : this.renderItem()}
+        keyboardShouldPersistTaps="always">
+        {this.renderContent()}
       </ScrollView>
     );
+  }
+
+  renderNonList() {
+    return (
+      <View style={styles.contentContainerStyle}>{this.renderContent()}</View>
+    );
+  }
+
+  renderList() {
+    if (this.props.scrollEnabled) {
+      return this.renderScrollView();
+    } else {
+      return this.renderNonList();
+    }
+  }
+
+  render() {
+    return this.renderList();
   }
 }
 
