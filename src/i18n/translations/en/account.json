@@ -34,6 +34,17 @@
       "desc": "",
       "cancel": "Cancel",
       "select": "Change"
+    },
+    "warehouse": {
+      "label": "Warehouse"
+    },
+    "agencyInformationRegister": {
+      "label": "Distributor Information",
+      "desc": "View/ Edit distributor information"
+    },
+    "commissionIncomeStatement": {
+      "label": "Commission report",
+      "desc": "Look up monthly commissions"
     }
   },
   "avatarPicker": {

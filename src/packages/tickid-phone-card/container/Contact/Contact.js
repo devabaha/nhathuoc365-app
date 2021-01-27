@@ -20,7 +20,7 @@ import ContactEntity from '../../entity/Contact';
 import SearchComponent from '../../component/Search';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import ContactItemComponent from '../../component/ContactItem';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ModalAllowPermisson from '../../component/ModalAllowPermisson';
 import AndroidOpenSettings from 'react-native-android-open-settings';
 import EventTracker from '../../../../helper/EventTracker';

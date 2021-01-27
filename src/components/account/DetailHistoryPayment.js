@@ -4,8 +4,7 @@ import { View, StyleSheet, SectionList } from 'react-native';
 import HorizontalInfoItem from './HorizontalInfoItem';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class DetailHistoryPayment extends Component {
+class DetailHistoryPayment extends Component {
   constructor(props) {
     super(props);
 
@@ -122,3 +121,5 @@ const styles = StyleSheet.create({
     color: '#ffffff'
   }
 });
+
+export default observer(DetailHistoryPayment);

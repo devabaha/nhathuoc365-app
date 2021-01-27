@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import Animated, { block, set, call, useCode, cond, eq } from 'react-native-reanimated';
-import { useValue, useValues, usePanGestureHandler, diffClamp, withDecay, timing } from 'react-native-redash';
+import { useValue, useValues, usePanGestureHandler, diffClamp, withDecay, timing } from 'react-native-redash/lib/module/v1';
 
 import Heading, { HeadingProps, HeadingPosition } from './Heading';
 import MainContent from './MainContent';

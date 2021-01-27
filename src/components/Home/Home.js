@@ -41,7 +41,6 @@ class Home extends Component {
     listService: PropTypes.array,
     primaryActions: PropTypes.array,
     showPrimaryActions: PropTypes.bool,
-    notify: PropTypes.object,
     userInfo: PropTypes.object,
     refreshing: PropTypes.bool,
     apiFetching: PropTypes.bool,
@@ -52,6 +51,7 @@ class Home extends Component {
     onShowAllVouchers: PropTypes.func,
     onPressService: PropTypes.func,
     onPullToRefresh: PropTypes.func,
+    onShowAllGroupProduct: PropTypes.func,
     onShowAllSites: PropTypes.func,
     onShowAllCampaigns: PropTypes.func,
     onShowAllNews: PropTypes.func,
@@ -61,7 +61,8 @@ class Home extends Component {
     onPressCampaignItem: PropTypes.func,
     onPressNewItem: PropTypes.func,
     onPressNoti: PropTypes.func,
-    product_groups: PropTypes.object
+    product_groups: PropTypes.array,
+    listServiceItemsPerRow: PropTypes.number
   };
 
   static defaultProps = {
@@ -78,7 +79,6 @@ class Home extends Component {
     listService: [],
     primaryActions: [],
     showPrimaryActions: true,
-    notify: {},
     userInfo: undefined,
     refreshing: false,
     apiFetching: false,
@@ -89,6 +89,7 @@ class Home extends Component {
     onShowAllVouchers: defaultListener,
     onPressService: defaultListener,
     onPullToRefresh: defaultListener,
+    onShowAllGroupProduct: defaultListener,
     onShowAllSites: defaultListener,
     onShowAllCampaigns: defaultListener,
     onShowAllNews: defaultListener,
@@ -98,7 +99,7 @@ class Home extends Component {
     onPressCampaignItem: defaultListener,
     onPressNewItem: defaultListener,
     onPressNoti: defaultListener,
-    product_groups: {}
+    product_groups: [],
   };
 
   get hasServices() {
@@ -142,9 +143,8 @@ class Home extends Component {
   }
 
   get hasProduct_groups() {
-    let array_product_groups = Object.keys(this.props.product_groups);
     return (
-      Array.isArray(array_product_groups) && array_product_groups.length > 0
+      Array.isArray(this.props.product_groups) && this.props.product_groups.length > 0
     );
   }
 
@@ -175,7 +175,7 @@ class Home extends Component {
           {this.props.site && this.props.site.app_event_banner_image && (
             <Image
               style={styles.headerImage}
-              source={{ uri: this.props.site.app_event_banner_image }}
+              source={{ uri: this.props.site.app_event_banner_image}}
             />
           )}
         </View>
@@ -194,7 +194,6 @@ class Home extends Component {
           showsVerticalScrollIndicator={false}
         >
           <Header
-            notify={this.props.notify}
             name={name}
             onPressNoti={this.props.onPressNoti}
             goToSearch={this.props.goToSearch}
@@ -240,19 +239,21 @@ class Home extends Component {
 
           <View style={styles.contentWrapper}>
             {this.hasProduct_groups ? (
-              Object.keys(this.props.product_groups).map((key, index) => {
+              this.props.product_groups.map((productGroup, index) => {
                 let {
+                  id,
                   products,
                   title,
                   display_type
-                } = this.props.product_groups[key];
+                } = productGroup;
                 return (
                   <ListProducts
-                    key={index}
+                    key={id}
                     type={display_type}
                     data={products}
                     title={title}
                     onPressProduct={this.props.onPressProduct}
+                    onShowAll={() => this.props.onShowAllGroupProduct(productGroup)}
                   />
                 );
               })
@@ -260,7 +261,7 @@ class Home extends Component {
               <ListProductSkeleton />
             ) : null}
 
-            {this.hasSites && (
+            {this.hasSites ? (
               <HomeCardList
                 onShowAll={null}
                 data={this.props.sites}
@@ -283,7 +284,9 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
-            )}
+            ): this.props.apiFetching ? (
+              <HomeCardListSkeleton />
+            ) : null}
 
             {this.hasPromotion && (
               <Promotion
@@ -314,7 +317,7 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.hasRooms && (
+            {this.hasRooms ? (
               <HomeCardList
                 data={this.props.rooms}
                 onShowAll={null}
@@ -337,9 +340,11 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
-            )}
+            ): this.props.apiFetching ? (
+              <HomeCardListSkeleton />
+            ) : null}
 
-            {this.hasRoomNews && (
+            {this.hasRoomNews ? (
               <HomeCardList
                 onShowAll={null}
                 data={this.props.room_news}
@@ -356,7 +361,9 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
-            )}
+            ) : this.props.apiFetching ? (
+              <HomeCardListSkeleton />
+            ) : null}
 
             {this.hasProduct_groups &&
               Object.keys(this.props.product_groups).map((key, index) => {
@@ -408,28 +415,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
     width: appConfig.device.width * 3,
     height: appConfig.device.width * 3,
-    borderRadius: appConfig.device.width * 3 * 0.48,
+    borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.height / 5.3,
+    top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden'
   },
   headerImage: {
-    height: appConfig.device.width / 2,
+    height: appConfig.device.width / 3,
     resizeMode: 'cover',
     width: appConfig.device.width,
     position: 'absolute',
-    bottom: 0
+    bottom: 0,
   },
   contentWrapper: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: appConfig.colors.sceneBackground,
     marginBottom: 32
   },
   primaryActionsWrapper: {

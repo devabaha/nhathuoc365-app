@@ -22,6 +22,9 @@
     },
     "address": {
       "title": "Địa chỉ"
+    },
+    "city": {
+      "title": "Tỉnh/Thành phố"
     }
   },
 

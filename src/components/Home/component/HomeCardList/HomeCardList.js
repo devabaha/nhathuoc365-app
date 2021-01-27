@@ -65,12 +65,19 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     lineHeight: 20,
     marginTop: 12,
-    marginBottom: 6
+    marginBottom: 6,
+    flex: 1,
+    marginRight: 20,
   },
   viewAll: {
     color: '#0084ff',
     fontSize: 15,
     fontWeight: '500'
+  },
+  listContainer:  {
+    paddingTop: 15,
+    borderTopWidth: 0.5,
+    borderColor: '#eee',
   }
 });
 

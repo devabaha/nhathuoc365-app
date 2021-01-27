@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 
 import { LinkProps } from '.';
-import { timing, useValue } from 'react-native-redash';
+import { timing, useValue } from 'react-native-redash/lib/module/v1';
 import { DEFAULT_UNACTIVE_LINK_COLOR, DEFAULT_ACTIVE_LINK_COLOR } from '../constants';
 
 const styles = StyleSheet.create({

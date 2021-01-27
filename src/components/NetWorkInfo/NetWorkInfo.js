@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -6,80 +6,107 @@ import {
   Text,
   TouchableOpacity,
   Animated,
-  Easing
+  Easing,
 } from 'react-native';
-import { default as NetInfo } from '@react-native-community/netinfo';
+import {default as NetInfo} from '@react-native-community/netinfo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
+import store from '../../store';
+import {ORIGIN_DEV_API_DOMAIN} from '../../network/API/BaseAPI';
 
 const styles = StyleSheet.create({
   wrapper: {
     width: '100%',
     zIndex: 9999999,
     top: 0,
-    position: 'absolute'
+    position: 'absolute',
   },
   androidDivider: {
-    height: 3
+    height: 3,
   },
   container: {
-    flex: 1
+    flex: 1,
   },
   iconContainer: {
     marginRight: 15,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   icon: {
     fontSize: 26,
-    color: appConfig.colors.primary
+    color: appConfig.colors.primary,
   },
   mainContent: {
     padding: 10,
     flexDirection: 'row',
     backgroundColor: '#fafafa',
-    ...elevationShadowStyle(3)
+    ...elevationShadowStyle(3),
   },
   messageContainer: {
-    flex: 1
+    flex: 1,
   },
   title: {
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   description: {
     fontSize: 12,
     color: '#444',
     marginTop: 3,
-    fontStyle: 'italic'
+    fontStyle: 'italic',
   },
   btnContainer: {
     marginLeft: 15,
     borderRadius: 4,
     alignSelf: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   btn: {
     padding: 7,
     paddingHorizontal: 10,
     backgroundColor: appConfig.colors.primary,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   btnText: {
-    color: '#fff'
-  }
+    color: '#fff',
+  },
+
+  devServerWaterMarkWrapper: {
+    zIndex: 9999999,
+    top: 0,
+    right: 0,
+    position: 'absolute',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  devServerWaterMarkContainer: {
+    backgroundColor: 'rgba(0,0,0,1)',
+    borderRadius: 10,
+    paddingVertical: 2,
+    paddingHorizontal: 10,
+    opacity: 0.2,
+  },
+  devServerWaterMarkLabel: {
+    letterSpacing: 3,
+    fontWeight: 'bold',
+    // fontFamily: 'SairaStencilOne-Regular',
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 8
+  },
 });
 
 class NetWorkInfo extends Component {
   state = {
     isConnected: true,
-    visible: false
+    visible: false,
   };
   unsubscribe = () => {};
   animatedTranslateY = new Animated.Value(-100);
 
   get title() {
-    const { t } = this.props;
+    const {t} = this.props;
     if (!this.state.isConnected) {
       return t('networkInfo.notConnected.title');
     } else if (this.state.isWeakConnection) {
@@ -90,7 +117,7 @@ class NetWorkInfo extends Component {
   }
 
   get message() {
-    const { t } = this.props;
+    const {t} = this.props;
     if (!this.state.isConnected) {
       return t('networkInfo.notConnected.message');
     } else if (this.state.isWeakConnection) {
@@ -126,9 +153,9 @@ class NetWorkInfo extends Component {
         toValue: nextState.visible ? 0 : -100,
         duration: 300,
         easing: Easing.quad,
-        useNativeDriver: true
-      }).start(({ finished }) => {
-        finished && this.setState({ visible: nextState.visible });
+        useNativeDriver: true,
+      }).start(({finished}) => {
+        finished && this.setState({visible: nextState.visible});
       });
       return false;
     }
@@ -142,7 +169,7 @@ class NetWorkInfo extends Component {
 
   componentDidMount() {
     this.unsubscribe = NetInfo.addEventListener(
-      this.handleNetWorkState.bind(this)
+      this.handleNetWorkState.bind(this),
     );
   }
 
@@ -151,59 +178,75 @@ class NetWorkInfo extends Component {
   }
 
   handleNetWorkState(state) {
-    const { isConnected } = state;
+    const {isConnected} = state;
     const visible = !!!isConnected;
 
-    this.setState({ visible, isConnected });
+    this.setState({visible, isConnected});
   }
 
   onOk() {
-    this.setState({ visible: false });
+    this.setState({visible: false});
+  }
+
+  renderDevServerModeWaterMark() {
+    const isDevServer = store.apiDomain === ORIGIN_DEV_API_DOMAIN;
+    if (isDevServer) {
+      return (
+        <SafeAreaView pointerEvents="none" style={styles.devServerWaterMarkWrapper}>
+          <View style={styles.devServerWaterMarkContainer}>
+            <Text style={styles.devServerWaterMarkLabel}>ON DEV SERVER</Text>
+          </View>
+        </SafeAreaView>
+      );
+    }
+
+    return null;
   }
 
   render() {
     const extraStyle = {
-      transform: [{ translateY: this.animatedTranslateY }]
+      transform: [{translateY: this.animatedTranslateY}],
     };
     return (
-      <Animated.View style={[styles.wrapper, extraStyle]}>
-        <SafeAreaView
-          style={[
-            styles.container,
-            {
-              backgroundColor: this.backgroundColor
-            }
-          ]}
-        >
-          {appConfig.device.isAndroid && (
-            <View
-              style={[
-                styles.androidDivider,
-                {
-                  backgroundColor: this.backgroundColor
-                }
-              ]}
-            />
-          )}
-          <View style={styles.mainContent}>
-            <View style={styles.iconContainer}>{this.icon}</View>
-            <View style={styles.messageContainer}>
-              <Text style={styles.title}>{this.title}</Text>
-              <Text style={styles.description}>{this.message}</Text>
+      <>
+        <Animated.View style={[styles.wrapper, extraStyle]}>
+          <SafeAreaView
+            style={[
+              styles.container,
+              {
+                backgroundColor: this.backgroundColor,
+              },
+            ]}>
+            {appConfig.device.isAndroid && (
+              <View
+                style={[
+                  styles.androidDivider,
+                  {
+                    backgroundColor: this.backgroundColor,
+                  },
+                ]}
+              />
+            )}
+            <View style={styles.mainContent}>
+              <View style={styles.iconContainer}>{this.icon}</View>
+              <View style={styles.messageContainer}>
+                <Text style={styles.title}>{this.title}</Text>
+                <Text style={styles.description}>{this.message}</Text>
+              </View>
+              <View style={styles.btnContainer}>
+                <TouchableOpacity
+                  style={styles.btn}
+                  onPress={this.onOk.bind(this)}>
+                  <Text style={styles.btnText}>OK</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={styles.btnContainer}>
-              <TouchableOpacity
-                style={styles.btn}
-                onPress={this.onOk.bind(this)}
-              >
-                <Text style={styles.btnText}>OK</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </SafeAreaView>
-      </Animated.View>
+          </SafeAreaView>
+        </Animated.View>
+        {this.renderDevServerModeWaterMark()}
+      </>
     );
   }
 }
 
-export default withTranslation()(NetWorkInfo);
+export default withTranslation()(observer(NetWorkInfo));

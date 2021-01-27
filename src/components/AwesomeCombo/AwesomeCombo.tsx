@@ -5,7 +5,7 @@ import {
     LayoutChangeEvent,
     View
 } from 'react-native';
-import { useValues, timing as timingRedash, delay, transformOrigin, useClocks, TimingParams } from 'react-native-redash';
+import { useValues, timing as timingRedash, delay, transformOrigin, useClocks, TimingParams } from 'react-native-redash/lib/module/v1';
 import Animated, {
     Easing,
     useCode,

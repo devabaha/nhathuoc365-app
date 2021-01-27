@@ -3,7 +3,7 @@ import { PureComponent } from 'react';
 import { View, Text, FlatList, StyleSheet, ViewStyle, StyleProp } from 'react-native';
 //@ts-ignore
 import SkeletonLoading from '../../../SkeletonLoading';
-import { SKELETON_COLOR } from '../../constants';
+import { SKELETON_COLOR } from '../../../SkeletonLoading/constants';
 
 export interface HomeCardListSkeletonProps {
     itemContainerStyle?: StyleProp<ViewStyle>;
@@ -83,7 +83,6 @@ class HomeCardListSkeleton extends PureComponent<HomeCardListSkeletonProps> {
                     style={styles.skeletonContainer}
                     width="100%"
                     height="100%"
-                    loading
                 />
             </View>
         );

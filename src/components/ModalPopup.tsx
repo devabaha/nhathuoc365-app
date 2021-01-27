@@ -7,7 +7,8 @@ import {
     Easing,
     Animated,
     TouchableOpacity,
-    TouchableHighlight
+    TouchableHighlight,
+    TouchableWithoutFeedback
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -84,10 +85,6 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
             left: '-100%',
             top: '-100%'
         },
-        imageDimension: {
-            width: undefined,
-            height: undefined
-        },
         imgRealDimension: {
             width: undefined,
             height: undefined
@@ -111,6 +108,12 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
 
     componentWillUnmount() {
         this.eventTracker.clearTracking();
+    }
+
+    handleCloseForeground() {
+        if (this.state.imgRealDimension.width !== undefined) {
+            this.handleClose();
+        }
     }
 
     handleClose() {
@@ -235,7 +238,8 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
                     })
                 },
                 (err) => {
-                    console.log("%cload_image_popup", "color:red", err)
+                    this.handleClose();
+                    console.log("%cload_image_popup", "color:red", err);
                     //@ts-ignore
                     flashShowMessage({
                         type: "danger",
@@ -291,36 +295,38 @@ class ModalPopup extends PureComponent<ModalPopupProps> {
         }
 
         return (
-            <View style={styles.container}>
-                <Animated.View style={[styles.background, animatedBackgroundStyle]} />
-                <View style={[
-                    styles.iconWrapper,
-                    this.state.closeBtnPosition,
-                ]}>
-                    <TouchableOpacity
-                        onPress={this.handleClose.bind(this)}
-                        style={styles.iconContainer}
+            <TouchableWithoutFeedback onPress={this.handleCloseForeground.bind(this)}>
+                <View style={styles.container}>
+                    <Animated.View style={[styles.background, animatedBackgroundStyle]} />
+                    <View style={[
+                        styles.iconWrapper,
+                        this.state.closeBtnPosition,
+                    ]}>
+                        <TouchableOpacity
+                            onPress={this.handleClose.bind(this)}
+                            style={styles.iconContainer}
+                        >
+                            <Icon name="close" style={styles.icon} />
+                        </TouchableOpacity>
+                    </View>
+
+                    <Animated.View
+                        style={[
+                            styles.imageContainer,
+                            animatedImageStyle
+                        ]}
+                        onLayout={this.handleImageLayout.bind(this)}
                     >
-                        <Icon name="close" style={styles.icon} />
-                    </TouchableOpacity>
+                        <Image
+                            ref={this.refPopup}
+                            source={{ uri: this.props.image }}
+                            style={styles.image}
+                        />
+                    </Animated.View>
+
+                    {this.renderMaskPressing()}
                 </View>
-
-                <Animated.View
-                    style={[
-                        styles.imageContainer,
-                        animatedImageStyle
-                    ]}
-                    onLayout={this.handleImageLayout.bind(this)}
-                >
-                    <Image
-                        ref={this.refPopup}
-                        source={{ uri: this.props.image }}
-                        style={styles.image}
-                    />
-                </Animated.View>
-
-                {this.renderMaskPressing()}
-            </View>
+            </TouchableWithoutFeedback>
         );
     }
 }

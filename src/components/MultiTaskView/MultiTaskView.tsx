@@ -39,7 +39,7 @@ import Animated, {
 import appConfig from 'app-config';
 import { RectButton, PanGestureHandler, State } from 'react-native-gesture-handler';
 
-import { useValue, useClock, usePanGestureHandler, translate, withOffset, withDecay, diffClamp, multiplyTo, between, clamp, delay, withSpring, withSpringTransition, transformOrigin } from 'react-native-redash';
+import { useValue, useClock, usePanGestureHandler, translate, withOffset, withDecay, diffClamp, multiplyTo, between, clamp, delay, withSpring, withSpringTransition, transformOrigin } from 'react-native-redash/lib/module/v1';
 const StyleGuide = {
   spacing: 8,
   palette: {

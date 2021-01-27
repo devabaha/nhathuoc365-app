@@ -68,12 +68,12 @@ class Request extends Component {
                     {this.props.title}
                   </Text>
                 )}
-                {!!notiMess && notiMess !== '0' && (
                   <NotiBadge
                     label={notiMess}
                     containerStyle={styles.notiMess}
+                    show={!!notiMess && notiMess !== '0'}
+                    animation
                   />
-                )}
               </View>
               {!!this.props.subTitle && (
                 <Text numberOfLines={2} style={styles.subTitle}>

@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
     container: {
     },
     layoutContainer: {
+        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         paddingVertical: 12,
@@ -39,11 +40,15 @@ const styles = StyleSheet.create({
     },
     iconContainer: {
         flex: 1,
+        height: '100%',
         paddingHorizontal: 15,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     icon: {
         alignSelf: 'flex-end',
-        color: '#777'
+        color: '#777',
+        fontSize: 16
     }
 })
 
@@ -129,27 +134,29 @@ class Row extends Component<RowProps> {
         return (
             <View style={[styles.container, this.props.containerStyle]}>
                 <View style={[styles.header, this.props.headerContainerStyle]}>
-                    <TouchableOpacity
-                        style={[styles.layoutContainer, { flex: !!this.props.totalHeight ? 1 : 1 }]}
-                        onPress={this.props.onPressTitle}
-                    >
-                        {!!this.props.image &&
-                            <View style={styles.imageContainer}>
-                                <Image
-                                    source={{ uri: this.props.image }}
-                                    style={styles.image}
-                                />
-                            </View>
-                        }
-                        <Text style={styles.title}>{this.props.title}</Text>
-                    </TouchableOpacity>
+                    <View style={{ flex: !isShowDirectionIcon ? 1 : undefined }}>
+                        <TouchableOpacity
+                            style={[styles.layoutContainer]}
+                            onPress={this.props.onPressTitle}
+                        >
+                            {!!this.props.image &&
+                                <View style={styles.imageContainer}>
+                                    <Image
+                                        source={{ uri: this.props.image }}
+                                        style={styles.image}
+                                    />
+                                </View>
+                            }
+                            <Text style={styles.title}>{this.props.title}</Text>
+                        </TouchableOpacity>
+                    </View>
                     {isShowDirectionIcon &&
                         <TouchableOpacity
                             onPress={this.onToggle.bind(this)}
                             style={[styles.iconContainer]}
                         >
                             <AnimatedIcon
-                                name="chevron-down"
+                                name="angle-down"
                                 style={[styles.icon, this.animatedIconStyle]}
                             />
                         </TouchableOpacity>

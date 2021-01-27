@@ -1,7 +1,8 @@
 {
   "shopTitle": {
     "preOrder": "Pre-order",
-    "buy": "Add to cart"
+    "buy": "Add to cart",
+    "book": "Book"
   },
   "attr": {
     "notChooseAttrYet": "No attribute selected",
@@ -11,6 +12,7 @@
   "addToCart": "Add to cart",
   "liked": "Liked",
   "like": "Like",
+  "productsLeft": "Stock: {{quantity}}",
   "information": {
     "brands": "BRANDS",
     "origin": "ORIGIN"

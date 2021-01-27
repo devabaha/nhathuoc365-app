@@ -28,3 +28,9 @@ export const whiteNavBarConfig = {
     color: appConfig.colors.text
   }
 };
+
+export const routerConfig = {
+  sceneStyle: {
+    backgroundColor: appConfig.colors.sceneBackground
+  }
+}

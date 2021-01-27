@@ -159,6 +159,24 @@
     },
     "qrPaymentInfo": {
       "mainTitle": "Payment acceptance"
+    },
+    "premiumInfo": {
+      "mainTitle": "Tier benefits"
+    },
+    "productSchedule": {
+      "mainTitle": "Select Date & Time"
+    },
+    "groupProduct": {
+      "mainTitle": "Group product"
+    },
+    "gpsListStore": {
+      "mainTitle": "List of store"
+    },
+    "agencyInformationRegister": {
+      "mainTitle": "Distributor information"
+    },
+    "commissionIncomeStatement": {
+      "mainTitle": "Commission report"
     }
   },
 

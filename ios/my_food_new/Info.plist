@@ -35,7 +35,13 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>CodePushDeploymentKey</key>
-	<string>xNmNpAwsu0EPNbXurAuwF1uLZKC5P1w_f-LBfY</string>
+	<string>DeploymentKey</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemapsurl</string>
+		<string>comgooglemaps</string>
+		<string>comgooglemaps-x-callback</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -66,11 +72,11 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Cho phép truy cập FaceID để thanh toán nhanh chóng và an toàn</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
+	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí ở mọi thời điểm</string>
+	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Cho phép ứng dụng truy cập Vị trí</string>
+	<string>Cho phép ứng dụng truy cập Vị trí để có thể giúp bạn tìm cửa hàng gần nhất</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Cho phép ứng dụng truy cập Micro</string>
 	<key>NSMotionUsageDescription</key>
@@ -79,24 +85,30 @@
 	<string>Cho phép ứng dụng truy cập Thư viện ảnh để chuyển ảnh khi chat</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Cho phép sử dụng nhận biết lời nói</string>
+	<key>OneSignal_disable_badge_clearing</key>
+	<false/>
 	<key>UIAppFonts</key>
 	<array>
+		<string>AntDesign.ttf</string>
 		<string>Entypo.ttf</string>
 		<string>EvilIcons.ttf</string>
 		<string>Feather.ttf</string>
 		<string>FontAwesome.ttf</string>
-		<string>Foundation.ttf</string>
-		<string>Ionicons.ttf</string>
-		<string>MaterialCommunityIcons.ttf</string>
-		<string>MaterialIcons.ttf</string>
-		<string>Octicons.ttf</string>
-		<string>SimpleLineIcons.ttf</string>
-		<string>Zocial.ttf</string>
-		<string>AntDesign.ttf</string>
 		<string>FontAwesome5_Brands.ttf</string>
 		<string>FontAwesome5_Regular.ttf</string>
 		<string>FontAwesome5_Solid.ttf</string>
+		<string>Foundation.ttf</string>
+		<string>Ionicons.ttf</string>
+		<string>MaterialIcons.ttf</string>
+		<string>MaterialCommunityIcons.ttf</string>
+		<string>SimpleLineIcons.ttf</string>
+		<string>Octicons.ttf</string>
+		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
+		<string>SairaStencilOne-Regular.ttf</string>
+		<string>Roboto_medium.ttf</string>
+		<string>Roboto.ttf</string>
+		<string>rubicon-icon-font.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>

@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import { Actions } from 'react-native-router-flux';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import React, {Component} from 'react';
+import {Actions} from 'react-native-router-flux';
+import {View, StyleSheet, Animated, Easing} from 'react-native';
 import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
-import { languages } from '../../i18n/constants';
-import BaseAPI, { ORIGIN_API_DOMAIN } from '../../network/API/BaseAPI';
+import {languages} from '../../i18n/constants';
+import BaseAPI, {ORIGIN_API_DOMAIN} from '../../network/API/BaseAPI';
 
 class Launch extends Component {
   constructor(props) {
@@ -15,7 +15,7 @@ class Launch extends Component {
       animatedBouncing: new Animated.Value(0),
       animatedPressing: new Animated.Value(0),
       animatedSpreading: new Animated.Value(0),
-      animatedSpreadingShadow: new Animated.Value(0)
+      animatedSpreadingShadow: new Animated.Value(0),
     };
   }
 
@@ -29,7 +29,7 @@ class Launch extends Component {
       const response = await APIHandler.user_login({
         fb_access_token: '',
         language: this.props.appLanguage,
-        locale: languages[this.props.appLanguage].locale
+        locale: languages[this.props.appLanguage].locale,
       });
       setTimeout(() => {
         this.handleAuthWithResponse(response);
@@ -52,9 +52,12 @@ class Launch extends Component {
     return false;
   }
 
-  handleAuthWithResponse = response => {
-    const user = response.data;
-    const { is_test_device } = user;
+  handleAuthWithResponse = (response) => {
+    const user = response.data || {};
+    const site = response.other_data?.site || {};
+    store.setStoreData(site);
+
+    const {is_test_device} = user;
     const isTestDevice = this.handleTestDevice(is_test_device);
 
     if (isTestDevice) {
@@ -67,15 +70,15 @@ class Launch extends Component {
       case STATUS_SUCCESS:
         store.setUserInfo(user);
         store.setAnalyticsUser(user);
+        this.props.setTabVisible({
+          [appConfig.routes.roomTab]: !!response.data.view_beehome,
+          [appConfig.routes.listBeeLand]: response.data.view_beeland
+        });
         Actions.replace(appConfig.routes.primaryTabbar);
         if (user.room) {
           Actions.jump(appConfig.routes.roomTab);
         } else {
         }
-        this.props.setTabVisible({
-          [appConfig.routes.roomTab]: !!response.data.view_beehome,
-          [appConfig.routes.listBeeLand]: response.data.view_beeland
-        });
         break;
       case STATUS_FILL_INFO_USER:
         store.setUserInfo(user);
@@ -83,12 +86,12 @@ class Launch extends Component {
         Actions.replace('op_register', {
           title: 'Đăng ký thông tin',
           name_props: user.name,
-          hideBackImage: true
+          hideBackImage: true,
         });
         break;
       case STATUS_UNDEFINED_USER:
         Actions.replace(appConfig.routes.phoneAuth, {
-          loginMode: user.loginMode ? user.loginMode : 'FIREBASE' //FIREBASE / SMS_BRAND_NAME
+          loginMode: user.loginMode ? user.loginMode : 'FIREBASE', //FIREBASE / SMS_BRAND_NAME
         });
         break;
       default:
@@ -104,31 +107,31 @@ class Launch extends Component {
             toValue: 30,
             easing: Easing.circle,
             duration: 300,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(this.state.animatedPressing, {
             toValue: 1,
             easing: Easing.bounce,
             duration: 200,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(this.state.animatedPressing, {
             toValue: 0,
             easing: Easing.in,
             duration: 200,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(this.state.animatedBouncing, {
             toValue: 60,
             easing: Easing.in,
             duration: 600,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(this.state.animatedBouncing, {
             toValue: 0,
             duration: 0,
-            useNativeDriver: true
-          })
+            useNativeDriver: true,
+          }),
         ]),
         Animated.sequence([
           Animated.parallel([
@@ -137,28 +140,28 @@ class Launch extends Component {
               easing: Easing.in,
               duration: 600,
               delay: 400,
-              useNativeDriver: true
+              useNativeDriver: true,
             }),
             Animated.timing(this.state.animatedSpreadingShadow, {
               toValue: 1,
               easing: Easing.in,
               duration: 600,
               delay: 500,
-              useNativeDriver: true
-            })
+              useNativeDriver: true,
+            }),
           ]),
           Animated.timing(this.state.animatedSpreading, {
             toValue: 0,
             duration: 0,
-            useNativeDriver: true
+            useNativeDriver: true,
           }),
           Animated.timing(this.state.animatedSpreadingShadow, {
             toValue: 0,
             duration: 0,
-            useNativeDriver: true
-          })
-        ])
-      ])
+            useNativeDriver: true,
+          }),
+        ]),
+      ]),
     ).start();
   };
 
@@ -179,44 +182,43 @@ class Launch extends Component {
                 {
                   opacity: this.state.animatedBouncing.interpolate({
                     inputRange: [0, 30, 60],
-                    outputRange: [0.6, 1, 0.6]
+                    outputRange: [0.6, 1, 0.6],
                   }),
                   transform: [
                     {
                       translateY: this.state.animatedBouncing.interpolate({
                         inputRange: [0, 30, 60],
-                        outputRange: [0, 30, 0]
-                      })
+                        outputRange: [0, 30, 0],
+                      }),
                     },
                     {
                       scale: this.state.animatedBouncing.interpolate({
                         inputRange: [0, 30, 60],
-                        outputRange: [0.6, 1, 0.6]
-                      })
+                        outputRange: [0.6, 1, 0.6],
+                      }),
                     },
                     {
                       scaleX: this.state.animatedPressing.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [1, 1.3]
-                      })
+                        outputRange: [1, 1.3],
+                      }),
                     },
                     {
                       scaleY: this.state.animatedPressing.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [1, 0.7]
-                      })
-                    }
-                  ]
-                }
-              ]}
-            >
+                        outputRange: [1, 0.7],
+                      }),
+                    },
+                  ],
+                },
+              ]}>
               <Animated.View
                 style={[
                   styles.leftHalf,
                   {
                     opacity: this.state.animatedBouncing.interpolate({
                       inputRange: [0, 15, 30, 45, 60],
-                      outputRange: [0, 1, 1, 1, 0]
+                      outputRange: [0, 1, 1, 1, 0],
                     }),
                     transform: [
                       {
@@ -227,12 +229,12 @@ class Launch extends Component {
                             '-180deg',
                             '0deg',
                             '180deg',
-                            '360deg'
-                          ]
-                        })
-                      }
-                    ]
-                  }
+                            '360deg',
+                          ],
+                        }),
+                      },
+                    ],
+                  },
                 ]}
               />
             </Animated.View>
@@ -243,25 +245,25 @@ class Launch extends Component {
                 {
                   opacity: this.state.animatedSpreadingShadow.interpolate({
                     inputRange: [0, 0.5, 1],
-                    outputRange: [0, 1, 0]
-                  })
+                    outputRange: [0, 1, 0],
+                  }),
                 },
                 {
                   transform: [
                     {
                       scaleX: this.state.animatedSpreadingShadow.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 8]
-                      })
+                        outputRange: [0, 8],
+                      }),
                     },
                     {
                       scaleY: this.state.animatedSpreadingShadow.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0.6, 1.5]
-                      })
-                    }
-                  ]
-                }
+                        outputRange: [0.6, 1.5],
+                      }),
+                    },
+                  ],
+                },
               ]}
             />
             <Animated.View
@@ -270,17 +272,17 @@ class Launch extends Component {
                 {
                   opacity: this.state.animatedSpreading.interpolate({
                     inputRange: [0, 0.5, 1],
-                    outputRange: [0, 1, 0]
+                    outputRange: [0, 1, 0],
                   }),
                   transform: [
                     {
                       scaleX: this.state.animatedSpreading.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, 5]
-                      })
-                    }
-                  ]
-                }
+                        outputRange: [0, 5],
+                      }),
+                    },
+                  ],
+                },
               ]}
             />
           </View>
@@ -295,29 +297,29 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   logoContainer: {
     position: 'absolute',
     top: appConfig.device.height * 0.3,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   logo: {
     width: 200,
-    height: 128
+    height: 128,
   },
   text: {
     fontSize: 14,
     color: '#666',
     // marginTop: 8,
     fontWeight: '400',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   animateLoading: {
     marginTop: 40,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   leftHalf: {
     width: 0,
@@ -330,16 +332,16 @@ const styles = StyleSheet.create({
     borderTopColor: appConfig.colors.logo.sub,
     borderBottomWidth: 10,
     borderBottomColor: 'transparent',
-    borderRadius: 10
+    borderRadius: 10,
   },
   dot: {
     borderRadius: 10,
     width: 20,
     height: 20,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   bouncing: {
-    backgroundColor: appConfig.colors.logo.main
+    backgroundColor: appConfig.colors.logo.main,
   },
   spreadingShadow: {
     top: 55,
@@ -350,7 +352,7 @@ const styles = StyleSheet.create({
     zIndex: -2,
     position: 'absolute',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   spreading: {
     backgroundColor: appConfig.colors.logo.addition,
@@ -361,8 +363,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 10,
     height: 10,
-    zIndex: -1
-  }
+    zIndex: -1,
+  },
 });
 
 export default Launch;

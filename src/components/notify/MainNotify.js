@@ -17,7 +17,6 @@ import NotifyItemComponent from './NotifyItemComponent';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
 class MainNotify extends Component {
   constructor(props) {
     super(props);
@@ -81,7 +80,7 @@ class MainNotify extends Component {
     });
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this._setOptionList();
   }
 
@@ -337,4 +336,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default MainNotify;
+export default observer(MainNotify);

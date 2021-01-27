@@ -1,28 +1,39 @@
-import React, { Component } from 'react';
-import { StyleSheet, ScrollView, View, RefreshControl } from 'react-native';
+import React, {Component} from 'react';
+import {
+  StyleSheet,
+  ScrollView,
+  View,
+  RefreshControl,
+} from 'react-native';
 import Swiper from 'react-native-swiper';
+import Animated from 'react-native-reanimated';
 import Items from './Items';
 import ListHeader from './ListHeader';
 import store from 'app-store';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import NoResult from '../NoResult';
+import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
 class CategoryScreen extends Component {
+  static defaultProps = {
+    animatedScrollY: new Animated.Value(0),
+    scrollEnabled: true
+  };
   constructor(props) {
     super(props);
 
-    const { item, that } = props;
+    const {item, promotions} = props;
     let header_title;
 
     if (item.id == 0) {
       header_title = `— ${props.t('tabs.screen.mainTitle')} —`;
     } else {
       header_title = `— ${props.t('tabs.screen.categoryTitle', {
-        productName: item.name
+        productName: item.name,
       })} —`;
     }
 
@@ -33,9 +44,9 @@ class CategoryScreen extends Component {
       items_data: null,
       items_data_bak: null,
       page: 0,
-      promotions: that.state.promotions,
+      promotions,
       isAll: item.id == 0,
-      fetched: false
+      fetched: false,
     };
 
     this.unmounted = false;
@@ -52,7 +63,7 @@ class CategoryScreen extends Component {
   }
 
   componentDidMount() {
-    var { item, index } = this.props;
+    var {item, index} = this.props;
     this.start_time = 0;
 
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
@@ -73,7 +84,7 @@ class CategoryScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    var { item, index, cate_index } = nextProps;
+    var {item, index, cate_index} = nextProps;
 
     if (
       index == cate_index &&
@@ -95,7 +106,7 @@ class CategoryScreen extends Component {
   _goItem(item) {
     Actions.item({
       title: item.name,
-      item
+      item,
     });
   }
 
@@ -103,11 +114,11 @@ class CategoryScreen extends Component {
     this.setState(
       {
         refreshing: true,
-        page: 0
+        page: 0,
       },
       () => {
         this._getItemByCateIdFromServer(this.props.item.id, 1000);
-      }
+      },
     );
   }
 
@@ -118,7 +129,7 @@ class CategoryScreen extends Component {
 
     this.setState(
       {
-        loading: this.state.items_data ? false : true
+        loading: this.state.items_data ? false : true,
       },
       () => {
         // load
@@ -129,10 +140,10 @@ class CategoryScreen extends Component {
             syncInBackground: true,
             syncParams: {
               extraFetchOptions: {},
-              someFlag: true
-            }
+              someFlag: true,
+            },
           })
-          .then(data => {
+          .then((data) => {
             // delay append data
             setTimeout(() => {
               if (this.props.index == 0) {
@@ -142,13 +153,13 @@ class CategoryScreen extends Component {
               this.setState({
                 items_data:
                   data.length > STORES_LOAD_MORE
-                    ? [...data, { id: -1, type: 'loadmore' }]
+                    ? [...data, {id: -1, type: 'loadmore'}]
                     : data,
                 items_data_bak: data,
                 loading: false,
                 fetched: true,
                 refreshing: false,
-                page: 1
+                page: 1,
               });
 
               action(() => {
@@ -159,10 +170,10 @@ class CategoryScreen extends Component {
               // this._loadNextCate();
             }, this._delay());
           })
-          .catch(err => {
+          .catch((err) => {
             this._getItemByCateIdFromServer(category_id);
           });
-      }
+      },
     );
   }
 
@@ -179,7 +190,7 @@ class CategoryScreen extends Component {
       var response = await APIHandler.site_category_product(
         site_id,
         category_id,
-        this.state.page
+        this.state.page,
       );
       console.log(response, site_id, category_id);
       if (response && response.status == STATUS_SUCCESS) {
@@ -196,13 +207,13 @@ class CategoryScreen extends Component {
             this.setState({
               items_data:
                 response.data.length >= STORES_LOAD_MORE
-                  ? [...items_data, { id: -1, type: 'loadmore' }]
+                  ? [...items_data, {id: -1, type: 'loadmore'}]
                   : items_data,
               items_data_bak: items_data,
               loading: false,
               fetched: true,
               refreshing: false,
-              page: this.state.page
+              page: this.state.page,
             });
 
             action(() => {
@@ -217,7 +228,7 @@ class CategoryScreen extends Component {
               storage.save({
                 key: store_category_key,
                 data: items_data,
-                expires: STORE_CATEGORY_CACHE
+                expires: STORE_CATEGORY_CACHE,
               });
             }
           }, delay || this._delay());
@@ -256,22 +267,19 @@ class CategoryScreen extends Component {
   }
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     // show loading
     if (this.state.loading) {
-      return (
-        <View style={styles.containerScreen}>
-          <Indicator />
-        </View>
-      );
+      return <ListStoreProductSkeleton />;
     }
 
-    const { items_data, header_title, fetched, loading } = this.state;
+    const {items_data, header_title, fetched, loading} = this.state;
 
     return (
-      <View style={styles.containerScreen}>
-        <ScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
+      <View style={[styles.containerScreen, this.props.containerStyle]}>
+        <Animated.ScrollView
+          scrollEnabled={this.props.scrollEnabled}
+          contentContainerStyle={{flexGrow: 1}}
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
@@ -279,35 +287,60 @@ class CategoryScreen extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }
-        >
+          onScrollBeginDrag={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: this.props.animatedContentOffsetY,
+                  },
+                },
+              },
+            ],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          onScroll={Animated.event(
+            [
+              {
+                nativeEvent: {
+                  contentOffset: {
+                    y: this.props.animatedScrollY,
+                  },
+                },
+              },
+            ],
+            {
+              useNativeDriver: true,
+            },
+          )}>
           {this.state.isAll &&
             this.state.promotions &&
             this.state.promotions.length > 0 && (
               <Swiper
                 style={{
-                  marginVertical: 8
+                  marginVertical: 8,
                 }}
                 width={Util.size.width}
                 height={Util.size.width * 0.96 * (50 / 320) + 16}
                 autoplayTimeout={3}
                 showsPagination={false}
                 horizontal
-                autoplay
-              >
+                autoplay>
                 {this.state.promotions.map((banner, i) => {
                   return (
                     <View
                       key={i}
                       style={{
                         width: Util.size.width,
-                        alignItems: 'center'
-                      }}
-                    >
+                        alignItems: 'center',
+                      }}>
                       <CachedImage
-                        source={{ uri: banner.banner }}
+                        source={{uri: banner.banner}}
                         style={{
                           width: Util.size.width * 0.96,
-                          height: Util.size.width * 0.96 * (50 / 320)
+                          height: Util.size.width * 0.96 * (50 / 320),
                         }}
                       />
                     </View>
@@ -322,9 +355,8 @@ class CategoryScreen extends Component {
             style={{
               flexDirection: 'row',
               flexWrap: 'wrap',
-              paddingTop: 7
-            }}
-          >
+              paddingTop: 7,
+            }}>
             {items_data != null
               ? items_data.map((item, index) => (
                   <Items
@@ -350,7 +382,7 @@ class CategoryScreen extends Component {
               )}
             </View>
           ) : null}
-        </ScrollView>
+        </Animated.ScrollView>
       </View>
     );
   }

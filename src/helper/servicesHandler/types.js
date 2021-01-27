@@ -29,11 +29,13 @@ export const SERVICES_TYPE = {
 
   /** QRBARCODE */
   ACCUMULATE_POINTS: 'ACCUMULATE_POINTS_TYPE',
+  QRCODE_SCAN_TYPE: 'QRCODE_SCAN_TYPE',
   QRCODE_SCAN: 'qrscan',
 
   /** VOUCHER */
   LIST_VOUCHER: 'list_voucher',
   MY_VOUCHER: 'my_voucher',
+  MY_VOUCHER_TYPE: 'MY_VOUCHER_TYPE',
   MY_VOUCHER_DETAIL: 'my_voucher_detail',
   VOUCHER_DETAIL: 'voucher_detail',
 
@@ -66,12 +68,14 @@ export const SERVICES_TYPE = {
 
   /** STORE */
   OPEN_SHOP: 'open_shop',
+  GPS_LIST_STORE: 'gps_list_store',
 
   /** COMMUNICATION */
   CALL: 'call',
 
   /** PRODUCT */
   PRODUCT_DETAIL: 'product_detail',
+  GROUP_PRODUCT: 'group_product',
 
   /** AFFILIATE */
   AFFILIATE: 'affiliate',
@@ -89,5 +93,11 @@ export const SERVICES_TYPE = {
   POP_UP: 'popup',
 
   /** SCHEDULE BOOKING */
-  SCHEDULE_BOOKING: 'schedule_booking'
+  SCHEDULE_BOOKING: 'schedule_booking',
+
+  /** PREMIUMS */
+  PREMIUM_INFO: 'PREMIUM_INFO',
+
+  /** COMMISSION */
+  COMMISSION_INCOME_STATEMENT: 'commission_income_statement'
 };

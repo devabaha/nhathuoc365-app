@@ -1,4 +1,4 @@
 <resources>
-	<string moduleConfig="true" name="reactNativeCodePush_androidDeploymentKey">TmfMXtNe5yrz6tYSKRAvT2YjzM_Kjg-2NWEBuB</string>
+	<string moduleConfig="true" name="CodePushDeploymentKey">CodePushDeploymentKey</string>
     <string name="app_name">HomeID</string>
 </resources>

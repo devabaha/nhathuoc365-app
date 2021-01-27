@@ -7,7 +7,7 @@
       "title": "Phone number"
     },
     "birthdate": {
-      "title": "Birthdate"
+      "title": "Date of birth"
     },
     "gender": {
       "title": "Gender"
@@ -17,6 +17,9 @@
     },
     "address": {
       "title": "Address"
+    },
+    "city": {
+      "title": "Province/City"
     }
   },
   "signOut": {

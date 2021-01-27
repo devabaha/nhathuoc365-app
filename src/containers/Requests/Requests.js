@@ -24,10 +24,10 @@ import Button from '../../components/Button';
  * @version 1.0.1
  * @author [Nguyễn Hoàng Minh](https://github.com/minhnguyenit14)
  */
-Request.propTypes = {
-  siteId: PropTypes.string.isRequired
-};
 class Requests extends Component {
+  static propTypes = {
+    siteId: PropTypes.string.isRequired
+  }
   state = {
     loading: true,
     refreshing: false,

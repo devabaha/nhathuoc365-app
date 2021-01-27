@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { SafeAreaView, StyleSheet, Keyboard } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import countries from 'world-countries';
-
 import appConfig from 'app-config';
 import store from 'app-store';
 import { RESEND_OTP_INTERVAL } from './constants';
@@ -44,10 +43,9 @@ class PhoneAuth extends Component {
     this.slackErrorFirebaseRequest = new APIRequest();
     this.requests = [this.slackErrorFirebaseRequest];
     this.unmounted = false;
+
     this.phoneAuth = new PhoneAuthenticate();
-    this.phoneAuth.setInstantVerifySuccess = this.firebaseConfirmCode.bind(
-      this
-    );
+    this.phoneAuth.setInstantVerifySuccess = this.firebaseConfirmCode.bind(this);
   }
 
   getGeoCurrentCountry() {
@@ -200,6 +198,7 @@ class PhoneAuth extends Component {
     const { t } = this.props;
     this.phoneAuth.updateConfirmData(
       response => {
+        console.log(response);
         switch (this.phoneAuth.loginMode) {
           case LOGIN_MODE.FIREBASE:
             this.firebaseConfirmCode(response);
@@ -260,14 +259,14 @@ class PhoneAuth extends Component {
         name_props: response.data.name
       });
     } else {
-      Actions.replace(appConfig.routes.primaryTabbar);
-      if (response.data.room) {
-        Actions.jump(appConfig.routes.roomTab);
-      }
       this.props.setTabVisible({
         [appConfig.routes.roomTab]: !!response.data.view_beehome,
         [appConfig.routes.listBeeLand]: response.data.view_beeland
       });
+      Actions.replace(appConfig.routes.primaryTabbar);
+      if (response.data.room) {
+        Actions.jump(appConfig.routes.roomTab);
+      }
     }
   }
 

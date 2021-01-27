@@ -8,7 +8,7 @@ import * as Animatable from 'react-native-animatable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default class AddStoreTutorial extends Component {
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     Animatable.initializeRegistryWithDefinitions({
       slideInDown: {
         from: {

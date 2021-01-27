@@ -71,6 +71,8 @@ class Config {
         sub: '#6559c5',
         addition: '#d37ee9'
       },
+      sceneBackground: '#e9e9ee',
+      marigold: '#EEAA21',
       primary: this.primaryColor,
       white: '#fff',
       black: '#000',
@@ -117,6 +119,7 @@ class Config {
       qrBarCode: 'qrBarCode',
 
       notifies: 'notifies',
+      notifyDetail: 'notify_item',
 
       detailHistoryPayment: 'detail_history_payment',
 
@@ -173,6 +176,7 @@ class Config {
       modalSearchPlaces: 'modalSearchPlaces',
       modalRateApp: 'modalRateApp',
       modalPopup: 'modalPopup',
+      modalInput: 'modalInput',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -214,7 +218,28 @@ class Config {
       multiLevelCategory: 'multiLevelCategory',
 
       //dynamic domain
-      domainSelector: 'domainSelector'
+      domainSelector: 'domainSelector',
+
+      // Premium
+      premiumInfo: 'premiumInfo',
+
+      // Item detail
+      item: 'item',
+
+      // Product schedule
+      productSchedule: 'productSchedule',
+
+      //Group product
+      groupProduct: 'groupProduct',
+
+      // List GPS store
+      gpsListStore: 'gpsListStore',
+
+      // Agency
+      agencyInformationRegister: "agencyInformationRegister",
+
+      // Commission
+      commissionIncomeStatement: "commissionIncomeStatement"
     };
   }
 }

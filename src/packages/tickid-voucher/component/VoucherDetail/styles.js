@@ -5,7 +5,7 @@ const screenWidth = Dimensions.get('screen').width;
 
 const styles = StyleSheet.create({
   scrollViewWrapper: {
-    backgroundColor: '#f1f1f1'
+    backgroundColor: config.colors.sceneBackground
   },
   container: {
     flex: 1

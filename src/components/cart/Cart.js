@@ -29,7 +29,7 @@ class Cart extends Component {
     this.eventTracker = new EventTracker();
   }
 
-  componentWillMount() {
+  componentWillUnMount() {
     this.unmounted = true;
     Actions.refresh({
       renderRightButton: this._renderRightButton.bind(this)

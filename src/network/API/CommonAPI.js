@@ -52,6 +52,9 @@ class CommonAPI {
   get SEARCH_PRODUCT() {
     return BaseAPI.apiDomain + 'apiSite/search_product';
   }
+  get SITE_PRODUCT_CONFIG() {
+    return BaseAPI.apiDomain + 'apiSite/product_config';
+  }
   get USER_SITES() {
     return BaseAPI.apiDomain + 'apiUser/sites';
   }
@@ -374,8 +377,41 @@ class CommonAPI {
   get SLACK_ERROR_FIREBASE() {
     return 'https://hooks.slack.com/services/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';
   }
+
+  // Premium
+  get GET_PREMIUMS() {
+    return BaseAPI.apiDomain + 'apiPremiums/index';
+  }
+
+  get USER_SITE_CITY() {
+    return BaseAPI.apiDomain + 'apiUser/site_city';
+  }
+
+  get CART_SERVICE_BOOK() {
+    return BaseAPI.apiDomain + 'apiCart/book';
+  }
+
+  get SITE_GROUP_PRODUCT() {
+    return BaseAPI.apiDomain + 'apiSite/group_product';
+  }
+
+  get USER_SITE_STORE() {
+    return BaseAPI.apiDomain + 'apiUser/site_store';
+  }
+
+  get USER_CHOOSE_STORE() {
+    return BaseAPI.apiDomain + 'apiUser/choose_store';
+  }
+
+  get USER_REGISTER_GOLD_MEMBER(){
+    return BaseAPI.apiDomain + 'apiUser/register_gold_member';
+  }
+
+  get USER_SITE_CART_COMMISSION() {
+    return BaseAPI.apiDomain + 'apiUser/site_cart_commission';
+  }
 }
 
 export default new CommonAPI();
 
-export { CommonAPI };
+export {CommonAPI};

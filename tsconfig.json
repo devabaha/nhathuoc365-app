@@ -1,21 +1,22 @@
 {
-  "compilerOptions": {
-    "baseUrl": "./src",
-    "paths": {
-      "app-config": ["config.js"]
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "baseUrl": ".",
+        /* Base directory to resolve non-absolute module names. */
+        "paths": {
+            "app-util": ["./src/util"],
+            "app-store": ["./src/store"],
+            "app-config": ["./src/config.js"],
+            "app-packages": ["./src/packages"],
+        },
+        "jsx": "react",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "allowJs": true,
+        "checkJs": false,
     },
-    "allowJs": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "noEmit": true,
-    "jsx": "preserve",
-    "target": "es5",
-    "lib": ["es5", "es2015", "es2016", "dom"],
-    "isolatedModules": true
-  },
-  "include": ["."]
+    "exclude": [
+      "node_modules"
+    ]
 }

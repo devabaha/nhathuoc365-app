@@ -1,6 +1,6 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -11,33 +11,29 @@ import {
   FlatList,
   RefreshControl,
   ScrollView,
-  Alert
+  Alert,
 } from 'react-native';
 
 //library
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
-import { reaction } from 'mobx';
+import {Actions, ActionConst} from 'react-native-router-flux';
+import {reaction} from 'mobx';
 import store from '../../store/Store';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class CoinWallet extends Component {
+class CoinWallet extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      historiesData: null
+      historiesData: null,
     };
 
     this.eventTracker = new EventTracker();
   }
 
-  componentWillMount() {
-    this._getWallet();
-  }
-
   componentDidMount() {
+    this._getWallet();
     this.eventTracker.logCurrentView();
   }
 
@@ -51,7 +47,7 @@ export default class CoinWallet extends Component {
       var response = await APIHandler.user_coins_wallet();
       console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
-        this.setState({ historiesData: response.data.histories });
+        this.setState({historiesData: response.data.histories});
       }
     } catch (e) {
       console.log(e);
@@ -63,22 +59,22 @@ export default class CoinWallet extends Component {
     if (response && response.status == STATUS_SUCCESS) {
       Actions.notify_item({
         title: 'Giới thiệu ví XU',
-        data: response.data
+        data: response.data,
       });
     }
   }
 
-  renderRow({ item, index }) {
+  renderRow({item, index}) {
     return (
       <View>
         <View style={styles.containerRowView}>
           <Icon
-            style={{ flex: 1, marginLeft: 20 }}
+            style={{flex: 1, marginLeft: 20}}
             name={item.change >= 0 ? 'plus-square' : 'minus-square'}
             size={25}
             color="rgb(0,0,0)"
           />
-          <View style={{ flex: 6, flexDirection: 'column' }}>
+          <View style={{flex: 6, flexDirection: 'column'}}>
             <Text>{item.content}</Text>
             <View style={styles.bottomRowView}>
               <Text style={styles.dateText}>{item.created}</Text>
@@ -95,7 +91,7 @@ export default class CoinWallet extends Component {
   }
 
   renderTopLabelCoin() {
-    const { user_info } = store;
+    const {user_info} = store;
     return (
       <View style={styles.profile_list_opt_btn}>
         <View style={styles.iconView}>
@@ -134,14 +130,14 @@ export default class CoinWallet extends Component {
         <TouchableWithoutFeedback onPress={() => this.onPressNew()}>
           <View style={styles.newsCoinView}>
             <Icon
-              style={{ flex: 1, marginLeft: 20 }}
+              style={{flex: 1, marginLeft: 20}}
               name="newspaper-o"
               size={25}
               color="#4267b2"
             />
-            <Text style={{ flex: 7, fontSize: 16 }}>Giới thiệu về ví XU</Text>
+            <Text style={{flex: 7, fontSize: 16}}>Giới thiệu về ví XU</Text>
             <Icon
-              style={{ flex: 1, marginLeft: 10 }}
+              style={{flex: 1, marginLeft: 10}}
               name="chevron-right"
               size={20}
               color="rgb(200,200,200)"
@@ -164,7 +160,7 @@ const styles = StyleSheet.create({
     flex: 1,
 
     marginBottom: 0,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   profile_list_opt_btn: {
     width: Util.size.width,
@@ -175,45 +171,45 @@ const styles = StyleSheet.create({
     paddingHorizontal: 4,
     marginTop: 20,
     borderTopWidth: 0,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   point_icon: {
     width: 60,
-    height: 60
+    height: 60,
   },
   iconView: {
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   profile_list_icon_box: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     width: 70,
-    height: 70
+    height: 70,
   },
   profile_list_label: {
     fontSize: 18,
     color: '#000000',
-    fontWeight: '400'
+    fontWeight: '400',
   },
   profile_list_small_label: {
     fontSize: 14,
     color: '#666666',
-    marginTop: 2
+    marginTop: 2,
   },
   labelCoinParentView: {
     flex: 5,
     marginTop: 0,
     marginLeft: 10,
-    marginRight: 10
+    marginRight: 10,
   },
   labelCoinView: {
     marginTop: 0,
     marginLeft: 0,
     marginRight: 0,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   lineView: {
     marginTop: 10,
@@ -221,7 +217,7 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 10,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   lineViewWallet: {
     marginTop: 1,
@@ -229,45 +225,47 @@ const styles = StyleSheet.create({
     marginRight: 1,
     marginBottom: 1,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   lineRowView: {
     marginTop: 0,
     marginLeft: 10,
     marginRight: 10,
     height: 1,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   newsCoinView: {
     flexDirection: 'row',
     height: 30,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   historyCoinText: {
     marginLeft: 20,
     marginBottom: 20,
     fontSize: 18,
-    color: 'rgb(0,0,0)'
+    color: 'rgb(0,0,0)',
   },
   containerRowView: {
     flex: 1,
     height: 70,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   bottomRowView: {
     marginTop: 5,
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   dateText: {
     fontSize: 16,
-    color: 'rgb(150,150,150)'
+    color: 'rgb(150,150,150)',
   },
   pointText: {
     fontSize: 16,
     color: 'rgb(0,0,0)',
     fontWeight: 'bold',
-    marginRight: 15
-  }
+    marginRight: 15,
+  },
 });
+
+export default observer(CoinWallet);

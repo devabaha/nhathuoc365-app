@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -7,11 +7,10 @@ import {
   TouchableHighlight,
   FlatList,
   RefreshControl,
-  Animated,
   SafeAreaView,
-  TouchableOpacity
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
+import Animated, {interpolate} from 'react-native-reanimated';
 import store from '../../store/Store';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
@@ -20,11 +19,14 @@ import RightButtonOrders from '../RightButtonOrders';
 import Button from 'react-native-button';
 import appConfig from 'app-config';
 import IconFeather from 'react-native-vector-icons/Feather';
-import { willUpdateState } from '../../packages/tickid-chat/helper';
+import {willUpdateState} from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
 import StoreNavBarHomeID from './StoreNavBarHomeID';
 import HeaderStoreHomeID from './HeaderStoreHomeID';
 import EventTracker from '../../helper/EventTracker';
+import ListStoreProductSkeleton from './ListStoreProductSkeleton';
+import CategoriesSkeleton from './CategoriesSkeleton';
+import {findNodeHandle} from 'react-native';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const BANNER_ABSOLUTE_HEIGHT =
@@ -41,11 +43,11 @@ const COLLAPSED_HEADER_VIEW =
 
 class Stores extends Component {
   static propTypes = {
-    categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+    categoryId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   };
 
   static defaultProps = {
-    categoryId: 0
+    categoryId: 0,
   };
 
   constructor(props) {
@@ -57,7 +59,7 @@ class Stores extends Component {
       category_nav_index: 0,
       categories_data: null,
       selected_category: { id: 0, name: '' },
-      scrollY: new Animated.Value(0),
+      // scrollY: new Animated.Value(0),
       moreOptions: [],
       flatListHeight: undefined,
       siteNotify: {
@@ -70,31 +72,40 @@ class Stores extends Component {
     this.flatListPagesHeight = [];
     this.refScrollView = React.createRef();
     this.refCategories = [];
+    this.refCates = [];
 
     action(() => {
       store.setStoresFinish(false);
     })();
 
     this.eventTracker = new EventTracker();
+    this.animatedScrollY = new Animated.Value(0);
+    this.animatedContentOffsetY = new Animated.Value(0);
+    this.scrollY = new Animated.Value(0);
+  }
+
+  get isGetFullStore() {
+    return this.props.categoryId === 0;
   }
 
   componentDidMount() {
     this._getNotifySite();
     this._initial(this.props);
-    this.state.scrollY.addListener(this.scrollListener);
+    // this.state.scrollY.addListener(this.scrollListener);
 
     // pass add store tutorial
     var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
     storage.save({
       key: key_tutorial,
-      data: { finish: true },
-      expires: null
+      data: {finish: true},
+      expires: null,
     });
 
     setTimeout(() => {
       const { t } = this.props;
       Actions.refresh({
-        title: ''
+        title: '',
+        // right: this._renderRightButton(),
       });
     });
     this.eventTracker.logCurrentView();
@@ -102,7 +113,7 @@ class Stores extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
-    this.state.scrollY.removeListener(this.scrollListener);
+    // this.state.scrollY.removeListener(this.scrollListener);
     this.eventTracker.clearTracking();
   }
 
@@ -128,11 +139,11 @@ class Stores extends Component {
         {
           loading: true,
           category_nav_index: 0,
-          categories_data: null
+          categories_data: null,
         },
         () => {
           this._initial(nextProps);
-        }
+        },
       );
     }
   }
@@ -168,11 +179,11 @@ class Stores extends Component {
   }
 
   parseDataCategories(response) {
-    const { t } = this.props;
+    const {t} = this.props;
     if (!this.props.categoryId || this.props.extraCategoryId) {
       response.data.categories.unshift({
         id: this.props.extraCategoryId || 0,
-        name: this.props.extraCategoryName || t('tabs.store.title')
+        name: this.props.extraCategoryName || t('tabs.store.title'),
       });
     }
 
@@ -189,7 +200,7 @@ class Stores extends Component {
             this._changeCategory(item, index);
             return;
           }
-        })
+        }),
     );
   }
 
@@ -238,46 +249,136 @@ class Stores extends Component {
     }
   };
 
+  _renderRightButton() {
+    return (
+      <View style={[styles.right_btn_box]}>
+        {/* <RightButtonOrders tel={store.store_data.tel} /> */}
+        <Button
+          onPress={() => {
+            Actions.push(appConfig.routes.searchStore, {
+              categories: this.state.categories_data,
+              category_id: this.state.selected_category.id,
+              category_name:
+                this.state.selected_category.id !== 0
+                  ? this.state.selected_category.name
+                  : '',
+            });
+          }}>
+          <IconFeather size={26} color={appConfig.colors.white} name="search" />
+        </Button>
+        <RightButtonChat tel={store.store_data.tel} />
+      </View>
+    );
+  }
+
   _changeCategory(item, index, nav_only) {
     this.setState({ flatListHeight: this.flatListPagesHeight[index] });
     if (this.refs_category_nav) {
       const categories_count = this.state.categories_data.length;
-      const end_of_list = categories_count - index - 1 >= 3;
+      const end_of_list = categories_count - index - 1 >= 1;
 
       setTimeout(() =>
         willUpdateState(this.unmounted, () => {
           // nav
           if (index > 0 && end_of_list) {
-            this.refs_category_nav.scrollToIndex({
-              index: index - 1,
-              animated: true
+            this.refs_category_nav.scrollToOffset({
+              offset: this.refCates[index - 1].offsetX,
             });
           } else if (!end_of_list) {
             this.refs_category_nav.scrollToEnd();
           } else if (index == 0) {
-            this.refs_category_nav.scrollToIndex({ index, animated: true });
+            this.refs_category_nav.scrollToOffset({
+              offset: this.refCates[index].offsetX,
+            });
           }
 
           if (this.refs_category_screen && !nav_only) {
-            this.refs_category_screen.scrollToIndex({
-              index: index,
-              animated: true
-            });
+            this.refs_category_screen.scrollToIndex({index});
           }
-        })
+        }),
       );
 
       if (item) {
         this.setState({
           category_nav_index: index,
-          selected_category: item
+          selected_category: item,
         });
       } else if (nav_only) {
         this.setState({
           category_nav_index: index,
-          selected_category: this.state.categories_data[index]
+          selected_category: this.state.categories_data[index],
         });
       }
+    }
+  }
+
+  _onScrollEnd(e) {
+    let contentOffset = e.nativeEvent.contentOffset;
+    let viewSize = e.nativeEvent.layoutMeasurement;
+
+    // Divide the horizontal offset by the width of the view to see which page is visible
+    let pageNum = Math.floor(contentOffset.x / viewSize.width);
+
+    this._changeCategory(null, pageNum, true);
+  }
+
+  _confirmRemoveCartItem(item) {
+    this.cartItemConfirmRemove = item;
+
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.open();
+    }
+  }
+
+  _closePopup() {
+    if (this.refs_modal_delete_cart_item) {
+      this.refs_modal_delete_cart_item.close();
+    }
+  }
+
+  async _removeCartItem() {
+    if (!this.cartItemConfirmRemove) {
+      return;
+    }
+
+    this._closePopup();
+
+    var item = this.cartItemConfirmRemove;
+
+    try {
+      const data = {
+        quantity: 0,
+        model: item.model,
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data,
+      );
+
+      if (response && response.status == STATUS_SUCCESS) {
+        setTimeout(() => {
+          action(() => {
+            store.setCartData(response.data);
+            // prev item in list
+            if (isAndroid && store.cart_item_index > 0) {
+              var index = store.cart_item_index - 1;
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
+            }
+          })();
+        }, 450);
+
+        flashShowMessage({
+          message: response.message,
+          type: 'success',
+        });
+      }
+
+      this.cartItemConfirmRemove = undefined;
+    } catch (e) {
+      console.log(e + ' site_cart_update');
     }
   }
 
@@ -326,6 +427,20 @@ class Stores extends Component {
     }
   };
 
+  measureCategoriesLayout = (ref, category, index) => {
+    if (ref&& (!this.refCates[index] || this.refCates[index].offsetX === undefined)) {
+      setTimeout(() => {
+      if (!this.refs_category_nav) return;
+
+      ref.measureLayout(findNodeHandle(this.refs_category_nav), (offsetX) => {
+        this.refCates[index] = {
+          offsetX,
+        };
+      });
+      });
+    }
+  };
+
   _onRefreshCateEnd = () => {
     if (!this.unmounted) {
       appConfig.device.isAndroid &&
@@ -345,7 +460,7 @@ class Stores extends Component {
     const animated = {
       transform: [
         {
-          translateY: this.state.scrollY.interpolate({
+          translateY: interpolate(this.scrollY, {
             inputRange: [0, COLLAPSED_HEADER_VIEW],
             outputRange: [0, -COLLAPSED_HEADER_VIEW],
             extrapolate: 'clamp'
@@ -356,7 +471,7 @@ class Stores extends Component {
 
     const infoContainerStyle = {
       height: BANNER_VIEW_HEIGHT / 1.618,
-      opacity: this.state.scrollY.interpolate({
+      opacity: interpolate(this.scrollY, {
         inputRange: [0, COLLAPSED_HEADER_VIEW / 1.2],
         outputRange: [1, 0],
         extrapolate: 'clamp'
@@ -366,7 +481,7 @@ class Stores extends Component {
     const imageBgStyle = {
       transform: [
         {
-          scale: this.state.scrollY.interpolate({
+          scale: interpolate(this.scrollY, {
             inputRange: [0, COLLAPSED_HEADER_VIEW],
             outputRange: [1, 1.1],
             extrapolate: 'clamp'
@@ -378,6 +493,7 @@ class Stores extends Component {
     const { t } = this.props;
     return (
       <SafeAreaView style={[styles.container]}>
+
         <StoreNavBarHomeID
           onPressSearch={this.handleSearchInStore}
           placeholder={t('navBar.placeholder')}
@@ -410,7 +526,7 @@ class Stores extends Component {
               zIndex: 2,
               transform: [
                 {
-                  translateY: this.state.scrollY.interpolate({
+                  translateY: interpolate(this.scrollY, {
                     inputRange: [
                       0,
                       1,
@@ -430,47 +546,52 @@ class Stores extends Component {
             }
           ]}
         >
-          {this.state.categories_data != null ? (
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              showsVerticalScrollIndicator={false}
-              ref={ref => (this.refs_category_nav = ref)}
-              onScrollToIndexFailed={() => {}}
-              data={this.state.categories_data}
-              extraData={this.state.category_nav_index}
-              keyExtractor={item => `${item.id}`}
-              horizontal={true}
-              style={styles.categories_nav}
-              renderItem={({ item, index }) => {
-                let active = this.state.category_nav_index == index;
-                return (
-                  <TouchableHighlight
-                    onPress={() => this._changeCategory(item, index)}
-                    underlayColor="transparent"
-                  >
-                    <View style={styles.categories_nav_items}>
-                      <Text
-                        style={[
-                          styles.categories_nav_items_title,
-                          active
-                            ? styles.categories_nav_items_title_active
-                            : null
-                        ]}
-                      >
-                        {item.name}
-                      </Text>
+          {this.state.categories_data != null
+          ? this.state.categories_data.length > 1 && (
+              <View style={styles.categories_nav}>
+                <FlatList
+                  showsHorizontalScrollIndicator={false}
+                  showsVerticalScrollIndicator={false}
+                  ref={(ref) => (this.refs_category_nav = ref)}
+                  onScrollToIndexFailed={() => {}}
+                  data={this.state.categories_data}
+                  extraData={this.state.category_nav_index}
+                  keyExtractor={(item) => `${item.id}`}
+                  horizontal={true}
+                  style={styles.categories_nav}
+                  renderItem={({item, index}) => {
+                    let active = this.state.category_nav_index == index;
+                    return (
+                      <TouchableHighlight
+                        onPress={() => this._changeCategory(item, index)}
+                        underlayColor="transparent">
+                        <View
+                          ref={(inst) =>
+                            this.measureCategoriesLayout(inst, item, index)
+                          }
+                          style={styles.categories_nav_items}>
+                          <Text
+                            numberOfLines={2}
+                            style={[
+                              styles.categories_nav_items_title,
+                              active
+                                ? styles.categories_nav_items_title_active
+                                : null,
+                            ]}>
+                            {item.name}
+                          </Text>
 
-                      {active && (
-                        <View style={styles.categories_nav_items_active} />
-                      )}
-                    </View>
-                  </TouchableHighlight>
-                );
-              }}
-            />
-          ) : (
-            <Indicator size="small" />
-          )}
+                          {active && (
+                            <View style={styles.categories_nav_items_active} />
+                          )}
+                        </View>
+                      </TouchableHighlight>
+                    );
+                  }}
+                />
+              </View>
+            )
+          : this.isGetFullStore && <CategoriesSkeleton />}
         </Animated.View>
 
         <Animated.ScrollView
@@ -488,17 +609,22 @@ class Stores extends Component {
           style={[styles.container]}
           scrollEventThrottle={16}
           onScroll={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: this.state.scrollY
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: y=>  Animated.block([
+                        Animated.set(this.scrollY, y),
+                        Animated.call([this.scrollY], ([value]) => this.scrollListener({value}))
+                      ])
+                    }
                   }
                 }
+              ],
+              {
+                useNativeDriver: true
               }
-            ],
-            { useNativeDriver: true }
-          )}
+            )}
         >
           <Animated.View
             style={{
@@ -534,6 +660,7 @@ class Stores extends Component {
                 renderItem={({ item, index }) => {
                   return (
                     <CategoryScreen
+                      containerStyle={{flex: undefined}}
                       ref={inst => (this.refCategories[index] = inst)}
                       scrollEnabled={false}
                       activeRefreshControl={appConfig.device.isIOS}
@@ -552,21 +679,24 @@ class Stores extends Component {
                   );
                 }}
               />
-            ) : (
-              <Indicator />
-            )}
+            )  : (
+          <ListStoreProductSkeleton />
+        )}
           </Animated.View>
         </Animated.ScrollView>
         {/* 
         {store.stores_finish == true && (
           <CartFooter
-            perfix="stores"
+            prefix="stores"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
+            animatedScrollY={this.animatedScrollY}
+            animatedContentOffsetY={this.animatedContentOffsetY}
+            animating
           />
         )}
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
           title={t('cart:popup.remove.message')}
           height={110}
           noConfirm={this._closePopup.bind(this)}
@@ -602,76 +732,6 @@ class Stores extends Component {
       </SafeAreaView>
     );
   }
-
-  _onScrollEnd(e) {
-    let contentOffset = e.nativeEvent.contentOffset;
-    let viewSize = e.nativeEvent.layoutMeasurement;
-
-    // Divide the horizontal offset by the width of the view to see which page is visible
-    let pageNum = Math.floor(contentOffset.x / viewSize.width);
-
-    this._changeCategory(null, pageNum, true);
-  }
-
-  _confirmRemoveCartItem(item) {
-    this.cartItemConfirmRemove = item;
-
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.open();
-    }
-  }
-
-  _closePopup() {
-    if (this.refs_modal_delete_cart_item) {
-      this.refs_modal_delete_cart_item.close();
-    }
-  }
-
-  async _removeCartItem() {
-    if (!this.cartItemConfirmRemove) {
-      return;
-    }
-
-    this._closePopup();
-
-    var item = this.cartItemConfirmRemove;
-
-    try {
-      const data = {
-        quantity: 0,
-        model: item.model
-      };
-
-      var response = await APIHandler.site_cart_update(
-        store.store_id,
-        item.id,
-        data
-      );
-
-      if (response && response.status == STATUS_SUCCESS) {
-        setTimeout(() => {
-          action(() => {
-            store.setCartData(response.data);
-            // prev item in list
-            if (isAndroid && store.cart_item_index > 0) {
-              var index = store.cart_item_index - 1;
-              store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, { index });
-            }
-          })();
-        }, 450);
-
-        flashShowMessage({
-          message: response.message,
-          type: 'success'
-        });
-      }
-
-      this.cartItemConfirmRemove = undefined;
-    } catch (e) {
-      console.log(e + ' site_cart_update');
-    }
-  }
 }
 
 const styles = StyleSheet.create({
@@ -685,7 +745,7 @@ const styles = StyleSheet.create({
   },
 
   items_box: {
-    width: Util.size.width
+    width: Util.size.width,
   },
 
   categories_nav: {
@@ -693,20 +753,20 @@ const styles = StyleSheet.create({
     zIndex: 1,
     height: 40,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd'
+    borderBottomColor: '#dddddd',
   },
   categories_nav_items: {
     justifyContent: 'center',
-    height: '100%'
+    height: '100%',
   },
   categories_nav_items_title: {
     paddingHorizontal: 10,
     fontSize: 14,
     fontWeight: '500',
-    color: '#666666'
+    color: '#666666',
   },
   categories_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   categories_nav_items_active: {
     position: 'absolute',

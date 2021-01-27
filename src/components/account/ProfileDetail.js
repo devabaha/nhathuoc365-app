@@ -1,35 +1,36 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   SafeAreaView,
   View,
   StyleSheet,
   SectionList,
   TouchableHighlight,
-  Alert
+  Alert,
 } from 'react-native';
 import store from '../../store/Store';
 import HorizontalInfoItem from './HorizontalInfoItem';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import IconMaterialCommunity from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '../Button';
 import appConfig from 'app-config';
 import Loading from '../Loading';
 import EventTracker from '../../helper/EventTracker';
-import firebase from 'react-native-firebase';
+import firebaseAuth from '@react-native-firebase/auth';
+import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
 
 class ProfileDetail extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      logout_loading: false
+      logout_loading: false,
     };
     this.eventTracker = new EventTracker();
   }
 
   get sectionData() {
-    const { t } = this.props;
+    const {t} = this.props;
     return [
       {
         id: 'id_section_1',
@@ -37,14 +38,14 @@ class ProfileDetail extends Component {
           {
             id: 'ho_ten',
             title: t('sections.fullName.title'),
-            value: store.user_info.name
+            value: store.user_info.name,
           },
           {
             id: 'so_dien_thoai',
             title: t('sections.phoneNumber.title'),
-            value: store.user_info.tel
-          }
-        ]
+            value: store.user_info.tel,
+          },
+        ],
       },
       {
         id: 'id_section_2',
@@ -52,19 +53,19 @@ class ProfileDetail extends Component {
           {
             id: 'ngay_sinh',
             title: t('sections.birthdate.title'),
-            value: store.user_info.birth
+            value: store.user_info.birth,
           },
           {
             id: 'gioi_tinh',
             title: t('sections.gender.title'),
-            value: store.user_info.gender
+            value: store.user_info.gender,
           },
           {
             id: 'email',
             title: t('sections.email.title'),
-            value: store.user_info.email
-          }
-        ]
+            value: store.user_info.email,
+          },
+        ],
       },
       {
         id: 'id_section_3',
@@ -72,18 +73,24 @@ class ProfileDetail extends Component {
           {
             id: 'dia_chi',
             title: t('sections.address.title'),
-            value: store.user_info.address
-          }
-        ]
-      }
+            value: store.user_info.address,
+          },
+          // {
+          //   id: 'thanh_pho',
+          //   title: t('sections.city.title'),
+          //   value: store.user_info.city,
+          //   isHidden: !isConfigActive(CONFIG_KEY.SELECT_CITY_KEY)
+          // },
+        ],
+      },
     ];
   }
 
   componentDidMount() {
     setTimeout(() =>
       Actions.refresh({
-        right: this._renderRightButton
-      })
+        right: this._renderRightButton,
+      }),
     );
     this.eventTracker.logCurrentView();
   }
@@ -98,7 +105,7 @@ class ProfileDetail extends Component {
         style={styles.rightBtnEdit}
         underlayColor="transparent"
         onPress={this._onShowEditProfile}
-      >
+        hitSlop={HIT_SLOP}>
         <Icon name="edit" size={24} color="#ffffff" />
       </TouchableHighlight>
     );
@@ -106,12 +113,12 @@ class ProfileDetail extends Component {
 
   _onShowEditProfile = () => {
     Actions.push(appConfig.routes.editProfile, {
-      userInfo: this.props.userInfo
+      userInfo: this.props.userInfo,
     });
   };
 
   handleLogout = () => {
-    const { t } = this.props;
+    const {t} = this.props;
 
     Alert.alert(
       t('signOut.warningTitle'),
@@ -119,24 +126,24 @@ class ProfileDetail extends Component {
       [
         {
           text: t('signOut.cancel'),
-          onPress: () => {}
+          onPress: () => {},
         },
         {
           text: t('signOut.title'),
           onPress: this.logout,
-          style: 'destructive'
-        }
+          style: 'destructive',
+        },
       ],
-      { cancelable: false }
+      {cancelable: false},
     );
   };
 
   logout = async () => {
     this.setState({
-      logout_loading: true
+      logout_loading: true,
     });
     try {
-      const { t } = this.props;
+      const {t} = this.props;
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
@@ -146,13 +153,13 @@ class ProfileDetail extends Component {
           store.setOrdersKeyChange(store.orders_key_change + 1);
           store.resetAsyncStorage();
 
-          const isFirebaseSignedIn = !!firebase.auth().currentUser;
+          const isFirebaseSignedIn = !!firebaseAuth().currentUser;
           if (isFirebaseSignedIn) {
-            firebase.auth().signOut();
+            firebaseAuth().signOut();
           }
           flashShowMessage({
             message: t('signOut.successMessage'),
-            type: 'success'
+            type: 'success',
           });
           Actions.reset(appConfig.routes.sceneWrapper);
           break;
@@ -164,7 +171,7 @@ class ProfileDetail extends Component {
       store.addApiQueue('user_logout', this.logout.bind(this));
     } finally {
       this.setState({
-        logout_loading: false
+        logout_loading: false,
       });
     }
   };
@@ -177,18 +184,18 @@ class ProfileDetail extends Component {
     return <View style={styles.separatorItem} />;
   };
 
-  _renderItems = ({ item, index, section }) => {
+  _renderItems = ({item, index, section}) => {
     return <HorizontalInfoItem data={item} />;
   };
 
   render() {
     const sections = this.sectionData;
-    const { t } = this.props;
+    const {t} = this.props;
 
     return (
       <SafeAreaView style={styles.container}>
         <SectionList
-          style={{ flex: 1 }}
+          style={{flex: 1}}
           renderItem={this._renderItems}
           ListFooterComponent={() => (
             <Button
@@ -200,7 +207,7 @@ class ProfileDetail extends Component {
                   style={{
                     position: 'absolute',
                     right: 15,
-                    alignSelf: 'center'
+                    alignSelf: 'center',
                   }}
                 />
               }
@@ -231,30 +238,30 @@ const styles = StyleSheet.create({
 
     marginBottom: 0,
     width: '100%',
-    backgroundColor: '#EFEFF4'
+    backgroundColor: '#EFEFF4',
   },
   logoutBtn: {
     marginBottom: 10,
     backgroundColor: '#dfdfdf',
-    width: '80%'
+    width: '80%',
   },
   logoutTitleBtn: {
-    color: '#333'
+    color: '#333',
   },
   separatorSection: {
     width: '100%',
-    height: 5
+    height: 5,
   },
   logoutContainerStyle: {
-    marginTop: 50
+    marginTop: 50,
   },
   separatorItem: {
     height: 1,
-    backgroundColor: '#EFEFF4'
+    backgroundColor: '#EFEFF4',
   },
   rightBtnEdit: {
-    right: 10
-  }
+    padding: 10,
+  },
 });
 
 export default withTranslation('profileDetail')(observer(ProfileDetail));

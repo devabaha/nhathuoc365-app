@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Animated,
-  Easing,
   StyleSheet,
   View,
   ImageBackground,
   Text,
   TouchableHighlight
 } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { CachedImage, CustomCachedImage } from 'react-native-img-cache';
 import Icon from 'react-native-vector-icons/AntDesign';
 import PropTypes from 'prop-types';

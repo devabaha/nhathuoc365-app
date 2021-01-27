@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableHighlight, View } from 'react-native';
+import { StyleSheet, TouchableHighlight, TouchableOpacity, View, Share } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import appConfig from '../../config';
@@ -42,11 +42,16 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
 
     get icon() {
         if (this.props.icon) return this.props.icon;
-        let Icon = null, name = "", extraStyle = {};
+        let Icon = Ionicons, name = "", extraStyle = {};
         switch (this.props.type) {
             case RIGHT_BUTTON_TYPE.SHOPPING_CART:
                 name = "ios-cart";
-                Icon = Ionicons;
+                break;
+            case RIGHT_BUTTON_TYPE.CHAT:
+                name = "ios-chatbubles";
+                break;
+            case RIGHT_BUTTON_TYPE.SHARE:
+                name = "ios-share-social";
                 break;
         }
 
@@ -61,6 +66,12 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         switch (this.props.type) {
             case RIGHT_BUTTON_TYPE.SHOPPING_CART:
                 this.handlePressCart();
+                break;
+            case RIGHT_BUTTON_TYPE.CHAT:
+                this.handlePressChat();
+                break;
+            case RIGHT_BUTTON_TYPE.SHARE:
+                this.handlePressShare();
                 break;
         }
     }
@@ -81,30 +92,76 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
         }
     }
 
-    updateNoti() {
-        switch (this.props.type) {
-            case RIGHT_BUTTON_TYPE.SHOPPING_CART:
-                if (
-                    (store.cart_data && (store.cart_data.count !== this.state.noti)) ||
-                    (!store.cart_data && this.state.noti)
-                ) {
-                    this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
+    handlePressChat() {
+        const store_data = store.store_data || {};
+        const user_info = store.user_info || {};
+        const site_id = this.props.siteId || store_data.id;
+
+        Actions.amazing_chat({
+            titleStyle: { width: 220 },
+            phoneNumber: store_data.tel,
+            title: store_data.name,
+            site_id: site_id,
+            user_id: user_info.id
+        });
+    }
+
+    async handlePressShare() {
+        try {
+            const message = this.props.shareTitle;
+            const url = this.props.shareURL;
+            const shareContent = url ? { url, message: `Xem ${message} tại ${url}` } : { message };
+
+            const result = await Share.share(shareContent, {
+                dialogTitle: message,
+                tintColor: appConfig.colors.primary
+            });
+
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
                 }
-                break;
-            case RIGHT_BUTTON_TYPE.CHAT:
-                if ((store.notify && store.notify.notify_chat !== this.state.noti) ||
-                    (!store.notify && this.state.noti)) {
-                    this.setState({ noti: store.notify ? store.notify.notify_chat : 0 });
-                }
-                break;
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            console.log('%cerror_sharing', 'color: red', error);
+            //@ts-ignore
+            flashShowMessage({
+                type: 'danger',
+                message: 'Chia sẻ không thành công! Bạn vui lòng thử lại sau!'
+            });
         }
+    }
+
+    updateNoti() {
+        setTimeout(() => {
+            switch (this.props.type) {
+                case RIGHT_BUTTON_TYPE.SHOPPING_CART:
+                    if (
+                        (store.cart_data && (store.cart_data.count !== this.state.noti)) ||
+                        (!store.cart_data && this.state.noti)
+                    ) {
+                        this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
+                    }
+                    break;
+                case RIGHT_BUTTON_TYPE.CHAT:
+                    if ((store.notify && store.notify.notify_chat !== this.state.noti) ||
+                        (!store.notify && this.state.noti)) {
+                        this.setState({ noti: store.notify ? store.notify.notify_chat : 0 });
+                    }
+                    break;
+            }
+        });
     }
 
     render() {
         this.updateNoti();
-        
+        const TouchableComponent = this.props.touchableOpacity ? TouchableOpacity : TouchableHighlight;
         return (
-            <TouchableHighlight
+            <TouchableComponent
                 underlayColor="transparent"
                 onPress={this.handlePressIcon.bind(this)}
             >
@@ -120,7 +177,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                         containerStyle={styles.notiContainer}
                     />
                 </View>
-            </TouchableHighlight>
+            </TouchableComponent>
         );
     }
 }

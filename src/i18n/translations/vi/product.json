@@ -1,7 +1,8 @@
 {
   "shopTitle": {
     "preOrder": "Đặt trước",
-    "buy": "Mua ngay"
+    "buy": "Mua ngay",
+    "book": "Đặt ngay"
   },
   "attr": {
     "notChooseAttrYet": "Chưa chọn thuộc tính",
@@ -11,6 +12,7 @@
   "addToCart": "Thêm vào giỏ hàng",
   "liked": "Đã thích",
   "like": "Yêu thích",
+  "productsLeft": "Kho: {{quantity}}",
   "information": {
     "brands": "NHÃN HIỆU",
     "origin": "XUẤT XỨ"

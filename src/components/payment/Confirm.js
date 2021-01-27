@@ -1,37 +1,36 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
-  Image,
   TouchableHighlight,
   StyleSheet,
-  ScrollView,
   FlatList,
   TextInput,
   Clipboard,
   Keyboard,
-  Alert
+  Alert,
 } from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Material from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import {Actions, ActionConst} from 'react-native-router-flux';
 import store from '../../store/Store';
-import _ from 'lodash';
 import ListHeader from '../stores/ListHeader';
 import PopupConfirm from '../PopupConfirm';
 import Sticker from '../Sticker';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
-import { CheckBox } from 'react-native-elements';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
-import { USE_ONLINE } from 'app-packages/tickid-voucher';
+import {USE_ONLINE} from 'app-packages/tickid-voucher';
 import EventTracker from '../../helper/EventTracker';
-import { ANALYTICS_EVENTS_NAME } from '../../constants';
+import {ANALYTICS_EVENTS_NAME} from '../../constants';
+import KeyboardSpacer from 'react-native-keyboard-spacer';
+import CartItem from './CartItem';
 
 class Confirm extends Component {
   static defaultProps = {
-    orderEdited: () => {}
+    orderEdited: () => {},
   };
   constructor(props) {
     super(props);
@@ -49,7 +48,7 @@ class Confirm extends Component {
       name_register: '',
       tel_register: '',
       pass_register: '',
-      paymentMethod: {}
+      paymentMethod: {},
     };
 
     this.unmounted = false;
@@ -60,11 +59,11 @@ class Confirm extends Component {
     if (this.props.notice_data != nextProps.notice_data) {
       this.setState(
         {
-          notice_data: nextProps.notice_data
+          notice_data: nextProps.notice_data,
         },
         () => {
           this._initial(nextProps);
-        }
+        },
       );
     }
   }
@@ -74,8 +73,8 @@ class Confirm extends Component {
 
     setTimeout(() =>
       Actions.refresh({
-        right: this._renderRightButton()
-      })
+        right: this._renderRightButton(),
+      }),
     );
     this.eventTracker.logCurrentView();
   }
@@ -89,11 +88,11 @@ class Confirm extends Component {
       if (props.notice_data) {
         this._getOrdersItem(
           props.notice_data.site_id,
-          props.notice_data.page_id
+          props.notice_data.page_id,
         );
       } else {
         Actions.refresh({
-          renderRightButton: this._renderRightButton.bind(this)
+          renderRightButton: this._renderRightButton.bind(this),
         });
       }
     } else {
@@ -105,7 +104,7 @@ class Confirm extends Component {
           this._unMount();
 
           Actions.pop();
-        }
+        },
       });
     }
   }
@@ -115,7 +114,7 @@ class Confirm extends Component {
   }
 
   async _siteInfo(site_id) {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
       const response = await APIHandler.site_detail(site_id);
 
@@ -127,12 +126,12 @@ class Confirm extends Component {
 
           Actions.refresh({
             title: '#' + this.state.data.cart_code,
-            renderRightButton: this._renderRightButton.bind(this)
+            renderRightButton: this._renderRightButton.bind(this),
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('common:api.error.message')
+            message: response.message || t('common:api.error.message'),
           });
         }
       }
@@ -140,7 +139,7 @@ class Confirm extends Component {
       console.log(e + ' site_info');
       flashShowMessage({
         type: 'danger',
-        message: t('common:api.error.message')
+        message: t('common:api.error.message'),
       });
     }
   }
@@ -153,11 +152,11 @@ class Confirm extends Component {
         if (response && response.status == STATUS_SUCCESS) {
           this.setState(
             {
-              data: response.data
+              data: response.data,
             },
             () => {
               this._siteInfo(site_id);
-            }
+            },
           );
 
           // message: lấy thông tin thành công
@@ -192,12 +191,12 @@ class Confirm extends Component {
   _updateCartNote(callback) {
     this.setState(
       {
-        continue_loading: true
+        continue_loading: true,
       },
       async () => {
         try {
           const response = await APIHandler.site_cart_note(store.store_id, {
-            user_note: store.user_cart_note
+            user_note: store.user_cart_note,
           });
           console.log(response);
           if (!this.unmounted) {
@@ -215,10 +214,10 @@ class Confirm extends Component {
         } finally {
           !this.unmounted &&
             this.setState({
-              continue_loading: false
+              continue_loading: false,
             });
         }
-      }
+      },
     );
   }
 
@@ -226,17 +225,17 @@ class Confirm extends Component {
   _siteCartOrders() {
     this.setState(
       {
-        continue_loading: true
+        continue_loading: true,
       },
       async () => {
-        const { t } = this.props;
+        const {t} = this.props;
         try {
           const data = {
-            ref_user_id: store.cart_data ? store.cart_data.ref_user_id : ''
+            ref_user_id: store.cart_data ? store.cart_data.ref_user_id : '',
           };
           const response = await APIHandler.site_cart_order(
             store.store_id,
-            data
+            data,
           );
 
           if (!this.unmounted) {
@@ -248,21 +247,21 @@ class Confirm extends Component {
                 this.setState({
                   suggest_register: response.data.total_orders == 1,
                   name_register: response.data.address.name,
-                  tel_register: response.data.address.tel
+                  tel_register: response.data.address.tel,
                 });
 
                 // hide back button
                 Actions.refresh({
                   hideBackImage: true,
                   onBack: () => false,
-                  panHandlers: null
+                  panHandlers: null,
                 });
 
                 Events.trigger(RELOAD_STORE_ORDERS);
                 this.eventTracker.logEvent(ANALYTICS_EVENTS_NAME.cart.order, {
                   params: {
-                    id: response.data.id
-                  }
+                    id: response.data.id,
+                  },
                 });
 
                 // update cart data
@@ -277,12 +276,12 @@ class Confirm extends Component {
               }
               flashShowMessage({
                 type: 'success',
-                message: response.message
+                message: response.message,
               });
             } else {
               flashShowMessage({
                 type: 'danger',
-                message: response.message || t('common:api.error.message')
+                message: response.message || t('common:api.error.message'),
               });
             }
           }
@@ -290,15 +289,15 @@ class Confirm extends Component {
           console.log(e + ' site_cart_order');
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         } finally {
           !this.unmounted &&
             this.setState({
-              continue_loading: false
+              continue_loading: false,
             });
         }
-      }
+      },
     );
   }
 
@@ -307,7 +306,7 @@ class Confirm extends Component {
     Keyboard.dismiss();
 
     if (store.cart_data.count_selected <= 0) {
-      const { t } = this.props;
+      const {t} = this.props;
       return Alert.alert(
         t('cart:notification.noItemSelected.title'),
         t('cart:notification.noItemSelected.message'),
@@ -318,10 +317,10 @@ class Confirm extends Component {
               if (this.props.add_new) {
                 this.props.add_new();
               }
-            }
-          }
+            },
+          },
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
     }
 
@@ -359,37 +358,37 @@ class Confirm extends Component {
   _goAddress() {
     const onBack = () => {
       Actions.push(appConfig.routes.paymentConfirm, {
-        type: ActionConst.REPLACE
+        type: ActionConst.REPLACE,
       });
     };
 
     Actions.push(appConfig.routes.myAddress, {
-      type: ActionConst.REPLACE
+      type: ActionConst.REPLACE,
       // onBack
     });
   }
 
-  _goPaymentMethod = cart_data => {
+  _goPaymentMethod = (cart_data) => {
     Actions.push(appConfig.routes.paymentMethod, {
       onConfirm: this.onConfirmPaymentMethod,
       selectedMethod: cart_data.payment_method,
       price: cart_data.total_before_view,
       totalPrice: cart_data.total_selected,
       extraFee: cart_data.item_fee,
-      onUpdatePaymentMethod: data => {
+      onUpdatePaymentMethod: (data) => {
         if (!this.state.single) {
-          this.setState({ data });
+          this.setState({data});
         }
-      }
+      },
     });
   };
 
   onConfirmPaymentMethod = (method, extraData) => {
     const paymentMethod = {
       ...method,
-      ...extraData
+      ...extraData,
     };
-    this.setState({ paymentMethod });
+    this.setState({paymentMethod});
   };
 
   // show popup confirm remove item in cart
@@ -418,7 +417,7 @@ class Confirm extends Component {
     if (!this.cartItemConfirmRemove) {
       return;
     }
-    const { t } = this.props;
+    const {t} = this.props;
 
     this.start_time = time();
 
@@ -429,13 +428,13 @@ class Confirm extends Component {
     try {
       const data = {
         quantity: 0,
-        model: item.model
+        model: item.model,
       };
 
       const response = await APIHandler.site_cart_update(
         store.store_id,
         item.id,
-        data
+        data,
       );
 
       if (!this.unmounted) {
@@ -446,7 +445,7 @@ class Confirm extends Component {
             if (isAndroid && store.cart_item_index > 0) {
               var index = store.cart_item_index - 1;
               store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, { index });
+              Events.trigger(NEXT_PREV_CART, {index});
             }
 
             if (store.cart_data == null || store.cart_products == null) {
@@ -457,12 +456,12 @@ class Confirm extends Component {
 
           flashShowMessage({
             message: response.message,
-            type: 'success'
+            type: 'success',
           });
         } else {
           flashShowMessage({
             message: response.message || t('common:api.error.message'),
-            type: 'danger'
+            type: 'danger',
           });
         }
         this.cartItemConfirmRemove = undefined;
@@ -471,7 +470,7 @@ class Confirm extends Component {
       console.log(e + ' site_cart_update');
       flashShowMessage({
         message: t('common:api.error.message'),
-        type: 'danger'
+        type: 'danger',
       });
     }
   }
@@ -479,20 +478,20 @@ class Confirm extends Component {
   _showSticker() {
     this.setState(
       {
-        coppy_sticker_flag: true
+        coppy_sticker_flag: true,
       },
       () => {
         setTimeout(() => {
           this.setState({
-            coppy_sticker_flag: false
+            coppy_sticker_flag: false,
           });
         }, 2000);
-      }
+      },
     );
   }
 
   _coppyAddress(address) {
-    const { t } = this.props;
+    const {t} = this.props;
     var address_string = `${t('confirm.address.title')}: ${address.name}, ${
       address.tel
     }, ${address.address}`;
@@ -510,6 +509,13 @@ class Confirm extends Component {
 
   _viewOrders() {
     this._popupClose();
+    /**
+     * @todo
+     * force update props of prev screen
+     * for the case this screen pushed from Orders
+     * so Orders can refresh to update status of this cart before it shown.
+     */
+    Actions.refresh({});
 
     this._goBack();
 
@@ -518,7 +524,7 @@ class Confirm extends Component {
       Actions.orders_item({
         title: `#${store.cart_data.cart_code}`,
         data: store.cart_data,
-        tel: store.store_data.tel
+        tel: store.store_data.tel,
       });
 
       // add stack unmount
@@ -547,19 +553,19 @@ class Confirm extends Component {
   _onLayout(event) {
     if (this.state.noteOffset == 0) {
       this.setState({
-        noteOffset: event.nativeEvent.layout.y - 8
+        noteOffset: event.nativeEvent.layout.y - 8,
       });
     }
   }
 
-  _scrollToTop(top = 0) {
-    if (this.refs_confirm_page) {
-      this.refs_confirm_page.scrollTo({ x: 0, y: top, animated: true });
-      this.setState({
-        scrollTop: top
-      });
-    }
-  }
+  // _scrollToTop(top = 0) {
+  //   if (this.refs_confirm_page) {
+  //     this.refs_confirm_page.scrollTo({ x: 0, y: top, animated: true });
+  //     this.setState({
+  //       scrollTop: top
+  //     });
+  //   }
+  // }
 
   openMyVoucher = () => {
     Actions.push(appConfig.routes.myVoucher, {
@@ -568,17 +574,17 @@ class Confirm extends Component {
         ? this.props.store.cart_store_id
         : store.cart_store_id,
       onUseVoucherOnlineSuccess: this.handleUseVoucherOnlineSuccess,
-      onUseVoucherOnlineFailure: this.handleUseOnlineFailure
+      onUseVoucherOnlineFailure: this.handleUseOnlineFailure,
     });
   };
 
-  openCurrentVoucher = userVoucher => {
+  openCurrentVoucher = (userVoucher) => {
     Actions.push(appConfig.routes.voucherDetail, {
       mode: USE_ONLINE,
       title: userVoucher.voucher_name,
       voucherId: userVoucher.id,
       onRemoveVoucherSuccess: this.handleRemoveVoucherSuccess,
-      onRemoveVoucherFailure: this.handleRemoveVoucherFailure
+      onRemoveVoucherFailure: this.handleRemoveVoucherFailure,
     });
   };
 
@@ -592,23 +598,45 @@ class Confirm extends Component {
     })();
   };
 
-  handleUseOnlineFailure = response => {};
+  handleUseOnlineFailure = (response) => {};
 
-  handleRemoveVoucherSuccess = cartData => {
+  handleRemoveVoucherSuccess = (cartData) => {
     Actions.pop();
     action(() => {
       store.setCartData(cartData);
     })();
   };
 
-  handleRemoveVoucherFailure = response => {};
+  handleRemoveVoucherFailure = (response) => {};
+
+  renderCartProducts(products, single) {
+    return (
+      <View style={styles.items_box}>
+        {products.map((product) => {
+          if (!single && product.selected != 1) {
+            return null;
+          }
+
+          return (
+            <CartItem
+              key={product.id}
+              parentCtx={this}
+              item={product}
+              onRemoveCartItem={() => this._removeItemCartConfirm(product)}
+              noAction={!single}
+            />
+          );
+        })}
+      </View>
+    );
+  }
 
   render() {
-    const { t } = this.props;
-    var { single } = this.state;
+    const {t} = this.props;
+    var {single} = this.state;
     // from this
     if (single) {
-      var { cart_data, cart_products_confirm } = store;
+      var {cart_data, cart_products_confirm} = store;
       var address_data = cart_data ? cart_data.address : null;
     }
 
@@ -621,7 +649,7 @@ class Confirm extends Component {
 
       if (cart_data && Object.keys(cart_data.products).length > 0) {
         var cart_products_confirm = [];
-        Object.keys(cart_data.products).map(key => {
+        Object.keys(cart_data.products).map((key) => {
           let product = cart_data.products[key];
           if (product.selected == 1) {
             cart_products_confirm.push(product);
@@ -653,24 +681,22 @@ class Confirm extends Component {
     var is_paymenting = cart_data.status == CART_STATUS_ORDERING;
 
     return (
-      <View style={styles.container}>
+      <>
         {single && (
           <View style={styles.payments_nav}>
             <TouchableHighlight
               onPress={this._goAddress.bind(this)}
-              underlayColor="transparent"
-            >
+              underlayColor="transparent">
               <View style={styles.payments_nav_items}>
                 <View
                   style={[
                     styles.payments_nav_icon_box,
-                    styles.payments_nav_icon_box_active
-                  ]}
-                >
+                    styles.payments_nav_icon_box_active,
+                  ]}>
                   <Icon
                     style={[
                       styles.payments_nav_icon,
-                      styles.payments_nav_icon_active
+                      styles.payments_nav_icon_active,
                     ]}
                     name="map-marker"
                     size={18}
@@ -680,9 +706,8 @@ class Confirm extends Component {
                 <Text
                   style={[
                     styles.payments_nav_items_title,
-                    styles.payments_nav_items_title_active
-                  ]}
-                >
+                    styles.payments_nav_items_title_active,
+                  ]}>
                   {t('confirm.process.step1')}
                 </Text>
 
@@ -695,13 +720,12 @@ class Confirm extends Component {
                 <View
                   style={[
                     styles.payments_nav_icon_box,
-                    styles.payments_nav_icon_box_active
-                  ]}
-                >
+                    styles.payments_nav_icon_box_active,
+                  ]}>
                   <Icon
                     style={[
                       styles.payments_nav_icon,
-                      styles.payments_nav_icon_active
+                      styles.payments_nav_icon_active,
                     ]}
                     name="check"
                     size={18}
@@ -711,9 +735,8 @@ class Confirm extends Component {
                 <Text
                   style={[
                     styles.payments_nav_items_title,
-                    styles.payments_nav_items_title_active
-                  ]}
-                >
+                    styles.payments_nav_items_title_active,
+                  ]}>
                   {t('confirm.process.step2')}
                 </Text>
 
@@ -723,68 +746,68 @@ class Confirm extends Component {
           </View>
         )}
 
-        <ScrollView
-          scrollEventThrottle={16}
-          onScroll={event => {
-            const scrollTop = event.nativeEvent.contentOffset.y;
-            this.setState({ scrollTop });
-          }}
-          //keyboardShouldPersistTaps="always"
-          ref={ref => (this.refs_confirm_page = ref)}
-          style={[
-            styles.content,
-            {
-              marginBottom: single ? store.keyboardTop + 60 : 0
-            }
-          ]}
-        >
-          <View
+        <KeyboardAwareScrollView style={styles.container}>
+          <KeyboardAwareScrollView
+            scrollEventThrottle={16}
+            // onScroll={event => {
+            //   const scrollTop = event.nativeEvent.contentOffset.y;
+            //   this.setState({ scrollTop });
+            // }}
+            keyboardShouldPersistTaps="handled"
+            ref={(ref) => (this.refs_confirm_page = ref)}
             style={[
-              styles.rows,
+              // styles.content,
               {
-                marginTop: single ? 8 : 0
-              }
+                // marginBottom: single ? store.keyboardTop + 60 : 0
+              },
             ]}
-          >
-            <TouchableHighlight
-              underlayColor="transparent"
-              // onPress={() =>
-              //   Actions.push(appConfig.routes.qrBarCode, {
-              //     title: 'Mã đơn hàng',
-              //     address: cart_data.cart_code,
-              //     content: 'Dùng QRCode mã đơn hàng để xem thông tin'
-              //   })
-              // }
-            >
-              <View style={styles.address_name_box}>
-                <View>
-                  <View style={styles.box_icon_label}>
-                    <Icon
-                      style={styles.icon_label}
-                      name="info-circle"
-                      size={16}
-                      color="#999999"
-                    />
-                    <Text style={styles.input_label}>
-                      {t('confirm.information.title')}
+            contentContainerStyle={{paddingTop: single ? 60 : 0}}>
+            <View
+              style={[
+                styles.rows,
+                {
+                  marginTop: single ? 8 : 0,
+                },
+              ]}>
+              <TouchableHighlight
+                underlayColor="transparent"
+                // onPress={() =>
+                //   Actions.push(appConfig.routes.qrBarCode, {
+                //     title: 'Mã đơn hàng',
+                //     address: cart_data.cart_code,
+                //     content: 'Dùng QRCode mã đơn hàng để xem thông tin'
+                //   })
+                // }
+              >
+                <View style={styles.address_name_box}>
+                  <View>
+                    <View style={styles.box_icon_label}>
+                      <Icon
+                        style={styles.icon_label}
+                        name="info-circle"
+                        size={16}
+                        color="#999999"
+                      />
+                      <Text style={styles.input_label}>
+                        {t('confirm.information.title')}
+                      </Text>
+                    </View>
+                    <Text style={styles.desc_content}>
+                      {`${t('confirm.information.ordersCode')}:`}{' '}
+                      {cart_data.cart_code}
                     </Text>
                   </View>
-                  <Text style={styles.desc_content}>
-                    {`${t('confirm.information.ordersCode')}:`}{' '}
-                    {cart_data.cart_code}
-                  </Text>
-                </View>
-                <View style={styles.address_default_box}>
-                  <View style={styles.orders_status_box}>
-                    <Text style={styles.address_default_title}>
-                      {t('confirm.information.status')}
-                    </Text>
-                    <Text style={[styles.orders_status]}>
-                      {cart_data.status_view}
-                    </Text>
+                  <View style={styles.address_default_box}>
+                    <View style={styles.orders_status_box}>
+                      <Text style={styles.address_default_title}>
+                        {t('confirm.information.status')}
+                      </Text>
+                      <Text style={[styles.orders_status]}>
+                        {cart_data.status_view}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-                {/* <View
+                  {/* <View
                   style={[
                     styles.profile_list_icon_box,
                     styles.profile_list_icon_box_angle
@@ -792,807 +815,645 @@ class Confirm extends Component {
                 >
                   <Icon name="angle-right" size={16} color="#999999" />
                 </View> */}
-              </View>
-            </TouchableHighlight>
-          </View>
+                </View>
+              </TouchableHighlight>
+            </View>
 
-          {single && <ListHeader title={t('confirm.information.recheck')} />}
+            {single && <ListHeader title={t('confirm.information.recheck')} />}
 
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              single ? null : styles.mt8,
-              {
-                paddingTop: 0,
-                paddingRight: 0
-              }
-            ]}
-          >
             <View
               style={[
-                styles.address_name_box,
+                styles.rows,
+                styles.borderBottom,
+                single ? null : styles.mt8,
                 {
-                  paddingTop: 12
-                }
-              ]}
-            >
-              <View style={styles.box_icon_label}>
-                <Icon
-                  style={styles.icon_label}
-                  name="truck"
-                  size={13}
-                  color="#999999"
-                />
-                <Text style={styles.input_label}>
-                  {t('confirm.address.title')}
-                </Text>
-              </View>
+                  paddingTop: 0,
+                  paddingRight: 0,
+                },
+              ]}>
               <View
                 style={[
-                  styles.address_default_box,
+                  styles.address_name_box,
                   {
-                    position: 'absolute',
-                    top: 0,
-                    right: 0
-                  }
-                ]}
-              >
+                    paddingTop: 12,
+                  },
+                ]}>
+                <View style={styles.box_icon_label}>
+                  <Icon
+                    style={styles.icon_label}
+                    name="truck"
+                    size={13}
+                    color="#999999"
+                  />
+                  <Text style={styles.input_label}>
+                    {t('confirm.address.title')}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.address_default_box,
+                    {
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                    },
+                  ]}>
+                  {single ? (
+                    <TouchableHighlight
+                      style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: 15,
+                      }}
+                      underlayColor="transparent"
+                      onPress={this._goAddress.bind(this)}>
+                      <Text
+                        style={[
+                          styles.address_default_title,
+                          styles.title_active,
+                        ]}>
+                        {t('confirm.change')}
+                      </Text>
+                    </TouchableHighlight>
+                  ) : (
+                    <TouchableHighlight
+                      style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: 15,
+                      }}
+                      underlayColor="transparent"
+                      onPress={this._coppyAddress.bind(this, address_data)}>
+                      <Text
+                        style={[
+                          styles.address_default_title,
+                          styles.title_active,
+                        ]}>
+                        {t('confirm.copy.title')}
+                      </Text>
+                    </TouchableHighlight>
+                  )}
+                </View>
+              </View>
+
+              <View style={styles.address_content}>
+                <Text style={styles.address_name}>{address_data.name}</Text>
+                <Text style={styles.address_content_phone}>
+                  {address_data.tel}
+                </Text>
                 {single ? (
-                  <TouchableHighlight
-                    style={{
-                      paddingVertical: 12,
-                      paddingHorizontal: 15
-                    }}
-                    underlayColor="transparent"
-                    onPress={this._goAddress.bind(this)}
-                  >
-                    <Text
-                      style={[
-                        styles.address_default_title,
-                        styles.title_active
-                      ]}
-                    >
-                      {t('confirm.change')}
+                  <View>
+                    <Text style={styles.address_content_address_detail}>
+                      {address_data.address}
                     </Text>
-                  </TouchableHighlight>
+                  </View>
                 ) : (
-                  <TouchableHighlight
-                    style={{
-                      paddingVertical: 12,
-                      paddingHorizontal: 15
-                    }}
-                    underlayColor="transparent"
-                    onPress={this._coppyAddress.bind(this, address_data)}
-                  >
-                    <Text
-                      style={[
-                        styles.address_default_title,
-                        styles.title_active
-                      ]}
-                    >
-                      {t('confirm.copy.title')}
-                    </Text>
-                  </TouchableHighlight>
+                  <Text style={styles.address_content_address_detail}>
+                    {address_data.address}
+                  </Text>
                 )}
               </View>
             </View>
 
-            <View style={styles.address_content}>
-              <Text style={styles.address_name}>{address_data.name}</Text>
-              <Text style={styles.address_content_phone}>
-                {address_data.tel}
-              </Text>
-              {single ? (
-                <View>
-                  <Text style={styles.address_content_address_detail}>
-                    {address_data.address}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.address_content_address_detail}>
-                  {address_data.address}
-                </Text>
-              )}
-            </View>
-          </View>
-
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              single ? null : styles.mt8,
-              {
-                paddingTop: 0,
-                paddingRight: 0
-              }
-            ]}
-          >
             <View
               style={[
-                styles.address_name_box,
+                styles.rows,
+                styles.borderBottom,
+                single ? null : styles.mt8,
                 {
-                  paddingTop: 12
-                }
-              ]}
-            >
-              <View style={styles.box_icon_label}>
-                <Icon
-                  style={styles.icon_label}
-                  name="dollar"
-                  size={13}
-                  color={DEFAULT_COLOR}
-                />
-                <Text style={styles.input_label}>
-                  {t('confirm.paymentMethod.title')}
-                </Text>
-              </View>
+                  paddingTop: 0,
+                  paddingRight: 0,
+                },
+              ]}>
               <View
                 style={[
-                  styles.address_default_box,
+                  styles.address_name_box,
                   {
-                    position: 'absolute',
-                    top: 0,
-                    right: 0
-                  }
-                ]}
-              >
-                <TouchableHighlight
-                  style={{
-                    paddingVertical: 12,
-                    paddingHorizontal: 15
-                  }}
-                  underlayColor="transparent"
-                  onPress={() => this._goPaymentMethod(cart_data)}
-                >
-                  <Text
-                    style={[styles.address_default_title, styles.title_active]}
-                  >
-                    {t('confirm.change')}
+                    paddingTop: 12,
+                  },
+                ]}>
+                <View style={styles.box_icon_label}>
+                  <Icon
+                    style={styles.icon_label}
+                    name="dollar"
+                    size={13}
+                    color={DEFAULT_COLOR}
+                  />
+                  <Text style={styles.input_label}>
+                    {t('confirm.paymentMethod.title')}
                   </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
-
-            <View style={{ flexDirection: 'row', ...styles.address_content }}>
-              {cart_data.payment_method ? (
-                <View style={styles.paymentMethodContainer}>
-                  {cart_data.payment_method.image && (
-                    <CachedImage
-                      mutable
-                      source={{ uri: cart_data.payment_method.image }}
-                      style={styles.imagePaymentMethod}
-                    />
-                  )}
-                  {cart_data.payment_method.name && (
-                    <Text style={[styles.address_name]}>
-                      {cart_data.payment_method.name}
-                    </Text>
-                  )}
                 </View>
-              ) : (
-                <Text style={styles.placeholder}>
-                  {t('confirm.paymentMethod.unselected')}
-                </Text>
-              )}
-            </View>
-          </View>
-
-          <View
-            onLayout={this._onLayout.bind(this)}
-            style={[styles.rows, styles.borderBottom, styles.mt8]}
-          >
-            <TouchableHighlight
-              underlayColor="#ffffff"
-              onPress={() => {
-                if (this.refs_cart_note) {
-                  this.refs_cart_note.focus();
-                }
-              }}
-            >
-              <View style={styles.box_icon_label}>
-                <Icon
-                  style={styles.icon_label}
-                  name="pencil-square-o"
-                  size={15}
-                  color="#999999"
-                />
-                <Text style={styles.input_label}>
-                  {`${t('confirm.note.title')} `}
-                </Text>
-                <Text style={styles.input_label_help}>
-                  ({t('confirm.note.description')})
-                </Text>
-              </View>
-            </TouchableHighlight>
-            {single ? (
-              <View>
-                <TextInput
-                  ref={ref => (this.refs_cart_note = ref)}
+                <View
                   style={[
-                    styles.input_address_text,
+                    styles.address_default_box,
                     {
-                      height:
-                        this.state.address_height > 50
-                          ? this.state.address_height
-                          : 50
-                    }
-                  ]}
-                  keyboardType="default"
-                  maxLength={250}
-                  placeholder={t('confirm.note.placeholder')}
-                  placeholderTextColor="#999999"
-                  multiline={true}
-                  underlineColorAndroid="transparent"
-                  onContentSizeChange={e => {
-                    this.setState({
-                      address_height: e.nativeEvent.contentSize.height
-                    });
-                  }}
-                  onChangeText={value => {
-                    action(() => {
-                      store.setUserCartNote(value);
-                    })();
-                  }}
-                  onFocus={this._scrollToTop.bind(this, this.state.noteOffset)}
-                  value={
-                    store.user_cart_note ||
-                    (store.cart_data ? store.cart_data.user_note : '')
-                  }
-                />
-              </View>
-            ) : (
-              <Text style={styles.input_note_value}>
-                {cart_data.user_note || t('confirm.note.noNote')}
-              </Text>
-            )}
-          </View>
-
-          <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
-            <View style={styles.address_name_box}>
-              <View style={styles.box_icon_label}>
-                <Icon
-                  style={styles.icon_label}
-                  name="shopping-cart"
-                  size={14}
-                  color="#999999"
-                />
-                <Text style={styles.input_label}>
-                  {single
-                    ? t('confirm.items.selected')
-                    : t('confirm.items.shopped')}
-                </Text>
-              </View>
-            </View>
-          </View>
-
-          {single ? (
-            <FlatList
-              style={styles.items_box}
-              data={cart_products_confirm}
-              extraData={cart_products_confirm}
-              renderItem={({ item, index }) => {
-                return <ItemCartComponent parentCtx={this} item={item} />;
-              }}
-              keyExtractor={item => item.id}
-            />
-          ) : (
-            <FlatList
-              style={styles.items_box}
-              data={cart_products_confirm}
-              extraData={cart_products_confirm}
-              renderItem={({ item, index }) => {
-                // hide item not selected
-                if (item.selected != 1) {
-                  return null;
-                }
-
-                return (
-                  <View
-                    style={[
-                      styles.cart_item_box,
-                      {
-                        height: 80
-                      }
-                    ]}
-                  >
-                    <View
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                    },
+                  ]}>
+                  <TouchableHighlight
+                    style={{
+                      paddingVertical: 12,
+                      paddingHorizontal: 15,
+                    }}
+                    underlayColor="transparent"
+                    onPress={() => this._goPaymentMethod(cart_data)}>
+                    <Text
                       style={[
-                        styles.cart_item_image_box,
-                        {
-                          marginLeft: 16
-                        }
-                      ]}
-                    >
+                        styles.address_default_title,
+                        styles.title_active,
+                      ]}>
+                      {t('confirm.change')}
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+
+              <View style={{flexDirection: 'row', ...styles.address_content}}>
+                {cart_data.payment_method ? (
+                  <View style={styles.paymentMethodContainer}>
+                    {cart_data.payment_method.image && (
                       <CachedImage
                         mutable
-                        style={styles.cart_item_image}
-                        source={{ uri: item.image }}
+                        source={{uri: cart_data.payment_method.image}}
+                        style={styles.imagePaymentMethod}
                       />
-                    </View>
-
-                    <View style={styles.cart_item_info}>
-                      <View style={styles.cart_item_info_content}>
-                        <Text style={styles.cart_item_info_name}>
-                          {item.name}
-                        </Text>
-
-                        {!!item.classification && (
-                          <Text style={styles.cart_item_sub_info_name}>
-                            {item.classification}
-                          </Text>
-                        )}
-
-                        <View style={styles.cart_item_price_box}>
-                          {item.discount_percent > 0 && (
-                            <Text style={styles.cart_item_price_price_safe_off}>
-                              {item.discount}
-                            </Text>
-                          )}
-                          <Text style={styles.cart_item_price_price}>
-                            {item.price_view}
-                          </Text>
-                        </View>
-                      </View>
-                    </View>
-
-                    <Text style={styles.cart_item_weight}>
-                      {item.quantity_view}
-                    </Text>
-
-                    {item.discount_percent > 0 && (
-                      <View style={styles.item_safe_off}>
-                        <View style={styles.item_safe_off_percent}>
-                          <Text style={styles.item_safe_off_percent_val}>
-                            -{item.discount_percent}%
-                          </Text>
-                        </View>
-                      </View>
+                    )}
+                    {cart_data.payment_method.name && (
+                      <Text style={[styles.address_name]}>
+                        {cart_data.payment_method.name}
+                      </Text>
                     )}
                   </View>
-                );
-              }}
-              keyExtractor={item => item.id}
-            />
-          )}
-
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              {
-                borderTopWidth: 0,
-                backgroundColor: '#fafafa'
-              }
-            ]}
-          >
-            <View style={[styles.address_name_box]}>
-              <Text style={[styles.text_total_items, styles.feeLabel]}>
-                {t('confirm.payment.price.temp')}
-              </Text>
-              <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}
-                >
-                  <Text
-                    style={[
-                      styles.address_default_title,
-                      styles.title_active,
-                      styles.feeValue,
-                      { color: '#333333' }
-                    ]}
-                  >
-                    {cart_data.total_before_view}
+                ) : (
+                  <Text style={styles.placeholder}>
+                    {t('confirm.paymentMethod.unselected')}
                   </Text>
-                </TouchableHighlight>
+                )}
               </View>
             </View>
-
-            {Object.keys(cart_data.promotions).length > 0 &&
-              cart_data.promotions != null && (
-                <View style={[styles.address_name_box, styles.feeBox]}>
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      { color: 'brown' }
-                    ]}
-                  >
-                    {cart_data.promotions.title}
-                  </Text>
-                  <View style={styles.address_default_box}>
-                    <TouchableHighlight
-                      underlayColor="transparent"
-                      onPress={() => 1}
-                    >
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                          styles.feeValue,
-                          { color: 'brown' }
-                        ]}
-                      >
-                        {t('confirm.payment.discount.prefix')}{' '}
-                        {cart_data.promotions.discount_text}
-                      </Text>
-                    </TouchableHighlight>
-                  </View>
-                </View>
-              )}
-
-            {Object.keys(cart_data.item_fee).map(index => {
-              return (
-                <View
-                  key={index}
-                  style={[styles.address_name_box, styles.feeBox]}
-                >
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      { color: DEFAULT_COLOR }
-                    ]}
-                  >
-                    {index}
-                  </Text>
-                  <View style={styles.address_default_box}>
-                    <TouchableHighlight
-                      underlayColor="transparent"
-                      onPress={() => 1}
-                    >
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                          styles.feeValue
-                        ]}
-                      >
-                        {cart_data.item_fee[index]}
-                      </Text>
-                    </TouchableHighlight>
-                  </View>
-                </View>
-              );
-            })}
-          </View>
-
-          <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              {
-                borderTopWidth: 0
-              }
-            ]}
-          >
-            <View style={styles.address_name_box}>
-              <Text
-                style={[styles.text_total_items, styles.feeLabel, styles.both]}
-              >
-                {`${t('confirm.payment.price.total')} `}
-                <Text style={{ fontWeight: '400', fontSize: 14 }}>
-                  ({cart_data.count_selected} {t('confirm.unitName')})
-                </Text>
-              </Text>
-              <View style={styles.address_default_box}>
-                <TouchableHighlight
-                  underlayColor="transparent"
-                  onPress={() => 1}
-                >
-                  <Text
-                    style={[
-                      styles.address_default_title,
-                      styles.title_active,
-                      styles.feeValue,
-                      styles.both
-                    ]}
-                  >
-                    {cart_data.total_selected}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
-          </View>
-
-          {single && (
             <View
-              style={[styles.rows, styles.borderBottom, { marginVertical: 8 }]}
-            >
-              <View style={styles.address_name_box}>
-                <View style={styles.useVoucherLabelWrapper}>
-                  <Material name="ticket-percent" size={20} color="#05b051" />
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      styles.both,
-                      styles.useVoucherLabel
-                    ]}
-                  >
-                    {t('confirm.payment.discount.title')}
+              onLayout={this._onLayout.bind(this)}
+              style={[styles.rows, styles.borderBottom, styles.mt8]}>
+              <TouchableHighlight
+                underlayColor="#ffffff"
+                onPress={() => {
+                  if (this.refs_cart_note) {
+                    this.refs_cart_note.focus();
+                  }
+                }}>
+                <View style={styles.box_icon_label}>
+                  <Icon
+                    style={styles.icon_label}
+                    name="pencil-square-o"
+                    size={15}
+                    color="#999999"
+                  />
+                  <Text style={styles.input_label}>
+                    {`${t('confirm.note.title')} `}
+                  </Text>
+                  <Text style={styles.input_label_help}>
+                    ({t('confirm.note.description')})
                   </Text>
                 </View>
-                <Button
-                  containerStyle={[
-                    styles.address_default_box,
-                    styles.addVoucherWrapper
-                  ]}
-                  onPress={
-                    cart_data.user_voucher
-                      ? this.openCurrentVoucher.bind(
-                          this,
-                          cart_data.user_voucher
-                        )
-                      : this.openMyVoucher
-                  }
-                >
-                  {cart_data.user_voucher ? (
-                    <Text
-                      ellipsizeMode="tail"
-                      numberOfLines={1}
-                      style={[styles.addVoucherLabel, { marginLeft: 10 }]}
-                    >
-                      <Material name="check-circle" size={16} color="#05b051" />
-                      {` ${cart_data.user_voucher.voucher_name}`}
-                    </Text>
-                  ) : (
-                    <Text style={styles.addVoucherLabel}>
-                      {t('confirm.payment.discount.add')}
-                    </Text>
-                  )}
-                </Button>
+              </TouchableHighlight>
+              {single ? (
+                <View>
+                  <TextInput
+                    ref={(ref) => (this.refs_cart_note = ref)}
+                    style={[
+                      styles.input_address_text,
+                      {
+                        height:
+                          this.state.address_height > 50
+                            ? this.state.address_height
+                            : 50,
+                      },
+                    ]}
+                    keyboardType="default"
+                    maxLength={250}
+                    placeholder={t('confirm.note.placeholder')}
+                    placeholderTextColor="#999999"
+                    multiline={true}
+                    underlineColorAndroid="transparent"
+                    onContentSizeChange={(e) => {
+                      this.setState({
+                        address_height: e.nativeEvent.contentSize.height,
+                      });
+                    }}
+                    onChangeText={(value) => {
+                      action(() => {
+                        store.setUserCartNote(value);
+                      })();
+                    }}
+                    // onFocus={this._scrollToTop.bind(this, this.state.noteOffset)}
+                    value={
+                      store.user_cart_note ||
+                      (store.cart_data ? store.cart_data.user_note : '')
+                    }
+                  />
+                </View>
+              ) : (
+                <Text style={styles.input_note_value}>
+                  {cart_data.user_note || t('confirm.note.noNote')}
+                </Text>
+              )}
+            </View>
+
+            <View style={[styles.rows, styles.borderBottom, styles.mt8]}>
+              <View style={styles.address_name_box}>
+                <View style={styles.box_icon_label}>
+                  <Icon
+                    style={styles.icon_label}
+                    name="shopping-cart"
+                    size={14}
+                    color="#999999"
+                  />
+                  <Text style={styles.input_label}>
+                    {single
+                      ? t('confirm.items.selected')
+                      : t('confirm.items.shopped')}
+                  </Text>
+                </View>
               </View>
             </View>
-          )}
 
-          {Object.keys(cart_data.cashback_view).map(index => {
-            return (
-              <View
-                key={index}
-                style={[
-                  styles.rows,
-                  styles.borderBottom,
-                  {
-                    borderTopWidth: 0
-                  }
-                ]}
-              >
-                <View style={styles.address_name_box}>
-                  <Text
-                    style={[
-                      styles.text_total_items,
-                      styles.feeLabel,
-                      styles.both
-                    ]}
-                  >
-                    {index}
-                  </Text>
-                  <View style={styles.address_default_box}>
+            {this.renderCartProducts(cart_products_confirm, single)}
+
+            <View
+              style={[
+                styles.rows,
+                styles.borderBottom,
+                {
+                  borderTopWidth: 0,
+                  backgroundColor: '#fafafa',
+                },
+              ]}>
+              <View style={[styles.address_name_box]}>
+                <Text style={[styles.text_total_items, styles.feeLabel]}>
+                  {t('confirm.payment.price.temp')}
+                </Text>
+                <View style={styles.address_default_box}>
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={() => 1}>
                     <Text
                       style={[
                         styles.address_default_title,
                         styles.title_active,
                         styles.feeValue,
-                        styles.both
-                      ]}
-                    >
-                      {cart_data.cashback_view[index]}
+                        {color: '#333333'},
+                      ]}>
+                      {cart_data.total_before_view}
                     </Text>
-                  </View>
+                  </TouchableHighlight>
                 </View>
               </View>
-            );
-          })}
-          {(is_ready || is_reorder || is_paymenting) && (
-            <View style={styles.boxButtonActions}>
-              {is_ready && (
-                <TouchableHighlight
-                  style={[
-                    styles.buttonAction,
-                    {
-                      marginRight: 6
-                    }
-                  ]}
-                  onPress={this.confirmCancelCart.bind(this, cart_data)}
-                  underlayColor="transparent"
-                >
-                  <View style={styles.boxButtonAction}>
-                    <Icon name="times" size={16} color="#555" />
-                    <Text style={styles.buttonActionTitle}>
-                      {t('confirm.cancel')}
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-              )}
 
-              {is_ready && (
-                <TouchableHighlight
-                  style={[
-                    styles.buttonAction,
-                    {
-                      marginLeft: 6
-                    }
-                  ]}
-                  onPress={this.confirmEditCart.bind(this, cart_data)}
-                  underlayColor="transparent"
-                >
-                  <View
-                    style={[
-                      styles.boxButtonAction,
-                      {
-                        backgroundColor: '#fa7f50',
-                        borderColor: '#999999'
-                      }
-                    ]}
-                  >
-                    <Icon name="pencil-square-o" size={16} color="#ffffff" />
+              {Object.keys(cart_data.promotions).length > 0 &&
+                cart_data.promotions != null && (
+                  <View style={[styles.address_name_box, styles.feeBox]}>
                     <Text
                       style={[
-                        styles.buttonActionTitle,
-                        {
-                          color: '#ffffff'
-                        }
-                      ]}
-                    >
-                      {t('confirm.edit')}
+                        styles.text_total_items,
+                        styles.feeLabel,
+                        {color: 'brown'},
+                      ]}>
+                      {cart_data.promotions.title}
                     </Text>
+                    <View style={styles.address_default_box}>
+                      <TouchableHighlight
+                        underlayColor="transparent"
+                        onPress={() => 1}>
+                        <Text
+                          style={[
+                            styles.address_default_title,
+                            styles.title_active,
+                            styles.feeValue,
+                            {color: 'brown'},
+                          ]}>
+                          {t('confirm.payment.discount.prefix')}{' '}
+                          {cart_data.promotions.discount_text}
+                        </Text>
+                      </TouchableHighlight>
+                    </View>
                   </View>
-                </TouchableHighlight>
-              )}
+                )}
 
-              {is_reorder && (
-                <TouchableHighlight
-                  style={styles.buttonAction}
-                  onPress={this.confirmCoppyCart.bind(this, cart_data)}
-                  underlayColor="transparent"
-                >
+              {Object.keys(cart_data.item_fee).map((index) => {
+                return (
                   <View
-                    style={[
-                      styles.boxButtonAction,
-                      {
-                        width: Util.size.width - 30,
-                        backgroundColor: '#fa7f50',
-                        borderColor: '#999999'
-                      }
-                    ]}
-                  >
-                    <Icon name="refresh" size={16} color="#ffffff" />
+                    key={index}
+                    style={[styles.address_name_box, styles.feeBox]}>
                     <Text
                       style={[
-                        styles.buttonActionTitle,
-                        {
-                          color: '#ffffff'
-                        }
-                      ]}
-                    >
-                      {t('confirm.rebuy')}
+                        styles.text_total_items,
+                        styles.feeLabel,
+                        {color: DEFAULT_COLOR},
+                      ]}>
+                      {index}
                     </Text>
+                    <View style={styles.address_default_box}>
+                      <TouchableHighlight
+                        underlayColor="transparent"
+                        onPress={() => 1}>
+                        <Text
+                          style={[
+                            styles.address_default_title,
+                            styles.title_active,
+                            styles.feeValue,
+                          ]}>
+                          {cart_data.item_fee[index]}
+                        </Text>
+                      </TouchableHighlight>
+                    </View>
                   </View>
-                </TouchableHighlight>
-              )}
-
-              {is_paymenting && (
-                <TouchableHighlight
-                  style={styles.buttonAction}
-                  onPress={this.goBackStores.bind(this, cart_data)}
-                  underlayColor="transparent"
-                >
-                  <View
-                    style={[
-                      styles.boxButtonAction,
-                      {
-                        width: Util.size.width - 30,
-                        backgroundColor: '#fa7f50',
-                        borderColor: '#999999'
-                      }
-                    ]}
-                  >
-                    <Icon name="plus" size={16} color="#ffffff" />
-                    <Text
-                      style={[
-                        styles.buttonActionTitle,
-                        {
-                          color: '#ffffff'
-                        }
-                      ]}
-                    >
-                      {t('confirm.addMoreItems')}
-                    </Text>
-                  </View>
-                </TouchableHighlight>
-              )}
+                );
+              })}
             </View>
-          )}
 
-          {cart_data.status > 1 && (
             <View
               style={[
-                styles.boxButtonActions,
+                styles.rows,
+                styles.borderBottom,
                 {
-                  paddingTop: 0
-                }
-              ]}
-            >
-              <TouchableHighlight
-                style={styles.buttonAction}
-                onPress={() => {
-                  Actions.rating({
-                    cart_data
-                  });
-                }}
-                underlayColor="transparent"
-              >
-                <View
+                  borderTopWidth: 0,
+                },
+              ]}>
+              <View style={styles.address_name_box}>
+                <Text
                   style={[
-                    styles.boxButtonAction,
-                    {
-                      width: Util.size.width - 160,
-                      backgroundColor: DEFAULT_COLOR,
-                      borderColor: '#999999'
-                    }
-                  ]}
-                >
-                  <Icon
-                    style={styles.starReviews}
-                    name="star"
-                    size={12}
-                    color="#ffffff"
-                  />
-
-                  <Text
-                    style={[
-                      styles.buttonActionTitle,
-                      {
-                        color: '#ffffff'
-                      }
-                    ]}
-                  >
-                    {t('confirm.feedback')}
+                    styles.text_total_items,
+                    styles.feeLabel,
+                    styles.both,
+                  ]}>
+                  {`${t('confirm.payment.price.total')} `}
+                  <Text style={{fontWeight: '400', fontSize: 14}}>
+                    ({cart_data.count_selected} {t('confirm.unitName')})
                   </Text>
+                </Text>
+                <View style={styles.address_default_box}>
+                  <TouchableHighlight
+                    underlayColor="transparent"
+                    onPress={() => 1}>
+                    <Text
+                      style={[
+                        styles.address_default_title,
+                        styles.title_active,
+                        styles.feeValue,
+                        styles.both,
+                      ]}>
+                      {cart_data.total_selected}
+                    </Text>
+                  </TouchableHighlight>
                 </View>
-              </TouchableHighlight>
+              </View>
             </View>
-          )}
-        </ScrollView>
 
-        {single && (
-          <TouchableHighlight
-            style={[
-              styles.cart_payment_btn_box,
-              {
-                bottom: store.keyboardTop
-              }
-            ]}
-            underlayColor="transparent"
-            onPress={this._onSave.bind(this)}
-          >
-            <View style={styles.cart_payment_btn}>
+            {single && (
               <View
-                style={{
-                  minWidth: 20,
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
-                {this.state.continue_loading ? (
-                  <Indicator size="small" color="#ffffff" />
-                ) : (
-                  <Icon name="check" size={20} color="#ffffff" />
+                style={[styles.rows, styles.borderBottom, {marginVertical: 8}]}>
+                <View style={styles.address_name_box}>
+                  <View style={styles.useVoucherLabelWrapper}>
+                    <Material name="ticket-percent" size={20} color="#05b051" />
+                    <Text
+                      style={[
+                        styles.text_total_items,
+                        styles.feeLabel,
+                        styles.both,
+                        styles.useVoucherLabel,
+                      ]}>
+                      {t('confirm.payment.discount.title')}
+                    </Text>
+                  </View>
+                  <Button
+                    containerStyle={[
+                      styles.address_default_box,
+                      styles.addVoucherWrapper,
+                    ]}
+                    onPress={
+                      cart_data.user_voucher
+                        ? this.openCurrentVoucher.bind(
+                            this,
+                            cart_data.user_voucher,
+                          )
+                        : this.openMyVoucher
+                    }>
+                    {cart_data.user_voucher ? (
+                      <Text
+                        ellipsizeMode="tail"
+                        numberOfLines={1}
+                        style={[styles.addVoucherLabel, {marginLeft: 10}]}>
+                        <Material
+                          name="check-circle"
+                          size={16}
+                          color="#05b051"
+                        />
+                        {` ${cart_data.user_voucher.voucher_name}`}
+                      </Text>
+                    ) : (
+                      <Text style={styles.addVoucherLabel}>
+                        {t('confirm.payment.discount.add')}
+                      </Text>
+                    )}
+                  </Button>
+                </View>
+              </View>
+            )}
+
+            {Object.keys(cart_data.cashback_view).map((index) => {
+              return (
+                <View
+                  key={index}
+                  style={[
+                    styles.rows,
+                    styles.borderBottom,
+                    {
+                      borderTopWidth: 0,
+                    },
+                  ]}>
+                  <View style={styles.address_name_box}>
+                    <Text
+                      style={[
+                        styles.text_total_items,
+                        styles.feeLabel,
+                        styles.both,
+                      ]}>
+                      {index}
+                    </Text>
+                    <View style={styles.address_default_box}>
+                      <Text
+                        style={[
+                          styles.address_default_title,
+                          styles.title_active,
+                          styles.feeValue,
+                          styles.both,
+                        ]}>
+                        {cart_data.cashback_view[index]}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              );
+            })}
+            {(is_ready || is_reorder || is_paymenting) && (
+              <View style={styles.boxButtonActions}>
+                {is_ready && (
+                  <TouchableHighlight
+                    style={[
+                      styles.buttonAction,
+                      {
+                        marginRight: 6,
+                      },
+                    ]}
+                    onPress={this.confirmCancelCart.bind(this, cart_data)}
+                    underlayColor="transparent">
+                    <View style={styles.boxButtonAction}>
+                      <Icon name="times" size={16} color="#555" />
+                      <Text style={styles.buttonActionTitle}>
+                        {t('confirm.cancel')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                )}
+
+                {is_ready && (
+                  <TouchableHighlight
+                    style={[
+                      styles.buttonAction,
+                      {
+                        marginLeft: 6,
+                      },
+                    ]}
+                    onPress={this.confirmEditCart.bind(this, cart_data)}
+                    underlayColor="transparent">
+                    <View
+                      style={[
+                        styles.boxButtonAction,
+                        {
+                          backgroundColor: '#fa7f50',
+                          borderColor: '#999999',
+                        },
+                      ]}>
+                      <Icon name="pencil-square-o" size={16} color="#ffffff" />
+                      <Text
+                        style={[
+                          styles.buttonActionTitle,
+                          {
+                            color: '#ffffff',
+                          },
+                        ]}>
+                        {t('confirm.edit')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                )}
+
+                {/* {is_reorder && (
+                  <TouchableHighlight
+                    style={styles.buttonAction}
+                    onPress={this.confirmCoppyCart.bind(this, cart_data)}
+                    underlayColor="transparent">
+                    <View
+                      style={[
+                        styles.boxButtonAction,
+                        {
+                          backgroundColor: '#fa7f50',
+                          borderColor: '#999999',
+                        },
+                      ]}>
+                      <Icon name="refresh" size={16} color="#ffffff" />
+                      <Text
+                        style={[
+                          styles.buttonActionTitle,
+                          {
+                            color: '#ffffff',
+                          },
+                        ]}>
+                        {t('confirm.rebuy')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
+                )} */}
+
+                {is_paymenting && (
+                  <TouchableHighlight
+                    style={styles.buttonAction}
+                    onPress={this.goBackStores.bind(this, cart_data)}
+                    underlayColor="transparent">
+                    <View
+                      style={[
+                        styles.boxButtonAction,
+                        {
+                          backgroundColor: '#fa7f50',
+                          borderColor: '#999999',
+                        },
+                      ]}>
+                      <Icon name="plus" size={16} color="#ffffff" />
+                      <Text
+                        style={[
+                          styles.buttonActionTitle,
+                          {
+                            color: '#ffffff',
+                          },
+                        ]}>
+                        {t('confirm.addMoreItems')}
+                      </Text>
+                    </View>
+                  </TouchableHighlight>
                 )}
               </View>
-              <Text style={styles.cart_payment_btn_title}>
-                {t('confirm.order.title')}
-              </Text>
-            </View>
-          </TouchableHighlight>
-        )}
+            )}
+
+            {cart_data.status > 1 && (
+              <View
+                style={[
+                  styles.boxButtonActions,
+                  {
+                    paddingTop: 0,
+                  },
+                ]}>
+                <TouchableHighlight
+                  style={styles.buttonAction}
+                  onPress={() => {
+                    Actions.rating({
+                      cart_data,
+                    });
+                  }}
+                  underlayColor="transparent">
+                  <View
+                    style={[
+                      styles.boxButtonAction,
+                      {
+                        backgroundColor: DEFAULT_COLOR,
+                        borderColor: '#999999',
+                      },
+                    ]}>
+                    <Icon
+                      style={styles.starReviews}
+                      name="star"
+                      size={12}
+                      color="#ffffff"
+                    />
+
+                    <Text
+                      style={[
+                        styles.buttonActionTitle,
+                        {
+                          color: '#ffffff',
+                        },
+                      ]}>
+                      {t('confirm.feedback')}
+                    </Text>
+                  </View>
+                </TouchableHighlight>
+              </View>
+            )}
+          </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
 
         {this.state.suggest_register && !is_login ? (
           <PopupConfirm
-            ref_popup={ref => (this.popup_message = ref)}
+            ref_popup={(ref) => (this.popup_message = ref)}
             title={t('confirm.order.popup.notLoggedIn.description')}
             noTitle={t('confirm.order.popup.notLoggedIn.cancel')}
             noBlur
@@ -1602,9 +1463,9 @@ class Confirm extends Component {
             height={300}
             otherClose={false}
             style={{
-              marginTop: -(NAV_HEIGHT / 2)
+              marginTop: -(NAV_HEIGHT / 2),
             }}
-            content={title => {
+            content={(title) => {
               return (
                 <View style={styles.success_box}>
                   <View style={styles.success_icon_box}>
@@ -1616,44 +1477,44 @@ class Confirm extends Component {
                   <Text style={styles.success_title}>{title}</Text>
 
                   <TextInput
-                    ref={ref => (this.refs_name_register = ref)}
+                    ref={(ref) => (this.refs_name_register = ref)}
                     style={{
                       borderWidth: Util.pixel,
                       borderColor: '#dddddd',
                       padding: 8,
                       borderRadius: 3,
-                      marginTop: 12
+                      marginTop: 12,
                     }}
                     keyboardType="default"
                     maxLength={100}
                     placeholder={t('confirm.order.popup.userPlaceholder')}
                     placeholderTextColor="#999999"
                     underlineColorAndroid="transparent"
-                    onChangeText={value => {
+                    onChangeText={(value) => {
                       this.setState({
-                        name_register: value
+                        name_register: value,
                       });
                     }}
                     value={this.state.name_register}
                   />
 
                   <TextInput
-                    ref={ref => (this.refs_tel_register = ref)}
+                    ref={(ref) => (this.refs_tel_register = ref)}
                     style={{
                       borderWidth: Util.pixel,
                       borderColor: '#dddddd',
                       padding: 8,
                       borderRadius: 3,
-                      marginTop: 8
+                      marginTop: 8,
                     }}
                     keyboardType="default"
                     maxLength={250}
                     placeholder={t('confirm.order.popup.telPlaceholder')}
                     placeholderTextColor="#999999"
                     underlineColorAndroid="transparent"
-                    onChangeText={value => {
+                    onChangeText={(value) => {
                       this.setState({
-                        tel_register: value
+                        tel_register: value,
                       });
                     }}
                     value={this.state.tel_register}
@@ -1686,7 +1547,7 @@ class Confirm extends Component {
           />
         ) : (
           <PopupConfirm
-            ref_popup={ref => (this.popup_message = ref)}
+            ref_popup={(ref) => (this.popup_message = ref)}
             title={t('confirm.order.popup.loggedIn.description')}
             noTitle={t('confirm.order.popup.loggedIn.cancel')}
             noConfirm={this._viewOrders.bind(this)}
@@ -1694,7 +1555,7 @@ class Confirm extends Component {
             yesConfirm={this._continueShopping.bind(this)}
             height={150}
             otherClose={false}
-            content={title => {
+            content={(title) => {
               return (
                 <View style={styles.success_box}>
                   <View style={styles.success_icon_box}>
@@ -1716,7 +1577,7 @@ class Confirm extends Component {
         />
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_remove_item_confirm = ref)}
+          ref_popup={(ref) => (this.refs_remove_item_confirm = ref)}
           title={t('cart:popup.remove.message')}
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
@@ -1725,7 +1586,7 @@ class Confirm extends Component {
         />
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_cancel_cart = ref)}
+          ref_popup={(ref) => (this.refs_cancel_cart = ref)}
           title={t('cart:popup.cancel.message')}
           height={110}
           noConfirm={this._closePopupCancel.bind(this)}
@@ -1733,24 +1594,57 @@ class Confirm extends Component {
           otherClose={false}
         />
 
-        {/* <PopupConfirm
-          ref_popup={ref => (this.refs_coppy_cart = ref)}
+        <PopupConfirm
+          ref_popup={(ref) => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
           yesConfirm={this._coppyCart.bind(this)}
           otherClose={false}
-        /> */}
+        />
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_edit_cart = ref)}
+          ref_popup={(ref) => (this.refs_edit_cart = ref)}
           title={t('cart:popup.edit.message')}
           height={110}
           noConfirm={this._closePopupEdit.bind(this)}
           yesConfirm={this._editCart.bind(this)}
           otherClose={false}
         />
-      </View>
+
+        {single && (
+          <TouchableHighlight
+            style={[
+              styles.cart_payment_btn_box,
+              {
+                // bottom: store.keyboardTop
+                position: undefined,
+              },
+            ]}
+            underlayColor="transparent"
+            onPress={this._onSave.bind(this)}>
+            <View style={styles.cart_payment_btn}>
+              <View
+                style={{
+                  minWidth: 20,
+                  height: '100%',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {this.state.continue_loading ? (
+                  <Indicator size="small" color="#ffffff" />
+                ) : (
+                  <Icon name="check" size={20} color="#ffffff" />
+                )}
+              </View>
+              <Text style={styles.cart_payment_btn_title}>
+                {t('confirm.order.title')}
+              </Text>
+            </View>
+          </TouchableHighlight>
+        )}
+        {appConfig.device.isIOS && <KeyboardSpacer />}
+      </>
     );
   }
 
@@ -1761,12 +1655,12 @@ class Confirm extends Component {
       store.setStoreData({
         id: item.site_id,
         name: item.shop_name,
-        tel: item.tel
+        tel: item.tel,
       });
       store.goStoreNow = true;
 
       Actions.primaryTabbar({
-        type: ActionConst.RESET
+        type: ActionConst.RESET,
       });
     }
   }
@@ -1776,7 +1670,7 @@ class Confirm extends Component {
       try {
         const response = await APIHandler.site_cart_canceling(
           this.item_cancel.site_id,
-          this.item_cancel.id
+          this.item_cancel.id,
         );
 
         if (!this.unmounted) {
@@ -1788,7 +1682,7 @@ class Confirm extends Component {
 
             flashShowMessage({
               type: 'success',
-              message: response.message
+              message: response.message,
             });
           }
         }
@@ -1816,7 +1710,7 @@ class Confirm extends Component {
 
   _onRegister() {
     Actions.push(appConfig.routes.phoneAuth, {
-      tel: store.cart_data.address.tel
+      tel: store.cart_data.address.tel,
     });
   }
 
@@ -1825,7 +1719,7 @@ class Confirm extends Component {
       try {
         var response = await APIHandler.site_cart_reorder(
           this.item_coppy.site_id,
-          this.item_coppy.id
+          this.item_coppy.id,
         );
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
@@ -1836,14 +1730,14 @@ class Confirm extends Component {
 
           flashShowMessage({
             type: 'success',
-            message: response.message
+            message: response.message,
           });
 
           Actions.pop();
 
           setTimeout(() => {
             Actions.push(appConfig.routes.paymentConfirm, {
-              goConfirm: true
+              goConfirm: true,
             });
           }, 1000);
         }
@@ -1860,7 +1754,7 @@ class Confirm extends Component {
       try {
         const response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
-          this.item_edit.id
+          this.item_edit.id,
         );
 
         if (!this.unmounted) {
@@ -1871,13 +1765,13 @@ class Confirm extends Component {
             Events.trigger(RELOAD_STORE_ORDERS);
 
             this.setState({
-              single: true
+              single: true,
             });
 
             this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
             flashShowMessage({
               type: 'success',
-              message: response.message
+              message: response.message,
             });
           }
         }
@@ -1918,422 +1812,109 @@ class Confirm extends Component {
   }
 }
 
-/* @flow */
-
-class ItemCartComponent extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      check_loading: false,
-      increment_loading: false,
-      decrement_loading: false
-    };
-  }
-
-  _checkBoxHandler(item) {
-    this.setState(
-      {
-        check_loading: true
-      },
-      async () => {
-        const { t } = this.props;
-        try {
-          const data = {
-            model: item.model
-          };
-          let response = null;
-
-          if (item.selected == 1) {
-            response = await APIHandler.site_cart_unselected(
-              store.store_id,
-              item.id,
-              data
-            );
-          } else {
-            response = await APIHandler.site_cart_selected(
-              store.store_id,
-              item.id,
-              data
-            );
-          }
-
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              store.setCartData(response.data);
-              flashShowMessage({
-                message: response.message,
-                type: 'success'
-              });
-            } else {
-              flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger'
-              });
-            }
-          }
-        } catch (e) {
-          if (item.selected == 1) {
-            console.log(e + ' site_cart_unselected');
-          } else {
-            console.log(e + ' site_cart_selected');
-          }
-          flashShowMessage({
-            message: t('common:api.error.message'),
-            type: 'danger'
-          });
-        } finally {
-          !this.unmounted &&
-            this.setState({
-              check_loading: false
-            });
-        }
-      }
-    );
-  }
-
-  // xử lý trừ số lượng, số lượng = 0 confirm xoá
-  _item_qnt_decrement_handler(item) {
-    if (item.quantity <= 1) {
-      this.props.parentCtx._removeItemCartConfirm(item);
-    } else {
-      this._item_qnt_decrement(item);
-    }
-  }
-
-  // giảm số lượng item trong giỏ hàng
-  _item_qnt_decrement(item) {
-    this.setState(
-      {
-        decrement_loading: true
-      },
-      async () => {
-        try {
-          const { t } = this.props;
-          const data = {
-            quantity: 1,
-            model: item.model
-          };
-
-          const response = await APIHandler.site_cart_minus(
-            store.store_id,
-            item.id,
-            data
-          );
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              store.setCartData(response.data);
-              flashShowMessage({
-                message: response.message,
-                type: 'success'
-              });
-            } else {
-              flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger'
-              });
-            }
-          }
-        } catch (e) {
-          console.log(e + ' site_cart_minus');
-          flashShowMessage({
-            message: t('common:api.error.message'),
-            type: 'danger'
-          });
-        } finally {
-          !this.unmounted &&
-            this.setState({
-              decrement_loading: false
-            });
-        }
-      }
-    );
-  }
-
-  // tăng số lượng sảm phẩm trong giỏ hàng
-  _item_qnt_increment(item) {
-    this.setState(
-      {
-        increment_loading: true
-      },
-      async () => {
-        const { t } = this.props;
-        try {
-          const data = {
-            quantity: 1,
-            model: item.model
-          };
-
-          const response = await APIHandler.site_cart_plus(
-            store.store_id,
-            item.id,
-            data
-          );
-
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              store.setCartData(response.data);
-
-              flashShowMessage({
-                message: response.message,
-                type: 'success'
-              });
-            } else {
-              flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger'
-              });
-            }
-          }
-        } catch (e) {
-          console.log(e + ' site_cart_plus');
-          flashShowMessage({
-            message: t('common:api.error.message'),
-            type: 'danger'
-          });
-        } finally {
-          !this.unmounted &&
-            this.setState({
-              increment_loading: false
-            });
-        }
-      }
-    );
-  }
-
-  render() {
-    var item = this.props.item;
-
-    var { check_loading, increment_loading, decrement_loading } = this.state;
-    var is_processing = check_loading || increment_loading || decrement_loading;
-
-    return (
-      <View
-        style={[
-          styles.cart_item_box,
-          {
-            minHeight: 87,
-            maxHeight: 100
-          }
-        ]}
-      >
-        <View style={styles.cart_item_check_box}>
-          {check_loading ? (
-            <Indicator size="small" />
-          ) : (
-            <CheckBox
-              containerStyle={styles.cart_item_check}
-              checked={item.selected == 1 ? true : false}
-              checkedColor={DEFAULT_COLOR}
-              hiddenTextElement
-              onPress={
-                is_processing ? null : this._checkBoxHandler.bind(this, item)
-              }
-            />
-          )}
-        </View>
-
-        <View style={styles.cart_item_image_box}>
-          <CachedImage
-            mutable
-            style={styles.cart_item_image}
-            source={{ uri: item.image }}
-          />
-        </View>
-
-        <View style={styles.cart_item_info}>
-          <View style={styles.cart_item_info_content}>
-            <Text numberOfLines={1} style={styles.cart_item_info_name}>
-              {item.name}
-            </Text>
-
-            {!!item.classification && (
-              <Text numberOfLines={1} style={styles.cart_item_sub_info_name}>
-                {item.classification}
-              </Text>
-            )}
-
-            <View style={styles.cart_item_price_box}>
-              {item.discount_percent > 0 && (
-                <Text style={styles.cart_item_price_price_safe_off}>
-                  {item.discount}
-                </Text>
-              )}
-              <Text style={styles.cart_item_price_price}>
-                {item.price_view}
-              </Text>
-            </View>
-
-            <View style={styles.cart_item_actions}>
-              <TouchableHighlight
-                style={styles.cart_item_actions_btn}
-                underlayColor="transparent"
-                onPress={
-                  is_processing
-                    ? null
-                    : this._item_qnt_decrement_handler.bind(this, item)
-                }
-              >
-                <View>
-                  {decrement_loading ? (
-                    <Indicator size="small" />
-                  ) : (
-                    <Text style={styles.cart_item_btn_label}>-</Text>
-                  )}
-                </View>
-              </TouchableHighlight>
-
-              <Text style={styles.cart_item_actions_quantity}>
-                {item.quantity_view}
-              </Text>
-
-              <TouchableHighlight
-                style={styles.cart_item_actions_btn}
-                underlayColor="transparent"
-                onPress={
-                  is_processing
-                    ? null
-                    : this._item_qnt_increment.bind(this, item)
-                }
-              >
-                <View>
-                  {increment_loading ? (
-                    <Indicator size="small" />
-                  ) : (
-                    <Text style={styles.cart_item_btn_label}>+</Text>
-                  )}
-                </View>
-              </TouchableHighlight>
-            </View>
-          </View>
-        </View>
-
-        {item.discount_percent > 0 && (
-          <View style={styles.item_safe_off}>
-            <View style={styles.item_safe_off_percent}>
-              <Text style={styles.item_safe_off_percent_val}>
-                -{item.discount_percent}%
-              </Text>
-            </View>
-          </View>
-        )}
-
-        {/*item.selected != 1 && (
-          <TouchableHighlight
-            underlayColor="transparent"
-            onPress={this._checkBoxHandler.bind(this, item)}
-            style={styles.uncheckOverlay}>
-            <View></View>
-          </TouchableHighlight>
-        )*/}
-      </View>
-    );
-  }
-}
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
 
-    marginBottom: 0
+    marginBottom: 0,
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
 
   content: {
-    marginBottom: 60
+    marginBottom: 60,
   },
   rows: {
     paddingVertical: 12,
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     borderTopWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   address_name_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   address_name: {
     fontSize: 14,
     color: '#000000',
-    fontWeight: '600'
+    fontWeight: '600',
   },
   address_default_box: {
     flex: 1,
     alignItems: 'flex-end',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   address_default_title: {
     color: '#666666',
-    fontSize: 12
+    fontSize: 12,
   },
   title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   address_content: {
     marginTop: 12,
-    marginLeft: 22
+    marginLeft: 22,
   },
   address_content_phone: {
     color: '#404040',
     fontSize: 14,
     marginTop: 4,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   address_content_address_detail: {
     color: '#404040',
     fontSize: 14,
     marginTop: 4,
-    lineHeight: 20
+    lineHeight: 20,
   },
   address_content_phuong: {
     color: '#404040',
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
   },
   address_content_city: {
     color: '#404040',
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
   },
   address_content_tinh: {
     color: '#404040',
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
   },
 
   desc_content: {
     fontSize: 12,
     color: '#666666',
     marginTop: 4,
-    marginLeft: 22
+    marginLeft: 22,
   },
   orders_status_box: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   orders_status: {
     fontSize: 12,
     color: '#fa7f50',
     fontWeight: '600',
-    marginTop: 4
+    marginTop: 4,
   },
   borderBottom: {
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
 
   cart_section_box: {
     width: '100%',
     height: 32,
     justifyContent: 'center',
-    backgroundColor: '#fa7f50'
+    backgroundColor: '#fa7f50',
   },
   cart_section_title: {
     color: '#ffffff',
     fontSize: 14,
     paddingLeft: 8,
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   cart_item_box: {
@@ -2343,34 +1924,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
     borderColor: '#dddddd',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cart_item_image_box: {
-    width: 50
+    width: 50,
   },
   cart_item_image: {
     height: '100%',
-    resizeMode: 'contain'
+    resizeMode: 'contain',
   },
   cart_item_info: {
-    flex: 1
+    flex: 1,
   },
   cart_item_info_content: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   cart_item_info_name: {
     color: '#000000',
     fontSize: 14,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   cart_item_sub_info_name: {
     color: '#555',
-    fontSize: 12
+    fontSize: 12,
   },
   cart_item_actions: {
     flexDirection: 'row',
     marginTop: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cart_item_actions_btn: {
     justifyContent: 'center',
@@ -2379,59 +1960,56 @@ const styles = StyleSheet.create({
     height: 22,
     borderWidth: Util.pixel,
     borderColor: '#666666',
-    borderRadius: 3
+    borderRadius: 3,
+  },
+  cart_item_remove_btn: {
+    backgroundColor: '#babbbf',
+    marginRight: 15,
+    borderWidth: 0,
+  },
+  cart_item_remove_icon: {
+    color: '#fff',
   },
   cart_item_actions_quantity: {
     paddingHorizontal: 8,
     minWidth: '30%',
     textAlign: 'center',
     color: '#404040',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   cart_item_btn_label: {
     color: '#404040',
     fontSize: 20,
-    lineHeight: isIOS ? 20 : 24
+    lineHeight: isIOS ? 20 : 24,
   },
-  cart_item_check_box: {
-    width: 61,
-    justifyContent: 'center'
-  },
-  cart_item_check: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 0,
-    paddingRight: 0,
-    marginRight: 0,
-    backgroundColor: '#fff'
-  },
+
   cart_item_price_box: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4
+    marginTop: 4,
   },
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   cart_item_weight: {
     position: 'absolute',
     right: 15,
     bottom: 8,
     color: '#666666',
-    fontSize: 12
+    fontSize: 12,
   },
 
   cart_item_price_price_safe_off: {
     textDecorationLine: 'line-through',
     fontSize: 14,
     color: '#666666',
-    marginRight: 4
+    marginRight: 4,
   },
   cart_item_price_price: {
     fontSize: 14,
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
 
   cart_payment_btn_box: {
@@ -2440,7 +2018,7 @@ const styles = StyleSheet.create({
     height: 60,
     bottom: 0,
     left: 0,
-    right: 0
+    right: 0,
   },
   cart_payment_btn: {
     width: '100%',
@@ -2448,72 +2026,72 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   cart_payment_btn_title: {
     color: '#ffffff',
     fontSize: 18,
-    marginLeft: 8
+    marginLeft: 8,
   },
 
   mt8: {
-    marginTop: 8
+    marginTop: 8,
   },
   text_total_items: {
     fontSize: 14,
-    color: '#000000'
+    color: '#000000',
   },
 
   input_address_text: {
     width: '100%',
     color: '#000000',
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
   },
   input_label: {
     fontSize: 16,
     color: '#000000',
-    marginLeft: 8
+    marginLeft: 8,
   },
   input_label_help: {
     fontSize: 12,
     marginTop: 2,
-    color: '#666666'
+    color: '#666666',
   },
 
   box_icon_label: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   icon_label: {
     fontSize: 14,
-    width: 15
+    width: 15,
   },
 
   success_box: {
-    padding: 15
+    padding: 15,
   },
   success_title: {
     lineHeight: 20,
-    color: '#000000'
+    color: '#000000',
   },
   success_icon_box: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12
+    marginBottom: 12,
   },
   success_icon_label: {
     color: DEFAULT_COLOR,
     fontSize: 18,
     fontWeight: '600',
-    marginLeft: 8
+    marginLeft: 8,
   },
   input_note_value: {
     fontSize: 14,
     marginTop: 8,
     color: '#404040',
-    marginLeft: 22
+    marginLeft: 22,
   },
 
   item_safe_off: {
@@ -2525,18 +2103,18 @@ const styles = StyleSheet.create({
     height: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   item_safe_off_percent: {
     backgroundColor: '#fa7f50',
     paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100%'
+    height: '100%',
   },
   item_safe_off_percent_val: {
     color: '#ffffff',
-    fontSize: 12
+    fontSize: 12,
   },
 
   payments_nav: {
@@ -2544,22 +2122,25 @@ const styles = StyleSheet.create({
     height: 60,
     flexDirection: 'row',
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
+
+    position: 'absolute',
+    zIndex: 1,
   },
   payments_nav_items: {
     justifyContent: 'center',
     height: 60,
     width: Util.size.width / 2,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   payments_nav_items_title: {
     paddingHorizontal: 10,
     fontSize: 12,
     fontWeight: '500',
-    color: '#666666'
+    color: '#666666',
   },
   payments_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   payments_nav_items_active: {
     position: 'absolute',
@@ -2567,7 +2148,7 @@ const styles = StyleSheet.create({
     top: 20,
     right: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   payments_nav_items_right_active: {
     position: 'absolute',
@@ -2575,11 +2156,11 @@ const styles = StyleSheet.create({
     top: 20,
     left: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   right_btn_add_store: {
     paddingVertical: 1,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
 
   payments_nav_icon_box: {
@@ -2590,13 +2171,13 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   payments_nav_icon_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   payments_nav_icon_box_active: {
-    borderColor: DEFAULT_COLOR
+    borderColor: DEFAULT_COLOR,
   },
 
   uncheckOverlay: {
@@ -2605,7 +2186,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
   },
 
   boxButtonActions: {
@@ -2613,38 +2194,44 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16
+    paddingVertical: 16,
+    paddingHorizontal: 30,
+  },
+  buttonAction: {
+    flex: 1,
   },
   boxButtonAction: {
+    flex: 1,
     flexDirection: 'row',
     borderWidth: Util.pixel,
     borderColor: '#666666',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 5,
-    width: Util.size.width / 2 - 24,
+    // width: Util.size.width / 2 - 24,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   buttonActionTitle: {
     color: '#333333',
     marginLeft: 4,
-    fontSize: 14
+    fontSize: 14,
   },
   starReviews: {
-    marginLeft: 2
+    marginLeft: 2,
   },
   feeBox: {
-    marginTop: 12
+    marginTop: 12,
   },
   feeLabel: {
-    fontSize: 16
+    fontSize: 16,
+    flex: 1
   },
   feeValue: {
-    fontSize: 16
+    fontSize: 16,
   },
   both: {
-    fontWeight: '600'
+    fontWeight: '600',
   },
   profile_list_icon_box: {
     // backgroundColor: "#cc9900",
@@ -2654,47 +2241,47 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     marginLeft: 4,
-    marginRight: -20
+    marginRight: -20,
   },
   profile_list_icon_box_angle: {
     position: 'absolute',
     top: 0,
     right: 0,
-    height: '100%'
+    height: '100%',
   },
   useVoucherLabelWrapper: {
     flex: 1,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   useVoucherLabel: {
-    marginLeft: 4
+    marginLeft: 4,
   },
   addVoucherWrapper: {
     flex: 1,
     borderLeftWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    borderColor: '#ebebeb'
+    borderColor: '#ebebeb',
   },
   addVoucherLabel: {
     fontSize: 14,
     fontWeight: '400',
-    color: '#333'
+    color: '#333',
   },
   paymentMethodContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1
+    flex: 1,
   },
   imagePaymentMethod: {
     width: 40,
     height: 40,
     resizeMode: 'contain',
-    marginRight: 7
+    marginRight: 7,
   },
   placeholder: {
-    color: '#999999'
-  }
+    color: '#999999',
+  },
 });
 
 export default withTranslation(['orders', 'cart', 'common'])(observer(Confirm));

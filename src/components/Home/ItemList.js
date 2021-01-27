@@ -12,8 +12,7 @@ import { Actions, ActionConst } from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 
-@observer
-export default class ItemList extends Component {
+class ItemList extends Component {
   // tới màn hình store
   _goStores(item) {
     action(() => {
@@ -354,3 +353,5 @@ const styles = StyleSheet.create({
     fontWeight: '600'
   }
 });
+
+export default observer(ItemList);

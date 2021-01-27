@@ -13,8 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { Actions } from 'react-native-router-flux';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class PhoneCard extends Component {
+class PhoneCard extends Component {
   constructor(props) {
     super(props);
 
@@ -594,3 +593,5 @@ const styles = StyleSheet.create({
     borderRadius: 10
   }
 });
+
+export default observer(PhoneCard);

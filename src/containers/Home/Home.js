@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 import store from 'app-store';
 import appConfig from 'app-config';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import HomeComponent from '../../components/Home';
-import { executeJobs } from '../../helper/jobsOnReset';
-import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
+import {executeJobs} from '../../helper/jobsOnReset';
+import {servicesHandler, SERVICES_TYPE} from '../../helper/servicesHandler';
 import {
   LIST_SERVICE_TYPE,
-  MIN_ITEMS_PER_ROW
+  MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
 
@@ -34,10 +34,10 @@ class Home extends Component {
       listService: [],
       listServiceConfig: {
         type: LIST_SERVICE_TYPE.VERTICAL,
-        items_per_row: MIN_ITEMS_PER_ROW
+        items_per_row: MIN_ITEMS_PER_ROW,
       },
       primaryActions: null,
-      product_groups: {}
+      product_groups: [],
     };
     this.eventTracker = new EventTracker();
   }
@@ -63,7 +63,7 @@ class Home extends Component {
   async getHomeDataFromApi(showLoading = true) {
     if (showLoading) {
       this.setState({
-        apiFetching: true
+        apiFetching: true,
       });
     }
 
@@ -72,7 +72,7 @@ class Home extends Component {
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
-            cart_data: response.data.vote_cart
+            cart_data: response.data.vote_cart,
           });
         }
 
@@ -87,7 +87,7 @@ class Home extends Component {
           this.handlePopup(popup);
         }
 
-        this.setState(prevState => ({
+        this.setState((prevState) => ({
           site: response.data.site,
           sites: response.data.sites,
           title_sites: response.data.title_sites,
@@ -106,12 +106,12 @@ class Home extends Component {
           listServiceConfig: response.data.list_service_config
             ? {
                 ...prevState.listServiceConfig,
-                ...response.data.list_service_config
+                ...response.data.list_service_config,
               }
             : prevState.listServiceConfig,
           primaryActions: response.data.primary_actions,
           showPrimaryActions: response.data.showPrimaryActions,
-          product_groups: response.data.product_groups
+          product_groups: response.data.product_groups,
         }));
 
         this.executeDeepLink();
@@ -123,9 +123,9 @@ class Home extends Component {
       this.setState(
         {
           refreshing: false,
-          apiFetching: false
+          apiFetching: false,
         },
-        executeJobs
+        executeJobs,
       );
     }
   }
@@ -137,7 +137,7 @@ class Home extends Component {
         image: popup.image_url,
         // image: "https://www.erevollution.com/public/upload/citizen/48526.jpg",
         delay: popup.delay !== undefined ? popup.delay : 2000,
-        data: popup
+        data: popup,
       };
       servicesHandler(popupService, this.props.t);
       store.setPopupClickedID(popup.modified);
@@ -166,7 +166,7 @@ class Home extends Component {
   }
 
   handlePullToRefresh = () => {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
 
     setTimeout(() => {
       const showLoading = false;
@@ -177,26 +177,25 @@ class Home extends Component {
   handlePressedSurplusNext = () => {
     Actions.push(appConfig.routes.vndWallet, {
       title: store.user_info.default_wallet.name,
-      wallet: store.user_info.default_wallet
+      wallet: store.user_info.default_wallet,
     });
   };
 
-  handlePromotionPressed = item => {
+  handlePromotionPressed = (item) => {
     servicesHandler(item, this.props.t);
   };
 
-  handleVoucherPressed = item => {
+  handleVoucherPressed = (item) => {
     Actions.notify_item({
       title: item.title,
-      data: item
+      data: item,
     });
   };
 
   handleShowAllVouchers = () => {};
 
   handlePressService(service, callBack) {
-    console.log(service);
-    const { t } = this.props;
+    const {t} = this.props;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
@@ -209,9 +208,18 @@ class Home extends Component {
     Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
   };
 
+  handleShowAllGroupProduct = (group) => {
+    const service = {
+      type: SERVICES_TYPE.GROUP_PRODUCT,
+      title: group.title,
+      groupId: group.id,
+    };
+    this.handlePressService(service);
+  };
+
   handleShowAllCampaigns = () => {
     Actions.push(appConfig.routes.mainVoucher, {
-      from: 'home'
+      from: 'home',
     });
   };
 
@@ -231,24 +239,24 @@ class Home extends Component {
 
   handlePressSiteItem = (store, callBack) => {
     servicesHandler(
-      { type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id },
+      {type: SERVICES_TYPE.OPEN_SHOP, siteId: store.id},
       this.props.t,
-      callBack
+      callBack,
     );
   };
 
-  handlePressCampaignItem = campaign => {
+  handlePressCampaignItem = (campaign) => {
     Actions.push(appConfig.routes.voucherDetail, {
       title: campaign.title,
       campaignId: campaign.id,
-      from: 'home'
+      from: 'home',
     });
   };
 
-  handlePressNewItem = item => {
+  handlePressNewItem = (item) => {
     Actions.notify_item({
       title: item.title,
-      data: item
+      data: item,
     });
   };
 
@@ -263,11 +271,11 @@ class Home extends Component {
   handlePressButtonChat = () => {
     if (store.user_info && this.state.site) {
       Actions.amazing_chat({
-        titleStyle: { width: 220 },
+        titleStyle: {width: 220},
         phoneNumber: this.state.site.tel,
         title: this.state.site.name,
         site_id: this.state.site.id,
-        user_id: store.user_info.id
+        user_id: store.user_info.id,
       });
     }
   };
@@ -278,7 +286,7 @@ class Home extends Component {
     const service = {
       type: SERVICES_TYPE.PRODUCT_DETAIL,
       siteId: product.site_id,
-      productId: product.id
+      productId: product.id,
     };
     servicesHandler(service, this.props.t, callBack);
   };
@@ -298,13 +306,12 @@ class Home extends Component {
         notices={this.state.notices}
         services={this.state.services}
         userInfo={store.user_info}
-        notify={store.notify}
         products={this.state.products}
         campaigns={this.state.campaigns}
         promotions={this.state.promotions}
         listService={this.state.listService}
         listServiceType={this.state.listServiceConfig.type}
-        listServiceItemsPerRow={this.state.listServiceConfig.items_per_row}
+        listServiceItemsPerRow={Number(this.state.listServiceConfig.items_per_row)}
         primaryActions={this.state.primaryActions}
         showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}
@@ -316,6 +323,7 @@ class Home extends Component {
         onShowAllVouchers={this.handleShowAllVouchers}
         onPressService={this.handlePressService.bind(this)}
         onPullToRefresh={this.handlePullToRefresh}
+        onShowAllGroupProduct={this.handleShowAllGroupProduct}
         onShowAllSites={this.handleShowAllSites}
         onShowAllCampaigns={this.handleShowAllCampaigns}
         onShowAllNews={this.handleShowAllNews}

@@ -1,18 +1,18 @@
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
-import { Alert, Linking } from 'react-native';
+import {Alert, Linking} from 'react-native';
 import Communications from 'react-native-communications';
 import store from 'app-store';
 
-import { SERVICES_TYPE } from './types';
+import {SERVICES_TYPE} from './types';
 import {
   handleUseVoucherOnlineSuccess,
-  handleUseVoucherOnlineFailure
+  handleUseVoucherOnlineFailure,
 } from './voucherHandler';
 import {
   handleCategoryPress,
   handleServicePress,
-  handleOrderHistoryPress
+  handleOrderHistoryPress,
 } from './radaHandler';
 
 /**
@@ -39,14 +39,14 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.RADA_SERVICE_DETAIL:
       const radaService = {
         id: service.id,
-        name: service.name
+        name: service.name,
       };
       handleServicePress(radaService, t);
       break;
     case SERVICES_TYPE.RADA_LIST_SERVICE:
       const radaCategory = {
         id: service.id,
-        name: service.name
+        name: service.name,
       };
       handleCategoryPress(radaCategory, t);
       break;
@@ -55,12 +55,12 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         service_type: service.type,
         service_id: service.id,
         title: t('common:screen.rada.mainTitle'),
-        onPressItem: item => {
+        onPressItem: (item) => {
           handleCategoryPress(item, t);
         },
-        onPressOrderHistory: item => {
+        onPressOrderHistory: (item) => {
           handleOrderHistoryPress(item, t);
-        }
+        },
       });
       break;
 
@@ -138,7 +138,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
 
     /** EXTERNAL LINK */
     case SERVICES_TYPE.EXTERNAL_LINK:
-      Linking.openURL(service.link).catch(err => {
+      Linking.openURL(service.link).catch((err) => {
         console.log('open_external_link', err);
         Alert.alert(t('common:link.error.message'));
       });
@@ -147,7 +147,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** QRBARCODE */
     case SERVICES_TYPE.ACCUMULATE_POINTS:
       Actions.push(appConfig.routes.qrBarCode, {
-        title: t('common:screen.qrBarCode.mainTitle')
+        title: t('common:screen.qrBarCode.mainTitle'),
       });
       break;
     case SERVICES_TYPE.QRCODE_SCAN_TYPE:
@@ -155,36 +155,36 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.qrBarCode, {
         index: 1,
         title: t('common:screen.qrBarCode.scanTitle'),
-        wallet: store.user_info.default_wallet
+        wallet: store.user_info.default_wallet,
       });
       break;
 
     /** VOUCHER */
     case SERVICES_TYPE.LIST_VOUCHER:
       Actions.push(appConfig.routes.mainVoucher, {
-        from: 'home'
+        from: 'home',
       });
       break;
     case SERVICES_TYPE.MY_VOUCHER_TYPE:
     case SERVICES_TYPE.MY_VOUCHER:
       Actions.push(appConfig.routes.myVoucher, {
         title: t('common:screen.myVoucher.mainTitle'),
-        from: 'home'
+        from: 'home',
       });
       break;
     case SERVICES_TYPE.MY_VOUCHER_DETAIL:
-      store.setDeepLinkData({ id: service.id });
+      store.setDeepLinkData({id: service.id});
       Actions.push(appConfig.routes.myVoucher, {
         title: t('common:screen.myVoucher.mainTitle'),
         from: 'home',
         onUseVoucherOnlineSuccess: handleUseVoucherOnlineSuccess,
-        onUseVoucherOnlineFailure: handleUseVoucherOnlineFailure
+        onUseVoucherOnlineFailure: handleUseVoucherOnlineFailure,
       });
       break;
     case SERVICES_TYPE.VOUCHER_DETAIL:
-      store.setDeepLinkData({ id: service.id });
+      store.setDeepLinkData({id: service.id});
       Actions.push(appConfig.routes.mainVoucher, {
-        from: 'deeplink'
+        from: 'deeplink',
       });
       break;
 
@@ -192,7 +192,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.TRANSACTION:
       Actions.vnd_wallet({
         title: store.user_info.default_wallet.name,
-        wallet: store.user_info.default_wallet
+        wallet: store.user_info.default_wallet,
       });
       break;
 
@@ -201,7 +201,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.storeOrders, {
         tel: service.tel,
         title: service.site_name,
-        store_id: service.store_id
+        store_id: service.store_id,
       });
       break;
     case SERVICES_TYPE.ORDERS:
@@ -209,7 +209,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Actions.push(appConfig.routes.ordersTab);
       break;
     case SERVICES_TYPE.ORDER_DETAIL:
-      store.setDeepLinkData({ id: service.id });
+      store.setDeepLinkData({id: service.id});
       Actions.push(appConfig.routes.deepLinkOrdersTab);
       break;
 
@@ -220,7 +220,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         service_id: service.id,
         indexTab: service.tab,
         title: service.name,
-        serviceId: service.serviceId ? service.serviceId : 100
+        serviceId: service.serviceId ? service.serviceId : 100,
       });
       break;
 
@@ -229,7 +229,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       Alert.alert(
         'Thông báo',
         'Chức năng đặt lịch giữ chỗ 30DAY tới các cửa hàng đang được phát triển.',
-        [{ text: 'Đồng ý' }]
+        [{text: 'Đồng ý'}],
       );
       break;
 
@@ -237,7 +237,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** Address */
     case SERVICES_TYPE.MY_ADDRESS:
       Actions.push(appConfig.routes.myAddress, {
-        from_page: 'account'
+        from_page: 'account',
       });
       break;
 
@@ -248,64 +248,67 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.NEWS_DETAIL:
       Actions.notify_item({
         title: service.news.title,
-        data: service.news
+        data: service.news,
       });
       break;
     case SERVICES_TYPE.NEWS_CATEGORY:
       Actions.push(appConfig.routes.notifies, {
         title: service.title,
-        news_type: `/${service.categoryId}`
+        news_type: `/${service.categoryId}`,
       });
       break;
 
     /** CHAT */
     case SERVICES_TYPE.CHAT_NOTI:
       Actions.amazing_chat({
-        titleStyle: { width: 220 },
+        titleStyle: {width: 220},
         phoneNumber: service.tel,
         title: service.site_name,
         site_id: service.site_id,
-        user_id: service.user_id
+        user_id: service.user_id,
       });
       break;
     case SERVICES_TYPE.LIST_CHAT:
       Actions.list_amazing_chat({
-        titleStyle: { width: 220 }
+        titleStyle: {width: 220},
       });
       break;
 
     /** STORE */
     case SERVICES_TYPE.OPEN_SHOP:
       APIHandler.site_info(service.siteId)
-        .then(response => {
+        .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             store.setStoreData(response.data);
             if (response.data.config_menu_categories) {
               Actions.push(appConfig.routes.multiLevelCategory, {
                 title: response.data.name,
                 siteId: service.siteId,
-                categoryId: service.categoryId || 0
+                categoryId: service.categoryId || 0,
               });
             } else {
               Actions.push(appConfig.routes.store, {
                 title: service.name || response.data.name,
-                categoryId: service.categoryId || 0
+                categoryId: service.categoryId || 0,
               });
             }
           } else {
             throw Error(
-              response ? response.message : t('common:api.error.message')
+              response ? response.message : t('common:api.error.message'),
             );
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log('open_shop', err);
           flashShowMessage({
             type: 'danger',
-            message: err.message || t('common:api.error.message')
+            message: err.message || t('common:api.error.message'),
           });
         })
         .finally(callBack);
+      break;
+    case SERVICES_TYPE.GPS_LIST_STORE:
+      Actions.push(appConfig.routes.gpsListStore);
       break;
 
     /** COMMUNICATION */
@@ -316,29 +319,36 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** PRODUCT */
     case SERVICES_TYPE.PRODUCT_DETAIL:
       APIHandler.site_product(service.siteId, service.productId)
-        .then(response => {
+        .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             const item = response.data;
             if (item) {
               Actions.item({
                 title: item.name,
-                item
+                item,
               });
             }
           } else {
             throw Error(
-              response ? response.message : t('common:api.error.message')
+              response ? response.message : t('common:api.error.message'),
             );
           }
         })
-        .catch(e => {
+        .catch((e) => {
           console.log(e + ' deep_link_site_product');
           flashShowMessage({
             type: 'danger',
-            message: e.message || t('common:api.error.message')
+            message: e.message || t('common:api.error.message'),
           });
         })
         .finally(callBack);
+      break;
+    case SERVICES_TYPE.GROUP_PRODUCT:
+      Actions.push(appConfig.routes.groupProduct, {
+        groupId: service.groupId,
+        siteId: service.siteId || store?.store_data?.id,
+        title: service.title,
+      });
       break;
 
     /** AFFILIATE */
@@ -362,7 +372,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         service.default_payment_method_id !== undefined
           ? {
               id: service.default_payment_method_id,
-              type: service.default_payment_method_type
+              type: service.default_payment_method_type,
             }
           : null;
       Actions.push(appConfig.routes.paymentMethod, {
@@ -373,9 +383,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         extraFee: service.item_fee,
         showPrice: service.showPrice,
         showSubmit: service.showSubmit,
-        onUpdatePaymentMethod: data => callBack(false, data),
+        onUpdatePaymentMethod: (data) => callBack(false, data),
         store_id: service.storeId,
-        title: service.title
+        title: service.title,
       });
       break;
 
@@ -389,17 +399,30 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
               callBack && callBack();
               Actions.pop();
               servicesHandler(service.data, t);
-            }
+            },
           }),
-        service.delay
+        service.delay,
       );
       break;
 
     /** SCHEDULE BOOKING */
     case SERVICES_TYPE.SCHEDULE_BOOKING:
       Actions.push(appConfig.routes.schedule, {
-        serviceId: service.service_id
+        serviceId: service.service_id,
       });
+      break;
+
+    /** PREMIUMS */
+    case SERVICES_TYPE.PREMIUM_INFO:
+      if (Actions.currentScene === `${appConfig.routes.premiumInfo}_1`) {
+        Actions.jump(appConfig.routes.accountTab);
+      }
+      Actions.push(appConfig.routes.premiumInfo);
+      break;
+
+    /** COMMISSION */
+    case SERVICES_TYPE.COMMISSION_INCOME_STATEMENT:
+      Actions.push(appConfig.routes.commissionIncomeStatement);
       break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [

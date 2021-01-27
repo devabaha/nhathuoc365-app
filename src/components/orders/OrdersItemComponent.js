@@ -57,7 +57,7 @@ class OrdersItemComponent extends Component {
   }
 
   _goOrdersItemHandler(item) {
-    var is_paymenting = item.status == CART_STATUS_ORDERING;
+    const is_paymenting = item.status == CART_STATUS_ORDERING;
     if (is_paymenting) {
       action(() => {
         store.setStoreId(item.site_id);
@@ -76,6 +76,7 @@ class OrdersItemComponent extends Component {
   _goOrdersItem(item) {
     if (this.props.disableGoDetail) return;
     store.setStoreData(item.site);
+    store.setCartData(item);
     Actions.orders_item({
       data: item,
       title: `#${item.cart_code}`,
@@ -212,7 +213,7 @@ class OrdersItemComponent extends Component {
                 <TouchableHighlight
                   underlayColor={hexToRgbA(DEFAULT_COLOR, 0.9)}
                   onPress={() => {
-                    this._goOrdersItemHandler(item);
+                    this._goOrdersItem(item);
                   }}
                   style={{
                     paddingVertical: 6,

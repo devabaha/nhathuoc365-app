@@ -12,27 +12,34 @@ class SelectProvince extends BaseContainer {
   static propTypes = {
     onSelectProvince: PropTypes.func,
     onClose: PropTypes.func,
-    provinceSelected: PropTypes.string
+    provinceSelected: PropTypes.string,
+    allOption: PropTypes.bool,
+    listCities: PropTypes.array,
+    dataKey: PropTypes.string
   };
 
   static defaultProps = {
     onSelectProvince: defaultListener,
     onClose: defaultListener,
-    provinceSelected: ''
+    provinceSelected: '',
+    allOption: true,
+    listCities: [],
+    dataKey: ''
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      listCities: []
+      listCities: this.props.listCities
     };
-
     this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    this.getListCities();
+    if (!this.props.listCities.length) {
+      this.getListCities();
+    }
     this.eventTracker.logCurrentView();
   }
 
@@ -44,9 +51,11 @@ class SelectProvince extends BaseContainer {
     try {
       const response = await internalFetch(config.rest.listCities());
       if (response.status === config.httpCode.success) {
-        this.setState({
-          listCities: response.data.list_city
-        });
+        const listCities = this.props.allOption
+          ? response.data.list_city
+          : response.data.list_city.slice(1);
+
+        this.setState({ listCities });
       }
     } catch (error) {
       console.log(error);
@@ -62,6 +71,7 @@ class SelectProvince extends BaseContainer {
         onSelect={this.props.onSelectProvince}
         provinceSelected={this.props.provinceSelected}
         listCities={this.state.listCities}
+        dataKey={this.props.dataKey}
       />
     );
   }

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { LayoutChangeEvent, StyleSheet } from 'react-native';
 import Animated, { Easing } from 'react-native-reanimated';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { timing, useValue } from 'react-native-redash';
+import { timing, useValue } from 'react-native-redash/lib/module/v1';
 
 import { CheckPointProps } from '.';
 import { DEFAULT_UNACTIVE_COLOR, DEFAULT_ACTIVE_COLOR, DEFAULT_ACTIVE_LINK_COLOR, DEFAULT_UNACTIVE_LINK_COLOR } from '../constants';

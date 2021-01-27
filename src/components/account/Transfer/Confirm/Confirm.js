@@ -17,7 +17,7 @@ import {
   FieldItemWrapper,
   FieldItem
 } from 'app-packages/tickid-phone-card/component/FieldItem';
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { internalFetch } from 'app-packages/tickid-phone-card/helper/apiFetch';
 import Loading from '@tickid/tickid-rn-loading';
 import config from 'app-packages/tickid-phone-card/config';

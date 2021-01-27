@@ -37,10 +37,8 @@ class PayWallet extends Component {
   componentWillUnmount() {
     this.eventTracker.clearTracking();
   }
-
-  componentWillMount() {}
+  
   // thực hiện add cửa hàng vào account của user
-
   _onSave() {
     var { wallet, address, amount } = this.state;
     if (!address) {

@@ -159,6 +159,24 @@
     },
     "qrPaymentInfo": {
       "mainTitle": "Chấp nhận thanh toán"
+    },
+    "premiumInfo": {
+      "mainTitle": "Ưu đãi hạng"
+    },
+    "productSchedule": {
+      "mainTitle": "Chọn ngày và giờ"
+    },
+    "groupProduct": {
+      "mainTitle": "Nhóm sản phẩm"
+    },
+    "gpsListStore": {
+      "mainTitle": "Danh sách cửa hàng"
+    },
+    "agencyInformationRegister": {
+      "mainTitle": "Thông tin NPP"
+    },
+    "commissionIncomeStatement": {
+      "mainTitle": "Báo cáo hoa hồng"
     }
   },
 

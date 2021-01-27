@@ -32,7 +32,7 @@ class BaseHandler {
    * @param {string} api
    * @returns {import('network/Entity/APIRequest/APIRequest').Request}
    */
-  getCancelableAPI(api) {
+  getCancelableAPI(api, autoHandleResponse = false) {
     this._networkIndicator();
     const cancelInstance = this.getCancelInstance();
 
@@ -40,8 +40,8 @@ class BaseHandler {
       cancel: () => cancelInstance.cancel(),
       promise: () =>
         axios(api)
-          .then(response => this.processError(response))
-          .catch(err => console.log('getCancelableAPI', err))
+          .then((response) => this.processError(response, autoHandleResponse))
+          .catch((err) => console.log('getCancelableAPI', err)),
     };
   }
 
@@ -52,7 +52,7 @@ class BaseHandler {
    * @param {Object} data
    * @returns {import('network/Entity/APIRequest/APIRequest').Request}
    */
-  postCancelableAPI(api, data, isEncoding = true) {
+  postCancelableAPI(api, data, isEncoding = true, autoHandleResponse = false) {
     this._networkIndicator();
     const cancelInstance = this.getCancelInstance();
     data = isEncoding ? encodeQueryData(data) : data;
@@ -61,8 +61,8 @@ class BaseHandler {
       promise: () =>
         axios
           .post(api, data)
-          .then(response => this.processError(response))
-          .catch(err => console.log('postCancelableAPI', err))
+          .then((response) => this.processError(response, autoHandleResponse))
+          .catch((err) => console.log('postCancelableAPI', err)),
     };
   }
 
@@ -98,14 +98,14 @@ class BaseHandler {
 
     return axios
       .post(api, encodeQueryData(data))
-      .then(response => this.processError(response))
-      .catch(err => console.log('postAPI', err));
+      .then((response) => this.processError(response))
+      .catch((err) => console.log('postAPI', err));
   }
 
   /**
    * @todo Xử lý ngoại lệ
    */
-  processError(response) {
+  processError(response, autoHandleResponse = false) {
     this._networkIndicator(false);
 
     if (response.status != HTTP_SUCCESS) {
@@ -115,7 +115,30 @@ class BaseHandler {
         store.setConnect(true);
       })();
     }
-    return response.data;
+
+    if (autoHandleResponse) {
+      return this.handleResponse(response.data);
+    } else {
+      return response.data;
+    }
+  }
+
+  /**
+   * @todo handle response from api by the common way
+   */
+  handleResponse(response) {
+    if (!response) throw Error("Response has no content!");
+    if (response.status === HTTP_SUCCESS) {
+      if (response.data) {
+        return response.data;
+      } else {
+      console.log('%cRESPONSE_EMPTY_DATA', 'color:red', response);
+      throw Error(response.message);
+      }
+    } else {
+      console.log(`%cRESPONSE_FAILURE ${response.status}`, 'color:red', response);
+      throw Error(response.message);
+    }
   }
 }
 

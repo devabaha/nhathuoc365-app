@@ -14,8 +14,7 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome';
 import EventTracker from '../../helper/EventTracker';
 
-@observer
-export default class MdCardConfirm extends Component {
+class MdCardConfirm extends Component {
   constructor(props) {
     super(props);
 
@@ -409,3 +408,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(225,225,225)'
   }
 });
+
+export default observer(MdCardConfirm);

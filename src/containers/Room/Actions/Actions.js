@@ -45,7 +45,7 @@ class Actions extends PureComponent {
         <View style={styles.actionWrapper}>
           <Icon name={action.icon} style={styles.icon} />
           <Text style={styles.actionTitle}>{action.title}</Text>
-          {!!action.notify && <NotiBadge label={action.notify} />}
+          <NotiBadge label={action.notify} show={!!action.notify} animation/>
         </View>
       </TouchableHighlight>
     ));

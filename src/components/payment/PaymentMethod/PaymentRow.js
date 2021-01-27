@@ -141,7 +141,7 @@ class PaymentRow extends Component {
       };
 
       return (
-        <View key={bank.id} style={[styles.bankTransferContainer, extraStyle]}>
+        <View key={index} style={[styles.bankTransferContainer, extraStyle]}>
           <Text style={styles.bankTransferName}>{bank.name}</Text>
           <Text style={styles.bankTransferLabel}>
             Chủ TK:{' '}

@@ -9,7 +9,7 @@ import Animated, {
   Easing,
   Extrapolate
 } from 'react-native-reanimated';
-import { useValue, timing } from 'react-native-redash';
+import { useValue, timing } from 'react-native-redash/lib/module/v1';
 
 import appConfig from 'app-config';
 

@@ -7,7 +7,7 @@ import {
   languages
 } from './constants';
 
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as RNLocalize from 'react-native-localize';
 import moment from 'moment';
 

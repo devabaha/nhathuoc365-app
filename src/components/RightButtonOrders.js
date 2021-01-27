@@ -16,13 +16,9 @@ import store from '../store/Store';
 import { NotiBadge } from './Badges';
 import appConfig from 'app-config';
 
-const AnimatedNoti = Animated.createAnimatedComponent(NotiBadge);
-@observer
-export default class RightButtonOrders extends Component {
+class RightButtonOrders extends Component {
   state = {
-    noti: store.cart_data ? store.cart_data.count : 0,
-    animatedNoti: new Animated.Value(0),
-    animatedNotiBounce: new Animated.Value(0)
+    noti: 0,
   };
 
   updateNoti() {
@@ -31,76 +27,7 @@ export default class RightButtonOrders extends Component {
       (!store.cart_data && this.state.noti)
     ) {
       this.setState({ noti: store.cart_data ? store.cart_data.count : 0 });
-      this.activeNotiAnimation();
     }
-  }
-
-  activeNotiAnimation() {
-    Animated.parallel(
-      [
-        Animated.sequence([
-          Animated.timing(this.state.animatedNoti, {
-            toValue: 1,
-            duration: 100,
-            easing: Easing.quad,
-            useNativeDriver: true
-          }),
-          Animated.delay(200),
-          Animated.timing(this.state.animatedNoti, {
-            toValue: -1,
-            duration: 200,
-            easing: Easing.elastic(0.5),
-            useNativeDriver: true
-          }),
-          Animated.timing(this.state.animatedNoti, {
-            toValue: 1,
-            duration: 200,
-            easing: Easing.elastic(0.5),
-            useNativeDriver: true
-          }),
-          Animated.timing(this.state.animatedNoti, {
-            toValue: 0,
-            duration: 100,
-            easing: Easing.elastic(0.5),
-            useNativeDriver: true
-          })
-        ]),
-
-        Animated.sequence([
-          Animated.timing(this.state.animatedNotiBounce, {
-            toValue: -1,
-            duration: 200,
-            easing: Easing.quad,
-            useNativeDriver: true
-          }),
-          Animated.delay(50),
-          Animated.timing(this.state.animatedNotiBounce, {
-            toValue: 1,
-            duration: 200,
-            easing: Easing.quad,
-            useNativeDriver: true
-          }),
-          Animated.timing(this.state.animatedNotiBounce, {
-            toValue: 2,
-            duration: 200,
-            easing: Easing.elastic(0.5),
-            useNativeDriver: true
-          }),
-          Animated.timing(this.state.animatedNotiBounce, {
-            toValue: 0,
-            duration: 200,
-            easing: Easing.quad,
-            useNativeDriver: true
-          })
-        ])
-      ],
-      { stopTogether: false }
-    ).start(({ finished }) => {
-      if (finished) {
-        this.state.animatedNoti.setValue(0);
-        this.state.animatedNotiBounce.setValue(0);
-      }
-    });
   }
 
   goToOrders = () => {
@@ -115,7 +42,7 @@ export default class RightButtonOrders extends Component {
             store_id: this.props.store_id || undefined,
             title: this.props.title || undefined,
             tel: this.props.tel || undefined,
-            hideContinue: true
+            hideContinue: true,
           });
         }
       } else {
@@ -133,25 +60,6 @@ export default class RightButtonOrders extends Component {
     }
   };
 
-  animatedNoti() {
-    return {
-      transform: [
-        {
-          scaleX: this.state.animatedNoti.interpolate({
-            inputRange: [-1, 0, 1],
-            outputRange: [0.8, 1, 1.25]
-          })
-        },
-        {
-          translateY: this.state.animatedNotiBounce.interpolate({
-            inputRange: [-1, 0, 1, 2],
-            outputRange: [2, 0, -3, 2]
-          })
-        }
-      ]
-    };
-  }
-
   render() {
     this.updateNoti();
 
@@ -161,13 +69,12 @@ export default class RightButtonOrders extends Component {
           {this.props.icon || (
             <Icon name="shopping-cart" size={20} color="#ffffff" />
           )}
-          {!!this.state.noti && (
-            <AnimatedNoti
+            <NotiBadge
               label={this.state.noti}
               containerStyle={{ right: -4, top: isAndroid ? -2 : -4 }}
-              style={this.animatedNoti()}
+              animation
+              show={!!this.state.noti}
             />
-          )}
         </View>
       </TouchableOpacity>
     );
@@ -183,7 +90,7 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(7)
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   stores_info_action_notify: {
     position: 'absolute',
@@ -196,11 +103,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     borderRadius: 8,
-    paddingHorizontal: 2
+    paddingHorizontal: 2,
   },
   stores_info_action_notify_value: {
     fontSize: 10,
     color: '#ffffff',
-    fontWeight: '600'
-  }
+    fontWeight: '600',
+  },
 });
+
+export default observer(RightButtonOrders);
