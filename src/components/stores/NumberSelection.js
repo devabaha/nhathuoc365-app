@@ -30,7 +30,7 @@ const NumberSelection = props => {
       >
         <Icon name="minus" style={[styles.icon, extraStyle]} />
       </TouchableHighlight>
-      <View style={styles.textContainer}>
+      <View style={[styles.textContainer, props.textContainer]}>
         <TextInput
           editable={!props.disabled}
           style={[styles.text, extraStyle]}

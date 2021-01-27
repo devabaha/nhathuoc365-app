@@ -7785,22 +7785,13 @@ react-native-gifted-chat@^0.16.3:
     react-native-typing-animation "^0.1.7"
     uuid "3.4.0"
 
-react-native-google-places-autocomplete@^1.4.1:
+react-native-google-places-autocomplete@1.9.0, react-native-google-places-autocomplete@^1.4.1:
   version "1.9.0"
   resolved "https://registry.yarnpkg.com/react-native-google-places-autocomplete/-/react-native-google-places-autocomplete-1.9.0.tgz#d88bdbb78ca78d5223e1fdf8701d75625f2a2833"
   integrity sha512-gYWwI6ZeCxW8zkknMPcQ8oSGe5vckNFagIrGx9Fpqf4j/CAoxAYm7gHrHvipTLLKtEIhwlK3gb4VntyQg4bwmw==
   dependencies:
     lodash.debounce "^4.0.8"
     prop-types "^15.5.10"
-    qs "~6.9.1"
-
-react-native-google-places-autocomplete@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/react-native-google-places-autocomplete/-/react-native-google-places-autocomplete-2.1.2.tgz#1cf1462216d2bddfaa01a6db11077b8eac8d123b"
-  integrity sha512-daCLjXu2n5iIwfBWrfexF+ssCjhCnAboZvv+SKnsB+86zKlEq7TD4ERLq+XoNtt/JW5jaoBSk0SxATNKTrMqAA==
-  dependencies:
-    lodash.debounce "^4.0.8"
-    prop-types "^15.7.2"
     qs "~6.9.1"
 
 react-native-haptic-feedback@^1.11.0:

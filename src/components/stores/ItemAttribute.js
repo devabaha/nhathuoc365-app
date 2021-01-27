@@ -23,6 +23,7 @@ import Button from '../Button';
 import Loading from '@tickid/tickid-rn-loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from '../../helper/EventTracker';
+import DropShip from '../item/DropShip';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -47,10 +48,19 @@ class ItemAttribute extends PureComponent {
     selectedModel: {},
     selectedModelKey: '',
     quantity: MIN_QUANTITY,
+    dropShipPrice: 0,
   };
   refModal = React.createRef();
   unmounted = false;
   eventTracker = new EventTracker();
+
+  get isDropShip() {
+    return this.props.isDropShip;
+  }
+
+  get hasAttrs() {
+    return Array.isArray(this.state.models) && this.state.models.length > 0;
+  }
 
   componentDidMount() {
     this.getAttrs();
@@ -90,8 +100,12 @@ class ItemAttribute extends PureComponent {
               this.setState({viewData, selectedAttrs});
             }
           } else {
-            this.props.onSubmit();
-            Actions.pop();
+            if (this.isDropShip) {
+              this.setState({product: this.props.product});
+            } else {
+              this.props.onSubmit();
+              Actions.pop();
+            }
           }
         }
       }
@@ -296,7 +310,11 @@ class ItemAttribute extends PureComponent {
   };
 
   handleSubmit = () => {
-    this.props.onSubmit(this.state.quantity, this.state.selectedModelKey);
+    this.props.onSubmit(
+      this.state.quantity,
+      this.state.selectedModelKey,
+      this.state.dropShipPrice,
+    );
     this.handleClose();
   };
 
@@ -328,8 +346,11 @@ class ItemAttribute extends PureComponent {
       this.state.selectedAttrs,
     );
     const disabled =
-      numberSelectedAttrs === 0 ||
-      Object.keys(this.state.viewData).length !== numberSelectedAttrs;
+      this.isDropShip
+        && this.state.product.price >= this.state.dropShipPrice
+        || (this.hasAttrs && numberSelectedAttrs === 0 ||
+          Object.keys(this.state.viewData).length !== numberSelectedAttrs
+        );
 
     const btnProps = disabled && {
       btnContainerStyle: styles.containerDisabled,
@@ -341,19 +362,24 @@ class ItemAttribute extends PureComponent {
       ? this.state.selectedModel.image
       : this.state.product.image;
 
-    const price = this.state.selectedModel.price
-      ? this.state.selectedModel.price
-      : this.state.product.total_price_view;
+    const price =
+      (this.state.selectedModel.price
+        ? this.state.selectedModel.price
+        : this.state.product.total_price_view) ||
+      (this.isDropShip && this.state.product.price_view);
 
-    const inventory = this.state.selectedModel.inventory
-      ? this.state.selectedModel.inventory
-      : this.state.product.total_inventory;
+    const inventory =
+      (this.state.selectedModel.inventory
+        ? this.state.selectedModel.inventory
+        : this.state.product?.total_inventory) ||
+      (this.isDropShip && this.state.product.inventory);
 
     const title = this.state.product.name;
-    const subTitle =
-      numberSelectedAttrs === 0
-        ? `• ${t('attr.notChooseAttrYet')}`
-        : this.getSelectedAttrsViewData(numberSelectedAttrs);
+    const subTitle = this.isDropShip
+      ? ''
+      : numberSelectedAttrs === 0
+      ? `• ${t('attr.notChooseAttrYet')}`
+      : this.getSelectedAttrsViewData(numberSelectedAttrs);
 
     return this.state.loading ? (
       <Loading loading />
@@ -366,13 +392,13 @@ class ItemAttribute extends PureComponent {
         swipeToClose={false}
         style={[styles.modal]}
         easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <SafeAreaView style={[styles.safeView]}>
-            <TouchableWithoutFeedback onPress={this.handleClose}>
-              <View style={{flex: 1}} />
-            </TouchableWithoutFeedback>
+        <SafeAreaView style={[styles.safeView]}>
+          <TouchableWithoutFeedback onPress={this.handleClose}>
+            <View style={{flex: 1}} />
+          </TouchableWithoutFeedback>
 
-            <Animated.View style={[styles.optionListContainer]}>
+          <Animated.View style={[styles.optionListContainer]}>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
               <View style={styles.header}>
                 <View
                   style={[
@@ -404,26 +430,55 @@ class ItemAttribute extends PureComponent {
                   </View>
                 </View>
               </View>
+            </TouchableWithoutFeedback>
 
-              <TouchableOpacity
-                style={styles.close}
-                onPress={this.handleClose}
-                hitSlop={HIT_SLOP}>
-                <Icon name="ios-close" style={styles.closeIcon} />
-              </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.close}
+              onPress={this.handleClose}
+              hitSlop={HIT_SLOP}>
+              <Icon name="ios-close" style={styles.closeIcon} />
+            </TouchableOpacity>
 
-              <ScrollView
-                style={{
-                  maxHeight: appConfig.device.height * 0.5,
-                }}
-                scrollEventThrottle={16}
-                keyboardShouldPersistTaps="always"
-                keyboardDismissMode="on-drag">
-                <View onStartShouldSetResponder={() => true}>
-                  {this.renderOptions()}
-                </View>
-              </ScrollView>
+            <ScrollView
+              style={{
+                maxHeight: appConfig.device.height * 0.5,
+              }}
+              scrollEventThrottle={16}
+              keyboardShouldPersistTaps="handled"
+              // keyboardDismissMode="on-drag"
+              onStartShouldSetResponder={() => true}>
+              {/* <View onStartShouldSetResponder={() => true}> */}
+              {this.renderOptions()}
+              {this.isDropShip && (
+                <DropShip
+                  price={this.state.product?.price}
+                  priceView={this.state.product?.price_view}
+                  quantity={this.state.quantity}
+                  min={MIN_QUANTITY}
+                  max={inventory}
+                  onChangeNewPrice={(dropShipPrice) => {
+                    this.setState({dropShipPrice});
+                  }}
+                  onChangeQuantity={(text) =>
+                    this.handleChangeQuantity(text, MIN_QUANTITY, inventory)
+                  }
+                  onMinus={() => {
+                    this.setState({quantity: this.state.quantity - 1});
+                  }}
+                  onPlus={() => {
+                    this.setState({quantity: this.state.quantity + 1});
+                  }}
+                  onQuantityBlur={() => {
+                    if (!this.state.quantity) {
+                      this.setState({quantity: MIN_QUANTITY});
+                    }
+                  }}
+                />
+              )}
+              {/* </View> */}
+            </ScrollView>
 
+            {!this.isDropShip && (
               <View style={styles.quantity}>
                 <Text style={styles.label}>{t('attr.quantity')}</Text>
                 <NumberSelection
@@ -447,17 +502,17 @@ class ItemAttribute extends PureComponent {
                   disabled={disabled}
                 />
               </View>
+            )}
 
-              <Button
-                title={t('addToCart')}
-                onPress={this.handleSubmit}
-                {...btnProps}
-              />
-            </Animated.View>
+            <Button
+              title={t('addToCart')}
+              onPress={this.handleSubmit}
+              {...btnProps}
+            />
+          </Animated.View>
 
-            {appConfig.device.isIOS && <KeyboardSpacer />}
-          </SafeAreaView>
-        </TouchableWithoutFeedback>
+          {appConfig.device.isIOS && <KeyboardSpacer />}
+        </SafeAreaView>
       </Modal>
     );
   }
@@ -481,7 +536,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   header: {
-    paddingVertical: 20,
+    paddingTop: 30,
+    paddingBottom: 20,
     backgroundColor: '#fff',
     flexDirection: 'row',
     borderColor: '#eee',

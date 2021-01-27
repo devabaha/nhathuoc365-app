@@ -32,10 +32,8 @@ class Config {
 
   get voucherModule() {
     return {
-      // appKey: 'abahaglobalkeywoxBg',
-      // secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
-      appKey: 'awsneakersstorekeytvcdX',
-      secretKey: 'J2X4awsneakersstorekeytvcdXSWs2sx'
+      appKey: 'abahaglobalkeywoxBg',
+      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
     };
   }
 
@@ -190,6 +188,7 @@ class Config {
       modalRateApp: 'modalRateApp',
       modalCameraView: 'modalCameraView',
       modalPopup: 'modalPopup',
+      modalInput: 'modalInput',
 
       //  Reset password
       resetPassword: 'resetPassword',
