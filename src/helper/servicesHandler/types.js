@@ -85,5 +85,9 @@ export const SERVICES_TYPE = {
   PREMIUM_INFO: 'PREMIUM_INFO',
 
   /** COMMISSION */
-  COMMISSION_INCOME_STATEMENT: 'commission_income_statement'
+  COMMISSION_INCOME_STATEMENT: 'commission_income_statement',
+
+  /** GAMIFICATION */
+  LOTTERY_GAME: 'lottery_game'
+
 };

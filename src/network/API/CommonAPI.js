@@ -394,12 +394,20 @@ class CommonAPI {
     return BaseAPI.apiDomain + 'apiUser/choose_store';
   }
 
-  get USER_REGISTER_GOLD_MEMBER(){
+  get USER_REGISTER_GOLD_MEMBER() {
     return BaseAPI.apiDomain + 'apiUser/register_gold_member';
   }
 
   get USER_SITE_CART_COMMISSION() {
     return BaseAPI.apiDomain + 'apiUser/site_cart_commission';
+  }
+
+  get LOTTERY_INDEX() {
+    return BaseAPI.apiDomain + 'apiLottery/index';
+  }
+  
+  get LOTTERY_TURN() {
+    return BaseAPI.apiDomain + 'apiLottery/turn';
   }
 }
 

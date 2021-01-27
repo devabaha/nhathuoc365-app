@@ -151,6 +151,7 @@ import GPSListStore from './containers/GPSListStore';
 import AgencyInformationRegister from './containers/AgencyInformationRegister';
 import CommissionIncomeStatement from './containers/CommissionIncomeStatement';
 import ModalInput from './components/ModalInput';
+import {LotteryGame} from './containers/Gamification';
 
 /**
  * Not allow font scaling
@@ -810,6 +811,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ GAMIFICATION - LOTTERY ================ */}
+                <Stack key={appConfig.routes.lotteryGame}>
+                  <Scene
+                    key={`${appConfig.routes.lotteryGame}_1`}
+                    component={LotteryGame}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 <Stack key={appConfig.routes.commissionIncomeStatement}>
                   <Scene

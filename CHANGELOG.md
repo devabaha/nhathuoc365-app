@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.1] - 2020-01-27
+### Added
+- Lottery game.
+
 ## [r11.2.5] - 2020-01-27
 ### Fixed
 - ModernList will not use VirtualizedList as renderer when `scrollEnabled` is false.

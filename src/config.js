@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.2.5';
+    return 'r11.3.1';
   }
 
   get appName() {
@@ -212,6 +212,9 @@ class Config {
 
       // Commission
       commissionIncomeStatement: 'commissionIncomeStatement',
+
+      // Gamification
+      lotteryGame: 'lotteryGame'
     };
   }
 }
