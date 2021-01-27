@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r11.3.1] - 2020-01-27
 ### Added
 - Lottery game.
+### Fixed
+- Query list warehouse only if config activated.
 
 ## [r11.2.5] - 2020-01-27
 ### Fixed

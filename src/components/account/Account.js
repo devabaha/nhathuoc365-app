@@ -542,7 +542,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    this.getListWarehouse();
+    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
     this.initial(() => {
       this.key_add_new = this.options.length;
       store.is_stay_account = true;
