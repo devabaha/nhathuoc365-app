@@ -1,13 +1,17 @@
-import { Platform, Dimensions, PixelRatio } from 'react-native';
+import {Platform, Dimensions, PixelRatio} from 'react-native';
 import {
   isIphoneX,
   getStatusBarHeight,
-  getBottomSpace
+  getBottomSpace,
 } from 'react-native-iphone-x-helper';
 
 class Config {
   constructor() {
     this._primaryColor = '#128C7E';
+  }
+
+  get tagVersion() {
+    return 'r11.3.1';
   }
 
   get appName() {
@@ -31,7 +35,7 @@ class Config {
 
   get radaModule() {
     return {
-      partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm'
+      partnerAuthorization: 'l4yn7tixrkaio4gq5rdc:XRNaQj8hwk3ZbIm',
     };
   }
 
@@ -51,7 +55,7 @@ class Config {
       width: Dimensions.get('window').width,
       height: Dimensions.get('window').height,
       statusBarHeight: getStatusBarHeight(),
-      bottomSpace: getBottomSpace()
+      bottomSpace: getBottomSpace(),
     };
   }
 
@@ -77,7 +81,7 @@ class Config {
       white: '#fff',
       black: '#000',
       text: '#333',
-      placeholder: '#c7c7cd'
+      placeholder: '#c7c7cd',
     };
   }
 
@@ -236,10 +240,13 @@ class Config {
       gpsListStore: 'gpsListStore',
 
       // Agency
-      agencyInformationRegister: "agencyInformationRegister",
+      agencyInformationRegister: 'agencyInformationRegister',
 
       // Commission
-      commissionIncomeStatement: "commissionIncomeStatement"
+      commissionIncomeStatement: 'commissionIncomeStatement',
+
+      // Gamification
+      lotteryGame: 'lotteryGame'
     };
   }
 }

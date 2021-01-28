@@ -428,15 +428,18 @@ class Stores extends Component {
   };
 
   measureCategoriesLayout = (ref, category, index) => {
-    if (ref&& (!this.refCates[index] || this.refCates[index].offsetX === undefined)) {
+    if (
+      ref &&
+      (!this.refCates[index] || this.refCates[index].offsetX === undefined)
+    ) {
       setTimeout(() => {
-      if (!this.refs_category_nav) return;
+        if (!this.refs_category_nav) return;
 
-      ref.measureLayout(findNodeHandle(this.refs_category_nav), (offsetX) => {
-        this.refCates[index] = {
-          offsetX,
-        };
-      });
+        ref.measureLayout(findNodeHandle(this.refs_category_nav), (offsetX) => {
+          this.refCates[index] = {
+            offsetX,
+          };
+        });
       });
     }
   };

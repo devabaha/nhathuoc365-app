@@ -1,15 +1,15 @@
 /* @flow */
 
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, TouchableHighlight } from 'react-native';
+import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
 
 //library
 import Modal from 'react-native-modalbox';
 
 class PopupConfirm extends Component {
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <Modal
         isOpen={this.props.isOpen}
@@ -23,12 +23,13 @@ class PopupConfirm extends Component {
           styles.modal_confirm,
           {
             height: this.props.height || 110,
-            marginTop: this.props.height ? -(this.props.height / 3) : -(110 / 3)
+            marginTop: this.props.height
+              ? -(this.props.height / 3)
+              : -(110 / 3),
           },
-          this.props.style
+          this.props.style,
         ]}
-        ref={this.props.ref_popup}
-      >
+        ref={this.props.ref_popup}>
         {this.props.content ? (
           this.props.content(this.props.title)
         ) : (
@@ -39,16 +40,14 @@ class PopupConfirm extends Component {
           <TouchableHighlight
             style={[styles.modal_confirm_btn, styles.modal_confirm_btn_left]}
             underlayColor="transparent"
-            onPress={this.props.noConfirm}
-          >
+            onPress={this.props.noConfirm}>
             <Text
               style={[
                 styles.modal_confirm_label,
                 {
-                  color: this.props.noBlur ? '#999999' : DEFAULT_COLOR
-                }
-              ]}
-            >
+                  color: this.props.noBlur ? '#999999' : DEFAULT_COLOR,
+                },
+              ]}>
               {this.props.noTitle || t('popupConfirm.no')}
             </Text>
           </TouchableHighlight>
@@ -56,8 +55,7 @@ class PopupConfirm extends Component {
           <TouchableHighlight
             style={styles.modal_confirm_btn}
             underlayColor="transparent"
-            onPress={this.props.yesConfirm}
-          >
+            onPress={this.props.yesConfirm}>
             <Text style={styles.modal_confirm_label}>
               {this.props.yesTitle || t('popupConfirm.yes')}
             </Text>
@@ -69,7 +67,10 @@ class PopupConfirm extends Component {
 }
 
 PopupConfirm.propTypes = {
-  ref_popup: PropTypes.func.isRequired,
+  ref_popup: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({current: PropTypes.any}),
+  ]).isRequired,
   title: PropTypes.string.isRequired,
   noTitle: PropTypes.string,
   yesTitle: PropTypes.string,
@@ -81,21 +82,21 @@ PopupConfirm.propTypes = {
   onOpened: PropTypes.func,
   otherClose: PropTypes.bool,
   isOpen: PropTypes.bool,
-  content: PropTypes.any
+  content: PropTypes.any,
 };
 
 const styles = StyleSheet.create({
   modal_confirm: {
     width: '80%',
     height: 110,
-    borderRadius: 3
+    borderRadius: 3,
   },
   modal_confirm_title: {
     paddingHorizontal: 20,
     marginTop: 16,
     textAlign: 'center',
     color: '#666666',
-    fontSize: 14
+    fontSize: 14,
   },
   modal_confirm_actions: {
     position: 'absolute',
@@ -107,7 +108,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     flexDirection: 'row',
     borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3
+    borderBottomRightRadius: 3,
   },
   modal_confirm_btn: {
     justifyContent: 'center',
@@ -115,17 +116,17 @@ const styles = StyleSheet.create({
     width: '50%',
 
     borderTopWidth: Util.pixel,
-    borderTopColor: '#dddddd'
+    borderTopColor: '#dddddd',
   },
   modal_confirm_btn_left: {
     borderRightWidth: Util.pixel,
-    borderRightColor: '#dddddd'
+    borderRightColor: '#dddddd',
   },
   modal_confirm_label: {
     fontSize: 16,
     color: DEFAULT_COLOR,
-    lineHeight: 20
-  }
+    lineHeight: 20,
+  },
 });
 
 export default withTranslation()(PopupConfirm);

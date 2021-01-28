@@ -5,7 +5,7 @@ import TagList from './TagList';
 import { LIST_TYPE } from '../constants';
 import Animated from 'react-native-reanimated';
 
-class MordernListComponent extends Component {
+class ModernListComponent extends Component {
   state = {};
 
   renderHeader() {
@@ -32,7 +32,8 @@ class MordernListComponent extends Component {
       disabledTextStyle: this.props.disabledTextStyle,
       renderItem: this.props.renderItem,
       extraData: this.props.extraData,
-      listEmptyComponent: this.props.listEmptyComponent
+      listEmptyComponent: this.props.listEmptyComponent,
+      scrollEnabled: this.props.scrollEnabled
     };
     switch (this.props.type) {
       case LIST_TYPE.NORMAL:
@@ -68,10 +69,11 @@ class MordernListComponent extends Component {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    flex: 0.00001
+    // flex: 0.00001
   },
   headerWrapper: {
-    paddingVertical: 10,
+    paddingTop: 10,
+    paddingBottom: 7,
     paddingHorizontal: 15
   },
   headerContent: {
@@ -83,7 +85,9 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#555'
   },
-  body: {}
+  body: {
+    overflow: 'hidden'
+  }
 });
 
-export default MordernListComponent;
+export default ModernListComponent;

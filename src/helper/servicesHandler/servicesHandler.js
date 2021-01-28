@@ -424,6 +424,14 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.COMMISSION_INCOME_STATEMENT:
       Actions.push(appConfig.routes.commissionIncomeStatement);
       break;
+
+    /** GAMIFICATION */
+    /** Lottery */
+    case SERVICES_TYPE.LOTTERY_GAME:
+      Actions.push(appConfig.routes.lotteryGame, {
+        title: service.news?.title || service.title,
+      });
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }

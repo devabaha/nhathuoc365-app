@@ -970,6 +970,44 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.USER_SITE_CART_COMMISSION);
     return this.postCancelableAPI(api, data, true);
   }
+
+  /**
+   * @todo Lấy thông tin game đoán số
+   *
+   * @typedef {Object | null} LotteryInfo
+   * @property {number} id ID của game
+   * @property {string} title Tiêu đề game
+   * @property {string} (size: 600x) ảnh banner game
+   * @property {string} rules Thể lệ 
+   * @property {string} prize Cơ cấu giải thưởng
+   * @property {number} point_count Số điểm cho 1 lượt chơi
+   * @property {string} start_date Ngày bắt đầu
+   * @property {string} end_date Ngày kết thúc
+   * @property {number} max_turn Số lượt chơi tối đa trong 1 ngày
+   * @property {number[]} my_turn Danh sách các lần đã dự đoán dạng list array
+   * @property {string} my_turn_selected  Danh sách số đã dự đoán dạng string (vd: 001, 002, 003)
+   * @property {boolean} is_active Check game có đang trong thời gian diễn ra hay không
+   * @property {string} message Nếu game ngoài thời gian diễn ra. message này để thông báo về trạng thái của game
+   * @property {{balance: number, balance_view: string}} my_wallet Thông tin địa chỉ ví tích điểm của user nếu có
+   *
+   * @returns {LotteryInfo}
+   */
+  lottery_index(site_id) {
+    const api = url_for(API.LOTTERY_INDEX + '/' + site_id);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * @todo Gửi số tham gia dự đoán game đoán số
+   *
+   * @param {number} lottery_id returned from @see lottery_index
+   * @param {{prediction_number: number|string}} data
+   */
+  lottery_turn(site_id, lottery_id, data) {
+    const api = url_for(API.LOTTERY_TURN + '/' + site_id + '/' + lottery_id);
+    return this.postCancelableAPI(api, data);
+  }
+
 }
 
 export default CommonAPIHandler;

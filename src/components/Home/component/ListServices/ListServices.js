@@ -17,6 +17,7 @@ import {
   TITLE_MARGIN_INCREMENT_PERCENTAGE,
 } from './constants';
 import Service from './Service';
+import { SERVICES_TYPE } from 'src/helper/servicesHandler';
 
 const styles = StyleSheet.create({
   container: {
@@ -288,11 +289,12 @@ class ListServices extends Component {
     };
 
     const titleStyle = {marginTop: titleMarginTop};
+    const selfRequest = item.type === SERVICES_TYPE.OPEN_SHOP ? this.props.selfRequest : undefined;
 
     return (
       <Service
         key={index}
-        selfRequest={this.props.selfRequest}
+        selfRequest={selfRequest}
         service={item}
         onPress={(item) => this.props.onItemPress(item)}
         containerStyle={this.serviceStyle}

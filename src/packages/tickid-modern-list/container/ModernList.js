@@ -6,7 +6,7 @@ import { LIST_TYPE, DEFAULT_LISTENER } from '../constants';
 class ModernList extends Component {
   static propTypes = {
     headerTitle: PropTypes.string,
-    listScrollable: PropTypes.bool,
+    scrollEnabled: PropTypes.bool,
     data: PropTypes.array,
     mainKey: PropTypes.string,
     type: PropTypes.oneOf([LIST_TYPE.NORMAL, LIST_TYPE.TAG]),
@@ -30,7 +30,7 @@ class ModernList extends Component {
 
   static defaultProps = {
     headerTitle: '',
-    listScrollable: false,
+    scrollEnabled: true,
     data: [],
     mainKey: '',
     type: LIST_TYPE.NORMAL,
@@ -59,7 +59,7 @@ class ModernList extends Component {
       <ModernListComponent
         headerTitle={this.props.headerTitle}
         headerTitleStyle={this.props.headerTitleStyle}
-        scrollEnabled={this.props.listScrollable}
+        scrollEnabled={this.props.scrollEnabled}
         data={this.props.data}
         extraData={this.props.extraData}
         mainKey={this.props.mainKey}

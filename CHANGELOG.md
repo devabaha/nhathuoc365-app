@@ -5,15 +5,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [r11.3.1] - 2020-01-27
+### Added
+- Lottery game.
+### Fixed
+- Query list warehouse only if config activated.
+- Only 1 time query in empty store.
+- Self request in only type OPEN_SHOP.
+- Only get warehouse if config activated.
+
+## [r11.2.5] - 2020-01-27
+### Fixed
+- ModernList will not use VirtualizedList as renderer when `scrollEnabled` is false.
+- Logic to generate name of `cart` event of EventTracker.
+
+## [r11.2.4] - 2020-01-27
 ### Added
 - DropShip in product detail.
+### Fixed
+- Get dimensions of categories nav bar in Store screen.
+
 ## [r11.2.3] - 2020-01-23
 ### Fixed
 - Add key for item in section fake list.
 - Fix key props for MyInputTouchable in AgencyInformationRegister.
-- Fix .gitignore to commit *.keystore
-## [r11.2.2] - 2020-01-21
+- Fix .gitignore to commit *.keystore.
 
+## [r11.2.2] - 2020-01-21
 ### Add
 - Background color for empty image in GPS List Store.
 ### Fixed
@@ -25,7 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Commission report.
 - Tsconfig.json to resolve alias path.
 - YearMonthModal to pick year/month (on dev).
-
 ### Fixed
 - Set default value for otherData.site from response of api user_login.
 - UI LabelPrice paymentMethod
@@ -55,7 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Group product.
 - Skeleton loading for store screen.
 - Remove cart item in cart.
-
 ### Changed
 - UI cart footer.
 - UI confirm screen.
@@ -65,7 +82,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Premium.
 - Select city for B2B customer.
-
 ### Changed
 - Upgrade React native to v0.63.4 by [@minhnguyenit14](https://github.com/minhnguyenit14).
 - New UI cart footer.

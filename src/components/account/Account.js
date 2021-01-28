@@ -614,6 +614,7 @@ class Account extends Component {
   }
 
   async getListWarehouse(){
+    if(!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();

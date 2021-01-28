@@ -177,6 +177,9 @@
     },
     "commissionIncomeStatement": {
       "mainTitle": "Commission report"
+    },
+    "lotteryGame": {
+      "mainTitle": "Lucky number"
     }
   },
 
