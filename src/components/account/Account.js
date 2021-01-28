@@ -656,7 +656,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
+    this.getListWarehouse();
     this.initial(() => {
       store.is_stay_account = true;
       store.parentTab = `${appConfig.routes.accountTab}_1`;
@@ -669,7 +669,8 @@ class Account extends Component {
     cancelRequests(this.requests);
   }
 
-  async getListWarehouse() {
+  async getListWarehouse(){
+    if(!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();

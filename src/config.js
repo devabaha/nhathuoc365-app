@@ -11,10 +11,6 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.2.4';
-  }
-
-  get tagVersion() {
     return 'r11.3.1';
   }
 

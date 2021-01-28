@@ -78,20 +78,39 @@ class CategoryScreen extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) {
-    var {item, index, cate_index} = nextProps;
+  
+  shouldComponentUpdate(nextProps, nextState) {
+    const {item, index, cate_index} = nextProps;
 
     if (
       index == cate_index &&
       this.state.items_data == null &&
-      this.props != nextProps &&
+      Object.keys(this.props).some(key=> nextProps[key] != this.props[key]) &&
       !this.state.loading
     ) {
       this.start_time = time();
       // get list products by category_id
       this._getItemByCateId(item.id);
     }
+    return true;
   }
+  
+
+  // UNSAFE_componentWillReceiveProps(nextProps) {
+  //   var {item, index, cate_index} = nextProps;
+
+  //   if (
+  //     index == cate_index &&
+  //     this.state.items_data == null &&
+  //     Object.keys(this.props).some(key=> nextProps[key] != this.props[key]) &&
+  //     !this.state.loading
+  //   ) {
+  //     this.start_time = time();
+  //     console.log(nextProps, this.props !== nextProps)
+  //     // get list products by category_id
+  //     this._getItemByCateId(item.id);
+  //   }
+  // }
 
   componentWillUnmount() {
     this.unmounted = true;
@@ -166,6 +185,7 @@ class CategoryScreen extends Component {
             }, this._delay());
           })
           .catch((err) => {
+            console.log('get_item_by_cate_id', err);
             this._getItemByCateIdFromServer(category_id);
           });
       },
