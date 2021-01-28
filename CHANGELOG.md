@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Lottery game.
 ### Fixed
 - Query list warehouse only if config activated.
+- Only 1 time query in empty store.
+- Self request in only type OPEN_SHOP.
+- Only get warehouse if config activated.
 
 ## [r11.2.5] - 2020-01-27
 ### Fixed

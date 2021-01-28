@@ -542,7 +542,7 @@ class Account extends Component {
   }
 
   componentDidMount() {
-    isConfigActive(CONFIG_KEY.SELECT_STORE_KEY) && this.getListWarehouse();
+    this.getListWarehouse();
     this.initial(() => {
       this.key_add_new = this.options.length;
       store.is_stay_account = true;
@@ -557,6 +557,7 @@ class Account extends Component {
   }
 
   async getListWarehouse(){
+    if(!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();

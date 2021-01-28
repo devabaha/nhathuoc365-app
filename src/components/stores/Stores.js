@@ -394,7 +394,7 @@ class Stores extends Component {
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
 
-        {this.state.categories_data != null ? (
+        {this.state.categories_data != null && (
           <FlatList
             scrollEnabled={this.state.categories_data.length > 1}
             showsHorizontalScrollIndicator={false}
@@ -428,8 +428,6 @@ class Stores extends Component {
               />
             )}
           />
-        ) : (
-          <ListStoreProductSkeleton />
         )}
 
         {store.stores_finish == true && (
