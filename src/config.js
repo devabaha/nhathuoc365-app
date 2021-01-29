@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.3.1';
+    return 'r11.3.2';
   }
 
   get appName() {
@@ -77,6 +77,13 @@ class Config {
         main: this.primaryColor,
         sub: '#FFF',
         addition: '#000'
+      },
+      status: {
+        danger: '#ef476f',
+        warning: '#ffd166',
+        success: '#06d6a0',
+        info: '#118ab2',
+        other: '#073b4c'
       },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',

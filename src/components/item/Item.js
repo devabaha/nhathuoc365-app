@@ -301,7 +301,7 @@ class Item extends Component {
           model,
         };
         if (newPrice) {
-          data.newPrice = newPrice;
+          data.new_price = newPrice;
         }
         const {t} = this.props;
         try {

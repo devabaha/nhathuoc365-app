@@ -35,7 +35,8 @@ class Confirm extends Component {
   constructor(props) {
     super(props);
 
-    var is_paymenting = props.data && props.data.status == CART_STATUS_ORDERING;
+    const is_paymenting =
+      props.data && props.data.status == CART_STATUS_ORDERING;
 
     this.state = {
       single: this.props.from_page != 'orders_item' || is_paymenting,
@@ -609,6 +610,169 @@ class Confirm extends Component {
 
   handleRemoveVoucherFailure = (response) => {};
 
+  goBackStores(item) {
+    if (store.no_refresh_home_change) {
+      Actions.pop();
+    } else {
+      store.setStoreData({
+        id: item.site_id,
+        name: item.shop_name,
+        tel: item.tel,
+      });
+      store.goStoreNow = true;
+
+      Actions.primaryTabbar({
+        type: ActionConst.RESET,
+      });
+    }
+  }
+
+  async _cancelCart() {
+    if (this.item_cancel) {
+      try {
+        const response = await APIHandler.site_cart_canceling(
+          this.item_cancel.site_id,
+          this.item_cancel.id,
+        );
+
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS) {
+            store.setOrdersKeyChange(store.orders_key_change + 1);
+            Events.trigger(RELOAD_STORE_ORDERS);
+
+            this._getOrdersItem(this.item_cancel.site_id, this.item_cancel.id);
+
+            flashShowMessage({
+              type: 'success',
+              message: response.message,
+            });
+          }
+        }
+      } catch (e) {
+        console.log(e + ' site_cart_canceling');
+      }
+    }
+
+    this._closePopupCancel();
+  }
+
+  _closePopupCancel() {
+    if (this.refs_cancel_cart) {
+      this.refs_cancel_cart.close();
+    }
+  }
+
+  confirmCancelCart(item) {
+    this.item_cancel = item;
+
+    if (this.refs_cancel_cart) {
+      this.refs_cancel_cart.open();
+    }
+  }
+
+  _onRegister() {
+    Actions.push(appConfig.routes.phoneAuth, {
+      tel: store.cart_data.address.tel,
+    });
+  }
+
+  async _coppyCart() {
+    if (this.item_coppy) {
+      try {
+        var response = await APIHandler.site_cart_reorder(
+          this.item_coppy.site_id,
+          this.item_coppy.id,
+        );
+        if (response && response.status == STATUS_SUCCESS) {
+          action(() => {
+            store.setCartData(response.data);
+            store.setOrdersKeyChange(store.orders_key_change + 1);
+            Events.trigger(RELOAD_STORE_ORDERS);
+          })();
+
+          flashShowMessage({
+            type: 'success',
+            message: response.message,
+          });
+
+          Actions.pop();
+
+          setTimeout(() => {
+            Actions.push(appConfig.routes.paymentConfirm, {
+              goConfirm: true,
+            });
+          }, 1000);
+        }
+      } catch (e) {
+        console.log(e + ' site_cart_reorder');
+      }
+    }
+
+    this._closePopupCoppy();
+  }
+
+  async _editCart() {
+    if (this.item_edit) {
+      try {
+        const response = await APIHandler.site_cart_update_ordering(
+          this.item_edit.site_id,
+          this.item_edit.id,
+        );
+
+        if (!this.unmounted) {
+          if (response && response.status == STATUS_SUCCESS) {
+            this.props.orderEdited();
+            store.setCartData(response.data);
+            store.setOrdersKeyChange(store.orders_key_change + 1);
+            Events.trigger(RELOAD_STORE_ORDERS);
+
+            this.setState({
+              single: true,
+            });
+
+            this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
+            flashShowMessage({
+              type: 'success',
+              message: response.message,
+            });
+          }
+        }
+      } catch (e) {
+        console.log(e + ' site_cart_update_ordering');
+      }
+    }
+
+    this._closePopupEdit();
+  }
+
+  _closePopupEdit() {
+    if (this.refs_edit_cart) {
+      this.refs_edit_cart.close();
+    }
+  }
+
+  _closePopupCoppy() {
+    if (this.refs_coppy_cart) {
+      this.refs_coppy_cart.close();
+    }
+  }
+
+  confirmCoppyCart(item) {
+    this.item_coppy = item;
+
+    if (this.refs_coppy_cart) {
+      this.refs_coppy_cart.open();
+    }
+  }
+
+  confirmEditCart(item) {
+    this.item_edit = item;
+
+    if (this.refs_edit_cart) {
+      this.refs_edit_cart.open();
+    }
+  }
+
   renderCartProducts(products, single) {
     return (
       <View style={styles.items_box}>
@@ -625,6 +789,72 @@ class Confirm extends Component {
               onRemoveCartItem={() => this._removeItemCartConfirm(product)}
               noAction={!single}
             />
+          );
+        })}
+      </View>
+    );
+  }
+
+  renderCommissions(cart_data) {
+    const commissions = cart_data?.commissions || [];
+    if (commissions.length === 0) return null;
+
+    return (
+      <View
+        style={[
+          styles.rows,
+          styles.borderBottom,
+          {
+            borderTopWidth: 0,
+            backgroundColor: '#fafafa',
+            marginBottom: 12,
+            paddingTop: 0,
+          },
+        ]}>
+        {commissions.map((commission, index) => {
+          const isLast = index === commissions.length - 1;
+          return (
+            <View
+              key={index}
+              style={[
+                styles.address_name_box,
+                styles.feeBox,
+                isLast && {
+                  borderTopWidth: 0.5,
+                  borderColor: '#ddd',
+                  backgroundColor: '#fff',
+                  marginHorizontal: -15,
+                  marginVertical: -12,
+                  paddingVertical: 12,
+                  paddingHorizontal: 15,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.text_total_items,
+                  styles.feeLabel,
+                  isLast && styles.both,
+                  !isLast && {color: appConfig.colors.primary},
+                  {paddingRight: 15},
+                ]}>
+                {commission.name}
+              </Text>
+              <View>
+                <TouchableHighlight
+                  underlayColor="transparent"
+                  onPress={() => 1}>
+                  <Text
+                    style={[
+                      styles.address_default_title,
+                      styles.title_active,
+                      styles.feeValue,
+                      isLast && styles.both,
+                    ]}>
+                    {commission.value_view}
+                  </Text>
+                </TouchableHighlight>
+              </View>
+            </View>
           );
         })}
       </View>
@@ -675,10 +905,11 @@ class Confirm extends Component {
       );
     }
 
-    var is_login = store.user_info != null && store.user_info.username != null;
-    var is_ready = cart_data.status == CART_STATUS_READY;
-    var is_reorder = cart_data.status == CART_STATUS_COMPLETED;
-    var is_paymenting = cart_data.status == CART_STATUS_ORDERING;
+    const is_login =
+      store.user_info != null && store.user_info.username != null;
+    const is_ready = cart_data.status == CART_STATUS_READY;
+    const is_reorder = cart_data.status == CART_STATUS_COMPLETED;
+    const is_paymenting = cart_data.status == CART_STATUS_ORDERING;
 
     return (
       <>
@@ -1295,6 +1526,9 @@ class Confirm extends Component {
                 </View>
               );
             })}
+
+            {this.renderCommissions(cart_data)}
+
             {(is_ready || is_reorder || is_paymenting) && (
               <View style={styles.boxButtonActions}>
                 {is_ready && (
@@ -1384,7 +1618,7 @@ class Confirm extends Component {
                       style={[
                         styles.boxButtonAction,
                         {
-                          backgroundColor: '#fa7f50',
+                          backgroundColor: appConfig.colors.marigold,
                           borderColor: '#999999',
                         },
                       ]}>
@@ -1646,169 +1880,6 @@ class Confirm extends Component {
         {appConfig.device.isIOS && <KeyboardSpacer />}
       </>
     );
-  }
-
-  goBackStores(item) {
-    if (store.no_refresh_home_change) {
-      Actions.pop();
-    } else {
-      store.setStoreData({
-        id: item.site_id,
-        name: item.shop_name,
-        tel: item.tel,
-      });
-      store.goStoreNow = true;
-
-      Actions.primaryTabbar({
-        type: ActionConst.RESET,
-      });
-    }
-  }
-
-  async _cancelCart() {
-    if (this.item_cancel) {
-      try {
-        const response = await APIHandler.site_cart_canceling(
-          this.item_cancel.site_id,
-          this.item_cancel.id,
-        );
-
-        if (!this.unmounted) {
-          if (response && response.status == STATUS_SUCCESS) {
-            store.setOrdersKeyChange(store.orders_key_change + 1);
-            Events.trigger(RELOAD_STORE_ORDERS);
-
-            this._getOrdersItem(this.item_cancel.site_id, this.item_cancel.id);
-
-            flashShowMessage({
-              type: 'success',
-              message: response.message,
-            });
-          }
-        }
-      } catch (e) {
-        console.log(e + ' site_cart_canceling');
-      }
-    }
-
-    this._closePopupCancel();
-  }
-
-  _closePopupCancel() {
-    if (this.refs_cancel_cart) {
-      this.refs_cancel_cart.close();
-    }
-  }
-
-  confirmCancelCart(item) {
-    this.item_cancel = item;
-
-    if (this.refs_cancel_cart) {
-      this.refs_cancel_cart.open();
-    }
-  }
-
-  _onRegister() {
-    Actions.push(appConfig.routes.phoneAuth, {
-      tel: store.cart_data.address.tel,
-    });
-  }
-
-  async _coppyCart() {
-    if (this.item_coppy) {
-      try {
-        var response = await APIHandler.site_cart_reorder(
-          this.item_coppy.site_id,
-          this.item_coppy.id,
-        );
-        if (response && response.status == STATUS_SUCCESS) {
-          action(() => {
-            store.setCartData(response.data);
-            store.setOrdersKeyChange(store.orders_key_change + 1);
-            Events.trigger(RELOAD_STORE_ORDERS);
-          })();
-
-          flashShowMessage({
-            type: 'success',
-            message: response.message,
-          });
-
-          Actions.pop();
-
-          setTimeout(() => {
-            Actions.push(appConfig.routes.paymentConfirm, {
-              goConfirm: true,
-            });
-          }, 1000);
-        }
-      } catch (e) {
-        console.log(e + ' site_cart_reorder');
-      }
-    }
-
-    this._closePopupCoppy();
-  }
-
-  async _editCart() {
-    if (this.item_edit) {
-      try {
-        const response = await APIHandler.site_cart_update_ordering(
-          this.item_edit.site_id,
-          this.item_edit.id,
-        );
-
-        if (!this.unmounted) {
-          if (response && response.status == STATUS_SUCCESS) {
-            this.props.orderEdited();
-            store.setCartData(response.data);
-            store.setOrdersKeyChange(store.orders_key_change + 1);
-            Events.trigger(RELOAD_STORE_ORDERS);
-
-            this.setState({
-              single: true,
-            });
-
-            this._getOrdersItem(this.item_edit.site_id, this.item_edit.id);
-            flashShowMessage({
-              type: 'success',
-              message: response.message,
-            });
-          }
-        }
-      } catch (e) {
-        console.log(e + ' site_cart_update_ordering');
-      }
-    }
-
-    this._closePopupEdit();
-  }
-
-  _closePopupEdit() {
-    if (this.refs_edit_cart) {
-      this.refs_edit_cart.close();
-    }
-  }
-
-  _closePopupCoppy() {
-    if (this.refs_coppy_cart) {
-      this.refs_coppy_cart.close();
-    }
-  }
-
-  confirmCoppyCart(item) {
-    this.item_coppy = item;
-
-    if (this.refs_coppy_cart) {
-      this.refs_coppy_cart.open();
-    }
-  }
-
-  confirmEditCart(item) {
-    this.item_edit = item;
-
-    if (this.refs_edit_cart) {
-      this.refs_edit_cart.open();
-    }
   }
 }
 

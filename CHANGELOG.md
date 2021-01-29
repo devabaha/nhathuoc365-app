@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.2] - 2020-01-29
+### Added
+- Show commissions in cart.
+
+### Changed
+- Press order item in order screen will replace store_data, cart_data of it's self.
+- Color of addMoreItems in Confirm screen to marigold.
+
 ## [r11.3.1] - 2020-01-27
 ### Added
 - Lottery game.

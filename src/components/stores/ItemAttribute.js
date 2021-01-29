@@ -347,7 +347,7 @@ class ItemAttribute extends PureComponent {
     );
     const disabled =
       this.isDropShip
-        && this.state.product.price >= this.state.dropShipPrice
+        && this.state.product.price > this.state.dropShipPrice
         || (this.hasAttrs && numberSelectedAttrs === 0 ||
           Object.keys(this.state.viewData).length !== numberSelectedAttrs
         );
