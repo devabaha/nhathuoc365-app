@@ -81,29 +81,44 @@ const DropShip = ({
   onPlus = () => {},
   onQuantityBlur = () => {},
 }) => {
+  const priceFormatter = (price) => {
+    originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
+    return numberFormat(originPrice);
+  };
+
+  const calculateOriginGrossProfit = () => {
+    let grossProfit = 0;
+
+    try {
+      grossProfit = Number(quantity) * Number(newPrice) - Number(price) || 0;
+    } catch (err) {
+      console.log('calculate_gross_profit', err);
+    }
+
+    return grossProfit;
+  };
+
+  const calculateGrossProfit = () => {
+    return priceFormatter(calculateOriginGrossProfit()) + currency;
+  };
+
   const [newPriceView, setNewPriceView] = useState('0');
   const [newPrice, setNewPrice] = useState('0');
+  const [totalProfit, setTotalProfit] = useState(calculateOriginGrossProfit());
 
   const handleChangePrice = (price) => {
     const originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
     setNewPrice(originPrice);
     setNewPriceView(price);
     onChangeNewPrice(originPrice);
+    setTotalProfit(calculateOriginGrossProfit());
   };
 
-  const valueExecutorHighPrice = (price) => {
-    originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
-    return numberFormat(originPrice);
-  };
-
-  const calculateGrossProfit = () => {
-    let grossProfit = 0;
-    try {
-      grossProfit = Number(quantity) * Number(newPrice) - Number(price) || 0;
-    } catch (err) {
-      console.log('calculate_gross_profit', err);
-    }
-    return valueExecutorHighPrice(grossProfit) + currency;
+  const totalProfitValidateStyle = {
+    color:
+      newPrice < price
+        ? appConfig.colors.status.danger
+        : appConfig.colors.status.success,
   };
 
   return (
@@ -135,20 +150,33 @@ const DropShip = ({
 
         <View style={[styles.value, styles.newPriceContainer]}>
           <TextInput
-            style={[styles.price, styles.newPriceInput]}
+            style={[
+              styles.price,
+              styles.newPriceInput,
+              totalProfitValidateStyle,
+            ]}
             keyboardType="number-pad"
             onChangeText={handleChangePrice}
-            value={valueExecutorHighPrice(newPriceView)}
+            value={priceFormatter(newPriceView)}
           />
-          <Text style={[styles.price, styles.newPriceCurrency]}>
+          <Text
+            style={[
+              styles.price,
+              styles.newPriceCurrency,
+              totalProfitValidateStyle,
+            ]}>
             {currency}
           </Text>
         </View>
       </Container>
       <Container row style={styles.row}>
         <Text style={styles.title}>Lợi nhuận gộp</Text>
-        <Text style={[styles.value, styles.price]}>
-          {calculateGrossProfit()}
+        <Text
+          style={[
+            styles.value,
+            styles.price,
+          ]}>
+          {calculateGrossProfit(totalProfit)}
         </Text>
       </Container>
     </Container>

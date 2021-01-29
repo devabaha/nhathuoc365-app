@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Show commissions in cart.
+
+### Changed
+- Press order item in order screen will replace store_data, cart_data of it's self.
+- Color of addMoreItems in Confirm screen to marigold.
 
 ## [r11.3.1] - 2020-01-27
 ### Added

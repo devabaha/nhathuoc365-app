@@ -1,7 +1,7 @@
 import { Actions } from 'react-native-router-flux';
-import { formatViewEvents } from '../constants';
-import { ANALYTICS_DELAY_LOG_EVENT } from '../constants/analytics';
-import store from '../store/Store';
+import { formatViewEvents } from '../../constants';
+import { ANALYTICS_DELAY_LOG_EVENT } from '../../constants/analytics';
+import store from 'app-store';
 
 class EventTracker {
   timer = -1;
@@ -84,6 +84,10 @@ class EventTracker {
   logEvent(eventName, options = this.defaultLogOptions) {
     options.delay = 0;
     this.timeoutLogEvent(eventName, options);
+  }
+
+  logPaymentInfo(){
+    store.analyst.logAddPaymentInfo();
   }
 
   logCurrentView(options = this.defaultLogOptions) {

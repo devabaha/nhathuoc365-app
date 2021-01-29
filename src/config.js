@@ -74,6 +74,13 @@ class Config {
         sub: '#f5bb4b',
         addition: '#f18c21',
       },
+      status: {
+        danger: '#ef476f',
+        warning: '#ffd166',
+        success: '#06d6a0',
+        info: '#118ab2',
+        other: '#073b4c'
+      },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
       primary: this.primaryColor,
