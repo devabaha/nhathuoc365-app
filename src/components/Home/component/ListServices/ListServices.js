@@ -289,7 +289,7 @@ class ListServices extends Component {
     };
 
     const titleStyle = {marginTop: titleMarginTop};
-    const selfRequest = item.type === SERVICES_TYPE.OPEN_SHOP ? this.props.selfRequest : undefined;
+    const selfRequest = this.props.selfRequest;
 
     return (
       <Service
