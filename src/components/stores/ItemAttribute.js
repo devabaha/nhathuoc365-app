@@ -135,7 +135,7 @@ class ItemAttribute extends PureComponent {
         // disable if empty inventory.
         disabled = !!!(
           Object.values(models).find((model) => model.name === attr)
-            ?.inventory !== null
+            ?.inventory
         );
 
         return {
