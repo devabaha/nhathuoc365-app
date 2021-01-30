@@ -2,6 +2,8 @@ import { Actions } from 'react-native-router-flux';
 import { formatViewEvents } from '../../constants';
 import { ANALYTICS_DELAY_LOG_EVENT } from '../../constants/analytics';
 import store from 'app-store';
+import { AddPaymentInfoModel, AddToCartModel, AddToWishListModel, RemoveFromCartModel } from './FirebaseStandardModel';
+import { FirebaseAnalyticsTypes } from '@react-native-firebase/analytics';
 
 class EventTracker {
   timer = -1;
@@ -86,8 +88,36 @@ class EventTracker {
     this.timeoutLogEvent(eventName, options);
   }
 
-  logPaymentInfo(){
-    store.analyst.logAddPaymentInfo();
+  logPaymentInfo(item){
+    const paymentInfo: FirebaseAnalyticsTypes.AddPaymentInfoEventParameters = {
+      
+    }
+    const PaymentInfoModel = new AddPaymentInfoModel(paymentInfo);
+    PaymentInfoModel.logEvent();
+  }
+
+  logAddToCart(item){
+    const cartInfo: FirebaseAnalyticsTypes.AddToCartEventParameters = {
+      
+    }
+    const CartInfoModel = new AddToCartModel(cartInfo);
+    CartInfoModel.logEvent();
+  }
+
+  logAddToWishList(item){
+    const wishListInfo: FirebaseAnalyticsTypes.AddToWishlistEventParameters = {
+      
+    }
+    const WishListModel = new AddToWishListModel(wishListInfo);
+    WishListModel.logEvent();
+  }
+
+  logRemoveFromCart() {
+    const cartInfo: FirebaseAnalyticsTypes.RemoveFromCartEventParameters = {
+      
+    }
+    const RemoveCartModel = new RemoveFromCartModel(cartInfo);
+    RemoveCartModel.logEvent();
   }
 
   logCurrentView(options = this.defaultLogOptions) {
