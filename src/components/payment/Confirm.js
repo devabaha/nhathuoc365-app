@@ -85,6 +85,7 @@ class Confirm extends Component {
   }
 
   _initial(props) {
+    console.log(props.notice_data);
     if (!this.state.single) {
       if (props.notice_data) {
         this._getOrdersItem(
@@ -148,7 +149,6 @@ class Confirm extends Component {
   async _getOrdersItem(site_id, page_id) {
     try {
       const response = await APIHandler.site_cart_show(site_id, page_id);
-
       if (!this.unmounted) {
         if (response && response.status == STATUS_SUCCESS) {
           this.setState(
@@ -797,7 +797,8 @@ class Confirm extends Component {
 
   renderCommissions(cart_data) {
     const commissions = cart_data?.commissions || [];
-    if (commissions.length === 0) return null;
+    if (typeof commissions === 'string' || commissions.length === 0)
+      return null;
 
     return (
       <View

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.3] - 2020-01-30
+### Fixed
+- Product has 1 attribute group will auto detect remaining inventory (re-fix).
+
 ## [r11.3.2] - 2020-01-29
 ### Added
 - Show commissions in cart.
