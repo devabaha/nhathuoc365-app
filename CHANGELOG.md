@@ -41,12 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Add key for item in section fake list.
 - Fix key props for MyInputTouchable in AgencyInformationRegister.
-<<<<<<< HEAD
-- Fix .gitignore to commit *.keystore
-=======
 - Fix .gitignore to commit *.keystore.
 
->>>>>>> abaha/core
 ## [r11.2.2] - 2020-01-21
 ### Add
 - Background color for empty image in GPS List Store.
