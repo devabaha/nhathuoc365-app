@@ -29,7 +29,7 @@ class OpRegister extends Component {
       loading: false,
       isCityLoading: false,
       isWarehouseLoading: false,
-      referCodeEditable: true,
+      referCodeEditable: store?.user_info?.invite_user_id ? false : true,
       provinceSelected: {
         name: store.user_info ? store.user_info.city : '',
         id: store.user_info ? store.user_info.city_id : '',
