@@ -2,12 +2,12 @@ import {FirebaseAnalyticsTypes} from '@react-native-firebase/analytics';
 import store from 'app-store';
 import {defaultCurrency} from '../helper/currency';
 
-class RemoveFromCartModel {
-  cartInfo: FirebaseAnalyticsTypes.RemoveFromCartEventParameters = {
+class ViewCartModel {
+  cartInfo: FirebaseAnalyticsTypes.ViewCartEventParameters = {
     currency: defaultCurrency(),
   };
 
-  constructor(cartInfo: FirebaseAnalyticsTypes.RemoveFromCartEventParameters) {
+  constructor(cartInfo: FirebaseAnalyticsTypes.ViewCartEventParameters) {
     this.cartInfo = {
       ...this.cartInfo,
       ...cartInfo,
@@ -15,12 +15,12 @@ class RemoveFromCartModel {
   }
 
   get eventName() {
-    return 'remove_from_cart';
+    return 'view_cart';
   }
 
   logEvent() {
-    return store.analyst.logRemoveFromCart(this.cartInfo);
+    return store.analyst.logViewCart(this.cartInfo);
   }
 }
 
-export default RemoveFromCartModel;
+export default ViewCartModel;

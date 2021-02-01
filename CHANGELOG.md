@@ -6,11 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.3.3] - 2020-01-30
+## [r11.3.4] - 2021-02-01
+
+### Changed
+- Disable refer input in Op_Register if invite_user_id in user_info existed.
+
+### Fixed
+- [ONLY] Product has 1 attribute group will auto detect remaining inventory (re-fix).
+
+## [r11.3.3] - 2021-01-30
 ### Fixed
 - Product has 1 attribute group will auto detect remaining inventory (re-fix).
 
-## [r11.3.2] - 2020-01-29
+## [r11.3.2] - 2021-01-29
 ### Added
 - Show commissions in cart.
 
@@ -18,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Press order item in order screen will replace store_data, cart_data of it's self.
 - Color of addMoreItems in Confirm screen to marigold.
 
-## [r11.3.1] - 2020-01-27
+## [r11.3.1] - 2021-01-27
 ### Added
 - Lottery game.
 ### Fixed
@@ -27,30 +35,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Self request in only type OPEN_SHOP.
 - Only get warehouse if config activated.
 
-## [r11.2.5] - 2020-01-27
+## [r11.2.5] - 2021-01-27
 ### Fixed
 - ModernList will not use VirtualizedList as renderer when `scrollEnabled` is false.
 - Logic to generate name of `cart` event of EventTracker.
 
-## [r11.2.4] - 2020-01-27
+## [r11.2.4] - 2021-01-27
 ### Added
 - DropShip in product detail.
 ### Fixed
 - Get dimensions of categories nav bar in Store screen.
 
-## [r11.2.3] - 2020-01-23
+## [r11.2.3] - 2021-01-23
 ### Fixed
 - Add key for item in section fake list.
 - Fix key props for MyInputTouchable in AgencyInformationRegister.
 - Fix .gitignore to commit *.keystore.
 
-## [r11.2.2] - 2020-01-21
+## [r11.2.2] - 2021-01-21
 ### Add
 - Background color for empty image in GPS List Store.
 ### Fixed
 - Product has 1 attribute group will auto detect remaining inventory.
 
-## [r11.2.1] - 2020-01-20
+## [r11.2.1] - 2021-01-20
 ### Added
 - GPS list store screen for chain stores.
 - Commission report.
@@ -60,7 +68,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Set default value for otherData.site from response of api user_login.
 - UI LabelPrice paymentMethod
 
-## [r11.1.3] - 2020-01-15
+## [r11.1.3] - 2021-01-15
 ### Added
 - Specific key to hide premium.
 - Inventory in product detail.
@@ -72,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Increase hit slop of action button in CartFooter, Confirm.
 - Layout of promotion in confirm order.
 
-## [r11.1.2] - 2020-01-13
+## [r11.1.2] - 2021-01-13
 ### Changed
 - Default background for no images in product detail.
 ### Fixed
@@ -80,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Orders flow.
 - `Gotostore` button in product detail now pressable.
 
-## [r11.1.1] - 2020-01-12
+## [r11.1.1] - 2021-01-12
 ### Added
 - Group product.
 - Skeleton loading for store screen.

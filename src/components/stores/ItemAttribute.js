@@ -132,11 +132,13 @@ class ItemAttribute extends PureComponent {
 
       data = data.map((attr, i) => {
         let disabled = false;
-        // disable if empty inventory.
-        disabled = !!!(
-          Object.values(models).find((model) => model.name === attr)
-            ?.inventory
-        );
+
+        if (attrs.length === 1) {
+          // disable if empty inventory ONLY IF product has only 1 attr.
+          disabled = !!!Object.values(models).find(
+            (model) => model.name === attr,
+          )?.inventory;
+        }
 
         return {
           [VALUE_KEY]: attr,
@@ -346,11 +348,10 @@ class ItemAttribute extends PureComponent {
       this.state.selectedAttrs,
     );
     const disabled =
-      this.isDropShip
-        && this.state.product.price > this.state.dropShipPrice
-        || (this.hasAttrs && numberSelectedAttrs === 0 ||
-          Object.keys(this.state.viewData).length !== numberSelectedAttrs
-        );
+      (this.isDropShip &&
+        this.state.product.price > this.state.dropShipPrice) ||
+      (this.hasAttrs && numberSelectedAttrs === 0) ||
+      Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 
     const btnProps = disabled && {
       btnContainerStyle: styles.containerDisabled,

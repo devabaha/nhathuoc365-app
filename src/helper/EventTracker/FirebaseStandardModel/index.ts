@@ -3,8 +3,34 @@ import AddToCartModel from './AddToCartModel';
 import AddToWishListModel from './AddToWishListModel';
 import PurchaseModel from './PurchaseModel';
 import RemoveFromCartModel from './RemoveFromCartModel';
+import SearchModel from './SearchModel';
+import SelectItemModel from './SelectItemModel';
+import SelectPromotionModel from './SelectPromotionModel';
+import ShareModel from './ShareModel';
+import SignUpModel from './SignUpModel';
+import ViewCartModel from './ViewCartModel';
+import ViewItemModel from './ViewItemModel';
+import ViewPromotionModel from './ViewPromotionModel';
+import ViewItemListModel from './ViewItemListModel';
+import LoginModel from './LoginModel';
 
-export {AddPaymentInfoModel, AddToCartModel, AddToWishListModel, PurchaseModel, RemoveFromCartModel};
+export {
+  AddPaymentInfoModel,
+  AddToCartModel,
+  AddToWishListModel,
+  PurchaseModel,
+  RemoveFromCartModel,
+  SearchModel,
+  SelectItemModel,
+  SelectPromotionModel,
+  ShareModel,
+  SignUpModel,
+  ViewCartModel,
+  ViewItemModel,
+  ViewPromotionModel,
+  ViewItemListModel,
+  LoginModel
+};
 
 export type UndefinedOrString = undefined | string;
 export type UndefinedOrNumber = undefined | number;

@@ -1,9 +1,10 @@
 import {FirebaseAnalyticsTypes} from '@react-native-firebase/analytics';
 import store from 'app-store';
+import { defaultCurrency } from '../helper/currency';
 
 class AddToCartModel {
     cartInfo: FirebaseAnalyticsTypes.AddToCartEventParameters = {
-      currency: 'VND'
+      currency: defaultCurrency()
   };
 
   constructor(cartInfo: FirebaseAnalyticsTypes.AddToCartEventParameters) {
@@ -13,8 +14,12 @@ class AddToCartModel {
     };
   }
 
+  get eventName() {
+    return 'add_to_cart'
+  }
+
   logEvent() {
-    store.analyst.logAddToCart(this.cartInfo);
+    return store.analyst.logAddToCart(this.cartInfo);
   }
 }
 
