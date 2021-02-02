@@ -6,10 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.3.4] - 2021-02-01
+## [r11.3.4] - 2021-02-02
 
 ### Changed
 - Disable refer input in Op_Register if invite_user_id in user_info existed.
+- Loading all screen while waiting register in Op_register.
 
 ### Fixed
 - [ONLY] Product has 1 attribute group will auto detect remaining inventory (re-fix).
