@@ -1,29 +1,3 @@
-##### Tag Version
-
-# r11.1.1
-
-**r** presented for Retail app.
-
-##### Tag Description
-
-###### Old Features
-- Firebase Analytics.
-- Firebase Phone Authentication.
-- Popup Homepage.
-- Package Options.
-
-###### New Features
-- React native 0.63.4.
-- Premium.
-- New UI cart footer.
-- Fix many bugs.
-- Improve performance.
-
-###### Patch
-- Fix multi categories show 1 column on some android device.
-
----
-
 Tạo nhánh mới tick/vn.tickid từ tick/tickid
 Steps:
 
