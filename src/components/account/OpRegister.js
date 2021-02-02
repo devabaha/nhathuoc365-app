@@ -17,6 +17,7 @@ import EventTracker from '../../helper/EventTracker';
 import {APIRequest} from '../.../../../network/Entity';
 import HorizontalInfoItem from './HorizontalInfoItem';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import Loading from '../Loading';
 
 class OpRegister extends Component {
   constructor(props) {
@@ -381,6 +382,7 @@ class OpRegister extends Component {
 
     return (
       <View style={styles.container}>
+        {loading && <Loading center />}
         <ScrollView
           style={{
             marginBottom: store.keyboardTop + 60,
@@ -477,15 +479,15 @@ class OpRegister extends Component {
                 justifyContent: 'center',
                 alignItems: 'center',
               }}>
-              {this.state.loading ? (
+              {/* {this.state.loading ? (
                 <Indicator size="small" color="#ffffff" />
-              ) : (
+              ) : ( */}
                 <Icon
                   name={this.state.edit_mode ? 'save' : 'user-plus'}
                   size={20}
                   color="#ffffff"
                 />
-              )}
+              {/* )} */}
             </View>
 
             <Text style={styles.address_continue_title}>
