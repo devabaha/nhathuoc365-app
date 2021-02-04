@@ -15,6 +15,8 @@ import FastImage from 'react-native-fast-image';
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../components/Badges';
 import { PRODUCT_TYPES } from '../../constants';
+import CTAProduct from '../item/CTAProduct';
+import { CART_TYPES } from 'src/constants/cart';
 class Items extends Component {
   constructor(props) {
     super(props);
@@ -23,6 +25,7 @@ class Items extends Component {
       buying: false,
       loadmore: false,
     };
+    this.CTAProduct = new CTAProduct(props.t, this);
   }
   unmounted = false;
 
@@ -35,17 +38,18 @@ class Items extends Component {
   }
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
-    switch (product.product_type) {
-      case PRODUCT_TYPES.NORMAL:
-        this._addCart(product, quantity, model);
-        break;
-      case PRODUCT_TYPES.SERVICE:
-        this.goToSchedule(product);
-        break;
-      default:
-        this._addCart(product, quantity, model);
-        break;
-    }
+    this.CTAProduct.handlePressMainActionBtnProduct(product, CART_TYPES.NORMAL);
+    // switch (product.product_type) {
+    //   case PRODUCT_TYPES.NORMAL:
+    //     this._addCart(product, quantity, model);
+    //     break;
+    //   case PRODUCT_TYPES.SERVICE:
+    //     this.goToSchedule(product);
+    //     break;
+    //   default:
+    //     this._addCart(product, quantity, model);
+    //     break;
+    // }
   };
 
   goToSchedule = (product) => {
@@ -58,10 +62,6 @@ class Items extends Component {
   _addCart = (item, quantity = 1, model = '') => {
     if (this.props.buyPress) {
       this.props.buyPress(item);
-    }
-
-    if (isIOS) {
-      this._getMeasure(item);
     }
 
     this.setState(
@@ -109,27 +109,6 @@ class Items extends Component {
                     });
                 }
 
-                if (isIOS) {
-                  setTimeout(() => {
-                    store.setCartFlyPosition({
-                      px: 24,
-                      py: Util.size.height - NAV_HEIGHT - 64,
-                      width: 60,
-                      height: 60,
-                    });
-                    layoutAnimation();
-                  }, 500);
-                }
-
-                if (index !== null && index < length) {
-                  store.setCartItemIndex(index);
-                  Events.trigger(NEXT_PREV_CART, {index});
-                  setTimeout(() => {
-                    store.setCartFlyShow(false);
-                    store.setCartFlyImage(null);
-                  }, 750);
-                }
-
                 flashShowMessage({
                   message: response.message,
                   type: 'success',
@@ -157,25 +136,6 @@ class Items extends Component {
       },
     );
   };
-
-  _getMeasure(item) {
-    action(() => {
-      store.setCartFlyImage({uri: item.image});
-    })();
-
-    if (this.ref_item) {
-      this.ref_item.measure((a, b, width, height, px, py) => {
-        action(() => {
-          store.setCartFlyPosition({
-            px,
-            py: py - (isIOS ? NAV_HEIGHT : 0),
-            width: ITEM_WIDTH,
-            height: ITEM_IMG_HEIGHT,
-          });
-        })();
-      });
-    }
-  }
 
   render() {
     let {item, index, onPress, isCategories, isLocationItem, t} = this.props;

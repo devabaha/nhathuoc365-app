@@ -6,12 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.3.4] - 2021-02-02
+## [r11.3.5] - 2021-02-04
+### Added
+- Call-to-action model for product.
+- Prevent adding different item type to cart.
 
+## [r11.3.4] - 2021-02-02
 ### Changed
 - Disable refer input in Op_Register if invite_user_id in user_info existed.
 - Loading all screen while waiting register in Op_register.
-
 ### Fixed
 - [ONLY] Product has 1 attribute group will auto detect remaining inventory (re-fix).
 
@@ -22,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r11.3.2] - 2021-01-29
 ### Added
 - Show commissions in cart.
-
 ### Changed
 - Press order item in order screen will replace store_data, cart_data of it's self.
 - Color of addMoreItems in Confirm screen to marigold.

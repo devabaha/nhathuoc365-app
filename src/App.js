@@ -157,6 +157,7 @@ import AgencyInformationRegister from './containers/AgencyInformationRegister';
 import CommissionIncomeStatement from './containers/CommissionIncomeStatement';
 import ModalInput from './components/ModalInput';
 import {LotteryGame} from './containers/Gamification';
+import ModalConfirm from './components/ModalConfirm';
 
 /**
  * Not allow font scaling
@@ -1703,6 +1704,9 @@ class RootRouter extends Component {
 
               {/* ================ MODAL INPUT ================ */}
               <Stack key={appConfig.routes.modalInput} component={ModalInput} />
+
+              {/* ================ MODAL CONFIRM ================ */}
+              <Stack key={appConfig.routes.modalConfirm} component={ModalConfirm} />
 
               {/* ================ COUNTRY PICKER ================ */}
               <Stack
