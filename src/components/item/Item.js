@@ -30,9 +30,14 @@ import {PRODUCT_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import {CART_TYPES} from 'src/constants/cart';
+import Loading from '../Loading';
+import CTAProduct from './CTAProduct';
 
 const ITEM_KEY = 'ItemKey';
-
+const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
+const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
+const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
 class Item extends Component {
   constructor(props) {
     super(props);
@@ -43,16 +48,22 @@ class Item extends Component {
       item_data: null,
       images: null,
       loading: true,
+      actionLoading: false,
       buying: false,
       like_loading: true,
       is_drop_ship_loading: false,
       like_flag: 0,
       scrollY: 0,
+      cartTypeConfirmMessage: '',
     };
 
     this.animatedScrollY = new Animated.Value(0);
     this.unmounted = false;
     this.eventTracker = new EventTracker();
+    this.refPopupConfirmCartType = React.createRef();
+    this.productTempData = [];
+
+    this.CTAProduct = new CTAProduct(props.t, this);
   }
 
   isServiceProduct(product = {}) {
@@ -275,25 +286,121 @@ class Item extends Component {
     });
   };
 
-  handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
-    switch (product.product_type) {
-      case PRODUCT_TYPES.NORMAL:
-        this._addCart(product, quantity, model);
+  isActionWillAddDifferentCartType = (cartType) => {
+    const cartData = store.cart_data;
+    if (cartData && cartData.cart_type) {
+      if (cartData.cart_type !== cartType) {
+        switch (cartData.cart_type) {
+          case CART_TYPES.NORMAL:
+            this.setState({
+              cartTypeConfirmMessage: CART_HAS_ONLY_NORMAL_MESSAGE,
+            });
+            break;
+          case CART_TYPES.DROP_SHIP:
+            this.setState({
+              cartTypeConfirmMessage: CART_HAS_ONLY_DROP_SHIP_MESSAGE,
+            });
+            break;
+        }
+        if (this.refPopupConfirmCartType.current) {
+          this.refPopupConfirmCartType.current.open();
+        }
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  handlePressMainActionBtnProduct = (product, cartType) => {
+    this.CTAProduct.handlePressMainActionBtnProduct(product, cartType);
+    // switch (product.product_type) {
+    //   case PRODUCT_TYPES.NORMAL:
+    //     this.handleBuy(product, cartType, this._addCart);
+    //     break;
+    //   case PRODUCT_TYPES.SERVICE:
+    //     this.goToSchedule(product);
+    //     break;
+    //   default:
+    //     this.handleBuy(product, cartType, this._addCart);
+    //     break;
+    // }
+  };
+
+  handlePressSubAction = (product, cartType) => {
+    this.CTAProduct.handlePressSubAction(product, cartType);
+    // switch (cartType) {
+    //   case CART_TYPES.DROP_SHIP:
+    //     this.handleDropShip(product, cartType);
+    //     break;
+    //   default:
+    //     this._likeHandler(product);
+    //     break;
+    // }
+  };
+
+  handlePressActionBtnProduct = (product, cartType) => {
+    switch (cartType) {
+      case CART_TYPES.NORMAL:
+        this.handlePressMainActionBtnProduct(product, cartType);
         break;
-      case PRODUCT_TYPES.SERVICE:
-        this.goToSchedule(product);
+      case CART_TYPES.DROP_SHIP:
+        this.handlePressSubAction(product, cartType);
         break;
       default:
-        this._addCart(product, quantity, model);
+        this.handlePressMainActionBtnProduct(product, cartType);
         break;
     }
   };
 
+  submitDropShip = (product, quantity, modalKey, newPrice) => {
+    this.setState({is_drop_ship_loading: true});
+    console.log(product, quantity, modalKey, newPrice);
+    this._addCart(product, quantity, modalKey, newPrice, false);
+  };
+
+  handleDropShip = (product, cartType) => {
+    this.handleBuy(product, cartType, this.submitDropShip, true);
+  };
+
+  handleBuy = (product, cartType, callBack = () => {}, isDropShip = false) => {
+    if (product.attrs || isDropShip) {
+      Actions.push(appConfig.routes.itemAttribute, {
+        isDropShip,
+        itemId: product.id,
+        product,
+        onSubmit: (...args) => {
+          if (this.isActionWillAddDifferentCartType(cartType)) {
+            this.saveProductTempData(product, ...args);
+            return;
+          }
+          callBack(product, ...args);
+        },
+      });
+    } else {
+      if (this.isActionWillAddDifferentCartType(cartType)) {
+        this.saveProductTempData(product, 1, '', null, false);
+        return;
+      }
+      callBack(product);
+    }
+  };
+
+  saveProductTempData = (...args) => {
+    this.productTempData = [...args];
+  };
+
   // add item vào giỏ hàng
-  _addCart = (item, quantity = 1, model = '', newPrice, loading = true) => {
+  _addCart = (
+    item,
+    quantity = 1,
+    model = '',
+    newPrice = null,
+    buying = true,
+  ) => {
     this.setState(
       {
-        buying: loading,
+        buying,
       },
       async () => {
         const data = {
@@ -310,51 +417,47 @@ class Item extends Component {
             item.id,
             data,
           );
-          console.log(data);
 
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              if (response.data.attrs) {
-                Actions.push(appConfig.routes.itemAttribute, {
-                  itemId: item.id,
-                  onSubmit: (quantity, modal_key) =>
-                    this._addCart(item, quantity, modal_key),
-                });
-              } else {
-                store.setCartData(response.data);
-
-                var index = null,
-                  length = 0;
-                if (response.data.products) {
-                  length = Object.keys(response.data.products).length;
-
-                  Object.keys(response.data.products)
-                    .reverse()
-                    .some((key, key_index) => {
-                      let value = response.data.products[key];
-                      if (value.id == item.id) {
-                        index = key_index;
-                        return true;
-                      }
-                    });
-                }
-
-                if (index !== null && index < length) {
-                  store.setCartItemIndex(index);
-                  Events.trigger(NEXT_PREV_CART, {index});
-                }
-
-                flashShowMessage({
-                  message: response.message,
-                  type: 'success',
-                });
-              }
+          if (response && response.status == STATUS_SUCCESS) {
+            if (!this.unmounted && response.data.attrs) {
+              Actions.push(appConfig.routes.itemAttribute, {
+                itemId: item.id,
+                onSubmit: (quantity, modal_key) =>
+                  this._addCart(item, quantity, modal_key),
+              });
             } else {
               flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger',
+                message: response.message,
+                type: 'success',
               });
             }
+            store.setCartData(response.data);
+
+            var index = null,
+              length = 0;
+            if (response.data.products) {
+              length = Object.keys(response.data.products).length;
+
+              Object.keys(response.data.products)
+                .reverse()
+                .some((key, key_index) => {
+                  let value = response.data.products[key];
+                  if (value.id == item.id) {
+                    index = key_index;
+                    return true;
+                  }
+                });
+            }
+
+            if (index !== null && index < length) {
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
+            }
+
+            flashShowMessage({
+              message: response.message,
+              type: 'success',
+            });
           }
         } catch (e) {
           console.log(e + ' site_cart_plus');
@@ -363,22 +466,16 @@ class Item extends Component {
             message: t('common:api.error.message'),
           });
         } finally {
-          !this.unmounted &&
+          if (!this.unmounted) {
+            this.productTempData = [];
             this.setState({
               buying: false,
               is_drop_ship_loading: false,
             });
+          }
         }
       },
     );
-  };
-
-  handlePressSubAction = (product) => {
-    if (isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)) {
-      this.handleDropShip(product);
-    } else {
-      this._likeHandler(product);
-    }
   };
 
   _likeHandler(item) {
@@ -493,19 +590,63 @@ class Item extends Component {
     }
   }
 
-  submitDropShip = (product, quantity, modalKey, newPrice) => {
-    this.setState({is_drop_ship_loading: true});
-    this._addCart(product, quantity, modalKey, newPrice, false);
+  async _cancelCart(callBack) {
+    const {t} = this.props;
+    try {
+      const response = await APIHandler.site_cart_canceling(
+        store.cart_data?.site_id,
+      );
+
+      if (response && response.status == STATUS_SUCCESS) {
+        store.resetCartData();
+        callBack();
+
+        store.setOrdersKeyChange(store.orders_key_change + 1);
+        Events.trigger(RELOAD_STORE_ORDERS);
+
+        flashShowMessage({
+          type: 'success',
+          message: response.message,
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || t('common:api.error.message'),
+        });
+      }
+    } catch (e) {
+      console.log(e + ' site_cart_canceling');
+      flashShowMessage({
+        type: 'danger',
+        message: t('common:api.error.message'),
+      });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          actionLoading: false,
+        });
+    }
+  }
+
+  confirmCartType = () => {
+    this.setState({actionLoading: true});
+    this.closeConfirmCartTypePopUp();
+    this._cancelCart(() => {
+      if (this.productTempData.length > 0) {
+        this._addCart(...this.productTempData);
+      }
+    });
   };
 
-  handleDropShip = (item) => {
-    Actions.push(appConfig.routes.itemAttribute, {
-      isDropShip: true,
-      itemId: item.id,
-      product: item,
-      onSubmit: (quantity, modal_key, newPrice) =>
-        this.submitDropShip(item, quantity, modal_key, newPrice),
-    });
+  closeConfirmCartTypePopUp = () => {
+    if (this.refPopupConfirmCartType.current) {
+      this.refPopupConfirmCartType.current.close();
+    }
+  };
+
+  cancelConfirmCartType = () => {
+    this.productTempData = [];
+    this.closeConfirmCartTypePopUp();
   };
 
   renderPagination = (index, total, context, hasImages) => {
@@ -655,6 +796,7 @@ class Item extends Component {
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+        {this.state.actionLoading && <Loading center />}
         <Header
           title={this.props.title}
           animatedValue={this.animatedScrollY}
@@ -720,7 +862,14 @@ class Item extends Component {
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
-                  onPress={() => this.handlePressSubAction(item_data || item)}
+                  onPress={() =>
+                    this.handlePressSubAction(
+                      item_data || item,
+                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+                        ? CART_TYPES.DROP_SHIP
+                        : '',
+                    )
+                  }
                   underlayColor="transparent">
                   <View
                     style={[
@@ -754,8 +903,9 @@ class Item extends Component {
 
                 <TouchableHighlight
                   onPress={() =>
-                    this.handlePressActionBtnProduct(
+                    this.handlePressMainActionBtnProduct(
                       item_data ? item_data : item,
+                      CART_TYPES.NORMAL,
                     )
                   }
                   underlayColor="transparent">
@@ -915,6 +1065,7 @@ class Item extends Component {
           </Animated.ScrollView>
           {this.renderCartFooter(item)}
         </SafeAreaView>
+
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
           title={t('cart:popup.remove.message')}
@@ -926,6 +1077,18 @@ class Item extends Component {
             }
           }}
           yesConfirm={this._removeCartItem.bind(this)}
+        />
+
+        <PopupConfirm
+          ref_popup={this.refPopupConfirmCartType}
+          title={this.state.cartTypeConfirmMessage}
+          otherClose={false}
+          type="warning"
+          isConfirm
+          yesTitle={CONTINUE_ORDER_CONFIRM}
+          titleStyle={{textAlign: 'left'}}
+          noConfirm={this.cancelConfirmCartType}
+          yesConfirm={this.confirmCartType}
         />
       </View>
     );

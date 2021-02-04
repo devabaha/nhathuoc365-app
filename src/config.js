@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.3.4';
+    return 'r11.3.5';
   }
 
   get appName() {
@@ -186,6 +186,7 @@ class Config {
       modalRateApp: 'modalRateApp',
       modalPopup: 'modalPopup',
       modalInput: 'modalInput',
+      modalConfirm: 'modalConfirm',
 
       //  Reset password
       resetPassword: 'resetPassword',

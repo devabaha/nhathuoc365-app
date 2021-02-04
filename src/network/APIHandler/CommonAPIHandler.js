@@ -724,7 +724,9 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   async site_cart_canceling(store_id, cart_id) {
-    var api = url_for(API.SITE_CART_CANCELING + '/' + store_id + '/' + cart_id);
+    var api = url_for(
+      API.SITE_CART_CANCELING + '/' + store_id + (cart_id ? '/' + cart_id : ''),
+    );
     return await this.getAPI(api);
   }
 
@@ -902,18 +904,18 @@ class CommonAPIHandler extends BaseHandler {
 
   /**
    * @todo register gold member/ store
-   * 
+   *
    */
-  user_gold_member_register(data){
+  user_gold_member_register(data) {
     const api = url_for(API.USER_REGISTER_GOLD_MEMBER);
     return this.postAPI(api, data);
   }
 
   /**
    * @todo get commission income
-   * 
+   *
    */
-  user_site_cart_commission(data){
+  user_site_cart_commission(data) {
     const api = url_for(API.USER_SITE_CART_COMMISSION);
     return this.postCancelableAPI(api, data, true);
   }
@@ -954,7 +956,6 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.LOTTERY_TURN + '/' + site_id + '/' + lottery_id);
     return this.postCancelableAPI(api, data);
   }
-
 }
 
 export default CommonAPIHandler;
