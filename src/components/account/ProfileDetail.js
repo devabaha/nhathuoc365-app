@@ -17,7 +17,7 @@ import appConfig from 'app-config';
 import Loading from '../Loading';
 import EventTracker from '../../helper/EventTracker';
 import firebaseAuth from '@react-native-firebase/auth';
-import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
 class ProfileDetail extends Component {
   constructor(props) {
@@ -27,6 +27,11 @@ class ProfileDetail extends Component {
       logout_loading: false,
     };
     this.eventTracker = new EventTracker();
+    this.unmounted = false;
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
   }
 
   get sectionData() {
@@ -147,16 +152,8 @@ class ProfileDetail extends Component {
       const response = await APIHandler.user_logout();
       switch (response.status) {
         case STATUS_SUCCESS:
-          store.setUserInfo(response.data);
-          store.resetCartData();
-          store.setRefreshHomeChange(store.refresh_home_change + 1);
-          store.setOrdersKeyChange(store.orders_key_change + 1);
-          store.resetAsyncStorage();
+          store.logOut(response.data);
 
-          const isFirebaseSignedIn = !!firebaseAuth().currentUser;
-          if (isFirebaseSignedIn) {
-            firebaseAuth().signOut();
-          }
           flashShowMessage({
             message: t('signOut.successMessage'),
             type: 'success',
@@ -164,15 +161,15 @@ class ProfileDetail extends Component {
           Actions.reset(appConfig.routes.sceneWrapper);
           break;
         default:
-          console.log('default');
+          console.log(response);
       }
     } catch (error) {
       console.log(error);
-      store.addApiQueue('user_logout', this.logout.bind(this));
     } finally {
-      this.setState({
-        logout_loading: false,
-      });
+      !this.unmounted &&
+        this.setState({
+          logout_loading: false,
+        });
     }
   };
 
