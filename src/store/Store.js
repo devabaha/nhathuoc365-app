@@ -4,7 +4,9 @@ import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {initialize as initializeRadaModule} from '@tickid/tickid-rada';
 import firebaseAnalytics from '@react-native-firebase/analytics';
-
+import firebaseAuth from '@react-native-firebase/auth';
+import {Actions} from 'react-native-router-flux';
+import appConfig from 'app-config';
 @autobind
 class Store {
   constructor() {
@@ -56,6 +58,12 @@ class Store {
         this.getNoitify();
       }
     }, DELAY_UPDATE_NOTICE);
+
+    this.logoutExceptionScene = [
+      `${appConfig.routes.phoneAuth}_1`,
+      `${appConfig.routes.op_register}_1`,
+      appConfig.routes.launch,
+    ];
   }
 
   async _getStoreInfo() {
@@ -77,6 +85,28 @@ class Store {
     this.getNotifyFlag = false;
     try {
       const response = await APIHandler.user_notify();
+      if (response.status === STATUS_LOGIN_FAIL) {
+        const isExecuteLogout = !this.logoutExceptionScene.includes(
+          Actions.currentScene,
+        );
+
+        if (isExecuteLogout) {
+          try {
+            const response = await APIHandler.user_logout();
+            this.logOut(response?.data || {});
+          } catch (error) {
+            this.logOut({});
+            console.log(error);
+          } finally {
+            flashShowMessage({
+              message: response.message,
+              type: 'danger',
+            });
+            Actions.reset(appConfig.routes.sceneWrapper);
+          }
+        }
+      }
+
       if (response && response.status == STATUS_SUCCESS) {
         action(() => {
           if (!this.notifyReceived) {
@@ -496,8 +526,21 @@ class Store {
   }
 
   @observable isUpdateOrders = false;
-  @action setUpdateOrders(isUpdateOrders){
+  @action setUpdateOrders(isUpdateOrders) {
     this.isUpdateOrders = isUpdateOrders;
+  }
+
+  @action logOut(userInfo) {
+    this.setUserInfo(userInfo);
+    this.resetCartData();
+    this.setRefreshHomeChange(this.refresh_home_change + 1);
+    this.setOrdersKeyChange(this.orders_key_change + 1);
+    this.resetAsyncStorage();
+
+    const isFirebaseSignedIn = !!firebaseAuth().currentUser;
+    if (isFirebaseSignedIn) {
+      firebaseAuth().signOut();
+    }
   }
 }
 

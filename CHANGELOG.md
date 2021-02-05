@@ -6,10 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.3.5] - 2021-02-04
+## [r11.3.5] - 2021-02-05
 ### Added
 - Call-to-action model for product.
 - Prevent adding different item type to cart.
+- Logout and refresh app flow if response status of api notify is 405.
 
 ## [r11.3.4] - 2021-02-02
 ### Changed
