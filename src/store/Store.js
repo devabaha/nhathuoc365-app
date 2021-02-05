@@ -7,7 +7,7 @@ import appConfig from 'app-config';
 import firebaseAnalytics from '@react-native-firebase/analytics';
 import firebaseAuth from '@react-native-firebase/auth';
 import {Actions} from 'react-native-router-flux';
-import appConfig from 'app-config';
+
 @autobind
 class Store {
   constructor() {
