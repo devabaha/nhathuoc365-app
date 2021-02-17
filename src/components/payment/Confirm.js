@@ -27,6 +27,7 @@ import EventTracker from '../../helper/EventTracker';
 import {ANALYTICS_EVENTS_NAME} from '../../constants';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import CartItem from './CartItem';
+import Tag from '../Tag';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -85,7 +86,6 @@ class Confirm extends Component {
   }
 
   _initial(props) {
-    console.log(props.notice_data);
     if (!this.state.single) {
       if (props.notice_data) {
         this._getOrdersItem(
@@ -911,6 +911,7 @@ class Confirm extends Component {
     const is_ready = cart_data.status == CART_STATUS_READY;
     const is_reorder = cart_data.status == CART_STATUS_COMPLETED;
     const is_paymenting = cart_data.status == CART_STATUS_ORDERING;
+    const cartType = cart_data.cart_type_name;
 
     return (
       <>
@@ -1049,6 +1050,14 @@ class Confirm extends Component {
                 </View> */}
                 </View>
               </TouchableHighlight>
+              {!!cartType && (
+                <View style={styles.cartTypeContainer}>
+                  <Tag
+                    label={cartType}
+                    fill={appConfig.colors.cartType[cart_data.cart_type]}
+                  />
+                </View>
+              )}
             </View>
 
             {single && <ListHeader title={t('confirm.information.recheck')} />}
@@ -2354,6 +2363,10 @@ const styles = StyleSheet.create({
   placeholder: {
     color: '#999999',
   },
+  cartTypeContainer: {
+    paddingHorizontal: 15, 
+    marginTop: 7
+  }
 });
 
 export default withTranslation(['orders', 'cart', 'common'])(observer(Confirm));

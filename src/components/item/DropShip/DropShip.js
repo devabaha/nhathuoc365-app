@@ -90,7 +90,7 @@ const DropShip = ({
     let grossProfit = 0;
 
     try {
-      grossProfit = Number(quantity) * Number(newPrice) - Number(price) || 0;
+      grossProfit = Number(quantity) * (Number(newPrice) - Number(price)) || 0;
     } catch (err) {
       console.log('calculate_gross_profit', err);
     }

@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.3.5';
+    return 'r11.3.6';
   }
 
   get appName() {
@@ -84,6 +84,10 @@ class Config {
         success: '#06d6a0',
         info: '#118ab2',
         other: '#073b4c'
+      },
+      cartType: {
+        cart: '#B0C0F0',
+        dropship: '#FF9F1C'
       },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
