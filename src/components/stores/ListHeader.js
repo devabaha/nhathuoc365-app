@@ -5,7 +5,7 @@ import { View, Text, StyleSheet } from 'react-native';
 
 export default class ListHeader extends Component {
   render() {
-    let { title, alignLeft } = this.props;
+    let { title, alignLeft, containerStyle } = this.props;
 
     return (
       <View
@@ -13,7 +13,8 @@ export default class ListHeader extends Component {
           styles.store_heading_box,
           {
             alignItems: alignLeft ? 'flex-start' : 'center'
-          }
+          },
+          containerStyle
         ]}
       >
         {!!title && <Text style={styles.store_heading_title}>{title}</Text>}
@@ -32,6 +33,6 @@ const styles = StyleSheet.create({
   store_heading_title: {
     fontSize: 14,
     color: '#333333',
-    marginVertical: 15
+    marginVertical: 15,
   }
 });

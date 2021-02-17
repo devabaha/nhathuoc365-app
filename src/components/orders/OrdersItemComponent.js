@@ -7,6 +7,7 @@ import store from '../../store/Store';
 import appConfig from 'app-config';
 import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
 import Loading from '../Loading';
+import Tag from '../Tag';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -54,7 +55,7 @@ class OrdersItemComponent extends Component {
     ) {
       Actions.pop();
     } else {
-      this._goToStore(item)
+      this._goToStore(item);
     }
   }
 
@@ -86,7 +87,7 @@ class OrdersItemComponent extends Component {
     });
   }
 
-  _goToStore(item){
+  _goToStore(item) {
     if (this.props.disableGoStore) return;
     store.setStoreData(item.site);
     store.setCartData(item);
@@ -113,6 +114,8 @@ class OrdersItemComponent extends Component {
     // var is_reorder = item.status == CART_STATUS_COMPLETED;
     var is_ready = false;
     var is_reorder = false;
+
+    const cartType = item.cart_type_name;
 
     return (
       <TouchableHighlight
@@ -182,6 +185,17 @@ class OrdersItemComponent extends Component {
                   </Text>
                 </View>
               )}
+
+              {!!cartType && <View style={styles.orders_item_time_box}>
+                <Tag
+                  label={cartType}
+                  fill={appConfig.colors.cartType[item.cart_type]}
+                  animate={false}
+                  strokeWidth={0}
+                  labelStyle={styles.cartTypeLabel}
+                  labelContainerStyle={styles.cartTypeLabelContainer}
+                />
+              </View>}
 
               <View style={styles.orders_item_row}>
                 {item.products && Object.keys(item.products).length > 0 && (
@@ -492,6 +506,14 @@ const styles = StyleSheet.create({
   orders_item_note_content: {
     flex: 1,
   },
+
+  cartTypeLabelContainer: {
+    marginTop: 3
+  },
+  cartTypeLabel: {
+    fontSize: 10, 
+    textTransform: 'uppercase'
+  }
 });
 
 export default withTranslation('orders')(observer(OrdersItemComponent));

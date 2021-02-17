@@ -10,7 +10,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Octicons from 'react-native-vector-icons/Octicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import AutoHeightWebView from 'react-native-autoheight-webview';
@@ -64,6 +64,15 @@ class Item extends Component {
     this.productTempData = [];
 
     this.CTAProduct = new CTAProduct(props.t, this);
+  }
+
+  get subActionColor() {
+    const is_like = this.state.like_flag == 1;
+    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+      ? appConfig.colors.primary
+      : is_like
+      ? appConfig.colors.status.danger
+      : appConfig.colors.primary;
   }
 
   isServiceProduct(product = {}) {
@@ -314,29 +323,10 @@ class Item extends Component {
 
   handlePressMainActionBtnProduct = (product, cartType) => {
     this.CTAProduct.handlePressMainActionBtnProduct(product, cartType);
-    // switch (product.product_type) {
-    //   case PRODUCT_TYPES.NORMAL:
-    //     this.handleBuy(product, cartType, this._addCart);
-    //     break;
-    //   case PRODUCT_TYPES.SERVICE:
-    //     this.goToSchedule(product);
-    //     break;
-    //   default:
-    //     this.handleBuy(product, cartType, this._addCart);
-    //     break;
-    // }
   };
 
   handlePressSubAction = (product, cartType) => {
     this.CTAProduct.handlePressSubAction(product, cartType);
-    // switch (cartType) {
-    //   case CART_TYPES.DROP_SHIP:
-    //     this.handleDropShip(product, cartType);
-    //     break;
-    //   default:
-    //     this._likeHandler(product);
-    //     break;
-    // }
   };
 
   handlePressActionBtnProduct = (product, cartType) => {
@@ -765,15 +755,14 @@ class Item extends Component {
   }
 
   renderSubActionBtnIcon() {
-    const is_like = this.state.like_flag == 1;
     return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
       this.state.is_drop_ship_loading ? (
         <Indicator size="small" />
       ) : (
-        <Octicons
-          name="package"
+        <MaterialCommunityIcons
+          name="truck-fast"
           size={24}
-          color={is_like ? '#e31b23' : appConfig.colors.primary}
+          color={this.subActionColor}
         />
       )
     ) : this.state.like_loading ? (
@@ -782,7 +771,7 @@ class Item extends Component {
       <Icon
         name="heart"
         size={20}
-        color={is_like ? '#e31b23' : appConfig.colors.primary}
+        color={this.subActionColor}
       />
     );
   }
@@ -876,9 +865,7 @@ class Item extends Component {
                       styles.item_actions_btn,
                       styles.item_actions_btn_chat,
                       {
-                        borderColor: is_like
-                          ? '#e31b23'
-                          : appConfig.colors.primary,
+                        borderColor: this.subActionColor,
                       },
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
@@ -889,7 +876,7 @@ class Item extends Component {
                         styles.item_actions_title,
                         styles.item_actions_title_chat,
                         {
-                          color: is_like ? '#e31b23' : appConfig.colors.primary,
+                          color: this.subActionColor,
                         },
                       ]}>
                       {isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
