@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.7] - 2021-02-18
+### Fixed
+- Phone number including country code in log in screen.
+- Allow submit `0` in lottery game.
+
 ## [r11.3.6] - 2021-02-17
 ### Added
 - Cart type tag in order.

@@ -105,14 +105,14 @@ class CTAProduct {
   };
 
   handleBuy = (product, cartType, callBack = () => {}, isDropShip = false) => {
-    if (product.attrs || isDropShip) {
+    if (product.has_attr || isDropShip) {
       Actions.push(appConfig.routes.itemAttribute, {
         isDropShip,
         itemId: product.id,
         product,
         onSubmit: (...args) => {
-            Actions.pop();
-            if (this.isActionWillAddDifferentCartType(cartType)) {
+          Actions.pop();
+          if (this.isActionWillAddDifferentCartType(cartType)) {
             this.saveProductTempData(product, ...args, false);
             return;
           }

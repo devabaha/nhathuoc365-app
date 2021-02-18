@@ -295,89 +295,12 @@ class Item extends Component {
     });
   };
 
-  isActionWillAddDifferentCartType = (cartType) => {
-    const cartData = store.cart_data;
-    if (cartData && cartData.cart_type) {
-      if (cartData.cart_type !== cartType) {
-        switch (cartData.cart_type) {
-          case CART_TYPES.NORMAL:
-            this.setState({
-              cartTypeConfirmMessage: CART_HAS_ONLY_NORMAL_MESSAGE,
-            });
-            break;
-          case CART_TYPES.DROP_SHIP:
-            this.setState({
-              cartTypeConfirmMessage: CART_HAS_ONLY_DROP_SHIP_MESSAGE,
-            });
-            break;
-        }
-        if (this.refPopupConfirmCartType.current) {
-          this.refPopupConfirmCartType.current.open();
-        }
-        return true;
-      }
-    }
-
-    return false;
-  };
-
   handlePressMainActionBtnProduct = (product, cartType) => {
     this.CTAProduct.handlePressMainActionBtnProduct(product, cartType);
   };
 
   handlePressSubAction = (product, cartType) => {
     this.CTAProduct.handlePressSubAction(product, cartType);
-  };
-
-  handlePressActionBtnProduct = (product, cartType) => {
-    switch (cartType) {
-      case CART_TYPES.NORMAL:
-        this.handlePressMainActionBtnProduct(product, cartType);
-        break;
-      case CART_TYPES.DROP_SHIP:
-        this.handlePressSubAction(product, cartType);
-        break;
-      default:
-        this.handlePressMainActionBtnProduct(product, cartType);
-        break;
-    }
-  };
-
-  submitDropShip = (product, quantity, modalKey, newPrice) => {
-    this.setState({is_drop_ship_loading: true});
-    console.log(product, quantity, modalKey, newPrice);
-    this._addCart(product, quantity, modalKey, newPrice, false);
-  };
-
-  handleDropShip = (product, cartType) => {
-    this.handleBuy(product, cartType, this.submitDropShip, true);
-  };
-
-  handleBuy = (product, cartType, callBack = () => {}, isDropShip = false) => {
-    if (product.attrs || isDropShip) {
-      Actions.push(appConfig.routes.itemAttribute, {
-        isDropShip,
-        itemId: product.id,
-        product,
-        onSubmit: (...args) => {
-          if (this.isActionWillAddDifferentCartType(cartType)) {
-            this.saveProductTempData(product, ...args);
-            return;
-          }
-          callBack(product, ...args);
-        },
-      });
-    } else {
-      if (this.isActionWillAddDifferentCartType(cartType)) {
-        this.saveProductTempData(product, 1, '', null, false);
-        return;
-      }
-      callBack(product);
-    }
-  };
-
-  saveProductTempData = (...args) => {
-    this.productTempData = [...args];
   };
 
   // add item vào giỏ hàng
