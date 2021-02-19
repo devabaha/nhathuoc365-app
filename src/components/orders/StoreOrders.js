@@ -92,8 +92,11 @@ class StoreOrders extends Component {
       }
     } catch (e) {
       console.log(e + ' site_cart_index');
-      store.addApiQueue('site_cart_index', this._getData.bind(this, delay));
+      // store.addApiQueue('site_cart_index', this._getData.bind(this, delay));
     } finally {
+      setStater(this, this.unmounted, {
+        loading: false
+      });
     }
   }
   _goStores(item, category_id) {
@@ -180,6 +183,7 @@ class StoreOrders extends Component {
                   item={item}
                   from_page="store_orders"
                   goStore={this.props.goStore}
+                  index={index}
                 />
               );
             }}
