@@ -212,7 +212,7 @@ class Footer extends Component {
   translateY = new Animated.Value(0);
 
   get submitDisabled() {
-    return Number.isNaN(this.state.number) || Number(this.state.number) === 0;
+    return Number.isNaN(this.state.number) || this.state.number === '';
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -228,8 +228,8 @@ class Footer extends Component {
 
   submit = () => {
     Keyboard.dismiss();
-    this.setState({number: ''});
     this.props.onSubmit(this.state.number);
+    this.setState({number: ''});
   };
 
   onChangeText = (number) => {

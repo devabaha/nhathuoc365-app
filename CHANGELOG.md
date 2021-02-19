@@ -6,12 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.7] - 2021-02-19
+### Changed
+- Flow of checking cart type between normal, dropship and service product.
+### Fixed
+- Phone number including country code in log in screen.
+- Allow submit `0` in lottery game.
+
 ## [r11.3.6] - 2021-02-17
 ### Added
 - Cart type tag in order.
 ### Fixed
 - Calculating total profit in drop ship mode.
 - Color of drop ship btn.
+
 ## [r11.3.5] - 2021-02-05
 ### Added
 - Call-to-action model for product.

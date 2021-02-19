@@ -6,17 +6,24 @@ import {PRODUCT_TYPES} from 'src/constants';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
-const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
-const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
+const CART_TYPE_REPLACE_KEYWORD = 'cart_type';
+const CART_TYPE_WARNING_MESSAGE = `\r\n• Giỏ hàng đang đặt thuộc loại ${CART_TYPE_REPLACE_KEYWORD}.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để hủy giỏ hàng đang đặt và tạo giỏ hàng mới.\r\n`;
 
 class CTAProduct {
   productTempData = [];
+  product = null;
+  cartType = '';
+  actionFunctionName = "";
   t = () => {};
   context = this;
 
   constructor(t, context) {
     this.t = t;
     this.context = context;
+  }
+
+  isServiceProduct(product = {}) {
+    return product.product_type === PRODUCT_TYPES.SERVICE;
   }
 
   goToSchedule = (product) => {
@@ -29,15 +36,18 @@ class CTAProduct {
     const cartData = store.cart_data;
     if (cartData && cartData.cart_type) {
       if (cartData.cart_type !== cartType) {
-        let modalTitle = '';
-        switch (cartData.cart_type) {
-          case CART_TYPES.NORMAL:
-            modalTitle = CART_HAS_ONLY_NORMAL_MESSAGE;
-            break;
-          case CART_TYPES.DROP_SHIP:
-            modalTitle = CART_HAS_ONLY_DROP_SHIP_MESSAGE;
-            break;
-        }
+        let modalTitle = CART_TYPE_WARNING_MESSAGE.replace(
+          CART_TYPE_REPLACE_KEYWORD,
+          cartData.cart_type_name,
+        );
+        // switch (cartData.cart_type) {
+        //   case CART_TYPES.NORMAL:
+        //     modalTitle = CART_HAS_ONLY_NORMAL_MESSAGE;
+        //     break;
+        //   case CART_TYPES.DROP_SHIP:
+        //     modalTitle = CART_HAS_ONLY_DROP_SHIP_MESSAGE;
+        //     break;
+        // }
 
         Actions.push(appConfig.routes.modalConfirm, {
           message: modalTitle,
@@ -57,6 +67,7 @@ class CTAProduct {
   };
 
   handlePressMainActionBtnProduct = (product, cartType) => {
+    this.actionFunctionName = 'handlePressMainActionBtnProduct';
     switch (product.product_type) {
       case PRODUCT_TYPES.NORMAL:
         this.handleBuy(product, cartType, this._addCart);
@@ -71,6 +82,13 @@ class CTAProduct {
   };
 
   handlePressSubAction = (product, cartType) => {
+    this.actionFunctionName = 'handlePressSubAction';
+
+    if(this.isServiceProduct(product)){
+      this._likeHandler(product);
+      return;
+    }
+
     switch (cartType) {
       case CART_TYPES.DROP_SHIP:
         this.handleDropShip(product, cartType);
@@ -96,7 +114,7 @@ class CTAProduct {
   };
 
   submitDropShip = (product, quantity, modalKey, newPrice) => {
-    this.context.setState({is_drop_ship_loading: true});
+    this.context.setState({isSubActionLoading: true});
     this._addCart(product, quantity, modalKey, newPrice, false);
   };
 
@@ -105,25 +123,28 @@ class CTAProduct {
   };
 
   handleBuy = (product, cartType, callBack = () => {}, isDropShip = false) => {
-    if (product.attrs || isDropShip) {
+    if (this.isActionWillAddDifferentCartType(cartType)) {
+      this.product = product;
+      this.cartType = cartType;
+      return;
+    }
+
+    if (product.has_attr || isDropShip) {
       Actions.push(appConfig.routes.itemAttribute, {
         isDropShip,
         itemId: product.id,
         product,
         onSubmit: (...args) => {
-            Actions.pop();
-            if (this.isActionWillAddDifferentCartType(cartType)) {
-            this.saveProductTempData(product, ...args, false);
-            return;
-          }
+          Actions.pop();
+
           callBack(product, ...args);
         },
       });
     } else {
-      if (this.isActionWillAddDifferentCartType(cartType)) {
-        this.saveProductTempData(product, 1, '', null);
-        return;
-      }
+      // if (this.isActionWillAddDifferentCartType(cartType)) {
+      //   this.saveProductTempData(product, 1, '', null);
+      //   return;
+      // }
       callBack(product);
     }
   };
@@ -211,7 +232,7 @@ class CTAProduct {
           if (!this.context.unmounted) {
             this.context.setState({
               buying: false,
-              is_drop_ship_loading: false,
+              isSubActionLoading: false,
             });
           }
         }
@@ -305,14 +326,21 @@ class CTAProduct {
   confirmCartType = () => {
     this.context.setState({actionLoading: true});
     this._cancelCart(() => {
-      if (this.productTempData.length > 0) {
-        this._addCart(...this.productTempData);
-      }
+      // if (this.productTempData.length > 0) {
+      //   this._addCart(...this.productTempData);
+      // }
+      setTimeout(() => {
+        if (this.product) {
+          this[this.actionFunctionName](this.product, this.cartType);
+        }
+      }, 500);
     });
   };
 
   cancelConfirmCartType = () => {
     this.productTempData = [];
+    this.product = null;
+    this.cartType = '';
   };
 }
 

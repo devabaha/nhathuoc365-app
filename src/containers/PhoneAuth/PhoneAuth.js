@@ -154,9 +154,7 @@ class PhoneAuth extends Component {
   }
 
   formatPhoneNumber(phoneNumber, countryCode = this.formatCountryCode()) {
-    if (phoneNumber.substring(0, 2) === countryCode.replace('+', '')) {
-      phoneNumber = phoneNumber.substr(2);
-    } else if (phoneNumber.substring(0, 1) === '0') {
+    if (phoneNumber.substring(0, 1) === '0') {
       phoneNumber = phoneNumber.substr(1);
     }
 

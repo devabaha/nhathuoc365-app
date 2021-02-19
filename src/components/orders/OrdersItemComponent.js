@@ -107,7 +107,7 @@ class OrdersItemComponent extends Component {
   }
 
   render() {
-    var {item, from_page, t} = this.props;
+    var {item, from_page, t, index} = this.props;
     var single = from_page != 'store_orders';
     var is_paymenting = item.status == CART_STATUS_ORDERING;
     // var is_ready = item.status == CART_STATUS_READY;
@@ -125,23 +125,28 @@ class OrdersItemComponent extends Component {
           style={[
             styles.orders_item_box,
             {
-              paddingTop: single ? 0 : 12,
+              // paddingTop: single ? 0 : 12,
             },
           ]}>
-          {single && (
-            <TouchableHighlight
-              underlayColor="transparent"
-              onPress={this._goStoreOrders.bind(this, item)}>
-              <View style={styles.cart_section_box}>
-                <CachedImage
-                  mutable
-                  style={styles.cart_section_image}
-                  source={{uri: item.shop_logo_url}}
-                />
-                <Text style={styles.cart_section_title}>{item.shop_name}</Text>
-              </View>
-            </TouchableHighlight>
-          )}
+          {/* {single && ( */}
+          <TouchableHighlight
+            underlayColor="transparent"
+            onPress={this._goStoreOrders.bind(this, item)}>
+            <View style={styles.cart_section_box}>
+              <CachedImage
+                mutable
+                style={styles.cart_section_image}
+                source={{uri: item.shop_logo_url}}
+              />
+              <Text style={styles.cart_section_title}>{item.shop_name}</Text>
+              {!!(index + 1) && (
+                <View style={styles.indexContainer}>
+                  <Text style={styles.indexValue}>{index + 1}</Text>
+                </View>
+              )}
+            </View>
+          </TouchableHighlight>
+          {/* )} */}
 
           <View style={styles.orders_item_icon_box}>
             <Icon
@@ -186,16 +191,18 @@ class OrdersItemComponent extends Component {
                 </View>
               )}
 
-              {!!cartType && <View style={styles.orders_item_time_box}>
-                <Tag
-                  label={cartType}
-                  fill={appConfig.colors.cartType[item.cart_type]}
-                  animate={false}
-                  strokeWidth={0}
-                  labelStyle={styles.cartTypeLabel}
-                  labelContainerStyle={styles.cartTypeLabelContainer}
-                />
-              </View>}
+              {!!cartType && (
+                <View style={styles.orders_item_time_box}>
+                  <Tag
+                    label={cartType}
+                    fill={appConfig.colors.cartType[item.cart_type]}
+                    animate={false}
+                    strokeWidth={0}
+                    labelStyle={styles.cartTypeLabel}
+                    labelContainerStyle={styles.cartTypeLabelContainer}
+                  />
+                </View>
+              )}
 
               <View style={styles.orders_item_row}>
                 {item.products && Object.keys(item.products).length > 0 && (
@@ -508,12 +515,25 @@ const styles = StyleSheet.create({
   },
 
   cartTypeLabelContainer: {
-    marginTop: 3
+    marginTop: 3,
   },
   cartTypeLabel: {
-    fontSize: 10, 
-    textTransform: 'uppercase'
-  }
+    fontSize: 10,
+    textTransform: 'uppercase',
+  },
+
+  indexContainer: {
+    paddingVertical: 3,
+    paddingRight: 18,
+    paddingLeft: 10,
+    borderTopLeftRadius: 15,
+    borderBottomLeftRadius: 15,
+    backgroundColor: '#f0f0f0',
+  },
+  indexValue: {
+    color: '#666',
+    fontSize: 12,
+  },
 });
 
 export default withTranslation('orders')(observer(OrdersItemComponent));

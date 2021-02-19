@@ -378,6 +378,7 @@ class Orders extends Component {
                 confirmCoppyCart={this.confirmCoppyCart.bind(this)}
                 confirmEditCart={this.confirmEditCart.bind(this)}
                 item={item}
+                index={index}
               />
             );
           }}

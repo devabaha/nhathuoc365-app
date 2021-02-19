@@ -51,7 +51,7 @@ class Item extends Component {
       actionLoading: false,
       buying: false,
       like_loading: true,
-      is_drop_ship_loading: false,
+      isSubActionLoading: false,
       like_flag: 0,
       scrollY: 0,
       cartTypeConfirmMessage: '',
@@ -68,7 +68,7 @@ class Item extends Component {
 
   get subActionColor() {
     const is_like = this.state.like_flag == 1;
-    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) && !this.isServiceProduct(this.state.item_data || this.state.item)
       ? appConfig.colors.primary
       : is_like
       ? appConfig.colors.status.danger
@@ -295,89 +295,12 @@ class Item extends Component {
     });
   };
 
-  isActionWillAddDifferentCartType = (cartType) => {
-    const cartData = store.cart_data;
-    if (cartData && cartData.cart_type) {
-      if (cartData.cart_type !== cartType) {
-        switch (cartData.cart_type) {
-          case CART_TYPES.NORMAL:
-            this.setState({
-              cartTypeConfirmMessage: CART_HAS_ONLY_NORMAL_MESSAGE,
-            });
-            break;
-          case CART_TYPES.DROP_SHIP:
-            this.setState({
-              cartTypeConfirmMessage: CART_HAS_ONLY_DROP_SHIP_MESSAGE,
-            });
-            break;
-        }
-        if (this.refPopupConfirmCartType.current) {
-          this.refPopupConfirmCartType.current.open();
-        }
-        return true;
-      }
-    }
-
-    return false;
-  };
-
   handlePressMainActionBtnProduct = (product, cartType) => {
     this.CTAProduct.handlePressMainActionBtnProduct(product, cartType);
   };
 
   handlePressSubAction = (product, cartType) => {
     this.CTAProduct.handlePressSubAction(product, cartType);
-  };
-
-  handlePressActionBtnProduct = (product, cartType) => {
-    switch (cartType) {
-      case CART_TYPES.NORMAL:
-        this.handlePressMainActionBtnProduct(product, cartType);
-        break;
-      case CART_TYPES.DROP_SHIP:
-        this.handlePressSubAction(product, cartType);
-        break;
-      default:
-        this.handlePressMainActionBtnProduct(product, cartType);
-        break;
-    }
-  };
-
-  submitDropShip = (product, quantity, modalKey, newPrice) => {
-    this.setState({is_drop_ship_loading: true});
-    console.log(product, quantity, modalKey, newPrice);
-    this._addCart(product, quantity, modalKey, newPrice, false);
-  };
-
-  handleDropShip = (product, cartType) => {
-    this.handleBuy(product, cartType, this.submitDropShip, true);
-  };
-
-  handleBuy = (product, cartType, callBack = () => {}, isDropShip = false) => {
-    if (product.attrs || isDropShip) {
-      Actions.push(appConfig.routes.itemAttribute, {
-        isDropShip,
-        itemId: product.id,
-        product,
-        onSubmit: (...args) => {
-          if (this.isActionWillAddDifferentCartType(cartType)) {
-            this.saveProductTempData(product, ...args);
-            return;
-          }
-          callBack(product, ...args);
-        },
-      });
-    } else {
-      if (this.isActionWillAddDifferentCartType(cartType)) {
-        this.saveProductTempData(product, 1, '', null, false);
-        return;
-      }
-      callBack(product);
-    }
-  };
-
-  saveProductTempData = (...args) => {
-    this.productTempData = [...args];
   };
 
   // add item vào giỏ hàng
@@ -460,7 +383,7 @@ class Item extends Component {
             this.productTempData = [];
             this.setState({
               buying: false,
-              is_drop_ship_loading: false,
+              isSubActionLoading: false,
             });
           }
         }
@@ -754,33 +677,47 @@ class Item extends Component {
     );
   }
 
-  renderSubActionBtnIcon() {
-    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
-      this.state.is_drop_ship_loading ? (
-        <Indicator size="small" />
-      ) : (
-        <MaterialCommunityIcons
-          name="truck-fast"
-          size={24}
-          color={this.subActionColor}
-        />
-      )
-    ) : this.state.like_loading ? (
+  renderSubActionBtnIcon(product) {
+    return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
-    ) : (
-      <Icon
-        name="heart"
-        size={20}
+    ) : this.isServiceProduct(product) ? (
+      <Icon name="heart" size={20} color={this.subActionColor} />
+    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
+      <MaterialCommunityIcons
+        name="truck-fast"
+        size={24}
         color={this.subActionColor}
       />
+    ) : (
+      <Icon name="heart" size={20} color={this.subActionColor} />
     );
+
+    // this.isServiceProduct(product) ? (
+    //   this.state.like_loading ? (
+    //     <Indicator size="small" />
+    //   ) : (
+    //     <Icon name="heart" size={20} color={this.subActionColor} />
+    //   )
+    // ) : (
+    //   isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+    //     (this.state.isSubActionLoading ? (
+    //       <Indicator size="small" />
+    //     ) : (
+    //       <MaterialCommunityIcons
+    //         name="truck-fast"
+    //         size={24}
+    //         color={this.subActionColor}
+    //       />
+    //     ))
+    // );
   }
 
   render() {
-    var {item, item_data} = this.state;
+    // var {item, item_data} = this.state;
+    const item = this.state.item_data || this.state.item;
     const is_like = this.state.like_flag == 1;
     const {t} = this.props;
-    const unitName = item_data ? item_data.unit_name : item.unit_name;
+    const unitName = item.unit_name;
 
     return (
       <View style={styles.container}>
@@ -789,7 +726,7 @@ class Item extends Component {
         <Header
           title={this.props.title}
           animatedValue={this.animatedScrollY}
-          item={item_data || item}
+          item={item}
         />
 
         <SafeAreaView style={styles.container}>
@@ -818,21 +755,21 @@ class Item extends Component {
                 onRefresh={this._onRefresh.bind(this)}
               />
             }>
-            {this.renderProductSwiper(item_data)}
+            {this.renderProductSwiper(item)}
 
             <View style={styles.item_heading_box}>
               <Text style={styles.item_heading_title}>
-                {item_data ? item_data.name : item.name}
+                {item.name}
               </Text>
 
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
-                    {item_data ? item_data.discount : item.discount}
+                    {item.discount}
                   </Text>
                 )}
                 <Text style={styles.item_heading_price}>
-                  {item_data ? item_data.price_view : item.price_view}
+                  {item.price_view}
                   {!!unitName && (
                     <Text style={styles.item_unit_name}>/ {unitName}</Text>
                   )}
@@ -853,7 +790,7 @@ class Item extends Component {
                 <TouchableHighlight
                   onPress={() =>
                     this.handlePressSubAction(
-                      item_data || item,
+                      item,
                       isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
                         ? CART_TYPES.DROP_SHIP
                         : '',
@@ -869,7 +806,7 @@ class Item extends Component {
                       },
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
-                      {this.renderSubActionBtnIcon()}
+                      {this.renderSubActionBtnIcon(item)}
                     </View>
                     <Text
                       style={[
@@ -879,7 +816,7 @@ class Item extends Component {
                           color: this.subActionColor,
                         },
                       ]}>
-                      {isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+                      {!this.isServiceProduct(item) && isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
                         ? 'Giao hộ'
                         : is_like
                         ? t('liked')
@@ -891,7 +828,7 @@ class Item extends Component {
                 <TouchableHighlight
                   onPress={() =>
                     this.handlePressMainActionBtnProduct(
-                      item_data ? item_data : item,
+                      item,
                       CART_TYPES.NORMAL,
                     )
                   }
@@ -988,7 +925,7 @@ class Item extends Component {
             )}
 
             <View style={styles.item_content_text}>
-              {item_data != null ? (
+              {item != null ? (
                 <AutoHeightWebView
                   onError={() => console.log('on error')}
                   onLoad={() => console.log('on load')}
@@ -1000,7 +937,7 @@ class Item extends Component {
                   }}
                   style={styles.webview}
                   onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item_data.content}}
+                  source={{html: item.content}}
                   zoomable={false}
                   scrollEnabled={false}
                   customStyle={`
@@ -1026,10 +963,10 @@ class Item extends Component {
               )}
             </View>
 
-            {item_data != null && item_data.related && (
+            {item != null && item.related && (
               <View style={[styles.items_box]}>
                 <ListHeader title={`— ${t('relatedItems')} —`} />
-                {item_data.related.map((item, index) => {
+                {item.related.map((item, index) => {
                   return (
                     <Items
                       key={index}
