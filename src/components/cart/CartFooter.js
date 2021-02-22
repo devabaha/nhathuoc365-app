@@ -809,6 +809,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   store_cart_content_container: {
+    minHeight: 75+14,
     flexDirection: 'row',
     borderTopWidth: Util.pixel,
     borderTopColor: '#dddddd',
