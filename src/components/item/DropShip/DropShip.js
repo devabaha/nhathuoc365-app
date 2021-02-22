@@ -158,7 +158,7 @@ const DropShip = ({
               styles.newPriceInput,
               totalProfitValidateStyle
             ]}
-            keyboardType="number-pad"
+            keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
             onChangeText={handleChangePrice}
             value={priceFormatter(newPriceView)}
             editable={!disabled}
