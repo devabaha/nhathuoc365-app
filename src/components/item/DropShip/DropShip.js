@@ -5,6 +5,9 @@ import Container from '../../Layout/Container';
 import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
+  disabled: {
+    opacity: .5
+  },
   row: {
     // marginBottom: 15,
     paddingVertical: 12,
@@ -82,7 +85,7 @@ const DropShip = ({
   onQuantityBlur = () => {},
 }) => {
   const priceFormatter = (price) => {
-    originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
+    const originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
     return numberFormat(originPrice);
   };
 
@@ -122,7 +125,7 @@ const DropShip = ({
   };
 
   return (
-    <Container padding={15}>
+    <Container pointerEvents={disabled? 'none':'auto'} style={disabled && styles.disabled} padding={15}>
       <Container row style={styles.row}>
         <Text style={styles.title}>Số lượng</Text>
         <NumberSelection
@@ -135,7 +138,7 @@ const DropShip = ({
           onMinus={onMinus}
           onPlus={onPlus}
           onBlur={onQuantityBlur}
-          disabled={disabled}
+          // disabled={disabled}
         />
       </Container>
       <Container row style={styles.row}>
@@ -153,11 +156,12 @@ const DropShip = ({
             style={[
               styles.price,
               styles.newPriceInput,
-              totalProfitValidateStyle,
+              totalProfitValidateStyle
             ]}
             keyboardType="number-pad"
             onChangeText={handleChangePrice}
             value={priceFormatter(newPriceView)}
+            editable={!disabled}
           />
           <Text
             style={[
@@ -171,11 +175,7 @@ const DropShip = ({
       </Container>
       <Container row style={styles.row}>
         <Text style={styles.title}>Lợi nhuận gộp</Text>
-        <Text
-          style={[
-            styles.value,
-            styles.price,
-          ]}>
+        <Text style={[styles.value, styles.price]}>
           {calculateGrossProfit(totalProfit)}
         </Text>
       </Container>
