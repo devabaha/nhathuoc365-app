@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.8] - 2021-02-22
+### Changed
+- Disabled style in drop ship.
+### Fixed
+- Price for drop ship in item attributes.
+
 ## [r11.3.7] - 2021-02-19
 ### Changed
 - Flow of checking cart type between normal, dropship and service product.

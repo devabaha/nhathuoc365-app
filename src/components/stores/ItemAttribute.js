@@ -363,6 +363,24 @@ class ItemAttribute extends PureComponent {
       ? this.state.selectedModel.image
       : this.state.product.image;
 
+    const isDropShipDisabled =
+      this.state.models.length !== 0 &&
+      !Object.keys(this.state.selectedModel).length;
+
+    const priceDropShip =
+      this.state.models.length !== 0
+        ? this.state.selectedModel.price_in_number
+          ? this.state.selectedModel.price_in_number
+          : 0
+        : this.state.product?.price || 0;
+
+    const priceDropShipView =
+      this.state.models.length !== 0
+        ? this.state.selectedModel.price
+          ? this.state.selectedModel.price
+          : '-'
+        : this.state.product?.price_view || '-';
+
     const price =
       (this.state.selectedModel.price
         ? this.state.selectedModel.price
@@ -452,8 +470,9 @@ class ItemAttribute extends PureComponent {
               {this.renderOptions()}
               {this.isDropShip && (
                 <DropShip
-                  price={this.state.product?.price}
-                  priceView={this.state.product?.price_view}
+                  disabled={isDropShipDisabled}
+                  price={priceDropShip}
+                  priceView={priceDropShipView}
                   quantity={this.state.quantity}
                   min={MIN_QUANTITY}
                   max={inventory}
