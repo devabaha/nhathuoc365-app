@@ -3,10 +3,13 @@ import {
   TouchableOpacity,
   // Animated,
   StyleSheet,
+  ViewPropTypes,
+  Text,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import appConfig from 'app-config';
+import PropTypes from 'prop-types';
 
 const AnimatedIonicons = new Animated.createAnimatedComponent(Ionicons);
 const styles = StyleSheet.create({
@@ -31,12 +34,65 @@ const styles = StyleSheet.create({
   contentOverlay: {
     position: 'absolute',
     zIndex: 1,
-    color: '#fff',
   },
+  iconOverlay: {
+    color: '#fff',
+  }
 });
 
 class OverlayIconButton extends Component {
+  static propTypes = {
+    disabled: PropTypes.bool,
+    renderMainIcon: PropTypes.func,
+    renderOverlayIcon: PropTypes.func,
+  };
+
   state = {};
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.disabled !== this.props.disabled ||
+      nextProps.iconName !== this.props.iconName ||
+      nextProps.containerStyle !== this.props.containerStyle ||
+      nextProps.iconStyle !== this.props.iconStyle ||
+      nextProps.contentOverlayStyle !== this.props.contentOverlayStyle
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  renderMainIcon = () => {
+    if (typeof this.props.renderMainIcon === 'function') {
+      return this.props.renderMainIcon(styles.icon);
+    }
+
+    return (
+      <AnimatedIonicons
+        name={this.props.iconName}
+        style={[styles.icon, this.props.iconStyle]}
+      />
+    );
+  };
+
+  renderOverlayIcon = () => {
+    if (typeof this.props.renderOverlayIcon === 'function') {
+      return this.props.renderOverlayIcon(styles.icon, styles.iconOverlay, styles.contentOverlay);
+    }
+
+    return (
+      <AnimatedIonicons
+        name={this.props.iconName}
+        style={[
+          styles.icon,
+          styles.iconOverlay,
+          styles.contentOverlay,
+          this.props.contentOverlayStyle,
+        ]}
+      />
+    );
+  };
+
   render() {
     return (
       <Animated.View style={this.props.wrapperStyle}>
@@ -47,18 +103,8 @@ class OverlayIconButton extends Component {
             <Animated.View
               style={[styles.background, this.props.backgroundStyle]}
             />
-            <AnimatedIonicons
-              name={this.props.iconName}
-              style={[styles.icon, this.props.iconStyle]}
-            />
-            <AnimatedIonicons
-              name={this.props.iconName}
-              style={[
-                styles.icon,
-                styles.contentOverlay,
-                this.props.contentOverlayStyle,
-              ]}
-            />
+            {this.renderMainIcon()}
+            {this.renderOverlayIcon()}
           </Animated.View>
         </TouchableOpacity>
       </Animated.View>
