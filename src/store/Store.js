@@ -7,6 +7,7 @@ import firebaseAnalytics from '@react-native-firebase/analytics';
 import firebaseAuth from '@react-native-firebase/auth';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
+import equal from 'deep-equal';
 @autobind
 class Store {
   constructor() {
@@ -118,8 +119,13 @@ class Store {
           }
           const {user, ...notifies} = response.data;
           this.initConfigRadaModule(user);
-          this.setUserInfo(user);
-          this.setNotify(notifies);
+          if (!equal(user, this.user_info)) {
+            this.setUserInfo(user);
+          }
+          
+          if (!equal(notifies, this.notify)) {
+            this.setNotify(notifies);
+          }
         })();
       }
     } catch (error) {

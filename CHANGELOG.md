@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.9] - 2021-02-23
+### Add
+- Warehouse btn in detail product.
+### Changed
+- Only update notify and user_info if changed in store mobx.
+
 ## [r11.3.8] - 2021-02-22
 ### Changed
 - Disabled style in drop ship.

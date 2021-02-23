@@ -297,11 +297,11 @@ class CartFooter extends Component {
           onPress={() => this.onPressCartItem(item)}>
           <View style={styles.store_cart_item}>
             <View style={styles.store_cart_item_image_box}>
-              <CachedImage
+              {!!item.image && <CachedImage
                 mutable
                 style={styles.store_cart_item_image}
                 source={{uri: item.image}}
-              />
+              />}
             </View>
             <View style={styles.store_cart_item_title_box}>
               <View style={{flex: 1}}>
@@ -431,7 +431,7 @@ class CartFooter extends Component {
                 };
               }}
               renderItem={this.renderItems.bind(this)}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item, index) => index.toString()}
               horizontal
             />
 

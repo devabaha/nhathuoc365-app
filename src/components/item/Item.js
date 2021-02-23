@@ -33,6 +33,7 @@ import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 import {CART_TYPES} from 'src/constants/cart';
 import Loading from '../Loading';
 import CTAProduct from './CTAProduct';
+import {APIRequest} from 'src/network/Entity';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -43,6 +44,7 @@ class Item extends Component {
     super(props);
 
     this.state = {
+      listWarehouse: [],
       refreshing: false,
       item: props.item,
       item_data: null,
@@ -64,11 +66,15 @@ class Item extends Component {
     this.productTempData = [];
 
     this.CTAProduct = new CTAProduct(props.t, this);
+    this.getWarehouseRequest = new APIRequest();
+    this.updateWarehouseRequest = new APIRequest();
+    this.requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
   }
 
   get subActionColor() {
     const is_like = this.state.like_flag == 1;
-    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) && !this.isServiceProduct(this.state.item_data || this.state.item)
+    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+      !this.isServiceProduct(this.state.item_data || this.state.item)
       ? appConfig.colors.primary
       : is_like
       ? appConfig.colors.status.danger
@@ -81,6 +87,7 @@ class Item extends Component {
 
   componentDidMount() {
     this._initial(this.props);
+    this.getListWarehouse();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -106,6 +113,7 @@ class Item extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    cancelRequests(this.requests);
   }
 
   logEventTracking(rootData) {
@@ -169,6 +177,53 @@ class Item extends Component {
       });
     }
   }
+
+  async getListWarehouse() {
+    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    const {t} = this.props;
+    try {
+      this.getWarehouseRequest.data = APIHandler.user_site_store();
+      const responseData = await this.getWarehouseRequest.promise();
+      const listWarehouse =
+        responseData?.stores?.map((store) => ({
+          ...store,
+          title: store.name,
+          description: store.address,
+          image: store.image_url,
+        })) || [];
+      this.setState({
+        listWarehouse,
+      });
+    } catch (err) {
+      console.log('user get warehouse', err);
+      flashShowMessage({
+        type: 'danger',
+        message: err.message || t('common:api.error.message'),
+      });
+    } finally {
+    }
+  }
+
+  async updateWarehouse(warehouse) {
+    const data = {store_id: warehouse.id};
+    try {
+      this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
+      const responseData = await this.updateWarehouseRequest.promise();
+      flashShowMessage({
+        type: 'success',
+        message: responseData.message,
+      });
+      this._getData();
+    } catch (error) {
+      console.log('%cupdate_warehouse', 'color:red', error);
+      flashShowMessage({
+        type: 'danger',
+        message: error.message || this.props.t('common:api.error.message'),
+      });
+    } finally {
+    }
+  }
+
   // Lấy chi tiết sản phẩm
   _getData(delay) {
     var {item} = this.state;
@@ -301,6 +356,26 @@ class Item extends Component {
 
   handlePressSubAction = (product, cartType) => {
     this.CTAProduct.handlePressSubAction(product, cartType);
+  };
+
+  handlePressWarehouse = () => {
+    Actions.push(appConfig.routes.modalList, {
+      heading: this.props.t('opRegister:modal.warehouse.title'),
+      data: this.state.listWarehouse,
+      selectedItem: {id: store?.user_info?.store_id},
+      onPressItem: this.onSelectWarehouse,
+      onCloseModal: Actions.pop,
+      modalStyle: {
+        height: null,
+        maxHeight: '80%',
+      },
+    });
+  };
+
+  onSelectWarehouse = (warehouse, closeModal) => {
+    this.setState({loading: true});
+    closeModal();
+    this.updateWarehouse(warehouse);
   };
 
   // add item vào giỏ hàng
@@ -608,7 +683,7 @@ class Item extends Component {
     return images.map((image, index) => {
       return (
         <TouchableHighlight
-          underlayColor="rgba(0,0,0,.1)"
+          underlayColor="transparent"
           onPress={() => {
             Actions.item_image_viewer({
               images: this.state.images,
@@ -634,7 +709,7 @@ class Item extends Component {
     const isShowButtons = hasImages && images.length > 1;
 
     return (
-      <View>
+      <View style={{paddingBottom: 30}}>
         <SkeletonLoading
           loading={!product}
           height={appConfig.device.width * 0.6}>
@@ -718,22 +793,24 @@ class Item extends Component {
     const is_like = this.state.like_flag == 1;
     const {t} = this.props;
     const unitName = item.unit_name;
+    const storeName = store?.user_info?.store_name;
 
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="transparent" barStyle="dark-content" />
-        {this.state.actionLoading && <Loading center />}
+        {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
           animatedValue={this.animatedScrollY}
           item={item}
+          onPressWarehouse={this.handlePressWarehouse}
         />
 
         <SafeAreaView style={styles.container}>
           <Animated.ScrollView
             ref={(ref) => (this.refs_body_item = ref)}
             contentContainerStyle={{
-              paddingTop: 15,
+              paddingTop: 60,
             }}
             onScroll={Animated.event(
               [
@@ -758,9 +835,7 @@ class Item extends Component {
             {this.renderProductSwiper(item)}
 
             <View style={styles.item_heading_box}>
-              <Text style={styles.item_heading_title}>
-                {item.name}
-              </Text>
+              <Text style={styles.item_heading_title}>{item.name}</Text>
 
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
@@ -816,7 +891,8 @@ class Item extends Component {
                           color: this.subActionColor,
                         },
                       ]}>
-                      {!this.isServiceProduct(item) && isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+                      {!this.isServiceProduct(item) &&
+                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
                         ? 'Giao hộ'
                         : is_like
                         ? t('liked')
@@ -868,6 +944,37 @@ class Item extends Component {
 
             {item != null && (
               <View style={styles.item_content_box}>
+                {storeName && (
+                  <>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_left,
+                      ]}>
+                      <View style={styles.item_content_icon_box}>
+                        <MaterialCommunityIcons
+                          name="warehouse"
+                          size={16}
+                          color="#999999"
+                        />
+                      </View>
+                      <Text style={styles.item_content_item_title}>
+                        Kho hàng
+                      </Text>
+                    </View>
+
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_right,
+                      ]}>
+                      <Text style={styles.item_content_item_value}>
+                        {storeName}
+                      </Text>
+                    </View>
+                  </>
+                )}
+
                 {item.brand != null && item.brand != '' && (
                   <View
                     style={[
@@ -1146,6 +1253,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999999',
     paddingLeft: 4,
+    textTransform: 'uppercase',
   },
   item_content_item_value: {
     fontSize: 14,
@@ -1192,7 +1300,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     borderRadius: 20,
     position: 'absolute',
-    bottom: 10,
+    bottom: -30,
     right: 15,
     backgroundColor: 'rgba(255,255,255,.6)',
     paddingHorizontal: 10,
@@ -1277,4 +1385,6 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['product', 'cart', 'common'])(observer(Item));
+export default withTranslation(['product', 'cart', 'common', 'opRegister'])(
+  observer(Item),
+);
