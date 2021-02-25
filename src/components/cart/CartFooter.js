@@ -295,13 +295,21 @@ class CartFooter extends Component {
         <TouchableHighlight
           underlayColor="#fafafa"
           onPress={() => this.onPressCartItem(item)}>
-          <View style={styles.store_cart_item}>
+          <View
+            style={[
+              styles.store_cart_item,
+              this.state.containerHeight && {
+                height: this.state.containerHeight,
+              },
+            ]}>
             <View style={styles.store_cart_item_image_box}>
-              {!!item.image && <CachedImage
-                mutable
-                style={styles.store_cart_item_image}
-                source={{uri: item.image}}
-              />}
+              {!!item.image && (
+                <CachedImage
+                  mutable
+                  style={styles.store_cart_item_image}
+                  source={{uri: item.image}}
+                />
+              )}
             </View>
             <View style={styles.store_cart_item_title_box}>
               <View style={{flex: 1}}>
@@ -335,7 +343,7 @@ class CartFooter extends Component {
                     </View>
                   </TouchableHighlight>
 
-                  <Text style={styles.store_cart_item_qnt}>
+                  <Text numberOfLines={2} style={styles.store_cart_item_qnt}>
                     {item.quantity_view}
                   </Text>
 
@@ -809,7 +817,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   store_cart_content_container: {
-    minHeight: 75+14,
+    minHeight: 75 + 14,
     flexDirection: 'row',
     borderTopWidth: Util.pixel,
     borderTopColor: '#dddddd',
@@ -875,10 +883,12 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   store_cart_item_qnt: {
+    textAlign: 'center',
     fontWeight: '600',
     color: '#404040',
-    fontSize: 16,
+    fontSize: 12,
     paddingHorizontal: 16,
+    maxWidth: CART_ITEM_WIDTH - 75 - 44 - 30,
   },
   store_cart_item_remove: {
     backgroundColor: '#cc7171',

@@ -6,7 +6,7 @@ import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   disabled: {
-    opacity: .5
+    opacity: 0.5,
   },
   row: {
     // marginBottom: 15,
@@ -31,8 +31,16 @@ const styles = StyleSheet.create({
   value: {
     maxWidth: '50%',
   },
+  quantityLabel: {
+    flex: undefined
+  },
+  quantityWrapper: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
   quantityContainer: {
     width: null,
+    maxWidth: undefined,
   },
   quantityTxtContainer: {
     minWidth: 70,
@@ -125,21 +133,26 @@ const DropShip = ({
   };
 
   return (
-    <Container pointerEvents={disabled? 'none':'auto'} style={disabled && styles.disabled} padding={15}>
-      <Container row style={styles.row}>
-        <Text style={styles.title}>Số lượng</Text>
-        <NumberSelection
-          containerStyle={[styles.value, styles.quantityContainer]}
-          textContainer={styles.quantityTxtContainer}
-          value={quantity}
-          min={min}
-          max={max}
-          onChangeText={onChangeQuantity}
-          onMinus={onMinus}
-          onPlus={onPlus}
-          onBlur={onQuantityBlur}
-          // disabled={disabled}
-        />
+    <Container
+      pointerEvents={disabled ? 'none' : 'auto'}
+      style={disabled && styles.disabled}
+      padding={15}>
+      <Container row style={[styles.row, {width: '100%'}]}>
+        <Text style={[styles.title, styles.quantityLabel]}>Số lượng</Text>
+        <View style={styles.quantityWrapper}>
+          <NumberSelection
+            containerStyle={[styles.value, styles.quantityContainer]}
+            textContainer={styles.quantityTxtContainer}
+            value={quantity}
+            min={min}
+            max={max}
+            onChangeText={onChangeQuantity}
+            onMinus={onMinus}
+            onPlus={onPlus}
+            onBlur={onQuantityBlur}
+            // disabled={disabled}
+          />
+        </View>
       </Container>
       <Container row style={styles.row}>
         <Text style={styles.title}>Giá bán</Text>
@@ -156,7 +169,7 @@ const DropShip = ({
             style={[
               styles.price,
               styles.newPriceInput,
-              totalProfitValidateStyle
+              totalProfitValidateStyle,
             ]}
             keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
             onChangeText={handleChangePrice}

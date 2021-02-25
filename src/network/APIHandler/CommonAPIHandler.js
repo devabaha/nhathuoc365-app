@@ -956,6 +956,17 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.LOTTERY_TURN + '/' + site_id + '/' + lottery_id);
     return this.postCancelableAPI(api, data);
   }
+
+  /**
+   * check product by QR code
+   *
+   * @param object data
+   * @param string data.qrcode
+   */
+  user_check_product_code(data) {
+    var api = url_for(API.USER_CHECK_PRODUCT_CODE);
+    return this.postCancelableAPI(api, data);
+  }
 }
 
 export default CommonAPIHandler;
