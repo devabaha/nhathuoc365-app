@@ -408,6 +408,10 @@ class ItemAttribute extends PureComponent {
       ? null
       : inventory;
 
+    const isInventoryVisible =
+      !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
+      item.product_type !== PRODUCT_TYPES.SERVICE;
+
     return this.state.loading ? (
       <Loading loading />
     ) : (
@@ -452,7 +456,11 @@ class ItemAttribute extends PureComponent {
                   <View>
                     <Text style={styles.highlight}>{price}</Text>
                     <Text style={styles.note}>
-                      {`${t('attr.stock')}:`} <Text>{inventory}</Text>
+                      {isInventoryVisible && (
+                        <>
+                          {`${t('attr.stock')}:`} <Text>{inventory}</Text>
+                        </>
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -510,28 +518,28 @@ class ItemAttribute extends PureComponent {
               <View style={styles.quantity}>
                 <Text style={styles.label}>{t('attr.quantity')}</Text>
                 <View style={styles.quantityWrapper}>
-                <NumberSelection
-                containerStyle={[ styles.quantityContainer]}
-                textContainer={styles.quantityTxtContainer}
-                  value={this.state.quantity}
-                  min={MIN_QUANTITY}
-                  max={maxQuantity}
-                  onChangeText={(text) =>
-                    this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
-                  }
-                  onMinus={() => {
-                    this.setState({quantity: this.state.quantity - 1});
-                  }}
-                  onPlus={() => {
-                    this.setState({quantity: this.state.quantity + 1});
-                  }}
-                  onBlur={() => {
-                    if (!this.state.quantity) {
-                      this.setState({quantity: MIN_QUANTITY});
+                  <NumberSelection
+                    containerStyle={[styles.quantityContainer]}
+                    textContainer={styles.quantityTxtContainer}
+                    value={this.state.quantity}
+                    min={MIN_QUANTITY}
+                    max={maxQuantity}
+                    onChangeText={(text) =>
+                      this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
                     }
-                  }}
-                  disabled={disabled}
-                />
+                    onMinus={() => {
+                      this.setState({quantity: this.state.quantity - 1});
+                    }}
+                    onPlus={() => {
+                      this.setState({quantity: this.state.quantity + 1});
+                    }}
+                    onBlur={() => {
+                      if (!this.state.quantity) {
+                        this.setState({quantity: MIN_QUANTITY});
+                      }
+                    }}
+                    disabled={disabled}
+                  />
                 </View>
               </View>
             )}

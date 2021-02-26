@@ -34,6 +34,7 @@ import {CART_TYPES} from 'src/constants/cart';
 import Loading from '../Loading';
 import CTAProduct from './CTAProduct';
 import {APIRequest} from 'src/network/Entity';
+import NoResult from '../NoResult';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -369,6 +370,9 @@ class Item extends Component {
         height: null,
         maxHeight: '80%',
       },
+      ListEmptyComponent: (
+        <NoResult iconName="warehouse" message="Không tìm thấy kho hàng" />
+      ),
     });
   };
 
@@ -794,6 +798,10 @@ class Item extends Component {
     const {t} = this.props;
     const unitName = item.unit_name;
     const storeName = store?.user_info?.store_name;
+    const isInventoryVisible =
+      !!item.inventory &&
+      !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
+      item.product_type !== PRODUCT_TYPES.SERVICE;
 
     return (
       <View style={styles.container}>
@@ -931,7 +939,7 @@ class Item extends Component {
                   label={saleFormat(item.discount_percent)}
                 />
               )}
-              {!!item.inventory && (
+              {isInventoryVisible && (
                 <View style={styles.productsLeftContainer}>
                   <View style={styles.productsLeftBackground} />
                   <View style={styles.productsLeftBackgroundTagTail} />

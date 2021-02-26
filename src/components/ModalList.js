@@ -80,6 +80,7 @@ class Modal extends PureComponent {
           data={this.props.data}
           renderItem={this.renderItem.bind(this)}
           keyExtractor={(item, index) => index.toString()}
+          ListEmptyComponent={this.props.ListEmptyComponent}
         />
       </ModalBox>
     );
