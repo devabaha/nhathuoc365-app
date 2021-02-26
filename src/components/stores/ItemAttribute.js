@@ -410,7 +410,7 @@ class ItemAttribute extends PureComponent {
 
     const isInventoryVisible =
       !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
-      item.product_type !== PRODUCT_TYPES.SERVICE;
+      this.state.product?.product_type !== PRODUCT_TYPES.SERVICE;
 
     return this.state.loading ? (
       <Loading loading />
