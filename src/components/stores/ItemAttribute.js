@@ -25,6 +25,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from '../../helper/EventTracker';
 import DropShip from '../item/DropShip';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import { PRODUCT_TYPES } from 'src/constants';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
