@@ -8,5 +8,7 @@ export const CONFIG_KEY = {
     DISPLAY_NPP_REGISTER_KEY: "display_npp_register_key",
     DISPLAY_COMMISSION_KEY: "display_commission_key",
 
-    OPEN_SITE_DROP_SHIPPING_KEY: "open_site_drop_shipping_key"
+    OPEN_SITE_DROP_SHIPPING_KEY: "open_site_drop_shipping_key",
+
+    ALLOW_SITE_SALE_OUT_INVENTORY_KEY : 'allow_site_sale_out_inventory_key',
 }

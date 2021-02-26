@@ -343,6 +343,9 @@ class CommonAPI {
   get USER_PROCESS_QRCODE() {
     return BaseAPI.apiDomain + 'apiUser/process_qrcode';
   }
+  get USER_CHECK_PRODUCT_CODE() {
+    return BaseAPI.apiDomain + 'apiUser/check_product_code'
+  }
 
   // Service
   get SERVICE_INFO() {

@@ -24,6 +24,7 @@ import Loading from '@tickid/tickid-rn-loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from '../../helper/EventTracker';
 import DropShip from '../item/DropShip';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -306,7 +307,8 @@ class ItemAttribute extends PureComponent {
   };
 
   handleChangeQuantity = (quantity, min, max) => {
-    if ((quantity >= min && quantity <= max) || !quantity) {
+    const hasMax = max !== null && max !== undefined;
+    if ((quantity >= min && hasMax ? quantity <= max : true) || !quantity) {
       this.setState({quantity: !quantity ? '' : Number(quantity)});
     }
   };
@@ -400,6 +402,12 @@ class ItemAttribute extends PureComponent {
       ? `• ${t('attr.notChooseAttrYet')}`
       : this.getSelectedAttrsViewData(numberSelectedAttrs);
 
+    const maxQuantity = isConfigActive(
+      CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY,
+    )
+      ? null
+      : inventory;
+
     return this.state.loading ? (
       <Loading loading />
     ) : (
@@ -475,12 +483,12 @@ class ItemAttribute extends PureComponent {
                   priceView={priceDropShipView}
                   quantity={this.state.quantity}
                   min={MIN_QUANTITY}
-                  max={inventory}
+                  max={maxQuantity}
                   onChangeNewPrice={(dropShipPrice) => {
                     this.setState({dropShipPrice});
                   }}
                   onChangeQuantity={(text) =>
-                    this.handleChangeQuantity(text, MIN_QUANTITY, inventory)
+                    this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
                   }
                   onMinus={() => {
                     this.setState({quantity: this.state.quantity - 1});
@@ -501,12 +509,15 @@ class ItemAttribute extends PureComponent {
             {!this.isDropShip && (
               <View style={styles.quantity}>
                 <Text style={styles.label}>{t('attr.quantity')}</Text>
+                <View style={styles.quantityWrapper}>
                 <NumberSelection
+                containerStyle={[ styles.quantityContainer]}
+                textContainer={styles.quantityTxtContainer}
                   value={this.state.quantity}
                   min={MIN_QUANTITY}
-                  max={inventory}
+                  max={maxQuantity}
                   onChangeText={(text) =>
-                    this.handleChangeQuantity(text, MIN_QUANTITY, inventory)
+                    this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
                   }
                   onMinus={() => {
                     this.setState({quantity: this.state.quantity - 1});
@@ -521,6 +532,7 @@ class ItemAttribute extends PureComponent {
                   }}
                   disabled={disabled}
                 />
+                </View>
               </View>
             )}
 
@@ -617,6 +629,18 @@ const styles = StyleSheet.create({
     height: 0.5,
     backgroundColor: '#eee',
     marginHorizontal: 10,
+  },
+  quantityWrapper: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  quantityContainer: {
+    width: null,
+    maxWidth: undefined,
+  },
+  quantityTxtContainer: {
+    minWidth: 70,
+    flex: undefined,
   },
   quantity: {
     flexDirection: 'row',

@@ -144,11 +144,11 @@ class MultiLevelCategory extends React.Component<MultiLevelCategoryProps> {
                         })
                         Actions.push(appConfig.routes.searchStore, {
                             categories: categories,
-                            category_id: this.state.selectedMainCategory.id,
-                            category_name:
-                                this.state.selectedMainCategory.id !== -1
-                                    ? this.state.selectedMainCategory.name
-                                    : ''
+                            category_id: 0,
+                            // category_name:
+                            //     this.state.selectedMainCategory.id !== -1
+                            //         ? this.state.selectedMainCategory.name
+                            //         : ''
                         });
                     }}
                 >

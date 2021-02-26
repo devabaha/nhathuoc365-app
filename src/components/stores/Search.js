@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -9,22 +9,23 @@ import {
   Keyboard,
   // Animated,
   // Easing,
-  SafeAreaView
+  SafeAreaView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
 import Items from './Items';
 import ListHeader from './ListHeader';
 import CartFooter from '../cart/CartFooter';
 import PopupConfirm from '../PopupConfirm';
 import ModernList from 'app-packages/tickid-modern-list';
-import { LIST_TYPE } from 'app-packages/tickid-modern-list/constants';
-import Animated, { Easing } from 'react-native-reanimated';
-import { debounce } from 'lodash';
+import {LIST_TYPE} from 'app-packages/tickid-modern-list/constants';
+import Animated, {Easing} from 'react-native-reanimated';
+import {debounce} from 'lodash';
 import EventTracker from '../../helper/EventTracker';
+import NoResult from '../NoResult';
 
-const { interpolate } = Animated;
+const {interpolate} = Animated;
 const START_DEG = new Animated.Value(0);
 const END_DEG = new Animated.Value(Math.PI);
 const STORE_SEARCH_KEY = 'STORE-SEARCH';
@@ -44,7 +45,7 @@ class Search extends Component {
       categories: this.categories,
       selectedCategory: this.selectedCategory,
       animatedCategories: new Animated.Value(0),
-      bodyCategoriesHeight: null
+      bodyCategoriesHeight: null,
     };
 
     this.onSearch = this.onSearch.bind(this);
@@ -57,17 +58,17 @@ class Search extends Component {
 
   get categories() {
     const categories = this.props.categories || [];
-    return categories.map(category => ({
+    return categories.map((category) => ({
       ...category,
-      active: category.id === this.props.category_id
+      active: category.id === this.props.category_id,
     }));
   }
 
   get selectedCategory() {
     const categories = this.props.categories || [];
     return (
-      categories.find(category => category.id === this.props.category_id) || {
-        id: 0
+      categories.find((category) => category.id === this.props.category_id) || {
+        id: 0,
       }
     );
   }
@@ -85,21 +86,24 @@ class Search extends Component {
     this.getHistory();
 
     const placeholder = this.getPlaceholder(
-      this.props.category_id !== 0 ? this.props.category_name : ''
+      this.props.category_id !== 0 ? this.props.category_name : '',
     );
-
+    if (keyword) {
+      this.setState({loading: true});
+      this.onSearch(keyword);
+    }
     setTimeout(() => {
       Actions.refresh({
         searchValue: keyword || '',
         placeholder,
         autoFocus: true,
-        onSearch: text => {
+        onSearch: (text) => {
           Actions.refresh({
-            searchValue: text
+            searchValue: text,
           });
 
           this.setState({
-            searchValue: text
+            searchValue: text,
           });
 
           // auto search on changed text
@@ -114,16 +118,16 @@ class Search extends Component {
             placeholder: this.getPlaceholder(
               this.state.selectedCategory.id !== 0
                 ? this.state.selectedCategory.name
-                : ''
-            )
+                : '',
+            ),
           });
 
           this.setState({
-            searchValue: ''
+            searchValue: '',
           });
 
           this.onSearch('');
-        }
+        },
       });
     });
     this.eventTracker.logCurrentView();
@@ -178,26 +182,26 @@ class Search extends Component {
         syncInBackground: true,
         syncParams: {
           extraFetchOptions: {},
-          someFlag: true
-        }
+          someFlag: true,
+        },
       })
-      .then(history => {
+      .then((history) => {
         this.setState({
-          history
+          history,
         });
       })
-      .catch(e => {
+      .catch((e) => {
         console.log('load storage history', e);
-        this.setState({ history: null });
+        this.setState({history: null});
       });
   }
 
-  onSearch = debounce(keyword => {
+  onSearch = debounce((keyword) => {
     if (keyword == null || keyword == '') {
       this.setState({
         search_data: null,
         loading: false,
-        noResult: false
+        noResult: false,
       });
 
       return;
@@ -207,13 +211,13 @@ class Search extends Component {
 
     this.setState(
       {
-        loading: true
+        loading: true,
       },
       async () => {
         try {
           const response = await APIHandler.search_product(store.store_id, {
             search: keyword,
-            category_id: this.state.selectedCategory.id
+            category_id: this.state.selectedCategory.id,
           });
 
           if (response && response.status == STATUS_SUCCESS) {
@@ -221,7 +225,7 @@ class Search extends Component {
               this.setState({
                 search_data: response.data,
                 noResult: false,
-                header_title: `— Kết quả cho "${keyword}" —`
+                header_title: `— Kết quả cho "${keyword}" —`,
               });
             }
           } else {
@@ -229,7 +233,7 @@ class Search extends Component {
 
             this.setState({
               search_data: null,
-              noResult: true
+              noResult: true,
             });
           }
         } catch (e) {
@@ -241,10 +245,10 @@ class Search extends Component {
         } finally {
           !this.unmounted &&
             this.setState({
-              loading: false
+              loading: false,
             });
         }
-      }
+      },
     );
   }, 500);
 
@@ -264,17 +268,17 @@ class Search extends Component {
     } else {
       Actions.item({
         title: item.name,
-        item
+        item,
       });
     }
   }
 
   _insertName(item) {
     Actions.refresh({
-      searchValue: item.name
+      searchValue: item.name,
     });
     this.setState({
-      searchValue: item.name
+      searchValue: item.name,
     });
   }
 
@@ -287,7 +291,7 @@ class Search extends Component {
   _updateHistory(item) {
     item = {
       id: item.id,
-      name: item.name
+      name: item.name,
     };
 
     // load
@@ -304,13 +308,13 @@ class Search extends Component {
         syncInBackground: true,
         syncParams: {
           extraFetchOptions: {},
-          someFlag: true
-        }
+          someFlag: true,
+        },
       })
-      .then(data => {
+      .then((data) => {
         this._saveHistorey([...data, item]);
       })
-      .catch(err => {
+      .catch((err) => {
         // save
         this._saveHistorey([item]);
       });
@@ -327,10 +331,10 @@ class Search extends Component {
         '/' +
         this.state.selectedCategory.id,
       data,
-      expires: null
+      expires: null,
     });
 
-    this.setState({ history: data });
+    this.setState({history: data});
   }
 
   removeHistory = () => {
@@ -341,37 +345,37 @@ class Search extends Component {
         '/' +
         store.store_id +
         '/' +
-        this.state.selectedCategory.id
+        this.state.selectedCategory.id,
     });
 
-    this.setState({ history: null });
+    this.setState({history: null});
   };
 
-  handlePressCategory = category => {
+  handlePressCategory = (category) => {
     if (category.id !== this.state.selectedCategory.id) {
       this.getHistory(category.id);
 
       const categories = [...this.state.categories];
-      categories.forEach(cate => {
+      categories.forEach((cate) => {
         cate.active = cate.id === category.id;
       });
       const placeholder = this.getPlaceholder(
-        category.id !== 0 ? category.name : ''
+        category.id !== 0 ? category.name : '',
       );
       Actions.refresh({
-        placeholder
+        placeholder,
       });
       this.setState({
         categories,
-        selectedCategory: category
+        selectedCategory: category,
       });
       this.onSearch(this.state.searchValue);
     }
   };
 
-  handleCategoriesLayout = e => {
+  handleCategoriesLayout = (e) => {
     if (!this.state.bodyCategoriesHeight) {
-      this.setState({ bodyCategoriesHeight: e.nativeEvent.layout.height });
+      this.setState({bodyCategoriesHeight: e.nativeEvent.layout.height});
     }
   };
 
@@ -379,13 +383,13 @@ class Search extends Component {
     Animated.timing(this.state.animatedCategories, {
       toValue: this.categoriesCollapsed ? 0 : 1,
       easing: Easing.inOut(Easing.ease),
-      duration: 300
+      duration: 300,
     }).start();
     this.categoriesCollapsed = !this.categoriesCollapsed;
   };
 
   render() {
-    const { loading, search_data, history, buying_idx } = this.state;
+    const {loading, search_data, history, buying_idx} = this.state;
 
     const MIN_HEIGHT_CATEGORIES = new Animated.Value(0);
     const MAX_HEIGHT_CATEGORIES =
@@ -397,16 +401,16 @@ class Search extends Component {
         {
           rotate: interpolate(this.state.animatedCategories, {
             inputRange: [0, 1],
-            outputRange: [START_DEG, END_DEG]
-          })
-        }
-      ]
+            outputRange: [START_DEG, END_DEG],
+          }),
+        },
+      ],
     };
     const animatedCategoriesStyle = this.state.bodyCategoriesHeight && {
       height: interpolate(this.state.animatedCategories, {
         inputRange: [0, 1],
-        outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES]
-      })
+        outputRange: [MAX_HEIGHT_CATEGORIES, MIN_HEIGHT_CATEGORIES],
+      }),
     };
     // show loading
     if (loading) {
@@ -419,7 +423,7 @@ class Search extends Component {
           <FlatList
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
-            onEndReached={num => {}}
+            onEndReached={(num) => {}}
             onEndReachedThreshold={0}
             style={[styles.items_box]}
             ListHeaderComponent={() => (
@@ -427,7 +431,7 @@ class Search extends Component {
             )}
             data={search_data}
             extraData={this.state}
-            renderItem={({ item, index }) => (
+            renderItem={({item, index}) => (
               <Items
                 item={item}
                 index={index}
@@ -436,21 +440,20 @@ class Search extends Component {
                 buyPress={this._updateHistory.bind(this, item)}
               />
             )}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             numColumns={2}
           />
         ) : (
           <ScrollView
-            contentContainerStyle={{ flexGrow: 1 }}
+            contentContainerStyle={{flexGrow: 1}}
             keyboardDismissMode="on-drag"
-            keyboardShouldPersistTaps="always"
-          >
+            keyboardShouldPersistTaps="always">
             {this.state.noResult && (
               <Text style={styles.noResult}>Không tìm thấy sản phẩm</Text>
             )}
             {this.state.categories.length !== 0 && (
               <ModernList
-                containerStyle={{ marginBottom: 15 }}
+                containerStyle={{marginBottom: 15}}
                 scrollEnabled={false}
                 headerTitle="Danh mục"
                 mainKey="name"
@@ -458,8 +461,8 @@ class Search extends Component {
                 onPressItem={this.handlePressCategory}
                 bodyWrapperStyle={animatedCategoriesStyle}
                 onBodyLayout={this.handleCategoriesLayout}
-                activeStyle={{ backgroundColor: DEFAULT_COLOR }}
-                activeTextStyle={{ color: '#fff' }}
+                activeStyle={{backgroundColor: DEFAULT_COLOR}}
+                activeTextStyle={{color: '#fff'}}
                 type={LIST_TYPE.TAG}
                 headerRightComponent={
                   <CollapseIcon
@@ -479,7 +482,7 @@ class Search extends Component {
                     headerTitle="Lịch sử tìm kiếm"
                     mainKey="name"
                     data={data}
-                    onPressItem={item => this._onTouchHistory(item)}
+                    onPressItem={(item) => this._onTouchHistory(item)}
                     headerRightComponent={
                       <RemoveBtn onPress={this.removeHistory} />
                     }
@@ -527,6 +530,12 @@ class Search extends Component {
                 //   </ScrollView>
                 // );
               })()}
+            {!this.state.history &&
+              !this.state.noResult &&
+              !this.state.loading &&
+              !this.state.searchValue && (
+                <NoResult iconName="magnify" message="Nhập để tìm kiếm" />
+              )}
           </ScrollView>
         )}
 
@@ -538,7 +547,7 @@ class Search extends Component {
         )}
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
           title="Bạn muốn bỏ sản phẩm này khỏi giỏ hàng?"
           height={110}
           noConfirm={() => {
@@ -561,14 +570,13 @@ class Search extends Component {
               zIndex: 999,
               borderWidth: 1,
               borderColor: DEFAULT_COLOR,
-              overflow: 'hidden'
-            }}
-          >
+              overflow: 'hidden',
+            }}>
             {store.cart_fly_image && (
               <CachedImage
                 style={{
                   width: store.cart_fly_position.width,
-                  height: store.cart_fly_position.height
+                  height: store.cart_fly_position.height,
                 }}
                 source={store.cart_fly_image}
               />
@@ -601,13 +609,13 @@ class Search extends Component {
     try {
       const data = {
         quantity: 0,
-        model: item.model
+        model: item.model,
       };
 
       var response = await APIHandler.site_cart_update(
         store.store_id,
         item.id,
-        data
+        data,
       );
 
       if (response && response.status == STATUS_SUCCESS) {
@@ -617,13 +625,13 @@ class Search extends Component {
           if (isAndroid && store.cart_item_index > 0) {
             var index = store.cart_item_index - 1;
             store.setCartItemIndex(index);
-            Events.trigger(NEXT_PREV_CART, { index });
+            Events.trigger(NEXT_PREV_CART, {index});
           }
         })();
 
         flashShowMessage({
           message: response.message,
-          type: 'success'
+          type: 'success',
         });
       }
 
@@ -642,18 +650,18 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#ffffff',
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   seach_history_name_box: {
     justifyContent: 'center',
-    height: '100%'
+    height: '100%',
   },
   seach_history_box: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   seach_history_name: {
     fontSize: 14,
-    color: '#404040'
+    color: '#404040',
   },
   seach_history_expand: {
     width: 40,
@@ -662,20 +670,20 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
 
   container: {
     flex: 1,
-    marginBottom: 0
+    marginBottom: 0,
   },
   right_btn_add_store: {
     paddingVertical: 1,
     paddingHorizontal: 8,
-    paddingTop: isAndroid ? 4 : 0
+    paddingTop: isAndroid ? 4 : 0,
   },
   right_btn_box: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   stores_info_action_notify: {
     position: 'absolute',
@@ -688,12 +696,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
     borderRadius: 8,
-    paddingHorizontal: 2
+    paddingHorizontal: 2,
   },
   stores_info_action_notify_value: {
     fontSize: 10,
     color: '#ffffff',
-    fontWeight: '600'
+    fontWeight: '600',
   },
 
   items_box: {},
@@ -702,20 +710,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
     height: 40,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd'
+    borderBottomColor: '#dddddd',
   },
   categories_nav_items: {
     justifyContent: 'center',
-    height: '100%'
+    height: '100%',
   },
   categories_nav_items_title: {
     paddingHorizontal: 10,
     fontSize: 14,
     fontWeight: '500',
-    color: '#666666'
+    color: '#666666',
   },
   categories_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   categories_nav_items_active: {
     position: 'absolute',
@@ -723,34 +731,33 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     height: 3,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   noResult: {
     textAlign: 'center',
     paddingVertical: 15,
     fontSize: 16,
     fontWeight: '500',
-    color: '#555'
+    color: '#555',
   },
   collapseIcon: {
     fontSize: 20,
-    color: '#555'
+    color: '#555',
   },
   removeHistoryTxt: {
     color: DEFAULT_COLOR,
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
 });
 
 export default withTranslation('stores')(observer(Search));
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
-const CollapseIcon = props => (
+const CollapseIcon = (props) => (
   <TouchableOpacity
     hitSlop={HIT_SLOP}
     activeOpacity={0.6}
-    onPress={props.onPress}
-  >
+    onPress={props.onPress}>
     <AnimatedIcon
       name="caret-down"
       style={[styles.collapseIcon, props.style]}
@@ -758,7 +765,7 @@ const CollapseIcon = props => (
   </TouchableOpacity>
 );
 
-const RemoveBtn = props => (
+const RemoveBtn = (props) => (
   <TouchableOpacity activeOpacity={0.6} onPress={props.onPress}>
     <Text style={styles.removeHistoryTxt}>Xóa</Text>
   </TouchableOpacity>
