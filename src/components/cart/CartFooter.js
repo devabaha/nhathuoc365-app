@@ -296,12 +296,7 @@ class CartFooter extends Component {
           underlayColor="#fafafa"
           onPress={() => this.onPressCartItem(item)}>
           <View
-            style={[
-              styles.store_cart_item,
-              this.state.containerHeight && {
-                height: this.state.containerHeight,
-              },
-            ]}>
+            style={styles.store_cart_item}>
             <View style={styles.store_cart_item_image_box}>
               {!!item.image && (
                 <CachedImage
