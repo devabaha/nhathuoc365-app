@@ -192,6 +192,7 @@ class Home extends Component {
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
+      service.type = SERVICES_TYPE.PRODUCT_STAMPS;
       servicesHandler(service, t, callBack);
     }
   }

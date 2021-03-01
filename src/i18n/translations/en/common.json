@@ -136,6 +136,9 @@
     },
     "lotteryGame": {
       "mainTitle": "Lucky number"
+    },
+    "listProductScanned": {
+      "mainTitle": "Scanned Products"
     }
   },
 

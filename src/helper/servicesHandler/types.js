@@ -62,6 +62,7 @@ export const SERVICES_TYPE = {
   /** PRODUCT */
   PRODUCT_DETAIL: 'product_detail',
   GROUP_PRODUCT: 'group_product',
+  PRODUCT_STAMPS: 'product_stamps',
 
   /** AFFILIATE */
   AFFILIATE: 'affiliate',

@@ -136,6 +136,9 @@
     },
     "lotteryGame": {
       "mainTitle": "Game đoán số"
+    },
+    "listProductScanned": {
+      "mainTitle": "Sản phẩm đã quét"
     }
   },
 

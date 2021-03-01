@@ -964,8 +964,17 @@ class CommonAPIHandler extends BaseHandler {
    * @param string data.qrcode
    */
   user_check_product_code(data) {
-    var api = url_for(API.USER_CHECK_PRODUCT_CODE);
+    const api = url_for(API.USER_CHECK_PRODUCT_CODE);
     return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get all product stamps
+   *
+   */
+  user_get_product_stamps() {
+    const api = url_for(API.USER_GET_PRODUCT_STAMPS);
+    return this.getCancelableAPI(api);
   }
 }
 
