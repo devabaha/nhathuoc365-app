@@ -775,6 +775,20 @@ class Item extends Component {
     );
   }
 
+  renderNoticeMessage(product) {
+    return product?.notice?.message ? (
+      <View
+        style={{
+          padding: 15,
+          backgroundColor: product.notice.bgColor || appConfig.colors.primary,
+        }}>
+        <Text style={{color: '#fff', textAlign: 'center', fontSize: 15, fontWeight: '500'}}>
+          {product.notice.message}
+        </Text>
+      </View>
+    ) : null;
+  }
+
   renderDetailInfo(product) {
     console.log(product.detail_info);
     return product?.detail_info?.map((info, index) => {
@@ -860,17 +874,7 @@ class Item extends Component {
                     <Text style={styles.item_unit_name}>/ {unitName}</Text>
                   )}
                 </Text>
-                {/* {item.discount_percent > 0 && (
-                  <DiscountBadge
-                    containerStyle={styles.discountBadge}
-                    label={saleFormat(item.discount_percent)}
-                  />
-                )} */}
               </View>
-
-              {/* <Text style={styles.item_heading_qnt}>
-                {item_data ? item_data.unit_name_view : item.unit_name_view}
-              </Text> */}
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
@@ -955,6 +959,7 @@ class Item extends Component {
 
             {item != null && (
               <View style={styles.item_content_box}>
+                {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
                 {storeName && (
                   <View style={styles.item_content_item_container}>

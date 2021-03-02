@@ -22,6 +22,21 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     justifyContent: 'space-between',
   },
+  titleContainer: {
+    borderBottomLeftRadius: 8,
+    backgroundColor: '#fafafa',
+    borderColor: '#ddd',
+    marginTop: -15,
+    paddingTop: 15,
+    marginRight: -15,
+    paddingRight: 15,
+    paddingBottom: 7,
+    paddingLeft: 10,
+  },
+  title: {
+    color: '#333',
+    fontWeight: '500',
+  },
   label: {
     justifyContent: 'center',
     color: '#666',
@@ -58,7 +73,7 @@ const styles = StyleSheet.create({
   },
   timeValue: {
     color: '#333',
-    fontSize: 12
+    fontSize: 12,
   },
 
   decor: {
@@ -70,22 +85,27 @@ const styles = StyleSheet.create({
     borderRightWidth: 7,
     borderLeftColor: 'transparent',
     borderBottomColor: 'transparent',
-    // top: '50%',
     right: 0,
-    // bottom: 0,
   },
 });
 
+const ACTIVE_TIME_LABEL = "Ngày nhận";
+const QR_CODE_TITLE = "Mã QR";
+
 const ProductStamp = ({image, name, qrcode, activeTime, onPress}) => {
   return (
-    <TouchableOpacity activeOpacity={.8} onPress={onPress}>
+    <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
       <View style={styles.container}>
         <Container padding={15} row centerVertical={false}>
           <FastImage style={styles.image} source={{uri: image}} />
           <View style={styles.infoContainer}>
-            <Text numberOfLines={2}>{name}</Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.title} numberOfLines={2}>
+                {name}
+              </Text>
+            </View>
             <Container row>
-              <Text style={styles.label}>Mã QR</Text>
+              <Text style={styles.label}>{QR_CODE_TITLE}</Text>
               <View style={styles.valueContainer}>
                 <Text style={styles.value}>{qrcode}</Text>
               </View>
@@ -94,7 +114,7 @@ const ProductStamp = ({image, name, qrcode, activeTime, onPress}) => {
         </Container>
         <View style={styles.footer}>
           <Container row style={styles.timeContainer}>
-            <Text style={styles.label}>Ngày nhận</Text>
+            <Text style={styles.label}>{ACTIVE_TIME_LABEL}</Text>
             <View style={styles.timeValueContainer}>
               <Text style={styles.timeValue}>{activeTime}</Text>
             </View>
