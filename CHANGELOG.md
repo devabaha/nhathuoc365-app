@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [r11.3.11] - 2021-03-03
 ### Changed
 - CartItem also using text input to enter quantity.
+### Fixed
+- UI QuickOpenBtnCart.
 
 ## [r11.3.10] - 2021-03-02
 ### Added
