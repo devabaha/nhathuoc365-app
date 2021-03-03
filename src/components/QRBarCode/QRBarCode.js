@@ -60,8 +60,6 @@ class QRBarCode extends Component {
   }
 
   componentDidMount() {
-    this.checkProductCode('abc');
-
     if (!this.props.address) {
       this._getData();
       this.setTimmer();
@@ -602,13 +600,14 @@ class QRBarCode extends Component {
       console.log(response);
       
       if (response) {
-        if (response.status === STATUS_SUCCESS && response.data) {
+          Actions.pop();
+          if (response.status === STATUS_SUCCESS && response.data) {
           Actions.push(appConfig.routes.item, {
-            item: response.data,
+            item: response.data.product,
             title: response.data.name,
+            preventUpdate: true
           });
         } else {
-          Actions.pop();
           Actions.push(appConfig.routes.searchStore, {
             qr_code: qrcode,
           });

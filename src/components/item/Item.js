@@ -50,10 +50,10 @@ class Item extends Component {
       item: props.item,
       item_data: null,
       images: null,
-      loading: true,
+      loading: !this.props.preventUpdate,
       actionLoading: false,
       buying: false,
-      like_loading: true,
+      like_loading: !this.props.preventUpdate,
       isSubActionLoading: false,
       like_flag: 0,
       scrollY: 0,
@@ -87,7 +87,7 @@ class Item extends Component {
   }
 
   componentDidMount() {
-    this._initial(this.props);
+    !this.props.preventUpdate && this._initial(this.props);
     this.getListWarehouse();
   }
 
@@ -340,6 +340,9 @@ class Item extends Component {
   }
 
   _onRefresh() {
+    if (this.props.preventUpdate) {
+      return null;
+    }
     this.setState({refreshing: true});
 
     this._getDataFromServer(1000);
@@ -770,25 +773,39 @@ class Item extends Component {
     ) : (
       <Icon name="heart" size={20} color={this.subActionColor} />
     );
+  }
 
-    // this.isServiceProduct(product) ? (
-    //   this.state.like_loading ? (
-    //     <Indicator size="small" />
-    //   ) : (
-    //     <Icon name="heart" size={20} color={this.subActionColor} />
-    //   )
-    // ) : (
-    //   isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
-    //     (this.state.isSubActionLoading ? (
-    //       <Indicator size="small" />
-    //     ) : (
-    //       <MaterialCommunityIcons
-    //         name="truck-fast"
-    //         size={24}
-    //         color={this.subActionColor}
-    //       />
-    //     ))
-    // );
+  renderNoticeMessage(product) {
+    return product?.notice?.message ? (
+      <View
+        style={[
+          styles.noticeContainer,
+          {
+            backgroundColor: product.notice.bgColor || appConfig.colors.primary,
+          },
+        ]}>
+        <Text style={styles.noticeMessage}>{product.notice.message}</Text>
+      </View>
+    ) : null;
+  }
+
+  renderDetailInfo(product) {
+    console.log(product.detail_info);
+    return product?.detail_info?.map((info, index) => {
+      return (
+        <View key={index} style={styles.item_content_item_container}>
+          <View
+            style={[styles.item_content_item, styles.item_content_item_left]}>
+            <Text style={styles.item_content_item_title}>{info.name}</Text>
+          </View>
+
+          <View
+            style={[styles.item_content_item, styles.item_content_item_right]}>
+            <Text style={styles.item_content_item_value}>{info.info}</Text>
+          </View>
+        </View>
+      );
+    });
   }
 
   render() {
@@ -857,17 +874,7 @@ class Item extends Component {
                     <Text style={styles.item_unit_name}>/ {unitName}</Text>
                   )}
                 </Text>
-                {/* {item.discount_percent > 0 && (
-                  <DiscountBadge
-                    containerStyle={styles.discountBadge}
-                    label={saleFormat(item.discount_percent)}
-                  />
-                )} */}
               </View>
-
-              {/* <Text style={styles.item_heading_qnt}>
-                {item_data ? item_data.unit_name_view : item.unit_name_view}
-              </Text> */}
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
@@ -952,8 +959,10 @@ class Item extends Component {
 
             {item != null && (
               <View style={styles.item_content_box}>
+                {this.renderNoticeMessage(item)}
+                {this.renderDetailInfo(item)}
                 {storeName && (
-                  <>
+                  <View style={styles.item_content_item_container}>
                     <View
                       style={[
                         styles.item_content_item,
@@ -980,60 +989,58 @@ class Item extends Component {
                         {storeName}
                       </Text>
                     </View>
-                  </>
-                )}
-
-                {item.brand != null && item.brand != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_left,
-                    ]}>
-                    <View style={styles.item_content_icon_box}>
-                      <Icon name="user" size={16} color="#999999" />
-                    </View>
-                    <Text style={styles.item_content_item_title}>
-                      {t('information.brands')}
-                    </Text>
                   </View>
                 )}
 
                 {item.brand != null && item.brand != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_right,
-                    ]}>
-                    <Text style={styles.item_content_item_value}>
-                      {item.brand}
-                    </Text>
-                  </View>
-                )}
-
-                {item.made_in != null && item.made_in != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_left,
-                    ]}>
-                    <View style={styles.item_content_icon_box}>
-                      <Icon name="map-marker" size={16} color="#999999" />
+                  <View style={styles.item_content_item_container}>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_left,
+                      ]}>
+                      <View style={styles.item_content_icon_box}>
+                        <Icon name="user" size={16} color="#999999" />
+                      </View>
+                      <Text style={styles.item_content_item_title}>
+                        {t('information.brands')}
+                      </Text>
                     </View>
-                    <Text style={styles.item_content_item_title}>
-                      {t('information.origin')}
-                    </Text>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_right,
+                      ]}>
+                      <Text style={styles.item_content_item_value}>
+                        {item.brand}
+                      </Text>
+                    </View>
                   </View>
                 )}
 
                 {item.made_in != null && item.made_in != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_right,
-                    ]}>
-                    <Text style={styles.item_content_item_value}>
-                      {item.made_in}
-                    </Text>
+                  <View style={styles.item_content_item_container}>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_left,
+                      ]}>
+                      <View style={styles.item_content_icon_box}>
+                        <Icon name="map-marker" size={16} color="#999999" />
+                      </View>
+                      <Text style={styles.item_content_item_title}>
+                        {t('information.origin')}
+                      </Text>
+                    </View>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_right,
+                      ]}>
+                      <Text style={styles.item_content_item_value}>
+                        {item.made_in}
+                      </Text>
+                    </View>
                   </View>
                 )}
               </View>
@@ -1052,7 +1059,7 @@ class Item extends Component {
                   }}
                   style={styles.webview}
                   onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item.content}}
+                  source={{html: item.content || ''}}
                   zoomable={false}
                   scrollEnabled={false}
                   customStyle={`
@@ -1231,27 +1238,31 @@ const styles = StyleSheet.create({
   },
 
   item_content_box: {
-    width: '100%',
-    flexDirection: 'row',
+    // width: '100%',
+    // flexDirection: 'row',
     borderLeftWidth: Util.pixel,
     borderTopWidth: Util.pixel,
     borderColor: '#dddddd',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
+  },
+  item_content_item_container: {
+    flexDirection: 'row',
   },
   item_content_item: {
-    height: 24,
+    // height: 24,
     borderRightWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    padding: 8,
+    flex: 1,
   },
   item_content_item_left: {
-    width: '45%',
+    // width: '45%',
   },
   item_content_item_right: {
-    width: '55%',
+    // width: '55%',
   },
   item_content_icon_box: {
     width: 24,
@@ -1268,6 +1279,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#404040',
     marginLeft: 4,
+    flex: 1,
   },
 
   item_content_text: {
@@ -1390,6 +1402,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginHorizontal: 8,
     elevation: 3,
+  },
+  noticeContainer: {
+    padding: 15,
+  },
+  noticeMessage: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
   },
 });
 

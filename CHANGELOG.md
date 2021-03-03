@@ -6,9 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.3.10] - 2021-02-26
+## [r11.3.11] - 2021-03-03
+### Changed
+- CartItem also using text input to enter quantity.
+
+## [r11.3.10] - 2021-03-02
 ### Added
 - Logic for config key allow site sale out inventory.
+- List scanned product.
 - Check product code by qrcode.
 ### Fixed
 - Cart footer UI quantity.

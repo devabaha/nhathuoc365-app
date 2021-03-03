@@ -278,6 +278,9 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         title: service.title,
       });
       break;
+    case SERVICES_TYPE.PRODUCT_STAMPS:
+      Actions.push(appConfig.routes.productStamps);
+      break;
 
     /** AFFILIATE */
     case SERVICES_TYPE.AFFILIATE:

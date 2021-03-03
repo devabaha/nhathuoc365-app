@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableHighlight,
-  TouchableOpacity,
   StyleSheet,
   FlatList,
   Alert,
@@ -17,7 +16,6 @@ import Animated, {
   interpolate,
   concat,
 } from 'react-native-reanimated';
-import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import {Actions} from 'react-native-router-flux';
@@ -26,13 +24,16 @@ import Button from 'react-native-button';
 
 import appConfig from 'app-config';
 import store from '../../store/Store';
-import {DiscountBadge, NotiBadge} from '../Badges';
+import {NotiBadge} from '../Badges';
 import {debounce} from 'lodash';
 import PopupConfirm from '../PopupConfirm';
+import CartItem from './CartItem';
+import {
+  ORDER_BTN_WIDTH,
+  CART_ITEM_WHITE_SPACE,
+  CART_ITEM_WIDTH,
+} from './constants';
 
-const ORDER_BTN_WIDTH = 100;
-const WHITE_SPACE = 30;
-const CART_ITEM_WIDTH = appConfig.device.width - ORDER_BTN_WIDTH - WHITE_SPACE;
 class CartFooter extends Component {
   static defaultProps = {
     animatedScrollY: new Animated.Value(0),
@@ -50,6 +51,9 @@ class CartFooter extends Component {
       decrement_loading: false,
       prefix: props.prefix || '',
       containerHeight: 0,
+      cartItemUpdateQuantityId: '',
+      cartItemMinusId: '',
+      cartItemPlusId: '',
     };
   }
   unmounted = false;
@@ -159,6 +163,7 @@ class CartFooter extends Component {
     this.setState(
       {
         decrement_loading: true,
+        cartItemMinusId: item.id,
       },
       async () => {
         const {t} = this.props;
@@ -197,22 +202,24 @@ class CartFooter extends Component {
           !this.unmounted &&
             this.setState({
               decrement_loading: false,
+              cartItemMinusId: '',
             });
         }
       },
     );
   }
 
-  _item_qnt_increment(item) {
+  _item_qnt_increment(item, quantity = 1) {
     this.setState(
       {
         increment_loading: true,
+        cartItemPlusId: item.id,
       },
       async () => {
         const {t} = this.props;
         try {
           const data = {
-            quantity: 1,
+            quantity,
             model: item.model,
           };
 
@@ -247,10 +254,57 @@ class CartFooter extends Component {
           !this.unmounted &&
             this.setState({
               increment_loading: false,
+              cartItemPlusId: '',
             });
         }
       },
     );
+  }
+
+  async _updateCartItem(item, quantity) {
+    this.setState({
+      cartItemUpdateQuantityId: item.id,
+    });
+    try {
+      const data = {
+        quantity,
+        model: item.model,
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data,
+      );
+
+      if (response && response.status == STATUS_SUCCESS) {
+        store.setCartData(response.data);
+        // prev item in list
+        if (isAndroid && store.cart_item_index > 0) {
+          store.setCartItemIndex(store.cart_item_index - 1);
+        }
+        flashShowMessage({
+          type: 'success',
+          message: response.message,
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message || this.props.t('common:api.error.message'),
+        });
+      }
+    } catch (e) {
+      console.log('site_cart_footer_update', e);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('common:api.error.message'),
+      });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          cartItemUpdateQuantityId: '',
+        });
+    }
   }
 
   _store_cart_prev() {
@@ -290,101 +344,30 @@ class CartFooter extends Component {
   };
 
   renderItems({item}) {
+    const isMinusLoading = this.state.cartItemMinusId === item.id;
+    const isPlusLoading = this.state.cartItemPlusId === item.id;
+    const isUpdateQuantityLoading = this.state.cartItemUpdateQuantityId === item.id;
+    const disabled = isUpdateQuantityLoading || isMinusLoading || isPlusLoading;
     return (
-      <View style={styles.store_cart_item_container}>
-        <TouchableHighlight
-          underlayColor="#fafafa"
-          onPress={() => this.onPressCartItem(item)}>
-          <View
-            style={styles.store_cart_item}>
-            <View style={styles.store_cart_item_image_box}>
-              {!!item.image && (
-                <CachedImage
-                  mutable
-                  style={styles.store_cart_item_image}
-                  source={{uri: item.image}}
-                />
-              )}
-            </View>
-            <View style={styles.store_cart_item_title_box}>
-              <View style={{flex: 1}}>
-                <Text numberOfLines={1} style={styles.store_cart_item_title}>
-                  {item.name}
-                </Text>
-                {!!item.classification && (
-                  <Text
-                    numberOfLines={1}
-                    style={[styles.store_cart_item_sub_title]}>
-                    {item.classification}
-                  </Text>
-                )}
-                <Text style={styles.store_cart_item_price}>
-                  {item.price_view}
-                </Text>
-              </View>
-              <View style={styles.store_cart_actions}>
-                <View style={styles.store_cart_calculator}>
-                  <TouchableHighlight
-                    onPress={this._item_qnt_decrement_handler.bind(this, item)}
-                    underlayColor="#eee"
-                    hitSlop={HIT_SLOP}
-                    style={styles.p8}>
-                    <View style={styles.store_cart_item_qnt_change}>
-                      {this.state.decrement_loading ? (
-                        <Indicator size="small" />
-                      ) : (
-                        <AntDesignIcon name="minus" size={14} color="#404040" />
-                      )}
-                    </View>
-                  </TouchableHighlight>
-
-                  <Text numberOfLines={2} style={styles.store_cart_item_qnt}>
-                    {item.quantity_view}
-                  </Text>
-
-                  <TouchableHighlight
-                    onPress={this._item_qnt_increment.bind(this, item)}
-                    underlayColor="#eee"
-                    hitSlop={HIT_SLOP}
-                    style={styles.p8}>
-                    <View style={styles.store_cart_item_qnt_change}>
-                      {this.state.increment_loading ? (
-                        <Indicator size="small" />
-                      ) : (
-                        <AntDesignIcon name="plus" size={14} color="#404040" />
-                      )}
-                    </View>
-                  </TouchableHighlight>
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableHighlight>
-
-        {!!item.discount_percent && (
-          <DiscountBadge
-            containerStyle={styles.discountBadgeContainer}
-            contentContainerStyle={styles.discountBadgeContentContainer}
-            label={
-              <Text style={styles.discountBadgeLabel}>
-                {saleFormat(item.discount_percent)}
-              </Text>
-            }
-          />
-        )}
-        <TouchableOpacity
-          onPress={this._confirmRemoveCartItem.bind(this, item)}
-          hitSlop={HIT_SLOP}
-          style={[
-            styles.store_cart_item_qnt_change,
-            styles.store_cart_item_remove,
-          ]}>
-          <AntDesignIcon
-            name="close"
-            style={styles.store_cart_item_remove_icon}
-          />
-        </TouchableOpacity>
-      </View>
+      <CartItem
+        image={item.image}
+        name={item.name}
+        classification={item.classification}
+        priceView={item.price_view}
+        quantity={item.quantity}
+        quantityView={item.quantity_view}
+        unitName={item.unit_name}
+        discountPercent={item.discount_percent}
+        disabled={disabled}
+        isUpdateQuantityLoading={isUpdateQuantityLoading}
+        isMinusLoading={isMinusLoading}
+        isPlusLoading={isPlusLoading}
+        onPressCartItem={() => this.onPressCartItem(item)}
+        onRemove={() => this._confirmRemoveCartItem(item)}
+        onMinus={() => this._item_qnt_decrement_handler(item)}
+        onPlus={() => this._item_qnt_increment(item)}
+        onUpdateQuantity={(quantity) => this._updateCartItem(item, quantity)}
+      />
     );
   }
 
@@ -908,13 +891,13 @@ const styles = StyleSheet.create({
   },
 
   maskContainer: {
-    width: WHITE_SPACE,
+    width: CART_ITEM_WHITE_SPACE,
     height: '100%',
     position: 'absolute',
     right: 0,
   },
   maskLinear: {
-    width: WHITE_SPACE,
+    width: CART_ITEM_WHITE_SPACE,
     height: '100%',
   },
 
@@ -983,6 +966,11 @@ const styles = StyleSheet.create({
   },
   discountBadgeLabel: {
     fontSize: 10,
+  },
+
+  quantityContainer: {
+    // width: null,
+    // maxWidth: undefined
   },
 });
 

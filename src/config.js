@@ -228,6 +228,7 @@ class Config {
 
       //Group product
       groupProduct: 'groupProduct',
+      productStamps: 'productStamps',
 
       // List GPS store
       gpsListStore: 'gpsListStore',

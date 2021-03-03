@@ -346,6 +346,9 @@ class CommonAPI {
   get USER_CHECK_PRODUCT_CODE() {
     return BaseAPI.apiDomain + 'apiUser/check_product_code'
   }
+  get USER_GET_PRODUCT_STAMPS() {
+    return BaseAPI.apiDomain + 'apiUser/product_stamps';
+  }
 
   // Service
   get SERVICE_INFO() {

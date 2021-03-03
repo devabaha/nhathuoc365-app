@@ -158,6 +158,7 @@ import CommissionIncomeStatement from './containers/CommissionIncomeStatement';
 import ModalInput from './components/ModalInput';
 import {LotteryGame} from './containers/Gamification';
 import ModalConfirm from './components/ModalConfirm';
+import ProductStamps from './containers/ProductStamps';
 
 /**
  * Not allow font scaling
@@ -819,6 +820,17 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ PRODUCT STAMPS ================ */}
+                <Stack key={appConfig.routes.productStamps}>
+                  <Scene
+                    key={`${appConfig.routes.productStamps}_1`}
+                    component={ProductStamps}
+                    title={t('screen.listProductScanned.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ GAMIFICATION - LOTTERY ================ */}
                 <Stack key={appConfig.routes.lotteryGame}>
