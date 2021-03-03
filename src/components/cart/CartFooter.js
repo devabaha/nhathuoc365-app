@@ -941,17 +941,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-
-  maskContainer: {
-    width: WHITE_SPACE,
-    height: '100%',
-    position: 'absolute',
-    right: 0,
-  },
-  maskLinear: {
-    width: WHITE_SPACE,
-    height: '100%',
-  },
   discountBadgeContainer: {
     position: 'absolute',
     bottom: 0,
