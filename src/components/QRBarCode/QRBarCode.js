@@ -60,8 +60,6 @@ class QRBarCode extends Component {
   }
 
   componentDidMount() {
-    // this.checkProductCode('abc');
-
     if (!this.props.address) {
       this._getData();
       this.setTimmer();

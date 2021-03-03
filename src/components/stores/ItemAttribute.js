@@ -25,7 +25,7 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from '../../helper/EventTracker';
 import DropShip from '../item/DropShip';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import { PRODUCT_TYPES } from 'src/constants';
+import {PRODUCT_TYPES} from 'src/constants';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -309,7 +309,13 @@ class ItemAttribute extends PureComponent {
 
   handleChangeQuantity = (quantity, min, max) => {
     const hasMax = max !== null && max !== undefined;
-    if ((quantity >= min && hasMax ? quantity <= max : true) || !quantity) {
+
+    if (
+      (Number(quantity) >= Number(min) && hasMax
+        ? Number(quantity) <= Number(max)
+        : true) ||
+      !quantity
+    ) {
       this.setState({quantity: !quantity ? '' : Number(quantity)});
     }
   };

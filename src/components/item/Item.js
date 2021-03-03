@@ -778,13 +778,13 @@ class Item extends Component {
   renderNoticeMessage(product) {
     return product?.notice?.message ? (
       <View
-        style={{
-          padding: 15,
-          backgroundColor: product.notice.bgColor || appConfig.colors.primary,
-        }}>
-        <Text style={{color: '#fff', textAlign: 'center', fontSize: 15, fontWeight: '500'}}>
-          {product.notice.message}
-        </Text>
+        style={[
+          styles.noticeContainer,
+          {
+            backgroundColor: product.notice.bgColor || appConfig.colors.primary,
+          },
+        ]}>
+        <Text style={styles.noticeMessage}>{product.notice.message}</Text>
       </View>
     ) : null;
   }
@@ -1402,6 +1402,15 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginHorizontal: 8,
     elevation: 3,
+  },
+  noticeContainer: {
+    padding: 15,
+  },
+  noticeMessage: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
   },
 });
 

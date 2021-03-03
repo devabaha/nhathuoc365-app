@@ -1,16 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useRef} from 'react';
 import {
   TextInput,
   View,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import { default as ModalBox } from 'react-native-modalbox';
+import {default as ModalBox} from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Button from '../components/Button';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 
 function ModalInput({
   refModal = () => {},
@@ -25,9 +25,10 @@ function ModalInput({
   value,
   onClosedModal,
   onSubmit = () => {},
-  extraInput = null
+  extraInput = null,
+  backdropPressToClose = false
 }) {
-  const [text, setPrice] = useState('');
+  const [text, setPrice] = useState(value);
   let ref_modal = null;
 
   function onChangeText(text) {
@@ -53,6 +54,7 @@ function ModalInput({
   }
 
   function getFormattedText() {
+    return valueExecutor ? valueExecutor(text) : text;
     return value === undefined
       ? valueExecutor
         ? valueExecutor(text)
@@ -76,8 +78,7 @@ function ModalInput({
       onClosed={onClosed}
       useNativeDriver
       swipeToClose={false}
-      backdropPressToClose={false}
-    >
+      backdropPressToClose={backdropPressToClose}>
       <View style={styles.headingContainer}>
         <TouchableOpacity onPress={onClosing} style={styles.iconContainer}>
           <Icon name="close" style={styles.icon} />
@@ -106,6 +107,7 @@ function ModalInput({
         }
         title={btnTitle}
         onPress={handleSubmit}
+        containerStyle={styles.btnContainer}
       />
     </ModalBox>
   );
@@ -113,12 +115,12 @@ function ModalInput({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   modal: {
     maxWidth: '80%',
     height: undefined,
-    borderRadius: 8
+    borderRadius: 8,
   },
   iconContainer: {
     position: 'absolute',
@@ -126,18 +128,18 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     left: 15,
-    top: 15
+    top: 15,
   },
   icon: {
     fontSize: 18,
-    color: '#666'
+    color: '#666',
   },
   headingContainer: {
     padding: 30,
     paddingBottom: 15,
     borderBottomWidth: 1,
     borderStyle: 'solid',
-    borderBottomColor: '#ccc'
+    borderBottomColor: '#ccc',
   },
   heading: {
     marginTop: 10,
@@ -145,25 +147,31 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#555',
     letterSpacing: 1.6,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   body: {
-    padding: 15
+    padding: 15,
   },
   description: {
     fontSize: 13,
-    color: '#666'
+    color: '#666',
   },
   textInputContainer: {
     borderWidth: 0.5,
     borderColor: '#ddd',
     borderRadius: 8,
     padding: 15,
-    margin: 15
+    margin: 15,
   },
   textInput: {
-    color: '#242424'
-  }
+    color: '#242424',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
+
+  btnContainer: {
+    paddingBottom: 15,
+  },
 });
 
 export default ModalInput;

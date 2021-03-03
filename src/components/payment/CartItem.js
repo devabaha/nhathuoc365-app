@@ -7,14 +7,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import {DiscountBadge} from '../Badges';
-import {CheckBox} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import {Actions} from 'react-native-router-flux';
 import store from 'app-store';
 import appConfig from 'app-config';
-import Button from 'react-native-button';
+import ExtraQuantityInput from '../cart/CartItem/ExtraQuantityInput';
 
 const styles = StyleSheet.create({
   cart_item_box: {
@@ -133,9 +131,11 @@ const styles = StyleSheet.create({
     color: '#333',
     fontSize: 15,
   },
-  cart_item_actions_quantity: {
-    paddingHorizontal: 8,
+  store_cart_item_qnt_container: {
+    paddingHorizontal: 16,
     minWidth: 50,
+  },
+  cart_item_actions_quantity: {
     textAlign: 'center',
     color: '#404040',
     fontWeight: '500',
@@ -161,7 +161,10 @@ class CartItem extends Component {
       check_loading: false,
       increment_loading: false,
       decrement_loading: false,
+      isUpdateQuantityLoading: false,
     };
+
+    this.refModal = null;
   }
 
   _checkBoxHandler(item) {
@@ -334,6 +337,83 @@ class CartItem extends Component {
     );
   }
 
+  async _updateCartItem(item, quantity) {
+    this.setState({
+      isUpdateQuantityLoading: true,
+    });
+    try {
+      const data = {
+        quantity,
+        model: item.model,
+      };
+
+      var response = await APIHandler.site_cart_update(
+        store.store_id,
+        item.id,
+        data,
+      );
+
+      if (response && response.status == STATUS_SUCCESS) {
+        store.setCartData(response.data);
+        // prev item in list
+        if (isAndroid && store.cart_item_index > 0) {
+          store.setCartItemIndex(store.cart_item_index - 1);
+        }
+        flashShowMessage({
+          type: 'success',
+          message: response.message,
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response.message || this.props.t('common:api.error.message'),
+        });
+      }
+    } catch (e) {
+      console.log('site_cart_footer_update', e);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('common:api.error.message'),
+      });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          isUpdateQuantityLoading: false,
+        });
+    }
+  }
+
+  handleSelectQuantity = (quantity) => {
+    if (this.refModal) {
+      this.refModal.close();
+    }
+
+    this._updateCartItem(this.props.item, quantity);
+  };
+
+  onShowModalChangeQuantity = () => {
+    Actions.push(appConfig.routes.modalInput, {
+      backdropPressToClose: true,
+      title: 'Nhập số lượng',
+      btnTitle: 'Chọn',
+      onSubmit: this.handleSelectQuantity,
+      description: `${this.props.item?.name}${
+        this.props.item?.classification &&
+        '\r\n' + this.props.item?.classification
+      }`,
+      value: this.props.item?.quantity?.toString(),
+      textInputProps: {
+        autoFocus: true,
+        keyboardType: 'number-pad',
+        textAlign: 'center',
+      },
+      textInputStyle: {flex: 1},
+      extraInput: <ExtraQuantityInput message={this.props.item?.unit_name} />,
+      textInputContainerStyle: {flexDirection: 'row'},
+      refModal: (inst) => (this.refModal = inst),
+    });
+  };
+
   onPressCartItem = () => {
     Actions.push(appConfig.routes.item, {
       item: this.props.item,
@@ -378,9 +458,25 @@ class CartItem extends Component {
             </View>
           </TouchableHighlight>
 
-          <Text style={styles.cart_item_actions_quantity}>
-            {item.quantity_view}
-          </Text>
+          <TouchableOpacity
+            hitSlop={HIT_SLOP}
+            onPress={
+              this.state.isUpdateQuantityLoading ||
+              this.state.decrement_loading ||
+              this.state.increment_loading
+                ? () => {}
+                : this.onShowModalChangeQuantity
+            }>
+            <View style={styles.store_cart_item_qnt_container}>
+              {this.state.isUpdateQuantityLoading ? (
+                <Indicator size="small" />
+              ) : (
+                <Text style={styles.cart_item_actions_quantity}>
+                  {item.quantity_view}
+                </Text>
+              )}
+            </View>
+          </TouchableOpacity>
 
           <TouchableHighlight
             style={styles.cart_item_actions_btn}
