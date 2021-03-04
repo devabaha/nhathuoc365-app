@@ -611,6 +611,10 @@ class QRBarCode extends Component {
           Actions.push(appConfig.routes.searchStore, {
             qr_code: qrcode,
           });
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || t('common:api.error.message'),
+          });
         }
       } else {
         flashShowMessage({
