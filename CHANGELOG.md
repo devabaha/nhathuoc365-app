@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.3.12] - 2021-03-04
+### Added
+- QRFrame for QRBarCode (not correctly, just for making color, because of rectOfInteract).
+- Btn to go to Product Stamps if product scanned.
+
+### Fixed
+- Input props auto focus not work in modal input.
+- Regex to validate link, cart code, account code, wallet address.
+
 ## [r11.3.11] - 2021-03-03
 ### Changed
 - CartItem also using text input to enter quantity.

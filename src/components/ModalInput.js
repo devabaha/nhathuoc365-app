@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   TextInput,
   View,
@@ -26,10 +26,21 @@ function ModalInput({
   onClosedModal,
   onSubmit = () => {},
   extraInput = null,
-  backdropPressToClose = false
+  backdropPressToClose = false,
 }) {
   const [text, setPrice] = useState(value);
   let ref_modal = null;
+  let ref_input = useRef();
+
+  useEffect(() => {
+    if (textInputProps?.autoFocus) {
+      setTimeout(() => {
+        if (ref_input.current) {
+          ref_input.current.focus();
+        }
+      });
+    }
+  }, []);
 
   function onChangeText(text) {
     setPrice(text);
@@ -90,6 +101,7 @@ function ModalInput({
         <Text style={styles.description}>{description}</Text>
         <View style={[styles.textInputContainer, textInputContainerStyle]}>
           <TextInput
+            ref={ref_input}
             value={getFormattedText()}
             onChangeText={onChangeText}
             {...textInputProps}

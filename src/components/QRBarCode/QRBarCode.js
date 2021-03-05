@@ -8,6 +8,7 @@ import {
   ScrollView,
   Platform,
   Alert,
+  Dimensions,
 } from 'react-native';
 import ScreenBrightness from 'react-native-screen-brightness';
 import {
@@ -28,11 +29,31 @@ import store from 'app-store';
 import EventTracker from '../../helper/EventTracker';
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
+import QRFrame from './QRFrame';
+import QRBackground from './QRBackground';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
+
+const CONTAINER_QR_WIDTH = Dimensions.get('screen').width;
+const CONTAINER_QR_HEIGHT =
+  Dimensions.get('screen').height;
+const SCAN_AREA_TOP_PERCENT = 0.22;
+const SCAN_AREA_TOP = appConfig.device.height * SCAN_AREA_TOP_PERCENT;
+const SCAN_AREA_LEFT = appConfig.device.width * 0.2;
+const SCAN_AREA_WIDTH = appConfig.device.width * 0.6;
+const SCAN_AREA_HEIGHT = appConfig.device.width * 0.6;
+const SCAN_AREA_LEFT_PERCENT = 
+  SCAN_AREA_LEFT / CONTAINER_QR_WIDTH;
+
+const QR_SCAN_AREA = {
+  x: SCAN_AREA_TOP_PERCENT,
+  y: SCAN_AREA_LEFT_PERCENT,
+  width: SCAN_AREA_HEIGHT / CONTAINER_QR_HEIGHT,
+  height: 1 - SCAN_AREA_LEFT_PERCENT * 2,
+};
 
 class QRBarCode extends Component {
   static propTypes = {
@@ -554,6 +575,7 @@ class QRBarCode extends Component {
   }
 
   _proccessQRCodeResult(text_result) {
+    if (this.unmounted) return;
     const {wallet, from} = this.state;
     if (text_result) {
       if (isURL(text_result)) {
@@ -598,14 +620,15 @@ class QRBarCode extends Component {
       this.checkProductRequest.data = APIHandler.user_check_product_code(data);
       const response = await this.checkProductRequest.promise();
       console.log(response);
-      
+
       if (response) {
-          Actions.pop();
-          if (response.status === STATUS_SUCCESS && response.data) {
+        Actions.pop();
+        if (response.status === STATUS_SUCCESS && response.data) {
           Actions.push(appConfig.routes.item, {
             item: response.data.product,
             title: response.data.name,
-            preventUpdate: true
+            preventUpdate: true,
+            showBtnProductStamps: true,
           });
         } else {
           Actions.push(appConfig.routes.searchStore, {
@@ -692,10 +715,41 @@ class QRBarCode extends Component {
     const {t} = this.props;
     return (
       <QRCodeScanner
+        reactivate
+        reactivateTimeout={2000}
+        fadeIn={false}
+        cameraProps={{
+          rectOfInterest: QR_SCAN_AREA,
+          cameraViewDimensions: {
+            height: CONTAINER_QR_HEIGHT,
+            width: CONTAINER_QR_WIDTH,
+          },
+        }}
+        customMarker={
+          <View style={styles.qrMarkerContainer}>
+            <QRBackground
+              scanAreaHeight={SCAN_AREA_HEIGHT}
+              scanAreaWidth={SCAN_AREA_WIDTH}
+              scanAreaLeft={SCAN_AREA_LEFT}
+              scanAreaTop={SCAN_AREA_TOP}
+            />
+            <View
+              style={[
+                styles.qrFrameContainer,
+                {
+                  top: SCAN_AREA_TOP,
+                  left: SCAN_AREA_LEFT,
+                },
+              ]}>
+              <QRFrame width={SCAN_AREA_WIDTH} height={SCAN_AREA_HEIGHT} />
+            </View>
+          </View>
+        }
+        showMarker
         checkAndroid6Permissions={true}
         ref={(node) => (this.scanner = node)}
         onRead={(e) => {
-          this._proccessQRCodeResult(e.data);
+          setTimeout(() => this._proccessQRCodeResult(e.data), 500);
         }}
         topContent={
           this.state.permissionCameraGranted === false ? (
@@ -851,6 +905,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   centerText: {
+    top: 15,
+    textAlign: 'center',
     lineHeight: 20,
     fontSize: 16,
     color: '#404040',
@@ -945,6 +1001,19 @@ const styles = StyleSheet.create({
   permissionNotGrantedSetting: {
     fontSize: 14,
     color: '#404040',
+  },
+
+  qrMarkerContainer: {
+    flex: 1,
+    width: '100%',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+  },
+  qrFrameContainer: {
+    borderColor: '#333',
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

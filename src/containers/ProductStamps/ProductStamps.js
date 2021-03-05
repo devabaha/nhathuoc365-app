@@ -30,10 +30,10 @@ const ProductStamps = () => {
     getProductStampsRequest.data = APIHandler.user_get_product_stamps();
     try {
       const response = await getProductStampsRequest.promise();
-      console.log(response);
+
       if (response) {
-        if (response.status === STATUS_SUCCESS && response.data) {
-          setProductStamps(response.data);
+        if (response.status === STATUS_SUCCESS) {
+          setProductStamps(response.data || []);
         } else {
           flashShowMessage({
             type: 'danger',
