@@ -35,12 +35,17 @@ import Loading from '../Loading';
 import CTAProduct from './CTAProduct';
 import {APIRequest} from 'src/network/Entity';
 import NoResult from '../NoResult';
+import Shimmer from 'react-native-shimmer';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
 const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
 const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
 class Item extends Component {
+  static defaultProps = {
+    showBtnProductStamps: false,
+  };
+
   constructor(props) {
     super(props);
 
@@ -775,6 +780,24 @@ class Item extends Component {
     );
   }
 
+  renderBtnProductStamps = () => {
+    return (
+      !!this.props.showBtnProductStamps && (
+        <Button
+          containerStyle={styles.btnProductStampsContainer}
+          btnContainerStyle={styles.btnProductStampsContentContainer}
+          titleStyle={styles.btnProductStampsTitle}
+          renderTitleComponent={(style) => (
+            <Shimmer opacity={1} animationOpacity={0.3} pauseDuration={3000}>
+              <Text style={style}>Xem sản phẩm đã quét</Text>
+            </Shimmer>
+          )}
+          onPress={() => Actions.push(appConfig.routes.productStamps)}
+        />
+      )
+    );
+  };
+
   renderNoticeMessage(product) {
     return product?.notice?.message ? (
       <View
@@ -959,6 +982,7 @@ class Item extends Component {
 
             {item != null && (
               <View style={styles.item_content_box}>
+                {this.renderBtnProductStamps()}
                 {this.renderNoticeMessage(item)}
                 {this.renderDetailInfo(item)}
                 {storeName && (
@@ -1411,6 +1435,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 15,
     fontWeight: '500',
+  },
+
+  btnProductStampsContainer: {
+    backgroundColor: '#fafafa',
+  },
+  btnProductStampsContentContainer: {
+    paddingVertical: 5,
+    backgroundColor: 'transparent',
+  },
+  btnProductStampsTitle: {
+    color: appConfig.colors.primary,
+    ...(appConfig.device.isAndroid && {fontWeight: '700'}),
   },
 });
 
