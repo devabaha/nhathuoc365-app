@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - QRFrame for QRBarCode (not correctly, just for making color, because of rectOfInteract).
 - Btn to go to Product Stamps if product scanned.
+- QRScan for package options key.
+- SubActionButton for QRScan in primary actions.
 
 ### Fixed
 - Input props auto focus not work in modal input.

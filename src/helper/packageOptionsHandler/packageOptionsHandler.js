@@ -8,6 +8,7 @@ export const isActivePackageOptionConfig = (...types) => {
   let isActive = store.isHomeLoaded;
   types.forEach(type => {
     const optionKey = getOptionType(type);
+    console.log(store.packageOptions)
     if (store.packageOptions && optionKey) {
       isActive =
         types.length > 1

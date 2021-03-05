@@ -1,5 +1,6 @@
 export const PACKAGE_OPTIONS_TYPE = {
   TOP_UP: 'package_option_topup',
+  QR_SCAN: 'package_option_qrscan',
 
   CHAIN_STORE: 'package_option_chainStore',
   VOUCHERS: 'package_option_vouchers',
