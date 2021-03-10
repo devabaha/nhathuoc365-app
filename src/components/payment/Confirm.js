@@ -2383,7 +2383,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     color: '#333',
     letterSpacing: 0.2,
-    marginTop: 5,
+    marginTop: 10,
     fontSize: 13,
     fontWeight: '400',
   }

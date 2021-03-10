@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ComboLocation module.
 - ComboLocation view in Address, Confirm.
 - Gamification type.
+- API user_device to upload app versions info.
 
 ### Changed
 - Banner image ratio in NotifyItem.

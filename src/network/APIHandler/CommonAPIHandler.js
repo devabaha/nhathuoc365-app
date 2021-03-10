@@ -990,6 +990,18 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.USER_LOCATION);
     return this.postCancelableAPI(api, data);
   }
+
+  /**
+   * upload app version info.
+   *
+   * @param object data
+   * @param string data.code_push_version
+   * @param string data.tag_version
+   */
+  async user_device(data) {
+    const api = url_for(API.USER_DEVICE);
+    return await this.postAPI(api, data);
+  }
 }
 
 export default CommonAPIHandler;
