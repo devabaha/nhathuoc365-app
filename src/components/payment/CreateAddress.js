@@ -214,9 +214,7 @@ class CreateAddress extends Component {
           ref: (ref) => (this.refs_map_address = ref),
           maxLength: 250,
         },
-        isHidden:
-          inputAddressConfig === undefined ||
-          inputAddressConfig === INPUT_ADDRESS_TYPE.ONLY_COMBO_ADDRESS,
+        isHidden: inputAddressConfig === INPUT_ADDRESS_TYPE.ONLY_COMBO_ADDRESS,
       },
       {
         title: t('formData.address.label'),

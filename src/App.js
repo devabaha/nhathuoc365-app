@@ -160,6 +160,7 @@ import {LotteryGame} from './containers/Gamification';
 import ModalConfirm from './components/ModalConfirm';
 import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
+import APIHandler from './network/APIHandler';
 
 /**
  * Not allow font scaling
@@ -447,9 +448,18 @@ class App extends Component {
     );
   }
 
+  async updateAppVersionsInfo(codePushVersion) {
+    const data = {
+      code_push_version: codePushVersion,
+      tag_version: appConfig.tagVersion,
+    };
+    const response = await APIHandler.user_device(data);
+  }
+
   codePushGetMetaData() {
     codePush.getUpdateMetadata().then((localPackage) => {
       store.setCodePushMetaData(localPackage);
+      this.updateAppVersionsInfo(localPackage?.label);
     });
   }
 
@@ -1719,7 +1729,10 @@ class RootRouter extends Component {
               <Stack key={appConfig.routes.modalInput} component={ModalInput} />
 
               {/* ================ MODAL CONFIRM ================ */}
-              <Stack key={appConfig.routes.modalConfirm} component={ModalConfirm} />
+              <Stack
+                key={appConfig.routes.modalConfirm}
+                component={ModalConfirm}
+              />
 
               {/* ================ COUNTRY PICKER ================ */}
               <Stack

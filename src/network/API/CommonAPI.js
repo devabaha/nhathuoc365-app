@@ -271,6 +271,9 @@ class CommonAPI {
   }
 
   // Users
+  get USER_DEVICE() {
+    return BaseAPI.apiDomain + 'apiUser/device';
+  }
   get USER_REGISTER() {
     return BaseAPI.apiDomain + 'apiUser/register';
   }
