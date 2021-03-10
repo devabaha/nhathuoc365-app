@@ -109,7 +109,7 @@ class CreateAddress extends Component {
   get metadata() {
     const {t} = this.props;
     const inputAddressConfig =
-      Number(store.store_data[CONFIG_KEY.INPUT_ADDRESS_CONFIG_KEY]);
+      Number(store.store_data[CONFIG_KEY.INPUT_ADDRESS_CONFIG_KEY]) || undefined;
 
     return [
       {
