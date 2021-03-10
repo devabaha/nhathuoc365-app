@@ -250,7 +250,7 @@ class CTAProduct {
           var response = await APIHandler.site_like(
             store.store_id,
             item.id,
-            this.context.state.like_flag == 1 ? 0 : 1,
+            this.context.state.item_data.like_flag == 1 ? 0 : 1,
           );
 
           if (response && response.status == STATUS_SUCCESS) {

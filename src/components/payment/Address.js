@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
@@ -6,10 +6,10 @@ import {
   StyleSheet,
   FlatList,
   ScrollView,
-  Alert
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions, ActionConst } from 'react-native-router-flux';
+import {Actions, ActionConst} from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
@@ -24,7 +24,7 @@ class Address extends Component {
       item_selected: null,
       loading: true,
       continue_loading: false,
-      single: !props.from_page
+      single: !props.from_page,
     };
 
     this._getData = this._getData.bind(this);
@@ -34,7 +34,7 @@ class Address extends Component {
 
   componentDidMount() {
     Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this)
+      renderRightButton: this._renderRightButton.bind(this),
     });
     // this.props.i18n.changeLanguage('en')
     this._getData();
@@ -52,8 +52,7 @@ class Address extends Component {
       <TouchableHighlight
         style={styles.right_btn_add_store}
         underlayColor="transparent"
-        onPress={this._createNew.bind(this)}
-      >
+        onPress={this._createNew.bind(this)}>
         <Icon name="plus" size={20} color="#ffffff" />
       </TouchableHighlight>
     );
@@ -68,15 +67,15 @@ class Address extends Component {
         if (response.data) {
           setTimeout(() => {
             this.setState({
-              data: [...response.data, { id: 0, type: 'address_add' }],
+              data: [...response.data, {id: 0, type: 'address_add'}],
               loading: false,
-              item_selected: null
+              item_selected: null,
             });
           }, delay || 0);
         } else {
           this.setState({
             data: null,
-            loading: false
+            loading: false,
           });
         }
       }
@@ -87,7 +86,7 @@ class Address extends Component {
 
   _goConfirmPage() {
     if (this.state.item_selected == null) {
-      const { t } = this.props;
+      const {t} = this.props;
 
       return Alert.alert(
         t('confirmNotification.title'),
@@ -95,10 +94,10 @@ class Address extends Component {
         [
           {
             text: t('confirmNotification.accept'),
-            onPress: this._createNew.bind(this)
-          }
+            onPress: this._createNew.bind(this),
+          },
         ],
-        { cancelable: false }
+        {cancelable: false},
       );
     }
 
@@ -108,14 +107,14 @@ class Address extends Component {
   _addSiteCart() {
     this.setState(
       {
-        continue_loading: true
+        continue_loading: true,
       },
       async () => {
-        const { t } = this.props;
+        const {t} = this.props;
         try {
           const response = await APIHandler.site_cart_change_address(
             store.store_id,
-            this.state.item_selected
+            this.state.item_selected,
           );
 
           if (!this.unmounted) {
@@ -124,14 +123,14 @@ class Address extends Component {
 
               flashShowMessage({
                 type: 'success',
-                message: response.message
+                message: response.message,
               });
 
               this._goConfirm();
             } else {
               flashShowMessage({
                 type: 'danger',
-                message: response.message || t('common:api.error.message')
+                message: response.message || t('common:api.error.message'),
               });
             }
           }
@@ -139,15 +138,15 @@ class Address extends Component {
           console.log(e + ' site_cart_change_address');
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         } finally {
           !this.unmounted &&
             this.setState({
-              continue_loading: false
+              continue_loading: false,
             });
         }
-      }
+      },
     );
   }
 
@@ -159,20 +158,20 @@ class Address extends Component {
   // chọn địa chỉ cho đơn hàng
   _addressSelectHanlder(item) {
     this.setState({
-      item_selected: item.id
+      item_selected: item.id,
     });
   }
 
   _createNew() {
     Actions.create_address({
       addressReload: this._getData,
-      from_page: this.props.from_page
+      from_page: this.props.from_page,
     });
   }
 
   render() {
-    const { single } = this.state;
-    const { t } = this.props;
+    const {single} = this.state;
+    const {t} = this.props;
 
     return (
       <View style={styles.container}>
@@ -183,13 +182,12 @@ class Address extends Component {
                 <View
                   style={[
                     styles.payments_nav_icon_box,
-                    styles.payments_nav_icon_box_active
-                  ]}
-                >
+                    styles.payments_nav_icon_box_active,
+                  ]}>
                   <Icon
                     style={[
                       styles.payments_nav_icon,
-                      styles.payments_nav_icon_active
+                      styles.payments_nav_icon_active,
                     ]}
                     name="map-marker"
                     size={20}
@@ -199,9 +197,8 @@ class Address extends Component {
                 <Text
                   style={[
                     styles.payments_nav_items_title,
-                    styles.payments_nav_items_title_active
-                  ]}
-                >
+                    styles.payments_nav_items_title_active,
+                  ]}>
                   {t('address.title')}
                 </Text>
 
@@ -217,8 +214,7 @@ class Address extends Component {
                   this._goConfirm();
                 }
               }}
-              underlayColor="transparent"
-            >
+              underlayColor="transparent">
               <View style={styles.payments_nav_items}>
                 <View style={[styles.payments_nav_icon_box]}>
                   <Icon
@@ -242,10 +238,9 @@ class Address extends Component {
           style={[
             styles.content,
             {
-              marginBottom: single ? 60 : 0
-            }
-          ]}
-        >
+              marginBottom: single ? 60 : 0,
+            },
+          ]}>
           {!single && (
             <View
               style={{
@@ -253,9 +248,8 @@ class Address extends Component {
                 paddingHorizontal: 15,
                 paddingVertical: 8,
                 borderTopWidth: Util.pixel,
-                borderColor: '#dddddd'
-              }}
-            >
+                borderColor: '#dddddd',
+              }}>
               <Text style={styles.add_store_title}>{t('address.receive')}</Text>
             </View>
           )}
@@ -263,27 +257,25 @@ class Address extends Component {
             style={[
               styles.address_list_box,
               {
-                marginTop: single ? 8 : 0
-              }
-            ]}
-          >
+                marginTop: single ? 8 : 0,
+              },
+            ]}>
             {this.state.data != null ? (
               <FlatList
                 ref="address_list"
                 data={this.state.data}
                 extraData={this.state}
-                keyExtractor={item => `${item.id}`}
+                keyExtractor={(item) => `${item.id}`}
                 ItemSeparatorComponent={() => (
                   <View style={styles.separator}></View>
                 )}
-                renderItem={({ item, index }) => {
+                renderItem={({item, index}) => {
                   if (item.type == 'address_add') {
                     return (
                       <TouchableHighlight
                         underlayColor="transparent"
                         onPress={this._createNew.bind(this)}
-                        style={styles.address_add_box}
-                      >
+                        style={styles.address_add_box}>
                         <View style={styles.address_add_content}>
                           <Text style={styles.address_add_title}>
                             {t('address.new')}
@@ -315,18 +307,21 @@ class Address extends Component {
                     is_selected = true;
                   }
 
+                  const comboAddress =
+                    (item.province_name || '') +
+                    (item.district_name ? ' • ' + item.district_name : '') +
+                    (item.ward_name ? ' • ' + item.ward_name : '');
+
                   return (
                     <TouchableHighlight
                       underlayColor="transparent"
                       onPress={this._addressSelectHanlder.bind(this, item)}
-                      style={{ backgroundColor: '#fff' }}
-                    >
+                      style={{backgroundColor: '#fff'}}>
                       <View
                         style={[
                           styles.address_box,
-                          !is_selected && single && styles.uncheckOverlay
-                        ]}
-                      >
+                          !is_selected && single && styles.uncheckOverlay,
+                        ]}>
                         <View style={styles.address_name_box}>
                           <Text style={styles.address_name}>
                             {item.name}{' '}
@@ -344,10 +339,9 @@ class Address extends Component {
                                 edit_data: item,
                                 title: t('common:screen.address.editTitle'),
                                 addressReload: this._getData,
-                                from_page: this.props.from_page
+                                from_page: this.props.from_page,
                               });
-                            }}
-                          >
+                            }}>
                             <View style={styles.address_edit_box}>
                               <Icon
                                 name="pencil-square-o"
@@ -437,6 +431,12 @@ class Address extends Component {
                             </TouchableHighlight>
                           )
                         } */}
+                        {!!comboAddress && (
+                          <Text
+                            style={styles.comboAddress}>
+                            {comboAddress}
+                          </Text>
+                        )}
                       </View>
                     </TouchableHighlight>
                   );
@@ -447,9 +447,8 @@ class Address extends Component {
                 {this.state.loading && (
                   <View
                     style={{
-                      paddingVertical: 16
-                    }}
-                  >
+                      paddingVertical: 16,
+                    }}>
                     <Indicator size="small" />
                   </View>
                 )}
@@ -461,10 +460,9 @@ class Address extends Component {
                     styles.address_add_box,
                     {
                       marginTop: 0,
-                      borderTopWidth: 0
-                    }
-                  ]}
-                >
+                      borderTopWidth: 0,
+                    },
+                  ]}>
                   <View style={styles.address_add_content}>
                     <Text style={styles.address_add_title}>
                       {t('address.new')}
@@ -483,8 +481,7 @@ class Address extends Component {
           <TouchableHighlight
             underlayColor="transparent"
             onPress={this._goConfirmPage.bind(this)}
-            style={styles.address_continue}
-          >
+            style={styles.address_continue}>
             <View style={styles.address_continue_content}>
               <Text style={styles.address_continue_title}>
                 {t('nextBtnMessage')}
@@ -494,9 +491,8 @@ class Address extends Component {
                   minWidth: 20,
                   height: '100%',
                   justifyContent: 'center',
-                  alignItems: 'center'
-                }}
-              >
+                  alignItems: 'center',
+                }}>
                 {this.state.continue_loading ? (
                   <Indicator size="small" color="#fff" />
                 ) : (
@@ -516,42 +512,42 @@ const styles = StyleSheet.create({
     color: '#404040',
     fontSize: 14,
     fontWeight: '500',
-    lineHeight: 20
+    lineHeight: 20,
   },
 
   container: {
     flex: 1,
 
-    marginBottom: 0
+    marginBottom: 0,
   },
   content: {
-    marginBottom: 60
+    marginBottom: 60,
   },
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: '#dddddd'
+    backgroundColor: '#dddddd',
   },
   address_list_box: {
     marginTop: 8,
     borderTopWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   address_box: {
     paddingVertical: 15,
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
-    minHeight: 120
+    minHeight: 120,
   },
   address_name_box: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   address_name: {
     fontSize: 16,
     color: '#3c3c3c',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   address_default_box: {
     alignItems: 'flex-end',
@@ -559,65 +555,65 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
-    zIndex: 2
+    zIndex: 2,
   },
   address_default_title: {
     color: '#999999',
-    fontSize: 12
+    fontSize: 12,
   },
   address_content: {
-    marginTop: 8
+    marginTop: 8,
     // width: Util.size.width - 140
   },
   address_content_phone: {
     color: '#333',
-    fontSize: 14
+    fontSize: 14,
   },
   address_content_address_detail: {
     color: '#333',
     fontSize: 14,
-    marginTop: 6
+    marginTop: 6,
   },
   address_content_map_address: {
     color: '#666',
     fontSize: 12,
-    marginTop: 4
+    marginTop: 4,
   },
   address_content_phuong: {
     color: '#404040',
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
   },
   address_content_city: {
     color: '#404040',
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
   },
   address_content_tinh: {
     color: '#404040',
     fontSize: 14,
-    marginTop: 4
+    marginTop: 4,
   },
   address_selected_box: {
     // position: 'absolute',
     // width: 100,
     // height: 60,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
     // top: 20,
     // right: 10
   },
   address_label: {
     fontSize: 10,
     color: '#666666',
-    marginTop: 4
+    marginTop: 4,
   },
 
   address_add_box: {
     marginTop: 8,
     backgroundColor: '#ffffff',
     borderTopWidth: Util.pixel,
-    borderTopColor: '#dddddd'
+    borderTopColor: '#dddddd',
   },
   address_add_content: {
     width: '100%',
@@ -626,11 +622,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd'
+    borderBottomColor: '#dddddd',
   },
   address_add_title: {
     color: '#242424',
-    fontSize: 14
+    fontSize: 14,
   },
   address_add_icon_box: {
     width: 60,
@@ -640,7 +636,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 0,
     top: 0,
-    bottom: 0
+    bottom: 0,
   },
 
   address_continue: {
@@ -649,7 +645,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     width: '100%',
-    height: 60
+    height: 60,
   },
   address_continue_content: {
     width: '100%',
@@ -657,12 +653,12 @@ const styles = StyleSheet.create({
     backgroundColor: DEFAULT_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   address_continue_title: {
     color: '#ffffff',
     fontSize: 18,
-    marginRight: 8
+    marginRight: 8,
   },
 
   address_edit_btn: {
@@ -672,23 +668,23 @@ const styles = StyleSheet.create({
     // paddingVertical: 8,
     // paddingHorizontal: 15
     fontSize: 22,
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   address_edit_box: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
-    paddingLeft: 15
+    paddingLeft: 15,
   },
   address_edit_label: {
     fontSize: 12,
     color: '#999999',
-    marginLeft: 4
+    marginLeft: 4,
   },
 
   uncheckOverlay: {
-    backgroundColor: hexToRgbA('#000', 0.03)
+    backgroundColor: hexToRgbA('#000', 0.03),
     // backgroundColor: 'rgba(0,0,0,.03)',
     // position: 'absolute',
     // top: 0,
@@ -702,22 +698,22 @@ const styles = StyleSheet.create({
     height: 60,
     flexDirection: 'row',
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd'
+    borderColor: '#dddddd',
   },
   payments_nav_items: {
     justifyContent: 'center',
     height: 60,
     width: Util.size.width / 2,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   payments_nav_items_title: {
     paddingHorizontal: 10,
     fontSize: 12,
     fontWeight: '500',
-    color: '#666666'
+    color: '#666666',
   },
   payments_nav_items_title_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   payments_nav_items_active: {
     position: 'absolute',
@@ -725,7 +721,7 @@ const styles = StyleSheet.create({
     top: 20,
     right: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   payments_nav_items_right_active: {
     position: 'absolute',
@@ -733,15 +729,15 @@ const styles = StyleSheet.create({
     top: 20,
     left: 0,
     height: Util.pixel,
-    backgroundColor: DEFAULT_COLOR
+    backgroundColor: DEFAULT_COLOR,
   },
   borderBottom: {
     borderBottomWidth: Util.pixel,
-    borderBottomColor: '#dddddd'
+    borderBottomColor: '#dddddd',
   },
   right_btn_add_store: {
     paddingVertical: 1,
-    paddingHorizontal: 8
+    paddingHorizontal: 8,
   },
 
   payments_nav_icon_box: {
@@ -752,13 +748,25 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 4,
   },
   payments_nav_icon_active: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   payments_nav_icon_box_active: {
-    borderColor: DEFAULT_COLOR
+    borderColor: DEFAULT_COLOR,
+  },
+
+  comboAddress: {
+    marginHorizontal: -15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: '#f0f0f0',
+    color: '#333',
+    letterSpacing: 0.2,
+    marginTop: 5,
+    fontSize: 13,
+    fontWeight: '400',
   }
 });
 

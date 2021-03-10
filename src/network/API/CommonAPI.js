@@ -334,6 +334,9 @@ class CommonAPI {
   get USER_GET_PRODUCT_STAMPS() {
     return BaseAPI.apiDomain + 'apiUser/product_stamps';
   }
+  get USER_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/location';
+  }
 
   // Service
   get SERVICE_INFO() {

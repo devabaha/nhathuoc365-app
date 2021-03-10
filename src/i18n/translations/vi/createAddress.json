@@ -16,6 +16,21 @@
       "label": "Số điện thoại",
       "placeholder": "Điền số điện thoại"
     },
+    "province": {
+      "label": "Tỉnh/ thành phố",
+      "description": "",
+      "placeholder": "Chọn tỉnh/ thành phố"
+    },
+    "district": {
+      "label": "Quận/ huyện",
+      "description": "",
+      "placeholder": "Chọn quận/ huyện"
+    },
+    "wards": {
+      "label": "Phường/ xã",
+      "description": "",
+      "placeholder": "Chọn phường/ xã"
+    },
     "map_address": {
       "label": "Địa chỉ bản đồ",
       "description": "",

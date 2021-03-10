@@ -191,6 +191,7 @@ class Config {
       modalPopup: 'modalPopup',
       modalInput: 'modalInput',
       modalConfirm: 'modalConfirm',
+      modalComboLocation: 'modalComboLocation',
 
       //  Reset password
       resetPassword: 'resetPassword',

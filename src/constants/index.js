@@ -1,5 +1,6 @@
 import {ANALYTICS_EVENTS_NAME, formatViewEvents} from './analytics';
 import {PRODUCT_TYPES} from './product';
+import appConfig from 'app-config';
 
 const LOGIN_MODE = {
   FIREBASE: 'firebase',
@@ -13,3 +14,6 @@ const LOGIN_STEP = {
 };
 
 export {ANALYTICS_EVENTS_NAME, formatViewEvents, LOGIN_MODE, LOGIN_STEP, PRODUCT_TYPES};
+
+// Use with Ionicons.
+export const BACK_NAV_ICON_NAME = appConfig.device.isIOS ? 'ios-chevron-back' : 'md-arrow-back';

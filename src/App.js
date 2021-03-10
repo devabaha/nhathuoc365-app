@@ -154,6 +154,7 @@ import ModalInput from './components/ModalInput';
 import {LotteryGame} from './containers/Gamification';
 import ModalConfirm from './components/ModalConfirm';
 import ProductStamps from './containers/ProductStamps';
+import ModalComboLocation from './components/ModalComboLocation';
 
 /**
  * Not allow font scaling
@@ -1684,6 +1685,12 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.countryPicker}
                 component={CountryPicker}
+              />
+
+              {/* ================ MODAL COMBO LOCATION ================ */}
+              <Stack
+                key={appConfig.routes.modalComboLocation}
+                component={ModalComboLocation}
               />
             </Lightbox>
 

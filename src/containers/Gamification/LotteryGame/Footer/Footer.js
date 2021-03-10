@@ -16,6 +16,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Shimmer from 'react-native-shimmer';
 
 import {MAIN_COLOR, SUB_COLOR} from '../constants';
+import {GAME_TYPE} from '../../constants';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const {concat, Extrapolate} = Animated;

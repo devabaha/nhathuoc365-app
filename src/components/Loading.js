@@ -10,7 +10,7 @@ import appConfig from 'app-config';
 
 export default class Loading extends Component {
   static defaultProps = {
-    color: appConfig.device.isAndroid ? PlatformColor('?attr/colorAccent') : '',
+    color: appConfig.device.isAndroid ? PlatformColor('?attr/colorAccent') : undefined,
   };
   
   render() {

@@ -913,6 +913,11 @@ class Confirm extends Component {
     const is_paymenting = cart_data.status == CART_STATUS_ORDERING;
     const cartType = cart_data.cart_type_name;
 
+    const comboAddress =
+      (address_data.province_name || '') +
+      (address_data.district_name ? ' • ' + address_data.district_name : '') +
+      (address_data.ward_name ? ' • ' + address_data.ward_name : '');
+
     return (
       <>
         {single && (
@@ -1150,6 +1155,10 @@ class Confirm extends Component {
                   <Text style={styles.address_content_address_detail}>
                     {address_data.address}
                   </Text>
+                )}
+
+                {!!comboAddress && (
+                  <Text style={styles.comboAddress}>{comboAddress}</Text>
                 )}
               </View>
             </View>
@@ -2364,8 +2373,19 @@ const styles = StyleSheet.create({
     color: '#999999',
   },
   cartTypeContainer: {
-    paddingHorizontal: 15, 
-    marginTop: 7
+    paddingHorizontal: 15,
+    marginTop: 7,
+  },
+  comboAddress: {
+    marginHorizontal: -15,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: '#f0f0f0',
+    color: '#333',
+    letterSpacing: 0.2,
+    marginTop: 5,
+    fontSize: 13,
+    fontWeight: '400',
   }
 });
 

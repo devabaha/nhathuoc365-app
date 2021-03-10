@@ -8,3 +8,9 @@ export const isConfigActive = (key) => {
     }
     return false;
 }
+
+export const INPUT_ADDRESS_TYPE = {
+    ONLY_MAP_ADDRESS: 0,
+    ONLY_COMBO_ADDRESS :1,
+    ALL_ADDRESS: 2
+}

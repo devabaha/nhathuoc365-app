@@ -37,16 +37,26 @@ const MIN_LUMINOUS = 0.5;
 const isAndroid = Platform.OS === 'android';
 const isIos = Platform.OS === 'ios';
 
-const CONTAINER_QR_WIDTH = Dimensions.get('screen').width;
-const CONTAINER_QR_HEIGHT =
-  Dimensions.get('screen').height;
-const SCAN_AREA_TOP_PERCENT = 0.22;
-const SCAN_AREA_TOP = appConfig.device.height * SCAN_AREA_TOP_PERCENT;
-const SCAN_AREA_LEFT = appConfig.device.width * 0.2;
-const SCAN_AREA_WIDTH = appConfig.device.width * 0.6;
-const SCAN_AREA_HEIGHT = appConfig.device.width * 0.6;
-const SCAN_AREA_LEFT_PERCENT = 
-  SCAN_AREA_LEFT / CONTAINER_QR_WIDTH;
+const DEFAULT_CAMERA_RATIO = 4 / 3;
+const CONTAINER_QR_WIDTH = Dimensions.get('window').width;
+const CONTAINER_QR_HEIGHT = Dimensions.get('window').height;
+const DEFAULT_CAMERA_WIDTH = CONTAINER_QR_HEIGHT / DEFAULT_CAMERA_RATIO;
+
+const BOTTOM_HEIGHT =
+  CONTAINER_QR_HEIGHT * 0.1 > 100 ? 100 : CONTAINER_QR_HEIGHT * 0.1;
+
+const SCAN_AREA_WIDTH = CONTAINER_QR_WIDTH * 0.6;
+const SCAN_AREA_HEIGHT = CONTAINER_QR_WIDTH * 0.6;
+
+const SCAN_AREA_TOP_PERCENT =
+  (CONTAINER_QR_HEIGHT - SCAN_AREA_HEIGHT - BOTTOM_HEIGHT * 2) /
+  CONTAINER_QR_HEIGHT /
+  2;
+const SCAN_AREA_TOP = CONTAINER_QR_HEIGHT * SCAN_AREA_TOP_PERCENT;
+const SCAN_AREA_LEFT = CONTAINER_QR_WIDTH * 0.2;
+const SCAN_AREA_LEFT_PERCENT =
+  ((DEFAULT_CAMERA_WIDTH - CONTAINER_QR_WIDTH) / 2 + SCAN_AREA_LEFT) /
+  DEFAULT_CAMERA_WIDTH;
 
 const QR_SCAN_AREA = {
   x: SCAN_AREA_TOP_PERCENT,
@@ -715,19 +725,26 @@ class QRBarCode extends Component {
     const {t} = this.props;
     return (
       <QRCodeScanner
+        cameraStyle={{
+          height: CONTAINER_QR_HEIGHT,
+          width: CONTAINER_QR_WIDTH,
+        }}
         reactivate
         reactivateTimeout={2000}
         fadeIn={false}
         cameraProps={{
+          ratio: '4:3',
           rectOfInterest: QR_SCAN_AREA,
           cameraViewDimensions: {
             height: CONTAINER_QR_HEIGHT,
-            width: CONTAINER_QR_WIDTH,
+            width: DEFAULT_CAMERA_WIDTH,
           },
         }}
         customMarker={
           <View style={styles.qrMarkerContainer}>
             <QRBackground
+              containerWidth={CONTAINER_QR_WIDTH}
+              containerHeight={CONTAINER_QR_HEIGHT}
               scanAreaHeight={SCAN_AREA_HEIGHT}
               scanAreaWidth={SCAN_AREA_WIDTH}
               scanAreaLeft={SCAN_AREA_LEFT}
@@ -782,7 +799,7 @@ class QRBarCode extends Component {
     const {barcode} = this.state;
     const {t} = this.props;
     return (
-      <ScrollView style={{flex: 1}}>
+      <ScrollView contentContainerStyle={styles.myQRCodeContainer}>
         <Text style={styles.headerText}>{' ' + t('POSGuideMessage')}</Text>
         <View style={{marginLeft: 30, marginRight: 30}}>
           <Barcode
@@ -815,7 +832,7 @@ class QRBarCode extends Component {
   renderOnlyQRCode() {
     const {barcode, content} = this.state;
     return (
-      <ScrollView style={{flex: 1}}>
+      <ScrollView contentContainerStyle={styles.myQRCodeContainer}>
         <Text style={styles.addressText}>{barcode}</Text>
         <View style={styles.addressQrCodeView}>
           <QRCode
@@ -916,9 +933,14 @@ const styles = StyleSheet.create({
   contentView: {
     height: Util.size.height - 49 - global.NAV_HEIGHT,
   },
+  myQRCodeContainer: {
+    paddingBottom: 100,
+    flexGrow: 1,
+  },
   bottomView: {
     backgroundColor: '#fff',
     position: 'absolute',
+    height: BOTTOM_HEIGHT,
     bottom: 0,
     left: 0,
     right: 0,
