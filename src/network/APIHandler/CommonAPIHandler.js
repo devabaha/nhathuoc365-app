@@ -1001,8 +1001,10 @@ class CommonAPIHandler extends BaseHandler {
    *
    * @returns {LotteryInfo}
    */
-  lottery_index(site_id) {
-    const api = url_for(API.LOTTERY_INDEX + '/' + site_id);
+  lottery_index(site_id, lottery_id) {
+    const api = url_for(
+      API.LOTTERY_INDEX + '/' + site_id + '/' + (lottery_id || ''),
+    );
     return this.getCancelableAPI(api);
   }
 
@@ -1035,6 +1037,18 @@ class CommonAPIHandler extends BaseHandler {
   user_get_product_stamps() {
     const api = url_for(API.USER_GET_PRODUCT_STAMPS);
     return this.getCancelableAPI(api);
+  }
+
+  /**
+   * get location data.
+   *
+   * @param object data
+   * @param string data.type
+   * @param string data.parent parentID of selected location (ex: cityID of selected district)
+   */
+  user_location(data) {
+    const api = url_for(API.USER_LOCATION);
+    return this.postCancelableAPI(api, data);
   }
 }
 

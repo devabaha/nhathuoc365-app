@@ -16,10 +16,25 @@
       "label": "Phone",
       "placeholder": "Enter phone number"
     },
+    "province": {
+      "label": "Province",
+      "description": "",
+      "placeholder": "Select your province"
+    },
+    "district": {
+      "label": "District",
+      "description": "",
+      "placeholder": "Select your district"
+    },
+    "wards": {
+      "label": "Wards",
+      "description": "",
+      "placeholder": "Select your wards"
+    },
     "map_address": {
       "label": "Map address",
       "description": "",
-      "placeholder": "Choose your address"
+      "placeholder": "Select your address"
     },
     "address": {
       "label": "Detail address",

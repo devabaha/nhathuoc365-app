@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   SafeAreaView,
@@ -8,11 +8,11 @@ import {
   TouchableWithoutFeedback,
   Animated,
   Easing,
-  Keyboard
+  Keyboard,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import Modal from 'react-native-modalbox';
-import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Row from './Row';
 import appConfig from 'app-config';
@@ -23,18 +23,18 @@ const API_KEYS = 'AIzaSyBZfS1WyeCgdWk9D6RVMT65RXl5ZOptJAQ';
 class PlacesAutoComplete extends Component {
   static propTypes = {
     minLengthToSearch: PropTypes.number,
-    onPressItem: PropTypes.func
+    onPressItem: PropTypes.func,
   };
 
   static defaultProps = {
     minLengthToSearch: 2,
-    onPressItem: () => {}
+    onPressItem: () => {},
   };
 
   state = {
     animatedClear: new Animated.Value(0),
     showResult: false,
-    textSearch: ''
+    textSearch: '',
   };
   refAutoComplete = React.createRef();
   ref_modal = React.createRef();
@@ -44,7 +44,7 @@ class PlacesAutoComplete extends Component {
     if (nextState.showResult !== this.state.showResult) {
       Animated.spring(this.state.animatedClear, {
         toValue: nextState.showResult ? 1 : 0,
-        useNativeDriver: true
+        useNativeDriver: true,
       }).start();
     }
     if (nextProps !== this.props) {
@@ -59,6 +59,11 @@ class PlacesAutoComplete extends Component {
   }
 
   componentDidMount() {
+    setTimeout(() => {
+      if (this.refAutoComplete.current.refs.textInput) {
+        this.refAutoComplete.current.refs.textInput.focus();
+      }
+    });
     this.eventTracker.logCurrentView();
   }
 
@@ -67,7 +72,7 @@ class PlacesAutoComplete extends Component {
   }
 
   handleChangeText(textSearch) {
-    const state = { textSearch };
+    const state = {textSearch};
     if (textSearch.length >= this.props.minLengthToSearch) {
       state.showResult = true;
     }
@@ -107,12 +112,12 @@ class PlacesAutoComplete extends Component {
     let detail_address = {
       description: '',
       district: '',
-      city: ''
+      city: '',
     };
     let map_address = {
       description: '',
       lat: '',
-      lng: ''
+      lng: '',
     };
 
     if (data.description) {
@@ -120,13 +125,13 @@ class PlacesAutoComplete extends Component {
       detail_address.description = data.structured_formatting.main_text || '';
       detail_map_address = data.structured_formatting.secondary_text || '';
 
-      details.address_components.some(add =>
-        add.types.some(type => {
+      details.address_components.some((add) =>
+        add.types.some((type) => {
           if (type === 'country') {
             country = add.long_name;
             return true;
           }
-        })
+        }),
       );
 
       if (country) {
@@ -149,8 +154,8 @@ class PlacesAutoComplete extends Component {
     }
 
     if (details.address_components) {
-      details.address_components.forEach(addComp => {
-        addComp.types.forEach(type => {
+      details.address_components.forEach((addComp) => {
+        addComp.types.forEach((type) => {
           if (type === 'administrative_area_level_1') {
             detail_address.city = addComp.long_name;
           }
@@ -161,7 +166,7 @@ class PlacesAutoComplete extends Component {
       });
     }
 
-    return { detail_address, map_address };
+    return {detail_address, map_address};
   }
 
   onPressOutSide() {
@@ -174,11 +179,11 @@ class PlacesAutoComplete extends Component {
         {
           translateX: this.state.animatedClear.interpolate({
             inputRange: [0, 1],
-            outputRange: [200, 0]
-          })
-        }
+            outputRange: [200, 0],
+          }),
+        },
       ],
-      opacity: this.state.animatedClear
+      opacity: this.state.animatedClear,
     };
 
     return (
@@ -228,7 +233,7 @@ class PlacesAutoComplete extends Component {
   // }
 
   render() {
-    const { t, i18n, minLengthToSearch } = this.props;
+    const {t, i18n, minLengthToSearch} = this.props;
     return (
       <Modal
         entry="bottom"
@@ -241,15 +246,13 @@ class PlacesAutoComplete extends Component {
         swipeToClose={false}
         onClosed={this.props.onCloseModal}
         useNativeDriver
-        easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}
-      >
+        easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
         <TouchableWithoutFeedback onPress={this.onPressOutSide.bind(this)}>
           <SafeAreaView style={styles.container}>
             <View style={styles.headerContainer}>
               <TouchableOpacity
                 onPress={this.onClose}
-                style={styles.iconContainer}
-              >
+                style={styles.iconContainer}>
                 <Icon name="close" style={styles.icon} />
               </TouchableOpacity>
               <Text style={styles.heading}>
@@ -265,7 +268,7 @@ class PlacesAutoComplete extends Component {
               keyboardAppearance={'light'} // Can be left out for default keyboardAppearance https://facebook.github.io/react-native/docs/textinput.html#keyboardappearance
               listViewDisplayed={this.state.showResult} // true/false/undefined
               fetchDetails={true}
-              renderRow={row => this.renderRow(row)}
+              renderRow={(row) => this.renderRow(row)}
               // renderDescription={row => this.renderDescription(row)} // custom description render
               onPress={(data, details = null) => {
                 // 'details' is provided when fetchDetails = true
@@ -277,7 +280,7 @@ class PlacesAutoComplete extends Component {
                 // available options: https://developers.google.com/places/web-service/autocomplete
                 key: API_KEYS,
                 region: 'vn',
-                language: i18n.language // language of the results
+                language: i18n.language, // language of the results
                 // types: 'address' // default: 'geocode'
               }}
               // ListFooterComponent={() => this.renderFooter()}
@@ -289,14 +292,14 @@ class PlacesAutoComplete extends Component {
                 description: styles.rowContent,
                 separator: styles.separator,
                 predefinedPlacesDescription: styles.rowContentPredefined,
-                listView: styles.listView
+                listView: styles.listView,
               }}
               enablePoweredByContainer={false}
               placeholderTextColor={appConfig.colors.placeholder}
               textInputProps={{
                 clearButtonMode: 'never',
                 onChangeText: this.handleChangeText.bind(this),
-                onBlur: () => {}
+                onBlur: () => {},
               }}
               renderRightButton={this.renderClearButton.bind(this)}
               currentLocation={false} // Will add a 'Current location' button at the top of the predefined places list
@@ -317,11 +320,11 @@ class PlacesAutoComplete extends Component {
               }
               GooglePlacesDetailsQuery={{
                 // available options for GooglePlacesDetails API : https://developers.google.com/places/web-service/details
-                fields: 'formatted_address,geometry,address_component,name'
+                fields: 'formatted_address,geometry,address_component,name',
               }}
               filterReverseGeocodingByTypes={[
                 'locality',
-                'administrative_area_level_3'
+                'administrative_area_level_3',
               ]} // filter the reverse geocoding results by types - ['locality', 'administrative_area_level_3'] if you want to display only cities
               // predefinedPlaces={[workPlace]}
 
@@ -342,10 +345,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     overflow: 'hidden',
-    height: '70%'
+    height: '70%',
   },
   container: {
-    flex: 1
+    flex: 1,
   },
   headerContainer: {
     padding: 15,
@@ -353,7 +356,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderColor: '#eee',
     alignItems: 'center',
-    zIndex: 1
+    zIndex: 1,
   },
   iconContainer: {
     position: 'absolute',
@@ -362,17 +365,17 @@ const styles = StyleSheet.create({
     height: 30,
     left: 15,
     top: 15,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   icon: {
     fontSize: 22,
-    color: '#666'
+    color: '#666',
   },
   heading: {
     fontSize: 20,
     textAlign: 'center',
     color: '#333',
-    fontWeight: '500'
+    fontWeight: '500',
   },
   footerContainer: {
     backgroundColor: '#f9f9f9',
@@ -380,14 +383,14 @@ const styles = StyleSheet.create({
     padding: 15,
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
   },
   content: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   rowContainer: {
     paddingVertical: 11,
-    height: null
+    height: null,
   },
   textInputContainer: {
     width: '100%',
@@ -401,12 +404,12 @@ const styles = StyleSheet.create({
     borderColor: hexToRgbA(DEFAULT_COLOR, 0.9),
     shadowOffset: {
       width: 0,
-      height: 0
+      height: 0,
     },
     shadowOpacity: 0.15,
     shadowRadius: 3,
 
-    elevation: 5
+    elevation: 5,
   },
   textInput: {
     marginTop: 0,
@@ -415,33 +418,33 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     paddingRight: 30,
     borderRadius: 0,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   listView: {
-    flex: 1
+    flex: 1,
   },
   rowContent: {
-    width: '100%'
+    width: '100%',
   },
   rowContentPredefined: {
-    color: DEFAULT_COLOR
+    color: DEFAULT_COLOR,
   },
   separator: {
-    marginLeft: 13
+    marginLeft: 13,
   },
   loader: {
-    marginRight: 5
+    marginRight: 5,
   },
   clearContainer: {
     position: 'absolute',
     zIndex: 1,
     alignSelf: 'center',
-    right: 15
+    right: 15,
   },
   clearIcon: {
     fontSize: 16,
-    color: '#888'
-  }
+    color: '#888',
+  },
 });
 
 export default withTranslation(['searchPlaces', 'common'])(PlacesAutoComplete);

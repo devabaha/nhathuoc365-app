@@ -4,13 +4,12 @@ import {Actions} from 'react-native-router-flux';
 import Animated, {Easing, interpolate} from 'react-native-reanimated';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import appConfig from 'app-config';
-
 import Container from '../../Layout/Container';
 import OverlayIconButton from './OverlayIconButton';
 import RightButtonNavBar from '../../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../../RightButtonNavBar/constants';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import { BACK_NAV_ICON_NAME } from '../../../constants';
 
 const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
@@ -50,6 +49,9 @@ const styles = StyleSheet.create({
     marginLeft: -3,
     marginRight: -5,
   },
+  backIconStyle: {
+    fontSize: 28
+  }
 });
 
 const ACTIVE_OFFSET_TOP = 100;
@@ -87,7 +89,10 @@ class Header extends Component {
   animatingScrollUp = false;
   animationDuration = 250;
 
-  iconStyle = {opacity: this.animatedOpacity};
+  iconStyle = {
+    opacity: this.animatedOpacity
+  };
+
   iconOverlayStyle = {
     transform: [
       {
@@ -104,7 +109,7 @@ class Header extends Component {
       outputRange: [1, 0],
     }),
   };
-  iconName = appConfig.device.isIOS ? 'ios-arrow-back' : 'md-arrow-back';
+  iconName = BACK_NAV_ICON_NAME;
   contentOverlayStyle = [this.iconBackgroundStyle, this.iconOverlayStyle];
 
   componentDidMount() {
@@ -272,8 +277,8 @@ class Header extends Component {
             <OverlayIconButton
               iconName={this.iconName}
               backgroundStyle={this.iconBackgroundStyle}
-              contentOverlayStyle={this.contentOverlayStyle}
-              iconStyle={this.iconStyle}
+              contentOverlayStyle={[this.contentOverlayStyle, styles.backIconStyle]}
+              iconStyle={[this.iconStyle, styles.backIconStyle]}
               wrapperStyle={narrowLeftGapStyle}
               onPress={Actions.pop}
             />

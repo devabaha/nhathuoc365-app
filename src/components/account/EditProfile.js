@@ -42,7 +42,6 @@ class EditProfile extends Component {
   }
 
   get sections() {
-    console.log(this.state);
     return [
       {
         id: 'id_section_1',

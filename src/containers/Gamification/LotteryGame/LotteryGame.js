@@ -14,6 +14,7 @@ import Loading from '../../../components/Loading';
 import Header from './Header';
 import Body from './Body';
 import Footer from './Footer';
+import { GAME_TYPE } from '../constants';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,7 +65,7 @@ class LotteryGame extends Component {
     const {t} = this.props;
     this.gameInfoRequest.cancel();
     try {
-      this.gameInfoRequest.data = APIHandler.lottery_index(store.store_id);
+      this.gameInfoRequest.data = APIHandler.lottery_index(store.store_id, this.props.id);
       const response = await this.gameInfoRequest.promise();
       console.log(response);
       if (response) {
@@ -164,11 +165,12 @@ class LotteryGame extends Component {
                 <Body
                   rules={this.state.gameInfo.rules}
                   prize={this.state.gameInfo.prize}
+                  results={this.state.gameInfo.my_turn}
                 />
               </Animated.View>
             )}
           </ScrollView>
-          {!!this.state.gameInfo && (
+          {!!this.state.gameInfo && this.state.gameInfo.type === GAME_TYPE.LOTO && (
             <Footer
               title="Chọn số nhanh"
               submitTitle="Gửi số"
@@ -188,6 +190,7 @@ class LotteryGame extends Component {
               onSubmit={this.submit}
               collapsing={this.handleCollapsing}
               hasResults={this.state.gameInfo.my_turn.length !== 0}
+              type={this.state.gameInfo.type}
             />
           )}
         </SafeAreaView>
