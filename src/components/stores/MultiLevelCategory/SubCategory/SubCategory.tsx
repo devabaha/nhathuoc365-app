@@ -174,7 +174,7 @@ class SubCategory extends Component<SubCategoryProps> {
                         }
 
                         return (
-                            <View style={[styles.categoryWrapper, containerStyle]}>
+                            <View key={index} style={[styles.categoryWrapper, containerStyle]}>
                                 <Category
                                     key={index}
                                     title={childCate.name}

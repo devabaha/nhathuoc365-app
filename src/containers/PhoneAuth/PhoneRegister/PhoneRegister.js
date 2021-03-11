@@ -152,7 +152,7 @@ class PhoneRegister extends Component {
             keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
             placeholder={t('phonePlaceholder')}
             onChangeText={this.handleChangePhoneNumber.bind(this)}
-            onSubmitEditing={() => !registerDisabled && onSignIn()}
+            onSubmitEditing={() => (!registerDisabled ? onSignIn() : {})}
           />
         </View>
         <TouchableOpacity

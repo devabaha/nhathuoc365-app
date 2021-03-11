@@ -20,7 +20,6 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import {willUpdateState} from '../../packages/tickid-chat/helper';
 import CategoryScreen from './CategoryScreen';
 import EventTracker from '../../helper/EventTracker';
-import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
 
@@ -149,14 +148,14 @@ class Stores extends Component {
         categories_data: response.data.categories,
         promotions: response.data.promotions,
       },
-      () =>
-        this.state.categories_data.map((item, index) => {
-          if (!this.props.goCategory) return;
-          if (this.props.goCategory === item.id) {
-            this._changeCategory(item, index);
-            return;
-          }
-        }),
+      // () =>
+      //   this.state.categories_data.map((item, index) => {
+      //     if (!this.props.goCategory) return;
+      //     if (this.props.goCategory === item.id) {
+      //       setTimeout(()=>this._changeCategory(item, index), 500);
+      //       return;
+      //     }
+      //   }),
     );
   }
 
@@ -338,6 +337,10 @@ class Stores extends Component {
           this.refCates[index] = {
             offsetX,
           };
+
+          if (this.props.goCategory && this.props.goCategory === category.id) {
+            this._changeCategory(category, index);
+          }
         });
       });
     }
@@ -417,16 +420,26 @@ class Stores extends Component {
                 index,
               };
             }}
-            renderItem={({item, index}) => (
-              <CategoryScreen
-                item={item}
-                index={index}
-                cate_index={this.state.category_nav_index}
-                promotions={this.state.promotions}
-                animatedScrollY={this.animatedScrollY}
-                animatedContentOffsetY={this.animatedContentOffsetY}
-              />
-            )}
+            renderItem={({item, index}) => {
+              const isAutoLoad =
+                (this.state.category_nav_index - 1 >= 0 &&
+                  index === this.state.category_nav_index - 1) ||
+                (this.state.category_nav_index + 1 <=
+                  this.state.categories_data.length - 1 &&
+                  index === this.state.category_nav_index + 1);
+
+              return (
+                <CategoryScreen
+                  item={item}
+                  index={index}
+                  cate_index={this.state.category_nav_index}
+                  isAutoLoad={isAutoLoad}
+                  promotions={this.state.promotions}
+                  animatedScrollY={this.animatedScrollY}
+                  animatedContentOffsetY={this.animatedContentOffsetY}
+                />
+              );
+            }}
           />
         )}
 

@@ -7,12 +7,14 @@ import {
   FlatList,
   ScrollView,
   Alert,
+  RefreshControl,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions, ActionConst} from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
+import {APIRequest} from 'src/network/Entity';
 
 class Address extends Component {
   constructor(props) {
@@ -29,13 +31,17 @@ class Address extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
+    this.getAddressRequest = new APIRequest();
+    this.requests = [this.getAddressRequest];
     this.eventTracker = new EventTracker();
   }
 
   componentDidMount() {
-    Actions.refresh({
-      renderRightButton: this._renderRightButton.bind(this),
-    });
+    setTimeout(() =>
+      Actions.refresh({
+        right: this._renderRightButton.bind(this),
+      }),
+    );
     // this.props.i18n.changeLanguage('en')
     this._getData();
     this.eventTracker.logCurrentView();
@@ -43,6 +49,7 @@ class Address extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    cancelRequests(this.requests);
     this.eventTracker.clearTracking();
   }
 
@@ -61,7 +68,8 @@ class Address extends Component {
   // get list address
   async _getData(delay) {
     try {
-      var response = await APIHandler.user_address();
+      this.getAddressRequest.data = APIHandler.user_address();
+      const response = await this.getAddressRequest.promise();
 
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
@@ -81,6 +89,11 @@ class Address extends Component {
       }
     } catch (e) {
       console.log(e + ' user_address');
+    } finally {
+      this.setState({
+        loading: false,
+        refreshing: false,
+      });
     }
   }
 
@@ -169,6 +182,11 @@ class Address extends Component {
     });
   }
 
+  onRefresh = () => {
+    this.setState({refreshing: true});
+    this._getData();
+  };
+
   render() {
     const {single} = this.state;
     const {t} = this.props;
@@ -240,7 +258,13 @@ class Address extends Component {
             {
               marginBottom: single ? 60 : 0,
             },
-          ]}>
+          ]}
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            />
+          }>
           {!single && (
             <View
               style={{
@@ -261,130 +285,130 @@ class Address extends Component {
               },
             ]}>
             {this.state.data != null ? (
-              <FlatList
-                ref="address_list"
-                data={this.state.data}
-                extraData={this.state}
-                keyExtractor={(item) => `${item.id}`}
-                ItemSeparatorComponent={() => (
-                  <View style={styles.separator}></View>
-                )}
-                renderItem={({item, index}) => {
-                  if (item.type == 'address_add') {
-                    return (
-                      <TouchableHighlight
-                        underlayColor="transparent"
-                        onPress={this._createNew.bind(this)}
-                        style={styles.address_add_box}>
-                        <View style={styles.address_add_content}>
-                          <Text style={styles.address_add_title}>
-                            {t('address.new')}
-                          </Text>
-                          <View style={styles.address_add_icon_box}>
-                            <Icon name="plus" size={18} color="#999999" />
-                          </View>
-                        </View>
-                      </TouchableHighlight>
-                    );
-                  }
-
-                  var is_selected = false;
-
-                  if (this.state.item_selected) {
-                    if (this.state.item_selected == item.id) {
-                      is_selected = true;
-                    }
-                  } else if (
-                    store.cart_data &&
-                    store.cart_data.address_id != 0
-                  ) {
-                    is_selected = store.cart_data.address_id == item.id;
-                    if (is_selected) {
-                      this.state.item_selected = item.id;
-                    }
-                  } else if (index == 0) {
-                    this.state.item_selected = item.id;
-                    is_selected = true;
-                  }
-
-                  const comboAddress =
-                    (item.province_name || '') +
-                    (item.district_name ? ' • ' + item.district_name : '') +
-                    (item.ward_name ? ' • ' + item.ward_name : '');
-
+              // <FlatList
+              //   ref="address_list"
+              //   data={this.state.data}
+              //   extraData={this.state}
+              //   keyExtractor={(item) => `${item.id}`}
+              //   ItemSeparatorComponent={() => (
+              //     <View style={styles.separator}></View>
+              //   )}
+              //   renderItem={({item, index}) => {
+              this.state.data.map((item, index) => {
+                if (item.type == 'address_add') {
                   return (
                     <TouchableHighlight
+                      key={index}
                       underlayColor="transparent"
-                      onPress={this._addressSelectHanlder.bind(this, item)}
-                      style={{backgroundColor: '#fff'}}>
-                      <View
-                        style={[
-                          styles.address_box,
-                          !is_selected && single && styles.uncheckOverlay,
-                        ]}>
-                        <View style={styles.address_name_box}>
-                          <Text style={styles.address_name}>
-                            {item.name}{' '}
-                            {item.default_flag == 1 && (
-                              <Icon
-                                name="map-marker"
-                                style={styles.address_edit_btn}
-                              />
-                            )}
-                          </Text>
-                          <TouchableHighlight
-                            underlayColor="transparent"
-                            onPress={() => {
-                              Actions.create_address({
-                                edit_data: item,
-                                title: t('common:screen.address.editTitle'),
-                                addressReload: this._getData,
-                                from_page: this.props.from_page,
-                              });
-                            }}>
-                            <View style={styles.address_edit_box}>
-                              <Icon
-                                name="pencil-square-o"
-                                size={12}
-                                color="#999999"
-                              />
-                              <Text style={styles.address_edit_label}>
-                                {t('address.edit')}
-                              </Text>
-                            </View>
-                          </TouchableHighlight>
+                      onPress={this._createNew.bind(this)}
+                      style={styles.address_add_box}>
+                      <View style={styles.address_add_content}>
+                        <Text style={styles.address_add_title}>
+                          {t('address.new')}
+                        </Text>
+                        <View style={styles.address_add_icon_box}>
+                          <Icon name="plus" size={18} color="#999999" />
                         </View>
-                        <View style={styles.address_name_box}>
-                          <View style={styles.address_content}>
-                            <Text style={styles.address_content_phone}>
-                              {item.tel}
-                            </Text>
-                            <Text style={styles.address_content_address_detail}>
-                              {item.address}
-                            </Text>
-                            {!!item.map_address && (
-                              <Text style={styles.address_content_map_address}>
-                                {item.map_address}
-                              </Text>
-                            )}
-                            {/* <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
-                          <Text style={styles.address_content_tinh}>Hoà Bình</Text> */}
-                          </View>
+                      </View>
+                    </TouchableHighlight>
+                  );
+                }
 
-                          {is_selected && single && (
-                            <View style={styles.address_selected_box}>
-                              <Icon
-                                name="check"
-                                size={24}
-                                color={DEFAULT_COLOR}
-                              />
-                              {/* <Text style={styles.address_label}>
+                var is_selected = false;
+
+                if (this.state.item_selected) {
+                  if (this.state.item_selected == item.id) {
+                    is_selected = true;
+                  }
+                } else if (store.cart_data && store.cart_data.address_id != 0) {
+                  is_selected = store.cart_data.address_id == item.id;
+                  if (is_selected) {
+                    this.state.item_selected = item.id;
+                  }
+                } else if (index == 0) {
+                  this.state.item_selected = item.id;
+                  is_selected = true;
+                }
+
+                const comboAddress =
+                  (item.province_name || '') +
+                  (item.district_name ? ' • ' + item.district_name : '') +
+                  (item.ward_name ? ' • ' + item.ward_name : '');
+
+                return (
+                  <TouchableHighlight
+                    key={index}
+                    underlayColor="transparent"
+                    onPress={this._addressSelectHanlder.bind(this, item)}
+                    style={{backgroundColor: '#fff'}}>
+                    <View
+                      style={[
+                        styles.address_box,
+                        !is_selected && single && styles.uncheckOverlay,
+                      ]}>
+                      <View style={styles.address_name_box}>
+                        <Text style={styles.address_name}>
+                          {item.name}{' '}
+                          {item.default_flag == 1 && (
+                            <Icon
+                              name="map-marker"
+                              style={styles.address_edit_btn}
+                            />
+                          )}
+                        </Text>
+                        <TouchableHighlight
+                          underlayColor="transparent"
+                          onPress={() => {
+                            Actions.create_address({
+                              edit_data: item,
+                              title: t('common:screen.address.editTitle'),
+                              addressReload: this._getData,
+                              from_page: this.props.from_page,
+                            });
+                          }}>
+                          <View style={styles.address_edit_box}>
+                            <Icon
+                              name="pencil-square-o"
+                              size={12}
+                              color="#999999"
+                            />
+                            <Text style={styles.address_edit_label}>
+                              {t('address.edit')}
+                            </Text>
+                          </View>
+                        </TouchableHighlight>
+                      </View>
+                      <View style={styles.address_name_box}>
+                        <View style={styles.address_content}>
+                          <Text style={styles.address_content_phone}>
+                            {item.tel}
+                          </Text>
+                          <Text style={styles.address_content_address_detail}>
+                            {item.address}
+                          </Text>
+                          {!!item.map_address && (
+                            <Text style={styles.address_content_map_address}>
+                              {item.map_address}
+                            </Text>
+                          )}
+                          {/* <Text style={styles.address_content_city}>Thành Phố Hoà Bình</Text>
+                          <Text style={styles.address_content_tinh}>Hoà Bình</Text> */}
+                        </View>
+
+                        {is_selected && single && (
+                          <View style={styles.address_selected_box}>
+                            <Icon
+                              name="check"
+                              size={24}
+                              color={DEFAULT_COLOR}
+                            />
+                            {/* <Text style={styles.address_label}>
                                 {t('address.delivery')}
                               </Text> */}
-                            </View>
-                          )}
-                        </View>
-                        {/* {item.default_flag == 1 && (
+                          </View>
+                        )}
+                      </View>
+                      {/* {item.default_flag == 1 && (
                           <View style={styles.address_edit_btn}>
                             <Text style={styles.address_default_title}>
                               {t('address.default')}
@@ -392,7 +416,7 @@ class Address extends Component {
                           </View>
                         )} */}
 
-                        {/* <View style={styles.address_default_box}>
+                      {/* <View style={styles.address_default_box}>
                           <TouchableHighlight
                             underlayColor="transparent"
                             onPress={() => {
@@ -417,7 +441,7 @@ class Address extends Component {
                           </TouchableHighlight>
                         </View> */}
 
-                        {/* {
+                      {/* {
                           !is_selected && single && (
                             <TouchableHighlight
                               underlayColor="transparent"
@@ -431,18 +455,16 @@ class Address extends Component {
                             </TouchableHighlight>
                           )
                         } */}
-                        {!!comboAddress && (
-                          <Text
-                            style={styles.comboAddress}>
-                            {comboAddress}
-                          </Text>
-                        )}
-                      </View>
-                    </TouchableHighlight>
-                  );
-                }}
-              />
+                      {!!comboAddress && (
+                        <Text style={styles.comboAddress}>{comboAddress}</Text>
+                      )}
+                    </View>
+                  </TouchableHighlight>
+                );
+              })
             ) : (
+              // }
+              // />
               <View>
                 {this.state.loading && (
                   <View
@@ -538,6 +560,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     backgroundColor: '#ffffff',
     minHeight: 120,
+    borderBottomColor: '#dddddd',
+    borderBottomWidth: Util.pixel,
   },
   address_name_box: {
     flexDirection: 'row',
@@ -737,7 +761,7 @@ const styles = StyleSheet.create({
   },
   right_btn_add_store: {
     paddingVertical: 1,
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
   },
 
   payments_nav_icon_box: {
@@ -761,13 +785,13 @@ const styles = StyleSheet.create({
     marginHorizontal: -15,
     paddingHorizontal: 15,
     paddingVertical: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f5f5f5',
     color: '#333',
     letterSpacing: 0.2,
     marginTop: 10,
     fontSize: 13,
     fontWeight: '400',
-  }
+  },
 });
 
 export default withTranslation(['address', 'common'])(observer(Address));

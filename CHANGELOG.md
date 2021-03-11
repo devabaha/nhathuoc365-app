@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.4.2] - 2021-03-11
+### Added
+- Refreshing in Address.
+### Changed
+- Disable cache product function.
+- Enable and change a bit cache categories function.
+- Hiding animation for ListStoreProductSkeleton.
+### Fixed
+- Right button nav bar in Address for going to Create Address.
+
 ## [r11.4.1] - 2021-03-10
 ### Added
 - Scanner animation for QRFrame in QRBarCode.
@@ -15,12 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ComboLocation view in Address, Confirm.
 - Gamification type.
 - API user_device to upload app versions info.
-
 ### Changed
 - Banner image ratio in NotifyItem.
 - Add game id for accessing gamification.
 - UI Gameification changes by id.
-
 ### Fixed
 - Scan area for QRFrame in QRBarCode doesn't correct dimension.
 - Transparent default indicator loading IOS color on some ios version.
@@ -35,7 +43,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Btn to go to Product Stamps if product scanned.
 - QRScan for package options key.
 - SubActionButton for QRScan in primary actions.
-
 ### Fixed
 - Input props auto focus not work in modal input.
 - Regex to validate link, cart code, account code, wallet address.
