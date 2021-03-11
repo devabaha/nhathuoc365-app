@@ -83,6 +83,8 @@ class OrdersItemComponent extends Component {
     if (item.address_id != 0) {
       Actions.push(appConfig.routes.paymentConfirm, {
         goConfirm: true,
+        data: item,
+        from_page: 'orders_item'
       });
     } else {
       Actions.create_address({
