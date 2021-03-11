@@ -232,51 +232,51 @@ class Item extends Component {
 
   // Lấy chi tiết sản phẩm
   _getData(delay) {
-    var {item} = this.state;
-    var item_key = ITEM_KEY + item.id + store.user_info.id;
+    // var {item} = this.state;
+    // var item_key = ITEM_KEY + item.id + store.user_info.id;
 
-    // load
-    storage
-      .load({
-        key: item_key,
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          extraFetchOptions: {},
-          someFlag: true,
-        },
-      })
-      .then((data) => {
-        setTimeout(() => {
-          if (isIOS) {
-            layoutAnimation();
-          }
+    // // load
+    // storage
+    //   .load({
+    //     key: item_key,
+    //     autoSync: true,
+    //     syncInBackground: true,
+    //     syncParams: {
+    //       extraFetchOptions: {},
+    //       someFlag: true,
+    //     },
+    //   })
+    //   .then((data) => {
+    //     setTimeout(() => {
+    //       if (isIOS) {
+    //         layoutAnimation();
+    //       }
 
-          var images = [];
+    //       var images = [];
 
-          if (data && data.img) {
-            data.img.map((item) => {
-              images.push({
-                url: item.image,
-              });
-            });
-          }
+    //       if (data && data.img) {
+    //         data.img.map((item) => {
+    //           images.push({
+    //             url: item.image,
+    //           });
+    //         });
+    //       }
 
-          this.logEventTracking(data);
+    //       this.logEventTracking(data);
 
-          this.setState({
-            item_data: data,
-            images: images,
-            like_flag: data.like_flag,
-            loading: false,
-            refreshing: false,
-            like_loading: false,
-          });
-        }, delay || this._delay());
-      })
-      .catch((err) => {
+    //       this.setState({
+    //         item_data: data,
+    //         images: images,
+    //         like_flag: data.like_flag,
+    //         loading: false,
+    //         refreshing: false,
+    //         like_loading: false,
+    //       });
+    //     }, delay || this._delay());
+    //   })
+    //   .catch((err) => {
         this._getDataFromServer(delay);
-      });
+      // });
   }
 
   async _getDataFromServer(delay) {

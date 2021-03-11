@@ -304,9 +304,9 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * Danh sách địa chỉ
    */
-  async user_address() {
+  user_address() {
     var api = url_for(API.USER_ADDRESS);
-    return await this.getAPI(api);
+    return this.getCancelableAPI(api);
   }
 
   /**

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FlatList, View, StyleSheet, ScrollView, Text } from 'react-native';
 import Shimmer from 'react-native-shimmer';
 import appConfig from '../../config';
 import SkeletonLoading from '../SkeletonLoading';
 import { SKELETON_COLOR } from '../SkeletonLoading/constants';
+import Animated, { useValue, Easing, useCode, call } from 'react-native-reanimated';
 
 
 const ITEM_WIDTH = appConfig.device.width / 2 - 12;
@@ -11,8 +12,17 @@ const ITEM_WIDTH = appConfig.device.width / 2 - 12;
 const LightenSkeletonColor = LightenColor(SKELETON_COLOR, -12);
 
 const styles = StyleSheet.create({
+    wrapper: {
+        backgroundColor: appConfig.colors.sceneBackground,
+        position: 'absolute',
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+        zIndex: 9999
+    },
     container: {
-        width: appConfig.device.width
+        width: appConfig.device.width,
     },
     content: {
         flexGrow: 1,
@@ -76,8 +86,28 @@ const styles = StyleSheet.create({
     }
 })
 
+const ListStoreProductSkeleton = ({ loading }) => {
 
-const ListStoreProductSkeleton = () => {
+    const animatedOpacity = useValue(1);
+    const [isShow, setShow] = useState(!loading);
+
+    useEffect(() => {
+        Animated.timing(animatedOpacity, {
+            toValue: loading ? 1 : 0,
+            duration: 200,
+            easing: Easing.quad
+        }).start();
+    }, [loading])
+
+    useCode(() => {
+        return call([animatedOpacity], ([opacityValue]) => {
+            if (opacityValue >= 1) {
+                setShow(true)
+            } else {
+                setShow(false);
+            }
+        })
+    }, [])
 
     const renderItemSkeleton = ({ item, index }) => {
         return (
@@ -102,19 +132,25 @@ const ListStoreProductSkeleton = () => {
     };
 
     return (
-        <Shimmer>
-            <Text style={styles.container}>
-                <FlatList
-                    style={styles.container}
-                    contentContainerStyle={[styles.content]}
-                    data={[1, 2, 3, 4, 5, 6]}
-                    numColumns={2}
-                    renderItem={renderItemSkeleton}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-            </Text>
-        </Shimmer>
+        <Animated.View pointerEvents={isShow ? 'auto' : 'none'} style={[
+            styles.wrapper,
+            {
+                opacity: animatedOpacity,
+            }]}>
+            <Shimmer>
+                <Text style={styles.container}>
+                    <FlatList
+                        style={styles.container}
+                        contentContainerStyle={[styles.content]}
+                        data={[1, 2, 3, 4, 5, 6]}
+                        numColumns={2}
+                        renderItem={renderItemSkeleton}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
+                </Text>
+            </Shimmer>
+        </Animated.View>
     );
 }
 
-export default ListStoreProductSkeleton;
+export default (ListStoreProductSkeleton);

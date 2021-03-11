@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   ScrollView,
   View,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import appConfig from 'app-config';
-import { HEADER_HEIGHT, RESEND_OTP_INTERVAL } from '../constants';
+import {HEADER_HEIGHT, RESEND_OTP_INTERVAL} from '../constants';
 
 const styles = StyleSheet.create({
   container: {},
@@ -18,71 +18,71 @@ const styles = StyleSheet.create({
     width: '100%',
     height: HEADER_HEIGHT + (appConfig.device.isIPhoneX ? 40 : 20),
     marginLeft: 10,
-    marginBottom: 10
+    marginBottom: 10,
   },
   contentContainer: {
     paddingHorizontal: 16,
-    marginTop: 20
+    marginTop: 20,
   },
   codeInput: {
     marginBottom: 10,
-    fontSize: 15
+    fontSize: 15,
   },
   desText: {
     color: 'black',
     fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
-    fontWeight: '300'
+    fontWeight: '300',
   },
   phoneNumber: {
     fontSize: 17,
     fontWeight: '500',
     marginTop: 0,
-    marginBottom: 20
+    marginBottom: 20,
   },
   txtNote: {
     color: 'red',
-    marginTop: 20
+    marginTop: 20,
   },
   txtCode: {
     fontWeight: '800',
     fontSize: 20,
-    padding: 10
+    padding: 10,
   },
   continueText: {
     color: 'black',
     fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   backIcon: {
     fontSize: 36,
-    color: '#333'
+    color: '#333',
   },
   txtDesCode: {
     fontSize: 17,
     fontWeight: '200',
     color: 'black',
-    marginTop: 20
+    marginTop: 20,
   },
   resSendOTP: {
     fontSize: 17,
     color: '#528BC5',
     fontWeight: '700',
-    marginTop: 15
-  }
+    marginTop: 15,
+  },
 });
 
 class AuthConfirm extends Component {
   static defaultProps = {
-    onBackToPhoneInput: () => {}
+    onBackToPhoneInput: () => {},
   };
 
   state = {
     requestNewOtpCounter: RESEND_OTP_INTERVAL,
-    message: ''
+    message: '',
   };
   timer = -1;
 
@@ -102,18 +102,18 @@ class AuthConfirm extends Component {
     this.props.onRequestNewOtp();
     this.setState(
       {
-        requestNewOtpCounter: RESEND_OTP_INTERVAL
+        requestNewOtpCounter: RESEND_OTP_INTERVAL,
       },
-      () => this.startCountDown()
+      () => this.startCountDown(),
     );
   }
 
   startCountDown() {
     clearInterval(this.timer);
     this.timer = setInterval(() => {
-      const { requestNewOtpCounter } = this.state;
+      const {requestNewOtpCounter} = this.state;
       if (requestNewOtpCounter > 0) {
-        this.setState({ requestNewOtpCounter: requestNewOtpCounter - 1 });
+        this.setState({requestNewOtpCounter: requestNewOtpCounter - 1});
       } else {
         clearInterval(this.timer);
       }
@@ -133,14 +133,14 @@ class AuthConfirm extends Component {
   }
 
   render() {
-    const { codeInput, requestNewOtpCounter } = this.state;
+    const {codeInput, requestNewOtpCounter} = this.state;
     const {
       t,
       phoneNumber,
       onConfirmCode,
       confirmDisabled,
       onChangeCode,
-      message
+      message,
     } = this.props;
 
     return (
@@ -165,19 +165,17 @@ class AuthConfirm extends Component {
             keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
             style={styles.txtCode}
             maxLength={6}
-            onSubmitEditing={!confirmDisabled && onConfirmCode}
+            onSubmitEditing={!confirmDisabled ? onConfirmCode : () => {}}
           />
           <TouchableOpacity
             activeOpacity={0.5}
             onPress={onConfirmCode}
-            disabled={confirmDisabled}
-          >
+            disabled={confirmDisabled}>
             <Text
               style={[
                 styles.continueText,
-                { color: !confirmDisabled ? 'black' : 'lightgray' }
-              ]}
-            >
+                {color: !confirmDisabled ? 'black' : 'lightgray'},
+              ]}>
               {t('verifyCodeInputConfirmMessage')}
             </Text>
           </TouchableOpacity>
@@ -185,12 +183,11 @@ class AuthConfirm extends Component {
           <Text style={styles.txtDesCode}>{t('notReceiveCode')}</Text>
           <TouchableOpacity
             onPress={this.reStartCountDown.bind(this)}
-            disabled={!this.isReSendable}
-          >
+            disabled={!this.isReSendable}>
             <Text style={styles.resSendOTP}>
               {!this.isReSendable
                 ? `${t('requestNewCodeWithTime')} ${this.convertSecondToMinute(
-                    requestNewOtpCounter
+                    requestNewOtpCounter,
                   )}`
                 : t('requestNewCode')}
             </Text>

@@ -90,9 +90,7 @@ const GroupProduct = ({
       />
     );
   };
-  return isLoading ? (
-    <ListStoreProductSkeleton />
-  ) : (
+  return (
     <>
       <AnimatedFlatList
         data={products}
@@ -140,6 +138,7 @@ const GroupProduct = ({
         animatedContentOffsetY={animatedContentOffsetY}
         animating
       />
+      <ListStoreProductSkeleton loading={isLoading} />
     </>
   );
 };
