@@ -28,6 +28,7 @@ import {ANALYTICS_EVENTS_NAME} from '../../constants';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import CartItem from './CartItem';
 import Tag from '../Tag';
+import Loading from '../Loading';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -44,13 +45,14 @@ class Confirm extends Component {
       coppy_sticker_flag: false,
       address_height: 50,
       continue_loading: false,
-      data: null,
+      data: props.data || store.cart_data,
       noteOffset: 0,
       suggest_register: false,
       name_register: '',
       tel_register: '',
       pass_register: '',
       paymentMethod: {},
+      loading: false,
     };
 
     this.unmounted = false;
@@ -72,7 +74,13 @@ class Confirm extends Component {
 
   componentDidMount() {
     this._initial(this.props);
+    const is_paymenting =
+      this.state.data && this.state.data.status == CART_STATUS_ORDERING;
 
+    if (is_paymenting) {
+      this.setState({loading: true});
+      this._getOrdersItem(store.store_id, this.state.data.id);
+    }
     setTimeout(() =>
       Actions.refresh({
         right: this._renderRightButton(),
@@ -166,6 +174,11 @@ class Confirm extends Component {
       }
     } catch (e) {
       console.log(e + ' site_cart_show');
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          loading: false,
+        });
     }
   }
 
@@ -874,9 +887,6 @@ class Confirm extends Component {
     // from detail orders
     else {
       var cart_data = this.state.data;
-      if (!cart_data) {
-        cart_data = this.props.data;
-      }
 
       if (cart_data && Object.keys(cart_data.products).length > 0) {
         var cart_products_confirm = [];
@@ -920,6 +930,7 @@ class Confirm extends Component {
 
     return (
       <>
+        {this.state.loading && <Loading center />}
         {single && (
           <View style={styles.payments_nav}>
             <TouchableHighlight
@@ -2386,7 +2397,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 13,
     fontWeight: '400',
-  }
+  },
 });
 
 export default withTranslation(['orders', 'cart', 'common'])(observer(Confirm));

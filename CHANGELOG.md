@@ -7,15 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.4.2] - 2021-03-11
+## [r11.4.2] - 2021-03-12
 ### Added
 - Refreshing in Address.
+- Right button nav bar in Address for going to Create Address.
 ### Changed
 - Disable cache product function.
 - Enable and change a bit cache categories function.
 - Hiding animation for ListStoreProductSkeleton.
+- Cart with status is_paymenting will get latest data after mounted.
 ### Fixed
-- Right button nav bar in Address for going to Create Address.
+- Replace cart_data when access Confirm through Orders.
 
 ## [r11.4.1] - 2021-03-10
 ### Added
