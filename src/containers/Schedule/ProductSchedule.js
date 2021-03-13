@@ -108,11 +108,6 @@ class ProductSchedule extends Component {
               confirmNote: response.data.service_confirm_note,
               serviceTitle: response.data.service_name,
             });
-          } else {
-            flashShowMessage({
-              type: 'danger',
-              message: response.message || errMess,
-            });
           }
         } else {
           flashShowMessage({

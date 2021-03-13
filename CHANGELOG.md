@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.4.3] - 2021-03-13
+### Added
+- One more step for shipping fee calculating for delivery mode (config site_use_ship) in Confirm.
+### Fixed
+- TickidChat now use react-native-image-crop-picker instead of @react-native-community/cameraroll to get images because of crashing while getting photos from Shared Album on ios.
+
 ## [r11.4.2] - 2021-03-12
 ### Added
 - Refreshing in Address.

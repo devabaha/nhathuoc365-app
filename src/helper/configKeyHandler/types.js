@@ -13,4 +13,6 @@ export const CONFIG_KEY = {
   ALLOW_SITE_SALE_OUT_INVENTORY_KEY: 'allow_site_sale_out_inventory_key',
 
   INPUT_ADDRESS_CONFIG_KEY: 'input_address_config_key',
+
+  SITE_USE_SHIP: 'site_use_ship'
 };

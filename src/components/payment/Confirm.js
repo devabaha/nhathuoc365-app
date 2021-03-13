@@ -5,6 +5,7 @@ import {
   TouchableHighlight,
   StyleSheet,
   FlatList,
+  ScrollView,
   TextInput,
   Clipboard,
   Keyboard,
@@ -29,6 +30,10 @@ import KeyboardSpacer from 'react-native-keyboard-spacer';
 import CartItem from './CartItem';
 import Tag from '../Tag';
 import Loading from '../Loading';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import APIHandler from 'src/network/APIHandler';
+import {APIRequest} from 'src/network/Entity';
+import Container from '../Layout/Container/Container';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -53,13 +58,21 @@ class Confirm extends Component {
       pass_register: '',
       paymentMethod: {},
       loading: false,
+      isConfirming: false,
     };
 
+    this.refs_confirm_page = React.createRef();
     this.unmounted = false;
+    this.getShippingInfoRequest = new APIRequest();
+    this.requests = [this.getShippingInfoRequest];
     this.eventTracker = new EventTracker();
   }
 
-  componentWillReceiveProps(nextProps) {
+  get isSiteUseShipNotConfirming() {
+    return isConfigActive(CONFIG_KEY.SITE_USE_SHIP) && !this.state.isConfirming;
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.notice_data != nextProps.notice_data) {
       this.setState(
         {
@@ -91,6 +104,7 @@ class Confirm extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    cancelRequests(this.requests);
   }
 
   _initial(props) {
@@ -102,7 +116,7 @@ class Confirm extends Component {
         );
       } else {
         Actions.refresh({
-          renderRightButton: this._renderRightButton.bind(this),
+          right: this._renderRightButton.bind(this),
         });
       }
     } else {
@@ -136,7 +150,7 @@ class Confirm extends Component {
 
           Actions.refresh({
             title: '#' + this.state.data.cart_code,
-            renderRightButton: this._renderRightButton.bind(this),
+            right: this._renderRightButton.bind(this),
           });
         } else {
           flashShowMessage({
@@ -313,6 +327,65 @@ class Confirm extends Component {
         }
       },
     );
+  }
+
+  async getShippingInfo(siteId, cartId) {
+    const {t} = this.props;
+
+    this.getShippingInfoRequest.data = APIHandler.cart_confirmed(
+      siteId,
+      cartId,
+    );
+
+    try {
+      const response = await this.getShippingInfoRequest.promise();
+      console.log(response);
+      setTimeout(() => this.refs_confirm_page.current.scrollToEnd());
+
+      if (response) {
+        if (response.status === STATUS_SUCCESS) {
+          if (response.data) {
+            store.setCartData(response.data);
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: response.message || t('common:api.error.message'),
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: t('common:api.error.message'),
+        });
+      }
+    } catch (err) {
+      console.log('get_shipping_info', err);
+      flashShowMessage({
+        type: 'danger',
+        message: t('common:api.error.message'),
+      });
+    } finally {
+      this.setState({
+        loading: false,
+      });
+    }
+  }
+
+  handleEditConfirmingCart() {
+    this.setState({isConfirming: false});
+  }
+
+  handleSubmit() {
+    if (this.isSiteUseShipNotConfirming) {
+      this.setState({
+        isConfirming: true,
+        loading: true,
+      });
+      this.getShippingInfo(store.store_id, this.state.data.id);
+    } else {
+      this._onSave();
+    }
   }
 
   // on save
@@ -573,8 +646,8 @@ class Confirm extends Component {
   }
 
   // _scrollToTop(top = 0) {
-  //   if (this.refs_confirm_page) {
-  //     this.refs_confirm_page.scrollTo({ x: 0, y: top, animated: true });
+  //   if (this.refs_confirm_page.current) {
+  //     this.refs_confirm_page.current.scrollTo({ x: 0, y: top, animated: true });
   //     this.setState({
   //       scrollTop: top
   //     });
@@ -800,7 +873,7 @@ class Confirm extends Component {
               parentCtx={this}
               item={product}
               onRemoveCartItem={() => this._removeItemCartConfirm(product)}
-              noAction={!single}
+              noAction={!single || this.state.isConfirming}
             />
           );
         })}
@@ -995,7 +1068,9 @@ class Confirm extends Component {
           </View>
         )}
 
-        <KeyboardAwareScrollView style={styles.container}>
+        <KeyboardAwareScrollView
+          ref={this.refs_confirm_page}
+          style={styles.container}>
           <KeyboardAwareScrollView
             scrollEventThrottle={16}
             // onScroll={event => {
@@ -1003,7 +1078,6 @@ class Confirm extends Component {
             //   this.setState({ scrollTop });
             // }}
             keyboardShouldPersistTaps="handled"
-            ref={(ref) => (this.refs_confirm_page = ref)}
             style={[
               // styles.content,
               {
@@ -1115,39 +1189,40 @@ class Confirm extends Component {
                       right: 0,
                     },
                   ]}>
-                  {single ? (
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 15,
-                      }}
-                      underlayColor="transparent"
-                      onPress={this._goAddress.bind(this)}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                        ]}>
-                        {t('confirm.change')}
-                      </Text>
-                    </TouchableHighlight>
-                  ) : (
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 15,
-                      }}
-                      underlayColor="transparent"
-                      onPress={this._coppyAddress.bind(this, address_data)}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                        ]}>
-                        {t('confirm.copy.title')}
-                      </Text>
-                    </TouchableHighlight>
-                  )}
+                  {!this.state.isConfirming &&
+                    (single ? (
+                      <TouchableHighlight
+                        style={{
+                          paddingVertical: 12,
+                          paddingHorizontal: 15,
+                        }}
+                        underlayColor="transparent"
+                        onPress={this._goAddress.bind(this)}>
+                        <Text
+                          style={[
+                            styles.address_default_title,
+                            styles.title_active,
+                          ]}>
+                          {t('confirm.change')}
+                        </Text>
+                      </TouchableHighlight>
+                    ) : (
+                      <TouchableHighlight
+                        style={{
+                          paddingVertical: 12,
+                          paddingHorizontal: 15,
+                        }}
+                        underlayColor="transparent"
+                        onPress={this._coppyAddress.bind(this, address_data)}>
+                        <Text
+                          style={[
+                            styles.address_default_title,
+                            styles.title_active,
+                          ]}>
+                          {t('confirm.copy.title')}
+                        </Text>
+                      </TouchableHighlight>
+                    ))}
                 </View>
               </View>
 
@@ -1783,28 +1858,6 @@ class Confirm extends Component {
                     }}
                     value={this.state.tel_register}
                   />
-
-                  {/*<TextInput
-                    ref={ref => this.refs_pass_register = ref}
-                    style={{
-                      borderWidth: Util.pixel,
-                      borderColor: "#dddddd",
-                      padding: 8,
-                      borderRadius: 3,
-                      marginTop: 8
-                    }}
-                    keyboardType="default"
-                    maxLength={50}
-                    placeholder="Nhập mật khẩu"
-                    placeholderTextColor="#999999"
-                    underlineColorAndroid="transparent"
-                    onChangeText={(value) => {
-                      this.setState({
-                        pass_register: value
-                      });
-                    }}
-                    value={this.state.pass_register}
-                    />*/}
                 </View>
               );
             }}
@@ -1877,35 +1930,67 @@ class Confirm extends Component {
         />
 
         {single && (
-          <TouchableHighlight
-            style={[
-              styles.cart_payment_btn_box,
-              {
-                // bottom: store.keyboardTop
-                position: undefined,
-              },
-            ]}
-            underlayColor="transparent"
-            onPress={this._onSave.bind(this)}>
-            <View style={styles.cart_payment_btn}>
-              <View
-                style={{
-                  minWidth: 20,
-                  height: '100%',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                {this.state.continue_loading ? (
-                  <Indicator size="small" color="#ffffff" />
-                ) : (
-                  <Icon name="check" size={20} color="#ffffff" />
-                )}
+          <Container row>
+            {this.state.isConfirming && (
+              <TouchableHighlight
+                style={[
+                  styles.cart_payment_btn_box,
+                  {
+                    // bottom: store.keyboardTop
+                    position: undefined,
+                  },
+                ]}
+                underlayColor="transparent"
+                onPress={this.handleEditConfirmingCart.bind(this)}>
+                <View
+                  style={[styles.cart_payment_btn, {backgroundColor: '#bbb'}]}>
+                  <View
+                    style={{
+                      minWidth: 20,
+                      height: '100%',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}>
+                    <Icon name="edit" size={20} color="#fff" />
+                  </View>
+                  <Text style={styles.cart_payment_btn_title}>
+                    {t('confirm.edit')}
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            )}
+            <TouchableHighlight
+              style={[
+                styles.cart_payment_btn_box,
+                {
+                  // bottom: store.keyboardTop
+                  position: undefined,
+                },
+              ]}
+              underlayColor="transparent"
+              onPress={this.handleSubmit.bind(this)}>
+              <View style={styles.cart_payment_btn}>
+                <View
+                  style={{
+                    minWidth: 20,
+                    height: '100%',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  {this.state.continue_loading ? (
+                    <Indicator size="small" color="#ffffff" />
+                  ) : (
+                    <Icon name="check" size={20} color="#ffffff" />
+                  )}
+                </View>
+                <Text style={styles.cart_payment_btn_title}>
+                  {this.isSiteUseShipNotConfirming
+                    ? t('confirm.confirmOrder')
+                    : t('confirm.order.title')}
+                </Text>
               </View>
-              <Text style={styles.cart_payment_btn_title}>
-                {t('confirm.order.title')}
-              </Text>
-            </View>
-          </TouchableHighlight>
+            </TouchableHighlight>
+          </Container>
         )}
         {appConfig.device.isIOS && <KeyboardSpacer />}
       </>
@@ -2115,7 +2200,8 @@ const styles = StyleSheet.create({
 
   cart_payment_btn_box: {
     position: 'absolute',
-    width: '100%',
+    flex: 1,
+    // width: '100%',
     height: 60,
     bottom: 0,
     left: 0,
@@ -2133,6 +2219,7 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 18,
     marginLeft: 8,
+    textTransform: 'uppercase',
   },
 
   mt8: {
