@@ -275,8 +275,8 @@ class Item extends Component {
     //     }, delay || this._delay());
     //   })
     //   .catch((err) => {
-        this._getDataFromServer(delay);
-      // });
+    this._getDataFromServer(delay);
+    // });
   }
 
   async _getDataFromServer(delay) {
@@ -681,17 +681,6 @@ class Item extends Component {
   }
 
   renderProductImages(images) {
-    if (!images.length) {
-      return (
-        <View style={styles.noImageContainer}>
-          <SVGPhotoBroken
-            width="80"
-            height="80"
-            fill={appConfig.colors.primary}
-          />
-        </View>
-      );
-    }
     return images.map((image, index) => {
       return (
         <TouchableHighlight
@@ -723,20 +712,31 @@ class Item extends Component {
     return (
       <View style={{paddingBottom: 30}}>
         <SkeletonLoading
-          loading={!product}
+          style={styles.noImageContainer}
+          loading={this.state.loading}
           height={appConfig.device.width * 0.6}>
-          <Swiper
-            showsButtons={isShowButtons}
-            renderPagination={(index, total, context) =>
-              this.renderPagination(index, total, context, hasImages)
-            }
-            nextButton={this.renderNextButton()}
-            prevButton={this.renderPrevButton()}
-            width={appConfig.device.width}
-            height={appConfig.device.width * 0.6}
-            containerStyle={styles.content_swiper}>
-            {this.renderProductImages(images)}
-          </Swiper>
+          {!images.length ? (
+            <View style={[styles.noImageContainer, styles.swiper_image]}>
+              <SVGPhotoBroken
+                width="80"
+                height="80"
+                fill={appConfig.colors.primary}
+              />
+            </View>
+          ) : (
+            <Swiper
+              showsButtons={isShowButtons}
+              renderPagination={(index, total, context) =>
+                this.renderPagination(index, total, context, hasImages)
+              }
+              nextButton={this.renderNextButton()}
+              prevButton={this.renderPrevButton()}
+              width={appConfig.device.width}
+              height={appConfig.device.width * 0.6}
+              containerStyle={styles.content_swiper}>
+              {this.renderProductImages(images)}
+            </Swiper>
+          )}
         </SkeletonLoading>
       </View>
     );
@@ -813,7 +813,6 @@ class Item extends Component {
   }
 
   renderDetailInfo(product) {
-    console.log(product.detail_info);
     return product?.detail_info?.map((info, index) => {
       return (
         <View key={index} style={styles.item_content_item_container}>
