@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   StyleSheet,
   FlatList,
   ScrollView,
@@ -56,12 +56,12 @@ class Address extends Component {
   // render button trên navbar
   _renderRightButton() {
     return (
-      <TouchableHighlight
+      <TouchableOpacity
         style={styles.right_btn_add_store}
-        underlayColor="transparent"
+        activeOpacity={.7}
         onPress={this._createNew.bind(this)}>
         <Icon name="plus" size={20} color="#ffffff" />
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 
@@ -195,7 +195,7 @@ class Address extends Component {
       <View style={styles.container}>
         {single && (
           <View style={styles.payments_nav}>
-            <TouchableHighlight onPress={() => {}} underlayColor="transparent">
+            <TouchableOpacity onPress={() => {}} activeOpacity={.7}>
               <View style={styles.payments_nav_items}>
                 <View
                   style={[
@@ -222,9 +222,9 @@ class Address extends Component {
 
                 <View style={styles.payments_nav_items_active} />
               </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
 
-            <TouchableHighlight
+            <TouchableOpacity
               onPress={() => {
                 if (store.cart_data.address_id == 0) {
                   this._goConfirmPage();
@@ -232,7 +232,7 @@ class Address extends Component {
                   this._goConfirm();
                 }
               }}
-              underlayColor="transparent">
+              activeOpacity={.7}>
               <View style={styles.payments_nav_items}>
                 <View style={[styles.payments_nav_icon_box]}>
                   <Icon
@@ -248,7 +248,7 @@ class Address extends Component {
 
                 <View style={styles.payments_nav_items_right_active} />
               </View>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -297,9 +297,9 @@ class Address extends Component {
               this.state.data.map((item, index) => {
                 if (item.type == 'address_add') {
                   return (
-                    <TouchableHighlight
+                    <TouchableOpacity
                       key={index}
-                      underlayColor="transparent"
+                      activeOpacity={.7}
                       onPress={this._createNew.bind(this)}
                       style={styles.address_add_box}>
                       <View style={styles.address_add_content}>
@@ -310,7 +310,7 @@ class Address extends Component {
                           <Icon name="plus" size={18} color="#999999" />
                         </View>
                       </View>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                   );
                 }
 
@@ -336,9 +336,9 @@ class Address extends Component {
                   (item.ward_name ? ' • ' + item.ward_name : '');
 
                 return (
-                  <TouchableHighlight
+                  <TouchableOpacity
                     key={index}
-                    underlayColor="transparent"
+                    activeOpacity={.7}
                     onPress={this._addressSelectHanlder.bind(this, item)}
                     style={{backgroundColor: '#fff'}}>
                     <View
@@ -356,8 +356,8 @@ class Address extends Component {
                             />
                           )}
                         </Text>
-                        <TouchableHighlight
-                          underlayColor="transparent"
+                        <TouchableOpacity
+                          activeOpacity={.7}
                           onPress={() => {
                             Actions.create_address({
                               edit_data: item,
@@ -376,7 +376,7 @@ class Address extends Component {
                               {t('address.edit')}
                             </Text>
                           </View>
-                        </TouchableHighlight>
+                        </TouchableOpacity>
                       </View>
                       <View style={styles.address_name_box}>
                         <View style={styles.address_content}>
@@ -395,8 +395,8 @@ class Address extends Component {
                           <Text style={styles.address_content_tinh}>Hoà Bình</Text> */}
                         </View>
 
-                        {is_selected && single && (
-                          <View style={styles.address_selected_box}>
+                        {single && (
+                          <View style={[styles.address_selected_box, {opacity: is_selected ?1:0}]}>
                             <Icon
                               name="check"
                               size={24}
@@ -417,8 +417,8 @@ class Address extends Component {
                         )} */}
 
                       {/* <View style={styles.address_default_box}>
-                          <TouchableHighlight
-                            underlayColor="transparent"
+                          <TouchableOpacity
+                            activeOpacity={.7}
                             onPress={() => {
                               Actions.create_address({
                                 edit_data: item,
@@ -438,13 +438,13 @@ class Address extends Component {
                                 {t('address.edit')}
                               </Text>
                             </View>
-                          </TouchableHighlight>
+                          </TouchableOpacity>
                         </View> */}
 
                       {/* {
                           !is_selected && single && (
-                            <TouchableHighlight
-                              underlayColor="transparent"
+                            <TouchableOpacity
+                              activeOpacity={.7}
                               onPress={this._addressSelectHanlder.bind(
                                 this,
                                 item
@@ -452,14 +452,14 @@ class Address extends Component {
                               style={styles.uncheckOverlay}
                             >
                               <View></View>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                           )
                         } */}
                       {!!comboAddress && (
                         <Text style={styles.comboAddress}>{comboAddress}</Text>
                       )}
                     </View>
-                  </TouchableHighlight>
+                  </TouchableOpacity>
                 );
               })
             ) : (
@@ -475,8 +475,8 @@ class Address extends Component {
                   </View>
                 )}
 
-                <TouchableHighlight
-                  underlayColor="transparent"
+                <TouchableOpacity
+                  activeOpacity={.7}
                   onPress={this._createNew.bind(this)}
                   style={[
                     styles.address_add_box,
@@ -493,15 +493,15 @@ class Address extends Component {
                       <Icon name="plus" size={18} color="#999999" />
                     </View>
                   </View>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </View>
             )}
           </View>
         </ScrollView>
 
         {single && (
-          <TouchableHighlight
-            underlayColor="transparent"
+          <TouchableOpacity
+            activeOpacity={.7}
             onPress={this._goConfirmPage.bind(this)}
             style={styles.address_continue}>
             <View style={styles.address_continue_content}>
@@ -522,7 +522,7 @@ class Address extends Component {
                 )}
               </View>
             </View>
-          </TouchableHighlight>
+          </TouchableOpacity>
         )}
       </View>
     );
@@ -587,6 +587,7 @@ const styles = StyleSheet.create({
   },
   address_content: {
     marginTop: 8,
+    flex: 1,
     // width: Util.size.width - 140
   },
   address_content_phone: {
@@ -624,6 +625,7 @@ const styles = StyleSheet.create({
     // height: 60,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 15,
     // top: 20,
     // right: 10
   },

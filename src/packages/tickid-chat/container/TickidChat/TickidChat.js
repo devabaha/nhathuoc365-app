@@ -376,7 +376,7 @@ class TickidChat extends Component {
       .then((images) => {
         console.log(images);
         this.closeModal();
-        const selectedImages = this.nomarlizeImages(images);
+        const selectedImages = this.normalizeImages(images);
         console.log(selectedImages);
         this.setState(
           {
@@ -412,7 +412,7 @@ class TickidChat extends Component {
         // console.log(response);
         this.closeModal();
         response.path = response.uri;
-        const selectedImages = this.nomarlizeImages([response]);
+        const selectedImages = this.normalizeImages([response]);
         console.log(selectedImages);
         this.setState(
           {
@@ -440,7 +440,7 @@ class TickidChat extends Component {
     }
   };
 
-  nomarlizeImages(images) {
+  normalizeImages(images) {
     return images.map((img) => {
       if (!img.filename) {
         img.filename = `${new Date().getTime()}`;

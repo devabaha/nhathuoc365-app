@@ -328,7 +328,6 @@ class ImageGallery extends Component {
       LIBRARY_PERMISSIONS_TYPE.REQUEST,
       permissionGranted => {
         if (permissionGranted) {
-          // this.getAlbum(false);
           this.getAlbum(false);
         }
       }
@@ -460,7 +459,7 @@ class ImageGallery extends Component {
       return;
     }
 
-    const permissonLibraryRequest = isAndroid
+    const permissionLibraryRequest = isAndroid
       ? PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE
       : PERMISSIONS.IOS.PHOTO_LIBRARY;
 
@@ -475,7 +474,7 @@ class ImageGallery extends Component {
     }
 
     try {
-      const result = await permissionHandler(permissonLibraryRequest);
+      const result = await permissionHandler(permissionLibraryRequest);
       switch (result) {
         case RESULTS.UNAVAILABLE:
           Alert.alert('Quyền truy cập Thư viện không khả dụng');
@@ -508,7 +507,7 @@ class ImageGallery extends Component {
       return false;
     }
 
-    const permissonCameraRequest = isAndroid
+    const permissionCameraRequest = isAndroid
       ? PERMISSIONS.ANDROID.CAMERA
       : PERMISSIONS.IOS.CAMERA;
 
@@ -523,7 +522,7 @@ class ImageGallery extends Component {
     }
 
     try {
-      const result = await permissionHandler(permissonCameraRequest);
+      const result = await permissionHandler(permissionCameraRequest);
       switch (result) {
         case RESULTS.UNAVAILABLE:
           Alert.alert('Quyền truy cập Camera không khả dụng');

@@ -189,6 +189,14 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Get shipping info for cart
+   */
+  cart_confirmed(store_id, cart_id) {
+    var api = url_for(API.CART_CONFIRMED + '/' + store_id + '/' + cart_id);
+    return this.postCancelableAPI(api);
+  }
+
+  /**
    * thêm product vào giỏ hàng
    */
   async site_cart_adding(store_id, product_id) {

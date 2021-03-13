@@ -95,6 +95,9 @@ class CommonAPI {
   }
 
   // Cart
+  get CART_CONFIRMED() {
+    return BaseAPI.apiDomain + 'apiCart/confirmed';
+  }
   get SITE_CART_PLUS() {
     return BaseAPI.apiDomain + 'apiCart/plus';
   }

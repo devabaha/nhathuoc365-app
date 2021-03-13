@@ -360,7 +360,9 @@ class Chat extends Component {
         messages={this.state.messages}
         onSendText={this.handleSendText}
         // Gallery props
-        galleryVisible={appConfig.device.isIOS}
+        // galleryVisible={appConfig.device.isIOS}
+        galleryVisible={false}
+        useModalGallery
         uploadURL={UPLOAD_URL}
         onSendImage={this.handleSendImage}
         onUploadedImage={response =>
