@@ -69,7 +69,7 @@ class Confirm extends Component {
   }
 
   get isSiteUseShipNotConfirming() {
-    return isConfigActive(CONFIG_KEY.SITE_USE_SHIP) && !this.state.isConfirming;
+    return store?.store_data[CONFIG_KEY.SITE_USE_SHIP] && !this.state.isConfirming;
   }
 
   UNSAFE_componentWillReceiveProps(nextProps) {
