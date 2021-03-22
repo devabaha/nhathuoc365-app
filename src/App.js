@@ -1260,7 +1260,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifyDetail}>
                   <Scene
                     key={`${appConfig.routes.notifyDetail}_1`}
-                    title={t('screen.newsDetail.mainTitle')}
+                    // title={t('screen.newsDetail.mainTitle')}
                     component={NotifyItem}
                     {...navBarConfig}
                     back

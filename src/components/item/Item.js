@@ -710,11 +710,11 @@ class Item extends Component {
     const isShowButtons = hasImages && images.length > 1;
 
     return (
-      <View style={{paddingBottom: 30}}>
+      <View>
         <SkeletonLoading
           style={styles.noImageContainer}
           loading={this.state.loading}
-          height={appConfig.device.width * 0.6}>
+          height={appConfig.device.width}>
           {!images.length ? (
             <View style={[styles.noImageContainer, styles.swiper_image]}>
               <SVGPhotoBroken
@@ -729,10 +729,13 @@ class Item extends Component {
               renderPagination={(index, total, context) =>
                 this.renderPagination(index, total, context, hasImages)
               }
+              buttonWrapperStyle={{
+                alignItems: 'flex-end'
+              }}
               nextButton={this.renderNextButton()}
               prevButton={this.renderPrevButton()}
               width={appConfig.device.width}
-              height={appConfig.device.width * 0.6}
+              height={appConfig.device.width}
               containerStyle={styles.content_swiper}>
               {this.renderProductImages(images)}
             </Swiper>
@@ -813,7 +816,8 @@ class Item extends Component {
   }
 
   renderDetailInfo(product) {
-    return product?.detail_info?.map((info, index) => {
+    if (!Array.isArray(product?.detail_info)) return;
+    return product.detail_info.map((info, index) => {
       return (
         <View key={index} style={styles.item_content_item_container}>
           <View
@@ -844,7 +848,6 @@ class Item extends Component {
 
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="transparent" barStyle="dark-content" />
         {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
@@ -856,8 +859,10 @@ class Item extends Component {
         <SafeAreaView style={styles.container}>
           <Animated.ScrollView
             ref={(ref) => (this.refs_body_item = ref)}
-            contentContainerStyle={{
-              paddingTop: 60,
+            style={{
+              marginTop: appConfig.device.isIOS
+                ? -appConfig.device.statusBarHeight
+                : 0,
             }}
             onScroll={Animated.event(
               [
@@ -1176,7 +1181,7 @@ const styles = StyleSheet.create({
     flex: 0,
   },
   swiper_image: {
-    height: Util.size.width * 0.6,
+    height: '100%',
     resizeMode: 'contain',
   },
 
@@ -1343,11 +1348,11 @@ const styles = StyleSheet.create({
   paginationContainer: {
     borderRadius: 20,
     position: 'absolute',
-    bottom: -30,
+    bottom: 15,
     right: 15,
     backgroundColor: 'rgba(255,255,255,.6)',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 3,
   },
   paginationText: {
     fontSize: 12,
@@ -1361,6 +1366,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 30
   },
   swipeRightControlBtn: {
     right: 7,

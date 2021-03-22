@@ -640,19 +640,6 @@ const styles = StyleSheet.create({
     borderColor: '#dddddd'
   },
 
-  cart_section_box: {
-    width: '100%',
-    height: 32,
-    justifyContent: 'center',
-    backgroundColor: '#fa7f50'
-  },
-  cart_section_title: {
-    color: '#ffffff',
-    fontSize: 14,
-    paddingLeft: 8,
-    fontWeight: '600'
-  },
-
   cart_item_box: {
     width: '100%',
     paddingVertical: 8,

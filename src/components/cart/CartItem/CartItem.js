@@ -94,8 +94,8 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   store_cart_item_qnt_change: {
-    width: 22,
-    height: 22,
+    width: 24,
+    height: 24,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: Util.pixel,
@@ -120,6 +120,9 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 
+  btn_left: {
+    zIndex: 1,
+  },
   p8: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -213,7 +216,7 @@ const CartItem = ({
                   onPress={disabled || isMinusLoading ? () => {} : onMinus}
                   underlayColor="#eee"
                   hitSlop={HIT_SLOP}
-                  style={styles.p8}>
+                  style={[styles.btn_left, styles.p8]}>
                   <View style={styles.store_cart_item_qnt_change}>
                     {isMinusLoading ? (
                       <Indicator size="small" />

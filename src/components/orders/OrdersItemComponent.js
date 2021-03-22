@@ -170,7 +170,8 @@ class OrdersItemComponent extends Component {
                 style={[
                   styles.orders_status_box_title,
                   {
-                    color: is_paymenting ? '#fa7f50' : DEFAULT_COLOR,
+                    color: appConfig.colors.orderStatus[item.status] ||
+                    appConfig.colors.primary,
                   },
                 ]}>
                 {item.status_view}
@@ -273,7 +274,7 @@ class OrdersItemComponent extends Component {
                   alignItems: 'center',
                 }}>
                 <TouchableHighlight
-                  underlayColor={hexToRgbA('#dd4b39', 0.9)}
+                  underlayColor={hexToRgbA(appConfig.colors.marigold, 0.9)}
                   onPress={() => {
                     if (this.props.confirmCancelCart) {
                       this.props.confirmCancelCart(item);
@@ -283,7 +284,7 @@ class OrdersItemComponent extends Component {
                     paddingVertical: 6,
                     paddingHorizontal: 8,
                     borderRadius: 3,
-                    backgroundColor: '#dd4b39',
+                    backgroundColor: appConfig.colors.marigold,
                     marginTop: 16,
                   }}>
                   <Text
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
   },
   orders_status_box_title: {
     fontSize: 12,
-    color: DEFAULT_COLOR,
+    fontWeight: '600'
   },
   orders_item_content_text: {
     marginTop: 8,

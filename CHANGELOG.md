@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.4.4] - 2020-03-22
+### Added
+- orderStatus color.
+### Changed
+- site_use_ship valid checking.
+- hitSlop cartItem btn.
+- ModalInput, ModalList, ModalPicker UI, logic.
+- ON DEV SERVER checking.
+- Must select at least 1 product to confirm delivery order.
+- Hide unselected products in confirm delivery order.
+- UI for swiper in detail product.
+
+
 ## [r11.4.3] - 2021-03-13
 ### Added
 - One more step for shipping fee calculating for delivery mode (config site_use_ship) in Confirm.

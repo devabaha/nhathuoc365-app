@@ -356,9 +356,9 @@ class GestureWrapper extends Component {
     this.state.animatedTranslateYScrollView.removeListener(
       this.onAnimatedValueChange.bind(this),
     );
-    if (isAndroid) {
-      StatusBar.setBackgroundColor(this.props.defaultStatusBarColor, true);
-    }
+    // if (isAndroid) {
+    //   StatusBar.setBackgroundColor(this.props.defaultStatusBarColor, true);
+    // }
   }
 
   onAnimatedValueChange({value}) {

@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.4.3';
+    return 'r11.4.4';
   }
 
   get appName() {
@@ -88,6 +88,17 @@ class Config {
       cartType: {
         cart: '#B0C0F0',
         dropship: '#FF9F1C'
+      },
+      orderStatus: {
+        [CART_STATUS_CANCEL_1]: '#ef476f',
+        [CART_STATUS_CANCEL]: '#ef476f',
+        [CART_STATUS_ORDERING]: '#6F7C12',
+        [CART_STATUS_READY]: '#812384',
+        [CART_STATUS_ACCEPTED]: '#F46036',
+        [CART_STATUS_PROCESSING]: '#986d60',
+        [CART_STATUS_DELIVERY]: '#EEAA21',
+        [CART_STATUS_COMPLETED]: '#06d6a0',
+        [CART_STATUS_CLOSED]: '#aaa',
       },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',

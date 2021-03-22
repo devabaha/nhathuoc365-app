@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   },
   cart_item_check_icon: {
     color: appConfig.colors.primary,
-    fontSize: 22,
+    fontSize: 24,
   },
   cart_item_check: {
     alignItems: 'center',
@@ -113,11 +113,18 @@ const styles = StyleSheet.create({
   cart_item_actions_btn: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 22,
-    height: 22,
     borderWidth: Util.pixel,
     borderColor: '#666666',
     borderRadius: 3,
+  },
+  cart_item_actions_btn_container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 24,
+    height: 24,
+  },
+  cart_item_actions_btn_left:  {
+    zIndex: 1
   },
   cart_item_remove_btn: {
     backgroundColor: 'rgba(255,255,255,.9)',
@@ -441,7 +448,7 @@ class CartItem extends Component {
       <View style={styles.cart_item_actions}>
         <View style={styles.cart_item_calculations}>
           <TouchableHighlight
-            style={styles.cart_item_actions_btn}
+            style={[styles.cart_item_actions_btn, styles.cart_item_actions_btn_left]}
             underlayColor="#eee"
             hitSlop={HIT_SLOP}
             onPress={
@@ -449,7 +456,8 @@ class CartItem extends Component {
                 ? null
                 : this._item_qnt_decrement_handler.bind(this, item)
             }>
-            <View>
+            <View
+              style={styles.cart_item_actions_btn_container}>
               {decrement_loading ? (
                 <Indicator size="small" />
               ) : (
@@ -485,7 +493,8 @@ class CartItem extends Component {
             onPress={
               is_processing ? null : this._item_qnt_increment.bind(this, item)
             }>
-            <View>
+            <View
+              style={styles.cart_item_actions_btn_container}>
               {increment_loading ? (
                 <Indicator size="small" />
               ) : (
@@ -499,7 +508,7 @@ class CartItem extends Component {
             <Indicator size="small" />
           ) : (
             <TouchableOpacity
-              hitSlop={HIT_SLOP}
+              hitSlop={{right: 50, bottom: 50, left: 50, top: 50}}
               onPress={
                 is_processing ? null : this._checkBoxHandler.bind(this, item)
               }>
@@ -516,6 +525,7 @@ class CartItem extends Component {
 
   render() {
     const item = this.props.item;
+    if(this.props.noAction && !item.selected) return null;
     return (
       <TouchableHighlight underlayColor="#ccc" onPress={this.onPressCartItem}>
         <View style={styles.cart_item_box}>
