@@ -11,6 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Button from '../components/Button';
 import {Actions} from 'react-native-router-flux';
+import appConfig from 'app-config';
 
 function ModalInput({
   refModal = () => {},
@@ -98,7 +99,7 @@ function ModalInput({
       </View>
 
       <View style={styles.body}>
-        <Text style={styles.description}>{description}</Text>
+        {!!description && <Text style={styles.description}>{description}</Text>}
         <View style={[styles.textInputContainer, textInputContainerStyle]}>
           <TextInput
             ref={ref_input}
@@ -149,9 +150,8 @@ const styles = StyleSheet.create({
   headingContainer: {
     padding: 30,
     paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderStyle: 'solid',
-    borderBottomColor: '#ccc',
+    borderBottomWidth: 2,
+    borderBottomColor: appConfig.colors.primary,
   },
   heading: {
     marginTop: 10,
@@ -163,17 +163,21 @@ const styles = StyleSheet.create({
   },
   body: {
     padding: 15,
+    paddingTop: 20,
   },
   description: {
     fontSize: 13,
     color: '#666',
+    marginBottom: 12,
   },
   textInputContainer: {
     borderWidth: 0.5,
     borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    margin: 15,
+    borderRadius: 4,
+    padding: appConfig.device.ratio * 3,
+    paddingHorizontal: 15,
+    paddingBottom: appConfig.device.ratio * 3 + 1,
+    marginBottom: 0
   },
   textInput: {
     color: '#242424',

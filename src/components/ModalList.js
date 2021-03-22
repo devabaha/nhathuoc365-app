@@ -14,8 +14,14 @@ import EventTracker from '../helper/EventTracker';
 import appConfig from 'app-config';
 
 class Modal extends PureComponent {
+  static defaultProps = {
+    entry: 'bottom',
+    position: 'bottom',
+    footerComponent: () => {},
+    ref_modal: () => {}
+  };
   state = {};
-  ref_modal = React.createRef();
+  ref_modal = null;
   eventTracker = new EventTracker();
 
   componentDidMount() {
@@ -27,13 +33,15 @@ class Modal extends PureComponent {
   }
 
   onClose = () => {
-    if (this.ref_modal.current) {
-      this.ref_modal.current.close();
+    if (this.ref_modal) {
+      this.ref_modal.close();
     }
   };
 
   renderItem({item}) {
-    const isSelected = item.id === this.props.selectedItem.id;
+    if(!item) return;
+    const isSelected =
+      this.props.selectedItem && item.id === this.props.selectedItem.id;
     const extraStyle = isSelected && styles.selectedItemContainer;
     return (
       <TouchableHighlight
@@ -47,8 +55,14 @@ class Modal extends PureComponent {
             </View>
           )}
           <View style={styles.itemInfoContainer}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.description}</Text>
+            <Text style={[styles.title, this.props.titleStyle]}>
+              {item.title}
+            </Text>
+            {!!item.renderDescription
+              ? item.renderDescription(styles.description)
+              : !!item.description && (
+                  <Text style={styles.description}>{item.description}</Text>
+                )}
           </View>
 
           {isSelected && (
@@ -62,15 +76,18 @@ class Modal extends PureComponent {
   render() {
     return (
       <ModalBox
-        entry="bottom"
-        position="bottom"
+        entry={this.props.entry}
+        position={this.props.position}
         style={[styles.modal, this.props.modalStyle]}
         backButtonClose
-        ref={this.ref_modal}
+        ref={inst => {
+          this.props.ref_modal(inst);
+          this.ref_modal = inst;
+        }}
         isOpen
         onClosed={this.props.onCloseModal}
         useNativeDriver>
-        <View style={styles.headingContainer}>
+        <View style={[styles.headingContainer, this.props.headingContainerStyle]}>
           <TouchableOpacity onPress={this.onClose} style={styles.iconContainer}>
             <Icon name="close" style={styles.icon} />
           </TouchableOpacity>
@@ -81,7 +98,9 @@ class Modal extends PureComponent {
           renderItem={this.renderItem.bind(this)}
           keyExtractor={(item, index) => index.toString()}
           ListEmptyComponent={this.props.ListEmptyComponent}
+          {...this.props.listProps}
         />
+        {this.props.footerComponent()}
       </ModalBox>
     );
   }
@@ -160,7 +179,7 @@ const styles = StyleSheet.create({
   selectedIcon: {
     fontSize: 20,
     color: appConfig.colors.primary,
-    marginLeft: 15
+    marginLeft: 15,
   },
 });
 

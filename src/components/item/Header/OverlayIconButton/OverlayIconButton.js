@@ -15,8 +15,8 @@ const AnimatedIonicons = new Animated.createAnimatedComponent(Ionicons);
 const styles = StyleSheet.create({
   container: {
     borderRadius: 20,
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,.5)',
   },
   icon: {
-    fontSize: 24,
+    fontSize: 22,
     color: appConfig.colors.primary,
   },
   contentOverlay: {
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   iconOverlay: {
     color: '#fff',
-  }
+  },
 });
 
 class OverlayIconButton extends Component {
@@ -77,7 +77,11 @@ class OverlayIconButton extends Component {
 
   renderOverlayIcon = () => {
     if (typeof this.props.renderOverlayIcon === 'function') {
-      return this.props.renderOverlayIcon(styles.icon, styles.iconOverlay, styles.contentOverlay);
+      return this.props.renderOverlayIcon(
+        styles.icon,
+        styles.iconOverlay,
+        styles.contentOverlay,
+      );
     }
 
     return (
@@ -97,6 +101,7 @@ class OverlayIconButton extends Component {
     return (
       <Animated.View style={this.props.wrapperStyle}>
         <TouchableOpacity
+          hitSlop={HIT_SLOP}
           disabled={this.props.disabled}
           onPress={this.props.onPress}>
           <Animated.View style={[styles.container, this.props.containerStyle]}>

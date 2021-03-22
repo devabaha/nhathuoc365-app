@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, {PureComponent} from 'react';
 import {
   TouchableOpacity,
   TouchableHighlight,
@@ -8,10 +8,10 @@ import {
   StyleSheet,
   Platform,
   Picker,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LinearGradient from 'react-native-linear-gradient';
 import EventTracker from '../helper/EventTracker';
@@ -21,12 +21,15 @@ class ModalPicker extends PureComponent {
     cancelTitle: 'Hủy',
     selectTitle: 'Chọn',
     onClose: () => {},
-    swipeToClose: false
+    swipeToClose: false,
   };
 
   state = {
-    selectedValue: this.props.selectedValue,
-    headerHeight: 0
+    selectedValue:
+      this.props.selectedValue !== undefined
+        ? this.props.selectedValue
+        : this.props.defaultValue || this.props.data[0]?.value,
+    headerHeight: 0,
   };
   refModal = React.createRef();
   eventTracker = new EventTracker();
@@ -39,8 +42,8 @@ class ModalPicker extends PureComponent {
     this.eventTracker.clearTracking();
   }
 
-  onHeaderLayout = e => {
-    this.setState({ headerHeight: e.nativeEvent.layout.height });
+  onHeaderLayout = (e) => {
+    this.setState({headerHeight: e.nativeEvent.layout.height});
   };
 
   renderPicker() {
@@ -57,8 +60,7 @@ class ModalPicker extends PureComponent {
               selectedValue={this.state.selectedValue}
               style={styles.picker}
               itemStyle={styles.languagePickerItem}
-              onValueChange={this.onValueChange}
-            >
+              onValueChange={this.onValueChange}>
               {this.renderLanguages()}
             </Picker>
           </View>
@@ -68,10 +70,9 @@ class ModalPicker extends PureComponent {
           <ScrollView
             style={styles.picker}
             scrollEventThrottle={16}
-            contentContainerStyle={styles.androidPicker}
-          >
+            contentContainerStyle={styles.androidPicker}>
             {this.props.data.map((item, index) =>
-              this.renderAndroidData({ item, index })
+              this.renderAndroidData({item, index}),
             )}
           </ScrollView>
         );
@@ -80,26 +81,23 @@ class ModalPicker extends PureComponent {
     }
   }
 
-  renderAndroidData({ item, index }) {
+  renderAndroidData({item, index}) {
     const isSelected = item.value === this.state.selectedValue;
 
     return (
       <TouchableHighlight
         onPress={() => this.onValueChange(item.value, index)}
-        underlayColor={'rgba(0,0,0,.02)'}
-      >
+        underlayColor={'rgba(0,0,0,.02)'}>
         <View
           style={[
             styles.androidDataRow,
-            isSelected && styles.androidDataRowSelected
-          ]}
-        >
+            isSelected && styles.androidDataRowSelected,
+          ]}>
           <Text
             style={[
               styles.androidDataText,
-              isSelected && styles.androidDataTextSelected
-            ]}
-          >
+              isSelected && styles.androidDataTextSelected,
+            ]}>
             {item.label}
           </Text>
           {/* {isSelected && <Icon name="check" style={styles.checkIcon} />} */}
@@ -115,7 +113,7 @@ class ModalPicker extends PureComponent {
   }
 
   onValueChange = (itemValue, indexValue) => {
-    this.setState({ selectedValue: itemValue });
+    this.setState({selectedValue: itemValue});
   };
 
   onCancelPress = () => {
@@ -137,6 +135,7 @@ class ModalPicker extends PureComponent {
 
   render() {
     const confirmDisabled =
+      this.props.selectedValue !== undefined &&
       this.state.selectedValue === this.props.selectedValue;
     return (
       <Modal
@@ -148,18 +147,15 @@ class ModalPicker extends PureComponent {
         useNativeDriver
         swipeToClose={this.props.swipeToClose}
         style={[styles.modal]}
-        easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}
-      >
+        easing={Easing.bezier(0.54, 0.96, 0.74, 1.01)}>
         <View
           onLayout={this.onHeaderLayout}
-          style={styles.languagePickerHeaderContainer}
-        >
+          style={styles.languagePickerHeaderContainer}>
           <View style={styles.languagePickerHeader}>
             <TouchableOpacity
               hitSlop={HIT_SLOP}
               onPress={this.onCancelPress}
-              style={styles.languagePickerCancel}
-            >
+              style={styles.languagePickerCancel}>
               <Text style={styles.languagePickerCancelText}>
                 {this.props.cancelTitle}
               </Text>
@@ -171,14 +167,12 @@ class ModalPicker extends PureComponent {
               hitSlop={HIT_SLOP}
               onPress={this.onSelectPress}
               style={styles.languagePickerSelect}
-              disabled={confirmDisabled}
-            >
+              disabled={confirmDisabled}>
               <Text
                 style={[
                   styles.languagePickerSelectText,
-                  confirmDisabled && styles.languagePickerSelectTextDisabled
-                ]}
-              >
+                  confirmDisabled && styles.languagePickerSelectTextDisabled,
+                ]}>
                 {this.props.selectTitle}
               </Text>
             </TouchableOpacity>
@@ -199,7 +193,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
     overflow: 'hidden',
-    height: undefined
+    height: undefined,
   },
   languagePickerHeaderContainer: {
     zIndex: 1,
@@ -207,27 +201,27 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#fafafa',
     borderBottomColor: '#eee',
-    borderBottomWidth: 0.8
+    borderBottomWidth: 0.8,
   },
   languagePickerHeader: {
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   languagePickerCancel: {
     position: 'absolute',
-    left: 15
+    left: 15,
   },
   languagePickerCancelText: {
     fontSize: 16,
     color: '#666',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   languagePickerTitle: {
     color: '#2a2a2a',
     fontWeight: '600',
     textAlign: 'center',
     fontSize: 24,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   languagePickerSubTitle: {
     letterSpacing: 1.15,
@@ -235,44 +229,44 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: Platform.select({
       ios: 5,
-      android: 2
-    })
+      android: 2,
+    }),
   },
   languagePickerSelect: {
     position: 'absolute',
-    right: 15
+    right: 15,
   },
   languagePickerSelectText: {
     fontSize: 16,
     color: DEFAULT_COLOR,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   languagePickerSelectTextDisabled: {
-    color: '#bababa'
+    color: '#bababa',
   },
   languagePickerItem: {
-    color: '#333'
+    color: '#333',
   },
   pickerMask: {
     zIndex: 1,
     height: 30,
     width: '100%',
-    position: 'absolute'
+    position: 'absolute',
   },
   picker: {
     width: '100%',
     ...Platform.select({
       ios: {
-        paddingVertical: 0
+        paddingVertical: 0,
       },
       android: {
-        maxHeight: 220
-      }
-    })
+        maxHeight: 220,
+      },
+    }),
   },
   androidPicker: {
     flexGrow: 1,
-    paddingVertical: 15
+    paddingVertical: 15,
   },
   androidDataRow: {
     flexDirection: 'row',
@@ -280,23 +274,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   androidDataRowSelected: {
-    backgroundColor: '#f5f5f5'
+    backgroundColor: '#f5f5f5',
   },
   androidDataText: {
     fontSize: 18,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   androidDataTextSelected: {
     fontWeight: 'bold',
-    color: '#333'
+    color: '#333',
   },
   checkIcon: {
     fontSize: 22,
-    color: DEFAULT_COLOR
-  }
+    color: DEFAULT_COLOR,
+  },
 });
 
 export default ModalPicker;

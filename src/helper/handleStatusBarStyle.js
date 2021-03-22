@@ -4,7 +4,18 @@ import {Actions} from 'react-native-router-flux';
 import {config as bgrStatusBarConfig} from 'app-packages/tickid-bgr-status-bar';
 
 export default function handleStatusBarStyle(prevState, newState, action) {
-  if (appConfig.device.isAndroid) return;
+  if (appConfig.device.isAndroid) {
+    if (Actions.currentScene === `${appConfig.routes.item}_1`) {
+      StatusBar.setBackgroundColor('transparent');
+      StatusBar.setTranslucent(true);
+      StatusBar.setBarStyle('dark-content', true);
+    } else {
+      StatusBar.setBackgroundColor(appConfig.colors.primary);
+      StatusBar.setTranslucent(false);
+      StatusBar.setBarStyle('light-content', true);
+    }
+    return;
+  }
 
   const darkStatusBarScenes = [
     appConfig.routes.domainSelector,

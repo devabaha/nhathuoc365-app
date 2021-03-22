@@ -8,6 +8,7 @@ import store from 'app-store';
 
 export const ORIGIN_API_DOMAIN = 'https://apiapp.abaha.vn/';
 export const ORIGIN_DEV_API_DOMAIN = 'https://apiapp.tickid.top/';
+export const ORIGIN_SPRINT_DEV_API_DOMAIN = 'https://apiapp.abaha.click/';
 export const ORIGIN_IMAGE_DOMAIN = 'https://img.abaha.vn/';
 
 class BaseAPI {

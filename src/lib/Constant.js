@@ -95,6 +95,8 @@ global.CART_STATUS_PROCESSING = 15;
 global.CART_STATUS_DELIVERY = 20;
 global.CART_STATUS_COMPLETED = 25;
 global.CART_STATUS_CANCEL = 0;
+global.CART_STATUS_CLOSED = 30;
+global.CART_STATUS_CANCEL_1 = -1;
 
 /**Object table type */
 global.OBJECT_TYPE_KEY_SITE = 'site';

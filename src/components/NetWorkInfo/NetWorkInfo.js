@@ -12,7 +12,7 @@ import {default as NetInfo} from '@react-native-community/netinfo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 import store from '../../store';
-import {ORIGIN_DEV_API_DOMAIN} from '../../network/API/BaseAPI';
+import {ORIGIN_API_DOMAIN} from '../../network/API/BaseAPI';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -93,7 +93,8 @@ const styles = StyleSheet.create({
     // fontFamily: 'SairaStencilOne-Regular',
     color: '#fff',
     textAlign: 'center',
-    fontSize: 8
+    fontSize: 8,
+    textTransform: 'uppercase'
   },
 });
 
@@ -189,8 +190,8 @@ class NetWorkInfo extends Component {
   }
 
   renderDevServerModeWaterMark() {
-    const isDevServer = store.apiDomain === ORIGIN_DEV_API_DOMAIN;
-    if (isDevServer) {
+    const isLiveServer = store.apiDomain === ORIGIN_API_DOMAIN;
+    if (!isLiveServer) {
       return (
         <SafeAreaView pointerEvents="none" style={styles.devServerWaterMarkWrapper}>
           <View style={styles.devServerWaterMarkContainer}>

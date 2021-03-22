@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, SafeAreaView} from 'react-native';
+import {StyleSheet, SafeAreaView, StatusBar} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Animated, {Easing, interpolate} from 'react-native-reanimated';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -9,7 +9,8 @@ import OverlayIconButton from './OverlayIconButton';
 import RightButtonNavBar from '../../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../../RightButtonNavBar/constants';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import { BACK_NAV_ICON_NAME } from '../../../constants';
+import {BACK_NAV_ICON_NAME} from '../../../constants';
+import appConfig from 'app-config';
 
 const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
@@ -18,13 +19,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     zIndex: 999,
+    paddingTop: appConfig.device.isAndroid
+      ? appConfig.device.statusBarHeight
+      : 0,
   },
   background: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
+    height: '200%',
     backgroundColor: '#fff',
     ...elevationShadowStyle(3),
+    bottom: 0,
   },
   mainWrapper: {
     width: '100%',
@@ -34,8 +39,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
   },
+  backBtn: {
+    zIndex: 1,
+  },
   backIcon: {
-    fontSize: 30,
+    fontSize: 26,
   },
   title: {
     color: '#333',
@@ -49,9 +57,6 @@ const styles = StyleSheet.create({
     marginLeft: -3,
     marginRight: -5,
   },
-  backIconStyle: {
-    fontSize: 28
-  }
 });
 
 const ACTIVE_OFFSET_TOP = 100;
@@ -78,7 +83,6 @@ class Header extends Component {
     item: {},
     onPressWarehouse: () => {},
   };
-
   state = {
     titleOriginWidth: 0,
   };
@@ -90,7 +94,7 @@ class Header extends Component {
   animationDuration = 250;
 
   iconStyle = {
-    opacity: this.animatedOpacity
+    opacity: this.animatedOpacity,
   };
 
   iconOverlayStyle = {
@@ -277,9 +281,9 @@ class Header extends Component {
             <OverlayIconButton
               iconName={this.iconName}
               backgroundStyle={this.iconBackgroundStyle}
-              contentOverlayStyle={[this.contentOverlayStyle, styles.backIconStyle]}
-              iconStyle={[this.iconStyle, styles.backIconStyle]}
-              wrapperStyle={narrowLeftGapStyle}
+              contentOverlayStyle={[this.contentOverlayStyle, styles.backIcon]}
+              iconStyle={[this.iconStyle, styles.backIcon]}
+              wrapperStyle={[styles.backBtn, narrowLeftGapStyle]}
               onPress={Actions.pop}
             />
 
