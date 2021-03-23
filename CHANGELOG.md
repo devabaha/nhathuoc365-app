@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI for swiper in detail product.
 ### Fixed
 - Dropship  checking.
+- phoneNumber includes countryCode checking.
 
 ## [r11.4.3] - 2021-03-13
 ### Added
