@@ -357,8 +357,8 @@ class ItemAttribute extends PureComponent {
       this.state.selectedAttrs,
     );
     const disabled =
-      (this.isDropShip &&
-        this.state.product.price > this.state.dropShipPrice) ||
+      (this.isDropShip && (this.state.selectedModel &&
+        this.state.selectedModel.price_in_number > this.state.dropShipPrice)) ||
       (this.hasAttrs && numberSelectedAttrs === 0) ||
       Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 

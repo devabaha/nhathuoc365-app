@@ -43,6 +43,7 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.premiumInfo,
 
     appConfig.routes.item,
+    appConfig.routes.itemAttribute,
   ];
 
   switch (action.type) {

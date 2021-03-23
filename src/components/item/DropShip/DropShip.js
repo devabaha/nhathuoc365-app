@@ -161,7 +161,7 @@ const DropShip = ({
       <Container row style={styles.row}>
         <View style={styles.newPriceTitleContainer}>
           <Text style={styles.title}>Giá muốn bán</Text>
-          <Text style={styles.note}>* Phải cao hơn giá bán</Text>
+          <Text style={styles.note}>* Phải cao hơn hoặc bằng giá bán</Text>
         </View>
 
         <View style={[styles.value, styles.newPriceContainer]}>
