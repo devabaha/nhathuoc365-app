@@ -81,7 +81,7 @@ class Body extends Component {
     return (
       <View style={styles.container}>
         <Block
-          title="Thể lệ game"
+          title="Thể lệ"
           content={this.props.rules}
           iconName="balance-scale"
           titleStyle={styles.rulesTitle}
