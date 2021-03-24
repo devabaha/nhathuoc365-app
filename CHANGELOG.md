@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Hide unselected products in confirm delivery order.
 - UI for swiper in detail product.
 - Hide site in detail Voucher.
+- Payment method selector position and visible logic.
 ### Fixed
 - Dropship  checking.
 - phoneNumber includes countryCode checking.
