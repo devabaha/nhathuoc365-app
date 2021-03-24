@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.4.4] - 2020-03-23
+## [r11.4.4] - 2020-03-24
 ### Added
 - orderStatus color.
 ### Changed
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Must select at least 1 product to confirm delivery order.
 - Hide unselected products in confirm delivery order.
 - UI for swiper in detail product.
+- Hide site in detail Voucher.
 ### Fixed
 - Dropship  checking.
 - phoneNumber includes countryCode checking.
