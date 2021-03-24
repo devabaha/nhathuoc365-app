@@ -1277,76 +1277,6 @@ class Confirm extends Component {
           </View>
 
           <View
-            style={[
-              styles.rows,
-              styles.borderBottom,
-              single ? null : styles.mt8,
-              {
-                paddingTop: 0,
-                paddingRight: 0,
-              },
-            ]}>
-            <View
-              style={[
-                styles.address_name_box,
-                {
-                  paddingTop: 12,
-                },
-              ]}>
-              <View style={styles.box_icon_label}>
-                <Icon5 style={styles.icon_label} name="dollar-sign" size={15} />
-                <Text style={styles.input_label}>
-                  {t('confirm.paymentMethod.title')}
-                </Text>
-              </View>
-              <View
-                style={[
-                  styles.address_default_box,
-                  {
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                  },
-                ]}>
-                <TouchableHighlight
-                  style={{
-                    paddingVertical: 12,
-                    paddingHorizontal: 15,
-                  }}
-                  underlayColor="transparent"
-                  onPress={() => this._goPaymentMethod(cart_data)}>
-                  <Text
-                    style={[styles.address_default_title, styles.title_active]}>
-                    {t('confirm.change')}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            </View>
-
-            <View style={{flexDirection: 'row', ...styles.address_content}}>
-              {cart_data.payment_method ? (
-                <View style={styles.paymentMethodContainer}>
-                  {cart_data.payment_method.image && (
-                    <CachedImage
-                      mutable
-                      source={{uri: cart_data.payment_method.image}}
-                      style={styles.imagePaymentMethod}
-                    />
-                  )}
-                  {cart_data.payment_method.name && (
-                    <Text style={[styles.address_name]}>
-                      {cart_data.payment_method.name}
-                    </Text>
-                  )}
-                </View>
-              ) : (
-                <Text style={styles.placeholder}>
-                  {t('confirm.paymentMethod.unselected')}
-                </Text>
-              )}
-            </View>
-          </View>
-          <View
             onLayout={this._onLayout.bind(this)}
             style={[styles.rows, styles.borderBottom, styles.mt8]}>
             <TouchableHighlight
@@ -1428,10 +1358,93 @@ class Confirm extends Component {
 
           {this.renderCartProducts(cart_products_confirm, single)}
 
+          {(!single ||
+            !store?.store_data[CONFIG_KEY.SITE_USE_SHIP] ||
+            this.state.isConfirming) && (
+            <View
+              style={[
+                styles.rows,
+                styles.borderBottom,
+                styles.mt8,
+                {
+                  paddingTop: 0,
+                  paddingRight: 0,
+                },
+              ]}>
+              <View
+                style={[
+                  styles.address_name_box,
+                  {
+                    paddingTop: 12,
+                  },
+                ]}>
+                <View style={styles.box_icon_label}>
+                  <Icon5
+                    style={styles.icon_label}
+                    name="dollar-sign"
+                    size={15}
+                  />
+                  <Text style={styles.input_label}>
+                    {t('confirm.paymentMethod.title')}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.address_default_box,
+                    {
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                    },
+                  ]}>
+                  <TouchableHighlight
+                    style={{
+                      paddingVertical: 12,
+                      paddingHorizontal: 15,
+                    }}
+                    underlayColor="transparent"
+                    onPress={() => this._goPaymentMethod(cart_data)}>
+                    <Text
+                      style={[
+                        styles.address_default_title,
+                        styles.title_active,
+                      ]}>
+                      {t('confirm.change')}
+                    </Text>
+                  </TouchableHighlight>
+                </View>
+              </View>
+
+              <View style={{flexDirection: 'row', ...styles.address_content}}>
+                {cart_data.payment_method ? (
+                  <View style={styles.paymentMethodContainer}>
+                    {cart_data.payment_method.image && (
+                      <CachedImage
+                        mutable
+                        source={{uri: cart_data.payment_method.image}}
+                        style={styles.imagePaymentMethod}
+                      />
+                    )}
+                    {cart_data.payment_method.name && (
+                      <Text style={[styles.address_name]}>
+                        {cart_data.payment_method.name}
+                      </Text>
+                    )}
+                  </View>
+                ) : (
+                  <Text style={styles.placeholder}>
+                    {t('confirm.paymentMethod.unselected')}
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
+
           <View
             style={[
               styles.rows,
               styles.borderBottom,
+              styles.mt8,
               {
                 borderTopWidth: 0,
                 backgroundColor: '#fafafa',
