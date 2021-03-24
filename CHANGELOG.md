@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Dropship  checking.
 - phoneNumber includes countryCode checking.
+- Cart footer quick btn pressing UI.
 
 ## [r11.4.3] - 2021-03-13
 ### Added

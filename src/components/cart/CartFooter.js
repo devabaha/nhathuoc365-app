@@ -909,13 +909,13 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: ORDER_BTN_WIDTH / 2,
     backgroundColor: appConfig.colors.primary,
     ...elevationShadowStyle(7, 0, 0, 0.5, appConfig.colors.primary),
-    paddingHorizontal: 7,
+    overflow: 'hidden'
   },
   quickOpenCartBtnContainer: {
     flex: 1,
     // borderTopLeftRadius: ORDER_BTN_WIDTH / 2,
     // borderBottomLeftRadius: ORDER_BTN_WIDTH / 2,
-    overflow: 'hidden',
+    // overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -927,7 +927,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    left: 5,
+    paddingLeft: 12,
+    paddingRight: 7,
   },
   totalPriceContainer: {
     paddingHorizontal: 7,
