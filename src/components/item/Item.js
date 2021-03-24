@@ -716,7 +716,7 @@ class Item extends Component {
           loading={this.state.loading}
           height={appConfig.device.width}>
           {!images.length ? (
-            <View style={[styles.noImageContainer, styles.swiper_image]}>
+            <View style={[styles.noImageContainer, styles.swiper_no_image]}>
               <SVGPhotoBroken
                 width="80"
                 height="80"
@@ -1182,6 +1182,10 @@ const styles = StyleSheet.create({
   },
   swiper_image: {
     height: '100%',
+    resizeMode: 'contain',
+  },
+  swiper_no_image: {
+    height: appConfig.device.width * .6,
     resizeMode: 'contain',
   },
 

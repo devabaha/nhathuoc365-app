@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   devServerWaterMarkContainer: {
     backgroundColor: 'rgba(0,0,0,1)',
@@ -88,13 +88,13 @@ const styles = StyleSheet.create({
     opacity: 0.2,
   },
   devServerWaterMarkLabel: {
-    letterSpacing: 3,
-    fontWeight: 'bold',
+    letterSpacing: 1,
+    // fontWeight: 'bold',
     // fontFamily: 'SairaStencilOne-Regular',
     color: '#fff',
     textAlign: 'center',
     fontSize: 8,
-    textTransform: 'uppercase'
+    // textTransform: 'uppercase'
   },
 });
 
@@ -193,9 +193,13 @@ class NetWorkInfo extends Component {
     const isLiveServer = store.apiDomain === ORIGIN_API_DOMAIN;
     if (!isLiveServer) {
       return (
-        <SafeAreaView pointerEvents="none" style={styles.devServerWaterMarkWrapper}>
+        <SafeAreaView
+          pointerEvents="none"
+          style={styles.devServerWaterMarkWrapper}>
           <View style={styles.devServerWaterMarkContainer}>
-            <Text style={styles.devServerWaterMarkLabel}>ON DEV SERVER</Text>
+            <Text style={styles.devServerWaterMarkLabel}>
+              {store.apiDomain}
+            </Text>
           </View>
         </SafeAreaView>
       );
