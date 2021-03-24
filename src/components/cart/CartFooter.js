@@ -346,7 +346,8 @@ class CartFooter extends Component {
   renderItems({item}) {
     const isMinusLoading = this.state.cartItemMinusId === item.id;
     const isPlusLoading = this.state.cartItemPlusId === item.id;
-    const isUpdateQuantityLoading = this.state.cartItemUpdateQuantityId === item.id;
+    const isUpdateQuantityLoading =
+      this.state.cartItemUpdateQuantityId === item.id;
     const disabled = isUpdateQuantityLoading || isMinusLoading || isPlusLoading;
     return (
       <CartItem
@@ -599,6 +600,8 @@ class CartFooter extends Component {
       <Animated.View style={[styles.quickOpenCartBtnWrapper, extraStyle]}>
         <View style={styles.quickOpenCartBtnContainer}>
           <ButtonComponent
+            style={styles.quickOpenCartBtnContentWrapper}
+            containerStyle={styles.quickOpenCartBtnContentWrapper}
             underlayColor={LightenColor(appConfig.colors.primary, -10)}
             onPress={this.forceShowCart}>
             <Animated.View style={styles.quickOpenCartBtnContentContainer}>
@@ -909,7 +912,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: ORDER_BTN_WIDTH / 2,
     backgroundColor: appConfig.colors.primary,
     ...elevationShadowStyle(7, 0, 0, 0.5, appConfig.colors.primary),
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   quickOpenCartBtnContainer: {
     flex: 1,
@@ -918,6 +921,9 @@ const styles = StyleSheet.create({
     // overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  quickOpenCartBtnContentWrapper: {
+    width: '100%',
   },
   quickOpenCartBtnContentContainer: {
     height: '100%',
