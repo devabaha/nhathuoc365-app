@@ -335,6 +335,7 @@ class Home extends Component {
           scrollEventThrottle={16}
           refreshControl={
             <RefreshControl
+              progressViewOffset={this.state.headerHeight || 80}
               refreshing={this.props.refreshing}
               onRefresh={this.props.onPullToRefresh}
               tintColor={appConfig.colors.white}

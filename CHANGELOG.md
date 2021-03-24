@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI for swiper in detail product.
 - Hide site in detail Voucher.
 - Payment method selector position and visible logic.
+- [Android] Refresh control offset in Home.
 ### Fixed
 - Dropship  checking.
 - phoneNumber includes countryCode checking.
