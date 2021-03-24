@@ -220,6 +220,11 @@ class CTAProduct {
                 type: 'success',
               });
             }
+          } else {
+            flashShowMessage({
+              message: response.message || this.t('common:api.error.message'),
+              type: 'danger',
+            });
           }
         } catch (e) {
           console.log(e + ' site_cart_plus');
