@@ -137,6 +137,7 @@ function AwesomeCombo({
 
     function renderItem(item: AwesomeComboItem, index: number) {
         return <AwesomeComboItem
+            key={index}
             title={item.title}
             last={index === data.length - 1}
             onPress={() => onSelect(item)}
@@ -156,7 +157,7 @@ function AwesomeCombo({
                 height: number,
                 pageX: number,
                 pageY: number) => {
-                
+
                 if (pageX + containerWidth > appWidth - PADDING_STANDARD) {
                     setContainerPosition({
                         x: pageX - (containerWidth - (appWidth - pageX)) - PADDING_STANDARD,

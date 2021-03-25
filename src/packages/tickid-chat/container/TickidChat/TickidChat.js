@@ -376,7 +376,7 @@ class TickidChat extends Component {
       .then((images) => {
         console.log(images);
         this.closeModal();
-        const selectedImages = this.nomarlizeImages(images);
+        const selectedImages = this.normalizeImages(images);
         console.log(selectedImages);
         this.setState(
           {
@@ -412,7 +412,7 @@ class TickidChat extends Component {
         // console.log(response);
         this.closeModal();
         response.path = response.uri;
-        const selectedImages = this.nomarlizeImages([response]);
+        const selectedImages = this.normalizeImages([response]);
         console.log(selectedImages);
         this.setState(
           {
@@ -432,7 +432,7 @@ class TickidChat extends Component {
 
   handlePressGallery = (state = this.state) => {
     if (isIos) {
-      if (!state.showToolBar && state.selectedImages.length !== 0) {
+      if (state.selectedImages.length !== 0) {
         this.animateBtnBack(1).start();
         state.showBackBtn = true;
         state.showSendBtn = true;
@@ -440,7 +440,7 @@ class TickidChat extends Component {
     }
   };
 
-  nomarlizeImages(images) {
+  normalizeImages(images) {
     return images.map((img) => {
       if (!img.filename) {
         img.filename = `${new Date().getTime()}`;
@@ -462,12 +462,12 @@ class TickidChat extends Component {
     }
   };
 
-  handlePressComposerButton = (componentType) => {
+  handlePressComposerButton = (componentType, forceFocus) => {
     const state = {...this.state};
 
     switch (componentType.id) {
       case COMPONENT_TYPE.EMOJI.id:
-        if (!state.editable) {
+        if (!state.editable || !!forceFocus) {
           state.editable = true;
           this.handleFocus(componentType);
         } else {
@@ -478,10 +478,10 @@ class TickidChat extends Component {
       case COMPONENT_TYPE.GALLERY.id:
         Keyboard.dismiss();
         this.handlePressGallery(state);
+        state.editable = false;
         if (this.props.useModalGallery) {
           state.selectedType = COMPONENT_TYPE._NONE;
           state.showToolBar = false;
-          state.editable = false;
           state.androidGalleryModalOptionVisible = true;
           this.setState(state);
           return;
@@ -526,7 +526,7 @@ class TickidChat extends Component {
       state.showSendBtn = false;
       this.animateBtnBack(0).start();
     }
-
+    state.editable = !!selectedImages.length;
     state.selectedImages = selectedImages;
     this.setState(state);
   };
@@ -557,12 +557,13 @@ class TickidChat extends Component {
       this.setState({
         text: '',
         showSendBtn: false,
+        editable: !!this.state.showToolBar,
       });
     }
   }
 
   handleSendMessage = () => {
-    if (this.state.editable) {
+    if (this.state.editable || !!this.state.text) {
       this.handleSendText();
     } else if (this.state.selectedImages.length !== 0) {
       this.handleSendImage();
@@ -574,6 +575,9 @@ class TickidChat extends Component {
   };
 
   handleCollapsingGallery = () => {
+    this.setState({
+      editable: !!this.state.text || !!this.state.selectedImages?.length,
+    });
     this.props.collapsingGallery();
   };
 
@@ -657,9 +661,13 @@ class TickidChat extends Component {
 
   renderLeftComposer = (props) => {
     const showBackCondition =
-      this.state.showSendBtn && this.state.selectedImages.length !== 0;
+      this.state.showSendBtn &&
+      this.state.selectedImages.length !== 0 &&
+      !this.state.text;
+
     const backAnimated =
-      this.state.selectedImages.length !== 0
+      this.state.selectedImages.length !== 0 &&
+      this.state.selectedType?.id === COMPONENT_TYPE.GALLERY.id
         ? {
             opacity: this.state.animatedBtnSendValue.interpolate({
               inputRange: [0, BTN_IMAGE_WIDTH],
@@ -748,7 +756,9 @@ class TickidChat extends Component {
         showInput={
           this.state.selectedImages.length === 0 || !this.state.showBackBtn
         }
-        onFocusInput={() => this.handleFocus(COMPONENT_TYPE.EMOJI)}
+        onFocusInput={() =>
+          this.handlePressComposerButton(COMPONENT_TYPE.EMOJI, true)
+        }
         refInput={this.refInput}
         animatedBtnBackValue={this.state.animatedBtnBackValue}
         onBackPress={this.handleBackPress}

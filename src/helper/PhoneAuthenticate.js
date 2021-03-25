@@ -8,6 +8,7 @@ import store from 'app-store';
 import appConfig from 'app-config';
 import {APIRequest} from '../network/Entity';
 
+const PNF = require('google-libphonenumber').PhoneNumberFormat;
 class PhoneAuthenticate {
   constructor(
     phoneNumber = '',
@@ -47,6 +48,7 @@ class PhoneAuthenticate {
     );
 
     this.phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+    this.country = {};
   }
 
   isValidPhoneNumberForRegion(p, c) {
@@ -57,6 +59,10 @@ class PhoneAuthenticate {
 
   get formattedPhoneNumber() {
     return this.formatPhoneNumber();
+  }
+
+  set setCountry(country){
+    this.country = country;
   }
 
   set setPhoneNumber(phoneNumber) {
@@ -109,13 +115,16 @@ class PhoneAuthenticate {
     phoneNumber = this.phoneNumber,
     countryCode = this.countryCode,
   ) {
-    if (phoneNumber.substring(0, 2) === countryCode.replace('+', '')) {
-      phoneNumber = phoneNumber.substr(2);
-    } else if (phoneNumber.substring(0, 1) === '0') {
-      phoneNumber = phoneNumber.substr(1);
-    }
+    // if (phoneNumber.substring(0, 2) === countryCode.replace('+', '')) {
+    //   phoneNumber = phoneNumber.substr(2);
+    // } else if (phoneNumber.substring(0, 1) === '0') {
+    //   phoneNumber = phoneNumber.substr(1);
+    // }
 
-    return countryCode + phoneNumber;
+    const number = this.phoneUtil.parseAndKeepRawInput(phoneNumber, this.country.cca2);
+    const validPhoneNumber = this.phoneUtil.format(number, PNF.E164);
+
+    return validPhoneNumber;
   }
 
   signIn() {
@@ -236,12 +245,12 @@ class PhoneAuthenticate {
         user
           .getIdToken(true)
           .then(async (idToken) => {
-            console.log('2', this.isCancel, this.isFirebaseVerifying, );
+            console.log('2', this.isCancel, this.isFirebaseVerifying);
             if (this.isCancel) return;
             const response = await APIHandler.login_firebase_verify({
               token: idToken,
             });
-            console.log('response', response, this.isCancel, isInstantVerified)
+            console.log('response', response, this.isCancel, isInstantVerified);
             if (this.isCancel) return;
             this.isFirebaseVerifying = false;
 

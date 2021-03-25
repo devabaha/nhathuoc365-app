@@ -11,7 +11,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.3.1';
+    return 'r11.4.4';
   }
 
   get appName() {
@@ -74,6 +74,28 @@ class Config {
         main: this.primaryColor,
         sub: '#6559c5',
         addition: '#d37ee9'
+      },
+      status: {
+        danger: '#ef476f',
+        warning: '#ffd166',
+        success: '#06d6a0',
+        info: '#118ab2',
+        other: '#073b4c'
+      },
+      cartType: {
+        cart: '#B0C0F0',
+        dropship: '#FF9F1C'
+      },
+      orderStatus: {
+        [CART_STATUS_CANCEL_1]: '#ef476f',
+        [CART_STATUS_CANCEL]: '#ef476f',
+        [CART_STATUS_ORDERING]: '#6F7C12',
+        [CART_STATUS_READY]: '#812384',
+        [CART_STATUS_ACCEPTED]: '#F46036',
+        [CART_STATUS_PROCESSING]: '#986d60',
+        [CART_STATUS_DELIVERY]: '#EEAA21',
+        [CART_STATUS_COMPLETED]: '#06d6a0',
+        [CART_STATUS_CLOSED]: '#06d6a0',
       },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
@@ -181,6 +203,8 @@ class Config {
       modalRateApp: 'modalRateApp',
       modalPopup: 'modalPopup',
       modalInput: 'modalInput',
+      modalConfirm: 'modalConfirm',
+      modalComboLocation: 'modalComboLocation',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -235,6 +259,7 @@ class Config {
 
       //Group product
       groupProduct: 'groupProduct',
+      productStamps: 'productStamps',
 
       // List GPS store
       gpsListStore: 'gpsListStore',

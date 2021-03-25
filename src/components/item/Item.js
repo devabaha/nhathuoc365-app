@@ -13,7 +13,7 @@ import {
   Animated
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Octicons from 'react-native-vector-icons/Octicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions} from 'react-native-router-flux';
 import Swiper from 'react-native-swiper';
 import AutoHeightWebView from 'react-native-autoheight-webview';
@@ -33,29 +33,61 @@ import {PRODUCT_TYPES} from '../../constants';
 import SkeletonLoading from '../SkeletonLoading';
 import SVGPhotoBroken from '../../images/photo_broken.svg';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import {CART_TYPES} from 'src/constants/cart';
+import Loading from '../Loading';
+import CTAProduct from './CTAProduct';
+import {APIRequest} from 'src/network/Entity';
+import NoResult from '../NoResult';
+import Shimmer from 'react-native-shimmer';
 
 const ITEM_KEY = 'ItemKey';
-
+const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
+const CART_HAS_ONLY_NORMAL_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm thông thường.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
+const CART_HAS_ONLY_DROP_SHIP_MESSAGE = `• Đơn hàng của bạn đang chứa sản phẩm giao hộ.\r\n\r\n• Đơn hàng chỉ có thể chứa các sản phẩm cùng loại.\r\n\r\n• Chọn ${CONTINUE_ORDER_CONFIRM} để xóa đơn hàng hiện tại và tạo đơn hàng mới cho loại sản phẩm này.`;
 class Item extends Component {
+  static defaultProps = {
+    showBtnProductStamps: false,
+  };
+
   constructor(props) {
     super(props);
 
     this.state = {
+      listWarehouse: [],
       refreshing: false,
       item: props.item,
       item_data: null,
       images: null,
-      loading: true,
+      loading: !this.props.preventUpdate,
+      actionLoading: false,
       buying: false,
-      like_loading: true,
-      is_drop_ship_loading: false,
+      like_loading: !this.props.preventUpdate,
+      isSubActionLoading: false,
       like_flag: 0,
       scrollY: 0,
+      cartTypeConfirmMessage: '',
     };
 
     this.animatedScrollY = new Animated.Value(0);
     this.unmounted = false;
     this.eventTracker = new EventTracker();
+    this.refPopupConfirmCartType = React.createRef();
+    this.productTempData = [];
+
+    this.CTAProduct = new CTAProduct(props.t, this);
+    this.getWarehouseRequest = new APIRequest();
+    this.updateWarehouseRequest = new APIRequest();
+    this.requests = [this.getWarehouseRequest, this.updateWarehouseRequest];
+  }
+
+  get subActionColor() {
+    const is_like = this.state.like_flag == 1;
+    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) &&
+      !this.isServiceProduct(this.state.item_data || this.state.item)
+      ? appConfig.colors.primary
+      : is_like
+      ? appConfig.colors.status.danger
+      : appConfig.colors.primary;
   }
 
   isServiceProduct(product = {}) {
@@ -63,7 +95,8 @@ class Item extends Component {
   }
 
   componentDidMount() {
-    this._initial(this.props);
+    !this.props.preventUpdate && this._initial(this.props);
+    this.getListWarehouse();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -89,6 +122,7 @@ class Item extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    cancelRequests(this.requests);
   }
 
   logEventTracking(rootData) {
@@ -152,53 +186,100 @@ class Item extends Component {
       });
     }
   }
+
+  async getListWarehouse() {
+    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+    const {t} = this.props;
+    try {
+      this.getWarehouseRequest.data = APIHandler.user_site_store();
+      const responseData = await this.getWarehouseRequest.promise();
+      const listWarehouse =
+        responseData?.stores?.map((store) => ({
+          ...store,
+          title: store.name,
+          description: store.address,
+          image: store.image_url,
+        })) || [];
+      this.setState({
+        listWarehouse,
+      });
+    } catch (err) {
+      console.log('user get warehouse', err);
+      flashShowMessage({
+        type: 'danger',
+        message: err.message || t('common:api.error.message'),
+      });
+    } finally {
+    }
+  }
+
+  async updateWarehouse(warehouse) {
+    const data = {store_id: warehouse.id};
+    try {
+      this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
+      const responseData = await this.updateWarehouseRequest.promise();
+      flashShowMessage({
+        type: 'success',
+        message: responseData.message,
+      });
+      this._getData();
+    } catch (error) {
+      console.log('%cupdate_warehouse', 'color:red', error);
+      flashShowMessage({
+        type: 'danger',
+        message: error.message || this.props.t('common:api.error.message'),
+      });
+    } finally {
+    }
+  }
+
   // Lấy chi tiết sản phẩm
   _getData(delay) {
-    var {item} = this.state;
-    var item_key = ITEM_KEY + item.id + store.user_info.id;
+    // var {item} = this.state;
+    // var item_key = ITEM_KEY + item.id + store.user_info.id;
 
-    // load
-    storage
-      .load({
-        key: item_key,
-        autoSync: true,
-        syncInBackground: true,
-        syncParams: {
-          extraFetchOptions: {},
-          someFlag: true,
-        },
-      })
-      .then((data) => {
-        setTimeout(() => {
-          if (isIOS) {
-            layoutAnimation();
-          }
+    // // load
+    // storage
+    //   .load({
+    //     key: item_key,
+    //     autoSync: true,
+    //     syncInBackground: true,
+    //     syncParams: {
+    //       extraFetchOptions: {},
+    //       someFlag: true,
+    //     },
+    //   })
+    //   .then((data) => {
+    //     setTimeout(() => {
+    //       if (isIOS) {
+    //         layoutAnimation();
+    //       }
 
-          var images = [];
+    //       var images = [];
 
-          if (data && data.img) {
-            data.img.map((item) => {
-              images.push({
-                url: item.image,
-              });
-            });
-          }
+    //       if (data && data.img) {
+    //         data.img.map((item) => {
+    //           images.push({
+    //             url: item.image,
+    //           });
+    //         });
+    //       }
 
-          this.logEventTracking(data);
+    //       this.logEventTracking(data);
 
-          this.setState({
-            item_data: data,
-            images: images,
-            like_flag: data.like_flag,
-            loading: false,
-            refreshing: false,
-            like_loading: false,
-          });
-        }, delay || this._delay());
-      })
-      .catch((err) => {
-        this._getDataFromServer(delay);
-      });
+    //       this.setState({
+    //         item_data: data,
+    //         images: images,
+    //         like_flag: data.like_flag,
+    //         loading: false,
+    //         refreshing: false,
+    //         like_loading: false,
+    //       });
+    //     }, delay || this._delay());
+    //   })
+    //   .catch((err) => {
+    this._getDataFromServer(delay);
+    // });
   }
 
   async _getDataFromServer(delay) {
@@ -267,6 +348,9 @@ class Item extends Component {
   }
 
   _onRefresh() {
+    if (this.props.preventUpdate) {
+      return null;
+    }
     this.setState({refreshing: true});
 
     this._getDataFromServer(1000);
@@ -278,25 +362,48 @@ class Item extends Component {
     });
   };
 
-  handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
-    switch (product.product_type) {
-      case PRODUCT_TYPES.NORMAL:
-        this._addCart(product, quantity, model);
-        break;
-      case PRODUCT_TYPES.SERVICE:
-        this.goToSchedule(product);
-        break;
-      default:
-        this._addCart(product, quantity, model);
-        break;
-    }
+  handlePressMainActionBtnProduct = (product, cartType) => {
+    this.CTAProduct.handlePressMainActionBtnProduct(product, cartType);
+  };
+
+  handlePressSubAction = (product, cartType) => {
+    this.CTAProduct.handlePressSubAction(product, cartType);
+  };
+
+  handlePressWarehouse = () => {
+    Actions.push(appConfig.routes.modalList, {
+      heading: this.props.t('opRegister:modal.warehouse.title'),
+      data: this.state.listWarehouse,
+      selectedItem: {id: store?.user_info?.store_id},
+      onPressItem: this.onSelectWarehouse,
+      onCloseModal: Actions.pop,
+      modalStyle: {
+        height: null,
+        maxHeight: '80%',
+      },
+      ListEmptyComponent: (
+        <NoResult iconName="warehouse" message="Không tìm thấy kho hàng" />
+      ),
+    });
+  };
+
+  onSelectWarehouse = (warehouse, closeModal) => {
+    this.setState({loading: true});
+    closeModal();
+    this.updateWarehouse(warehouse);
   };
 
   // add item vào giỏ hàng
-  _addCart = (item, quantity = 1, model = '', newPrice, loading = true) => {
+  _addCart = (
+    item,
+    quantity = 1,
+    model = '',
+    newPrice = null,
+    buying = true,
+  ) => {
     this.setState(
       {
-        buying: loading,
+        buying,
       },
       async () => {
         const data = {
@@ -304,7 +411,7 @@ class Item extends Component {
           model,
         };
         if (newPrice) {
-          data.newPrice = newPrice;
+          data.new_price = newPrice;
         }
         const {t} = this.props;
         try {
@@ -313,51 +420,47 @@ class Item extends Component {
             item.id,
             data,
           );
-          console.log(data);
 
-          if (!this.unmounted) {
-            if (response && response.status == STATUS_SUCCESS) {
-              if (response.data.attrs) {
-                Actions.push(appConfig.routes.itemAttribute, {
-                  itemId: item.id,
-                  onSubmit: (quantity, modal_key) =>
-                    this._addCart(item, quantity, modal_key),
-                });
-              } else {
-                store.setCartData(response.data);
-
-                var index = null,
-                  length = 0;
-                if (response.data.products) {
-                  length = Object.keys(response.data.products).length;
-
-                  Object.keys(response.data.products)
-                    .reverse()
-                    .some((key, key_index) => {
-                      let value = response.data.products[key];
-                      if (value.id == item.id) {
-                        index = key_index;
-                        return true;
-                      }
-                    });
-                }
-
-                if (index !== null && index < length) {
-                  store.setCartItemIndex(index);
-                  Events.trigger(NEXT_PREV_CART, {index});
-                }
-
-                flashShowMessage({
-                  message: response.message,
-                  type: 'success',
-                });
-              }
+          if (response && response.status == STATUS_SUCCESS) {
+            if (!this.unmounted && response.data.attrs) {
+              Actions.push(appConfig.routes.itemAttribute, {
+                itemId: item.id,
+                onSubmit: (quantity, modal_key) =>
+                  this._addCart(item, quantity, modal_key),
+              });
             } else {
               flashShowMessage({
-                message: response.message || t('common:api.error.message'),
-                type: 'danger',
+                message: response.message,
+                type: 'success',
               });
             }
+            store.setCartData(response.data);
+
+            var index = null,
+              length = 0;
+            if (response.data.products) {
+              length = Object.keys(response.data.products).length;
+
+              Object.keys(response.data.products)
+                .reverse()
+                .some((key, key_index) => {
+                  let value = response.data.products[key];
+                  if (value.id == item.id) {
+                    index = key_index;
+                    return true;
+                  }
+                });
+            }
+
+            if (index !== null && index < length) {
+              store.setCartItemIndex(index);
+              Events.trigger(NEXT_PREV_CART, {index});
+            }
+
+            flashShowMessage({
+              message: response.message,
+              type: 'success',
+            });
           }
         } catch (e) {
           console.log(e + ' site_cart_plus');
@@ -366,22 +469,16 @@ class Item extends Component {
             message: t('common:api.error.message'),
           });
         } finally {
-          !this.unmounted &&
+          if (!this.unmounted) {
+            this.productTempData = [];
             this.setState({
               buying: false,
-              is_drop_ship_loading: false,
+              isSubActionLoading: false,
             });
+          }
         }
       },
     );
-  };
-
-  handlePressSubAction = (product) => {
-    if (isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)) {
-      this.handleDropShip(product);
-    } else {
-      this._likeHandler(product);
-    }
   };
 
   _likeHandler(item) {
@@ -496,19 +593,63 @@ class Item extends Component {
     }
   }
 
-  submitDropShip = (product, quantity, modalKey, newPrice) => {
-    this.setState({is_drop_ship_loading: true});
-    this._addCart(product, quantity, modalKey, newPrice, false);
+  async _cancelCart(callBack) {
+    const {t} = this.props;
+    try {
+      const response = await APIHandler.site_cart_canceling(
+        store.cart_data?.site_id,
+      );
+
+      if (response && response.status == STATUS_SUCCESS) {
+        store.resetCartData();
+        callBack();
+
+        store.setOrdersKeyChange(store.orders_key_change + 1);
+        Events.trigger(RELOAD_STORE_ORDERS);
+
+        flashShowMessage({
+          type: 'success',
+          message: response.message,
+        });
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || t('common:api.error.message'),
+        });
+      }
+    } catch (e) {
+      console.log(e + ' site_cart_canceling');
+      flashShowMessage({
+        type: 'danger',
+        message: t('common:api.error.message'),
+      });
+    } finally {
+      !this.unmounted &&
+        this.setState({
+          actionLoading: false,
+        });
+    }
+  }
+
+  confirmCartType = () => {
+    this.setState({actionLoading: true});
+    this.closeConfirmCartTypePopUp();
+    this._cancelCart(() => {
+      if (this.productTempData.length > 0) {
+        this._addCart(...this.productTempData);
+      }
+    });
   };
 
-  handleDropShip = (item) => {
-    Actions.push(appConfig.routes.itemAttribute, {
-      isDropShip: true,
-      itemId: item.id,
-      product: item,
-      onSubmit: (quantity, modal_key, newPrice) =>
-        this.submitDropShip(item, quantity, modal_key, newPrice),
-    });
+  closeConfirmCartTypePopUp = () => {
+    if (this.refPopupConfirmCartType.current) {
+      this.refPopupConfirmCartType.current.close();
+    }
+  };
+
+  cancelConfirmCartType = () => {
+    this.productTempData = [];
+    this.closeConfirmCartTypePopUp();
   };
 
   renderPagination = (index, total, context, hasImages) => {
@@ -543,21 +684,10 @@ class Item extends Component {
   }
 
   renderProductImages(images) {
-    if (!images.length) {
-      return (
-        <View style={styles.noImageContainer}>
-          <SVGPhotoBroken
-            width="80"
-            height="80"
-            fill={appConfig.colors.primary}
-          />
-        </View>
-      );
-    }
     return images.map((image, index) => {
       return (
         <TouchableHighlight
-          underlayColor="rgba(0,0,0,.1)"
+          underlayColor="transparent"
           onPress={() => {
             Actions.item_image_viewer({
               images: this.state.images,
@@ -585,20 +715,34 @@ class Item extends Component {
     return (
       <View>
         <SkeletonLoading
-          loading={!product}
-          height={appConfig.device.width * 0.6}>
-          <Swiper
-            showsButtons={isShowButtons}
-            renderPagination={(index, total, context) =>
-              this.renderPagination(index, total, context, hasImages)
-            }
-            nextButton={this.renderNextButton()}
-            prevButton={this.renderPrevButton()}
-            width={appConfig.device.width}
-            height={appConfig.device.width * 0.6}
-            containerStyle={styles.content_swiper}>
-            {this.renderProductImages(images)}
-          </Swiper>
+          style={styles.noImageContainer}
+          loading={this.state.loading}
+          height={appConfig.device.width}>
+          {!images.length ? (
+            <View style={[styles.noImageContainer, styles.swiper_no_image]}>
+              <SVGPhotoBroken
+                width="80"
+                height="80"
+                fill={appConfig.colors.primary}
+              />
+            </View>
+          ) : (
+            <Swiper
+              showsButtons={isShowButtons}
+              renderPagination={(index, total, context) =>
+                this.renderPagination(index, total, context, hasImages)
+              }
+              buttonWrapperStyle={{
+                alignItems: 'flex-end'
+              }}
+              nextButton={this.renderNextButton()}
+              prevButton={this.renderPrevButton()}
+              width={appConfig.device.width}
+              height={appConfig.device.width}
+              containerStyle={styles.content_swiper}>
+              {this.renderProductImages(images)}
+            </Swiper>
+          )}
         </SkeletonLoading>
       </View>
     );
@@ -626,49 +770,102 @@ class Item extends Component {
     );
   }
 
-  renderSubActionBtnIcon() {
-    const is_like = this.state.like_flag == 1;
-    return isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
-      this.state.is_drop_ship_loading ? (
-        <Indicator size="small" />
-      ) : (
-        <Octicons
-          name="package"
-          size={24}
-          color={is_like ? '#e31b23' : appConfig.colors.primary}
-        />
-      )
-    ) : this.state.like_loading ? (
+  renderSubActionBtnIcon(product) {
+    return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
-    ) : (
-      <Icon
-        name="heart"
-        size={20}
-        color={is_like ? '#e31b23' : appConfig.colors.primary}
+    ) : this.isServiceProduct(product) ? (
+      <Icon name="heart" size={20} color={this.subActionColor} />
+    ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
+      <MaterialCommunityIcons
+        name="truck-fast"
+        size={24}
+        color={this.subActionColor}
       />
+    ) : (
+      <Icon name="heart" size={20} color={this.subActionColor} />
     );
   }
 
+  renderBtnProductStamps = () => {
+    return (
+      !!this.props.showBtnProductStamps && (
+        <Button
+          containerStyle={styles.btnProductStampsContainer}
+          btnContainerStyle={styles.btnProductStampsContentContainer}
+          titleStyle={styles.btnProductStampsTitle}
+          renderTitleComponent={(style) => (
+            <Shimmer opacity={1} animationOpacity={0.3} pauseDuration={3000}>
+              <Text style={style}>Xem sản phẩm đã quét</Text>
+            </Shimmer>
+          )}
+          onPress={() => Actions.push(appConfig.routes.productStamps)}
+        />
+      )
+    );
+  };
+
+  renderNoticeMessage(product) {
+    return product?.notice?.message ? (
+      <View
+        style={[
+          styles.noticeContainer,
+          {
+            backgroundColor: product.notice.bgColor || appConfig.colors.primary,
+          },
+        ]}>
+        <Text style={styles.noticeMessage}>{product.notice.message}</Text>
+      </View>
+    ) : null;
+  }
+
+  renderDetailInfo(product) {
+    if (!Array.isArray(product?.detail_info)) return;
+    return product.detail_info.map((info, index) => {
+      return (
+        <View key={index} style={styles.item_content_item_container}>
+          <View
+            style={[styles.item_content_item, styles.item_content_item_left]}>
+            <Text style={styles.item_content_item_title}>{info.name}</Text>
+          </View>
+
+          <View
+            style={[styles.item_content_item, styles.item_content_item_right]}>
+            <Text style={styles.item_content_item_value}>{info.info}</Text>
+          </View>
+        </View>
+      );
+    });
+  }
+
   render() {
-    var {item, item_data} = this.state;
+    // var {item, item_data} = this.state;
+    const item = this.state.item_data || this.state.item;
     const is_like = this.state.like_flag == 1;
     const {t} = this.props;
-    const unitName = item_data ? item_data.unit_name : item.unit_name;
+    const unitName = item.unit_name;
+    const storeName = store?.user_info?.store_name;
+    const isInventoryVisible =
+      !!item.inventory &&
+      !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
+      item.product_type !== PRODUCT_TYPES.SERVICE;
 
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="transparent" barStyle="dark-content" />
+        {(this.state.loading || this.state.actionLoading) && <Loading center />}
         <Header
           title={this.props.title}
           animatedValue={this.animatedScrollY}
-          item={item_data || item}
+          item={item}
+          onPressWarehouse={this.handlePressWarehouse}
         />
 
         <SafeAreaView style={styles.container}>
           <Animated.ScrollView
             ref={(ref) => (this.refs_body_item = ref)}
-            contentContainerStyle={{
-              paddingTop: 15,
+            style={{
+              marginTop: appConfig.device.isIOS
+                ? -appConfig.device.statusBarHeight
+                : 0,
             }}
             onScroll={Animated.event(
               [
@@ -690,63 +887,57 @@ class Item extends Component {
                 onRefresh={this._onRefresh.bind(this)}
               />
             }>
-            {this.renderProductSwiper(item_data)}
+            {this.renderProductSwiper(item)}
 
             <View style={styles.item_heading_box}>
-              <Text style={styles.item_heading_title}>
-                {item_data ? item_data.name : item.name}
-              </Text>
+              <Text style={styles.item_heading_title}>{item.name}</Text>
 
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
-                    {item_data ? item_data.discount : item.discount}
+                    {item.discount}
                   </Text>
                 )}
                 <Text style={styles.item_heading_price}>
-                  {item_data ? item_data.price_view : item.price_view}
+                  {item.price_view}
                   {!!unitName && (
                     <Text style={styles.item_unit_name}>/ {unitName}</Text>
                   )}
                 </Text>
-                {/* {item.discount_percent > 0 && (
-                  <DiscountBadge
-                    containerStyle={styles.discountBadge}
-                    label={saleFormat(item.discount_percent)}
-                  />
-                )} */}
               </View>
-
-              {/* <Text style={styles.item_heading_qnt}>
-                {item_data ? item_data.unit_name_view : item.unit_name_view}
-              </Text> */}
 
               <View style={styles.item_actions_box}>
                 <TouchableHighlight
-                  onPress={() => this.handlePressSubAction(item_data || item)}
+                  onPress={() =>
+                    this.handlePressSubAction(
+                      item,
+                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+                        ? CART_TYPES.DROP_SHIP
+                        : '',
+                    )
+                  }
                   underlayColor="transparent">
                   <View
                     style={[
                       styles.item_actions_btn,
                       styles.item_actions_btn_chat,
                       {
-                        borderColor: is_like
-                          ? '#e31b23'
-                          : appConfig.colors.primary,
+                        borderColor: this.subActionColor,
                       },
                     ]}>
                     <View style={styles.item_actions_btn_icon_container}>
-                      {this.renderSubActionBtnIcon()}
+                      {this.renderSubActionBtnIcon(item)}
                     </View>
                     <Text
                       style={[
                         styles.item_actions_title,
                         styles.item_actions_title_chat,
                         {
-                          color: is_like ? '#e31b23' : appConfig.colors.primary,
+                          color: this.subActionColor,
                         },
                       ]}>
-                      {isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
+                      {!this.isServiceProduct(item) &&
+                      isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY)
                         ? 'Giao hộ'
                         : is_like
                         ? t('liked')
@@ -757,8 +948,9 @@ class Item extends Component {
 
                 <TouchableHighlight
                   onPress={() =>
-                    this.handlePressActionBtnProduct(
-                      item_data ? item_data : item,
+                    this.handlePressMainActionBtnProduct(
+                      item,
+                      CART_TYPES.NORMAL,
                     )
                   }
                   underlayColor="transparent">
@@ -784,7 +976,7 @@ class Item extends Component {
                   label={saleFormat(item.discount_percent)}
                 />
               )}
-              {!!item.inventory && (
+              {isInventoryVisible && (
                 <View style={styles.productsLeftContainer}>
                   <View style={styles.productsLeftBackground} />
                   <View style={styles.productsLeftBackgroundTagTail} />
@@ -797,64 +989,96 @@ class Item extends Component {
 
             {item != null && (
               <View style={styles.item_content_box}>
-                {item.brand != null && item.brand != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_left,
-                    ]}>
-                    <View style={styles.item_content_icon_box}>
-                      <Icon name="user" size={16} color="#999999" />
+                {this.renderBtnProductStamps()}
+                {this.renderNoticeMessage(item)}
+                {this.renderDetailInfo(item)}
+                {storeName && (
+                  <View style={styles.item_content_item_container}>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_left,
+                      ]}>
+                      <View style={styles.item_content_icon_box}>
+                        <MaterialCommunityIcons
+                          name="warehouse"
+                          size={16}
+                          color="#999999"
+                        />
+                      </View>
+                      <Text style={styles.item_content_item_title}>
+                        Kho hàng
+                      </Text>
                     </View>
-                    <Text style={styles.item_content_item_title}>
-                      {t('information.brands')}
-                    </Text>
+
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_right,
+                      ]}>
+                      <Text style={styles.item_content_item_value}>
+                        {storeName}
+                      </Text>
+                    </View>
                   </View>
                 )}
 
                 {item.brand != null && item.brand != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_right,
-                    ]}>
-                    <Text style={styles.item_content_item_value}>
-                      {item.brand}
-                    </Text>
+                  <View style={styles.item_content_item_container}>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_left,
+                      ]}>
+                      <View style={styles.item_content_icon_box}>
+                        <Icon name="user" size={16} color="#999999" />
+                      </View>
+                      <Text style={styles.item_content_item_title}>
+                        {t('information.brands')}
+                      </Text>
+                    </View>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_right,
+                      ]}>
+                      <Text style={styles.item_content_item_value}>
+                        {item.brand}
+                      </Text>
+                    </View>
                   </View>
                 )}
 
                 {item.made_in != null && item.made_in != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_left,
-                    ]}>
-                    <View style={styles.item_content_icon_box}>
-                      <Icon name="map-marker" size={16} color="#999999" />
+                  <View style={styles.item_content_item_container}>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_left,
+                      ]}>
+                      <View style={styles.item_content_icon_box}>
+                        <Icon name="map-marker" size={16} color="#999999" />
+                      </View>
+                      <Text style={styles.item_content_item_title}>
+                        {t('information.origin')}
+                      </Text>
                     </View>
-                    <Text style={styles.item_content_item_title}>
-                      {t('information.origin')}
-                    </Text>
-                  </View>
-                )}
-
-                {item.made_in != null && item.made_in != '' && (
-                  <View
-                    style={[
-                      styles.item_content_item,
-                      styles.item_content_item_right,
-                    ]}>
-                    <Text style={styles.item_content_item_value}>
-                      {item.made_in}
-                    </Text>
+                    <View
+                      style={[
+                        styles.item_content_item,
+                        styles.item_content_item_right,
+                      ]}>
+                      <Text style={styles.item_content_item_value}>
+                        {item.made_in}
+                      </Text>
+                    </View>
                   </View>
                 )}
               </View>
             )}
 
             <View style={styles.item_content_text}>
-              {item_data != null ? (
+              {item != null ? (
                 <AutoHeightWebView
                   onError={() => console.log('on error')}
                   onLoad={() => console.log('on load')}
@@ -866,7 +1090,7 @@ class Item extends Component {
                   }}
                   style={styles.webview}
                   onHeightUpdated={(height) => this.setState({height})}
-                  source={{html: item_data.content}}
+                  source={{html: item.content || ''}}
                   zoomable={false}
                   scrollEnabled={false}
                   customStyle={`
@@ -892,10 +1116,10 @@ class Item extends Component {
               )}
             </View>
 
-            {item_data != null && item_data.related && (
+            {item != null && item.related && (
               <View style={[styles.items_box]}>
                 <ListHeader title={`— ${t('relatedItems')} —`} />
-                {item_data.related.map((item, index) => {
+                {item.related.map((item, index) => {
                   return (
                     <Items
                       key={index}
@@ -918,6 +1142,7 @@ class Item extends Component {
           </Animated.ScrollView>
           {this.renderCartFooter(item)}
         </SafeAreaView>
+
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
           title={t('cart:popup.remove.message')}
@@ -929,6 +1154,18 @@ class Item extends Component {
             }
           }}
           yesConfirm={this._removeCartItem.bind(this)}
+        />
+
+        <PopupConfirm
+          ref_popup={this.refPopupConfirmCartType}
+          title={this.state.cartTypeConfirmMessage}
+          otherClose={false}
+          type="warning"
+          isConfirm
+          yesTitle={CONTINUE_ORDER_CONFIRM}
+          titleStyle={{textAlign: 'left'}}
+          noConfirm={this.cancelConfirmCartType}
+          yesConfirm={this.confirmCartType}
         />
       </View>
     );
@@ -947,7 +1184,11 @@ const styles = StyleSheet.create({
     flex: 0,
   },
   swiper_image: {
-    height: Util.size.width * 0.6,
+    height: '100%',
+    resizeMode: 'contain',
+  },
+  swiper_no_image: {
+    height: appConfig.device.width * .6,
     resizeMode: 'contain',
   },
 
@@ -1032,27 +1273,31 @@ const styles = StyleSheet.create({
   },
 
   item_content_box: {
-    width: '100%',
-    flexDirection: 'row',
+    // width: '100%',
+    // flexDirection: 'row',
     borderLeftWidth: Util.pixel,
     borderTopWidth: Util.pixel,
     borderColor: '#dddddd',
-    flexWrap: 'wrap',
+    // flexWrap: 'wrap',
+  },
+  item_content_item_container: {
+    flexDirection: 'row',
   },
   item_content_item: {
-    height: 24,
+    // height: 24,
     borderRightWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
     borderColor: '#dddddd',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    padding: 8,
+    flex: 1,
   },
   item_content_item_left: {
-    width: '45%',
+    // width: '45%',
   },
   item_content_item_right: {
-    width: '55%',
+    // width: '55%',
   },
   item_content_icon_box: {
     width: 24,
@@ -1062,12 +1307,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#999999',
     paddingLeft: 4,
+    textTransform: 'uppercase',
   },
   item_content_item_value: {
     fontSize: 14,
     fontWeight: '600',
     color: '#404040',
     marginLeft: 4,
+    flex: 1,
   },
 
   item_content_text: {
@@ -1108,11 +1355,11 @@ const styles = StyleSheet.create({
   paginationContainer: {
     borderRadius: 20,
     position: 'absolute',
-    bottom: 10,
+    bottom: 15,
     right: 15,
     backgroundColor: 'rgba(255,255,255,.6)',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 3,
   },
   paginationText: {
     fontSize: 12,
@@ -1126,6 +1373,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 30
   },
   swipeRightControlBtn: {
     right: 7,
@@ -1191,6 +1439,29 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     elevation: 3,
   },
+  noticeContainer: {
+    padding: 15,
+  },
+  noticeMessage: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '500',
+  },
+
+  btnProductStampsContainer: {
+    backgroundColor: '#fafafa',
+  },
+  btnProductStampsContentContainer: {
+    paddingVertical: 5,
+    backgroundColor: 'transparent',
+  },
+  btnProductStampsTitle: {
+    color: appConfig.colors.primary,
+    ...(appConfig.device.isAndroid && {fontWeight: '700'}),
+  },
 });
 
-export default withTranslation(['product', 'cart', 'common'])(observer(Item));
+export default withTranslation(['product', 'cart', 'common', 'opRegister'])(
+  observer(Item),
+);

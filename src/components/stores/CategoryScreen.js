@@ -1,10 +1,5 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  ScrollView,
-  View,
-  RefreshControl,
-} from 'react-native';
+import {StyleSheet, ScrollView, View, RefreshControl} from 'react-native';
 import Swiper from 'react-native-swiper';
 import Animated from 'react-native-reanimated';
 import Items from './Items';
@@ -21,7 +16,7 @@ const CATE_AUTO_LOAD = 'CateAutoLoad';
 class CategoryScreen extends Component {
   static defaultProps = {
     animatedScrollY: new Animated.Value(0),
-    scrollEnabled: true
+    scrollEnabled: true,
   };
   constructor(props) {
     super(props);
@@ -38,7 +33,7 @@ class CategoryScreen extends Component {
     }
 
     this.state = {
-      loading: false,
+      loading: props.index === 0,
       refreshing: false,
       header_title,
       items_data: null,
@@ -68,13 +63,20 @@ class CategoryScreen extends Component {
 
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
 
-    if (index == 0) {
+    if (index == 0 || index == 1) {
       this._getItemByCateId(item.id);
     } else {
       Events.on(keyAutoLoad, keyAutoLoad, () => {
-        if (this.state.items_data == null) {
-          this._getItemByCateId(item.id);
-        }
+        // setTimeout(() => {
+        //   console.log(
+        //     this.props.index,
+        //     this.props.cate_index,
+        //     this.props.isAutoLoad(),
+        //   );
+        //   if (this.props.isAutoLoad()) {
+        //     this._getItemByCateId(item.id);
+        //   }
+        // }, 500);
       });
     }
 
@@ -83,23 +85,24 @@ class CategoryScreen extends Component {
     });
   }
 
-  
   shouldComponentUpdate(nextProps, nextState) {
     const {item, index, cate_index} = nextProps;
 
     if (
-      index == cate_index &&
+      (index == cate_index || nextProps.isAutoLoad) &&
       this.state.items_data == null &&
-      Object.keys(this.props).some(key=> nextProps[key] != this.props[key]) &&
-      !this.state.loading
+      Object.keys(this.props).some(
+        (key) => nextProps[key] != this.props[key],
+      ) &&
+      !nextState.loading
     ) {
       this.start_time = time();
       // get list products by category_id
       this._getItemByCateId(item.id);
     }
+
     return true;
   }
-  
 
   // UNSAFE_componentWillReceiveProps(nextProps) {
   //   var {item, index, cate_index} = nextProps;
@@ -186,7 +189,7 @@ class CategoryScreen extends Component {
               })();
 
               // load next category
-              // this._loadNextCate();
+              this._loadNextCate();
             }, this._delay());
           })
           .catch((err) => {
@@ -212,7 +215,7 @@ class CategoryScreen extends Component {
         category_id,
         this.state.page,
       );
-      console.log(response, site_id, category_id);
+
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           // delay append data
@@ -241,7 +244,7 @@ class CategoryScreen extends Component {
             })();
 
             // load next category
-            // this._loadNextCate();
+            this._loadNextCate();
 
             // cache in five minutes
             if (response.data && !loadmore) {
@@ -258,11 +261,11 @@ class CategoryScreen extends Component {
             fetched: true,
             refreshing: false,
             fetched: true,
-            items_data: this.state.items_data_bak
+            items_data: this.state.items_data_bak,
           });
 
           // load next category
-          // this._loadNextCate();
+          this._loadNextCate();
         }
       }
     } catch (e) {
@@ -270,7 +273,7 @@ class CategoryScreen extends Component {
       !this.unmounted &&
         this.setState({
           loading: false,
-          refreshing: false
+          refreshing: false,
         });
     }
   }
@@ -288,122 +291,121 @@ class CategoryScreen extends Component {
 
   render() {
     const {t} = this.props;
-    // show loading
-    if (this.state.loading) {
-      return <ListStoreProductSkeleton />;
-    }
 
     const {items_data, header_title, fetched, loading} = this.state;
 
     return (
-      <View style={[styles.containerScreen, this.props.containerStyle]}>
-        <Animated.ScrollView
-          scrollEnabled={this.props.scrollEnabled}
-          contentContainerStyle={{flexGrow: 1}}
-          scrollEventThrottle={16}
-          refreshControl={
-            <RefreshControl
-              refreshing={this.state.refreshing}
-              onRefresh={this._onRefresh.bind(this)}
-            />
-          }
-          onScrollBeginDrag={Animated.event(
-            [
-              {
-                nativeEvent: {
-                  contentOffset: {
-                    y: this.props.animatedContentOffsetY,
+      <>
+        <View style={[styles.containerScreen, this.props.containerStyle]}>
+          <Animated.ScrollView
+            scrollEnabled={this.props.scrollEnabled}
+            contentContainerStyle={{flexGrow: 1}}
+            scrollEventThrottle={16}
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={this._onRefresh.bind(this)}
+              />
+            }
+            onScrollBeginDrag={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: this.props.animatedContentOffsetY,
+                    },
                   },
                 },
-              },
-            ],
-            {
-              useNativeDriver: true,
-            },
-          )}
-          onScroll={Animated.event(
-            [
+              ],
               {
-                nativeEvent: {
-                  contentOffset: {
-                    y: this.props.animatedScrollY,
-                  },
-                },
+                useNativeDriver: true,
               },
-            ],
-            {
-              useNativeDriver: true,
-            },
-          )}>
-          {this.state.isAll &&
-            this.state.promotions &&
-            this.state.promotions.length > 0 && (
-              <Swiper
-                style={{
-                  marginVertical: 8,
-                }}
-                width={Util.size.width}
-                height={Util.size.width * 0.96 * (50 / 320) + 16}
-                autoplayTimeout={3}
-                showsPagination={false}
-                horizontal
-                autoplay>
-                {this.state.promotions.map((banner, i) => {
-                  return (
-                    <View
-                      key={i}
-                      style={{
-                        width: Util.size.width,
-                        alignItems: 'center',
-                      }}>
-                      <CachedImage
-                        source={{uri: banner.banner}}
-                        style={{
-                          width: Util.size.width * 0.96,
-                          height: Util.size.width * 0.96 * (50 / 320),
-                        }}
-                      />
-                    </View>
-                  );
-                })}
-              </Swiper>
             )}
-
-          {/* <ListHeader title={header_title} /> */}
-
-          <View
-            style={{
-              flexDirection: 'row',
-              flexWrap: 'wrap',
-              paddingTop: 7,
-            }}>
-            {items_data != null
-              ? items_data.map((item, index) => (
-                  <Items
-                    key={index}
-                    item={item}
-                    index={index}
-                    onPress={
-                      item.type != 'loadmore'
-                        ? this._goItem.bind(this, item)
-                        : this._loadMore.bind(this)
-                    }
-                  />
-                ))
-              : null}
-          </View>
-          {items_data == null ? (
-            <View style={[styles.containerScreen]}>
-              {fetched && (
-                <NoResult
-                  iconName="cart-off"
-                  message={`${t('noProduct')} :(`}
-                />
+            onScroll={Animated.event(
+              [
+                {
+                  nativeEvent: {
+                    contentOffset: {
+                      y: this.props.animatedScrollY,
+                    },
+                  },
+                },
+              ],
+              {
+                useNativeDriver: true,
+              },
+            )}>
+            {this.state.isAll &&
+              this.state.promotions &&
+              this.state.promotions.length > 0 && (
+                <Swiper
+                  style={{
+                    marginVertical: 8,
+                  }}
+                  width={Util.size.width}
+                  height={Util.size.width * 0.96 * (50 / 320) + 16}
+                  autoplayTimeout={3}
+                  showsPagination={false}
+                  horizontal
+                  autoplay>
+                  {this.state.promotions.map((banner, i) => {
+                    return (
+                      <View
+                        key={i}
+                        style={{
+                          width: Util.size.width,
+                          alignItems: 'center',
+                        }}>
+                        <CachedImage
+                          source={{uri: banner.banner}}
+                          style={{
+                            width: Util.size.width * 0.96,
+                            height: Util.size.width * 0.96 * (50 / 320),
+                          }}
+                        />
+                      </View>
+                    );
+                  })}
+                </Swiper>
               )}
+
+            {/* <ListHeader title={header_title} /> */}
+
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                paddingTop: 7,
+              }}>
+              {items_data != null
+                ? items_data.map((item, index) => (
+                    <Items
+                      key={index}
+                      item={item}
+                      index={index}
+                      onPress={
+                        item.type != 'loadmore'
+                          ? this._goItem.bind(this, item)
+                          : this._loadMore.bind(this)
+                      }
+                    />
+                  ))
+                : null}
             </View>
-          ) : null}
-        </Animated.ScrollView>
-      </View>
+            {items_data == null ? (
+              <View style={[styles.containerScreen]}>
+                {fetched && (
+                  <NoResult
+                    iconName="cart-off"
+                    message={`${t('noProduct')} :(`}
+                  />
+                )}
+              </View>
+            ) : null}
+          </Animated.ScrollView>
+        </View>
+        <ListStoreProductSkeleton loading={this.state.loading} />
+      </>
     );
   }
 }
@@ -413,32 +415,32 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     width: Util.size.width,
     flex: 1,
-    paddingBottom: 7
+    paddingBottom: 7,
   },
   emptyText: {
     fontSize: 18,
     fontWeight: '500',
     color: '#888',
-    opacity: 0.8
+    opacity: 0.8,
   },
   emptyIcon: {
     fontSize: 80,
     color: DEFAULT_COLOR,
     marginBottom: 15,
-    opacity: 0.7
+    opacity: 0.7,
   },
   emptyContainer: {
     flex: 1,
     width: Util.size.width,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   emptyWrapper: {
     justifyContent: 'center',
-    alignItems: 'center'
-  }
+    alignItems: 'center',
+  },
 });
 
-export default withTranslation('stores', { withRef: true })(
-  observer(CategoryScreen)
+export default withTranslation('stores', {withRef: true})(
+  observer(CategoryScreen),
 );

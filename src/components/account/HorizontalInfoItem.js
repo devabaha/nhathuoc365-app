@@ -45,9 +45,10 @@ export default class HorizontalInfoItem extends Component {
   ) => {
     if (isLoading) {
       return (
-        <View style={styles.loadingContainer}>
+        <View style={styles.loadingWrapper}>
           <Loading
-            wrapperStyle={styles.loading}
+            wrapperStyle={styles.loadingContainer}
+            style={styles.loading}
             size="small"
           />
         </View>
@@ -58,12 +59,13 @@ export default class HorizontalInfoItem extends Component {
         <Text
           style={[
             styles.detailTitle,
-            {color: specialColor ? specialColor : 'black'},
+            {color: specialColor ? specialColor : 'black', height: undefined},
+            !!defaultValue && !value && {color: appConfig.colors.placeholder},
             detailTitleStyle,
             rightTextStyle,
           ]}
           {...inputProps}>
-          {value}
+          {value || defaultValue}
         </Text>
       );
     } else if (input) {
@@ -74,11 +76,7 @@ export default class HorizontalInfoItem extends Component {
             onPress={this.goToMap.bind(this)}>
             <View pointerEvents="none">
               <TextInput
-                style={[
-                  styles.detailTitle,
-                  detailTitleStyle,
-                  rightTextStyle,
-                ]}
+                style={[styles.detailTitle, detailTitleStyle, rightTextStyle]}
                 value={value}
                 placeholder={defaultValue}
                 multiline={multiline}
@@ -91,11 +89,7 @@ export default class HorizontalInfoItem extends Component {
       }
       return (
         <TextInput
-          style={[
-            styles.detailTitle,
-            detailTitleStyle,
-            rightTextStyle,
-          ]}
+          style={[styles.detailTitle, detailTitleStyle, rightTextStyle]}
           value={value}
           placeholder={defaultValue}
           multiline={multiline}
@@ -108,7 +102,7 @@ export default class HorizontalInfoItem extends Component {
         return (
           <View style={styles.btnSelect}>
             <DatePicker
-              style={{flex: 1, justifyContent: 'center'}}
+              style={{justifyContent: 'center'}}
               date={value || this.state.selectedDate}
               mode="date"
               placeholder={defaultValue}
@@ -122,14 +116,14 @@ export default class HorizontalInfoItem extends Component {
                   color: 'black',
                   position: 'absolute',
                   right: 0,
-                  ...rightTextStyle
+                  ...rightTextStyle,
                 },
                 placeholderText: {
                   fontSize: 14,
                   color: appConfig.colors.placeholder,
                   position: 'absolute',
                   right: 0,
-                  ...rightTextStyle
+                  ...rightTextStyle,
                 },
                 dateInput: {
                   borderColor: 'transparent',
@@ -153,8 +147,8 @@ export default class HorizontalInfoItem extends Component {
             <Text
               style={{
                 fontSize: 14,
-                color: isEmpty(value) ? '#989898' : 'black',
-                ...rightTextStyle
+                color: isEmpty(value) ? appConfig.colors.placeholder : 'black',
+                ...rightTextStyle,
               }}
               {...inputProps}>
               {isEmpty(value) ? defaultValue : value}
@@ -196,8 +190,11 @@ export default class HorizontalInfoItem extends Component {
         isHidden,
         renderRight,
         isLoading,
-        rightTextStyle
+        rightTextStyle,
+        titleStyle,
+        containerStyle: dataContainerStyle,
       },
+      containerStyle,
       inputProps,
     } = this.props;
 
@@ -215,13 +212,12 @@ export default class HorizontalInfoItem extends Component {
           // {backgroundColor: disable ? '#eeF0F4' : '#ffffff'},
           {
             backgroundColor: '#fff',
-            opacity: disable ? .6 : 1
+            opacity: disable ? 0.6 : 1,
           },
-          this.props.containerStyle,
+          containerStyle,
+          dataContainerStyle,
         ]}>
-        <Text style={[styles.title, extraTitleStyle, this.props.titleStyle]}>
-          {title}
-        </Text>
+        <Text style={[styles.title, extraTitleStyle, titleStyle]}>{title}</Text>
         {renderRight
           ? renderRight()
           : this._renderRightView(
@@ -248,58 +244,61 @@ const styles = StyleSheet.create({
     minHeight: 50,
     flexDirection: 'row',
     alignItems: 'center',
-    // paddingTop: 15,
-    // paddingBottom: 15
+    paddingHorizontal: 20,
   },
 
   title: {
     fontSize: 14,
     color: '#888',
-    marginLeft: 20,
     textAlign: 'left',
     flex: 0.5,
   },
 
   detailTitle: {
     flex: 0.5,
+    height: '100%',
     fontSize: 14,
     color: '#242424',
-    marginRight: 20,
     paddingLeft: 0,
     textAlign: 'right',
+    paddingVertical: 0,
   },
 
   btnSelect: {
     flex: 0.6,
-    marginRight: 20,
     justifyContent: 'center',
     alignItems: 'flex-end',
+    paddingVertical: 15,
+    marginVertical: -15,
   },
   columnViewContainer: {
     flexDirection: 'column',
     alignItems: 'flex-start',
-    paddingVertical: 10,
     height: null,
-    paddingHorizontal: 20,
+    paddingBottom: 10,
   },
   columnViewTitle: {
     flex: 0,
+    paddingVertical: 10,
     marginLeft: 0,
-    marginBottom: 10,
   },
   columnViewValue: {
     textAlign: 'left',
     marginRight: 0,
+    paddingRight: 0,
     flex: 1,
+    width: '100%',
     color: '#242244',
   },
 
+  loadingWrapper: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
   loadingContainer: {
-    flex: 1, 
-    alignItems: 'flex-end', 
-    paddingRight: 15
+    position: undefined,
   },
   loading: {
-    position: undefined
-  }
+    padding: 0,
+  },
 });

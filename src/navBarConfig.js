@@ -7,7 +7,8 @@ export const navBarConfig = {
   },
   titleStyle: {
     color: appConfig.colors.white,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    paddingHorizontal: 5
   },
   navBarButtonColor: appConfig.colors.white,
   backButtonTextStyle: {

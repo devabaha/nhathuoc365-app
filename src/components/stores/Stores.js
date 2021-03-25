@@ -24,7 +24,6 @@ import CategoryScreen from './CategoryScreen';
 import StoreNavBarHomeID from './StoreNavBarHomeID';
 import HeaderStoreHomeID from './HeaderStoreHomeID';
 import EventTracker from '../../helper/EventTracker';
-import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
 
@@ -193,14 +192,14 @@ class Stores extends Component {
         promotions: response.data.promotions,
         moreOptions: response.data.more_options
       },
-      () =>
-        this.state.categories_data.map((item, index) => {
-          if (!this.props.goCategory) return;
-          if (this.props.goCategory === item.id) {
-            this._changeCategory(item, index);
-            return;
-          }
-        }),
+      // () =>
+      //   this.state.categories_data.map((item, index) => {
+      //     if (!this.props.goCategory) return;
+      //     if (this.props.goCategory === item.id) {
+      //       setTimeout(()=>this._changeCategory(item, index), 500);
+      //       return;
+      //     }
+      //   }),
     );
   }
 
@@ -439,6 +438,10 @@ class Stores extends Component {
           this.refCates[index] = {
             offsetX,
           };
+
+          if (this.props.goCategory && this.props.goCategory === category.id) {
+            this._changeCategory(category, index);
+          }
         });
       });
     }
@@ -661,6 +664,13 @@ class Stores extends Component {
                   };
                 }}
                 renderItem={({ item, index }) => {
+                  const isAutoLoad =
+                (this.state.category_nav_index - 1 >= 0 &&
+                  index === this.state.category_nav_index - 1) ||
+                (this.state.category_nav_index + 1 <=
+                  this.state.categories_data.length - 1 &&
+                  index === this.state.category_nav_index + 1);
+
                   return (
                     <CategoryScreen
                       containerStyle={{flex: undefined}}
@@ -674,6 +684,7 @@ class Stores extends Component {
                       item={item}
                       index={index}
                       cate_index={this.state.category_nav_index}
+                      isAutoLoad={isAutoLoad}
                       that={this}
                       onLayout={e => this.handleLayoutFlatListContent(e, index)}
                       onRefreshEnd={this._onRefreshCateEnd}
@@ -682,8 +693,8 @@ class Stores extends Component {
                   );
                 }}
               />
-            )  : (
-          <ListStoreProductSkeleton />
+            )  : (null
+          // <ListStoreProductSkeleton />
         )}
           </Animated.View>
         </Animated.ScrollView>

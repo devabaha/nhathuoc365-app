@@ -45,7 +45,9 @@ const Block = ({
   title,
   content,
   iconName,
-  icon
+  icon,
+
+  customContent
 }) => {
   return (
     <View style={[styles.block, containerStyle]}>
@@ -53,7 +55,7 @@ const Block = ({
         <Text style={[styles.title, titleStyle]}>{title}</Text>
         {icon || <Icon name={iconName} style={[styles.icon, iconStyle]} />}
       </View>
-      <Text style={[styles.content, contentStyle]}>{content}</Text>
+      {customContent || <Text style={[styles.content, contentStyle]}>{content}</Text>}
     </View>
   );
 };

@@ -1,30 +1,35 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-} from 'react-native';
+import {StyleSheet, SafeAreaView, StatusBar} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Animated, {Easing, interpolate} from 'react-native-reanimated';
-
-import appConfig from 'app-config';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Container from '../../Layout/Container';
 import OverlayIconButton from './OverlayIconButton';
 import RightButtonNavBar from '../../RightButtonNavBar';
 import {RIGHT_BUTTON_TYPE} from '../../RightButtonNavBar/constants';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import {BACK_NAV_ICON_NAME} from '../../../constants';
+import appConfig from 'app-config';
+
+const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
     width: '100%',
     zIndex: 999,
+    paddingTop: appConfig.device.isAndroid
+      ? appConfig.device.statusBarHeight
+      : 0,
   },
   background: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
+    height: '200%',
     backgroundColor: '#fff',
     ...elevationShadowStyle(3),
+    bottom: 0,
   },
   mainWrapper: {
     width: '100%',
@@ -34,8 +39,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 10,
   },
+  backBtn: {
+    zIndex: 1,
+  },
   backIcon: {
-    fontSize: 30,
+    fontSize: 26,
   },
   title: {
     color: '#333',
@@ -54,6 +62,9 @@ const styles = StyleSheet.create({
 const ACTIVE_OFFSET_TOP = 100;
 const RIGHT_BUTTONS = [
   {
+    type: RIGHT_BUTTON_TYPE.WAREHOUSE,
+  },
+  {
     type: RIGHT_BUTTON_TYPE.CHAT,
     iconName: 'ios-chatbubbles',
   },
@@ -70,46 +81,40 @@ const RIGHT_BUTTONS = [
 class Header extends Component {
   static defaultProps = {
     item: {},
+    onPressWarehouse: () => {},
   };
-
   state = {
     titleOriginWidth: 0,
   };
   animatedOpacity = new Animated.Value(0);
   animatedTranslate = new Animated.Value(0);
   animatedScale = new Animated.Value(1);
+  animatingScrollDown = false;
+  animatingScrollUp = false;
+  animationDuration = 250;
 
-  get iconName() {
-    return appConfig.device.isIOS ? 'ios-arrow-back' : 'md-arrow-back';
-  }
+  iconStyle = {
+    opacity: this.animatedOpacity,
+  };
 
-  get iconBackgroundStyle() {
-    return {
-      opacity: interpolate(this.animatedOpacity, {
-        inputRange: [0, 1],
-        outputRange: [1, 0],
-      }),
-    };
-  }
-
-  get iconStyle() {
-    return {
-      opacity: this.animatedOpacity,
-    };
-  }
-
-  get iconOverlayStyle() {
-    return {
-      transform: [
-        {
-          scale: interpolate(this.animatedScale, {
-            inputRange: [0, 1],
-            outputRange: [1, 1.1],
-          }),
-        },
-      ],
-    };
-  }
+  iconOverlayStyle = {
+    transform: [
+      {
+        scale: interpolate(this.animatedScale, {
+          inputRange: [0, 1],
+          outputRange: [1, 1.1],
+        }),
+      },
+    ],
+  };
+  iconBackgroundStyle = {
+    opacity: interpolate(this.animatedOpacity, {
+      inputRange: [0, 1],
+      outputRange: [1, 0],
+    }),
+  };
+  iconName = BACK_NAV_ICON_NAME;
+  contentOverlayStyle = [this.iconBackgroundStyle, this.iconOverlayStyle];
 
   componentDidMount() {
     this.props.animatedValue.addListener(this.scrollListener);
@@ -119,9 +124,6 @@ class Header extends Component {
     this.props.animatedValue.removeListener(this.scrollListener);
   }
 
-  animatingScrollDown = false;
-  animatingScrollUp = false;
-  animationDuration = 250;
   scrollListener = ({value}) => {
     if (value > ACTIVE_OFFSET_TOP) {
       if (this.animatingScrollDown) return;
@@ -163,8 +165,41 @@ class Header extends Component {
     });
   };
 
+  handlePressWarehouse = () => {
+    this.props.onPressWarehouse();
+  };
+
+  renderWarehouseIcon = (iconStyle) => {
+    return (
+      <Animated.View>
+        <AnimatedIcon name="warehouse" style={[iconStyle, this.iconStyle]} />
+      </Animated.View>
+    );
+  };
+
+  renderOverlayWarehouseIcon = (
+    iconStyle,
+    iconOverlayStyle,
+    contentOverlayStyle,
+  ) => {
+    return (
+      <Animated.View style={[contentOverlayStyle, this.contentOverlayStyle]}>
+        <AnimatedIcon
+          name="warehouse"
+          style={[iconStyle, iconOverlayStyle, this.iconOverlayStyle]}
+        />
+      </Animated.View>
+    );
+  };
+
   renderRightButtons() {
     return RIGHT_BUTTONS.map((btn, index) => {
+      if (
+        btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE &&
+        !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)
+      ) {
+        return null;
+      }
       const isLast = index === RIGHT_BUTTONS.length - 1;
 
       const narrowRightGapStyle = {
@@ -181,16 +216,28 @@ class Header extends Component {
             type={btn.type}
             shareTitle={this.props.item.name}
             shareURL={this.props.item.url}
+            onPress={
+              btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE
+                ? this.handlePressWarehouse
+                : null
+            }
             icon={
               <OverlayIconButton
                 iconName={btn.iconName}
                 containerStyle={styles.containerIconStyle}
                 backgroundStyle={this.iconBackgroundStyle}
-                contentOverlayStyle={[
-                  this.iconBackgroundStyle,
-                  this.iconOverlayStyle,
-                ]}
+                contentOverlayStyle={this.contentOverlayStyle}
                 iconStyle={this.iconStyle}
+                renderMainIcon={
+                  btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE
+                    ? this.renderWarehouseIcon
+                    : null
+                }
+                renderOverlayIcon={
+                  btn.type === RIGHT_BUTTON_TYPE.WAREHOUSE
+                    ? this.renderOverlayWarehouseIcon
+                    : null
+                }
                 disabled
               />
             }
@@ -234,12 +281,9 @@ class Header extends Component {
             <OverlayIconButton
               iconName={this.iconName}
               backgroundStyle={this.iconBackgroundStyle}
-              contentOverlayStyle={[
-                this.iconBackgroundStyle,
-                this.iconOverlayStyle,
-              ]}
-              iconStyle={this.iconStyle}
-              wrapperStyle={narrowLeftGapStyle}
+              contentOverlayStyle={[this.contentOverlayStyle, styles.backIcon]}
+              iconStyle={[this.iconStyle, styles.backIcon]}
+              wrapperStyle={[styles.backBtn, narrowLeftGapStyle]}
               onPress={Actions.pop}
             />
 

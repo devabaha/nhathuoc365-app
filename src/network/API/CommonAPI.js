@@ -95,6 +95,9 @@ class CommonAPI {
   }
 
   // Cart
+  get CART_CONFIRMED() {
+    return BaseAPI.apiDomain + 'apiCart/confirmed';
+  }
   get SITE_CART_PLUS() {
     return BaseAPI.apiDomain + 'apiCart/plus';
   }
@@ -259,6 +262,9 @@ class CommonAPI {
   }
 
   // Users
+  get USER_DEVICE() {
+    return BaseAPI.apiDomain + 'apiUser/device';
+  }
   get USER_REGISTER() {
     return BaseAPI.apiDomain + 'apiUser/register';
   }
@@ -336,6 +342,15 @@ class CommonAPI {
   }
   get USER_PROCESS_QRCODE() {
     return BaseAPI.apiDomain + 'apiUser/process_qrcode';
+  }
+  get USER_CHECK_PRODUCT_CODE() {
+    return BaseAPI.apiDomain + 'apiUser/check_product_code'
+  }
+  get USER_GET_PRODUCT_STAMPS() {
+    return BaseAPI.apiDomain + 'apiUser/product_stamps';
+  }
+  get USER_LOCATION() {
+    return BaseAPI.apiDomain + 'apiUser/location';
   }
 
   // Service

@@ -23,9 +23,9 @@ class Bills extends Component {
     titleBillsComplete: '',
     titleBillsInComplete: '',
     scrollY: new Animated.Value(0),
-    animatedQuickPaymentTranslateY: new Animated.Value(0)
   };
   unmounted = false;
+  animatedQuickPaymentTranslateY = new Animated.Value(60);
 
   get isBillsEmpty() {
     return (
@@ -124,8 +124,8 @@ class Bills extends Component {
     this.setState({
       quickPaymentHeight: height
     });
-    this.state.animatedQuickPaymentTranslateY.setValue(height);
-    Animated.timing(this.state.animatedQuickPaymentTranslateY, {
+    this.animatedQuickPaymentTranslateY.setValue(height);
+    Animated.timing(this.animatedQuickPaymentTranslateY, {
       toValue: 0,
       duration: 300,
       easing: Easing.quad,
@@ -192,7 +192,7 @@ class Bills extends Component {
     const wrapperStyle = {
       transform: [
         {
-          translateY: this.state.animatedQuickPaymentTranslateY
+          translateY: this.animatedQuickPaymentTranslateY
         }
       ]
     };

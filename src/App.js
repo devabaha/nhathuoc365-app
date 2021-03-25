@@ -186,6 +186,10 @@ import AgencyInformationRegister from './containers/AgencyInformationRegister';
 import CommissionIncomeStatement from './containers/CommissionIncomeStatement';
 import ModalInput from './components/ModalInput';
 import {LotteryGame} from './containers/Gamification';
+import ModalConfirm from './components/ModalConfirm';
+import ProductStamps from './containers/ProductStamps';
+import ModalComboLocation from './components/ModalComboLocation';
+import APIHandler from './network/APIHandler';
 
 /**
  * Not allow font scaling
@@ -473,9 +477,18 @@ class App extends Component {
     );
   }
 
+  async updateAppVersionsInfo(codePushVersion) {
+    const data = {
+      code_push_version: codePushVersion,
+      tag_version: appConfig.tagVersion,
+    };
+    const response = await APIHandler.user_device(data);
+  }
+
   codePushGetMetaData() {
     codePush.getUpdateMetadata().then((localPackage) => {
       store.setCodePushMetaData(localPackage);
+      this.updateAppVersionsInfo(localPackage?.label);
     });
   }
 
@@ -864,6 +877,17 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ PRODUCT STAMPS ================ */}
+                <Stack key={appConfig.routes.productStamps}>
+                  <Scene
+                    key={`${appConfig.routes.productStamps}_1`}
+                    component={ProductStamps}
+                    title={t('screen.listProductScanned.mainTitle')}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ GAMIFICATION - LOTTERY ================ */}
                 <Stack key={appConfig.routes.lotteryGame}>
@@ -1473,7 +1497,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifyDetail}>
                   <Scene
                     key={`${appConfig.routes.notifyDetail}_1`}
-                    title={t('screen.newsDetail.mainTitle')}
+                    // title={t('screen.newsDetail.mainTitle')}
                     component={NotifyItem}
                     {...navBarConfig}
                     back
@@ -1710,7 +1734,7 @@ class RootRouter extends Component {
                     key="list_amazing_chat_1"
                     title="Chat với Cửa hàng"
                     component={ListChat}
-                    navBar={ListChatNavBar}
+                    // navBar={ListChatNavBar}
                     {...navBarConfig}
                     back
                   />
@@ -1930,10 +1954,22 @@ class RootRouter extends Component {
               {/* ================ MODAL INPUT ================ */}
               <Stack key={appConfig.routes.modalInput} component={ModalInput} />
 
+              {/* ================ MODAL CONFIRM ================ */}
+              <Stack
+                key={appConfig.routes.modalConfirm}
+                component={ModalConfirm}
+              />
+
               {/* ================ COUNTRY PICKER ================ */}
               <Stack
                 key={appConfig.routes.countryPicker}
                 component={CountryPicker}
+              />
+
+              {/* ================ MODAL COMBO LOCATION ================ */}
+              <Stack
+                key={appConfig.routes.modalComboLocation}
+                component={ModalComboLocation}
               />
             </Lightbox>
 

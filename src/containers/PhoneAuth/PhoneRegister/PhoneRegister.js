@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -7,7 +7,7 @@ import {
   Text,
   TextInput,
   TouchableWithoutFeedback,
-  Image
+  Image,
 } from 'react-native';
 
 import appConfig from 'app-config';
@@ -18,31 +18,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffffff',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   content: {
-    paddingTop: '30%'
+    paddingTop: '30%',
   },
   image: {
     width: 128,
     height: 82,
-    top: -30
+    top: -30,
   },
   welcomeText: {
     color: 'black',
     fontSize: 26,
-    fontWeight: '800'
+    fontWeight: '800',
   },
   desText: {
     color: 'black',
     fontSize: 18,
     marginTop: 8,
     marginBottom: 22,
-    fontWeight: '300'
+    fontWeight: '300',
   },
   phoneContainer: {
     flexDirection: 'row',
-    marginTop: 15
+    marginTop: 15,
   },
   countryContainer: {
     flexDirection: 'row',
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#dddddd',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 8
+    padding: 8,
   },
   phoneTextInput: {
     flex: 1,
@@ -59,35 +59,35 @@ const styles = StyleSheet.create({
     fontSize: 25,
     padding: 5,
     marginLeft: 10,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   flagStyle: {
     width: 40,
     height: 40,
     borderRadius: 5,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   countryCode: {
-    fontSize: 25
+    fontSize: 25,
   },
   phoneNumber: {
-    fontSize: 15
+    fontSize: 15,
   },
   continueText: {
     color: 'black',
     fontSize: 20,
     fontWeight: '500',
     alignSelf: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   txtNote: {
     color: 'red',
-    marginTop: 20
+    marginTop: 20,
   },
   txtCode: {
     fontWeight: '800',
     fontSize: 20,
-    padding: 10
+    padding: 10,
   },
   title: {
     position: 'absolute',
@@ -95,13 +95,13 @@ const styles = StyleSheet.create({
     bottom: 0,
     color: '#fff',
     fontSize: 20,
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 });
 
 class PhoneRegister extends Component {
   static defaultProps = {
-    onCloseOTP: () => {}
+    onCloseOTP: () => {},
   };
 
   constructor(props) {
@@ -120,7 +120,7 @@ class PhoneRegister extends Component {
       country,
       message,
       registerDisabled,
-      onSignIn
+      onSignIn,
     } = this.props;
 
     return (
@@ -128,8 +128,7 @@ class PhoneRegister extends Component {
         keyboardShouldPersistTaps="handled"
         bounces={false}
         style={styles.container}
-        contentContainerStyle={styles.content}
-      >
+        contentContainerStyle={styles.content}>
         <Image resizeMode="contain" style={styles.image} source={LOGO_PATH} />
         <Text style={styles.welcomeText}>{t('phoneWelcomeMessage')}</Text>
         <Text style={styles.desText}>{t('phoneDescription')}</Text>
@@ -153,20 +152,18 @@ class PhoneRegister extends Component {
             keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
             placeholder={t('phonePlaceholder')}
             onChangeText={this.handleChangePhoneNumber.bind(this)}
-            onSubmitEditing={!registerDisabled ? onSignIn : undefined}
+            onSubmitEditing={() => (!registerDisabled ? onSignIn() : {})}
           />
         </View>
         <TouchableOpacity
           activeOpacity={0.5}
           onPress={onSignIn}
-          disabled={registerDisabled}
-        >
+          disabled={registerDisabled}>
           <Text
             style={[
               styles.continueText,
-              { color: !registerDisabled ? 'black' : 'lightgray' }
-            ]}
-          >
+              {color: !registerDisabled ? 'black' : 'lightgray'},
+            ]}>
             {t('phoneConfirmMessage')}
           </Text>
         </TouchableOpacity>

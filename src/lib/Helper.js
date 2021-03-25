@@ -82,13 +82,13 @@ function isURL(s) {
 global.isURL = isURL;
 
 global.isLinkTickID = (s) => {
-  var regexp = /(tickid)/;
+  var regexp = /(abaha)/;
   return regexp.test(s);
 };
 
 global.isWalletAddress = (address) => {
   return (
-    /^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)
+    /^(0x)[0-9a-fA-F]{40}$/.test(address)
   );
 };
 
@@ -103,12 +103,12 @@ global.isWalletAddressWithZoneCode = (str) => {
 
 //Kiem tra la ma tai khoan
 global.isAccountCode = (address) => {
-  return /^(0x)?[0-9a-z]{10}$/.test(address);
+  return /^(0x)[0-9a-z]{10}$/.test(address);
 };
 
 //Kiem tra la ma tai khoan
 global.isCartCode = (address) => {
-  return /^(00)?[0-9a-z]{9}$/.test(address);
+  return /^(00)[0-9a-z]{9}$/.test(address);
 };
 
 global.stristr = (haystack, needle, bool) => {

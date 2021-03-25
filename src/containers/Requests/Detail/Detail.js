@@ -5,7 +5,9 @@ import appConfig from 'app-config';
 import Loading from '../../../components/Loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Comments from './Comments';
+import equal from 'deep-equal';
 
+const DELAY_GET_CONVERSATION = 3000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
 
@@ -20,6 +22,7 @@ class Detail extends Component {
     user: {}
   };
   unmounted = false;
+  timerGetChat = null;
 
   componentDidMount() {
     this.getRequest();
@@ -27,7 +30,21 @@ class Detail extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    clearTimeout(this.timerGetChat);
   }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(nextState !== this.state){
+     return !equal(nextState, this.state);
+    }
+
+    if(nextProps !== this.props){
+      return true;
+    }
+
+    return false;
+  }
+  
 
   getRequest = async () => {
     const { t } = this.props;
@@ -37,6 +54,7 @@ class Detail extends Component {
         this.props.roomId,
         this.props.requestId
       );
+
       if (!this.unmounted && response) {
         if (response.status === STATUS_SUCCESS && response.data) {
           this.setState({
@@ -52,6 +70,10 @@ class Detail extends Component {
           });
         }
       }
+      this.timerGetChat = setTimeout(
+        () => this.getRequest(),
+        DELAY_GET_CONVERSATION
+      );
     } catch (error) {
       console.log('get_request', error);
       flashShowMessage({

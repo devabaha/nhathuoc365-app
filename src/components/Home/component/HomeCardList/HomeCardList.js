@@ -33,7 +33,7 @@ function HomeCardList({ horizontal = true, ...props }) {
         data={props.data}
         showsHorizontalScrollIndicator={false}
         renderItem={props.children}
-        keyExtractor={item => `${item.id}`}
+        keyExtractor={(item, index) => index.toString()}
         refreshControl={props.refreshControl}
         {...props.flatListProps}
       />

@@ -137,7 +137,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
     }
 
     updateNoti() {
-        setTimeout(() => {
+        // setTimeout(() => {
             switch (this.props.type) {
                 case RIGHT_BUTTON_TYPE.SHOPPING_CART:
                     if (
@@ -154,7 +154,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
                     }
                     break;
             }
-        });
+        // });
     }
 
     render() {

@@ -16,6 +16,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import Shimmer from 'react-native-shimmer';
 
 import {MAIN_COLOR, SUB_COLOR} from '../constants';
+import {GAME_TYPE} from '../../constants';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const {concat, Extrapolate} = Animated;
@@ -212,7 +213,7 @@ class Footer extends Component {
   translateY = new Animated.Value(0);
 
   get submitDisabled() {
-    return Number.isNaN(this.state.number) || Number(this.state.number) === 0;
+    return Number.isNaN(this.state.number) || this.state.number === '';
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -228,8 +229,8 @@ class Footer extends Component {
 
   submit = () => {
     Keyboard.dismiss();
-    this.setState({number: ''});
     this.props.onSubmit(this.state.number);
+    this.setState({number: ''});
   };
 
   onChangeText = (number) => {

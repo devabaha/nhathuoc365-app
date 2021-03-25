@@ -12,7 +12,7 @@ import {default as NetInfo} from '@react-native-community/netinfo';
 import FeatherIcon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 import store from '../../store';
-import {ORIGIN_DEV_API_DOMAIN} from '../../network/API/BaseAPI';
+import {ORIGIN_API_DOMAIN} from '../../network/API/BaseAPI';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   devServerWaterMarkContainer: {
     backgroundColor: 'rgba(0,0,0,1)',
@@ -88,12 +88,13 @@ const styles = StyleSheet.create({
     opacity: 0.2,
   },
   devServerWaterMarkLabel: {
-    letterSpacing: 3,
-    fontWeight: 'bold',
+    letterSpacing: 1,
+    // fontWeight: 'bold',
     // fontFamily: 'SairaStencilOne-Regular',
     color: '#fff',
     textAlign: 'center',
-    fontSize: 8
+    fontSize: 8,
+    // textTransform: 'uppercase'
   },
 });
 
@@ -189,12 +190,16 @@ class NetWorkInfo extends Component {
   }
 
   renderDevServerModeWaterMark() {
-    const isDevServer = store.apiDomain === ORIGIN_DEV_API_DOMAIN;
-    if (isDevServer) {
+    const isLiveServer = store.apiDomain === ORIGIN_API_DOMAIN;
+    if (!isLiveServer) {
       return (
-        <SafeAreaView pointerEvents="none" style={styles.devServerWaterMarkWrapper}>
+        <SafeAreaView
+          pointerEvents="none"
+          style={styles.devServerWaterMarkWrapper}>
           <View style={styles.devServerWaterMarkContainer}>
-            <Text style={styles.devServerWaterMarkLabel}>ON DEV SERVER</Text>
+            <Text style={styles.devServerWaterMarkLabel}>
+              {store.apiDomain}
+            </Text>
           </View>
         </SafeAreaView>
       );

@@ -267,7 +267,7 @@ class VoucherDetail extends Component {
               <Tabs>{tabs}</Tabs>
             </View>
 
-            {this.props.site && (
+            {/* {this.props.site && (
               <View style={styles.providerWrapper}>
                 <Button
                   onPress={() =>
@@ -296,7 +296,7 @@ class VoucherDetail extends Component {
                   </View>
                 </Button>
               </View>
-            )}
+            )} */}
           </View>
         </ScrollView>
 

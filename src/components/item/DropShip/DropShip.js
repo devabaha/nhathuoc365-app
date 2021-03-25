@@ -5,6 +5,9 @@ import Container from '../../Layout/Container';
 import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
+  disabled: {
+    opacity: 0.5,
+  },
   row: {
     // marginBottom: 15,
     paddingVertical: 12,
@@ -28,8 +31,16 @@ const styles = StyleSheet.create({
   value: {
     maxWidth: '50%',
   },
+  quantityLabel: {
+    flex: undefined
+  },
+  quantityWrapper: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
   quantityContainer: {
     width: null,
+    maxWidth: undefined,
   },
   quantityTxtContainer: {
     minWidth: 70,
@@ -81,47 +92,67 @@ const DropShip = ({
   onPlus = () => {},
   onQuantityBlur = () => {},
 }) => {
+  const priceFormatter = (price) => {
+    const originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
+    return numberFormat(originPrice);
+  };
+
+  const calculateOriginGrossProfit = () => {
+    let grossProfit = 0;
+
+    try {
+      grossProfit = Number(quantity) * (Number(newPrice) - Number(price)) || 0;
+    } catch (err) {
+      console.log('calculate_gross_profit', err);
+    }
+
+    return grossProfit;
+  };
+
+  const calculateGrossProfit = () => {
+    return priceFormatter(calculateOriginGrossProfit()) + currency;
+  };
+
   const [newPriceView, setNewPriceView] = useState('0');
   const [newPrice, setNewPrice] = useState('0');
+  const [totalProfit, setTotalProfit] = useState(calculateOriginGrossProfit());
 
   const handleChangePrice = (price) => {
     const originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
     setNewPrice(originPrice);
     setNewPriceView(price);
     onChangeNewPrice(originPrice);
+    setTotalProfit(calculateOriginGrossProfit());
   };
 
-  const valueExecutorHighPrice = (price) => {
-    originPrice = Number(String(price).replace(/(?!\d+|-)\D*/g, ''));
-    return numberFormat(originPrice);
-  };
-
-  const calculateGrossProfit = () => {
-    let grossProfit = 0;
-    try {
-      grossProfit = Number(quantity) * Number(newPrice) - Number(price) || 0;
-    } catch (err) {
-      console.log('calculate_gross_profit', err);
-    }
-    return valueExecutorHighPrice(grossProfit) + currency;
+  const totalProfitValidateStyle = {
+    color:
+      newPrice < price
+        ? appConfig.colors.status.danger
+        : appConfig.colors.status.success,
   };
 
   return (
-    <Container padding={15}>
-      <Container row style={styles.row}>
-        <Text style={styles.title}>Số lượng</Text>
-        <NumberSelection
-          containerStyle={[styles.value, styles.quantityContainer]}
-          textContainer={styles.quantityTxtContainer}
-          value={quantity}
-          min={min}
-          max={max}
-          onChangeText={onChangeQuantity}
-          onMinus={onMinus}
-          onPlus={onPlus}
-          onBlur={onQuantityBlur}
-          disabled={disabled}
-        />
+    <Container
+      pointerEvents={disabled ? 'none' : 'auto'}
+      style={disabled && styles.disabled}
+      padding={15}>
+      <Container row style={[styles.row, {width: '100%'}]}>
+        <Text style={[styles.title, styles.quantityLabel]}>Số lượng</Text>
+        <View style={styles.quantityWrapper}>
+          <NumberSelection
+            containerStyle={[styles.value, styles.quantityContainer]}
+            textContainer={styles.quantityTxtContainer}
+            value={quantity}
+            min={min}
+            max={max}
+            onChangeText={onChangeQuantity}
+            onMinus={onMinus}
+            onPlus={onPlus}
+            onBlur={onQuantityBlur}
+            // disabled={disabled}
+          />
+        </View>
       </Container>
       <Container row style={styles.row}>
         <Text style={styles.title}>Giá bán</Text>
@@ -130,17 +161,27 @@ const DropShip = ({
       <Container row style={styles.row}>
         <View style={styles.newPriceTitleContainer}>
           <Text style={styles.title}>Giá muốn bán</Text>
-          <Text style={styles.note}>* Phải cao hơn giá bán</Text>
+          <Text style={styles.note}>* Phải cao hơn hoặc bằng giá bán</Text>
         </View>
 
         <View style={[styles.value, styles.newPriceContainer]}>
           <TextInput
-            style={[styles.price, styles.newPriceInput]}
-            keyboardType="number-pad"
+            style={[
+              styles.price,
+              styles.newPriceInput,
+              totalProfitValidateStyle,
+            ]}
+            keyboardType={appConfig.device.isIOS ? 'number-pad' : 'numeric'}
             onChangeText={handleChangePrice}
-            value={valueExecutorHighPrice(newPriceView)}
+            value={priceFormatter(newPriceView)}
+            editable={!disabled}
           />
-          <Text style={[styles.price, styles.newPriceCurrency]}>
+          <Text
+            style={[
+              styles.price,
+              styles.newPriceCurrency,
+              totalProfitValidateStyle,
+            ]}>
             {currency}
           </Text>
         </View>
@@ -148,7 +189,7 @@ const DropShip = ({
       <Container row style={styles.row}>
         <Text style={styles.title}>Lợi nhuận gộp</Text>
         <Text style={[styles.value, styles.price]}>
-          {calculateGrossProfit()}
+          {calculateGrossProfit(totalProfit)}
         </Text>
       </Container>
     </Container>

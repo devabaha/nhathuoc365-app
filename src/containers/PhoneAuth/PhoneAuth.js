@@ -45,6 +45,7 @@ class PhoneAuth extends Component {
     this.unmounted = false;
 
     this.phoneAuth = new PhoneAuthenticate();
+    this.phoneAuth.setCountry = this.state.currentCountry;
     this.phoneAuth.setInstantVerifySuccess = this.firebaseConfirmCode.bind(this);
   }
 
@@ -55,7 +56,7 @@ class PhoneAuth extends Component {
         const currentCountry = countries.filter(
           country => country.cca2 == cca2
         )[0];
-        this.setState({ currentCountry });
+        this.handleSelectCountry(currentCountry);
       })
       .catch(error => {
         console.error(error);
@@ -154,9 +155,7 @@ class PhoneAuth extends Component {
   }
 
   formatPhoneNumber(phoneNumber, countryCode = this.formatCountryCode()) {
-    if (phoneNumber.substring(0, 2) === countryCode.replace('+', '')) {
-      phoneNumber = phoneNumber.substr(2);
-    } else if (phoneNumber.substring(0, 1) === '0') {
+    if (phoneNumber.substring(0, 1) === '0') {
       phoneNumber = phoneNumber.substr(1);
     }
 
@@ -286,6 +285,7 @@ class PhoneAuth extends Component {
 
   handleSelectCountry(currentCountry) {
     this.setState({ currentCountry });
+    this.phoneAuth.setCountry = currentCountry;
   }
 
   handleBackToPhoneInput() {

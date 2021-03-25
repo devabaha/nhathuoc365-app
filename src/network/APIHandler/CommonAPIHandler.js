@@ -189,6 +189,14 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Get shipping info for cart
+   */
+  cart_confirmed(store_id, cart_id) {
+    var api = url_for(API.CART_CONFIRMED + '/' + store_id + '/' + cart_id);
+    return this.postCancelableAPI(api);
+  }
+
+  /**
    * thêm product vào giỏ hàng
    */
   async site_cart_adding(store_id, product_id) {
@@ -304,9 +312,9 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * Danh sách địa chỉ
    */
-  async user_address() {
+  user_address() {
     var api = url_for(API.USER_ADDRESS);
-    return await this.getAPI(api);
+    return this.getCancelableAPI(api);
   }
 
   /**
@@ -770,7 +778,9 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   async site_cart_canceling(store_id, cart_id) {
-    var api = url_for(API.SITE_CART_CANCELING + '/' + store_id + '/' + cart_id);
+    var api = url_for(
+      API.SITE_CART_CANCELING + '/' + store_id + (cart_id ? '/' + cart_id : ''),
+    );
     return await this.getAPI(api);
   }
 
@@ -955,18 +965,18 @@ class CommonAPIHandler extends BaseHandler {
 
   /**
    * @todo register gold member/ store
-   * 
+   *
    */
-  user_gold_member_register(data){
+  user_gold_member_register(data) {
     const api = url_for(API.USER_REGISTER_GOLD_MEMBER);
     return this.postAPI(api, data);
   }
 
   /**
    * @todo get commission income
-   * 
+   *
    */
-  user_site_cart_commission(data){
+  user_site_cart_commission(data) {
     const api = url_for(API.USER_SITE_CART_COMMISSION);
     return this.postCancelableAPI(api, data, true);
   }
@@ -992,8 +1002,10 @@ class CommonAPIHandler extends BaseHandler {
    *
    * @returns {LotteryInfo}
    */
-  lottery_index(site_id) {
-    const api = url_for(API.LOTTERY_INDEX + '/' + site_id);
+  lottery_index(site_id, lottery_id) {
+    const api = url_for(
+      API.LOTTERY_INDEX + '/' + site_id + '/' + (lottery_id || ''),
+    );
     return this.getCancelableAPI(api);
   }
 
@@ -1008,6 +1020,49 @@ class CommonAPIHandler extends BaseHandler {
     return this.postCancelableAPI(api, data);
   }
 
+  /**
+   * check product by QR code
+   *
+   * @param object data
+   * @param string data.qrcode
+   */
+  user_check_product_code(data) {
+    const api = url_for(API.USER_CHECK_PRODUCT_CODE);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get all product stamps
+   *
+   */
+  user_get_product_stamps() {
+    const api = url_for(API.USER_GET_PRODUCT_STAMPS);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * get location data.
+   *
+   * @param object data
+   * @param string data.type
+   * @param string data.parent parentID of selected location (ex: cityID of selected district)
+   */
+  user_location(data) {
+    const api = url_for(API.USER_LOCATION);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * upload app version info.
+   *
+   * @param object data
+   * @param string data.code_push_version
+   * @param string data.tag_version
+   */
+  async user_device(data) {
+    const api = url_for(API.USER_DEVICE);
+    return await this.postAPI(api, data);
+  }
 }
 
 export default CommonAPIHandler;

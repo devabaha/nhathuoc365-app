@@ -24,6 +24,8 @@ import Loading from '@tickid/tickid-rn-loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import EventTracker from '../../helper/EventTracker';
 import DropShip from '../item/DropShip';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
+import {PRODUCT_TYPES} from 'src/constants';
 
 const ATTR_LABEL_KEY = 'attrLabelKey';
 const ATTR_KEY = 'attrKey';
@@ -132,11 +134,13 @@ class ItemAttribute extends PureComponent {
 
       data = data.map((attr, i) => {
         let disabled = false;
-        // disable if empty inventory.
-        disabled = !!!(
-          Object.values(models).find((model) => model.name === attr)
-            ?.inventory !== null
-        );
+
+        if (attrs.length === 1) {
+          // disable if empty inventory ONLY IF product has only 1 attr.
+          disabled = !!!Object.values(models).find(
+            (model) => model.name === attr,
+          )?.inventory;
+        }
 
         return {
           [VALUE_KEY]: attr,
@@ -304,7 +308,14 @@ class ItemAttribute extends PureComponent {
   };
 
   handleChangeQuantity = (quantity, min, max) => {
-    if ((quantity >= min && quantity <= max) || !quantity) {
+    const hasMax = max !== null && max !== undefined;
+
+    if (
+      (Number(quantity) >= Number(min) && hasMax
+        ? Number(quantity) <= Number(max)
+        : true) ||
+      !quantity
+    ) {
       this.setState({quantity: !quantity ? '' : Number(quantity)});
     }
   };
@@ -346,11 +357,10 @@ class ItemAttribute extends PureComponent {
       this.state.selectedAttrs,
     );
     const disabled =
-      this.isDropShip
-        && this.state.product.price >= this.state.dropShipPrice
-        || (this.hasAttrs && numberSelectedAttrs === 0 ||
-          Object.keys(this.state.viewData).length !== numberSelectedAttrs
-        );
+      (this.isDropShip && (this.state.selectedModel &&
+        this.state.selectedModel.price_in_number > this.state.dropShipPrice)) ||
+      (this.hasAttrs && numberSelectedAttrs === 0) ||
+      Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 
     const btnProps = disabled && {
       btnContainerStyle: styles.containerDisabled,
@@ -361,6 +371,24 @@ class ItemAttribute extends PureComponent {
     const imageUri = this.state.selectedModel.image
       ? this.state.selectedModel.image
       : this.state.product.image;
+
+    const isDropShipDisabled =
+      this.state.models.length !== 0 &&
+      !Object.keys(this.state.selectedModel).length;
+
+    const priceDropShip =
+      this.state.models.length !== 0
+        ? this.state.selectedModel.price_in_number
+          ? this.state.selectedModel.price_in_number
+          : 0
+        : this.state.product?.price || 0;
+
+    const priceDropShipView =
+      this.state.models.length !== 0
+        ? this.state.selectedModel.price
+          ? this.state.selectedModel.price
+          : '-'
+        : this.state.product?.price_view || '-';
 
     const price =
       (this.state.selectedModel.price
@@ -380,6 +408,16 @@ class ItemAttribute extends PureComponent {
       : numberSelectedAttrs === 0
       ? `• ${t('attr.notChooseAttrYet')}`
       : this.getSelectedAttrsViewData(numberSelectedAttrs);
+
+    const maxQuantity = isConfigActive(
+      CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY,
+    )
+      ? null
+      : inventory;
+
+    const isInventoryVisible =
+      !isConfigActive(CONFIG_KEY.ALLOW_SITE_SALE_OUT_INVENTORY_KEY) &&
+      this.state.product?.product_type !== PRODUCT_TYPES.SERVICE;
 
     return this.state.loading ? (
       <Loading loading />
@@ -425,7 +463,11 @@ class ItemAttribute extends PureComponent {
                   <View>
                     <Text style={styles.highlight}>{price}</Text>
                     <Text style={styles.note}>
-                      {`${t('attr.stock')}:`} <Text>{inventory}</Text>
+                      {isInventoryVisible && (
+                        <>
+                          {`${t('attr.stock')}:`} <Text>{inventory}</Text>
+                        </>
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -451,16 +493,17 @@ class ItemAttribute extends PureComponent {
               {this.renderOptions()}
               {this.isDropShip && (
                 <DropShip
-                  price={this.state.product?.price}
-                  priceView={this.state.product?.price_view}
+                  disabled={isDropShipDisabled}
+                  price={priceDropShip}
+                  priceView={priceDropShipView}
                   quantity={this.state.quantity}
                   min={MIN_QUANTITY}
-                  max={inventory}
+                  max={maxQuantity}
                   onChangeNewPrice={(dropShipPrice) => {
                     this.setState({dropShipPrice});
                   }}
                   onChangeQuantity={(text) =>
-                    this.handleChangeQuantity(text, MIN_QUANTITY, inventory)
+                    this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
                   }
                   onMinus={() => {
                     this.setState({quantity: this.state.quantity - 1});
@@ -481,26 +524,30 @@ class ItemAttribute extends PureComponent {
             {!this.isDropShip && (
               <View style={styles.quantity}>
                 <Text style={styles.label}>{t('attr.quantity')}</Text>
-                <NumberSelection
-                  value={this.state.quantity}
-                  min={MIN_QUANTITY}
-                  max={inventory}
-                  onChangeText={(text) =>
-                    this.handleChangeQuantity(text, MIN_QUANTITY, inventory)
-                  }
-                  onMinus={() => {
-                    this.setState({quantity: this.state.quantity - 1});
-                  }}
-                  onPlus={() => {
-                    this.setState({quantity: this.state.quantity + 1});
-                  }}
-                  onBlur={() => {
-                    if (!this.state.quantity) {
-                      this.setState({quantity: MIN_QUANTITY});
+                <View style={styles.quantityWrapper}>
+                  <NumberSelection
+                    containerStyle={[styles.quantityContainer]}
+                    textContainer={styles.quantityTxtContainer}
+                    value={this.state.quantity}
+                    min={MIN_QUANTITY}
+                    max={maxQuantity}
+                    onChangeText={(text) =>
+                      this.handleChangeQuantity(text, MIN_QUANTITY, maxQuantity)
                     }
-                  }}
-                  disabled={disabled}
-                />
+                    onMinus={() => {
+                      this.setState({quantity: this.state.quantity - 1});
+                    }}
+                    onPlus={() => {
+                      this.setState({quantity: this.state.quantity + 1});
+                    }}
+                    onBlur={() => {
+                      if (!this.state.quantity) {
+                        this.setState({quantity: MIN_QUANTITY});
+                      }
+                    }}
+                    disabled={disabled}
+                  />
+                </View>
               </View>
             )}
 
@@ -597,6 +644,18 @@ const styles = StyleSheet.create({
     height: 0.5,
     backgroundColor: '#eee',
     marginHorizontal: 10,
+  },
+  quantityWrapper: {
+    flex: 1,
+    alignItems: 'flex-end',
+  },
+  quantityContainer: {
+    width: null,
+    maxWidth: undefined,
+  },
+  quantityTxtContainer: {
+    minWidth: 70,
+    flex: undefined,
   },
   quantity: {
     flexDirection: 'row',

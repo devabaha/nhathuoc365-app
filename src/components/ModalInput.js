@@ -1,16 +1,17 @@
-import React, { useState, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   TextInput,
   View,
   StyleSheet,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import { default as ModalBox } from 'react-native-modalbox';
+import {default as ModalBox} from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import Button from '../components/Button';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
+import appConfig from 'app-config';
 
 function ModalInput({
   refModal = () => {},
@@ -25,10 +26,22 @@ function ModalInput({
   value,
   onClosedModal,
   onSubmit = () => {},
-  extraInput = null
+  extraInput = null,
+  backdropPressToClose = false,
 }) {
-  const [text, setPrice] = useState('');
+  const [text, setPrice] = useState(value);
   let ref_modal = null;
+  let ref_input = useRef();
+
+  useEffect(() => {
+    if (textInputProps?.autoFocus) {
+      setTimeout(() => {
+        if (ref_input.current) {
+          ref_input.current.focus();
+        }
+      });
+    }
+  }, []);
 
   function onChangeText(text) {
     setPrice(text);
@@ -53,6 +66,7 @@ function ModalInput({
   }
 
   function getFormattedText() {
+    return valueExecutor ? valueExecutor(text) : text;
     return value === undefined
       ? valueExecutor
         ? valueExecutor(text)
@@ -76,8 +90,7 @@ function ModalInput({
       onClosed={onClosed}
       useNativeDriver
       swipeToClose={false}
-      backdropPressToClose={false}
-    >
+      backdropPressToClose={backdropPressToClose}>
       <View style={styles.headingContainer}>
         <TouchableOpacity onPress={onClosing} style={styles.iconContainer}>
           <Icon name="close" style={styles.icon} />
@@ -86,9 +99,10 @@ function ModalInput({
       </View>
 
       <View style={styles.body}>
-        <Text style={styles.description}>{description}</Text>
+        {!!description && <Text style={styles.description}>{description}</Text>}
         <View style={[styles.textInputContainer, textInputContainerStyle]}>
           <TextInput
+            ref={ref_input}
             value={getFormattedText()}
             onChangeText={onChangeText}
             {...textInputProps}
@@ -106,6 +120,7 @@ function ModalInput({
         }
         title={btnTitle}
         onPress={handleSubmit}
+        containerStyle={styles.btnContainer}
       />
     </ModalBox>
   );
@@ -113,12 +128,12 @@ function ModalInput({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   modal: {
     maxWidth: '80%',
     height: undefined,
-    borderRadius: 8
+    borderRadius: 8,
   },
   iconContainer: {
     position: 'absolute',
@@ -126,18 +141,17 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     left: 15,
-    top: 15
+    top: 15,
   },
   icon: {
     fontSize: 18,
-    color: '#666'
+    color: '#666',
   },
   headingContainer: {
     padding: 30,
     paddingBottom: 15,
-    borderBottomWidth: 1,
-    borderStyle: 'solid',
-    borderBottomColor: '#ccc'
+    borderBottomWidth: 2,
+    borderBottomColor: appConfig.colors.primary,
   },
   heading: {
     marginTop: 10,
@@ -145,25 +159,35 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#555',
     letterSpacing: 1.6,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   body: {
-    padding: 15
+    padding: 15,
+    paddingTop: 20,
   },
   description: {
     fontSize: 13,
-    color: '#666'
+    color: '#666',
+    marginBottom: 12,
   },
   textInputContainer: {
     borderWidth: 0.5,
     borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 15,
-    margin: 15
+    borderRadius: 4,
+    padding: appConfig.device.ratio * 3,
+    paddingHorizontal: 15,
+    paddingBottom: appConfig.device.ratio * 3 + 1,
+    marginBottom: 0
   },
   textInput: {
-    color: '#242424'
-  }
+    color: '#242424',
+    paddingVertical: 0,
+    paddingHorizontal: 0,
+  },
+
+  btnContainer: {
+    paddingBottom: 15,
+  },
 });
 
 export default ModalInput;

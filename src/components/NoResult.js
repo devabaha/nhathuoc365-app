@@ -27,7 +27,9 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingVertical: '20%',
+    paddingBottom: '35%',
   },
   wrapper: {
     justifyContent: 'center',
@@ -36,8 +38,8 @@ const styles = StyleSheet.create({
   text: {
     color: NO_RESULT_COLOR,
     paddingTop: 15,
+    // paddingBottom: 100,
     fontSize: 20,
-    paddingBottom: 100,
     fontWeight: '500'
   }
 });
