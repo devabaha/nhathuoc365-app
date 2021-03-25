@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.4.4] - 2020-03-24
+## [r11.4.5] - 2021-03-25
+### Fixed
+- sendMessage while blurring in tickid-chat.
+- UI navbar in ListChat, Search.
+
+## [r11.4.4] - 2021-03-24
 ### Added
 - orderStatus color.
 ### Changed
