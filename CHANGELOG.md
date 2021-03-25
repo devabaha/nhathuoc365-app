@@ -6,14 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [b11.4.4] - 2020-03-24
+## [b11.4.5] - 2020-03-24
 ### Changed
 - Detail Request will call api to get latest data every 3s.
 ### Fixed
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
 
-## [r11.4.4] - 2020-03-24
+## [r11.4.5] - 2021-03-25
+### Fixed
+- sendMessage while blurring in tickid-chat.
+- UI navbar in ListChat, Search.
+
+## [r11.4.4] - 2021-03-24
 ### Added
 - orderStatus color.
 ### Changed
