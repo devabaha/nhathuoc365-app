@@ -9,61 +9,70 @@ import PointRechargeButton from './PointRechargeButton';
 
 class PrimaryActions extends Component {
   render() {
+    const props = this.props;
     const actionsWrapper = !this.props.primaryActions && {
       height: null
     };
     return (
       <View style={styles.container}>
         <View style={[styles.actionsWrapper, actionsWrapper]}>
-          <PointRechargeButton iconStyle={styles.scanIcon} />
-          <Button
-            containerStyle={{ width: '100%', flex: 1 }}
-            onPress={() => this.props.onSurplusNext()}
-          >
-            <View style={styles.walletInfoWrapper}>
-              <Text numberOfLines={2} style={styles.walletNameLabel}>
-                {this.props.walletName}
-              </Text>
-
-              <View style={styles.walletLabelRight}>
-                <Text style={styles.surplus}>{this.props.surplus}</Text>
-              </View>
-              <View style={styles.iconNextWrapper}>
-                <Image style={styles.iconNext} source={imageIconNext} />
-              </View>
-            </View>
-          </Button>
-        </View>
-        {this.props.primaryActions && (
-          <View style={styles.walletAction}>
-            {this.props.primaryActions.map(action => (
-              <Button
-                key={action.type}
-                onPress={() => this.props.onPressItem(action)}
-                containerStyle={styles.actionButton}
-              >
-                <View style={styles.actionWrapper}>
-                  <Image
-                    source={{ uri: action.icon }}
-                    style={[
-                      styles.actionIcon,
-                      {
-                        ...getImageRatio(
-                          action.iconOriginSize.width,
-                          action.iconOriginSize.height,
-                          undefined,
-                          35
-                        )
-                      }
-                    ]}
+          <View style={styles.mainContentWrapper}>
+                <View style={styles.pointRechargeBtnContainer}>
+                  <PointRechargeButton
+                    wrapperStyle={styles.pointRechargeBtn}
+                    iconStyle={styles.scanIcon}
                   />
-                  <Text style={styles.actionTitle}>{action.title}</Text>
+                  <View style={styles.pointRechargeBtnSeparatorContainer}>
+                    <View style={styles.pointRechargeBtnSeparator} />
+                  </View>
                 </View>
-              </Button>
-            ))}
+
+            <Button
+              containerStyle={styles.surplusContainer}
+              onPress={() => props.onSurplusNext()}>
+              <View style={styles.walletInfoWrapper}>
+                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+
+                <View style={styles.walletLabelRight}>
+                  <Text style={styles.surplus}>{props.surplus}</Text>
+                </View>
+                <View style={styles.iconNextWrapper}>
+                  <Image style={styles.iconNext} source={imageIconNext} />
+                </View>
+              </View>
+            </Button>
           </View>
-        )}
+          {this.isActivePrimaryActions && props.primaryActions && (
+            <View style={styles.walletAction}>
+              {props.primaryActions.map((action) => (
+                <Button
+                  key={action.type}
+                  onPress={() => props.onPressItem(action)}
+                  containerStyle={styles.actionButton}>
+                  <View style={styles.actionWrapper}>
+                    <Image
+                      source={{uri: action.icon}}
+                      style={[
+                        styles.actionIcon,
+                        {
+                          ...getImageRatio(
+                            action.iconOriginSize.width,
+                            action.iconOriginSize.height,
+                            undefined,
+                            35,
+                          ),
+                        },
+                      ]}
+                    />
+                    <Text style={styles.actionTitle}>{action.title}</Text>
+                  </View>
+                </Button>
+              ))}
+            </View>
+          )}
+        </View>
       </View>
+
     );
   }
 }
@@ -86,98 +95,123 @@ PrimaryActions.defaultProps = {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   actionsWrapper: {
     width: appConfig.device.width - 32,
     marginHorizontal: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 8,
+    borderWidth: 0.5,
+    borderColor: '#ebebeb',
+    overflow: 'hidden',
     // height: 140,
     ...Platform.select({
       ios: {
-        shadowOffset: { width: 0, height: 3 },
+        shadowOffset: {width: 0, height: 3},
         shadowOpacity: 0.1,
-        shadowRadius: 5
+        shadowRadius: 5,
       },
       android: {
         elevation: 2,
         borderWidth: Util.pixel,
-        borderColor: '#E1E1E1'
-      }
-    })
+        borderColor: '#E1E1E1',
+      },
+    }),
+  },
+  mainContentWrapper: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ebebeb',
   },
   walletInfoWrapper: {
     flex: 1,
     flexDirection: 'row',
-    paddingLeft: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    borderLeftWidth: 0.5,
-    borderColor: '#ccc'
+  },
+  pointRechargeBtnContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginRight: 15,
+    marginLeft: -15,
+  },
+  pointRechargeBtn: {
+    paddingVertical: 10,
+  },
+  pointRechargeBtnSeparatorContainer: {
+    paddingVertical: 10,
+  },
+  pointRechargeBtnSeparator: {
+    flex: 1,
+    width: 0.5,
+    backgroundColor: '#ccc',
+  },
+  surplusContainer: {
+    width: '100%',
+    flex: 1,
+    paddingVertical: 18,
   },
   walletAction: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    borderTopWidth: 1,
-    borderTopColor: '#ebebeb'
+    paddingVertical: 15,
   },
   walletLabelRight: {
     paddingLeft: 5,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   scanIcon: {
     fontSize: 36,
     color: appConfig.colors.primary,
-    paddingRight: 15
+    // paddingRight: 10
   },
   iconNextWrapper: {
     fontSize: 20,
     color: '#042C5C',
     fontWeight: 'bold',
     lineHeight: 20,
-    marginLeft: 10
+    marginLeft: 10,
   },
   iconNext: {
     width: 20,
     height: 20,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   walletNameLabel: {
     flex: 1,
     paddingRight: 10,
     color: '#042C5C',
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   surplus: {
     fontSize: 18,
     color: '#042C5C',
     fontWeight: '600',
-    lineHeight: 20
+    lineHeight: 20,
   },
   actionButton: {
-    flex: 1
+    flex: 1,
   },
   actionWrapper: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   actionIcon: {
-    backgroundColor: appConfig.colors.primary
+    backgroundColor: appConfig.colors.primary,
   },
   actionTitle: {
     fontSize: 12,
     marginTop: 5,
     color: '#414242',
-    fontWeight: '500'
-  }
+    fontWeight: '500',
+  },
+
 });
 
 export default PrimaryActions;

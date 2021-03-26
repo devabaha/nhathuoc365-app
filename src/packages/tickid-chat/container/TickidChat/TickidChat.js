@@ -69,6 +69,8 @@ class TickidChat extends Component {
     refListMessages: PropTypes.func,
     onUploadedImage: PropTypes.func,
     onScrollOffsetTop: PropTypes.func,
+    onComposerInputFocus: PropTypes.func,
+    onComposerInputBlur: PropTypes.func,
     containerStyle: ViewPropTypes.style,
     listContainerStyle: ViewPropTypes.style,
     listContentContainerStyle: ViewPropTypes.style,
@@ -111,6 +113,8 @@ class TickidChat extends Component {
     refListMessages: defaultListener,
     onScrollOffsetTop: defaultListener,
     refGiftedChat: defaultListener,
+    onComposerInputFocus: defaultListener,
+    onComposerInputBlur: defaultListener,
     containerStyle: {},
     listContainerStyle: {},
     listContentContainerStyle: {},
@@ -338,6 +342,7 @@ class TickidChat extends Component {
     if (this.refInput.current) {
       this.refInput.current.focus();
     }
+    this.props.onComposerInputFocus();
 
     setTimeout(() =>
       setStater(this, this.unmounted, {
@@ -349,6 +354,8 @@ class TickidChat extends Component {
   };
 
   handleBlur = () => {
+    this.props.onComposerInputBlur();
+
     if (this.refInput.current) {
       this.refInput.current.blur();
       this.setState({editable: false});

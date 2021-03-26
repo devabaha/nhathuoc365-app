@@ -18,7 +18,7 @@ class Card extends Component {
     isKeyboardOpening: false,
     animatedArrow: new Animated.Value(0),
     animatedAreaHeight: new Reanimated.Value(0),
-    animatedVisible: new Animated.Value(0),
+    animatedVisible: new Reanimated.Value(0),
     heightCollapsable: undefined
   };
 
@@ -90,10 +90,10 @@ class Card extends Component {
   };
 
   blurCard(value) {
-    Animated.timing(this.state.animatedVisible, {
+    Reanimated.timing(this.state.animatedVisible, {
       toValue: value,
       duration: 200,
-      useNativeDriver: true
+      easing: Easing.quad
     }).start();
   }
 
@@ -113,11 +113,11 @@ class Card extends Component {
           heightCollapsable: height
         },
         () => {
-          Animated.timing(this.state.animatedVisible, {
+          Reanimated.timing(this.state.animatedVisible, {
             toValue: 1,
             duration: 200,
             delay: 100,
-            useNativeDriver: true
+      easing: Easing.quad
           }).start();
         }
       );
@@ -187,7 +187,7 @@ class Card extends Component {
 
     return (
       <>
-        <Animated.View
+        <Reanimated.View
           onLayout={this.onContainerLayout.bind(this)}
           style={[showUpStyle, this.props.containerStyle]}
           pointerEvents="box-none"
@@ -239,7 +239,7 @@ class Card extends Component {
               />
             </View>
           </View>
-        </Animated.View>
+        </Reanimated.View>
       </>
     );
   }

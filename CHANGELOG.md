@@ -6,12 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## [b11.4.5] - 2020-03-24
+## [b11.4.5] - 2020-03-26
 ### Changed
 - Detail Request will call api to get latest data every 3s.
 ### Fixed
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
+- DetailCard in Request hide chat input.
 
 ## [r11.4.5] - 2021-03-26
 ### Fixed

@@ -11,7 +11,8 @@ import {
 
 const styles = StyleSheet.create({
   add_store_action_btn: {
-    paddingVertical: 4
+    paddingVertical: 4,
+    paddingHorizontal: 12
   },
   add_store_action_btn_box: {
     alignItems: 'center'

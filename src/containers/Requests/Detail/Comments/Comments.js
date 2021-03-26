@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
-import { StyleSheet, View, Animated, Text } from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, Animated, Text} from 'react-native';
+import Reanimated, {Easing} from 'react-native-reanimated';
 // librarys
 import appConfig from 'app-config';
 import TickidChat from '../../../../packages/tickid-chat';
-import { default as DetailCard } from '../Card';
-import { languages } from '../../../../i18n/constants';
+import {default as DetailCard} from '../Card';
+import {languages} from '../../../../i18n/constants';
 
 const UPLOAD_URL = APIHandler.url_user_upload_image();
 
@@ -14,7 +15,7 @@ class Comments extends Component {
 
     this.state = {
       headerHeight: 0,
-      animatedListScroll: new Animated.Value(0),
+      animatedListScroll: new Reanimated.Value(0),
 
       messages: null,
       showImageGallery: false,
@@ -23,8 +24,9 @@ class Comments extends Component {
       showSendBtn: false,
       showBackBtn: false,
       selectedImages: [],
-      uploadImages: []
+      uploadImages: [],
     };
+    this.animatedTop = new Reanimated.Value(0);
     this.unmounted = false;
     this.refListMessages = null;
     this.refGiftedChat = null;
@@ -33,7 +35,7 @@ class Comments extends Component {
   }
 
   get giftedChatProps() {
-    this.giftedChatExtraProps.user = { ...this.props.user };
+    this.giftedChatExtraProps.user = {...this.props.user};
     this.giftedChatExtraProps.locale =
       languages[this.props.i18n.language].locale;
     this.giftedChatExtraProps.showUserAvatar = true;
@@ -68,11 +70,11 @@ class Comments extends Component {
     this.stopTracking = true;
   };
 
-  handleHeaderLayout = e => {
+  handleHeaderLayout = (e) => {
     if (!this.stopTracking || !this.state.headerHeight) {
       const height = e.nativeEvent.layout.height;
       this.setState({
-        headerHeight: height
+        headerHeight: height,
       });
     }
   };
@@ -83,18 +85,28 @@ class Comments extends Component {
     }
   };
 
+  handleInputState = (isFocus) => {
+    Reanimated.timing(this.animatedTop, {
+      toValue: isFocus ? -this.state.headerHeight/5 : 0,
+      duration: 300,
+      easing: Easing.quad
+      // useNativeDriver: false,
+    }).start();
+  };
+
   renderHeader = () => {
     const animatedHeaderStyle = {
+      top: this.animatedTop,
       transform: [
         {
           translateY: this.state.animatedListScroll.interpolate({
             // inputRange: [0, this.state.headerHeight || 0.1],
             inputRange: [0, 100],
             outputRange: [0, -this.state.headerHeight],
-            extrapolate: 'clamp'
-          })
-        }
-      ]
+            extrapolate: 'clamp',
+          }),
+        },
+      ],
     };
 
     return this.props.request ? (
@@ -118,7 +130,7 @@ class Comments extends Component {
   };
 
   render() {
-    const { comments } = this.props;
+    const {comments} = this.props;
 
     return (
       <View style={styles.container}>
@@ -130,32 +142,34 @@ class Comments extends Component {
             renderEmpty={() => null}
             setHeader={this.props.setHeader}
             defaultStatusBarColor={appConfig.colors.primary}
-            containerStyle={{ backgroundColor: 'transparent' }}
+            containerStyle={{backgroundColor: 'transparent'}}
             placeholder="Nhập nội dung phản hồi..."
             // Refs
-            ref={inst => (this.refTickidChat = inst)}
-            refGiftedChat={inst => (this.refGiftedChat = inst)}
-            refListMessages={inst => (this.refListMessages = inst)}
+            ref={(inst) => (this.refTickidChat = inst)}
+            refGiftedChat={(inst) => (this.refGiftedChat = inst)}
+            refListMessages={(inst) => (this.refListMessages = inst)}
             // GiftedChat props
             giftedChatProps={this.giftedChatProps}
+            onComposerInputFocus={() => this.handleInputState(true)}
+            onComposerInputBlur={() => this.handleInputState(false)}
             useModalGallery
             messages={comments}
             onSendText={this.props.onSendText}
-            renderScrollComponent={props => (
-              <Animated.ScrollView
+            renderScrollComponent={(props) => (
+              <Reanimated.ScrollView
                 {...props}
                 scrollEventThrottle={16}
-                onScroll={Animated.event(
+                onScroll={Reanimated.event(
                   [
                     {
                       nativeEvent: {
                         contentOffset: {
-                          y: this.state.animatedListScroll
-                        }
-                      }
-                    }
+                          y: this.state.animatedListScroll,
+                        },
+                      },
+                    },
                   ],
-                  { useNativeDriver: true }
+                  // {useNativeDriver: true},
                 )}
               />
             )}
@@ -163,8 +177,8 @@ class Comments extends Component {
             galleryVisible={false}
             uploadURL={UPLOAD_URL}
             onSendImage={this.props.onSendTempImage}
-            onUploadedImage={response =>
-              this.props.onSendImage({ image: response.data.name })
+            onUploadedImage={(response) =>
+              this.props.onSendImage({image: response.data.name})
             }
             // Pin props
             pinListVisible={false}
@@ -182,14 +196,14 @@ class Comments extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   header: {
     position: 'absolute',
     width: '100%',
     zIndex: 1,
     padding: 15,
-    paddingBottom: 0
+    paddingBottom: 0,
   },
   emptyText: {
     textAlign: 'center',
@@ -198,8 +212,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
     padding: 15,
     color: '#666',
-    fontStyle: 'italic'
-  }
+    fontStyle: 'italic',
+  },
 });
 
 export default withTranslation()(observer(Comments));
