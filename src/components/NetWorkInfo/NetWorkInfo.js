@@ -158,7 +158,7 @@ class NetWorkInfo extends Component {
       }).start(({finished}) => {
         finished && this.setState({visible: nextState.visible});
       });
-      return false;
+      return true;
     }
 
     if (nextState !== this.state) {
@@ -187,6 +187,12 @@ class NetWorkInfo extends Component {
 
   onOk() {
     this.setState({visible: false});
+    Animated.timing(this.animatedTranslateY, {
+      toValue: -100,
+      duration: 300,
+      easing: Easing.quad,
+      useNativeDriver: true,
+    }).start();
   }
 
   renderDevServerModeWaterMark() {
@@ -210,7 +216,7 @@ class NetWorkInfo extends Component {
 
   render() {
     const extraStyle = {
-      transform: [{translateY: this.animatedTranslateY}],
+      transform: [{translateY: this.animatedTranslateY}]
     };
     return (
       <>
