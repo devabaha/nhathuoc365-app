@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - sendMessage while blurring in tickid-chat.
 - UI navbar in ListChat, Search.
 - Force close NetworkInfo when press OK.
+- [Android] Unselected default text color in ModalPicker.
 
 ## [r11.4.4] - 2021-03-24
 ### Added
