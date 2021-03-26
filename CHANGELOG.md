@@ -8,10 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [r11.4.5] - 2021-03-26
+
+### Changed
+- Open language selector by default.
 ### Fixed
 - sendMessage while blurring in tickid-chat.
 - UI navbar in ListChat, Search.
 - Force close NetworkInfo when press OK.
+- Crash app if paymentMethod all unchecked default_flag.
 
 ## [r11.4.4] - 2021-03-24
 ### Added

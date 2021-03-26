@@ -57,7 +57,7 @@ class PaymentMethod extends Component {
             if (Array.isArray(response.data)) {
               selectedMethod = response.data.find(
                 item => item.default_flag === 1
-              );
+              ) || {};
             }
             this.setState({
               paymentMethod: response.data || [],
