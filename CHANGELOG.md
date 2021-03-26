@@ -13,10 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
 
-## [r11.4.5] - 2021-03-25
+## [r11.4.5] - 2021-03-26
 ### Fixed
 - sendMessage while blurring in tickid-chat.
 - UI navbar in ListChat, Search.
+- Force close NetworkInfo when press OK.
 
 ## [r11.4.4] - 2021-03-24
 ### Added
