@@ -31,7 +31,7 @@ class HomeCardList extends Component {
           style={styles.listContainer}
           showsHorizontalScrollIndicator={false}
           renderItem={props.children}
-          keyExtractor={item => `${item.id}`}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     );

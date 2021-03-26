@@ -1,26 +1,28 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   StyleSheet,
   FlatList,
   RefreshControl,
   View,
   ActivityIndicator,
-  SafeAreaView
+  SafeAreaView,
+  TouchableOpacity
 } from 'react-native';
 import store from '../../store/Store';
 import NoResult from '../NoResult';
 import ChatRow from './ChatRow';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
-import { setStater } from '../../packages/tickid-chat/helper';
-import { APIRequest } from '../../network/Entity';
+import {setStater} from '../../packages/tickid-chat/helper';
+import {APIRequest} from '../../network/Entity';
 import EventTracker from '../../helper/EventTracker';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class List extends Component {
   state = {
-    loading: false,
+    loading: true,
     refreshing: false,
-    customers: []
+    customers: [],
   };
   limit = 20;
   offset = 0;
@@ -32,9 +34,11 @@ class List extends Component {
   eventTracker = new EventTracker();
 
   componentDidMount() {
-    this.setState({
-      loading: true
-    });
+    setTimeout(() =>
+      Actions.refresh({
+        right: this.renderRightNavBar,
+      }),
+    );
 
     this.getListCustomer();
     this.eventTracker.logCurrentView();
@@ -47,6 +51,16 @@ class List extends Component {
     this.eventTracker.clearTracking();
   }
 
+  renderRightNavBar = () => {
+    return (
+      <TouchableOpacity onPress={this.handleSearch.bind(this)}>
+        <View style={styles.iconWrapper}>
+          <Icon name="ios-search" style={styles.icon} />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   handleSearch() {
     Actions.search_chat();
   }
@@ -56,7 +70,7 @@ class List extends Component {
       this.isLoadMore = false;
       this.getListCustomer({
         limit: this.offset,
-        offset: 0
+        offset: 0,
       });
     }, 3000);
   }
@@ -64,9 +78,9 @@ class List extends Component {
   async getListCustomer(
     data = {
       limit: this.limit,
-      offset: this.offset
+      offset: this.offset,
     },
-    delay = 1000
+    delay = 1000,
   ) {
     try {
       let site_id = store.store_data.id;
@@ -81,8 +95,8 @@ class List extends Component {
       this.getListCustomerAPI.data = APIHandler.site_load_conversations(
         site_id,
         {
-          ...data
-        }
+          ...data,
+        },
       );
 
       const response = await this.getListCustomerAPI.promise();
@@ -96,12 +110,12 @@ class List extends Component {
               if (this.isLoadMore) {
                 customers = this.state.customers.concat(customers);
               }
-              this.setState({ customers });
+              this.setState({customers});
             } else {
               this.isLoadMore && (this.offset -= this.limit);
               flashShowMessage({
                 type: 'danger',
-                message: 'Không còn bản ghi nào!'
+                message: 'Không còn bản ghi nào!',
               });
             }
           }
@@ -114,14 +128,14 @@ class List extends Component {
     } finally {
       if (!this.unmounted) {
         this.setState({
-          refreshing: false
+          refreshing: false,
         });
         setTimeout(
           () =>
             setStater(this, this.unmounted, {
-              loading: false
+              loading: false,
             }),
-          1000
+          1000,
         );
       }
     }
@@ -129,7 +143,7 @@ class List extends Component {
 
   _onRefresh() {
     this.offset = 0;
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
     this.isLoadMore = false;
     this.getListCustomer();
   }
@@ -138,7 +152,7 @@ class List extends Component {
     if (!this.isLoadMore) {
       this.offset += this.limit;
       this.isLoadMore = true;
-      this.setState({ loading: true });
+      this.setState({loading: true});
       this.getListCustomer();
     }
   }
@@ -148,15 +162,15 @@ class List extends Component {
       site_id: item.site_id,
       user_id: item.user_id,
       phoneNumber: item.tel,
-      title: item.name
+      title: item.name,
     });
   }
 
   render() {
     const customers = [...this.state.customers];
-    customers.push({ id: 'chat' });
+    customers.push({id: 'chat'});
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{flex: 1}}>
         {this.state.customers.length === 0 ? (
           !!!this.state.loading && (
             <NoResult
@@ -178,9 +192,8 @@ class List extends Component {
                   style={{
                     height: 45,
                     alignItems: 'center',
-                    justifyContent: 'center'
-                  }}
-                >
+                    justifyContent: 'center',
+                  }}>
                   <ActivityIndicator animating />
                 </View>
               ) : null
@@ -189,10 +202,10 @@ class List extends Component {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             data={this.state.customers}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={(item) => item.id.toString()}
             onEndReached={this.onLoadMore.bind(this)}
             onEndReachedThreshold={0.4}
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               // console.log(item)
               return (
                 <ChatRow
@@ -227,17 +240,17 @@ class List extends Component {
 const styles = StyleSheet.create({
   list: {
     width: Util.size.width,
-    flexGrow: 1
+    flexGrow: 1,
   },
   container: {
     flex: 1,
     paddingBottom: 15,
-    backgroundColor: BGR_SCREEN_COLOR
+    backgroundColor: BGR_SCREEN_COLOR,
   },
   loadingWrapper: {
     position: 'absolute',
     width: '100%',
-    height: appConfig.device.isAndroid ? '100%' : appConfig.device.height
+    height: appConfig.device.isAndroid ? '100%' : appConfig.device.height,
   },
   button: {
     marginTop: 20,
@@ -250,20 +263,24 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     minWidth: 150,
     maxWidth: 220,
-    width: Util.size.width * 0.5
+    width: Util.size.width * 0.5,
   },
   buttonText: {
     color: '#fff',
     fontFamily: 'Helvetica',
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   iconWrapper: {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    marginRight: 15
-  }
+  },
+  icon: {
+    color: appConfig.colors.white,
+    paddingHorizontal: 12,
+    fontSize: 24
+  },
 });
 
 export default observer(List);

@@ -71,10 +71,12 @@ export default function handleStatusBarStyle(prevState, newState, action) {
               0,
               Actions.currentScene.length - 2,
             );
+          } else {
+            stackName = Actions.currentScene;
           }
+
           return sceneName === stackName;
         }) || statusBarInState === bgrStatusBarConfig.mode.dark;
-
       setTimeout(() => {
         if (isDark) {
           StatusBar.setBarStyle('dark-content', true);
