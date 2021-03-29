@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.4.6] - 2021-03-29
+### Fixed
+- NetworkInfo error because SafeAreaView can't translate out of screen viewable.
+- Remove setting store_id in NotifyItem.
+
 ## [r11.4.5] - 2021-03-26
 
 ### Changed
@@ -16,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - UI navbar in ListChat, Search.
 - Force close NetworkInfo when press OK.
 - Crash app if paymentMethod all unchecked default_flag.
+- [Android] Unselected default text color in ModalPicker.
 
 ## [r11.4.4] - 2021-03-24
 ### Added

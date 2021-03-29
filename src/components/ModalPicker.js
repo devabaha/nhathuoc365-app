@@ -282,6 +282,7 @@ const styles = StyleSheet.create({
   androidDataText: {
     fontSize: 18,
     textAlign: 'center',
+    color: '#888',
   },
   androidDataTextSelected: {
     fontWeight: 'bold',
