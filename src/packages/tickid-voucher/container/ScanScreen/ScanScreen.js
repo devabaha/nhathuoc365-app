@@ -178,6 +178,7 @@ class ScanScreen extends BaseContainer {
         onPressEnterCode={this.handleBeforeShowEnterCode}
         showLoading={this.state.showLoading}
         topContentText={this.props.topContentText}
+        t={this.props.t}
       />
     );
   }

@@ -7,9 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.4.6] - 2021-03-29
+## [r11.4.6] - 2021-03-30
+### Added
+- QRScanner.
 ### Fixed
-- NetworkInfo error because SafeAreaView can't translate out of screen viewable.
+- NetworkInfo error because SafeAreaView can't translate out of viewable screen.
 - Remove setting store_id in NotifyItem.
 
 ## [r11.4.5] - 2021-03-26

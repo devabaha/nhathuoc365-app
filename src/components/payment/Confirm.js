@@ -879,14 +879,14 @@ class Confirm extends Component {
   renderCartProducts(products, single) {
     return (
       <View style={styles.items_box}>
-        {products.map((product) => {
+        {products.map((product, index) => {
           if (!single && product.selected != 1) {
             return null;
           }
 
           return (
             <CartItem
-              key={product.id}
+              key={index}
               parentCtx={this}
               item={product}
               onRemoveCartItem={() => this._removeItemCartConfirm(product)}
