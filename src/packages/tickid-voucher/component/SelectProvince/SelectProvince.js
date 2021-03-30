@@ -116,7 +116,9 @@ class SelectProvince extends Component {
   };
 
   renderProvince = ({item: province}) => {
-    let displayProvince = province[this.props.dataKey];
+    let displayProvince = this.props.dataKey
+      ? province[this.props.dataKey]
+      : province;
     const isActive = this.props.provinceSelected === displayProvince;
     return (
       <Button
@@ -129,7 +131,9 @@ class SelectProvince extends Component {
         ]}
         style={styles.provinceItem}
         onPress={() => this.onSelect(province)}>
-        <Text numberOfLines={2} style={[styles.provinceItem]}>{displayProvince}</Text>
+        <Text numberOfLines={2} style={[styles.provinceItem]}>
+          {displayProvince}
+        </Text>
         {isActive && <Image style={styles.iconChecked} source={iconChecked} />}
       </Button>
     );
@@ -178,7 +182,7 @@ class SelectProvince extends Component {
     const {searchText} = this.state;
     if (searchText) {
       return this.props.listCities.filter((city) => {
-        let cityName = city[this.props.dataKey];
+        let cityName = this.props.dataKey ? city[this.props.dataKey] : city;
         return cityName.toLowerCase().includes(searchText.toLowerCase());
       });
     }
@@ -238,7 +242,7 @@ class SelectProvince extends Component {
                 return {
                   length: 50,
                   offset: 50 * index,
-                  index
+                  index,
                 };
               }}
             />
@@ -310,14 +314,14 @@ const styles = StyleSheet.create({
   provinceItemWrap: {
     justifyContent: 'space-between',
     borderColor: '#fafafa',
-    height: 50
+    height: 50,
   },
   provinceItem: {
     fontSize: 15,
     fontWeight: '400',
     color: '#444',
     padding: 15,
-    flex: 1
+    flex: 1,
   },
   iconChecked: {
     width: 20,
