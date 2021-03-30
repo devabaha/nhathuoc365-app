@@ -1,77 +1,86 @@
-import React from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Text } from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import Button from 'react-native-button';
+// import Button from 'react-native-button';
 import config from '../../config';
 import LoadingComponent from '@tickid/tickid-rn-loading';
+import QRScanner from '../../../../components/QRBarCode/QRScanner';
+import Button from '../../../../components/Button';
 
-function ScanScreen(props) {
-  const { t } = useTranslation('voucher');
-  const renderBottomContent = () => {
+class ScanScreen extends Component {
+  state = {
+    permissionCameraGranted: false,
+  };
+
+  handleCameraPermission = (permissionCameraGranted) => {
+    this.setState({permissionCameraGranted});
+  };
+
+  onReadedCode = (event) => {
+    this.props.onReadedCode(event.data);
+  }
+
+  renderBottomContent = () => {
     return (
       <Button
         containerStyle={styles.enterCodeBtn}
-        onPress={props.onPressEnterCode}
-      >
-        <Text style={styles.enterCodeBtnTitle}>{t('scan.enterCode')}</Text>
-      </Button>
+        onPress={this.props.onPressEnterCode}
+        title={this.props.t('scan.enterCode')}
+      />
     );
   };
 
-  const renderTopContent = () => {
+  renderTopContent = () => {
     return (
       <View style={styles.topContent}>
-        <Text style={styles.topContentText}>{props.topContentText}</Text>
+        <Text style={styles.topContentText}>{this.props.topContentText}</Text>
       </View>
     );
   };
 
-  return (
-    <View style={styles.wrapper}>
-      {props.showLoading && <LoadingComponent loading />}
-
-      <QRCodeScanner
-        onRead={event => props.onReadedCode(event.data)}
-        containerStyle={styles.containerStyle}
-        cameraStyle={styles.cameraStyle}
-        topContent={renderTopContent()}
-        bottomContent={renderBottomContent()}
-      />
-    </View>
-  );
+  render() {
+    return (
+      <View style={styles.wrapper}>
+        {this.props.showLoading && <LoadingComponent loading />}
+        <QRScanner
+          onRead={this.onReadedCode}
+          onChangePermission={this.handleCameraPermission}
+        />
+        {this.state.permissionCameraGranted && this.renderTopContent()}
+        {this.renderBottomContent()}
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    marginBottom: config.device.bottomSpace
+    marginBottom: config.device.bottomSpace,
   },
   containerStyle: {
     backgroundColor: config.colors.sceneBackground,
-    flex: 1
+    flex: 1,
   },
   topContent: {
-    padding: 16
+    position: 'absolute',
+    top: 0,
+    padding: 16,
+    paddingHorizontal: '20%',
+    width: '100%',
   },
   topContentText: {
     fontSize: 15,
     fontWeight: '500',
-    color: '#333',
-    lineHeight: 22
+    color: '#fff',
+    lineHeight: 22,
+    textAlign: 'center',
   },
   enterCodeBtn: {
-    paddingVertical: 14,
-    paddingHorizontal: 28,
-    backgroundColor: config.colors.white,
-    borderRadius: 3,
-    borderWidth: 1,
-    borderColor: '#ebebeb'
+    position: 'absolute',
+    bottom: 0,
   },
-  enterCodeBtnTitle: {
-    fontSize: 16,
-    color: config.colors.black
-  }
 });
 
 const defaultListener = () => {};
@@ -80,14 +89,14 @@ ScanScreen.propTypes = {
   onPressEnterCode: PropTypes.func,
   onReadedCode: PropTypes.func,
   showLoading: PropTypes.bool,
-  topContentText: PropTypes.string
+  topContentText: PropTypes.string,
 };
 
 ScanScreen.defaultProps = {
   onPressEnterCode: defaultListener,
   onReadedCode: defaultListener,
   showLoading: false,
-  topContentText: ''
+  topContentText: '',
 };
 
 export default ScanScreen;

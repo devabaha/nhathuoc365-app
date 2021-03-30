@@ -17,20 +17,17 @@ import {
   RESULTS,
   openSettings,
 } from 'react-native-permissions';
-import QRCodeScanner from 'react-native-qrcode-scanner';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions, ActionConst} from 'react-native-router-flux';
 import QRCode from 'react-native-qrcode-svg';
 import Barcode from 'react-native-barcode-builder';
 import appConfig from 'app-config';
 import timer from 'react-native-timer';
-import Button from 'react-native-button';
 import store from 'app-store';
 import EventTracker from '../../helper/EventTracker';
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
-import QRFrame from './QRFrame';
-import QRBackground from './QRBackground';
+import QRScanner from './QRScanner';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
@@ -81,7 +78,6 @@ class QRBarCode extends Component {
       title: props.title || props.t('common:screen.qrBarCode.mainTitle'),
       content: props.content ? props.content : props.t('content.description'),
       originLuminous: MIN_LUMINOUS,
-      permissionCameraGranted: undefined,
     };
 
     this.unmounted = false;
@@ -100,10 +96,6 @@ class QRBarCode extends Component {
     this.eventTracker.logCurrentView();
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    this.checkPermissions();
-  }
-
   componentWillUnmount() {
     this.unmounted = true;
     timer.clearTimeout(this, 'barcodeupdate');
@@ -111,55 +103,6 @@ class QRBarCode extends Component {
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
   }
-
-  async checkPermissions() {
-    const permissionCameraGranted = await this.checkCameraPermission();
-    if (
-      permissionCameraGranted !== this.state.permissionCameraGranted &&
-      !this.unmounted
-    ) {
-      this.setState({permissionCameraGranted});
-    }
-  }
-
-  checkCameraPermission = async () => {
-    const {t} = this.props;
-    if (!isAndroid && !isIos) {
-      Alert.alert(t('common:system.camera.error.notSupport'));
-      return false;
-    }
-
-    const permissonCameraRequest = isAndroid
-      ? PERMISSIONS.ANDROID.CAMERA
-      : PERMISSIONS.IOS.CAMERA;
-
-    try {
-      const result = await check(permissonCameraRequest);
-      switch (result) {
-        case RESULTS.UNAVAILABLE:
-          Alert.alert(t('common:system.camera.error.unavailable'));
-          console.log(
-            'This feature is not available (on this device / in this context)',
-          );
-          return false;
-        case RESULTS.DENIED:
-          console.log(
-            'The permission has not been requested / is denied but requestable',
-          );
-          return false;
-        case RESULTS.GRANTED:
-          console.log('The library permission is granted');
-          return true;
-        case RESULTS.BLOCKED:
-          console.log('The permission is denied and not requestable anymore');
-          return false;
-      }
-    } catch (error) {
-      console.log(error);
-      Alert.alert(t('common:system.camera.error.accessProblem'));
-      return false;
-    }
-  };
 
   handleBrightness = () => {
     ScreenBrightness.getBrightness().then((originLuminous) => {
@@ -584,42 +527,45 @@ class QRBarCode extends Component {
     }, 0);
   }
 
-  _proccessQRCodeResult(text_result) {
-    if (this.unmounted) return;
-    const {wallet, from} = this.state;
-    if (text_result) {
-      if (isURL(text_result)) {
-        if (isLinkTickID(text_result)) {
-          this._getSearchCodeByLink(text_result);
+  _proccessQRCodeResult(event) {
+    setTimeout(() => {
+      if (this.unmounted) return;
+      const text_result = event.data;
+      const {wallet, from} = this.state;
+      if (text_result) {
+        if (isURL(text_result)) {
+          if (isLinkTickID(text_result)) {
+            this._getSearchCodeByLink(text_result);
+          } else {
+            this._open_webview(text_result);
+          }
+        } else if (isWalletAddress(text_result)) {
+          if (from == appConfig.routes.transfer) {
+            // Actions.push(appConfig.routes.payWallet, {
+            //   title: 'Chuyển khoản',
+            //   wallet: wallet,
+            //   address: text_result
+            // });
+            this.goToPayment(text_result);
+          } else {
+            this._check_address(text_result);
+          }
+        } else if (isAccountCode(text_result)) {
+          setTimeout(() => {
+            this._getAccountByBarcode(text_result);
+          }, 450);
+        } else if (isCartCode(text_result)) {
+          setTimeout(() => {
+            this._getCartByCartcode(text_result);
+          }, 450);
+        } else if (isWalletAddressWithZoneCode(text_result)) {
+          this._getWalletByAddressAndZoneCode(text_result);
         } else {
-          this._open_webview(text_result);
+          // this._search_store(text_result);
+          this.checkProductCode(text_result);
         }
-      } else if (isWalletAddress(text_result)) {
-        if (from == appConfig.routes.transfer) {
-          // Actions.push(appConfig.routes.payWallet, {
-          //   title: 'Chuyển khoản',
-          //   wallet: wallet,
-          //   address: text_result
-          // });
-          this.goToPayment(text_result);
-        } else {
-          this._check_address(text_result);
-        }
-      } else if (isAccountCode(text_result)) {
-        setTimeout(() => {
-          this._getAccountByBarcode(text_result);
-        }, 450);
-      } else if (isCartCode(text_result)) {
-        setTimeout(() => {
-          this._getCartByCartcode(text_result);
-        }, 450);
-      } else if (isWalletAddressWithZoneCode(text_result)) {
-        this._getWalletByAddressAndZoneCode(text_result);
-      } else {
-        // this._search_store(text_result);
-        this.checkProductCode(text_result);
       }
-    }
+    }, 500);
   }
 
   async checkProductCode(qrcode) {
@@ -721,78 +667,8 @@ class QRBarCode extends Component {
     }
   };
 
-  renderQRCodeScanner(text_result) {
-    const {t} = this.props;
-    return (
-      <QRCodeScanner
-        cameraStyle={{
-          height: CONTAINER_QR_HEIGHT,
-          width: CONTAINER_QR_WIDTH,
-        }}
-        reactivate
-        reactivateTimeout={2000}
-        fadeIn={false}
-        cameraProps={{
-          ratio: '4:3',
-          rectOfInterest: QR_SCAN_AREA,
-          cameraViewDimensions: {
-            height: CONTAINER_QR_HEIGHT,
-            width: DEFAULT_CAMERA_WIDTH,
-          },
-        }}
-        customMarker={
-          <View style={styles.qrMarkerContainer}>
-            <QRBackground
-              containerWidth={CONTAINER_QR_WIDTH}
-              containerHeight={CONTAINER_QR_HEIGHT}
-              scanAreaHeight={SCAN_AREA_HEIGHT}
-              scanAreaWidth={SCAN_AREA_WIDTH}
-              scanAreaLeft={SCAN_AREA_LEFT}
-              scanAreaTop={SCAN_AREA_TOP}
-            />
-            <View
-              style={[
-                styles.qrFrameContainer,
-                {
-                  top: SCAN_AREA_TOP,
-                  left: SCAN_AREA_LEFT,
-                },
-              ]}>
-              <QRFrame width={SCAN_AREA_WIDTH} height={SCAN_AREA_HEIGHT} />
-            </View>
-          </View>
-        }
-        showMarker
-        checkAndroid6Permissions={true}
-        ref={(node) => (this.scanner = node)}
-        onRead={(e) => {
-          setTimeout(() => this._proccessQRCodeResult(e.data), 500);
-        }}
-        topContent={
-          this.state.permissionCameraGranted === false ? (
-            <View style={[styles.topContent]}>
-              <Text style={styles.centerText}>
-                <Icon name="camera-party-mode" size={16} color="#404040" />
-                {' ' + t('common:system.camera.access.request')}
-              </Text>
-              <Button
-                containerStyle={styles.permissionNotGrantedBtn}
-                style={styles.permissionNotGrantedSetting}
-                onPress={this.goToSetting.bind(this)}>
-                {t('settingLabel')}
-              </Button>
-            </View>
-          ) : (
-            <View style={styles.topContent}>
-              <Text style={styles.centerText}>
-                <Icon name="camera-party-mode" size={16} color="#404040" />
-                {' ' + t('qrGuideMessage')}
-              </Text>
-            </View>
-          )
-        }
-      />
-    );
+  renderQRCodeScanner() {
+    return <QRScanner onRead={this._proccessQRCodeResult} />;
   }
 
   renderMyQRCode() {
@@ -917,14 +793,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   topContent: {
-    width: appConfig.device.width,
     paddingVertical: 16,
+    paddingTop: '50%',
     alignItems: 'center',
   },
   centerText: {
-    top: 15,
     textAlign: 'center',
-    lineHeight: 20,
     fontSize: 16,
     color: '#404040',
     marginLeft: 8,
@@ -1012,30 +886,6 @@ const styles = StyleSheet.create({
     width: appConfig.device.width / 1.5,
     height: appConfig.device.width / 1.5,
     alignSelf: 'center',
-  },
-  permissionNotGrantedBtn: {
-    marginTop: 15,
-    backgroundColor: '#d9d9d9',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 5,
-  },
-  permissionNotGrantedSetting: {
-    fontSize: 14,
-    color: '#404040',
-  },
-
-  qrMarkerContainer: {
-    flex: 1,
-    width: '100%',
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-  qrFrameContainer: {
-    borderColor: '#333',
-    borderStyle: 'dashed',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
 });
 

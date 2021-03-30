@@ -85,7 +85,7 @@ class EnterCodeManual extends Component {
   };
 
   startAnimation(animation, toValue, duration) {
-    Animated.timing(animation, { toValue, duration }).start();
+    Animated.timing(animation, { toValue, duration, useNativeDriver: false }).start();
   }
 
   runCloseAnimation() {
