@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - NetworkInfo error because SafeAreaView can't translate out of viewable screen.
 - Remove setting store_id in NotifyItem.
+- SelectProvince for non-dataKey data.
 
 ## [r11.4.5] - 2021-03-26
 ### Fixed
