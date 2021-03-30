@@ -21,11 +21,10 @@ const styles = StyleSheet.create({
     top: 0,
     position: 'absolute',
   },
-  androidDivider: {
-    height: 3,
-  },
   container: {
+    zIndex: 1,
     flex: 1,
+    paddingTop: appConfig.device.isIOS ? appConfig.device.statusBarHeight : 7,
   },
   iconContainer: {
     marginRight: 15,
@@ -102,9 +101,11 @@ class NetWorkInfo extends Component {
   state = {
     isConnected: true,
     visible: false,
+    visibleMainContent: true,
   };
   unsubscribe = () => {};
   animatedTranslateY = new Animated.Value(-100);
+  animatedMainContentTranslateY = new Animated.Value(0);
 
   get title() {
     const {t} = this.props;
@@ -156,7 +157,24 @@ class NetWorkInfo extends Component {
         easing: Easing.quad,
         useNativeDriver: true,
       }).start(({finished}) => {
-        finished && this.setState({visible: nextState.visible});
+        finished &&
+          this.setState({
+            visible: nextState.visible,
+            visibleMainContent: nextState.visible,
+          });
+      });
+      return true;
+    }
+
+    if (nextState.visibleMainContent !== this.state.visibleMainContent) {
+      Animated.timing(this.animatedMainContentTranslateY, {
+        toValue: nextState.visibleMainContent ? 0 : -100,
+        duration: 300,
+        easing: Easing.quad,
+        useNativeDriver: true,
+      }).start(({finished}) => {
+        finished &&
+          this.setState({visibleMainContent: nextState.visibleMainContent});
       });
       return true;
     }
@@ -186,13 +204,7 @@ class NetWorkInfo extends Component {
   }
 
   onOk() {
-    this.setState({visible: false});
-    Animated.timing(this.animatedTranslateY, {
-      toValue: -100,
-      duration: 300,
-      easing: Easing.quad,
-      useNativeDriver: true,
-    }).start();
+    this.setState({visibleMainContent: false});
   }
 
   renderDevServerModeWaterMark() {
@@ -216,43 +228,36 @@ class NetWorkInfo extends Component {
 
   render() {
     const extraStyle = {
-      transform: [{translateY: this.animatedTranslateY}]
+      transform: [{translateY: this.animatedTranslateY}],
+    };
+    const extraMainContentStyle = {
+      transform: [{translateY: this.animatedMainContentTranslateY}],
     };
     return (
       <>
         <Animated.View style={[styles.wrapper, extraStyle]}>
-          <SafeAreaView
+          <View
             style={[
               styles.container,
               {
                 backgroundColor: this.backgroundColor,
               },
-            ]}>
-            {appConfig.device.isAndroid && (
-              <View
-                style={[
-                  styles.androidDivider,
-                  {
-                    backgroundColor: this.backgroundColor,
-                  },
-                ]}
-              />
-            )}
-            <View style={styles.mainContent}>
-              <View style={styles.iconContainer}>{this.icon}</View>
-              <View style={styles.messageContainer}>
-                <Text style={styles.title}>{this.title}</Text>
-                <Text style={styles.description}>{this.message}</Text>
-              </View>
-              <View style={styles.btnContainer}>
-                <TouchableOpacity
-                  style={styles.btn}
-                  onPress={this.onOk.bind(this)}>
-                  <Text style={styles.btnText}>OK</Text>
-                </TouchableOpacity>
-              </View>
+            ]}
+          />
+          <Animated.View style={[styles.mainContent, extraMainContentStyle]}>
+            <View style={styles.iconContainer}>{this.icon}</View>
+            <View style={styles.messageContainer}>
+              <Text style={styles.title}>{this.title}</Text>
+              <Text style={styles.description}>{this.message}</Text>
             </View>
-          </SafeAreaView>
+            <View style={styles.btnContainer}>
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={this.onOk.bind(this)}>
+                <Text style={styles.btnText}>OK</Text>
+              </TouchableOpacity>
+            </View>
+          </Animated.View>
         </Animated.View>
         {this.renderDevServerModeWaterMark()}
       </>

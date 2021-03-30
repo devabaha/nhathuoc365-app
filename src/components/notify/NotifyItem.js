@@ -88,9 +88,9 @@ class NotifyItem extends Component {
                 }
               });
             }
-            action(() => {
-              store.setStoreId(response.data.site_id);
-            })();
+            // action(() => {
+            //   store.setStoreId(response.data.site_id);
+            // })();
 
             setTimeout(() => {
               this.setState(

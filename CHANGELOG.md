@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [b11.4.6] - 2020-03-30
+
 ## [b11.4.5] - 2020-03-26
 ### Changed
 - Detail Request will call api to get latest data every 3s.
@@ -14,11 +17,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - key of AwesomeCombo, HomeCardList item.
 - DetailCard in Request hide chat input.
 
+## [r11.4.6] - 2021-03-30
+### Added
+- QRScanner.
+### Fixed
+- NetworkInfo error because SafeAreaView can't translate out of viewable screen.
+- Remove setting store_id in NotifyItem.
+
 ## [r11.4.5] - 2021-03-26
 ### Fixed
 - sendMessage while blurring in tickid-chat.
 - UI navbar in ListChat, Search.
 - Force close NetworkInfo when press OK.
+- [Android] Unselected default text color in ModalPicker.
 
 ## [r11.4.4] - 2021-03-24
 ### Added
