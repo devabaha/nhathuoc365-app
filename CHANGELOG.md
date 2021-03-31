@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.5.1] - 2021-03-31
+### Added
+- base structure for themes.
+
 ## [r11.4.6] - 2021-03-30
 ### Added
 - QRScanner.
