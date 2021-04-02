@@ -7,8 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [b11.4.6] - 2020-03-30
-- [r11.4.6]
+## [b11.4.6] - 2020-04-02
+### Changed
+- Auto reload when pop from Request Detail.
 
 ## [b11.4.5] - 2020-03-26
 ### Changed

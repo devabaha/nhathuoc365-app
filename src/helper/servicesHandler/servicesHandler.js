@@ -112,7 +112,8 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         siteId: service.site_id,
         roomId: service.room_id,
         requestId: service.request_id,
-        title: service.title
+        title: service.title,
+        callbackReload: service.callbackReload
       });
       break;
     case SERVICES_TYPE.BEEHOME_ROOM_CHAT:

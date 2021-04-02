@@ -17,6 +17,7 @@ import Request from './Request';
 import Loading from '../../components/Loading';
 import NoResult from '../../components/NoResult';
 import Button from '../../components/Button';
+import { servicesHandler, SERVICES_TYPE } from 'src/helper/servicesHandler';
 
 /**
  * A list of all request of this site
@@ -111,12 +112,15 @@ class Requests extends Component {
   };
 
   handlePressRequest(request) {
-    Actions.push(appConfig.routes.requestDetail, {
-      siteId: this.props.siteId,
-      roomId: this.props.roomId,
-      requestId: request.id,
-      title: request.title || this.props.t('screen.requests.detailTitle')
-    });
+    const service = {
+      type: SERVICES_TYPE.BEEHOME_REQUEST,
+      site_id: this.props.siteId,
+      room_id: this.props.roomId,
+      request_id: request.id,
+      title: request.title || this.props.t('screen.requests.detailTitle'),
+      callbackReload: this.getRequests
+    };
+    servicesHandler(service);
   }
 
   onRefresh = () => {
@@ -164,7 +168,7 @@ class Requests extends Component {
           />
         )}
         <Button
-          title="Tạo phản ánh"
+          title="Tạo yêu cầu"
           iconLeft={<Icon name="filetext1" style={styles.icon} />}
           onPress={this.createRequest}
         />
@@ -210,6 +214,6 @@ export default withTranslation()(Requests);
  */
 const NoResultComp = (
   <View style={{ marginTop: '50%' }}>
-    <NoResult message="Danh sách phản ánh đang trống" />
+    <NoResult message="Danh sách yêu cầu đang trống" />
   </View>
 );

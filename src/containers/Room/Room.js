@@ -369,7 +369,8 @@ class Room extends Component {
       site_id: this.room.siteId,
       room_id: this.room.roomId,
       request_id: request.id,
-      title: request.title || this.props.t('screen.requests.detailTitle')
+      title: request.title || this.props.t('screen.requests.detailTitle'),
+      callbackReload: () => this.getRequests(this.room.siteId, this.room.roomId)
     };
     servicesHandler(service);
   };

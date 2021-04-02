@@ -6,12 +6,17 @@ import Loading from '../../../components/Loading';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import Comments from './Comments';
 import equal from 'deep-equal';
+import { Actions } from 'react-native-router-flux';
 
 const DELAY_GET_CONVERSATION = 3000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
 
 class Detail extends Component {
+  static defaultProps = {
+    callbackReload: () => {}
+  }
+
   state = {
     loading: true,
     refreshing: false,
@@ -26,6 +31,15 @@ class Detail extends Component {
 
   componentDidMount() {
     this.getRequest();
+    
+    setTimeout(() =>
+      Actions.refresh({
+        onBack: () => {
+          this.props.callbackReload();
+          Actions.pop();
+        },
+      }),
+    );
   }
 
   componentWillUnmount() {
