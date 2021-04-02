@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -6,28 +6,29 @@ import {
   StyleSheet,
   RefreshControl,
   Platform,
-  StatusBar
+  StatusBar,
   // ScrollView,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import StatusBarBackground, {
-  showBgrStatusIfOffsetTop
+  showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
-import HomeCardList, { HomeCardItem } from './component/HomeCardList';
+import HomeCardList, {HomeCardItem} from './component/HomeCardList';
 import ListServices from './component/ListServices';
 import ListProducts from './component/ListProducts';
 import appConfig from 'app-config';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
+import Themes from '../../Themes';
 
 const defaultListener = () => {};
 const STATUS_BAR_STYLE = {
   LIGHT: 'light-content',
-  DARK: 'dark-content'
+  DARK: 'dark-content',
 };
 const {
   set,
@@ -38,7 +39,7 @@ const {
   Value,
   block,
   call,
-  event
+  event,
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
 
@@ -76,7 +77,7 @@ class Home extends Component {
     onPressNewItem: PropTypes.func,
     onPressNoti: PropTypes.func,
     product_groups: PropTypes.array,
-    listServiceItemsPerRow: PropTypes.number
+    listServiceItemsPerRow: PropTypes.number,
   };
 
   static defaultProps = {
@@ -118,15 +119,17 @@ class Home extends Component {
     animatedHeaderValue: new Value(0),
     statusBarStyle: STATUS_BAR_STYLE.LIGHT,
     showShadow: false,
-    headerHeight: undefined
+    headerHeight: undefined,
   };
 
-  handleAnimatedScroll = ({ value }) => {
+  homeThemes = Themes.getNameSpace('home');
+
+  handleAnimatedScroll = ({value}) => {
     value = Math.round(value);
     if (value <= 0 && this.state.showShadow) {
       this.setState({
         showShadow: false,
-        statusBarStyle: STATUS_BAR_STYLE.LIGHT
+        statusBarStyle: STATUS_BAR_STYLE.LIGHT,
       });
       return;
     }
@@ -134,7 +137,7 @@ class Home extends Component {
     if (value >= EXTRAPOLATE_RANGE * 0.7 && !this.state.showShadow) {
       this.setState({
         showShadow: true,
-        statusBarStyle: STATUS_BAR_STYLE.DARK
+        statusBarStyle: STATUS_BAR_STYLE.DARK,
       });
     }
   };
@@ -170,106 +173,97 @@ class Home extends Component {
   }
   get hasProduct_groups() {
     return (
-      Array.isArray(this.props.product_groups) && this.props.product_groups.length > 0
+      Array.isArray(this.props.product_groups) &&
+      this.props.product_groups.length > 0
     );
   }
 
   handleHeaderLayout(e) {
-    const { height } = e.nativeEvent.layout;
+    const {height} = e.nativeEvent.layout;
     if (height !== this.state.headerHeight) {
       this.setState({
-        headerHeight: height
+        headerHeight: height,
       });
     }
   }
 
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
     `${appConfig.routes.homeTab}_1`,
-    EXTRAPOLATE_RANGE / 2
+    EXTRAPOLATE_RANGE / 2,
   );
 
+  wrapperAnimatedStyle = {
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
+      outputRange: [0, 1],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+    ...elevationShadowStyle(3),
+    elevation: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+      outputRange: [0, 0, 5],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+    shadowOpacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+      outputRange: [0, 0, 0.15],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+    backgroundColor: color(
+      255,
+      255,
+      255,
+      interpolate(this.state.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 1],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+    ),
+  };
+
+  headerAnimatedStyle = {
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE],
+      outputRange: [0, 1],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+  };
+
+  headerIconStyle = {
+    color:
+      this.homeThemes('styles.home.header_search_wrapper_active')?.backgroundColor ||
+      appConfig.colors.primary,
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE],
+      outputRange: [0, 1],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+  };
+
+  searchWrapperStyle = [
+    this.homeThemes('styles.home.header_search_wrapper_active'),
+    {
+      backgroundColor: color(
+        ...hexToRgbCode(
+          this.homeThemes('styles.home.header_search_wrapper_active')
+            ?.backgroundColor || '#f5f5f5',
+        ),
+        interpolate(this.state.animatedHeaderValue, {
+          inputRange: [0, EXTRAPOLATE_RANGE],
+          outputRange: [0, 1],
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
+    },
+  ];
+
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     const name = this.props.userInfo
       ? this.props.userInfo.name
         ? this.props.userInfo.name
         : t('welcome.defaultUserName')
       : t('welcome.defaultUserName');
-
-    let wrapperAnimatedStyle = {
-      opacity: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
-        outputRange: [0, 1],
-        extrapolate: Extrapolate.CLAMP
-      }),
-      ...elevationShadowStyle(3),
-      elevation: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-        outputRange: [0, 0, 5],
-        extrapolate: Extrapolate.CLAMP
-      }),
-      shadowOpacity: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-        outputRange: [0, 0, 0.15],
-        extrapolate: Extrapolate.CLAMP
-      }),
-      backgroundColor: color(
-        255,
-        255,
-        255,
-        interpolate(this.state.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-          outputRange: [0, 0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
-    };
-
-    // if (this.state.showShadow) {
-    //   wrapperAnimatedStyle = {
-    //     ...wrapperAnimatedStyle,
-    //     ...elevationShadowStyle(3),
-    //   }
-    // }
-
-    const headerAnimatedStyle = {
-      opacity: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE],
-        outputRange: [0, 1],
-        extrapolate: Extrapolate.CLAMP
-      })
-    };
-
-    const [r, g, b] = hexToRgbA(appConfig.colors.primary)
-      .replace('rgba(', '')
-      .replace(')', '')
-      .split(',');
-
-    const headerIconStyle = {
-      color: color(
-        Number(r),
-        Number(g),
-        Number(b),
-        interpolate(this.state.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE],
-          outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
-    };
-
-    const searchWrapperStyle = {
-      backgroundColor: color(
-        245,
-        245,
-        245,
-        interpolate(this.state.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE],
-          outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
-    };
 
     return (
       <View style={styles.container}>
@@ -283,20 +277,19 @@ class Home extends Component {
           {this.props.site && this.props.site.app_event_banner_image && (
             <Image
               style={styles.headerImage}
-              source={{ uri: this.props.site.app_event_banner_image}}
+              source={{uri: this.props.site.app_event_banner_image}}
             />
           )}
         </View>
 
         <View
           onLayout={this.handleHeaderLayout.bind(this)}
-          style={styles.headerContainerStyle}
-        >
+          style={styles.headerContainerStyle}>
           <Header
-            wrapperStyle={wrapperAnimatedStyle}
-            maskSearchWrapperStyle={searchWrapperStyle}
-            maskSubStyle={headerAnimatedStyle}
-            iconStyle={headerIconStyle}
+            wrapperStyle={this.wrapperAnimatedStyle}
+            maskSearchWrapperStyle={this.searchWrapperStyle}
+            maskSubStyle={this.headerAnimatedStyle}
+            iconStyle={this.headerIconStyle}
             notify={this.props.notify}
             name={name}
             onPressNoti={this.props.onPressNoti}
@@ -312,25 +305,25 @@ class Home extends Component {
               {
                 nativeEvent: {
                   contentOffset: {
-                    y: y =>
+                    y: (y) =>
                       block([
                         set(this.state.animatedHeaderValue, y),
                         call([y], ([offsetY]) => {
                           this.showBgrStatusIfOffsetTop({
-                            nativeEvent: { contentOffset: { y: offsetY } }
+                            nativeEvent: {contentOffset: {y: offsetY}},
                           });
-                          this.handleAnimatedScroll({ value: offsetY });
-                        })
-                      ])
-                  }
-                }
-              }
+                          this.handleAnimatedScroll({value: offsetY});
+                        }),
+                      ]),
+                  },
+                },
+              },
             ],
             {
-              useNativeDriver: true
-            }
+              useNativeDriver: true,
+            },
           )}
-          contentContainerStyle={{ paddingTop: this.state.headerHeight || 80 }}
+          contentContainerStyle={{paddingTop: this.state.headerHeight || 80}}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
@@ -340,8 +333,7 @@ class Home extends Component {
               onRefresh={this.props.onPullToRefresh}
               tintColor={appConfig.colors.white}
             />
-          }
-        >
+          }>
           {/* <Header
             name={name}
             onPressNoti={this.props.onPressNoti}
@@ -393,12 +385,7 @@ class Home extends Component {
 
             {this.hasProduct_groups ? (
               this.props.product_groups.map((productGroup, index) => {
-                let {
-                  id,
-                  products,
-                  title,
-                  display_type
-                } = productGroup;
+                let {id, products, title, display_type} = productGroup;
                 return (
                   <ListProducts
                     key={id}
@@ -406,7 +393,9 @@ class Home extends Component {
                     data={products}
                     title={title}
                     onPressProduct={this.props.onPressProduct}
-                    onShowAll={() => this.props.onShowAllGroupProduct(productGroup)}
+                    onShowAll={() =>
+                      this.props.onShowAllGroupProduct(productGroup)
+                    }
                   />
                 );
               })
@@ -422,11 +411,10 @@ class Home extends Component {
                   this.props.title_sites
                     ? this.props.title_sites
                     : t('sections.favoriteStore.title')
-                }
-              >
-                {({ item, index }) => (
+                }>
+                {({item, index}) => (
                   <HomeCardItem
-                    selfRequest={callBack =>
+                    selfRequest={(callBack) =>
                       this.props.onPressSiteItem(item, callBack)
                     }
                     title={item.title}
@@ -442,9 +430,8 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
                 data={this.props.campaigns}
-                title={t('sections.voucher.title')}
-              >
-                {({ item, index }) => {
+                title={t('sections.voucher.title')}>
+                {({item, index}) => {
                   return (
                     <HomeCardItem
                       title={item.title}
@@ -464,9 +451,8 @@ class Home extends Component {
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
-                title={t('sections.news.title')}
-              >
-                {({ item, index }) => (
+                title={t('sections.news.title')}>
+                {({item, index}) => (
                   <HomeCardItem
                     title={item.title}
                     imageUrl={item.image_url}
@@ -502,7 +488,7 @@ const styles = StyleSheet.create({
     top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   headerImage: {
     height: appConfig.device.width / 3,
@@ -513,17 +499,17 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     backgroundColor: appConfig.colors.sceneBackground,
-    marginBottom: 32
+    marginBottom: 32,
   },
   primaryActionsWrapper: {
-    paddingBottom: 8
+    paddingBottom: 8,
   },
   headerContainerStyle: {
     position: 'absolute',
     top: 0,
     width: '100%',
-    zIndex: 9999
-  }
+    zIndex: 9999,
+  },
 });
 
 export default withTranslation(['home', 'common'])(Home);

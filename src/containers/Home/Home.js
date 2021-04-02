@@ -11,6 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
+import Themes, { THEMES_TYPE } from '../../Themes';
 
 class Home extends Component {
   constructor(props) {
@@ -45,6 +46,10 @@ class Home extends Component {
   componentDidMount() {
     this.getHomeDataFromApi();
     this.eventTracker.logCurrentView();
+    // setTimeout(() => {
+    //   Themes.setCurrentTheme(THEMES_TYPE.BASIC_SALES);
+    //   Actions.reset(appConfig.routes.sceneWrapper)
+    // }, 5000);
   }
 
   componentWillUnmount() {
