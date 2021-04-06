@@ -22,15 +22,15 @@ import Sticker from '../Sticker';
 import {reaction} from 'mobx';
 import SelectionList from '../SelectionList';
 import appConfig from 'app-config';
-import { languages } from '../../i18n/constants';
-import { setAppLanguage } from '../../i18n/i18n';
-import { servicesHandler, SERVICES_TYPE } from '../../helper/servicesHandler';
+import {languages} from '../../i18n/constants';
+import {setAppLanguage} from '../../i18n/i18n';
+import {servicesHandler, SERVICES_TYPE} from '../../helper/servicesHandler';
 import EventTracker from '../../helper/EventTracker';
 import SkeletonLoading from '../SkeletonLoading';
 import BaseAPI from '../../network/API/BaseAPI';
-import { APIRequest } from '../../network/Entity';
+import {APIRequest} from '../../network/Entity';
 import Loading from '../Loading';
-import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -78,7 +78,8 @@ class Account extends Component {
       store_name,
       username,
     } = user_info;
-    const isShowPremium = premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
+    const isShowPremium =
+      premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
 
     return [
       {
@@ -241,38 +242,42 @@ class Account extends Component {
         label: t('options.agencyInformationRegister.label'),
         desc: t('options.agencyInformationRegister.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.push(appConfig.routes.agencyInformationRegister),
+        onPress: () => Actions.push(appConfig.routes.agencyInformationRegister),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#527c23'
-          }
+            backgroundColor: '#527c23',
+          },
         ],
-        isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY)
+        isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY),
       },
       {
         key: 'warehouse',
         icon: 'warehouse',
-        iconType: "MaterialCommunityIcons",
+        iconType: 'MaterialCommunityIcons',
         label: t('options.warehouse.label'),
         desc: store_name,
         disabled: this.state.isWarehouseLoading,
-        rightIcon: this.state.isWarehouseLoading 
-        ? <Loading wrapperStyle={{position: undefined, marginRight: -10}} size="small"/> 
-        : <IconAngleRight />,
+        rightIcon: this.state.isWarehouseLoading ? (
+          <Loading
+            wrapperStyle={{position: undefined, marginRight: -10}}
+            size="small"
+          />
+        ) : (
+          <IconAngleRight />
+        ),
         onPress: () =>
-        Actions.push(appConfig.routes.modalList, {
-          heading: this.props.t('opRegister:modal.warehouse.title'),
-          data: this.state.listWarehouse,
-          selectedItem: {id: store_id},
-          onPressItem: this.onSelectWarehouse,
-          onCloseModal: Actions.pop,
-          modalStyle: {
-            height: null, 
-            maxHeight: '80%'
-          }
-        }),
+          Actions.push(appConfig.routes.modalList, {
+            heading: this.props.t('opRegister:modal.warehouse.title'),
+            data: this.state.listWarehouse,
+            selectedItem: {id: store_id},
+            onPressItem: this.onSelectWarehouse,
+            onCloseModal: Actions.pop,
+            modalStyle: {
+              height: null,
+              maxHeight: '80%',
+            },
+          }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -280,7 +285,7 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)
+        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY),
       },
 
       {
@@ -292,15 +297,15 @@ class Account extends Component {
         label: t('options.commissionIncomeStatement.label'),
         desc: t('options.commissionIncomeStatement.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.push(appConfig.routes.commissionIncomeStatement),
+        onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#fd6d61'
-          }
+            backgroundColor: '#fd6d61',
+          },
         ],
-        isHidden: !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY)
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
       {
         key: '2',
@@ -311,15 +316,15 @@ class Account extends Component {
         onPress: () =>
           Actions.push(appConfig.routes.myVoucher, {
             title: t('common:screen.myVoucher.mainTitle'),
-            from: 'home'
+            from: 'home',
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#F35022'
-          }
+            backgroundColor: '#F35022',
+          },
         ],
-        iconColor: '#ffffff'
+        iconColor: '#ffffff',
       },
       {
         key: '-3',
@@ -330,17 +335,17 @@ class Account extends Component {
         rightIcon: <IconAngleRight />,
         onPress: () => {
           const service = {
-            type: SERVICES_TYPE.SERVICE_ORDERS
+            type: SERVICES_TYPE.SERVICE_ORDERS,
           };
           servicesHandler(service);
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#F35022'
-          }
+            backgroundColor: '#F35022',
+          },
         ],
-        iconColor: '#ffffff'
+        iconColor: '#ffffff',
       },
       {
         key: '-1',
@@ -351,15 +356,15 @@ class Account extends Component {
         onPress: () =>
           Actions.push(appConfig.routes.ordersTab, {
             title: 'Đơn hàng của tôi',
-            from: 'home'
+            from: 'home',
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#03A5F0'
-          }
+            backgroundColor: '#03A5F0',
+          },
         ],
-        iconColor: '#ffffff'
+        iconColor: '#ffffff',
       },
       {
         key: '-2',
@@ -372,10 +377,10 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#846faa'
-          }
+            backgroundColor: '#846faa',
+          },
         ],
-        iconColor: '#ffffff'
+        iconColor: '#ffffff',
       },
 
       {
@@ -396,7 +401,7 @@ class Account extends Component {
         iconColor: '#fff',
         iconSize: 18,
         iconType: 'MaterialCommunityIcons',
-        isHidden: !store.user_info || !store.user_info.tel
+        isHidden: !store.user_info || !store.user_info.tel,
       },
       {
         key: '7',
@@ -413,38 +418,38 @@ class Account extends Component {
             selectedValue: this.props.i18n.language,
             selectedLabel: languages[this.props.i18n.language].label,
             data: Object.values(languages),
-            onSelect: this.handleConfirmChangeAppLanguage
+            onSelect: this.handleConfirmChangeAppLanguage,
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189'
-          }
+            backgroundColor: '#175189',
+          },
         ],
-        iconColor: '#ffffff'
+        iconColor: '#ffffff',
       },
       {
         key: '3',
         icon: 'handshake-o',
-        label: t('options.termOfUse.label', { appName: APP_NAME_SHOW }),
+        label: t('options.termOfUse.label', {appName: APP_NAME_SHOW}),
         desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
           Actions.webview({
             title: t('options.termOfUse.webViewTitle', {
-              appName: APP_NAME_SHOW
+              appName: APP_NAME_SHOW,
             }),
-            url: APP_INFO
+            url: APP_INFO,
           }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: DEFAULT_COLOR
-          }
+            backgroundColor: DEFAULT_COLOR,
+          },
         ],
         iconColor: '#ffffff',
-        marginTop: true
+        marginTop: true,
       },
       {
         key: '4',
@@ -452,7 +457,11 @@ class Account extends Component {
         label: t('options.appInformation.label'),
         desc: t('options.appInformation.desc', {
           appName: APP_NAME_SHOW,
-          appVersion: DeviceInfo.getVersion() + codePushVersion,
+          appVersion:
+            DeviceInfo.getVersion() +
+            codePushVersion +
+            '-' +
+            appConfig.tagVersion,
         }),
         rightIcon: <IconAngleRight />,
         onPress: () => {},
@@ -613,17 +622,19 @@ class Account extends Component {
     cancelRequests(this.requests);
   }
 
-  async getListWarehouse(){
-    if(!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+  async getListWarehouse() {
+    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
       const responseData = await this.getWarehouseRequest.promise();
-      const listWarehouse = responseData?.stores?.map(store => ({...store, 
-        title: store.name,
-        description: store.address,
-        image: store.image_url
-      })) || [];
+      const listWarehouse =
+        responseData?.stores?.map((store) => ({
+          ...store,
+          title: store.name,
+          description: store.address,
+          image: store.image_url,
+        })) || [];
       this.setState({
         listWarehouse,
       });
@@ -659,31 +670,31 @@ class Account extends Component {
     }
   };
 
-  async updateWarehouse(warehouse){
+  async updateWarehouse(warehouse) {
     const data = {store_id: warehouse.id};
-    try{
-    this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
-    const responseData = await this.updateWarehouseRequest.promise();
-    flashShowMessage({
-      type:"success",
-      message: responseData.message
-    })
-} catch(error){
-  console.log('%cupdate_warehouse', 'color:red', error);
-  flashShowMessage({
-    type:"danger",
-    message: error.message || this.props.t('common:api.error.message')
-  })
-} finally{
-  this.setState({isWarehouseLoading: false});
-}
+    try {
+      this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
+      const responseData = await this.updateWarehouseRequest.promise();
+      flashShowMessage({
+        type: 'success',
+        message: responseData.message,
+      });
+    } catch (error) {
+      console.log('%cupdate_warehouse', 'color:red', error);
+      flashShowMessage({
+        type: 'danger',
+        message: error.message || this.props.t('common:api.error.message'),
+      });
+    } finally {
+      this.setState({isWarehouseLoading: false});
+    }
   }
 
   onSelectWarehouse = (warehouse, closeModal) => {
-  this.setState({isWarehouseLoading: true});
-  closeModal();
-  this.updateWarehouse(warehouse);
-  }
+    this.setState({isWarehouseLoading: true});
+    closeModal();
+    this.updateWarehouse(warehouse);
+  };
 
   handleShowProfileDetail = () => {
     Actions.push(appConfig.routes.profileDetail, {
@@ -1433,7 +1444,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['account', 'common', 'opRegister'])(observer(Account));
+export default withTranslation(['account', 'common', 'opRegister'])(
+  observer(Account),
+);
 
 const IconAngleRight = () => (
   <Icon name="angle-right" size={26} color="#999999" />
