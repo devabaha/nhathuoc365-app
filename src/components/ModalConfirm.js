@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import PopupConfirm from './PopupConfirm';
 import {Actions} from 'react-native-router-flux';
+import Modal from './account/Transfer/Payment/Modal';
 
 const ModalConfirm = ({
   type,
@@ -14,6 +15,12 @@ const ModalConfirm = ({
   message = '',
   otherClose = false,
   isConfirm = false,
+
+  momo, // use MOMO styled modal.
+
+  title,
+  content,
+  contentStyle,
   ...props
 }) => {
   let _refModal = null;
@@ -52,7 +59,21 @@ const ModalConfirm = ({
     yesConfirm();
   };
 
-  return (
+  return momo ? (
+    <Modal
+      visible
+      titleStyle={titleStyle}
+      contentStyle={contentStyle}
+      title={title}
+      content={content}
+      okText={yesTitle}
+      cancelText={noTitle}
+      onRequestClose={handleClosed}
+      onCancel={handleNoConfirm}
+      onOk={handleYesConfirm}
+      {...props}
+    />
+  ) : (
     <PopupConfirm
       ref_popup={handleRef}
       title={message}

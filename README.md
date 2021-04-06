@@ -19,7 +19,11 @@ Chi tiết
 	3.2. Appstore Connect: Tạo Key theo hướng dẫn 
 4. Tạo Google Analytic: Tạo GA cho web
 5. Code Push: chạy các lệnh sau, thay thế bằng 
+
 code-push app add tick-homeid-ios ios react-native
+
+appcenter apps create -d tick-homeid-ios -o iOS -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-homeid-ios Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -29,6 +33,9 @@ code-push app add tick-homeid-ios ios react-native
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
 code-push app add tick-homeid-android android react-native
+
+appcenter apps create -d tick-homeid-android -o Android -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-homeid-android Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -37,10 +44,13 @@ code-push app add tick-homeid-android android react-native
 │ Staging    │  │aqlsT8KPGWOwEfreKXCL65hTd9KBLYPGxP_7f
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
-code-push release-react tick-homeid-ios ios -d "Production" -m --description "upgrade tag b11.4.6"
-code-push release-react tick-homeid-android android -d "Production" -m --description "upgrade tag b11.4.6"
+code-push release-react tick-homeid-ios ios -d "Production" -m --description "upgrade tag b11.4.7"
+code-push release-react tick-homeid-android android -d "Production" -m --description "upgrade tag b11.4.7"
 
-1. FBAK: sử dụng key FBAK đang có của homeid. Sẽ thay thế bằng Firebase. 
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-homeid-ios -d "Production" -m --description "upgrade tag b11.4.7"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-homeid-android -d "Production" -m --description "upgrade tag b11.4.7"
+
+6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
 2. Chuẩn bị Icon và Splash: Tạo icon.png 1024x1024 và splash.png 4096x4096
 Sử dụng các lệnh theo tài liệu: https://github.com/bamlab/generator-rn-toolbox/tree/master/generators/assets

@@ -7,17 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [b11.4.6] - 2020-04-02
+## [b11.4.7] - 2021-04-06
+- [r11.4.7]
+
+## [b11.4.6] - 2021-04-02
 ### Changed
 - Auto reload when pop from Request Detail.
 
-## [b11.4.5] - 2020-03-26
+## [b11.4.5] - 2021-03-26
 ### Changed
 - Detail Request will call api to get latest data every 3s.
 ### Fixed
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
 - DetailCard in Request hide chat input.
+## [r11.4.7] - 2021-04-06
+### Added
+- base structure for themes (in-progress).
+- Ask permission for modalGalleryOptionAndroid.
+### Fixed
+- Crashing when scan QRBarcode.
+- PayAccount cant back.
 
 ## [r11.4.6] - 2021-03-30
 ### Added
