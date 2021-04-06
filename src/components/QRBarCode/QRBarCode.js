@@ -231,7 +231,6 @@ class QRBarCode extends Component {
                       wallet: response.data.account.default_wallet,
                       account: response.data.account,
                       app: response.data.app,
-                      type: ActionConst.REPLACE,
                     });
 
                     flashShowMessage({
@@ -527,7 +526,7 @@ class QRBarCode extends Component {
     }, 0);
   }
 
-  _proccessQRCodeResult(event) {
+  _proccessQRCodeResult = (event) =>  {
     setTimeout(() => {
       if (this.unmounted) return;
       const text_result = event.data;

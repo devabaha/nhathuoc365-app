@@ -19,7 +19,11 @@ Chi tiết
 	3.2. Appstore Connect: Tạo Key theo hướng dẫn 
 4. Tạo Google Analytic: Tạo GA cho web
 5. Code Push: chạy các lệnh sau, thay thế bằng 
+
 code-push app add tick-tickid-ios ios react-native
+
+appcenter apps create -d tick-test-ios -o iOS -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-ios Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -29,6 +33,9 @@ code-push app add tick-tickid-ios ios react-native
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
 code-push app add tick-tickid-android android react-native
+
+appcenter apps create -d tick-test-android -o Android -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name       │ Deployment Key                                                   │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -39,6 +46,9 @@ code-push app add tick-tickid-android android react-native
 
 code-push release-react tick-tickid-ios ios -d "Production" -m --description "test codepush"
 code-push release-react tick-tickid-android android -d "Production" -m --description "test codepush"
+
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "test codepush"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "test codepush"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
