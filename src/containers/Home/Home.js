@@ -189,7 +189,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-    service.type = SERVICES_TYPE.GPS_LIST_STORE;
+    
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
