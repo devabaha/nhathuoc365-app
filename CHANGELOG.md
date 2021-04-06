@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.5.1] - 2021-04-06
+## [r11.4.7] - 2021-04-06
 ### Added
 - base structure for themes (in-progress).
 - Ask permission for modalGalleryOptionAndroid.
