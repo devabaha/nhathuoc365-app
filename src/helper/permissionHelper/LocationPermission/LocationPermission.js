@@ -1,5 +1,5 @@
 import { RESULTS, PERMISSIONS, request, check } from "react-native-permissions";
-import { LOCATION_PERMISSION_TYPE, REQUEST_LOCATION_RESULT_TYPE } from "../constants";
+import { LOCATION_PERMISSION_TYPE, REQUEST_RESULT_TYPE } from "../constants";
 import appConfig from 'app-config';
 import { Alert, Linking } from "react-native";
 import AndroidOpenSettings from 'react-native-android-open-settings';
@@ -32,36 +32,36 @@ class LocationPermission {
               console.log(
                 'This feature is not available (on this device / in this context)'
               );
-              return REQUEST_LOCATION_RESULT_TYPE.NOT_AVAILABLE;
+              return REQUEST_RESULT_TYPE.NOT_AVAILABLE;
             case RESULTS.DENIED:
               console.log(
                 'The permission has not been requested / is denied but requestable'
               );
-              return REQUEST_LOCATION_RESULT_TYPE.NOT_GRANTED;
+              return REQUEST_RESULT_TYPE.NOT_GRANTED;
             case RESULTS.GRANTED:
               console.log('The location permission is granted');
-              return REQUEST_LOCATION_RESULT_TYPE.GRANTED;
+              return REQUEST_RESULT_TYPE.GRANTED;
             case RESULTS.BLOCKED:
               console.log('The permission is denied and not requestable anymore');
-              return REQUEST_LOCATION_RESULT_TYPE.NOT_GRANTED;
+              return REQUEST_RESULT_TYPE.NOT_GRANTED;
           }
         } catch (error) {
           console.log('%crequest_location_permission', 'color:red', error);
-          return REQUEST_LOCATION_RESULT_TYPE.TIMEOUT;
+          return REQUEST_RESULT_TYPE.TIMEOUT;
         }
       };
 
       handleAccessSettingWhenRequestLocationError = (errorCode) => {
         switch (errorCode) {
-          case REQUEST_LOCATION_RESULT_TYPE.NOT_GRANTED:
+          case REQUEST_RESULT_TYPE.NOT_GRANTED:
             appConfig.device.isIOS
               ? this.openSettingIOS('app-settings:')
-              : this.openSettingsAndroid(REQUEST_LOCATION_RESULT_TYPE.NOT_GRANTED);
+              : this.openSettingsAndroid(REQUEST_RESULT_TYPE.NOT_GRANTED);
             break;
-          case REQUEST_LOCATION_RESULT_TYPE.NOT_AVAILABLE:
+          case REQUEST_RESULT_TYPE.NOT_AVAILABLE:
             appConfig.device.isIOS
               ? this.openSettingIOS('App-Prefs:root=Privacy&path=LOCATION')
-              : this.openSettingsAndroid(REQUEST_LOCATION_RESULT_TYPE.NOT_AVAILABLE);
+              : this.openSettingsAndroid(REQUEST_RESULT_TYPE.NOT_AVAILABLE);
             break;
         }
       };
@@ -81,10 +81,10 @@ class LocationPermission {
     
       openSettingsAndroid = (type) => {
         switch (type) {
-          case REQUEST_LOCATION_RESULT_TYPE.NOT_AVAILABLE:
+          case REQUEST_RESULT_TYPE.NOT_AVAILABLE:
             AndroidOpenSettings.locationSourceSettings();
             break;
-          case REQUEST_LOCATION_RESULT_TYPE.NOT_GRANTED:
+          case REQUEST_RESULT_TYPE.NOT_GRANTED:
             AndroidOpenSettings.appDetailsSettings();
             break;
         }
