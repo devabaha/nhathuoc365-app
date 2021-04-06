@@ -21,6 +21,9 @@ Tạo App trên Onesignal
 Tạo Google Analytic: Tạo GA cho web
 Code Push: chạy các lệnh sau, thay thế bằng
 code-push app add tick-huongcang-ios ios react-native
+
+appcenter apps create -d tick-huongcang-ios -o iOS -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-huongcang-ios Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -30,6 +33,9 @@ code-push app add tick-huongcang-ios ios react-native
 └────────────┴──────────────────────────────────────────────────────────────────┘
 
 code-push app add tick-huongcang-android android react-native
+
+appcenter apps create -d tick-huongcang-android -o Android -p React-Native
+appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-huongcang-android Production
 ┌────────────┬──────────────────────────────────────────────────────────────────┐
 │ Name │ Deployment Key │
 ├────────────┼──────────────────────────────────────────────────────────────────┤
@@ -39,6 +45,9 @@ code-push app add tick-huongcang-android android react-native
 └────────────┴──────────────────────────────────────────────────────────────────┘
 code-push release-react tick-huongcang-ios ios -d "Production" -m --description "new app"
 code-push release-react tick-huongcang-android android -d "Production" -m --description "new app"
+
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-ios -d "Production" -m --description "new app"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-huongcang-android -d "Production" -m --description "new app"
 
 FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase.
 

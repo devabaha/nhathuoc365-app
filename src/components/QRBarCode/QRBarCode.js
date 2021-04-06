@@ -225,13 +225,13 @@ class QRBarCode extends Component {
                     loading: false,
                   },
                   () => {
-                    Actions.pay_account({
+                    Actions.pop();
+                    Actions.push('pay_account', {
                       title: t('common:screen.payAccount.mainTitle'),
                       barcode: barcode,
                       wallet: response.data.account.default_wallet,
                       account: response.data.account,
                       app: response.data.app,
-                      type: ActionConst.REPLACE,
                     });
 
                     flashShowMessage({
@@ -527,7 +527,7 @@ class QRBarCode extends Component {
     }, 0);
   }
 
-  _proccessQRCodeResult(event) {
+  _proccessQRCodeResult = (event) => {
     setTimeout(() => {
       if (this.unmounted) return;
       const text_result = event.data;
@@ -566,7 +566,7 @@ class QRBarCode extends Component {
         }
       }
     }, 500);
-  }
+  };
 
   async checkProductCode(qrcode) {
     const data = {qrcode};

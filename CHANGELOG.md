@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [r11.5.1] - 2021-03-31
+## [r11.4.7] - 2021-04-06
 ### Added
-- base structure for themes.
+- base structure for themes (in-progress).
+- Ask permission for modalGalleryOptionAndroid.
+### Fixed
+- Crashing when scan QRBarcode.
+- PayAccount cant back.
 
 ## [r11.4.6] - 2021-03-30
 ### Added
