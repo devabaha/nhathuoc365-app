@@ -180,7 +180,7 @@ class Confirm extends Component {
               this._siteInfo(site_id);
             },
           );
-
+          store.setCartData(response.data);
           // message: lấy thông tin thành công
           // Toast.show(response.message);
         }
@@ -964,15 +964,14 @@ class Confirm extends Component {
   render() {
     const {t} = this.props;
     var {single} = this.state;
+    // from this
+    if (single) {
+      var {cart_data, cart_products_confirm} = store;
+      var address_data = cart_data ? cart_data.address : null;
+    }
 
-    // // from this
-    // if (!single) {
-    //   var {cart_data, cart_products_confirm} = store;
-    //   var address_data = cart_data ? cart_data.address : null;
-    // }
-
-    // // from detail orders
-    // else {
+    // from detail orders
+    else {
       var cart_data = this.state.data;
       if (cart_data && Object.keys(cart_data.products).length > 0) {
         var cart_products_confirm = [];
@@ -987,7 +986,7 @@ class Confirm extends Component {
         var cart_products_confirm = cart_products_confirm.reverse();
         var address_data = cart_data.address;
       }
-    // }
+    }
 
     // show loading
     if (
