@@ -117,10 +117,6 @@ class Confirm extends Component {
           props.notice_data.site_id,
           props.notice_data.page_id,
         );
-      } else {
-        Actions.refresh({
-          right: this._renderRightButton.bind(this),
-        });
       }
     } else {
       // callback when unmount this sreen
@@ -184,7 +180,7 @@ class Confirm extends Component {
               this._siteInfo(site_id);
             },
           );
-
+          store.setCartData(response.data);
           // message: lấy thông tin thành công
           // Toast.show(response.message);
         }
@@ -977,7 +973,6 @@ class Confirm extends Component {
     // from detail orders
     else {
       var cart_data = this.state.data;
-
       if (cart_data && Object.keys(cart_data.products).length > 0) {
         var cart_products_confirm = [];
         Object.keys(cart_data.products).map((key) => {

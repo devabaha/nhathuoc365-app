@@ -25,9 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - base structure for themes (in-progress).
 - Ask permission for modalGalleryOptionAndroid.
+### Changed
+- Use autorun to update noti in RightButtonNavBar instead of checking inside render function.
 ### Fixed
 - Crashing when scan QRBarcode.
 - PayAccount cant back.
+- Not update data from server in Confirm (now it will get data from server if is_payment-ing).
 
 ## [r11.4.6] - 2021-03-30
 ### Added
