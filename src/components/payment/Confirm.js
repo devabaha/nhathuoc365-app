@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
+  Image,
   TouchableHighlight,
   StyleSheet,
   FlatList,
@@ -30,10 +31,14 @@ import {ANALYTICS_EVENTS_NAME} from '../../constants';
 import CartItem from './CartItem';
 import Tag from '../Tag';
 import Loading from '../Loading';
-import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
-import APIHandler from 'src/network/APIHandler';
-import {APIRequest} from 'src/network/Entity';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import APIHandler from '../../network/APIHandler';
+import {APIRequest} from '../../network/Entity';
 import Container from '../Layout/Container/Container';
+import {
+  CART_PAYMENT_STATUS,
+  CART_PAYMENT_TYPES,
+} from '../../constants/cart/types';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -75,6 +80,21 @@ class Confirm extends Component {
     );
   }
 
+  get cartData() {
+    return this.state.single ? store?.cart_data : this.state.data;
+  }
+
+  get isUnpaid() {
+    return this.cartData.payment_status === CART_PAYMENT_STATUS.UNPAID;
+  }
+
+  get canTransaction() {
+    return (
+      this.cartData.cart_payment_type === CART_PAYMENT_TYPES.PAY &&
+      this.isUnpaid
+    );
+  }
+
   UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props.notice_data != nextProps.notice_data) {
       this.setState(
@@ -95,7 +115,9 @@ class Confirm extends Component {
 
     if (is_paymenting) {
       this.setState({loading: true});
-      this._getOrdersItem(store.store_id, this.state.data.id);
+      this._getOrdersItem(this.state.data.site_id, this.state.data.id);
+    } else if (this.props.item) {
+      this._getOrdersItem(this.props.item.site_id, this.props.item.id, false);
     }
     setTimeout(() =>
       Actions.refresh({
@@ -167,7 +189,7 @@ class Confirm extends Component {
     }
   }
 
-  async _getOrdersItem(site_id, page_id) {
+  async _getOrdersItem(site_id, page_id, is_paymenting = true) {
     try {
       const response = await APIHandler.site_cart_show(site_id, page_id);
       if (!this.unmounted) {
@@ -180,7 +202,9 @@ class Confirm extends Component {
               this._siteInfo(site_id);
             },
           );
-          store.setCartData(response.data);
+          if (is_paymenting) {
+            store.setCartData(response.data);
+          }
           // message: lấy thông tin thành công
           // Toast.show(response.message);
         }
@@ -269,37 +293,42 @@ class Confirm extends Component {
             if (response && response.status == STATUS_SUCCESS) {
               if (this.popup_message) {
                 this.popup_message.open();
+              }
 
-                // first orders
-                this.setState({
-                  suggest_register: response.data.total_orders == 1,
-                  name_register: response.data.address.name,
-                  tel_register: response.data.address.tel,
-                });
+              // first orders
+              this.setState({
+                suggest_register: response.data.total_orders == 1,
+                name_register: response.data.address.name,
+                tel_register: response.data.address.tel,
+              });
 
-                // hide back button
-                Actions.refresh({
-                  hideBackImage: true,
-                  onBack: () => false,
-                  panHandlers: null,
-                });
+              // hide back button
+              Actions.refresh({
+                hideBackImage: true,
+                onBack: () => false,
+                panHandlers: null,
+              });
 
-                Events.trigger(RELOAD_STORE_ORDERS);
-                this.eventTracker.logEvent(ANALYTICS_EVENTS_NAME.cart.order, {
-                  params: {
-                    id: response.data.id,
-                  },
-                });
+              Events.trigger(RELOAD_STORE_ORDERS);
+              this.eventTracker.logEvent(ANALYTICS_EVENTS_NAME.cart.order, {
+                params: {
+                  id: response.data.id,
+                },
+              });
 
-                // update cart data
-                // update cart
-                store.setCartData(response.data);
-                // reload home screen
-                store.setRefreshHomeChange(store.refresh_home_change + 1);
-                // hide payment nav
-                store.setPaymentNavShow(false);
-                // reload orders list screen
-                store.setOrdersKeyChange(store.orders_key_change + 1);
+              // update cart data
+              // update cart
+              store.setCartData(response.data);
+              // reload home screen
+              store.setRefreshHomeChange(store.refresh_home_change + 1);
+              // hide payment nav
+              store.setPaymentNavShow(false);
+              // reload orders list screen
+              store.setOrdersKeyChange(store.orders_key_change + 1);
+
+              if (this.canTransaction) {
+                // store.resetCartData();
+                this.goToTransaction(response.data.site_id, response.data.id);
               }
               flashShowMessage({
                 type: 'success',
@@ -345,6 +374,7 @@ class Confirm extends Component {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             store.setCartData(response.data);
+            this.setState({isConfirming: true});
           }
         } else {
           flashShowMessage({
@@ -377,10 +407,10 @@ class Confirm extends Component {
     this.setState({isConfirming: false});
   }
 
-  handleSubmit() {
+  handleSubmit(cart_data) {
     Keyboard.dismiss();
 
-    if (store.cart_data.count_selected <= 0) {
+    if (cart_data.count_selected <= 0) {
       const {t} = this.props;
       return Alert.alert(
         t('cart:notification.noItemSelected.title'),
@@ -401,7 +431,6 @@ class Confirm extends Component {
 
     if (this.isSiteUseShipNotConfirming) {
       this.setState({
-        isConfirming: true,
         loading: true,
       });
       this.getShippingInfo(store.store_id, this.state.data.id);
@@ -409,6 +438,17 @@ class Confirm extends Component {
       this._onSave();
     }
   }
+
+  goToTransaction = (siteId, cartId) => {
+    Actions.push(appConfig.routes.transaction, {
+      siteId,
+      cartId,
+      onPop: () => {
+        this.setState({loading: true});
+        this._getOrdersItem(siteId, cartId);
+      },
+    });
+  };
 
   // on save
   _onSave() {
@@ -460,9 +500,12 @@ class Confirm extends Component {
     Actions.push(appConfig.routes.paymentMethod, {
       onConfirm: this.onConfirmPaymentMethod,
       selectedMethod: cart_data.payment_method,
+      selectedPaymentMethodDetail: cart_data.payment_method_detail,
       price: cart_data.total_before_view,
       totalPrice: cart_data.total_selected,
       extraFee: cart_data.item_fee,
+      store_id: cart_data.site_id,
+      cart_id: cart_data.id,
       onUpdatePaymentMethod: (data) => {
         if (!this.state.single) {
           this.setState({data});
@@ -629,9 +672,7 @@ class Confirm extends Component {
     this._goBack();
 
     // clear cart data on app
-    action(() => {
-      store.resetCartData();
-    })();
+    store.resetCartData();
   }
 
   _goBack() {
@@ -901,16 +942,7 @@ class Confirm extends Component {
 
     return (
       <View
-        style={[
-          styles.rows,
-          styles.borderBottom,
-          {
-            borderTopWidth: 0,
-            backgroundColor: '#fafafa',
-            marginBottom: 12,
-            paddingTop: 0,
-          },
-        ]}>
+        style={[styles.rows, styles.borderBottom, styles.commissionContainer]}>
         {commissions.map((commission, index) => {
           const isLast = index === commissions.length - 1;
           return (
@@ -919,15 +951,7 @@ class Confirm extends Component {
               style={[
                 styles.address_name_box,
                 styles.feeBox,
-                isLast && {
-                  borderTopWidth: 0.5,
-                  borderColor: '#ddd',
-                  backgroundColor: '#fff',
-                  marginHorizontal: -15,
-                  marginVertical: -12,
-                  paddingVertical: 12,
-                  paddingHorizontal: 15,
-                },
+                isLast && styles.lastCommission,
               ]}>
               <Text
                 style={[
@@ -935,7 +959,7 @@ class Confirm extends Component {
                   styles.feeLabel,
                   isLast && styles.both,
                   !isLast && {color: appConfig.colors.primary},
-                  {paddingRight: 15},
+                  styles.commissionTitle,
                 ]}>
                 {commission.name}
               </Text>
@@ -969,7 +993,6 @@ class Confirm extends Component {
       var {cart_data, cart_products_confirm} = store;
       var address_data = cart_data ? cart_data.address : null;
     }
-
     // from detail orders
     else {
       var cart_data = this.state.data;
@@ -987,7 +1010,6 @@ class Confirm extends Component {
         var address_data = cart_data.address;
       }
     }
-
     // show loading
     if (
       cart_data == null ||
@@ -1383,54 +1405,95 @@ class Confirm extends Component {
                     {t('confirm.paymentMethod.title')}
                   </Text>
                 </View>
-                <View
-                  style={[
-                    styles.address_default_box,
-                    {
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                    },
-                  ]}>
-                  <TouchableHighlight
-                    style={{
-                      paddingVertical: 12,
-                      paddingHorizontal: 15,
-                    }}
-                    underlayColor="transparent"
-                    onPress={() => this._goPaymentMethod(cart_data)}>
-                    <Text
-                      style={[
-                        styles.address_default_title,
-                        styles.title_active,
-                      ]}>
-                      {t('confirm.change')}
-                    </Text>
-                  </TouchableHighlight>
-                </View>
+                {this.isUnpaid && (
+                  <View
+                    style={[
+                      styles.address_default_box,
+                      {
+                        position: 'absolute',
+                        top: 0,
+                        right: 0,
+                      },
+                    ]}>
+                    <TouchableHighlight
+                      style={{
+                        paddingVertical: 12,
+                        paddingHorizontal: 15,
+                      }}
+                      underlayColor="transparent"
+                      onPress={() => this._goPaymentMethod(cart_data)}>
+                      <Text
+                        style={[
+                          styles.address_default_title,
+                          styles.title_active,
+                        ]}>
+                        {t('confirm.change')}
+                      </Text>
+                    </TouchableHighlight>
+                  </View>
+                )}
               </View>
 
-              <View style={{flexDirection: 'row', ...styles.address_content}}>
-                {cart_data.payment_method ? (
-                  <View style={styles.paymentMethodContainer}>
-                    {cart_data.payment_method.image && (
-                      <CachedImage
-                        mutable
-                        source={{uri: cart_data.payment_method.image}}
-                        style={styles.imagePaymentMethod}
-                      />
-                    )}
-                    {cart_data.payment_method.name && (
-                      <Text style={[styles.address_name]}>
-                        {cart_data.payment_method.name}
-                      </Text>
-                    )}
-                  </View>
-                ) : (
-                  <Text style={styles.placeholder}>
-                    {t('confirm.paymentMethod.unselected')}
+              <View>
+                <View style={{flexDirection: 'row', ...styles.address_content}}>
+                  {cart_data.payment_method ? (
+                    <View style={styles.paymentMethodContainer}>
+                      {cart_data.payment_method.image && (
+                        <CachedImage
+                          mutable
+                          source={{uri: cart_data.payment_method.image}}
+                          style={styles.imagePaymentMethod}
+                        />
+                      )}
+                      {cart_data.payment_method.name && (
+                        <Text style={[styles.address_name]}>
+                          {cart_data.payment_method.name}
+                        </Text>
+                      )}
+                      {!!cart_data?.payment_method_detail?.image && (
+                        <CachedImage
+                          mutable
+                          source={{
+                            uri: cart_data?.payment_method_detail?.image,
+                          }}
+                          style={[
+                            styles.imagePaymentMethod,
+                            styles.imagePaymentMethodDetail,
+                          ]}
+                        />
+                      )}
+                    </View>
+                  ) : (
+                    <Text style={styles.placeholder}>
+                      {t('confirm.paymentMethod.unselected')}
+                    </Text>
+                  )}
+                </View>
+                <View
+                  style={[
+                    styles.paymentStatusContainer,
+                    {
+                      backgroundColor: hexToRgbA(
+                        appConfig.colors.paymentStatus[
+                          cart_data.payment_status
+                        ],
+                        0.1,
+                      ),
+                    },
+                  ]}>
+                  <Text
+                    style={[
+                      styles.paymentStatusTitle,
+                      {
+                        color:
+                          appConfig.colors.paymentStatus[
+                            cart_data.payment_status
+                          ],
+                      },
+                    ]}>
+                    {cart_data.payment_status_name}
                   </Text>
-                )}
+                </View>
               </View>
             </View>
           )}
@@ -1942,28 +2005,16 @@ class Confirm extends Component {
           otherClose={false}
         />
 
-        {single && (
+        {single ? (
           <Container row style={{bottom: store.keyboardTop}}>
             {this.state.isConfirming && (
               <TouchableHighlight
-                style={[
-                  styles.cart_payment_btn_box,
-                  {
-                    // bottom: store.keyboardTop
-                    position: undefined,
-                  },
-                ]}
+                style={styles.cart_payment_btn_box}
                 underlayColor="transparent"
                 onPress={this.handleEditConfirmingCart.bind(this)}>
                 <View
                   style={[styles.cart_payment_btn, {backgroundColor: '#bbb'}]}>
-                  <View
-                    style={{
-                      minWidth: 20,
-                      height: '100%',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                    }}>
+                  <View style={styles.cart_payment_btn_icon}>
                     <Icon name="edit" size={20} color="#fff" />
                   </View>
                   <Text style={styles.cart_payment_btn_title}>
@@ -1973,23 +2024,11 @@ class Confirm extends Component {
               </TouchableHighlight>
             )}
             <TouchableHighlight
-              style={[
-                styles.cart_payment_btn_box,
-                {
-                  // bottom: store.keyboardTop
-                  position: undefined,
-                },
-              ]}
+              style={styles.cart_payment_btn_box}
               underlayColor="transparent"
-              onPress={this.handleSubmit.bind(this)}>
+              onPress={() => this.handleSubmit(cart_data)}>
               <View style={styles.cart_payment_btn}>
-                <View
-                  style={{
-                    minWidth: 20,
-                    height: '100%',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
+                <View style={styles.cart_payment_btn_icon}>
                   {this.state.continue_loading ? (
                     <Indicator size="small" color="#ffffff" />
                   ) : (
@@ -1999,11 +2038,37 @@ class Confirm extends Component {
                 <Text style={styles.cart_payment_btn_title}>
                   {this.isSiteUseShipNotConfirming
                     ? t('confirm.confirmOrder')
+                    : this.canTransaction
+                    ? t('confirm.order.payTitle')
                     : t('confirm.order.title')}
                 </Text>
               </View>
             </TouchableHighlight>
           </Container>
+        ) : (
+          this.canTransaction && (
+            <Container row style={{bottom: store.keyboardTop}}>
+              <TouchableHighlight
+                style={styles.cart_payment_btn_box}
+                underlayColor="transparent"
+                onPress={() =>
+                  this.goToTransaction(cart_data.site_id, cart_data.id)
+                }>
+                <View style={styles.cart_payment_btn}>
+                  <View style={styles.cart_payment_btn_icon}>
+                    {this.state.continue_loading ? (
+                      <Indicator size="small" color="#ffffff" />
+                    ) : (
+                      <Icon name="check" size={20} color="#ffffff" />
+                    )}
+                  </View>
+                  <Text style={styles.cart_payment_btn_title}>
+                    {t('confirm.order.payTitle')}
+                  </Text>
+                </View>
+              </TouchableHighlight>
+            </Container>
+          )
         )}
       </>
     );
@@ -2037,6 +2102,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#000000',
     fontWeight: '600',
+    flex: 1,
   },
   address_default_box: {
     flex: 1,
@@ -2197,7 +2263,7 @@ const styles = StyleSheet.create({
   },
 
   cart_payment_btn_box: {
-    position: 'absolute',
+    // position: 'absolute',
     flex: 1,
     // width: '100%',
     height: 60,
@@ -2210,6 +2276,12 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: DEFAULT_COLOR,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cart_payment_btn_icon: {
+    minWidth: 20,
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -2465,6 +2537,10 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginRight: 7,
   },
+  imagePaymentMethodDetail: {
+    marginLeft: 15,
+    marginRight: 15,
+  },
   placeholder: {
     color: '#999999',
   },
@@ -2483,6 +2559,36 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '400',
   },
+
+  commissionContainer: {
+    borderTopWidth: 0,
+    backgroundColor: '#fafafa',
+    marginBottom: 12,
+    paddingTop: 0,
+  },
+  lastCommission: {
+    borderTopWidth: 0.5,
+    borderColor: '#ddd',
+    backgroundColor: '#fff',
+    marginHorizontal: -15,
+    marginVertical: -12,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+  },
+  commissionTitle: {
+    paddingRight: 15,
+  },
+
+  paymentStatusContainer: {
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    marginTop: 5,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+  },
+  paymentStatusTitle: {
+    fontSize: 12
+  }
 });
 
 export default withTranslation(['orders', 'cart', 'common'])(observer(Confirm));

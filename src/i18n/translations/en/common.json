@@ -139,6 +139,9 @@
     },
     "listProductScanned": {
       "mainTitle": "Scanned Products"
+    },
+    "transaction": {
+      "mainTitle": "Transaction"
     }
   },
 

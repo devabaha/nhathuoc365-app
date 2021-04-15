@@ -798,6 +798,14 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * Lấy danh sách chi tiết các loại hình thanh toán trong phương thức thanh toán đã chọn
+   */
+  payment_method_detail(site_id, data) {
+    var api = url_for(API.PAYMENT_METHOD_DETAIL + '/' + site_id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
    *
    */
   async service_rating(order_id, data) {
@@ -1009,6 +1017,22 @@ class CommonAPIHandler extends BaseHandler {
   async user_device(data) {
     const api = url_for(API.USER_DEVICE);
     return await this.postAPI(api, data);
+  }
+
+  /**
+   * check cart payment status
+   */
+  cart_payment_status(siteId, cartId) {
+    const api = url_for(API.CART_PAYMENT_STATUS + '/' + siteId + '/' + cartId);
+    return this.getCancelableAPI(api);
+  }
+
+  /**
+   * get payment info in transaction
+   */
+  payment_cart_payment(siteId, cartId) {
+    const api = url_for(API.PAYMENT_CART_PAYMENT + '/' + siteId + '/' + cartId);
+    return this.getCancelableAPI(api);
   }
 }
 

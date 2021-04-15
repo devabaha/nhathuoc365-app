@@ -42,9 +42,14 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   state = {
     noti: 0,
   };
+  autoUpdateDisposer = () => {};
 
   componentDidMount() {
     this.updateNoti();
+  }
+
+  componentWillUnmount() {
+    this.autoUpdateDisposer();
   }
 
   get icon() {
@@ -153,7 +158,7 @@ class RightButtonNavBar extends Component<RightButtonNavBarProps> {
   }
 
   updateNoti() {
-    autorun(() => {
+    this.autoUpdateDisposer = autorun(() => {
       switch (this.props.type) {
         case RIGHT_BUTTON_TYPE.SHOPPING_CART:
           if (

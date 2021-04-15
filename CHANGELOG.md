@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Select and show payment method detail in Payment Method and Confirm.
+- Transaction for order with specific payment method.
+- Disposer for noti auto update in RightButtonNavBar.
+### Fixed
+- Cancel autorun when unmounted for RightButtonNavBar.
+- Can't select payment method after ordering.
 
 ## [r11.4.7] - 2021-04-07
 ### Added

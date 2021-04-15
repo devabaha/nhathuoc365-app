@@ -316,6 +316,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         showSubmit: service.showSubmit,
         onUpdatePaymentMethod: (data) => callBack(false, data),
         store_id: service.storeId,
+        cart_id: service.cartId,
         title: service.title,
       });
       break;
