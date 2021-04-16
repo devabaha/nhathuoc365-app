@@ -9,6 +9,7 @@
   "item": {
     "title": "Orders #{{code}}",
     "next": "Continue",
+    "store": "Store",
     "edit": "Edit",
     "note": "Note",
     "cancel": "Cancel",

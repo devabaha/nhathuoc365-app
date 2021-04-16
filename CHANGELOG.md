@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Select and show payment method detail in Payment Method and Confirm.
 - Transaction for order with specific payment method.
 - Disposer for noti auto update in RightButtonNavBar.
+### Changed
+- Revert function of pressing cart and next button (with status ordering) in Order.
 ### Fixed
 - Cancel autorun when unmounted for RightButtonNavBar.
 - Can't select payment method after ordering.

@@ -9,6 +9,7 @@
   "item": {
     "title": " Đơn #{{code}}",
     "next": "Tiếp tục",
+    "store": "Cửa hàng",
     "edit": "Sửa đơn",
     "note": "Ghi chú",
     "cancel": "Hủy đơn",

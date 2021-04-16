@@ -85,7 +85,11 @@ class Confirm extends Component {
   }
 
   get isUnpaid() {
-    return this.cartData.payment_status === CART_PAYMENT_STATUS.UNPAID;
+    return (
+      this.cartData.payment_status === null ||
+      this.cartData.payment_status === undefined ||
+      this.cartData.payment_status === CART_PAYMENT_STATUS.UNPAID
+    );
   }
 
   get canTransaction() {
@@ -1469,31 +1473,34 @@ class Confirm extends Component {
                     </Text>
                   )}
                 </View>
-                <View
-                  style={[
-                    styles.paymentStatusContainer,
-                    {
-                      backgroundColor: hexToRgbA(
-                        appConfig.colors.paymentStatus[
-                          cart_data.payment_status
-                        ],
-                        0.1,
-                      ),
-                    },
-                  ]}>
-                  <Text
-                    style={[
-                      styles.paymentStatusTitle,
-                      {
-                        color:
-                          appConfig.colors.paymentStatus[
-                            cart_data.payment_status
-                          ],
-                      },
-                    ]}>
-                    {cart_data.payment_status_name}
-                  </Text>
-                </View>
+                {cart_data.payment_status !== null &&
+                  cart_data.payment_status !== undefined && (
+                    <View
+                      style={[
+                        styles.paymentStatusContainer,
+                        {
+                          backgroundColor: hexToRgbA(
+                            appConfig.colors.paymentStatus[
+                              cart_data.payment_status
+                            ],
+                            0.1,
+                          ),
+                        },
+                      ]}>
+                      <Text
+                        style={[
+                          styles.paymentStatusTitle,
+                          {
+                            color:
+                              appConfig.colors.paymentStatus[
+                                cart_data.payment_status
+                              ],
+                          },
+                        ]}>
+                        {cart_data.payment_status_name}
+                      </Text>
+                    </View>
+                  )}
               </View>
             </View>
           )}
@@ -2587,8 +2594,8 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   paymentStatusTitle: {
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 });
 
 export default withTranslation(['orders', 'cart', 'common'])(observer(Confirm));
