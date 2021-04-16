@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Cancel autorun when unmounted for RightButtonNavBar.
 - Can't select payment method after ordering.
+- [Android] Setup config for react-native-gesture-handler.
 
 ## [r11.4.7] - 2021-04-07
 ### Added
