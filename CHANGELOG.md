@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [r11.4.7]
 ### Fixed
 - [Android] Setup config for react-native-gesture-handler.
+- Add index for ListRoomStatus.
 
 ## [b11.4.6] - 2021-04-02
 ### Changed

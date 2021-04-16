@@ -27,7 +27,7 @@ class ListRoomStatus extends Component {
         borderColor: '#fff'
       };
       return (
-        <View style={[styles.statusContainer, extraStyle]}>
+        <View key={index} style={[styles.statusContainer, extraStyle]}>
           <Text style={[styles.title, { color: status.color }]}>
             {status.name}
           </Text>
