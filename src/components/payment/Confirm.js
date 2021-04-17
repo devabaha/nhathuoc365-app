@@ -1473,8 +1473,7 @@ class Confirm extends Component {
                     </Text>
                   )}
                 </View>
-                {cart_data.payment_status !== null &&
-                  cart_data.payment_status !== undefined && (
+                {!!cart_data.payment_status_name && (
                     <View
                       style={[
                         styles.paymentStatusContainer,

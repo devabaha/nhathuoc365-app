@@ -390,7 +390,7 @@ class OrdersItemComponent extends Component {
               </View>
             )}
 
-            {item.payment_status !== null && item.payment_status !== undefined && (
+            {!!item.payment_status_name && (
               <View
                 style={[
                   styles.paymentStatusContainer,
