@@ -13,6 +13,7 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {Actions} from 'react-native-router-flux';
 import CameraRoll from '@react-native-community/cameraroll';
 import Shimmer from 'react-native-shimmer';
+import QRCode from 'react-native-qrcode-svg';
 
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -28,6 +29,7 @@ import Button from '../../../components/Button';
 import Loading, {BlurFilter} from '../../../components/Loading';
 import Container from '../../../components/Layout/Container';
 import PopupConfirm from '../../../components/PopupConfirm';
+import QRCodeFrame from './QRCodeFrame/QRCodeFrame';
 
 const styles = StyleSheet.create({
   container: {
@@ -99,7 +101,7 @@ const styles = StyleSheet.create({
   infoContainer: {
     borderBottomWidth: Util.pixel,
     borderColor: '#ccc',
-    backgroundColor: '#fafafa'
+    backgroundColor: '#fafafa',
   },
   title: {},
   value: {
@@ -211,6 +213,7 @@ const Transaction = ({
   const intervalUpdater = useRef();
   const errorRequestTime = useRef(1);
   const refPopup = useRef(null);
+  const refQRCode = useRef();
 
   useEffect(() => {
     Actions.refresh({
@@ -257,7 +260,7 @@ const Transaction = ({
           if (response.data) {
             setTransactionData(response.data);
             if (response.data.url) {
-              handleOpenTransaction(response.data.url);
+              // handleOpenTransaction(response.data.url);
             }
           }
         } else {
@@ -349,31 +352,36 @@ const Transaction = ({
   };
 
   const onSaveQRCode = async () => {
-    const granted = await PhotoLibraryPermission.request();
-    if (granted) {
-      setImageSavingLoading(true);
-      CameraRoll.save(image, {type: 'photo'})
-        .then((res) => {
-          console.log(res);
-          if (res) {
-            flashShowMessage({
-              type: 'success',
-              message: 'Lưu ảnh thành công',
+    if (refQRCode.current) {
+      const granted = await PhotoLibraryPermission.request();
+      if (granted) {
+        setImageSavingLoading(true);
+        refQRCode.current.toDataURL((dataURL) => {
+          console.log(dataURL);
+          CameraRoll.save('data:image/png;base64,' + dataURL, {type: 'photo'})
+            .then((res) => {
+              console.log(res);
+              if (res) {
+                flashShowMessage({
+                  type: 'success',
+                  message: 'Lưu ảnh thành công',
+                });
+              }
+            })
+            .catch((err) => {
+              flashShowMessage({
+                type: 'danger',
+                message: t('api.error.message'),
+              });
+              console.log('err_save_qr_code', err);
+            })
+            .finally(() => {
+              setImageSavingLoading(false);
             });
-          }
-        })
-        .catch((err) => {
-          flashShowMessage({
-            type: 'danger',
-            message: t('api.error.message'),
-          });
-          console.log('err_save_qr_code', err);
-        })
-        .finally(() => {
-          setImageSavingLoading(false);
         });
-    } else {
-      PhotoLibraryPermission.openPermissionAskingModal();
+      } else {
+        PhotoLibraryPermission.openPermissionAskingModal();
+      }
     }
   };
 
@@ -436,6 +444,37 @@ const Transaction = ({
   const onRefresh = () => {
     setRefreshing(true);
     getTransactionData();
+  };
+
+  const renderQRCode = () => {
+    return (
+      !!transactionData?.data_qrcode && (
+        <View style={styles.qrImageContainer}>
+          <QRCodeFrame>
+            <QRCode
+              value={transactionData.data_qrcode}
+              size={appConfig.device.width * 0.5}
+              getRef={refQRCode}
+              quietZone={20}
+            />
+          </QRCodeFrame>
+          <Button
+            hitSlop={HIT_SLOP}
+            containerStyle={styles.saveQRBtnContainer}
+            btnContainerStyle={styles.saveQRBtnContentContainer}
+            onPress={onSaveQRCode}
+            iconLeft={
+              <AntDesignIcon name="download" style={styles.saveQRCodeIcon} />
+            }
+            renderTitleComponent={() => (
+              <Text style={[styles.saveQRBtnTitle, styles.saveQRBtnContent]}>
+                {SAVE_QR_CODE_TITLE}
+              </Text>
+            )}
+          />
+        </View>
+      )
+    );
   };
 
   const renderInfo = () => {
@@ -537,23 +576,7 @@ const Transaction = ({
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         {renderPaidStatus()}
-        <View style={styles.qrImageContainer}>
-          <Image source={{uri: image}} style={styles.qrImage} />
-          <Button
-            hitSlop={HIT_SLOP}
-            containerStyle={styles.saveQRBtnContainer}
-            btnContainerStyle={styles.saveQRBtnContentContainer}
-            onPress={onSaveQRCode}
-            iconLeft={
-              <AntDesignIcon name="download" style={styles.saveQRCodeIcon} />
-            }
-            renderTitleComponent={() => (
-              <Text style={[styles.saveQRBtnTitle, styles.saveQRBtnContent]}>
-                {SAVE_QR_CODE_TITLE}
-              </Text>
-            )}
-          />
-        </View>
+        {renderQRCode()}
         {renderInfo()}
         {renderNote()}
       </ScrollView>
