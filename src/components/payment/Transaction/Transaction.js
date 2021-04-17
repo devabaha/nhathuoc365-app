@@ -101,12 +101,19 @@ const styles = StyleSheet.create({
   infoContainer: {
     borderBottomWidth: Util.pixel,
     borderColor: '#ccc',
-    backgroundColor: '#fafafa',
+    // backgroundColor: '#fafafa',
+  },
+  infoTitle: {
+    padding: 10,
+    backgroundColor: '#f5f5f5',
+    marginBottom: 3,
+    color: '#333',
+    fontWeight: '500',
+    textTransform: 'uppercase',
+    letterSpacing: .3
   },
   title: {},
-  value: {
-    //   color: '#444'
-  },
+  value: {},
   highlight: {
     fontWeight: 'bold',
   },
@@ -163,39 +170,6 @@ const Transaction = ({
   onPop = () => {},
 }) => {
   const {t} = useTranslation();
-  const test_data = [
-    {
-      title: 'Số tiền',
-      value: '32.000đ',
-      value_highlight: true,
-      value_special: true,
-    },
-    {
-      title: 'Mã giao dịch',
-      value: 'cjzivubalDNJCnjciIUNC-VJDA',
-      title_highlight: true,
-    },
-    {
-      title: 'Phương thức',
-      value: 'Thẻ ATM nội địa',
-    },
-    {
-      title: 'Tên ngân hàng',
-      value: 'MBBank',
-    },
-    {
-      title: 'Số tài khoản',
-      value: '8859207534753234',
-    },
-    {
-      title: 'Tên tài khoản',
-      value: 'Nguyễn Hoàng Minh',
-    },
-  ];
-  const image =
-    'https://i.pinimg.com/originals/f8/0b/e9/f80be9fd0d57a07357d551e87e97e34b.jpg';
-  const note =
-    'Chú ý: Quý khách vui lòng chuyển khoản đúng số tiền trên. Chuyển sai số tiền ngân hàng sẽ báo kết nối lỗi.';
 
   const [isLoading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -260,7 +234,7 @@ const Transaction = ({
           if (response.data) {
             setTransactionData(response.data);
             if (response.data.url) {
-              // handleOpenTransaction(response.data.url);
+              handleOpenTransaction(response.data.url);
             }
           }
         } else {
@@ -570,13 +544,16 @@ const Transaction = ({
             // message={isLoading && SAVE_IMAGE_MESSAGE}
           />
         ))}
+      {renderPaidStatus()}
+
       <ScrollView
         contentContainerStyle={styles.scrollContentContainer}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-        {renderPaidStatus()}
         {renderQRCode()}
+
+        <Text style={styles.infoTitle}>Thông tin giao dịch</Text>
         {renderInfo()}
         {renderNote()}
       </ScrollView>
