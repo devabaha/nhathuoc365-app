@@ -92,6 +92,12 @@ class Confirm extends Component {
     );
   }
 
+  get isPaid() {
+    return (
+      this.cartData.payment_status === CART_PAYMENT_STATUS.PAID
+    )
+  }
+
   get canTransaction() {
     return (
       this.cartData.cart_payment_type === CART_PAYMENT_TYPES.PAY &&
@@ -1737,7 +1743,7 @@ class Confirm extends Component {
                 </TouchableHighlight>
               )}
 
-              {is_ready && (
+              {is_ready && !this.isPaid && (
                 <TouchableHighlight
                   style={[
                     styles.buttonAction,
