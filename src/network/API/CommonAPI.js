@@ -96,7 +96,7 @@ class CommonAPI {
 
   // Cart
   get CART_PAYMENT_STATUS() {
-    return BaseAPI.apiDomain + '/apiCart/payment_status';
+    return BaseAPI.apiDomain + 'apiCart/payment_status';
   }
   get CART_CONFIRMED() {
     return BaseAPI.apiDomain + 'apiCart/confirmed';

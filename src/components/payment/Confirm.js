@@ -361,6 +361,7 @@ class Confirm extends Component {
           !this.unmounted &&
             this.setState({
               continue_loading: false,
+              loading: false
             });
         }
       },
@@ -418,6 +419,9 @@ class Confirm extends Component {
   }
 
   handleSubmit(cart_data) {
+    this.setState({
+      loading: true,
+    });
     Keyboard.dismiss();
 
     if (cart_data.count_selected <= 0) {
@@ -440,9 +444,6 @@ class Confirm extends Component {
     }
 
     if (this.isSiteUseShipNotConfirming) {
-      this.setState({
-        loading: true,
-      });
       this.getShippingInfo(store.store_id, this.state.data.id);
     } else {
       this._onSave();

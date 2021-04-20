@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     color: '#333',
     fontWeight: '500',
     textTransform: 'uppercase',
-    letterSpacing: .3
+    letterSpacing: 0.3,
   },
   title: {},
   value: {},
@@ -181,8 +181,12 @@ const Transaction = ({
   const [backType, setBackType] = useState(BACK_TYPE.POP);
   const [isImageSavingLoading, setImageSavingLoading] = useState(false);
 
-  const checkPaymentStatusRequest = new APIRequest();
-  const getTransactionDataRequest = new APIRequest();
+  const [checkPaymentStatusRequest] = useState(
+    new APIRequest({testID: new Date().getTime()}),
+  );
+  const [getTransactionDataRequest] = useState(
+    new APIRequest({testID: new Date().getTime()}),
+  );
   const requests = [checkPaymentStatusRequest, getTransactionDataRequest];
   const intervalUpdater = useRef();
   const errorRequestTime = useRef(1);
@@ -196,7 +200,7 @@ const Transaction = ({
   }, [isPaid]);
 
   useEffect(() => {
-    getTransactionData();
+    getTransactionData.current(true);
     checkPaymentStatus();
 
     return () => {
@@ -205,7 +209,7 @@ const Transaction = ({
     };
   }, []);
 
-  const handleRemakeRequest = (time = 1) => {
+  const handleRemakeRequest = useRef((time = 1) => {
     errorRequestTime.current = time;
 
     checkPaymentStatusRequest.cancel();
@@ -218,9 +222,9 @@ const Transaction = ({
     } else {
       setError(true);
     }
-  };
+  });
 
-  const getTransactionData = async () => {
+  const getTransactionData = useRef(async (isOpenTransaction = false) => {
     getTransactionDataRequest.data = APIHandler.payment_cart_payment(
       siteId,
       cartId,
@@ -233,7 +237,7 @@ const Transaction = ({
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             setTransactionData(response.data);
-            if (response.data.url) {
+            if (response.data.url && isOpenTransaction) {
               handleOpenTransaction(response.data.url);
             }
           }
@@ -259,7 +263,7 @@ const Transaction = ({
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  });
 
   const checkPaymentStatus = async () => {
     checkPaymentStatusRequest.data = APIHandler.cart_payment_status(
@@ -268,7 +272,7 @@ const Transaction = ({
     );
     try {
       const response = await checkPaymentStatusRequest.promise();
-
+      console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -321,7 +325,7 @@ const Transaction = ({
         message: t('api.error.message'),
       });
     } finally {
-      handleRemakeRequest();
+      handleRemakeRequest.current();
     }
   };
 
@@ -417,7 +421,7 @@ const Transaction = ({
 
   const onRefresh = () => {
     setRefreshing(true);
-    getTransactionData();
+    getTransactionData.current();
   };
 
   const renderQRCode = () => {

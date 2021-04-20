@@ -1050,7 +1050,7 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.transaction}>
+                <Stack key={appConfig.routes.transaction} panHandlers={null}>
                   <Scene
                     key={`${appConfig.routes.transaction}_1`}
                     title={t('screen.transaction.mainTitle')}

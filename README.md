@@ -47,8 +47,8 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-test-android P
 code-push release-react tick-tickid-ios ios -d "Production" -m --description "test codepush"
 code-push release-react tick-tickid-android android -d "Production" -m --description "test codepush"
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "test codepush"
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "test codepush"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-ios -d "Production" -m --description "fix re-create request to check payment status in transaction"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-test-android -d "Production" -m --description "fix re-create request to check payment status in transaction"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
