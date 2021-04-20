@@ -201,7 +201,7 @@ const Transaction = ({
 
   useEffect(() => {
     getTransactionData.current(true);
-    checkPaymentStatus();
+    checkPaymentStatus.current();
 
     return () => {
       clearTimeout(intervalUpdater.current);
@@ -217,7 +217,7 @@ const Transaction = ({
 
     if (errorRequestTime.current <= MAX_ERROR_REQUEST_TIME) {
       intervalUpdater.current = setTimeout(() => {
-        checkPaymentStatus();
+        checkPaymentStatus.current();
       }, DELAY_REQUEST_TIME);
     } else {
       setError(true);
@@ -232,7 +232,7 @@ const Transaction = ({
 
     try {
       const response = await getTransactionDataRequest.promise();
-      console.log(response);
+      console.log(response, siteId, cartId);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -265,14 +265,14 @@ const Transaction = ({
     }
   });
 
-  const checkPaymentStatus = async () => {
+  const checkPaymentStatus = useRef(async () => {
     checkPaymentStatusRequest.data = APIHandler.cart_payment_status(
       siteId,
       cartId,
     );
     try {
       const response = await checkPaymentStatusRequest.promise();
-      console.log(response);
+      console.log(response, siteId, cartId);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -327,7 +327,7 @@ const Transaction = ({
     } finally {
       handleRemakeRequest.current();
     }
-  };
+  });
 
   const onSaveQRCode = async () => {
     if (refQRCode.current) {
