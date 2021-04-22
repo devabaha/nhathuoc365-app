@@ -1,50 +1,39 @@
 import React from 'react';
-import {SafeAreaView, StyleSheet, Text, Platform, View, TouchableOpacity} from 'react-native';
-import appConfig from 'app-config';
-import Container from '../../../../components/Layout/Container';
+import {
+  StyleSheet,
+  Text,
+  Platform,
+  View,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native';
 import {CloseButton} from 'app-packages/tickid-navbar';
-import {navBarConfig} from '../../../../navBarConfig';
+import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    paddingTop: 0,
-    top: 0,
-    ...Platform.select({
-      ios: {
-        height: 64,
-      },
-      android: {
-        height: 54,
-      },
-      windows: {
-        height: 54,
-      },
-    }),
-    right: 0,
-    left: 0,
     borderBottomWidth: Util.pixel,
     borderBottomColor: '#cccccc',
   },
 
   mainContentContainer: {
-    marginTop: 10,
     flexDirection: 'row',
+    alignItems: 'center',
     ...Platform.select({
       ios: {
-        top: 20,
+        height: 44,
       },
       android: {
-        top: 5,
+        height: 54,
       },
       windows: {
-        top: 5,
+        height: 54,
       },
     }),
   },
 
   title: {
-    top: 2,
     textAlign: 'center',
     color: '#333',
     fontSize: 17,
@@ -54,22 +43,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
 
-  closeBtnContainer: {top: -8},
+  closeBtnContainer: {},
 });
 
 function NavBar({title, onClose = () => {}}) {
   return (
     <View style={styles.container}>
-      <View flex row style={styles.mainContentContainer}>
-        {/* <View style={styles.titleWrapper}> */}
-        <Text style={styles.title}>{title}</Text>
-        {/* </View> */}
-        <TouchableOpacity onPress={onClose}>
-        <View pointerEvents="none" style={styles.closeBtnContainer}>
-          <CloseButton />
+      <SafeAreaView>
+        <View style={styles.mainContentContainer}>
+          <Text style={styles.title}>{title}</Text>
+          <TouchableOpacity onPress={onClose}>
+            <View pointerEvents="none" style={styles.closeBtnContainer}>
+              <CloseButton />
+            </View>
+          </TouchableOpacity>
         </View>
-        </TouchableOpacity>
-      </View>
+      </SafeAreaView>
     </View>
   );
 }
