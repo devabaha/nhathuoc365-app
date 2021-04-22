@@ -1,0 +1,1 @@
+export {QRCodeFrame} from './QRCodeFrame';

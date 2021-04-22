@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
 import appConfig from 'app-config';
-import {servicesHandler, SERVICES_TYPE} from 'src/helper/servicesHandler';
 import Loading from '../Loading';
 import Tag from '../Tag';
 
@@ -59,7 +58,7 @@ class OrdersItemComponent extends Component {
     }
   }
 
-  _goOrdersItemHandler(item) {
+  handleGoToStore(item) {
     const is_paymenting = item.status == CART_STATUS_ORDERING;
     if (is_paymenting) {
       action(() => {
@@ -71,9 +70,24 @@ class OrdersItemComponent extends Component {
           this._getCart(this._paymentHandler.bind(this, item));
         }
       })();
-    } else {
-      this._goOrdersItem(item);
     }
+  }
+
+  _goOrdersItemHandler(item) {
+    // const is_paymenting = item.status == CART_STATUS_ORDERING;
+    // if (is_paymenting) {
+    //   action(() => {
+    //     store.setStoreId(item.site_id);
+
+    //     if (store.cart_data != null) {
+    //       this._paymentHandler(item);
+    //     } else {
+    //       this._getCart(this._paymentHandler.bind(this, item));
+    //     }
+    //   })();
+    // } else {
+    this._goOrdersItem(item);
+    // }
   }
 
   _goOrdersItem(item) {
@@ -84,7 +98,7 @@ class OrdersItemComponent extends Component {
       Actions.push(appConfig.routes.paymentConfirm, {
         goConfirm: true,
         data: item,
-        from_page: 'orders_item'
+        from_page: 'orders_item',
       });
     } else {
       Actions.create_address({
@@ -170,8 +184,9 @@ class OrdersItemComponent extends Component {
                 style={[
                   styles.orders_status_box_title,
                   {
-                    color: appConfig.colors.orderStatus[item.status] ||
-                    appConfig.colors.primary,
+                    color:
+                      appConfig.colors.orderStatus[item.status] ||
+                      appConfig.colors.primary,
                   },
                 ]}>
                 {item.status_view}
@@ -244,9 +259,10 @@ class OrdersItemComponent extends Component {
                   alignItems: 'center',
                 }}>
                 <TouchableHighlight
+                  hitSlop={HIT_SLOP}
                   underlayColor={hexToRgbA(DEFAULT_COLOR, 0.9)}
                   onPress={() => {
-                    this._goOrdersItem(item);
+                    this.handleGoToStore(item);
                   }}
                   style={{
                     paddingVertical: 6,
@@ -260,7 +276,7 @@ class OrdersItemComponent extends Component {
                       color: '#ffffff',
                       fontSize: 14,
                     }}>
-                    {`${t('item.next')} `}
+                    {`${t('item.store')} `}
                     <Icon name="angle-right" size={14} color="#ffffff" />
                   </Text>
                 </TouchableHighlight>
@@ -374,6 +390,31 @@ class OrdersItemComponent extends Component {
               </View>
             )}
 
+            {!!item.payment_status_name && (
+              <View
+                style={[
+                  styles.paymentStatusContainer,
+                  {
+                    backgroundColor: hexToRgbA(
+                      appConfig.colors.paymentStatus[item.payment_status],
+                      0.1,
+                    ),
+                  },
+                ]}>
+                <Text
+                  style={[
+                    styles.orders_item_content_value,
+                    styles.paymentStatusTitle,
+                    {
+                      color:
+                        appConfig.colors.paymentStatus[item.payment_status],
+                    },
+                  ]}>
+                  {item.payment_status_name}
+                </Text>
+              </View>
+            )}
+
             <View style={[styles.orders_item_row, styles.row_payment]}>
               {!!item.count_selected && (
                 <Text style={styles.orders_item_content_label}>
@@ -476,7 +517,7 @@ const styles = StyleSheet.create({
   },
   orders_status_box_title: {
     fontSize: 12,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   orders_item_content_text: {
     marginTop: 8,
@@ -539,6 +580,16 @@ const styles = StyleSheet.create({
   },
   indexValue: {
     color: '#666',
+    fontSize: 12,
+  },
+
+  paymentStatusContainer: {
+    paddingVertical: 3,
+    paddingHorizontal: 10,
+    alignSelf: 'flex-start',
+    borderRadius: 4,
+  },
+  paymentStatusTitle: {
     fontSize: 12,
   },
 });

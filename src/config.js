@@ -4,6 +4,7 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
+import { CART_PAYMENT_STATUS } from './constants/cart/types';
 
 class Config {
   constructor() {
@@ -100,6 +101,11 @@ class Config {
         [CART_STATUS_COMPLETED]: '#06d6a0',
         [CART_STATUS_CLOSED]: '#aaa',
       },
+      paymentStatus: {
+        [CART_PAYMENT_STATUS.UNPAID]: '#EEAA21',
+        [CART_PAYMENT_STATUS.PAID]: '#06d6a0',
+        [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
+      },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
       primary: this.primaryColor,
@@ -188,6 +194,7 @@ class Config {
       paymentConfirm: 'paymentConfirm',
       paymentMethod: 'paymentMethod',
       internetBanking: 'internetBanking',
+      transaction: 'transaction',
       //
       upToPhone: 'upToPhone',
 
@@ -213,6 +220,7 @@ class Config {
       modalInput: 'modalInput',
       modalConfirm: 'modalConfirm',
       modalComboLocation: 'modalComboLocation',
+      modalWebview: 'modalWebview',
 
       //  Reset password
       resetPassword: 'resetPassword',

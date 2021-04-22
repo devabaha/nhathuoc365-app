@@ -148,6 +148,10 @@
     },
     "listProductScanned": {
       "mainTitle": "Sản phẩm đã quét"
+    },
+    "transaction": {
+      "mainTitle": "Giao dịch",
+      "paymentTitle": "Thanh toán"
     }
   },
 

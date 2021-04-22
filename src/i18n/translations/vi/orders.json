@@ -9,6 +9,7 @@
   "item": {
     "title": " Đơn #{{code}}",
     "next": "Tiếp tục",
+    "store": "Cửa hàng",
     "edit": "Sửa đơn",
     "note": "Ghi chú",
     "cancel": "Hủy đơn",
@@ -56,6 +57,7 @@
     },
     "order": {
       "title": "ĐẶT HÀNG",
+      "payTitle": "THANH TOÁN",
       "popup": {
         "title": "THÀNH CÔNG",
         "loggedIn": {
