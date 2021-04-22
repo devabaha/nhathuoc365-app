@@ -1050,16 +1050,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.transaction} panHandlers={null}>
-                  <Scene
-                    key={`${appConfig.routes.transaction}_1`}
-                    title={t('screen.transaction.mainTitle')}
-                    component={Transaction}
-                    {...navBarConfig}
-                    back
-                  />
-                </Stack>
-
                 <Stack key="create_address">
                   <Scene
                     key="create_address_1"
@@ -1767,6 +1757,16 @@ class RootRouter extends Component {
                 key={`${appConfig.routes.transferResult}_1`}
                 component={TransferResult}
                 hideNavBar
+              />
+            </Stack>
+
+            {/* ================ MODAL TRANSACTION================ */}
+            <Stack key={appConfig.routes.transaction} panHandlers={null}>
+              <Scene
+                key={`${appConfig.routes.transaction}_1`}
+                component={Transaction}
+                hideNavBar
+                back
               />
             </Stack>
           </Modal>

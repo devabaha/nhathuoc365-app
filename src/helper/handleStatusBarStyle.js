@@ -23,6 +23,7 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.phoneAuth,
     appConfig.routes.qrBarCode,
     appConfig.routes.modalWebview,
+    appConfig.routes.transaction,
 
     appConfig.routes.myVoucher,
     appConfig.routes.voucherDetail,

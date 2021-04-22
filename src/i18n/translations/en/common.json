@@ -141,7 +141,8 @@
       "mainTitle": "Scanned Products"
     },
     "transaction": {
-      "mainTitle": "Transaction"
+      "mainTitle": "Transaction",
+      "paymentTitle": "Payment"
     }
   },
 

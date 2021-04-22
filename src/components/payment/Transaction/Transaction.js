@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -30,6 +30,7 @@ import Loading, {BlurFilter} from '../../../components/Loading';
 import Container from '../../../components/Layout/Container';
 import PopupConfirm from '../../../components/PopupConfirm';
 import QRCodeFrame from './QRCodeFrame/QRCodeFrame';
+import NavBar from './NavBar';
 
 const styles = StyleSheet.create({
   container: {
@@ -187,49 +188,93 @@ const Transaction = ({
   const [getTransactionDataRequest] = useState(
     new APIRequest({testID: new Date().getTime()}),
   );
-  const requests = [checkPaymentStatusRequest, getTransactionDataRequest];
-  const intervalUpdater = useRef();
-  const errorRequestTime = useRef(1);
+
   const refPopup = useRef(null);
   const refQRCode = useRef();
 
   useEffect(() => {
-    Actions.refresh({
-      onBack: handleBack,
-    });
-  }, [isPaid]);
-
-  useEffect(() => {
-    getTransactionData.current(true);
-    checkPaymentStatus.current();
+    getTransactionData(true);
 
     return () => {
-      clearTimeout(intervalUpdater.current);
-      cancelRequests(requests);
+      getTransactionDataRequest.cancel();
+    };
+  }, [getTransactionData]);
+
+  useEffect(() => {
+    let intervalUpdater = null;
+
+    async function checkPaymentStatus() {
+      checkPaymentStatusRequest.data = APIHandler.cart_payment_status(
+        siteId,
+        cartId,
+      );
+      try {
+        const response = await checkPaymentStatusRequest.promise();
+        console.log(response, siteId, cartId);
+        if (response) {
+          if (response.status === STATUS_SUCCESS) {
+            if (response.data) {
+              switch (response.data.status) {
+                case CART_PAYMENT_STATUS.PAID:
+                  if (
+                    Actions.currentScene ===
+                    `${appConfig.routes.modalWebview}_1`
+                  ) {
+                    Actions.pop();
+                  }
+                  setPaid(true);
+                  break;
+                case CART_PAYMENT_STATUS.CANCEL:
+                  setError(true);
+                  break;
+                default:
+                  setLoading(false);
+                  break;
+              }
+            }
+            setError(false);
+          } else {
+            setError(true);
+
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || t('api.error.message'),
+            });
+          }
+        } else {
+          setError(true);
+
+          flashShowMessage({
+            type: 'danger',
+            message: t('api.error.message'),
+          });
+        }
+      } catch (err) {
+        console.log('check_payment_status', err);
+
+        setError(true);
+        flashShowMessage({
+          type: 'danger',
+          message: t('api.error.message'),
+        });
+      } finally {
+        intervalUpdater = setTimeout(checkPaymentStatus, 2000);
+      }
+    }
+
+    checkPaymentStatus();
+
+    return () => {
+      checkPaymentStatusRequest.cancel();
+      clearTimeout(intervalUpdater);
     };
   }, []);
 
-  const handleRemakeRequest = useRef((time = 1) => {
-    errorRequestTime.current = time;
-
-    checkPaymentStatusRequest.cancel();
-    clearTimeout(intervalUpdater.current);
-
-    if (errorRequestTime.current <= MAX_ERROR_REQUEST_TIME) {
-      intervalUpdater.current = setTimeout(() => {
-        checkPaymentStatus.current();
-      }, DELAY_REQUEST_TIME);
-    } else {
-      setError(true);
-    }
-  });
-
-  const getTransactionData = useRef(async (isOpenTransaction = false) => {
+  const getTransactionData = useCallback(async (isOpenTransaction = false) => {
     getTransactionDataRequest.data = APIHandler.payment_cart_payment(
       siteId,
       cartId,
     );
-
     try {
       const response = await getTransactionDataRequest.promise();
       console.log(response, siteId, cartId);
@@ -263,71 +308,7 @@ const Transaction = ({
       setLoading(false);
       setRefreshing(false);
     }
-  });
-
-  const checkPaymentStatus = useRef(async () => {
-    checkPaymentStatusRequest.data = APIHandler.cart_payment_status(
-      siteId,
-      cartId,
-    );
-    try {
-      const response = await checkPaymentStatusRequest.promise();
-      console.log(response, siteId, cartId);
-      if (response) {
-        if (response.status === STATUS_SUCCESS) {
-          if (response.data) {
-            // if (response.data.cart) {
-            //   store.setCartData(response.data.cart);
-            // }
-            switch (response.data.status) {
-              case CART_PAYMENT_STATUS.PAID:
-                if (
-                  Actions.currentScene === `${appConfig.routes.modalWebview}_1`
-                ) {
-                  Actions.pop();
-                }
-                setPaid(true);
-                break;
-              case CART_PAYMENT_STATUS.CANCEL:
-                setError(true);
-                break;
-              default:
-                setLoading(false);
-                break;
-            }
-          }
-          // handleRemakeRequest();
-          // return;
-          setError(false);
-        } else {
-          setError(true);
-
-          flashShowMessage({
-            type: 'danger',
-            message: response.message || t('api.error.message'),
-          });
-        }
-      } else {
-        setError(true);
-
-        flashShowMessage({
-          type: 'danger',
-          message: t('api.error.message'),
-        });
-      }
-      // handleRemakeRequest(errorRequestTime.current++);
-    } catch (err) {
-      console.log('check_payment_status', err);
-      // handleRemakeRequest(errorRequestTime.current++);
-      setError(true);
-      flashShowMessage({
-        type: 'danger',
-        message: t('api.error.message'),
-      });
-    } finally {
-      handleRemakeRequest.current();
-    }
-  });
+  }, []);
 
   const onSaveQRCode = async () => {
     if (refQRCode.current) {
@@ -421,7 +402,7 @@ const Transaction = ({
 
   const onRefresh = () => {
     setRefreshing(true);
-    getTransactionData.current();
+    getTransactionData();
   };
 
   const renderQRCode = () => {
@@ -538,56 +519,60 @@ const Transaction = ({
   };
 
   return (
-    <ScreenWrapper containerStyle={styles.container}>
-      {/* <BlurFilter visible={isLoading} /> */}
-      {isLoading ||
-        (isImageSavingLoading && (
-          <Loading
-            center
-            // highlight={isLoading}
-            // message={isLoading && SAVE_IMAGE_MESSAGE}
-          />
-        ))}
-      {renderPaidStatus()}
+    <>
+      <NavBar title={t('screen.transaction.paymentTitle')} onClose={handleBack} />
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContentContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }>
-        {renderQRCode()}
+      <ScreenWrapper containerStyle={styles.container}>
+        {/* <BlurFilter visible={isLoading} /> */}
+        {isLoading ||
+          (isImageSavingLoading && (
+            <Loading
+              center
+              // highlight={isLoading}
+              // message={isLoading && SAVE_IMAGE_MESSAGE}
+            />
+          ))}
+        {renderPaidStatus()}
 
-        <Text style={styles.infoTitle}>Thông tin giao dịch</Text>
-        {renderInfo()}
-        {renderNote()}
-      </ScrollView>
+        <ScrollView
+          contentContainerStyle={styles.scrollContentContainer}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
+          {renderQRCode()}
 
-      <Container row style={styles.btnContainer}>
-        <Button
-          containerStyle={styles.confirmBtn}
-          btnContainerStyle={styles.backHomeContainer}
-          titleStyle={styles.backHomeTitle}
-          onPress={handleBackHome}
-          title={BACK_HOME_TITLE}
-        />
-        {!isPaid && (
+          <Text style={styles.infoTitle}>Thông tin giao dịch</Text>
+          {renderInfo()}
+          {renderNote()}
+        </ScrollView>
+
+        <Container row style={styles.btnContainer}>
           <Button
             containerStyle={styles.confirmBtn}
-            onPress={() => handleOpenTransaction()}
-            title={OPEN_WEBVIEW_TITLE}
+            btnContainerStyle={styles.backHomeContainer}
+            titleStyle={styles.backHomeTitle}
+            onPress={handleBackHome}
+            title={BACK_HOME_TITLE}
           />
-        )}
-      </Container>
+          {!isPaid && (
+            <Button
+              containerStyle={styles.confirmBtn}
+              onPress={() => handleOpenTransaction()}
+              title={OPEN_WEBVIEW_TITLE}
+            />
+          )}
+        </Container>
 
-      <PopupConfirm
-        ref_popup={(ref) => (refPopup.current = ref)}
-        title={CANCEL_TRANSACTION_WARNING_TITLE}
-        type="warning"
-        noConfirm={closePopUp}
-        yesConfirm={() => confirmPopUp()}
-        isConfirm
-      />
-    </ScreenWrapper>
+        <PopupConfirm
+          ref_popup={(ref) => (refPopup.current = ref)}
+          title={CANCEL_TRANSACTION_WARNING_TITLE}
+          type="warning"
+          noConfirm={closePopUp}
+          yesConfirm={() => confirmPopUp()}
+          isConfirm
+        />
+      </ScreenWrapper>
+    </>
   );
 };
 
