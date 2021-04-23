@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+- UI Confirm and OrderItemComponent (payment tag, button action).
+
 ## [r11.5.1] - 2021-04-22
 ### Added
 - Select and show payment method detail in Payment Method and Confirm.
