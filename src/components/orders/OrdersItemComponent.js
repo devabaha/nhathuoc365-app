@@ -68,7 +68,7 @@ class OrdersItemComponent extends Component {
         if (store.cart_data != null) {
           this._paymentHandler(item);
         } else {
-          this._getCart(this._paymentHandler.bind(this, item));
+          this._getCart(this._paymentHandler(item));
         }
       })();
     }
@@ -296,7 +296,12 @@ class OrdersItemComponent extends Component {
               </View>
             </View>
 
-            {is_paymenting && <ActionButton title={t('item.store')} />}
+            {is_paymenting && (
+              <ActionButton
+                title={t('item.store')}
+                onGoToStore={(item) => this.handleGoToStore(item)}
+              />
+            )}
           </View>
 
           <View style={[styles.orders_item_payment]}>
@@ -529,15 +534,13 @@ const actionBtnStyles = StyleSheet.create({
   },
 });
 
-const ActionButton = React.memo(({title}) => {
+const ActionButton = React.memo(({title, onGoToStore}) => {
   return (
     <View style={actionBtnStyles.container}>
       <TouchableHighlight
         hitSlop={HIT_SLOP}
         underlayColor={hexToRgbA(appConfig.colors.primary, 0.9)}
-        onPress={() => {
-          this.handleGoToStore(item);
-        }}
+        onPress={onGoToStore}
         style={actionBtnStyles.btnContainer}>
         <Text style={actionBtnStyles.btnTitle}>
           {title} <Icon name="angle-right" style={actionBtnStyles.btnTitle} />
