@@ -299,7 +299,7 @@ class OrdersItemComponent extends Component {
             {is_paymenting && (
               <ActionButton
                 title={t('item.store')}
-                onGoToStore={(item) => this.handleGoToStore(item)}
+                onGoToStore={() => this.handleGoToStore(item)}
               />
             )}
           </View>
