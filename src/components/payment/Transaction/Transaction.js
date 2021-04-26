@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Image,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -14,6 +13,7 @@ import {Actions} from 'react-native-router-flux';
 import CameraRoll from '@react-native-community/cameraroll';
 import Shimmer from 'react-native-shimmer';
 import QRCode from 'react-native-qrcode-svg';
+import RNFetchBlob from 'rn-fetch-blob';
 
 import appConfig from 'app-config';
 import store from 'app-store';
@@ -29,8 +29,9 @@ import Button from '../../../components/Button';
 import Loading, {BlurFilter} from '../../../components/Loading';
 import Container from '../../../components/Layout/Container';
 import PopupConfirm from '../../../components/PopupConfirm';
-import QRCodeFrame from './QRCodeFrame/QRCodeFrame';
+import QRPayFrame from './QRPayFrame';
 import NavBar from './NavBar';
+import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
 
 const styles = StyleSheet.create({
   container: {
@@ -147,9 +148,6 @@ const styles = StyleSheet.create({
 
 const SAVE_QR_CODE_TITLE = 'Lưu ảnh mã QR';
 
-const DELAY_REQUEST_TIME = 2000;
-const MAX_ERROR_REQUEST_TIME = 3;
-
 const STATUS_SUCCESS_TITLE = 'Thanh toán thành công';
 const STATUS_INPROGRESS_TITLE = 'Đang chờ thanh toán...';
 const STATUS_ERROR_TITLE = 'Lỗi kiểm tra giao dịch';
@@ -191,6 +189,8 @@ const Transaction = ({
 
   const refPopup = useRef(null);
   const refQRCode = useRef();
+
+  const isActiveWebview = () => !transactionData?.data_qrcode && !isPaid;
 
   useEffect(() => {
     getTransactionData(true);
@@ -282,7 +282,11 @@ const Transaction = ({
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             setTransactionData(response.data);
-            if (response.data.url && isOpenTransaction) {
+            if (
+              !response.data.data_qrcode &&
+              response.data.url &&
+              isOpenTransaction
+            ) {
               handleOpenTransaction(response.data.url);
             }
           }
@@ -310,33 +314,41 @@ const Transaction = ({
     }
   }, []);
 
+  const handleSavePhoto = async (dataURL) => {
+    const imageName = new Date().getTime() + '.png';
+
+    const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
+    const iOSPath = 'data:image/png;base64,' + dataURL;
+
+    try {
+      const data = await (appConfig.device.isIOS
+        ? CameraRoll.save(iOSPath, {type: 'photo'})
+        : RNFetchBlob.fs.writeFile(androidPath, dataURL, 'base64'));
+      if (data) {
+        flashShowMessage({
+          type: 'success',
+          message: 'Lưu ảnh thành công',
+        });
+      }
+    } catch (error) {
+      flashShowMessage({
+        type: 'danger',
+        message: t('api.error.message'),
+      });
+      console.log('err_save_qr_code', error);
+    } finally {
+      setImageSavingLoading(false);
+    }
+  };
+
   const onSaveQRCode = async () => {
     if (refQRCode.current) {
       const granted = await PhotoLibraryPermission.request();
+      console.log(granted);
       if (granted) {
         setImageSavingLoading(true);
-        refQRCode.current.toDataURL((dataURL) => {
-          console.log(dataURL);
-          CameraRoll.save('data:image/png;base64,' + dataURL, {type: 'photo'})
-            .then((res) => {
-              console.log(res);
-              if (res) {
-                flashShowMessage({
-                  type: 'success',
-                  message: 'Lưu ảnh thành công',
-                });
-              }
-            })
-            .catch((err) => {
-              flashShowMessage({
-                type: 'danger',
-                message: t('api.error.message'),
-              });
-              console.log('err_save_qr_code', err);
-            })
-            .finally(() => {
-              setImageSavingLoading(false);
-            });
+        refQRCode.current.toDataURL(async (dataURL) => {
+          handleSavePhoto(dataURL);
         });
       } else {
         PhotoLibraryPermission.openPermissionAskingModal();
@@ -389,16 +401,22 @@ const Transaction = ({
     }
   };
 
-  const handleOpenTransaction = (url = transactionData?.url) => {
-    if (url) {
-      Actions.push(appConfig.routes.modalWebview, {
-        title: t('screen.transaction.mainTitle'),
-        url,
-      });
-    } else {
-      Alert.alert('Chưa có link thanh toán');
-    }
-  };
+  const handleOpenTransaction = useCallback(
+    (url = transactionData?.url) => {
+      console.log('aaa', transactionData);
+      if (transactionData?.type !== PAYMENT_METHOD_TYPES.QR_CODE) {
+        if (url) {
+          Actions.push(appConfig.routes.modalWebview, {
+            title: t('screen.transaction.mainTitle'),
+            url,
+          });
+        } else {
+          Alert.alert('Chưa có link thanh toán');
+        }
+      }
+    },
+    [transactionData],
+  );
 
   const onRefresh = () => {
     setRefreshing(true);
@@ -409,14 +427,14 @@ const Transaction = ({
     return (
       !!transactionData?.data_qrcode && (
         <View style={styles.qrImageContainer}>
-          <QRCodeFrame>
+          <QRPayFrame>
             <QRCode
               value={transactionData.data_qrcode}
               size={appConfig.device.width * 0.5}
               getRef={refQRCode}
               quietZone={20}
             />
-          </QRCodeFrame>
+          </QRPayFrame>
           <Button
             hitSlop={HIT_SLOP}
             containerStyle={styles.saveQRBtnContainer}
@@ -520,7 +538,10 @@ const Transaction = ({
 
   return (
     <>
-      <NavBar title={t('screen.transaction.paymentTitle')} onClose={handleBack} />
+      <NavBar
+        title={t('screen.transaction.paymentTitle')}
+        onClose={handleBack}
+      />
 
       <ScreenWrapper containerStyle={styles.container}>
         {/* <BlurFilter visible={isLoading} /> */}
@@ -554,7 +575,7 @@ const Transaction = ({
             onPress={handleBackHome}
             title={BACK_HOME_TITLE}
           />
-          {!isPaid && (
+          {!!isActiveWebview() && (
             <Button
               containerStyle={styles.confirmBtn}
               onPress={() => handleOpenTransaction()}

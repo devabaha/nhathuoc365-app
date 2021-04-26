@@ -7,6 +7,7 @@ import store from '../../store/Store';
 import appConfig from 'app-config';
 import Loading from '../Loading';
 import Tag from '../Tag';
+import {CART_TYPES} from 'src/constants/cart';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -126,29 +127,39 @@ class OrdersItemComponent extends Component {
     });
   }
 
-  render() {
-    var {item, from_page, t, index} = this.props;
-    var single = from_page != 'store_orders';
-    var is_paymenting = item.status == CART_STATUS_ORDERING;
-    // var is_ready = item.status == CART_STATUS_READY;
-    // var is_reorder = item.status == CART_STATUS_COMPLETED;
-    var is_ready = false;
-    var is_reorder = false;
+  renderCartIcon() {
+    let iconName = 'shopping-cart';
+    switch (this.props.item?.cart_type) {
+      case CART_TYPES.DROP_SHIP:
+        iconName = 'truck';
+        break;
+    }
+    return (
+      <Icon
+        style={styles.orders_item_icon}
+        name={iconName}
+        size={16}
+        color="#999999"
+      />
+    );
+  }
 
+  render() {
+    var {item, t, index} = this.props;
+    var is_paymenting = item.status == CART_STATUS_ORDERING;
     const cartType = item.cart_type_name;
+    const deliveryCode =
+      item.delivery_details &&
+      (item.delivery_details.ship_unit || item.delivery_details.unit) +
+        ' - ' +
+        (item.delivery_details.ship_unit_id ||
+          item.delivery_details.booking_id);
 
     return (
       <TouchableHighlight
         underlayColor="transparent"
         onPress={this._goOrdersItemHandler.bind(this, item)}>
-        <View
-          style={[
-            styles.orders_item_box,
-            {
-              // paddingTop: single ? 0 : 12,
-            },
-          ]}>
-          {/* {single && ( */}
+        <View style={[styles.orders_item_box]}>
           <TouchableHighlight
             underlayColor="transparent"
             onPress={this._goStoreOrders.bind(this, item)}>
@@ -166,18 +177,22 @@ class OrdersItemComponent extends Component {
               )}
             </View>
           </TouchableHighlight>
-          {/* )} */}
 
           <View style={styles.orders_item_icon_box}>
-            <Icon
-              style={styles.orders_item_icon}
-              name="shopping-cart"
-              size={16}
-              color="#999999"
-            />
-            <Text style={styles.orders_item_icon_title}>
-              {t('item.title', {code: item.cart_code})}
-            </Text>
+            {this.renderCartIcon()}
+            <View style={styles.orders_item_title_container}>
+              <Tag
+                label={cartType}
+                fill={appConfig.colors.cartType[item.cart_type]}
+                animate={false}
+                strokeWidth={0}
+                labelStyle={styles.cartTypeLabel}
+                labelContainerStyle={styles.cartTypeLabelContainer}
+              />
+              <Text style={styles.orders_item_icon_title}>
+                #{item.cart_code}
+              </Text>
+            </View>
 
             <View style={styles.orders_status_box}>
               <Text
@@ -197,6 +212,8 @@ class OrdersItemComponent extends Component {
           <View
             style={{
               flexDirection: 'row',
+              justifyContent: 'space-between',
+              paddingLeft: 37,
             }}>
             <View style={styles.orders_item_content}>
               {item.orders_time != null && item.orders_time != '' && (
@@ -213,18 +230,45 @@ class OrdersItemComponent extends Component {
                 </View>
               )}
 
-              {!!cartType && (
-                <View style={styles.orders_item_time_box}>
+              {!!item.payment_status_name && (
+                <Tag
+                  label={item.payment_status_name}
+                  fill={hexToRgbA(
+                    appConfig.colors.paymentStatus[item.payment_status],
+                    0.1,
+                  )}
+                  animate={false}
+                  strokeWidth={0}
+                  labelStyle={[
+                    styles.cartTypeLabel,
+                    {
+                      color:
+                        appConfig.colors.paymentStatus[item.payment_status],
+                    },
+                  ]}
+                  labelContainerStyle={styles.cartTypeLabelContainer}
+                />
+              )}
+
+              <View style={[styles.orders_item_time_box, styles.tagContainer]}>
+                {!!deliveryCode && (
                   <Tag
-                    label={cartType}
-                    fill={appConfig.colors.cartType[item.cart_type]}
+                    label={deliveryCode}
+                    fill={
+                      appConfig.colors.delivery[
+                        item.delivery_details?.status
+                      ] || appConfig.colors.cartType[item.cart_type]
+                    }
                     animate={false}
                     strokeWidth={0}
                     labelStyle={styles.cartTypeLabel}
-                    labelContainerStyle={styles.cartTypeLabelContainer}
+                    labelContainerStyle={[
+                      styles.cartTypeLabelContainer,
+                      styles.tagsLabelContainer,
+                    ]}
                   />
-                </View>
-              )}
+                )}
+              </View>
 
               <View style={styles.orders_item_row}>
                 {item.products && Object.keys(item.products).length > 0 && (
@@ -252,127 +296,7 @@ class OrdersItemComponent extends Component {
               </View>
             </View>
 
-            {is_paymenting && (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                }}>
-                <TouchableHighlight
-                  hitSlop={HIT_SLOP}
-                  underlayColor={hexToRgbA(DEFAULT_COLOR, 0.9)}
-                  onPress={() => {
-                    this.handleGoToStore(item);
-                  }}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 8,
-                    borderRadius: 3,
-                    backgroundColor: DEFAULT_COLOR,
-                    marginTop: 20,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#ffffff',
-                      fontSize: 14,
-                    }}>
-                    {`${t('item.store')} `}
-                    <Icon name="angle-right" size={14} color="#ffffff" />
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            )}
-
-            {is_ready && (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: 'center',
-                }}>
-                <TouchableHighlight
-                  underlayColor={hexToRgbA(appConfig.colors.marigold, 0.9)}
-                  onPress={() => {
-                    if (this.props.confirmCancelCart) {
-                      this.props.confirmCancelCart(item);
-                    }
-                  }}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 8,
-                    borderRadius: 3,
-                    backgroundColor: appConfig.colors.marigold,
-                    marginTop: 16,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#ffffff',
-                      fontSize: 14,
-                    }}>
-                    <Icon name="times" size={14} color="#ffffff" />
-                    {` ${t('item.cancel')}`}
-                  </Text>
-                </TouchableHighlight>
-
-                <TouchableHighlight
-                  underlayColor={hexToRgbA('#666666', 0.9)}
-                  onPress={() => {
-                    if (this.props.confirmEditCart) {
-                      this.props.confirmEditCart(item);
-                    }
-                  }}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 8,
-                    borderRadius: 3,
-                    backgroundColor: '#666666',
-                    marginTop: 16,
-                  }}>
-                  <Text
-                    style={{
-                      color: '#ffffff',
-                      fontSize: 14,
-                    }}>
-                    <Icon name="pencil-square-o" size={14} color="#ffffff" />
-                    {` ${t('item.edit')}`}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            )}
-
-            {/* {is_reorder && (
-              <View
-                style={{
-                  flex: 1,
-                  alignItems: 'center'
-                }}
-              >
-                <TouchableHighlight
-                  underlayColor={hexToRgbA('#f0ad4e', 0.9)}
-                  onPress={() => {
-                    if (this.props.confirmCoppyCart) {
-                      this.props.confirmCoppyCart(item);
-                    }
-                  }}
-                  style={{
-                    paddingVertical: 6,
-                    paddingHorizontal: 8,
-                    borderRadius: 3,
-                    backgroundColor: '#f0ad4e',
-                    marginTop: 12
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: '#ffffff',
-                      fontSize: 14
-                    }}
-                  >
-                    <Icon name="files-o" size={14} color="#ffffff" />
-                    {' Sao chép'}
-                  </Text>
-                </TouchableHighlight>
-              </View>
-            )} */}
+            {is_paymenting && <ActionButton title={t('item.store')} />}
           </View>
 
           <View style={[styles.orders_item_payment]}>
@@ -381,36 +305,13 @@ class OrdersItemComponent extends Component {
                 <Text
                   style={[styles.orders_item_content_label, styles.note_label]}>
                   {`${t('item.note')}: `}
-                </Text>
-                <View style={styles.orders_item_note_content}>
-                  <Text style={styles.orders_item_content_value}>
+                  <Text
+                    style={[
+                      styles.orders_item_content_value,
+                      styles.note_value,
+                    ]}>
                     {item.user_note}
                   </Text>
-                </View>
-              </View>
-            )}
-
-            {!!item.payment_status_name && (
-              <View
-                style={[
-                  styles.paymentStatusContainer,
-                  {
-                    backgroundColor: hexToRgbA(
-                      appConfig.colors.paymentStatus[item.payment_status],
-                      0.1,
-                    ),
-                  },
-                ]}>
-                <Text
-                  style={[
-                    styles.orders_item_content_value,
-                    styles.paymentStatusTitle,
-                    {
-                      color:
-                        appConfig.colors.paymentStatus[item.payment_status],
-                    },
-                  ]}>
-                  {item.payment_status_name}
                 </Text>
               </View>
             )}
@@ -475,9 +376,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 
+  orders_item_title_container: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
   orders_item_box: {
     width: '100%',
-    // height: 180,
     paddingBottom: 8,
     backgroundColor: '#ffffff',
     marginBottom: 8,
@@ -490,15 +395,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   orders_item_icon_title: {
-    marginLeft: 8,
-    fontSize: 14,
+    marginLeft: 5,
     color: '#404040',
     fontWeight: '500',
   },
 
   orders_item_content: {
-    width: '70%',
-    paddingHorizontal: 15,
+    flex: 1,
+    // paddingHorizontal: 15,
   },
   orders_item_row: {
     flexDirection: 'row',
@@ -522,7 +426,7 @@ const styles = StyleSheet.create({
   orders_item_content_text: {
     marginTop: 8,
     overflow: 'hidden',
-    marginLeft: 22,
+    // marginLeft: 22,
   },
   orders_item_content_value: {
     fontSize: 14,
@@ -534,7 +438,7 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   orders_item_price_value: {
-    color: DEFAULT_COLOR,
+    color: appConfig.colors.primary,
     fontSize: 14,
     fontWeight: '500',
   },
@@ -548,26 +452,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginTop: 4,
-    marginLeft: 22,
+    marginBottom: 5,
   },
   orders_item_time_title: {
     fontSize: 12,
     color: '#666666',
     marginLeft: 4,
   },
-  note_label: {
-    marginLeft: 22,
+  note_label: {},
+  note_value: {
+    fontWeight: '300',
   },
   orders_item_note_content: {
     flex: 1,
   },
 
   cartTypeLabelContainer: {
-    marginTop: 3,
+    paddingVertical: 3,
   },
   cartTypeLabel: {
-    fontSize: 10,
+    fontSize: 9,
     textTransform: 'uppercase',
+    textAlign: 'left',
   },
 
   indexContainer: {
@@ -586,12 +492,57 @@ const styles = StyleSheet.create({
   paymentStatusContainer: {
     paddingVertical: 3,
     paddingHorizontal: 10,
-    alignSelf: 'flex-start',
     borderRadius: 4,
   },
   paymentStatusTitle: {
     fontSize: 12,
   },
+
+  tagContainer: {
+    flexWrap: 'wrap',
+    marginTop: 0,
+    marginBottom: 0,
+  },
+  tagsLabelContainer: {
+    marginTop: 5,
+    marginRight: 5,
+  },
 });
 
 export default withTranslation('orders')(observer(OrdersItemComponent));
+
+const actionBtnStyles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  btnContainer: {
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+    borderRadius: 3,
+    backgroundColor: appConfig.colors.primary,
+    marginTop: 8,
+  },
+  btnTitle: {
+    color: '#ffffff',
+    fontSize: 12,
+  },
+});
+
+const ActionButton = React.memo(({title}) => {
+  return (
+    <View style={actionBtnStyles.container}>
+      <TouchableHighlight
+        hitSlop={HIT_SLOP}
+        underlayColor={hexToRgbA(appConfig.colors.primary, 0.9)}
+        onPress={() => {
+          this.handleGoToStore(item);
+        }}
+        style={actionBtnStyles.btnContainer}>
+        <Text style={actionBtnStyles.btnTitle}>
+          {title} <Icon name="angle-right" style={actionBtnStyles.btnTitle} />
+        </Text>
+      </TouchableHighlight>
+    </View>
+  );
+});
