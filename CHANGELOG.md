@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.5.3] - 2021-04-26
+### Added
+- QRPayFrame.
+### Changed
+- Only Mobile Banking payment method can open PaymentMethodDetailModal screen.
+### Fixed
+- [Android] Crash while saving image (QRPay).
+
 ## [r11.5.2] - 2021-04-23
 ### Changed
 - UI Confirm and OrderItemComponent (payment tag, button action).

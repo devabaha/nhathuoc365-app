@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -15,
     color: appConfig.colors.primary,
-    fontWeight: '900',
+    fontWeight: 'bold',
     fontSize: 20,
     textTransform: 'uppercase',
     letterSpacing: .3
@@ -82,11 +82,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const QRCodeFrame = ({children, style}) => {
+const QRPayFrame = ({children, style}) => {
   return (
     <View style={[styles.container, style]}>
       {children}
-      <Text style={styles.title}>QR Code</Text>
+      <Text style={styles.title}>QR Pay</Text>
       <View style={styles.frameContainer}>
         <View style={[styles.frame, styles.frameTopLeftHorizontal]} />
         <View style={[styles.frame, styles.frameTopLeftVertical]} />
@@ -104,4 +104,4 @@ const QRCodeFrame = ({children, style}) => {
   );
 };
 
-export default QRCodeFrame;
+export default QRPayFrame;

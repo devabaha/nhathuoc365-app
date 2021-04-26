@@ -171,8 +171,8 @@ class PaymentMethod extends Component {
 
     switch (item.type) {
       case PAYMENT_METHOD_TYPES.MOBILE_BANKING:
-      case PAYMENT_METHOD_TYPES.DOMESTIC_ATM:
-      case PAYMENT_METHOD_TYPES.DEBIT_CREDIT:
+      // case PAYMENT_METHOD_TYPES.DOMESTIC_ATM:
+      // case PAYMENT_METHOD_TYPES.DEBIT_CREDIT:
         // if (!isSelected) {
         Actions.push(appConfig.routes.internetBanking, {
           title: item.title,
