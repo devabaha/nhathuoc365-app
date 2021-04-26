@@ -259,7 +259,7 @@ class PaymentRow extends Component {
           {this.state.scrollable && this.renderDirectionIcons()}
           <GradientView start />
           <Animated.ScrollView
-            style={styles.bankTransferScrolView}
+            style={styles.bankTransferScrollView}
             onLayout={this.onBankTransferScrollLayout}
             contentContainerStyle={{flexGrow: 1}}
             scrollEventThrottle={16}
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     fontWeight: appConfig.device.isIOS ? '500' : '400',
     color: '#242424',
   },
-  bankTransferScrolView: {
+  bankTransferScrollView: {
     flex: 1,
     paddingVertical: 15,
   },
@@ -390,6 +390,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 7,
     paddingBottom: 15,
+    width: appConfig.device.width * .8,
   },
   gradient: {
     height: '100%',

@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - QRPayFrame.
 ### Changed
 - Only Mobile Banking payment method can open PaymentMethodDetailModal screen.
+- Fix width of bank account in PaymentMethodRow.
 ### Fixed
 - [Android] Crash while saving image (QRPay).
 

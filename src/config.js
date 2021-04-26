@@ -29,8 +29,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'dieuthuykeyYhloT',
-      secretKey: '3SOrdieuthuykeyYhloTV6hCQ2',
+      appKey: 'lacianakeyyRuTR',
+      secretKey: 'm39OlacianakeyyRuTRCWwoGP',
     };
   }
 
