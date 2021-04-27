@@ -36,6 +36,7 @@ class Home extends Component {
       },
       primaryActions: null,
       product_groups: [],
+      news_categories: [],
     };
     this.eventTracker = new EventTracker();
   }
@@ -67,6 +68,7 @@ class Home extends Component {
 
     try {
       const response = await APIHandler.user_site_home();
+      console.log(response.data.news_categories, response.data.newses);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
@@ -105,6 +107,7 @@ class Home extends Component {
           primaryActions: response.data.primary_actions,
           showPrimaryActions: response.data.showPrimaryActions,
           product_groups: response.data.product_groups,
+          news_categories: response.data.news_categories,
         }));
 
         this.executeDeepLink();
@@ -189,7 +192,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-    
+
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
@@ -279,7 +282,9 @@ class Home extends Component {
         promotions={this.state.promotions}
         listService={this.state.listService}
         listServiceType={this.state.listServiceConfig.type}
-        listServiceItemsPerRow={Number(this.state.listServiceConfig.items_per_row)}
+        listServiceItemsPerRow={Number(
+          this.state.listServiceConfig.items_per_row,
+        )}
         primaryActions={this.state.primaryActions}
         showPrimaryActions={this.state.showPrimaryActions}
         apiFetching={this.state.apiFetching}
@@ -301,6 +306,7 @@ class Home extends Component {
         onPressNoti={this.handlePressButtonChat}
         refreshing={this.state.refreshing}
         product_groups={this.state.product_groups}
+        news_categories={this.state.news_categories}
       />
     );
   }

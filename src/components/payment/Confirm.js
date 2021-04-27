@@ -335,7 +335,11 @@ class Confirm extends Component {
               // reload orders list screen
               store.setOrdersKeyChange(store.orders_key_change + 1);
 
-              if (this.canTransaction) {
+              if (
+                response.data.cart_payment_type === CART_PAYMENT_TYPES.PAY &&
+                (!response.data.payment_status ||
+                  response.data.payment_status === CART_PAYMENT_STATUS.UNPAID)
+              ) {
                 // store.resetCartData();
                 this.goToTransaction(response.data.site_id, response.data.id);
               }
@@ -2684,7 +2688,7 @@ const styles = StyleSheet.create({
   },
   btnActionTitle: {
     fontWeight: '500',
-  }
+  },
 });
 
 export default withTranslation(['orders', 'cart', 'common'])(observer(Confirm));

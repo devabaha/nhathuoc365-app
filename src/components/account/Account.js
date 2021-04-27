@@ -27,9 +27,9 @@ import {setAppLanguage} from '../../i18n/i18n';
 import EventTracker from '../../helper/EventTracker';
 import SkeletonLoading from '../SkeletonLoading';
 import BaseAPI from '../../network/API/BaseAPI';
-import { APIRequest } from '../../network/Entity';
+import {APIRequest} from '../../network/Entity';
 import Loading from '../Loading';
-import { CONFIG_KEY, isConfigActive } from '../../helper/configKeyHandler';
+import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -77,7 +77,8 @@ class Account extends Component {
       store_name,
       username,
     } = user_info;
-    const isShowPremium = premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
+    const isShowPremium =
+      premium !== undefined && !isConfigActive(CONFIG_KEY.HIDE_PREMIUM_TAB_KEY);
 
     return [
       {
@@ -240,38 +241,42 @@ class Account extends Component {
         label: t('options.agencyInformationRegister.label'),
         desc: t('options.agencyInformationRegister.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.push(appConfig.routes.agencyInformationRegister),
+        onPress: () => Actions.push(appConfig.routes.agencyInformationRegister),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#527c23'
-          }
+            backgroundColor: '#527c23',
+          },
         ],
-        isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY)
+        isHidden: !isConfigActive(CONFIG_KEY.DISPLAY_NPP_REGISTER_KEY),
       },
       {
         key: 'warehouse',
         icon: 'warehouse',
-        iconType: "MaterialCommunityIcons",
+        iconType: 'MaterialCommunityIcons',
         label: t('options.warehouse.label'),
         desc: store_name,
         disabled: this.state.isWarehouseLoading,
-        rightIcon: this.state.isWarehouseLoading 
-        ? <Loading wrapperStyle={{position: undefined, marginRight: -10}} size="small"/> 
-        : <IconAngleRight />,
+        rightIcon: this.state.isWarehouseLoading ? (
+          <Loading
+            wrapperStyle={{position: undefined, marginRight: -10}}
+            size="small"
+          />
+        ) : (
+          <IconAngleRight />
+        ),
         onPress: () =>
-        Actions.push(appConfig.routes.modalList, {
-          heading: this.props.t('opRegister:modal.warehouse.title'),
-          data: this.state.listWarehouse,
-          selectedItem: {id: store_id},
-          onPressItem: this.onSelectWarehouse,
-          onCloseModal: Actions.pop,
-          modalStyle: {
-            height: null, 
-            maxHeight: '80%'
-          }
-        }),
+          Actions.push(appConfig.routes.modalList, {
+            heading: this.props.t('opRegister:modal.warehouse.title'),
+            data: this.state.listWarehouse,
+            selectedItem: {id: store_id},
+            onPressItem: this.onSelectWarehouse,
+            onCloseModal: Actions.pop,
+            modalStyle: {
+              height: null,
+              maxHeight: '80%',
+            },
+          }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -279,7 +284,7 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
-        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)
+        isHidden: !username || !isConfigActive(CONFIG_KEY.SELECT_STORE_KEY),
       },
 
       {
@@ -291,15 +296,15 @@ class Account extends Component {
         label: t('options.commissionIncomeStatement.label'),
         desc: t('options.commissionIncomeStatement.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.push(appConfig.routes.commissionIncomeStatement),
+        onPress: () => Actions.push(appConfig.routes.commissionIncomeStatement),
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#fd6d61'
-          }
+            backgroundColor: '#fd6d61',
+          },
         ],
-        isHidden: !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY)
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
 
       {
@@ -556,17 +561,19 @@ class Account extends Component {
     cancelRequests(this.requests);
   }
 
-  async getListWarehouse(){
-    if(!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+  async getListWarehouse() {
+    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
       const responseData = await this.getWarehouseRequest.promise();
-      const listWarehouse = responseData?.stores?.map(store => ({...store, 
-        title: store.name,
-        description: store.address,
-        image: store.image_url
-      })) || [];
+      const listWarehouse =
+        responseData?.stores?.map((store) => ({
+          ...store,
+          title: store.name,
+          description: store.address,
+          image: store.image_url,
+        })) || [];
       this.setState({
         listWarehouse,
       });
@@ -602,31 +609,31 @@ class Account extends Component {
     }
   };
 
-  async updateWarehouse(warehouse){
+  async updateWarehouse(warehouse) {
     const data = {store_id: warehouse.id};
-    try{
-    this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
-    const responseData = await this.updateWarehouseRequest.promise();
-    flashShowMessage({
-      type:"success",
-      message: responseData.message
-    })
-} catch(error){
-  console.log('%cupdate_warehouse', 'color:red', error);
-  flashShowMessage({
-    type:"danger",
-    message: error.message || this.props.t('common:api.error.message')
-  })
-} finally{
-  this.setState({isWarehouseLoading: false});
-}
+    try {
+      this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
+      const responseData = await this.updateWarehouseRequest.promise();
+      flashShowMessage({
+        type: 'success',
+        message: responseData.message,
+      });
+    } catch (error) {
+      console.log('%cupdate_warehouse', 'color:red', error);
+      flashShowMessage({
+        type: 'danger',
+        message: error.message || this.props.t('common:api.error.message'),
+      });
+    } finally {
+      this.setState({isWarehouseLoading: false});
+    }
   }
 
   onSelectWarehouse = (warehouse, closeModal) => {
-  this.setState({isWarehouseLoading: true});
-  closeModal();
-  this.updateWarehouse(warehouse);
-  }
+    this.setState({isWarehouseLoading: true});
+    closeModal();
+    this.updateWarehouse(warehouse);
+  };
 
   handleShowProfileDetail = () => {
     Actions.push(appConfig.routes.profileDetail, {
@@ -651,6 +658,7 @@ class Account extends Component {
     const user_info = store.user_info || {wallets: []};
     return (
       <View
+        key="wallets"
         style={{
           // marginTop: 7,
           borderTopWidth: 0,
@@ -696,7 +704,7 @@ class Account extends Component {
   renderExtWallets() {
     const user_info = store.user_info || {ext_wallets: []};
     return (
-      <View>
+      <View key="extra_wallets">
         <View style={styles.add_store_actions_box}>
           {user_info.ext_wallets.map((wallet, index) => (
             <TouchableHighlight
@@ -1436,7 +1444,9 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withTranslation(['account', 'common', 'opRegister'])(observer(Account));
+export default withTranslation(['account', 'common', 'opRegister'])(
+  observer(Account),
+);
 
 const IconAngleRight = () => (
   <Icon name="angle-right" size={26} color="#999999" />

@@ -8,7 +8,7 @@ import {
   RefreshControl,
   ScrollView,
 } from 'react-native';
-import {reaction} from 'mobx';
+import {autorun, reaction} from 'mobx';
 import appConfig from 'app-config';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
@@ -34,6 +34,7 @@ class Orders extends Component {
 
     this._getData = this._getData.bind(this);
     this.unmounted = false;
+    this.autoUpdateDisposer = () => {};
 
     // refresh
     reaction(() => store.orders_key_change, this._getData);
@@ -41,7 +42,8 @@ class Orders extends Component {
   }
 
   componentDidMount() {
-    this._getData();
+    // this._getData();
+    this.forceUpdateOrders();
 
     store.is_stay_orders = true;
     store.parentTab = `${appConfig.routes.newsTab}_1`;
@@ -51,6 +53,7 @@ class Orders extends Component {
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    this.autoUpdateDisposer();
   }
 
   UNSAFE_componentWillReceiveProps() {
@@ -104,7 +107,6 @@ class Orders extends Component {
       StatusBar.setNetworkActivityIndicatorVisible(true);
     try {
       const response = await APIHandler.user_cart_list();
-
       if (response && response.status == STATUS_SUCCESS) {
         if (store.deep_link_data) {
           const item = response.data.find(
@@ -303,15 +305,16 @@ class Orders extends Component {
   }
 
   forceUpdateOrders() {
-    if (store.isUpdateOrders && !this.state.refreshing) {
-      setTimeout(() => this._getData(0, true));
-    }
+    this.autoUpdateDisposer = autorun(() => {
+      if (store.isUpdateOrders && !this.state.refreshing) {
+        setTimeout(() => this._getData(0, true));
+      }
+    });
   }
 
   render() {
     const {loading, data} = this.state;
     const {t} = this.props;
-    this.forceUpdateOrders();
 
     if (loading) {
       return <Indicator />;
