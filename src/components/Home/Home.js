@@ -219,7 +219,6 @@ class Home extends Component {
                 onPress={this.props.onPromotionPressed}
               />
             )}
-
             {this.hasProduct_groups ? (
               this.props.product_groups.map((productGroup, index) => {
                 let {id, products, title, display_type} = productGroup;
@@ -239,7 +238,6 @@ class Home extends Component {
             ) : this.props.apiFetching ? (
               <ListProductSkeleton />
             ) : null}
-
             {this.hasSites && (
               <HomeCardList
                 onShowAll={this.props.onShowAllSites}
@@ -262,7 +260,6 @@ class Home extends Component {
                 )}
               </HomeCardList>
             )}
-
             {this.hasCampaigns && (
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
@@ -284,13 +281,34 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {/* {this.hasNews ? (
+            {this.hasNewsGroups ? (
+              this.props.news_categories.map((newsGroup, index) => {
+                let {id, news, title} = newsGroup;
+                return (
+                  <HomeCardList
+                    key={id}
+                    onShowAll={() => this.props.onShowAllNews(title, id)}
+                    data={news}
+                    title={title}>
+                    {({item, index}) => {
+                      return (
+                        <HomeCardItem
+                          title={item.title}
+                          imageUrl={item.image_url}
+                          onPress={() => this.props.onPressNewItem(item)}
+                          last={this.props.newses.length - 1 === index}
+                        />
+                      );
+                    }}
+                  </HomeCardList>
+                );
+              })
+            ) : this.hasNews ? (
               <HomeCardList
                 onShowAll={this.props.onShowAllNews}
                 data={this.props.newses}
-                title={t('sections.news.title')}
-              >
-                {({ item, index }) => (
+                title={t('sections.news.title')}>
+                {({item, index}) => (
                   <HomeCardItem
                     title={item.title}
                     imageUrl={item.image_url}
@@ -301,22 +319,6 @@ class Home extends Component {
               </HomeCardList>
             ) : this.props.apiFetching ? (
               <HomeCardListSkeleton />
-            ) : null} */}
-            {this.hasNewsGroups ? (
-              this.props.news_categories.map((newsGroup, index) => {
-                let {id, news, title} = newsGroup;
-                return (
-                  <ListProducts
-                    key={id}
-                    data={news}
-                    title={title}
-                    onPressProduct={this.props.onPressNewItem}
-                    onShowAll={() =>
-                      this.props.onShowAllGroupProduct(newsGroup)
-                    }
-                  />
-                );
-              })
             ) : this.props.apiFetching ? (
               <HomeCardListSkeleton />
             ) : null}

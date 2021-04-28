@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.5.4] - 2021-04-27
+### Changed
+- News_categories instead of news (if available) in home.
+- Width of bank account in PaymentMethodRow.
+### Fixed
+- Re-call api to check payment status when function unmounted in transaction.
+
 ## [r11.5.3] - 2021-04-26
 ### Added
 - QRPayFrame.

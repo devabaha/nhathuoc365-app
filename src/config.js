@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.5.3';
+    return 'r11.5.4';
   }
 
   get appName() {
@@ -29,8 +29,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'socloekeyHojPL',
-      secretKey: '6QlOsocloekeyHojPLyxmWZA',
+      appKey: 'abahaglobalkeywoxBg',
+      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
     };
   }
 

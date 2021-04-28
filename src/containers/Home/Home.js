@@ -68,7 +68,6 @@ class Home extends Component {
 
     try {
       const response = await APIHandler.user_site_home();
-      console.log(response.data.news_categories, response.data.newses);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data.vote_cart && response.data.vote_cart.site_id) {
           Actions.rating({
@@ -217,8 +216,11 @@ class Home extends Component {
     });
   };
 
-  handleShowAllNews = () => {
-    Actions.push(appConfig.routes.newsTab);
+  handleShowAllNews = (title, id) => {
+    Actions.push(appConfig.routes.newsTab, {
+      title,
+      id,
+    });
   };
 
   handlePressSiteItem = (store, callBack) => {
@@ -299,7 +301,7 @@ class Home extends Component {
         onShowAllGroupProduct={this.handleShowAllGroupProduct}
         onShowAllSites={this.handleShowAllSites}
         onShowAllCampaigns={this.handleShowAllCampaigns}
-        onShowAllNews={this.handleShowAllNews}
+        onShowAllNews={(title, id) => this.handleShowAllNews(title, id)}
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}

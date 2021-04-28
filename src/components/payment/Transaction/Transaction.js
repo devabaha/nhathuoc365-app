@@ -199,11 +199,10 @@ const Transaction = ({
       getTransactionDataRequest.cancel();
     };
   }, [getTransactionData]);
-  console.log('render')
 
   useEffect(() => {
-    console.log('effect')
     let intervalUpdater = () => {};
+    let isUnMounted = false;
 
     async function checkPaymentStatus() {
       checkPaymentStatusRequest.data = APIHandler.cart_payment_status(
@@ -213,6 +212,8 @@ const Transaction = ({
       try {
         const response = await checkPaymentStatusRequest.promise();
         // console.log(response, siteId, cartId);
+        if (isUnMounted) return;
+
         if (response) {
           if (response.status === STATUS_SUCCESS) {
             if (response.data) {
@@ -248,26 +249,25 @@ const Transaction = ({
             message: t('api.error.message'),
           });
         }
-        console.log('response');
         intervalUpdater = setTimeout(checkPaymentStatus, 2000);
       } catch (err) {
         console.log('check_payment_status', err);
+        if (isUnMounted) return;
 
         setError(true);
         flashShowMessage({
           type: 'danger',
           message: t('api.error.message'),
         });
-      } finally {
       }
     }
 
     checkPaymentStatus();
 
     return () => {
+      isUnMounted = true;
       clearTimeout(intervalUpdater);
       checkPaymentStatusRequest.cancel();
-      console.log('end')
     };
   }, []);
 
