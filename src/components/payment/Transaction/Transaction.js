@@ -201,7 +201,8 @@ const Transaction = ({
   }, [getTransactionData]);
 
   useEffect(() => {
-    let intervalUpdater = null;
+    let intervalUpdater = () => {};
+    let isUnMounted = false;
 
     async function checkPaymentStatus() {
       checkPaymentStatusRequest.data = APIHandler.cart_payment_status(
@@ -210,7 +211,9 @@ const Transaction = ({
       );
       try {
         const response = await checkPaymentStatusRequest.promise();
-        console.log(response, siteId, cartId);
+        // console.log(response, siteId, cartId);
+        if (isUnMounted) return;
+
         if (response) {
           if (response.status === STATUS_SUCCESS) {
             if (response.data) {
@@ -226,9 +229,6 @@ const Transaction = ({
                   break;
                 case CART_PAYMENT_STATUS.CANCEL:
                   setError(true);
-                  break;
-                default:
-                  setLoading(false);
                   break;
               }
             }
@@ -249,24 +249,25 @@ const Transaction = ({
             message: t('api.error.message'),
           });
         }
+        intervalUpdater = setTimeout(checkPaymentStatus, 2000);
       } catch (err) {
         console.log('check_payment_status', err);
+        if (isUnMounted) return;
 
         setError(true);
         flashShowMessage({
           type: 'danger',
           message: t('api.error.message'),
         });
-      } finally {
-        intervalUpdater = setTimeout(checkPaymentStatus, 2000);
       }
     }
 
     checkPaymentStatus();
 
     return () => {
-      checkPaymentStatusRequest.cancel();
+      isUnMounted = true;
       clearTimeout(intervalUpdater);
+      checkPaymentStatusRequest.cancel();
     };
   }, []);
 
@@ -403,7 +404,6 @@ const Transaction = ({
 
   const handleOpenTransaction = useCallback(
     (url = transactionData?.url) => {
-      console.log('aaa', transactionData);
       if (transactionData?.type !== PAYMENT_METHOD_TYPES.QR_CODE) {
         if (url) {
           Actions.push(appConfig.routes.modalWebview, {

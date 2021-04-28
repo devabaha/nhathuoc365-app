@@ -617,8 +617,8 @@ class CommonAPIHandler extends BaseHandler {
   /**
    * Load news list
    */
-  async user_news_list(type = '') {
-    var api = url_for(API.USER_NEWS_LIST + type);
+  async user_news_list(type = '', id = '') {
+    var api = url_for(API.USER_NEWS_LIST + type + '/' + id);
     return await this.getAPI(api);
   }
 

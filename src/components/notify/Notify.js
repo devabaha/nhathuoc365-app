@@ -1,12 +1,12 @@
 /* @flow */
 
-import React, { Component } from 'react';
-import { View, StyleSheet, RefreshControl, FlatList } from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, RefreshControl, FlatList} from 'react-native';
 
 // library
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import store from '../../store/Store';
-import { reaction } from 'mobx';
+import {reaction} from 'mobx';
 
 // components
 import NewItemComponent from './NewItemComponent';
@@ -21,10 +21,13 @@ class Notify extends Component {
       refreshing: false,
       loading: true,
       news_type: props.news_type || '',
-      navigators: this._setOptionList()
+      navigators: this._setOptionList(),
     };
 
-    reaction(() => store.refresh_news, () => this._getData());
+    reaction(
+      () => store.refresh_news,
+      () => this._getData(),
+    );
     this.eventTracker = new EventTracker();
   }
 
@@ -66,6 +69,11 @@ class Notify extends Component {
   }
 
   componentDidMount() {
+    setTimeout(() => {
+      Actions.refresh({
+        title: this.props.title || this.props.t('common:screen.news.mainTitle'),
+      });
+    });
     this._getData();
 
     store.getNoitify();
@@ -77,23 +85,23 @@ class Notify extends Component {
   }
 
   async _getData(delay) {
-    const { t } = this.props;
+    const {t} = this.props;
     try {
-      var response = await APIHandler.user_news_list(this.state.news_type);
+      var response = await APIHandler.user_news_list(this.state.news_type, this.props.id);
       if (response && response.status == STATUS_SUCCESS) {
         if (store.deep_link_data) {
           const news = response.data.find(
-            newsItem => newsItem.id === store.deep_link_data.id
+            (newsItem) => newsItem.id === store.deep_link_data.id,
           );
           if (news) {
             Actions.notify_item({
               title: news.title,
-              data: news
+              data: news,
             });
           } else {
             flashShowMessage({
               type: 'danger',
-              message: t('getNews.error.message')
+              message: t('getNews.error.message'),
             });
           }
         }
@@ -101,7 +109,7 @@ class Notify extends Component {
           this.setState({
             data: response.data,
             refreshing: false,
-            loading: false
+            loading: false,
           });
         }, delay || 0);
       }
@@ -113,13 +121,13 @@ class Notify extends Component {
   }
 
   _onRefresh() {
-    this.setState({ refreshing: true });
+    this.setState({refreshing: true});
 
     this._getData(1000);
   }
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     if (this.state.loading) {
       return <Indicator />;
     }
@@ -131,14 +139,14 @@ class Notify extends Component {
         } */}
         {this.state.data != null ? (
           <FlatList
-            style={{ marginTop: 2 }}
+            style={{marginTop: 2}}
             data={this.state.data}
-            onEndReached={num => {}}
+            onEndReached={(num) => {}}
             onEndReachedThreshold={0}
-            renderItem={({ item, index }) => {
+            renderItem={({item, index}) => {
               return <NewItemComponent item={item} />;
             }}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
@@ -157,36 +165,36 @@ class Notify extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginBottom: 0
+    marginBottom: 0,
   },
   separator: {
     width: '100%',
     height: 2,
-    backgroundColor: '#cccccc'
+    backgroundColor: '#cccccc',
   },
   headerView: {
     backgroundColor: 'rgb(255,255,255)',
     flexDirection: 'row',
     padding: 10,
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   headerContentView: {
-    width: Util.size.width - 70
+    width: Util.size.width - 70,
   },
   titleHeaderTexxt: {
     fontSize: 16,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   descHeaderTexxt: {
-    fontSize: 15
+    fontSize: 15,
   },
   boxIconStyle: {
     backgroundColor: DEFAULT_COLOR,
     marginRight: 10,
     marginLeft: 6,
-    borderRadius: 15
-  }
+    borderRadius: 15,
+  },
 });
 
-export default withTranslation('news')(observer(Notify));
+export default withTranslation(['news', 'common'])(observer(Notify));

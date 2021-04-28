@@ -209,11 +209,11 @@ class PaymentRow extends Component {
       <View style={styles.directionIcons}>
         <AnimatedIconAntDesign
           name="swapleft"
-          style={[styles.bankSwapLeftIcon, animatedLeftIconStyle]}
+          style={[styles.bankDirectionIcon, animatedLeftIconStyle]}
         />
         <AnimatedIconAntDesign
           name="swapright"
-          style={[styles.bankSwapRightIcon, animatedRightIconStyle]}
+          style={[styles.bankDirectionIcon, animatedRightIconStyle]}
         />
       </View>
     );
@@ -386,11 +386,11 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   bankTransferContainer: {
-    marginLeft: 30,
+    marginLeft: 15,
     paddingHorizontal: 15,
     paddingTop: 7,
     paddingBottom: 15,
-    width: appConfig.device.width * .8,
+    width: appConfig.device.width * .75,
   },
   gradient: {
     height: '100%',
@@ -434,13 +434,9 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 7,
   },
-  bankSwapRightIcon: {
+  bankDirectionIcon: {
     fontSize: 35,
-    color: '#eee',
-  },
-  bankSwapLeftIcon: {
-    fontSize: 35,
-    color: '#eee',
+    color: '#ccc',
   },
 });
 
