@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Width of bank account in PaymentMethodRow.
 ### Fixed
 - Re-call api to check payment status when function unmounted in transaction.
+- [Android] need WRITE_EXTERNAL_STORAGE permission to save QRPay image in transaction.
 
 ## [r11.5.3] - 2021-04-26
 ### Added

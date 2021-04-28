@@ -320,6 +320,7 @@ const Transaction = ({
       const data = await (appConfig.device.isIOS
         ? CameraRoll.save(iOSPath, {type: 'photo'})
         : RNFetchBlob.fs.writeFile(androidPath, dataURL, 'base64'));
+        
       if (data) {
         flashShowMessage({
           type: 'success',
@@ -339,7 +340,9 @@ const Transaction = ({
 
   const onSaveQRCode = async () => {
     if (refQRCode.current) {
-      const granted = await PhotoLibraryPermission.request();
+      const granted = await (appConfig.device.isIOS
+        ? PhotoLibraryPermission.request()
+        : PhotoLibraryPermission.requestWriteExternalAndroid());
       console.log(granted);
       if (granted) {
         setImageSavingLoading(true);
