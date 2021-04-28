@@ -241,15 +241,7 @@ const Transaction = ({
               message: response.message || t('api.error.message'),
             });
           }
-        } else {
-          setError(true);
-
-          flashShowMessage({
-            type: 'danger',
-            message: t('api.error.message'),
-          });
         }
-        intervalUpdater = setTimeout(checkPaymentStatus, 2000);
       } catch (err) {
         console.log('check_payment_status', err);
         if (isUnMounted) return;
@@ -259,6 +251,9 @@ const Transaction = ({
           type: 'danger',
           message: t('api.error.message'),
         });
+      } finally {
+        if (isUnMounted) return;
+        intervalUpdater = setTimeout(checkPaymentStatus, 2000);
       }
     }
 
