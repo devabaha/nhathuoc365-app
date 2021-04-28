@@ -481,7 +481,7 @@ class Home extends Component {
               })
             ) : this.hasNews ? (
               <HomeCardList
-                onShowAll={this.props.onShowAllNews}
+                onShowAll={() => this.props.onShowAllNews()}
                 data={this.props.newses}
                 title={t('sections.news.title')}>
                 {({item, index}) => (
