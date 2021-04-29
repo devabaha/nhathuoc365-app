@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [r11.5.4] - 2021-04-27
+### Added
+- Enter voucher code in My Voucher screen.
 ### Changed
 - News_categories instead of news (if available) in home.
 - Width of bank account in PaymentMethodRow.

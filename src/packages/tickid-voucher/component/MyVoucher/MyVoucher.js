@@ -1,8 +1,10 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import IonicsIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Button from 'react-native-button';
 import PropTypes from 'prop-types';
 import config from '../../config';
-import { View, StyleSheet, FlatList, RefreshControl } from 'react-native';
+import {View, Text, StyleSheet, FlatList, RefreshControl} from 'react-native';
 import LoadingComponent from '@tickid/tickid-rn-loading';
 import MyVoucherItem from './MyVoucherItem';
 import NoResult from '../NoResult';
@@ -18,7 +20,7 @@ class MyVoucher extends Component {
     refreshing: PropTypes.bool,
     apiFetching: PropTypes.bool,
     isUseOnlineMode: PropTypes.bool,
-    campaigns: PropTypes.array
+    campaigns: PropTypes.array,
   };
 
   static defaultProps = {
@@ -29,7 +31,7 @@ class MyVoucher extends Component {
     refreshing: false,
     apiFetching: false,
     isUseOnlineMode: false,
-    campaigns: []
+    campaigns: [],
   };
 
   get totalCampaigns() {
@@ -44,7 +46,7 @@ class MyVoucher extends Component {
     return (
       <FlatList
         data={this.props.campaigns}
-        keyExtractor={item => `${item.data.id}`}
+        keyExtractor={(item) => `${item.data.id}`}
         renderItem={this.renderMyVoucher}
         refreshControl={
           <RefreshControl
@@ -56,7 +58,7 @@ class MyVoucher extends Component {
     );
   }
 
-  renderMyVoucher = ({ item: voucher, index }) => {
+  renderMyVoucher = ({item: voucher, index}) => {
     return (
       <MyVoucherItem
         title={voucher.data.title}
@@ -71,11 +73,11 @@ class MyVoucher extends Component {
   };
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     return (
       <View style={styles.container}>
         {this.props.apiFetching && (
-          <View style={{ flex: 1 }}>
+          <View style={{flex: 1}}>
             <LoadingComponent loading />
           </View>
         )}
@@ -84,7 +86,7 @@ class MyVoucher extends Component {
         {!this.props.apiFetching && !this.hasCampaigns && (
           <NoResult
             title={t('my.noVoucher.title')}
-            text={t('my.noVoucher.description', { appName: APP_NAME_SHOW })}
+            text={t('my.noVoucher.description', {appName: APP_NAME_SHOW})}
           />
         )}
 
@@ -92,11 +94,25 @@ class MyVoucher extends Component {
           <Button
             containerStyle={styles.getVoucherBtn}
             style={styles.getVoucherTitle}
+            icon
+            onPress={() => {
+              this.props.onPressEnterCode();
+            }}>
+            <View style={styles.btnContentContainer}>
+              <MaterialIcons name="text-fields" style={styles.icon} />
+              <Text style={styles.getVoucherTitle}>{t('scan.enterCode')}</Text>
+            </View>
+          </Button>
+          <Button
+            containerStyle={styles.getVoucherBtn}
+            style={styles.getVoucherTitle}
             onPress={() => {
               this.props.onPressEnterVoucher();
-            }}
-          >
-            {t('my.enterVoucher')}
+            }}>
+            <View style={styles.btnContentContainer}>
+              <IonicsIcon name="scan" style={styles.icon} />
+              <Text style={styles.getVoucherTitle}>{t('scan.message')}</Text>
+            </View>
           </Button>
         </View>
       </View>
@@ -108,24 +124,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: config.colors.sceneBackground,
-    marginBottom: config.device.bottomSpace
+    marginBottom: config.device.bottomSpace,
   },
   getVoucherWrapper: {
     backgroundColor: config.colors.white,
     height: 62,
     paddingHorizontal: 16,
-    justifyContent: 'center'
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   getVoucherBtn: {
+    flex: 1,
     backgroundColor: config.colors.primary,
     borderRadius: 8,
-    paddingVertical: 14
+    paddingVertical: 14,
+    marginHorizontal: 7,
+    paddingHorizontal: 12,
   },
   getVoucherTitle: {
     color: config.colors.white,
     textTransform: 'uppercase',
     fontWeight: '600',
-    fontSize: 16
+    fontSize: 16,
+  },
+  btnContentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  icon: {
+    fontSize: 20,
+    color: config.colors.white,
+    marginRight: 10
   }
 });
 

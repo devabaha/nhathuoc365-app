@@ -35,7 +35,8 @@
     "modal": {
       "title": "Enter code manually"
     },
-    "enterCode": "Enter code"
+    "enterCode": "Enter code",
+    "message": "Scan"
   },
   "notification": {
     "title": "Notification",
