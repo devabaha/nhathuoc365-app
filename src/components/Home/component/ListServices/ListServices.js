@@ -17,7 +17,8 @@ import {
   TITLE_MARGIN_INCREMENT_PERCENTAGE,
 } from './constants';
 import Service from './Service';
-import { SERVICES_TYPE } from 'src/helper/servicesHandler';
+import {SERVICES_TYPE} from 'src/helper/servicesHandler';
+import Themes from 'src/Themes';
 
 const styles = StyleSheet.create({
   container: {
@@ -83,6 +84,8 @@ class ListServices extends Component {
     itemsPerRow: MIN_ITEMS_PER_ROW,
     onItemPress: () => {},
   };
+
+  homeStyles = Themes.getNameSpace('home');
 
   state = {
     horizontalContainerWidth: undefined,
@@ -286,6 +289,7 @@ class ListServices extends Component {
       width: serviceDimension,
       height: serviceDimension,
       backgroundColor: item.bgrColor,
+      ...this.homeStyles('styles.home.list_service_item'),
     };
 
     const titleStyle = {marginTop: titleMarginTop};
@@ -318,8 +322,11 @@ class ListServices extends Component {
         },
       ],
     };
+    const containerStyle = this.homeStyles(
+      'styles.home.list_service_container',
+    );
     return (
-      <Animated.View style={[styles.container, visibleStyle]}>
+      <Animated.View style={[styles.container, containerStyle, visibleStyle]}>
         <Animated.ScrollView
           scrollEventThrottle={1}
           scrollEnabled={this.scrollEnabled}

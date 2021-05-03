@@ -11,11 +11,14 @@ import {
   PACKAGE_OPTIONS_TYPE,
 } from '../../../../helper/packageOptionsHandler';
 import QRScanButton from './QRScanButton';
+import Themes from 'src/Themes';
 
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
   }
+
+  homeThemes = Themes.getNameSpace('home');
 
   get isActiveQRScan() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.QR_SCAN);
@@ -36,9 +39,26 @@ class PrimaryActions extends Component {
     const actionsWrapper = !props.primaryActions && {
       height: null,
     };
+    const overflowWrapper = this.homeThemes(
+      'styles.home.primary_action_overflow_wrapper',
+    );
+    const shadowWrapper = this.homeThemes('styles.home.shadow_wrapper');
+    const colorWalletName = this.homeThemes(
+      'styles.home.primary_action_color_text',
+    );
+    const colorSurplus = this.homeThemes(
+      'styles.home.primary_action_color_surplus',
+    );
+
     return (
       <View style={styles.container}>
-        <View style={[styles.actionsWrapper, actionsWrapper]}>
+        <View
+          style={[
+            styles.actionsWrapper,
+            overflowWrapper,
+            actionsWrapper,
+            shadowWrapper,
+          ]}>
           <View style={styles.mainContentWrapper}>
             {this.isActiveQRScan ? (
               <View style={styles.pointRechargeBtnContainer}>
@@ -68,10 +88,14 @@ class PrimaryActions extends Component {
               containerStyle={styles.surplusContainer}
               onPress={() => props.onSurplusNext()}>
               <View style={styles.walletInfoWrapper}>
-                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+                <Text style={[styles.walletNameLabel, colorWalletName]}>
+                  {props.walletName}
+                </Text>
 
                 <View style={styles.walletLabelRight}>
-                  <Text style={styles.surplus}>{props.surplus}</Text>
+                  <Text style={[styles.surplus, colorSurplus]}>
+                    {props.surplus}
+                  </Text>
                 </View>
                 <View style={styles.iconNextWrapper}>
                   <Image style={styles.iconNext} source={imageIconNext} />
@@ -132,6 +156,12 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowRadius: 5,
   },
   actionsWrapper: {
     width: appConfig.device.width - 32,
@@ -142,18 +172,6 @@ const styles = StyleSheet.create({
     borderColor: '#ebebeb',
     overflow: 'hidden',
     // height: 140,
-    ...Platform.select({
-      ios: {
-        shadowOffset: {width: 0, height: 3},
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 2,
-        borderWidth: Util.pixel,
-        borderColor: '#E1E1E1',
-      },
-    }),
   },
   mainContentWrapper: {
     flexDirection: 'row',
@@ -187,13 +205,12 @@ const styles = StyleSheet.create({
   surplusContainer: {
     width: '100%',
     flex: 1,
-    paddingVertical: 18,
   },
   walletAction: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 15,
+    paddingVertical: 20,
   },
   walletLabelRight: {
     paddingLeft: 5,
@@ -202,7 +219,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scanIcon: {
-    fontSize: 36,
+    fontSize: 28,
     color: appConfig.colors.primary,
     // paddingRight: 10
   },

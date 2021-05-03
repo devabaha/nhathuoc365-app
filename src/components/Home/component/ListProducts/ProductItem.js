@@ -2,10 +2,12 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import {View, Text, StyleSheet} from 'react-native';
-
+import appConfig from 'app-config';
 import ImageBackground from '../../../ImageBg';
 import Loading from '../../../Loading';
 import {DiscountBadge} from '../../../Badges';
+import Themes from 'src/Themes';
+import Ribbon from 'src/components/Ribbon/Ribbon';
 
 class ProductItem extends PureComponent {
   static propTypes = {
@@ -32,6 +34,7 @@ class ProductItem extends PureComponent {
     loading: false,
   };
   unmounted = false;
+  homeThemes = Themes.getNameSpace('home');
 
   handlePress = () => {
     if (!!this.props.selfRequest) {
@@ -51,11 +54,29 @@ class ProductItem extends PureComponent {
   };
 
   render() {
+    const shadowWrapperStyle = this.homeThemes(
+      'styles.home.list_product_item_container_shadow',
+    );
+    const infoWrapperStyle = this.homeThemes(
+      'styles.home.list_product_item_info_wrapper',
+    );
+    const priceBoxStyle = this.homeThemes(
+      'styles.home.list_product_item_price_box',
+    );
+    const salePriceTextStyle = this.homeThemes(
+      'styles.home.list_product_item_salePrice',
+    );
+
     return (
       <Button
         onPress={this.handlePress}
         containerStyle={[styles.wrapper, this.props.wrapperStyle]}>
-        <View style={[styles.container, this.props.containerStyle]}>
+        <View
+          style={[
+            styles.container,
+            shadowWrapperStyle,
+            this.props.containerStyle,
+          ]}>
           <ImageBackground
             style={[styles.image, this.props.imageStyle]}
             source={{uri: this.props.image}}>
@@ -63,13 +84,12 @@ class ProductItem extends PureComponent {
               <Loading color="#fff" containerStyle={styles.loading} />
             )}
             {this.props.discount_percent > 0 && (
-              <DiscountBadge
-                containerStyle={styles.discountBadgeContainer}
-                label={saleFormat(this.props.discount_percent)}
-              />
+              <View style={styles.discountBadgeContainer}>
+                <Ribbon text={saleFormat(this.props.discount_percent)} />
+              </View>
             )}
           </ImageBackground>
-          <View style={styles.infoWrapper}>
+          <View style={[styles.infoWrapper, infoWrapperStyle]}>
             <Text style={styles.name} numberOfLines={2}>
               {this.props.name}
             </Text>
@@ -78,8 +98,10 @@ class ProductItem extends PureComponent {
               {this.props.discount_percent > 0 && (
                 <Text style={styles.discount}>{this.props.discount_view}</Text>
               )}
-              <View style={styles.priceBox}>
-                <Text style={styles.price}>{this.props.price_view}</Text>
+              <View style={[styles.priceBox, priceBoxStyle]}>
+                <Text style={[styles.price, salePriceTextStyle]}>
+                  {this.props.price_view}
+                </Text>
               </View>
             </View>
           </View>
@@ -91,8 +113,9 @@ class ProductItem extends PureComponent {
 
 const styles = StyleSheet.create({
   wrapper: {
-    width: 150,
-    paddingHorizontal: 15,
+    width: appConfig.device.width / 2 - 20,
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
   container: {
     flex: 1,
@@ -104,7 +127,7 @@ const styles = StyleSheet.create({
   },
   infoWrapper: {
     flex: 1,
-    marginTop: 8,
+    marginTop: 10,
     alignItems: 'flex-start',
   },
   name: {
@@ -138,8 +161,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,.12)',
   },
   discountBadgeContainer: {
-    top: 0,
-    height: 18,
+    top: 10,
+    left: 0,
     position: 'absolute',
     backgroundColor: '#fff',
     width: undefined,

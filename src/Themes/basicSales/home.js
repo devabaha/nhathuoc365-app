@@ -8,6 +8,9 @@ import SVGMessage from '../../images/home/message.svg';
 import {ASSETS_TYPE, BUNDLE_ICON_SETS} from '../constants';
 
 export const home = StyleSheet.create({
+  home_content_wrapper: {
+    backgroundColor: 'transparent',
+  },
   // Header
   header_container: {
     paddingBottom: 10,
@@ -35,6 +38,72 @@ export const home = StyleSheet.create({
   },
   header_right_nav_bar_last_icon: {
     paddingRight: 0,
+  },
+  primary_action_overflow_wrapper: {
+    overflow: 'visible',
+  },
+  primary_action_color_text: {
+    color: '#2B2B2B',
+    fontSize: 14,
+  },
+  primary_action_color_surplus: {
+    fontSize: 20,
+    color: '#2B2B2B',
+  },
+  shadow_wrapper: {
+    ...Platform.select({
+      ios: {
+        shadowColor: '#333',
+        shadowOffset: {
+          width: 1,
+          height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 8,
+        borderWidth: Util.pixel,
+        borderColor: '#E1E1E1',
+      },
+    }),
+  },
+  list_service_container: {
+    backgroundColor: 'transparent',
+  },
+  list_service_item: {
+    borderRadius: 100,
+  },
+  list_product_item_container_shadow: {
+    borderRadius: 4,
+    backgroundColor: '#fafafa',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#333',
+        shadowOffset: {
+          width: 1,
+          height: 4,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 8,
+        borderWidth: Util.pixel,
+        borderColor: '#E1E1E1',
+      },
+    }),
+  },
+  list_product_item_info_wrapper: {
+    backgroundColor: '#fff',
+    padding: 5,
+    borderRadius: 4,
+  },
+  list_product_item_price_box: {
+    backgroundColor: 'transparent',
+  },
+  list_product_item_salePrice: {
+    color: '#FF0000',
   },
 });
 

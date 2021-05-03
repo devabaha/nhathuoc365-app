@@ -229,10 +229,18 @@ class Home extends Component {
     }),
   };
 
+  headerBackgroundOpacity = {
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE],
+      outputRange: [1, 0],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+  };
+
   headerIconStyle = {
     color:
-      this.homeThemes('styles.home.header_search_wrapper_active')?.backgroundColor ||
-      appConfig.colors.primary,
+      this.homeThemes('styles.home.header_search_wrapper_active')
+        ?.backgroundColor || appConfig.colors.primary,
     opacity: interpolate(this.state.animatedHeaderValue, {
       inputRange: [0, EXTRAPOLATE_RANGE],
       outputRange: [0, 1],
@@ -264,6 +272,9 @@ class Home extends Component {
         ? this.props.userInfo.name
         : t('welcome.defaultUserName')
       : t('welcome.defaultUserName');
+    const homeContentWrapper = this.homeThemes(
+      'styles.home.home_content_wrapper',
+    );
 
     return (
       <View style={styles.container}>
@@ -273,14 +284,15 @@ class Home extends Component {
           backgroundColor={appConfig.colors.primary}
         /> */}
 
-        <View style={styles.headerBackground}>
+        <Animated.View
+          style={[styles.headerBackground, this.headerBackgroundOpacity]}>
           {this.props.site && this.props.site.app_event_banner_image && (
             <Image
               style={styles.headerImage}
               source={{uri: this.props.site.app_event_banner_image}}
             />
           )}
-        </View>
+        </Animated.View>
 
         <View
           onLayout={this.handleHeaderLayout.bind(this)}
@@ -297,7 +309,6 @@ class Home extends Component {
             loading={this.props.storeFetching}
           />
         </View>
-
         <ScrollView
           // onScroll={this.showBgrStatusIfOffsetTop}
           onScroll={event(
@@ -375,7 +386,7 @@ class Home extends Component {
             <ListServiceSkeleton />
           ) : null}
 
-          <View style={styles.contentWrapper}>
+          <View style={[styles.contentWrapper, homeContentWrapper]}>
             {this.hasPromotion && (
               <Promotion
                 data={this.props.promotions}
@@ -477,7 +488,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F7F8',
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
@@ -485,7 +496,7 @@ const styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
+    top: -(appConfig.device.width * 3) + appConfig.device.width / 2,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden',

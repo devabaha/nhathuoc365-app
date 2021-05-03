@@ -1,21 +1,21 @@
-import React, { Component } from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import React, {Component} from 'react';
+import {View, Image, Text, StyleSheet} from 'react-native';
 import Button from 'react-native-button';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { NotiBadge } from '../../../Badges';
-import { BASE_SERVICE_DIMENSION, BASE_TITLE_MARGIN } from './constants';
-import { IMAGE_ICON_TYPE } from '../../constants';
+import {NotiBadge} from '../../../Badges';
+import {BASE_SERVICE_DIMENSION, BASE_TITLE_MARGIN} from './constants';
+import {IMAGE_ICON_TYPE} from '../../constants';
 import Loading from '../../../Loading';
-import { SERVICES_TYPE } from '../../../../helper/servicesHandler';
+import {SERVICES_TYPE} from '../../../../helper/servicesHandler';
 
 const styles = StyleSheet.create({
   buttonWrapper: {
     paddingVertical: 10,
     paddingHorizontal: 8,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   itemWrapper: {
-    alignItems: 'center'
+    alignItems: 'center',
   },
   iconWrapper: {
     width: BASE_SERVICE_DIMENSION,
@@ -24,50 +24,50 @@ const styles = StyleSheet.create({
     backgroundColor: '#eee',
     overflow: 'hidden',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   icon: {
     width: '100%',
-    height: '100%'
+    height: '100%',
   },
   title: {
     textAlign: 'center',
     fontSize: 12,
     fontWeight: '400',
     color: '#333',
-    marginTop: BASE_TITLE_MARGIN
+    marginTop: BASE_TITLE_MARGIN,
   },
   notifyWrapper: {
     right: -8,
     top: -8,
     minWidth: 20,
-    height: 20
+    height: 20,
   },
   notifyLabel: {
-    fontSize: 12
+    fontSize: 12,
   },
   loading: {
     width: '100%',
     height: '100%',
-    backgroundColor: 'rgba(0,0,0,.2)'
-  }
+    backgroundColor: 'rgba(0,0,0,.2)',
+  },
 });
 
 class Service extends Component {
   state = {
-    loading: false
+    loading: false,
   };
 
   handlePress(service) {
     if (this.state.loading) return;
-    const { type } = service;
+    const {type} = service;
     if (
       !!this.props.selfRequest &&
       (type === SERVICES_TYPE.OPEN_SHOP ||
         type === SERVICES_TYPE.PRODUCT_DETAIL)
     ) {
       this.setState({
-        loading: true
+        loading: true,
       });
       this.handleSelfRequest(service);
     } else {
@@ -77,7 +77,7 @@ class Service extends Component {
 
   handleSelfRequest(service) {
     this.props.selfRequest(service, () => {
-      !this.unmounted && this.setState({ loading: false });
+      !this.unmounted && this.setState({loading: false});
     });
   }
 
@@ -88,14 +88,13 @@ class Service extends Component {
       itemStyle,
       notiLabel,
       isShowNoti,
-      titleStyle
+      titleStyle,
     } = this.props;
 
     return (
       <Button
         onPress={this.handlePress.bind(this, service)}
-        containerStyle={[styles.buttonWrapper, containerStyle]}
-      >
+        containerStyle={[styles.buttonWrapper, containerStyle]}>
         <View style={styles.itemWrapper}>
           <View>
             <View style={[styles.iconWrapper, itemStyle]}>
@@ -103,7 +102,7 @@ class Service extends Component {
                 <Loading size="small" center containerStyle={styles.loading} />
               )}
               {service.iconType === IMAGE_ICON_TYPE ? (
-                <Image style={styles.icon} source={{ uri: service.icon }} />
+                <Image style={styles.icon} source={{uri: service.icon}} />
               ) : (
                 <MaterialCommunityIcons
                   name={service.icon}

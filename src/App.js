@@ -140,7 +140,7 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import CameraView from './components/CameraView/CameraView';
-import { CaptureFaceID } from './containers/IView';
+import {CaptureFaceID} from './containers/IView';
 import GPSStoreLocation from './containers/GPSStoreLocation';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
@@ -597,7 +597,7 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{ overflow: 'scroll', flex: 1 }}>
+      <View style={{overflow: 'scroll', flex: 1}}>
         {/* <GPSStoreLocation /> */}
         {this.state.header}
         <NetWorkInfo />
@@ -785,8 +785,7 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}
-                  >
+                    primaryColor={appConfig.colors.primary}>
                     <Scene component={() => null} />
                   </Stack>
 
@@ -799,8 +798,7 @@ class RootRouter extends Component {
                     iconSize={24}
                     iconLabel={t('appTab.tab4.title')}
                     iconName="cart"
-                    notifyKey="notify_cart"
-                  >
+                    notifyKey="notify_cart">
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
                       title={t('screen.orders.mainTitle')}
