@@ -7,36 +7,38 @@ import SVGSearch from '../../images/home/search.svg';
 import SVGMessage from '../../images/home/message.svg';
 import {ASSETS_TYPE, BUNDLE_ICON_SETS} from '../constants';
 
-export const home = StyleSheet.create({
+export const home = {
+  header: StyleSheet.create({
   // Header
-  header_container: {
+  container: {
     paddingBottom: 10,
   },
-  header_mask_sub: {
+  maskSub: {
     backgroundColor: '#000',
     opacity: 0.4,
   },
-  header_search_wrapper: {
+  searchWrapper: {
     borderRadius: 20,
   },
-  header_search_wrapper_active: {
+  searchWrapperActive: {
     backgroundColor: '#000',
     opacity: 0.4,
   },
-  header_search_icon: {
+  searchIcon: {
     color: '#fff',
   },
-  header_search_input_placeholder: {
+  searchInputPlaceholder: {
     color: '#fff',
   },
-  header_right_nav_bar_icon: {
+  rightNavBarIcon: {
     paddingLeft: 10,
     paddingRight: 10,
   },
-  header_right_nav_bar_last_icon: {
+  rightNavBarLastIcon: {
     paddingRight: 0,
   },
-});
+})
+};
 
 export const assets = {
   cart: {

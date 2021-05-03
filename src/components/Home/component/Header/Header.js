@@ -24,34 +24,37 @@ import Themes from '../../../../Themes';
 import equal from 'deep-equal';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
+const homeThemes = Themes.getNameSpace('home');
+const  headerStyles = homeThemes('styles.home.header');
 
 class Header extends Component {
   static defaultProps = {
     loading: false,
   };
-  homeThemes = Themes.getNameSpace('home');
+  
 
   shouldComponentUpdate(nextProps, nextState) {
     return !equal(nextProps, this.props);
   }
+  
 
   containerStyle = [
     styles.container,
-    this.homeThemes('styles.home.header_container'),
+    homeThemes('styles.home.header_container'),
   ];
 
   searchWrapperStyle = [
     styles.searchWrapper,
-    this.homeThemes('styles.home.header_search_wrapper'),
+    homeThemes('styles.home.header_search_wrapper'),
   ];
 
   render() {
-    const SearchIcon = this.homeThemes('assets.search') || Ionicons;
-    const CartIcon = this.homeThemes('assets.cart')
-      ? Animated.createAnimatedComponent(this.homeThemes('assets.cart'))
+    const SearchIcon = homeThemes('assets.search') || Ionicons;
+    const CartIcon = homeThemes('assets.cart')
+      ? Animated.createAnimatedComponent(homeThemes('assets.cart'))
       : AnimatedIcon;
-    const MessageIcon = this.homeThemes('assets.message')
-      ? Animated.createAnimatedComponent(this.homeThemes('assets.message'))
+    const MessageIcon = homeThemes('assets.message')
+      ? Animated.createAnimatedComponent(homeThemes('assets.message'))
       : AnimatedIcon;
 
     return (
@@ -67,7 +70,7 @@ class Header extends Component {
                 style={[
                   this.searchWrapperStyle,
                   styles.maskSub,
-                  this.homeThemes('styles.home.header_mask_sub'),
+                  // this.homeThemes('styles.home.header_mask_sub'),
                 ]}
               />
               <Animated.View
@@ -79,16 +82,20 @@ class Header extends Component {
               />
               <View pointerEvents="none" style={this.searchWrapperStyle}>
                 <SearchIcon
-                  style={[this.homeThemes('styles.home.header_search_icon')]}
+                  // style={[this.homeThemes('styles.home.header_search_icon')]}
+                  style={styles.searchIcon}
                   name="ios-search"
                 />
                 <TextInput
                   style={styles.searchInput}
                   placeholder={store.store_data ? store.store_data.name : ''}
+                  // placeholderTextColor={
+                  //   this.homeThemes(
+                  //     'styles.home.header_search_input_placeholder',
+                  //   ).color || appConfig.colors.primary
+                  // }
                   placeholderTextColor={
-                    this.homeThemes(
-                      'styles.home.header_search_input_placeholder',
-                    ).color || appConfig.colors.primary
+                    styles?.searchInputPlaceholder?.color || appConfig.colors.primary
                   }
                   numberOfLines={1}
                 />
@@ -101,9 +108,10 @@ class Header extends Component {
 
           <RightButtonNavBar
             type={RIGHT_BUTTON_TYPE.SHOPPING_CART}
-            containerStyle={this.homeThemes(
-              'styles.home.header_right_nav_bar_icon',
-            )}
+            // containerStyle={this.homeThemes(
+            //   'styles.home.header_right_nav_bar_icon',
+            // )}
+            containerStyle={styles.rightNavBarIcon}
             icon={
               <View>
                 <CartIcon
@@ -122,9 +130,13 @@ class Header extends Component {
           <RightButtonNavBar
             onPress={this.props.onPressNoti}
             type={RIGHT_BUTTON_TYPE.CHAT}
+            // containerStyle={[
+            //   this.homeThemes('styles.home.header_right_nav_bar_icon'),
+            //   this.homeThemes('styles.home.header_right_nav_bar_last_icon'),
+            // ]}
             containerStyle={[
-              this.homeThemes('styles.home.header_right_nav_bar_icon'),
-              this.homeThemes('styles.home.header_right_nav_bar_last_icon'),
+              styles.rightNavBarIcon,
+              styles.rightNavBarLastIcon
             ]}
             style={styles.chatIconStyle}
             icon={
@@ -148,7 +160,7 @@ class Header extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   wrapper: {
     // position: 'absolute',
     // top: 0,
@@ -244,6 +256,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
 });
+styles = Themes.mergeStyles(styles, headerStyles);
 
 Header.propTypes = {
   name: PropTypes.string,

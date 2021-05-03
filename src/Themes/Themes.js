@@ -137,6 +137,14 @@ class Themes {
     return assets;
   };
 
+  mergeStyles = (base, others) => {
+    Object.keys(base).forEach(key => {
+      base[key] = {...base[key], ...others[key]}
+    });
+
+    return base;
+  }
+
   get styles() {
     return this.currentTheme.styles;
   }
