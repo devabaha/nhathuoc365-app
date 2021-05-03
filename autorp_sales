@@ -1,0 +1,259 @@
+#!/bin/bash
+
+# cp old-file-path new-file-path
+# mv old-folder-path new-folder-path
+# perl -pi -w -e 's/SEARCH_FOR/REPLACE_WITH/g;' *.txt
+
+# declare root_path="~/Users/minhnguyen/Workspace/tickidapp"
+copy_file () {
+    cp "$1" "$2"
+}
+
+replace_folder_name () {
+    mv "$1" "$2"
+}
+
+replace_special_characters () {
+    declare -a specialChars=(@ / +)
+    declare superSpecialChars="/"
+    
+    declare rpSyntax='s/a/b/g;'
+    declare rpCommands=""
+    
+    for i in ${!specialChars[@]}
+    do
+        declare a="${specialChars[$i]}"
+        declare b="\\\\${specialChars[$i]}"
+        
+        if [[ $superSpecialChars == *"${specialChars[$i]}"* ]]; then
+            a="\\${specialChars[$i]}"
+            b="\\\\\\${specialChars[$i]}"
+        fi
+        
+        rpCommands+="s/$a/$b/g;"
+    done
+    echo $1 | sed ${rpCommands}
+}
+
+replace_string () {
+    if [ $# -lt 3 ]; then
+        echo "Only $# param(s) passed. Must be at least 3"
+        return 1
+    fi
+    args=("$@")
+    for i in ${!args[@]}
+    do
+        if [ $i -gt 1 ]; then
+            perl -pi -w -e "s/$(replace_special_characters "$1")/$(replace_special_characters "$2")/g;" ${args[$i]}
+        fi
+    done
+}
+declare root_path="."
+
+# ------------ PARAMS ------------ #
+# replace
+declare version_code_id="1"
+declare version_name_id="1.0.1"
+declare version_code="versionCode $version_code_id"
+declare version_name="versionName \"$version_name_id\""
+
+declare bundle_prefix="vn"
+declare bundle_name="az911distribute"
+declare bundle_id="$bundle_prefix.$bundle_name"
+declare development_team_id="6WXJD4GU8C"
+declare development_team="DEVELOPMENT_TEAM = $development_team_id"
+declare marketing_version_id="1.0.1"
+declare marketing_version="MARKETING_VERSION = $marketing_version_id"
+declare project_version_id="1"
+declare project_version="CURRENT_PROJECT_VERSION = $project_version_id"
+
+declare app_key_value="az911danhchodailykeyKuPM6"
+declare app_key="appKey: '$app_key_value'"
+declare secret_key_value="Gjp6az911danhchodailykeyKuPM6MG2EIW"
+declare secret_key="secretKey: '$secret_key_value'"
+declare app_name_value="AZ911 Distribute"
+declare email="contact@az911.vn"
+declare app_config_name_value="AZ911Distribute"
+declare app_name="APP_NAME = '$app_config_name_value'"
+declare app_config_name="'$app_config_name_value'"
+declare app_config_name_simple="az911distribute"
+declare default_site_id_value="1803"
+declare default_site_id="return $current_app_default_site_id_value;"
+declare app_name_show="APP_NAME_SHOW = '$app_name_value'"
+declare hotline="+841900571236"
+declare app_fanpage_value=""
+declare app_fanpage="APP_FANPAGE = '$app_fanpage_value'"
+declare app_info="http://az911.vn/"
+declare primary_color_value="29B4C5" #fill full 6 characters for HEX format
+declare primary_color="#$primary_color_value"
+declare default_color="DEFAULT_COLOR = '$primary_color'"
+declare noti_accent_color="FF$primary_color_value"
+declare logo_sub_color_code="#fff"
+declare logo_sub_color="sub: '$logo_sub_color_code'"
+declare logo_addition_color_code="#84C38C"
+declare logo_addition_color="addition: '$logo_addition_color_code'"
+    
+declare oneSignal_key="1bc53b69-00ec-469c-ba7e-2d1f94dcbb8c"
+
+declare branchIO_key="key_live_kd7jIYLYYZZrHyCsV4t2lomkrze8CimW"
+
+declare firebase_reversed_client_id="com.googleusercontent.apps.915697121102-128d52vluc32rg3sb2pp0ujqu8289vl8"
+
+declare code_push_ios_key="Ex6xx5ueZXuu-rTk5VMcRFq0aA9x8iUi0Ukxn"
+declare code_push_android_key="HT3lBgnIZImC38A-dTnPs2WObgeFbb6YaqoMc"
+
+# current
+declare current_version_code_id="1"
+declare current_version_name_id="1.0.1"
+declare current_version_code="versionCode $current_version_code_id"
+declare current_version_name="versionName \"$current_version_name_id\""
+
+declare current_bundle_prefix="vn"
+declare current_bundle_name="abahaglobal"
+declare current_bundle_id="$current_bundle_prefix.$current_bundle_name"
+declare current_development_team_id="6WXJD4GU8C"
+declare current_development_team="DEVELOPMENT_TEAM = $current_development_team_id"
+declare current_marketing_version_id="1.0.1"
+declare current_marketing_version="MARKETING_VERSION = $current_marketing_version_id"
+declare current_project_version_id="1"
+declare current_project_version="CURRENT_PROJECT_VERSION = $current_project_version_id"
+
+declare current_app_key_value="abahaglobalkeywoxBg"
+declare current_app_key="appKey: '$current_app_key_value'"
+declare current_secret_key_value="dyTUabahaglobalkeywoxBg4OA1mh"
+declare current_secret_key="secretKey: '$current_secret_key_value'"
+declare current_app_name_value="Hương Cảng"
+declare current_email="thuc.lehuy@gmail.com"
+declare current_app_config_name_value="HuongCang"
+declare current_app_name="APP_NAME = '$current_app_config_name_value'"
+declare current_app_config_name="'$current_app_config_name_value'"
+declare current_app_branchio_host_name = 'abahavn'
+declare current_app_config_name_simple_old="huongcang"
+declare current_app_config_name_simple="abahaglobal"
+declare current_app_default_site_id_value="1803"
+declare current_app_default_site_id="return $current_app_default_site_id_value;"
+declare current_app_name_show="APP_NAME_SHOW = '$current_app_name_value'"
+declare current_hotline="+84983962301"
+declare current_app_fanpage_value=""
+declare current_app_fanpage="APP_FANPAGE = '$current_app_fanpage_value'"
+declare current_app_info="https://huongcang.vn"
+declare current_primary_color_value="f41820"
+declare current_primary_color="#$current_primary_color_value"
+declare current_default_color="DEFAULT_COLOR = '$current_primary_color'"
+declare current_noti_accent_color="FF$current_primary_color_value"
+declare current_logo_sub_color_code="#FFF"
+declare current_logo_sub_color="sub: '$current_logo_sub_color_code'"
+declare current_logo_addition_color_code="#000"
+declare current_logo_addition_color="addition: '$current_logo_addition_color_code'"
+
+declare current_oneSignal_key="437375e6-9a46-42fd-836e-30d3b1c28cd1"
+
+declare current_branchIO_key="key_live_foZpplSsblvX2B7t9NAHXhhmtsdYTtL9"
+
+declare current_firebase_reversed_client_id="com.googleusercontent.apps.728365043840-ntj4nu08nefckr2sv2ijlv6mjgahnioh"
+
+declare current_code_push_ios_key="U8m8H8iVkv6UUVelkFrUgIQxhApLREmpZEr9DY"
+declare current_code_push_android_key="5HFSX4XXEgoAgHaA6kHqntGoQz43C2FgCZR1Lr"
+
+#_____ A.N.D.R.O.I.D
+declare gradle_properties_path="$root_path/android/gradle.properties"
+declare buck_path="$root_path/android/app/BUCK"
+declare app_gradle_build_path="$root_path/android/app/build.gradle"
+declare manifest_path="$root_path/android/app/src/main/AndroidManifest.xml"
+declare java_path="$root_path/android/app/src/main/java"
+declare main_activity_path="$java_path/$current_bundle_prefix/$current_bundle_name/MainActivity.java"
+declare main_application_path="$java_path/$current_bundle_prefix/$current_bundle_name/MainApplication.java"
+declare values_string_path="android/app/src/main/res/values/strings.xml"
+
+
+#_____ I.O.S
+declare info_plist_path="$root_path/ios/my_food_new/Info.plist"
+declare entitlements_path="$root_path/ios/my_food_new/my_food_new.entitlements"
+declare xcodeproj_path="$root_path/ios/my_food_new.xcodeproj/project.pbxproj"
+
+
+#_____ J.S
+#_ deprecated
+declare ndt_history_path="$root_path/src/components/account/Ndt/NdtHistory.js"
+#_ deprecated
+declare recharge_path="$root_path/src/components/account/VndWallet/Recharge.js"
+#__________ i18n
+declare i18n_vi_path="$root_path/src/i18n/translations/vi/common.json"
+declare i18n_en_path="$root_path/src/i18n/translations/en/common.json"
+#---------- end i18n
+declare constant_path="$root_path/src/lib/Constant.js"
+declare config_path="$root_path/src/config.js"
+declare tickid_phone_card_config="$root_path/src/packages/tickid-phone-card/config.js"
+declare tickid_voucher_config="$root_path/src/packages/tickid-voucher/config.js"
+
+
+#_____ README
+declare readme_path="$root_path/README.md"
+
+#_____ ICON
+declare icon_name="icon.jpg"
+declare icon_round_jpg_name="icon-round.jpg"
+declare icon_round_name="icon-round.png"
+declare image_logo_name="logo-640x410.jpg"
+declare store_tabbar_logo_name="btn-cart.png"
+declare icon_path="$root_path/$icon_name"
+declare icon_round_jpg_path="$root_path/$icon_round_jpg_name"
+declare icon_round_path="$root_path/$icon_round_name"
+declare images_path="$root_path/src/images"
+declare image_logo_path="$images_path/$image_logo_name"
+declare store_tabbar_logo_path="$images_path/$store_tabbar_logo_name"
+
+
+######################################################
+# RUN
+
+replace_string "$current_development_team" "$development_team" "$xcodeproj_path"
+replace_string "$current_marketing_version" "$marketing_version" "$xcodeproj_path"
+replace_string "$current_project_version" "$project_version" "$xcodeproj_path"
+
+replace_string "$current_version_code" "$version_code" "$app_gradle_build_path"
+replace_string "$current_version_name" "$version_name" "$app_gradle_build_path"
+
+replace_string "$current_bundle_id" "$bundle_id" "$gradle_properties_path" "$buck_path" "$app_gradle_build_path" "$manifest_path" "$main_activity_path" "$main_application_path" "$info_plist_path" "$xcodeproj_path"
+
+replace_string "$current_app_name_value" "$app_name_value" "$values_string_path" "$info_plist_path" "$ndt_history_path" "$recharge_path" "$i18n_vi_path" "$i18n_en_path"
+replace_string "$current_app_name_show" "$app_name_show" "$constant_path"
+replace_string "$current_app_name" "$app_name" "$constant_path"
+replace_string "$current_email" "$email" "$constant_path"
+replace_string "$current_hotline" "$hotline" "$constant_path"
+replace_string "$current_app_fanpage" "$app_fanpage" "$constant_path"
+replace_string "$current_app_info" "$app_info" "$constant_path"
+replace_string "$current_default_color" "$default_color" "$constant_path"
+replace_string "$current_code_push_ios_key" "$code_push_ios_key" "$constant_path" "$readme_path"
+replace_string "$current_code_push_android_key" "$code_push_android_key" "$constant_path" "$readme_path"
+
+replace_string "$current_app_config_name_simple_old" "$app_config_name_simple" "$readme_path" "$entitlements_path" current_app_branchio_host_name
+
+replace_string "$current_app_config_name_simple" "$app_config_name_simple" "$info_plist_path"
+
+replace_string "$current_app_branchio_host_name" "$app_config_name_simple" "$manifest_path"
+
+replace_string "$current_app_config_name" "$app_config_name" "$config_path"
+
+replace_string "$current_app_branchio_host_name" "$app_config_name_simple" "$manifest_path"
+replace_string "$current_app_key" "$app_key" "$config_path"
+replace_string "$current_secret_key" "$secret_key" "$config_path"
+replace_string "$current_oneSignal_key" "$oneSignal_key" "$config_path"
+replace_string "$current_primary_color" "$primary_color" "$config_path"
+replace_string "$current_primary_color" "$primary_color" "$tickid_phone_card_config"
+replace_string "$current_primary_color" "$primary_color" "$tickid_voucher_config"
+replace_string "$current_logo_sub_color" "$logo_sub_color" "$config_path"
+replace_string "$current_logo_addition_color" "$logo_addition_color" "$config_path"
+
+replace_string "$current_noti_accent_color" "$noti_accent_color" "$manifest_path"
+
+replace_string "$current_primary_color_value" "$primary_color_value" "$manifest_path"
+
+replace_string "$current_branchIO_key" "$branchIO_key" "$manifest_path" "$info_plist_path"
+
+replace_string "$current_firebase_reversed_client_id" "$firebase_reversed_client_id" "$info_plist_path"
+
+replace_folder_name "$java_path/$current_bundle_prefix/$current_bundle_name" "$java_path/$bundle_prefix/$bundle_name"
+
+copy_file "$icon_round_jpg_path" "$image_logo_path"
+copy_file "$icon_round_path" "$store_tabbar_logo_path"

@@ -16,7 +16,7 @@ class Config {
   }
 
   get appName() {
-    return 'ABAHAGLOBAL';
+    return 'HuongCang';
   }
 
   get namespace() {
