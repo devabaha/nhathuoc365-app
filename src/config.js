@@ -4,6 +4,7 @@ import {
   getStatusBarHeight,
   getBottomSpace,
 } from 'react-native-iphone-x-helper';
+import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
 
 class Config {
   constructor() {
@@ -11,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.4.6';
+    return 'r11.5.4';
   }
 
   get appName() {
@@ -83,11 +84,24 @@ class Config {
         warning: '#ffd166',
         success: '#06d6a0',
         info: '#118ab2',
-        other: '#073b4c'
+        other: '#073b4c',
       },
       cartType: {
         cart: '#B0C0F0',
-        dropship: '#FF9F1C'
+        dropship: '#FF9F1C',
+      },
+      delivery: {
+        [DELIVERY_STATUS_CODE.CANCEL]: '#DED9E2',
+        [DELIVERY_STATUS_CODE.SYSTEM_RECEIVED_ORDER]: '#9FA4C4',
+        [DELIVERY_STATUS_CODE.SHIPPER_RECEIVED_ORDER]: '#95AFBA',
+        [DELIVERY_STATUS_CODE.SHIPPER_GETTING_PACKAGES]: '#0F7173',
+        [DELIVERY_STATUS_CODE.FAIL_TO_GETTING_PACKAGES]: '#EF798A',
+        [DELIVERY_STATUS_CODE.DELIVERING]: '#ffd166',
+        [DELIVERY_STATUS_CODE.DELIVERY_SUCCESS]: '#06d6a0',
+        [DELIVERY_STATUS_CODE.DELIVERY_FAIL]: '#ef476f',
+        [DELIVERY_STATUS_CODE.ORDER_RETURNING]: '#92817A',
+        [DELIVERY_STATUS_CODE.ORDER_RETURNED]: '#6C7D47',
+        [DELIVERY_STATUS_CODE.FOR_CONTROL]: '#17A398',
       },
       orderStatus: {
         [CART_STATUS_CANCEL_1]: '#ef476f',
@@ -99,6 +113,11 @@ class Config {
         [CART_STATUS_DELIVERY]: '#EEAA21',
         [CART_STATUS_COMPLETED]: '#06d6a0',
         [CART_STATUS_CLOSED]: '#aaa',
+      },
+      paymentStatus: {
+        [CART_PAYMENT_STATUS.UNPAID]: '#EEAA21',
+        [CART_PAYMENT_STATUS.PAID]: '#06d6a0',
+        [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
       },
       sceneBackground: '#e9e9ee',
       marigold: '#EEAA21',
@@ -188,6 +207,7 @@ class Config {
       paymentConfirm: 'paymentConfirm',
       paymentMethod: 'paymentMethod',
       internetBanking: 'internetBanking',
+      transaction: 'transaction',
       //
       upToPhone: 'upToPhone',
 
@@ -213,6 +233,7 @@ class Config {
       modalInput: 'modalInput',
       modalConfirm: 'modalConfirm',
       modalComboLocation: 'modalComboLocation',
+      modalWebview: 'modalWebview',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -252,7 +273,7 @@ class Config {
       commissionIncomeStatement: 'commissionIncomeStatement',
 
       // Gamification
-      lotteryGame: 'lotteryGame'
+      lotteryGame: 'lotteryGame',
     };
   }
 }

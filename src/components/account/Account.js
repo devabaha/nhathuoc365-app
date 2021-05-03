@@ -669,8 +669,8 @@ class Account extends Component {
     cancelRequests(this.requests);
   }
 
-  async getListWarehouse(){
-    if(!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
+  async getListWarehouse() {
+    if (!isConfigActive(CONFIG_KEY.SELECT_STORE_KEY)) return;
     const {t} = this.props;
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
@@ -766,6 +766,7 @@ class Account extends Component {
     const user_info = store.user_info || {wallets: []};
     return (
       <View
+        key="wallets"
         style={{
           // marginTop: 7,
           borderTopWidth: 0,
@@ -811,7 +812,7 @@ class Account extends Component {
   renderExtWallets() {
     const user_info = store.user_info || {ext_wallets: []};
     return (
-      <View>
+      <View key="extra_wallets">
         <View style={styles.add_store_actions_box}>
           {user_info.ext_wallets.map((wallet, index) => (
             <TouchableHighlight

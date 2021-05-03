@@ -13,7 +13,7 @@ class CTAProduct {
   productTempData = [];
   product = null;
   cartType = '';
-  actionFunctionName = "";
+  actionFunctionName = '';
   t = () => {};
   context = this;
 
@@ -84,7 +84,7 @@ class CTAProduct {
   handlePressSubAction = (product, cartType) => {
     this.actionFunctionName = 'handlePressSubAction';
 
-    if(this.isServiceProduct(product)){
+    if (this.isServiceProduct(product)) {
       this._likeHandler(product);
       return;
     }

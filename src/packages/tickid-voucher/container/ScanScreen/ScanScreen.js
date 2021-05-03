@@ -11,13 +11,17 @@ class ScanScreen extends BaseContainer {
   static propTypes = {
     topContentText: PropTypes.string,
     placeholder: PropTypes.string,
-    isFromMyVoucher: PropTypes.bool
+    isFromMyVoucher: PropTypes.bool,
+    isEnterCode: PropTypes.bool,
+    onCloseEnterCode: PropTypes.func
   };
 
   static defaultProps = {
     topContentText: '',
     placeholder: '',
-    isFromMyVoucher: false
+    isFromMyVoucher: false,
+    isEnterCode: false,
+    onCloseEnterCode: () => {}
   };
 
   constructor(props) {
@@ -30,6 +34,9 @@ class ScanScreen extends BaseContainer {
   }
 
   componentDidMount() {
+    if(this.props.isEnterCode){
+      this.handleBeforeShowEnterCode();
+    }
     this.eventTracker.logCurrentView();
   }
 
@@ -40,7 +47,10 @@ class ScanScreen extends BaseContainer {
   handlePressEnterCode = ({ onSendCode }) => {
     const { t } = this.props;
     config.route.push(config.routes.voucherEnterCodeManual, {
-      onClose: config.route.pop,
+      onClose: () => {
+        config.route.pop();
+        this.props.onCloseEnterCode();
+      },
       heading: t('scan.modal.title'),
       placeholder: this.props.placeholder,
       /**

@@ -168,6 +168,10 @@ class Home extends Component {
     return Array.isArray(this.props.newses) && this.props.newses.length > 0;
   }
 
+  get hasNewsGroups() {
+    return this.props.news_categories?.length > 0;
+  }
+
   get hasProducts() {
     return Array.isArray(this.props.products) && this.props.products.length > 0;
   }
@@ -382,7 +386,6 @@ class Home extends Component {
                 onPress={this.props.onPromotionPressed}
               />
             )}
-
             {this.hasProduct_groups ? (
               this.props.product_groups.map((productGroup, index) => {
                 let {id, products, title, display_type} = productGroup;
@@ -402,7 +405,6 @@ class Home extends Component {
             ) : this.props.apiFetching ? (
               <ListProductSkeleton />
             ) : null}
-
             {this.hasSites && (
               <HomeCardList
                 onShowAll={this.props.onShowAllSites}
@@ -425,7 +427,6 @@ class Home extends Component {
                 )}
               </HomeCardList>
             )}
-
             {this.hasCampaigns && (
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
@@ -447,9 +448,31 @@ class Home extends Component {
               </HomeCardList>
             )}
 
-            {this.hasNews ? (
+            {this.hasNewsGroups ? (
+              this.props.news_categories.map((newsGroup, index) => {
+                let {id, news, title} = newsGroup;
+                return (
+                  <HomeCardList
+                    key={id}
+                    onShowAll={() => this.props.onShowAllNews(title, id)}
+                    data={news}
+                    title={title}>
+                    {({item, index}) => {
+                      return (
+                        <HomeCardItem
+                          title={item.title}
+                          imageUrl={item.image_url}
+                          onPress={() => this.props.onPressNewItem(item)}
+                          last={this.props.newses.length - 1 === index}
+                        />
+                      );
+                    }}
+                  </HomeCardList>
+                );
+              })
+            ) : this.hasNews ? (
               <HomeCardList
-                onShowAll={this.props.onShowAllNews}
+                onShowAll={() => this.props.onShowAllNews()}
                 data={this.props.newses}
                 title={t('sections.news.title')}>
                 {({item, index}) => (
@@ -461,6 +484,8 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
+            ) : this.props.apiFetching ? (
+              <HomeCardListSkeleton />
             ) : this.props.apiFetching ? (
               <HomeCardListSkeleton />
             ) : null}
