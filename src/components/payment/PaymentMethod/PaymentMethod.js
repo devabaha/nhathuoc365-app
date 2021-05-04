@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, ScrollView, SafeAreaView, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  ScrollView,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  RefreshControl,
+} from 'react-native';
 import ModernList from 'app-packages/tickid-modern-list';
 import Loading from '@tickid/tickid-rn-loading';
 import {Actions} from 'react-native-router-flux';
@@ -8,6 +15,7 @@ import Button from '../../Button';
 import store from 'app-store';
 import PaymentRow from './PaymentRow';
 import EventTracker from '../../../helper/EventTracker';
+import {PAYMENT_METHOD_TYPES} from '../../../constants/payment';
 
 const DEFAULT_OBJECT = {};
 
@@ -16,14 +24,19 @@ class PaymentMethod extends Component {
     onUpdatePaymentMethod: () => {},
     showPrice: true,
     showSubmit: true,
-    store_id: store.store_id,
+    store_id: store.store_data?.id,
+    cart_id: store.cart_data?.id,
   };
 
   state = {
     paymentMethod: [],
     selectedMethod: this.props.selectedMethod || DEFAULT_OBJECT,
-    selectedBank: DEFAULT_OBJECT,
+    selectedPaymentMethodDetail:
+      this.props.selectedPaymentMethodDetail ||
+      store.cart_data?.payment_method_detail ||
+      {},
     loading: true,
+    refreshing: false,
   };
   unmounted = false;
   eventTracker = new EventTracker();
@@ -55,13 +68,14 @@ class PaymentMethod extends Component {
           if (response.data) {
             let selectedMethod = null;
             if (Array.isArray(response.data)) {
-              selectedMethod = response.data.find(
-                item => item.default_flag === 1
-              ) || {};
+              selectedMethod =
+                response.data.find((item) => item.default_flag === 1) || {};
             }
             this.setState({
               paymentMethod: response.data || [],
-              selectedMethod: this.state.selectedMethod?.id ? this.state.selectedMethod : selectedMethod
+              selectedMethod: this.state.selectedMethod?.id
+                ? this.state.selectedMethod
+                : selectedMethod,
             });
           }
         } else {
@@ -78,7 +92,7 @@ class PaymentMethod extends Component {
         message: t('common:api.error.message'),
       });
     } finally {
-      !this.unmounted && this.setState({loading: false});
+      !this.unmounted && this.setState({loading: false, refreshing: false});
     }
   };
 
@@ -87,11 +101,11 @@ class PaymentMethod extends Component {
     //   this.state.selectedMethod === DEFAULT_OBJECT
     //     ? null
     //     : this.state.selectedMethod;
-    // const selectedBank =
-    //   this.state.selectedBank === DEFAULT_OBJECT
+    // const selectedPaymentMethodDetail =
+    //   this.state.selectedPaymentMethodDetail === DEFAULT_OBJECT
     //     ? null
-    //     : this.state.selectedBank;
-    // this.props.onConfirm(selectedMethod, selectedBank);
+    //     : this.state.selectedPaymentMethodDetail;
+    // this.props.onConfirm(selectedMethod, selectedPaymentMethodDetail);
     // Actions.pop();
     if (this.state.selectedMethod === DEFAULT_OBJECT) {
       Actions.pop();
@@ -103,12 +117,13 @@ class PaymentMethod extends Component {
     const data = {
       payment_type: this.state.selectedMethod.type,
       payment_content: '',
+      payment_method_id: this.state.selectedPaymentMethodDetail?.id || '',
     };
     const {t} = this.props;
     try {
       const response = await APIHandler.add_payment_method(
-        store.store_id,
-        store.cart_data.id,
+        this.props.store_id,
+        this.props.cart_id,
         data,
       );
 
@@ -141,24 +156,59 @@ class PaymentMethod extends Component {
     }
   };
 
-  handleBankPress = (selectedBank) => {
-    this.setState({selectedBank});
+  handleSelectPaymentMethodDetail = (
+    paymentMethod,
+    isSelected,
+    selectedPaymentMethodDetail,
+  ) => {
+    // this.setState({
+    //   selectedMethod: isSelected ? DEFAULT_OBJECT : paymentMethod,
+    //   selectedPaymentMethodDetail: selectedPaymentMethodDetail
+    //     ? {...selectedPaymentMethodDetail, type: paymentMethod?.type}
+    //     : DEFAULT_OBJECT,
+    // });
+    this.setState({
+      selectedMethod: paymentMethod,
+      selectedPaymentMethodDetail: selectedPaymentMethodDetail
+        ? {...selectedPaymentMethodDetail, type: paymentMethod?.type}
+        : {},
+    });
   };
 
   onPressPaymentMethod = (item) => {
-    const isExisted =
-      this.state.selectedMethod && this.state.selectedMethod.id === item.id;
-    this.setState({
-      selectedMethod: isExisted ? DEFAULT_OBJECT : item,
-    });
+    const isSelected =
+      this.state.selectedMethod && this.state.selectedMethod.id == item.id;
 
-    // switch (item.type) {
-    //   case '2':
-    //     Actions.push(appConfig.routes.internetBanking, {
-    //       onPressBank: this.handleBankPress
-    //     });
-    //     break;
-    // }
+    switch (item.type) {
+      case PAYMENT_METHOD_TYPES.MOBILE_BANKING:
+        // case PAYMENT_METHOD_TYPES.DOMESTIC_ATM:
+        // case PAYMENT_METHOD_TYPES.DEBIT_CREDIT:
+        // if (!isSelected) {
+        Actions.push(appConfig.routes.internetBanking, {
+          title: item.title,
+          siteId: store?.store_data?.id,
+          paymentMethodId: item.id,
+          onPressPaymentMethodDetail: (selectedPaymentMethodDetail) => {
+            this.handleSelectPaymentMethodDetail(
+              item,
+              isSelected,
+              selectedPaymentMethodDetail,
+            );
+          },
+        });
+        // } else {
+        //   this.handleSelectPaymentMethodDetail(item, isSelected);
+        // }
+        break;
+      default:
+        this.handleSelectPaymentMethodDetail(item, isSelected);
+        break;
+    }
+  };
+
+  onRefresh = () => {
+    this.setState({refreshing: true});
+    this.getPaymentMethod();
   };
 
   renderPaymentMethod(item, index) {
@@ -168,30 +218,40 @@ class PaymentMethod extends Component {
         title={item.name}
         subTitle={item.content}
         onPress={() => this.onPressPaymentMethod(item)}
-        active={item.id === this.state.selectedMethod.id}
-        image={item.type === '3' && item.image}
+        active={item.id == this.state.selectedMethod.id}
+        image={item.image}
         /**
          * Specify style for bank transfer
          */
-        bankTransferData={item.type === '2' && item.data}
-        // renderRight={
-        //   item.type === '1' &&
-        //   this.state.selectedBank && (
-        //     <BankLogo image={this.state.selectedBank.image} />
-        //   )
-        // }
+        bankTransferData={
+          item.type === PAYMENT_METHOD_TYPES.BANK_TRANSFER && item.data
+        }
+        renderRight={
+          this.state.selectedPaymentMethodDetail?.type == item.type && (
+            <PaymentMethodDetailLogo
+              image={this.state.selectedPaymentMethodDetail.image}
+            />
+          )
+        }
       />
     );
   }
 
   render() {
     const {t} = this.props;
-    const extraData = this.state.selectedMethod.id + this.state.selectedBank.id;
+    const extraData =
+      this.state.selectedMethod.id + this.state.selectedPaymentMethodDetail.id;
     const extraFee = this.props.extraFee || {};
 
     return (
       <SafeAreaView style={styles.container}>
-        <ScrollView>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={this.state.refreshing}
+              onRefresh={this.onRefresh}
+            />
+          }>
           <View style={styles.box}>
             {this.state.loading && <Loading loading />}
             <ModernList
@@ -306,13 +366,15 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
   },
-  bankLogoContainer: {
+  PaymentMethodDetailLogoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  bankLogo: {
+  PaymentMethodDetailLogo: {
+    marginLeft: 10,
     resizeMode: 'contain',
-    width: 80,
+    width: 50,
+    height: 50,
     flex: 1,
   },
   noResultContainer: {
@@ -341,13 +403,13 @@ const TotalPrice = (props) => {
   );
 };
 
-const BankLogo = (props) => {
+const PaymentMethodDetailLogo = (props) => {
   return (
-    <View style={styles.bankLogoContainer}>
+    <View style={styles.PaymentMethodDetailLogoContainer}>
       <CachedImage
         mutable
         source={{uri: props.image}}
-        style={styles.bankLogo}
+        style={styles.PaymentMethodDetailLogo}
       />
     </View>
   );

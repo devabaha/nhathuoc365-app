@@ -21,7 +21,7 @@ import Modal from '../../components/account/Transfer/Payment/Modal';
 import {
   LocationPermission,
   LOCATION_PERMISSION_TYPE,
-  REQUEST_LOCATION_RESULT_TYPE,
+  REQUEST_RESULT_TYPE,
 } from '../../helper/permissionHelper';
 import Loading from '../../components/Loading';
 import {APIRequest} from '../../network/Entity';
@@ -138,11 +138,11 @@ const GPSListStore = () => {
 
   const title = 'Không truy cập được Vị trí';
   const content =
-    requestLocationErrorCode === REQUEST_LOCATION_RESULT_TYPE.TIMEOUT
+    requestLocationErrorCode === REQUEST_RESULT_TYPE.TIMEOUT
       ? 'Hết thời gian yêu cầu.'
       : 'Bạn vui lòng bật Vị trí và cấp quyền truy cập Vị trí cho ứng dụng để có thể đạt được trải nghiệm sử dụng tốt nhất.';
   const okText =
-    requestLocationErrorCode === REQUEST_LOCATION_RESULT_TYPE.TIMEOUT
+    requestLocationErrorCode === REQUEST_RESULT_TYPE.TIMEOUT
       ? 'Thử lại'
       : 'Cài đặt';
   const cancelText = 'Bỏ qua';
@@ -191,9 +191,7 @@ const GPSListStore = () => {
     ) {
       if (isGoToSetting) {
         requestLocationPermission();
-      } else if (
-        requestLocationErrorCode === REQUEST_LOCATION_RESULT_TYPE.GRANTED
-      ) {
+      } else if (requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED) {
         updateLocation();
       }
     }
@@ -205,7 +203,7 @@ const GPSListStore = () => {
       LOCATION_PERMISSION_TYPE.REQUEST,
       (result) => {
         console.log(result);
-        if (result === REQUEST_LOCATION_RESULT_TYPE.GRANTED) {
+        if (result === REQUEST_RESULT_TYPE.GRANTED) {
           setGotoSetting(false);
           updateLocation();
         } else {
@@ -216,8 +214,7 @@ const GPSListStore = () => {
   };
 
   const updateLocation = (timeout = 5000, loading = false) => {
-    if (requestLocationErrorCode !== REQUEST_LOCATION_RESULT_TYPE.GRANTED)
-      return;
+    if (requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED) return;
     const config = {
       timeout,
       enableHighAccuracy: appConfig.device.isIOS,
@@ -239,7 +236,7 @@ const GPSListStore = () => {
     if (coords && !latitude) {
       const {longitude, latitude} = coords;
       setConnectGPS(true);
-      setRequestLocationErrorCode(REQUEST_LOCATION_RESULT_TYPE.GRANTED);
+      setRequestLocationErrorCode(REQUEST_RESULT_TYPE.GRANTED);
       setRequestLocationLoading(false);
       setLongitude(longitude);
       setLatitude(latitude);
@@ -339,8 +336,13 @@ const GPSListStore = () => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
     return (
       <Container row style={styles.storeContainer}>
-
-        <FastImage source={{uri: store.image_url}} style={[styles.image, !store.image_url && {backgroundColor: '#f5f5f5'}]} />
+        <FastImage
+          source={{uri: store.image_url}}
+          style={[
+            styles.image,
+            !store.image_url && {backgroundColor: '#f5f5f5'},
+          ]}
+        />
 
         <Container flex centerVertical={false} style={styles.infoContainer}>
           <Container centerVertical={false}>

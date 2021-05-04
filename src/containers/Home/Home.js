@@ -38,6 +38,7 @@ class Home extends Component {
       },
       primaryActions: null,
       product_groups: [],
+      news_categories: [],
     };
     this.eventTracker = new EventTracker();
   }
@@ -110,6 +111,7 @@ class Home extends Component {
           primaryActions: response.data.primary_actions,
           showPrimaryActions: response.data.showPrimaryActions,
           product_groups: response.data.product_groups,
+          news_categories: response.data.news_categories,
         }));
 
         this.executeDeepLink();
@@ -194,6 +196,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
+
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
@@ -221,8 +224,11 @@ class Home extends Component {
     });
   };
 
-  handleShowAllNews = () => {
-    Actions.push(appConfig.routes.newsTab);
+  handleShowAllNews = (title, id) => {
+    Actions.push(appConfig.routes.newsTab, {
+      title,
+      id,
+    });
   };
 
   handlePressSiteItem = (store, callBack) => {
@@ -349,7 +355,7 @@ class Home extends Component {
         onShowAllGroupProduct={this.handleShowAllGroupProduct}
         onShowAllSites={this.handleShowAllSites}
         onShowAllCampaigns={this.handleShowAllCampaigns}
-        onShowAllNews={this.handleShowAllNews}
+        onShowAllNews={(title, id) => this.handleShowAllNews(title, id)}
         onPressSiteItem={this.handlePressSiteItem}
         onPressCampaignItem={this.handlePressCampaignItem}
         onPressNewItem={this.handlePressNewItem}
@@ -357,6 +363,7 @@ class Home extends Component {
         refreshing={this.state.refreshing}
         product_groups={this.state.product_groups}
         goToSearch={this.goToSearch}
+        news_categories={this.state.news_categories}
       />
     );
   }

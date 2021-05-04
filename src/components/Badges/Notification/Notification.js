@@ -1,11 +1,13 @@
-import React, { PureComponent } from 'react';
-import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
+import React, {PureComponent} from 'react';
+import {StyleSheet, Text, Animated, Easing} from 'react-native';
 
 class Notification extends PureComponent {
   static defaultProps = {
     animation: false,
     show: false,
-    alert: false
+    alert: false,
+    color: 'red',
+    alertColor: 'red',
   };
   state = {};
   animatedShowValue = new Animated.Value(0);
@@ -26,21 +28,21 @@ class Notification extends PureComponent {
         toValue: this.props.show ? 1 : 0,
         duration: 300,
         easing: Easing.quad,
-        useNativeDriver: true
+        useNativeDriver: true,
       }),
       Animated.sequence([
         Animated.timing(this.animatedNotifyValue, {
           toValue: !!this.props.label ? 1 : 0,
           duration: 700,
           easing: Easing.quad,
-          useNativeDriver: true
+          useNativeDriver: true,
         }),
         Animated.timing(this.animatedNotifyValue, {
           toValue: 0,
           duration: 0,
-          useNativeDriver: true
-        })
-      ])
+          useNativeDriver: true,
+        }),
+      ]),
     ]).start();
   }
 
@@ -49,20 +51,27 @@ class Notification extends PureComponent {
     const animatedAlerting = {
       opacity: this.animatedNotifyValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [1, 0]
+        outputRange: [1, 0],
       }),
       transform: [
         {
           scale: this.animatedNotifyValue.interpolate({
             inputRange: [0, 1],
-            outputRange: [1, 4]
-          })
-        }
-      ]
+            outputRange: [1, 4],
+          }),
+        },
+      ],
     };
 
     return (
-      <Animated.View style={[styles.alertContainer, animatedAlerting]}>
+      <Animated.View
+        style={[
+          styles.alertContainer,
+          {
+            borderColor: this.props.alertColor,
+          },
+          animatedAlerting,
+        ]}>
         <Animated.View />
       </Animated.View>
     );
@@ -73,19 +82,27 @@ class Notification extends PureComponent {
       opacity: this.animatedShowValue,
       transform: [
         {
-          scale: this.animatedShowValue
+          scale: this.animatedShowValue,
         },
         {
           translateY: this.animatedNotifyValue.interpolate({
             inputRange: [0, 0.25, 0.5, 0.75, 1],
-            outputRange: [0, -5, 0, -3, 0]
-          })
-        }
-      ]
+            outputRange: [0, -5, 0, -3, 0],
+          }),
+        },
+      ],
     };
     return (
-      <Animated.View style={[styles.wrapper, extraStyle]}>
-        <Animated.View style={[styles.container, this.props.containerStyle]}>
+      <Animated.View
+        style={[styles.wrapper, extraStyle, this.props.wrapperStyle]}>
+        <Animated.View
+          style={[
+            styles.container,
+            {
+              backgroundColor: this.props.color,
+            },
+            this.props.containerStyle,
+          ]}>
           {this.renderAlert()}
           <Text style={[styles.label, this.props.labelStyle]}>
             {this.props.label}
@@ -100,7 +117,7 @@ const styles = StyleSheet.create({
   wrapper: {
     position: 'absolute',
     top: 0,
-    right: 0
+    right: 0,
   },
   container: {
     top: -5,
@@ -111,11 +128,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 15,
     minWidth: 15,
-    backgroundColor: 'red'
   },
   label: {
     color: '#fff',
-    fontSize: 10
+    fontSize: 10,
   },
   alertContainer: {
     position: 'absolute',
@@ -123,8 +139,8 @@ const styles = StyleSheet.create({
     height: 10,
     borderColor: 'red',
     borderWidth: 0.5,
-    borderRadius: 5
-  }
+    borderRadius: 5,
+  },
 });
 
 export default Notification;

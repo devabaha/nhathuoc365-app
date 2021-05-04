@@ -1,15 +1,24 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, RefreshControl, View, Text} from 'react-native';
-import APIHandler from 'src/network/APIHandler';
-import {APIRequest} from 'src/network/Entity';
+import {FlatList, RefreshControl, StyleSheet} from 'react-native';
+import APIHandler from '../../network/APIHandler';
+import {APIRequest} from '../../network/Entity';
 import appConfig from 'app-config';
-import FastImage from 'react-native-fast-image';
-
-import Container from '../../components/Layout/Container';
-import Loading from 'src/components/Loading';
-import ProductStamp from './ProductStamp/ProductStamp';
+import Loading from '../../components/Loading';
+import ProductStamp from './ProductStamp';
 import {Actions} from 'react-native-router-flux';
-import NoResult from 'src/components/NoResult';
+import NoResult from '../../components/NoResult';
+import Button from '../../components/Button';
+import Icon from 'react-native-vector-icons/Ionicons';
+
+const styles = StyleSheet.create({
+  btnScanQrProduct: {
+    backgroundColor: appConfig.colors.white,
+    justifyContent: 'center',
+  },
+  iconScanQrProduct: {
+    marginRight: 10,
+  },
+});
 
 const ProductStamps = () => {
   const getProductStampsRequest = new APIRequest();
@@ -83,6 +92,12 @@ const ProductStamps = () => {
     );
   };
 
+  const goToScanQR = () => {
+    Actions.push(appConfig.routes.qrBarCode, {
+      title: t('screen.qrBarCode.scanTitle'),
+      index: 1,
+    });
+  };
   return (
     <>
       {isLoading && <Loading center />}
@@ -101,6 +116,19 @@ const ProductStamps = () => {
               message="Bạn chưa nhận sản phẩm nào"
             />
           )
+        }
+      />
+      <Button
+        containerStyle={styles.btnScanQrProduct}
+        onPress={goToScanQR}
+        title="Quét mã sản phẩm"
+        iconLeft={
+          <Icon
+            name="scan"
+            color="white"
+            size={24}
+            style={styles.iconScanQrProduct}
+          />
         }
       />
     </>

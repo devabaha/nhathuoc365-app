@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   Modal,
   TouchableOpacity,
@@ -7,8 +7,12 @@ import {
   TouchableWithoutFeedback,
   View,
   BackHandler,
-  Alert
 } from 'react-native';
+
+import {
+  CameraPermission,
+  PhotoLibraryPermission,
+} from '../../../../helper/permissionHelper';
 
 class ModalGalleryOptionAndroid extends Component {
   state = {};
@@ -20,7 +24,7 @@ class ModalGalleryOptionAndroid extends Component {
       } else {
         BackHandler.removeEventListener(
           'hardwareBackPress',
-          this.handleBackPress
+          this.handleBackPress,
         );
       }
     }
@@ -36,6 +40,30 @@ class ModalGalleryOptionAndroid extends Component {
     BackHandler.removeEventListener('hardwareBackPress', this.handleBackPress);
   }
 
+  handleOpenCamera = async () => {
+    const granted = await CameraPermission.request();
+    if (granted) {
+      this.props.onPressCamera();
+    } else {
+      this.handleBackPress();
+      setTimeout(() => {
+        CameraPermission.openPermissionAskingModal();
+      }, 500);
+    }
+  };
+
+  handleOpenLibrary = async () => {
+    const granted = await PhotoLibraryPermission.request();
+    if (granted) {
+      this.props.onPressLibrary();
+    } else {
+      this.handleBackPress();
+      setTimeout(() => {
+        PhotoLibraryPermission.openPermissionAskingModal();
+      }, 500);
+    }
+  };
+
   handleBackPress = () => {
     this.props.onClose();
     return false;
@@ -47,18 +75,17 @@ class ModalGalleryOptionAndroid extends Component {
         animationType="fade"
         transparent
         visible={this.props.visible}
-        onRequestClose={this.props.onRequestClose}
-      >
+        onRequestClose={this.props.onRequestClose}>
         <TouchableWithoutFeedback onPress={this.props.onClose}>
           <View style={styles.container}>
             <View style={styles.content}>
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>Chọn ảnh từ</Text>
               </View>
-              <TouchableOpacity onPress={this.props.onPressCamera}>
+              <TouchableOpacity onPress={this.handleOpenCamera}>
                 <Text style={styles.option}>Camera</Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={this.props.onPressLibrary}>
+              <TouchableOpacity onPress={this.handleOpenLibrary}>
                 <Text style={styles.option}>Mở thư viện</Text>
               </TouchableOpacity>
             </View>
@@ -73,15 +100,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,.3)'
+    backgroundColor: 'rgba(0,0,0,.3)',
   },
   content: {
     backgroundColor: '#fff',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   titleContainer: {
     borderBottomWidth: 0.5,
-    borderColor: '#ddd'
+    borderColor: '#ddd',
   },
   title: {
     fontSize: 20,
@@ -89,14 +116,14 @@ const styles = StyleSheet.create({
     color: '#888',
     textTransform: 'uppercase',
     fontWeight: 'bold',
-    letterSpacing: 1
+    letterSpacing: 1,
   },
   option: {
     width: '100%',
     paddingVertical: 10,
     fontSize: 16,
-    color: '#333'
-  }
+    color: '#333',
+  },
 });
 
 export default ModalGalleryOptionAndroid;

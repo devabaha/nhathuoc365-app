@@ -17,14 +17,14 @@ class APIRequest {
    *
    * @param {Request} data
    */
-  constructor({ cancel = () => {}, promise = () => {}, testID = 'init' } = {}) {
+  constructor({cancel = () => {}, promise = () => {}, testID = 'init'} = {}) {
     this.id = new Date().getTime();
     this.cancel = cancel;
     this.promise = promise;
     this.testID = testID;
   }
 
-  set data({ testID = 'init', cancel, promise }) {
+  set data({testID = this.testID, cancel, promise}) {
     this.testID = testID;
     this.updateCancel = cancel;
     this.updatePromise = promise;

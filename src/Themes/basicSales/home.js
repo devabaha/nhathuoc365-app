@@ -7,105 +7,124 @@ import SVGSearch from '../../images/home/search.svg';
 import SVGMessage from '../../images/home/message.svg';
 import {ASSETS_TYPE, BUNDLE_ICON_SETS} from '../constants';
 
-export const home = StyleSheet.create({
-  home_content_wrapper: {
-    backgroundColor: 'transparent',
-  },
-  // Header
-  header_container: {
-    paddingBottom: 10,
-  },
-  header_mask_sub: {
-    backgroundColor: '#000',
-    opacity: 0.4,
-  },
-  header_search_wrapper: {
-    borderRadius: 20,
-  },
-  header_search_wrapper_active: {
-    backgroundColor: '#000',
-    opacity: 0.4,
-  },
-  header_search_icon: {
-    color: '#fff',
-  },
-  header_search_input_placeholder: {
-    color: '#fff',
-  },
-  header_right_nav_bar_icon: {
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  header_right_nav_bar_last_icon: {
-    paddingRight: 0,
-  },
-  primary_action_overflow_wrapper: {
-    overflow: 'visible',
-  },
-  primary_action_color_text: {
-    color: '#2B2B2B',
-    fontSize: 14,
-  },
-  primary_action_color_surplus: {
-    fontSize: 20,
-    color: '#2B2B2B',
-  },
-  shadow_wrapper: {
-    ...Platform.select({
-      ios: {
-        shadowColor: '#333',
-        shadowOffset: {
-          width: 1,
-          height: 4,
+export const home = {
+  header: StyleSheet.create({
+    // Header
+    container: {
+      paddingBottom: 10,
+    },
+    maskSub: {
+      backgroundColor: '#fff',
+      opacity: 0.4,
+    },
+    searchWrapper: {
+      borderRadius: 20,
+    },
+    searchWrapperActive: {
+      backgroundColor: '#000',
+      opacity: 0.4,
+    },
+    searchIcon: {
+      color: '#fff',
+    },
+    searchInputPlaceholder: {
+      color: '#fff',
+    },
+    rightNavBarIcon: {
+      paddingLeft: 10,
+      paddingRight: 10,
+    },
+    rightNavBarLastIcon: {
+      paddingRight: 0,
+    },
+  }),
+  home: StyleSheet.create({
+    contentWrapper: {
+      backgroundColor: 'transparent',
+    },
+  }),
+  primaryAction: StyleSheet.create({
+    overflowWrapper: {
+      overflow: 'visible',
+    },
+    colorText: {
+      color: '#2B2B2B',
+      fontSize: 14,
+    },
+    colorSurplus: {
+      fontSize: 20,
+      color: '#2B2B2B',
+    },
+    shadowWrapper: {
+      ...Platform.select({
+        ios: {
+          shadowColor: '#333',
+          shadowOffset: {
+            width: 1,
+            height: 4,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 8,
-        borderWidth: Util.pixel,
-        borderColor: '#E1E1E1',
-      },
-    }),
-  },
-  list_service_container: {
-    backgroundColor: 'transparent',
-  },
-  list_service_item: {
-    borderRadius: 100,
-  },
-  list_product_item_container_shadow: {
-    borderRadius: 4,
-    backgroundColor: '#fafafa',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#333',
-        shadowOffset: {
-          width: 1,
-          height: 4,
+        android: {
+          elevation: 8,
+          borderWidth: Util.pixel,
+          borderColor: '#E1E1E1',
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 8,
-        borderWidth: Util.pixel,
-        borderColor: '#E1E1E1',
-      },
-    }),
-  },
-  list_product_item_info_wrapper: {
-    backgroundColor: '#fff',
-    padding: 5,
-    borderRadius: 4,
-  },
-  list_product_item_price_box: {
-    backgroundColor: 'transparent',
-  },
-  list_product_item_salePrice: {
-    color: '#FF0000',
-  },
-});
+      }),
+    },
+  }),
+  listService: StyleSheet.create({
+    container: {
+      paddingVertical: 6,
+      backgroundColor: 'transparent',
+    },
+    item: {
+      borderRadius: 100,
+    },
+  }),
+  listProduct: StyleSheet.create({
+    container: {
+      flex: 1,
+      borderRadius: 4,
+      backgroundColor: '#fafafa',
+      ...Platform.select({
+        ios: {
+          shadowColor: '#333',
+          shadowOffset: {
+            width: 1,
+            height: 4,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+        },
+        android: {
+          elevation: 8,
+          borderWidth: Util.pixel,
+          borderColor: '#E1E1E1',
+        },
+      }),
+    },
+    infoWrapper: {
+      flex: 1,
+      marginTop: 10,
+      alignItems: 'flex-start',
+      backgroundColor: '#fff',
+      padding: 5,
+      borderRadius: 4,
+    },
+    priceBox: {
+      marginTop: 4,
+      paddingVertical: 2,
+      paddingHorizontal: 4,
+      borderRadius: 4,
+      backgroundColor: 'transparent',
+    },
+    price: {
+      color: '#FF0000',
+    },
+  }),
+};
 
 export const assets = {
   cart: {

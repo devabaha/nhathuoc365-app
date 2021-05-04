@@ -9,6 +9,7 @@
   "item": {
     "title": "Orders #{{code}}",
     "next": "Continue",
+    "store": "Store",
     "edit": "Edit",
     "note": "Note",
     "cancel": "Cancel",
@@ -56,6 +57,7 @@
     },
     "order": {
       "title": "ORDER",
+      "payTitle": "PAY",
       "popup": {
         "title": "SUCCESS",
         "loggedIn": {
