@@ -77,7 +77,7 @@ class Config {
       logo: {
         main: this.primaryColor,
         sub: '#FFF',
-        addition: '#000'
+        addition: '#000',
       },
       status: {
         danger: '#ef476f',

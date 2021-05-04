@@ -191,9 +191,7 @@ const GPSListStore = () => {
     ) {
       if (isGoToSetting) {
         requestLocationPermission();
-      } else if (
-        requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED
-      ) {
+      } else if (requestLocationErrorCode === REQUEST_RESULT_TYPE.GRANTED) {
         updateLocation();
       }
     }
@@ -216,8 +214,7 @@ const GPSListStore = () => {
   };
 
   const updateLocation = (timeout = 5000, loading = false) => {
-    if (requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED)
-      return;
+    if (requestLocationErrorCode !== REQUEST_RESULT_TYPE.GRANTED) return;
     const config = {
       timeout,
       enableHighAccuracy: appConfig.device.isIOS,
@@ -339,8 +336,13 @@ const GPSListStore = () => {
     const disabledDistanceStyle = !isConnectGPS && styles.disabledDistance;
     return (
       <Container row style={styles.storeContainer}>
-
-        <FastImage source={{uri: store.image_url}} style={[styles.image, !store.image_url && {backgroundColor: '#f5f5f5'}]} />
+        <FastImage
+          source={{uri: store.image_url}}
+          style={[
+            styles.image,
+            !store.image_url && {backgroundColor: '#f5f5f5'},
+          ]}
+        />
 
         <Container flex centerVertical={false} style={styles.infoContainer}>
           <Container centerVertical={false}>

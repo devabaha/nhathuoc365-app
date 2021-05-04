@@ -100,9 +100,7 @@ class ListProducts extends Component {
         <View style={styles.headingWrapper}>
           <Text style={styles.heading}>{this.props.title}</Text>
           {!!this.props.onShowAll && (
-            <Button
-              underlayColor="transparent"
-              onPress={this.props.onShowAll}>
+            <Button underlayColor="transparent" onPress={this.props.onShowAll}>
               <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
             </Button>
           )}
@@ -117,30 +115,25 @@ class ListProducts extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    marginTop: 10,
-    paddingBottom: 20,
+    marginVertical: 15,
   },
   headingWrapper: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
     paddingTop: 15,
-    paddingBottom: 12,
-    paddingHorizontal: 16,
+    paddingBottom: 5,
+    paddingHorizontal: 15,
     justifyContent: 'space-between',
   },
   heading: {
     color: '#333',
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '500',
     lineHeight: 20,
     flex: 1,
     marginRight: 20,
   },
   listHorizontal: {
-    paddingTop: 15,
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
+    marginHorizontal: 5,
   },
   contentHorizontal: {},
   listVertical: {

@@ -452,17 +452,17 @@ class Account extends Component {
             selectedValue: this.props.i18n.language,
             selectedLabel: languages[this.props.i18n.language].label,
             data: Object.values(languages),
-            onSelect: this.handleConfirmChangeAppLanguage
+            onSelect: this.handleConfirmChangeAppLanguage,
           });
         },
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#175189'
-          }
+            backgroundColor: '#175189',
+          },
         ],
         iconColor: '#ffffff',
-        marginTop: true
+        marginTop: true,
       },
 
       {
