@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backIcon: {
-    fontSize: 26,
+    fontSize: 20,
   },
   title: {
     color: '#333',

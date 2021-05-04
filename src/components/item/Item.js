@@ -692,11 +692,11 @@ class Item extends Component {
             });
           }}
           key={index}>
-          <View>
+          <View style={{height: '100%'}}>
             <FastImage
               style={styles.swiper_image}
               source={{uri: image.image}}
-              resizeMode="contain"
+              resizeMode="cover"
             />
           </View>
         </TouchableHighlight>
@@ -730,12 +730,12 @@ class Item extends Component {
                 this.renderPagination(index, total, context, hasImages)
               }
               buttonWrapperStyle={{
-                alignItems: 'flex-end'
+                alignItems: 'flex-end',
               }}
               nextButton={this.renderNextButton()}
               prevButton={this.renderPrevButton()}
               width={appConfig.device.width}
-              height={appConfig.device.width}
+              height={appConfig.device.height / 2}
               containerStyle={styles.content_swiper}>
               {this.renderProductImages(images)}
             </Swiper>
@@ -856,7 +856,7 @@ class Item extends Component {
           onPressWarehouse={this.handlePressWarehouse}
         />
 
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container2}>
           <Animated.ScrollView
             ref={(ref) => (this.refs_body_item = ref)}
             style={{
@@ -971,6 +971,7 @@ class Item extends Component {
                 <DiscountBadge
                   containerStyle={styles.discountBadge}
                   label={saleFormat(item.discount_percent)}
+                  contentContainerStyle={styles.discountBadgeContent}
                 />
               )}
               {isInventoryVisible && (
@@ -1100,7 +1101,7 @@ class Item extends Component {
                     color: #404040 !important;
                   }
                   p {
-                    font-size: 15px;
+                    font-size: 14px;
                     line-height: 24px
                   }
                   img {
@@ -1138,7 +1139,7 @@ class Item extends Component {
             </View>
           </Animated.ScrollView>
           {this.renderCartFooter(item)}
-        </SafeAreaView>
+        </View>
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
@@ -1174,6 +1175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#ffffff',
   },
+
   right_btn_box: {
     flexDirection: 'row',
   },
@@ -1181,45 +1183,43 @@ const styles = StyleSheet.create({
     flex: 0,
   },
   swiper_image: {
+    width: '100%',
     height: '100%',
     resizeMode: 'contain',
   },
   swiper_no_image: {
-    height: appConfig.device.width * .6,
+    height: appConfig.device.height / 2 - 70,
     resizeMode: 'contain',
   },
 
   item_heading_box: {
     width: '100%',
     marginVertical: 15,
-    paddingHorizontal: 15,
     paddingVertical: 24,
-    alignItems: 'center',
     backgroundColor: '#fcfcfc',
   },
   item_heading_title: {
+    marginTop: 10,
     fontSize: 20,
     color: '#404040',
     fontWeight: '600',
+    paddingLeft: 15,
   },
   item_heading_price_box: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 4,
+    marginTop: 5,
     flexWrap: 'wrap',
+    paddingLeft: 15,
   },
   item_heading_safe_off_value: {
-    fontSize: 20,
+    fontSize: 16,
     color: '#cccccc',
     textDecorationLine: 'line-through',
-    paddingRight: 4,
   },
   item_heading_price: {
-    fontSize: 20,
+    fontSize: 16,
     color: appConfig.colors.primary,
     fontWeight: '600',
-    paddingLeft: 4,
+    paddingVertical: 5,
   },
   item_unit_name: {
     color: '#999',
@@ -1232,11 +1232,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   item_actions_box: {
-    width: '100%',
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     marginTop: 20,
+    overflow: 'hidden',
+    justifyContent: 'center',
+    marginHorizontal: 5,
   },
   item_actions_btn: {
     borderWidth: Util.pixel,
@@ -1244,8 +1244,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 16,
     height: 40,
+    width: appConfig.device.width / 2 - 20,
+    borderRadius: 5,
   },
   item_actions_btn_icon_container: {
     height: '100%',
@@ -1254,7 +1255,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   item_actions_btn_icon: {
-    fontSize: 24,
+    fontSize: 20,
     color: '#fff',
   },
   item_actions_btn_chat: {
@@ -1270,31 +1271,21 @@ const styles = StyleSheet.create({
   },
 
   item_content_box: {
-    // width: '100%',
-    // flexDirection: 'row',
-    borderLeftWidth: Util.pixel,
-    borderTopWidth: Util.pixel,
-    borderColor: '#dddddd',
-    // flexWrap: 'wrap',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginHorizontal: 10,
   },
   item_content_item_container: {
     flexDirection: 'row',
   },
   item_content_item: {
-    // height: 24,
     borderRightWidth: Util.pixel,
     borderBottomWidth: Util.pixel,
-    borderColor: '#dddddd',
+    borderColor: '#ddd',
     flexDirection: 'row',
     alignItems: 'center',
     padding: 8,
     flex: 1,
-  },
-  item_content_item_left: {
-    // width: '45%',
-  },
-  item_content_item_right: {
-    // width: '55%',
   },
   item_content_icon_box: {
     width: 24,
@@ -1316,7 +1307,7 @@ const styles = StyleSheet.create({
 
   item_content_text: {
     width: '100%',
-    paddingTop: 16,
+    paddingVertical: 16,
   },
 
   items_box: {
@@ -1343,10 +1334,18 @@ const styles = StyleSheet.create({
   },
   discountBadge: {
     left: 20,
-    left: 0,
     top: -5,
     position: 'absolute',
     width: null,
+    height: 25,
+  },
+
+  discountBadgeContent: {
+    backgroundColor: '#FD0D1B',
+    borderRadius: 15,
+    paddingHorizontal: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   paginationContainer: {
@@ -1370,7 +1369,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30
+    marginBottom: 30,
   },
   swipeRightControlBtn: {
     right: 7,
@@ -1391,11 +1390,10 @@ const styles = StyleSheet.create({
   },
   webview: {
     paddingHorizontal: 6,
-    marginHorizontal: 15,
     width: appConfig.device.width - 30,
+    marginLeft: 15,
   },
   noImageContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     opacity: 0.4,

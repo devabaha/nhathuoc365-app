@@ -14,7 +14,7 @@
     "note": "Ghi chú",
     "cancel": "Hủy đơn",
     "totalSelected": "{{total}} sản phẩm",
-    "totalPaymentMessage": "Tổng thanh toán"
+    "totalPaymentMessage": "Tổng"
   },
   "confirm": {
     "process": {

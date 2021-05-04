@@ -363,7 +363,8 @@ class CategoryScreen extends Component {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                paddingTop: 7,
+                paddingHorizontal: 7.5,
+                marginVertical: 15,
               }}>
               {items_data != null
                 ? items_data.map((item, index) => (
@@ -402,6 +403,7 @@ const styles = StyleSheet.create({
   containerScreen: {
     width: Util.size.width,
     flex: 1,
+    backgroundColor: '#fff',
   },
 });
 

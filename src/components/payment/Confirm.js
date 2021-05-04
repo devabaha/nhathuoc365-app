@@ -1060,7 +1060,7 @@ class Confirm extends Component {
     return (
       <>
         {this.state.loading && <Loading center />}
-        {single && (
+        {/* {single && (
           <View style={styles.payments_nav}>
             <TouchableHighlight
               onPress={this._goAddress.bind(this)}
@@ -1122,11 +1122,7 @@ class Confirm extends Component {
               </View>
             </TouchableHighlight>
           </View>
-        )}
-
-        {/* <KeyboardAwareScrollView
-          ref={this.refs_confirm_page}
-          style={styles.container}> */}
+        )} */}
         <KeyboardAwareScrollView
           ref={this.refs_confirm_page}
           style={styles.container}
@@ -1145,13 +1141,12 @@ class Confirm extends Component {
           extraScrollHeight={60}
           resetScrollToCoords={this.resetScrollToCoords}
           onMomentumScrollEnd={this.handleScroll}
-          onScrollEndDrag={this.handleScroll}
-          contentContainerStyle={{paddingTop: single ? 60 : 0}}>
+          onScrollEndDrag={this.handleScroll}>
           <View
             style={[
               styles.rows,
               {
-                marginTop: single ? 8 : 0,
+                marginVertical: 10,
               },
             ]}>
             <TouchableHighlight
@@ -1297,8 +1292,6 @@ class Confirm extends Component {
               )}
             </View>
           </View>
-
-          {single && <ListHeader title={t('confirm.information.recheck')} />}
 
           <View
             style={[
@@ -2153,7 +2146,6 @@ class Confirm extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-
     marginBottom: 0,
   },
   right_btn_box: {
@@ -2172,10 +2164,11 @@ const styles = StyleSheet.create({
   },
   address_name_box: {
     flexDirection: 'row',
+    paddingVertical: 5,
   },
   address_name: {
     fontSize: 14,
-    color: '#000000',
+    color: '#333',
     fontWeight: '600',
     flex: 1,
   },
@@ -2225,7 +2218,7 @@ const styles = StyleSheet.create({
 
   desc_content: {
     fontSize: 12,
-    color: '#666666',
+    color: '#333',
     marginTop: 4,
     marginLeft: 22,
   },

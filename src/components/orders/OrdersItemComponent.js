@@ -376,9 +376,8 @@ const styles = StyleSheet.create({
   cart_section_title: {
     flex: 1,
     color: '#000000',
-    fontSize: 14,
+    fontSize: 16,
     paddingLeft: 8,
-    fontWeight: '500',
   },
 
   orders_item_title_container: {
@@ -398,10 +397,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
+    paddingVertical: 5,
   },
   orders_item_icon_title: {
     marginLeft: 5,
-    color: '#404040',
+    color: '#333',
     fontWeight: '500',
   },
 
@@ -414,9 +414,8 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   orders_item_content_label: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#404040',
-    fontWeight: '500',
   },
   orders_status_box: {
     flex: 1,
@@ -435,7 +434,7 @@ const styles = StyleSheet.create({
   },
   orders_item_content_value: {
     fontSize: 14,
-    color: '#404040',
+    color: '#333',
   },
   orders_item_payment: {
     width: '100%',
@@ -482,12 +481,13 @@ const styles = StyleSheet.create({
   },
 
   indexContainer: {
-    paddingVertical: 3,
-    paddingRight: 18,
-    paddingLeft: 10,
-    borderTopLeftRadius: 15,
-    borderBottomLeftRadius: 15,
+    width: 25,
+    height: 25,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#f0f0f0',
+    marginHorizontal: 5,
   },
   indexValue: {
     color: '#666',
