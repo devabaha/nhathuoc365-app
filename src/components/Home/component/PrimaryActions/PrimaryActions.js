@@ -13,12 +13,13 @@ import {
 import QRScanButton from './QRScanButton';
 import Themes from 'src/Themes';
 
+const homeThemes = Themes.getNameSpace('home');
+const primaryActionStyles = homeThemes('styles.home.primaryAction');
+console.log({primaryActionStyles});
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
   }
-
-  homeThemes = Themes.getNameSpace('home');
 
   get isActiveQRScan() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.QR_SCAN);
@@ -39,25 +40,14 @@ class PrimaryActions extends Component {
     const actionsWrapper = !props.primaryActions && {
       height: null,
     };
-    const overflowWrapper = this.homeThemes(
-      'styles.home.primary_action_overflow_wrapper',
-    );
-    const shadowWrapper = this.homeThemes('styles.home.shadow_wrapper');
-    const colorWalletName = this.homeThemes(
-      'styles.home.primary_action_color_text',
-    );
-    const colorSurplus = this.homeThemes(
-      'styles.home.primary_action_color_surplus',
-    );
 
     return (
       <View style={styles.container}>
         <View
           style={[
             styles.actionsWrapper,
-            overflowWrapper,
             actionsWrapper,
-            shadowWrapper,
+            primaryActionStyles.shadowWrapper,
           ]}>
           <View style={styles.mainContentWrapper}>
             {this.isActiveQRScan ? (
@@ -88,14 +78,10 @@ class PrimaryActions extends Component {
               containerStyle={styles.surplusContainer}
               onPress={() => props.onSurplusNext()}>
               <View style={styles.walletInfoWrapper}>
-                <Text style={[styles.walletNameLabel, colorWalletName]}>
-                  {props.walletName}
-                </Text>
+                <Text style={[styles.walletNameLabel]}>{props.walletName}</Text>
 
                 <View style={styles.walletLabelRight}>
-                  <Text style={[styles.surplus, colorSurplus]}>
-                    {props.surplus}
-                  </Text>
+                  <Text style={[styles.surplus]}>{props.surplus}</Text>
                 </View>
                 <View style={styles.iconNextWrapper}>
                   <Image style={styles.iconNext} source={imageIconNext} />
@@ -152,16 +138,10 @@ PrimaryActions.defaultProps = {
   onPressItem: defaultListener,
 };
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowRadius: 5,
   },
   actionsWrapper: {
     width: appConfig.device.width - 32,
@@ -265,5 +245,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+
+styles = Themes.mergeStyles(styles, primaryActionStyles);
 
 export default observer(PrimaryActions);

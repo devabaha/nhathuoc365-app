@@ -9,6 +9,9 @@ import {DiscountBadge} from '../../../Badges';
 import Themes from 'src/Themes';
 import Ribbon from 'src/components/Ribbon/Ribbon';
 
+const homeThemes = Themes.getNameSpace('home');
+const productItemStyle = homeThemes('styles.home.listProduct');
+
 class ProductItem extends PureComponent {
   static propTypes = {
     name: PropTypes.string,
@@ -34,7 +37,6 @@ class ProductItem extends PureComponent {
     loading: false,
   };
   unmounted = false;
-  homeThemes = Themes.getNameSpace('home');
 
   handlePress = () => {
     if (!!this.props.selfRequest) {
@@ -54,29 +56,11 @@ class ProductItem extends PureComponent {
   };
 
   render() {
-    const shadowWrapperStyle = this.homeThemes(
-      'styles.home.list_product_item_container_shadow',
-    );
-    const infoWrapperStyle = this.homeThemes(
-      'styles.home.list_product_item_info_wrapper',
-    );
-    const priceBoxStyle = this.homeThemes(
-      'styles.home.list_product_item_price_box',
-    );
-    const salePriceTextStyle = this.homeThemes(
-      'styles.home.list_product_item_salePrice',
-    );
-
     return (
       <Button
         onPress={this.handlePress}
         containerStyle={[styles.wrapper, this.props.wrapperStyle]}>
-        <View
-          style={[
-            styles.container,
-            shadowWrapperStyle,
-            this.props.containerStyle,
-          ]}>
+        <View style={[styles.container, this.props.containerStyle]}>
           <ImageBackground
             style={[styles.image, this.props.imageStyle]}
             source={{uri: this.props.image}}>
@@ -89,7 +73,7 @@ class ProductItem extends PureComponent {
               </View>
             )}
           </ImageBackground>
-          <View style={[styles.infoWrapper, infoWrapperStyle]}>
+          <View style={[styles.infoWrapper]}>
             <Text style={styles.name} numberOfLines={2}>
               {this.props.name}
             </Text>
@@ -98,10 +82,8 @@ class ProductItem extends PureComponent {
               {this.props.discount_percent > 0 && (
                 <Text style={styles.discount}>{this.props.discount_view}</Text>
               )}
-              <View style={[styles.priceBox, priceBoxStyle]}>
-                <Text style={[styles.price, salePriceTextStyle]}>
-                  {this.props.price_view}
-                </Text>
+              <View style={[styles.priceBox]}>
+                <Text style={[styles.price]}>{this.props.price_view}</Text>
               </View>
             </View>
           </View>
@@ -111,7 +93,7 @@ class ProductItem extends PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   wrapper: {
     width: appConfig.device.width / 2 - 20,
     paddingHorizontal: 5,
@@ -169,5 +151,7 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(1),
   },
 });
+
+styles = Themes.mergeStyles(styles, productItemStyle);
 
 export default ProductItem;

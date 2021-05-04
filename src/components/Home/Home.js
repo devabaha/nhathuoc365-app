@@ -23,7 +23,10 @@ import appConfig from 'app-config';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
-import Themes from '../../Themes';
+import Themes from 'src/Themes';
+
+const homeThemes = Themes.getNameSpace('home');
+const homeStyles = homeThemes('styles.home.home');
 
 const defaultListener = () => {};
 const STATUS_BAR_STYLE = {
@@ -509,7 +512,7 @@ class Home extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
@@ -547,5 +550,6 @@ const styles = StyleSheet.create({
     zIndex: 9999,
   },
 });
+styles = Themes.mergeStyles(styles, homeStyles);
 
 export default withTranslation(['home', 'common'])(Home);

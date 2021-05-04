@@ -20,7 +20,10 @@ import Service from './Service';
 import {SERVICES_TYPE} from 'src/helper/servicesHandler';
 import Themes from 'src/Themes';
 
-const styles = StyleSheet.create({
+const homeThemes = Themes.getNameSpace('home');
+const listServiceStyle = homeThemes('styles.home.listService');
+
+let styles = StyleSheet.create({
   container: {
     paddingVertical: 6,
     backgroundColor: '#fff',
@@ -70,6 +73,7 @@ const styles = StyleSheet.create({
   },
 });
 
+styles = Themes.mergeStyles(styles, listServiceStyle);
 class ListServices extends Component {
   static propTypes = {
     type: PropTypes.oneOf(Object.values(LIST_SERVICE_TYPE)),
@@ -84,8 +88,6 @@ class ListServices extends Component {
     itemsPerRow: MIN_ITEMS_PER_ROW,
     onItemPress: () => {},
   };
-
-  homeStyles = Themes.getNameSpace('home');
 
   state = {
     horizontalContainerWidth: undefined,
@@ -289,7 +291,7 @@ class ListServices extends Component {
       width: serviceDimension,
       height: serviceDimension,
       backgroundColor: item.bgrColor,
-      ...this.homeStyles('styles.home.list_service_item'),
+      ...listServiceStyle.item,
     };
 
     const titleStyle = {marginTop: titleMarginTop};
@@ -322,11 +324,9 @@ class ListServices extends Component {
         },
       ],
     };
-    const containerStyle = this.homeStyles(
-      'styles.home.list_service_container',
-    );
+
     return (
-      <Animated.View style={[styles.container, containerStyle, visibleStyle]}>
+      <Animated.View style={[styles.container, visibleStyle]}>
         <Animated.ScrollView
           scrollEventThrottle={1}
           scrollEnabled={this.scrollEnabled}

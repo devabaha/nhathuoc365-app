@@ -6,6 +6,7 @@ import SVGCart from '../../images/home/cart.svg';
 import SVGSearch from '../../images/home/search.svg';
 import SVGMessage from '../../images/home/message.svg';
 import {ASSETS_TYPE, BUNDLE_ICON_SETS} from '../constants';
+import appConfig from 'app-config';
 
 export const home = {
   header: StyleSheet.create({
@@ -44,14 +45,27 @@ export const home = {
     },
   }),
   primaryAction: StyleSheet.create({
-    overflowWrapper: {
+    actionsWrapper: {
+      width: appConfig.device.width - 32,
+      marginHorizontal: 16,
+      backgroundColor: '#fff',
+      borderRadius: 8,
+      borderWidth: 0.5,
+      borderColor: '#ebebeb',
       overflow: 'visible',
     },
-    colorText: {
+    walletNameLabel: {
       color: '#2B2B2B',
       fontSize: 14,
+      flex: 1,
+      paddingRight: 10,
+      fontWeight: '500',
     },
-    colorSurplus: {
+    walletLabelRight: {
+      paddingLeft: 5,
+      alignItems: 'flex-end',
+      justifyContent: 'flex-start',
+      fontWeight: 'bold',
       fontSize: 20,
       color: '#2B2B2B',
     },

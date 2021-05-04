@@ -17,7 +17,7 @@ class Themes {
   currentTheme = {};
 
   constructor() {
-    // this.setCurrentTheme(THEMES_TYPE.BASIC_SALES);
+    this.setCurrentTheme(THEMES_TYPE.BASIC_SALES);
   }
 
   setCurrentTheme(themeType) {
