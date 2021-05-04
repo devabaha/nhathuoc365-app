@@ -25,18 +25,16 @@ import equal from 'deep-equal';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const homeThemes = Themes.getNameSpace('home');
-const  headerStyles = homeThemes('styles.home.header');
+const headerStyles = homeThemes('styles.home.header');
 
 class Header extends Component {
   static defaultProps = {
     loading: false,
   };
-  
 
   shouldComponentUpdate(nextProps, nextState) {
     return !equal(nextProps, this.props);
   }
-  
 
   containerStyle = [
     styles.container,
@@ -95,7 +93,8 @@ class Header extends Component {
                   //   ).color || appConfig.colors.primary
                   // }
                   placeholderTextColor={
-                    styles?.searchInputPlaceholder?.color || appConfig.colors.primary
+                    styles?.searchInputPlaceholder?.color ||
+                    appConfig.colors.primary
                   }
                   numberOfLines={1}
                 />
@@ -136,7 +135,7 @@ class Header extends Component {
             // ]}
             containerStyle={[
               styles.rightNavBarIcon,
-              styles.rightNavBarLastIcon
+              styles.rightNavBarLastIcon,
             ]}
             style={styles.chatIconStyle}
             icon={

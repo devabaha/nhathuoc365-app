@@ -2,10 +2,15 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import {View, Text, StyleSheet} from 'react-native';
-
+import appConfig from 'app-config';
 import ImageBackground from '../../../ImageBg';
 import Loading from '../../../Loading';
 import {DiscountBadge} from '../../../Badges';
+import Themes from 'src/Themes';
+import Ribbon from 'src/components/Ribbon/Ribbon';
+
+const homeThemes = Themes.getNameSpace('home');
+const productItemStyle = homeThemes('styles.home.listProduct');
 
 class ProductItem extends PureComponent {
   static propTypes = {
@@ -63,13 +68,12 @@ class ProductItem extends PureComponent {
               <Loading color="#fff" containerStyle={styles.loading} />
             )}
             {this.props.discount_percent > 0 && (
-              <DiscountBadge
-                containerStyle={styles.discountBadgeContainer}
-                label={saleFormat(this.props.discount_percent)}
-              />
+              <View style={styles.discountBadgeContainer}>
+                <Ribbon text={saleFormat(this.props.discount_percent)} />
+              </View>
             )}
           </ImageBackground>
-          <View style={styles.infoWrapper}>
+          <View style={[styles.infoWrapper]}>
             <Text style={styles.name} numberOfLines={2}>
               {this.props.name}
             </Text>
@@ -78,8 +82,8 @@ class ProductItem extends PureComponent {
               {this.props.discount_percent > 0 && (
                 <Text style={styles.discount}>{this.props.discount_view}</Text>
               )}
-              <View style={styles.priceBox}>
-                <Text style={styles.price}>{this.props.price_view}</Text>
+              <View style={[styles.priceBox]}>
+                <Text style={[styles.price]}>{this.props.price_view}</Text>
               </View>
             </View>
           </View>
@@ -89,10 +93,11 @@ class ProductItem extends PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   wrapper: {
-    width: 150,
-    paddingHorizontal: 15,
+    width: appConfig.device.width / 2 - 20,
+    paddingHorizontal: 5,
+    paddingVertical: 10,
   },
   container: {
     flex: 1,
@@ -104,7 +109,7 @@ const styles = StyleSheet.create({
   },
   infoWrapper: {
     flex: 1,
-    marginTop: 8,
+    marginTop: 10,
     alignItems: 'flex-start',
   },
   name: {
@@ -138,13 +143,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,.12)',
   },
   discountBadgeContainer: {
-    top: 0,
-    height: 18,
+    top: 10,
+    left: 0,
     position: 'absolute',
     backgroundColor: '#fff',
     width: undefined,
     ...elevationShadowStyle(1),
   },
 });
+
+styles = Themes.mergeStyles(styles, productItemStyle);
 
 export default ProductItem;

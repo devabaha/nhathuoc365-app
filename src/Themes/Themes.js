@@ -4,6 +4,7 @@ import FastImage from 'react-native-fast-image';
 
 import basicSales from './basicSales';
 import {ASSETS_TYPE, BUNDLE_ICON_SETS, THEMES_TYPE} from './constants';
+import {isEmpty} from 'lodash';
 
 export const THEMES = [
   {
@@ -36,12 +37,15 @@ class Themes {
     }
 
     const styles = {};
-    const nameSpaceKeys = Object.keys(this.styles).filter((key) =>
-      nameSpaces.includes(key),
-    );
-    nameSpaceKeys.forEach((key) => {
-      styles[key] = this.styles[key];
-    });
+
+    if (!isEmpty(this.currentTheme)) {
+      const nameSpaceKeys = Object.keys(this.styles).filter((key) =>
+        nameSpaces.includes(key),
+      );
+      nameSpaceKeys.forEach((key) => {
+        styles[key] = this.styles[key];
+      });
+    }
 
     const themesInNamespace = {
       ...this.currentTheme,
@@ -138,19 +142,19 @@ class Themes {
   };
 
   mergeStyles = (base, others) => {
-    Object.keys(base).forEach(key => {
-      base[key] = {...base[key], ...others[key]}
+    Object.keys(base).forEach((key) => {
+      base[key] = {...base[key], ...others[key]};
     });
 
     return base;
-  }
+  };
 
   get styles() {
-    return this.currentTheme.styles;
+    return this.currentTheme?.styles ?? {};
   }
 
   get assets() {
-    return this.currentTheme.assets;
+    return this.currentTheme?.assets ?? {};
   }
 }
 

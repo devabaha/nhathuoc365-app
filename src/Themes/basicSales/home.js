@@ -6,38 +6,138 @@ import SVGCart from '../../images/home/cart.svg';
 import SVGSearch from '../../images/home/search.svg';
 import SVGMessage from '../../images/home/message.svg';
 import {ASSETS_TYPE, BUNDLE_ICON_SETS} from '../constants';
+import appConfig from 'app-config';
 
 export const home = {
   header: StyleSheet.create({
-  // Header
-  container: {
-    paddingBottom: 10,
-  },
-  maskSub: {
-    backgroundColor: '#000',
-    opacity: 0.4,
-  },
-  searchWrapper: {
-    borderRadius: 20,
-  },
-  searchWrapperActive: {
-    backgroundColor: '#000',
-    opacity: 0.4,
-  },
-  searchIcon: {
-    color: '#fff',
-  },
-  searchInputPlaceholder: {
-    color: '#fff',
-  },
-  rightNavBarIcon: {
-    paddingLeft: 10,
-    paddingRight: 10,
-  },
-  rightNavBarLastIcon: {
-    paddingRight: 0,
-  },
-})
+    // Header
+    container: {
+      paddingBottom: 10,
+    },
+    maskSub: {
+      backgroundColor: '#fff',
+      opacity: 0.4,
+    },
+    searchWrapper: {
+      borderRadius: 20,
+    },
+    searchWrapperActive: {
+      backgroundColor: '#000',
+      opacity: 0.4,
+    },
+    searchIcon: {
+      color: '#fff',
+    },
+    searchInputPlaceholder: {
+      color: '#fff',
+    },
+    rightNavBarIcon: {
+      paddingLeft: 10,
+      paddingRight: 10,
+    },
+    rightNavBarLastIcon: {
+      paddingRight: 0,
+    },
+  }),
+  home: StyleSheet.create({
+    contentWrapper: {
+      backgroundColor: 'transparent',
+    },
+  }),
+  primaryAction: StyleSheet.create({
+    actionsWrapper: {
+      width: appConfig.device.width - 32,
+      marginHorizontal: 16,
+      backgroundColor: '#fff',
+      borderRadius: 8,
+      borderWidth: 0.5,
+      borderColor: '#ebebeb',
+      overflow: 'visible',
+    },
+    walletNameLabel: {
+      color: '#2B2B2B',
+      fontSize: 14,
+      flex: 1,
+      paddingRight: 10,
+      fontWeight: '500',
+    },
+    walletLabelRight: {
+      paddingLeft: 5,
+      alignItems: 'flex-end',
+      justifyContent: 'flex-start',
+      fontWeight: 'bold',
+      fontSize: 20,
+      color: '#2B2B2B',
+    },
+    shadowWrapper: {
+      ...Platform.select({
+        ios: {
+          shadowColor: '#333',
+          shadowOffset: {
+            width: 1,
+            height: 4,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+        },
+        android: {
+          elevation: 8,
+          borderWidth: Util.pixel,
+          borderColor: '#E1E1E1',
+        },
+      }),
+    },
+  }),
+  listService: StyleSheet.create({
+    container: {
+      paddingVertical: 6,
+      backgroundColor: 'transparent',
+    },
+    item: {
+      borderRadius: 100,
+    },
+  }),
+  listProduct: StyleSheet.create({
+    container: {
+      flex: 1,
+      borderRadius: 4,
+      backgroundColor: '#fafafa',
+      ...Platform.select({
+        ios: {
+          shadowColor: '#333',
+          shadowOffset: {
+            width: 1,
+            height: 4,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+        },
+        android: {
+          elevation: 8,
+          borderWidth: Util.pixel,
+          borderColor: '#E1E1E1',
+        },
+      }),
+    },
+    infoWrapper: {
+      flex: 1,
+      marginTop: 10,
+      alignItems: 'flex-start',
+      backgroundColor: '#fff',
+      padding: 5,
+      borderRadius: 4,
+    },
+    priceBox: {
+      marginTop: 4,
+      paddingVertical: 2,
+      paddingHorizontal: 4,
+      borderRadius: 4,
+      backgroundColor: 'transparent',
+    },
+    price: {
+      color: '#FF0000',
+    },
+  }),
 };
 
 export const assets = {

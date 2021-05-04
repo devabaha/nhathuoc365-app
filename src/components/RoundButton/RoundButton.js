@@ -17,9 +17,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   titleHorizontal: {
-      marginTop: 0,
-      marginHorizontal: 10
-  }
+    marginTop: 0,
+    marginHorizontal: 10,
+  },
 });
 
 function RoundButton({
@@ -50,7 +50,12 @@ function RoundButton({
         <View style={[styles.container, containerStyle, style]}>
           {children}
         </View>
-        {!!title && <Text style={[styles.title, row && styles.titleHorizontal, titleStyle]}>{title}</Text>}
+        {!!title && (
+          <Text
+            style={[styles.title, row && styles.titleHorizontal, titleStyle]}>
+            {title}
+          </Text>
+        )}
       </Container>
     </TouchableOpacity>
   );

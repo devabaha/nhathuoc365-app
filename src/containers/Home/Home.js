@@ -11,7 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
-import Themes, { THEMES_TYPE } from '../../Themes';
+import Themes, {THEMES_TYPE} from '../../Themes';
 
 class Home extends Component {
   constructor(props) {
@@ -47,10 +47,6 @@ class Home extends Component {
   componentDidMount() {
     this.getHomeDataFromApi();
     this.eventTracker.logCurrentView();
-    // setTimeout(() => {
-    //   Themes.setCurrentTheme(THEMES_TYPE.BASIC_SALES);
-    //   Actions.reset(appConfig.routes.sceneWrapper)
-    // }, 5000);
   }
 
   componentWillUnmount() {
@@ -207,11 +203,11 @@ class Home extends Component {
       servicesHandler(service, t, callBack);
     }
   }
-  
+
   handleShowAllSites = () => {
     store.setSelectedTab(appConfig.routes.customerCardWallet);
     Actions.jump(appConfig.routes.customerCardWallet); //appConfig.routes.customerCardWallet
-  }
+  };
 
   handleShowAllGroupProduct = (group) => {
     const service = {
@@ -271,15 +267,15 @@ class Home extends Component {
   };
 
   getStore(id, onSuccess = () => {}, onFail = () => {}, onFinally = () => {}) {
-    const { t } = this.props;
+    const {t} = this.props;
     APIHandler.site_info(id)
-      .then(response => {
+      .then((response) => {
         if (response) {
           onSuccess(response);
         } else {
           flashShowMessage({
             type: 'danger',
-            message: t('common:api.error.message')
+            message: t('common:api.error.message'),
           });
         }
       })
@@ -299,30 +295,30 @@ class Home extends Component {
   };
 
   goToSearch = () => {
-    const { t } = this.props;
-    this.setState({ storeFetching: true });
+    const {t} = this.props;
+    this.setState({storeFetching: true});
 
     this.getStore(
       store.store_id || appConfig.defaultSiteId,
-      response => {
+      (response) => {
         if (response.status == STATUS_SUCCESS && response.data) {
           store.setStoreData(response.data);
           Actions.push(appConfig.routes.searchStore, {
             categories: null,
             category_id: 0,
-            category_name: ''
+            category_name: '',
           });
         } else {
           flashShowMessage({
             type: 'danger',
-            message: response.message || t('common:api.error.message')
+            message: response.message || t('common:api.error.message'),
           });
         }
       },
-      error => {},
+      (error) => {},
       () => {
-        setTimeout(() => this.setState({ storeFetching: false }), 400);
-      }
+        setTimeout(() => this.setState({storeFetching: false}), 400);
+      },
     );
   };
 

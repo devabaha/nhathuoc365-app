@@ -43,4 +43,3 @@ export const DELIVERY_STATUS_CODE = {
   // Đã đối soát
   FOR_CONTROL: 50,
 };
-

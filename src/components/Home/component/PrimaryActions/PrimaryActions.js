@@ -11,7 +11,11 @@ import {
   PACKAGE_OPTIONS_TYPE,
 } from '../../../../helper/packageOptionsHandler';
 import QRScanButton from './QRScanButton';
+import Themes from 'src/Themes';
 
+const homeThemes = Themes.getNameSpace('home');
+const primaryActionStyles = homeThemes('styles.home.primaryAction');
+console.log({primaryActionStyles});
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
@@ -36,9 +40,15 @@ class PrimaryActions extends Component {
     const actionsWrapper = !props.primaryActions && {
       height: null,
     };
+
     return (
       <View style={styles.container}>
-        <View style={[styles.actionsWrapper, actionsWrapper]}>
+        <View
+          style={[
+            styles.actionsWrapper,
+            actionsWrapper,
+            primaryActionStyles.shadowWrapper,
+          ]}>
           <View style={styles.mainContentWrapper}>
             {this.isActiveQRScan ? (
               <View style={styles.pointRechargeBtnContainer}>
@@ -68,10 +78,10 @@ class PrimaryActions extends Component {
               containerStyle={styles.surplusContainer}
               onPress={() => props.onSurplusNext()}>
               <View style={styles.walletInfoWrapper}>
-                <Text style={styles.walletNameLabel}>{props.walletName}</Text>
+                <Text style={[styles.walletNameLabel]}>{props.walletName}</Text>
 
                 <View style={styles.walletLabelRight}>
-                  <Text style={styles.surplus}>{props.surplus}</Text>
+                  <Text style={[styles.surplus]}>{props.surplus}</Text>
                 </View>
                 <View style={styles.iconNextWrapper}>
                   <Image style={styles.iconNext} source={imageIconNext} />
@@ -128,7 +138,7 @@ PrimaryActions.defaultProps = {
   onPressItem: defaultListener,
 };
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
@@ -142,18 +152,6 @@ const styles = StyleSheet.create({
     borderColor: '#ebebeb',
     overflow: 'hidden',
     // height: 140,
-    ...Platform.select({
-      ios: {
-        shadowOffset: {width: 0, height: 3},
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 2,
-        borderWidth: Util.pixel,
-        borderColor: '#E1E1E1',
-      },
-    }),
   },
   mainContentWrapper: {
     flexDirection: 'row',
@@ -187,13 +185,12 @@ const styles = StyleSheet.create({
   surplusContainer: {
     width: '100%',
     flex: 1,
-    paddingVertical: 18,
   },
   walletAction: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 15,
+    paddingVertical: 20,
   },
   walletLabelRight: {
     paddingLeft: 5,
@@ -202,7 +199,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scanIcon: {
-    fontSize: 36,
+    fontSize: 28,
     color: appConfig.colors.primary,
     // paddingRight: 10
   },
@@ -248,5 +245,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
+
+styles = Themes.mergeStyles(styles, primaryActionStyles);
 
 export default observer(PrimaryActions);
