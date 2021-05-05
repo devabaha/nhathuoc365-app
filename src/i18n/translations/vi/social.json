@@ -1,0 +1,9 @@
+{
+    "feeds": {
+        "like": "Thích",
+        "comment": "Bình luận",
+        "share": "Chia sẻ",
+        "more": "Khác",
+        "self": "Bạn"
+    }
+}

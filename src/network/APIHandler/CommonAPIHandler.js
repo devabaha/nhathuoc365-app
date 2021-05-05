@@ -1034,6 +1034,14 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.PAYMENT_CART_PAYMENT + '/' + siteId + '/' + cartId);
     return this.getCancelableAPI(api);
   }
+
+  /**
+   * get list category of news
+   */
+   user_list_news_category() {
+    const api = url_for(API.USER_LIST_NEWS_CATEGORY);
+    return this.getCancelableAPI(api);
+  }
 }
 
 export default CommonAPIHandler;

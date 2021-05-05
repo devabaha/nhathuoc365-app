@@ -1,0 +1,9 @@
+{
+    "feeds": {
+        "like": "Like",
+        "comment": "Comment",
+        "share": "Share",
+        "more": "More",
+        "self": "You"
+    }
+}

@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Image component with custom render if loading error.
+- ScreenWrapper take sceneBackground as backgroundColor.
+- Common component for social like Feeds, ActionBar.
+
+### Changed
+- Container can select wrapper between reanimated and animated.
+- UI/ UX, logic of News (Notify) screen.
+
 ## [r11.5.4] - 2021-04-27
 ### Added
 - Enter voucher code in My Voucher screen.

@@ -14,7 +14,7 @@ export const ORIGIN_IMAGE_DOMAIN = 'https://img.abaha.vn/';
 
 class BaseAPI {
   constructor(
-    apiDomain = ORIGIN_API_DOMAIN,
+    apiDomain = ORIGIN_DEV_API_DOMAIN,
     imageDomain = ORIGIN_IMAGE_DOMAIN
   ) {
     this._apiDomain = apiDomain;

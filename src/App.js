@@ -157,6 +157,7 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
+import { News } from './containers/Social';
 
 /**
  * Not allow font scaling
@@ -771,7 +772,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={Notify}
+                      component={News}
                     />
                   </Stack>
 

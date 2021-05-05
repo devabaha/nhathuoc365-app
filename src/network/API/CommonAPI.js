@@ -433,6 +433,10 @@ class CommonAPI {
   get LOTTERY_TURN() {
     return BaseAPI.apiDomain + 'apiLottery/turn';
   }
+
+  get USER_LIST_NEWS_CATEGORY() {
+    return BaseAPI.apiDomain + 'apiUser/list_news_category';
+  }
 }
 
 export default new CommonAPI();
