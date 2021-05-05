@@ -63,7 +63,9 @@ class ProductItem extends PureComponent {
         style={[styles.wrapper, this.props.wrapperStyle]}>
         <ImageBackground
           style={[styles.image, this.props.imageStyle]}
-          source={{uri: this.props.image}}>
+          source={{
+            uri: this.props.image,
+          }}>
           {this.state.loading && (
             <Loading color="#fff" containerStyle={styles.loading} />
           )}
@@ -95,16 +97,16 @@ class ProductItem extends PureComponent {
 let styles = StyleSheet.create({
   wrapper: {
     width: appConfig.device.width / 2 - 20,
-    paddingHorizontal: 5,
-    paddingVertical: 10,
     flex: 1,
   },
 
   image: {
-    height: 120,
+    width: '100%',
+    height: 150,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: 'hidden',
+    resizeMode: 'contain',
   },
   infoWrapper: {
     alignItems: 'flex-start',

@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   listHorizontal: {
-    marginHorizontal: 5,
+    marginHorizontal: 10,
   },
   contentHorizontal: {},
   listVertical: {

@@ -84,7 +84,7 @@ class Item extends Component {
       ? appConfig.colors.primary
       : is_like
       ? appConfig.colors.status.danger
-      : appConfig.colors.primary;
+      : '#333';
   }
 
   isServiceProduct(product = {}) {
@@ -771,7 +771,11 @@ class Item extends Component {
     return this.state.like_loading || this.state.isSubActionLoading ? (
       <Indicator size="small" />
     ) : this.isServiceProduct(product) ? (
-      <Icon name="heart" size={20} color={this.subActionColor} />
+      <Icon
+        name={this.state.like_flag === 1 ? 'heart' : 'heart-o'}
+        size={20}
+        color={this.subActionColor}
+      />
     ) : isConfigActive(CONFIG_KEY.OPEN_SITE_DROP_SHIPPING_KEY) ? (
       <MaterialCommunityIcons
         name="truck-fast"
@@ -1316,6 +1320,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: appConfig.device.width,
+    marginLeft: 5,
   },
 
   boxButtonActions: {

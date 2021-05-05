@@ -64,20 +64,20 @@ class Header extends Component {
             <TouchableOpacity
               disabled={this.props.loading}
               onPress={this.props.goToSearch}>
-              <Animated.View
+              {/* <Animated.View
                 style={[
                   this.searchWrapperStyle,
                   styles.maskSub,
                   // this.homeThemes('styles.home.header_mask_sub'),
                 ]}
-              />
-              <Animated.View
+              /> */}
+              {/* <Animated.View
                 style={[
                   this.searchWrapperStyle,
                   styles.maskMain,
                   this.props.maskSearchWrapperStyle,
                 ]}
-              />
+              /> */}
               <View pointerEvents="none" style={this.searchWrapperStyle}>
                 <SearchIcon
                   // style={[this.homeThemes('styles.home.header_search_icon')]}
@@ -87,15 +87,11 @@ class Header extends Component {
                 <TextInput
                   style={styles.searchInput}
                   placeholder={store.store_data ? store.store_data.name : ''}
+                  placeholderTextColor="#fff"
                   // placeholderTextColor={
-                  //   this.homeThemes(
-                  //     'styles.home.header_search_input_placeholder',
-                  //   ).color || appConfig.colors.primary
+                  //   styles?.searchInputPlaceholder?.color ||
+                  //   appConfig.colors.primary
                   // }
-                  placeholderTextColor={
-                    styles?.searchInputPlaceholder?.color ||
-                    appConfig.colors.primary
-                  }
                   numberOfLines={1}
                 />
                 {this.props.loading && (

@@ -295,7 +295,10 @@ class Items extends Component {
                 </Text>
               </View>
               <View style={styles.price_box}>
-                <View>
+                <View
+                  style={{
+                    maxWidth: '80%',
+                  }}>
                   {item.discount_percent > 0 && (
                     <Text style={styles.item_safe_off_price}>
                       {item.discount_view}
@@ -341,7 +344,7 @@ class Items extends Component {
                       ) : (
                         <Icon name="cart-plus" size={22} color={'#0eac24'} />
                       )}
-                      {this.isServiceProduct(item) ? (
+                      {/* {this.isServiceProduct(item) ? (
                         <Text style={styles.item_add_cart_title}>
                           {t('product:shopTitle.book')}
                         </Text>
@@ -349,7 +352,7 @@ class Items extends Component {
                         <Text style={styles.item_add_cart_title}>
                           {t('product:shopTitle.buy')}
                         </Text>
-                      )}
+                      )} */}
 
                       {quantity > 0 && (
                         <View style={styles.quantity_box}>
@@ -388,9 +391,9 @@ const styles = StyleSheet.create({
         shadowColor: '#333',
         shadowOffset: {
           width: 1,
-          height: 8,
+          height: 4,
         },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.2,
         shadowRadius: 5,
       },
       android: {
@@ -428,6 +431,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     backgroundColor: '#fff',
     borderRadius: 7,
+    position: 'relative',
   },
   item_info_made: {
     flexDirection: 'row',
@@ -459,7 +463,7 @@ const styles = StyleSheet.create({
   },
   item_add_cart_btn: {
     position: 'absolute',
-    top: 0,
+    bottom: 0,
     right: 0,
     zIndex: 2,
   },
@@ -534,6 +538,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   nameLocation: {
     fontSize: 14,

@@ -20,6 +20,7 @@ export const home = {
     },
     searchWrapper: {
       borderRadius: 20,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
     searchWrapperActive: {
       backgroundColor: '#000',
