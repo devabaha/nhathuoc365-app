@@ -395,8 +395,6 @@ const styles = StyleSheet.create({
       },
       android: {
         elevation: 8,
-        borderWidth: Util.pixel,
-        borderColor: '#E1E1E1',
       },
     }),
   },

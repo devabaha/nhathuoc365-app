@@ -1,7 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import {View, Text, StyleSheet, ImageBackground} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ImageBackground,
+  TouchableOpacity,
+} from 'react-native';
 import Loading from '../../../Loading';
 import Themes from 'src/Themes';
 
@@ -10,7 +16,6 @@ class HomeCardItem extends Component {
     loading: false,
   };
   unmounted = false;
-  homeThemes = Themes.getNameSpace('home');
   handlePress = () => {
     if (!!this.props.selfRequest) {
       this.setState({
@@ -30,18 +35,17 @@ class HomeCardItem extends Component {
 
   render() {
     const props = this.props;
-    const shadowStyle = this.homeThemes('styles.home.shadow_wrapper');
     return (
-      <Button
-        disabled={this.state.loading}
-        onPress={this.handlePress}
-        containerStyle={[
-          styles.containerBtn,
-          {
-            marginRight: props.last ? 16 : 0,
-          },
-        ]}>
-        <View style={[styles.container, shadowStyle, props.containerStyle]}>
+      <View style={[styles.container, this.props.containerStyle]}>
+        <TouchableOpacity
+          disabled={this.state.loading}
+          onPress={this.handlePress}
+          style={[
+            styles.containerBtn,
+            {
+              marginRight: props.last ? 16 : 0,
+            },
+          ]}>
           <ImageBackground
             style={[styles.image, props.imageStyle]}
             source={{uri: props.imageUrl}}>
@@ -64,21 +68,18 @@ class HomeCardItem extends Component {
               </Text>
             )}
           </View>
-        </View>
-      </Button>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
   containerBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 7.5,
-  },
-  container: {
     width: 210,
     backgroundColor: '#fff',
     borderRadius: 8,
+    flexDirection: 'column',
     flex: 1,
     ...Platform.select({
       ios: {
@@ -96,6 +97,10 @@ const styles = StyleSheet.create({
         borderColor: '#E1E1E1',
       },
     }),
+  },
+  container: {
+    paddingVertical: 10,
+    paddingHorizontal: 7.5,
   },
   image: {
     backgroundColor: '#ebebeb',

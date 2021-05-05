@@ -403,7 +403,6 @@ const styles = StyleSheet.create({
   containerScreen: {
     width: Util.size.width,
     flex: 1,
-    backgroundColor: '#fff',
   },
 });
 

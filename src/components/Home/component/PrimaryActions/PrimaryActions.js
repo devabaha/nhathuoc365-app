@@ -160,10 +160,10 @@ let styles = StyleSheet.create({
     borderBottomColor: '#ebebeb',
   },
   walletInfoWrapper: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    flex: 1,
   },
   pointRechargeBtnContainer: {
     flexDirection: 'row',
@@ -185,6 +185,7 @@ let styles = StyleSheet.create({
   surplusContainer: {
     width: '100%',
     flex: 1,
+    justifyContent: 'center',
   },
   walletAction: {
     flex: 1,

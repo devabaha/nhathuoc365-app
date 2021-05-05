@@ -55,33 +55,36 @@ class ListProducts extends Component {
         horizontal
         data={this.props.data}
         style={styles.listHorizontal}
-        contentContainerStyle={styles.contentHorizontal}
         keyExtractor={(item, index) => index.toString()}
         showsHorizontalScrollIndicator={false}
-        renderItem={this.renderItemHorizontal.bind(this)}
+        renderItem={this.renderItemHorizontal}
       />
     );
   }
 
-  renderItemHorizontal({item: product, index}) {
+  renderItemHorizontal = ({item: product, index}) => {
     const extraProps = {
       last: this.props.data.length - 1 === index,
     };
     return this.renderProduct(product, extraProps);
-  }
+  };
 
   renderProduct(product, extraProps) {
     return (
-      <ProductItem
-        selfRequest={(callBack) => this.props.onPressProduct(product, callBack)}
-        name={product.name}
-        image={product.image}
-        discount_view={product.discount_view}
-        discount_percent={product.discount_percent}
-        price_view={product.price_view}
-        onPress={() => this.props.onPressProduct(product)}
-        {...extraProps}
-      />
+      <View style={{paddingHorizontal: 5, paddingVertical: 10}}>
+        <ProductItem
+          selfRequest={(callBack) =>
+            this.props.onPressProduct(product, callBack)
+          }
+          name={product.name}
+          image={product.image}
+          discount_view={product.discount_view}
+          discount_percent={product.discount_percent}
+          price_view={product.price_view}
+          onPress={() => this.props.onPressProduct(product)}
+          {...extraProps}
+        />
+      </View>
     );
   }
 

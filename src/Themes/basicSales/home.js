@@ -98,10 +98,10 @@ export const home = {
     },
   }),
   listProduct: StyleSheet.create({
-    container: {
-      flex: 1,
+    wrapper: {
       borderRadius: 4,
-      backgroundColor: '#fafafa',
+      backgroundColor: '#fff',
+      alignItems: 'stretch',
       ...Platform.select({
         ios: {
           shadowColor: '#333',
@@ -118,17 +118,17 @@ export const home = {
           borderColor: '#E1E1E1',
         },
       }),
+      height: '100%',
     },
     infoWrapper: {
       flex: 1,
-      marginTop: 10,
-      alignItems: 'flex-start',
+      alignItems: 'stretch',
       backgroundColor: '#fff',
       padding: 5,
-      borderRadius: 4,
+      borderBottomLeftRadius: 4,
+      borderBottomRightRadius: 4,
     },
     priceBox: {
-      marginTop: 4,
       paddingVertical: 2,
       paddingHorizontal: 4,
       borderRadius: 4,
