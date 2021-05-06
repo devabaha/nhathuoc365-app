@@ -119,7 +119,7 @@ class ListProducts extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 15,
+    marginVertical: 10,
   },
   headingWrapper: {
     flexDirection: 'row',

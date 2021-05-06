@@ -913,6 +913,7 @@ class Account extends Component {
       <View style={styles.container}>
         <ScrollView
           ref={(ref) => (this.refs_account = ref)}
+          contentContainerStyle={{marginTop: 7.5}}
           refreshControl={
             <RefreshControl
               refreshing={this.state.refreshing}
@@ -926,7 +927,7 @@ class Account extends Component {
                 style={[
                   styles.profile_list_opt_btn,
                   styles.profile_user_container,
-                  {flex: 1, flexDirection: 'row', marginTop: 7.5},
+                  {flex: 1, flexDirection: 'row'},
                 ]}
                 underlayColor="rgba(255,255,255,.7)">
                 <>

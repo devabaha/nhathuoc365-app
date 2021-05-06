@@ -281,7 +281,10 @@ class Items extends Component {
                   }}>
                   {item.discount_percent > 0 && (
                     <Text style={styles.item_safe_off_price}>
-                      {item.discount_view} / {item.unit_name}
+                      <Text style={{textDecorationLine: 'line-through'}}>
+                        {item.discount_view}
+                      </Text>
+                      / {item.unit_name}
                     </Text>
                   )}
 
@@ -491,7 +494,6 @@ const styles = StyleSheet.create({
   item_safe_off_price: {
     color: '#A0A0A0',
     fontSize: 13,
-    textDecorationLine: 'line-through',
     marginRight: 4,
     paddingBottom: 4,
   },
