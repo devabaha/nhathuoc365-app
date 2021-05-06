@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView, View, RefreshControl} from 'react-native';
+import {StyleSheet, ScrollView, View, RefreshControl, Text} from 'react-native';
 import Swiper from 'react-native-swiper';
 import Animated from 'react-native-reanimated';
 import Items from './Items';
@@ -278,6 +278,14 @@ class CategoryScreen extends Component {
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
   }
 
+  renderFilter = () => {
+    return (
+      <View>
+        <Text>123</Text>
+      </View>
+    );
+  };
+
   render() {
     const {t} = this.props;
 
@@ -358,6 +366,7 @@ class CategoryScreen extends Component {
               )}
 
             {/* <ListHeader title={header_title} /> */}
+            {this.renderFilter()}
 
             <View
               style={{
