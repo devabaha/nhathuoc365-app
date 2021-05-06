@@ -46,7 +46,6 @@ const styles = StyleSheet.create({
   },
   content_wrapper: {
     backgroundColor: appConfig.colors.marigold,
-    paddingHorizontal: 8,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',

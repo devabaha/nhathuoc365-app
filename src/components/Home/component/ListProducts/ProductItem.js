@@ -82,7 +82,12 @@ class ProductItem extends PureComponent {
 
           <View style={styles.priceWrapper}>
             {this.props.discount_percent > 0 && (
-              <Text style={styles.discount}>{this.props.discount_view}</Text>
+              <Text style={styles.discount}>
+                <Text style={{textDecorationLine: 'line-through'}}>
+                  {this.props.discount_view}
+                </Text>
+                / {this.props.unit_name}
+              </Text>
             )}
             <View style={[styles.priceBox]}>
               <Text style={[styles.price]}>{this.props.price_view}</Text>
@@ -96,7 +101,7 @@ class ProductItem extends PureComponent {
 
 let styles = StyleSheet.create({
   wrapper: {
-    width: appConfig.device.width / 2 - 20,
+    width: appConfig.device.width / 2 - 40,
     flex: 1,
   },
 
@@ -124,7 +129,6 @@ let styles = StyleSheet.create({
   discount: {
     color: '#404040',
     fontSize: 13,
-    textDecorationLine: 'line-through',
   },
   priceBox: {
     marginTop: 4,

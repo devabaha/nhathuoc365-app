@@ -270,26 +270,6 @@ class Items extends Component {
 
             <View style={styles.item_info_box}>
               <View>
-                <View style={styles.item_info_made}>
-                  <View style={styles.directionRow}>
-                    {item.made_in != '' && (
-                      <>
-                        <Icon name="map-marker" size={12} color="#666666" />
-                        <Text
-                          numberOfLines={2}
-                          style={styles.item_info_made_title}>
-                          {item.made_in}
-                        </Text>
-                      </>
-                    )}
-                  </View>
-
-                  <View style={styles.item_info_weight}>
-                    <Text style={styles.item_info_made_title}>
-                      {item.unit_name_view}
-                    </Text>
-                  </View>
-                </View>
                 <Text style={styles.item_info_name} numberOfLines={2}>
                   {item.name}
                 </Text>
@@ -301,7 +281,7 @@ class Items extends Component {
                   }}>
                   {item.discount_percent > 0 && (
                     <Text style={styles.item_safe_off_price}>
-                      {item.discount_view}
+                      {item.discount_view} / {item.unit_name}
                     </Text>
                   )}
 
@@ -377,7 +357,7 @@ Items.propTypes = {
   onPress: PropTypes.func.isRequired,
 };
 
-const ITEM_WIDTH = appConfig.device.width / 2 - 7.5;
+const ITEM_WIDTH = appConfig.device.width / 2 - 5;
 const ITEM_HEIGHT = (Util.size.width / 2) * 1.333;
 const ITEM_IMG_HEIGHT = (Util.size.width / 2) * 1.333 * 0.666;
 
@@ -402,7 +382,7 @@ const styles = StyleSheet.create({
     }),
   },
   item_box_container: {
-    marginHorizontal: 7.5,
+    marginHorizontal: 5,
     backgroundColor: '#fff',
     flex: 1,
     borderRadius: 7,
@@ -413,8 +393,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   item_image_box: {
-    width: ITEM_WIDTH - 15,
-    height: ITEM_WIDTH - 15,
+    width: ITEM_WIDTH - 10,
+    height: ITEM_WIDTH - 10,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
     overflow: 'hidden',
@@ -548,7 +528,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   discountBadgeContainer: {
-    top: 15,
+    top: 10,
     left: 0,
     position: 'absolute',
     zIndex: 99,

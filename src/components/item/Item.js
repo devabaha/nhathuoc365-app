@@ -896,14 +896,15 @@ class Item extends Component {
               <View style={styles.item_heading_price_box}>
                 {item.discount_percent > 0 && (
                   <Text style={styles.item_heading_safe_off_value}>
-                    {item.discount}
+                    <Text style={{textDecorationLine: 'line-through'}}>
+                      {item.discount}
+                    </Text>
+                    / {unitName}
                   </Text>
                 )}
                 <Text style={styles.item_heading_price}>
                   {item.price_view}
-                  {!!unitName && (
-                    <Text style={styles.item_unit_name}>/ {unitName}</Text>
-                  )}
+                  {!!unitName && <Text style={styles.item_unit_name}> </Text>}
                 </Text>
               </View>
 
@@ -980,8 +981,8 @@ class Item extends Component {
               )}
               {isInventoryVisible && (
                 <View style={styles.productsLeftContainer}>
-                  <View style={styles.productsLeftBackground} />
-                  <View style={styles.productsLeftBackgroundTagTail} />
+                  {/* <View style={styles.productsLeftBackground} />
+                  <View style={styles.productsLeftBackgroundTagTail} /> */}
                   <Text style={styles.productsLeftText}>
                     {t('productsLeft', {quantity: item.inventory})}
                   </Text>
@@ -1217,7 +1218,6 @@ const styles = StyleSheet.create({
   item_heading_safe_off_value: {
     fontSize: 16,
     color: '#cccccc',
-    textDecorationLine: 'line-through',
   },
   item_heading_price: {
     fontSize: 16,
@@ -1338,7 +1338,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   discountBadge: {
-    left: 20,
+    left: 10,
     top: -5,
     position: 'absolute',
     width: null,
@@ -1416,7 +1416,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: '#5f7d95',
   },
   productsLeftBackgroundTagTail: {
     position: 'absolute',
@@ -1433,9 +1432,8 @@ const styles = StyleSheet.create({
     borderLeftColor: 'transparent',
   },
   productsLeftText: {
-    color: '#fff',
-    fontStyle: 'italic',
-    fontSize: 12,
+    color: '#333',
+    fontSize: 13,
     marginHorizontal: 8,
     elevation: 3,
   },

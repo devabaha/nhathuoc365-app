@@ -56,13 +56,11 @@ const styles = StyleSheet.create({
   title: {
     color: '#333',
     fontSize: 20,
-    fontWeight: '500',
     lineHeight: 20,
   },
   viewAll: {
     color: '#0084ff',
     fontSize: 15,
-    fontWeight: '500',
   },
   listContainer: {
     marginLeft: 10,

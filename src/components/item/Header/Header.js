@@ -66,11 +66,11 @@ const RIGHT_BUTTONS = [
   },
   {
     type: RIGHT_BUTTON_TYPE.CHAT,
-    iconName: 'ios-chatbubbles',
+    iconName: 'chatbubble-ellipses-outline',
   },
   {
     type: RIGHT_BUTTON_TYPE.SHOPPING_CART,
-    iconName: 'ios-cart',
+    iconName: 'ios-cart-outline',
   },
   {
     type: RIGHT_BUTTON_TYPE.SHARE,

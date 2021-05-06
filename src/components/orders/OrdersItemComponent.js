@@ -8,6 +8,7 @@ import appConfig from 'app-config';
 import Loading from '../Loading';
 import Tag from '../Tag';
 import {CART_TYPES} from 'src/constants/cart';
+import Button from '../Button';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -295,13 +296,6 @@ class OrdersItemComponent extends Component {
                 )}
               </View>
             </View>
-
-            {is_paymenting && (
-              <ActionButton
-                title={t('item.store')}
-                onGoToStore={() => this.handleGoToStore(item)}
-              />
-            )}
           </View>
 
           <View style={[styles.orders_item_payment]}>
@@ -336,6 +330,15 @@ class OrdersItemComponent extends Component {
                 </Text>
               </View>
             </View>
+            {is_paymenting && (
+              <Button
+                onPress={() => this.handleGoToStore(item)}
+                btnContainerStyle={styles.btnContinue}
+                renderTitleComponent={() => (
+                  <Text style={styles.txtTitleBtn}>{t('item.store')}</Text>
+                )}
+              />
+            )}
           </View>
 
           {this.state.goToStoreLoading && (
@@ -511,6 +514,13 @@ const styles = StyleSheet.create({
   tagsLabelContainer: {
     marginTop: 5,
     marginRight: 5,
+  },
+  btnContinue: {
+    paddingVertical: 8,
+  },
+  txtTitleBtn: {
+    fontSize: 14,
+    color: '#fff',
   },
 });
 

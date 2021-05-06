@@ -821,8 +821,18 @@ class RootRouter extends Component {
                     iconLabel={t('appTab.tab5.title')}
                     iconName="account-circle"
                     notifyKey="notify_account"
+                    navigationBarStyle={{
+                      backgroundColor: '#fff',
+                    }}
+                    headerLayoutPreset="left"
                     iconSize={24}>
                     <Scene
+                      titleStyle={{
+                        color: '#333',
+                        fontSize: 25,
+                        fontWeight: 'bold',
+                        paddingBottom: 10,
+                      }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}

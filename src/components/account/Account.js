@@ -109,20 +109,20 @@ class Account extends Component {
         labelStyle: [
           styles.premiumLabel,
           {
-            color: premium_color,
+            color: '#333',
           },
         ],
         desc: premium_info,
         descStyle: {
-          color: '#ccc',
+          color: '#8B8B8B',
         },
         rightIcon: this.renderRightPremium(premium_point, premium_point_unit),
-        renderAfter: () =>
-          this.renderProgressPremium(
-            premium_point,
-            next_premium_point,
-            premium_color,
-          ),
+        // renderAfter: () =>
+        //   this.renderProgressPremium(
+        //     premium_point,
+        //     next_premium_point,
+        //     premium_color,
+        //   ),
         onPress: () => Actions.push(appConfig.routes.premiumInfo),
         boxIconStyle: [
           styles.boxIconStyle,
@@ -142,19 +142,23 @@ class Account extends Component {
         key: 'default_wallet',
         icon: default_wallet.icon,
         label: (
-          <Text style={styles.profile_list_label}>
-            {default_wallet.name}:{' '}
+          <Text style={styles.profile_list_label}>{default_wallet.name} </Text>
+        ),
+        isHidden: !user_info.default_wallet,
+        rightIcon: (
+          <View style={[styles.rightPremiumContainer]}>
             <Text
               style={[
                 styles.profile_list_label_balance,
-                {color: default_wallet.color},
+                {color: default_wallet.color, paddingLeft: 10},
               ]}>
               {default_wallet.balance_view}
             </Text>
-          </Text>
+            <View style={styles.rightPremiumIconContainer}>
+              <IconAngleRight />
+            </View>
+          </View>
         ),
-        isHidden: !user_info.default_wallet,
-        rightIcon: <IconAngleRight />,
         onPress: () => {
           Actions.push(appConfig.routes.vndWallet, {
             title: default_wallet.name,
@@ -922,7 +926,7 @@ class Account extends Component {
                 style={[
                   styles.profile_list_opt_btn,
                   styles.profile_user_container,
-                  {flex: 1, flexDirection: 'row'},
+                  {flex: 1, flexDirection: 'row', marginTop: 7.5},
                 ]}
                 underlayColor="rgba(255,255,255,.7)">
                 <>
@@ -987,6 +991,7 @@ class Account extends Component {
                           styles.profile_list_label,
                           {
                             fontSize: 18,
+                            fontWeight: 'bold',
                           },
                         ]}
                         numberOfLines={1}>
@@ -1437,10 +1442,8 @@ const styles = StyleSheet.create({
     fontWeight: '400',
   },
   profile_list_label_balance: {
-    fontSize: 18,
-    color: '#922B21',
-    fontWeight: '600',
-    left: 20,
+    fontSize: 16,
+    color: '#333',
   },
   profile_list_label_address: {
     fontSize: 16,
@@ -1548,16 +1551,14 @@ const styles = StyleSheet.create({
   premiumContainer: {
     height: null,
     minHeight: 80,
-    backgroundColor: '#242424',
-    paddingTop: 12,
-    paddingBottom: 15,
-    ...elevationShadowStyle(4),
+    backgroundColor: '#fff',
+    paddingVertical: 20,
   },
   premiumLabel: {
-    fontFamily: 'SairaStencilOne-Regular',
+    // fontFamily: 'SairaStencilOne-Regular',
     // fontWeight: 'bold',
-    textTransform: 'uppercase',
-    fontSize: 20,
+    // textTransform: 'uppercase',
+    fontSize: 16,
     letterSpacing: 1,
   },
   rightPremiumContainer: {
@@ -1565,9 +1566,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingRight: 15,
     paddingVertical: 3,
-    backgroundColor: '#f6f6f6',
-    borderTopLeftRadius: 20,
-    borderBottomLeftRadius: 20,
+    // backgroundColor: '#f6f6f6',
+    // borderTopLeftRadius: 20,
+    // borderBottomLeftRadius: 20,
     marginLeft: 10,
     marginRight: -15,
   },
@@ -1575,7 +1576,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: -5,
     color: '#242424',
-    fontSize: 10,
+    fontSize: 12,
   },
   rightPremiumHighlight: {
     fontWeight: '500',

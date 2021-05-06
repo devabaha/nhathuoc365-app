@@ -76,7 +76,7 @@ class HomeCardItem extends Component {
 
 const styles = StyleSheet.create({
   containerBtn: {
-    width: 210,
+    width: 280,
     backgroundColor: '#fff',
     borderRadius: 8,
     flexDirection: 'column',
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   image: {
     backgroundColor: '#ebebeb',
     width: '100%',
-    height: 120,
+    height: 280 / 1.91,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     overflow: 'hidden',
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 15,
-    fontWeight: 'bold',
   },
   specialSubTitle: {
     fontWeight: '600',

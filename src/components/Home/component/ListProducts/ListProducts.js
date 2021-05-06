@@ -81,6 +81,7 @@ class ListProducts extends Component {
           discount_view={product.discount_view}
           discount_percent={product.discount_percent}
           price_view={product.price_view}
+          unit_name={product.unit_name}
           onPress={() => this.props.onPressProduct(product)}
           {...extraProps}
         />
@@ -130,7 +131,6 @@ const styles = StyleSheet.create({
   heading: {
     color: '#333',
     fontSize: 20,
-    fontWeight: '500',
     lineHeight: 20,
     flex: 1,
     marginRight: 20,
@@ -164,8 +164,7 @@ const styles = StyleSheet.create({
   },
   viewAll: {
     color: '#0084ff',
-    fontSize: 15,
-    fontWeight: '500',
+    fontSize: 14,
   },
 });
 

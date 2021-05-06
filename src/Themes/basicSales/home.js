@@ -94,9 +94,6 @@ export const home = {
       paddingVertical: 6,
       backgroundColor: 'transparent',
     },
-    item: {
-      borderRadius: 100,
-    },
   }),
   listProduct: StyleSheet.create({
     wrapper: {

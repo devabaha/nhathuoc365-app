@@ -363,8 +363,8 @@ class CategoryScreen extends Component {
               style={{
                 flexDirection: 'row',
                 flexWrap: 'wrap',
-                paddingHorizontal: 7.5,
                 marginVertical: 15,
+                paddingHorizontal: 5,
               }}>
               {items_data != null
                 ? items_data.map((item, index) => (
