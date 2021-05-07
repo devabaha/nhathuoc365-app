@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.5.5] - 2021-05-07
+### Fixed
+- Fix crash app in wallet (WalletRow) by [lamah.dev@gmail.com].
+
 ## [r11.5.4] - 2021-04-27
 ### Added
 - Enter voucher code in My Voucher screen.
