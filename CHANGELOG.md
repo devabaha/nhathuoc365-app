@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-
+## [r11.5.4] - 2021-04-27
+### Fixed
+- Fix crash app in wallet (WalletRow) by [lamah.dev@gmail.com].
 ## [r11.5.4] - 2021-04-27
 ### Added
 - Enter voucher code in My Voucher screen.
