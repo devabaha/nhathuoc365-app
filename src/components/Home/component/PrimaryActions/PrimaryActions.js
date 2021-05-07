@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {View, Text, Image, StyleSheet, Platform} from 'react-native';
+import Icon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import getImageRatio from 'app-packages/tickid-util/getImageRatio';
-import imageIconNext from '../../../../images/next.png';
 import PointRechargeButton from './PointRechargeButton';
 import {
   isActivePackageOptionConfig,
@@ -15,7 +15,6 @@ import Themes from 'src/Themes';
 
 const homeThemes = Themes.getNameSpace('home');
 const primaryActionStyles = homeThemes('styles.home.primaryAction');
-console.log({primaryActionStyles});
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
@@ -84,7 +83,7 @@ class PrimaryActions extends Component {
                   <Text style={[styles.surplus]}>{props.surplus}</Text>
                 </View>
                 <View style={styles.iconNextWrapper}>
-                  <Image style={styles.iconNext} source={imageIconNext} />
+                  <Icon name="chevron-right" size={20} color="#9F9F9F" />
                 </View>
               </View>
             </Button>
@@ -160,10 +159,10 @@ let styles = StyleSheet.create({
     borderBottomColor: '#ebebeb',
   },
   walletInfoWrapper: {
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    flex: 1,
   },
   pointRechargeBtnContainer: {
     flexDirection: 'row',
@@ -185,6 +184,7 @@ let styles = StyleSheet.create({
   surplusContainer: {
     width: '100%',
     flex: 1,
+    justifyContent: 'center',
   },
   walletAction: {
     flex: 1,
@@ -205,8 +205,7 @@ let styles = StyleSheet.create({
   },
   iconNextWrapper: {
     fontSize: 20,
-    color: '#042C5C',
-    fontWeight: 'bold',
+    color: '#2B2B2B',
     lineHeight: 20,
     marginLeft: 10,
   },
@@ -218,14 +217,13 @@ let styles = StyleSheet.create({
   walletNameLabel: {
     flex: 1,
     paddingRight: 10,
-    color: '#042C5C',
+    color: '#2B2B2B',
     fontSize: 16,
     fontWeight: '500',
   },
   surplus: {
-    fontSize: 18,
-    color: '#042C5C',
-    fontWeight: '600',
+    fontSize: 20,
+    color: '#2B2B2B',
     lineHeight: 20,
   },
   actionButton: {

@@ -1,7 +1,7 @@
 import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import appConfig from 'app-config';
 import ImageBackground from '../../../ImageBg';
 import Loading from '../../../Loading';
@@ -57,76 +57,78 @@ class ProductItem extends PureComponent {
 
   render() {
     return (
-      <Button
+      <TouchableOpacity
         onPress={this.handlePress}
-        containerStyle={[styles.wrapper, this.props.wrapperStyle]}>
-        <View style={[styles.container, this.props.containerStyle]}>
-          <ImageBackground
-            style={[styles.image, this.props.imageStyle]}
-            source={{uri: this.props.image}}>
-            {this.state.loading && (
-              <Loading color="#fff" containerStyle={styles.loading} />
-            )}
-            {this.props.discount_percent > 0 && (
-              <View style={styles.discountBadgeContainer}>
-                <Ribbon text={saleFormat(this.props.discount_percent)} />
-              </View>
-            )}
-          </ImageBackground>
-          <View style={[styles.infoWrapper]}>
-            <Text style={styles.name} numberOfLines={2}>
-              {this.props.name}
-            </Text>
+        activeOpacity={0.8}
+        style={[styles.wrapper, this.props.wrapperStyle]}>
+        <ImageBackground
+          style={[styles.image, this.props.imageStyle]}
+          source={{
+            uri: this.props.image,
+          }}>
+          {this.state.loading && (
+            <Loading color="#fff" containerStyle={styles.loading} />
+          )}
+          {this.props.discount_percent > 0 && (
+            <View style={styles.discountBadgeContainer}>
+              <Ribbon text={saleFormat(this.props.discount_percent)} />
+            </View>
+          )}
+        </ImageBackground>
+        <View style={[styles.infoWrapper]}>
+          <Text style={styles.name} numberOfLines={2}>
+            {this.props.name}
+          </Text>
 
-            <View style={styles.priceWrapper}>
-              {this.props.discount_percent > 0 && (
-                <Text style={styles.discount}>{this.props.discount_view}</Text>
-              )}
-              <View style={[styles.priceBox]}>
-                <Text style={[styles.price]}>{this.props.price_view}</Text>
-              </View>
+          <View style={styles.priceWrapper}>
+            {this.props.discount_percent > 0 && (
+              <Text style={styles.discount}>
+                <Text style={{textDecorationLine: 'line-through'}}>
+                  {this.props.discount_view}
+                </Text>
+                / {this.props.unit_name}
+              </Text>
+            )}
+            <View style={[styles.priceBox]}>
+              <Text style={[styles.price]}>{this.props.price_view}</Text>
             </View>
           </View>
         </View>
-      </Button>
+      </TouchableOpacity>
     );
   }
 }
 
 let styles = StyleSheet.create({
   wrapper: {
-    width: appConfig.device.width / 2 - 20,
-    paddingHorizontal: 5,
-    paddingVertical: 10,
-  },
-  container: {
+    width: appConfig.device.width / 2 - 40,
     flex: 1,
   },
+
   image: {
-    height: 120,
-    borderRadius: 8,
+    width: '100%',
+    height: 150,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
     overflow: 'hidden',
+    resizeMode: 'contain',
   },
   infoWrapper: {
-    flex: 1,
-    marginTop: 10,
     alignItems: 'flex-start',
   },
   name: {
-    flex: 1,
     fontSize: 14,
     lineHeight: 18,
     fontWeight: '500',
+    paddingBottom: 5,
   },
   priceWrapper: {
     width: '100%',
-    alignItems: 'flex-start',
-    marginTop: 4,
+    marginTop: 'auto',
   },
   discount: {
     color: '#404040',
     fontSize: 13,
-    textDecorationLine: 'line-through',
   },
   priceBox: {
     marginTop: 4,

@@ -291,7 +291,6 @@ class ListServices extends Component {
       width: serviceDimension,
       height: serviceDimension,
       backgroundColor: item.bgrColor,
-      ...listServiceStyle.item,
     };
 
     const titleStyle = {marginTop: titleMarginTop};

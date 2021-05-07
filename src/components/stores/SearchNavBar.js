@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import appConfig from 'app-config';
 import PropTypes from 'prop-types';
-import { Platform, StyleSheet, Text, View, TextInput } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { ifIphoneX } from 'react-native-iphone-x-helper';
+import {Platform, StyleSheet, Text, View, TextInput} from 'react-native';
+import {Actions} from 'react-native-router-flux';
+import {ifIphoneX} from 'react-native-iphone-x-helper';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Button from 'react-native-button';
 
@@ -15,7 +15,7 @@ class SearchNavBar extends Component {
     onSearch: PropTypes.func,
     onClearText: PropTypes.func,
     placeholder: PropTypes.string,
-    searchValue: PropTypes.string
+    searchValue: PropTypes.string,
   };
 
   static defaultProps = {
@@ -23,7 +23,7 @@ class SearchNavBar extends Component {
     onSearch: defaultListener,
     onClearText: defaultListener,
     placeholder: '',
-    searchValue: ''
+    searchValue: '',
   };
 
   renderRight() {
@@ -33,8 +33,7 @@ class SearchNavBar extends Component {
         onPress={() => {
           Actions.pop();
           this.props.onCancel();
-        }}
-      >
+        }}>
         <Text style={styles.cancelText}>Hủy</Text>
       </Button>
     );
@@ -44,7 +43,7 @@ class SearchNavBar extends Component {
     return (
       <View style={styles.searchWrapper}>
         <Icon
-          size={20}
+          size={15}
           color="#ccc"
           style={styles.searchIcon}
           name="ios-search"
@@ -67,7 +66,7 @@ class SearchNavBar extends Component {
                 color="#ccc"
                 style={{
                   position: 'relative',
-                  top: 0
+                  top: 0,
                 }}
                 name="ios-close"
               />
@@ -95,21 +94,21 @@ const styles = StyleSheet.create({
     ...ifIphoneX(
       {
         paddingTop: 40,
-        height: 88
+        height: 88,
       },
       {
         paddingTop: Platform.OS === 'ios' ? 20 : 0,
-        height: Platform.OS === 'ios' ? 64 : 54
-      }
-    )
+        height: Platform.OS === 'ios' ? 64 : 54,
+      },
+    ),
   },
   cancelButton: {
     justifyContent: 'center',
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
   },
   cancelText: {
     fontSize: 16,
-    color: '#fff'
+    color: '#fff',
   },
   searchIcon: {
     // top: 2,
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#666',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 8
+    marginRight: 8,
   },
   searchWrapper: {
     flex: 1,
@@ -134,18 +133,18 @@ const styles = StyleSheet.create({
     ...ifIphoneX(
       {
         marginTop: 4,
-        marginBottom: 8
+        marginBottom: 8,
       },
       {
-        marginVertical: Platform.OS === 'ios' ? 6 : 8
-      }
-    )
+        marginVertical: Platform.OS === 'ios' ? 6 : 8,
+      },
+    ),
   },
   searchInput: {
     flex: 1,
     paddingHorizontal: 8,
-    color: appConfig.colors.white
-  }
+    color: appConfig.colors.white,
+  },
 });
 
 export default SearchNavBar;

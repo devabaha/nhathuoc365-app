@@ -330,7 +330,6 @@ class App extends Component {
       }
 
       try {
-        console.log('APP', params, this.props);
         if (params['+clicked_branch_link']) {
           if (store.isHomeLoaded || params.type === SERVICES_TYPE.AFFILIATE) {
             servicesHandler(params, t);
@@ -358,7 +357,6 @@ class App extends Component {
   handleOpenningNotification = (openResult) => {
     const {t} = this.props;
     const params = openResult.notification.payload.additionalData;
-    console.log(params);
     if (store.isHomeLoaded) {
       servicesHandler(params, t);
     } else {
@@ -755,7 +753,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.homeTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab1.title')}
-                    iconName="store"
+                    iconName="home-outline"
                     iconSize={24}>
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
@@ -772,7 +770,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
-                    iconName="bell"
+                    iconName="newspaper-outline"
                     iconSize={24}
                     notifyKey="new_totals">
                     <Scene
@@ -797,7 +795,7 @@ class RootRouter extends Component {
                     icon={TabIcon}
                     iconSize={24}
                     iconLabel={t('appTab.tab4.title')}
-                    iconName="cart"
+                    iconName="cart-outline"
                     notifyKey="notify_cart">
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
@@ -819,10 +817,20 @@ class RootRouter extends Component {
                     key={appConfig.routes.accountTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab5.title')}
-                    iconName="account-circle"
+                    iconName="person-outline"
                     notifyKey="notify_account"
+                    navigationBarStyle={{
+                      backgroundColor: '#fff',
+                    }}
+                    headerLayoutPreset="left"
                     iconSize={24}>
                     <Scene
+                      titleStyle={{
+                        color: '#333',
+                        fontSize: 25,
+                        fontWeight: 'bold',
+                        paddingBottom: 10,
+                      }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}

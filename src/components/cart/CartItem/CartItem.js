@@ -27,12 +27,13 @@ const styles = StyleSheet.create({
     padding: 7,
   },
   store_cart_item_image_box: {
-    width: 75,
-    height: 75,
+    width: 60,
+    height: 60,
   },
   store_cart_item_image: {
     flex: 1,
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    borderRadius: 5,
   },
   store_cart_item_title_box: {
     flex: 1,
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
     ...elevationShadowStyle(3),
   },
   discountBadgeContentContainer: {
-    backgroundColor: appConfig.colors.marigold,
+    backgroundColor: '#FD0D1C',
     paddingVertical: 2,
   },
   discountBadgeLabel: {
