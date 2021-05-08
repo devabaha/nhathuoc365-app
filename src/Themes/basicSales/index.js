@@ -1,3 +1,3 @@
-import {home, assets} from './home';
+import {home} from './home';
 
-export default basicSales = {styles: {home}, assets};
+export default basicSalesStyles = {home};

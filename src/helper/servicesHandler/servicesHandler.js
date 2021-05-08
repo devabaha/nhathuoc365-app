@@ -360,10 +360,10 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** GAMIFICATION */
     /** Lottery */
     case SERVICES_TYPE.LOTTERY_GAME:
-      console.log(service);
+      console.log(service)
       Actions.push(appConfig.routes.lotteryGame, {
         title: service.news?.title || service.title,
-        id: service.id,
+        id: service.id
       });
       break;
     default:

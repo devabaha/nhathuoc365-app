@@ -17,13 +17,9 @@ import {
   TITLE_MARGIN_INCREMENT_PERCENTAGE,
 } from './constants';
 import Service from './Service';
-import {SERVICES_TYPE} from 'src/helper/servicesHandler';
-import Themes from 'src/Themes';
+import { SERVICES_TYPE } from 'src/helper/servicesHandler';
 
-const homeThemes = Themes.getNameSpace('home');
-const listServiceStyle = homeThemes('styles.home.listService');
-
-let styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     paddingVertical: 6,
     backgroundColor: '#fff',
@@ -73,7 +69,6 @@ let styles = StyleSheet.create({
   },
 });
 
-styles = Themes.mergeStyles(styles, listServiceStyle);
 class ListServices extends Component {
   static propTypes = {
     type: PropTypes.oneOf(Object.values(LIST_SERVICE_TYPE)),
@@ -323,7 +318,6 @@ class ListServices extends Component {
         },
       ],
     };
-
     return (
       <Animated.View style={[styles.container, visibleStyle]}>
         <Animated.ScrollView

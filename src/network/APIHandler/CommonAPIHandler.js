@@ -608,7 +608,7 @@ class CommonAPIHandler extends BaseHandler {
    */
   async user_update_favor_site(store_id, updateKey) {
     var api = url_for(
-      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey,
+      API.USER_UPDATE_FAVOR_SITE + '/' + store_id + '/' + updateKey
     );
     console.log(api);
     return await this.getAPI(api);

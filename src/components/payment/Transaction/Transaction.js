@@ -320,7 +320,7 @@ const Transaction = ({
       const data = await (appConfig.device.isIOS
         ? CameraRoll.save(iOSPath, {type: 'photo'})
         : RNFetchBlob.fs.writeFile(androidPath, dataURL, 'base64'));
-
+        
       if (data) {
         flashShowMessage({
           type: 'success',

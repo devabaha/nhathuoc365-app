@@ -9,12 +9,12 @@
   "item": {
     "title": " Đơn #{{code}}",
     "next": "Tiếp tục",
-    "store": "Tiếp tục mua hàng",
+    "store": "Cửa hàng",
     "edit": "Sửa đơn",
     "note": "Ghi chú",
     "cancel": "Hủy đơn",
     "totalSelected": "{{total}} sản phẩm",
-    "totalPaymentMessage": "Tổng"
+    "totalPaymentMessage": "Tổng thanh toán"
   },
   "confirm": {
     "process": {
