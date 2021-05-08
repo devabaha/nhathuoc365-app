@@ -6,7 +6,7 @@ import {
   StyleSheet,
   RefreshControl,
   Platform,
-  StatusBar
+  StatusBar,
   // ScrollView,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
@@ -23,11 +23,15 @@ import appConfig from 'app-config';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
+import Themes from 'src/Themes';
+
+const homeThemes = Themes.getNameSpace('home');
+const homeStyles = homeThemes('styles.home.home');
 
 const defaultListener = () => {};
 const STATUS_BAR_STYLE = {
   LIGHT: 'light-content',
-  DARK: 'dark-content'
+  DARK: 'dark-content',
 };
 const {
   set,
@@ -38,7 +42,7 @@ const {
   Value,
   block,
   call,
-  event
+  event,
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
 
@@ -118,15 +122,17 @@ class Home extends Component {
     animatedHeaderValue: new Value(0),
     statusBarStyle: STATUS_BAR_STYLE.LIGHT,
     showShadow: false,
-    headerHeight: undefined
+    headerHeight: undefined,
   };
 
-  handleAnimatedScroll = ({ value }) => {
+  homeThemes = Themes.getNameSpace('home');
+
+  handleAnimatedScroll = ({value}) => {
     value = Math.round(value);
     if (value <= 0 && this.state.showShadow) {
       this.setState({
         showShadow: false,
-        statusBarStyle: STATUS_BAR_STYLE.LIGHT
+        statusBarStyle: STATUS_BAR_STYLE.LIGHT,
       });
       return;
     }
@@ -134,7 +140,7 @@ class Home extends Component {
     if (value >= EXTRAPOLATE_RANGE * 0.7 && !this.state.showShadow) {
       this.setState({
         showShadow: true,
-        statusBarStyle: STATUS_BAR_STYLE.DARK
+        statusBarStyle: STATUS_BAR_STYLE.DARK,
       });
     }
   };
@@ -180,18 +186,91 @@ class Home extends Component {
   }
 
   handleHeaderLayout(e) {
-    const { height } = e.nativeEvent.layout;
+    const {height} = e.nativeEvent.layout;
     if (height !== this.state.headerHeight) {
       this.setState({
-        headerHeight: height
+        headerHeight: height,
       });
     }
   }
 
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
     `${appConfig.routes.homeTab}_1`,
-    EXTRAPOLATE_RANGE / 2
+    EXTRAPOLATE_RANGE / 2,
   );
+
+  wrapperAnimatedStyle = {
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
+      outputRange: [0, 1],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+    ...elevationShadowStyle(3),
+    elevation: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+      outputRange: [0, 0, 5],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+    shadowOpacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+      outputRange: [0, 0, 0.15],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+    backgroundColor: color(
+      255,
+      255,
+      255,
+      interpolate(this.state.animatedHeaderValue, {
+        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
+        outputRange: [0, 0, 1],
+        extrapolate: Extrapolate.CLAMP,
+      }),
+    ),
+  };
+
+  headerAnimatedStyle = {
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE],
+      outputRange: [0, 1],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+  };
+
+  headerBackgroundOpacity = {
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE],
+      outputRange: [1, 0],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+  };
+
+  headerIconStyle = {
+    color:
+      this.homeThemes('styles.home.header_search_wrapper_active')
+        ?.backgroundColor || appConfig.colors.primary,
+    opacity: interpolate(this.state.animatedHeaderValue, {
+      inputRange: [0, EXTRAPOLATE_RANGE],
+      outputRange: [0, 1],
+      extrapolate: Extrapolate.CLAMP,
+    }),
+  };
+
+  searchWrapperStyle = [
+    this.homeThemes('styles.home.header_search_wrapper_active'),
+    {
+      backgroundColor: color(
+        ...hexToRgbCode(
+          this.homeThemes('styles.home.header_search_wrapper_active')
+            ?.backgroundColor || '#f5f5f5',
+        ),
+        interpolate(this.state.animatedHeaderValue, {
+          inputRange: [0, EXTRAPOLATE_RANGE],
+          outputRange: [0, 1],
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
+    },
+  ];
 
   render() {
     const {t} = this.props;
@@ -200,81 +279,9 @@ class Home extends Component {
         ? this.props.userInfo.name
         : t('welcome.defaultUserName')
       : t('welcome.defaultUserName');
-
-    let wrapperAnimatedStyle = {
-      opacity: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
-        outputRange: [0, 1],
-        extrapolate: Extrapolate.CLAMP
-      }),
-      ...elevationShadowStyle(3),
-      elevation: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-        outputRange: [0, 0, 5],
-        extrapolate: Extrapolate.CLAMP
-      }),
-      shadowOpacity: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-        outputRange: [0, 0, 0.15],
-        extrapolate: Extrapolate.CLAMP
-      }),
-      backgroundColor: color(
-        255,
-        255,
-        255,
-        interpolate(this.state.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
-          outputRange: [0, 0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
-    };
-
-    // if (this.state.showShadow) {
-    //   wrapperAnimatedStyle = {
-    //     ...wrapperAnimatedStyle,
-    //     ...elevationShadowStyle(3),
-    //   }
-    // }
-
-    const headerAnimatedStyle = {
-      opacity: interpolate(this.state.animatedHeaderValue, {
-        inputRange: [0, EXTRAPOLATE_RANGE],
-        outputRange: [0, 1],
-        extrapolate: Extrapolate.CLAMP
-      })
-    };
-
-    const [r, g, b] = hexToRgbA(appConfig.colors.primary)
-      .replace('rgba(', '')
-      .replace(')', '')
-      .split(',');
-
-    const headerIconStyle = {
-      color: color(
-        Number(r),
-        Number(g),
-        Number(b),
-        interpolate(this.state.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE],
-          outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
-    };
-
-    const searchWrapperStyle = {
-      backgroundColor: color(
-        245,
-        245,
-        245,
-        interpolate(this.state.animatedHeaderValue, {
-          inputRange: [0, EXTRAPOLATE_RANGE],
-          outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
-    };
+    const homeContentWrapper = this.homeThemes(
+      'styles.home.home_content_wrapper',
+    );
 
     return (
       <View style={styles.container}>
@@ -284,24 +291,24 @@ class Home extends Component {
           backgroundColor={appConfig.colors.primary}
         /> */}
 
-        <View style={styles.headerBackground}>
+        <Animated.View
+          style={[styles.headerBackground, this.headerBackgroundOpacity]}>
           {this.props.site && this.props.site.app_event_banner_image && (
             <Image
               style={styles.headerImage}
               source={{uri: this.props.site.app_event_banner_image}}
             />
           )}
-        </View>
+        </Animated.View>
 
         <View
           onLayout={this.handleHeaderLayout.bind(this)}
-          style={styles.headerContainerStyle}
-        >
+          style={styles.headerContainerStyle}>
           <Header
-            wrapperStyle={wrapperAnimatedStyle}
-            maskSearchWrapperStyle={searchWrapperStyle}
-            maskSubStyle={headerAnimatedStyle}
-            iconStyle={headerIconStyle}
+            wrapperStyle={this.wrapperAnimatedStyle}
+            maskSearchWrapperStyle={this.searchWrapperStyle}
+            maskSubStyle={this.headerAnimatedStyle}
+            iconStyle={this.headerIconStyle}
             notify={this.props.notify}
             name={name}
             onPressNoti={this.props.onPressNoti}
@@ -309,7 +316,6 @@ class Home extends Component {
             loading={this.props.storeFetching}
           />
         </View>
-
         <ScrollView
           // onScroll={this.showBgrStatusIfOffsetTop}
           onScroll={event(
@@ -317,25 +323,25 @@ class Home extends Component {
               {
                 nativeEvent: {
                   contentOffset: {
-                    y: y =>
+                    y: (y) =>
                       block([
                         set(this.state.animatedHeaderValue, y),
                         call([y], ([offsetY]) => {
                           this.showBgrStatusIfOffsetTop({
-                            nativeEvent: { contentOffset: { y: offsetY } }
+                            nativeEvent: {contentOffset: {y: offsetY}},
                           });
-                          this.handleAnimatedScroll({ value: offsetY });
-                        })
-                      ])
-                  }
-                }
-              }
+                          this.handleAnimatedScroll({value: offsetY});
+                        }),
+                      ]),
+                  },
+                },
+              },
             ],
             {
-              useNativeDriver: true
-            }
+              useNativeDriver: true,
+            },
           )}
-          contentContainerStyle={{ paddingTop: this.state.headerHeight || 80 }}
+          contentContainerStyle={{paddingTop: this.state.headerHeight || 80}}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
@@ -345,8 +351,7 @@ class Home extends Component {
               onRefresh={this.props.onPullToRefresh}
               tintColor={appConfig.colors.white}
             />
-          }
-        >
+          }>
           {/* <Header
             name={name}
             onPressNoti={this.props.onPressNoti}
@@ -388,7 +393,7 @@ class Home extends Component {
             <ListServiceSkeleton />
           ) : null}
 
-          <View style={styles.contentWrapper}>
+          <View style={[styles.contentWrapper, homeContentWrapper]}>
             {this.hasPromotion && (
               <Promotion
                 data={this.props.promotions}
@@ -507,11 +512,11 @@ class Home extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+let styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F7F8',
   },
   headerBackground: {
     backgroundColor: appConfig.colors.primary,
@@ -519,7 +524,7 @@ const styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
+    top: -(appConfig.device.width * 3) + appConfig.device.width / 3 + 30,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden',
@@ -536,14 +541,15 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   primaryActionsWrapper: {
-    paddingBottom: 8
+    paddingBottom: 8,
   },
   headerContainerStyle: {
     position: 'absolute',
     top: 0,
     width: '100%',
-    zIndex: 9999
-  }
+    zIndex: 9999,
+  },
 });
+styles = Themes.mergeStyles(styles, homeStyles);
 
 export default withTranslation(['home', 'common'])(Home);

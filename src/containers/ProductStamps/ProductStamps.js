@@ -118,19 +118,19 @@ const ProductStamps = () => {
           )
         }
       />
-        <Button
-          containerStyle={styles.btnScanQrProduct}
-          onPress={goToScanQR}
-          title="Quét mã sản phẩm"
-          iconLeft={
-            <Icon
-              name="scan"
-              color="white"
-              size={24}
-              style={styles.iconScanQrProduct}
-            />
-          }
-        />
+      <Button
+        containerStyle={styles.btnScanQrProduct}
+        onPress={goToScanQR}
+        title="Quét mã sản phẩm"
+        iconLeft={
+          <Icon
+            name="scan"
+            color="white"
+            size={24}
+            style={styles.iconScanQrProduct}
+          />
+        }
+      />
     </>
   );
 };

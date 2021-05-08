@@ -8,7 +8,7 @@ const HEIGHT = 3;
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginVertical: 30
+    marginVertical: 30,
   },
   frameContainer: {
     position: 'absolute',
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 20,
     textTransform: 'uppercase',
-    letterSpacing: .3
+    letterSpacing: 0.3,
   },
   frame: {
     position: 'absolute',

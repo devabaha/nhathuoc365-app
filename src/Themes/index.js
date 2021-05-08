@@ -1,4 +1,5 @@
-import {THEMES_TYPE, THEMES} from './constants';
-export {default} from './Themes';
+import {THEMES_TYPE} from './constants';
+import Themes, {THEMES} from './Themes';
 
+export default Themes;
 export {THEMES, THEMES_TYPE};

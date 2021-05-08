@@ -208,7 +208,7 @@ class Stores extends Component {
                   : '',
             });
           }}>
-          <IconFeather size={26} color={appConfig.colors.white} name="search" />
+          <IconFeather size={22} color={appConfig.colors.white} name="search" />
         </Button>
         <RightButtonChat tel={store.store_data.tel} />
       </View>
