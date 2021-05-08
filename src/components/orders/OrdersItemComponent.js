@@ -8,7 +8,6 @@ import appConfig from 'app-config';
 import Loading from '../Loading';
 import Tag from '../Tag';
 import {CART_TYPES} from 'src/constants/cart';
-import Button from '../Button';
 
 class OrdersItemComponent extends Component {
   unmounted = false;
@@ -296,6 +295,13 @@ class OrdersItemComponent extends Component {
                 )}
               </View>
             </View>
+
+            {is_paymenting && (
+              <ActionButton
+                title={t('item.store')}
+                onGoToStore={() => this.handleGoToStore(item)}
+              />
+            )}
           </View>
 
           <View style={[styles.orders_item_payment]}>
@@ -330,15 +336,6 @@ class OrdersItemComponent extends Component {
                 </Text>
               </View>
             </View>
-            {is_paymenting && (
-              <Button
-                onPress={() => this.handleGoToStore(item)}
-                btnContainerStyle={styles.btnContinue}
-                renderTitleComponent={() => (
-                  <Text style={styles.txtTitleBtn}>{t('item.store')}</Text>
-                )}
-              />
-            )}
           </View>
 
           {this.state.goToStoreLoading && (
@@ -379,8 +376,9 @@ const styles = StyleSheet.create({
   cart_section_title: {
     flex: 1,
     color: '#000000',
-    fontSize: 16,
+    fontSize: 14,
     paddingLeft: 8,
+    fontWeight: '500',
   },
 
   orders_item_title_container: {
@@ -400,11 +398,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 15,
-    paddingVertical: 5,
   },
   orders_item_icon_title: {
     marginLeft: 5,
-    color: '#333',
+    color: '#404040',
     fontWeight: '500',
   },
 
@@ -417,8 +414,9 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
   },
   orders_item_content_label: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#404040',
+    fontWeight: '500',
   },
   orders_status_box: {
     flex: 1,
@@ -437,7 +435,7 @@ const styles = StyleSheet.create({
   },
   orders_item_content_value: {
     fontSize: 14,
-    color: '#333',
+    color: '#404040',
   },
   orders_item_payment: {
     width: '100%',
@@ -484,13 +482,12 @@ const styles = StyleSheet.create({
   },
 
   indexContainer: {
-    width: 25,
-    height: 25,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingVertical: 3,
+    paddingRight: 18,
+    paddingLeft: 10,
+    borderTopLeftRadius: 15,
+    borderBottomLeftRadius: 15,
     backgroundColor: '#f0f0f0',
-    marginHorizontal: 5,
   },
   indexValue: {
     color: '#666',
@@ -514,13 +511,6 @@ const styles = StyleSheet.create({
   tagsLabelContainer: {
     marginTop: 5,
     marginRight: 5,
-  },
-  btnContinue: {
-    paddingVertical: 8,
-  },
-  txtTitleBtn: {
-    fontSize: 14,
-    color: '#fff',
   },
 });
 

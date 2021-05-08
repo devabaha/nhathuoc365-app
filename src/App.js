@@ -140,7 +140,7 @@ import ResetPassword from './containers/ResetPassword';
 import RateApp from './components/RateApp';
 import AllServices from './containers/AllServices';
 import CameraView from './components/CameraView/CameraView';
-import {CaptureFaceID} from './containers/IView';
+import { CaptureFaceID } from './containers/IView';
 import GPSStoreLocation from './containers/GPSStoreLocation';
 import QRPaymentInfo from './components/payment/QRPaymentInfo';
 import MultiLevelCategory from './components/stores/MultiLevelCategory';
@@ -330,6 +330,7 @@ class App extends Component {
       }
 
       try {
+        console.log('APP', params, this.props);
         if (params['+clicked_branch_link']) {
           if (store.isHomeLoaded || params.type === SERVICES_TYPE.AFFILIATE) {
             servicesHandler(params, t);
@@ -357,6 +358,7 @@ class App extends Component {
   handleOpenningNotification = (openResult) => {
     const {t} = this.props;
     const params = openResult.notification.payload.additionalData;
+    console.log(params);
     if (store.isHomeLoaded) {
       servicesHandler(params, t);
     } else {
@@ -596,7 +598,7 @@ class App extends Component {
 
   render() {
     return (
-      <View style={{overflow: 'scroll', flex: 1}}>
+      <View style={{ overflow: 'scroll', flex: 1 }}>
         {/* <GPSStoreLocation /> */}
         {this.state.header}
         <NetWorkInfo />
@@ -753,7 +755,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.homeTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab1.title')}
-                    iconName="home-outline"
+                    iconName="store"
                     iconSize={24}>
                     <Scene
                       key={`${appConfig.routes.homeTab}_1`}
@@ -770,7 +772,7 @@ class RootRouter extends Component {
                     key={appConfig.routes.newsTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab2.title')}
-                    iconName="newspaper-outline"
+                    iconName="bell"
                     iconSize={24}
                     notifyKey="new_totals">
                     <Scene
@@ -783,7 +785,8 @@ class RootRouter extends Component {
                   <Stack
                     key={appConfig.routes.scanQrCodeTab}
                     icon={FoodHubCartButton}
-                    primaryColor={appConfig.colors.primary}>
+                    primaryColor={appConfig.colors.primary}
+                  >
                     <Scene component={() => null} />
                   </Stack>
 
@@ -795,8 +798,9 @@ class RootRouter extends Component {
                     icon={TabIcon}
                     iconSize={24}
                     iconLabel={t('appTab.tab4.title')}
-                    iconName="cart-outline"
-                    notifyKey="notify_cart">
+                    iconName="cart"
+                    notifyKey="notify_cart"
+                  >
                     <Scene
                       key={`${appConfig.routes.ordersTab}_1`}
                       title={t('screen.orders.mainTitle')}
@@ -817,20 +821,10 @@ class RootRouter extends Component {
                     key={appConfig.routes.accountTab}
                     icon={TabIcon}
                     iconLabel={t('appTab.tab5.title')}
-                    iconName="person-outline"
+                    iconName="account-circle"
                     notifyKey="notify_account"
-                    navigationBarStyle={{
-                      backgroundColor: '#fff',
-                    }}
-                    headerLayoutPreset="left"
                     iconSize={24}>
                     <Scene
-                      titleStyle={{
-                        color: '#333',
-                        fontSize: 25,
-                        fontWeight: 'bold',
-                        paddingBottom: 10,
-                      }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
                       component={Account}
@@ -933,6 +927,7 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.newsTab}_1`}
                     {...navBarConfig}
                     component={Notify}
+                    {...navBarConfig}
                     back
                   />
                 </Stack>
@@ -1810,9 +1805,9 @@ class RootRouter extends Component {
                 key={`${appConfig.routes.modalCameraView}_1`}
                 component={CameraView}
                 hideNavBar
-              />
+                />
             </Stack>
-
+            
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene

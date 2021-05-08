@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   backIcon: {
-    fontSize: 20,
+    fontSize: 26,
   },
   title: {
     color: '#333',
@@ -66,11 +66,11 @@ const RIGHT_BUTTONS = [
   },
   {
     type: RIGHT_BUTTON_TYPE.CHAT,
-    iconName: 'chatbubble-ellipses-outline',
+    iconName: 'ios-chatbubbles',
   },
   {
     type: RIGHT_BUTTON_TYPE.SHOPPING_CART,
-    iconName: 'ios-cart-outline',
+    iconName: 'ios-cart',
   },
   {
     type: RIGHT_BUTTON_TYPE.SHARE,

@@ -151,13 +151,13 @@ const styles = StyleSheet.create({
   btnContentContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'center'
   },
   icon: {
     fontSize: 20,
     color: config.colors.white,
-    marginRight: 10,
-  },
+    marginRight: 10
+  }
 });
 
 export default MyVoucher;

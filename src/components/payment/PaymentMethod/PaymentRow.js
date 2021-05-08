@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingTop: 7,
     paddingBottom: 15,
-    width: appConfig.device.width * 0.75,
+    width: appConfig.device.width * .75,
   },
   gradient: {
     height: '100%',

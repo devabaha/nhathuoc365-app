@@ -55,37 +55,33 @@ class ListProducts extends Component {
         horizontal
         data={this.props.data}
         style={styles.listHorizontal}
+        contentContainerStyle={styles.contentHorizontal}
         keyExtractor={(item, index) => index.toString()}
         showsHorizontalScrollIndicator={false}
-        renderItem={this.renderItemHorizontal}
+        renderItem={this.renderItemHorizontal.bind(this)}
       />
     );
   }
 
-  renderItemHorizontal = ({item: product, index}) => {
+  renderItemHorizontal({item: product, index}) {
     const extraProps = {
       last: this.props.data.length - 1 === index,
     };
     return this.renderProduct(product, extraProps);
-  };
+  }
 
   renderProduct(product, extraProps) {
     return (
-      <View style={{paddingHorizontal: 5, paddingVertical: 10}}>
-        <ProductItem
-          selfRequest={(callBack) =>
-            this.props.onPressProduct(product, callBack)
-          }
-          name={product.name}
-          image={product.image}
-          discount_view={product.discount_view}
-          discount_percent={product.discount_percent}
-          price_view={product.price_view}
-          unit_name={product.unit_name}
-          onPress={() => this.props.onPressProduct(product)}
-          {...extraProps}
-        />
-      </View>
+      <ProductItem
+        selfRequest={(callBack) => this.props.onPressProduct(product, callBack)}
+        name={product.name}
+        image={product.image}
+        discount_view={product.discount_view}
+        discount_percent={product.discount_percent}
+        price_view={product.price_view}
+        onPress={() => this.props.onPressProduct(product)}
+        {...extraProps}
+      />
     );
   }
 
@@ -104,7 +100,9 @@ class ListProducts extends Component {
         <View style={styles.headingWrapper}>
           <Text style={styles.heading}>{this.props.title}</Text>
           {!!this.props.onShowAll && (
-            <Button underlayColor="transparent" onPress={this.props.onShowAll}>
+            <Button
+              underlayColor="transparent"
+              onPress={this.props.onShowAll}>
               <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
             </Button>
           )}
@@ -119,24 +117,30 @@ class ListProducts extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    backgroundColor: '#fff',
+    marginTop: 10,
+    paddingBottom: 20,
   },
   headingWrapper: {
     flexDirection: 'row',
+    backgroundColor: '#fff',
     paddingTop: 15,
-    paddingBottom: 5,
-    paddingHorizontal: 15,
+    paddingBottom: 12,
+    paddingHorizontal: 16,
     justifyContent: 'space-between',
   },
   heading: {
     color: '#333',
-    fontSize: 20,
+    fontSize: 16,
+    fontWeight: '500',
     lineHeight: 20,
     flex: 1,
     marginRight: 20,
   },
   listHorizontal: {
-    marginHorizontal: 10,
+    paddingTop: 15,
+    borderTopWidth: 0.5,
+    borderColor: '#eee',
   },
   contentHorizontal: {},
   listVertical: {
@@ -164,7 +168,8 @@ const styles = StyleSheet.create({
   },
   viewAll: {
     color: '#0084ff',
-    fontSize: 14,
+    fontSize: 15,
+    fontWeight: '500',
   },
 });
 

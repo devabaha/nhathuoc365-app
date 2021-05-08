@@ -13,7 +13,6 @@ import RightButtonChat from '../../components/RightButtonChat';
 const styles = StyleSheet.create({
   listContentContainer: {
     paddingTop: 8,
-    marginLeft: 5,
   },
 });
 

@@ -1,21 +1,21 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   View,
   Text,
   TouchableHighlight,
   StyleSheet,
   FlatList,
-  RefreshControl,
+  RefreshControl
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Actions} from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import store from '../../store/Store';
 import PopupConfirm from '../PopupConfirm';
 import OrdersItemComponent from './OrdersItemComponent';
 import RightButtonChat from '../RightButtonChat';
 import RightButtonCall from '../RightButtonCall';
 import appConfig from 'app-config';
-import {setStater} from '../../packages/tickid-chat/helper';
+import { setStater } from '../../packages/tickid-chat/helper';
 import EventTracker from '../../helper/EventTracker';
 
 class StoreOrders extends Component {
@@ -30,7 +30,7 @@ class StoreOrders extends Component {
       store_id: props.store_id || store.store_id,
       store_data: store.store_data,
       tel: props.tel || store.store_data.tel,
-      title: props.title || store.store_data.name,
+      title: props.title || store.store_data.name
     };
 
     this._getData = this._getData.bind(this);
@@ -47,8 +47,8 @@ class StoreOrders extends Component {
           this._unMount();
 
           Actions.pop();
-        },
-      }),
+        }
+      })
     );
 
     this.start_time = time();
@@ -82,12 +82,12 @@ class StoreOrders extends Component {
           setStater(this, this.unmounted, {
             data: response.data,
             refreshing: false,
-            loading: false,
+            loading: false
           });
         }, delay || this._delay());
       } else {
         setStater(this, this.unmounted, {
-          loading: false,
+          loading: false
         });
       }
     } catch (e) {
@@ -95,7 +95,7 @@ class StoreOrders extends Component {
       // store.addApiQueue('site_cart_index', this._getData.bind(this, delay));
     } finally {
       setStater(this, this.unmounted, {
-        loading: false,
+        loading: false
       });
     }
   }
@@ -107,7 +107,7 @@ class StoreOrders extends Component {
     // hide tutorial go store
     if (this.props.that) {
       this.props.that.setState({
-        show_go_store: false,
+        show_go_store: false
       });
     }
 
@@ -118,7 +118,7 @@ class StoreOrders extends Component {
       //Ở Store chinh
       Actions.push(appConfig.routes.store, {
         title: item.name,
-        goCategory: category_id,
+        goCategory: category_id
       });
     }
   }
@@ -129,7 +129,7 @@ class StoreOrders extends Component {
   }
 
   _onRefresh() {
-    this.setState({refreshing: true});
+    this.setState({ refreshing: true });
 
     this._getData(1000);
   }
@@ -149,7 +149,8 @@ class StoreOrders extends Component {
   }
 
   render() {
-    var {loading, data, store_data} = this.state;
+    var { loading, data, store_data } = this.state;
+
     if (loading) {
       return <Indicator />;
     }
@@ -164,7 +165,7 @@ class StoreOrders extends Component {
             //     <Text style={styles.cart_section_title}>{section.key}</Text>
             //   </View>
             // )}
-            onEndReached={(num) => {}}
+            onEndReached={num => {}}
             ItemSeparatorComponent={() => (
               <View style={styles.separator}></View>
             )}
@@ -172,7 +173,7 @@ class StoreOrders extends Component {
             style={styles.items_box}
             data={this.state.data}
             extraData={this.state}
-            renderItem={({item, index}) => {
+            renderItem={({ item, index }) => {
               return (
                 <OrdersItemComponent
                   confirmCancelCart={this.confirmCancelCart.bind(this)}
@@ -186,7 +187,7 @@ class StoreOrders extends Component {
                 />
               );
             }}
-            keyExtractor={(item) => item.id}
+            keyExtractor={item => item.id}
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
@@ -205,7 +206,8 @@ class StoreOrders extends Component {
 
             <TouchableHighlight
               onPress={this._goStores.bind(this, this.state.store_data)}
-              underlayColor="transparent">
+              underlayColor="transparent"
+            >
               <View style={styles.empty_box_btn}>
                 <Text style={styles.empty_box_btn_title}>Vào cửa hàng</Text>
               </View>
@@ -214,7 +216,7 @@ class StoreOrders extends Component {
         )}
 
         <PopupConfirm
-          ref_popup={(ref) => (this.refs_cancel_cart = ref)}
+          ref_popup={ref => (this.refs_cancel_cart = ref)}
           title="Huỷ bỏ đơn hàng này, bạn đã chắc chắn chưa?"
           height={110}
           noConfirm={this._closePopupConfirm.bind(this)}
@@ -223,7 +225,7 @@ class StoreOrders extends Component {
         />
 
         <PopupConfirm
-          ref_popup={(ref) => (this.refs_coppy_cart = ref)}
+          ref_popup={ref => (this.refs_coppy_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sao chép đơn hàng này?"
           height={110}
           noConfirm={this._closePopupCoppy.bind(this)}
@@ -232,7 +234,7 @@ class StoreOrders extends Component {
         />
 
         <PopupConfirm
-          ref_popup={(ref) => (this.refs_edit_cart = ref)}
+          ref_popup={ref => (this.refs_edit_cart = ref)}
           title="Giỏ hàng đang mua (nếu có) sẽ bị xoá! Bạn vẫn muốn sửa đơn hàng này?"
           height={110}
           noConfirm={this._closePopupEdit.bind(this)}
@@ -254,7 +256,7 @@ class StoreOrders extends Component {
       try {
         const response = await APIHandler.site_cart_canceling(
           store.store_id,
-          this.item_cancel.id,
+          this.item_cancel.id
         );
 
         if (!this.unmounted) {
@@ -267,12 +269,12 @@ class StoreOrders extends Component {
 
             flashShowMessage({
               type: 'success',
-              message: response.message,
+              message: response.message
             });
           } else {
             flashShowMessage({
               type: 'danger',
-              message: response.message || 'Có lỗi xảy ra',
+              message: response.message || 'Có lỗi xảy ra'
             });
           }
         }
@@ -280,7 +282,7 @@ class StoreOrders extends Component {
         console.log(e + ' site_cart_canceling');
         flashShowMessage({
           type: 'danger',
-          message: 'Có lỗi xảy ra',
+          message: 'Có lỗi xảy ra'
         });
       } finally {
       }
@@ -302,7 +304,7 @@ class StoreOrders extends Component {
       try {
         var response = await APIHandler.site_cart_reorder(
           this.item_coppy.site_id,
-          this.item_coppy.id,
+          this.item_coppy.id
         );
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
@@ -313,7 +315,7 @@ class StoreOrders extends Component {
 
           flashShowMessage({
             type: 'success',
-            message: response.message,
+            message: response.message
           });
         }
       } catch (e) {
@@ -344,7 +346,7 @@ class StoreOrders extends Component {
       try {
         const response = await APIHandler.site_cart_update_ordering(
           this.item_edit.site_id,
-          this.item_edit.id,
+          this.item_edit.id
         );
         if (response && response.status == STATUS_SUCCESS) {
           action(() => {
@@ -352,7 +354,7 @@ class StoreOrders extends Component {
 
             flashShowMessage({
               type: 'success',
-              message: response.message,
+              message: response.message
             });
           })();
 
@@ -363,7 +365,7 @@ class StoreOrders extends Component {
 
         store.addApiQueue(
           'site_cart_update_ordering',
-          this._editCart.bind(this),
+          this._editCart.bind(this)
         );
       } finally {
       }
@@ -391,28 +393,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
 
-    marginBottom: 0,
+    marginBottom: 0
   },
   right_btn_box: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'center'
   },
 
   separator: {
     width: '100%',
     height: Util.pixel,
-    backgroundColor: '#dddddd',
+    backgroundColor: '#dddddd'
   },
 
   empty_box: {
     flex: 1,
     alignItems: 'center',
-    marginTop: '50%',
+    marginTop: '50%'
   },
   empty_box_title: {
     fontSize: 12,
     marginTop: 8,
-    color: '#404040',
+    color: '#404040'
   },
   empty_box_btn: {
     borderWidth: Util.pixel,
@@ -423,11 +425,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 12,
     borderRadius: 5,
-    backgroundColor: DEFAULT_COLOR,
+    backgroundColor: DEFAULT_COLOR
   },
   empty_box_btn_title: {
-    color: '#ffffff',
-  },
+    color: '#ffffff'
+  }
 });
 
 export default observer(StoreOrders);
