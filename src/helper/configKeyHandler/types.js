@@ -14,5 +14,7 @@ export const CONFIG_KEY = {
 
   INPUT_ADDRESS_CONFIG_KEY: 'input_address_config_key',
 
-  SITE_USE_SHIP: 'site_use_ship'
+  SITE_USE_SHIP: 'site_use_ship',
+
+  FILTER_PRICES_KEY: 'filter_prices_key',
 };

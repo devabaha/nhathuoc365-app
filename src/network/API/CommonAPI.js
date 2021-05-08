@@ -433,6 +433,9 @@ class CommonAPI {
   get LOTTERY_TURN() {
     return BaseAPI.apiDomain + 'apiLottery/turn';
   }
+  get FILTER_URL_TAG() {
+    return BaseAPI.apiDomain + 'apiSite/get_tags/';
+  }
 }
 
 export default new CommonAPI();

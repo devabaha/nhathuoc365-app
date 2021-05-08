@@ -8,6 +8,7 @@ import store from 'app-store';
 import {Actions} from 'react-native-router-flux';
 import NoResult from '../NoResult';
 import ListStoreProductSkeleton from './ListStoreProductSkeleton';
+import FilterProduct from './FilterProduct';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -281,7 +282,7 @@ class CategoryScreen extends Component {
   renderFilter = () => {
     return (
       <View>
-        <Text>123</Text>
+        <FilterProduct />
       </View>
     );
   };

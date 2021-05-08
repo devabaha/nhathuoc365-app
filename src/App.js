@@ -157,6 +157,7 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
+import ModalFilter from './components/stores/ModalFilter';
 
 /**
  * Not allow font scaling
@@ -1703,6 +1704,11 @@ class RootRouter extends Component {
               <Stack
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
+              />
+              {/* ================ MODAL FILTER PRODUCT================ */}
+              <Stack
+                key={appConfig.routes.filterProduct}
+                component={ModalFilter}
               />
             </Lightbox>
 
