@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   txtDescription: {
-    fontSize: 15,
+    fontSize: 17,
     fontWeight: '200',
     color: 'black',
     marginTop: 20,
@@ -201,7 +201,7 @@ class AuthConfirm extends Component {
                 : t('requestNewCode')}
             </Text>
           </TouchableOpacity>
-          {this.state.showDescription && <Text style={styles.txtDescription}>{t('description')}</Text>}
+          {!this.state.showDescription && <Text style={styles.txtDescription}>{t('description')}</Text>}
         </View>
       </ScrollView>
     );
