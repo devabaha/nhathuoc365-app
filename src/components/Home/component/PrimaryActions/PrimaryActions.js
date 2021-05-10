@@ -59,18 +59,18 @@ class PrimaryActions extends Component {
                   <View style={styles.pointRechargeBtnSeparator} />
                 </View>
               </View>
-            ) : (
-              this.isActiveTopUp && (
-                <View style={styles.pointRechargeBtnContainer}>
-                  <PointRechargeButton
-                    wrapperStyle={styles.pointRechargeBtn}
-                    iconStyle={styles.scanIcon}
-                  />
-                  <View style={styles.pointRechargeBtnSeparatorContainer}>
-                    <View style={styles.pointRechargeBtnSeparator} />
-                  </View>
+            ) : this.isActiveTopUp ? (
+              <View style={styles.pointRechargeBtnContainer}>
+                <PointRechargeButton
+                  wrapperStyle={styles.pointRechargeBtn}
+                  iconStyle={styles.scanIcon}
+                />
+                <View style={styles.pointRechargeBtnSeparatorContainer}>
+                  <View style={styles.pointRechargeBtnSeparator} />
                 </View>
-              )
+              </View>
+            ) : (
+              <View style={{height: 50}} />
             )}
 
             <Button

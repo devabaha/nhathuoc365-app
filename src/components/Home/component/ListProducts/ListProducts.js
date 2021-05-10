@@ -71,7 +71,7 @@ class ListProducts extends Component {
 
   renderProduct(product, extraProps) {
     return (
-      <View style={{paddingHorizontal: 5, paddingVertical: 10}}>
+      <View style={{paddingHorizontal: 5, paddingVertical: 10, flex: 1}}>
         <ProductItem
           selfRequest={(callBack) =>
             this.props.onPressProduct(product, callBack)
@@ -145,9 +145,11 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     borderTopWidth: 0.5,
     borderColor: '#eee',
+    marginHorizontal: 5,
   },
   itemVerticalWrapper: {
-    width: appConfig.device.width / 2,
+    width: appConfig.device.width / 2 - 5,
+    paddingHorizontal: 2.5,
     borderBottomWidth: 0.5,
     borderColor: '#eee',
   },
