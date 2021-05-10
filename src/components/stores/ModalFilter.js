@@ -9,7 +9,7 @@ import {isEmpty} from 'lodash';
 import ListTag from './ListTag';
 import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
 import {CONFIG_KEY} from 'src/helper/configKeyHandler';
-import ButtonTag from './ButtonTag';
+import ListPrice from './ListPrice';
 
 function ModalFilter({
   onSelectValue = () => {},
@@ -20,7 +20,14 @@ function ModalFilter({
 }) {
   const [selected, setSelected] = useState(defaultSelected);
   const refModal = useRef(null);
-  const priceValue = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
+  const priceValueString = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
+
+  const handleSelected = (selected) => {
+    setSelected((prev) => ({
+      ...prev,
+      ...selected,
+    }));
+  };
 
   const handleCloseModal = () => {
     if (refModal.current) {
@@ -44,14 +51,6 @@ function ModalFilter({
     );
   };
 
-  const renderPriceItem = ({item}) => {
-    return (
-      <View style={{flex: 0.5, padding: 5}}>
-        <ButtonTag text={`${item.min_price} - ${item.max_price}`} />
-      </View>
-    );
-  };
-
   const renderList = () => {
     switch (type) {
       case 'filter-multiple':
@@ -59,26 +58,11 @@ function ModalFilter({
           <View>
             <ListTag
               data={data}
-              onChangeValue={(selectedValue) => setSelected(selectedValue)}
+              onChangeValue={handleSelected}
               defaultValue={defaultSelected}
             />
-            {!!priceValue && (
-              <View style={{marginVertical: 5, marginHorizontal: 10}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    paddingVertical: 7,
-                    paddingHorizontal: 5,
-                  }}>
-                  Giá tiền
-                </Text>
-                <FlatList
-                  data={Object.values(JSON.parse(priceValue))}
-                  numColumns={2}
-                  keyExtractor={(_, index) => `min_max_price_${index}`}
-                  renderItem={renderPriceItem}
-                />
-              </View>
+            {!!priceValueString && (
+              <ListPrice title="Giá tiền" onChangeValue={handleSelected} />
             )}
           </View>
         );
@@ -147,7 +131,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: '#333',
     fontWeight: 'bold',
-    paddingVertical: 20,
+    paddingVertical: 15,
     paddingHorizontal: 10,
   },
   box: {

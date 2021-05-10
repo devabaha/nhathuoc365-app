@@ -1,58 +1,34 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {memo, useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
 import {includes, isEmpty, isEqual, omitBy} from 'lodash';
 import store from 'app-store';
-import {APIRequest} from 'src/network/Entity';
-import APIHandler from 'src/network/APIHandler';
-const data = [
-  {id: 1, name: 'Phổ biến', value: 'pho-bien', isSelected: true},
-  {id: 2, name: 'Bán chạy', value: 'ban-chay', isSelected: false},
-  {id: 3, name: 'Mới nhất', value: 'moi-nhat', isSelected: false},
-];
 
-export default function FilterProduct({
+function FilterProduct({
   titleLeft = 'Sắp xếp',
   titleRight = 'Lọc',
+  data = [],
+  data2 = [],
 }) {
   const [options, setOptions] = useState([]);
   const [dataFilterTag, setDataFilterTag] = useState([]);
   const [defaultSelected, setDefaultSelected] = useState({});
   const [selectedFilter, setSelectedFiler] = useState({});
-  const getListFilterTagRequest = new APIRequest();
-
-  const getListFilterTag = async () => {
-    try {
-      const siteId = store.store_data.id;
-      getListFilterTagRequest.data = APIHandler.getListFilterProduct(siteId);
-      const response = await getListFilterTagRequest.promise();
-      if (response.status === 200) {
-        // const newData = response.data.map(i => ({
-        //   ...i,
-        //   tagsContent:
-        // }))
-        setDataFilterTag(response.data);
-      }
-    } catch (err) {
-      console.log(err);
-      setDataFilterTag([]);
-    }
-  };
+  useEffect(() => {
+    setOptions(data2);
+  }, [data2]);
 
   useEffect(() => {
-    setOptions(data);
+    if (!isEmpty(data)) {
+      setDataFilterTag(data);
+    }
   }, [data]);
 
   useEffect(() => {
-    getListFilterTag();
-    const selected = data.filter((i) => i.isSelected)[0];
+    const selected = data2.filter((i) => i.isSelected)[0];
     setDefaultSelected(selected);
-
-    return () => {
-      getListFilterTagRequest.cancel();
-    };
   }, []);
 
   const handleRemoveTag = (tag) => () => {
@@ -95,7 +71,9 @@ export default function FilterProduct({
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.btnFilterLeft}
-          onPress={handleOpenModal('default')}>
+          onPress={() => {
+            console.log({dataFilterTag, options, data});
+          }}>
           <Text>{titleLeft}:</Text>
           {!isEmpty(defaultSelected) && (
             <Text style={styles.valueText}>{defaultSelected.name}</Text>
@@ -114,11 +92,15 @@ export default function FilterProduct({
         <View style={styles.tagWrapper}>
           {Object.values(selectedFilter).map((tag) => (
             <View style={styles.tagSelected}>
-              <Text style={{color: '#fff', fontSize: 12}}>{tag.tag}</Text>
-              <TouchableOpacity
-                style={{padding: 5}}
-                onPress={handleRemoveTag(tag)}>
-                <Icon name="x" size={12} color="#fff" />
+              <Text style={{color: '#fff', fontSize: 12, paddingHorizontal: 4}}>
+                {!!tag.tag
+                  ? tag.tag
+                  : `${vndCurrencyFormat(tag.min_price)} - ${vndCurrencyFormat(
+                      tag.max_price,
+                    )}`}
+              </Text>
+              <TouchableOpacity onPress={handleRemoveTag(tag)}>
+                <Icon name="x-circle" size={18} color="#fff" />
               </TouchableOpacity>
             </View>
           ))}
@@ -182,10 +164,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 15,
     backgroundColor: appConfig.primaryColor,
     flexDirection: 'row',
     paddingVertical: 5,
     paddingHorizontal: 5,
   },
 });
+
+export default FilterProduct;

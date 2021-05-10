@@ -107,7 +107,6 @@ class BaseHandler {
    */
   processError(response, autoHandleResponse = false) {
     this._networkIndicator(false);
-
     if (response.status != HTTP_SUCCESS) {
       throw 'Error: ' + response.statusText;
     } else {
@@ -127,16 +126,20 @@ class BaseHandler {
    * @todo handle response from api by the common way
    */
   handleResponse(response) {
-    if (!response) throw Error("Response has no content!");
+    if (!response) throw Error('Response has no content!');
     if (response.status === HTTP_SUCCESS) {
       if (response.data) {
         return response.data;
       } else {
-      console.log('%cRESPONSE_EMPTY_DATA', 'color:red', response);
-      throw Error(response.message);
+        console.log('%cRESPONSE_EMPTY_DATA', 'color:red', response);
+        throw Error(response.message);
       }
     } else {
-      console.log(`%cRESPONSE_FAILURE ${response.status}`, 'color:red', response);
+      console.log(
+        `%cRESPONSE_FAILURE ${response.status}`,
+        'color:red',
+        response,
+      );
       throw Error(response.message);
     }
   }

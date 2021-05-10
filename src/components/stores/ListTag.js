@@ -72,7 +72,6 @@ function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 10,
-    marginVertical: 10,
   },
 
   tag: {

@@ -9,6 +9,9 @@ import {Actions} from 'react-native-router-flux';
 import NoResult from '../NoResult';
 import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 import FilterProduct from './FilterProduct';
+import {APIRequest} from 'src/network/Entity';
+import APIHandler from 'src/network/APIHandler';
+import {isEqual} from 'lodash';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -31,6 +34,7 @@ class CategoryScreen extends Component {
         productName: item.name,
       })} —`;
     }
+    this.getListFilterTagRequest = new APIRequest();
 
     this.state = {
       loading: props.index === 0,
@@ -42,6 +46,8 @@ class CategoryScreen extends Component {
       promotions,
       isAll: item.id == 0,
       fetched: false,
+      dataFilterTag: [],
+      data2: [],
     };
 
     this.unmounted = false;
@@ -52,6 +58,32 @@ class CategoryScreen extends Component {
     var delay = 400 - Math.abs(time() - this.start_time);
     return delay;
   }
+
+  getListFilterTag = async () => {
+    try {
+      const siteId = store.store_data.id;
+      const data2 = [
+        {id: 1, name: 'Phổ biến', value: 'pho-bien', isSelected: true},
+        {id: 2, name: 'Bán chạy', value: 'ban-chay', isSelected: false},
+        {id: 3, name: 'Mới nhất', value: 'moi-nhat', isSelected: false},
+      ];
+      this.getListFilterTagRequest.data = APIHandler.getListFilterProduct(
+        siteId,
+      );
+      const response = await this.getListFilterTagRequest.promise();
+      if (response.status === 200) {
+        this.setState({
+          dataFilterTag: response.data,
+          data2,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      this.setState({
+        dataFilterTag: [],
+      });
+    }
+  };
 
   componentDidMount() {
     var {item, index} = this.props;
@@ -79,6 +111,7 @@ class CategoryScreen extends Component {
     Events.on(CATE_AUTO_LOAD, CATE_AUTO_LOAD + index, () => {
       Events.removeAll(keyAutoLoad);
     });
+    this.getListFilterTag();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -96,7 +129,6 @@ class CategoryScreen extends Component {
       // get list products by category_id
       this._getItemByCateId(item.id);
     }
-
     return true;
   }
 
@@ -279,18 +311,16 @@ class CategoryScreen extends Component {
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
   }
 
-  renderFilter = () => {
-    return (
-      <View>
-        <FilterProduct />
-      </View>
-    );
-  };
-
   render() {
     const {t} = this.props;
 
-    const {items_data, header_title, fetched, loading} = this.state;
+    const {
+      items_data,
+      header_title,
+      fetched,
+      loading,
+      dataFilterTag,
+    } = this.state;
 
     return (
       <>
@@ -367,7 +397,10 @@ class CategoryScreen extends Component {
               )}
 
             {/* <ListHeader title={header_title} /> */}
-            {this.renderFilter()}
+            <FilterProduct
+              data2={this.state.data2}
+              data={this.state.dataFilterTag}
+            />
 
             <View
               style={{
