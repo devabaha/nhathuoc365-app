@@ -7,6 +7,9 @@ import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import {isEmpty} from 'lodash';
 import ListTag from './ListTag';
+import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
+import {CONFIG_KEY} from 'src/helper/configKeyHandler';
+import ButtonTag from './ButtonTag';
 
 function ModalFilter({
   onSelectValue = () => {},
@@ -17,6 +20,7 @@ function ModalFilter({
 }) {
   const [selected, setSelected] = useState(defaultSelected);
   const refModal = useRef(null);
+  const priceValue = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
 
   const handleCloseModal = () => {
     if (refModal.current) {
@@ -40,12 +44,42 @@ function ModalFilter({
     );
   };
 
+  const renderPriceItem = ({item}) => {
+    return (
+      <View style={{flex: 0.5, padding: 5}}>
+        <ButtonTag text={`${item.min_price} - ${item.max_price}`} />
+      </View>
+    );
+  };
+
   const renderList = () => {
     switch (type) {
       case 'filter-multiple':
         return (
           <View>
-            <ListTag data={data} onChangeValue={() => console.log('123')} />
+            <ListTag
+              data={data}
+              onChangeValue={(selectedValue) => setSelected(selectedValue)}
+              defaultValue={defaultSelected}
+            />
+            {!!priceValue && (
+              <View style={{marginVertical: 5, marginHorizontal: 10}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    paddingVertical: 7,
+                    paddingHorizontal: 5,
+                  }}>
+                  Giá tiền
+                </Text>
+                <FlatList
+                  data={Object.values(JSON.parse(priceValue))}
+                  numColumns={2}
+                  keyExtractor={(_, index) => `min_max_price_${index}`}
+                  renderItem={renderPriceItem}
+                />
+              </View>
+            )}
           </View>
         );
       case 'default':
@@ -103,6 +137,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: appConfig.primaryColor,
     marginHorizontal: 10,
+    marginTop: 15,
   },
   txtButton: {
     color: '#fff',

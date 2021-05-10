@@ -6,14 +6,18 @@ import Button from '../Button';
 import appConfig from 'app-config';
 import ButtonTag from './ButtonTag';
 
-function ListTag({data = [], onChangeValue = () => {}}) {
-  const [selected, setSelected] = useState({});
+function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
+  const [selected, setSelected] = useState(defaultValue);
 
   useEffect(() => {
     if (!isEmpty(selected)) {
       onChangeValue(selected);
     }
   }, [selected]);
+
+  useEffect(() => {
+    setSelected(defaultValue);
+  }, [defaultValue]);
 
   const handleItem = (item) => () => {
     setSelected((prev) => {
@@ -43,7 +47,7 @@ function ListTag({data = [], onChangeValue = () => {}}) {
   };
   const renderItem = ({item}) => {
     return (
-      <View>
+      <View style={{marginVertical: 10}}>
         <Text style={styles.tag}>{item.tag}</Text>
         <FlatList
           data={item.tags_contents}
@@ -60,7 +64,6 @@ function ListTag({data = [], onChangeValue = () => {}}) {
         data={data}
         keyExtractor={(i, indx) => `${i?.id}_tag_${indx}`}
         renderItem={renderItem}
-        ItemSeparatorComponent={() => <View style={styles.divider} />}
       />
     </View>
   );
