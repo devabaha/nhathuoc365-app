@@ -68,7 +68,7 @@ class MyVoucher extends BaseContainer {
     });
   };
 
-  handlePressEnterVoucher = () => {
+  handlePressEnterVoucher = (isEnterCode = false) => {
     const { t } = this.props;
     config.route.push(config.routes.voucherScanner, {
       placeholder: t('scan.enterVoucher'),
@@ -76,6 +76,12 @@ class MyVoucher extends BaseContainer {
       isFromMyVoucher: true,
       refreshMyVoucher: () => {
         this.getMyVouchers();
+      },
+      isEnterCode,
+      onCloseEnterCode: () => {
+        if(isEnterCode){
+          config.route.pop();
+        }
       }
     });
   };
@@ -176,13 +182,15 @@ class MyVoucher extends BaseContainer {
       <MyVoucherComponent
         t={this.props.t}
         onPressVoucher={this.handlePressVoucher}
-        onPressEnterVoucher={this.handlePressEnterVoucher}
+        onPressEnterVoucher={() => this.handlePressEnterVoucher()}
         onPressUseOnline={this.handlePressUseOnline}
         campaigns={this.state.campaigns}
         onRefresh={this.handleOnRefresh}
         refreshing={this.state.refreshing}
         apiFetching={this.state.apiFetching}
         isUseOnlineMode={this.isUseOnlineMode}
+
+        onPressEnterCode={() => this.handlePressEnterVoucher(true)}
       />
     );
   }

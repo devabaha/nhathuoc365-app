@@ -15,6 +15,7 @@
       "defaultValue": "Chọn giới tính",
       "male": "Nam",
       "female": "Nữ",
+      "other": "Giới tính khác",
       "cancel": "Hủy"
     },
     "email": {
