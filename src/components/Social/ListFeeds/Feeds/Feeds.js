@@ -20,6 +20,7 @@ const Feeds = ({
   description,
   containerStyle,
   onPostPress,
+  onActionBarPress
 }) => {
   // console.log('render feeds');
 
@@ -38,7 +39,7 @@ const Feeds = ({
 
       <Container centerVertical={false} paddingHorizontal={10}>
         <ActionInfo totalReaction={25} totalComments={104} />
-        <ActionBar />
+        <ActionBar onActionBarPress={onActionBarPress}/>
       </Container>
     </Container>
   );

@@ -548,6 +548,22 @@ class Store {
       firebaseAuth().signOut();
     }
   }
+
+  @observable replyingMention = {};
+  @action setReplyingMention(replyingMention = {}){
+    this.replyingMention = replyingMention
+  }
+
+  @observable replyingComment = {};
+  @action setReplyingComment(replyingComment = {}){
+    this.replyingComment = replyingComment;
+    this.setReplyingMention(replyingComment.user);
+  }
+
+  @observable previewImages = [];
+  @action setPreviewImages(previewImages = []){
+    this.previewImages = previewImages
+  }
 }
 
 export default new Store();

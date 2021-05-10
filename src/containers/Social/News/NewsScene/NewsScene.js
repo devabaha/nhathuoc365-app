@@ -9,8 +9,12 @@ import {reaction} from 'mobx';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 import store from 'app-store';
+import appConfig from 'app-config';
+
 import NewsSceneSkeleton from './NewsSceneSkeleton';
 import NoResult from 'src/components/NoResult';
+
+import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 
 const styles = StyleSheet.create({
   feedsContainer: {
@@ -74,7 +78,7 @@ const NewsScene = ({id, isFetching = false}) => {
   const getData = useCallback(async () => {
     try {
       const response = await APIHandler.user_news_list('', id);
-    //   console.log(response, id);
+      //   console.log(response, id);
       if (response && response.status == STATUS_SUCCESS) {
         // direction to news_detail if detecting deep link data.
         if (store.deep_link_data) {
@@ -121,6 +125,16 @@ const NewsScene = ({id, isFetching = false}) => {
     });
   }, []);
 
+  const handleActionBarPress = useCallback((type) => {
+    switch (type) {
+      case SOCIAL_BUTTON_TYPES.COMMENT:
+        Actions.push(appConfig.routes.modalComment, {
+          title: 'Bình luận'
+        });
+        break;
+    }
+  }, []);
+
   const renderFeeds = ({item: feeds, index}) => {
     return (
       <Feeds
@@ -131,6 +145,7 @@ const NewsScene = ({id, isFetching = false}) => {
         avatarUrl={feeds.shop_logo_url}
         containerStyle={styles.feedsContainer}
         onPostPress={() => handlePostPress(feeds)}
+        onActionBarPress={handleActionBarPress}
       />
     );
   };

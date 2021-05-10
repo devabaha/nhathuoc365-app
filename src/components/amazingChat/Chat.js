@@ -97,6 +97,7 @@ class Chat extends Component {
 
   i = 0;
   componentDidMount() {
+    console.log(this.props);
     setTimeout(() => {
       Actions.refresh({
         right: this.renderRight.bind(this),

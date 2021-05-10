@@ -48,7 +48,7 @@ const ActionInfo = ({totalReaction, totalComments}) => {
       {!!totalComments && (
         <Container row style={styles.block}>
           <Text style={styles.text}>
-            {totalComments} {t('feeds.comment')}
+            {totalComments} {t('comment')}
           </Text>
         </Container>
       )}

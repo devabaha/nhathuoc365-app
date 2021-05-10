@@ -157,7 +157,8 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
-import { News } from './containers/Social';
+import {News} from './containers/Social';
+import {ModalComment} from './components/Social';
 
 /**
  * Not allow font scaling
@@ -1705,8 +1706,13 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
               />
-            </Lightbox>
 
+              {/* ================ MODAL COMMENT ================ */}
+              {/* <Stack
+                key={appConfig.routes.modalComment}
+                component={ModalComment}
+              /> */}
+            </Lightbox>
             {/* ================ MODAL WEBVIEW ================ */}
             <Stack key={appConfig.routes.modalWebview}>
               <Scene
@@ -1716,7 +1722,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -1726,7 +1731,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -1737,7 +1741,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -1749,7 +1752,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene
@@ -1758,13 +1760,22 @@ class RootRouter extends Component {
                 hideNavBar
               />
             </Stack>
-
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene
                 key={`${appConfig.routes.transaction}_1`}
                 component={Transaction}
                 hideNavBar
+                back
+              />
+            </Stack>
+
+            {/* ================ MODAL COMMENT ================ */}
+            <Stack key={appConfig.routes.modalComment}>
+              <Scene
+                key={`${appConfig.routes.modalComment}_1`}
+                component={ModalComment}
+                renderBackButton={CloseButton}
                 back
               />
             </Stack>

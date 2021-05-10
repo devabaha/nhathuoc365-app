@@ -16,13 +16,18 @@ const styles = StyleSheet.create({
   container: {
     width: ICON_DIMENSIONS,
     height: ICON_DIMENSIONS,
-    borderRadius: ICON_DIMENSIONS/2,
+    borderRadius: ICON_DIMENSIONS / 2,
     overflow: 'hidden',
     borderWidth: 2,
     borderColor: '#fff',
     backgroundColor: appConfig.colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  prefixTitle: {
+    fontSize: 12,
+    color: '#666',
+    marginRight: 3
   },
   icon: {
     color: '#fff',
@@ -32,6 +37,7 @@ const styles = StyleSheet.create({
 
 const FloatingIcons = ({
   icons,
+  prefixTitle,
   wrapperStyle,
   style,
   iconContainerStyle,
@@ -93,6 +99,7 @@ const FloatingIcons = ({
 
   return (
     <Container row style={[styles.wrapper, extraWrapperStyle, wrapperStyle]}>
+      {prefixTitle && <Text style={[styles.prefixTitle]}>{prefixTitle}</Text>}
       {renderIcons()}
     </Container>
   );

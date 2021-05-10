@@ -1,9 +1,9 @@
 {
-    "feeds": {
-        "like": "Thích",
-        "comment": "Bình luận",
-        "share": "Chia sẻ",
-        "more": "Khác",
-        "self": "Bạn"
-    }
+  "like": "Thích",
+  "comment": "Bình luận",
+  "share": "Chia sẻ",
+  "more": "Khác",
+  "self": "Bạn",
+  "reply": "Trả lời",
+  "replying": "Đang trả lời"
 }

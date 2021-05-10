@@ -97,7 +97,7 @@ class News extends Component {
       routes: [],
     };
 
-    this.reactionDisposer = reaction(
+    this.LIKEDisposer = reaction(
       () => store.refresh_news,
       () => this.getListNewsCategory(),
     );
@@ -123,7 +123,7 @@ class News extends Component {
 
   componentWillUnmount() {
     cancelRequests(this.requests);
-    this.reactionDisposer();
+    this.LIKEDisposer();
     this.eventTracker.clearTracking();
   }
 
@@ -169,8 +169,8 @@ class News extends Component {
     }));
   }
 
-  handleIndexChange = (index) => {
-    if (this.jumpTo) {
+  handleIndexChange = (index, isTabBarPress = false) => {
+    if (this.jumpTo && isTabBarPress) {
       this.jumpTo(index);
     }
     this.setState({index});
@@ -209,7 +209,7 @@ class News extends Component {
           return (
             <Button
               key={props.key}
-              onPress={() => this.setState({index: props.route.key})}
+              onPress={() => this.handleIndexChange(props.route.key, true)}
               containerStyle={{
                 minHeight: 48,
                 width: tabWidth,
@@ -248,7 +248,7 @@ class News extends Component {
             }}
             renderTabBar={this.renderTabBar.bind(this)}
             renderScene={this.renderScene.bind(this)}
-            onIndexChange={this.handleIndexChange}
+            onIndexChange={(index) => this.handleIndexChange(index)}
             initialLayout={{width: appConfig.device.width}}
           />
         )}

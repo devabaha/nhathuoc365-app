@@ -25,7 +25,8 @@ export type Icon = {
 
 export interface FloatingIconsProps {
   icons: Array<Icon> | Icon | string;
-
+  prefixTitle: string,
+  
   wrapperStyle?: StyleProp<ViewProps>;
   containerStyle?: StyleProp<ViewProps>;
   style?: StyleProp<ViewProps>;

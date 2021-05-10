@@ -11,6 +11,11 @@ import { MIN_HEIGHT_COMPOSER } from '../../constants';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 class CustomComposer extends PureComponent {
+  static defaultProps = {
+    onInputSizeChanged: () => {},
+    onTextChanged: () => {},
+    onKeyPress: () => {}
+  }
   state = {};
   contentSize = undefined;
   onContentSizeChange = e => {
@@ -66,6 +71,7 @@ class CustomComposer extends PureComponent {
                 onChange={this.onContentSizeChange}
                 onContentSizeChange={this.onContentSizeChange}
                 onChangeText={this.onChangeText}
+                onKeyPress={this.props.onKeyPress}
               />
             </View>
           </TouchableOpacity>

@@ -1,11 +1,12 @@
 import React, {useCallback, useRef, useState, useEffect} from 'react';
-import {StyleSheet, Pressable} from 'react-native';
-import Animated, {useValue, Easing} from 'react-native-reanimated';
+import {StyleSheet, Animated, Easing as RNEasing} from 'react-native';
+import Reanimated, {useValue, Easing} from 'react-native-reanimated';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import Container from 'src/components/Layout/Container';
+import Pressable from 'src/components/Pressable';
 
-const AnimatedAntDesignIcon = Animated.createAnimatedComponent(AntDesignIcon);
+const AnimatedAntDesignIcon = Reanimated.createAnimatedComponent(AntDesignIcon);
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -38,67 +39,19 @@ const Button = ({
   containerStyle,
   onPress,
 }) => {
-//   console.log('render button');
-
-  const animatedPressIn = useValue(0);
-
-  const animateTimeout = useRef();
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(animateTimeout.current);
-    };
-  }, []);
-
-  const animatingPressingIn = useCallback((toValue) => {
-    Animated.timing(animatedPressIn, {
-      toValue,
-      duration: 250,
-      easing: Easing.bezier(.67,.23,.89,.33),
-    }).start(() => {});
-  }, []);
-
-  const handlePressIn = useCallback(() => {
-    animateTimeout.current = setTimeout(() => animatingPressingIn(1), 300);
-  }, []);
-
-  const handlePressOut = useCallback(() => {
-    clearTimeout(animateTimeout.current);
-    animatingPressingIn(0);
-  }, []);
-
-  const animatedPressingStyle = {
-    opacity: animatedPressIn.interpolate({
-      inputRange: [0, 1],
-      outputRange: [1, 0.7],
-    }),
-    transform: [
-      {
-        scale: animatedPressIn.interpolate({
-          inputRange: [0, 1],
-          outputRange: [1, 0.95],
-        }),
-      },
-    ],
-  };
+  // console.log('render button');
 
   return (
-    <Pressable
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      onPress={onPress}
-      style={[styles.wrapper, containerStyle]}>
-      <Animated.View style={[styles.animatedWrapper, animatedPressingStyle]}>
-        <Container reanimated row style={[styles.container, style]}>
-          <AnimatedAntDesignIcon
-            name={iconName}
-            style={[styles.icon, iconStyle]}
-          />
-          <Animated.Text style={[styles.title, titleStyle]}>
-            {title}
-          </Animated.Text>
-        </Container>
-      </Animated.View>
+    <Pressable onPress={onPress} style={[styles.wrapper, containerStyle]}>
+      <Container reanimated row style={[styles.container, style]}>
+        <AnimatedAntDesignIcon
+          name={iconName}
+          style={[styles.icon, iconStyle]}
+        />
+        <Reanimated.Text style={[styles.title, titleStyle]}>
+          {title}
+        </Reanimated.Text>
+      </Container>
     </Pressable>
   );
 };

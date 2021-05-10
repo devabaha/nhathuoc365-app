@@ -1,6 +1,7 @@
 import React, {useCallback} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Container from 'src/components/Layout/Container';
+import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 import Button from './Button';
 import Reaction from './Reaction';
 
@@ -10,21 +11,31 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActionBar = () => {
+const ActionBar = ({onActionBarPress = () => {}}) => {
   // console.log('render action bar')
   const {t} = useTranslation('social');
 
-  const handlePress = useCallback(() => {}, []);
+  const onActionPress = useCallback((type) => {
+    onActionBarPress(type);
+  }, []);
 
   return (
     <Container row style={styles.container}>
       <Reaction
-        title={t('feeds.like')}
+        title={t('like')}
         iconName="like2"
-        onPress={handlePress}
+        onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.LIKE)}
       />
-      <Button title={t('feeds.comment')} iconName="message1" />
-      <Button title={t('feeds.share')} iconName="sharealt" />
+      <Button
+        title={t('comment')}
+        iconName="message1"
+        onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.COMMENT)}
+      />
+      <Button
+        title={t('share')}
+        iconName="sharealt"
+        onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.SHARE)}
+      />
     </Container>
   );
 };

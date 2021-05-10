@@ -437,6 +437,11 @@ class CommonAPI {
   get USER_LIST_NEWS_CATEGORY() {
     return BaseAPI.apiDomain + 'apiUser/list_news_category';
   }
+
+  // Social
+  get SITE_COMMENT() {
+    return BaseAPI.apiDomain + 'apiSite/comments';
+  }
 }
 
 export default new CommonAPI();

@@ -1,3 +1,4 @@
 import ListFeeds from './ListFeeds';
+import Comment, {ModalComment} from './Comment';
 
-export {ListFeeds};
+export {ListFeeds, Comment, ModalComment};
