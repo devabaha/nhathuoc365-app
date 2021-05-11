@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   View,
@@ -9,12 +9,12 @@ import {
   Text
 } from 'react-native';
 import StatusBarBackground, {
-  showBgrStatusIfOffsetTop
+  showBgrStatusIfOffsetTop,
 } from 'app-packages/tickid-bgr-status-bar';
 import Promotion from './component/Promotion';
 import Header from './component/Header';
 import PrimaryActions from './component/PrimaryActions';
-import HomeCardList, { HomeCardItem } from './component/HomeCardList';
+import HomeCardList, {HomeCardItem} from './component/HomeCardList';
 import ListServices from './component/ListServices';
 import ListProducts from './component/ListProducts';
 import appConfig from 'app-config';
@@ -62,7 +62,7 @@ class Home extends Component {
     onPressNewItem: PropTypes.func,
     onPressNoti: PropTypes.func,
     product_groups: PropTypes.array,
-    listServiceItemsPerRow: PropTypes.number
+    listServiceItemsPerRow: PropTypes.number,
   };
 
   static defaultProps = {
@@ -135,7 +135,11 @@ class Home extends Component {
   get hasRoomNews() {
     return (
       Array.isArray(this.props.room_news) && this.props.room_news.length > 0
-    );
+    ); 
+  }
+  
+  get hasNewsGroups() {
+    return this.props.news_categories?.length > 0;
   }
 
   get hasProducts() {
@@ -144,7 +148,8 @@ class Home extends Component {
 
   get hasProduct_groups() {
     return (
-      Array.isArray(this.props.product_groups) && this.props.product_groups.length > 0
+      Array.isArray(this.props.product_groups) &&
+      this.props.product_groups.length > 0
     );
   }
 
@@ -156,11 +161,11 @@ class Home extends Component {
 
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
     `${appConfig.routes.homeTab}_1`,
-    68
+    68,
   );
 
   render() {
-    const { t } = this.props;
+    const {t} = this.props;
     const name = this.props.userInfo
       ? this.props.userInfo.name
         ? this.props.userInfo.name
@@ -175,7 +180,7 @@ class Home extends Component {
           {this.props.site && this.props.site.app_event_banner_image && (
             <Image
               style={styles.headerImage}
-              source={{ uri: this.props.site.app_event_banner_image}}
+              source={{uri: this.props.site.app_event_banner_image}}
             />
           )}
         </View>
@@ -240,12 +245,7 @@ class Home extends Component {
           <View style={styles.contentWrapper}>
             {this.hasProduct_groups ? (
               this.props.product_groups.map((productGroup, index) => {
-                let {
-                  id,
-                  products,
-                  title,
-                  display_type
-                } = productGroup;
+                let {id, products, title, display_type} = productGroup;
                 return (
                   <ListProducts
                     key={id}
@@ -253,7 +253,9 @@ class Home extends Component {
                     data={products}
                     title={title}
                     onPressProduct={this.props.onPressProduct}
-                    onShowAll={() => this.props.onShowAllGroupProduct(productGroup)}
+                    onShowAll={() =>
+                      this.props.onShowAllGroupProduct(productGroup)
+                    }
                   />
                 );
               })
@@ -269,11 +271,10 @@ class Home extends Component {
                   this.props.title_sites
                     ? this.props.title_sites
                     : t('sections.favoriteStore.title')
-                }
-              >
-                {({ item, index }) => (
+                }>
+                {({item, index}) => (
                   <HomeCardItem
-                    selfRequest={callBack =>
+                    selfRequest={(callBack) =>
                       this.props.onPressSiteItem(item, callBack)
                     }
                     title={item.title}
@@ -294,14 +295,12 @@ class Home extends Component {
                 onPress={this.props.onPromotionPressed}
               />
             )}
-
             {this.hasCampaigns && (
               <HomeCardList
                 onShowAll={this.props.onShowAllCampaigns}
                 data={this.props.campaigns}
-                title={t('sections.voucher.title')}
-              >
-                {({ item, index }) => {
+                title={t('sections.voucher.title')}>
+                {({item, index}) => {
                   return (
                     <HomeCardItem
                       title={item.title}
@@ -386,7 +385,7 @@ class Home extends Component {
               })}
             {this.hasNews ? (
               <HomeCardList
-                onShowAll={this.props.onShowAllNews}
+                onShowAll={() => this.props.onShowAllNews()}
                 data={this.props.newses}
                 title={this.props.title_newses}
               >
@@ -399,6 +398,8 @@ class Home extends Component {
                   />
                 )}
               </HomeCardList>
+            ) : this.props.apiFetching ? (
+              <HomeCardListSkeleton />
             ) : this.props.apiFetching ? (
               <HomeCardListSkeleton />
             ) : null}
@@ -426,7 +427,7 @@ const styles = StyleSheet.create({
     top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   headerImage: {
     height: appConfig.device.width / 3,
@@ -437,11 +438,11 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     backgroundColor: appConfig.colors.sceneBackground,
-    marginBottom: 32
+    marginBottom: 32,
   },
   primaryActionsWrapper: {
-    paddingBottom: 8
-  }
+    paddingBottom: 8,
+  },
 });
 
 export default withTranslation(['home', 'common'])(Home);

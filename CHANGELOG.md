@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [b11.4.8] - 2021-04-16
+- [r11.5.5]
+
 ## [b11.4.7] - 2021-04-16
 - [r11.4.7]
 ### Fixed
@@ -24,7 +27,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
 - DetailCard in Request hide chat input.
-## [r11.4.7] - 2021-04-06
+
+## [r11.5.5] - 2021-05-08
+### Fixed
+- Fix resend otp calling.
+- Fix crash app in wallet (WalletRow) by [lamah.dev@gmail.com].
+
+## [r11.5.4] - 2021-04-27
+### Added
+- Enter voucher code in My Voucher screen.
+### Changed
+- News_categories instead of news (if available) in home.
+- Width of bank account in PaymentMethodRow.
+### Fixed
+- Re-call api to check payment status when function unmounted in transaction.
+- [Android] need WRITE_EXTERNAL_STORAGE permission to save QRPay image in transaction.
+
+## [r11.5.3] - 2021-04-26
+### Added
+- QRPayFrame.
+### Changed
+- Only Mobile Banking payment method can open PaymentMethodDetailModal screen.
+- Fix width of bank account in PaymentMethodRow.
+### Fixed
+- [Android] Crash while saving image (QRPay).
+
+## [r11.5.2] - 2021-04-23
+### Changed
+- UI Confirm and OrderItemComponent (payment tag, button action).
+
+## [r11.5.1] - 2021-04-22
+### Added
+- Select and show payment method detail in Payment Method and Confirm.
+- Transaction for order with specific payment method.
+- Disposer for noti auto update in RightButtonNavBar.
+### Changed
+- Revert function of pressing cart and next button (with status ordering) in Order.
+### Fixed
+- Cancel autorun when unmounted for RightButtonNavBar.
+- Can't select payment method after ordering.
+- [Android] Setup config for react-native-gesture-handler.
+
+## [r11.4.7] - 2021-04-07
 ### Added
 - base structure for themes (in-progress).
 - Ask permission for modalGalleryOptionAndroid.

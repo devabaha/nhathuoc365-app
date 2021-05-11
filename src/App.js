@@ -125,7 +125,7 @@ import getTickUniqueID from 'app-util/getTickUniqueID';
 import {navBarConfig, whiteNavBarConfig, routerConfig} from './navBarConfig';
 import {addJob} from './helper/jobsOnReset';
 import ItemAttribute from './components/stores/ItemAttribute';
-import InternetBankingModal from './components/payment/InternetBankingModal';
+import PaymentMethodDetailModal from './components/payment/PaymentMethodDetailModal';
 import AwesomeAlert from 'react-native-awesome-alerts';
 import Schedule, {ProductSchedule} from './containers/Schedule';
 import {ScheduleConfirm} from './containers/Schedule/Confirm';
@@ -190,6 +190,7 @@ import ModalConfirm from './components/ModalConfirm';
 import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
+import Transaction from './components/payment/Transaction';
 
 /**
  * Not allow font scaling
@@ -813,7 +814,6 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      title={t('screen.news.mainTitle')}
                       component={Notify}
                     />
                   </Stack> */}
@@ -1973,6 +1973,16 @@ class RootRouter extends Component {
               />
             </Lightbox>
 
+            {/* ================ MODAL WEBVIEW ================ */}
+            <Stack key={appConfig.routes.modalWebview}>
+              <Scene
+                key={`${appConfig.routes.modalWebview}_1`}
+                component={WebView}
+                renderBackButton={CloseButton}
+                back
+              />
+            </Stack>
+
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -1998,8 +2008,8 @@ class RootRouter extends Component {
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
                 key={`${appConfig.routes.internetBanking}_1`}
-                title="Thẻ ATM"
-                component={InternetBankingModal}
+                // title="Thẻ ATM"
+                component={PaymentMethodDetailModal}
                 renderBackButton={() => <CloseButton color="#fff" />}
                 {...navBarConfig}
                 back
@@ -2012,6 +2022,16 @@ class RootRouter extends Component {
                 key={`${appConfig.routes.transferResult}_1`}
                 component={TransferResult}
                 hideNavBar
+              />
+            </Stack>
+
+            {/* ================ MODAL TRANSACTION================ */}
+            <Stack key={appConfig.routes.transaction} panHandlers={null}>
+              <Scene
+                key={`${appConfig.routes.transaction}_1`}
+                component={Transaction}
+                hideNavBar
+                back
               />
             </Stack>
           </Modal>

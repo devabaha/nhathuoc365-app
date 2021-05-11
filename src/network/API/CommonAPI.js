@@ -95,6 +95,9 @@ class CommonAPI {
   }
 
   // Cart
+  get CART_PAYMENT_STATUS() {
+    return BaseAPI.apiDomain + 'apiCart/payment_status';
+  }
   get CART_CONFIRMED() {
     return BaseAPI.apiDomain + 'apiCart/confirmed';
   }
@@ -344,7 +347,7 @@ class CommonAPI {
     return BaseAPI.apiDomain + 'apiUser/process_qrcode';
   }
   get USER_CHECK_PRODUCT_CODE() {
-    return BaseAPI.apiDomain + 'apiUser/check_product_code'
+    return BaseAPI.apiDomain + 'apiUser/check_product_code';
   }
   get USER_GET_PRODUCT_STAMPS() {
     return BaseAPI.apiDomain + 'apiUser/product_stamps';
@@ -381,11 +384,17 @@ class CommonAPI {
   }
 
   // Payment
+  get PAYMENT_CART_PAYMENT() {
+    return BaseAPI.apiDomain + 'apiPayment/cart_payment';
+  }
   get PAYMENT_METHOD() {
     return BaseAPI.apiDomain + 'apiSite/payment';
   }
   get ADD_PAYMENT_METHOD() {
     return BaseAPI.apiDomain + 'apiSite/add_payment_method_cart';
+  }
+  get PAYMENT_METHOD_DETAIL() {
+    return BaseAPI.apiDomain + 'apiSite/payment_method_detail';
   }
 
   // SLACK - Error Firebase
@@ -429,7 +438,7 @@ class CommonAPI {
   get LOTTERY_INDEX() {
     return BaseAPI.apiDomain + 'apiLottery/index';
   }
-  
+
   get LOTTERY_TURN() {
     return BaseAPI.apiDomain + 'apiLottery/turn';
   }

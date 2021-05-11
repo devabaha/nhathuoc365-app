@@ -24,7 +24,7 @@ class APIRequest {
     this.testID = testID;
   }
 
-  set data({ testID = 'init', cancel, promise }) {
+  set data({ testID = this.testID, cancel, promise }) {
     this.testID = testID;
     this.updateCancel = cancel;
     this.updatePromise = promise;

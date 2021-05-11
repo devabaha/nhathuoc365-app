@@ -29,6 +29,16 @@ public class MainActivity extends ReactActivity {
   }
 
   @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new ReactActivityDelegate(this, getMainComponentName()) {
+      @Override
+      protected ReactRootView createRootView() {
+        return new RNGestureHandlerEnabledRootView(MainActivity.this);
+      }
+    };
+  }
+
+  @Override
   protected void onStart() {
           super.onStart();
           RNBranchModule.initSession(getIntent().getData(), this);

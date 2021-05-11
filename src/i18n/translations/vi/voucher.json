@@ -35,7 +35,8 @@
     "modal": {
       "title": "Nhập mã thủ công"
     },
-    "enterCode": "Nhập mã"
+    "enterCode": "Nhập mã",
+    "message": "Quét mã"
   },
   "notification": {
     "title": "Thông báo",

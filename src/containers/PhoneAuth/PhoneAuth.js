@@ -89,13 +89,13 @@ class PhoneAuth extends Component {
     this.phoneAuth.setCancel = true;
   }
 
-  signIn() {
+  signIn(type = LOGIN_MODE.FIREBASE) {
     const { t } = this.props;
     Keyboard.dismiss();
     this.setState({ isShowIndicator: true });
     this.phoneAuth.updateRegisterData(
       this.state.phoneNumber,
-      LOGIN_MODE.FIREBASE,
+      type,
       this.formatCountryCode(),
       response => {
         switch (this.phoneAuth.loginMode) {
@@ -242,7 +242,7 @@ class PhoneAuth extends Component {
   }
 
   requestOTP() {
-    this.signIn();
+    this.signIn(LOGIN_MODE.CALL);
     this.setState({ requestNewOtpCounter: RESEND_OTP_INTERVAL });
   }
 
@@ -330,7 +330,7 @@ class PhoneAuth extends Component {
               registerDisabled={!this.isPhoneNumberValid}
               onPressCountry={this.openCountryPicker.bind(this)}
               onChangePhoneNumber={this.handleChangePhoneNumber.bind(this)}
-              onSignIn={this.signIn.bind(this)}
+              onSignIn={() => this.signIn()}
               message={message}
             />
           )}

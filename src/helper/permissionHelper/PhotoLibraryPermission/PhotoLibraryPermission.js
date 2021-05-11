@@ -13,13 +13,21 @@ const PHOTO_LIBRARY_PERMISSIONS_TYPE = appConfig.device.isIOS
   ? PERMISSIONS.IOS.PHOTO_LIBRARY
   : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
 
-  const PHOTO_LIBRARY_TITLE = appConfig.device.isIOS ? 'Ảnh' : 'Bộ nhớ'
+const PHOTO_LIBRARY_TITLE = appConfig.device.isIOS ? 'Ảnh' : 'Bộ nhớ';
 
 class PhotoLibraryPermission extends BasePermission {
   async request() {
     const result = await this.callPermission(
       requestPermission,
       PHOTO_LIBRARY_PERMISSIONS_TYPE,
+    );
+    return result === REQUEST_RESULT_TYPE.GRANTED;
+  }
+
+  async requestWriteExternalAndroid() {
+    const result = await this.callPermission(
+      requestPermission,
+      PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
     );
     return result === REQUEST_RESULT_TYPE.GRANTED;
   }
