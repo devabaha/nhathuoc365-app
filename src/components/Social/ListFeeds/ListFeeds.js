@@ -15,6 +15,7 @@ const styles = StyleSheet.create({
 
 const ListFeeds = ({
   data,
+  extraData,
   onRefresh,
   refreshing,
   ListEmptyComponent,
@@ -43,6 +44,7 @@ const ListFeeds = ({
       <FlatList
         contentContainerStyle={[styles.contentContainer, contentContainerStyle]}
         data={data}
+        extraData={extraData}
         renderItem={renderFeeds}
         keyExtractor={(item, index) => item.id?.toString() || index.toString()}
         refreshControl={

@@ -571,7 +571,17 @@ class Store {
   }
 
   @computed get isReplyingYourSelf() {
-    return this.replyingUser?.id === this.replyingMention?.id;
+    return this.replyingUser?.id === this.replyingMention?.user_id;
+  }
+
+  @observable socialNews = {};
+  @action setSocialNews(socialNews = {}) {
+    this.socialNews = {...this.socialNews, ...socialNews};
+  }
+
+  @action updateSocialNews(id, data = {}) {
+    let temp = this.socialNews[id] || {};
+    this.socialNews[id] = {...temp, ...data};
   }
 }
 

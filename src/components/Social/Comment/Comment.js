@@ -264,9 +264,11 @@ class Comment extends Component {
   }
 
   formatMessage(message, level = 0, parent_id = null) {
+    console.log
     return {
       parent_id,
       ...message,
+      avatar: message.image,
       createdAt: message.created,
       _id: message.id,
       text: message.content,
@@ -389,6 +391,7 @@ class Comment extends Component {
       created: moment().format('YYYY-MM-DD HH:mm:ss'),
       level: store.replyingComment?.id ? 1 : 0,
       parent_id: store.replyingComment?.parent_id || store.replyingComment?.id,
+      reply_id: store.replyingComment?.id,
       user: {...this.state.user},
     };
 
@@ -427,6 +430,7 @@ class Comment extends Component {
       content: message.text || '',
       image: message.image || '',
       parent_id: message.parent_id || '',
+      reply_id: message.reply_id || ''
     };
 
     try {

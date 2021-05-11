@@ -11,7 +11,7 @@ import {Actions} from 'react-native-router-flux';
 import {ListFeeds} from 'src/components/Social';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
 import {reaction} from 'mobx';
-
+import {Observer} from 'mobx-react';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 import store from 'app-store';
@@ -31,6 +31,18 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
 });
+
+const getLikeFlag = (feeds) => {
+  let likeFlag = store.socialNews[feeds.id]?.like_flag;
+  likeFlag === undefined && (likeFlag = feeds.like_flag);
+  return likeFlag;
+};
+
+const getLikeCount = (feeds) => {
+  let likeCount = store.socialNews[feeds.id]?.like_count_friendly;
+  likeCount === undefined && (likeCount = feeds.like_count);
+  return likeCount;
+};
 
 const NewsScene = ({id, isFetching = false}) => {
   const {t} = useTranslation(['news', 'common']);
@@ -85,13 +97,31 @@ const NewsScene = ({id, isFetching = false}) => {
     }
   }, [id, isFetching]);
 
+  const setStoreSocialNews = (news) => {
+    const storeNews = {};
+    news.forEach(
+      (n) =>
+        (storeNews[n.id] = {
+          like_count: n.like_count,
+          like_count_friendly: n.like_flag
+            ? n.like_count - 1 >= 0
+              ? n.like_count - 1
+              : 0
+            : n.like_count,
+          share_count: n.share_count,
+          like_flag: n.like_flag,
+          comment_count: n.comment_count,
+        }),
+    );
+    store.setSocialNews(storeNews);
+  };
+
   const getData = useCallback(async () => {
     try {
       const response = await APIHandler.user_news_list('', id);
       console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
-        store.updateSocialNews(response.data);
-        
+        setStoreSocialNews(response.data);
         // direction to news_detail if detecting deep link data.
         if (store.deep_link_data) {
           const news = response.data.find(
@@ -129,14 +159,14 @@ const NewsScene = ({id, isFetching = false}) => {
       object: feeds.object,
       object_id: feeds.object_id,
       site_id: feeds.site_id,
-      status: store.socialNews[feeds.id]?.like_flag ? 0 : 1,
+      status: getLikeFlag(feeds),
     };
 
     likeRequest.data = APIHandler.social_likes(data);
     likeRequest
       .promise()
-      .then((res) => console.log(res))
-      .catch((err) => console.log('like_news', err));
+      // .then((res) => console.log(res))
+      // .catch((err) => console.log('like_news', err));
   }, []);
 
   const handleRefresh = useCallback(() => {
@@ -153,9 +183,11 @@ const NewsScene = ({id, isFetching = false}) => {
   }, []);
 
   const handleActionBarPress = useCallback((type, feeds) => {
-    console.log(feeds);
     switch (type) {
       case SOCIAL_BUTTON_TYPES.LIKE:
+        store.updateSocialNews(feeds.id, {
+          like_flag: getLikeFlag(feeds) ? 0 : 1,
+        });
         likeNews(feeds);
         break;
       case SOCIAL_BUTTON_TYPES.COMMENT:
@@ -171,19 +203,25 @@ const NewsScene = ({id, isFetching = false}) => {
 
   const renderFeeds = ({item: feeds, index}) => {
     return (
-      <Feeds
-        commentsCount={feeds.comments_count}
-        likeCount={feeds.like_count}
-        isLiked={Number(feeds.like_flag)}
-        title={feeds.title}
-        userName={feeds.shop_name}
-        description={feeds.created}
-        thumbnailUrl={feeds.image_url}
-        avatarUrl={feeds.shop_logo_url}
-        containerStyle={styles.feedsContainer}
-        onPostPress={() => handlePostPress(feeds)}
-        onActionBarPress={(type) => handleActionBarPress(type, feeds)}
-      />
+      <Observer>
+        {() => {
+          return (
+            <Feeds
+              commentsCount={feeds.comments_count}
+              likeCount={getLikeCount(feeds)}
+              isLiked={getLikeFlag(feeds)}
+              title={feeds.title}
+              userName={feeds.shop_name}
+              description={feeds.created}
+              thumbnailUrl={feeds.image_url}
+              avatarUrl={feeds.shop_logo_url}
+              containerStyle={styles.feedsContainer}
+              onPostPress={handlePostPress}
+              onActionBarPress={type => handleActionBarPress(type, feeds)}
+            />
+          );
+        }}
+      </Observer>
     );
   };
 
@@ -208,4 +246,4 @@ const NewsScene = ({id, isFetching = false}) => {
   );
 };
 
-export default React.memo(NewsScene);
+export default React.memo(observer((props) => <NewsScene {...props} />));

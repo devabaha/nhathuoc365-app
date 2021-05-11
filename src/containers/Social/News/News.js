@@ -97,7 +97,7 @@ class News extends Component {
       routes: [],
     };
 
-    this.LIKEDisposer = reaction(
+    this.updateNewsDisposer = reaction(
       () => store.refresh_news,
       () => this.getListNewsCategory(),
     );
@@ -123,7 +123,7 @@ class News extends Component {
 
   componentWillUnmount() {
     cancelRequests(this.requests);
-    this.LIKEDisposer();
+    this.updateNewsDisposer();
     this.eventTracker.clearTracking();
   }
 
@@ -132,6 +132,7 @@ class News extends Component {
     this.getListNewsCategoryRequest.data = APIHandler.user_list_news_category();
     try {
       const response = await this.getListNewsCategoryRequest.promise();
+      console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {

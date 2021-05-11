@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 13,
     color: '#666',
-    textTransform: 'lowercase',
   },
 });
 
@@ -35,15 +34,17 @@ const ActionInfo = ({totalReaction, totalComments, isLiked}) => {
 
   return (
     <Container row style={styles.container}>
-      {!!totalReaction && (
+      {(!!isLiked || !!totalReaction) && (
         <Container row style={styles.block}>
           <FloatingIcons
             icons={FLOATING_ICONS}
             wrapperStyle={styles.floatingIcons}
           />
           <Text style={styles.text}>
-            {isLiked ? t('you') + ', ' : ''}
-            {totalReaction} {isLiked ? t('others') : ''}
+            {!!isLiked && t('self')}
+            {!!totalReaction && !!isLiked && ' ' + t('and') + ' '}
+            {!!totalReaction &&
+              (totalReaction + (!!isLiked ? ' ' + t('others') : ''))}
           </Text>
         </Container>
       )}
