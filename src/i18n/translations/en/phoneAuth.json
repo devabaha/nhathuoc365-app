@@ -15,7 +15,8 @@
   "verifyCodeInputPlaceholder": "Enter code...",
   "verifyCodeInputConfirmMessage": "Next",
 
-  "notReceiveCode": "Not receive the code or Error? Please request new code.",
-  "requestNewCodeWithTime": "Request new code after",
-  "requestNewCode": "Request new code"
+  "notReceiveCode": "Not receive the code or Error? Please request new OTP.",
+  "requestNewCodeWithTime": "Request new OTP by call after",
+  "requestNewCode": "Request new OTP by call",
+  "description": "There will be an incoming call, please check the phone to receive the OTP."
 }
