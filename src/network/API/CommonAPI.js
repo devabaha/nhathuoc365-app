@@ -439,8 +439,16 @@ class CommonAPI {
   }
 
   // Social
-  get SITE_COMMENT() {
-    return BaseAPI.apiDomain + 'apiSite/comments';
+  get SOCIAL_SITE_COMMENTS() {
+    return BaseAPI.socialDomain + '/comments';
+  }
+
+  get SOCIAL_SITE_COMMENT() {
+    return BaseAPI.socialDomain + '/comments/store'
+  }
+
+  get SOCIAL_LIKES() {
+    return BaseAPI.socialDomain + '/likes/store'
   }
 }
 

@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import Container from 'src/components/Layout/Container';
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 import Button from './Button';
@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActionBar = ({onActionBarPress = () => {}}) => {
+const ActionBar = ({isLiked, onActionBarPress = () => {}}) => {
   // console.log('render action bar')
   const {t} = useTranslation('social');
 
@@ -24,6 +24,7 @@ const ActionBar = ({onActionBarPress = () => {}}) => {
       <Reaction
         title={t('like')}
         iconName="like2"
+        isLiked={isLiked}
         onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.LIKE)}
       />
       <Button

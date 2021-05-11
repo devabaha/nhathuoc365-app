@@ -1,4 +1,4 @@
-import {reaction, observable, action, toJS} from 'mobx';
+import {reaction, observable, action, toJS, computed} from 'mobx';
 import autobind from 'autobind-decorator';
 import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -122,7 +122,7 @@ class Store {
           if (!equal(user, this.user_info)) {
             this.setUserInfo(user);
           }
-          
+
           if (!equal(notifies, this.notify)) {
             this.setNotify(notifies);
           }
@@ -550,19 +550,28 @@ class Store {
   }
 
   @observable replyingMention = {};
-  @action setReplyingMention(replyingMention = {}){
-    this.replyingMention = replyingMention
+  @action setReplyingMention(replyingMention = {}) {
+    this.replyingMention = replyingMention;
   }
 
   @observable replyingComment = {};
-  @action setReplyingComment(replyingComment = {}){
+  @action setReplyingComment(replyingComment = {}) {
     this.replyingComment = replyingComment;
     this.setReplyingMention(replyingComment.user);
   }
 
+  @observable replyingUser = {};
+  @action setReplyingUser(replyingUser = {}) {
+    this.replyingUser = replyingUser;
+  }
+
   @observable previewImages = [];
-  @action setPreviewImages(previewImages = []){
-    this.previewImages = previewImages
+  @action setPreviewImages(previewImages = []) {
+    this.previewImages = previewImages;
+  }
+
+  @computed get isReplyingYourSelf() {
+    return this.replyingUser?.id === this.replyingMention?.id;
   }
 }
 

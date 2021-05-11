@@ -1,10 +1,9 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 
 import Post from './Post';
-import ActionBar from './ActionBar';
-import ActionInfo from './ActionInfo';
 import Container from 'src/components/Layout/Container';
+import ActionContainer from '../../ActionContainer';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,6 +12,9 @@ const styles = StyleSheet.create({
 });
 
 const Feeds = ({
+  commentsCount,
+  likeCount,
+  isLiked,
   title,
   thumbnailUrl,
   avatarUrl,
@@ -20,7 +22,7 @@ const Feeds = ({
   description,
   containerStyle,
   onPostPress,
-  onActionBarPress
+  onActionBarPress,
 }) => {
   // console.log('render feeds');
 
@@ -37,10 +39,12 @@ const Feeds = ({
         onPress={onPostPress}
       />
 
-      <Container centerVertical={false} paddingHorizontal={10}>
-        <ActionInfo totalReaction={25} totalComments={104} />
-        <ActionBar onActionBarPress={onActionBarPress}/>
-      </Container>
+      <ActionContainer
+        isLiked={isLiked}
+        likeCount={likeCount}
+        commentsCount={commentsCount}
+        onActionBarPress={onActionBarPress}
+      />
     </Container>
   );
 };

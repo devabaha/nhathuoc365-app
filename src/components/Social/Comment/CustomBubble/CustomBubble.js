@@ -1,23 +1,29 @@
-import React, {Component, useCallback, useMemo} from 'react';
-import {StyleSheet, View, Animated} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 import moment from 'moment';
 
 import {ImageMessageChat} from 'app-packages/tickid-chat/component';
 import BubbleBottom from '../BubbleBottom';
-import {Bubble} from 'react-native-gifted-chat';
+import {Bubble, MessageText} from 'react-native-gifted-chat';
+import LinearGradient from 'react-native-linear-gradient';
 
 import store from 'app-store';
 
-const BG_COLOR = "#f0f1f4";
-const BG_HIGHLIGHT_COLOR = "#c9cbd0";
+const BG_COLOR = '#f0f1f4';
+const BG_HIGHLIGHT_COLOR = '#c9cbd0';
+
+const MAX_LENGTH_TEXT = 50;
+const LINE_HEIGHT = 25;
+const MAX_COLLAPSED_HEIGHT = LINE_HEIGHT * 2.1;
 
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
-    marginBottom: 15,
+    paddingBottom: 10,
   },
   container: {
     flex: 1,
+    alignSelf: 'flex-start',
   },
   bubbleWrapper: {
     marginRight: 0,
@@ -31,6 +37,24 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     borderRadius: 15,
+  },
+  btnShowFullMessage: {
+    position: 'absolute',
+    bottom: 5,
+    right: 15,
+  },
+  labelShowFulMessage: {
+    color: '#777',
+    paddingLeft: 10,
+  },
+  maskShowFullMessage: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+  },
+  messageTextContainer: {
+    marginTop: -5,
+    overflow: 'hidden',
   },
 });
 
@@ -46,6 +70,11 @@ class CustomBubble extends Component {
   unMounted = false;
   animatedHighlight = new Animated.Value(0);
 
+  state = {
+    isShowFullMessage:
+      this.props?.currentMessage?.text?.length <= MAX_LENGTH_TEXT,
+  };
+
   componentWillUnmount() {
     this.unMounted = true;
   }
@@ -53,7 +82,7 @@ class CustomBubble extends Component {
   animateHighlight = () => {
     Animated.spring(this.animatedHighlight, {
       toValue: 1,
-      speed: 2,
+      speed: 1.5,
       useNativeDriver: true,
     }).start(() => {
       !this.unMounted && this.animatedHighlight.setValue(0);
@@ -65,7 +94,7 @@ class CustomBubble extends Component {
       {
         scale: this.animatedHighlight.interpolate({
           inputRange: [0, 0.5, 1],
-          outputRange: [1, 1.03, 1],
+          outputRange: [1, 1.05, 1],
         }),
       },
     ],
@@ -84,6 +113,48 @@ class CustomBubble extends Component {
 
   handleSend = (image) => {
     this.props.onSendImage(image);
+  };
+
+  openFullMessage = () => {
+    this.setState({isShowFullMessage: true});
+  };
+
+  renderMessageText = (props, bgColor) => {
+    props.textStyle = {
+      lineHeight: LINE_HEIGHT,
+    };
+
+    return (
+      <View
+        style={[
+          styles.messageTextContainer,
+          {
+            maxHeight: this.state.isShowFullMessage
+              ? undefined
+              : MAX_COLLAPSED_HEIGHT,
+          },
+        ]}>
+        <MessageText {...props} />
+
+        {!this.state.isShowFullMessage && (
+          <TouchableOpacity
+            activeOpacity={0.9}
+            style={styles.btnShowFullMessage}
+            onPress={this.openFullMessage}>
+            <LinearGradient
+              style={styles.maskShowFullMessage}
+              colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
+              locations={[0.75, 1]}
+              angle={-90}
+              useAngle
+            />
+            <Text style={styles.labelShowFulMessage}>
+              ... {this.props.t('seeMore')}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
   };
 
   renderImages = (props, image) => {
@@ -127,15 +198,16 @@ class CustomBubble extends Component {
     const highlightStyle =
       store.replyingComment?.id === props.currentMessage.id;
     const hasText = props.currentMessage.text;
+    const bgColor = hasText
+      ? highlightStyle
+        ? BG_HIGHLIGHT_COLOR
+        : BG_COLOR
+      : 'transparent';
 
     const wrapperStyle = {
       left: {
         ...bubbleWrapperStyle.left,
-        backgroundColor: hasText
-          ? highlightStyle
-            ? BG_HIGHLIGHT_COLOR
-            : BG_COLOR
-          : 'transparent',
+        backgroundColor: bgColor,
       },
     };
     return (
@@ -143,6 +215,9 @@ class CustomBubble extends Component {
         <Animated.View style={[styles.container, this.animatedStyle]}>
           <Bubble
             {...props}
+            renderMessageText={(props) =>
+              this.renderMessageText(props, bgColor)
+            }
             wrapperStyle={wrapperStyle}
             containerStyle={bubbleContainerStyle}
           />

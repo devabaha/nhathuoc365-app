@@ -30,7 +30,7 @@ const FLOATING_ICONS = [
   },
 ];
 
-const ActionInfo = ({totalReaction, totalComments}) => {
+const ActionInfo = ({totalReaction, totalComments, isLiked}) => {
   const {t} = useTranslation('social');
 
   return (
@@ -41,7 +41,10 @@ const ActionInfo = ({totalReaction, totalComments}) => {
             icons={FLOATING_ICONS}
             wrapperStyle={styles.floatingIcons}
           />
-          <Text style={styles.text}>{totalReaction}</Text>
+          <Text style={styles.text}>
+            {isLiked ? t('you') + ', ' : ''}
+            {totalReaction} {isLiked ? t('others') : ''}
+          </Text>
         </Container>
       )}
 

@@ -6,12 +6,19 @@ import CustomBubble from '../CustomBubble';
 const styles = StyleSheet.create({
   messageContainer: {
     marginRight: 10,
+    marginBottom: 2,
   },
 });
 
-const CustomMessage = ({refMessage, refContentMessage, onLayout = () => {}, ...props}) => {
+const CustomMessage = ({
+  refMessage,
+  refContentMessage,
+  onLayout = () => {},
+  ...props
+}) => {
+  const {t} = useTranslation('social');
   props.renderBubble = () => (
-    <CustomBubble ref={refContentMessage} {...props} />
+    <CustomBubble t={t} ref={refContentMessage} {...props} />
   );
   props.containerStyle = {
     left: {

@@ -132,7 +132,6 @@ class News extends Component {
     this.getListNewsCategoryRequest.data = APIHandler.user_list_news_category();
     try {
       const response = await this.getListNewsCategoryRequest.promise();
-      // console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {

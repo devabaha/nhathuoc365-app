@@ -1,7 +1,13 @@
 import React, {useCallback, useRef} from 'react';
-import {StatusBar, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {
+  StatusBar,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {default as ModalBox} from 'react-native-modalbox';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import Container from 'src/components/Layout/Container';
@@ -9,6 +15,7 @@ import Container from 'src/components/Layout/Container';
 import appConfig from 'app-config';
 
 import Comment from '../Comment';
+import store from 'app-store';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,32 +25,38 @@ const styles = StyleSheet.create({
     // height: '95%',
     // borderTopLeftRadius: 15,
     // borderTopRightRadius: 15,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   header: {
-    borderBottomWidth: .5,
+    borderBottomWidth: 0.5,
     borderColor: '#ddd',
     backgroundColor: '#fff',
-    zIndex: 1
+    zIndex: 1,
   },
   title: {
     position: 'absolute',
     textAlign: 'center',
     width: '100%',
     fontWeight: '600',
-    fontSize: 18
+    fontSize: 18,
   },
   iconContainer: {
-    padding: 15
+    padding: 15,
   },
   icon: {
     // marginLeft: 15,
     fontSize: 28,
-    color: '#333'
+    color: '#333',
   },
 });
 
-const ModalComment = ({title, modalStyle}) => {
+const ModalComment = ({
+  title,
+  modalStyle,
+  object_id,
+  object,
+  site_id = store?.store_data?.id,
+}) => {
   const refModal = useRef();
 
   const handleCloseModal = useCallback(() => {
@@ -72,7 +85,7 @@ const ModalComment = ({title, modalStyle}) => {
     //       <AntDesignIcon name="close" style={styles.icon} />
     //     </TouchableOpacity>
     //   </Container>
-      <Comment />
+    <Comment site_id={site_id} object={object} object_id={object_id} />
     // </ModalBox>
   );
 };

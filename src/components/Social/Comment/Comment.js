@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import FoundationIcon from 'react-native-vector-icons/Foundation';
 
 import TickidChat from 'app-packages/tickid-chat';
 
@@ -19,7 +20,7 @@ import store from 'app-store';
 import appConfig from 'app-config';
 
 import {languages} from 'src/i18n/constants';
-import {Avatar, Bubble, Message} from 'react-native-gifted-chat';
+import {Avatar} from 'react-native-gifted-chat';
 import moment from 'moment';
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 import {COMPONENT_TYPE, config} from 'app-packages/tickid-chat/constants';
@@ -29,6 +30,8 @@ import {
   PREVIEW_IMAGES_BAR_HEIGHT,
   REPLYING_BAR_HEIGHT,
 } from 'src/constants/social/comments';
+import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
+import Image from 'src/components/Image';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -49,6 +52,17 @@ const styles = StyleSheet.create({
   },
   sendContainer: {
     marginRight: 10,
+  },
+  emptyIcon: {
+    fontSize: 80,
+    color: '#909090',
+  },
+  userName: {
+    paddingHorizontal: 10,
+    paddingTop: 5,
+    color: '#333',
+    fontWeight: '700',
+    fontSize: 12,
   },
 });
 
@@ -82,10 +96,15 @@ class Comment extends Component {
   refContentMessages = {};
 
   getMessagesAPI = new APIRequest();
+  getCommentsAPI = new APIRequest();
+  postCommentAPI = new APIRequest();
+  requests = [this.getCommentsAPI, this.postCommentAPI];
 
   handleKeyboardDidShow = () => {
-    if (!this.state.isKeyboardShowing && this.isPressingReply) {
+    if (!this.state.isKeyboardShowing) {
       this.setState({isKeyboardShowing: true});
+    }
+    if (this.isPressingReply) {
       this.listChatScrollToItemById(this.currentReplyingComment);
     }
   };
@@ -111,22 +130,24 @@ class Comment extends Component {
     this.giftedChatExtraProps.showAvatarForEveryMessage = true;
     this.giftedChatExtraProps.renderCustomView = this.renderUserName;
     this.giftedChatExtraProps.scrollToBottom = false;
+    this.giftedChatExtraProps.maxComposerHeight = 60;
 
     return this.giftedChatExtraProps;
   }
 
   get user() {
-    let _id = store.store_id;
-
     //specify for tick/quan_ly_cua_hang
     // _id = this.props.site_id;
     //specify for tick/tickid
-    _id = this.props.user_id;
+    const id = this.props.user_id || store.user_info?.id;
+    const name = this.props.user_name || store.user_info?.name;
+    const avatar = this.props.user_avatar || store.user_info?.img;
 
     return {
-      _id,
-      name: store.store_data.name,
-      avatar: store.store_data.logo_url,
+      _id: id,
+      id,
+      name,
+      avatar,
     };
   }
 
@@ -148,7 +169,7 @@ class Comment extends Component {
         future: this.props.t('time.relative.future') || undefined,
         past: this.props.t('time.relative.past') || undefined,
         s: this.props.t('time.relative.s') || undefined,
-        ss: this.props.t('time.relative.ss') || undefined,
+        ss: this.props.t('time.relative.s') || undefined,
         m: this.props.t('time.relative.m') || undefined,
         mm: this.props.t('time.relative.mm') || undefined,
         h: this.props.t('time.relative.h') || undefined,
@@ -165,47 +186,50 @@ class Comment extends Component {
     });
 
     this._getMessages();
+    store.setReplyingUser(this.user);
   }
 
   componentWillUnmount() {
     this.unmounted = true;
-    this.getMessagesAPI.cancel();
+    clearTimeout(this.timerGetChat);
+    cancelRequests(this.requests);
     this.keyboardDidHideListener.remove();
     this.keyboardDidShowListener.remove();
-    clearTimeout(this.timerGetChat);
   }
 
   _getMessages = async () => {
-    let {site_id, user_id} = this.props;
+    let {site_id, object, object_id} = this.props;
 
     //specify for tick/quan_ly_cua_hang
     // const main_user = site_id;
     //specify for tick/tickid
-    const main_user = user_id;
-    user_id = 0;
-
+    // const main_user = user_id;
+    // user_id = 0;
+    const data = {
+      site_id,
+      object,
+      object_id,
+    };
     try {
-      this.getMessagesAPI.data = APIHandler.site_load_conversation(
-        site_id,
-        user_id,
-        this._lastID,
-      );
+      this.getCommentsAPI.data = APIHandler.social_site_comments(data);
 
-      const response = await this.getMessagesAPI.promise();
+      const response = await this.getCommentsAPI.promise();
       if (response && response.status == STATUS_SUCCESS && response.data) {
+        console.log(response);
         if (response.data.list) {
-          response.data.list = this.formatMessages(TEST_DATA);
+          response.data.list = this.formatMessages(response.data.list);
+          // response.data.list = this.formatMessages(response.data.list);
           // response.data.list = response.data.list
           //   .concat(response.data.list)
           //   .concat(response.data.list)
           //   .concat(response.data.list)
           //   .concat(response.data.list);
-          response.data.list = response.data.list.map((t, index) => ({
-            ...t,
-            // _id: index,
-            // id: index,
-            text: index ? CONTENT[index].content : '',
-          }));
+          // response.data.list = response.data.list.map((t, index) => ({
+          //   ...t,
+          //   // _id: index,
+          //   // id: index,
+          //   text: index ? CONTENT[index].content : '',
+          // }));
           response.data.list = this.formatIndexMessages(response.data.list);
           // console.log(response.data.list);
           if (this.state.messages) {
@@ -213,7 +237,7 @@ class Comment extends Component {
           } else {
             this.setState({
               messages: response.data.list,
-              user_id: main_user,
+              // user_id: main_user,
             });
           }
           this._calculatorLastID(response.data.list);
@@ -221,7 +245,7 @@ class Comment extends Component {
       } else if (this.isLoadFirstTime) {
         this.setState({
           messages: [],
-          user_id: main_user,
+          // user_id: main_user,
         });
       }
       //   this.timerGetChat = setTimeout(
@@ -275,11 +299,6 @@ class Comment extends Component {
       messages.forEach((m) => {
         const index = newMessages.findIndex((mess) => {
           return m.parent_id === mess.parent_id || m.parent_id === mess.id;
-          //  {
-          //   newMessages.splice(index, 0, m);
-          //   return true;
-          // }
-          // return false;
         });
         if (index !== -1) {
           newMessages.splice(index, 0, m);
@@ -287,17 +306,12 @@ class Comment extends Component {
       });
     }
     newMessages = this.formatIndexMessages(newMessages);
-
     this.setState(
       {
         messages: newMessages,
       },
       () => {
         setTimeout(() => this.listChatScrollToItemById(messages[0]));
-        // newMessages.forEach((mess) => {
-        //   console.log(mess)
-        //   this.updatePositionMap(null, {id: mess.id, index: mess.index});
-        // });
         callBack();
       },
     );
@@ -327,6 +341,8 @@ class Comment extends Component {
 
     store.setPreviewImages();
     store.setReplyingComment();
+
+    this._onSend(message[0]);
   };
 
   handleSendImage = (images) => {
@@ -362,8 +378,8 @@ class Comment extends Component {
 
     store.setPreviewImages();
     store.setReplyingComment();
-    return;
-    this._onSend({message});
+
+    this._onSend(formattedMessage[0]);
   };
 
   getFormattedMessage(type, message) {
@@ -394,28 +410,60 @@ class Comment extends Component {
     if (store.replyingMention?.name) {
       formattedMessage.text =
         store.replyingMention?.name + ' ' + formattedMessage.text;
+      formattedMessage.parent_id =
+        store.replyingComment?.parent_id || store.replyingComment?.id;
     }
-    
+
     return [formattedMessage];
   }
 
-  async _onSend(message) {
-    let {site_id, user_id} = this.props;
-    //specify for tick/quan_ly_cua_hang  -> comment dong user_id = '';
-    // specify for tick/tickid
-    user_id = '';
+  _onSend = async (message) => {
+    let {site_id, object_id, object} = this.props;
+
+    const data = {
+      object,
+      object_id,
+      site_id,
+      content: message.text || '',
+      image: message.image || '',
+      parent_id: message.parent_id || '',
+    };
 
     try {
-      const response = await APIHandler.site_send_message(site_id, user_id, {
-        ...message,
-      });
-      if (response && response.status == STATUS_SUCCESS) {
+      this.postCommentAPI.data = APIHandler.social_site_comment(data);
+      const response = await this.postCommentAPI.promise();
+      console.log(response, message, data);
+
+      if (response) {
+        if (response.status == STATUS_SUCCESS) {
+          if (response.data?.list) {
+            const messages = this.formatIndexMessages(
+              this.formatMessages(response.data.list),
+            );
+            this.setState({messages});
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message:
+              response.message || this.props.t('common:api.error.message'),
+          });
+        }
+      } else {
+        flashShowMessage({
+          type: 'danger',
+          message: this.props.t('common:api.error.message'),
+        });
       }
     } catch (e) {
-      console.warn(e + ' site_send_chat');
+      console.log('social_site_comment', e);
+      flashShowMessage({
+        type: 'danger',
+        message: this.props.t('common:api.error.message'),
+      });
     } finally {
     }
-  }
+  };
 
   handleMomentumScrollEnd = () => {
     if (
@@ -434,8 +482,8 @@ class Comment extends Component {
       if (!this.refMessages[comment.id]) return;
 
       const extraOffset =
-        (!!store.replyingComment?.id ? -REPLYING_BAR_HEIGHT : 0) -
-        (!!store.previewImages?.length ? PREVIEW_IMAGES_BAR_HEIGHT : 0);
+        (!!store.replyingComment?.id ? -REPLYING_BAR_HEIGHT : 0) +
+        (!!store.previewImages?.length ? -PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
       this.refMessages[comment.id].measureLayout(
         findNodeHandle(this.refListMessages),
@@ -445,13 +493,6 @@ class Comment extends Component {
           });
         },
       );
-
-      // this.refListMessages.scrollToOffset({
-      //   offset: this.getCommentOffset(comment.id,comment.index),
-      // });
-      // this.refListMessages.scrollToItem({
-      //   item: comment,
-      // });
     }
   }
 
@@ -487,41 +528,6 @@ class Comment extends Component {
     }
   };
 
-  getCommentOffset = (id, index) => {
-    // let offset = 0;
-    // Object.keys(this.messagesPositionMap).forEach((key) => {
-    //   if (key > 0 && key <= index) {
-    //     offset += this.messagesPositionMap[key - 1]?.height || 0;
-    //   }
-    // });
-    this.refMessages[id].measureLayout(
-      findNodeHandle(this.refListMessages),
-      (offsetX, offsetY) => {
-        console.log(offsetY, index, id);
-        // this.messagesPositionMap[index] = {offsetY};
-        //  e.nativeEvent.layout;
-      },
-    );
-    return this.messagesPositionMap[index].offsetY;
-  };
-
-  updatePositionMap = (e, {id, index}) => {
-    if (this.refMessages[id]) {
-      setTimeout(() => {
-        if (!this.refListMessages) return;
-        this.refMessages[id].measureLayout(
-          findNodeHandle(this.refListMessages),
-          (offsetX, offsetY) => {
-            // console.log(offsetY, index, id);
-            this.messagesPositionMap[index] = {offsetY};
-            //  e.nativeEvent.layout;
-          },
-        );
-      });
-    }
-    // this.messagesPositionMap[index] = e.nativeEvent.layout;
-  };
-
   handleCancelPreviewImage = (image) => {
     const images = [...store.previewImages];
     images.splice(image.index, 1);
@@ -529,7 +535,11 @@ class Comment extends Component {
   };
 
   handleKeyPress = (e) => {
-    if (e.nativeEvent.key === 'Backspace' && !this.refTickidChat?.state?.text) {
+    if (
+      e.nativeEvent.key === 'Backspace' &&
+      !store.isReplyingYourSelf &&
+      !this.refTickidChat?.state?.text
+    ) {
       store.setReplyingMention();
     }
   };
@@ -553,7 +563,6 @@ class Comment extends Component {
   renderMessage = (props) => {
     return (
       <CustomMessage
-        // onLayout={(e) => this.updatePositionMap(e, props.currentMessage)}
         refMessage={(inst) => {
           this.refMessages[props.currentMessage.id] = inst;
         }}
@@ -570,16 +579,7 @@ class Comment extends Component {
 
   renderUserName = (props) => {
     return (
-      <Text
-        style={{
-          paddingHorizontal: 10,
-          paddingTop: 5,
-          color: '#333',
-          fontWeight: '700',
-          fontSize: 12,
-        }}>
-        {props.currentMessage?.user?.name}
-      </Text>
+      <Text style={styles.userName}>{props.currentMessage?.user?.name}</Text>
     );
   };
 
@@ -594,16 +594,24 @@ class Comment extends Component {
       left: {
         width:
           props.currentMessage.level > 0
-            ? 44 * (props.currentMessage.level * 0.75)
-            : 44,
+            ? 40 * (props.currentMessage.level * 0.75)
+            : 40,
         height:
           props.currentMessage.level > 0
-            ? 44 * (props.currentMessage.level * 0.75)
-            : 44,
+            ? 40 * (props.currentMessage.level * 0.75)
+            : 40,
         borderRadius: 22,
       },
     };
-    return <Avatar {...props} />;
+    return (
+      <View style={props.containerStyle.left}>
+        <Image
+          style={props.imageStyle.left}
+          source={{uri: props.currentMessage?.user?.avatar || "any"}}
+        />
+      </View>
+    );
+    // <Avatar {...props} />);
   };
 
   renderMessageImage = () => {
@@ -656,6 +664,12 @@ class Comment extends Component {
         mixSend={this.handleMixSend}
         handlePickedImages={this.handleAddImageToComposer}
         onKeyPress={this.handleKeyPress}
+        renderEmpty={
+          <EmptyChat
+            icon={<FoundationIcon name="comments" style={styles.emptyIcon} />}
+            message="Chưa có bình luận!"
+          />
+        }
         // Root props
         setHeader={this.props.setHeader}
         defaultStatusBarColor={appConfig.colors.primary}
@@ -669,6 +683,7 @@ class Comment extends Component {
           onMomentumScrollEnd: this.handleMomentumScrollEnd,
           contentContainerStyle: {
             paddingTop,
+            paddingBottom: 30,
           },
         }}
         messages={this.state.messages}

@@ -73,12 +73,14 @@ const styles = StyleSheet.create({
   replyingSeparator: {
     width: '100%',
     height: 0.5,
-    backgroundColor: '#ddd',
+    backgroundColor: '#eee',
     bottom: 5,
   },
 
   previewImagesContainer: {
     paddingVertical: PADDING_IMAGE_HEIGHT,
+    borderBottomWidth: .5,
+    borderColor: '#eee'
   },
   previewImageContainer: {
     alignSelf: 'flex-start',
@@ -112,12 +114,15 @@ class CustomInputToolbar extends Component {
     toolbarHeight: 44,
     isKeyboardShowing: false,
   };
+  unmounted = false;
+
   componentDidMount() {
     Keyboard.addListener('keyboardDidShow', this.handleKeyboardDidShow);
     Keyboard.addListener('keyboardDidHide', this.handleKeyboardDidHide);
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
     store.setReplyingComment();
     store.setPreviewImages();
     Keyboard.removeListener(this.handleKeyboardDidShow);
@@ -125,15 +130,15 @@ class CustomInputToolbar extends Component {
   }
 
   handleKeyboardDidShow = (e) => {
-    this.setState({isKeyboardShowing: true});
+    !this.unmounted && this.setState({isKeyboardShowing: true});
   };
 
   handleKeyboardDidHide = (e) => {
-    this.setState({isKeyboardShowing: false});
+    !this.unmounted && this.setState({isKeyboardShowing: false});
   };
 
   handleLayout = (e) => {
-    if (this.state.isKeyboardShowing) {
+    if (this.state.isKeyboardShowing && !this.unmounted) {
       this.setState({toolbarHeight: e.nativeEvent.layout.height});
     }
   };
@@ -182,8 +187,11 @@ class CustomInputToolbar extends Component {
 
   render() {
     const {t} = this.props;
-    const replyingName = store.replyingComment?.user?.name;
-    const replyingMention = store.replyingMention?.name;
+    const replyingName = store.isReplyingYourSelf
+      ? t('yourself')
+      : store.replyingComment?.user?.name;
+    const replyingMention =
+      !store.isReplyingYourSelf && store.replyingMention?.name;
     const previewImages = !!store.previewImages?.length && store.previewImages;
     const hasReplyingContent = replyingName || previewImages;
     const top =
@@ -228,7 +236,7 @@ class CustomInputToolbar extends Component {
                         </>
                       )}
                       {!!previewImages &&
-                        this.renderPreviewImages(previewImages, replyingName)}
+                        this.renderPreviewImages(previewImages)}
                     </View>
                   </Container>
                 )}

@@ -624,12 +624,6 @@ class TickidChat extends Component {
   }
 
   handleSendMessage = () => {
-    console.log(
-      'a',
-      this.state.text,
-      this.state.selectedImages,
-      this.state.editable,
-    );
     if (
       this.props.mixSend &&
       !!this.state.text &&
@@ -861,13 +855,14 @@ class TickidChat extends Component {
       return this.props.renderInputToolbar(props);
     }
     return (
-      <View
-        onLayout={this.handleInputToolbarLayout}
-        style={styles.inputToolbar}>
-        {this.renderLeftComposer()}
-        {this.renderComposer()}
-        {this.renderSend()}
-      </View>
+      <InputToolbar {...props} />
+      // <View
+      //   onLayout={this.handleInputToolbarLayout}
+      //   style={styles.inputToolbar}>
+      //   {this.renderLeftComposer()}
+      //   {this.renderComposer()}
+      //   {this.renderSend()}
+      // </View>
     );
   };
 
@@ -1224,7 +1219,11 @@ class TickidChat extends Component {
         {!!this.props.messages &&
           this.props.messages.length === 0 &&
           (this.props.renderEmpty || (
-            <EmptyChat onPress={this.onListViewPress} />
+            <EmptyChat
+              iconName="comments"
+              message="Bắt đầu cuộc trò chuyện thôi!"
+              onPress={this.onListViewPress}
+            />
           ))}
         <View style={{flex: 1}} onLayout={this.handleContainerLayout}>
           <TouchableWithoutFeedback
@@ -1289,7 +1288,16 @@ class TickidChat extends Component {
                     extraChatViewStyle,
                   ],
                   ListHeaderComponent: this.props.listHeaderComponent,
-                  ListFooterComponent: this.props.listFooterComponent,
+                  // ListFooterComponent: this.props.listFooterComponent,
+                  ListFooterComponent: () => (
+                    <>
+                      <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={this.onListViewPress}
+                        style={styles.maskList}></TouchableOpacity>
+                      {this.props.listFooterComponent}
+                    </>
+                  ),
                   renderScrollComponent: this.props.renderScrollComponent,
                   // onScroll: this.props.onListScroll,
                   onLayout: this.props.onListLayout,
@@ -1447,15 +1455,22 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'left',
   },
+  maskList: {
+    flex: 1,
+    bottom: 0,
+    position: 'absolute',
+    width: WIDTH,
+    height: HEIGHT,
+  },
 });
 
 export default TickidChat;
 
-const EmptyChat = (props) => (
-  <TouchableWithoutFeedback onPress={props.onPress}>
+export const EmptyChat = ({onPress, message, icon, iconName = 'comments'}) => (
+  <TouchableWithoutFeedback onPress={onPress}>
     <View style={[styles.emptyChatContainer]}>
-      <IconFontisto name="comments" color={'#909090'} size={60} />
-      <Text style={styles.emptyChatText}>Bắt đầu cuộc trò chuyện thôi!</Text>
+      {icon || <IconFontisto name={iconName} color={'#909090'} size={60} />}
+      <Text style={styles.emptyChatText}>{message}</Text>
     </View>
   </TouchableWithoutFeedback>
 );

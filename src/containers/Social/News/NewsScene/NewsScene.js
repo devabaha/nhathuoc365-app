@@ -1,4 +1,10 @@
-import React, {useCallback, useEffect, useReducer, useRef} from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useReducer,
+  useRef,
+} from 'react';
 import {StyleSheet} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -15,6 +21,7 @@ import NewsSceneSkeleton from './NewsSceneSkeleton';
 import NoResult from 'src/components/NoResult';
 
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import {APIRequest} from 'src/network/Entity';
 
 const styles = StyleSheet.create({
   feedsContainer: {
@@ -30,6 +37,8 @@ const NewsScene = ({id, isFetching = false}) => {
 
   const reactionDisposer = useRef(() => {});
   const currentId = useRef(id);
+
+  const [likeRequest] = useState(new APIRequest());
 
   const [{data, loading, refreshing}, setState] = useReducer(
     (state, newState) => ({...state, ...newState}),
@@ -61,6 +70,7 @@ const NewsScene = ({id, isFetching = false}) => {
     );
     return () => {
       reactionDisposer.current();
+      cancelRequests([likeRequest]);
     };
   }, [id, data]);
 
@@ -78,8 +88,10 @@ const NewsScene = ({id, isFetching = false}) => {
   const getData = useCallback(async () => {
     try {
       const response = await APIHandler.user_news_list('', id);
-      //   console.log(response, id);
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
+        store.updateSocialNews(response.data);
+        
         // direction to news_detail if detecting deep link data.
         if (store.deep_link_data) {
           const news = response.data.find(
@@ -112,6 +124,21 @@ const NewsScene = ({id, isFetching = false}) => {
     }
   }, [id]);
 
+  const likeNews = useCallback((feeds) => {
+    const data = {
+      object: feeds.object,
+      object_id: feeds.object_id,
+      site_id: feeds.site_id,
+      status: store.socialNews[feeds.id]?.like_flag ? 0 : 1,
+    };
+
+    likeRequest.data = APIHandler.social_likes(data);
+    likeRequest
+      .promise()
+      .then((res) => console.log(res))
+      .catch((err) => console.log('like_news', err));
+  }, []);
+
   const handleRefresh = useCallback(() => {
     setState({refreshing: true});
     getData();
@@ -125,11 +152,18 @@ const NewsScene = ({id, isFetching = false}) => {
     });
   }, []);
 
-  const handleActionBarPress = useCallback((type) => {
+  const handleActionBarPress = useCallback((type, feeds) => {
+    console.log(feeds);
     switch (type) {
+      case SOCIAL_BUTTON_TYPES.LIKE:
+        likeNews(feeds);
+        break;
       case SOCIAL_BUTTON_TYPES.COMMENT:
         Actions.push(appConfig.routes.modalComment, {
-          title: 'Bình luận'
+          title: 'Bình luận',
+          object: feeds?.object || 'news',
+          object_id: feeds?.object_id || feeds?.id,
+          site_id: feeds.site_id,
         });
         break;
     }
@@ -138,6 +172,9 @@ const NewsScene = ({id, isFetching = false}) => {
   const renderFeeds = ({item: feeds, index}) => {
     return (
       <Feeds
+        commentsCount={feeds.comments_count}
+        likeCount={feeds.like_count}
+        isLiked={Number(feeds.like_flag)}
         title={feeds.title}
         userName={feeds.shop_name}
         description={feeds.created}
@@ -145,7 +182,7 @@ const NewsScene = ({id, isFetching = false}) => {
         avatarUrl={feeds.shop_logo_url}
         containerStyle={styles.feedsContainer}
         onPostPress={() => handlePostPress(feeds)}
-        onActionBarPress={handleActionBarPress}
+        onActionBarPress={(type) => handleActionBarPress(type, feeds)}
       />
     );
   };
