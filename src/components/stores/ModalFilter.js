@@ -1,6 +1,12 @@
 import React, {memo, useEffect, useRef, useState} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import {FlatList, TouchableOpacity} from 'react-native-gesture-handler';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Platform,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/Feather';
 import {Actions} from 'react-native-router-flux';
@@ -10,6 +16,7 @@ import ListTag from './ListTag';
 import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
 import {CONFIG_KEY} from 'src/helper/configKeyHandler';
 import ListPrice from './ListPrice';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 function ModalFilter({
   onSelectValue = () => {},
@@ -17,27 +24,33 @@ function ModalFilter({
   defaultSelected = {},
   type,
   title = 'Default',
+  onSelectValueSort = () => {},
 }) {
   const [selected, setSelected] = useState(defaultSelected);
+  const [selectedPrice, setSelectedPrice] = useState({});
+  const [selectedTag, setSelectedTag] = useState({});
   const refModal = useRef(null);
   const priceValueString = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
 
-  const handleSelected = (selected) => {
-    setSelected((prev) => ({
-      ...prev,
-      ...selected,
-    }));
+  const handleSelected = (val) => {
+    setSelectedTag(val);
+  };
+
+  const handleSelectedPrice = (value) => {
+    setSelectedPrice(value);
   };
 
   const handleCloseModal = () => {
     if (refModal.current) {
       refModal.current.close();
-      onSelectValue(selected);
+      type !== 'default'
+        ? onSelectValue({...selectedTag, ...selectedPrice})
+        : onSelectValueSort(selected);
     }
   };
 
   const handleItem = (item) => () => {
-    setSelected(item);
+    setSelected({...item, isSelected: true});
   };
 
   const renderItem = ({item, index}) => {
@@ -55,16 +68,20 @@ function ModalFilter({
     switch (type) {
       case 'filter-multiple':
         return (
-          <View>
+          <KeyboardAwareScrollView>
             <ListTag
               data={data}
               onChangeValue={handleSelected}
               defaultValue={defaultSelected}
             />
             {!!priceValueString && (
-              <ListPrice title="Giá tiền" onChangeValue={handleSelected} />
+              <ListPrice
+                title="Giá tiền"
+                defaultValue={defaultSelected}
+                onChangeValue={handleSelectedPrice}
+              />
             )}
-          </View>
+          </KeyboardAwareScrollView>
         );
       case 'default':
       default:

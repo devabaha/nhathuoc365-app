@@ -10,13 +10,12 @@ function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
   const [selected, setSelected] = useState(defaultValue);
 
   useEffect(() => {
-    if (!isEmpty(selected)) {
-      onChangeValue(selected);
-    }
+    onChangeValue(selected);
   }, [selected]);
 
   useEffect(() => {
-    setSelected(defaultValue);
+    const defaultValueTag = omit(defaultValue, 'price');
+    setSelected(defaultValueTag);
   }, [defaultValue]);
 
   const handleItem = (item) => () => {

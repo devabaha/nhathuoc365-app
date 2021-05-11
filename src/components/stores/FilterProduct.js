@@ -10,26 +10,28 @@ function FilterProduct({
   titleLeft = 'Sắp xếp',
   titleRight = 'Lọc',
   data = [],
-  data2 = [],
+  dataSort = [],
+  onValueSort,
+  onValueTag,
 }) {
   const [options, setOptions] = useState([]);
   const [dataFilterTag, setDataFilterTag] = useState([]);
   const [defaultSelected, setDefaultSelected] = useState({});
   const [selectedFilter, setSelectedFiler] = useState({});
   useEffect(() => {
-    setOptions(data2);
-  }, [data2]);
+    setOptions(dataSort);
+    const selected = dataSort.filter((i) => i.isSelected)[0];
+    if (!!selected) {
+      onValueSort?.(selected);
+      setDefaultSelected(selected);
+    }
+  }, [dataSort]);
 
   useEffect(() => {
     if (!isEmpty(data)) {
       setDataFilterTag(data);
     }
   }, [data]);
-
-  useEffect(() => {
-    const selected = data2.filter((i) => i.isSelected)[0];
-    setDefaultSelected(selected);
-  }, []);
 
   const handleRemoveTag = (tag) => () => {
     const newFilterSelected = Object.keys(selectedFilter).reduce((obj, key) => {
@@ -43,6 +45,7 @@ function FilterProduct({
       };
     }, {});
     setSelectedFiler(newFilterSelected);
+    onValueTag?.(newFilterSelected);
   };
 
   const handleOpenModal = (type) => () => {
@@ -51,7 +54,7 @@ function FilterProduct({
       defaultSelected: type === 'default' ? defaultSelected : selectedFilter,
       data: type === 'default' ? options : dataFilterTag,
       title: type === 'default' ? titleLeft : titleRight,
-      onSelectValue: (selected) => {
+      onSelectValueSort: (selected) => {
         if (type === 'default') {
           setDefaultSelected(selected);
           const newData = options.map((i) => ({
@@ -59,9 +62,13 @@ function FilterProduct({
             isSelected: i.id === selected.id,
           }));
           setOptions(newData);
+          onValueSort?.(selected);
           return;
         }
+      },
+      onSelectValue: (selected) => {
         setSelectedFiler(selected);
+        onValueTag?.(selected);
       },
     });
   };
@@ -71,9 +78,7 @@ function FilterProduct({
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.btnFilterLeft}
-          onPress={() => {
-            console.log({dataFilterTag, options, data});
-          }}>
+          onPress={handleOpenModal('default')}>
           <Text>{titleLeft}:</Text>
           {!isEmpty(defaultSelected) && (
             <Text style={styles.valueText}>{defaultSelected.name}</Text>
@@ -90,8 +95,8 @@ function FilterProduct({
       </View>
       {!isEmpty(selectedFilter) ? (
         <View style={styles.tagWrapper}>
-          {Object.values(selectedFilter).map((tag) => (
-            <View style={styles.tagSelected}>
+          {Object.values(selectedFilter).map((tag, index) => (
+            <View key={`${index}__tag_select`} style={styles.tagSelected}>
               <Text style={{color: '#fff', fontSize: 12, paddingHorizontal: 4}}>
                 {!!tag.tag
                   ? tag.tag
@@ -161,7 +166,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   tagSelected: {
-    marginHorizontal: 5,
+    margin: 5,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,

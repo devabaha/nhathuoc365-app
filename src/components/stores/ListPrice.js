@@ -5,18 +5,52 @@ import ButtonTag from './ButtonTag';
 import {CONFIG_KEY} from 'src/helper/configKeyHandler';
 import {isEmpty, isEqual} from 'lodash';
 
-function ListPrice({title, onChangeValue}) {
+function ListPrice({title, onChangeValue, defaultValue = {}}) {
   const priceValueString = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
   const [selectedPrice, setSelectedPrice] = useState({});
+  const [type, setType] = useState('select');
   const [maxPrice, setMaxPrice] = useState('');
   const [minPrice, setMinPrice] = useState('');
   const priceValue = JSON.parse(priceValueString);
 
   useEffect(() => {
-    if (!isEmpty(selectedPrice)) {
-      onChangeValue?.(selectedPrice);
-    }
+    onChangeValue?.(selectedPrice);
   }, [selectedPrice]);
+
+  useEffect(() => {
+    if (!!defaultValue.price) {
+      setSelectedPrice({price: defaultValue['price']});
+      setMinPrice(vndCurrencyFormat(defaultValue['price']?.min_price));
+      setMaxPrice(vndCurrencyFormat(defaultValue['price']?.max_price));
+    }
+  }, [defaultValue]);
+
+  const handleChangeText = (key) => (text) => {
+    setType('change_text');
+    if (key === 'min_price') {
+      setMinPrice(text);
+      setSelectedPrice((prev) => ({
+        price: {...prev['price'], min_price: parseInt(text)},
+      }));
+    } else {
+      setMaxPrice(text);
+      setSelectedPrice((prev) => ({
+        price: {...prev['price'], max_price: parseInt(text)},
+      }));
+    }
+  };
+
+  useEffect(() => {
+    if (type === 'select') {
+      if (isEmpty(selectedPrice)) {
+        setMinPrice('');
+        setMaxPrice('');
+      } else {
+        setMinPrice(vndCurrencyFormat(selectedPrice['price']?.min_price));
+        setMaxPrice(vndCurrencyFormat(selectedPrice['price']?.max_price));
+      }
+    }
+  }, [selectedPrice, type]);
 
   const handleItem = (item) => () => {
     setSelectedPrice((prev) => {
@@ -56,11 +90,21 @@ function ListPrice({title, onChangeValue}) {
         keyExtractor={(_, index) => `min_max_price_${index}`}
         renderItem={renderPriceItem}
       />
+      <Text style={styles.priceText}>Hoặc nhập ô giá ở đây</Text>
       <View style={styles.textInputWrapper}>
         <TextInput
           value={minPrice}
           onChangeText={handleChangeText('min_price')}
           style={styles.input}
+          keyboardType="number-pad"
+          placeholder="Từ 0 đ"
+        />
+        <TextInput
+          value={maxPrice}
+          onChangeText={handleChangeText('max_price')}
+          style={styles.input}
+          keyboardType="number-pad"
+          placeholder="Đến 10,000,000,000 đ"
         />
       </View>
     </View>
@@ -85,6 +129,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+    width: '50%',
+    height: 40,
+    marginHorizontal: 7,
+    paddingLeft: 4,
+  },
+  priceText: {
+    marginVertical: 7,
+    marginLeft: 10,
   },
 });
 

@@ -11,7 +11,7 @@ import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 import FilterProduct from './FilterProduct';
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
-import {isEqual} from 'lodash';
+import {isEmpty, isEqual} from 'lodash';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -48,6 +48,10 @@ class CategoryScreen extends Component {
       fetched: false,
       dataFilterTag: [],
       data2: [],
+      startLoad: false,
+      paramsFilter: {},
+      dataSort: [],
+      valueSort: {},
     };
 
     this.unmounted = false;
@@ -62,10 +66,11 @@ class CategoryScreen extends Component {
   getListFilterTag = async () => {
     try {
       const siteId = store.store_data.id;
-      const data2 = [
-        {id: 1, name: 'Phổ biến', value: 'pho-bien', isSelected: true},
-        {id: 2, name: 'Bán chạy', value: 'ban-chay', isSelected: false},
-        {id: 3, name: 'Mới nhất', value: 'moi-nhat', isSelected: false},
+      const dataSort = [
+        {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: true},
+        {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false},
+        {id: 3, name: 'Mới nhất', value: 'created', isSelected: false},
+        {id: 4, name: 'Giá từ thấp đến cao', value: 'price', isSelected: false},
       ];
       this.getListFilterTagRequest.data = APIHandler.getListFilterProduct(
         siteId,
@@ -74,7 +79,8 @@ class CategoryScreen extends Component {
       if (response.status === 200) {
         this.setState({
           dataFilterTag: response.data,
-          data2,
+          dataSort,
+          startLoad: true,
         });
       }
     } catch (err) {
@@ -221,7 +227,7 @@ class CategoryScreen extends Component {
             }, this._delay());
           })
           .catch((err) => {
-            console.log('get_item_by_cate_id', err);
+            console.log('get_item_by_cate_id_local', err);
             this._getItemByCateIdFromServer(category_id);
           });
       },
@@ -229,6 +235,7 @@ class CategoryScreen extends Component {
   }
 
   async _getItemByCateIdFromServer(category_id, delay, loadmore) {
+    const {paramsFilter} = this.state;
     var store_category_key =
       STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
     const site_id = this.props.site_id || store.store_id;
@@ -237,13 +244,23 @@ class CategoryScreen extends Component {
     } else {
       this.state.page = 0;
     }
+    let response = {};
     try {
-      var response = await APIHandler.site_category_product(
-        site_id,
-        category_id,
-        this.state.page,
-      );
-
+      if (!isEmpty(paramsFilter)) {
+        console.log({paramsFilter});
+        response = await APIHandler.filter_category_product(
+          site_id,
+          category_id,
+          this.state.page,
+          paramsFilter,
+        );
+      } else {
+        response = await APIHandler.site_category_product(
+          site_id,
+          category_id,
+          this.state.page,
+        );
+      }
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           // delay append data
@@ -288,7 +305,7 @@ class CategoryScreen extends Component {
             loading: false,
             fetched: true,
             refreshing: false,
-            items_data: this.state.items_data_bak,
+            items_data: !isEmpty(paramsFilter) ? [] : this.state.items_data_bak,
           });
 
           // load next category
@@ -307,9 +324,49 @@ class CategoryScreen extends Component {
     Events.removeAll(keyAutoLoad);
   }
 
-  _loadMore() {
+  _loadMore = () => {
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
-  }
+  };
+
+  handleValue = (type) => async (value) => {
+    if (type === 'tag') {
+      if (this.state.startLoad) {
+        let min_price = '';
+        let max_price = '';
+        if (!!value['price']) {
+          min_price = value['price'].min_price;
+          max_price = value['price'].max_price;
+        }
+        const tag_id = Object.values(value)
+          .map((i) => i?.id)
+          .filter(Boolean)
+          .join(',');
+        const params = {
+          min_price,
+          max_price,
+          tag: tag_id,
+          order: 'asc',
+          sort_by: this.state.valueSort.value,
+        };
+
+        await this.setState({paramsFilter: params});
+        if (isEmpty(value)) {
+          this._getItemByCateIdFromServer(this.props.item.id, 0, false);
+          return;
+        }
+        this._getItemByCateIdFromServer(this.props.item.id, 0, false);
+      }
+    } else {
+      await this.setState((prev) => ({
+        valueSort: value,
+        paramsFilter: {
+          ...prev.paramsFilter,
+          sort_by: value.value,
+        },
+      }));
+      this._getItemByCateIdFromServer(this.props.item.id, 0, false);
+    }
+  };
 
   render() {
     const {t} = this.props;
@@ -398,8 +455,10 @@ class CategoryScreen extends Component {
 
             {/* <ListHeader title={header_title} /> */}
             <FilterProduct
-              data2={this.state.data2}
+              dataSort={this.state.dataSort}
               data={this.state.dataFilterTag}
+              onValueTag={this.handleValue('tag')}
+              onValueSort={this.handleValue('sort')}
             />
 
             <View
@@ -417,13 +476,13 @@ class CategoryScreen extends Component {
                       onPress={
                         item.type != 'loadmore'
                           ? this._goItem.bind(this, item)
-                          : this._loadMore.bind(this)
+                          : this._loadMore
                       }
                     />
                   ))
                 : null}
             </View>
-            {items_data == null ? (
+            {items_data == null || isEmpty(items_data) ? (
               <View style={[styles.containerScreen]}>
                 {fetched && (
                   <NoResult
