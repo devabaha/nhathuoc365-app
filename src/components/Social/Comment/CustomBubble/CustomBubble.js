@@ -7,7 +7,11 @@ import BubbleBottom from '../BubbleBottom';
 import {Bubble, MessageText} from 'react-native-gifted-chat';
 import LinearGradient from 'react-native-linear-gradient';
 
+import appConfig from 'app-config';
 import store from 'app-store';
+
+import {ActionBtn} from '../BubbleBottom';
+import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
@@ -41,7 +45,8 @@ const styles = StyleSheet.create({
   btnShowFullMessage: {
     position: 'absolute',
     bottom: 5,
-    right: 15,
+    right: 0,
+    paddingRight: 15,
   },
   labelShowFulMessage: {
     color: '#777',
@@ -56,6 +61,27 @@ const styles = StyleSheet.create({
     marginTop: -5,
     overflow: 'hidden',
   },
+
+  containerMention: {
+    marginRight: 0,
+  },
+  contentMention: {
+    flex: 0,
+    bottom: -3,
+    marginRight: 7,
+  },
+  titleMention: {
+    fontWeight: '500',
+    fontSize: 16,
+    color: appConfig.colors.primary,
+  },
+  maskMention: {
+    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.28),
+    width: '110%',
+    height: '110%',
+    left: '-5%',
+    top: '-5%',
+  },
 });
 
 const bubbleWrapperStyle = {
@@ -67,13 +93,24 @@ const bubbleContainerStyle = {
 };
 
 class CustomBubble extends Component {
+  static defaultProps = {
+    seeMoreTitle: 'Xem thêm',
+  };
   unMounted = false;
   animatedHighlight = new Animated.Value(0);
 
   state = {
     isShowFullMessage:
-      this.props?.currentMessage?.text?.length <= MAX_LENGTH_TEXT,
+      this.props?.currentMessage?.content?.length <= MAX_LENGTH_TEXT,
   };
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if(nextProps.forceRender !== undefined){
+      return nextProps.forceRender;
+    }
+    return true;
+  }
+  
 
   componentWillUnmount() {
     this.unMounted = true;
@@ -119,10 +156,34 @@ class CustomBubble extends Component {
     this.setState({isShowFullMessage: true});
   };
 
+  isReplyingYourSelf(props) {
+    return (
+      props.currentMessage?.reply?.id === props.currentMessage?.user?.user_id
+    );
+  }
+
   renderMessageText = (props, bgColor) => {
     props.textStyle = {
       lineHeight: LINE_HEIGHT,
     };
+
+    if (!this.isReplyingYourSelf(props) && props.currentMessage?.reply?.name) {
+      props.currentMessage.text = (
+        <>
+          <Text>
+            <ActionBtn
+              title={props.currentMessage.reply.name}
+              style={styles.containerMention}
+              contentStyle={styles.contentMention}
+              titleStyle={styles.titleMention}
+              maskStyle={styles.maskMention}
+              onPress={() => {}}
+            />
+          </Text>
+          <Text>{props.currentMessage.content}</Text>
+        </>
+      );
+    }
 
     return (
       <View
@@ -149,7 +210,7 @@ class CustomBubble extends Component {
               useAngle
             />
             <Text style={styles.labelShowFulMessage}>
-              ... {this.props.t('seeMore')}
+              ... {this.props.seeMoreTitle}
             </Text>
           </TouchableOpacity>
         )}
@@ -159,9 +220,18 @@ class CustomBubble extends Component {
 
   renderImages = (props, image) => {
     if (!image) return null;
+    const imageStyle = {
+      borderWidth: 0.5,
+      borderColor: '#ddd',
+      height: IMAGE_COMMENT_HEIGHT,
+      width:
+        IMAGE_COMMENT_HEIGHT *
+        ((props.currentMessage?.image_info?.width || 0) /
+          (props.currentMessage?.image_info?.height || 1)),
+    };
     return (
       <ImageMessageChat
-        containerStyle={styles.imageContainer}
+        containerStyle={[styles.imageContainer, imageStyle]}
         uploadURL={props.uploadUrl}
         isUploadData={props.currentMessage.isUploadData}
         image={props.currentMessage.rawImage}
@@ -182,7 +252,8 @@ class CustomBubble extends Component {
     return (
       <BubbleBottom
         created={this.formattedCreated}
-        isLiked={false}
+        isLiked={props.isLiked}
+        totalReaction={props.totalReaction}
         onActionPress={(type) => this.handlePressBubbleBottom(type)}
       />
     );
@@ -193,16 +264,17 @@ class CustomBubble extends Component {
       onPressBubbleBottom,
       onSendImage,
       refContentMessage,
+      isHighlight,
       ...props
     } = this.props;
-    const highlightStyle =
-      store.replyingComment?.id === props.currentMessage.id;
+
     const hasText = props.currentMessage.text;
     const bgColor = hasText
-      ? highlightStyle
+      ? isHighlight
         ? BG_HIGHLIGHT_COLOR
         : BG_COLOR
       : 'transparent';
+    console.log(props.currentMessage.id)
 
     const wrapperStyle = {
       left: {
@@ -210,6 +282,7 @@ class CustomBubble extends Component {
         backgroundColor: bgColor,
       },
     };
+    
     return (
       <View style={styles.wrapper}>
         <Animated.View style={[styles.container, this.animatedStyle]}>
@@ -229,4 +302,4 @@ class CustomBubble extends Component {
   }
 }
 
-export default observer(CustomBubble);
+export default CustomBubble;

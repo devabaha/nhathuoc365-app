@@ -32,6 +32,9 @@ import {
 } from 'src/constants/social/comments';
 import {EmptyChat} from 'app-packages/tickid-chat/container/TickidChat/TickidChat';
 import Image from 'src/components/Image';
+import {Observer} from 'mobx-react';
+import CustomBubble from './CustomBubble';
+import {observable, reaction} from 'mobx';
 
 moment.relativeTimeThreshold('ss', 10);
 moment.relativeTimeThreshold('d', 7);
@@ -66,6 +69,20 @@ const styles = StyleSheet.create({
   },
 });
 
+export const getLikeCount = (comment) => {
+  let likeCount = store.socialComments[comment.id]?.like_count;
+  likeCount === undefined && (likeCount = comment?.like_count || 0);
+
+  return likeCount;
+};
+
+export const getLikeFlag = (comment) => {
+  let likeFlag = store.socialComments[comment.id]?.like_flag;
+  likeFlag === undefined && (likeFlag = comment?.like_flag || 0);
+
+  return likeFlag;
+};
+
 class Comment extends Component {
   static defaultProps = {
     user_id: '24511',
@@ -78,6 +95,7 @@ class Comment extends Component {
     isKeyboardShowing: false,
   };
 
+  tempID = 0;
   _lastID = 0;
   limit = 20;
   offset = 0;
@@ -98,7 +116,8 @@ class Comment extends Component {
   getMessagesAPI = new APIRequest();
   getCommentsAPI = new APIRequest();
   postCommentAPI = new APIRequest();
-  requests = [this.getCommentsAPI, this.postCommentAPI];
+  likeRequest = new APIRequest();
+  requests = [this.getCommentsAPI, this.postCommentAPI, this.likeRequest];
 
   handleKeyboardDidShow = () => {
     if (!this.state.isKeyboardShowing) {
@@ -191,11 +210,25 @@ class Comment extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    store.resetSocialComments();
+    store.setPreviewImages();
+    store.setReplyingComment();
     clearTimeout(this.timerGetChat);
     cancelRequests(this.requests);
     this.keyboardDidHideListener.remove();
     this.keyboardDidShowListener.remove();
   }
+
+  setStoreSocialComment = (comments) => {
+    const formattedComments = {};
+    comments.forEach((c) => (formattedComments[c.id] = c));
+
+    store.setSocialComments(formattedComments);
+  };
+
+  updateRefForStoreSocialComments = (comment, inst) => {
+    store.updateSocialComment(comment.id, {ref: inst});
+  };
 
   _getMessages = async () => {
     let {site_id, object, object_id} = this.props;
@@ -210,42 +243,30 @@ class Comment extends Component {
       object,
       object_id,
     };
+
     try {
-      this.getCommentsAPI.data = APIHandler.social_site_comments(data);
+      this.getCommentsAPI.data = APIHandler.social_comments(data);
 
       const response = await this.getCommentsAPI.promise();
+      // console.log(response);
       if (response && response.status == STATUS_SUCCESS && response.data) {
-        console.log(response);
         if (response.data.list) {
-          response.data.list = this.formatMessages(response.data.list);
-          // response.data.list = this.formatMessages(response.data.list);
-          // response.data.list = response.data.list
-          //   .concat(response.data.list)
-          //   .concat(response.data.list)
-          //   .concat(response.data.list)
-          //   .concat(response.data.list);
-          // response.data.list = response.data.list.map((t, index) => ({
-          //   ...t,
-          //   // _id: index,
-          //   // id: index,
-          //   text: index ? CONTENT[index].content : '',
-          // }));
-          response.data.list = this.formatIndexMessages(response.data.list);
-          // console.log(response.data.list);
+          let comments = [...response.data.list];
+          comments = this.formatMessages(comments);
+          this.setStoreSocialComment(comments);
+
           if (this.state.messages) {
-            this._appendMessages(response.data.list);
+            this._appendMessages(comments);
           } else {
             this.setState({
-              messages: response.data.list,
-              // user_id: main_user,
+              messages: comments,
             });
           }
-          this._calculatorLastID(response.data.list);
+          this._calculatorLastID(comments);
         }
       } else if (this.isLoadFirstTime) {
         this.setState({
           messages: [],
-          // user_id: main_user,
         });
       }
       //   this.timerGetChat = setTimeout(
@@ -253,7 +274,7 @@ class Comment extends Component {
       //     DELAY_GET_CONVERSATION,
       //   );
     } catch (e) {
-      console.warn(e + ' site_load_chat');
+      console.log('get_comments', e);
     } finally {
       this.isLoadFirstTime = false;
     }
@@ -263,12 +284,18 @@ class Comment extends Component {
     return messages.map((message, index) => ({...message, index}));
   }
 
-  formatMessage(message, level = 0, parent_id = null) {
-    console.log
+  formatMessage(message, level = 0, parent_id = null, real_parent_id = null) {
     return {
-      parent_id,
       ...message,
-      avatar: message.image,
+      id: message.id,
+      parent_id,
+      real_parent_id: real_parent_id || parent_id,
+      real_id: message.id,
+      like_flag: message?.like?.like_flag,
+      user: {
+        ...message.user,
+        avatar: message.user.image,
+      },
       createdAt: message.created,
       _id: message.id,
       text: message.content,
@@ -299,15 +326,21 @@ class Comment extends Component {
       });
     } else {
       messages.forEach((m) => {
+        console.log('zip m', m);
         const index = newMessages.findIndex((mess) => {
-          return m.parent_id === mess.parent_id || m.parent_id === mess.id;
+          console.log('zip com', mess.parent_id, mess.real_id, mess.id);
+          if (m.parent_id === mess.parent_id || m.parent_id === mess.id) {
+            // console.log('zip', m, mess)
+            return true;
+          }
+          return false;
         });
         if (index !== -1) {
           newMessages.splice(index, 0, m);
         }
       });
     }
-    newMessages = this.formatIndexMessages(newMessages);
+    // newMessages = this.formatIndexMessages(newMessages);
     this.setState(
       {
         messages: newMessages,
@@ -343,8 +376,6 @@ class Comment extends Component {
 
     store.setPreviewImages();
     store.setReplyingComment();
-
-    this._onSend(message[0]);
   };
 
   handleSendImage = (images) => {
@@ -385,19 +416,34 @@ class Comment extends Component {
   };
 
   getFormattedMessage(type, message) {
-    const formattedMessage = {
-      _id: String(new Date().getTime()),
-      id: String(new Date().getTime()),
-      created: moment().format('YYYY-MM-DD HH:mm:ss'),
-      level: store.replyingComment?.id ? 1 : 0,
-      parent_id: store.replyingComment?.parent_id || store.replyingComment?.id,
-      reply_id: store.replyingComment?.id,
-      user: {...this.state.user},
-    };
+    this.tempID--;
+    const level = store.replyingComment?.id ? 1 : 0;
+    const parent_id =
+      store.replyingComment?.parent_id || store.replyingComment?.id;
+    const real_parent_id =
+      store.replyingComment?.real_parent_id || store.replyingComment?.real_id;
+    const formattedMessage = this.formatMessage(
+      {
+        id: String(this.tempID),
+        created: moment().format('YYYY-MM-DD HH:mm:ss'),
+        like: {
+          like_flag: 0,
+        },
+        reply_id: !store.isReplyingYourSelf
+          ? store.replyingComment?.real_id
+          : '',
+        user: {...this.state.user},
+      },
+      level,
+      parent_id,
+      real_parent_id,
+    );
+    console.log(formattedMessage);
 
     switch (type) {
       case MESSAGE_TYPE_TEXT:
         formattedMessage.text = message;
+        formattedMessage.content = message;
         break;
       case MESSAGE_TYPE_IMAGE:
         formattedMessage.image = message;
@@ -405,16 +451,10 @@ class Comment extends Component {
         break;
       case MESSAGE_TYPE_MIXED:
         formattedMessage.text = message.text;
+        formattedMessage.content = message.text;
         formattedMessage.image = message.images[0].path;
         formattedMessage.isUploadData = true;
         break;
-    }
-
-    if (store.replyingMention?.name) {
-      formattedMessage.text =
-        store.replyingMention?.name + ' ' + formattedMessage.text;
-      formattedMessage.parent_id =
-        store.replyingComment?.parent_id || store.replyingComment?.id;
     }
 
     return [formattedMessage];
@@ -429,22 +469,49 @@ class Comment extends Component {
       site_id,
       content: message.text || '',
       image: message.image || '',
-      parent_id: message.parent_id || '',
-      reply_id: message.reply_id || ''
+      parent_id: message.real_parent_id || '',
+      reply_id: message.reply_id || '',
     };
 
     try {
-      this.postCommentAPI.data = APIHandler.social_site_comment(data);
+      this.postCommentAPI.data = APIHandler.social_comment(data);
       const response = await this.postCommentAPI.promise();
       console.log(response, message, data);
 
       if (response) {
         if (response.status == STATUS_SUCCESS) {
-          if (response.data?.list) {
-            const messages = this.formatIndexMessages(
-              this.formatMessages(response.data.list),
+          if (response.data?.comment) {
+            const responseComment = this.formatMessage(
+              response.data.comment,
+              message.level,
+              response.data?.comment?.parent_id,
             );
-            this.setState({messages});
+
+            const storeComment = {
+              ...responseComment,
+              _id: message._id,
+              id: message.id,
+              parent_id: message.parent_id,
+            };
+            console.log(message.id, responseComment, storeComment);
+            store.updateSocialComment(message.id, storeComment);
+            // store.updateSocialComment(responseComment.id, responseComment, true);
+
+            // const messages = [...this.state.messages];
+
+            // const index = messages.findIndex((m) => m.id === message.id);
+            // if (index !== -1) {
+            //   messages[index] = storeComment;
+            //   console.log(message[index])
+            // }
+            //             this.setState({messages}, () => {
+            // console.log(this.state.messages, store.socialComments)
+            //             });
+
+            // const messages = this.formatIndexMessages(
+            //   this.formatMessages(response.data.list),
+            // );
+            // this.setState({messages});
           }
         } else {
           flashShowMessage({
@@ -460,7 +527,7 @@ class Comment extends Component {
         });
       }
     } catch (e) {
-      console.log('social_site_comment', e);
+      console.log('social_comment', e);
       flashShowMessage({
         type: 'danger',
         message: this.props.t('common:api.error.message'),
@@ -483,13 +550,13 @@ class Comment extends Component {
 
   listChatScrollToItemById(comment) {
     if (this.refListMessages) {
-      if (!this.refMessages[comment.id]) return;
+      if (!store.socialComments[comment.id]?.ref) return;
 
       const extraOffset =
         (!!store.replyingComment?.id ? -REPLYING_BAR_HEIGHT : 0) +
         (!!store.previewImages?.length ? -PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
-      this.refMessages[comment.id].measureLayout(
+      store.socialComments[comment.id].ref.measureLayout(
         findNodeHandle(this.refListMessages),
         (offsetX, offsetY) => {
           this.refListMessages.scrollToOffset({
@@ -512,20 +579,50 @@ class Comment extends Component {
     }
   };
 
+  handleLikeComment = (comment) => {
+    const data = {
+      object: comment?.like?.object,
+      object_id: comment?.like?.object_id,
+      site_id: comment.site_id,
+      status: getLikeFlag(comment),
+    };
+
+    this.likeRequest.data = APIHandler.social_likes(data);
+    this.likeRequest
+      .promise()
+      .then((res) => console.log(res))
+      .catch((err) => console.log('like_comment', err));
+  };
+
   handlePressBottomBubble = (type, comment) => {
+    const storeComment = store.socialComments[comment.id];
+    // console.log('store_comment', storeComment)
     switch (type) {
       case SOCIAL_BUTTON_TYPES.LIKE:
+        const likeFlag = getLikeFlag(storeComment);
+        const likeCount = getLikeCount(storeComment);
+
+        store.updateSocialComment(
+          storeComment.id,
+          {
+            like_flag: likeFlag ? 0 : 1,
+            like_count: likeFlag ? likeCount - 1 : likeCount + 1,
+          },
+          true,
+        );
+
+        this.handleLikeComment(storeComment);
         break;
       case SOCIAL_BUTTON_TYPES.REPLY:
         this.isPressingReply = true;
-        this.currentReplyingComment = comment;
-        store.setReplyingComment(comment);
+        this.currentReplyingComment = storeComment;
+        store.setReplyingComment(storeComment);
 
         if (this.refTickidChat) {
           if (!this.state.isKeyboardShowing) {
             this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
           } else {
-            this.listChatScrollToItemById(comment);
+            this.listChatScrollToItemById(storeComment);
           }
         }
         break;
@@ -565,18 +662,48 @@ class Comment extends Component {
   };
 
   renderMessage = (props) => {
+    props.renderBubble = (bubbleProps) => {
+      // const isChanged =
+             
+      return (
+        <Observer>
+          {() => {
+            
+            const likeCount = getLikeCount(bubbleProps.currentMessage);
+            const likeFlag = getLikeFlag(bubbleProps.currentMessage);
+console.log('a')
+            return (
+              <CustomBubble
+                forceRender={store.socialCommentFireChanged?.id ===
+                  bubbleProps.currentMessage?.id || undefined}
+                seeMoreTitle={this.props.t('social:seeMore')}
+                ref={(inst) => {
+                  this.refContentMessages[bubbleProps.currentMessage.id] = inst;
+                }}
+                {...bubbleProps}
+                isHighlight={
+                  store.replyingComment?.id === bubbleProps.currentMessage.id
+                }
+                isLiked={likeFlag}
+                totalReaction={likeCount}
+                onPressBubbleBottom={this.handlePressBottomBubble}
+                onSendImage={({image}) =>
+                  this._onSend({...bubbleProps.currentMessage, image})
+                }
+                uploadUrl={UPLOAD_URL}
+              />
+            );
+          }}
+        </Observer>
+      );
+    };
+
     return (
       <CustomMessage
-        refMessage={(inst) => {
-          this.refMessages[props.currentMessage.id] = inst;
-        }}
-        refContentMessage={(inst) => {
-          this.refContentMessages[props.currentMessage.id] = inst;
-        }}
+        refMessage={(inst) =>
+          this.updateRefForStoreSocialComments(props.currentMessage, inst)
+        }
         {...props}
-        onPressBubbleBottom={this.handlePressBottomBubble}
-        onSendImage={this._onSend}
-        uploadUrl={UPLOAD_URL}
       />
     );
   };
@@ -611,7 +738,7 @@ class Comment extends Component {
       <View style={props.containerStyle.left}>
         <Image
           style={props.imageStyle.left}
-          source={{uri: props.currentMessage?.user?.avatar || "any"}}
+          source={{uri: props.currentMessage?.user?.avatar || 'any'}}
         />
       </View>
     );
@@ -716,7 +843,7 @@ class Comment extends Component {
   }
 }
 
-export default withTranslation()(observer(Comment));
+export default withTranslation(['common', 'social'])(observer(Comment));
 
 const TEST_DATA = [
   {

@@ -99,7 +99,7 @@ const FloatingIcons = ({
 
   return (
     <Container row style={[styles.wrapper, extraWrapperStyle, wrapperStyle]}>
-      {prefixTitle && <Text style={[styles.prefixTitle]}>{prefixTitle}</Text>}
+      {!!prefixTitle && <Text style={[styles.prefixTitle]}>{prefixTitle}</Text>}
       {renderIcons()}
     </Container>
   );

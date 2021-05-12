@@ -571,7 +571,7 @@ class Store {
   }
 
   @computed get isReplyingYourSelf() {
-    return this.replyingUser?.id === this.replyingMention?.user_id;
+    return this.replyingUser?.id == this.replyingMention?.user_id;
   }
 
   @observable socialNews = {};
@@ -582,6 +582,40 @@ class Store {
   @action updateSocialNews(id, data = {}) {
     let temp = this.socialNews[id] || {};
     this.socialNews[id] = {...temp, ...data};
+  }
+
+  @action resetSocialNews() {
+    this.socialNews = {};
+  }
+
+  @observable socialComments = {};
+  @action setSocialComments(socialComments = {}) {
+    this.socialComments = {...this.socialComments, ...socialComments};
+    this.setSocialCommentFireChanged();
+  }
+
+  @observable socialCommentFireChanged = {};
+  @action setSocialCommentFireChanged(socialCommentFireChanged = {}) {
+    this.socialCommentFireChanged = socialCommentFireChanged;
+  }
+
+  @action updateSocialComment(
+    id,
+    data = {},
+    isUpdateCommentFireChanged = false,
+  ) {
+    let temp = this.socialComments[id];
+    const storeComment = {...(temp || {}), ...data};
+
+    if (isUpdateCommentFireChanged) {
+      this.setSocialCommentFireChanged(storeComment);
+    }
+
+    this.socialComments[id] = storeComment;
+  }
+
+  @action resetSocialComments() {
+    this.socialComments = {};
   }
 }
 

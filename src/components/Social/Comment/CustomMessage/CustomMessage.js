@@ -1,7 +1,6 @@
 import React from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Message} from 'react-native-gifted-chat';
-import CustomBubble from '../CustomBubble';
 
 const styles = StyleSheet.create({
   messageContainer: {
@@ -16,10 +15,7 @@ const CustomMessage = ({
   onLayout = () => {},
   ...props
 }) => {
-  const {t} = useTranslation('social');
-  props.renderBubble = () => (
-    <CustomBubble t={t} ref={refContentMessage} {...props} />
-  );
+
   props.containerStyle = {
     left: {
       ...styles.messageContainer,

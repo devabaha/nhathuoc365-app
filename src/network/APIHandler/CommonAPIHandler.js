@@ -1051,8 +1051,8 @@ class CommonAPIHandler extends BaseHandler {
    * @param {string} data.object name of object
    * @param {number} data.object_id id of object
    */
-  social_site_comments(data) {
-    const api = url_for(API.SOCIAL_SITE_COMMENTS);
+  social_comments(data) {
+    const api = url_for(API.SOCIAL_COMMENTS);
     return this.postCancelableAPI(api, data);
   }
 
@@ -1064,8 +1064,8 @@ class CommonAPIHandler extends BaseHandler {
    * @param {number} data.object_id id of object
    * @param {number=} data.comment_id id of object
    */
-  social_site_comment(data) {
-    const api = url_for(API.SOCIAL_SITE_COMMENT);
+  social_comment(data) {
+    const api = url_for(API.SOCIAL_COMMENT);
     return this.postCancelableAPI(api, data);
   }
 

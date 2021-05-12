@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const BubbleBottom = ({created, isLiked, onActionPress = () => {}}) => {
+const BubbleBottom = ({created, isLiked, totalReaction, onActionPress = () => {}}) => {
   const {t} = useTranslation('social');
   const [liked, setLiked] = useState(isLiked);
 
@@ -75,11 +75,11 @@ const BubbleBottom = ({created, isLiked, onActionPress = () => {}}) => {
         />
       </Container>
 
-      {liked && (
+      {!!liked && (
         <FloatingIcons
           wrapperStyle={{position: 'absolute', right: 15}}
           icons="like1"
-          prefixTitle={1}
+          prefixTitle={totalReaction}
         />
       )}
     </Container>
@@ -88,73 +88,78 @@ const BubbleBottom = ({created, isLiked, onActionPress = () => {}}) => {
 
 export default React.memo(BubbleBottom);
 
-const ActionBtn = React.memo(({title, highlight, onPress}) => {
-  const [animationValue, setAnimation] = useState(new Animated.Value(0));
-  const animatedPressing = useRef(new Animated.Value(0));
+export const ActionBtn = React.memo(
+  ({title, highlight, style, contentStyle, titleStyle, maskStyle, onPress}) => {
+    const [animationValue, setAnimation] = useState(new Animated.Value(0));
+    const animatedPressing = useRef(new Animated.Value(0));
 
-  const setAnimationValue = useCallback((animatedValue) => {
-    setAnimation(animatedValue);
-  }, []);
+    const setAnimationValue = useCallback((animatedValue) => {
+      setAnimation(animatedValue);
+    }, []);
 
-  const animatedMaskStyle = {
-    opacity: animationValue,
-  };
+    const animatedMaskStyle = {
+      opacity: animationValue,
+    };
 
-  const animatedPressingStyle = {
-    opacity: animatedPressing.current.interpolate({
-      inputRange: [0, 0.5, 1],
-      outputRange: [0, 1, 0],
-    }),
-    transform: [
-      {
-        scale: animatedPressing.current.interpolate({
-          inputRange: [0, 0.5, 1],
-          outputRange: [1, 1.1, 1],
-        }),
-      },
-    ],
-  };
+    const animatedPressingStyle = {
+      opacity: animatedPressing.current.interpolate({
+        inputRange: [0, 0.5, 1],
+        outputRange: [0, 1, 0],
+      }),
+      transform: [
+        {
+          scale: animatedPressing.current.interpolate({
+            inputRange: [0, 0.5, 1],
+            outputRange: [1, 1.1, 1],
+          }),
+        },
+      ],
+    };
 
-  const animatedTextPressingStyle = {
-    transform: [
-      {
-        scale: animatedPressing.current.interpolate({
-          inputRange: [0, 0.5, 1],
-          outputRange: [1, 1.1, 1],
-        }),
-      },
-    ],
-  };
+    const animatedTextPressingStyle = {
+      transform: [
+        {
+          scale: animatedPressing.current.interpolate({
+            inputRange: [0, 0.5, 1],
+            outputRange: [1, 1.1, 1],
+          }),
+        },
+      ],
+    };
 
-  const handlePress = useCallback(() => {
-    Animated.spring(animatedPressing.current, {
-      toValue: 1,
-      speed: 1.5,
-      useNativeDriver: true,
-    }).start(() => {
-      animatedPressing.current.setValue(0);
-    });
-    onPress();
-  }, [highlight]);
+    const handlePress = useCallback(() => {
+      Animated.spring(animatedPressing.current, {
+        toValue: 1,
+        speed: 1.5,
+        useNativeDriver: true,
+      }).start(() => {
+        animatedPressing.current.setValue(0);
+      });
+      onPress();
+    }, [highlight]);
 
-  const titleExtraStyle = highlight && {color: appConfig.colors.primary};
+    const titleExtraStyle = highlight && {color: appConfig.colors.primary};
 
-  return (
-    <Pressable
-      hitSlop={HIT_SLOP}
-      onPress={handlePress}
-      refAnimationValue={setAnimationValue}
-      style={styles.actionBtnContainer}>
-      <Animated.View style={[styles.maskBtn, animatedPressingStyle]} />
-      <Animated.View style={[styles.maskBtn, animatedMaskStyle]} />
-      <Animated.Text
-        style={[
-          styles.actionTitle,
-          titleExtraStyle,
-          animatedTextPressingStyle,
-        ]}>
-        {title}
-      </Animated.Text>
-    </Pressable>
-  );
-});
+    return (
+      <Pressable
+        onPress={handlePress}
+        refAnimationValue={setAnimationValue}
+        style={[styles.actionBtnContainer, style]}
+        contentStyle={contentStyle}>
+        <Animated.View
+          style={[styles.maskBtn, animatedPressingStyle, maskStyle]}
+        />
+        <Animated.View style={[styles.maskBtn, animatedMaskStyle, maskStyle]} />
+        <Animated.Text
+          style={[
+            styles.actionTitle,
+            titleExtraStyle,
+            animatedTextPressingStyle,
+            titleStyle,
+          ]}>
+          {title}
+        </Animated.Text>
+      </Pressable>
+    );
+  },
+);

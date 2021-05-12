@@ -42,7 +42,7 @@ const Pressable = ({
   useEffect(() => {
     if (refAnimationValue) {
       refAnimationValue(animatedPressIn);
-    };
+    }
   }, []);
 
   const animatingPressingIn = useCallback((toValue, delay = 0) => {
@@ -82,6 +82,8 @@ const Pressable = ({
 
   return (
     <RNPressable
+      //@ts-ignore
+      hitSlop={HIT_SLOP}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       onPress={onPress}

@@ -99,13 +99,15 @@ const styles = StyleSheet.create({
   mentionContainer: {
     paddingHorizontal: 5,
     paddingVertical: 2,
-    backgroundColor: hexToRgbA(appConfig.colors.primary, 0.7),
+    // backgroundColor: hexToRgbA(appConfig.colors.primary, 0.28),
     borderRadius: 4,
     marginLeft: 7,
     marginRight: -5,
   },
   mention: {
-    color: '#fff',
+    // color: '#fff',
+    color: appConfig.colors.primary,
+    fontWeight: '500'
   },
 });
 
