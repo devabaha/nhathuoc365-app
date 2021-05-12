@@ -35,12 +35,8 @@ class ListProducts extends Component {
     return (
       <View style={styles.listVertical}>
         {this.props.data.map((product, index) => {
-          const extraStyle = {
-            borderRightWidth: index % 2 === 0 ? 0.5 : 0,
-          };
-
           return (
-            <View style={[styles.itemVerticalWrapper, extraStyle]} key={index}>
+            <View style={[styles.itemVerticalWrapper]} key={index}>
               {this.renderProduct(product, extraProps)}
             </View>
           );
@@ -71,7 +67,7 @@ class ListProducts extends Component {
 
   renderProduct(product, extraProps) {
     return (
-      <View style={{paddingHorizontal: 5, paddingVertical: 10, flex: 1}}>
+      <View style={{margin: 7.5, flex: 1}}>
         <ProductItem
           selfRequest={(callBack) =>
             this.props.onPressProduct(product, callBack)
@@ -136,22 +132,17 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   listHorizontal: {
-    marginHorizontal: 10,
+    paddingHorizontal: 7.5,
   },
   contentHorizontal: {},
   listVertical: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    borderTopWidth: 0.5,
-    borderColor: '#eee',
     marginHorizontal: 5,
   },
   itemVerticalWrapper: {
     width: appConfig.device.width / 2 - 5,
-    paddingHorizontal: 2.5,
-    borderBottomWidth: 0.5,
-    borderColor: '#eee',
   },
   itemVerticalContainer: {
     width: undefined,

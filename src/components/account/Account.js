@@ -1267,6 +1267,7 @@ class Account extends Component {
               useList={false}
               containerStyle={{
                 paddingVertical: 8,
+                marginBottom: 10,
               }}
               data={this.options}
             />

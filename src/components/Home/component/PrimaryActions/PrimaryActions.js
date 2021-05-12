@@ -155,8 +155,6 @@ let styles = StyleSheet.create({
   mainContentWrapper: {
     flexDirection: 'row',
     paddingHorizontal: 16,
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#ebebeb',
   },
   walletInfoWrapper: {
     flexDirection: 'row',
@@ -191,6 +189,8 @@ let styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 20,
+    borderTopWidth: 0.5,
+    borderColor: '#e5e5e5',
   },
   walletLabelRight: {
     paddingLeft: 5,
@@ -207,7 +207,6 @@ let styles = StyleSheet.create({
     fontSize: 20,
     color: '#2B2B2B',
     lineHeight: 20,
-    marginLeft: 10,
   },
   iconNext: {
     width: 20,
@@ -224,7 +223,6 @@ let styles = StyleSheet.create({
   surplus: {
     fontSize: 20,
     color: '#2B2B2B',
-    lineHeight: 20,
   },
   actionButton: {
     flex: 1,

@@ -261,12 +261,12 @@ class Items extends Component {
                   resizeMode="cover"
                 />
               )}
-              {item.discount_percent > 0 && (
-                <View style={styles.discountBadgeContainer}>
-                  <Ribbon text={saleFormat(item.discount_percent)} />
-                </View>
-              )}
             </View>
+            {item.discount_percent > 0 && (
+              <View style={styles.discountBadgeContainer}>
+                <Ribbon text={saleFormat(item.discount_percent)} />
+              </View>
+            )}
 
             <View style={styles.item_info_box}>
               <View>
@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
   },
   discountBadgeContainer: {
     top: 10,
-    left: 0,
+    left: -5,
     position: 'absolute',
     zIndex: 99,
   },

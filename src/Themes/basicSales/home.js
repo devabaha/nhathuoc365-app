@@ -58,7 +58,6 @@ export const home = {
     walletNameLabel: {
       color: '#2B2B2B',
       fontSize: 14,
-      paddingRight: 10,
       fontWeight: '500',
     },
     walletLabelRight: {
@@ -68,7 +67,6 @@ export const home = {
       fontWeight: 'bold',
       fontSize: 20,
       color: '#2B2B2B',
-      flex: 1,
     },
     shadowWrapper: {
       ...Platform.select({
