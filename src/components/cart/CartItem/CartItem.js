@@ -72,10 +72,10 @@ const styles = StyleSheet.create({
   },
   discountBadgeContentContainer: {
     backgroundColor: '#FD0D1C',
-    paddingVertical: 2,
+    padding: 10,
   },
   discountBadgeLabel: {
-    fontSize: 10,
+    fontSize: 13,
   },
 
   store_cart_calculator: {

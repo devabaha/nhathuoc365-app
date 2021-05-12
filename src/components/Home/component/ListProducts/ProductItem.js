@@ -69,12 +69,12 @@ class ProductItem extends PureComponent {
           {this.state.loading && (
             <Loading color="#fff" containerStyle={styles.loading} />
           )}
-          {this.props.discount_percent > 0 && (
-            <View style={styles.discountBadgeContainer}>
-              <Ribbon text={saleFormat(this.props.discount_percent)} />
-            </View>
-          )}
         </ImageBackground>
+        {this.props.discount_percent > 0 && (
+          <View style={styles.discountBadgeContainer}>
+            <Ribbon text={saleFormat(this.props.discount_percent)} />
+          </View>
+        )}
         <View style={[styles.infoWrapper]}>
           <Text style={styles.name} numberOfLines={2}>
             {this.props.name}
@@ -104,13 +104,11 @@ let styles = StyleSheet.create({
     width: appConfig.device.width / 2 - 40,
     flex: 1,
   },
-
   image: {
     width: '100%',
     height: 150,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    overflow: 'hidden',
     resizeMode: 'contain',
   },
   infoWrapper: {
@@ -146,7 +144,7 @@ let styles = StyleSheet.create({
   },
   discountBadgeContainer: {
     top: 10,
-    left: 0,
+    left: -5,
     position: 'absolute',
     backgroundColor: '#fff',
     width: undefined,

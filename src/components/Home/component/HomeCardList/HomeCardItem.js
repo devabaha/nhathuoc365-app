@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     }),
   },
   container: {
-    paddingVertical: 10,
-    paddingHorizontal: 7.5,
+    marginVertical: 10,
+    marginHorizontal: 7.5,
   },
   image: {
     backgroundColor: '#ebebeb',

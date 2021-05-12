@@ -821,6 +821,7 @@ class RootRouter extends Component {
                     notifyKey="notify_account"
                     navigationBarStyle={{
                       backgroundColor: '#fff',
+                      height: 60,
                     }}
                     headerLayoutPreset="left"
                     iconSize={24}>
@@ -829,7 +830,7 @@ class RootRouter extends Component {
                         color: '#333',
                         fontSize: 25,
                         fontWeight: 'bold',
-                        paddingBottom: 10,
+                        paddingTop: 20,
                       }}
                       key={`${appConfig.routes.accountTab}_1`}
                       title={t('screen.account.mainTitle')}
