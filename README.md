@@ -47,8 +47,8 @@ appcenter codepush deployment add -a app.abaha.net-gmail.com/tick-homeid-android
 code-push release-react tick-homeid-ios ios -d "Production" -m --description "upgrade tag b11.4.7"
 code-push release-react tick-homeid-android android -d "Production" -m --description "upgrade tag b11.4.7"
 
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-homeid-ios -d "Production" -m --description "upgrade tag b11.4.7"
-appcenter codepush release-react -a app.abaha.net-gmail.com/tick-homeid-android -d "Production" -m --description "upgrade tag b11.4.7"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-homeid-ios -d "Production" -m --description "upgrade tag b11.4.8"
+appcenter codepush release-react -a app.abaha.net-gmail.com/tick-homeid-android -d "Production" -m --description "upgrade tag b11.4.8"
 
 6. FBAK: sử dụng key FBAK đang có của TickID. Sẽ thay thế bằng Firebase. 
 
