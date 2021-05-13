@@ -263,7 +263,9 @@ const CommissionIncomeStatement = (props) => {
   const renderColumRose = ({item, index}) => {
     return (
       <View style={[styles.itemsRose, {borderRightWidth: index < 2 ? 1 : 0}]}>
-        <Text style={styles.heading}>{props.t(item)}</Text>
+        <Text style={styles.heading}>
+          {index === 0 ? monthBonus['total_revenue_title'] : props.t(item)}
+        </Text>
         <Text style={styles.valueText}>{monthBonus[item]}</Text>
       </View>
     );
