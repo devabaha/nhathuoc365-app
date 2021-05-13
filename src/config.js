@@ -261,6 +261,7 @@ class Config {
 
       // Gamification
       lotteryGame: 'lotteryGame',
+      filterProduct: 'filterProduct',
     };
   }
 }

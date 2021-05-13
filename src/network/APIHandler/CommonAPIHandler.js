@@ -180,6 +180,19 @@ class CommonAPIHandler extends BaseHandler {
     return await this.getAPI(api);
   }
 
+  async filter_category_product(store_id, category_id, page_num, params) {
+    const api = url_for(
+      API.SITE_CATEGORY_PRODUCT +
+        '/' +
+        store_id +
+        '/' +
+        category_id +
+        '/' +
+        page_num,
+    );
+    return await this.postAPI(api, params);
+  }
+
   /**
    * Lấy chi tiết sản phẩm theo product id
    */
@@ -1032,6 +1045,10 @@ class CommonAPIHandler extends BaseHandler {
    */
   payment_cart_payment(siteId, cartId) {
     const api = url_for(API.PAYMENT_CART_PAYMENT + '/' + siteId + '/' + cartId);
+    return this.getCancelableAPI(api);
+  }
+  getListFilterProduct(siteId) {
+    const api = url_for(API.FILTER_URL_TAG + siteId + '/product');
     return this.getCancelableAPI(api);
   }
 }
