@@ -8,6 +8,7 @@ import {
   RefreshControl,
   StatusBar,
   SafeAreaView,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -36,6 +37,7 @@ import CTAProduct from './CTAProduct';
 import {APIRequest} from 'src/network/Entity';
 import NoResult from '../NoResult';
 import Shimmer from 'react-native-shimmer';
+import {HomeCardItem} from '../Home/component/HomeCardList';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -838,9 +840,22 @@ class Item extends Component {
     });
   }
 
+  renderListNews = ({item, index}) => {
+    const {item_data} = this.state;
+    return (
+      <HomeCardItem
+        title={item.title}
+        imageUrl={item.image_url}
+        onPress={() => {}}
+        last={item_data.news_linking.length - 1 === index}
+      />
+    );
+  };
+
   render() {
     // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
+    console.log({item});
     const is_like = this.state.like_flag == 1;
     const {t} = this.props;
     const unitName = item.unit_name;
@@ -1121,7 +1136,7 @@ class Item extends Component {
 
             {item != null && item.related && (
               <View style={[styles.items_box]}>
-                <ListHeader title={`— ${t('relatedItems')} —`} />
+                <ListHeader title={`${t('relatedItems')}`} />
                 {item.related.map((item, index) => {
                   return (
                     <Items
@@ -1132,6 +1147,16 @@ class Item extends Component {
                     />
                   );
                 })}
+              </View>
+            )}
+            {item !== null && item.news_linking && (
+              <View style={styles.items_box}>
+                <ListHeader title={`${t('relatedNews')}`} />
+                <FlatList
+                  data={item.news_linking}
+                  horizontal
+                  renderItem={this.renderListNews}
+                />
               </View>
             )}
             <View style={styles.boxButtonActions}>
@@ -1283,8 +1308,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   item_content_item: {
-    borderRightWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
     borderColor: '#ddd',
     flexDirection: 'row',
     alignItems: 'center',

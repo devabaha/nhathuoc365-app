@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
   heading: {
     color: '#333',
     fontSize: 20,
-    lineHeight: 20,
     flex: 1,
     marginRight: 20,
   },
