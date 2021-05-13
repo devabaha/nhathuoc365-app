@@ -626,15 +626,15 @@ class TickidChat extends Component {
   handleSendMessage = () => {
     if (
       this.props.mixSend &&
-      !!this.state.text &&
-      !!this.state.selectedImages.length
+      (!!this.state.text &&
+      !!this.state.selectedImages.length)
     ) {
       this.props.mixSend({
         text: this.state.text,
         images: this.state.selectedImages,
       });
       this.handleMixSend();
-    } else if (this.state.editable || !!this.state.text) {
+    } else if ((this.state.editable || !!this.state.text) && this.state.selectedImages.length === 0) {
       this.handleSendText();
     } else if (this.state.selectedImages.length !== 0) {
       this.handleSendImage();

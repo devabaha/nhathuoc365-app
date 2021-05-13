@@ -1,5 +1,6 @@
-import React, {useCallback, useRef, useState} from 'react';
-import {Animated, StyleSheet, Text, Easing} from 'react-native';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
+import {Animated, StyleSheet, Text} from 'react-native';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Container from 'src/components/Layout/Container';
 import Pressable from 'src/components/Pressable';
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
@@ -7,14 +8,15 @@ import appConfig from 'app-config';
 import FloatingIcons from '../../FloatingIcons ';
 
 const styles = StyleSheet.create({
-  wrapper: {
-    justifyContent: 'space-between',
-    paddingHorizontal: 15,
+  wrapperContainer: {
     marginTop: 5,
     paddingHorizontal: 15,
   },
+  wrapper: {
+    justifyContent: 'space-between',
+  },
   container: {
-    alignItems: 'flex-end',
+    // alignItems: 'flex-end',
   },
   time: {
     fontSize: 13,
@@ -38,11 +40,37 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderRadius: 4,
   },
+
+  pendingContainer: {
+    marginVertical: 3,
+  },
+  pendingIcon: {
+    fontSize: 7,
+    color: appConfig.colors.status.warning,
+    marginRight: 5,
+  },
+  pendingMessage: {
+    fontSize: 12,
+    color: appConfig.colors.status.warning,
+  },
 });
 
-const BubbleBottom = ({created, isLiked, totalReaction, onActionPress = () => {}}) => {
+const BubbleBottom = ({
+  isLoading,
+  isPending,
+  pendingMessage,
+  bottomMainTitleStyle,
+  message,
+  isLiked,
+  totalReaction,
+  onActionPress = () => {},
+}) => {
   const {t} = useTranslation('social');
   const [liked, setLiked] = useState(isLiked);
+
+  useEffect(() => {
+    setLiked(isLiked);
+  }, [isLiked]);
 
   const onPressReaction = useCallback(
     (type) => {
@@ -60,28 +88,40 @@ const BubbleBottom = ({created, isLiked, totalReaction, onActionPress = () => {}
   );
 
   return (
-    <Container row style={styles.wrapper}>
-      <Container row style={styles.container}>
-        <Text style={styles.time}>{created}</Text>
-
-        <ActionBtn
-          title={t('like')}
-          highlight={liked}
-          onPress={() => onPressReaction(SOCIAL_BUTTON_TYPES.LIKE)}
-        />
-        <ActionBtn
-          title={t('reply')}
-          onPress={() => onPressReaction(SOCIAL_BUTTON_TYPES.REPLY)}
-        />
-      </Container>
-
-      {!!liked && (
-        <FloatingIcons
-          wrapperStyle={{position: 'absolute', right: 15}}
-          icons="like1"
-          prefixTitle={totalReaction}
-        />
+    <Container centerVertical={false} style={styles.wrapperContainer}>
+      {isPending && (
+        <Container row style={styles.pendingContainer}>
+          <FontAwesomeIcon name="circle" style={styles.pendingIcon} />
+          <Text style={styles.pendingMessage}>{pendingMessage}</Text>
+        </Container>
       )}
+      <Container row style={styles.wrapper}>
+        <Container row style={styles.container}>
+          <Text style={[styles.time, bottomMainTitleStyle]}>{message}</Text>
+
+          {!isLoading && (
+            <>
+              <ActionBtn
+                title={t('like')}
+                highlight={liked}
+                onPress={() => onPressReaction(SOCIAL_BUTTON_TYPES.LIKE)}
+              />
+              <ActionBtn
+                title={t('reply')}
+                onPress={() => onPressReaction(SOCIAL_BUTTON_TYPES.REPLY)}
+              />
+            </>
+          )}
+        </Container>
+
+        {!!liked && (
+          <FloatingIcons
+            wrapperStyle={{position: 'absolute', right: 15}}
+            icons="like1"
+            prefixTitle={totalReaction}
+          />
+        )}
+      </Container>
     </Container>
   );
 };

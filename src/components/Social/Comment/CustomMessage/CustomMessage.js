@@ -7,11 +7,15 @@ const styles = StyleSheet.create({
     marginRight: 10,
     marginBottom: 2,
   },
+  error: {
+    opacity: .6
+  }
 });
 
 const CustomMessage = ({
   refMessage,
   refContentMessage,
+  isError,
   onLayout = () => {},
   ...props
 }) => {
@@ -22,11 +26,12 @@ const CustomMessage = ({
       marginLeft: props.currentMessage.level * 45,
     },
   };
+
   return (
-    <View ref={refMessage} onLayout={onLayout}>
+    <View ref={refMessage} onLayout={onLayout} style={isError && styles.error}>
       <Message {...props} />
     </View>
   );
 };
 
-export default React.memo(CustomMessage, () => true);
+export default React.memo(CustomMessage);

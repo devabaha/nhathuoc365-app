@@ -1,4 +1,11 @@
-import {reaction, observable, action, toJS, computed} from 'mobx';
+import {
+  reaction,
+  observable,
+  action,
+  toJS,
+  computed,
+  extendObservable,
+} from 'mobx';
 import autobind from 'autobind-decorator';
 import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -588,10 +595,10 @@ class Store {
     this.socialNews = {};
   }
 
-  @observable socialComments = {};
+  socialComments = observable.map(new Map());
   @action setSocialComments(socialComments = {}) {
-    this.socialComments = {...this.socialComments, ...socialComments};
-    this.setSocialCommentFireChanged();
+    const storeComments = {...this.socialComments, ...socialComments};
+    this.socialComments.replace(storeComments);
   }
 
   @observable socialCommentFireChanged = {};
@@ -599,23 +606,20 @@ class Store {
     this.socialCommentFireChanged = socialCommentFireChanged;
   }
 
-  @action updateSocialComment(
-    id,
-    data = {},
-    isUpdateCommentFireChanged = false,
-  ) {
-    let temp = this.socialComments[id];
+  @action updateSocialComment(id, data = {}) {
+    let temp = this.socialComments.get(id);
     const storeComment = {...(temp || {}), ...data};
 
-    if (isUpdateCommentFireChanged) {
-      this.setSocialCommentFireChanged(storeComment);
-    }
-
-    this.socialComments[id] = storeComment;
+    // if (!temp) {
+    // this.socialComments.merge({[id]: storeComment});
+    // } else {
+    this.socialComments.set(id, storeComment);
+    // this.socialComments[id] = storeComment;
+    // }
   }
 
   @action resetSocialComments() {
-    this.socialComments = {};
+    this.socialComments.clear();
   }
 }
 

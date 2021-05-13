@@ -95,6 +95,7 @@ const bubbleContainerStyle = {
 class CustomBubble extends Component {
   static defaultProps = {
     seeMoreTitle: 'Xem thêm',
+    isUpdate: true,
   };
   unMounted = false;
   animatedHighlight = new Animated.Value(0);
@@ -104,13 +105,11 @@ class CustomBubble extends Component {
       this.props?.currentMessage?.content?.length <= MAX_LENGTH_TEXT,
   };
 
-  shouldComponentUpdate(nextProps, nextState) {
-    if(nextProps.forceRender !== undefined){
-      return nextProps.forceRender;
-    }
-    return true;
-  }
-  
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   return (
+  //     nextProps.storeItem !== this.props.storeItem || nextState !== this.state
+  //   );
+  // }
 
   componentWillUnmount() {
     this.unMounted = true;
@@ -249,9 +248,17 @@ class CustomBubble extends Component {
   };
 
   renderBubbleBottom = (props) => {
+    const message = props.isLoading
+      ? props.loadingMessage
+      : this.formattedCreated;
     return (
       <BubbleBottom
-        created={this.formattedCreated}
+        isError={props.isError}
+        isPending={props.isPending}
+        pendingMessage={props.pendingMessage}
+        bottomMainTitleStyle={props.messageBottomTitleStyle}
+        isLoading={props.isLoading}
+        message={message}
         isLiked={props.isLiked}
         totalReaction={props.totalReaction}
         onActionPress={(type) => this.handlePressBubbleBottom(type)}
@@ -267,6 +274,7 @@ class CustomBubble extends Component {
       isHighlight,
       ...props
     } = this.props;
+    console.log(props.currentMessage.id);
 
     const hasText = props.currentMessage.text;
     const bgColor = hasText
@@ -274,7 +282,6 @@ class CustomBubble extends Component {
         ? BG_HIGHLIGHT_COLOR
         : BG_COLOR
       : 'transparent';
-    console.log(props.currentMessage.id)
 
     const wrapperStyle = {
       left: {
@@ -282,7 +289,7 @@ class CustomBubble extends Component {
         backgroundColor: bgColor,
       },
     };
-    
+
     return (
       <View style={styles.wrapper}>
         <Animated.View style={[styles.container, this.animatedStyle]}>

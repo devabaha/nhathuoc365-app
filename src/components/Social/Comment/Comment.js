@@ -67,17 +67,22 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 12,
   },
+  titleError: {
+    color: appConfig.colors.status.danger,
+  },
 });
 
-export const getLikeCount = (comment) => {
-  let likeCount = store.socialComments[comment.id]?.like_count;
+export const getLikeCount = (comment, storeComment) => {
+  let likeCount = (storeComment || store.socialComments.get(comment.id))
+    ?.like_count;
   likeCount === undefined && (likeCount = comment?.like_count || 0);
 
   return likeCount;
 };
 
-export const getLikeFlag = (comment) => {
-  let likeFlag = store.socialComments[comment.id]?.like_flag;
+export const getLikeFlag = (comment, storeComment) => {
+  let likeFlag = (storeComment || store.socialComments.get(comment.id))
+    ?.like_flag;
   likeFlag === undefined && (likeFlag = comment?.like_flag || 0);
 
   return likeFlag;
@@ -227,7 +232,10 @@ class Comment extends Component {
   };
 
   updateRefForStoreSocialComments = (comment, inst) => {
-    store.updateSocialComment(comment.id, {ref: inst});
+    const storeRef = store.socialComments.get(comment.id)?.ref;
+    if (storeRef !== inst) {
+      store.updateSocialComment(comment.id, {ref: inst});
+    }
   };
 
   _getMessages = async () => {
@@ -248,7 +256,9 @@ class Comment extends Component {
       this.getCommentsAPI.data = APIHandler.social_comments(data);
 
       const response = await this.getCommentsAPI.promise();
-      // console.log(response);
+      if (this.unmounted) return;
+
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS && response.data) {
         if (response.data.list) {
           let comments = [...response.data.list];
@@ -260,6 +270,7 @@ class Comment extends Component {
           } else {
             this.setState({
               messages: comments,
+              user: response.data.main_user,
             });
           }
           this._calculatorLastID(comments);
@@ -267,6 +278,7 @@ class Comment extends Component {
       } else if (this.isLoadFirstTime) {
         this.setState({
           messages: [],
+          user: response.data.main_user,
         });
       }
       //   this.timerGetChat = setTimeout(
@@ -300,6 +312,7 @@ class Comment extends Component {
       _id: message.id,
       text: message.content,
       level,
+      error: false,
     };
   }
 
@@ -326,11 +339,8 @@ class Comment extends Component {
       });
     } else {
       messages.forEach((m) => {
-        console.log('zip m', m);
         const index = newMessages.findIndex((mess) => {
-          console.log('zip com', mess.parent_id, mess.real_id, mess.id);
           if (m.parent_id === mess.parent_id || m.parent_id === mess.id) {
-            // console.log('zip', m, mess)
             return true;
           }
           return false;
@@ -380,10 +390,7 @@ class Comment extends Component {
 
   handleSendImage = (images) => {
     if (Array.isArray(images) && images.length !== 0) {
-      const message = this.getFormattedMessage(
-        MESSAGE_TYPE_IMAGE,
-        images[0].path,
-      );
+      const message = this.getFormattedMessage(MESSAGE_TYPE_IMAGE, images[0]);
       message[0].rawImage = images[0];
       this._appendMessages(
         message,
@@ -438,7 +445,6 @@ class Comment extends Component {
       parent_id,
       real_parent_id,
     );
-    console.log(formattedMessage);
 
     switch (type) {
       case MESSAGE_TYPE_TEXT:
@@ -446,7 +452,11 @@ class Comment extends Component {
         formattedMessage.content = message;
         break;
       case MESSAGE_TYPE_IMAGE:
-        formattedMessage.image = message;
+        formattedMessage.image = message.path;
+        formattedMessage.image_info = {
+          width: message.width,
+          height: message.height,
+        };
         formattedMessage.isUploadData = true;
         break;
       case MESSAGE_TYPE_MIXED:
@@ -454,6 +464,10 @@ class Comment extends Component {
         formattedMessage.content = message.text;
         formattedMessage.image = message.images[0].path;
         formattedMessage.isUploadData = true;
+        formattedMessage.image_info = {
+          width: message.images[0].width,
+          height: message.images[0].height,
+        };
         break;
     }
 
@@ -493,27 +507,11 @@ class Comment extends Component {
               id: message.id,
               parent_id: message.parent_id,
             };
-            console.log(message.id, responseComment, storeComment);
+            // console.log(message.id, responseComment, storeComment);
             store.updateSocialComment(message.id, storeComment);
-            // store.updateSocialComment(responseComment.id, responseComment, true);
-
-            // const messages = [...this.state.messages];
-
-            // const index = messages.findIndex((m) => m.id === message.id);
-            // if (index !== -1) {
-            //   messages[index] = storeComment;
-            //   console.log(message[index])
-            // }
-            //             this.setState({messages}, () => {
-            // console.log(this.state.messages, store.socialComments)
-            //             });
-
-            // const messages = this.formatIndexMessages(
-            //   this.formatMessages(response.data.list),
-            // );
-            // this.setState({messages});
           }
         } else {
+          store.updateSocialComment(message.id, {...message, error: true});
           flashShowMessage({
             type: 'danger',
             message:
@@ -521,6 +519,7 @@ class Comment extends Component {
           });
         }
       } else {
+        store.updateSocialComment(message.id, {...message, error: true});
         flashShowMessage({
           type: 'danger',
           message: this.props.t('common:api.error.message'),
@@ -528,11 +527,18 @@ class Comment extends Component {
       }
     } catch (e) {
       console.log('social_comment', e);
+      store.updateSocialComment(message.id, {...message, error: true});
       flashShowMessage({
         type: 'danger',
         message: this.props.t('common:api.error.message'),
       });
     } finally {
+    }
+  };
+
+  handleTouchStart = () => {
+    if (this.isPressingReply) {
+      this.isPressingReply = false;
     }
   };
 
@@ -550,13 +556,17 @@ class Comment extends Component {
 
   listChatScrollToItemById(comment) {
     if (this.refListMessages) {
-      if (!store.socialComments[comment.id]?.ref) return;
+      // if (!store.socialComments.get(comment.id)?.ref) return;
+      if (!this.refMessages[comment.id]) return;
 
       const extraOffset =
         (!!store.replyingComment?.id ? -REPLYING_BAR_HEIGHT : 0) +
         (!!store.previewImages?.length ? -PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
-      store.socialComments[comment.id].ref.measureLayout(
+      // store.socialComments
+      //   .get(comment.id)
+      //   .ref
+      this.refMessages[comment.id].measureLayout(
         findNodeHandle(this.refListMessages),
         (offsetX, offsetY) => {
           this.refListMessages.scrollToOffset({
@@ -579,7 +589,7 @@ class Comment extends Component {
     }
   };
 
-  handleLikeComment = (comment) => {
+  handleLikeComment = (comment, currentLikeFlag, currentLikeCount) => {
     const data = {
       object: comment?.like?.object,
       object_id: comment?.like?.object_id,
@@ -590,28 +600,48 @@ class Comment extends Component {
     this.likeRequest.data = APIHandler.social_likes(data);
     this.likeRequest
       .promise()
-      .then((res) => console.log(res))
-      .catch((err) => console.log('like_comment', err));
+      .then((response) => {
+        console.log(response, currentLikeFlag, currentLikeCount);
+        if (response?.status !== STATUS_SUCCESS) {
+          flashShowMessage({
+            type: 'danger',
+            message: response?.message || this.props.t('api.error.message'),
+          });
+          store.updateSocialComment(comment.id, {
+            like_flag: currentLikeFlag,
+            like_count: currentLikeCount,
+          });
+        }
+      })
+      .catch((err) => {
+        console.log('like_comment', err);
+        flashShowMessage({
+          type: 'danger',
+          message: response?.message || this.props.t('api.error.message'),
+        });
+        store.updateSocialComment(comment.id, {
+          like_flag: currentLikeFlag,
+          like_count: currentLikeCount,
+        });
+      });
   };
 
   handlePressBottomBubble = (type, comment) => {
-    const storeComment = store.socialComments[comment.id];
-    // console.log('store_comment', storeComment)
+    const storeComment = store.socialComments.get(comment.id);
+
     switch (type) {
       case SOCIAL_BUTTON_TYPES.LIKE:
-        const likeFlag = getLikeFlag(storeComment);
-        const likeCount = getLikeCount(storeComment);
+        const currentLikeFlag = getLikeFlag(storeComment);
+        const currentLikeCount = getLikeCount(storeComment);
 
-        store.updateSocialComment(
-          storeComment.id,
-          {
-            like_flag: likeFlag ? 0 : 1,
-            like_count: likeFlag ? likeCount - 1 : likeCount + 1,
-          },
-          true,
-        );
+        store.updateSocialComment(storeComment.id, {
+          like_flag: currentLikeFlag ? 0 : 1,
+          like_count: currentLikeFlag
+            ? currentLikeCount - 1
+            : currentLikeCount + 1,
+        });
 
-        this.handleLikeComment(storeComment);
+        this.handleLikeComment(storeComment, currentLikeFlag, currentLikeCount);
         break;
       case SOCIAL_BUTTON_TYPES.REPLY:
         this.isPressingReply = true;
@@ -664,28 +694,50 @@ class Comment extends Component {
   renderMessage = (props) => {
     props.renderBubble = (bubbleProps) => {
       // const isChanged =
-             
+
       return (
         <Observer>
           {() => {
-            
-            const likeCount = getLikeCount(bubbleProps.currentMessage);
-            const likeFlag = getLikeFlag(bubbleProps.currentMessage);
-console.log('a')
+            const storeComment = store.socialComments.get(
+              bubbleProps.currentMessage.id,
+            );
+            const likeCount = getLikeCount(
+              bubbleProps.currentMessage,
+              storeComment,
+            );
+            const likeFlag = getLikeFlag(
+              bubbleProps.currentMessage,
+              storeComment,
+            );
+
+            const isLoading = typeof storeComment?.real_id !== 'number';
+            const pendingMessage = storeComment?.accept_status;
+            const isError = storeComment?.error;
+            const loadingMessage = isError
+              ? this.props.t('social:errorPosting')
+              : this.props.t('social:posting');
+
+            const messageBottomTitleStyle = isError && styles.titleError;
+
             return (
               <CustomBubble
-                forceRender={store.socialCommentFireChanged?.id ===
-                  bubbleProps.currentMessage?.id || undefined}
                 seeMoreTitle={this.props.t('social:seeMore')}
                 ref={(inst) => {
                   this.refContentMessages[bubbleProps.currentMessage.id] = inst;
                 }}
                 {...bubbleProps}
+                // storeItem={storeComment}
+                isLoading={isLoading}
                 isHighlight={
                   store.replyingComment?.id === bubbleProps.currentMessage.id
                 }
                 isLiked={likeFlag}
                 totalReaction={likeCount}
+                isPending={!!pendingMessage}
+                pendingMessage={pendingMessage}
+                loadingMessage={loadingMessage}
+                isError={isError}
+                messageBottomTitleStyle={messageBottomTitleStyle}
                 onPressBubbleBottom={this.handlePressBottomBubble}
                 onSendImage={({image}) =>
                   this._onSend({...bubbleProps.currentMessage, image})
@@ -699,12 +751,22 @@ console.log('a')
     };
 
     return (
-      <CustomMessage
-        refMessage={(inst) =>
-          this.updateRefForStoreSocialComments(props.currentMessage, inst)
-        }
-        {...props}
-      />
+      <Observer>
+        {() => {
+          const isError = store.socialComments.get(props.currentMessage.id)
+            ?.error;
+          return (
+            <CustomMessage
+              isError={isError}
+              refMessage={
+                (inst) => (this.refMessages[props.currentMessage.id] = inst)
+                // this.updateRefForStoreSocialComments(props.currentMessage, inst)
+              }
+              {...props}
+            />
+          );
+        }}
+      </Observer>
     );
   };
 
@@ -812,6 +874,7 @@ console.log('a')
         giftedChatProps={this.giftedChatProps}
         listChatProps={{
           onMomentumScrollEnd: this.handleMomentumScrollEnd,
+          onTouchStart: this.handleTouchStart,
           contentContainerStyle: {
             paddingTop,
             paddingBottom: 30,

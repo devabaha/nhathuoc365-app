@@ -189,7 +189,7 @@
   "time": {
     "future": "in %s",
     "past": "%s",
-    "s": "a few seconds",
+    "s": "Just now",
     "ss": "%d seconds",
     "m": "1 minute",
     "mm": "%d minutes",
