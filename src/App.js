@@ -821,7 +821,7 @@ class RootRouter extends Component {
                     notifyKey="notify_account"
                     navigationBarStyle={{
                       backgroundColor: '#fff',
-                      height: 60,
+                      height: 70,
                     }}
                     headerLayoutPreset="left"
                     iconSize={24}>
