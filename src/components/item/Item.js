@@ -891,6 +891,24 @@ class Item extends Component {
             {this.renderProductSwiper(item)}
 
             <View style={styles.item_heading_box}>
+              <View style={styles.boxDiscount}>
+                {item.discount_percent > 0 && (
+                  <DiscountBadge
+                    containerStyle={styles.discountBadge}
+                    label={saleFormat(item.discount_percent)}
+                    contentContainerStyle={styles.discountBadgeContent}
+                  />
+                )}
+                {isInventoryVisible && (
+                  <View style={styles.productsLeftContainer}>
+                    {/* <View style={styles.productsLeftBackground} />
+                  <View style={styles.productsLeftBackgroundTagTail} /> */}
+                    <Text style={styles.productsLeftText}>
+                      {t('productsLeft', {quantity: item.inventory})}
+                    </Text>
+                  </View>
+                )}
+              </View>
               <Text style={styles.item_heading_title}>{item.name}</Text>
 
               <View style={styles.item_heading_price_box}>
@@ -972,22 +990,6 @@ class Item extends Component {
                   </View>
                 </TouchableHighlight>
               </View>
-              {item.discount_percent > 0 && (
-                <DiscountBadge
-                  containerStyle={styles.discountBadge}
-                  label={saleFormat(item.discount_percent)}
-                  contentContainerStyle={styles.discountBadgeContent}
-                />
-              )}
-              {isInventoryVisible && (
-                <View style={styles.productsLeftContainer}>
-                  {/* <View style={styles.productsLeftBackground} />
-                  <View style={styles.productsLeftBackgroundTagTail} /> */}
-                  <Text style={styles.productsLeftText}>
-                    {t('productsLeft', {quantity: item.inventory})}
-                  </Text>
-                </View>
-              )}
             </View>
 
             {item != null && (
@@ -1040,11 +1042,7 @@ class Item extends Component {
                         {t('information.brands')}
                       </Text>
                     </View>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_right,
-                      ]}>
+                    <View style={[styles.item_content_item_right]}>
                       <Text style={styles.item_content_item_value}>
                         {item.brand}
                       </Text>
@@ -1066,11 +1064,7 @@ class Item extends Component {
                         {t('information.origin')}
                       </Text>
                     </View>
-                    <View
-                      style={[
-                        styles.item_content_item,
-                        styles.item_content_item_right,
-                      ]}>
+                    <View style={[styles.item_content_item_right]}>
                       <Text style={styles.item_content_item_value}>
                         {item.made_in}
                       </Text>
@@ -1119,9 +1113,9 @@ class Item extends Component {
               )}
             </View>
 
-            {item != null && item.related && (
+            {item != null && item.related !== null && (
               <View style={[styles.items_box]}>
-                <ListHeader title={`— ${t('relatedItems')} —`} />
+                <ListHeader title={`${t('relatedItems')}`} />
                 {item.related.map((item, index) => {
                   return (
                     <Items
@@ -1199,9 +1193,16 @@ const styles = StyleSheet.create({
 
   item_heading_box: {
     width: '100%',
-    marginVertical: 15,
+    marginVertical: 10,
     paddingVertical: 24,
-    backgroundColor: '#fcfcfc',
+    backgroundColor: 'red',
+    backgroundColor: '#fff',
+  },
+  boxDiscount: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 10,
   },
   item_heading_title: {
     marginTop: 10,
@@ -1281,15 +1282,18 @@ const styles = StyleSheet.create({
   },
   item_content_item_container: {
     flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
   },
   item_content_item: {
-    borderRightWidth: Util.pixel,
-    borderBottomWidth: Util.pixel,
     borderColor: '#ddd',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
-    flex: 1,
+    width: '30%',
+    paddingLeft: 10,
+  },
+  item_content_item_right: {
+    marginLeft: 10,
   },
   item_content_icon_box: {
     width: 24,
@@ -1338,9 +1342,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   discountBadge: {
-    left: 10,
-    top: -5,
-    position: 'absolute',
     width: null,
     height: 25,
   },
@@ -1405,13 +1406,7 @@ const styles = StyleSheet.create({
     backgroundColor: hexToRgbA(LightenColor(appConfig.colors.primary, 20), 0.5),
   },
 
-  productsLeftContainer: {
-    position: 'absolute',
-    top: -5,
-    right: 0,
-    height: 22,
-    justifyContent: 'center',
-  },
+  productsLeftContainer: {},
   productsLeftBackground: {
     position: 'absolute',
     width: '100%',

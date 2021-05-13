@@ -27,8 +27,8 @@ const styles = StyleSheet.create({
     padding: 7,
   },
   store_cart_item_image_box: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
   },
   store_cart_item_image: {
     flex: 1,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   discountBadgeContentContainer: {
     backgroundColor: '#FD0D1C',
-    padding: 10,
+    padding: 5,
   },
   discountBadgeLabel: {
     fontSize: 13,

@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 
 import {
-    Text,
-    ScrollView,
-    StyleSheet,
-    View,
-    TouchableOpacity,
-  } from 'react-native';
-  import Button from 'react-native-button';
+  Text,
+  ScrollView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from 'react-native';
+import Button from 'react-native-button';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {Table, TableWrapper, Row} from 'react-native-table-component';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -168,10 +168,10 @@ const CommissionIncomeStatement = (props) => {
     if (month) {
       data.month = month;
     }
-    console.log(data);
     getCommissionRequest.data = APIHandler.user_site_cart_commission(data);
     try {
       const responseData = await getCommissionRequest.promise();
+      console.log({hoahong: responseData});
       const data = responseData?.data;
       if (data) {
         setMonths(formatMonths(data.list_month || []));
