@@ -39,6 +39,12 @@ class EditProfile extends Component {
     };
     this.eventTracker = new EventTracker();
     this.getUserCityRequest = new APIRequest();
+    this.GENDER_LIST = [
+      props.t('sections.gender.male'),
+      props.t('sections.gender.female'),
+      props.t('sections.gender.other'),
+      props.t('sections.gender.cancel'),
+    ];
   }
 
   get sections() {
@@ -224,7 +230,10 @@ class EditProfile extends Component {
 
       if (response.data && response.status === STATUS_SUCCESS) {
         let provinceSelected = this.state.provinceSelected;
-        if (!this.state.provinceSelected.id && response.data.cities.length > 0) {
+        if (
+          !this.state.provinceSelected.id &&
+          response.data.cities.length > 0
+        ) {
           provinceSelected = response.data.cities[0];
         } else {
           provinceSelected =
@@ -324,8 +333,10 @@ class EditProfile extends Component {
     }
   };
 
-  _onChangeGender = (value) => {
-    this._onUpdateSections('gioi_tinh', value);
+  _onChangeGender = (index) => {
+    if (index !== this.GENDER_LIST.length - 1) {
+      this._onUpdateSections('gioi_tinh', this.GENDER_LIST[index]);
+    }
   };
 
   _onUpdateSections = (id, value, keys = [], values = []) => {
@@ -362,21 +373,15 @@ class EditProfile extends Component {
         />
         <ActionSheet
           ref={(ref) => (this.actionSheet = ref)}
-          options={[
-            t('sections.gender.female'),
-            t('sections.gender.male'),
-            t('sections.gender.cancel'),
-          ]}
-          cancelButtonIndex={2}
-          onPress={(index) => {
-            if (index !== 2) {
-              this._onChangeGender(
-                index === 1
-                  ? t('sections.gender.male')
-                  : t('sections.gender.female'),
-              );
-            }
-          }}
+          options={this.GENDER_LIST}
+          cancelButtonIndex={this.GENDER_LIST.length - 1}
+          destructiveButtonIndex={this.GENDER_LIST.length - 1}
+          // onPress={(index) => {
+          //   if(index !== this.GENDER_LIST.length -1){
+          //     this._onChangeGender(this.GENDER_LIST[index]
+          //     )}
+          // }}
+          onPress={this._onChangeGender}
         />
         {this.state.loading && <Loading center />}
         <Button title={t('saveChanges')} onPress={this._onSaveProfile} />

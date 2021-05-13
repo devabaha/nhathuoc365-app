@@ -16,6 +16,7 @@
   "verifyCodeInputConfirmMessage": "Tiếp tục",
 
   "notReceiveCode": "Mã Không nhận được mã hoặc mã nhập bị lỗi? Vui lòng yêu cầu mã mới.",
-  "requestNewCodeWithTime": "Yêu cầu mã mới sau",
-  "requestNewCode": "Yêu cầu mã mới"
+  "requestNewCodeWithTime": "Yêu cầu mã mới qua cuộc gọi sau",
+  "requestNewCode": "Yêu cầu mã mới qua cuộc gọi",
+  "description": "Sẽ có cuộc gọi đến, vui lòng nghe máy để nhận mã OTP."
 }
