@@ -195,6 +195,7 @@ const CommissionIncomeStatement = (props) => {
     getCommissionRequest.data = APIHandler.user_site_cart_commission(data);
     try {
       const responseData = await getCommissionRequest.promise();
+      console.log({hoahong: responseData});
       const data = responseData?.data;
       if (data) {
         setMonths(formatMonths(data.list_month || []));
