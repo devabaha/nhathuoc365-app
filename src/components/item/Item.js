@@ -8,6 +8,7 @@ import {
   RefreshControl,
   StatusBar,
   SafeAreaView,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -36,6 +37,8 @@ import CTAProduct from './CTAProduct';
 import {APIRequest} from 'src/network/Entity';
 import NoResult from '../NoResult';
 import Shimmer from 'react-native-shimmer';
+import {HomeCardItem} from '../Home/component/HomeCardList';
+import {isEmpty} from 'lodash';
 
 const ITEM_KEY = 'ItemKey';
 const CONTINUE_ORDER_CONFIRM = 'Tiếp tục';
@@ -838,6 +841,25 @@ class Item extends Component {
     });
   }
 
+  handleItemNews = (item) => () => {
+    Actions.notify_item({
+      title: item.title,
+      data: item,
+    });
+  };
+
+  renderListNews = ({item, index}) => {
+    return (
+      <View style={{marginHorizontal: 2.5}}>
+        <HomeCardItem
+          title={item.title}
+          imageUrl={item.image_url}
+          onPress={this.handleItemNews(item)}
+        />
+      </View>
+    );
+  };
+
   render() {
     // var {item, item_data} = this.state;
     const item = this.state.item_data || this.state.item;
@@ -1113,7 +1135,7 @@ class Item extends Component {
               )}
             </View>
 
-            {item != null && item.related !== null && (
+            {!!item.related && item.related != null && (
               <View style={[styles.items_box]}>
                 <ListHeader title={`${t('relatedItems')}`} />
                 {item.related.map((item, index) => {
@@ -1136,7 +1158,23 @@ class Item extends Component {
                 title={t('goToStore')}
               />
             </View>
+            {item.news_linking !== null &&
+              !isEmpty(item.news_linking) &&
+              typeof item.news_linking === 'object' && (
+                <View style={styles.newsWrapper}>
+                  <ListHeader title={`${t('Tin tức liên quan')}`} />
+                  <FlatList
+                    data={item.news_linking}
+                    renderItem={this.renderListNews}
+                    keyExtractor={(i, index) => `news__${i.id}`}
+                    showsHorizontalScrollIndicator={false}
+                    style={{paddingHorizontal: 5}}
+                    horizontal
+                  />
+                </View>
+              )}
           </Animated.ScrollView>
+
           {this.renderCartFooter(item)}
         </View>
 
@@ -1453,6 +1491,7 @@ const styles = StyleSheet.create({
     color: appConfig.colors.primary,
     ...(appConfig.device.isAndroid && {fontWeight: '700'}),
   },
+  newsWrapper: {paddingVertical: 15, backgroundColor: '#f5f5f5'},
 });
 
 export default withTranslation(['product', 'cart', 'common', 'opRegister'])(

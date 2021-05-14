@@ -1,8 +1,10 @@
-
 {
-    "modal": {
-        "yearMonth": {
-            "title": "Select month"
-        }
+  "modal": {
+    "yearMonth": {
+      "title": "Select month"
     }
+  },
+  "total_revenue": "Total F1",
+  "level": "Level commission",
+  "total_commission_month": "commission"
 }

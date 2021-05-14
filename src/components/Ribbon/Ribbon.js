@@ -13,7 +13,7 @@ function Ribbon({text = 'ribbon'}) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: appConfig.colors.primary,
+    backgroundColor: appConfig.colors.ribbon,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     borderLeftWidth: 7,
     borderRightWidth: 0,
     borderBottomWidth: 0,
-    borderTopColor: '#B10D1B',
+    borderTopColor: hexToRgbA(appConfig.colors.ribbon, 0.8),
     borderLeftColor: 'transparent',
     borderBottomColor: 'transparent',
     borderRightColor: 'transparent',

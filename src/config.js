@@ -33,8 +33,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'abahaglobalkeywoxBg',
-      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
+      appKey: 'shopidappkey',
+      secretKey: '2897423jkshopidappkey3423h',
     };
   }
 
@@ -126,6 +126,7 @@ class Config {
       black: '#000',
       text: '#333',
       placeholder: '#c7c7cd',
+      ribbon: '#F41820',
     };
   }
 
