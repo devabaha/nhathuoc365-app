@@ -1141,7 +1141,7 @@ class Item extends Component {
               )}
             </View>
 
-            {item != null && item.related && (
+            {!!item.related && item.related != null && (
               <View style={[styles.items_box]}>
                 <ListHeader title={`${t('relatedItems')}`} />
                 {item.related.map((item, index) => {
@@ -1164,7 +1164,7 @@ class Item extends Component {
                 title={t('goToStore')}
               />
             </View>
-            {item !== null &&
+            {item.news_linking !== null &&
               !isEmpty(item.news_linking) &&
               typeof item.news_linking === 'object' && (
                 <View style={styles.newsWrapper}>

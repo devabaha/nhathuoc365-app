@@ -63,6 +63,7 @@ class ProductItem extends PureComponent {
         style={[styles.wrapper, this.props.wrapperStyle]}>
         <ImageBackground
           style={[styles.image, this.props.imageStyle]}
+          imageStyle={{borderTopLeftRadius: 8, borderTopRightRadius: 8}}
           source={{
             uri: this.props.image,
           }}>
@@ -103,6 +104,7 @@ let styles = StyleSheet.create({
   wrapper: {
     width: appConfig.device.width / 2 - 40,
     flex: 1,
+    borderRadius: 8,
   },
   image: {
     width: '100%',

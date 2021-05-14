@@ -22,6 +22,7 @@ import Container from '../../components/Layout/Container';
 
 import appConfig from 'app-config';
 import NoResult from '../../components/NoResult';
+import {isEmpty} from 'lodash';
 
 const styles = StyleSheet.create({
   reload: {
@@ -296,15 +297,17 @@ const CommissionIncomeStatement = (props) => {
           </Text>
         </Container>
       </Container>
-      <View style={{paddingVertical: 10}}>
-        <FlatList
-          data={tableRose}
-          keyExtractor={(i) => i}
-          renderItem={renderColumRose}
-          numColumns={3}
-          scrollEnabled={false}
-        />
-      </View>
+      {!isEmpty(monthBonus) && (
+        <View style={{paddingVertical: 10}}>
+          <FlatList
+            data={tableRose}
+            keyExtractor={(i) => i}
+            renderItem={renderColumRose}
+            numColumns={3}
+            scrollEnabled={false}
+          />
+        </View>
+      )}
 
       <ScrollView horizontal>
         <View>
