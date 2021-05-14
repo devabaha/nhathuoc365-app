@@ -146,9 +146,8 @@ let styles = StyleSheet.create({
   },
   discountBadgeContainer: {
     top: 10,
-    left: -5,
+    left: -7,
     position: 'absolute',
-    backgroundColor: '#fff',
     width: undefined,
     ...elevationShadowStyle(1),
   },
