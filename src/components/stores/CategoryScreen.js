@@ -17,6 +17,12 @@ const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
+const dataSort = [
+  {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false},
+  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false},
+  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false},
+  {id: 4, name: 'Giá từ thấp đến cao', value: 'price', isSelected: false},
+];
 class CategoryScreen extends Component {
   static defaultProps = {
     animatedScrollY: new Animated.Value(0),
@@ -34,7 +40,6 @@ class CategoryScreen extends Component {
         productName: item.name,
       })} —`;
     }
-    this.getListFilterTagRequest = new APIRequest();
 
     this.state = {
       loading: props.index === 0,
@@ -46,11 +51,7 @@ class CategoryScreen extends Component {
       promotions,
       isAll: item.id == 0,
       fetched: false,
-      dataFilterTag: [],
-      data2: [],
-      startLoad: false,
       paramsFilter: {},
-      dataSort: [],
       valueSort: {},
     };
 
@@ -63,40 +64,11 @@ class CategoryScreen extends Component {
     return delay;
   }
 
-  getListFilterTag = async () => {
-    try {
-      const siteId = store.store_data.id;
-      const dataSort = [
-        {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: true},
-        {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false},
-        {id: 3, name: 'Mới nhất', value: 'created', isSelected: false},
-        {id: 4, name: 'Giá từ thấp đến cao', value: 'price', isSelected: false},
-      ];
-      this.getListFilterTagRequest.data = APIHandler.getListFilterProduct(
-        siteId,
-      );
-      const response = await this.getListFilterTagRequest.promise();
-      if (response.status === 200) {
-        this.setState({
-          dataFilterTag: response.data,
-          dataSort,
-          startLoad: true,
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      this.setState({
-        dataFilterTag: [],
-      });
-    }
-  };
-
   componentDidMount() {
     var {item, index} = this.props;
+    console.log('didmount');
     this.start_time = 0;
-
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
-
     if (index == 0 || index == 1) {
       this._getItemByCateId(item.id);
     } else {
@@ -117,7 +89,7 @@ class CategoryScreen extends Component {
     Events.on(CATE_AUTO_LOAD, CATE_AUTO_LOAD + index, () => {
       Events.removeAll(keyAutoLoad);
     });
-    this.getListFilterTag();
+    // this.getListFilterTag();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -254,6 +226,7 @@ class CategoryScreen extends Component {
           this.state.page,
           paramsFilter,
         );
+        console.log({dataFilter: response});
       } else {
         response = await APIHandler.site_category_product(
           site_id,
@@ -330,7 +303,8 @@ class CategoryScreen extends Component {
 
   handleValue = (type) => async (value) => {
     if (type === 'tag') {
-      if (this.state.startLoad) {
+      if (this.props.startLoad) {
+        console.log('loadd value');
         let min_price = '';
         let max_price = '';
         if (!!value['price']) {
@@ -369,15 +343,9 @@ class CategoryScreen extends Component {
   };
 
   render() {
-    const {t} = this.props;
+    const {t, dataFilterTag} = this.props;
 
-    const {
-      items_data,
-      header_title,
-      fetched,
-      loading,
-      dataFilterTag,
-    } = this.state;
+    const {items_data, header_title, fetched, loading} = this.state;
 
     return (
       <>
@@ -455,8 +423,8 @@ class CategoryScreen extends Component {
 
             {/* <ListHeader title={header_title} /> */}
             <FilterProduct
-              dataSort={this.state.dataSort}
-              data={this.state.dataFilterTag}
+              dataSort={dataSort}
+              data={dataFilterTag}
               onValueTag={this.handleValue('tag')}
               onValueSort={this.handleValue('sort')}
             />

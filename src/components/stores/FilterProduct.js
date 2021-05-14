@@ -20,15 +20,10 @@ function FilterProduct({
   const [selectedFilter, setSelectedFiler] = useState({});
   useEffect(() => {
     setOptions(dataSort);
-    const selected = dataSort.filter((i) => i.isSelected)[0];
-    if (!!selected) {
-      onValueSort?.(selected);
-      setDefaultSelected(selected);
-    }
-  }, [dataSort]);
+  }, []);
 
   useEffect(() => {
-    if (!isEmpty(data)) {
+    if (!isEmpty(data) && !isEqual(data, dataFilterTag)) {
       setDataFilterTag(data);
     }
   }, [data]);
@@ -49,6 +44,7 @@ function FilterProduct({
   };
 
   const handleOpenModal = (type) => () => {
+    console.log({dataFilterTag});
     Actions.push(appConfig.routes.filterProduct, {
       type,
       defaultSelected: type === 'default' ? defaultSelected : selectedFilter,

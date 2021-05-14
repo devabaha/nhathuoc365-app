@@ -109,7 +109,7 @@ function ModalFilter({
       <Text style={styles.title}>{title}</Text>
       {renderList()}
       <TouchableOpacity style={styles.btnContainer} onPress={handleCloseModal}>
-        <Text style={styles.txtButton}>Xong</Text>
+        <Text style={styles.txtButton}>Áp dụng</Text>
       </TouchableOpacity>
     </Modal>
   );
@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor: '#fff',
     paddingBottom: appConfig.device.isIphoneX ? 23 : 10,
+    flex: 1,
   },
   itemContainer: {
     flexDirection: 'row',

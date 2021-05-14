@@ -22,6 +22,8 @@ import CategoryScreen from './CategoryScreen';
 import EventTracker from '../../helper/EventTracker';
 import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
+import APIHandler from 'src/network/APIHandler';
+import {APIRequest} from 'src/network/Entity';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 
@@ -43,7 +45,10 @@ class Stores extends Component {
       categories_data: null,
       selected_category: {id: 0, name: ''},
       categoriesPosition: [],
+      dataFilterTag: [],
+      startLoad: false,
     };
+    this.getListFilterTagRequest = new APIRequest();
 
     this.unmounted = false;
     this.refCates = [];
@@ -61,9 +66,30 @@ class Stores extends Component {
     return this.props.categoryId === 0;
   }
 
+  getListFilterTag = async () => {
+    try {
+      const siteId = store.store_data.id;
+      this.getListFilterTagRequest.data = APIHandler.getListFilterProduct(
+        siteId,
+      );
+      const response = await this.getListFilterTagRequest.promise();
+      console.log({response});
+      if (response.status === 200) {
+        this.setState({
+          dataFilterTag: response.data,
+          startLoad: true,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      this.setState({
+        dataFilterTag: [],
+      });
+    }
+  };
+
   componentDidMount() {
     this._initial(this.props);
-
     // pass add store tutorial
     var key_tutorial = 'KeyTutorialGoStore' + store.user_info.id;
     storage.save({
@@ -78,6 +104,7 @@ class Stores extends Component {
       });
     });
     this.eventTracker.logCurrentView();
+    this.getListFilterTag();
   }
 
   componentWillUnmount() {
@@ -437,6 +464,8 @@ class Stores extends Component {
                   promotions={this.state.promotions}
                   animatedScrollY={this.animatedScrollY}
                   animatedContentOffsetY={this.animatedContentOffsetY}
+                  dataFilterTag={this.state.dataFilterTag}
+                  startLoad={this.state.startLoad}
                 />
               );
             }}

@@ -8,6 +8,7 @@ import ButtonTag from './ButtonTag';
 
 function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
   const [selected, setSelected] = useState(defaultValue);
+  const [isShow, setShow] = useState(false);
 
   useEffect(() => {
     onChangeValue(selected);
@@ -44,15 +45,25 @@ function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
       </View>
     );
   };
+
+  const _renderFooterItemTag = () => {
+    return (
+      <TouchableOpacity onPress={() => setShow((prev) => !prev)}>
+        <Text>{!isShow ? 'Hiển thị nhiều hơn' : 'Thu gọn'}</Text>
+      </TouchableOpacity>
+    );
+  };
   const renderItem = ({item}) => {
+    const dataTag = [];
     return (
       <View style={{marginVertical: 10}}>
         <Text style={styles.tag}>{item.tag}</Text>
         <FlatList
-          data={item.tags_contents}
+          data={dataTag}
           keyExtractor={(i) => `tag_content_${i?.id}`}
           numColumns={2}
           renderItem={renderTagItem}
+          renderFooter={_renderFooterItemTag}
         />
       </View>
     );
