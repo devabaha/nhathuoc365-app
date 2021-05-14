@@ -19,7 +19,7 @@ import {
   REPLYING_BAR_HEIGHT,
   PADDING_IMAGE_HEIGHT,
 } from 'src/constants/social/comments';
-import {reaction} from 'mobx';
+import {TouchableOpacity as GestureTouchableOpacity} from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   replyWrapper: {
     position: 'absolute',
     width: '100%',
-    backgroundColor: '#fff',
+    zIndex: 999,
   },
   separator: {
     ...elevationShadowStyle(3),
@@ -79,8 +79,8 @@ const styles = StyleSheet.create({
 
   previewImagesContainer: {
     paddingVertical: PADDING_IMAGE_HEIGHT,
-    borderBottomWidth: .5,
-    borderColor: '#eee'
+    borderBottomWidth: 0.5,
+    borderColor: '#eee',
   },
   previewImageContainer: {
     alignSelf: 'flex-start',
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   mention: {
     // color: '#fff',
     color: appConfig.colors.primary,
-    fontWeight: '500'
+    fontWeight: '500',
   },
 });
 
@@ -125,8 +125,6 @@ class CustomInputToolbar extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
-    store.setReplyingComment();
-    store.setPreviewImages();
     Keyboard.removeListener(this.handleKeyboardDidShow);
     Keyboard.removeListener(this.handleKeyboardDidHide);
   }
@@ -146,7 +144,7 @@ class CustomInputToolbar extends Component {
   };
 
   handleCancelReplying = () => {
-    store.setReplyingComment();
+    this.props.onCancelReplying();
   };
 
   renderPreviewImages(images) {
@@ -177,11 +175,11 @@ class CustomInputToolbar extends Component {
     );
   }
 
-  renderMention(replyingMention) {
+  renderMention(replyingMentionName) {
     return (
-      !!replyingMention && (
+      !!replyingMentionName && (
         <View style={styles.mentionContainer}>
-          <Text style={styles.mention}>{replyingMention}</Text>
+          <Text style={styles.mention}>{replyingMentionName}</Text>
         </View>
       )
     );
@@ -189,12 +187,10 @@ class CustomInputToolbar extends Component {
 
   render() {
     const {t} = this.props;
-    const replyingName = store.isReplyingYourSelf
-      ? t('yourself')
-      : store.replyingComment?.user?.name;
-    const replyingMention =
-      !store.isReplyingYourSelf && store.replyingMention?.name;
-    const previewImages = !!store.previewImages?.length && store.previewImages;
+    const replyingName = this.props.replyingName;
+    const replyingMentionName = this.props.replyingMentionName;
+    const previewImages =
+      !!this.props.previewImages?.length && this.props.previewImages;
     const hasReplyingContent = replyingName || previewImages;
     const top =
       (!!replyingName ? -39 : 0) -
@@ -209,6 +205,8 @@ class CustomInputToolbar extends Component {
               <>
                 {!!hasReplyingContent && (
                   <Container
+                    onStartShouldSetResponder={() => false}
+                    onStartShouldSetResponderCapture={() => true}
                     style={[styles.replyWrapper, {top}]}
                     centerVertical={false}>
                     <View style={styles.separator} />
@@ -224,7 +222,7 @@ class CustomInputToolbar extends Component {
                                 {replyingName}
                               </Text>
                             </Text>
-                            <TouchableOpacity
+                            <GestureTouchableOpacity
                               hitSlop={HIT_SLOP}
                               style={styles.closeIconContainer}
                               onPress={this.handleCancelReplying}>
@@ -232,7 +230,7 @@ class CustomInputToolbar extends Component {
                                 name="close"
                                 style={styles.closeIcon}
                               />
-                            </TouchableOpacity>
+                            </GestureTouchableOpacity>
                           </Container>
                           <View style={styles.replyingSeparator} />
                         </>
@@ -244,7 +242,7 @@ class CustomInputToolbar extends Component {
                 )}
                 <Container row>
                   {this.props.renderActions()}
-                  {this.renderMention(replyingMention)}
+                  {/* {this.renderMention(replyingMentionName)} */}
                 </Container>
               </>
             );

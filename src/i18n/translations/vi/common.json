@@ -205,5 +205,8 @@
       "y": "1 năm",
       "yy": "%d năm"
     }
-  }
+  },
+
+  "copy": "Sao chép",
+  "cancel": "Huỷ"
 }

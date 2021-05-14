@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Image component with custom render if loading error.
 - ScreenWrapper take sceneBackground as backgroundColor.
 - Common component for social like Feeds, ActionBar.
+- Comment for news.
 
 ### Changed
 - Container can select wrapper between reanimated and animated.

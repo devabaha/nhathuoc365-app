@@ -192,7 +192,8 @@ const NewsScene = ({id, isFetching = false}) => {
         break;
       case SOCIAL_BUTTON_TYPES.COMMENT:
         Actions.push(appConfig.routes.modalComment, {
-          title: 'Bình luận',
+          // title: 'Bình luận',
+          title: feeds.title,
           object: feeds?.object || 'news',
           object_id: feeds?.object_id || feeds?.id,
           site_id: feeds.site_id,
@@ -216,7 +217,7 @@ const NewsScene = ({id, isFetching = false}) => {
               thumbnailUrl={feeds.image_url}
               avatarUrl={feeds.shop_logo_url}
               containerStyle={styles.feedsContainer}
-              onPostPress={handlePostPress}
+              onPostPress={() => handlePostPress(feeds)}
               onActionBarPress={type => handleActionBarPress(type, feeds)}
             />
           );

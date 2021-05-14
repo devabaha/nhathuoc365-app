@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Animated, StyleSheet, Text} from 'react-native';
+import {Animated, Easing, StyleSheet, Text} from 'react-native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Container from 'src/components/Layout/Container';
 import Pressable from 'src/components/Pressable';
@@ -10,7 +10,7 @@ import FloatingIcons from '../../FloatingIcons ';
 const styles = StyleSheet.create({
   wrapperContainer: {
     marginTop: 5,
-    paddingHorizontal: 15,
+    paddingLeft: 10,
   },
   wrapper: {
     justifyContent: 'space-between',
@@ -42,7 +42,8 @@ const styles = StyleSheet.create({
   },
 
   pendingContainer: {
-    marginVertical: 3,
+    marginTop: appConfig.device.isIOS ? 5 : 3,
+    marginBottom: 3,
   },
   pendingIcon: {
     fontSize: 7,
@@ -52,6 +53,11 @@ const styles = StyleSheet.create({
   pendingMessage: {
     fontSize: 12,
     color: appConfig.colors.status.warning,
+  },
+  icon: {
+    position: 'absolute',
+    right: 0,
+    // bottom:0
   },
 });
 
@@ -114,9 +120,9 @@ const BubbleBottom = ({
           )}
         </Container>
 
-        {!!liked && (
+        {(!!liked || !!totalReaction) && (
           <FloatingIcons
-            wrapperStyle={{position: 'absolute', right: 15}}
+            wrapperStyle={styles.icon}
             icons="like1"
             prefixTitle={totalReaction}
           />

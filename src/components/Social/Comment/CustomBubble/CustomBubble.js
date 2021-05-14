@@ -16,9 +16,11 @@ import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
 
-const MAX_LENGTH_TEXT = 50;
+const CHARACTER_PER_LINE = 40;
 const LINE_HEIGHT = 25;
-const MAX_COLLAPSED_HEIGHT = LINE_HEIGHT * 2.1;
+const MAX_LINE = 5.1;
+const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
+const MAX_COLLAPSED_HEIGHT = LINE_HEIGHT * MAX_LINE;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -31,26 +33,31 @@ const styles = StyleSheet.create({
   },
   bubbleWrapper: {
     marginRight: 0,
-    overflow: 'hidden',
+    // overflow: 'hidden',
     paddingVertical: 3,
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
   },
   bubbleContainer: {
-    flex: 0,
+    // flex: 0,
   },
   imageContainer: {
     borderRadius: 15,
+    borderWidth: 0.5,
+    borderColor: '#ddd',
   },
   btnShowFullMessage: {
     position: 'absolute',
-    bottom: 5,
+    bottom: 2,
     right: 0,
-    paddingRight: 15,
+    borderBottomRightRadius: 15,
+    overflow: 'hidden'
   },
   labelShowFulMessage: {
     color: '#777',
-    paddingLeft: 10,
+    paddingLeft: 20,
+    paddingRight: 15,
+    lineHeight: LINE_HEIGHT,
   },
   maskShowFullMessage: {
     height: '100%',
@@ -58,8 +65,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   messageTextContainer: {
-    marginTop: -5,
-    overflow: 'hidden',
+    marginTop: -3,
+    // overflow: 'hidden',
   },
 
   containerMention: {
@@ -104,12 +111,6 @@ class CustomBubble extends Component {
     isShowFullMessage:
       this.props?.currentMessage?.content?.length <= MAX_LENGTH_TEXT,
   };
-
-  // shouldComponentUpdate(nextProps, nextState) {
-  //   return (
-  //     nextProps.storeItem !== this.props.storeItem || nextState !== this.state
-  //   );
-  // }
 
   componentWillUnmount() {
     this.unMounted = true;
@@ -220,8 +221,6 @@ class CustomBubble extends Component {
   renderImages = (props, image) => {
     if (!image) return null;
     const imageStyle = {
-      borderWidth: 0.5,
-      borderColor: '#ddd',
       height: IMAGE_COMMENT_HEIGHT,
       width:
         IMAGE_COMMENT_HEIGHT *
@@ -231,7 +230,7 @@ class CustomBubble extends Component {
     return (
       <ImageMessageChat
         containerStyle={[styles.imageContainer, imageStyle]}
-        uploadURL={props.uploadUrl}
+        uploadURL={props.uploadURL}
         isUploadData={props.currentMessage.isUploadData}
         image={props.currentMessage.rawImage}
         lowQualityUri={image}
@@ -274,7 +273,7 @@ class CustomBubble extends Component {
       isHighlight,
       ...props
     } = this.props;
-    console.log(props.currentMessage.id);
+    // console.log('%crender bubble', 'color:yellow', props.currentMessage.id);
 
     const hasText = props.currentMessage.text;
     const bgColor = hasText

@@ -1,4 +1,10 @@
-import React, {useCallback, useRef} from 'react';
+import React, {
+  Component,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -9,6 +15,7 @@ import {
 import {default as ModalBox} from 'react-native-modalbox';
 import {Actions} from 'react-native-router-flux';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Container from 'src/components/Layout/Container';
 
@@ -48,46 +55,81 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: '#333',
   },
+
+  reloadContainer: {
+    padding: 8, 
+    marginHorizontal: 4
+  },
+  reloadIcon: {
+    fontSize: 24,
+    color: appConfig.colors.primary
+  }
 });
 
-const ModalComment = ({
-  title,
-  modalStyle,
-  object_id,
-  object,
-  site_id = store?.store_data?.id,
-}) => {
-  const refModal = useRef();
+class ModalComment extends Component {
+  refModal = React.createRef();
+  refComment = React.createRef();
 
-  const handleCloseModal = useCallback(() => {
-    if (refModal.current) {
-      refModal.current.close();
+  componentDidMount() {
+    setTimeout(() =>
+      Actions.refresh({
+        right: () => (
+          <TouchableOpacity
+            onPress={this.handleReload}
+            hitSlop={HIT_SLOP}
+            style={styles.reloadContainer}>
+            <MaterialCommunityIcon
+              style={styles.reloadIcon}
+              name="lightning-bolt"
+            />
+          </TouchableOpacity>
+        ),
+      }),
+    );
+  }
+
+  handleReload = () => {
+    if (this.refComment.current) {
+      this.refComment.current._getMessages();
     }
-  }, []);
+  };
 
-  const onClosedModal = () => {
+  handleCloseModal = () => {
+    if (this.refModal.current) {
+      this.refModal.current.close();
+    }
+  };
+
+  onClosedModal = () => {
     Actions.pop();
   };
 
-  return (
-    // <ModalBox
-    //   entry="bottom"
-    //   position="bottom"
-    //   style={[styles.modal, modalStyle]}
-    //   backButtonClose
-    //   ref={refModal}
-    //   isOpen
-    //   onClosed={onClosedModal}
-    //   useNativeDriver>
-    //   <Container row style={styles.header}>
-    //     <Text style={styles.title}>{title}</Text>
-    //     <TouchableOpacity style={styles.iconContainer} onPress={handleCloseModal}>
-    //       <AntDesignIcon name="close" style={styles.icon} />
-    //     </TouchableOpacity>
-    //   </Container>
-    <Comment site_id={site_id} object={object} object_id={object_id} />
-    // </ModalBox>
-  );
-};
+  render() {
+    return (
+      // <ModalBox
+      //   entry="bottom"
+      //   position="bottom"
+      //   style={[styles.modal, modalStyle]}
+      //   backButtonClose
+      //   ref={refModal}
+      //   isOpen
+      //   onClosed={onClosedModal}
+      //   useNativeDriver>
+      //   <Container row style={styles.header}>
+      //     <Text style={styles.title}>{title}</Text>
+      //     <TouchableOpacity style={styles.iconContainer} onPress={handleCloseModal}>
+      //       <AntDesignIcon name="close" style={styles.icon} />
+      //     </TouchableOpacity>
+      //   </Container>
+      <Comment
+        ref={this.refComment}
+        site_id={this.props.site_id}
+        object={this.props.object}
+        object_id={this.props.object_id}
+      />
+      // </ModalBox>
+    );
+  }
+}
 
 export default ModalComment;

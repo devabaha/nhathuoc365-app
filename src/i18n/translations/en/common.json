@@ -203,5 +203,8 @@
     "MM": "%d months",
     "y": "1 year",
     "yy": "%d years"
-  }
+  },
+
+  "copy": "Copy",
+  "cancel": "Cancel"
 }
