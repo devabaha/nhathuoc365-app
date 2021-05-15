@@ -27,10 +27,10 @@ class HomeCardList extends Component {
         <FlatList
           horizontal
           data={props.data}
-          style={styles.listContainer}
           showsHorizontalScrollIndicator={false}
           renderItem={props.children}
           keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={{paddingHorizontal: 5}}
         />
       </View>
     );

@@ -50,10 +50,10 @@ class ListProducts extends Component {
       <FlatList
         horizontal
         data={this.props.data}
-        style={styles.listHorizontal}
         keyExtractor={(item, index) => index.toString()}
         showsHorizontalScrollIndicator={false}
         renderItem={this.renderItemHorizontal}
+        contentContainerStyle={styles.listHorizontal}
       />
     );
   }
@@ -67,7 +67,7 @@ class ListProducts extends Component {
 
   renderProduct(product, extraProps) {
     return (
-      <View style={{margin: 7.5, flex: 1}}>
+      <View style={{flex: 1, margin: 7.5}}>
         <ProductItem
           selfRequest={(callBack) =>
             this.props.onPressProduct(product, callBack)
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   listHorizontal: {
-    paddingHorizontal: 7.5,
+    paddingHorizontal: 5,
   },
   contentHorizontal: {},
   listVertical: {
