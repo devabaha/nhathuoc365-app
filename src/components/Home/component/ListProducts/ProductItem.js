@@ -2,6 +2,7 @@ import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import FastImage from 'react-native-fast-image';
 import appConfig from 'app-config';
 import ImageBackground from '../../../ImageBg';
 import Loading from '../../../Loading';
@@ -61,16 +62,14 @@ class ProductItem extends PureComponent {
         onPress={this.handlePress}
         activeOpacity={0.8}
         style={[styles.wrapper, this.props.wrapperStyle]}>
-        <ImageBackground
-          style={[styles.image, this.props.imageStyle]}
-          imageStyle={{borderTopLeftRadius: 8, borderTopRightRadius: 8}}
+        <FastImage
           source={{
             uri: this.props.image,
-          }}>
-          {this.state.loading && (
-            <Loading color="#fff" containerStyle={styles.loading} />
-          )}
-        </ImageBackground>
+          }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+
         {this.props.discount_percent > 0 && (
           <View style={styles.discountBadgeContainer}>
             <Ribbon text={saleFormat(this.props.discount_percent)} />
@@ -103,15 +102,16 @@ class ProductItem extends PureComponent {
 let styles = StyleSheet.create({
   wrapper: {
     width: appConfig.device.width / 2 - 40,
+    height: 'auto',
     flex: 1,
-    borderRadius: 8,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
   },
   image: {
     width: '100%',
     height: 150,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
-    resizeMode: 'contain',
   },
   infoWrapper: {
     alignItems: 'flex-start',
@@ -134,7 +134,6 @@ let styles = StyleSheet.create({
     marginTop: 4,
     paddingVertical: 2,
     paddingHorizontal: 4,
-    borderRadius: 4,
     backgroundColor: 'rgba(85, 185, 71, 1)',
   },
   price: {

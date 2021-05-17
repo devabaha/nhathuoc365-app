@@ -126,7 +126,7 @@ class Config {
       black: '#000',
       text: '#333',
       placeholder: '#c7c7cd',
-      ribbon: '#F41820',
+      ribbon: '#FD0D1B',
     };
   }
 
