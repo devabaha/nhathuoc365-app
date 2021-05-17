@@ -12,6 +12,7 @@ import FilterProduct from './FilterProduct';
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
 import {isEmpty, isEqual} from 'lodash';
+import mobx from 'mobx';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -66,7 +67,6 @@ class CategoryScreen extends Component {
 
   componentDidMount() {
     var {item, index} = this.props;
-    console.log('didmount');
     this.start_time = 0;
     var keyAutoLoad = AUTO_LOAD_NEXT_CATE + index;
     if (index == 0 || index == 1) {
@@ -301,52 +301,58 @@ class CategoryScreen extends Component {
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
   };
 
-  handleValue = (type) => async (value) => {
-    if (type === 'tag') {
-      if (this.props.startLoad) {
-        console.log('loadd value');
-        let min_price = '';
-        let max_price = '';
-        if (!!value['price']) {
-          min_price = value['price'].min_price;
-          max_price = value['price'].max_price;
-        }
-        const tag_id = Object.values(value)
-          .map((i) => i?.id)
-          .filter(Boolean)
-          .join(',');
-        const params = {
-          min_price,
-          max_price,
-          tag: tag_id,
-          order: 'asc',
-          sort_by: this.state.valueSort.value,
-        };
+  handleValue = async (value) => {
+    await this.setState((prev) => ({
+      valueSort: value,
+      paramsFilter: {
+        ...prev.paramsFilter,
+        sort_by: value.value,
+      },
+    }));
+    this._getItemByCateIdFromServer(this.props.item.id, 0, false);
+    // if (type === 'tag') {
+    //   if (this.props.startLoad) {
+    //     console.log('loadd value');
+    //     let min_price = '';
+    //     let max_price = '';
+    //     if (!!value['price']) {
+    //       min_price = value['price'].min_price;
+    //       max_price = value['price'].max_price;
+    //     }
+    //     const tag_id = Object.values(value)
+    //       .map((i) => i?.id)
+    //       .filter(Boolean)
+    //       .join(',');
+    //     const params = {
+    //       min_price,
+    //       max_price,
+    //       tag: tag_id,
+    //       order: 'asc',
+    //       sort_by: this.state.valueSort.value,
+    //     };
 
-        await this.setState({paramsFilter: params});
-        if (isEmpty(value)) {
-          this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-          return;
-        }
-        this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-      }
-    } else {
-      await this.setState((prev) => ({
-        valueSort: value,
-        paramsFilter: {
-          ...prev.paramsFilter,
-          sort_by: value.value,
-        },
-      }));
-      this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-    }
+    //     await this.setState({paramsFilter: params});
+    //     if (isEmpty(value)) {
+    //       this._getItemByCateIdFromServer(this.props.item.id, 0, false);
+    //       return;
+    //     }
+    //     this._getItemByCateIdFromServer(this.props.item.id, 0, false);
+    //   }
+    // } else {
+    //   await this.setState((prev) => ({
+    //     valueSort: value,
+    //     paramsFilter: {
+    //       ...prev.paramsFilter,
+    //       sort_by: value.value,
+    //     },
+    //   }));
+    //   this._getItemByCateIdFromServer(this.props.item.id, 0, false);
+    // }
   };
 
   render() {
-    const {t, dataFilterTag} = this.props;
-
+    const {t} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
-
     return (
       <>
         <View style={styles.containerScreen}>
@@ -423,10 +429,9 @@ class CategoryScreen extends Component {
 
             {/* <ListHeader title={header_title} /> */}
             <FilterProduct
+              selectedFilter={store.selectedFilter}
               dataSort={dataSort}
-              data={dataFilterTag}
-              onValueTag={this.handleValue('tag')}
-              onValueSort={this.handleValue('sort')}
+              onValueSort={this.handleValue}
             />
 
             <View

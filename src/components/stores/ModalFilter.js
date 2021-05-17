@@ -12,17 +12,11 @@ import Icon from 'react-native-vector-icons/Feather';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import {isEmpty} from 'lodash';
-import ListTag from './ListTag';
-import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
-import {CONFIG_KEY} from 'src/helper/configKeyHandler';
-import ListPrice from './ListPrice';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 function ModalFilter({
   onSelectValue = () => {},
   data = [],
   defaultSelected = {},
-  type,
   title = 'Default',
   onSelectValueSort = () => {},
 }) {
@@ -30,7 +24,6 @@ function ModalFilter({
   const [selectedPrice, setSelectedPrice] = useState({});
   const [selectedTag, setSelectedTag] = useState({});
   const refModal = useRef(null);
-  const priceValueString = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
 
   const handleSelected = (val) => {
     setSelectedTag(val);
@@ -43,9 +36,10 @@ function ModalFilter({
   const handleCloseModal = () => {
     if (refModal.current) {
       refModal.current.close();
-      type !== 'default'
-        ? onSelectValue({...selectedTag, ...selectedPrice})
-        : onSelectValueSort(selected);
+      onSelectValueSort(selected);
+      // type !== 'default'
+      //   ? onSelectValue({...selectedTag, ...selectedPrice})
+      //   : onSelectValueSort(selected);
     }
   };
 
@@ -65,35 +59,14 @@ function ModalFilter({
   };
 
   const renderList = () => {
-    switch (type) {
-      case 'filter-multiple':
-        return (
-          <KeyboardAwareScrollView>
-            <ListTag
-              data={data}
-              onChangeValue={handleSelected}
-              defaultValue={defaultSelected}
-            />
-            {!!priceValueString && (
-              <ListPrice
-                title="Giá tiền"
-                defaultValue={defaultSelected}
-                onChangeValue={handleSelectedPrice}
-              />
-            )}
-          </KeyboardAwareScrollView>
-        );
-      case 'default':
-      default:
-        return (
-          <FlatList
-            data={data}
-            extraData={selected}
-            keyExtractor={(i, index) => `${index}__${i.id}`}
-            renderItem={renderItem}
-          />
-        );
-    }
+    return (
+      <FlatList
+        data={data}
+        extraData={selected}
+        keyExtractor={(i, index) => `${index}__${i.id}`}
+        renderItem={renderItem}
+      />
+    );
   };
 
   return (
@@ -119,7 +92,6 @@ const styles = StyleSheet.create({
     height: 'auto',
     backgroundColor: '#fff',
     paddingBottom: appConfig.device.isIphoneX ? 23 : 10,
-    flex: 1,
   },
   itemContainer: {
     flexDirection: 'row',

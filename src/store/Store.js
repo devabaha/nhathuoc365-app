@@ -122,7 +122,7 @@ class Store {
           if (!equal(user, this.user_info)) {
             this.setUserInfo(user);
           }
-          
+
           if (!equal(notifies, this.notify)) {
             this.setNotify(notifies);
           }
@@ -264,6 +264,7 @@ class Store {
   @observable app_data = null;
   @observable deep_link_data = null;
   @observable stores_finish = false;
+  @observable selectedFilter = {};
 
   @action setStoresFinish(flag) {
     this.stores_finish = flag;
@@ -289,6 +290,10 @@ class Store {
 
   @action setDeepLinkData(data) {
     this.deep_link_data = data;
+  }
+
+  @action setSelectedFilter(data) {
+    this.selectedFilter = data;
   }
 
   /*********** home begin **********/

@@ -6,7 +6,12 @@ import Button from '../Button';
 import appConfig from 'app-config';
 import ButtonTag from './ButtonTag';
 
-function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
+function ListTag({
+  data = [],
+  onChangeValue = () => {},
+  defaultValue = {},
+  isOpen,
+}) {
   const [selected, setSelected] = useState(defaultValue);
   const [isShow, setShow] = useState(false);
 
@@ -14,10 +19,16 @@ function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
     onChangeValue(selected);
   }, [selected]);
 
+  // useEffect(() => {
+  //   if (isEmpty(defaultValue)) {
+  //     setSelected({});
+  //   }
+  // }, [isOpen]);
+
   useEffect(() => {
     const defaultValueTag = omit(defaultValue, 'price');
     setSelected(defaultValueTag);
-  }, [defaultValue]);
+  }, [defaultValue, isOpen]);
 
   const handleItem = (item) => () => {
     setSelected((prev) => {
@@ -54,7 +65,9 @@ function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
     );
   };
   const renderItem = ({item}) => {
-    const dataTag = [];
+    const dataTag = !isShow
+      ? item.tags_contents.filter((_, index) => index < 4)
+      : item.tags_contents;
     return (
       <View style={{marginVertical: 10}}>
         <Text style={styles.tag}>{item.tag}</Text>

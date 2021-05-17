@@ -18,6 +18,13 @@ function ListPrice({title, onChangeValue, defaultValue = {}}) {
   }, [selectedPrice]);
 
   useEffect(() => {
+    console.log('mounted price');
+    return () => {
+      console.log('unmounted price');
+    };
+  }, []);
+
+  useEffect(() => {
     if (!!defaultValue.price) {
       setSelectedPrice({price: defaultValue['price']});
       setMinPrice(vndCurrencyFormat(defaultValue['price']?.min_price));
@@ -52,28 +59,31 @@ function ListPrice({title, onChangeValue, defaultValue = {}}) {
     }
   }, [selectedPrice, type]);
 
-  const handleItem = (item) => () => {
-    console.log({item});
+  const handleItem = (key, value) => () => {
     setSelectedPrice((prev) => {
-      if (isEqual(prev['price'], item)) {
+      console.log({prev, value});
+      if (isEqual(prev['price'], {...value, text: key})) {
         return {};
       }
       return {
         ...prev,
-        price: item,
+        ['price']: {
+          text: key,
+          ...value,
+        },
       };
     });
   };
 
   const renderPriceItem = ({item}) => {
     const isChecked = !isEmpty(selectedPrice)
-      ? isEqual(selectedPrice['price'], item)
+      ? isEqual(selectedPrice['price'].text, item)
       : false;
     return (
       <View style={styles.itemContainer}>
         <ButtonTag
           text={item}
-          onPress={handleItem(priceValue[item])}
+          onPress={handleItem(item, priceValue[item])}
           checked={isChecked}
         />
       </View>

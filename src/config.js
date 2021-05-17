@@ -8,11 +8,11 @@ import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
 
 class Config {
   constructor() {
-    this._primaryColor = '#812384';
+    this._primaryColor = '#f41820';
   }
 
   get tagVersion() {
-    return 'r11.5.5';
+    return 'r11.5.4';
   }
 
   get appName() {
@@ -21,6 +21,10 @@ class Config {
 
   get namespace() {
     return 'app';
+  }
+
+  get defaultSiteId() {
+    return 1803;
   }
 
   get reduxLoggerEnable() {
@@ -72,8 +76,8 @@ class Config {
     return {
       logo: {
         main: this.primaryColor,
-        sub: '#f5bb4b',
-        addition: '#f18c21',
+        sub: '#FFF',
+        addition: '#000',
       },
       status: {
         danger: '#ef476f',
@@ -108,7 +112,7 @@ class Config {
         [CART_STATUS_PROCESSING]: '#986d60',
         [CART_STATUS_DELIVERY]: '#EEAA21',
         [CART_STATUS_COMPLETED]: '#06d6a0',
-        [CART_STATUS_CLOSED]: '#06d6a0',
+        [CART_STATUS_CLOSED]: '#aaa',
       },
       paymentStatus: {
         [CART_PAYMENT_STATUS.UNPAID]: '#EEAA21',
@@ -122,6 +126,7 @@ class Config {
       black: '#000',
       text: '#333',
       placeholder: '#c7c7cd',
+      ribbon: '#FD0D1B',
     };
   }
 
@@ -146,6 +151,7 @@ class Config {
       accountTab: 'accountTab',
       deepLinkNewsTab: 'deepLinkNewsTab',
       scanQrCodeTab: 'scanQrCodeTab',
+      customerCardWallet: 'customer_card_wallet',
       ordersTab: 'ordersTab',
       deepLinkOrdersTab: 'deepLinkOrdersTab',
 
@@ -214,11 +220,16 @@ class Config {
       schedule: 'schedule',
       scheduleConfirm: 'scheduleConfirm',
 
+      // Store Location
+      storeLocation: 'storeLocation',
+      gpsStoreLocation: 'gpsStoreLocation',
+
       // Modal
       modalPicker: 'modalPicker',
       modalList: 'modalList',
       modalSearchPlaces: 'modalSearchPlaces',
       modalRateApp: 'modalRateApp',
+      modalCameraView: 'modalCameraView',
       modalPopup: 'modalPopup',
       modalInput: 'modalInput',
       modalConfirm: 'modalConfirm',
@@ -230,6 +241,9 @@ class Config {
 
       // All serives
       allServices: 'allServices',
+
+      // iView
+      captureFaceID: 'captureFaceID',
 
       // multi-level category
       multiLevelCategory: 'multiLevelCategory',

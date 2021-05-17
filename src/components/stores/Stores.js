@@ -45,11 +45,7 @@ class Stores extends Component {
       categories_data: null,
       selected_category: {id: 0, name: ''},
       categoriesPosition: [],
-      dataFilterTag: [],
-      startLoad: false,
     };
-    this.getListFilterTagRequest = new APIRequest();
-
     this.unmounted = false;
     this.refCates = [];
 
@@ -65,28 +61,6 @@ class Stores extends Component {
   get isGetFullStore() {
     return this.props.categoryId === 0;
   }
-
-  getListFilterTag = async () => {
-    try {
-      const siteId = store.store_data.id;
-      this.getListFilterTagRequest.data = APIHandler.getListFilterProduct(
-        siteId,
-      );
-      const response = await this.getListFilterTagRequest.promise();
-      console.log({response});
-      if (response.status === 200) {
-        this.setState({
-          dataFilterTag: response.data,
-          startLoad: true,
-        });
-      }
-    } catch (err) {
-      console.log(err);
-      this.setState({
-        dataFilterTag: [],
-      });
-    }
-  };
 
   componentDidMount() {
     this._initial(this.props);
@@ -104,12 +78,12 @@ class Stores extends Component {
       });
     });
     this.eventTracker.logCurrentView();
-    this.getListFilterTag();
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     this.eventTracker.clearTracking();
+    store.setSelectedFilter({});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -464,8 +438,6 @@ class Stores extends Component {
                   promotions={this.state.promotions}
                   animatedScrollY={this.animatedScrollY}
                   animatedContentOffsetY={this.animatedContentOffsetY}
-                  dataFilterTag={this.state.dataFilterTag}
-                  startLoad={this.state.startLoad}
                 />
               );
             }}
