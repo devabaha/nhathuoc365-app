@@ -436,6 +436,23 @@ class CommonAPI {
   get FILTER_URL_TAG() {
     return BaseAPI.apiDomain + 'apiSite/get_tags/';
   }
+  
+  get USER_LIST_NEWS_CATEGORY() {
+    return BaseAPI.apiDomain + 'apiUser/list_news_category';
+  }
+
+  // Social
+  get SOCIAL_COMMENTS() {
+    return BaseAPI.socialDomain + 'comments';
+  }
+
+  get SOCIAL_COMMENT() {
+    return BaseAPI.socialDomain + 'comments/store'
+  }
+
+  get SOCIAL_LIKES() {
+    return BaseAPI.socialDomain + 'likes/store'
+  }
 }
 
 export default new CommonAPI();

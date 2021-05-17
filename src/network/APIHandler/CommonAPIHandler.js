@@ -1047,9 +1047,58 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.PAYMENT_CART_PAYMENT + '/' + siteId + '/' + cartId);
     return this.getCancelableAPI(api);
   }
+  
   getListFilterProduct(siteId) {
     const api = url_for(API.FILTER_URL_TAG + siteId + '/product');
     return this.getCancelableAPI(api);
+  }
+
+  /**
+   * get list category of news
+   */
+  user_list_news_category() {
+    const api = url_for(API.USER_LIST_NEWS_CATEGORY);
+    return this.getCancelableAPI(api);
+  }
+
+  // SOCIAL
+  /**
+   * get list comments
+   * 
+   * @param {object} data
+   * @param {string} data.object name of object
+   * @param {number} data.object_id id of object
+   */
+  social_comments(data) {
+    const api = url_for(API.SOCIAL_COMMENTS);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * send comment
+   * 
+   * @param {object} data
+   * @param {string} data.object name of object
+   * @param {number} data.object_id id of object
+   * @param {number=} data.comment_id id of object
+   */
+  social_comment(data) {
+    const api = url_for(API.SOCIAL_COMMENT);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * like
+   * 
+   * @param {object} data
+   * @param {string} data.object name of object
+   * @param {number} data.object_id id of object
+   * @param {number} data.site_id
+   * @param {number} data.status updated like status
+   */
+   social_likes(data) {
+    const api = url_for(API.SOCIAL_LIKES);
+    return this.postCancelableAPI(api, data);
   }
 }
 

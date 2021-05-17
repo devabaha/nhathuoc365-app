@@ -158,6 +158,8 @@ import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
 import ModalFilter from './components/stores/ModalFilter';
+import {News} from './containers/Social';
+import {ModalComment} from './components/Social';
 
 /**
  * Not allow font scaling
@@ -825,6 +827,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ MODAL COMMENT ================ */}
+                <Stack key={appConfig.routes.modalComment}>
+                  <Scene
+                    key={`${appConfig.routes.modalComment}_1`}
+                    component={ModalComment}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ PRODUCT STAMPS ================ */}
                 <Stack key={appConfig.routes.productStamps}>
@@ -1721,7 +1733,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -1731,7 +1742,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -1742,7 +1752,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -1754,7 +1763,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene
@@ -1763,7 +1771,6 @@ class RootRouter extends Component {
                 hideNavBar
               />
             </Stack>
-
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene
