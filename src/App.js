@@ -773,7 +773,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={News}
+                      component={Notify}
                     />
                   </Stack>
 
@@ -826,6 +826,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ MODAL COMMENT ================ */}
+                <Stack key={appConfig.routes.modalComment}>
+                  <Scene
+                    key={`${appConfig.routes.modalComment}_1`}
+                    component={ModalComment}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ PRODUCT STAMPS ================ */}
                 <Stack key={appConfig.routes.productStamps}>
@@ -1706,13 +1716,8 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
               />
-
-              {/* ================ MODAL COMMENT ================ */}
-              {/* <Stack
-                key={appConfig.routes.modalComment}
-                component={ModalComment}
-              /> */}
             </Lightbox>
+
             {/* ================ MODAL WEBVIEW ================ */}
             <Stack key={appConfig.routes.modalWebview}>
               <Scene
@@ -1766,16 +1771,6 @@ class RootRouter extends Component {
                 key={`${appConfig.routes.transaction}_1`}
                 component={Transaction}
                 hideNavBar
-                back
-              />
-            </Stack>
-
-            {/* ================ MODAL COMMENT ================ */}
-            <Stack key={appConfig.routes.modalComment}>
-              <Scene
-                key={`${appConfig.routes.modalComment}_1`}
-                component={ModalComment}
-                renderBackButton={CloseButton}
                 back
               />
             </Stack>

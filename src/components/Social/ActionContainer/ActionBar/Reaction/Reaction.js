@@ -19,7 +19,7 @@ const Reaction = ({
   style,
   iconStyle,
   titleStyle,
-  isLiked: isLikedProp = false,
+  isLiked: isLikedProp,
 }) => {
   //   console.log('render reaction');
 

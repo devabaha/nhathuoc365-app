@@ -22,6 +22,7 @@ import NoResult from 'src/components/NoResult';
 
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 import {APIRequest} from 'src/network/Entity';
+import {share} from 'src/helper/share';
 
 const styles = StyleSheet.create({
   feedsContainer: {
@@ -163,10 +164,9 @@ const NewsScene = ({id, isFetching = false}) => {
     };
 
     likeRequest.data = APIHandler.social_likes(data);
-    likeRequest
-      .promise()
-      // .then((res) => console.log(res))
-      // .catch((err) => console.log('like_news', err));
+    likeRequest.promise();
+    // .then((res) => console.log(res))
+    // .catch((err) => console.log('like_news', err));
   }, []);
 
   const handleRefresh = useCallback(() => {
@@ -199,6 +199,9 @@ const NewsScene = ({id, isFetching = false}) => {
           site_id: feeds.site_id,
         });
         break;
+      case SOCIAL_BUTTON_TYPES.SHARE:
+        share(feeds.url, feeds.title);
+        break;
     }
   }, []);
 
@@ -218,7 +221,7 @@ const NewsScene = ({id, isFetching = false}) => {
               avatarUrl={feeds.shop_logo_url}
               containerStyle={styles.feedsContainer}
               onPostPress={() => handlePostPress(feeds)}
-              onActionBarPress={type => handleActionBarPress(type, feeds)}
+              onActionBarPress={(type) => handleActionBarPress(type, feeds)}
             />
           );
         }}
