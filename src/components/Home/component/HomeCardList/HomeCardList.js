@@ -30,6 +30,7 @@ class HomeCardList extends Component {
           showsHorizontalScrollIndicator={false}
           renderItem={props.children}
           keyExtractor={(item, index) => index.toString()}
+          style={{overflow: 'visible'}}
           contentContainerStyle={{paddingHorizontal: 5}}
         />
       </View>

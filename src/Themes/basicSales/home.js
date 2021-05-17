@@ -80,7 +80,7 @@ export const home = {
           shadowRadius: 5,
         },
         android: {
-          elevation: 8,
+          elevation: 4,
           borderWidth: Util.pixel,
           borderColor: '#E1E1E1',
         },
@@ -94,28 +94,6 @@ export const home = {
     },
   }),
   listProduct: StyleSheet.create({
-    wrapper: {
-      borderRadius: 4,
-      backgroundColor: '#fff',
-      alignItems: 'stretch',
-      ...Platform.select({
-        ios: {
-          shadowColor: '#333',
-          shadowOffset: {
-            width: 1,
-            height: 4,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 5,
-        },
-        android: {
-          elevation: 8,
-          borderWidth: Util.pixel,
-          borderColor: '#E1E1E1',
-        },
-      }),
-      height: '100%',
-    },
     infoWrapper: {
       flex: 1,
       alignItems: 'stretch',

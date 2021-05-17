@@ -850,7 +850,7 @@ class Item extends Component {
 
   renderListNews = ({item, index}) => {
     return (
-      <View style={{marginHorizontal: 2.5}}>
+      <View>
         <HomeCardItem
           title={item.title}
           imageUrl={item.image_url}
@@ -914,12 +914,14 @@ class Item extends Component {
 
             <View style={styles.item_heading_box}>
               <View style={styles.boxDiscount}>
-                {item.discount_percent > 0 && (
+                {item.discount_percent > 0 ? (
                   <DiscountBadge
                     containerStyle={styles.discountBadge}
                     label={saleFormat(item.discount_percent)}
                     contentContainerStyle={styles.discountBadgeContent}
                   />
+                ) : (
+                  <View />
                 )}
                 {isInventoryVisible && (
                   <View style={styles.productsLeftContainer}>
@@ -1135,21 +1137,53 @@ class Item extends Component {
               )}
             </View>
 
-            {!!item.related && item.related != null && (
-              <View style={[styles.items_box]}>
-                <ListHeader title={`${t('relatedItems')}`} />
-                {item.related.map((item, index) => {
-                  return (
+            {!!item.related && item.related !== null && !isEmpty(item.related) && (
+              <View style={[styles.newsWrapper]}>
+                <Text style={styles.titleRelated}>{t('relatedItems')}</Text>
+                <FlatList
+                  data={item.related}
+                  keyExtractor={(i, index) => `item-related-${i.id}`}
+                  horizontal={true}
+                  renderItem={({item: product, index}) => (
                     <Items
-                      key={index}
-                      item={item}
+                      containerStyle={{
+                        width: appConfig.device.width / 2 - 20,
+                      }}
+                      contentStyle={{overflow: 'hidden'}}
+                      item={product}
                       index={index}
-                      onPress={this._itemRefresh.bind(this, item)}
+                      onPress={this._itemRefresh.bind(this, product)}
                     />
-                  );
-                })}
+                  )}
+                  style={{overflow: 'visible'}}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{
+                    paddingHorizontal: 5,
+                  }}
+                />
               </View>
             )}
+            {item.news_linking !== null &&
+              !isEmpty(item.news_linking) &&
+              typeof item.news_linking === 'object' && (
+                <View style={styles.newsWrapper}>
+                  <Text style={styles.titleRelated}>
+                    {t('TIN TỨC LIÊN QUAN')}
+                  </Text>
+
+                  <FlatList
+                    data={item.news_linking}
+                    renderItem={this.renderListNews}
+                    keyExtractor={(i, index) => `news__${i.id}`}
+                    showsHorizontalScrollIndicator={false}
+                    horizontal
+                    style={{overflow: 'visible'}}
+                    contentContainerStyle={{
+                      paddingHorizontal: 2.5,
+                    }}
+                  />
+                </View>
+              )}
             <View style={styles.boxButtonActions}>
               <Button
                 onPress={this._goStores.bind(this, this.state.store_data)}
@@ -1158,21 +1192,6 @@ class Item extends Component {
                 title={t('goToStore')}
               />
             </View>
-            {item.news_linking !== null &&
-              !isEmpty(item.news_linking) &&
-              typeof item.news_linking === 'object' && (
-                <View style={styles.newsWrapper}>
-                  <ListHeader title={`${t('Tin tức liên quan')}`} />
-                  <FlatList
-                    data={item.news_linking}
-                    renderItem={this.renderListNews}
-                    keyExtractor={(i, index) => `news__${i.id}`}
-                    showsHorizontalScrollIndicator={false}
-                    style={{paddingHorizontal: 5}}
-                    horizontal
-                  />
-                </View>
-              )}
           </Animated.ScrollView>
 
           {this.renderCartFooter(item)}
@@ -1213,6 +1232,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
 
+  titleRelated: {
+    fontSize: 20,
+    color: '#2B2B2B',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+
   right_btn_box: {
     flexDirection: 'row',
   },
@@ -1232,7 +1258,6 @@ const styles = StyleSheet.create({
   item_heading_box: {
     width: '100%',
     marginVertical: 10,
-    paddingVertical: 24,
     backgroundColor: 'red',
     backgroundColor: '#fff',
   },
@@ -1314,7 +1339,6 @@ const styles = StyleSheet.create({
   },
 
   item_content_box: {
-    borderWidth: 1,
     borderColor: '#ddd',
     marginHorizontal: 10,
   },
@@ -1465,7 +1489,7 @@ const styles = StyleSheet.create({
     borderLeftColor: 'transparent',
   },
   productsLeftText: {
-    color: '#333',
+    color: '#9F9F9F',
     fontSize: 13,
     marginHorizontal: 8,
     elevation: 3,
@@ -1491,7 +1515,10 @@ const styles = StyleSheet.create({
     color: appConfig.colors.primary,
     ...(appConfig.device.isAndroid && {fontWeight: '700'}),
   },
-  newsWrapper: {paddingVertical: 15, backgroundColor: '#f5f5f5'},
+  newsWrapper: {
+    backgroundColor: '#f5f5f5',
+    paddingVertical: 10,
+  },
 });
 
 export default withTranslation(['product', 'cart', 'common', 'opRegister'])(

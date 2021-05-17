@@ -57,55 +57,74 @@ class ProductItem extends PureComponent {
   };
 
   render() {
+    const {containerStyle} = this.props;
     return (
-      <TouchableOpacity
-        onPress={this.handlePress}
-        activeOpacity={0.8}
-        style={[styles.wrapper, this.props.wrapperStyle]}>
-        <FastImage
-          source={{
-            uri: this.props.image,
-          }}
-          style={styles.image}
-          resizeMode="cover"
-        />
+      <View style={[styles.container, containerStyle]}>
+        <TouchableOpacity
+          onPress={this.handlePress}
+          activeOpacity={0.8}
+          style={[styles.wrapper, this.props.wrapperStyle]}>
+          <FastImage
+            source={{
+              uri: this.props.image,
+            }}
+            style={styles.image}
+            resizeMode="cover"
+          />
 
-        {this.props.discount_percent > 0 && (
-          <View style={styles.discountBadgeContainer}>
-            <Ribbon text={saleFormat(this.props.discount_percent)} />
-          </View>
-        )}
-        <View style={[styles.infoWrapper]}>
-          <Text style={styles.name} numberOfLines={2}>
-            {this.props.name}
-          </Text>
+          {this.props.discount_percent > 0 && (
+            <View style={styles.discountBadgeContainer}>
+              <Ribbon text={saleFormat(this.props.discount_percent)} />
+            </View>
+          )}
+          <View style={[styles.infoWrapper]}>
+            <Text style={styles.name} numberOfLines={2}>
+              {this.props.name}
+            </Text>
 
-          <View style={styles.priceWrapper}>
-            {this.props.discount_percent > 0 && (
-              <Text style={styles.discount}>
-                <Text style={{textDecorationLine: 'line-through'}}>
-                  {this.props.discount_view}
+            <View style={styles.priceWrapper}>
+              {this.props.discount_percent > 0 && (
+                <Text style={styles.discount}>
+                  <Text style={{textDecorationLine: 'line-through'}}>
+                    {this.props.discount_view}
+                  </Text>
+                  / {this.props.unit_name}
                 </Text>
-                / {this.props.unit_name}
-              </Text>
-            )}
-            <View style={[styles.priceBox]}>
-              <Text style={[styles.price]}>{this.props.price_view}</Text>
+              )}
+              <View style={[styles.priceBox]}>
+                <Text style={[styles.price]}>{this.props.price_view}</Text>
+              </View>
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </View>
     );
   }
 }
 
 let styles = StyleSheet.create({
+  container: {
+    margin: 5,
+  },
   wrapper: {
     width: appConfig.device.width / 2 - 40,
-    height: 'auto',
     flex: 1,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#333',
+        shadowOffset: {
+          width: 1,
+          height: 4,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+      },
+      android: {
+        elevation: 4,
+      },
+    }),
   },
   image: {
     width: '100%',
@@ -145,7 +164,7 @@ let styles = StyleSheet.create({
   },
   discountBadgeContainer: {
     top: 10,
-    left: -7,
+    left: -5,
     position: 'absolute',
     width: undefined,
     ...elevationShadowStyle(1),

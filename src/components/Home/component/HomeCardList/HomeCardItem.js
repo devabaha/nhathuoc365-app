@@ -40,12 +40,7 @@ class HomeCardItem extends Component {
         <TouchableOpacity
           disabled={this.state.loading}
           onPress={this.handlePress}
-          style={[
-            styles.containerBtn,
-            {
-              marginRight: props.last ? 16 : 0,
-            },
-          ]}>
+          style={[styles.containerBtn]}>
           <ImageBackground
             style={[styles.image, props.imageStyle]}
             source={{uri: props.imageUrl}}>
@@ -92,9 +87,7 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
       },
       android: {
-        elevation: 8,
-        borderWidth: Util.pixel,
-        borderColor: '#E1E1E1',
+        elevation: 4,
       },
     }),
   },
