@@ -283,12 +283,12 @@ class NotifyItem extends Component {
           />
         )}
 
-        {item_data != null && item_data.related && (
+        {/* {item_data != null && item_data.related && (
           <CartFooter
             prefix="item"
             confirmRemove={this._confirmRemoveCartItem.bind(this)}
           />
-        )}
+        )} */}
 
         <PopupConfirm
           ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}

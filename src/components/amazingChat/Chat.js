@@ -14,7 +14,6 @@ import EventTracker from '../../helper/EventTracker';
 const DELAY_GET_CONVERSATION = 2000;
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
-const UPLOAD_URL = APIHandler.url_user_upload_image();
 
 class Chat extends Component {
   static propTypes = {};
@@ -364,7 +363,7 @@ class Chat extends Component {
         // galleryVisible={appConfig.device.isIOS}
         galleryVisible={false}
         useModalGallery
-        uploadURL={UPLOAD_URL}
+        uploadURL={APIHandler.url_user_upload_image()}
         onSendImage={this.handleSendImage}
         onUploadedImage={response =>
           this._onSend({ image: response.data.name })

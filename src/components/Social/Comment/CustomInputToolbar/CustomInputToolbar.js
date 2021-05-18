@@ -151,6 +151,7 @@ class CustomInputToolbar extends Component {
     return (
       <Container row style={styles.previewImagesContainer}>
         {images.map((image, index) => {
+          const aspectRatio = (image.width || 1) / (image.height || 1);
           return (
             <Container row style={styles.previewImageContainer} key={index}>
               <Image
@@ -159,9 +160,9 @@ class CustomInputToolbar extends Component {
                   styles.previewImage,
                   {
                     flex: 1,
-                    aspectRatio: (image.width || 1) / (image.height || 1),
+                    aspectRatio,
                     maxHeight: PREVIEW_IMAGE_HEIGHT,
-                    maxWidth: PREVIEW_IMAGE_HEIGHT *(image.width || 1) / (image.height || 1),
+                    maxWidth: PREVIEW_IMAGE_HEIGHT * aspectRatio,
                   },
                 ]}
               />

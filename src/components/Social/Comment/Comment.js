@@ -39,7 +39,6 @@ moment.relativeTimeThreshold('w', 4);
 const MESSAGE_TYPE_TEXT = 'text';
 const MESSAGE_TYPE_IMAGE = 'image';
 const MESSAGE_TYPE_MIXED = 'mixed';
-const UPLOAD_URL = APIHandler.url_user_upload_image();
 
 const styles = StyleSheet.create({
   composerAction: {
@@ -116,6 +115,7 @@ class Comment extends Component {
   postCommentAPI = new APIRequest();
   likeRequest = new APIRequest();
   requests = [this.getCommentsAPI, this.postCommentAPI, this.likeRequest];
+  uploadURL = APIHandler.url_user_upload_image();
 
   handleKeyboardDidShow = () => {
     if (!this.state.isKeyboardShowing) {
@@ -718,7 +718,7 @@ class Comment extends Component {
         {...props}
         t={this.props.t}
         onLongPress={this.handleBubbleLongPress}
-        uploadURL={UPLOAD_URL}
+        uploadURL={this.uploadURL}
         pendingMessage={pendingMessage}
         isPending={!!pendingMessage}
         isError={isError}
@@ -865,7 +865,7 @@ class Comment extends Component {
           // galleryVisible={appConfig.device.isIOS}
           galleryVisible={false}
           useModalGallery
-          uploadURL={UPLOAD_URL}
+          uploadURL={this.uploadURL}
           onSendImage={this.handleSendImage}
           onUploadedImage={(response) => {
             this._onSend({image: response.data.name});
