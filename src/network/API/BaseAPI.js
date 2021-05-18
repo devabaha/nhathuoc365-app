@@ -19,7 +19,7 @@ export const DEV_SOCIAL_DOMAIN = 'https://social.tickid.top/';
 
 class BaseAPI {
   constructor(
-    apiDomain = SPRINT_DEV_API_DOMAIN,
+    apiDomain = DEV_API_DOMAIN,
     socialDomain = DEV_SOCIAL_DOMAIN,
     imageDomain = DEV_IMAGE_DOMAIN,
   ) {

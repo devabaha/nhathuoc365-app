@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
 import {
-    Text,
-    ScrollView,
-    StyleSheet,
-    View,
-    TouchableOpacity,
-  } from 'react-native';
-  import Button from 'react-native-button';
+  Text,
+  ScrollView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
+import Button from 'react-native-button';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {Table, TableWrapper, Row} from 'react-native-table-component';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,6 +22,7 @@ import Container from '../../components/Layout/Container';
 
 import appConfig from 'app-config';
 import NoResult from '../../components/NoResult';
+import {isEmpty} from 'lodash';
 
 const styles = StyleSheet.create({
   reload: {
@@ -115,6 +117,26 @@ const styles = StyleSheet.create({
   noResultContainer: {
     marginTop: '50%',
   },
+  itemsRose: {
+    flex: 1 / 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderColor: '#999',
+  },
+  heading: {
+    fontSize: 13,
+    textAlign: 'center',
+  },
+  valueText: {
+    fontSize: 16,
+    paddingVertical: 3,
+    fontWeight: 'bold',
+  },
+  divider: {
+    width: 20,
+    height: 100,
+    backgroundColor: 'red',
+  },
 });
 
 const CommissionIncomeStatement = (props) => {
@@ -128,6 +150,8 @@ const CommissionIncomeStatement = (props) => {
     'Hoa hồng',
     'Vị trí',
   ];
+
+  const tableRose = ['total_revenue', 'level', 'total_commission_month'];
   const baseUnit = 150;
   const widthArr = [baseUnit, baseUnit, baseUnit, baseUnit, baseUnit * 0.6];
 
@@ -138,6 +162,7 @@ const CommissionIncomeStatement = (props) => {
   const [selectedMonth, setSelectedMonth] = useState();
   const [months, setMonths] = useState([]);
   const [stats, setStats] = useState({});
+  const [monthBonus, setMonthBonus] = useState({});
   const [commissions, setCommissions] = useState([]);
 
   const hasCommissions = () => {
@@ -168,23 +193,23 @@ const CommissionIncomeStatement = (props) => {
     if (month) {
       data.month = month;
     }
-    console.log(data);
     getCommissionRequest.data = APIHandler.user_site_cart_commission(data);
     try {
       const responseData = await getCommissionRequest.promise();
+      console.log({hoahong: responseData});
       const data = responseData?.data;
       if (data) {
         setMonths(formatMonths(data.list_month || []));
         setStats(data.stats || {});
         setSelectedMonth(data.month || []);
+        setMonthBonus(data.month_bonus || {});
         setCommissions(formatCommission(data?.commissions || []));
       }
-      console.log(responseData);
     } catch (error) {
       console.log('%cget_commission', 'color:red', error);
       flashShowMessage({
         type: 'danger',
-        message: error.message || this.props.t('common:api.error.message'),
+        message: error.message || props.t('common:api.error.message'),
       });
     } finally {
       setLoading(false);
@@ -237,6 +262,17 @@ const CommissionIncomeStatement = (props) => {
     );
   };
 
+  const renderColumRose = ({item, index}) => {
+    return (
+      <View style={[styles.itemsRose, {borderRightWidth: index < 2 ? 1 : 0}]}>
+        <Text style={styles.heading}>
+          {index === 0 ? monthBonus['total_revenue_title'] : props.t(item)}
+        </Text>
+        <Text style={styles.valueText}>{monthBonus[item]}</Text>
+      </View>
+    );
+  };
+
   return (
     <ScreenWrapper>
       {isLoading && <Loading center />}
@@ -262,6 +298,17 @@ const CommissionIncomeStatement = (props) => {
           </Text>
         </Container>
       </Container>
+      {!isEmpty(monthBonus) && (
+        <View style={{paddingVertical: 10}}>
+          <FlatList
+            data={tableRose}
+            keyExtractor={(i) => i}
+            renderItem={renderColumRose}
+            numColumns={3}
+            scrollEnabled={false}
+          />
+        </View>
+      )}
 
       <ScrollView horizontal>
         <View>
@@ -304,6 +351,10 @@ const CommissionIncomeStatement = (props) => {
   );
 };
 
-export default withTranslation(['commissionIncomeStatement', 'common'])(
-  CommissionIncomeStatement,
-);
+export default withTranslation([
+  'commissionIncomeStatement',
+  'common',
+  'total_revenue',
+  'level',
+  'total_commission_month',
+])(CommissionIncomeStatement);
