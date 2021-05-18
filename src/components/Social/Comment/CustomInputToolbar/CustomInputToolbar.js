@@ -11,7 +11,6 @@ import {InputToolbar} from 'react-native-gifted-chat';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import Container from 'src/components/Layout/Container';
-import store from 'app-store';
 import appConfig from 'app-config';
 import {
   PREVIEW_IMAGES_BAR_HEIGHT,
@@ -83,6 +82,7 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
   },
   previewImageContainer: {
+    alignItems: 'flex-start',
     alignSelf: 'flex-start',
   },
   previewImage: {
@@ -158,16 +158,18 @@ class CustomInputToolbar extends Component {
                 style={[
                   styles.previewImage,
                   {
-                    height: PREVIEW_IMAGE_HEIGHT,
-                    width: PREVIEW_IMAGE_HEIGHT * (image.width / image.height),
+                    flex: 1,
+                    aspectRatio: (image.width || 1) / (image.height || 1),
+                    maxHeight: PREVIEW_IMAGE_HEIGHT,
+                    maxWidth: PREVIEW_IMAGE_HEIGHT *(image.width || 1) / (image.height || 1),
                   },
                 ]}
               />
-              <TouchableOpacity
+              <GestureTouchableOpacity
                 style={[styles.closeImageContainer]}
                 onPress={() => this.props.onCancelPreviewImage(image)}>
                 <AntDesignIcon name="close" style={styles.closeIcon} />
-              </TouchableOpacity>
+              </GestureTouchableOpacity>
             </Container>
           );
         })}
