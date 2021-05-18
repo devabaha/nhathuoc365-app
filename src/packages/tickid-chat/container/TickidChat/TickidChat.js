@@ -613,7 +613,7 @@ class TickidChat extends Component {
       state.text = '';
       state.editable = !!state.showToolBar;
     }
-    if (!!state.images?.length) {
+    if (!!state.selectedImages?.length) {
       state.selectedImages = [];
     }
 
