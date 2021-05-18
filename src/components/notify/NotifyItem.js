@@ -20,6 +20,8 @@ import EventTracker from '../../helper/EventTracker';
 import RightButtonNavBar from '../RightButtonNavBar';
 import { RIGHT_BUTTON_TYPE } from '../RightButtonNavBar/constants';
 import Container from '../Layout/Container';
+import ActionContainer from '../Social/ActionContainer';
+import { getSocialNewsLikeCount, getSocialNewsLikeFlag, getSocialNewsCommentsCount, handleSocialNewsActionBarPress } from 'src/helper/social';
 
 class NotifyItem extends Component {
   constructor(props) {
@@ -249,6 +251,14 @@ class NotifyItem extends Component {
             )}
         </ScrollView>
 
+        <ActionContainer
+          style={{backgroundColor: '#fff', ...elevationShadowStyle(5)}}
+          isLiked={getSocialNewsLikeFlag(item)}
+          likeCount={getSocialNewsLikeCount(item)}
+          commentsCount={getSocialNewsCommentsCount(item)}
+          onActionBarPress={(type) => handleSocialNewsActionBarPress(type, item)}
+        />
+        
         {item_data != null && item_data.related && (
           <CartFooter
             prefix="item"

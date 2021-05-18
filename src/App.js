@@ -773,7 +773,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={Notify}
+                      component={News}
                     />
                   </Stack>
 

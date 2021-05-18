@@ -7,6 +7,8 @@ import Container from 'src/components/Layout/Container';
 import Image from 'src/components/Image';
 import {getNewsFeedSize} from 'app-helper/imageSize';
 
+import appConfig from 'app-config';
+
 const styles = StyleSheet.create({
   container: {},
   block: {
@@ -47,14 +49,28 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#eee',
   },
+  category: {
+    color: appConfig.colors.primary,
+    fontWeight: '500',
+    marginBottom: 7,
+    letterSpacing: .3
+  },
   title: {
     color: '#333',
-    fontWeight: '500',
+    fontWeight: 'bold',
     fontSize: 16,
   },
 });
 
-const Post = ({title, thumbnailUrl, avatarUrl, userName, description, onPress}) => {
+const Post = ({
+  title,
+  category,
+  thumbnailUrl,
+  avatarUrl,
+  userName,
+  description,
+  onPress,
+}) => {
   return (
     <TouchableWithoutFeedback onPress={onPress}>
       <Container centerVertical={false} style={styles.container}>
@@ -79,6 +95,7 @@ const Post = ({title, thumbnailUrl, avatarUrl, userName, description, onPress}) 
             style={styles.thumbnailContainer}
           />
           <View style={styles.titleContainer}>
+            {!!category && <Text style={styles.category}>{category}</Text>}
             <Text style={styles.title}>{title}</Text>
           </View>
         </Container>

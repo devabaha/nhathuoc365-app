@@ -11,10 +11,11 @@ const ActionContainer = ({
   isLiked,
   likeCount,
   commentsCount,
+  style,
   onActionBarPress = () => {},
 }) => {
   return (
-    <Container centerVertical={false} paddingHorizontal={10}>
+    <Container style={style} centerVertical={false} paddingHorizontal={12}>
       <ActionInfo
         isLiked={isLiked}
         totalReaction={likeCount}

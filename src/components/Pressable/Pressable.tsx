@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {
   StyleSheet,
   Pressable as RNPressable,
@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   animatedWrapper: {
-    flex: 1,
   },
   container: {
     padding: 15,

@@ -7,7 +7,7 @@ import Reaction from './Reaction';
 
 const styles = StyleSheet.create({
   container: {
-    // height: 30
+    // height: 100
   },
 });
 

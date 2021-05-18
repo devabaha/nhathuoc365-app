@@ -29,6 +29,10 @@ const Reaction = ({
   const animatedJumpReaction = useValue(0);
 
   useEffect(() => {
+    setLiked(isLikedProp ? 1 : 0);
+  }, [isLikedProp]);
+
+  useEffect(() => {
     animatedJumpReaction.setValue(0);
     if (isLiked) {
       timing(animatedJumpReaction, {

@@ -591,6 +591,18 @@ class Store {
     this.socialNews[id] = {...temp, ...data};
   }
 
+  @action getSocialNewsLikeFlag(feeds) {
+    let likeFlag = this.socialNews[feeds.id]?.like_flag;
+    likeFlag === undefined && (likeFlag = feeds.like_flag);
+    return likeFlag;
+  };
+  
+  @action getSocialNewsLikeCount(feeds) {
+    let likeCount = this.socialNews[feeds.id]?.like_count_friendly;
+    likeCount === undefined && (likeCount = feeds.like_count);
+    return likeCount;
+  };
+
   @action resetSocialNews() {
     this.socialNews = {};
   }

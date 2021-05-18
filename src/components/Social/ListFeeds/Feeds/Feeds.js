@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
 });
 
 const Feeds = ({
+  category,
   commentsCount,
   likeCount,
   isLiked,
@@ -31,6 +32,7 @@ const Feeds = ({
       centerVertical={false}
       style={[styles.container, containerStyle]}>
       <Post
+        category={category}
         avatarUrl={avatarUrl}
         userName={userName}
         description={description}
