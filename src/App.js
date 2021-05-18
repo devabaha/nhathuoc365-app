@@ -162,6 +162,9 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
+import ModalFilter from './components/stores/ModalFilter';
+import {News} from './containers/Social';
+import {ModalComment} from './components/Social';
 
 /**
  * Not allow font scaling
@@ -777,7 +780,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={Notify}
+                      component={News}
                     />
                   </Stack>
 
@@ -831,6 +834,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ MODAL COMMENT ================ */}
+                <Stack key={appConfig.routes.modalComment}>
+                  <Scene
+                    key={`${appConfig.routes.modalComment}_1`}
+                    component={ModalComment}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ PRODUCT STAMPS ================ */}
                 <Stack key={appConfig.routes.productStamps}>
@@ -926,7 +939,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.newsTab}_1`}
                     {...navBarConfig}
-                    component={Notify}
+                    component={News}
                     {...navBarConfig}
                     back
                   />
@@ -1230,8 +1243,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    title={t('screen.news.mainTitle')}
-                    component={Notify}
+                    component={News}
                     {...navBarConfig}
                     back
                   />
@@ -1745,6 +1757,11 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
               />
+              {/* ================ MODAL FILTER PRODUCT================ */}
+              <Stack
+                key={appConfig.routes.filterProduct}
+                component={ModalFilter}
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -1756,7 +1773,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -1766,7 +1782,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -1777,7 +1792,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -1789,7 +1803,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene

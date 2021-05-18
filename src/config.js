@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.5.5';
+    return 'r11.6.1';
   }
 
   get appName() {
@@ -234,6 +234,7 @@ class Config {
       modalConfirm: 'modalConfirm',
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
+      modalComment: 'modalComment',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -274,6 +275,7 @@ class Config {
 
       // Gamification
       lotteryGame: 'lotteryGame',
+      filterProduct: 'filterProduct',
     };
   }
 }

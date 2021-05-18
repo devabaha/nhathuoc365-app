@@ -223,11 +223,12 @@ class Home extends Component {
     });
   };
 
-  handleShowAllNews = (title, id) => {
-    Actions.push(appConfig.routes.newsTab, {
-      title,
-      id,
-    });
+  handleShowAllNews = (title, categoryId) => {
+    servicesHandler({type: SERVICES_TYPE.NEWS_CATEGORY, title, categoryId});
+    // Actions.push(appConfig.routes.newsTab, {
+    //   title,
+    //   id,
+    // });
   };
 
   handlePressSiteItem = (store, callBack) => {
