@@ -1416,7 +1416,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
-    paddingBottom: '25%',
+    paddingBottom: '50%',
     height: WINDOW_HEIGHT,
     position: 'absolute',
     zIndex: 0,
@@ -1466,9 +1466,9 @@ const styles = StyleSheet.create({
 
 export default TickidChat;
 
-export const EmptyChat = ({onPress, message, icon, iconName = 'comments'}) => (
+export const EmptyChat = ({onPress, style, message, icon, iconName = 'comments'}) => (
   <TouchableWithoutFeedback onPress={onPress}>
-    <View style={[styles.emptyChatContainer]}>
+    <View style={[styles.emptyChatContainer, style]}>
       {icon || <IconFontisto name={iconName} color={'#909090'} size={60} />}
       <Text style={styles.emptyChatText}>{message}</Text>
     </View>

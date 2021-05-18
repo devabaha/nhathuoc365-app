@@ -46,6 +46,9 @@ class BaseAPI {
     this.updateImageDomain(
       apiDomain === LIVE_API_DOMAIN ? LIVE_IMAGE_DOMAIN : DEV_IMAGE_DOMAIN,
     );
+    this.updateSocialDomain(
+      apiDomain === LIVE_API_DOMAIN ? LIVE_SOCIAL_DOMAIN : DEV_SOCIAL_DOMAIN,
+    );
     store.setBaseAPIDomain(apiDomain);
   }
 
