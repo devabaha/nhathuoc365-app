@@ -1,29 +1,45 @@
-import { useState } from "react";
+import { PermissionsAndroid } from "react-native";
 import RNFetchBlob from 'rn-fetch-blob';
 import appConfig from 'app-config';
 import CameraRoll from '@react-native-community/cameraroll';
-import handleDownloadImage from "./handleDownloadImage";
+import {handleDownloadImage} from "./handleDownloadImage";
 
-const handleSavePhoto = async (dataURL) => {
-    
-    const imageName = new Date().getTime() + '.png';
+async function hasAndroidPermission() {
+  const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+
+  const hasPermission = await PermissionsAndroid.check(permission);
+  if (hasPermission) {
+    return true;
+  }
+
+  const status = await PermissionsAndroid.request(permission);
+  return status === 'granted';
+}
+
+ const handleSaveImage = async (dataURL) => {
     var base64;
+    var imageType;
     try { 
     const res = await handleDownloadImage(dataURL);
-    base64 = res;
-    console.log(base64);
+    base64 = res.base64Str;
+    imageType = res.imageType;
+    
     } catch ( err){
         console.log(err);
     }
+    const imageName = new Date().getTime() + '.' + imageType;
     const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
-    const iOSPath = 'data:image/png;base64,' + base64;
+    console.log(androidPath)
+    const iOSPath = 'data:image/' + imageType + ';base64,' + base64;
     try {
       const data = await (appConfig.device.isIOS
         ? CameraRoll.save(iOSPath, {type: 'photo'})
-        : RNFetchBlob.fs.writeFile(androidPath, base64, 'base64'));
-       
-      if (data) {
+        : hasAndroidPermission() 
+        ? RNFetchBlob.fs.writeFile(androidPath, base64, 'base64')
+          .catch(err => console.log(err))
+        : null)
         
+      if (data) {
         flashShowMessage({
           type: 'success',
           message: 'Lưu ảnh thành công',
@@ -36,7 +52,6 @@ const handleSavePhoto = async (dataURL) => {
       });
       console.log('err_save_qr_code', error);
   };
-  
-
 }
-  export default handleSavePhoto
+
+export default handleSaveImage;

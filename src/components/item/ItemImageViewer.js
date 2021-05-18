@@ -8,11 +8,19 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
+import { handleSaveImage } from "../../helper/image";
+
 
 export default class ItemImageViewer extends Component {
   static defaultProps = {
     index: 0,
   };
+  constructor(props){
+    super(props)
+    this.state = {
+      index: 0,
+    };
+  }
   eventTracker = new EventTracker();
 
   componentDidMount() {
@@ -28,7 +36,17 @@ export default class ItemImageViewer extends Component {
 
     return (
       <View style={styles.container}>
-        <ImageViewer imageUrls={images} index={this.props.index} />
+        <ImageViewer 
+        enableSwipeDown= {true}
+        swipeDownThreshold={100}
+        onSwipeDown={() => Actions.pop() }
+        onSave={() => images.map((item) => {
+          handleSaveImage(item.url);
+        })}
+        imageUrls={images}
+        index={this.state.index}
+        longPressTime={2}
+        />
 
         <TouchableHighlight
           onPress={() => {

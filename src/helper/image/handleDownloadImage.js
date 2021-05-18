@@ -1,14 +1,17 @@
 import RNFetchBlob from 'rn-fetch-blob';
-const handleDownloadImage = (url) => {
+import appConfig from 'app-config';
+
+export const handleDownloadImage = (url) => {
      return RNFetchBlob.fetch('GET', url)
         .then((res) => {
           let status = res.info().status;
+          let contentType = appConfig.device.isIOS ? 'Content-Type' : 'content-type';
           console.log(res);
-        
-          if (status === 200) {
+          // console.log(res.respInfo.headers[0])
+          if (status === STATUS_SUCCESS) {
             // the conversion is done in native code
-            let base64Str = res.base64();
-            let imageType = res.info().headers['Content-Type'].slice(6);
+            let base64Str = res.data;
+            let imageType = res.respInfo.headers['Content-Type'].slice(6);
             // the following conversions are done in js, it's SYNC
             return {base64Str: base64Str , imageType: imageType}
           } else {
@@ -23,4 +26,4 @@ const handleDownloadImage = (url) => {
         });
     };
 
-    export default handleDownloadImage;
+    
