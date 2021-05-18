@@ -52,6 +52,9 @@ const styles = StyleSheet.create({
   sendContainer: {
     marginRight: 10,
   },
+  emptyChatContainer: {
+    paddingBottom: '100%',
+  },
   emptyIcon: {
     fontSize: 80,
     color: '#909090',
@@ -819,6 +822,7 @@ class Comment extends Component {
           renderEmpty={
             !this.state.loading ? (
               <EmptyChat
+                style={styles.emptyChatContainer}
                 icon={
                   <FoundationIcon name="comments" style={styles.emptyIcon} />
                 }

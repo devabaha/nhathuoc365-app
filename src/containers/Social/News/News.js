@@ -17,6 +17,7 @@ import appConfig from 'app-config';
 import NewsScene from './NewsScene';
 import {APIRequest} from 'src/network/Entity';
 import CategoriesSkeleton from 'src/components/stores/CategoriesSkeleton';
+import NoResult from 'src/components/NoResult';
 
 const MAX_TAB_ITEMS_PER_ROW = 3.5;
 
@@ -247,7 +248,7 @@ class News extends Component {
     return (
       <View style={styles.container}>
         {this.state.loading && <CategoriesSkeleton />}
-        {!!this.state.routes.length && (
+        {!!this.state.routes.length ? (
           <TabView
             navigationState={{
               routes: this.state.routes,
@@ -258,7 +259,10 @@ class News extends Component {
             onIndexChange={(index) => this.handleIndexChange(index)}
             initialLayout={{width: appConfig.device.width}}
           />
-        )}
+        ) : !this.state.loading && <NoResult 
+            iconName="bell-off"
+            message="Chưa có tin tức"
+        />}
       </View>
     );
   }
