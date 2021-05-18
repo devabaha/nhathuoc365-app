@@ -18,17 +18,14 @@ function ListPrice({title, onChangeValue, defaultValue = {}}) {
   }, [selectedPrice]);
 
   useEffect(() => {
-    console.log('mounted price');
-    return () => {
-      console.log('unmounted price');
-    };
-  }, []);
-
-  useEffect(() => {
     if (!!defaultValue.price) {
       setSelectedPrice({price: defaultValue['price']});
       setMinPrice(vndCurrencyFormat(defaultValue['price']?.min_price));
       setMaxPrice(vndCurrencyFormat(defaultValue['price']?.max_price));
+    } else {
+      setSelectedPrice({});
+      setMinPrice('');
+      setMaxPrice('');
     }
   }, [defaultValue]);
 
@@ -61,7 +58,6 @@ function ListPrice({title, onChangeValue, defaultValue = {}}) {
 
   const handleItem = (key, value) => () => {
     setSelectedPrice((prev) => {
-      console.log({prev, value});
       if (isEqual(prev['price'], {...value, text: key})) {
         return {};
       }

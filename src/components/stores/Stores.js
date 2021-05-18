@@ -24,8 +24,31 @@ import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
 import APIHandler from 'src/network/APIHandler';
 import {APIRequest} from 'src/network/Entity';
+import {reaction} from 'mobx';
+import FilterProduct from './FilterProduct';
+import {isEmpty} from 'lodash';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
+
+const dataSort = [
+  {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false, order: 'asc'},
+  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'asc'},
+  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'asc'},
+  {
+    id: 4,
+    name: 'Giá từ thấp đến cao',
+    value: 'price',
+    isSelected: false,
+    order: 'asc',
+  },
+  {
+    id: 5,
+    name: 'Giá từ cao đến thấp',
+    value: 'price',
+    isSelected: false,
+    order: 'desc',
+  },
+];
 
 class Stores extends Component {
   static propTypes = {
@@ -45,6 +68,8 @@ class Stores extends Component {
       categories_data: null,
       selected_category: {id: 0, name: ''},
       categoriesPosition: [],
+      filterParams: {},
+      valueSort: {},
     };
     this.unmounted = false;
     this.refCates = [];
@@ -62,6 +87,36 @@ class Stores extends Component {
     return this.props.categoryId === 0;
   }
 
+  handleEffect = async (value) => {
+    if (isEmpty(value)) {
+      await this.setState({
+        filterParams: {
+          order: this.state.valueSort?.order ?? '',
+          sort_by: this.state.valueSort?.value ?? '',
+        },
+      });
+      return;
+    }
+    let min_price = '';
+    let max_price = '';
+    if (!!value['price']) {
+      min_price = value['price'].min_price;
+      max_price = value['price'].max_price;
+    }
+    const tag_id = Object.values(value)
+      .map((i) => i?.id)
+      .filter(Boolean)
+      .join(',');
+    const params = {
+      min_price,
+      max_price,
+      tag: tag_id,
+      order: !!this.state.valueSort.order ? this.state.valueSort.order : 'asc',
+      sort_by: !isEmpty(this.state.valueSort) ? this.state.valueSort.value : '',
+    };
+    await this.setState({filterParams: params});
+  };
+
   componentDidMount() {
     this._initial(this.props);
     // pass add store tutorial
@@ -78,6 +133,10 @@ class Stores extends Component {
       });
     });
     this.eventTracker.logCurrentView();
+    reaction(
+      () => store.selectedFilter,
+      (data) => this.handleEffect(data),
+    );
   }
 
   componentWillUnmount() {
@@ -216,11 +275,10 @@ class Stores extends Component {
     );
   }
 
-  _changeCategory(item, index, nav_only) {
+  async _changeCategory(item, index, nav_only) {
     if (this.refs_category_nav) {
       const categories_count = this.state.categories_data.length;
       const end_of_list = categories_count - index - 1 >= 1;
-
       setTimeout(() =>
         willUpdateState(this.unmounted, () => {
           // nav
@@ -347,6 +405,23 @@ class Stores extends Component {
     }
   };
 
+  handleValue = async (value) => {
+    this.setState(
+      (prev) => {
+        console.log('prev state', prev.filterParams, value);
+        return {
+          filterParams: {
+            ...prev.filterParams,
+            sort_by: value.value,
+            order: value.order,
+          },
+          valueSort: value,
+        };
+      },
+      () => console.log('new state', this.state.filterParams),
+    );
+  };
+
   render() {
     const {t} = this.props;
     return (
@@ -398,6 +473,12 @@ class Stores extends Component {
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
 
+        <FilterProduct
+          selectedFilter={store.selectedFilter}
+          dataSort={dataSort}
+          onValueSort={this.handleValue}
+        />
+
         {this.state.categories_data != null && (
           <FlatList
             scrollEnabled={this.state.categories_data.length > 1}
@@ -438,6 +519,7 @@ class Stores extends Component {
                   promotions={this.state.promotions}
                   animatedScrollY={this.animatedScrollY}
                   animatedContentOffsetY={this.animatedContentOffsetY}
+                  paramsFilter={this.state.filterParams}
                 />
               );
             }}

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
@@ -20,6 +20,7 @@ function FilterComponent(props) {
   const [selectedTag, setSelectedTag] = useState({});
   const [selectedPrice, setSelectedPrice] = useState({});
   const priceValueString = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
+  const disposer = useRef(null);
 
   const getListFilterTag = async () => {
     try {
@@ -35,12 +36,19 @@ function FilterComponent(props) {
     }
   };
   useEffect(() => {
+    // autorun(() => {
+    //   () => console.log(mobx.toJS(Store.selectedFilter));
+    // });
     reaction(
       () => Store.selectedFilter,
       (data) => {
+        console.log({aa: mobx.toJS(data)});
         setDefaultSelected(data);
       },
     );
+    return () => {
+      console.log('da unmount chua');
+    };
   }, []);
 
   useEffect(() => {
@@ -48,12 +56,13 @@ function FilterComponent(props) {
   }, []);
 
   const handleCloseFilter = () => {
-    Actions.drawerClose();
     Store.setSelectedFilter({...selectedPrice, ...selectedTag});
+    Actions.drawerClose();
+    // disposer.current();
   };
 
   const handleSelected = (value) => {
-    setSelectedTag((prev) => ({...prev, ...value}));
+    setSelectedTag(value);
     // Store.setSelectedFilter(value);
   };
 

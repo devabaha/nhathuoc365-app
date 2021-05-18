@@ -40,8 +40,6 @@ function FilterProduct({
       };
     }, {});
     store.setSelectedFilter(newFilterSelected);
-    // setSelectedFiler(newFilterSelected);
-    // onValueTag?.(newFilterSelected);
   };
 
   const handleOpenModal = () => {
