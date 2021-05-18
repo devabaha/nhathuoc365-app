@@ -191,7 +191,7 @@ class ImageMessageChat extends Component {
             source={{
               uri: this.state.isOpenLightBox ? highQualityUri : lowQualityUri
             }}
-            style={{ width: '100%', height: '100%' }}
+            style={[{ width: '100%', height: '100%' }, this.props.imageStyle]}
           />
         </Lightbox>
 

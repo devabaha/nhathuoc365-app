@@ -464,6 +464,10 @@ class Comment extends Component {
   };
 
   _onSend = async (message) => {
+    if (!!message.image_info && !message.image) {
+      this.updateCommentData(message.id, message, true);
+      return;
+    }
     let {site_id, object_id, object} = this.props;
 
     const data = {
@@ -712,6 +716,7 @@ class Comment extends Component {
     return (
       <CustomMessage
         {...props}
+        t={this.props.t}
         onLongPress={this.handleBubbleLongPress}
         uploadURL={UPLOAD_URL}
         pendingMessage={pendingMessage}
@@ -862,9 +867,9 @@ class Comment extends Component {
           useModalGallery
           uploadURL={UPLOAD_URL}
           onSendImage={this.handleSendImage}
-          onUploadedImage={(response) =>
-            this._onSend({image: response.data.name})
-          }
+          onUploadedImage={(response) => {
+            this._onSend({image: response.data.name});
+          }}
           renderMessage={this.renderMessage}
           renderAvatar={this.renderAvatar}
           renderMessageImage={this.renderMessageImage}
