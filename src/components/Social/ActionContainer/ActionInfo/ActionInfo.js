@@ -1,6 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text} from 'react-native';
 import Container from 'src/components/Layout/Container';
+import Pressable from 'src/components/Pressable';
 import FloatingIcons from 'src/components/Social/FloatingIcons ';
 
 const styles = StyleSheet.create({
@@ -12,6 +13,10 @@ const styles = StyleSheet.create({
   },
   block: {
     paddingVertical: 5,
+    height: 30,
+  },
+  end: {
+    // marginLeft: 'auto'
   },
   floatingIcons: {
     marginRight: 5,
@@ -29,12 +34,18 @@ const FLOATING_ICONS = [
   },
 ];
 
-const ActionInfo = ({totalReaction, totalComments, isLiked}) => {
+const ActionInfo = ({
+  totalReaction,
+  totalComments,
+  isLiked,
+  disableComment,
+  onPressTotalComments = () => {},
+}) => {
   const {t} = useTranslation('social');
 
   return (
     <Container row style={styles.container}>
-      {(!!isLiked || !!totalReaction) && (
+      {(!!isLiked || !!totalReaction) ? (
         <Container row style={styles.block}>
           <FloatingIcons
             icons={FLOATING_ICONS}
@@ -44,17 +55,19 @@ const ActionInfo = ({totalReaction, totalComments, isLiked}) => {
             {!!isLiked && t('self')}
             {!!totalReaction && !!isLiked && ' ' + t('and') + ' '}
             {!!totalReaction &&
-              (totalReaction + (!!isLiked ? ' ' + t('others') : ''))}
+              totalReaction + (!!isLiked ? ' ' + t('others') : '')}
           </Text>
         </Container>
-      )}
+      ) : <Container/>}
 
-      {!!totalComments && (
-        <Container row style={styles.block}>
-          <Text style={styles.text}>
-            {totalComments} {t('comment')}
-          </Text>
-        </Container>
+      {!disableComment && !!totalComments && (
+        <Pressable style={styles.end} onPress={onPressTotalComments}>
+          <Container row style={styles.block}>
+            <Text style={styles.text}>
+              {totalComments} {t('comment')}
+            </Text>
+          </Container>
+        </Pressable>
       )}
     </Container>
   );

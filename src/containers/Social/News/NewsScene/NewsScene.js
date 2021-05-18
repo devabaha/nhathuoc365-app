@@ -20,7 +20,14 @@ import NewsSceneSkeleton from './NewsSceneSkeleton';
 import NoResult from 'src/components/NoResult';
 
 import {APIRequest} from 'src/network/Entity';
-import {handleSocialNewsActionBarPress} from 'src/helper/social';
+import {
+  calculateLikeCountFriendly,
+  getSocialNewsLikeCount,
+  getSocialNewsLikeFlag,
+  handleSocialNewsActionBarPress,
+} from 'src/helper/social';
+import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 
 const styles = StyleSheet.create({
   feedsContainer: {
@@ -30,18 +37,6 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
 });
-
-const getSocialNewsLikeFlag = (feeds) => {
-  let likeFlag = store.socialNews[feeds.id]?.like_flag;
-  likeFlag === undefined && (likeFlag = feeds.like_flag);
-  return likeFlag;
-};
-
-const getSocialNewsLikeCount = (feeds) => {
-  let likeCount = store.socialNews[feeds.id]?.like_count_friendly;
-  likeCount === undefined && (likeCount = feeds.like_count);
-  return likeCount;
-};
 
 const NewsScene = ({id, isFetching = false}) => {
   const {t} = useTranslation(['news', 'common']);
@@ -102,11 +97,7 @@ const NewsScene = ({id, isFetching = false}) => {
       (n) =>
         (storeNews[n.id] = {
           like_count: n.like_count,
-          like_count_friendly: n.like_flag
-            ? n.like_count - 1 >= 0
-              ? n.like_count - 1
-              : 0
-            : n.like_count,
+          like_count_friendly: calculateLikeCountFriendly(n),
           share_count: n.share_count,
           like_flag: n.like_flag,
           comment_count: n.comment_count,
@@ -120,7 +111,6 @@ const NewsScene = ({id, isFetching = false}) => {
       const response = await APIHandler.user_news_list('', id);
       console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
-        response.data = [response.data[0]];
         setStoreSocialNews(response.data);
         // direction to news_detail if detecting deep link data.
         if (store.deep_link_data) {
@@ -172,8 +162,6 @@ const NewsScene = ({id, isFetching = false}) => {
   }, []);
 
   const renderFeeds = ({item: feeds, index}) => {
-    console.log(feeds);
-
     return (
       <Observer>
         {() => {
@@ -189,8 +177,16 @@ const NewsScene = ({id, isFetching = false}) => {
               thumbnailUrl={feeds.image_url}
               avatarUrl={feeds.shop_logo_url}
               containerStyle={styles.feedsContainer}
+              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
               onPostPress={() => handlePostPress(feeds)}
               onActionBarPress={(type) => handleActionBarPress(type, feeds)}
+              onPressTotalComments={() =>
+                handleSocialNewsActionBarPress(
+                  SOCIAL_BUTTON_TYPES.COMMENT,
+                  feeds,
+                  false,
+                )
+              }
             />
           );
         }}

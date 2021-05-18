@@ -556,82 +556,18 @@ class Store {
     }
   }
 
-  @observable replyingMention = {};
-  @action setReplyingMention(replyingMention = {}) {
-    this.replyingMention = replyingMention;
-  }
-
-  @observable replyingComment = {};
-  @action setReplyingComment(replyingComment = {}) {
-    this.replyingComment = replyingComment;
-    this.setReplyingMention(replyingComment.user);
-  }
-
-  @observable replyingUser = {};
-  @action setReplyingUser(replyingUser = {}) {
-    this.replyingUser = replyingUser;
-  }
-
-  @observable previewImages = [];
-  @action setPreviewImages(previewImages = []) {
-    this.previewImages = previewImages;
-  }
-
-  @computed get isReplyingYourSelf() {
-    return this.replyingUser?.id == this.replyingMention?.user_id;
-  }
-
-  @observable socialNews = {};
+  @observable socialNews = observable.map(new Map());
   @action setSocialNews(socialNews = {}) {
-    this.socialNews = {...this.socialNews, ...socialNews};
+    this.socialNews.merge(socialNews);
   }
 
   @action updateSocialNews(id, data = {}) {
-    let temp = this.socialNews[id] || {};
-    this.socialNews[id] = {...temp, ...data};
+    let temp = this.socialNews.get(id) || {};
+    this.socialNews.set(id, {...temp, ...data});
   }
-
-  @action getSocialNewsLikeFlag(feeds) {
-    let likeFlag = this.socialNews[feeds.id]?.like_flag;
-    likeFlag === undefined && (likeFlag = feeds.like_flag);
-    return likeFlag;
-  };
-  
-  @action getSocialNewsLikeCount(feeds) {
-    let likeCount = this.socialNews[feeds.id]?.like_count_friendly;
-    likeCount === undefined && (likeCount = feeds.like_count);
-    return likeCount;
-  };
 
   @action resetSocialNews() {
-    this.socialNews = {};
-  }
-
-  socialComments = observable.map(new Map());
-  @action setSocialComments(socialComments = {}) {
-    const storeComments = {...this.socialComments, ...socialComments};
-    this.socialComments.replace(storeComments);
-  }
-
-  @observable socialCommentFireChanged = {};
-  @action setSocialCommentFireChanged(socialCommentFireChanged = {}) {
-    this.socialCommentFireChanged = socialCommentFireChanged;
-  }
-
-  @action updateSocialComment(id, data = {}) {
-    let temp = this.socialComments.get(id);
-    const storeComment = {...(temp || {}), ...data};
-
-    // if (!temp) {
-    // this.socialComments.merge({[id]: storeComment});
-    // } else {
-    this.socialComments.set(id, storeComment);
-    // this.socialComments[id] = storeComment;
-    // }
-  }
-
-  @action resetSocialComments() {
-    this.socialComments.clear();
+    this.socialNews.replace(new Map());
   }
 }
 

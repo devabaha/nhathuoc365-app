@@ -1,27 +1,35 @@
 import store from 'app-store';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
-import { share } from '../share';
+import {share} from '../share';
 
 import appConfig from 'app-config';
 
+export const calculateLikeCountFriendly = (feeds) => {
+  return feeds.like_flag
+    ? feeds.like_count - 1 >= 0
+      ? feeds.like_count - 1
+      : 0
+    : feeds.like_count;
+};
+
 export const getSocialNewsLikeFlag = (feeds) => {
-  let likeFlag = store.socialNews[feeds.id]?.like_flag;
+  let likeFlag = store.socialNews.get(feeds.id)?.like_flag;
   likeFlag === undefined && (likeFlag = feeds.like_flag);
   return likeFlag;
 };
 
 export const getSocialNewsLikeCount = (feeds) => {
-  let likeCount = store.socialNews[feeds.id]?.like_count_friendly;
+  let likeCount = store.socialNews.get(feeds.id)?.like_count_friendly;
   likeCount === undefined && (likeCount = feeds.like_count);
   return likeCount;
 };
 
 export const getSocialNewsCommentsCount = (feeds) => {
-    let commentsCount = store.socialNews[feeds.id]?.comment_count;
-    commentsCount === undefined && (commentsCount = feeds.comment_count);
-    return commentsCount;
-  };
+  let commentsCount = store.socialNews.get(feeds.id)?.comment_count;
+  commentsCount === undefined && (commentsCount = feeds.comment_count);
+  return commentsCount;
+};
 
 export const likeNews = (feeds) => {
   const oldLikeFlag = getSocialNewsLikeFlag(feeds);
@@ -55,7 +63,11 @@ export const likeNews = (feeds) => {
     });
 };
 
-export const handleSocialNewsActionBarPress = (type, feeds) => {
+export const handleSocialNewsActionBarPress = (
+  type,
+  feeds,
+  isCommentInputAutoFocus = true,
+) => {
   switch (type) {
     case SOCIAL_BUTTON_TYPES.LIKE:
       likeNews(feeds);
@@ -67,6 +79,7 @@ export const handleSocialNewsActionBarPress = (type, feeds) => {
         object: feeds?.object || 'news',
         object_id: feeds?.object_id || feeds?.id,
         site_id: feeds.site_id,
+        autoFocus: isCommentInputAutoFocus,
       });
       break;
     case SOCIAL_BUTTON_TYPES.SHARE:

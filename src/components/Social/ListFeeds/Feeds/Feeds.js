@@ -22,8 +22,10 @@ const Feeds = ({
   userName,
   description,
   containerStyle,
+  disableComment,
   onPostPress,
   onActionBarPress,
+  onPressTotalComments
 }) => {
   // console.log('render feeds');
 
@@ -45,7 +47,9 @@ const Feeds = ({
         isLiked={isLiked}
         likeCount={likeCount}
         commentsCount={commentsCount}
+        disableComment={disableComment}
         onActionBarPress={onActionBarPress}
+        onPressTotalComments={onPressTotalComments}
       />
     </Container>
   );

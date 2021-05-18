@@ -1,4 +1,4 @@
-import React, {useCallback, useState, useEffect} from 'react';
+import React, {useCallback, useState, useEffect, useRef} from 'react';
 import {StyleSheet} from 'react-native';
 import Animated, {Easing, useValue, timing} from 'react-native-reanimated';
 
@@ -22,6 +22,7 @@ const Reaction = ({
   isLiked: isLikedProp,
 }) => {
   //   console.log('render reaction');
+  const isDidMount = useRef(false);
 
   const [isLiked, setLiked] = useState(isLikedProp ? 1 : 0);
 
@@ -29,19 +30,30 @@ const Reaction = ({
   const animatedJumpReaction = useValue(0);
 
   useEffect(() => {
-    setLiked(isLikedProp ? 1 : 0);
+    if (isDidMount.current) {
+      setLiked(isLikedProp ? 1 : 0);
+    }
   }, [isLikedProp]);
 
   useEffect(() => {
-    animatedJumpReaction.setValue(0);
-    if (isLiked) {
-      timing(animatedJumpReaction, {
-        toValue: 1,
-        duration: 200,
-        easing: Easing.bezier(0.46, 0.81, 0.82, 0.28),
-      }).start(() => {});
+    if (isDidMount.current) {
+      animatedJumpReaction.setValue(0);
+      if (isLiked) {
+        timing(animatedJumpReaction, {
+          toValue: 1,
+          duration: 200,
+          easing: Easing.bezier(0.46, 0.81, 0.82, 0.28),
+        }).start(() => {});
+      }
     }
   }, [isLiked]);
+
+  useEffect(() => {
+    isDidMount.current = true;
+    return () => {
+      isDidMount.current = false;
+    };
+  }, []);
 
   const handlePress = useCallback(() => {
     setLiked(!isLiked);

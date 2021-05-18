@@ -255,7 +255,12 @@ class Comment extends Component {
       console.log('get_comments', e);
     } finally {
       this.isLoadFirstTime = false;
-      !this.unmounted && this.setStater({loading: false});
+      if (!this.unmounted) {
+        this.setStater({loading: false});
+        if (this.props.autoFocus && this.refTickidChat) {
+          this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
+        }
+      }
     }
   };
 
@@ -547,7 +552,7 @@ class Comment extends Component {
             (!!this.state.replyingComment.id ? REPLYING_BAR_HEIGHT : 0) +
             (!!this.state.previewImages.length ? PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
-            if (offsetY <= extraOffset && this.currentScrollPositionY === 0) {
+          if (offsetY <= extraOffset && this.currentScrollPositionY === 0) {
             setTimeout(() => this.handleMomentumScrollEnd(), 200);
           } else {
             this.refListMessages.scrollToOffset({
@@ -801,7 +806,7 @@ class Comment extends Component {
       (this.state.replyingComment.id ? REPLYING_BAR_HEIGHT : 0) +
       (this.state.previewImages.length ? PREVIEW_IMAGES_BAR_HEIGHT : 0);
 
-      return (
+    return (
       <>
         {this.state.loading && <Loading center />}
         <TickidChat
