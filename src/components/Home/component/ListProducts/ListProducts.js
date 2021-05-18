@@ -31,13 +31,26 @@ class ListProducts extends Component {
     const extraProps = {
       wrapperStyle: styles.itemVerticalContainer,
       imageStyle: styles.itemVerticalImage,
+      containerStyle: {flex: 1},
     };
     return (
       <View style={styles.listVertical}>
         {this.props.data.map((product, index) => {
           return (
             <View style={[styles.itemVerticalWrapper]} key={index}>
-              {this.renderProduct(product, extraProps)}
+              <ProductItem
+                selfRequest={(callBack) =>
+                  this.props.onPressProduct(product, callBack)
+                }
+                name={product.name}
+                image={product.image}
+                discount_view={product.discount_view}
+                discount_percent={product.discount_percent}
+                price_view={product.price_view}
+                unit_name={product.unit_name}
+                onPress={() => this.props.onPressProduct(product)}
+                {...extraProps}
+              />
             </View>
           );
         })}
@@ -50,10 +63,11 @@ class ListProducts extends Component {
       <FlatList
         horizontal
         data={this.props.data}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => `product_item_${item.id}`}
         showsHorizontalScrollIndicator={false}
         renderItem={this.renderItemHorizontal}
         contentContainerStyle={styles.listHorizontal}
+        style={{overflow: 'visible'}}
       />
     );
   }
@@ -67,21 +81,17 @@ class ListProducts extends Component {
 
   renderProduct(product, extraProps) {
     return (
-      <View style={{flex: 1, margin: 7.5}}>
-        <ProductItem
-          selfRequest={(callBack) =>
-            this.props.onPressProduct(product, callBack)
-          }
-          name={product.name}
-          image={product.image}
-          discount_view={product.discount_view}
-          discount_percent={product.discount_percent}
-          price_view={product.price_view}
-          unit_name={product.unit_name}
-          onPress={() => this.props.onPressProduct(product)}
-          {...extraProps}
-        />
-      </View>
+      <ProductItem
+        selfRequest={(callBack) => this.props.onPressProduct(product, callBack)}
+        name={product.name}
+        image={product.image}
+        discount_view={product.discount_view}
+        discount_percent={product.discount_percent}
+        price_view={product.price_view}
+        unit_name={product.unit_name}
+        onPress={() => this.props.onPressProduct(product)}
+        {...extraProps}
+      />
     );
   }
 

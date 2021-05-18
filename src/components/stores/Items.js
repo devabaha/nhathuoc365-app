@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import store from '../../store/Store';
 import {Actions} from 'react-native-router-flux';
 import FastImage from 'react-native-fast-image';
@@ -246,11 +247,11 @@ class Items extends Component {
     }
 
     var quantity = 0;
-
+    const {containerStyle, contentStyle} = this.props;
     return (
       <TouchableHighlight onPress={onPress} underlayColor="transparent">
-        <View style={[styles.item_box]}>
-          <View style={styles.item_box_container}>
+        <View style={[styles.item_box, containerStyle]}>
+          <View style={[styles.item_box_container, contentStyle]}>
             <View
               ref={(ref) => (this.ref_item = ref)}
               style={styles.item_image_box}>
@@ -325,7 +326,11 @@ class Items extends Component {
                           color="#0eac24"
                         />
                       ) : (
-                        <Icon name="cart-plus" size={22} color={'#0eac24'} />
+                        <MaterialIcons
+                          name="add-shopping-cart"
+                          size={22}
+                          color={'#0eac24'}
+                        />
                       )}
                       {/* {this.isServiceProduct(item) ? (
                         <Text style={styles.item_add_cart_title}>
@@ -366,9 +371,9 @@ const ITEM_IMG_HEIGHT = (Util.size.width / 2) * 1.333 * 0.666;
 
 const styles = StyleSheet.create({
   item_box: {
-    flex: 1,
     width: ITEM_WIDTH,
-    marginVertical: 7.5,
+    paddingVertical: 5,
+    flex: 1,
     ...Platform.select({
       ios: {
         shadowColor: '#333',
@@ -379,9 +384,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 5,
       },
-      android: {
-        elevation: 8,
-      },
     }),
   },
   item_box_container: {
@@ -389,6 +391,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flex: 1,
     borderRadius: 7,
+    ...Platform.select({
+      android: {
+        elevation: 8,
+      },
+    }),
   },
   directionRow: {
     flex: 1,
@@ -400,13 +407,14 @@ const styles = StyleSheet.create({
     height: ITEM_WIDTH - 10,
     borderTopLeftRadius: 7,
     borderTopRightRadius: 7,
-    overflow: 'hidden',
   },
   item_image: {
     zIndex: 1,
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+    borderTopLeftRadius: 7,
+    borderTopRightRadius: 7,
   },
   item_info_box: {
     flex: 1,
@@ -521,6 +529,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginTop: 'auto',
   },
   nameLocation: {
     fontSize: 14,
@@ -531,7 +540,7 @@ const styles = StyleSheet.create({
   },
   discountBadgeContainer: {
     top: 10,
-    left: -7,
+    left: -5,
     position: 'absolute',
     zIndex: 99,
   },

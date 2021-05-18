@@ -512,6 +512,8 @@ class Home extends Component {
   }
 }
 
+const topAndroid = appConfig.device.isIOS ? 0 : 10;
+
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -524,7 +526,8 @@ let styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
-    top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
+    top:
+      -(appConfig.device.width * 3) + appConfig.device.width / 3 - topAndroid,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden',

@@ -20,13 +20,13 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5,
     zIndex: 9,
-    paddingHorizontal: 5,
-    paddingVertical: 5,
+    paddingHorizontal: 3,
+    paddingVertical: 3,
   },
   text: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 13,
+    fontSize: 11,
   },
   beforeView: {
     position: 'absolute',
