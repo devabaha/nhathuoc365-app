@@ -1,6 +1,6 @@
-import React, {useCallback, useRef, useState, useEffect} from 'react';
-import {StyleSheet, Animated, Easing as RNEasing} from 'react-native';
-import Reanimated, {useValue, Easing} from 'react-native-reanimated';
+import React from 'react';
+import {StyleSheet} from 'react-native';
+import Reanimated from 'react-native-reanimated';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import Container from 'src/components/Layout/Container';

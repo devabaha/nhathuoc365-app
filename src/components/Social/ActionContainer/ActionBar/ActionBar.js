@@ -7,11 +7,11 @@ import Reaction from './Reaction';
 
 const styles = StyleSheet.create({
   container: {
-    // height: 30
+    // height: 100
   },
 });
 
-const ActionBar = ({isLiked, onActionBarPress = () => {}}) => {
+const ActionBar = ({isLiked, disableComment, onActionBarPress = () => {}}) => {
   // console.log('render action bar')
   const {t} = useTranslation('social');
 
@@ -27,11 +27,11 @@ const ActionBar = ({isLiked, onActionBarPress = () => {}}) => {
         isLiked={isLiked}
         onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.LIKE)}
       />
-      <Button
+      {!disableComment && <Button
         title={t('comment')}
         iconName="message1"
         onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.COMMENT)}
-      />
+      />}
       <Button
         title={t('share')}
         iconName="sharealt"

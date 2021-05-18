@@ -15,14 +15,19 @@ import {Observer} from 'mobx-react';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 import store from 'app-store';
-import appConfig from 'app-config';
 
 import NewsSceneSkeleton from './NewsSceneSkeleton';
 import NoResult from 'src/components/NoResult';
 
-import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 import {APIRequest} from 'src/network/Entity';
-import {share} from 'src/helper/share';
+import {
+  calculateLikeCountFriendly,
+  getSocialNewsLikeCount,
+  getSocialNewsLikeFlag,
+  handleSocialNewsActionBarPress,
+} from 'src/helper/social';
+import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 
 const styles = StyleSheet.create({
   feedsContainer: {
@@ -32,18 +37,6 @@ const styles = StyleSheet.create({
     paddingTop: 15,
   },
 });
-
-const getLikeFlag = (feeds) => {
-  let likeFlag = store.socialNews[feeds.id]?.like_flag;
-  likeFlag === undefined && (likeFlag = feeds.like_flag);
-  return likeFlag;
-};
-
-const getLikeCount = (feeds) => {
-  let likeCount = store.socialNews[feeds.id]?.like_count_friendly;
-  likeCount === undefined && (likeCount = feeds.like_count);
-  return likeCount;
-};
 
 const NewsScene = ({id, isFetching = false}) => {
   const {t} = useTranslation(['news', 'common']);
@@ -104,11 +97,7 @@ const NewsScene = ({id, isFetching = false}) => {
       (n) =>
         (storeNews[n.id] = {
           like_count: n.like_count,
-          like_count_friendly: n.like_flag
-            ? n.like_count - 1 >= 0
-              ? n.like_count - 1
-              : 0
-            : n.like_count,
+          like_count_friendly: calculateLikeCountFriendly(n),
           share_count: n.share_count,
           like_flag: n.like_flag,
           comment_count: n.comment_count,
@@ -155,20 +144,6 @@ const NewsScene = ({id, isFetching = false}) => {
     }
   }, [id]);
 
-  const likeNews = useCallback((feeds) => {
-    const data = {
-      object: feeds.object,
-      object_id: feeds.object_id,
-      site_id: feeds.site_id,
-      status: getLikeFlag(feeds),
-    };
-
-    likeRequest.data = APIHandler.social_likes(data);
-    likeRequest.promise();
-    // .then((res) => console.log(res))
-    // .catch((err) => console.log('like_news', err));
-  }, []);
-
   const handleRefresh = useCallback(() => {
     setState({refreshing: true});
     getData();
@@ -183,26 +158,7 @@ const NewsScene = ({id, isFetching = false}) => {
   }, []);
 
   const handleActionBarPress = useCallback((type, feeds) => {
-    switch (type) {
-      case SOCIAL_BUTTON_TYPES.LIKE:
-        store.updateSocialNews(feeds.id, {
-          like_flag: getLikeFlag(feeds) ? 0 : 1,
-        });
-        likeNews(feeds);
-        break;
-      case SOCIAL_BUTTON_TYPES.COMMENT:
-        Actions.push(appConfig.routes.modalComment, {
-          // title: 'Bình luận',
-          title: feeds.title,
-          object: feeds?.object || 'news',
-          object_id: feeds?.object_id || feeds?.id,
-          site_id: feeds.site_id,
-        });
-        break;
-      case SOCIAL_BUTTON_TYPES.SHARE:
-        share(feeds.url, feeds.title);
-        break;
-    }
+    handleSocialNewsActionBarPress(type, feeds);
   }, []);
 
   const renderFeeds = ({item: feeds, index}) => {
@@ -211,17 +167,26 @@ const NewsScene = ({id, isFetching = false}) => {
         {() => {
           return (
             <Feeds
-              commentsCount={feeds.comments_count}
-              likeCount={getLikeCount(feeds)}
-              isLiked={getLikeFlag(feeds)}
+              category={feeds.category?.title}
+              commentsCount={feeds.comment_count}
+              likeCount={getSocialNewsLikeCount(feeds)}
+              isLiked={getSocialNewsLikeFlag(feeds)}
               title={feeds.title}
               userName={feeds.shop_name}
               description={feeds.created}
               thumbnailUrl={feeds.image_url}
               avatarUrl={feeds.shop_logo_url}
               containerStyle={styles.feedsContainer}
+              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
               onPostPress={() => handlePostPress(feeds)}
               onActionBarPress={(type) => handleActionBarPress(type, feeds)}
+              onPressTotalComments={() =>
+                handleSocialNewsActionBarPress(
+                  SOCIAL_BUTTON_TYPES.COMMENT,
+                  feeds,
+                  false,
+                )
+              }
             />
           );
         }}

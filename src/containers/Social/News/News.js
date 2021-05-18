@@ -124,6 +124,7 @@ class News extends Component {
   componentWillUnmount() {
     cancelRequests(this.requests);
     this.updateNewsDisposer();
+    store.resetSocialNews();
     this.eventTracker.clearTracking();
   }
 
@@ -137,7 +138,13 @@ class News extends Component {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
             const routes = this.routesFormatter(response.data);
-            this.setState({routes});
+            let defaultIndex = this.props.indexTab;
+            if (this.props.id) {
+              defaultIndex = routes.findIndex((r) => {
+                return r.id === this.props.id;
+              });
+            }
+            this.setState({routes, index: defaultIndex});
           } else {
             flashShowMessage({
               type: 'danger',

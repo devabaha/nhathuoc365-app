@@ -774,7 +774,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={Notify}
+                      component={News}
                     />
                   </Stack>
 
@@ -930,7 +930,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.newsTab}_1`}
                     {...navBarConfig}
-                    component={Notify}
+                    component={News}
                     back
                   />
                 </Stack>
@@ -1222,8 +1222,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    title={t('screen.news.mainTitle')}
-                    component={Notify}
+                    component={News}
                     {...navBarConfig}
                     back
                   />

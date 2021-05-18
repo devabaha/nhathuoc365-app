@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
 });
 
 const Feeds = ({
+  category,
   commentsCount,
   likeCount,
   isLiked,
@@ -21,8 +22,10 @@ const Feeds = ({
   userName,
   description,
   containerStyle,
+  disableComment,
   onPostPress,
   onActionBarPress,
+  onPressTotalComments
 }) => {
   // console.log('render feeds');
 
@@ -31,6 +34,7 @@ const Feeds = ({
       centerVertical={false}
       style={[styles.container, containerStyle]}>
       <Post
+        category={category}
         avatarUrl={avatarUrl}
         userName={userName}
         description={description}
@@ -43,7 +47,9 @@ const Feeds = ({
         isLiked={isLiked}
         likeCount={likeCount}
         commentsCount={commentsCount}
+        disableComment={disableComment}
         onActionBarPress={onActionBarPress}
+        onPressTotalComments={onPressTotalComments}
       />
     </Container>
   );

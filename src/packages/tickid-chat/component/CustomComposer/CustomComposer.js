@@ -8,13 +8,12 @@ import {
   Platform
 } from 'react-native';
 import { MIN_HEIGHT_COMPOSER } from '../../constants';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 class CustomComposer extends PureComponent {
   static defaultProps = {
     onInputSizeChanged: () => {},
     onTextChanged: () => {},
-    onKeyPress: () => {}
+    onKeyPress: () => {},
   }
   state = {};
   contentSize = undefined;
