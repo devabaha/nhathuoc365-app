@@ -526,8 +526,8 @@ let styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
-    top:
-      -(appConfig.device.width * 3) + appConfig.device.width / 3 - topAndroid,
+    top: '-100%',
+    marginTop: -appConfig.device.width / 1.5,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden',
