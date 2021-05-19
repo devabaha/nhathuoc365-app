@@ -351,10 +351,6 @@ const CommissionIncomeStatement = (props) => {
   );
 };
 
-export default withTranslation([
-  'commissionIncomeStatement',
-  'common',
-  'total_revenue',
-  'level',
-  'total_commission_month',
-])(CommissionIncomeStatement);
+export default withTranslation(['commissionIncomeStatement', 'common'])(
+  CommissionIncomeStatement,
+);
