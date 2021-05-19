@@ -5,8 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [r11.6.1] - 2021-05-18
+## Unreleased
 
+## [r11.6.2] - 2021-05-19
+### Added
+- Show month commission in Commission report by [duylinhdang1998@gmail.com].
+
+## [r11.6.1] - 2021-05-18
 ### Added
 - Image component with custom render if loading error.
 - ScreenWrapper take sceneBackground as backgroundColor.

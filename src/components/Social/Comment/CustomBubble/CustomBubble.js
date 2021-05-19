@@ -45,6 +45,10 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     borderWidth: 0.5,
     borderColor: '#ddd',
+    flex: 1,
+    maxHeight: IMAGE_COMMENT_HEIGHT,
+    width: '100%',
+    height: undefined,
   },
   btnShowFullMessage: {
     position: 'absolute',
@@ -220,24 +224,17 @@ class CustomBubble extends Component {
 
   renderImages = (props, image) => {
     if (!image) return null;
+
+    const aspectRatio =
+      (props.currentMessage?.image_info?.width || 1) /
+      (props.currentMessage?.image_info?.height || 1);
+
     const imageStyle = {
-      flex: 1,
-      aspectRatio:
-        (props.currentMessage?.image_info?.width || 0) /
-        (props.currentMessage?.image_info?.height || 1),
-      maxHeight: IMAGE_COMMENT_HEIGHT,
-      maxWidth:
-        IMAGE_COMMENT_HEIGHT *
-        ((props.currentMessage?.image_info?.width || 0) /
-          (props.currentMessage?.image_info?.height || 1)),
+      aspectRatio,
     };
     return (
       <ImageMessageChat
-        containerStyle={[
-          styles.imageContainer,
-          {width: '100%', height: undefined},
-        ]}
-        imageStyle={imageStyle}
+        containerStyle={[styles.imageContainer, imageStyle]}
         uploadURL={props.uploadURL}
         isUploadData={props.currentMessage.isUploadData}
         image={props.currentMessage.rawImage}

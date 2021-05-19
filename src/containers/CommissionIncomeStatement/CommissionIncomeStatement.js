@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
 import {
-    Text,
-    ScrollView,
-    StyleSheet,
-    View,
-    TouchableOpacity,
-  } from 'react-native';
-  import Button from 'react-native-button';
+  Text,
+  ScrollView,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
+import Button from 'react-native-button';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import {Table, TableWrapper, Row} from 'react-native-table-component';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -21,6 +22,7 @@ import Container from '../../components/Layout/Container';
 
 import appConfig from 'app-config';
 import NoResult from '../../components/NoResult';
+import {isEmpty} from 'lodash';
 
 const styles = StyleSheet.create({
   reload: {
@@ -28,10 +30,15 @@ const styles = StyleSheet.create({
     color: '#fff',
     right: 12,
   },
+  headingWrapper: {
+    backgroundColor: '#fff',
+    paddingTop: 15,
+    paddingHorizontal: 15,
+  },
   headingContainer: {
     borderBottomWidth: 0.5,
-    borderColor: '#eee',
-    backgroundColor: '#fff',
+    borderColor: '#ddd',
+    paddingBottom: 15,
   },
   container: {
     flex: 1,
@@ -115,9 +122,63 @@ const styles = StyleSheet.create({
   noResultContainer: {
     marginTop: '50%',
   },
+  itemsRose: {
+    flex: 1,
+    justifyContent: 'center',
+    borderColor: '#888',
+  },
+  heading: {
+    fontSize: 12,
+    textAlign: 'center',
+    color: '#333',
+    textTransform: 'uppercase',
+  },
+  roseValueContainer: {
+    justifyContent: 'flex-end',
+    paddingHorizontal: 5,
+    paddingVertical: 15,
+  },
+  valueText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+  },
+  divider: {
+    width: 20,
+    height: 100,
+    backgroundColor: 'red',
+  },
+
+  roseHeaderContainer: {
+    backgroundColor: '#f5f5f5',
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+  },
+  roseContentContainer: {
+    backgroundColor: '#fff',
+  },
+  roseSeparator: {
+    position: 'absolute',
+    transform: [{rotate: '180deg'}],
+    bottom: -7,
+    left: -5,
+    width: 0,
+    height: 0,
+    backgroundColor: 'transparent',
+    borderStyle: 'solid',
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
+    borderBottomWidth: 7,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: '#f5f5f5',
+  },
 });
 
 const CommissionIncomeStatement = (props) => {
+  const {t} = useTranslation(['commissionIncomeStatement', 'common']);
+
   const getCommissionRequest = new APIRequest();
   const requests = [getCommissionRequest];
 
@@ -128,6 +189,8 @@ const CommissionIncomeStatement = (props) => {
     'Hoa hồng',
     'Vị trí',
   ];
+
+  const tableRose = ['total_revenue', 'level', 'total_commission_month'];
   const baseUnit = 150;
   const widthArr = [baseUnit, baseUnit, baseUnit, baseUnit, baseUnit * 0.6];
 
@@ -138,6 +201,7 @@ const CommissionIncomeStatement = (props) => {
   const [selectedMonth, setSelectedMonth] = useState();
   const [months, setMonths] = useState([]);
   const [stats, setStats] = useState({});
+  const [monthBonus, setMonthBonus] = useState({});
   const [commissions, setCommissions] = useState([]);
 
   const hasCommissions = () => {
@@ -168,23 +232,23 @@ const CommissionIncomeStatement = (props) => {
     if (month) {
       data.month = month;
     }
-    console.log(data);
     getCommissionRequest.data = APIHandler.user_site_cart_commission(data);
     try {
       const responseData = await getCommissionRequest.promise();
+      console.log({hoahong: responseData});
       const data = responseData?.data;
       if (data) {
         setMonths(formatMonths(data.list_month || []));
         setStats(data.stats || {});
         setSelectedMonth(data.month || []);
+        setMonthBonus(data.month_bonus || {});
         setCommissions(formatCommission(data?.commissions || []));
       }
-      console.log(responseData);
     } catch (error) {
       console.log('%cget_commission', 'color:red', error);
       flashShowMessage({
         type: 'danger',
-        message: error.message || this.props.t('common:api.error.message'),
+        message: error.message || t('common:api.error.message'),
       });
     } finally {
       setLoading(false);
@@ -237,31 +301,61 @@ const CommissionIncomeStatement = (props) => {
     );
   };
 
+  const renderColumRose = ({item, index}) => {
+    return (
+      <View style={[styles.itemsRose]}>
+        <Container flex center style={styles.roseHeaderContainer}>
+          <Text style={styles.heading}>
+            {index === 0 ? monthBonus['total_revenue_title'] : t(item)}
+          </Text>
+
+          {index > 0 && <View style={[styles.roseSeparator]} />}
+        </Container>
+        <Container style={[styles.roseValueContainer]}>
+          <Text style={styles.valueText}>{monthBonus[item]}</Text>
+        </Container>
+      </View>
+    );
+  };
+
   return (
     <ScreenWrapper>
       {isLoading && <Loading center />}
+      <Container style={styles.headingWrapper}>
+        <Container row style={styles.headingContainer}>
+          <Button
+            containerStyle={styles.yearMonthBtnContainer}
+            onPress={openYearMonthPicker}>
+            <Container row centerVertical style={styles.selectMonthContainer}>
+              <AntDesignIcon name="calendar" style={styles.yearMonthIcon} />
+              <Text style={styles.yearMonthTxt}>{selectedMonth}</Text>
+            </Container>
+          </Button>
 
-      <Container row padding={15} style={styles.headingContainer}>
-        <Button
-          containerStyle={styles.yearMonthBtnContainer}
-          onPress={openYearMonthPicker}>
-          <Container row centerVertical style={styles.selectMonthContainer}>
-            <AntDesignIcon name="calendar" style={styles.yearMonthIcon} />
-            <Text style={styles.yearMonthTxt}>{selectedMonth}</Text>
-          </Container>
-        </Button>
-
-        <Container flex style={styles.totalIncomeContainer}>
-          <Text style={styles.totalIncomeTitle}>Tổng trong tháng</Text>
-          <Text style={styles.incomeTxt}>
-            {stats.total_commission_month}
-            <Text style={styles.incomeUnitTxt}>
-              {' '}
-              /{stats.total_cart_accept}
+          <Container flex style={styles.totalIncomeContainer}>
+            <Text style={styles.totalIncomeTitle}>Tổng trong tháng</Text>
+            <Text style={styles.incomeTxt}>
+              {stats.total_commission_month}
+              <Text style={styles.incomeUnitTxt}>
+                {' '}
+                /{stats.total_cart_accept}
+              </Text>
             </Text>
-          </Text>
+          </Container>
         </Container>
       </Container>
+      {!isEmpty(monthBonus) && (
+        <View>
+          <FlatList
+            contentContainerStyle={styles.roseContentContainer}
+            data={tableRose}
+            keyExtractor={(i) => i}
+            renderItem={renderColumRose}
+            numColumns={3}
+            scrollEnabled={false}
+          />
+        </View>
+      )}
 
       <ScrollView horizontal>
         <View>
@@ -304,6 +398,4 @@ const CommissionIncomeStatement = (props) => {
   );
 };
 
-export default withTranslation(['commissionIncomeStatement', 'common'])(
-  CommissionIncomeStatement,
-);
+export default React.memo(CommissionIncomeStatement);
