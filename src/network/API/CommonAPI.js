@@ -453,6 +453,18 @@ class CommonAPI {
   get SOCIAL_LIKES() {
     return BaseAPI.socialDomain + 'likes/store'
   }
+
+  get SOCIAL_GROUPS(){
+    return BaseAPI.socialDomain + 'groups';
+  }
+
+  get SOCIAL_POSTS(){
+    return BaseAPI.socialDomain + 'posts';
+  }
+
+  get SOCIAL_CREATE_POST(){
+    return BaseAPI.socialDomain + 'posts/store';
+  }
 }
 
 export default new CommonAPI();
