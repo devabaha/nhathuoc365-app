@@ -25,6 +25,13 @@ import NoResult from '../../components/NoResult';
 import {isEmpty} from 'lodash';
 
 const styles = StyleSheet.create({
+  title: {
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    fontSize: 20,
+    color: '#333',
+    fontWeight: 'bold',
+  },
   reload: {
     fontSize: 22,
     color: '#fff',
@@ -174,6 +181,13 @@ const styles = StyleSheet.create({
     borderRightColor: 'transparent',
     borderBottomColor: '#f5f5f5',
   },
+  nextRevenueTitle: {
+    fontSize: 15,
+    color: 'red',
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+    textAlign: 'center',
+  },
 });
 
 const CommissionIncomeStatement = (props) => {
@@ -312,7 +326,9 @@ const CommissionIncomeStatement = (props) => {
           {index > 0 && <View style={[styles.roseSeparator]} />}
         </Container>
         <Container style={[styles.roseValueContainer]}>
-          <Text style={styles.valueText}>{monthBonus[item]}</Text>
+          <Text style={styles.valueText} numberOfLines={2}>
+            {monthBonus[item]}
+          </Text>
         </Container>
       </View>
     );
@@ -333,7 +349,7 @@ const CommissionIncomeStatement = (props) => {
           </Button>
 
           <Container flex style={styles.totalIncomeContainer}>
-            <Text style={styles.totalIncomeTitle}>Tổng trong tháng</Text>
+            <Text style={styles.totalIncomeTitle}>Tổng hoa hồng</Text>
             <Text style={styles.incomeTxt}>
               {stats.total_commission_month}
               <Text style={styles.incomeUnitTxt}>
@@ -354,8 +370,13 @@ const CommissionIncomeStatement = (props) => {
             numColumns={3}
             scrollEnabled={false}
           />
+          <Text style={styles.nextRevenueTitle}>
+            {monthBonus.next_total_revenue_title}
+          </Text>
         </View>
       )}
+
+      <Text style={styles.title}>Danh sách đơn hàng</Text>
 
       <ScrollView horizontal>
         <View>
