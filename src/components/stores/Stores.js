@@ -420,7 +420,6 @@ class Stores extends Component {
 
   render() {
     const {t} = this.props;
-    console.log(this.state.categories_data);
     return (
       <View style={styles.container}>
         {this.state.categories_data != null

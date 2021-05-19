@@ -59,35 +59,6 @@ class CategoryScreen extends Component {
     return delay;
   }
 
-  // handleEffect = async (value) => {
-  //   console.log({value: mobx.toJS(value)});
-  //   console.log({category_id: this.props.item.id});
-  //   if (isEmpty(value)) {
-  //     await this.setState({paramsFilter: {}});
-  //     this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-  //     return;
-  //   }
-  //   let min_price = '';
-  //   let max_price = '';
-  //   if (!!value['price']) {
-  //     min_price = value['price'].min_price;
-  //     max_price = value['price'].max_price;
-  //   }
-  //   const tag_id = Object.values(value)
-  //     .map((i) => i?.id)
-  //     .filter(Boolean)
-  //     .join(',');
-  //   const params = {
-  //     min_price,
-  //     max_price,
-  //     tag: tag_id,
-  //     order: !!this.state.valueSort.order ? this.state.valueSort.order : 'asc',
-  //     sort_by: !isEmpty(this.state.valueSort) ? this.state.valueSort.value : '',
-  //   };
-  //   await this.setState({paramsFilter: params});
-  //   this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-  // };
-
   componentDidMount() {
     var {item, index} = this.props;
     this.start_time = 0;
@@ -137,7 +108,7 @@ class CategoryScreen extends Component {
   componentDidUpdate(prevProps, prevState) {
     const {item, index, cate_index, isAutoLoad} = this.props;
     if (
-      (index === cate_index || isAutoLoad) &&
+      index === cate_index &&
       !isEmpty(this.props.paramsFilter) &&
       !this.state.loading &&
       Object.keys(prevProps).some((key) => prevProps[key] != this.props[key]) &&
@@ -251,6 +222,7 @@ class CategoryScreen extends Component {
       );
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
+          console.log({dataFilter: response.data});
           setTimeout(() => {
             if (this.props.index == 0) {
               layoutAnimation();
@@ -375,54 +347,6 @@ class CategoryScreen extends Component {
       return;
     }
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
-  };
-
-  handleValue = async (value) => {
-    await this.setState((prev) => ({
-      valueSort: value,
-      paramsFilter: {
-        ...prev.paramsFilter,
-        sort_by: value.value,
-      },
-    }));
-    // if (type === 'tag') {
-    //   if (this.props.startLoad) {
-    //     console.log('loadd value');
-    //     let min_price = '';
-    //     let max_price = '';
-    //     if (!!value['price']) {
-    //       min_price = value['price'].min_price;
-    //       max_price = value['price'].max_price;
-    //     }
-    //     const tag_id = Object.values(value)
-    //       .map((i) => i?.id)
-    //       .filter(Boolean)
-    //       .join(',');
-    //     const params = {
-    //       min_price,
-    //       max_price,
-    //       tag: tag_id,
-    //       order: 'asc',
-    //       sort_by: this.state.valueSort.value,
-    //     };
-
-    //     await this.setState({paramsFilter: params});
-    //     if (isEmpty(value)) {
-    //       this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-    //       return;
-    //     }
-    //     this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-    //   }
-    // } else {
-    //   await this.setState((prev) => ({
-    //     valueSort: value,
-    //     paramsFilter: {
-    //       ...prev.paramsFilter,
-    //       sort_by: value.value,
-    //     },
-    //   }));
-    //   this._getItemByCateIdFromServer(this.props.item.id, 0, false);
-    // }
   };
 
   render() {
