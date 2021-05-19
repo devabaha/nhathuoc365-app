@@ -118,27 +118,14 @@ class CategoryScreen extends Component {
 
   shouldComponentUpdate(nextProps, nextState) {
     const {item, index, cate_index} = nextProps;
-
-    // console.log(index === cate_index && !isEmpty(nextProps.paramsFilter));
-    // if (
-    //   index === cate_index &&
-    //   !isEmpty(nextProps.paramsFilter) &&
-    //   Object.keys(this.props).some(
-    //     (key) => nextProps[key] != this.props[key],
-    //   ) &&
-    //   !nextState.loading
-    //   // (!isEqual(this.props.paramsFilter, nextProps.paramsFilter) ||
-    //   //   isEmpty(this.state.filter_data))
-    // ) {
-    //   this.getItemByFilter(item.id, false);
-    // } else
     if (
       (index == cate_index || nextProps.isAutoLoad) &&
       this.state.items_data == null &&
       Object.keys(this.props).some(
         (key) => nextProps[key] != this.props[key],
       ) &&
-      !nextState.loading
+      !nextState.loading &&
+      isEmpty(nextProps.paramsFilter)
     ) {
       this.start_time = time();
       // get list products by category_id
@@ -148,14 +135,13 @@ class CategoryScreen extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const {item, index, cate_index} = this.props;
+    const {item, index, cate_index, isAutoLoad} = this.props;
     if (
-      index === cate_index &&
+      (index === cate_index || isAutoLoad) &&
       !isEmpty(this.props.paramsFilter) &&
-      Object.keys(prevProps).some((key) => prevProps[key] != this.props[key]) &&
       !this.state.loading &&
-      (!isEqual(prevState.filter_data, this.state.filter_data) ||
-        !isEqual(prevProps.paramsFilter, this.props.paramsFilter) ||
+      Object.keys(prevProps).some((key) => prevProps[key] != this.props[key]) &&
+      (!isEqual(prevProps.paramsFilter, this.props.paramsFilter) ||
         isEmpty(this.state.filter_data))
     ) {
       console.log('render vo han');

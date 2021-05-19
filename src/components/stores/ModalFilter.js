@@ -33,18 +33,12 @@ function ModalFilter({
     setSelectedPrice(value);
   };
 
-  const handleCloseModal = () => {
-    if (refModal.current) {
-      refModal.current.close();
-      onSelectValueSort(selected);
-      // type !== 'default'
-      //   ? onSelectValue({...selectedTag, ...selectedPrice})
-      //   : onSelectValueSort(selected);
-    }
-  };
-
   const handleItem = (item) => () => {
     setSelected({...item, isSelected: true});
+    if (refModal.current) {
+      refModal.current.close();
+      onSelectValueSort({...item, isSelected: true});
+    }
   };
 
   const renderItem = ({item, index}) => {
@@ -81,9 +75,6 @@ function ModalFilter({
       useNativeDriver>
       <Text style={styles.title}>{title}</Text>
       {renderList()}
-      <TouchableOpacity style={styles.btnContainer} onPress={handleCloseModal}>
-        <Text style={styles.txtButton}>Áp dụng</Text>
-      </TouchableOpacity>
     </Modal>
   );
 }

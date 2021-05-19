@@ -406,24 +406,21 @@ class Stores extends Component {
   };
 
   handleValue = async (value) => {
-    this.setState(
-      (prev) => {
-        console.log('prev state', prev.filterParams, value);
-        return {
-          filterParams: {
-            ...prev.filterParams,
-            sort_by: value.value,
-            order: value.order,
-          },
-          valueSort: value,
-        };
-      },
-      () => console.log('new state', this.state.filterParams),
-    );
+    this.setState((prev) => {
+      return {
+        filterParams: {
+          ...prev.filterParams,
+          sort_by: value.value,
+          order: value.order,
+        },
+        valueSort: value,
+      };
+    });
   };
 
   render() {
     const {t} = this.props;
+    console.log(this.state.categories_data);
     return (
       <View style={styles.container}>
         {this.state.categories_data != null
