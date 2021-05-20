@@ -91,6 +91,8 @@ export const SERVICES_TYPE = {
   COMMISSION_INCOME_STATEMENT: 'commission_income_statement',
 
   /** GAMIFICATION */
-  LOTTERY_GAME: 'lottery_game'
+  LOTTERY_GAME: 'lottery_game',
+
+  SOCIAL: 'social'
 
 };

@@ -22,6 +22,10 @@ function ListPrice({title, onChangeValue, defaultValue = {}}) {
       setSelectedPrice({price: defaultValue['price']});
       setMinPrice(vndCurrencyFormat(defaultValue['price']?.min_price));
       setMaxPrice(vndCurrencyFormat(defaultValue['price']?.max_price));
+    } else {
+      setSelectedPrice({});
+      setMinPrice('');
+      setMaxPrice('');
     }
   }, [defaultValue]);
 
@@ -52,29 +56,30 @@ function ListPrice({title, onChangeValue, defaultValue = {}}) {
     }
   }, [selectedPrice, type]);
 
-  const handleItem = (item) => () => {
+  const handleItem = (key, value) => () => {
     setSelectedPrice((prev) => {
-      if (isEqual(prev['price'], item)) {
+      if (isEqual(prev['price'], {...value, text: key})) {
         return {};
       }
       return {
         ...prev,
-        price: item,
+        ['price']: {
+          text: key,
+          ...value,
+        },
       };
     });
   };
 
   const renderPriceItem = ({item}) => {
     const isChecked = !isEmpty(selectedPrice)
-      ? isEqual(selectedPrice['price'], item)
+      ? isEqual(selectedPrice['price'].text, item)
       : false;
     return (
       <View style={styles.itemContainer}>
         <ButtonTag
-          text={`${vndCurrencyFormat(item.min_price)} - ${vndCurrencyFormat(
-            item.max_price,
-          )}`}
-          onPress={handleItem(item)}
+          text={item}
+          onPress={handleItem(item, priceValue[item])}
           checked={isChecked}
         />
       </View>
@@ -85,7 +90,7 @@ function ListPrice({title, onChangeValue, defaultValue = {}}) {
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <FlatList
-        data={Object.values(priceValue)}
+        data={Object.keys(priceValue)}
         numColumns={2}
         keyExtractor={(_, index) => `min_max_price_${index}`}
         renderItem={renderPriceItem}

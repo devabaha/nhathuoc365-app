@@ -20,7 +20,7 @@ const ListFeeds = ({
   refreshing,
   ListEmptyComponent,
   renderFeeds: renderFeedsProp,
-  contentContainerStyle
+  contentContainerStyle,
 }) => {
   const renderFeeds = ({item: feeds, index}) => {
     if (typeof renderFeedsProp === 'function') {

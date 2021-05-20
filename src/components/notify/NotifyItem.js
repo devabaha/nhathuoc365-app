@@ -96,7 +96,8 @@ class NotifyItem extends Component {
                 like_flag: response.data.like_flag || 0,
                 share_count: response.data.share_count || 0,
                 comment_count: response.data.comment_count || 0,
-                like_count_friendly: calculateLikeCountFriendly(response.data) || 0,
+                like_count_friendly:
+                  calculateLikeCountFriendly(response.data) || 0,
               });
             }
             if (!this.state.item_data) {

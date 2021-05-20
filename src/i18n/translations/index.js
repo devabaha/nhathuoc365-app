@@ -1,4 +1,4 @@
-import { languages } from '../constants';
+import {languages} from '../constants';
 
 import vi_common from './vi/common.json';
 import en_common from './en/common.json';
@@ -87,7 +87,7 @@ export default {
     rateApp: vi_rateApp,
     cardWallet: vi_cardWallet,
     commissionIncomeStatement: vi_commissionIncomeStatement,
-    social: vi_social
+    social: vi_social,
   },
   [languages.en.value]: {
     common: en_common,
@@ -117,6 +117,6 @@ export default {
     rateApp: en_rateApp,
     cardWallet: en_cardWallet,
     commissionIncomeStatement: en_commissionIncomeStatement,
-    social: en_social
-  }
+    social: en_social,
+  },
 };

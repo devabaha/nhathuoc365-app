@@ -14,9 +14,9 @@ import FastImage from 'react-native-fast-image';
 
 import appConfig from 'app-config';
 import {DiscountBadge} from '../../components/Badges';
-import { PRODUCT_TYPES } from '../../constants';
+import {PRODUCT_TYPES} from '../../constants';
 import CTAProduct from '../item/CTAProduct';
-import { CART_TYPES } from 'src/constants/cart';
+import {CART_TYPES} from 'src/constants/cart';
 class Items extends Component {
   constructor(props) {
     super(props);
@@ -35,6 +35,7 @@ class Items extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
+    this.setState({loadmore: false});
   }
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
@@ -206,7 +207,7 @@ class Items extends Component {
             if (onPress) {
               onPress();
             }
-
+            console.log('tai sao lai chay vao day');
             this.setState({
               loadmore: true,
             });
@@ -271,8 +272,7 @@ class Items extends Component {
             <TouchableHighlight
               style={styles.item_add_cart_btn}
               underlayColor="transparent"
-              onPress={() => this.handlePressActionBtnProduct(item)}
-              >
+              onPress={() => this.handlePressActionBtnProduct(item)}>
               <View
                 style={{
                   width: '100%',
@@ -292,7 +292,7 @@ class Items extends Component {
                   ) : (
                     <Icon name="cart-plus" size={22} color={'#0eac24'} />
                   )}
-                  {this.isServiceProduct(item)? (
+                  {this.isServiceProduct(item) ? (
                     <Text style={styles.item_add_cart_title}>
                       {t('product:shopTitle.book')}
                     </Text>

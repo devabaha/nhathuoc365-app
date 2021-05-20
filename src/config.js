@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.6.2';
+    return 'r11.6.3';
   }
 
   get appName() {
@@ -33,8 +33,8 @@ class Config {
 
   get voucherModule() {
     return {
-      appKey: 'abahaglobalkeywoxBg',
-      secretKey: 'dyTUabahaglobalkeywoxBg4OA1mh',
+      appKey: 'shopidappkey',
+      secretKey: '2897423jkshopidappkey3423h',
     };
   }
 
@@ -77,7 +77,7 @@ class Config {
       logo: {
         main: this.primaryColor,
         sub: '#FFF',
-        addition: '#000'
+        addition: '#000',
       },
       status: {
         danger: '#ef476f',
@@ -126,6 +126,7 @@ class Config {
       black: '#000',
       text: '#333',
       placeholder: '#c7c7cd',
+      ribbon: '#FD0D1B',
     };
   }
 
@@ -276,6 +277,9 @@ class Config {
       // Gamification
       lotteryGame: 'lotteryGame',
       filterProduct: 'filterProduct',
+      
+      // Social
+      social: 'social'
     };
   }
 }
