@@ -3,6 +3,9 @@ import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
+import Feeds from 'src/components/Social/ListFeeds/Feeds';
+import { CONFIG_KEY, isConfigActive } from 'app-helper/configKeyHandler';
+import { getRelativeTime } from 'app-helper/social';
 
 const styles = StyleSheet.create({});
 
@@ -22,42 +25,6 @@ const Posts = ({
 
   useEffect(() => {
     getPosts();
-    async function test() {
-      const data = {
-        site_id: 1938,
-        group_id: 19,
-        content:
-          "What is Lorem Ipsum?\rLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.\r\rWhy do we use it?\rIt is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on",
-        images: JSON.stringify([
-          {
-            name: '421492185.png',
-            with: 200,
-            height: 200,
-          },
-          {
-            name: '421492186.png',
-            with: 200,
-            height: 200,
-          },
-          {
-            name: '421492187.png',
-            with: 200,
-            height: 200,
-          },
-          {
-            name: '421492188.png',
-            with: 200,
-            height: 200,
-          },
-        ]),
-      };
-
-      const response = await APIHandler.social_create_post(data).promise();
-
-      console.log(response);
-    }
-
-    test();
 
     return () => {
       cancelRequests([getPostsRequest]);
@@ -110,7 +77,26 @@ const Posts = ({
   };
 
   const renderPost = ({item: post}) => {
-    return null;
+    return <Feeds
+    commentsCount={post.comment_count}
+    likeCount={post.like_count}
+    isLiked={post.like_flag}
+    userName={post.user?.name}
+    description={getRelativeTime(post.created)}
+    // thumbnailUrl={feeds.image_url}
+    avatarUrl={post.user?.image}
+    containerStyle={{marginBottom: 15}}
+    disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+    // onPostPress={() => handlePostPress(feeds)}
+    // onActionBarPress={(type) => handleActionBarPress(type, feeds)}
+    // onPressTotalComments={() =>
+    //   handleSocialNewsActionBarPress(
+    //     SOCIAL_BUTTON_TYPES.COMMENT,
+    //     feeds,
+    //     false,
+    //   )
+    // }
+  />
   };
 
   return (

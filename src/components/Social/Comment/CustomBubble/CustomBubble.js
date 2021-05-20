@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
-import moment from 'moment';
 
 import {ImageMessageChat} from 'app-packages/tickid-chat/component';
 import BubbleBottom from '../BubbleBottom';
@@ -12,6 +11,7 @@ import store from 'app-store';
 
 import {ActionBtn} from '../BubbleBottom';
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
+import {getRelativeTime} from 'app-helper/social';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
@@ -19,6 +19,7 @@ const BG_HIGHLIGHT_COLOR = '#c9cbd0';
 const CHARACTER_PER_LINE = 40;
 const LINE_HEIGHT = 25;
 const MAX_LINE = 5.1;
+const MAX_NUM_OF_BREAK_LINE = 19;
 const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
 const MAX_COLLAPSED_HEIGHT = LINE_HEIGHT * MAX_LINE;
 
@@ -70,7 +71,7 @@ const styles = StyleSheet.create({
   },
   messageTextContainer: {
     marginTop: -3,
-    // overflow: 'hidden',
+    overflow: 'hidden',
   },
 
   containerMention: {
@@ -112,9 +113,25 @@ class CustomBubble extends Component {
   animatedHighlight = new Animated.Value(0);
 
   state = {
-    isShowFullMessage:
-      this.props?.currentMessage?.content?.length <= MAX_LENGTH_TEXT,
+    isShowFullMessage: this.isShowFullMessage,
   };
+
+  get isShowFullMessage() {
+    const currentMessage = this.props?.currentMessage?.content;
+    if (currentMessage) {
+      const numOfBreakIos = currentMessage.split('\r')?.length;
+      const numOfBreakAndroid = currentMessage.split('\n')?.length;
+
+      console.log(numOfBreakIos,numOfBreakAndroid, currentMessage);
+      return (
+        currentMessage.length <= MAX_LENGTH_TEXT &&
+        numOfBreakIos <= MAX_NUM_OF_BREAK_LINE &&
+        numOfBreakAndroid <= MAX_NUM_OF_BREAK_LINE
+      );
+    }
+
+    return true;
+  }
 
   componentWillUnmount() {
     this.unMounted = true;
@@ -142,10 +159,7 @@ class CustomBubble extends Component {
   };
 
   get formattedCreated() {
-    return moment(
-      this.props.currentMessage.created,
-      'YYYY-MM-DD HH:mm:ss',
-    ).fromNow();
+    return getRelativeTime(this.props.currentMessage.created);
   }
 
   handlePressBubbleBottom = (type) => {
@@ -202,6 +216,7 @@ class CustomBubble extends Component {
         <MessageText {...props} />
 
         {!this.state.isShowFullMessage && (
+          <View style={{minWidth: 120}}>
           <TouchableOpacity
             activeOpacity={0.9}
             style={styles.btnShowFullMessage}
@@ -217,6 +232,7 @@ class CustomBubble extends Component {
               ... {this.props.seeMoreTitle}
             </Text>
           </TouchableOpacity>
+          </View>
         )}
       </View>
     );

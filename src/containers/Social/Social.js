@@ -136,6 +136,7 @@ const Social = ({siteId = store.store_data?.id}) => {
         contentContainerStyle={styles.contentContainer}
         horizontal
         showsHorizontalScrollIndicator={false}
+        overScrollMode={false}
         data={thumbnailGroups}
         renderItem={renderGroup}
         keyExtractor={(item, index) =>
