@@ -49,6 +49,7 @@ class ListProducts extends Component {
                 price_view={product.price_view}
                 unit_name={product.unit_name}
                 onPress={() => this.props.onPressProduct(product)}
+                item={product}
                 {...extraProps}
               />
             </View>
@@ -90,6 +91,7 @@ class ListProducts extends Component {
         price_view={product.price_view}
         unit_name={product.unit_name}
         onPress={() => this.props.onPressProduct(product)}
+        item={product}
         {...extraProps}
       />
     );
