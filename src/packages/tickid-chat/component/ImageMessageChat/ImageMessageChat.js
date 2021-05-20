@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {
   StyleSheet,
@@ -8,12 +8,12 @@ import {
   Easing,
   TouchableOpacity,
   Text,
-  ViewPropTypes
+  ViewPropTypes,
 } from 'react-native';
 import Lightbox from 'react-native-lightbox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import RNFetchBlob from 'rn-fetch-blob';
-import { getBase64Image, setStater } from '../../helper';
+import {getBase64Image, setStater} from '../../helper';
 // import FastImage from 'react-native-fast-image';
 // import { isIos } from '../../constants';
 
@@ -23,7 +23,7 @@ const UPLOAD_STATUS_TYPE = {
   UPLOADING: 'uploading',
   SUCCESS: 'success',
   ERROR: 'error',
-  DEFAULT: 'default'
+  DEFAULT: 'default',
 };
 
 class ImageMessageChat extends Component {
@@ -33,18 +33,18 @@ class ImageMessageChat extends Component {
     uploadURL: PropTypes.string,
     isUploadData: PropTypes.bool,
     image: PropTypes.any,
-    containerStyle: ViewPropTypes.style
+    containerStyle: ViewPropTypes.style,
   };
   static defaultProps = {
     highQualityUri: '',
     isUploadData: false,
-    containerStyle: {}
+    containerStyle: {},
   };
   state = {
     isOpenLightBox: false,
     progress: new Animated.Value(0),
     hide: new Animated.Value(0),
-    uploadStatus: UPLOAD_STATUS_TYPE.DEFAULT
+    uploadStatus: UPLOAD_STATUS_TYPE.DEFAULT,
   };
   unmounted = false;
 
@@ -76,7 +76,7 @@ class ImageMessageChat extends Component {
   }
 
   async uploadImage(reUp = false) {
-    this.setState({ uploadStatus: UPLOAD_STATUS_TYPE.UPLOADING });
+    this.setState({uploadStatus: UPLOAD_STATUS_TYPE.UPLOADING});
     let base64 = this.props.image.uploadPath;
     if (!this.props.image.isBase64) {
       base64 = await getBase64Image(this.props.image.path);
@@ -84,59 +84,59 @@ class ImageMessageChat extends Component {
     const image = {
       name: 'upload',
       filename: this.props.image.fileName,
-      data: base64
+      data: base64,
     };
 
     RNFetchBlob.fetch(
       'POST',
       this.props.uploadURL,
       {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
       },
-      [image]
+      [image],
     )
-      .uploadProgress({ interval: 250 }, (written, total) => {
+      .uploadProgress({interval: 250}, (written, total) => {
         console.log('uploadprogress', written);
         Animated.timing(this.state.progress, {
           toValue: written / total,
           duration: 100,
           useNativeDriver: true,
-          easing: Easing.in
+          easing: Easing.in,
         }).start();
       })
-      .progress({ count: 10 }, (received, total) => {
+      .progress({count: 10}, (received, total) => {
         console.log('downloadprogress', received);
         Animated.timing(this.state.progress, {
           toValue: received / total,
           duration: 100,
           useNativeDriver: true,
-          easing: Easing.in
+          easing: Easing.in,
         }).start();
       })
-      .then(response => {
+      .then((response) => {
         console.log(response);
         Animated.spring(this.state.hide, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true,
-          delay: 300
+          delay: 300,
         }).start(() => {
           setStater(this, this.unmounted, {
-            uploadStatus: UPLOAD_STATUS_TYPE.SUCCESS
+            uploadStatus: UPLOAD_STATUS_TYPE.SUCCESS,
           });
           this.props.onUploadedSuccess(JSON.parse(response.data), reUp);
         });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         Animated.spring(this.state.hide, {
           toValue: 1,
           duration: 300,
           useNativeDriver: true,
-          delay: 300
+          delay: 300,
         }).start(() => {
           setStater(this, this.unmounted, {
-            uploadStatus: UPLOAD_STATUS_TYPE.ERROR
+            uploadStatus: UPLOAD_STATUS_TYPE.ERROR,
           });
           this.props.onUploadedFail();
         });
@@ -144,11 +144,11 @@ class ImageMessageChat extends Component {
   }
 
   handleOpen() {
-    this.setState({ isOpenLightBox: true });
+    this.setState({isOpenLightBox: true});
   }
 
   handleWillClose() {
-    this.setState({ isOpenLightBox: false });
+    this.setState({isOpenLightBox: false});
   }
 
   render() {
@@ -161,12 +161,12 @@ class ImageMessageChat extends Component {
     if (this.props.image) {
       progress = this.state.progress.interpolate({
         inputRange: [0, 1],
-        outputRange: [-CONTAINER_WIDTH * 0.9, 0]
+        outputRange: [-CONTAINER_WIDTH * 0.9, 0],
       });
 
       opacity = this.state.hide.interpolate({
         inputRange: [0, 1],
-        outputRange: [1, 0]
+        outputRange: [1, 0],
       });
     }
 
@@ -179,19 +179,17 @@ class ImageMessageChat extends Component {
           this.state.uploadStatus !== UPLOAD_STATUS_TYPE.UPLOADING
             ? 'auto'
             : 'none'
-        }
-      >
+        }>
         <Lightbox
-          springConfig={{ overshootClamping: true }}
+          springConfig={{overshootClamping: true}}
           onOpen={this.handleOpen.bind(this)}
-          willClose={this.handleWillClose.bind(this)}
-        >
+          willClose={this.handleWillClose.bind(this)}>
           <Image
             resizeMode={this.state.isOpenLightBox ? 'contain' : 'cover'}
             source={{
-              uri: this.state.isOpenLightBox ? highQualityUri : lowQualityUri
+              uri: this.state.isOpenLightBox ? highQualityUri : lowQualityUri,
             }}
-            style={[{ width: '100%', height: '100%' }, this.props.imageStyle]}
+            style={[{width: '100%', height: '100%'}, this.props.imageStyle]}
           />
         </Lightbox>
 
@@ -200,19 +198,19 @@ class ImageMessageChat extends Component {
             <>
               <Animated.View
                 pointerEvents={'none'}
-                style={[styles.mask, { opacity }]}
+                style={[styles.mask, {opacity}]}
               />
-              <Animated.View style={[styles.progessBar, { opacity }]}>
+              <Animated.View style={[styles.progessBar, {opacity}]}>
                 <Animated.View
                   pointerEvents="none"
                   style={{
                     height: '100%',
                     transform: [
                       {
-                        translateX: progress
-                      }
+                        translateX: progress,
+                      },
                     ],
-                    backgroundColor: '#909090'
+                    backgroundColor: '#909090',
                   }}
                 />
               </Animated.View>
@@ -223,8 +221,7 @@ class ImageMessageChat extends Component {
             <TouchableOpacity
               style={styles.errorContainer}
               onPress={this.uploadImage.bind(this, true)}
-              activeOpacity={0.5}
-            >
+              activeOpacity={0.5}>
               <>
                 <Icon name="ios-refresh" size={24} color="white" />
                 <Text style={styles.errorText}>Lỗi! chạm để gửi lại</Text>
@@ -242,10 +239,10 @@ const styles = StyleSheet.create({
     height: CONTAINER_HEIGHT,
     borderRadius: 13,
     margin: 3,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   imageActive: {
-    flex: 1
+    flex: 1,
   },
   mask: {
     backgroundColor: 'rgba(0,0,0,.5)',
@@ -253,7 +250,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     zIndex: 1,
-    flex: 1
+    flex: 1,
   },
   progessBar: {
     height: 3,
@@ -264,7 +261,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
     backgroundColor: 'white',
     borderRadius: 3,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   errorContainer: {
     zIndex: 1,
@@ -273,14 +270,14 @@ const styles = StyleSheet.create({
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'absolute'
+    position: 'absolute',
   },
   errorText: {
     color: 'white',
     textAlign: 'center',
     fontSize: 13,
-    marginTop: 10
-  }
+    marginTop: 10,
+  },
 });
 
 export default ImageMessageChat;

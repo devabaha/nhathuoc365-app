@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     color: appConfig.colors.primary,
     fontWeight: '500',
     marginBottom: 7,
-    letterSpacing: .3
+    letterSpacing: 0.3,
   },
   title: {
     color: '#333',

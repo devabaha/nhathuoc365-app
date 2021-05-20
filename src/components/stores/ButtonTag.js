@@ -24,7 +24,9 @@ function ButtonTag({text, onPress, checked}) {
         },
       ]}
       onPress={handlePress}>
-      <Text style={{color: isChecked ? '#fff' : '#333'}}>{text}</Text>
+      <Text style={{color: isChecked ? '#fff' : '#333'}} numberOfLines={2}>
+        {text}
+      </Text>
     </TouchableOpacity>
   );
 }
@@ -36,6 +38,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderRadius: 3,
+    paddingHorizontal: 3,
   },
 });
 

@@ -22,6 +22,7 @@ import {
   Stack,
   Modal,
   Lightbox,
+  Drawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -158,6 +159,7 @@ import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
 import ModalFilter from './components/stores/ModalFilter';
+import FilterComponent from './components/stores/FilterDrawer';
 import {News} from './containers/Social';
 import {ModalComment} from './components/Social';
 
@@ -728,6 +730,19 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
+              {/* <Drawer
+                key="drawer-filter"
+                hideNavBar={true}
+                drawerPosition="right"
+                drawerWidth={350}
+                contentComponent={FilterComponent}>
+                <Scene
+                  key={`${appConfig.routes.store}_1`}
+                  component={StoreContainer}
+                  {...navBarConfig}
+                  back
+                />
+              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -1139,14 +1154,20 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Stack key={appConfig.routes.store}>
+                <Drawer
+                  key={appConfig.routes.store}
+                  hideNavBar={true}
+                  drawerPosition="right"
+                  drawerWidth={350}
+                  hideDrawerButton={true}
+                  contentComponent={(props) => <FilterComponent {...props} />}>
                   <Scene
                     key={`${appConfig.routes.store}_1`}
                     component={StoreContainer}
                     {...navBarConfig}
                     back
                   />
-                </Stack>
+                </Drawer>
 
                 <Stack key="stores_list">
                   <Scene

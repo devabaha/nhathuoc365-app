@@ -259,10 +259,11 @@ class News extends Component {
             onIndexChange={(index) => this.handleIndexChange(index)}
             initialLayout={{width: appConfig.device.width}}
           />
-        ) : !this.state.loading && <NoResult 
-            iconName="bell-off"
-            message="Chưa có tin tức"
-        />}
+        ) : (
+          !this.state.loading && (
+            <NoResult iconName="bell-off" message="Chưa có tin tức" />
+          )
+        )}
       </View>
     );
   }

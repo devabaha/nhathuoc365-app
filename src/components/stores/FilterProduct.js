@@ -3,35 +3,30 @@ import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Feather';
 import appConfig from 'app-config';
-import {includes, isEmpty, isEqual, omitBy} from 'lodash';
+import {includes, isEmpty, isEqual} from 'lodash';
 import store from 'app-store';
+import mobx from 'mobx';
+import {observer} from 'mobx-react';
 
 function FilterProduct({
   titleLeft = 'Sắp xếp',
   titleRight = 'Lọc',
-  data = [],
   dataSort = [],
   onValueSort,
-  onValueTag,
+  selectedFilter,
 }) {
   const [options, setOptions] = useState([]);
-  const [dataFilterTag, setDataFilterTag] = useState([]);
   const [defaultSelected, setDefaultSelected] = useState({});
-  const [selectedFilter, setSelectedFiler] = useState({});
+  // const [selectedFilter, setSelectedFiler] = useState({});
   useEffect(() => {
     setOptions(dataSort);
-    const selected = dataSort.filter((i) => i.isSelected)[0];
-    if (!!selected) {
-      onValueSort?.(selected);
-      setDefaultSelected(selected);
-    }
-  }, [dataSort]);
+  }, []);
 
-  useEffect(() => {
-    if (!isEmpty(data)) {
-      setDataFilterTag(data);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (!isEmpty(data) && !isEqual(data, dataFilterTag)) {
+  //     setDataFilterTag(data);
+  //   }
+  // }, [data]);
 
   const handleRemoveTag = (tag) => () => {
     const newFilterSelected = Object.keys(selectedFilter).reduce((obj, key) => {
@@ -44,31 +39,22 @@ function FilterProduct({
             }),
       };
     }, {});
-    setSelectedFiler(newFilterSelected);
-    onValueTag?.(newFilterSelected);
+    store.setSelectedFilter(newFilterSelected);
   };
 
-  const handleOpenModal = (type) => () => {
+  const handleOpenModal = () => {
     Actions.push(appConfig.routes.filterProduct, {
-      type,
-      defaultSelected: type === 'default' ? defaultSelected : selectedFilter,
-      data: type === 'default' ? options : dataFilterTag,
-      title: type === 'default' ? titleLeft : titleRight,
+      defaultSelected: defaultSelected,
+      data: options,
+      title: titleLeft,
       onSelectValueSort: (selected) => {
-        if (type === 'default') {
-          setDefaultSelected(selected);
-          const newData = options.map((i) => ({
-            ...i,
-            isSelected: i.id === selected.id,
-          }));
-          setOptions(newData);
-          onValueSort?.(selected);
-          return;
-        }
-      },
-      onSelectValue: (selected) => {
-        setSelectedFiler(selected);
-        onValueTag?.(selected);
+        setDefaultSelected(selected);
+        const newData = options.map((i) => ({
+          ...i,
+          isSelected: i.id === selected.id,
+        }));
+        setOptions(newData);
+        onValueSort?.(selected);
       },
     });
   };
@@ -78,8 +64,8 @@ function FilterProduct({
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.btnFilterLeft}
-          onPress={handleOpenModal('default')}>
-          <Text>{titleLeft}:</Text>
+          onPress={handleOpenModal}>
+          <Text>{titleLeft}</Text>
           {!isEmpty(defaultSelected) && (
             <Text style={styles.valueText}>{defaultSelected.name}</Text>
           )}
@@ -88,7 +74,9 @@ function FilterProduct({
         <View style={styles.divider} />
         <TouchableOpacity
           style={styles.btnFilterRight}
-          onPress={handleOpenModal('filter-multiple')}>
+          onPress={() => {
+            Actions.drawerOpen();
+          }}>
           <Icon name="filter" color="#333" size={20} />
           <Text style={styles.titleRight}>{titleRight}</Text>
         </TouchableOpacity>
@@ -98,11 +86,7 @@ function FilterProduct({
           {Object.values(selectedFilter).map((tag, index) => (
             <View key={`${index}__tag_select`} style={styles.tagSelected}>
               <Text style={{color: '#fff', fontSize: 12, paddingHorizontal: 4}}>
-                {!!tag.tag
-                  ? tag.tag
-                  : `${vndCurrencyFormat(tag.min_price)} - ${vndCurrencyFormat(
-                      tag.max_price,
-                    )}`}
+                {!!tag.tag ? tag.tag : tag.text}
               </Text>
               <TouchableOpacity onPress={handleRemoveTag(tag)}>
                 <Icon name="x-circle" size={18} color="#fff" />
