@@ -45,7 +45,6 @@ const {
   event,
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
-
 class Home extends Component {
   static propTypes = {
     sites: PropTypes.array,
@@ -187,6 +186,7 @@ class Home extends Component {
 
   handleHeaderLayout(e) {
     const {height} = e.nativeEvent.layout;
+    console.log({height});
     if (height !== this.state.headerHeight) {
       this.setState({
         headerHeight: height,
@@ -512,7 +512,9 @@ class Home extends Component {
   }
 }
 
-const topAndroid = appConfig.device.isIOS ? 0 : 10;
+const topBG = appConfig.device.isIOS
+  ? -appConfig.device.width / 1.5
+  : -appConfig.device.width - 40;
 
 let styles = StyleSheet.create({
   container: {
@@ -527,7 +529,7 @@ let styles = StyleSheet.create({
     borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
     top: '-100%',
-    marginTop: -appConfig.device.width / 1.5,
+    marginTop: topBG,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden',

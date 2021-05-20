@@ -1159,6 +1159,7 @@ class Item extends Component {
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={{
                     paddingHorizontal: 5,
+                    paddingVertical: 20,
                   }}
                 />
               </View>

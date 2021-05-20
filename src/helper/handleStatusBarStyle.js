@@ -9,6 +9,7 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     if (Actions.currentScene === `${appConfig.routes.homeTab}_1`) {
       StatusBar.setBarStyle(store.homeStatusBar.barStyle, true);
       StatusBar.setBackgroundColor(store.homeStatusBar.backgroundColor);
+      StatusBar.setTranslucent(false);
       return;
     }
     if (Actions.currentScene === `${appConfig.routes.item}_1`) {
@@ -47,10 +48,10 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.scheduleConfirm,
 
     appConfig.routes.resetPassword,
+    appConfig.routes.item,
 
     appConfig.routes.premiumInfo,
 
-    appConfig.routes.item,
     appConfig.routes.itemAttribute,
     appConfig.routes.accountTab,
   ];
