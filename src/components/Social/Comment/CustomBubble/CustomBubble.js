@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
-import moment from 'moment';
+import {StyleSheet, View, Text, Animated} from 'react-native';
 
 import {ImageMessageChat} from 'app-packages/tickid-chat/component';
 import BubbleBottom from '../BubbleBottom';
@@ -12,15 +11,19 @@ import store from 'app-store';
 
 import {ActionBtn} from '../BubbleBottom';
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
+import {getRelativeTime} from 'app-helper/social';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
 
 const CHARACTER_PER_LINE = 40;
-const LINE_HEIGHT = 25;
-const MAX_LINE = 5.1;
+const LINE_HEIGHT = 20;
+const MAX_LINE = 5;
+const MAX_NUM_OF_BREAK_LINE = 5;
 const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
-const MAX_COLLAPSED_HEIGHT = LINE_HEIGHT * MAX_LINE;
+const MAX_COLLAPSED_HEIGHT =
+  LINE_HEIGHT * MAX_LINE + (appConfig.device.isAndroid ? 0 : LINE_HEIGHT);
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -37,6 +40,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
+    overflow: 'hidden',
   },
   bubbleContainer: {
     // flex: 0,
@@ -50,12 +54,23 @@ const styles = StyleSheet.create({
     width: '100%',
     height: undefined,
   },
+  btnShowFullMessageContainer: {
+    minWidth: 120,
+    width: '100%',
+    alignItems: 'flex-end',
+    top: '100%',
+    zIndex: 1,
+  },
   btnShowFullMessage: {
     position: 'absolute',
-    bottom: 2,
+    bottom: appConfig.device.isIOS ? 5 : -2,
     right: 0,
     borderBottomRightRadius: 15,
-    overflow: 'hidden',
+  },
+  text: {
+    lineHeight: LINE_HEIGHT,
+    color: '#242424',
+    fontSize: 15,
   },
   labelShowFulMessage: {
     color: '#777',
@@ -70,7 +85,7 @@ const styles = StyleSheet.create({
   },
   messageTextContainer: {
     marginTop: -3,
-    // overflow: 'hidden',
+    overflow: 'hidden',
   },
 
   containerMention: {
@@ -112,9 +127,24 @@ class CustomBubble extends Component {
   animatedHighlight = new Animated.Value(0);
 
   state = {
-    isShowFullMessage:
-      this.props?.currentMessage?.content?.length <= MAX_LENGTH_TEXT,
+    isShowFullMessage: this.isShowFullMessage,
   };
+
+  get isShowFullMessage() {
+    const currentMessage = this.props?.currentMessage?.content;
+    if (currentMessage) {
+      const numOfBreakIos = currentMessage.split('\r')?.length;
+      const numOfBreakAndroid = currentMessage.split('\n')?.length;
+
+      return (
+        currentMessage.length <= MAX_LENGTH_TEXT &&
+        numOfBreakIos <= MAX_NUM_OF_BREAK_LINE &&
+        numOfBreakAndroid <= MAX_NUM_OF_BREAK_LINE
+      );
+    }
+
+    return true;
+  }
 
   componentWillUnmount() {
     this.unMounted = true;
@@ -142,10 +172,7 @@ class CustomBubble extends Component {
   };
 
   get formattedCreated() {
-    return moment(
-      this.props.currentMessage.created,
-      'YYYY-MM-DD HH:mm:ss',
-    ).fromNow();
+    return getRelativeTime(this.props.currentMessage.created);
   }
 
   handlePressBubbleBottom = (type) => {
@@ -167,9 +194,11 @@ class CustomBubble extends Component {
   }
 
   renderMessageText = (props, bgColor) => {
-    props.textStyle = {
-      lineHeight: LINE_HEIGHT,
-    };
+    props.customTextStyle = styles.text;
+
+    // if(!this.state.isShowFullMessage) {
+    //   props.currentMessage?.text = clipText
+    // }
 
     if (!this.isReplyingYourSelf(props) && props.currentMessage?.reply?.name) {
       props.currentMessage.text = (
@@ -184,7 +213,7 @@ class CustomBubble extends Component {
               onPress={() => {}}
             />
           </Text>
-          <Text>{props.currentMessage.content}</Text>
+          <Text style={styles.text}>{props.currentMessage.content}</Text>
         </>
       );
     }
@@ -199,25 +228,26 @@ class CustomBubble extends Component {
               : MAX_COLLAPSED_HEIGHT,
           },
         ]}>
-        <MessageText {...props} />
-
         {!this.state.isShowFullMessage && (
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={styles.btnShowFullMessage}
-            onPress={this.openFullMessage}>
-            <LinearGradient
-              style={styles.maskShowFullMessage}
-              colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
-              locations={[0.75, 1]}
-              angle={-90}
-              useAngle
-            />
-            <Text style={styles.labelShowFulMessage}>
-              ... {this.props.seeMoreTitle}
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.btnShowFullMessageContainer}>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={this.openFullMessage}
+              containerStyle={styles.btnShowFullMessage}>
+              <LinearGradient
+                style={styles.maskShowFullMessage}
+                colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
+                locations={[0.75, 1]}
+                angle={-90}
+                useAngle
+              />
+              <Text style={styles.labelShowFulMessage}>
+                ... {this.props.seeMoreTitle}
+              </Text>
+            </TouchableOpacity>
+          </View>
         )}
+        <MessageText {...props} />
       </View>
     );
   };
@@ -288,7 +318,7 @@ class CustomBubble extends Component {
       isHighlight,
       ...props
     } = this.props;
-    // console.log('%crender bubble', 'color:yellow', props.currentMessage.id);
+    console.log('%crender bubble', 'color:yellow', props.currentMessage.id);
 
     const hasText = props.currentMessage.text;
     const bgColor = hasText
@@ -300,6 +330,11 @@ class CustomBubble extends Component {
     const wrapperStyle = {
       left: {
         ...bubbleWrapperStyle.left,
+        paddingBottom: !this.state.isShowFullMessage
+          ? appConfig.device.isIOS
+            ? 0
+            : 7
+          : undefined,
         backgroundColor: bgColor,
       },
     };

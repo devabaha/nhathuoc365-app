@@ -1,9 +1,13 @@
 import store from 'app-store';
 import {Actions} from 'react-native-router-flux';
-import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import {
+  SOCIAL_BUTTON_TYPES,
+  SOCIAL_RELATIVE_TIME_FORMAT_DATE,
+} from 'src/constants/social';
 import {share} from '../share';
 
 import appConfig from 'app-config';
+import moment from 'moment';
 
 export const calculateLikeCountFriendly = (feeds) => {
   return feeds.like_flag
@@ -86,4 +90,11 @@ export const handleSocialNewsActionBarPress = (
       share(feeds.url, feeds.title);
       break;
   }
+};
+
+export const getRelativeTime = (
+  time,
+  format = SOCIAL_RELATIVE_TIME_FORMAT_DATE,
+) => {
+  return moment(time, format).fromNow();
 };

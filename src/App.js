@@ -163,6 +163,7 @@ import FilterComponent from './components/stores/FilterDrawer';
 import {News} from './containers/Social';
 import {ModalComment} from './components/Social';
 import SalesReport from './containers/SalesReport/SalesReport';
+import Social from './containers/Social/Social';
 
 /**
  * Not allow font scaling
@@ -843,6 +844,16 @@ class RootRouter extends Component {
                     />
                   </Stack>
                 </Tabs>
+
+                {/* ================ SOCIAL ================ */}
+                <Stack key={appConfig.routes.social}>
+                  <Scene
+                    key={`${appConfig.routes.social}_1`}
+                    component={Social}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
 
                 {/* ================ MODAL COMMENT ================ */}
                 <Stack key={appConfig.routes.modalComment}>

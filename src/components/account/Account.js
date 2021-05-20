@@ -50,6 +50,7 @@ class Account extends Component {
     this.getWarehouseRequest = new APIRequest();
     this.updateWarehouseRequest = new APIRequest();
     this.requests = [this.getWarehouseRequest];
+    this.unmounted = false;
   }
 
   get options() {
@@ -511,7 +512,7 @@ class Account extends Component {
       takePhotoButtonTitle: t('avatarPicker.takePhotoTitle'),
       chooseFromLibraryButtonTitle: t('avatarPicker.chooseFromLibraryTitle'),
       storageOptions: {
-        skipBackup: true,
+        // skipBackup: true,
         path: 'images',
       },
     };
@@ -522,7 +523,14 @@ class Account extends Component {
       } else if (response.didCancel) {
         console.log(response);
       } else {
-        // console.log(response);
+        if (!response.fileName) {
+          response.fileName = new Date().getTime();
+          if (response.type) {
+            response.fileName += '.' + response.type.split('image/')[1];
+          } else {
+            response.fileName += '.jpeg';
+          }
+        }
         this.uploadAvatar(response);
       }
     });
@@ -546,20 +554,35 @@ class Account extends Component {
           {
             'Content-Type': 'multipart/form-data',
           },
-          [avatar],
+          [avatar, {name: 'site_id', data: store.store_data?.id}],
         )
           .then((resp) => {
+            if (this.unmounted) return;
+
             var {data} = resp;
             var response = JSON.parse(data);
             if (response && response.status == STATUS_SUCCESS) {
               this.showSticker();
-              this.setState({
-                avatar_loading: false,
+            } else {
+              flashShowMessage({
+                type: 'danger',
+                message:
+                  response.message || this.props.t('common:api.error.message'),
               });
             }
           })
           .catch((error) => {
             console.log(error);
+            flashShowMessage({
+              type: 'danger',
+              message: this.props.t('common:api.error.message'),
+            });
+          })
+          .finally(() => {
+            if (this.unmounted) return;
+            this.setState({
+              avatar_loading: false,
+            });
           });
       },
     );
@@ -576,6 +599,7 @@ class Account extends Component {
   }
 
   componentWillUnmount() {
+    this.unmounted = true;
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
   }
@@ -586,6 +610,8 @@ class Account extends Component {
     try {
       this.getWarehouseRequest.data = APIHandler.user_site_store();
       const responseData = await this.getWarehouseRequest.promise();
+      if (this.unmounted) return;
+
       const listWarehouse =
         responseData?.stores?.map((store) => ({
           ...store,
@@ -603,6 +629,7 @@ class Account extends Component {
         message: err.message || t('common:api.error.message'),
       });
     } finally {
+      if (this.unmounted) return;
       this.setState({isWarehouseLoading: false});
     }
   }
@@ -618,6 +645,7 @@ class Account extends Component {
           store.setUserInfo(response.data);
           store.setOrdersKeyChange(store.orders_key_change + 1);
 
+          if (this.unmounted) return;
           this.setState({
             refreshing: false,
           });
@@ -632,6 +660,8 @@ class Account extends Component {
     const data = {store_id: warehouse.id};
     try {
       this.updateWarehouseRequest.data = APIHandler.user_choose_store(data);
+      if (this.unmounted) return;
+
       const responseData = await this.updateWarehouseRequest.promise();
       flashShowMessage({
         type: 'success',
@@ -644,6 +674,7 @@ class Account extends Component {
         message: error.message || this.props.t('common:api.error.message'),
       });
     } finally {
+      if (this.unmounted) return;
       this.setState({isWarehouseLoading: false});
     }
   }
@@ -1148,57 +1179,6 @@ class Account extends Component {
       </View>
     );
   }
-
-  handleLogout() {
-    Alert.alert(
-      t('signOut.title'),
-      t('signOut.subTitle'),
-      [
-        {
-          text: t('signOut.cancel'),
-          onPress: () => {},
-        },
-        {
-          text: t('signOut.accept'),
-          onPress: this.logout,
-          style: 'destructive',
-        },
-      ],
-      {cancelable: false},
-    );
-  }
-
-  logout = async () => {
-    this.setState({
-      logout_loading: true,
-    });
-    try {
-      const response = await APIHandler.user_logout();
-      switch (response.status) {
-        case STATUS_SUCCESS:
-          store.removeAnalytics();
-          store.setUserInfo(response.data);
-          store.resetCartData();
-          store.setRefreshHomeChange(store.refresh_home_change + 1);
-          store.setOrdersKeyChange(store.orders_key_change + 1);
-          store.resetAsyncStorage();
-          flashShowMessage({
-            message: t('signOut.successMessage'),
-            type: 'success',
-          });
-          Actions.reset(appConfig.routes.sceneWrapper);
-          break;
-        default:
-          console.log('default');
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      this.setState({
-        logout_loading: false,
-      });
-    }
-  };
 }
 
 const styles = StyleSheet.create({

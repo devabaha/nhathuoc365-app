@@ -179,27 +179,6 @@ class Comment extends Component {
   }
 
   componentDidMount() {
-    moment.updateLocale(this.props.i18n.language, {
-      relativeTime: {
-        future: this.props.t('time.relative.future') || undefined,
-        past: this.props.t('time.relative.past') || undefined,
-        s: this.props.t('time.relative.s') || undefined,
-        ss: this.props.t('time.relative.s') || undefined,
-        m: this.props.t('time.relative.m') || undefined,
-        mm: this.props.t('time.relative.mm') || undefined,
-        h: this.props.t('time.relative.h') || undefined,
-        hh: this.props.t('time.relative.hh') || undefined,
-        d: this.props.t('time.relative.d') || undefined,
-        dd: this.props.t('time.relative.dd') || undefined,
-        w: this.props.t('time.relative.w') || undefined,
-        ww: this.props.t('time.relative.ww') || undefined,
-        M: this.props.t('time.relative.M') || undefined,
-        MM: this.props.t('time.relative.MM') || undefined,
-        y: this.props.t('time.relative.y') || undefined,
-        yy: this.props.t('time.relative.yy') || undefined,
-      },
-    });
-
     this._getMessages();
   }
 
@@ -221,7 +200,7 @@ class Comment extends Component {
     );
   };
 
-  _getMessages = async () => {
+  _getMessages = async (isReload) => {
     this.setState({loading: true});
     let {site_id, object, object_id} = this.props;
 
@@ -237,7 +216,6 @@ class Comment extends Component {
       const response = await this.getCommentsAPI.promise();
       if (this.unmounted) return;
 
-      // console.log(response);
       if (response && response.status == STATUS_SUCCESS && response.data) {
         if (response.data.list) {
           let comments = [...response.data.list];
@@ -260,7 +238,7 @@ class Comment extends Component {
       this.isLoadFirstTime = false;
       if (!this.unmounted) {
         this.setStater({loading: false});
-        if (this.props.autoFocus && this.refTickidChat) {
+        if (!isReload && this.props.autoFocus && this.refTickidChat) {
           this.refTickidChat.handlePressComposerButton(COMPONENT_TYPE.EMOJI);
         }
       }

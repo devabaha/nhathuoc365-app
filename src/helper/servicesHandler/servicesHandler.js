@@ -366,6 +366,15 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         id: service.id,
       });
       break;
+
+    /** Social */
+    /** social */
+    case SERVICES_TYPE.SOCIAL:
+      Actions.push(appConfig.routes.social, {
+        // title: service.news?.title || service.title,
+        siteId: service.id,
+      });
+      break;
     default:
       // Alert.alert('Thông báo', 'Chức năng sắp ra mắt, hãy cùng chờ đón nhé.', [
       //   { text: 'Đồng ý' }
