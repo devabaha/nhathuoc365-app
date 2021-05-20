@@ -1,6 +1,9 @@
 import store from 'app-store';
 import {Actions} from 'react-native-router-flux';
-import {SOCIAL_BUTTON_TYPES, SOCIAL_RELATIVE_TIME_FORMAT_DATE} from 'src/constants/social';
+import {
+  SOCIAL_BUTTON_TYPES,
+  SOCIAL_RELATIVE_TIME_FORMAT_DATE,
+} from 'src/constants/social';
 import {share} from '../share';
 
 import appConfig from 'app-config';
@@ -89,6 +92,9 @@ export const handleSocialNewsActionBarPress = (
   }
 };
 
-export const getRelativeTime = (time, format = SOCIAL_RELATIVE_TIME_FORMAT_DATE) => {
+export const getRelativeTime = (
+  time,
+  format = SOCIAL_RELATIVE_TIME_FORMAT_DATE,
+) => {
   return moment(time, format).fromNow();
 };

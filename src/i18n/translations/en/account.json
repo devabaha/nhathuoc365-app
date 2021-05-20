@@ -41,6 +41,10 @@
     "commissionIncomeStatement": {
       "label": "Commission report",
       "desc": "Look up monthly commissions"
+    },
+    "salesReport": {
+      "label": "Invited Sales Report",
+      "desc": "Sales of invented"
     }
   },
   "avatarPicker": {

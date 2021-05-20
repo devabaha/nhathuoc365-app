@@ -307,6 +307,25 @@ class Account extends Component {
         isHidden:
           !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
+      {
+        key: 'report_npp',
+        icon: 'clipboard',
+        iconColor: '#ffffff',
+        size: 22,
+        iconSize: 14,
+        label: t('options.salesReport.label'),
+        desc: t('options.salesReport.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.salesReport),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#fd6d61',
+          },
+        ],
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
+      },
 
       {
         key: '2',
@@ -504,12 +523,12 @@ class Account extends Component {
       } else if (response.didCancel) {
         console.log(response);
       } else {
-        if(!response.fileName){
+        if (!response.fileName) {
           response.fileName = new Date().getTime();
-          if(response.type){
-            response.fileName += "." + response.type.split('image/')[1];
+          if (response.type) {
+            response.fileName += '.' + response.type.split('image/')[1];
           } else {
-            response.fileName += ".jpeg";
+            response.fileName += '.jpeg';
           }
         }
         this.uploadAvatar(response);
