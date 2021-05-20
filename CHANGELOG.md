@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Disable zoom in webview (notifiItem, Item) by [lamah.dev@gmail.com].
+
 ## [r11.6.2] - 2021-05-19
 ### Added
 - Show month commission in Commission report by [duylinhdang1998@gmail.com].
