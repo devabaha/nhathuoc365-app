@@ -41,6 +41,10 @@
     "commissionIncomeStatement": {
       "label": "Báo cáo hoa hồng",
       "desc": "Tra cứu hoa hồng theo tháng"
+    },
+    "salesReport": {
+      "label": "Báo cáo doanh số giới thiệu",
+      "desc": "Doanh số của những người được giới thiệu"
     }
   },
   "avatarPicker": {

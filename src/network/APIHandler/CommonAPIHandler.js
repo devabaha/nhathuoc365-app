@@ -955,6 +955,11 @@ class CommonAPIHandler extends BaseHandler {
     return this.postCancelableAPI(api, data, true);
   }
 
+  invited_revenue(data) {
+    const api = url_for(API.INVITED_REVENUE);
+    return this.postCancelableAPI(api, data, true);
+  }
+
   /**
    * @todo Lấy thông tin game đoán số
    *
@@ -1073,7 +1078,7 @@ class CommonAPIHandler extends BaseHandler {
    *
    * @param {object} data
    * @param {string} data.object name of object
-   * @param {number} data.object_id id of object
+   * @param {number} data.object_id id of objec
    */
   social_comments(data) {
     const api = url_for(API.SOCIAL_COMMENTS);

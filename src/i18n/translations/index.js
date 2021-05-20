@@ -54,6 +54,8 @@ import vi_commissionIncomeStatement from './vi/commissionIncomeStatement.json';
 import en_commissionIncomeStatement from './en/commissionIncomeStatement.json';
 import vi_social from './vi/social.json';
 import en_social from './en/social.json';
+import vi_salesReport from './vi/salesReport.json';
+import en_salesReport from './en/salesReport.json';
 
 export default {
   [languages.vi.value]: {
@@ -84,6 +86,7 @@ export default {
     rateApp: vi_rateApp,
     commissionIncomeStatement: vi_commissionIncomeStatement,
     social: vi_social,
+    salesReport: vi_salesReport,
   },
   [languages.en.value]: {
     common: en_common,
@@ -113,5 +116,6 @@ export default {
     rateApp: en_rateApp,
     commissionIncomeStatement: en_commissionIncomeStatement,
     social: en_social,
+    salesReport: en_salesReport,
   },
 };

@@ -143,6 +143,9 @@
     "transaction": {
       "mainTitle": "Giao dịch",
       "paymentTitle": "Thanh toán"
+    },
+    "salesReport": {
+      "mainTitle": "Báo cáo doanh số giới thiệu"
     }
   },
 

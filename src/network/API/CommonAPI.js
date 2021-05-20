@@ -453,6 +453,9 @@ class CommonAPI {
   get SOCIAL_LIKES() {
     return BaseAPI.socialDomain + 'likes/store';
   }
+  get INVITED_REVENUE() {
+    return BaseAPI.apiDomain + 'apiUser/invited_revenue';
+  }
 }
 
 export default new CommonAPI();

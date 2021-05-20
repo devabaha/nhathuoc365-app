@@ -162,6 +162,7 @@ import ModalFilter from './components/stores/ModalFilter';
 import FilterComponent from './components/stores/FilterDrawer';
 import {News} from './containers/Social';
 import {ModalComment} from './components/Social';
+import SalesReport from './containers/SalesReport/SalesReport';
 
 /**
  * Not allow font scaling
@@ -880,6 +881,15 @@ class RootRouter extends Component {
                     {...navBarConfig}
                     title={t('screen.commissionIncomeStatement.mainTitle')}
                     component={CommissionIncomeStatement}
+                    back
+                  />
+                </Stack>
+                <Stack key={appConfig.routes.salesReport}>
+                  <Scene
+                    key={`${appConfig.routes.salesReport}_1`}
+                    {...navBarConfig}
+                    title={t('screen.salesReport.mainTitle')}
+                    component={SalesReport}
                     back
                   />
                 </Stack>
