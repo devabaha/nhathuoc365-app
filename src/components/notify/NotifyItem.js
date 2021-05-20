@@ -214,6 +214,7 @@ class NotifyItem extends Component {
                 source={{html: item_data.content}}
                 zoomable={false}
                 scrollEnabled={false}
+                viewportContent={'width=device-width, user-scalable=no'}
                 customScript={`
 
                   `}
@@ -232,7 +233,8 @@ class NotifyItem extends Component {
                   }
                   img {
                     max-width: 100% !important;
-                  }`}
+                  }`
+                }
               />
             ) : (
               <Indicator size="small" />
