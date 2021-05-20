@@ -513,7 +513,7 @@ class Home extends Component {
 }
 
 const topBG = appConfig.device.isIOS
-  ? -appConfig.device.width / 1.5
+  ? -appConfig.device.width / 1.5 - 10
   : -appConfig.device.width - 40;
 
 let styles = StyleSheet.create({
