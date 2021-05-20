@@ -1,8 +1,10 @@
-
 {
-    "modal": {
-        "yearMonth": {
-            "title": "Chọn tháng"
-        }
+  "modal": {
+    "yearMonth": {
+      "title": "Chọn tháng"
     }
+  },
+  "total_revenue": "Tổng F1",
+  "level": "Mức thưởng",
+  "total_commission_month": "Thưởng"
 }

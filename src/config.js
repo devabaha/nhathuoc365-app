@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.5.4';
+    return 'r11.6.2';
   }
 
   get appName() {
@@ -235,6 +235,7 @@ class Config {
       modalConfirm: 'modalConfirm',
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
+      modalComment: 'modalComment',
 
       //  Reset password
       resetPassword: 'resetPassword',

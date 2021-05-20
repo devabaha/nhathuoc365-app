@@ -1,4 +1,11 @@
-import {reaction, observable, action, toJS} from 'mobx';
+import {
+  reaction,
+  observable,
+  action,
+  toJS,
+  computed,
+  extendObservable,
+} from 'mobx';
 import autobind from 'autobind-decorator';
 import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -552,6 +559,20 @@ class Store {
     if (isFirebaseSignedIn) {
       firebaseAuth().signOut();
     }
+  }
+
+  @observable socialNews = observable.map(new Map());
+  @action setSocialNews(socialNews = {}) {
+    this.socialNews.merge(socialNews);
+  }
+
+  @action updateSocialNews(id, data = {}) {
+    let temp = this.socialNews.get(id) || {};
+    this.socialNews.set(id, {...temp, ...data});
+  }
+
+  @action resetSocialNews() {
+    this.socialNews.replace(new Map());
   }
 }
 

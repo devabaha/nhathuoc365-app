@@ -65,7 +65,7 @@ function FilterProduct({
         <TouchableOpacity
           style={styles.btnFilterLeft}
           onPress={handleOpenModal}>
-          <Text>{titleLeft}:</Text>
+          <Text>{titleLeft}</Text>
           {!isEmpty(defaultSelected) && (
             <Text style={styles.valueText}>{defaultSelected.name}</Text>
           )}

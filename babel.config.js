@@ -7,10 +7,12 @@ module.exports = {
       {
         root: ['.'],
         alias: {
+          src: './src',
           'app-util': './src/util',
           'app-store': './src/store',
           'app-config': './src/config',
           'app-packages': './src/packages',
+          'app-helper': './src/helper',
         },
       },
     ],
@@ -19,5 +21,5 @@ module.exports = {
     production: {
       plugins: ['transform-remove-console'],
     },
-  }
+  },
 };
