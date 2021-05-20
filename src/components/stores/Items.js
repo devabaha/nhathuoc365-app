@@ -384,18 +384,19 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.2,
         shadowRadius: 5,
       },
+      android: {
+        elevation: 4,
+      },
     }),
+    overflow: 'visible',
   },
   item_box_container: {
+    overflow: 'visible',
     marginHorizontal: 5,
     backgroundColor: '#fff',
     flex: 1,
     borderRadius: 7,
-    ...Platform.select({
-      android: {
-        elevation: 8,
-      },
-    }),
+    elevation: 4,
   },
   directionRow: {
     flex: 1,

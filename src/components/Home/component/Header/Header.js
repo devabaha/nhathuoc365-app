@@ -22,6 +22,7 @@ import {RIGHT_BUTTON_TYPE} from '../../../RightButtonNavBar/constants';
 import Loading from '../../../Loading';
 import Themes from '../../../../Themes';
 import equal from 'deep-equal';
+import mobx from 'mobx';
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 const homeThemes = Themes.getNameSpace('home');
@@ -165,7 +166,6 @@ let styles = StyleSheet.create({
     padding: 15,
     flexDirection: 'row',
     paddingTop: Platform.select({
-      // android: StatusBar.currentHeight,
       ios: appConfig.device.statusBarHeight * 1.5,
     }),
     alignItems: 'center',

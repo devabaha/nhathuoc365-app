@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
   beforeView: {
     position: 'absolute',
     borderStyle: 'solid',
-    borderTopWidth: 7,
-    borderLeftWidth: 7,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
     borderRightWidth: 0,
     borderBottomWidth: 0,
     borderTopColor: hexToRgbA(appConfig.colors.ribbon, 0.8),
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'transparent',
     borderRightColor: 'transparent',
     left: 0,
-    bottom: -7,
+    bottom: -4,
   },
 });
 
