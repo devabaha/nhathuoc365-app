@@ -44,7 +44,7 @@ const CustomMessage = ({
 
   useEffect(() => {
     setState({comment: currentMessage});
-  }, [currentMessage.real_id]);
+  }, [currentMessage]);
 
   const handleLikeComment = () => {
     const currentLikeFlag = comment?.like_flag,
@@ -135,6 +135,8 @@ const CustomMessage = ({
           return (
             prevProps.currentMessage.like_flag !==
               nextProps.currentMessage.like_flag ||
+            prevProps.currentMessage.like_count !==
+              nextProps.currentMessage.like_count ||
             prevProps.uploadURL !== nextProps.uploadURL ||
             prevProps.isLoading !== nextProps.isLoading ||
             prevProps.seeMoreTitle !== nextProps.seeMoreTitle ||
@@ -149,17 +151,6 @@ const CustomMessage = ({
         }}
       />
     </View>
-  );
-};
-
-const areEquals = (prevProps, nextProps) => {
-  return (
-    prevProps.currentMessage.real_id === nextProps.currentMessage.real_id &&
-    nextProps.isHighlight === prevProps.isHighlight &&
-    nextProps.isLoading === prevProps.isLoading &&
-    nextProps.loadingMessage === prevProps.loadingMessage &&
-    nextProps.seeMoreTitle === prevProps.seeMoreTitle &&
-    nextProps.uploadURL === prevProps.uploadURL
   );
 };
 

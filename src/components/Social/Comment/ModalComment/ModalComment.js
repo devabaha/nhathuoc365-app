@@ -76,7 +76,7 @@ class ModalComment extends Component {
 
   handleReload = () => {
     if (this.refComment.current) {
-      this.refComment.current._getMessages();
+      this.refComment.current._getMessages(true);
     }
   };
 

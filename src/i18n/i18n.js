@@ -32,6 +32,15 @@ const updateMoment = (t, language) => {
   });
 };
 
+const changeLanguage = (language) => {
+  i18n.changeLanguage(language, (error, t) => {
+    if (error) {
+      console.log('%cchange_language', 'background-color: red', error);
+    }
+    updateMoment(t, language);
+  });
+};
+
 const saveAppLanguage = async (asyncStorageLanguage, callback = () => {}) => {
   AsyncStorage.setItem(
     asyncStorageLanguageKey,
@@ -61,19 +70,16 @@ export const setAppLanguage = async (i18n, selectedLanguage = null) => {
       };
       // console.log(asyncStorageLanguage, 'has selected');
       saveAppLanguage(asyncStorageLanguage, () => {
-        i18n.changeLanguage(selectedLanguage.languageTag);
-        updateMoment(i18n.t.bind(i18n), selectedLanguage.languageTag);
+        changeLanguage(selectedLanguage.languageTag);
       });
     } else if (language) {
       const languageTag = languageObj.language;
       // console.log(languageObj, 'no selected');
       if (languageTag) {
-        i18n.changeLanguage(languageTag.languageTag);
-        updateMoment(i18n.t.bind(i18n), languageTag.languageTag);
+        changeLanguage(languageTag.languageTag);
       }
     } else if (currentLanguage) {
-      i18n.changeLanguage(currentLanguage.languageTag);
-      updateMoment(i18n.t.bind(i18n), currentLanguage.languageTag);
+      changeLanguage(currentLanguage.languageTag);
 
       asyncStorageLanguage = {
         language: currentLanguage,
@@ -91,7 +97,7 @@ i18n.use(initReactI18next).init(
     lng: languages.vi.value,
     fallbackLng: languages.vi.value,
     debug: true,
-
+    returnObjects: true,
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },
