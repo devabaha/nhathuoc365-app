@@ -9,18 +9,23 @@ import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
 import { handleSaveImage } from "../../helper/image";
-
+import ActionSheet from 'react-native-actionsheet';
 
 export default class ItemImageViewer extends Component {
   static defaultProps = {
     index: 0,
   };
+
   constructor(props){
-    super(props)
+    super(props);
     this.state = {
       index: 0,
-    };
+    }
+    this.OPTIONS_LIST = ['Save Image', 'Cancel']
   }
+  
+
+
   eventTracker = new EventTracker();
 
   componentDidMount() {
@@ -40,12 +45,11 @@ export default class ItemImageViewer extends Component {
         enableSwipeDown= {true}
         swipeDownThreshold={100}
         onSwipeDown={() => Actions.pop() }
-        onSave={() => images.map((item) => {
-          handleSaveImage(item.url);
-        })}
+        saveToLocalByLongPress={false}
+        onLongPress={() => this.actionSheet.show()}
         imageUrls={images}
-        index={this.state.index}
-        longPressTime={2}
+        index={this.props.index}
+        onChange={(index) => this.setState({index: index})}
         />
 
         <TouchableHighlight
@@ -63,6 +67,13 @@ export default class ItemImageViewer extends Component {
           }}>
           <Icon name="times-circle" size={32} color="#ffffff" />
         </TouchableHighlight>
+        <ActionSheet
+          ref={ref => (this.actionSheet = ref)}
+          options={this.OPTIONS_LIST}
+          cancelButtonIndex={1}
+          destructiveButtonIndex={1}
+          onPress={() => {handleSaveImage(images[this.state.index].url)}}
+        />
       </View>
     );
   }
