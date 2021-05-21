@@ -9,9 +9,9 @@
       "desc": "Facebook Fanpage chăm sóc khách hàng"
     },
     "termOfUse": {
-      "label": "Về {{appName}}",
+      "label": "Giới thiệu về chúng tôi",
       "desc": "Điều khoản sử dụng",
-      "webViewTitle": "Về {{appName}}"
+      "webViewTitle": "Về chúng tôi"
     },
     "appInformation": {
       "label": "Thông tin ứng dụng",
