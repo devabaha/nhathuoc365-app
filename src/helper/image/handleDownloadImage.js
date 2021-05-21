@@ -5,8 +5,8 @@ export const handleDownloadImage = (url) => {
      return RNFetchBlob.fetch('GET', url)
         .then((res) => {
           let status = res.info().status;
-          let contentType = appConfig.device.isIOS ? 'Content-Type' : 'content-type';
-          console.log(res);
+          // let contentType = appConfig.device.isIOS ? 'Content-Type' : 'content-type';
+          // console.log(res);
           // console.log(res.respInfo.headers[0])
           if (status === STATUS_SUCCESS) {
             // the conversion is done in native code

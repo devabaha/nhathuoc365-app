@@ -16,20 +16,21 @@ async function hasAndroidPermission() {
   return status === 'granted';
 }
 
- const handleSaveImage = async (dataURL) => {
+ const handleSaveSingleImage = async (dataURL, callback = () => {}, all = false) => {
     var base64;
     var imageType;
     try { 
-    const res = await handleDownloadImage(dataURL);
-    base64 = res.base64Str;
-    imageType = res.imageType;
-    
+      const res = await handleDownloadImage(dataURL);
+      if(res){
+        base64 = res.base64Str;
+        imageType = res.imageType;
+      }
     } catch ( err){
         console.log(err);
     }
     const imageName = new Date().getTime() + '.' + imageType;
     const androidPath = RNFetchBlob.fs.dirs.DCIMDir + '/' + imageName;
-    console.log(androidPath)
+    // console.log(androidPath)
     const iOSPath = 'data:image/' + imageType + ';base64,' + base64;
     try {
       const data = await (appConfig.device.isIOS
@@ -39,19 +40,20 @@ async function hasAndroidPermission() {
           .catch(err => console.log(err))
         : null)
         
-      if (data) {
+      if (data&&!all) {
         flashShowMessage({
           type: 'success',
           message: 'Lưu ảnh thành công',
         });
+        callback('done');
       }
     } catch (error) {
       flashShowMessage({
         type: 'danger',
         message: t('api.error.message'),
       });
-      console.log('err_save_qr_code', error);
+      console.log('err_save_single_image', error);
   };
 }
 
-export default handleSaveImage;
+export default handleSaveSingleImage;

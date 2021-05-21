@@ -1,3 +1,3 @@
-import handleSaveImage from "./handleSaveImage";
-
-export { handleSaveImage };
+import handleSaveSingleImage from "./handleSaveSingleImage";
+import { handleSaveAllImage } from "./handleSaveAllImage";
+export { handleSaveSingleImage, handleSaveAllImage };

@@ -8,8 +8,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
-import { handleSaveImage } from "../../helper/image";
+import { handleSaveSingleImage, handleSaveAllImage } from "../../helper/image";
 import ActionSheet from 'react-native-actionsheet';
+import { map } from 'lodash';
 
 export default class ItemImageViewer extends Component {
   static defaultProps = {
@@ -21,7 +22,7 @@ export default class ItemImageViewer extends Component {
     this.state = {
       index: 0,
     }
-    this.OPTIONS_LIST = ['Save Image', 'Cancel']
+    this.OPTIONS_LIST = ['Save Image','Save All Image', 'Cancel']
   }
   
 
@@ -50,6 +51,7 @@ export default class ItemImageViewer extends Component {
         imageUrls={images}
         index={this.props.index}
         onChange={(index) => this.setState({index: index})}
+        onPress={() => {console.log('click')}}
         />
 
         <TouchableHighlight
@@ -70,9 +72,26 @@ export default class ItemImageViewer extends Component {
         <ActionSheet
           ref={ref => (this.actionSheet = ref)}
           options={this.OPTIONS_LIST}
-          cancelButtonIndex={1}
-          destructiveButtonIndex={1}
-          onPress={() => {handleSaveImage(images[this.state.index].url)}}
+          cancelButtonIndex={2}
+          destructiveButtonIndex={2}
+          onPress={(index) => { 
+            switch (index) {
+              case 0:
+               handleSaveSingleImage(images[this.state.index].url, (res) => console.log(res))
+                break;
+              case 1:
+                // images.map((item) => handleSaveImage(item.url))
+                handleSaveAllImage(images, (res) => {
+                          console.log(res);
+                          if(res == images.length - 1){
+                            alert('download done')
+                          }
+                        }
+                      )
+              default: () => {}
+                break;
+            }
+          }}
         />
       </View>
     );
