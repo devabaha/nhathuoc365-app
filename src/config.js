@@ -46,6 +46,10 @@ class Config {
     };
   }
 
+  get aboutUsID(){
+    return 5088;
+  }
+
   get device() {
     return {
       isIphoneX: isIphoneX(),
