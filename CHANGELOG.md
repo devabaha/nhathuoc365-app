@@ -5,10 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [Unreleased]
 
 ### Changed
-- Change 'About us' pressed from webview to NotifyItem by [kienluu612@gmail.com]
+- Change 'About us' pressed from webview to NotifyItem by [kienluu612@gmail.com].
+### Fixed
+- Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
+
 ## [r11.6.3] - 2021-05-20
 ### Added
 - Update moment locale relative time when change language.
