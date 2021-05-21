@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- Change 'About us' pressed from webview to NotifyItem by [kienluu612@gmail.com]
 ## [r11.6.3] - 2021-05-20
 ### Added
 - Update moment locale relative time when change language.
