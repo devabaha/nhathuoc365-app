@@ -45,7 +45,7 @@ const ActionInfo = ({
 
   return (
     <Container row style={styles.container}>
-      {(!!isLiked || !!totalReaction) ? (
+      {!!isLiked || !!totalReaction ? (
         <Container row style={styles.block}>
           <FloatingIcons
             icons={FLOATING_ICONS}
@@ -58,7 +58,9 @@ const ActionInfo = ({
               totalReaction + (!!isLiked ? ' ' + t('others') : '')}
           </Text>
         </Container>
-      ) : <Container/>}
+      ) : (
+        <Container />
+      )}
 
       {!disableComment && !!totalComments && (
         <Pressable style={styles.end} onPress={onPressTotalComments}>

@@ -62,7 +62,7 @@ class BaseHandler {
         axios
           .post(api, data)
           .then((response) => this.processError(response, autoHandleResponse))
-          .catch((err) => console.log('postCancelableAPI', err)),
+          .catch((err) => console.log({err})),
     };
   }
 

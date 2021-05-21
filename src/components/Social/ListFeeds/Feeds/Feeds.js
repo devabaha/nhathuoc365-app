@@ -25,7 +25,7 @@ const Feeds = ({
   disableComment,
   onPostPress,
   onActionBarPress,
-  onPressTotalComments
+  onPressTotalComments,
 }) => {
   // console.log('render feeds');
 

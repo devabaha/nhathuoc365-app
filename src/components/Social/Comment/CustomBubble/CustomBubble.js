@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
-import moment from 'moment';
 
 import {ImageMessageChat} from 'app-packages/tickid-chat/component';
 import BubbleBottom from '../BubbleBottom';
@@ -12,15 +11,26 @@ import store from 'app-store';
 
 import {ActionBtn} from '../BubbleBottom';
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
+import {getRelativeTime} from 'app-helper/social';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
 
 const CHARACTER_PER_LINE = 40;
-const LINE_HEIGHT = 25;
-const MAX_LINE = 5.1;
+const LINE_HEIGHT = 21;
+const MAX_LINE = 8;
+const MAX_NUM_OF_BREAK_LINE = 5;
 const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
-const MAX_COLLAPSED_HEIGHT = LINE_HEIGHT * MAX_LINE;
+const MAX_COLLAPSED_HEIGHT =
+  LINE_HEIGHT * MAX_LINE + (appConfig.device.isIOS ? LINE_HEIGHT : 10);
+
+const SHOW_FULL_MESSAGE_TOP_SPACING =
+  MAX_COLLAPSED_HEIGHT -
+  LINE_HEIGHT -
+  (appConfig.device.isIOS ? LINE_HEIGHT : 10) +
+  5.5;
+
+const MIN_WIDTH_MESSAGE = 120;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -33,7 +43,7 @@ const styles = StyleSheet.create({
   },
   bubbleWrapper: {
     marginRight: 0,
-    // overflow: 'hidden',
+    overflow: 'hidden',
     paddingVertical: 3,
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
@@ -50,12 +60,22 @@ const styles = StyleSheet.create({
     width: '100%',
     height: undefined,
   },
-  btnShowFullMessage: {
+  btnShowFullMessageContainer: {
     position: 'absolute',
-    bottom: 2,
+    minWidth: MIN_WIDTH_MESSAGE,
+    width: '100%',
+    alignItems: 'flex-end',
+    top: SHOW_FULL_MESSAGE_TOP_SPACING,
+    zIndex: 1,
+  },
+  btnShowFullMessage: {
     right: 0,
     borderBottomRightRadius: 15,
-    overflow: 'hidden',
+  },
+  text: {
+    lineHeight: LINE_HEIGHT,
+    color: '#242424',
+    fontSize: 15,
   },
   labelShowFulMessage: {
     color: '#777',
@@ -70,7 +90,7 @@ const styles = StyleSheet.create({
   },
   messageTextContainer: {
     marginTop: -3,
-    // overflow: 'hidden',
+    overflow: 'hidden',
   },
 
   containerMention: {
@@ -83,7 +103,7 @@ const styles = StyleSheet.create({
   },
   titleMention: {
     fontWeight: '500',
-    fontSize: 16,
+    fontSize: 15,
     color: appConfig.colors.primary,
   },
   maskMention: {
@@ -92,6 +112,13 @@ const styles = StyleSheet.create({
     height: '110%',
     left: '-5%',
     top: '-5%',
+  },
+
+  maskMessageAndroid: {
+    width: '100%',
+    height: 3,
+    bottom: 0,
+    position: 'absolute',
   },
 });
 
@@ -112,9 +139,24 @@ class CustomBubble extends Component {
   animatedHighlight = new Animated.Value(0);
 
   state = {
-    isShowFullMessage:
-      this.props?.currentMessage?.content?.length <= MAX_LENGTH_TEXT,
+    isShowFullMessage: this.isShowFullMessage,
   };
+
+  get isShowFullMessage() {
+    const currentMessage = this.props?.currentMessage?.content;
+    if (currentMessage) {
+      const numOfBreakIos = currentMessage.split('\r')?.length;
+      const numOfBreakAndroid = currentMessage.split('\n')?.length;
+
+      return (
+        currentMessage.length <= MAX_LENGTH_TEXT &&
+        numOfBreakIos <= MAX_NUM_OF_BREAK_LINE &&
+        numOfBreakAndroid <= MAX_NUM_OF_BREAK_LINE
+      );
+    }
+
+    return true;
+  }
 
   componentWillUnmount() {
     this.unMounted = true;
@@ -142,10 +184,7 @@ class CustomBubble extends Component {
   };
 
   get formattedCreated() {
-    return moment(
-      this.props.currentMessage.created,
-      'YYYY-MM-DD HH:mm:ss',
-    ).fromNow();
+    return getRelativeTime(this.props.currentMessage.created);
   }
 
   handlePressBubbleBottom = (type) => {
@@ -167,9 +206,7 @@ class CustomBubble extends Component {
   }
 
   renderMessageText = (props, bgColor) => {
-    props.textStyle = {
-      lineHeight: LINE_HEIGHT,
-    };
+    props.customTextStyle = styles.text;
 
     if (!this.isReplyingYourSelf(props) && props.currentMessage?.reply?.name) {
       props.currentMessage.text = (
@@ -184,7 +221,7 @@ class CustomBubble extends Component {
               onPress={() => {}}
             />
           </Text>
-          <Text>{props.currentMessage.content}</Text>
+          <Text style={styles.text}>{props.currentMessage.content}</Text>
         </>
       );
     }
@@ -197,26 +234,42 @@ class CustomBubble extends Component {
             maxHeight: this.state.isShowFullMessage
               ? undefined
               : MAX_COLLAPSED_HEIGHT,
+            minWidth: this.state.isShowFullMessage
+              ? undefined
+              : MIN_WIDTH_MESSAGE,
           },
         ]}>
+        {!this.state.isShowFullMessage && (
+          <View style={styles.btnShowFullMessageContainer}>
+            <TouchableOpacity
+              hitSlop={HIT_SLOP}
+              activeOpacity={0.9}
+              onPress={this.openFullMessage}
+              style={styles.btnShowFullMessage}>
+              <LinearGradient
+                style={styles.maskShowFullMessage}
+                colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
+                locations={[0.75, 1]}
+                angle={-90}
+                useAngle
+              />
+              <Text style={styles.labelShowFulMessage}>
+                ... {this.props.seeMoreTitle}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         <MessageText {...props} />
 
-        {!this.state.isShowFullMessage && (
-          <TouchableOpacity
-            activeOpacity={0.9}
-            style={styles.btnShowFullMessage}
-            onPress={this.openFullMessage}>
-            <LinearGradient
-              style={styles.maskShowFullMessage}
-              colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
-              locations={[0.75, 1]}
-              angle={-90}
-              useAngle
-            />
-            <Text style={styles.labelShowFulMessage}>
-              ... {this.props.seeMoreTitle}
-            </Text>
-          </TouchableOpacity>
+        {appConfig.device.isAndroid && (
+          <View
+            style={[
+              styles.maskMessageAndroid,
+              {
+                backgroundColor: bgColor,
+              },
+            ]}
+          />
         )}
       </View>
     );
@@ -288,7 +341,7 @@ class CustomBubble extends Component {
       isHighlight,
       ...props
     } = this.props;
-    // console.log('%crender bubble', 'color:yellow', props.currentMessage.id);
+    console.log('%crender bubble', 'color:yellow', props.currentMessage.id);
 
     const hasText = props.currentMessage.text;
     const bgColor = hasText

@@ -1,13 +1,7 @@
-import React, {
-  Component,
-} from 'react';
-import {
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import React, {Component} from 'react';
+import {StyleSheet, TouchableOpacity} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 
 import appConfig from 'app-config';
 
@@ -43,13 +37,13 @@ const styles = StyleSheet.create({
   },
 
   reloadContainer: {
-    padding: 8, 
-    marginHorizontal: 4
+    padding: 8,
+    marginHorizontal: 4,
   },
   reloadIcon: {
     fontSize: 24,
-    color: appConfig.colors.primary
-  }
+    color: appConfig.colors.primary,
+  },
 });
 
 class ModalComment extends Component {
@@ -76,7 +70,7 @@ class ModalComment extends Component {
 
   handleReload = () => {
     if (this.refComment.current) {
-      this.refComment.current._getMessages();
+      this.refComment.current._getMessages(true);
     }
   };
 

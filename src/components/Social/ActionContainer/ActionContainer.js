@@ -14,7 +14,7 @@ const ActionContainer = ({
   style,
   disableComment,
   onActionBarPress = () => {},
-  onPressTotalComments = () => {}
+  onPressTotalComments = () => {},
 }) => {
   return (
     <Container style={style} centerVertical={false} paddingHorizontal={12}>
@@ -25,7 +25,11 @@ const ActionContainer = ({
         onPressTotalComments={onPressTotalComments}
         disableComment={disableComment}
       />
-      <ActionBar isLiked={isLiked} disableComment={disableComment} onActionBarPress={onActionBarPress} />
+      <ActionBar
+        isLiked={isLiked}
+        disableComment={disableComment}
+        onActionBarPress={onActionBarPress}
+      />
     </Container>
   );
 };

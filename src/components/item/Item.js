@@ -1090,7 +1090,7 @@ class Item extends Component {
                   source={{html: item.content || ''}}
                   zoomable={false}
                   scrollEnabled={false}
-                  viewportContent ={'width=device-width, user-scalable=no'}
+                  viewportContent={'width=device-width, user-scalable=no'}
                   customStyle={`
                   * {
                     font-family: 'arial';

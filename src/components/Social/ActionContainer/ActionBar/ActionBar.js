@@ -27,11 +27,13 @@ const ActionBar = ({isLiked, disableComment, onActionBarPress = () => {}}) => {
         isLiked={isLiked}
         onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.LIKE)}
       />
-      {!disableComment && <Button
-        title={t('comment')}
-        iconName="message1"
-        onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.COMMENT)}
-      />}
+      {!disableComment && (
+        <Button
+          title={t('comment')}
+          iconName="message1"
+          onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.COMMENT)}
+        />
+      )}
       <Button
         title={t('share')}
         iconName="sharealt"

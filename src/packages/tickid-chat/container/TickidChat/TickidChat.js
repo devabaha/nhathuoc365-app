@@ -626,15 +626,18 @@ class TickidChat extends Component {
   handleSendMessage = () => {
     if (
       this.props.mixSend &&
-      (!!this.state.text &&
-      !!this.state.selectedImages.length)
+      !!this.state.text &&
+      !!this.state.selectedImages.length
     ) {
       this.props.mixSend({
         text: this.state.text,
         images: this.state.selectedImages,
       });
       this.handleMixSend();
-    } else if ((this.state.editable || !!this.state.text) && this.state.selectedImages.length === 0) {
+    } else if (
+      (this.state.editable || !!this.state.text) &&
+      this.state.selectedImages.length === 0
+    ) {
       this.handleSendText();
     } else if (this.state.selectedImages.length !== 0) {
       this.handleSendImage();
@@ -1466,7 +1469,13 @@ const styles = StyleSheet.create({
 
 export default TickidChat;
 
-export const EmptyChat = ({onPress, style, message, icon, iconName = 'comments'}) => (
+export const EmptyChat = ({
+  onPress,
+  style,
+  message,
+  icon,
+  iconName = 'comments',
+}) => (
   <TouchableWithoutFeedback onPress={onPress}>
     <View style={[styles.emptyChatContainer, style]}>
       {icon || <IconFontisto name={iconName} color={'#909090'} size={60} />}

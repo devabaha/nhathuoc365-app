@@ -6,17 +6,29 @@ import Button from '../Button';
 import appConfig from 'app-config';
 import ButtonTag from './ButtonTag';
 
-function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
+function ListTag({
+  data = [],
+  onChangeValue = () => {},
+  defaultValue = {},
+  isOpen,
+}) {
   const [selected, setSelected] = useState(defaultValue);
+  const [isShow, setShow] = useState(false);
 
   useEffect(() => {
     onChangeValue(selected);
   }, [selected]);
 
+  // useEffect(() => {
+  //   if (isEmpty(defaultValue)) {
+  //     setSelected({});
+  //   }
+  // }, [isOpen]);
+
   useEffect(() => {
     const defaultValueTag = omit(defaultValue, 'price');
     setSelected(defaultValueTag);
-  }, [defaultValue]);
+  }, [defaultValue, isOpen]);
 
   const handleItem = (item) => () => {
     setSelected((prev) => {
@@ -44,15 +56,27 @@ function ListTag({data = [], onChangeValue = () => {}, defaultValue = {}}) {
       </View>
     );
   };
+
+  const _renderFooterItemTag = () => {
+    return (
+      <TouchableOpacity onPress={() => setShow((prev) => !prev)}>
+        <Text>{!isShow ? 'Hiển thị nhiều hơn' : 'Thu gọn'}</Text>
+      </TouchableOpacity>
+    );
+  };
   const renderItem = ({item}) => {
+    const dataTag = !isShow
+      ? item.tags_contents.filter((_, index) => index < 4)
+      : item.tags_contents;
     return (
       <View style={{marginVertical: 10}}>
         <Text style={styles.tag}>{item.tag}</Text>
         <FlatList
-          data={item.tags_contents}
+          data={dataTag}
           keyExtractor={(i) => `tag_content_${i?.id}`}
           numColumns={2}
           renderItem={renderTagItem}
+          renderFooter={_renderFooterItemTag}
         />
       </View>
     );

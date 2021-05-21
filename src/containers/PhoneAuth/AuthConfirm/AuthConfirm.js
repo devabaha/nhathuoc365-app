@@ -201,7 +201,9 @@ class AuthConfirm extends Component {
                 : t('requestNewCode')}
             </Text>
           </TouchableOpacity>
-          {this.state.showDescription && <Text style={styles.txtDescription}>{t('description')}</Text>}
+          {this.state.showDescription && (
+            <Text style={styles.txtDescription}>{t('description')}</Text>
+          )}
         </View>
       </ScrollView>
     );
