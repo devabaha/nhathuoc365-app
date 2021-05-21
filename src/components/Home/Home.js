@@ -341,7 +341,7 @@ class Home extends Component {
               useNativeDriver: true,
             },
           )}
-          contentContainerStyle={{paddingTop: this.state.headerHeight || 80}}
+          contentContainerStyle={{paddingTop: this.state.headerHeight}}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
@@ -512,10 +512,6 @@ class Home extends Component {
   }
 }
 
-const topBG = appConfig.device.isIOS
-  ? -appConfig.device.width / 1.5 - 10
-  : -appConfig.device.width - 40;
-
 let styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -528,8 +524,7 @@ let styles = StyleSheet.create({
     height: appConfig.device.width * 3,
     borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
-    top: '-100%',
-    marginTop: topBG,
+    top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
     alignItems: 'center',
     overflow: 'hidden',

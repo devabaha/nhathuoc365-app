@@ -1149,7 +1149,10 @@ class Item extends Component {
                       containerStyle={{
                         width: appConfig.device.width / 2 - 20,
                       }}
-                      contentStyle={{overflow: 'hidden'}}
+                      imageStyle={{
+                        width: appConfig.device.width / 2 - 30,
+                        height: appConfig.device.width / 2 - 30,
+                      }}
                       item={product}
                       index={index}
                       onPress={this._itemRefresh.bind(this, product)}

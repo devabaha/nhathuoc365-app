@@ -254,7 +254,7 @@ class Items extends Component {
           <View style={[styles.item_box_container, contentStyle]}>
             <View
               ref={(ref) => (this.ref_item = ref)}
-              style={styles.item_image_box}>
+              style={[styles.item_image_box, this.props.imageStyle]}>
               {!!item.image && (
                 <FastImage
                   style={styles.item_image}
@@ -268,7 +268,6 @@ class Items extends Component {
                 <Ribbon text={saleFormat(item.discount_percent)} />
               </View>
             )}
-
             <View style={styles.item_info_box}>
               <View>
                 <Text style={styles.item_info_name} numberOfLines={2}>
@@ -541,7 +540,7 @@ const styles = StyleSheet.create({
   },
   discountBadgeContainer: {
     top: 10,
-    left: -5,
+    left: -3,
     position: 'absolute',
     zIndex: 99,
   },

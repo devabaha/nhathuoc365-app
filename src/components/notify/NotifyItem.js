@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   RefreshControl,
-  FlatList
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import ListHeader from '../stores/ListHeader';
 import Items from '../stores/Items';
@@ -18,7 +18,7 @@ import store from '../../store/Store';
 import appConfig from 'app-config';
 import EventTracker from '../../helper/EventTracker';
 import RightButtonNavBar from '../RightButtonNavBar';
-import { RIGHT_BUTTON_TYPE } from '../RightButtonNavBar/constants';
+import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 import Container from '../Layout/Container';
 
 class NotifyItem extends Component {
@@ -29,7 +29,7 @@ class NotifyItem extends Component {
       loading: true,
       item: props.data,
       item_data: null,
-      refreshing: false
+      refreshing: false,
     };
     this.eventTracker = new EventTracker();
   }
@@ -42,8 +42,8 @@ class NotifyItem extends Component {
     this._getData();
     setTimeout(() =>
       Actions.refresh({
-        right: this.renderRightButton.bind(this)
-      })
+        right: this.renderRightButton.bind(this),
+      }),
     );
   }
 
@@ -52,7 +52,7 @@ class NotifyItem extends Component {
   }
 
   _onRefresh() {
-    this.setState({ refreshing: true }, this._getData.bind(this, 1000));
+    this.setState({refreshing: true}, this._getData.bind(this, 1000));
   }
 
   componentWillReceiveProps(nextProps) {
@@ -61,11 +61,11 @@ class NotifyItem extends Component {
         {
           loading: true,
           item: nextProps.data,
-          item_data: null
+          item_data: null,
         },
         () => {
           this._getData();
-        }
+        },
       );
     }
   }
@@ -73,7 +73,7 @@ class NotifyItem extends Component {
   _getData(delay) {
     this.setState(
       {
-        loading: true
+        loading: true,
       },
       async () => {
         try {
@@ -84,8 +84,8 @@ class NotifyItem extends Component {
               this.eventTracker.logCurrentView({
                 params: {
                   id: response.data.id,
-                  name: response.data.title
-                }
+                  name: response.data.title,
+                },
               });
             }
             // action(() => {
@@ -97,19 +97,19 @@ class NotifyItem extends Component {
                 {
                   item_data: response.data,
                   refreshing: false,
-                  loading: false
+                  loading: false,
                 },
                 () =>
                   Actions.refresh({
-                    right: this.renderRightButton.bind(this)
-                  })
+                    right: this.renderRightButton.bind(this),
+                  }),
               );
             }, delay || 0);
           }
         } catch (e) {
           console.log(e + ' user_news');
         }
-      }
+      },
     );
   }
 
@@ -132,8 +132,8 @@ class NotifyItem extends Component {
   }
 
   render() {
-    var { item, item_data } = this.state;
-    const { t } = this.props;
+    var {item, item_data} = this.state;
+    const {t} = this.props;
 
     return (
       <View style={styles.container}>
@@ -144,22 +144,20 @@ class NotifyItem extends Component {
               onRefresh={this._onRefresh.bind(this)}
             />
           }
-          style={styles.notify_container}
-        >
+          style={styles.notify_container}>
           <View style={styles.notify_image_box}>
             <CachedImage
               mutable
               style={styles.notify_image}
-              source={{ uri: this.getHeaderInfo('image_url') }}
+              source={{uri: this.getHeaderInfo('image_url')}}
             />
           </View>
 
           <View
             style={{
               backgroundColor: '#ffffff',
-              paddingBottom: 16
-            }}
-          >
+              paddingBottom: 16,
+            }}>
             <View style={styles.notify_content}>
               <Text style={styles.notify_heading}>
                 {this.getHeaderInfo('title')}
@@ -187,17 +185,17 @@ class NotifyItem extends Component {
                 onLoad={() => console.log('on load')}
                 onLoadStart={() => console.log('on load start')}
                 onLoadEnd={() => console.log('on load end')}
-                onShouldStartLoadWithRequest={result => {
+                onShouldStartLoadWithRequest={(result) => {
                   console.log(result);
                   return true;
                 }}
                 style={{
                   paddingHorizontal: 6,
                   marginHorizontal: 15,
-                  width: appConfig.device.width - 30
+                  width: appConfig.device.width - 30,
                 }}
-                onHeightUpdated={height => this.setState({ height })}
-                source={{ html: item_data.content }}
+                onHeightUpdated={(height) => this.setState({height})}
+                source={{html: item_data.content}}
                 zoomable={false}
                 scrollEnabled={false}
                 customScript={`
@@ -228,24 +226,38 @@ class NotifyItem extends Component {
           {item_data != null &&
             item_data.related &&
             item_data.related.length !== 0 && (
-              <FlatList
-                onEndReached={num => {}}
-                onEndReachedThreshold={0}
-                style={[styles.items_box]}
-                ListHeaderComponent={() => (
-                  <ListHeader title={`—  ${t('relatedItems')}  —`} />
-                )}
-                data={item_data.related}
-                renderItem={({ item, index }) => (
-                  <Items
-                    item={item}
-                    index={index}
-                    onPress={this._goItem.bind(this, item)}
-                  />
-                )}
-                keyExtractor={item => item.id}
-                numColumns={2}
-              />
+              <View>
+                <Text style={styles.product_related_text}>
+                  {t('relatedItems')}
+                </Text>
+                <FlatList
+                  onEndReached={(num) => {}}
+                  onEndReachedThreshold={0}
+                  style={[styles.items_box]}
+                  data={item_data.related}
+                  renderItem={({item, index}) => (
+                    <Items
+                      item={item}
+                      index={index}
+                      onPress={this._goItem.bind(this, item)}
+                      containerStyle={{
+                        width: appConfig.device.width / 2 - 20,
+                      }}
+                      imageStyle={{
+                        width: appConfig.device.width / 2 - 30,
+                        height: appConfig.device.width / 2 - 30,
+                      }}
+                    />
+                  )}
+                  horizontal={true}
+                  keyExtractor={(item) => item.id}
+                  style={{overflow: 'visible'}}
+                  contentContainerStyle={{
+                    paddingHorizontal: 5,
+                    paddingVertical: 20,
+                  }}
+                />
+              </View>
             )}
         </ScrollView>
 
@@ -257,7 +269,7 @@ class NotifyItem extends Component {
         )}
 
         <PopupConfirm
-          ref_popup={ref => (this.refs_modal_delete_cart_item = ref)}
+          ref_popup={(ref) => (this.refs_modal_delete_cart_item = ref)}
           title={t('cart:popup.remove.message')}
           height={110}
           otherClose={false}
@@ -276,7 +288,7 @@ class NotifyItem extends Component {
   _goItem(item) {
     Actions.item({
       title: item.name,
-      item
+      item,
     });
   }
 
@@ -302,13 +314,13 @@ class NotifyItem extends Component {
     try {
       const data = {
         quantity: 0,
-        model: item.model
+        model: item.model,
       };
 
       var response = await APIHandler.site_cart_update(
         store.store_id,
         item.id,
-        data
+        data,
       );
 
       if (response && response.status == STATUS_SUCCESS) {
@@ -319,11 +331,11 @@ class NotifyItem extends Component {
             if (isAndroid && store.cart_item_index > 0) {
               var index = store.cart_item_index - 1;
               store.setCartItemIndex(index);
-              Events.trigger(NEXT_PREV_CART, { index });
+              Events.trigger(NEXT_PREV_CART, {index});
             }
             flashShowMessage({
               message: response.message,
-              type: 'success'
+              type: 'success',
             });
           })();
         }, 450);
@@ -340,12 +352,12 @@ const html_styles = StyleSheet.create({
   p: {
     color: '#404040',
     fontSize: 14,
-    lineHeight: 24
+    lineHeight: 24,
   },
   a: {
     fontWeight: '300',
-    color: DEFAULT_COLOR
-  }
+    color: DEFAULT_COLOR,
+  },
 });
 
 const styles = StyleSheet.create({
@@ -359,7 +371,7 @@ const styles = StyleSheet.create({
     // marginBottom: 8
   },
   notify_content: {
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
 
   notify_heading: {
@@ -367,49 +379,55 @@ const styles = StyleSheet.create({
     color: '#000000',
     fontWeight: '500',
     lineHeight: 24,
-    marginTop: 20
+    marginTop: 20,
   },
 
   notify_time_box: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 8
+    marginTop: 8,
   },
   notify_time: {
     marginLeft: 4,
     fontSize: 12,
-    color: '#666666'
+    color: '#666666',
   },
   notify_sort_content_box: {
-    marginTop: 20
+    marginTop: 20,
   },
   notify_sort_content: {
     color: '#000000',
     lineHeight: 24,
     fontSize: 14,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   notify_full_content: {
     color: '#404040',
     lineHeight: 24,
-    fontSize: 14
+    fontSize: 14,
   },
   notify_image_box: {
     height: appConfig.device.width / 1.75,
-    backgroundColor: '#cccccc'
+    backgroundColor: '#cccccc',
   },
   notify_image: {
     flex: 1,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
 
   items_box: {
     // marginBottom: 69,
-    marginTop: 20,
+    // marginTop: 20,
   },
   rightButtonNavBarContainer: {
-    marginRight: 5
-  }
+    marginRight: 5,
+  },
+  product_related_text: {
+    fontSize: 20,
+    color: '#2B2B2B',
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
 });
 
 export default withTranslation(['news', 'cart'])(observer(NotifyItem));
