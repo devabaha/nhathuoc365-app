@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import ImageViewer from 'react-native-image-zoom-viewer';
 import EventTracker from '../../helper/EventTracker';
-import { handleSaveSingleImage, handleSaveAllImage } from "../../helper/image";
+import { handleSaveImage } from "../../helper/image";
 import ActionSheet from 'react-native-actionsheet';
 import { map } from 'lodash';
 
@@ -77,17 +77,11 @@ export default class ItemImageViewer extends Component {
           onPress={(index) => { 
             switch (index) {
               case 0:
-               handleSaveSingleImage(images[this.state.index].url, (res) => console.log(res))
+                handleSaveImage(images[this.state.index].url);
                 break;
               case 1:
                 // images.map((item) => handleSaveImage(item.url))
-                handleSaveAllImage(images, (res) => {
-                          console.log(res);
-                          if(res == images.length - 1){
-                            alert('download done')
-                          }
-                        }
-                      )
+                handleSaveImage(images)
               default: () => {}
                 break;
             }

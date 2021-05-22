@@ -4,6 +4,10 @@ import appConfig from 'app-config';
 import CameraRoll from '@react-native-community/cameraroll';
 import {handleDownloadImage} from "./handleDownloadImage";
 
+const handleSaveImage = (data) => {
+  typeof data === 'object' ? handleSaveAllImage(data, () => {}) : typeof data === 'string' ? handleSaveSingleImage(data) : null;
+}
+
 async function hasAndroidPermission() {
   const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
 
@@ -55,5 +59,9 @@ async function hasAndroidPermission() {
       console.log('err_save_single_image', error);
   };
 }
-
-export default handleSaveSingleImage;
+function handleSaveAllImage (arrURL,  dD = () => {}) {
+   arrURL.map((item, index) => {
+      handleSaveSingleImage(item.url, () => {}, true).then(() => console.log(`download xong anh ${index}`)).catch(err => console.log(err));
+  })
+}
+export { handleSaveImage }
