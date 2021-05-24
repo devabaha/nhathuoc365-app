@@ -178,7 +178,7 @@ const NewsScene = ({id, isFetching = false}) => {
               avatarUrl={feeds.shop_logo_url}
               containerStyle={styles.feedsContainer}
               disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-              onPostPress={() => handlePostPress(feeds)}
+              onPressPost={() => handlePostPress(feeds)}
               onActionBarPress={(type) => handleActionBarPress(type, feeds)}
               onPressTotalComments={() =>
                 handleSocialActionBarPress(

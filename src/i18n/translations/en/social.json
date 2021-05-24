@@ -13,5 +13,6 @@
   "errorPosting": "Error!",
   "posting": "Posting...",
   "emptyComment": "Nothing here yet!",
-  "pleasePost": "What's on your mind?"
+  "pleasePost": "What's on your mind?",
+  "noPosts": "There are no posts yet"
 }

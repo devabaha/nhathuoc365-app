@@ -37,9 +37,9 @@ const PleasePost = ({
   title,
   placeholder,
   containerStyle,
-  onPressAvatar = () => {},
-  onPressContent = () => {},
-  onPressImages = () => {},
+  onPressAvatar,
+  onPressContent,
+  onPressImages,
 }) => {
   const {t} = useTranslation('social');
   placeholder === undefined && (placeholder = t('pleasePost'));
@@ -51,7 +51,7 @@ const PleasePost = ({
         {!!placeholder && <Text style={styles.placeholder}>{placeholder}</Text>}
       </Pressable>
 
-      <TouchableOpacity hitSlop={HIT_SLOP} onPress={onPressImages}>
+      <TouchableOpacity disabled={!onPressImages} hitSlop={HIT_SLOP} onPress={onPressImages}>
         <IonicIcons name="images" style={styles.icon} />
       </TouchableOpacity>
     </Container>

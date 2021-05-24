@@ -2,6 +2,7 @@ import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalG
 import React, {useCallback, useRef, useState, useEffect} from 'react';
 import {
   Alert,
+  Keyboard,
   ScrollView,
   StyleSheet,
   Text,
@@ -123,10 +124,12 @@ const CreatePost = ({
   const {t} = useTranslation(['common', 'social']);
 
   const isUnmounted = useRef(false);
+  const now = useRef(0);
   const uploadedSuccess = useRef(0);
   const uploaded = useRef(0);
   const uploadRequest = useRef([]);
   const refScrollView = useRef();
+  const startOffsetY = useRef(0);
   const offsetY = useRef(0);
   const containerHeight = useRef(0);
 
@@ -287,7 +290,9 @@ const CreatePost = ({
     Actions.push(appConfig.routes.modalEditImages, {
       title: 'Chỉnh sửa',
       images,
-      onChangeImages: (images) => setImages(images),
+      onChangeImages: (images) => {
+        console.log(images)
+        setImages(images)},
     });
   }, [images]);
 
@@ -295,8 +300,21 @@ const CreatePost = ({
     containerHeight.current = e.nativeEvent.layout.height;
   };
 
+  const handleScrollBeginDrag = (e) => {
+    now.current = new Date().getTime();
+    startOffsetY.current = e.nativeEvent.contentOffset.y;
+  };
+
   const handleScrollEnd = (e) => {
     offsetY.current = e.nativeEvent.contentOffset.y;
+    const velocity = now.current
+      ? (offsetY.current - startOffsetY.current) /
+        (new Date().getTime() - now.current)
+      : 0;
+
+    if (Math.abs(velocity) > 1.5) {
+      Keyboard.dismiss();
+    }
   };
 
   const handleInputCloneLayout = (contentOffset) => {
@@ -324,6 +342,7 @@ const CreatePost = ({
         keyboardShouldPersistTaps="handled"
         // keyboardDismissMode="on-drag"
         onLayout={handleListLayout}
+        onScrollBeginDrag={handleScrollBeginDrag}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}>
         <View>

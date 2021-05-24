@@ -93,8 +93,8 @@ export const normalizeImages = (images) => {
       img.uri = img.sourceURL;
     }
 
-    if (img.sourceURL) {
-      img.url = img.sourceURL;
+    if (img.sourceURL || img.uri) {
+      img.url = img.sourceURL || img.uri;
     }
     return img;
   });

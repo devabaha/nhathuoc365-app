@@ -1,12 +1,13 @@
-import React, {useState, useMemo, useCallback} from 'react';
+import React, {useState, useCallback} from 'react';
 import {
   StyleSheet,
   Text,
-  TouchableOpacity,
+  TouchableHighlight,
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
 import FastImage from 'react-native-fast-image';
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
 import Container from 'src/components/Layout/Container';
 
@@ -17,6 +18,7 @@ import appConfig from 'app-config';
 import {GRID_IMAGES_LAYOUT_TYPES} from 'src/constants/social';
 import {getPostGridImagesType, renderGridImages} from 'app-helper/social';
 import SeeMoreBtn from 'src/components/Social/SeeMoreBtn';
+import TextPressable from 'src/components/TextPressable';
 
 const CHARACTER_PER_LINE = 40;
 const LINE_HEIGHT = 21;
@@ -41,6 +43,10 @@ const styles = StyleSheet.create({
   avatar: {
     width: '100%',
     height: '100%',
+  },
+  userNameContainer: {
+    paddingRight: 15,
+    flex: 1,
   },
   userName: {
     color: '#333',
@@ -86,18 +92,31 @@ const styles = StyleSheet.create({
   imagesContainer: {
     marginTop: 10,
   },
+
+  groupNameDirectionIcon: {
+    color: '#666',
+    fontSize: 10,
+  },
+
+  seeMoreContainer: {
+    bottom: 0,
+    marginRight: 0,
+    right: 0,
+  },
 });
 
 const Post = ({
   title,
   category,
+  group,
   content,
   images = [],
   thumbnailUrl,
   avatarUrl,
   userName,
   description,
-  onPress,
+  onPress = () => {},
+  onPressGroup = () => {},
 }) => {
   const initIsShowFullMessage = () => {
     if (content) {
@@ -124,7 +143,23 @@ const Post = ({
 
   const contentContainerStyle = {
     maxHeight: !isShowFullMessage ? MAX_COLLAPSED_HEIGHT : undefined,
-    overflow: 'hidden'
+    overflow: 'hidden',
+  };
+
+  const renderGroupName = () => {
+    return !!group?.name ? (
+      <Text>
+        {' '}
+        <AntDesignIcon
+          name="caretright"
+          style={styles.groupNameDirectionIcon}
+        />
+        {'  '}
+        <TextPressable onPress={onPressGroup}>{group.name}</TextPressable>
+      </Text>
+    ) : (
+      ''
+    );
   };
 
   return (
@@ -138,21 +173,31 @@ const Post = ({
               resizeMode="cover"
             />
           </Container>
-          <Container centerVertical={false}>
-            <Text style={styles.userName}>{userName}</Text>
+          <Container centerVertical={false} style={styles.userNameContainer}>
+            <Text style={styles.userName}>
+              {userName}
+              {renderGroupName()}
+            </Text>
             {!!description && (
               <Text style={styles.description}>{description}</Text>
             )}
           </Container>
         </Container>
 
-        <Container>
-          <Container style={[styles.contentContainer, contentContainerStyle]}>
-            <Text style={styles.content}>{content}</Text>
-            {!isShowFullMessage && (
-              <SeeMoreBtn containerStyle={{bottom: 0, marginRight: 0}} onPress={handleShowFullMessage} />
-            )}
-          </Container>
+        <Container centerVertical={false}>
+          {!!content && (
+            <Container
+              centerVertical={false}
+              style={[styles.contentContainer, contentContainerStyle]}>
+              <Text style={styles.content}>{content}</Text>
+              {!isShowFullMessage && (
+                <SeeMoreBtn
+                  containerStyle={styles.seeMoreContainer}
+                  onPress={handleShowFullMessage}
+                />
+              )}
+            </Container>
+          )}
 
           {!!images?.length && (
             <Container style={styles.imagesContainer}>

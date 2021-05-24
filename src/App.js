@@ -855,7 +855,7 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ SOCIAL GROUPS ================ */}
-                <Stack key={appConfig.routes.socialGroups}>
+                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroups}>
                   <Scene
                     key={`${appConfig.routes.socialGroups}_1`}
                     component={SocialGroups}

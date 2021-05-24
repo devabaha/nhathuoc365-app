@@ -367,12 +367,19 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       });
       break;
 
+    /** SOCIAL */
     /** Social */
-    /** social */
     case SERVICES_TYPE.SOCIAL:
       Actions.push(appConfig.routes.social, {
         // title: service.news?.title || service.title,
         siteId: service.id,
+      });
+      break;
+    /** Social Group */
+    case SERVICES_TYPE.SOCIAL_GROUP:
+      Actions.push(appConfig.routes.socialGroups, {
+        id: service.id,
+        groupName: service.name,
       });
       break;
     default:

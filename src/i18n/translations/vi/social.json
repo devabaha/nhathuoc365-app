@@ -13,5 +13,6 @@
   "errorPosting": "Lỗi!",
   "posting": "Đang viết...",
   "emptyComment": "Chưa có bình luận!",
-  "pleasePost": "Bạn viết gì đi..."
+  "pleasePost": "Bạn đang nghĩ gì?",
+  "noPosts": "Chưa có bài viết"
 }

@@ -144,6 +144,9 @@
       "mainTitle": "Transaction",
       "paymentTitle": "Payment"
     },
+    "social": {
+      "mainTitle": "Social"
+    },
     "createPost": {
       "mainTitle": "Create post"
     }

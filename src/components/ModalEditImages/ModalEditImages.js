@@ -1,6 +1,6 @@
 import {openCamera, openLibrary} from 'app-helper/image';
-import React, {useCallback, useState} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {BackHandler, FlatList, StyleSheet, Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -12,13 +12,17 @@ import ScreenWrapper from '../ScreenWrapper';
 import appConfig from 'app-config';
 import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalGalleryOptionAndroid';
 import {getImageRatio} from 'app-helper/social/post';
+import {Actions} from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff',
+  },
   delContainer: {
     width: 30,
     height: 30,
-    backgroundColor: appConfig.colors.status.danger,
-    borderRadius: 15,
+    backgroundColor: '#242424',
+    borderRadius: 4,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'absolute',
@@ -49,12 +53,31 @@ const ModalEditImages = ({
   const [images, setImages] = useState(imagesProp);
   const [isOpenImagePicker, setOpenImagePicker] = useState(false);
 
+  useEffect(() => {
+    const backHandlerListener = () => {
+      onChangeImages(images);
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backHandlerListener);
+
+    Actions.refresh({
+      onBack: () => {
+        onChangeImages(images);
+        Actions.pop();
+      },
+    });
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandlerListener);
+    };
+  }, [images]);
+
   const handleDelImage = useCallback(
     (index) => {
       const tempImages = [...images];
       tempImages.splice(index, 1);
       setImages(tempImages);
-      onChangeImages(tempImages);
     },
     [images],
   );
@@ -67,7 +90,6 @@ const ModalEditImages = ({
     openCamera((selectedImages) => {
       const newImages = images.concat(selectedImages);
       setImages(newImages);
-      onChangeImages(images);
     }, closeModal);
   };
 
@@ -75,7 +97,6 @@ const ModalEditImages = ({
     openLibrary((selectedImages) => {
       const newImages = images.concat(selectedImages);
       setImages(newImages);
-      onChangeImages(images);
     }, closeModal);
   };
 
@@ -84,7 +105,6 @@ const ModalEditImages = ({
   };
 
   const renderImage = ({item: image, index}) => {
-    console.log(getImageRatio(image));
     return (
       <Container centerVertical={false}>
         <Image
@@ -93,7 +113,7 @@ const ModalEditImages = ({
           containerStyle={{
             width: appConfig.device.width,
             height: appConfig.device.width / getImageRatio(image),
-            marginBottom: 15,
+            marginBottom: 10,
           }}
         />
 
@@ -109,28 +129,40 @@ const ModalEditImages = ({
   };
 
   const renderEmpty = () => {
-    return <NoResult iconName="images" message="Chạm để thêm ảnh" />;
+    return (
+      <TouchableOpacity
+        style={{width: '100%', height: '100%'}}
+        onPress={handleSelectImage}>
+        <NoResult iconName="camera-plus-outline" message="Chạm để thêm ảnh" />
+      </TouchableOpacity>
+    );
   };
 
-  return (
-    <ScreenWrapper>
-      <FlatList
-        data={images}
-        renderItem={renderImage}
-        keyExtractor={(item, index) => index.toString()}
-        ListEmptyComponent={renderEmpty()}
-      />
+  const renderFooter = () => {
+    return (
       <TouchableOpacity onPress={handleSelectImage}>
-        <Container
-          row
-          center
-          paddingVertical={20}
-          paddingHorizontal={15}
-          style={{backgroundColor: '#fff', ...elevationShadowStyle(7)}}>
+        <Container row center paddingVertical={20} paddingHorizontal={15}>
           <Ionicons name="ios-images" style={styles.icon} />
           <Text style={styles.title}>Thêm ảnh</Text>
         </Container>
       </TouchableOpacity>
+    );
+  };
+
+  return (
+    <ScreenWrapper style={styles.container}>
+      {!!images.length ? (
+        <FlatList
+          data={images}
+          contentContainerStyle={{flexGrow: 1}}
+          renderItem={renderImage}
+          keyExtractor={(item, index) => index.toString()}
+          ListFooterComponent={renderFooter()}
+        />
+      ) : (
+        renderEmpty()
+      )}
+
       <ModalGalleryOptionAndroid
         visible={isOpenImagePicker}
         onClose={closeModal}

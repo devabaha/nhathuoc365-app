@@ -9,6 +9,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {Actions} from 'react-native-router-flux';
 
 import appConfig from 'app-config';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 const styles = StyleSheet.create({
   container: {
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Social = ({siteId = store.store_data?.id}) => {
+const Social = ({title, siteId = store.store_data?.id}) => {
   const isMounted = useIsMounted();
   const {t} = useTranslation();
 
@@ -66,6 +67,14 @@ const Social = ({siteId = store.store_data?.id}) => {
 
   useEffect(() => {
     getThumbnailGroups();
+
+    if (!title) {
+      setTimeout(() => {
+        Actions.refresh({
+          title: t('screen.social.mainTitle')
+        })
+      });
+    }
 
     return () => {
       cancelRequests([getThumbnailGroupsRequest]);
@@ -117,9 +126,10 @@ const Social = ({siteId = store.store_data?.id}) => {
   };
 
   const goToGroup = useCallback((group) => {
-    Actions.push(appConfig.routes.socialGroups, {
+    servicesHandler({
+      type: SERVICES_TYPE.SOCIAL_GROUP,
       id: group.id,
-      title: group.name,
+      name: group.name,
     });
   }, []);
 

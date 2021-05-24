@@ -144,6 +144,9 @@
       "mainTitle": "Giao dịch",
       "paymentTitle": "Thanh toán"
     },
+    "social": {
+      "mainTitle": "Cộng đồng"
+    },
     "createPost": {
       "mainTitle": "Tạo bài viết"
     }

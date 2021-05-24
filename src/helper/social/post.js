@@ -64,7 +64,7 @@ export const renderGridImages = (images) => {
   const gridType = useMemo(() => {
     return getPostGridImagesType(images);
   }, [images]);
-// console.log(images, gridType)
+console.log(images, gridType)
   switch (gridType) {
     case GRID_IMAGES_LAYOUT_TYPES.VERTICAL_2_ONLY:
       return <GridV2o images={images} />;

@@ -40,7 +40,7 @@ const S = ({images = []}) => {
 
   return (
     <Container centerVertical={false} style={[styles.container]}>
-      {renderImage()}
+      {renderImage(imagesHighlight.uri, imageStyle)}
     </Container>
   );
 };

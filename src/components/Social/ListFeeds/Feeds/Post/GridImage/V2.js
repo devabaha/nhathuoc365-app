@@ -52,6 +52,7 @@ const V2 = ({images = []}) => {
   const renderImage = (uri, style, index, overlayTitle, containerProps) => {
     return (
       <GridImage
+        key={index}
         overlayTitle={overlayTitle}
         images={images}
         index={index}
@@ -64,6 +65,7 @@ const V2 = ({images = []}) => {
 
   const renderHighlight = () => {
     return imagesHighlight.map((image, index) => {
+      console.log('highlight', index);
       const imageStyle = {
         width: imageHighlightDimensions,
       };
@@ -74,6 +76,7 @@ const V2 = ({images = []}) => {
 
   const renderNormal = () => {
     return imagesNormal.map((image, index) => {
+      console.log('normal', index + NUM_OF_HIGHLIGHT);
       const imageStyle = {
         width: imageNormalDimensions,
         marginLeft: IMAGE_SPACING,

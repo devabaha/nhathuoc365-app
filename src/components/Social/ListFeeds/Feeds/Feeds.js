@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
 
 const Feeds = ({
   category,
+  group,
   commentsCount,
   likeCount,
   isLiked,
@@ -26,7 +27,8 @@ const Feeds = ({
   containerStyle,
   disableComment,
   disableShare,
-  onPostPress,
+  onPressPost,
+  onPressGroup,
   onActionBarPress,
   onPressTotalComments,
 }) => {
@@ -37,6 +39,7 @@ const Feeds = ({
       centerVertical={false}
       style={[styles.container, containerStyle]}>
       <Post
+        group={group}
         category={category}
         avatarUrl={avatarUrl}
         userName={userName}
@@ -45,7 +48,8 @@ const Feeds = ({
         images={images}
         title={title}
         thumbnailUrl={thumbnailUrl}
-        onPress={onPostPress}
+        onPress={onPressPost}
+        onPressGroup={onPressGroup}
       />
 
       <ActionContainer
