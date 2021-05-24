@@ -12,12 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
 
-## [r11.6.3] - 2021-05-20
+## [r11.6.3] - 2021-05-24
 ### Added
 - Update moment locale relative time when change language.
 ### Changed
 - Unsubscribe all listener if unmounted in Account.
 - Add site_id for change avatar api.
+- Unpublished FilterProduct.
 ### Fixed
 - Not refresh comments when tap bolt.
 - Not correct clip comment if too long in Android.

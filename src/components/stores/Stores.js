@@ -469,11 +469,11 @@ class Stores extends Component {
             )
           : this.isGetFullStore && <CategoriesSkeleton />}
 
-        <FilterProduct
+        {/* <FilterProduct
           selectedFilter={store.selectedFilter}
           dataSort={dataSort}
           onValueSort={this.handleValue}
-        />
+        /> */}
 
         {this.state.categories_data != null && (
           <FlatList
