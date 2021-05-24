@@ -1291,6 +1291,15 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                <Stack key={appConfig.routes.notifiesVertical}>
+                  <Scene
+                    key={`${appConfig.routes.notifiesVertical}_1`}
+                    component={Notify}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
                 <Stack key="notifies_time">
                   <Scene
                     key="notifies_time_1"

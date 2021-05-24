@@ -234,8 +234,7 @@ class NotifyItem extends Component {
                   }
                   img {
                     max-width: 100% !important;
-                  }`
-                }
+                  }`}
               />
             ) : (
               <Indicator size="small" />
@@ -276,6 +275,7 @@ class NotifyItem extends Component {
             onActionBarPress={(type) =>
               handleSocialNewsActionBarPress(type, item_data)
             }
+            hasInfoExtraBottom={false}
             onPressTotalComments={() =>
               handleSocialNewsActionBarPress(
                 SOCIAL_BUTTON_TYPES.COMMENT,

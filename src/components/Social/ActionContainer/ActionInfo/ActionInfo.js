@@ -6,10 +6,12 @@ import FloatingIcons from 'src/components/Social/FloatingIcons ';
 
 const styles = StyleSheet.create({
   container: {
+    justifyContent: 'space-between',
+  },
+  extraBottom: {
     borderBottomWidth: Util.pixel,
     borderColor: '#ddd',
     paddingVertical: 5,
-    justifyContent: 'space-between',
   },
   block: {
     paddingVertical: 5,
@@ -39,12 +41,21 @@ const ActionInfo = ({
   totalComments,
   isLiked,
   disableComment,
+  hasInfoExtraBottom = true,
   onPressTotalComments = () => {},
 }) => {
   const {t} = useTranslation('social');
 
+  const hasContent =
+    !!isLiked || !!totalReaction || (!disableComment && !!totalComments);
+
   return (
-    <Container row style={styles.container}>
+    <Container
+      row
+      style={[
+        styles.container,
+        (hasInfoExtraBottom || hasContent) && styles.extraBottom,
+      ]}>
       {!!isLiked || !!totalReaction ? (
         <Container row style={styles.block}>
           <FloatingIcons
