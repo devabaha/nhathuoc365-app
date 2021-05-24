@@ -458,6 +458,10 @@ class CommonAPI {
     return BaseAPI.socialDomain + 'groups';
   }
 
+  get SOCIAL_GROUPS_SHOW(){
+    return BaseAPI.socialDomain + 'groups/show';
+  }
+
   get SOCIAL_POSTS(){
     return BaseAPI.socialDomain + 'posts';
   }

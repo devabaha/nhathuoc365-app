@@ -4,41 +4,46 @@ import useIsMounted from 'react-is-mounted-hook';
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
 import {SocialPleasePost} from 'src/components/Social/components';
-import { Actions } from 'react-native-router-flux';
+import {Actions} from 'react-native-router-flux';
 
 import appConfig from 'app-config';
+import Posts from '../Posts';
+import Container from 'src/components/Layout/Container';
+import Image from 'src/components/Image';
+
+import {getNewsFeedSize} from '../../../helper/image';
 
 const styles = StyleSheet.create({});
 
-const Groups = ({siteId = store.store_data?.id}) => {
+const Groups = ({id, siteId = store.store_data?.id}) => {
   const isMounted = useIsMounted();
   const {t} = useTranslation();
   const [isLoading, setLoading] = useState(false);
-  const [getGroupsRequest] = useState(new APIRequest());
+  const [isRefreshing, setRefreshing] = useState(false);
+  const [getGroupInfoRequest] = useState(new APIRequest());
 
-  const [groups, setGroups] = useState([]);
+  const [groupInfo, setGroupInfo] = useState({});
 
   useEffect(() => {
-    // getGroups();
-    console.log(store.user_info);
+    getGroupInfo();
     return () => {
-      cancelRequests([getGroupsRequest]);
+      cancelRequests([getGroupInfoRequest]);
     };
   }, []);
 
-  const getGroups = async () => {
+  const getGroupInfo = async () => {
     const data = {
       site_id: siteId,
     };
-    getGroupsRequest.data = APIHandler.social_groups(data);
+    getGroupInfoRequest.data = APIHandler.social_groups_show(id, data);
 
     try {
-      const response = await getGroupsRequest.promise();
+      const response = await getGroupInfoRequest.promise();
       console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
-            setPosts(response.data.list || []);
+            setGroupInfo(response.data || {});
           }
         } else {
           flashShowMessage({
@@ -66,13 +71,52 @@ const Groups = ({siteId = store.store_data?.id}) => {
     }
   };
 
+  const onRefresh = () => {
+    getGroupInfo();
+  };
+
   const handlePressContent = () => {
-   Actions.push(appConfig.routes.socialCreatePost)
+    Actions.push(appConfig.routes.socialCreatePost);
+  };
+
+  renderGroupHeader = () => {
+    return (
+      <Container centerVertical={false}>
+        <View style={{backgroundColor: '#fff'}}>
+          <Image
+            source={{uri: groupInfo.banner}}
+            style={{
+              ...getNewsFeedSize(),
+              borderBottomWidth: 0.5,
+              borderColor: '#ddd',
+            }}
+          />
+          <View style={{padding: 15}}>
+            <Text style={{fontSize: 26, fontWeight: 'bold', color: '#242424'}}>
+              {groupInfo.name}
+            </Text>
+            <Text style={{fontSize: 16, marginTop: 10, color: '#333'}}>
+              {groupInfo.desc}
+            </Text>
+          </View>
+        </View>
+
+        <SocialPleasePost
+          avatar={store.user_info.img}
+          onPressContent={handlePressContent}
+          containerStyle={{marginVertical: 10}}
+        />
+      </Container>
+    );
   };
 
   return (
     <>
-      <SocialPleasePost avatar={store.user_info.img} onPressContent={handlePressContent}/>
+      <Posts
+        groupId={id}
+        ListHeaderComponent={renderGroupHeader()}
+        onRefresh={onRefresh}
+      />
     </>
   );
 };

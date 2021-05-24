@@ -162,6 +162,7 @@ import ModalFilter from './components/stores/ModalFilter';
 import FilterComponent from './components/stores/FilterDrawer';
 import {ModalComment, SocialCreatePost} from './components/Social';
 import {Social, SocialNews, SocialGroups} from './containers/Social';
+import ModalEditImages from './components/ModalEditImages';
 
 /**
  * Not allow font scaling
@@ -868,7 +869,17 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.socialCreatePost}_1`}
                     component={SocialCreatePost}
-                    {...navBarConfig}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL EDIT IMAGES ================ */}
+                <Stack key={appConfig.routes.modalEditImages}>
+                  <Scene
+                    key={`${appConfig.routes.modalEditImages}_1`}
+                    component={ModalEditImages}
+                    {...whiteNavBarConfig}
                     back
                   />
                 </Stack>

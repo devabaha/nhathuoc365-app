@@ -1,16 +1,19 @@
-import React, {useEffect, useState} from 'react';
-import {FlatList, StyleSheet, Text, View} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
 import {APIRequest} from 'src/network/Entity';
 import Posts from './Posts';
 import store from 'app-store';
 import Image from 'src/components/Image';
 import LinearGradient from 'react-native-linear-gradient';
+import {Actions} from 'react-native-router-flux';
+
+import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginBottom: 15
+    marginBottom: 15,
   },
   contentContainer: {
     paddingLeft: 15,
@@ -111,26 +114,39 @@ const Social = ({siteId = store.store_data?.id}) => {
 
   const onRefresh = () => {
     getThumbnailGroups();
-  }
+  };
+
+  const goToGroup = useCallback((group) => {
+    Actions.push(appConfig.routes.socialGroups, {
+      id: group.id,
+      title: group.name,
+    });
+  }, []);
 
   const renderGroup = ({item: thumbnailGroup}) => {
     return (
-      <View
-        style={styles.groupContainer}>
-        <Image source={{uri: thumbnailGroup.banner}} style={styles.image} />
-        <LinearGradient
-          colors={['rgba(0,0,0,0)','rgba(0,0,0,.2)', 'rgba(0,0,0,.45)', 'rgba(0,0,0,.5)']}
-          locations={[0.5, .75, .88, 1]}
-          angle={180}
-          useAngle
-          style={[styles.gradient]}
-        />
-        <View style={styles.groupNameContainer}>
-          <Text numberOfLines={2} style={styles.groupName}>
-            {thumbnailGroup.name}
-          </Text>
+      <TouchableOpacity onPress={() => goToGroup(thumbnailGroup)}>
+        <View style={styles.groupContainer}>
+          <Image source={{uri: thumbnailGroup.banner}} style={styles.image} />
+          <LinearGradient
+            colors={[
+              'rgba(0,0,0,0)',
+              'rgba(0,0,0,.2)',
+              'rgba(0,0,0,.45)',
+              'rgba(0,0,0,.5)',
+            ]}
+            locations={[0.5, 0.75, 0.88, 1]}
+            angle={180}
+            useAngle
+            style={[styles.gradient]}
+          />
+          <View style={styles.groupNameContainer}>
+            <Text numberOfLines={2} style={styles.groupName}>
+              {thumbnailGroup.name}
+            </Text>
+          </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -151,7 +167,12 @@ const Social = ({siteId = store.store_data?.id}) => {
     );
   };
 
-  return <Posts ListHeaderComponent={renderThumbnailGroups()} onRefresh={onRefresh}/>;
+  return (
+    <Posts
+      ListHeaderComponent={renderThumbnailGroups()}
+      onRefresh={onRefresh}
+    />
+  );
 };
 
 export default React.memo(Social);

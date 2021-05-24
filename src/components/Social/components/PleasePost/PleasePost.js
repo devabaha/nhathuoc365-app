@@ -36,6 +36,7 @@ const PleasePost = ({
   avatar,
   title,
   placeholder,
+  containerStyle,
   onPressAvatar = () => {},
   onPressContent = () => {},
   onPressImages = () => {},
@@ -43,7 +44,7 @@ const PleasePost = ({
   const {t} = useTranslation('social');
   placeholder === undefined && (placeholder = t('pleasePost'));
   return (
-    <Container row padding={15} style={styles.container}>
+    <Container row padding={15} style={[styles.container, containerStyle]}>
       <Avatar url={avatar} onPress={onPressAvatar} />
       <Pressable style={styles.textContainer} onPress={onPressContent}>
         {!!title && <Text numberOfLines={2} style={styles.title}>{title}</Text>}

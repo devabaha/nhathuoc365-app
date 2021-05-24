@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const MultilineTextInput = ({onContentLayout = () => {}}) => {
+const MultilineTextInput = ({value, onChangeText = () => {}, onContentLayout = () => {}}) => {
   const {t} = useTranslation('social');
 
   const isFocus = useRef(0);
@@ -25,7 +25,7 @@ const MultilineTextInput = ({onContentLayout = () => {}}) => {
 
   const timeoutSelectionChange = useRef();
 
-  const [contentText, setContentText] = useState('');
+  const [contentText, setContentText] = useState(value);
   const [contentVisibleText, setContentVisibleText] = useState('');
 
   const handleInputLayout = (e) => {
@@ -34,49 +34,44 @@ const MultilineTextInput = ({onContentLayout = () => {}}) => {
 
   const handleFocus = (e) => {
     isFocus.current = true;
-    handleSelectionChange({
-      nativeEvent: {
-        selection: {
-          start: 1,
-          end: textInputCursorEnd.current,
-        },
-      },
+    const text = contentText;
+    // console.log('1');
+    setContentText(' '+text);
+    // setContentText(text + ' ');
+    setTimeout(() => {
+      setContentText(text);
+      setTimeout(() => isFocus.current = false, 300);
     });
   };
 
   const handleChangeText = (text) => {
     const visibleText = text.slice(0, textInputCursorEnd.current);
+    onChangeText(text);
     setContentText(text);
-
     setContentVisibleText(visibleText);
-    tempContentVisibleText.current = visibleText;
   };
 
   const handleSelectionChange = (e) => {
-    clearTimeout(timeoutSelectionChange.current);
     const {start, end} = e.nativeEvent.selection;
     textInputCursorEnd.current = end;
 
     if (isFocus.current) {
       const visibleText = contentText.slice(0, textInputCursorEnd.current);
-      if (visibleText !== tempContentVisibleText.current) {
-        setContentVisibleText(visibleText);
-        tempContentVisibleText.current = visibleText;
-      } else {
+      // console.log('2', end);
+
+      if (visibleText !== contentVisibleText) {
+        clearTimeout(timeoutSelectionChange.current);
         timeoutSelectionChange.current = setTimeout(() => {
-          // console.log('a')
-          setContentVisibleText(contentVisibleText);
-          tempContentVisibleText.current = contentVisibleText;
-          //   onContentLayout(contentHeight.current + textInputOffsetY.current);
-        });
+          // console.log(end);
+          setContentVisibleText(visibleText);
+        }, 100);
       }
-      isFocus.current = false;
     }
   };
-
+  // console.log('render');
   const handleInputCloneLayout = (e) => {
     contentHeight.current = e.nativeEvent.layout.height;
-    console.log(contentHeight.current);
+    // console.log(contentHeight.current);
     onContentLayout(contentHeight.current + textInputOffsetY.current);
   };
 
@@ -93,7 +88,7 @@ const MultilineTextInput = ({onContentLayout = () => {}}) => {
         onLayout={handleInputLayout}
         onChangeText={handleChangeText}
         onSelectionChange={handleSelectionChange}
-        // value={contentText}
+        value={contentText}
       />
       <TextInput
         onLayout={handleInputCloneLayout}

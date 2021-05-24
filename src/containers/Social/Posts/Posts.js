@@ -14,10 +14,12 @@ import {
 } from 'app-helper/social';
 import {SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {Observer} from 'mobx-react';
+import NoResult from 'src/components/NoResult';
 
 const styles = StyleSheet.create({});
 
 const Posts = ({
+  groupId,
   siteId = store.store_data?.id,
   refreshControl,
   onRefresh: onRefreshProp = () => {},
@@ -25,7 +27,7 @@ const Posts = ({
 }) => {
   const isMounted = useIsMounted();
   const {t} = useTranslation();
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
 
   const [getPostsRequest] = useState(new APIRequest());
@@ -60,11 +62,12 @@ const Posts = ({
     const data = {
       site_id: siteId,
     };
+    groupId !== undefined && (data.group_id = groupId);
     getPostsRequest.data = APIHandler.social_posts(data);
 
     try {
       const response = await getPostsRequest.promise();
-      console.log(response);
+      console.log(response, data);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -139,6 +142,10 @@ const Posts = ({
     );
   };
 
+  const renderEmpty = () => {
+    return <NoResult iconName="post" message="Chưa có bài viết" />
+  }
+
   return (
     <FlatList
       data={posts}
@@ -152,6 +159,7 @@ const Posts = ({
         )
       }
       ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={!isLoading && renderEmpty()}
     />
   );
 };

@@ -2,33 +2,25 @@ import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalG
 import React, {useCallback, useRef, useState, useEffect} from 'react';
 import {
   Alert,
-  FlatList,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import ImageCropPicker from 'react-native-image-crop-picker';
-import ImagePicker from 'react-native-image-picker';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import appConfig from 'app-config';
 
-import NoResult from 'src/components/NoResult';
 import ScreenWrapper from 'src/components/ScreenWrapper';
-import Button from 'src/components/Button';
 import {ImageMessageChat} from 'app-packages/tickid-chat/component';
 import Loading from 'src/components/Loading';
 import {Actions} from 'react-native-router-flux';
-import API from 'src/network/API';
 import {renderGridImages} from 'app-helper/social';
 import PleasePost from '../components/PleasePost';
 import store from 'app-store';
 import {reaction} from 'mobx';
 import MultilineTextInput from './MultilineTextInput';
+import {openCamera, openLibrary} from 'app-helper/image';
 
 const NUM_COLUMNS = 3;
 const IMAGE_PADDING = 15;
@@ -107,7 +99,6 @@ const styles = StyleSheet.create({
 
   extraListBottom: {
     width: '100%',
-    backgroundColor: 'red',
   },
 
   input: {
@@ -138,10 +129,10 @@ const CreatePost = ({
   const refScrollView = useRef();
   const offsetY = useRef(0);
   const containerHeight = useRef(0);
-  const contentHeight = useRef(0);
-  const textInputOffsetY = useRef(0);
-  const textInputCursorEnd = useRef(0);
 
+  const [contentText, setContentText] = useState(
+    'Cả nhà cùng tìm hiểu thông tin cơ bản về lịch sử ngày Phụ nữ Việt Nam 20/10 nhé!\r\rVào ngày 20 tháng 10 năm 1930, Hội Phụ nữ phản đế Việt Nam (nay đổi tên là Hội Liên hiệp Phụ nữ Việt Nam) chính thức được thành lập, để đánh dấu sự kiện này, Đảng Cộng sản Việt Nam đã quyết định chọn ngày 20 tháng 10 hằng năm làm ngày truyền thống của tổ chức này, đồng thời cũng xem đây là ngày kỷ niệm và tôn vinh phụ nữ Việt Nam, lấy tên là "Ngày Phụ nữ Việt Nam".\r\rTrước năm 1975 tại miền Nam Việt Nam, dưới chính thể Việt Nam Cộng Hòa, Ngày Phụ nữ Việt Nam cũng là ngày tưởng niệm Hai bà Trưng vào ngày 6 tháng 2 âm lịch.\r\rCả nhà cùng tìm hiểu thông tin cơ bản về lịch sử ngày Phụ nữ Việt Nam 20/10 nhé!\r\rVào ngày 20 tháng 10 năm 1930, Hội Phụ nữ phản đế Việt Nam (nay đổi tên là Hội Liên hiệp Phụ nữ Việt Nam) chính thức được thành lập, để đánh dấu sự kiện này, Đảng Cộng sản Việt Nam đã quyết định chọn ngày 20 tháng 10 hằng năm làm ngày truyền thống của tổ chức này, đồng thời cũng xem đây là ngày kỷ niệm và tôn vinh phụ nữ Việt Nam, lấy tên là "Ngày Phụ nữ Việt Nam".\r\rTrước năm 1975 tại miền Nam Việt Nam, dưới chính thể Việt Nam Cộng Hòa, Ngày Phụ nữ Việt Nam cũng là ngày tưởng niệm Hai bà Trưng vào ngày 6 tháng 2 âm lịch.',
+  );
   const [images, setImages] = useState([]);
   const [isOpenImagePicker, setOpenImagePicker] = useState(
     isOpenImagePickerProp,
@@ -150,8 +141,6 @@ const CreatePost = ({
   const [isLoading, setLoading] = useState(false);
 
   const [keyboardHeight, setKeyboardHeight] = useState(store.keyboardTop);
-  const [contentText, setContentText] = useState('');
-  const [contentVisibleText, setContentVisibleText] = useState('');
 
   useEffect(() => {
     if (!title) {
@@ -176,12 +165,38 @@ const CreatePost = ({
 
   useEffect(() => {
     Actions.refresh({
+      right: () => renderPostBtn(),
+    });
+  }, [images, contentText]);
+
+  useEffect(() => {
+    Actions.refresh({
       onBack: () => {
         clearRequests();
         Actions.pop();
       },
     });
   }, [clearRequests, uploadedSuccess.current, images]);
+
+  const handlePost = () => {
+    console.log(contentText, images);
+  };
+
+  const renderPostBtn = () => {
+    return (
+      <TouchableOpacity
+        onPress={handlePost}
+        style={{
+          backgroundColor: appConfig.colors.primary,
+          padding: 10,
+          paddingVertical: 5,
+          borderRadius: 4,
+          right: 12,
+        }}>
+        <Text style={{color: '#fff', fontSize: 16}}>Đăng</Text>
+      </TouchableOpacity>
+    );
+  };
 
   const clearRequests = useCallback(() => {
     uploadRequest.current.map((request) => request?.cancel && request.cancel());
@@ -212,83 +227,16 @@ const CreatePost = ({
     setOpenImagePicker(true);
   };
 
-  const openLibrary = () => {
-    ImageCropPicker.openPicker({
-      includeExif: true,
-      multiple: true,
-      includeBase64: true,
-      mediaType: 'photo',
-      maxFiles: 10,
-    })
-      .then((response) => {
-        // console.log(response);
-        closeModal();
-        const selectedImages = normalizeImages(response);
-        console.log(selectedImages);
-        setImages(images.concat(selectedImages));
-      })
-      .catch((err) => {
-        console.log('open_picker_err', err);
-        closeModal();
-      });
+  const handleOpenCamera = () => {
+    openCamera((selectedImages) => {
+      setImages(selectedImages);
+    }, closeModal);
   };
 
-  const openCamera = async () => {
-    const options = {
-      rotation: 360,
-      storageOptions: {
-        skipBackup: false,
-        path: 'images',
-      },
-    };
-
-    ImagePicker.launchCamera(options, (response) => {
-      if (response.error) {
-        console.log(response);
-        closeModal();
-      } else if (response.didCancel) {
-        console.log(response);
-        closeModal();
-      } else {
-        // console.log(response);
-        closeModal();
-        response.path = response.uri;
-        const selectedImages = normalizeImages([response]);
-        setImages(images.concat(selectedImages));
-        // console.log(selectedImages);
-      }
-    });
-  };
-
-  const normalizeImages = (images) => {
-    return images.map((img) => {
-      img.id = new Date().getTime();
-      if (!img.filename) {
-        img.filename = `${new Date().getTime()}`;
-      }
-      if (!img.fileName) {
-        img.fileName = `${new Date().getTime()}`;
-
-        if (img.mime) {
-          img.fileName += '.' + img.mime.split('image/')[1];
-        } else {
-          img.fileName += '.jpeg';
-        }
-      }
-      if (img.data) {
-        img.uploadPath = img.data;
-        img.isBase64 = true;
-      }
-
-      if (img.sourceURL) {
-        img.uri = img.sourceURL;
-      }
-
-      if (img.sourceURL) {
-        img.url = img.sourceURL;
-      }
-      return img;
-    });
+  const handleOpenLibrary = () => {
+    openLibrary((selectedImages) => {
+      setImages(selectedImages);
+    }, closeModal);
   };
 
   const closeModal = () => {
@@ -335,6 +283,14 @@ const CreatePost = ({
     updateUploadedTotal();
   };
 
+  const goToEditImages = useCallback(() => {
+    Actions.push(appConfig.routes.modalEditImages, {
+      title: 'Chỉnh sửa',
+      images,
+      onChangeImages: (images) => setImages(images),
+    });
+  }, [images]);
+
   const handleListLayout = (e) => {
     containerHeight.current = e.nativeEvent.layout.height;
   };
@@ -357,65 +313,16 @@ const CreatePost = ({
     }
   };
 
-  const renderEmpty = () => {
-    return (
-      <TouchableOpacity
-        style={styles.emptyContainer}
-        onPress={handleSelectImage}>
-        <NoResult iconName="camera-plus-outline" message="Bấm để chọn ảnh" />
-      </TouchableOpacity>
-    );
-  };
-
-  const renderImage = ({item: image, index}) => {
-    if (image.isAddMore) {
-      return (
-        <TouchableOpacity onPress={handleSelectImage} style={styles.addMoreBtn}>
-          <MaterialCommunityIcons
-            name="camera-plus-outline"
-            style={styles.addMoreIcon}
-          />
-          <Text style={styles.addMoreTitle}>Bấm để chọn ảnh</Text>
-        </TouchableOpacity>
-      );
-    }
-    return (
-      <ImageItem
-        image={image}
-        index={index}
-        uploadURL={APIHandler.url_user_upload_image()}
-        isUploaded={image.uploaded}
-        startUploading={isUploadData}
-        handleUploadedSuccess={handleUploadedSuccess}
-        handleUploadFail={handleUploadFail}
-        handleDelImage={handleDelImage}
-        getUploadRequest={(request) => {
-          uploadRequest.current[index] = request;
-        }}
-      />
-    );
-  };
-
-//   console.log('render');
+  //   console.log('render');
   return (
     <ScreenWrapper>
       {isLoading && <Loading center />}
-      {/* <FlatList
-        contentContainerStyle={styles.contentContainer}
-        data={getImages()}
-        renderItem={renderImage}
-        ListEmptyComponent={renderEmpty}
-        numColumns={3}
-        keyExtractor={(item, index) =>
-          item?.id ? item.id.toString() : index.toString()
-        }
-      /> */}
       <ScrollView
         ref={refScrollView}
         scrollEventThrottle={16}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
-        keyboardDismissMode="on-drag"
+        // keyboardDismissMode="on-drag"
         onLayout={handleListLayout}
         onMomentumScrollEnd={handleScrollEnd}
         onScrollEndDrag={handleScrollEnd}>
@@ -426,8 +333,16 @@ const CreatePost = ({
             placeholder={null}
             onPressImages={handleSelectImage}
           />
-          <MultilineTextInput onContentLayout={handleInputCloneLayout} />
-          {renderGridImages(images)}
+          <MultilineTextInput
+            value={contentText}
+            onChangeText={setContentText}
+            onContentLayout={handleInputCloneLayout}
+          />
+          <TouchableOpacity
+            onPress={goToEditImages}
+            style={{paddingBottom: 15}}>
+            {renderGridImages(images)}
+          </TouchableOpacity>
         </View>
 
         <View style={[styles.extraListBottom, {height: keyboardHeight}]} />
@@ -437,86 +352,11 @@ const CreatePost = ({
         visible={isOpenImagePicker}
         onClose={closeModal}
         onRequestClose={closeModal}
-        onPressCamera={openCamera}
-        onPressLibrary={openLibrary}
+        onPressCamera={handleOpenCamera}
+        onPressLibrary={handleOpenLibrary}
       />
     </ScreenWrapper>
   );
 };
 
 export default React.memo(CreatePost);
-
-const ImageItem = React.memo(
-  ({
-    isUploaded: isUploadedProp,
-    startUploading,
-    uploadURL,
-    image,
-    index,
-    getUploadRequest = () => {},
-    handleUploadedSuccess = () => {},
-    handleUploadFail = () => {},
-    handleDelImage = () => {},
-  }) => {
-    const [isUploaded, setUploaded] = useState(isUploadedProp);
-    const aspectRatio = (image.width || 1) / (image.height || 1);
-
-    useEffect(() => {
-      setUploaded(isUploadedProp);
-    }, [isUploadedProp]);
-
-    return (
-      <View
-        style={[
-          styles.imageWrapper,
-          {
-            flex: 1,
-            aspectRatio,
-            maxWidth: IMAGE_WIDTH,
-            marginLeft:
-              (index + 1) % NUM_COLUMNS === 0 &&
-              (index + NUM_COLUMNS - 1) % NUM_COLUMNS === 0
-                ? IMAGE_PADDING
-                : 0,
-            marginRight:
-              (index + NUM_COLUMNS) % NUM_COLUMNS === 0 ||
-              (index + NUM_COLUMNS - 1) % NUM_COLUMNS === 0
-                ? IMAGE_PADDING
-                : 0,
-          },
-        ]}>
-        <ImageMessageChat
-          containerStyle={styles.imageContainer}
-          uploadURL={uploadURL}
-          isUploadData={image.uploaded ? false : startUploading}
-          image={image}
-          lowQualityUri={image.uri}
-          getUploadRequest={getUploadRequest}
-          onUploadedSuccess={(response, isReUp) => {
-            setUploaded(true);
-            handleUploadedSuccess(response, isReUp, index);
-          }}
-          onUploadedFail={(error) => {
-            setUploaded(false);
-            handleUploadFail(error);
-          }}
-        />
-        <TouchableOpacity
-          hitSlop={HIT_SLOP}
-          disabled={isUploaded}
-          style={[
-            styles.delBtn,
-            isUploaded && {
-              backgroundColor: appConfig.colors.status.success,
-            },
-          ]}
-          onPress={() => handleDelImage(index)}>
-          <MaterialCommunityIcons
-            name={isUploaded ? 'check' : 'close'}
-            style={[styles.delIcon]}
-          />
-        </TouchableOpacity>
-      </View>
-    );
-  },
-);

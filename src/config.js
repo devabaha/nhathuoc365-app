@@ -225,6 +225,7 @@ class Config {
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
+      modalEditImages: 'modalEditImages',
 
       //  Reset password
       resetPassword: 'resetPassword',

@@ -11,7 +11,7 @@ import FastImage from 'react-native-fast-image';
 import Container from 'src/components/Layout/Container';
 
 import Image from 'src/components/Image';
-import {getNewsFeedSize} from 'app-helper/imageSize';
+import {getNewsFeedSize} from 'app-helper/image';
 
 import appConfig from 'app-config';
 import {GRID_IMAGES_LAYOUT_TYPES} from 'src/constants/social';
@@ -154,7 +154,7 @@ const Post = ({
             )}
           </Container>
 
-          {!!images.length && (
+          {!!images?.length && (
             <Container style={styles.imagesContainer}>
               {renderGridImages(images)}
             </Container>

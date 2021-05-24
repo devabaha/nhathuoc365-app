@@ -1109,36 +1109,49 @@ class CommonAPIHandler extends BaseHandler {
 
   /**
    * get list group
-   * 
+   *
    * @param {object} data
    * @param {number} data.site_id
    */
-   social_groups(data) {
+  social_groups(data) {
     const api = url_for(API.SOCIAL_GROUPS);
     return this.postCancelableAPI(api, data);
   }
 
   /**
-   * get list posts
-   * 
+   * get group info
+   *
    * @param {object} data
    * @param {number} data.site_id
    */
-   social_posts(data) {
+  social_groups_show(id, data) {
+    const api = url_for(API.SOCIAL_GROUPS_SHOW + '/' + id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get list posts
+   *
+   * @param {object} data
+   * @param {number} data.site_id
+   * @param {number} data.limit
+   * @param {number} data.page
+   */
+  social_posts(data) {
     const api = url_for(API.SOCIAL_POSTS);
     return this.postCancelableAPI(api, data);
   }
 
   /**
    * create post
-   * 
+   *
    * @param {object} data
    * @param {number} data.site_id
    * @param {number} data.group_id
    * @param {number} data.content
    * @param {number} data.images
    */
-   social_create_post(data) {
+  social_create_post(data) {
     const api = url_for(API.SOCIAL_CREATE_POST);
     return this.postCancelableAPI(api, data);
   }

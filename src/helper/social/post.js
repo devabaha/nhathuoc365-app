@@ -13,7 +13,7 @@ import {
 } from '../../components/Social';
 
 export const getImageRatio = (image = {width: 1, height: 1}) => {
-  return image.width / image.height;
+  return (image.width || 1) / (image.height || 1);
 };
 
 export const getPostGridImagesType = (images = []) => {
