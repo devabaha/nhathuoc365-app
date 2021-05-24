@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Changed
-- Change 'About us' pressed from webview to NotifyItem by [kienluu612@gmail.com].
+- Change 'About us' pressed from webview to Notify by [kienluu612@gmail.com].
 ### Fixed
 - Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
 

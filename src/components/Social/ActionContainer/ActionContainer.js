@@ -13,6 +13,7 @@ const ActionContainer = ({
   commentsCount,
   style,
   disableComment,
+  hasInfoExtraBottom,
   onActionBarPress = () => {},
   onPressTotalComments = () => {},
 }) => {
@@ -24,6 +25,7 @@ const ActionContainer = ({
         totalComments={commentsCount}
         onPressTotalComments={onPressTotalComments}
         disableComment={disableComment}
+        hasInfoExtraBottom={hasInfoExtraBottom}
       />
       <ActionBar
         isLiked={isLiked}

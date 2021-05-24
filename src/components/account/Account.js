@@ -30,7 +30,7 @@ import BaseAPI from '../../network/API/BaseAPI';
 import {APIRequest} from '../../network/Entity';
 import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import { servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -351,16 +351,12 @@ class Account extends Component {
         label: t('options.termOfUse.label'),
         desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () => 
-          servicesHandler(
-            {
-              type: SERVICES_TYPE.NEWS_DETAIL,
-              news:
-              {
-                title: t('options.termOfUse.webViewTitle'),
-                id: appConfig.aboutUsID
-              }
-            }),
+        onPress: () =>
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
+            title: t('options.termOfUse.webViewTitle'),
+            id: appConfig.aboutUsID,
+          }),
         boxIconStyle: [
           styles.boxIconStyle,
           {

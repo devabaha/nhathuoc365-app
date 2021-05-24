@@ -185,6 +185,12 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         id: service.categoryId,
       });
       break;
+      case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
+      Actions.push(appConfig.routes.notifiesVertical, {
+        title: service.title,
+        id: service.id,
+      });
+      break;
 
     /** CHAT */
     case SERVICES_TYPE.CHAT_NOTI:

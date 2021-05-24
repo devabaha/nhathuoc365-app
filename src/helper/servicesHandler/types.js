@@ -47,6 +47,7 @@ export const SERVICES_TYPE = {
   NEWS: 'news',
   NEWS_DETAIL: 'news_detail',
   NEWS_CATEGORY: 'news_category',
+  NEWS_CATEGORY_VERTICAL: 'news_category_vertical',
 
   /** CHAT */
   CHAT_NOTI: 'chat_noti',

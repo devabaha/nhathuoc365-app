@@ -166,6 +166,7 @@ class Config {
       qrBarCode: 'qrBarCode',
 
       notifies: 'notifies',
+      notifiesVertical: 'notifiesVertical',
       notifyDetail: 'notify_item',
 
       detailHistoryPayment: 'detail_history_payment',
