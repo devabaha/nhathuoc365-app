@@ -265,6 +265,8 @@ class Config {
       filterProduct: 'filterProduct',
       // Social
       social: 'social',
+      socialGroups: 'socialGroups',
+      socialCreatePost: 'socialCreatePost',
     };
   }
 }

@@ -16,6 +16,8 @@ const Feeds = ({
   commentsCount,
   likeCount,
   isLiked,
+  content,
+  images,
   title,
   thumbnailUrl,
   avatarUrl,
@@ -23,6 +25,7 @@ const Feeds = ({
   description,
   containerStyle,
   disableComment,
+  disableShare,
   onPostPress,
   onActionBarPress,
   onPressTotalComments,
@@ -38,6 +41,8 @@ const Feeds = ({
         avatarUrl={avatarUrl}
         userName={userName}
         description={description}
+        content={content}
+        images={images}
         title={title}
         thumbnailUrl={thumbnailUrl}
         onPress={onPostPress}
@@ -48,6 +53,7 @@ const Feeds = ({
         likeCount={likeCount}
         commentsCount={commentsCount}
         disableComment={disableComment}
+        disableShare={disableShare}
         onActionBarPress={onActionBarPress}
         onPressTotalComments={onPressTotalComments}
       />

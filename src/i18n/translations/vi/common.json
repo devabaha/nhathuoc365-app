@@ -143,6 +143,9 @@
     "transaction": {
       "mainTitle": "Giao dịch",
       "paymentTitle": "Thanh toán"
+    },
+    "createPost": {
+      "mainTitle": "Tạo bài viết"
     }
   },
 

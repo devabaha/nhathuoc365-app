@@ -22,11 +22,11 @@ import NoResult from 'src/components/NoResult';
 import {APIRequest} from 'src/network/Entity';
 import {
   calculateLikeCountFriendly,
-  getSocialNewsLikeCount,
-  getSocialNewsLikeFlag,
-  handleSocialNewsActionBarPress,
+  getSocialLikeCount,
+  getSocialLikeFlag,
+  handleSocialActionBarPress,
 } from 'src/helper/social';
-import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 
 const styles = StyleSheet.create({
@@ -158,7 +158,7 @@ const NewsScene = ({id, isFetching = false}) => {
   }, []);
 
   const handleActionBarPress = useCallback((type, feeds) => {
-    handleSocialNewsActionBarPress(type, feeds);
+    handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, type, feeds);
   }, []);
 
   const renderFeeds = ({item: feeds, index}) => {
@@ -169,8 +169,8 @@ const NewsScene = ({id, isFetching = false}) => {
             <Feeds
               category={feeds.category?.title}
               commentsCount={feeds.comment_count}
-              likeCount={getSocialNewsLikeCount(feeds)}
-              isLiked={getSocialNewsLikeFlag(feeds)}
+              likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, feeds)}
+              isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, feeds)}
               title={feeds.title}
               userName={feeds.shop_name}
               description={feeds.created}
@@ -181,7 +181,8 @@ const NewsScene = ({id, isFetching = false}) => {
               onPostPress={() => handlePostPress(feeds)}
               onActionBarPress={(type) => handleActionBarPress(type, feeds)}
               onPressTotalComments={() =>
-                handleSocialNewsActionBarPress(
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.NEWS,
                   SOCIAL_BUTTON_TYPES.COMMENT,
                   feeds,
                   false,

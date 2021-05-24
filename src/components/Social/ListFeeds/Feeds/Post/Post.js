@@ -1,5 +1,11 @@
-import React from 'react';
-import {StyleSheet, Text, TouchableWithoutFeedback, View} from 'react-native';
+import React, {useState, useMemo, useCallback} from 'react';
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 import FastImage from 'react-native-fast-image';
 
 import Container from 'src/components/Layout/Container';
@@ -8,6 +14,16 @@ import Image from 'src/components/Image';
 import {getNewsFeedSize} from 'app-helper/imageSize';
 
 import appConfig from 'app-config';
+import {GRID_IMAGES_LAYOUT_TYPES} from 'src/constants/social';
+import {getPostGridImagesType, renderGridImages} from 'app-helper/social';
+import SeeMoreBtn from 'src/components/Social/SeeMoreBtn';
+
+const CHARACTER_PER_LINE = 40;
+const LINE_HEIGHT = 21;
+const MAX_LINE = 5;
+const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
+const MAX_COLLAPSED_HEIGHT =
+  LINE_HEIGHT * MAX_LINE + (appConfig.device.isIOS ? 0 : 10);
 
 const styles = StyleSheet.create({
   container: {},
@@ -60,17 +76,57 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
+  contentContainer: {
+    paddingHorizontal: 15,
+  },
+  content: {
+    color: '#333',
+  },
+
+  imagesContainer: {
+    marginTop: 10,
+  },
 });
 
 const Post = ({
   title,
   category,
+  content,
+  images = [],
   thumbnailUrl,
   avatarUrl,
   userName,
   description,
   onPress,
 }) => {
+  const initIsShowFullMessage = () => {
+    if (content) {
+      const numOfBreakIos = content.split('\r')?.length;
+      const numOfBreakAndroid = content.split('\n')?.length;
+
+      return (
+        content.length <= MAX_LENGTH_TEXT &&
+        numOfBreakIos <= MAX_LINE &&
+        numOfBreakAndroid <= MAX_LINE
+      );
+    }
+
+    return true;
+  };
+
+  const [isShowFullMessage, setShowFullMessage] = useState(
+    initIsShowFullMessage(),
+  );
+
+  const handleShowFullMessage = useCallback(() => {
+    setShowFullMessage(true);
+  }, []);
+
+  const contentContainerStyle = {
+    maxHeight: !isShowFullMessage ? MAX_COLLAPSED_HEIGHT : undefined,
+    overflow: 'hidden'
+  };
+
   return (
     <TouchableWithoutFeedback onPress={onPress}>
       <Container centerVertical={false} style={styles.container}>
@@ -89,15 +145,35 @@ const Post = ({
             )}
           </Container>
         </Container>
+
         <Container>
-          <FastImage
-            source={{uri: thumbnailUrl}}
-            style={styles.thumbnailContainer}
-          />
-          <View style={styles.titleContainer}>
-            {!!category && <Text style={styles.category}>{category}</Text>}
-            <Text style={styles.title}>{title}</Text>
-          </View>
+          <Container style={[styles.contentContainer, contentContainerStyle]}>
+            <Text style={styles.content}>{content}</Text>
+            {!isShowFullMessage && (
+              <SeeMoreBtn containerStyle={{bottom: 0, marginRight: 0}} onPress={handleShowFullMessage} />
+            )}
+          </Container>
+
+          {!!images.length && (
+            <Container style={styles.imagesContainer}>
+              {renderGridImages(images)}
+            </Container>
+          )}
+        </Container>
+
+        <Container>
+          {!!thumbnailUrl && (
+            <FastImage
+              source={{uri: thumbnailUrl}}
+              style={styles.thumbnailContainer}
+            />
+          )}
+          {!!title && (
+            <View style={styles.titleContainer}>
+              {!!category && <Text style={styles.category}>{category}</Text>}
+              <Text style={styles.title}>{title}</Text>
+            </View>
+          )}
         </Container>
       </Container>
     </TouchableWithoutFeedback>

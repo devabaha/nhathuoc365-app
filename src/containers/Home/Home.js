@@ -191,8 +191,9 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-//     servicesHandler({type: SERVICES_TYPE.SOCIAL,});
-// return;
+    // servicesHandler({type: SERVICES_TYPE.SOCIAL,});
+    Actions.push(appConfig.routes.socialGroups)
+return;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {

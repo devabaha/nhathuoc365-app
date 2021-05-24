@@ -10,6 +10,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
+    marginBottom: 15
   },
   contentContainer: {
     paddingLeft: 15,
@@ -108,6 +109,10 @@ const Social = ({siteId = store.store_data?.id}) => {
     }
   };
 
+  const onRefresh = () => {
+    getThumbnailGroups();
+  }
+
   const renderGroup = ({item: thumbnailGroup}) => {
     return (
       <View
@@ -146,7 +151,7 @@ const Social = ({siteId = store.store_data?.id}) => {
     );
   };
 
-  return <Posts ListHeaderComponent={renderThumbnailGroups()} />;
+  return <Posts ListHeaderComponent={renderThumbnailGroups()} onRefresh={onRefresh}/>;
 };
 
 export default React.memo(Social);

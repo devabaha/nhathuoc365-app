@@ -4,14 +4,23 @@ import useIsMounted from 'react-is-mounted-hook';
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
-import { CONFIG_KEY, isConfigActive } from 'app-helper/configKeyHandler';
-import { getRelativeTime } from 'app-helper/social';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {
+  calculateLikeCountFriendly,
+  getRelativeTime,
+  getSocialLikeCount,
+  getSocialLikeFlag,
+  handleSocialActionBarPress,
+} from 'app-helper/social';
+import {SOCIAL_DATA_TYPES} from 'src/constants/social';
+import {Observer} from 'mobx-react';
 
 const styles = StyleSheet.create({});
 
 const Posts = ({
   siteId = store.store_data?.id,
   refreshControl,
+  onRefresh: onRefreshProp = () => {},
   ListHeaderComponent,
 }) => {
   const isMounted = useIsMounted();
@@ -28,8 +37,24 @@ const Posts = ({
 
     return () => {
       cancelRequests([getPostsRequest]);
+      store.resetSocialPost();
     };
   }, []);
+
+  const setStoreSocialPosts = (posts) => {
+    const storePosts = {};
+    posts.forEach(
+      (post) =>
+        (storePosts[post.id] = {
+          like_count: post.like_count,
+          like_count_friendly: calculateLikeCountFriendly(post),
+          share_count: post.share_count,
+          like_flag: post.like_flag || 0,
+          comment_count: post.comment_count,
+        }),
+    );
+    store.setSocialPosts(storePosts);
+  };
 
   const getPosts = useCallback(async () => {
     const data = {
@@ -43,6 +68,7 @@ const Posts = ({
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
+            setStoreSocialPosts(response.data.list || []);
             setPosts(response.data.list || []);
           }
         } else {
@@ -72,31 +98,45 @@ const Posts = ({
   }, [siteId]);
 
   const onRefresh = () => {
+    onRefreshProp();
     setRefreshing(true);
     getPosts();
   };
 
-  const renderPost = ({item: post}) => {
-    return <Feeds
-    commentsCount={post.comment_count}
-    likeCount={post.like_count}
-    isLiked={post.like_flag}
-    userName={post.user?.name}
-    description={getRelativeTime(post.created)}
-    // thumbnailUrl={feeds.image_url}
-    avatarUrl={post.user?.image}
-    containerStyle={{marginBottom: 15}}
-    disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-    // onPostPress={() => handlePostPress(feeds)}
-    // onActionBarPress={(type) => handleActionBarPress(type, feeds)}
-    // onPressTotalComments={() =>
-    //   handleSocialNewsActionBarPress(
-    //     SOCIAL_BUTTON_TYPES.COMMENT,
-    //     feeds,
-    //     false,
-    //   )
-    // }
-  />
+  const handleActionBarPress = useCallback((type, feeds) => {
+    handleSocialActionBarPress(SOCIAL_DATA_TYPES.POST, type, feeds);
+  }, []);
+
+  const renderPost = ({item: feeds}) => {
+    return (
+      <Observer>
+        {() => (
+          <Feeds
+            commentsCount={feeds.comment_count}
+            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.POST, feeds)}
+            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.POST, feeds)}
+            userName={feeds.user?.name}
+            description={getRelativeTime(feeds.created)}
+            content={feeds.content}
+            images={feeds.images}
+            // thumbnailUrl={feeds.image_url}
+            avatarUrl={feeds.user?.image}
+            containerStyle={{marginBottom: 15}}
+            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+            disableShare
+            onActionBarPress={(type) => handleActionBarPress(type, feeds)}
+            onPressTotalComments={() =>
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.POST,
+                SOCIAL_BUTTON_TYPES.COMMENT,
+                feeds,
+                false,
+              )
+            }
+          />
+        )}
+      </Observer>
+    );
   };
 
   return (

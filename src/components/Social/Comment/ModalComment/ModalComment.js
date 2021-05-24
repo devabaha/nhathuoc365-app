@@ -53,6 +53,7 @@ class ModalComment extends Component {
   componentDidMount() {
     setTimeout(() =>
       Actions.refresh({
+        title: this.props.title || this.props.t('comment'),
         right: () => (
           <TouchableOpacity
             onPress={this.handleReload}
@@ -87,4 +88,4 @@ class ModalComment extends Component {
   }
 }
 
-export default ModalComment;
+export default withTranslation('social')(ModalComment);

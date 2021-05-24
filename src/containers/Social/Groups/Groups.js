@@ -3,6 +3,10 @@ import {FlatList, StyleSheet, Text, View} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
+import {SocialPleasePost} from 'src/components/Social/components';
+import { Actions } from 'react-native-router-flux';
+
+import appConfig from 'app-config';
 
 const styles = StyleSheet.create({});
 
@@ -15,8 +19,8 @@ const Groups = ({siteId = store.store_data?.id}) => {
   const [groups, setGroups] = useState([]);
 
   useEffect(() => {
-    getGroups();
-
+    // getGroups();
+    console.log(store.user_info);
     return () => {
       cancelRequests([getGroupsRequest]);
     };
@@ -30,7 +34,7 @@ const Groups = ({siteId = store.store_data?.id}) => {
 
     try {
       const response = await getGroupsRequest.promise();
-console.log(response);
+      console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -62,18 +66,14 @@ console.log(response);
     }
   };
 
-  const renderGroup = ({item: post}) => {
-    return null;
+  const handlePressContent = () => {
+   Actions.push(appConfig.routes.socialCreatePost)
   };
 
   return (
-    <FlatList
-      data={groups}
-      renderItem={renderGroup}
-      keyExtractor={(item, index) =>
-        item?.id ? String(item.id) : index.toString()
-      }
-    />
+    <>
+      <SocialPleasePost avatar={store.user_info.img} onPressContent={handlePressContent}/>
+    </>
   );
 };
 

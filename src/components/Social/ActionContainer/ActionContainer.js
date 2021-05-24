@@ -5,7 +5,11 @@ import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
 import ActionBar from './ActionBar';
 import ActionInfo from './ActionInfo';
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#fff'
+  }
+});
 
 const ActionContainer = ({
   isLiked,
@@ -13,11 +17,12 @@ const ActionContainer = ({
   commentsCount,
   style,
   disableComment,
+  disableShare,
   onActionBarPress = () => {},
   onPressTotalComments = () => {},
 }) => {
   return (
-    <Container style={style} centerVertical={false} paddingHorizontal={12}>
+    <Container style={[styles.container, style]} centerVertical={false} paddingHorizontal={12}>
       <ActionInfo
         isLiked={isLiked}
         totalReaction={likeCount}
@@ -28,6 +33,7 @@ const ActionContainer = ({
       <ActionBar
         isLiked={isLiked}
         disableComment={disableComment}
+        disableShare={disableShare}
         onActionBarPress={onActionBarPress}
       />
     </Container>

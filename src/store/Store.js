@@ -574,6 +574,20 @@ class Store {
   @action resetSocialNews() {
     this.socialNews.replace(new Map());
   }
+
+  @observable socialPost = observable.map(new Map());
+  @action setSocialPosts(socialPost = {}) {
+    this.socialPost.merge(socialPost);
+  }
+
+  @action updateSocialPost(id, data = {}) {
+    let temp = this.socialPost.get(id) || {};
+    this.socialPost.set(id, {...temp, ...data});
+  }
+
+  @action resetSocialPost() {
+    this.socialPost.replace(new Map());
+  }
 }
 
 export default new Store();
