@@ -8,7 +8,7 @@ import {CART_PAYMENT_STATUS, DELIVERY_STATUS_CODE} from './constants/cart';
 
 class Config {
   constructor() {
-    this._primaryColor = '#812384';
+    this._primaryColor = '#f41820';
   }
 
   get tagVersion() {
@@ -21,6 +21,10 @@ class Config {
 
   get namespace() {
     return 'app';
+  }
+
+  get defaultSiteId() {
+    return 1803;
   }
 
   get reduxLoggerEnable() {
