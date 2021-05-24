@@ -17,9 +17,9 @@
       "desc": "Facebook Fanpage customer care"
     },
     "termOfUse": {
-      "label": "About {{appName}} - Term of use",
+      "label": "About us - Term of use",
       "desc": "Term of use",
-      "webViewTitle": "About {{appName}}"
+      "webViewTitle": "About us"
     },
     "appInformation": {
       "label": "App information",
@@ -49,6 +49,10 @@
     "commissionIncomeStatement": {
       "label": "Commission report",
       "desc": "Look up monthly commissions"
+    },
+    "salesReport": {
+      "label": "Invited Sales Report",
+      "desc": "Sales of invented"
     }
   },
   "avatarPicker": {

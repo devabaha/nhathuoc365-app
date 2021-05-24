@@ -4,8 +4,8 @@ import useIsMounted from 'react-is-mounted-hook';
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
-import { CONFIG_KEY, isConfigActive } from 'app-helper/configKeyHandler';
-import { getRelativeTime } from 'app-helper/social';
+import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
+import {getRelativeTime} from 'app-helper/social';
 
 const styles = StyleSheet.create({});
 
@@ -77,26 +77,28 @@ const Posts = ({
   };
 
   const renderPost = ({item: post}) => {
-    return <Feeds
-    commentsCount={post.comment_count}
-    likeCount={post.like_count}
-    isLiked={post.like_flag}
-    userName={post.user?.name}
-    description={getRelativeTime(post.created)}
-    // thumbnailUrl={feeds.image_url}
-    avatarUrl={post.user?.image}
-    containerStyle={{marginBottom: 15}}
-    disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-    // onPostPress={() => handlePostPress(feeds)}
-    // onActionBarPress={(type) => handleActionBarPress(type, feeds)}
-    // onPressTotalComments={() =>
-    //   handleSocialNewsActionBarPress(
-    //     SOCIAL_BUTTON_TYPES.COMMENT,
-    //     feeds,
-    //     false,
-    //   )
-    // }
-  />
+    return (
+      <Feeds
+        commentsCount={post.comment_count}
+        likeCount={post.like_count}
+        isLiked={post.like_flag}
+        userName={post.user?.name}
+        description={getRelativeTime(post.created)}
+        // thumbnailUrl={feeds.image_url}
+        avatarUrl={post.user?.image}
+        containerStyle={{marginBottom: 15}}
+        disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+        // onPostPress={() => handlePostPress(feeds)}
+        // onActionBarPress={(type) => handleActionBarPress(type, feeds)}
+        // onPressTotalComments={() =>
+        //   handleSocialNewsActionBarPress(
+        //     SOCIAL_BUTTON_TYPES.COMMENT,
+        //     feeds,
+        //     false,
+        //   )
+        // }
+      />
+    );
   };
 
   return (

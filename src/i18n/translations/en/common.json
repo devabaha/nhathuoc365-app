@@ -152,6 +152,9 @@
     "transaction": {
       "mainTitle": "Transaction",
       "paymentTitle": "Payment"
+    },
+    "salesReport": {
+      "mainTitle": "Sales Report"
     }
   },
 

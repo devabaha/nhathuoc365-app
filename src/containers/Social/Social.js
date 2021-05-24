@@ -110,12 +110,16 @@ const Social = ({siteId = store.store_data?.id}) => {
 
   const renderGroup = ({item: thumbnailGroup}) => {
     return (
-      <View
-        style={styles.groupContainer}>
+      <View style={styles.groupContainer}>
         <Image source={{uri: thumbnailGroup.banner}} style={styles.image} />
         <LinearGradient
-          colors={['rgba(0,0,0,0)','rgba(0,0,0,.2)', 'rgba(0,0,0,.45)', 'rgba(0,0,0,.5)']}
-          locations={[0.5, .75, .88, 1]}
+          colors={[
+            'rgba(0,0,0,0)',
+            'rgba(0,0,0,.2)',
+            'rgba(0,0,0,.45)',
+            'rgba(0,0,0,.5)',
+          ]}
+          locations={[0.5, 0.75, 0.88, 1]}
           angle={180}
           useAngle
           style={[styles.gradient]}

@@ -63,7 +63,8 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     color: '#333',
     fontWeight: '700',
-    fontSize: 12,
+    fontSize: 13,
+    marginBottom: 2
   },
   titleError: {
     color: appConfig.colors.status.danger,
@@ -714,9 +715,10 @@ class Comment extends Component {
   };
 
   renderUserName = (props) => {
-    return (
-      <Text style={styles.userName}>{props.currentMessage?.user?.name}</Text>
-    );
+    const userName =
+      props.currentMessage?.user?.name ||
+      (props.currentMessage?.user?.id && 'ID' + props.currentMessage?.user?.id);
+    return <Text style={styles.userName}>{userName}</Text>;
   };
 
   renderAvatar = (props) => {

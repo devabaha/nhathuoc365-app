@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Animated} from 'react-native';
+import {StyleSheet, View, Text, Animated, TouchableOpacity} from 'react-native';
 
 import {ImageMessageChat} from 'app-packages/tickid-chat/component';
 import BubbleBottom from '../BubbleBottom';
@@ -12,18 +12,25 @@ import store from 'app-store';
 import {ActionBtn} from '../BubbleBottom';
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
 import {getRelativeTime} from 'app-helper/social';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
 
 const CHARACTER_PER_LINE = 40;
-const LINE_HEIGHT = 20;
-const MAX_LINE = 5;
+const LINE_HEIGHT = 21;
+const MAX_LINE = 8;
 const MAX_NUM_OF_BREAK_LINE = 5;
 const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
 const MAX_COLLAPSED_HEIGHT =
-  LINE_HEIGHT * MAX_LINE + (appConfig.device.isAndroid ? 0 : LINE_HEIGHT);
+  LINE_HEIGHT * MAX_LINE + (appConfig.device.isIOS ? LINE_HEIGHT : 10);
+
+const SHOW_FULL_MESSAGE_TOP_SPACING =
+  MAX_COLLAPSED_HEIGHT -
+  LINE_HEIGHT -
+  (appConfig.device.isIOS ? LINE_HEIGHT : 10) +
+  5.5;
+
+const MIN_WIDTH_MESSAGE = 120;
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -36,11 +43,10 @@ const styles = StyleSheet.create({
   },
   bubbleWrapper: {
     marginRight: 0,
-    // overflow: 'hidden',
+    overflow: 'hidden',
     paddingVertical: 3,
     borderTopLeftRadius: 15,
     borderBottomLeftRadius: 15,
-    overflow: 'hidden',
   },
   bubbleContainer: {
     // flex: 0,
@@ -55,15 +61,14 @@ const styles = StyleSheet.create({
     height: undefined,
   },
   btnShowFullMessageContainer: {
-    minWidth: 120,
+    position: 'absolute',
+    minWidth: MIN_WIDTH_MESSAGE,
     width: '100%',
     alignItems: 'flex-end',
-    top: '100%',
+    top: SHOW_FULL_MESSAGE_TOP_SPACING,
     zIndex: 1,
   },
   btnShowFullMessage: {
-    position: 'absolute',
-    bottom: appConfig.device.isIOS ? 5 : -2,
     right: 0,
     borderBottomRightRadius: 15,
   },
@@ -98,7 +103,7 @@ const styles = StyleSheet.create({
   },
   titleMention: {
     fontWeight: '500',
-    fontSize: 16,
+    fontSize: 15,
     color: appConfig.colors.primary,
   },
   maskMention: {
@@ -107,6 +112,13 @@ const styles = StyleSheet.create({
     height: '110%',
     left: '-5%',
     top: '-5%',
+  },
+
+  maskMessageAndroid: {
+    width: '100%',
+    height: 3,
+    bottom: 0,
+    position: 'absolute',
   },
 });
 
@@ -196,10 +208,6 @@ class CustomBubble extends Component {
   renderMessageText = (props, bgColor) => {
     props.customTextStyle = styles.text;
 
-    // if(!this.state.isShowFullMessage) {
-    //   props.currentMessage?.text = clipText
-    // }
-
     if (!this.isReplyingYourSelf(props) && props.currentMessage?.reply?.name) {
       props.currentMessage.text = (
         <>
@@ -226,14 +234,18 @@ class CustomBubble extends Component {
             maxHeight: this.state.isShowFullMessage
               ? undefined
               : MAX_COLLAPSED_HEIGHT,
+            minWidth: this.state.isShowFullMessage
+              ? undefined
+              : MIN_WIDTH_MESSAGE,
           },
         ]}>
         {!this.state.isShowFullMessage && (
           <View style={styles.btnShowFullMessageContainer}>
             <TouchableOpacity
-              activeOpacity={0.8}
+              hitSlop={HIT_SLOP}
+              activeOpacity={0.9}
               onPress={this.openFullMessage}
-              containerStyle={styles.btnShowFullMessage}>
+              style={styles.btnShowFullMessage}>
               <LinearGradient
                 style={styles.maskShowFullMessage}
                 colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
@@ -248,6 +260,17 @@ class CustomBubble extends Component {
           </View>
         )}
         <MessageText {...props} />
+
+        {appConfig.device.isAndroid && (
+          <View
+            style={[
+              styles.maskMessageAndroid,
+              {
+                backgroundColor: bgColor,
+              },
+            ]}
+          />
+        )}
       </View>
     );
   };
@@ -330,11 +353,6 @@ class CustomBubble extends Component {
     const wrapperStyle = {
       left: {
         ...bubbleWrapperStyle.left,
-        paddingBottom: !this.state.isShowFullMessage
-          ? appConfig.device.isIOS
-            ? 0
-            : 7
-          : undefined,
         backgroundColor: bgColor,
       },
     };

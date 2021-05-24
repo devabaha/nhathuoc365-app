@@ -34,6 +34,7 @@ import SkeletonLoading from '../SkeletonLoading';
 import BaseAPI from '../../network/API/BaseAPI';
 import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
+import { servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -372,6 +373,25 @@ class Account extends Component {
         isHidden:
           !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
+      {
+        key: 'report_npp',
+        icon: 'clipboard',
+        iconColor: '#ffffff',
+        size: 22,
+        iconSize: 14,
+        label: t('options.salesReport.label'),
+        desc: t('options.salesReport.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () => Actions.push(appConfig.routes.salesReport),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#fd6d61',
+          },
+        ],
+        isHidden:
+          !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
+      },
 
       {
         key: 'reset_pass',
@@ -418,16 +438,19 @@ class Account extends Component {
       {
         key: '3',
         icon: 'handshake-o',
-        label: t('options.termOfUse.label', {appName: APP_NAME_SHOW}),
+        label: t('options.termOfUse.label'),
         desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
-          Actions.webview({
-            title: t('options.termOfUse.webViewTitle', {
-              appName: APP_NAME_SHOW,
+        onPress: () => 
+          servicesHandler(
+            {
+              type: SERVICES_TYPE.NEWS_DETAIL,
+              news:
+              {
+                title: t('options.termOfUse.webViewTitle'),
+                id: appConfig.aboutUsID
+              }
             }),
-            url: APP_INFO,
-          }),
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -585,12 +608,12 @@ class Account extends Component {
       } else if (response.didCancel) {
         console.log(response);
       } else {
-        if(!response.fileName){
+        if (!response.fileName) {
           response.fileName = new Date().getTime();
-          if(response.type){
-            response.fileName += "." + response.type.split('image/')[1];
+          if (response.type) {
+            response.fileName += '.' + response.type.split('image/')[1];
           } else {
-            response.fileName += ".jpeg";
+            response.fileName += '.jpeg';
           }
         }
         this.uploadAvatar(response);

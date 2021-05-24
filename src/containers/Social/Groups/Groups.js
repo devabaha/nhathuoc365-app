@@ -30,7 +30,7 @@ const Groups = ({siteId = store.store_data?.id}) => {
 
     try {
       const response = await getGroupsRequest.promise();
-console.log(response);
+      console.log(response);
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
