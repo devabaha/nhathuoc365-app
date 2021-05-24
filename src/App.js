@@ -1196,20 +1196,22 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                <Drawer
+                {/* <Drawer
                   key={appConfig.routes.store}
                   hideNavBar={true}
                   drawerPosition="right"
                   drawerWidth={350}
                   hideDrawerButton={true}
-                  contentComponent={(props) => <FilterComponent {...props} />}>
+                  contentComponent={(props) => <FilterComponent {...props} />}> */}
+                <Stack key={appConfig.routes.store}>
                   <Scene
                     key={`${appConfig.routes.store}_1`}
                     component={StoreContainer}
                     {...navBarConfig}
                     back
                   />
-                </Drawer>
+                </Stack>
+                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene
