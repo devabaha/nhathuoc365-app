@@ -17,6 +17,7 @@ import {Observer} from 'mobx-react';
 import NoResult from 'src/components/NoResult';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import Loading from 'src/components/Loading';
+import Post from 'src/components/Social/ListFeeds/Feeds/Post';
 
 const styles = StyleSheet.create({
   loadMore: {
@@ -103,6 +104,7 @@ const Posts = ({
               if (!isRefresh && !!posts?.length) {
                 listPost = [...posts].concat(listPost);
               }
+              console.log(posts)
               setStoreSocialPosts(listPost);
               setPosts(listPost);
             }
@@ -127,8 +129,12 @@ const Posts = ({
       } finally {
         if (isMounted()) {
           setLoading(false);
-          setLoadMore(false);
           setRefreshing(false);
+          setTimeout(() => {
+            if (isMounted()) {
+              setLoadMore(false);
+            }
+          }, 500);
         }
       }
     },
@@ -150,8 +156,8 @@ const Posts = ({
   };
 
   const handleLoadMore = () => {
-    if (!canLoadMore.current || isLoadMore) return;
-    console.log(canLoadMore.current, isLoadMore);
+    if (!canLoadMore.current || !posts?.length || isLoadMore) return;
+
     setLoadMore(true);
     page.current++;
     getPosts(page.current);
@@ -164,7 +170,6 @@ const Posts = ({
     } = e.nativeEvent;
 
     if (!canLoadMore.current && !isLoadMore && y / height <= 0.6) {
-      console.log('a', y, height)
       canLoadMore.current = true;
     }
   };
@@ -218,27 +223,41 @@ const Posts = ({
   };
 
   return (
-    <FlatList
-      data={posts}
-      renderItem={renderPost}
-      keyExtractor={(item, index) =>
-        item?.id ? String(item.id) : index.toString()
-      }
-      refreshControl={
-        refreshControl || (
-          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-        )
-      }
-      ListHeaderComponent={ListHeaderComponent}
-      ListEmptyComponent={!isLoading && renderEmpty()}
-      ListFooterComponent={isLoadMore && renderFooter()}
-      onEndReachedThreshold={0.4}
-      onEndReached={handleLoadMore}
-      onMomentumScrollEnd={handleScrollEnd}
-      onScrollEndDrag={handleScrollEnd}
-      onScroll={onScroll}
-      scrollEventThrottle={16}
-    />
+    <Observer>
+      {() => {
+        let postingData = [...posts];
+        if (!!Object.keys(store.socialPostingData).length) {
+          postingData.unshift(store.socialPostingData);
+        }
+
+        return (
+          <FlatList
+            data={postingData}
+            renderItem={renderPost}
+            keyExtractor={(item, index) =>
+              item?.id ? String(item.id) : index.toString()
+            }
+            refreshControl={
+              refreshControl || (
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={onRefresh}
+                />
+              )
+            }
+            ListHeaderComponent={ListHeaderComponent}
+            ListEmptyComponent={!isLoading && renderEmpty()}
+            ListFooterComponent={isLoadMore && renderFooter()}
+            onEndReachedThreshold={0.4}
+            onEndReached={handleLoadMore}
+            onMomentumScrollEnd={handleScrollEnd}
+            onScrollEndDrag={handleScrollEnd}
+            onScroll={onScroll}
+            scrollEventThrottle={16}
+          />
+        );
+      }}
+    </Observer>
   );
 };
 

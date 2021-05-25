@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {StyleSheet, Text, View, TextInput} from 'react-native';
 
 const styles = StyleSheet.create({
@@ -14,14 +14,18 @@ const styles = StyleSheet.create({
   },
 });
 
-const MultilineTextInput = ({value, onChangeText = () => {}, onContentLayout = () => {}}) => {
+const MultilineTextInput = ({
+  editable,
+  value,
+  onChangeText = () => {},
+  onContentLayout = () => {},
+}) => {
   const {t} = useTranslation('social');
 
   const isFocus = useRef(0);
   const contentHeight = useRef(0);
   const textInputOffsetY = useRef(0);
   const textInputCursorEnd = useRef(0);
-  const tempContentVisibleText = useRef('');
 
   const timeoutSelectionChange = useRef();
 
@@ -35,13 +39,16 @@ const MultilineTextInput = ({value, onChangeText = () => {}, onContentLayout = (
   const handleFocus = (e) => {
     isFocus.current = true;
     const text = contentText;
-    // console.log('1');
-    setContentText(' '+text);
+    setContentText(' ' + text);
     // setContentText(text + ' ');
     setTimeout(() => {
       setContentText(text);
-      setTimeout(() => isFocus.current = false, 300);
+      setTimeout(() => (isFocus.current = false), 300);
     });
+  };
+
+  const handleBlur = () => {
+    setContentVisibleText('');
   };
 
   const handleChangeText = (text) => {
@@ -57,12 +64,10 @@ const MultilineTextInput = ({value, onChangeText = () => {}, onContentLayout = (
 
     if (isFocus.current) {
       const visibleText = contentText.slice(0, textInputCursorEnd.current);
-      // console.log('2', end);
 
       if (visibleText !== contentVisibleText) {
         clearTimeout(timeoutSelectionChange.current);
         timeoutSelectionChange.current = setTimeout(() => {
-          // console.log(end);
           setContentVisibleText(visibleText);
         }, 100);
       }
@@ -71,7 +76,6 @@ const MultilineTextInput = ({value, onChangeText = () => {}, onContentLayout = (
   // console.log('render');
   const handleInputCloneLayout = (e) => {
     contentHeight.current = e.nativeEvent.layout.height;
-    // console.log(contentHeight.current);
     onContentLayout(contentHeight.current + textInputOffsetY.current);
   };
 
@@ -84,10 +88,19 @@ const MultilineTextInput = ({value, onChangeText = () => {}, onContentLayout = (
         scrollEnabled={false}
         autoFocus
         onFocus={handleFocus}
-        onBlur={() => setContentVisibleText('')}
+        onBlur={handleBlur}
         onLayout={handleInputLayout}
         onChangeText={handleChangeText}
         onSelectionChange={handleSelectionChange}
+        editable={editable}
+        onMoveShouldSetResponder={() => {
+          alert('a');
+          return false;
+        }}
+        onStartShouldSetResponder={() => {
+          alert('a');
+          return false;
+        }}
         value={contentText}
       />
       <TextInput

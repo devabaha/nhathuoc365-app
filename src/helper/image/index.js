@@ -3,6 +3,8 @@ import ImagePicker from 'react-native-image-picker';
 
 import appConfig from 'app-config';
 import {IMAGE_RATIOS} from 'src/constants/image';
+import RNFetchBlob from 'rn-fetch-blob';
+import { getBase64Image } from 'app-packages/tickid-chat/helper';
 
 export const getImageSize = (image_ratio, base = appConfig.device.width) => {
   return {
@@ -99,3 +101,53 @@ export const normalizeImages = (images) => {
     return img;
   });
 };
+
+export const uploadImages = (
+  uploadUrl,
+  images,
+  callbackUploadProgress = () => {},
+  callbackSuccess = () => {},
+  callbackError = () => {},
+) => {
+  images.forEach((image, index) => {
+    const imageData = normalizePostImageData(image);
+
+    console.log(imageData);
+
+    RNFetchBlob.fetch(
+      'POST',
+      uploadUrl,
+      {
+        'Content-Type': 'multipart/form-data',
+      },
+      [imageData],
+    )
+      .uploadProgress({interval: 250}, (written, total) => {
+        console.log('uploadprogress', written);
+        callbackUploadProgress(written / total, image, index);
+      })
+      .then((response) => {
+        console.log(response);
+        callbackSuccess(response, image, index);
+      })
+      .catch((error) => {
+        console.log(error);
+        callbackError(error, image, index);
+      });
+  });
+};
+
+export const normalizePostImageData = async (image) => {
+  let base64 = image.uploadPath;
+    if (!image.isBase64) {
+      base64 = await getBase64Image(image.path);
+    }
+
+    const imageData = {
+      name: 'upload',
+      filename: image.fileName,
+      data: base64,
+    };
+
+    return imageData;
+}

@@ -15,6 +15,7 @@ import firebaseAuth from '@react-native-firebase/auth';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 import equal from 'deep-equal';
+import {uploadImages} from 'app-helper/image';
 @autobind
 class Store {
   constructor() {
@@ -587,6 +588,65 @@ class Store {
 
   @action resetSocialPost() {
     this.socialPost.replace(new Map());
+  }
+
+  @observable socialPostingData = {};
+  @action setSocialPostingData(data = {}) {
+    this.socialPostingData = data;
+  }
+
+  @action socialPostData(data, t = () => {s}) {
+    const postData = async (data) => {
+
+      try {
+        const response = await APIHandler.social_create_post(data).promise();
+        console.log(response, data);
+        if (response) {
+          if (response.status === STATUS_SUCCESS) {
+            this.setSocialPostingData({
+              ...this.socialPostingData,
+              progress: 100,
+            });
+
+            setTimeout(() => {
+              this.setSocialPostingData();
+            });
+
+            if (response.data) {
+            }
+          } else {
+            flashShowMessage({
+              type: 'danger',
+              message: response.message || t('common:api.error.message'),
+            });
+          }
+        } else {
+          flashShowMessage({
+            type: 'danger',
+            message: t('common:api.error.message'),
+          });
+        }
+      } catch (error) {
+        console.log('create_social_post', error);
+        flashShowMessage({
+          type: 'danger',
+          message: t('common:api.error.message'),
+        });
+      } finally {
+      }
+    };
+    this.setSocialPostingData({...data, progress: 0});
+    if (data?.images?.length) {
+      uploadImages(
+        APIHandler.url_user_upload_image(),
+        data.images,
+        (progress, image, index) => {},
+        (response, image, index) => {},
+        (error, image, index) => {},
+      );
+    } else {
+      // postData(data);
+    }
   }
 }
 

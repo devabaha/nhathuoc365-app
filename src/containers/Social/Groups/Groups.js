@@ -132,15 +132,17 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
     getGroupInfo();
   };
 
-  const handlePressContent = () => {
-    Actions.push(appConfig.routes.socialCreatePost);
-  };
-
-  const handlePressTakePhoto = () => {
-    Actions.push(appConfig.routes.socialCreatePost, {
-      isOpenImagePicker: true,
-    });
-  };
+  const handlePressContent = useCallback(
+    (isOpenImagePicker = false) => {
+      Actions.push(appConfig.routes.socialCreatePost, {
+        group: groupInfo,
+        groupId: groupInfo.id,
+        siteId: groupInfo.site_id,
+        isOpenImagePicker,
+      });
+    },
+    [groupInfo],
+  );
 
   const handleScroll = useCallback((e) => {
     if (e.nativeEvent.contentOffset.y > 300) {
@@ -194,7 +196,7 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
         <SocialPleasePost
           avatar={store.user_info.img}
           onPressContent={handlePressContent}
-          onPressImages={handlePressTakePhoto}
+          onPressImages={() => handlePressContent(true)}
           containerStyle={{marginVertical: 10}}
         />
       </Container>

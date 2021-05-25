@@ -1148,8 +1148,8 @@ class CommonAPIHandler extends BaseHandler {
    * @param {object} data
    * @param {number} data.site_id
    * @param {number} data.group_id
-   * @param {number} data.content
-   * @param {number} data.images
+   * @param {string} data.content
+   * @param {array=} data.images
    */
   social_create_post(data) {
     const api = url_for(API.SOCIAL_CREATE_POST);

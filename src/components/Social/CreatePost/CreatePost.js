@@ -115,6 +115,9 @@ const styles = StyleSheet.create({
 });
 
 const CreatePost = ({
+  group = {},
+  groupId,
+  siteId = store?.store_data?.id,
   avatar = store.user_info.img,
   title,
   isOpenImagePicker: isOpenImagePickerProp = false,
@@ -143,6 +146,8 @@ const CreatePost = ({
   const [isUploadData, setUploadData] = useState(false);
   const [isLoading, setLoading] = useState(false);
 
+  const [editable, setEditable] = useState(true);
+
   const [keyboardHeight, setKeyboardHeight] = useState(store.keyboardTop);
 
   useEffect(() => {
@@ -170,7 +175,7 @@ const CreatePost = ({
     Actions.refresh({
       right: () => renderPostBtn(),
     });
-  }, [images, contentText]);
+  }, [images, contentText, group]);
 
   useEffect(() => {
     Actions.refresh({
@@ -182,15 +187,36 @@ const CreatePost = ({
   }, [clearRequests, uploadedSuccess.current, images]);
 
   const handlePost = () => {
-    console.log(contentText, images);
+    const postData = {
+      group,
+      user: store?.user_info
+        ? {
+            ...store.user_info,
+            image: store.user_info.img,
+          }
+        : {},
+      created: new Date(),
+      group_id: groupId,
+      site_id: siteId,
+      content: contentText,
+    };
+
+    if (!!images?.length) {
+      postData.images = images;
+    }
+
+    store.socialPostData(postData, t);
   };
 
   const renderPostBtn = () => {
+    const isDisabled = !contentText && !images?.length;
+
     return (
       <TouchableOpacity
         onPress={handlePost}
+        disabled={isDisabled}
         style={{
-          backgroundColor: appConfig.colors.primary,
+          backgroundColor: isDisabled ? '#ccc' : appConfig.colors.primary,
           padding: 10,
           paddingVertical: 5,
           borderRadius: 4,
@@ -291,8 +317,9 @@ const CreatePost = ({
       title: 'Chỉnh sửa',
       images,
       onChangeImages: (images) => {
-        console.log(images)
-        setImages(images)},
+        console.log(images);
+        setImages(images);
+      },
     });
   }, [images]);
 
@@ -303,6 +330,9 @@ const CreatePost = ({
   const handleScrollBeginDrag = (e) => {
     now.current = new Date().getTime();
     startOffsetY.current = e.nativeEvent.contentOffset.y;
+    if (editable) {
+      setEditable(false);
+    }
   };
 
   const handleScrollEnd = (e) => {
@@ -314,6 +344,10 @@ const CreatePost = ({
 
     if (Math.abs(velocity) > 1.5) {
       Keyboard.dismiss();
+    }
+
+    if (!editable) {
+      setEditable(true);
     }
   };
 
@@ -340,7 +374,6 @@ const CreatePost = ({
         scrollEventThrottle={16}
         contentContainerStyle={styles.list}
         keyboardShouldPersistTaps="handled"
-        // keyboardDismissMode="on-drag"
         onLayout={handleListLayout}
         onScrollBeginDrag={handleScrollBeginDrag}
         onMomentumScrollEnd={handleScrollEnd}
@@ -353,6 +386,7 @@ const CreatePost = ({
             onPressImages={handleSelectImage}
           />
           <MultilineTextInput
+            editable={editable}
             value={contentText}
             onChangeText={setContentText}
             onContentLayout={handleInputCloneLayout}
