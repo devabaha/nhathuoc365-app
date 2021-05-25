@@ -1,2 +1,2 @@
-import { handleSaveImage } from "./handleSaveImage";
-export { handleSaveImage };
+import {handleSaveImage} from './handleSaveImage';
+export {handleSaveImage};
