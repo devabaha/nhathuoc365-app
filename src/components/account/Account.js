@@ -353,9 +353,11 @@ class Account extends Component {
         rightIcon: <IconAngleRight />,
         onPress: () =>
           servicesHandler({
-            type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
-            title: t('options.termOfUse.webViewTitle'),
-            id: appConfig.aboutUsID,
+            type: SERVICES_TYPE.NEWS_DETAIL,
+            news: {
+              title: t('options.termOfUse.webViewTitle'),
+              id: appConfig.aboutUsID,
+            },
           }),
         boxIconStyle: [
           styles.boxIconStyle,
