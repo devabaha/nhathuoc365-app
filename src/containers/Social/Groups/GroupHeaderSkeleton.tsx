@@ -11,7 +11,7 @@ import {getNewsFeedSize} from 'app-helper/image';
 
 const styles = StyleSheet.create({
   shimmer: {
-    marginBottom: 15
+    marginBottom: 15,
   },
   wrapper: {
     backgroundColor: '#fff',
@@ -25,16 +25,6 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
   },
 
-  itemContainer: {
-    backgroundColor: SKELETON_COLOR,
-    width: 90,
-    height: 90,
-    borderRadius: 10,
-    overflow: 'hidden',
-    marginRight: 15,
-    justifyContent: 'flex-end',
-  },
-
   block: {
     backgroundColor: SKELETON_COLOR,
   },
@@ -43,6 +33,8 @@ const styles = StyleSheet.create({
     ...getNewsFeedSize(),
     borderBottomWidth: 0.5,
     borderColor: '#ddd',
+    backgroundColor: SKELETON_COLOR,
+    justifyContent: 'flex-end',
   },
   groupInfoContainer: {
     padding: 15,
@@ -56,12 +48,12 @@ const styles = StyleSheet.create({
   title: {
     height: 20,
     width: '40%',
-    marginBottom: 10
+    marginBottom: 10,
   },
   description: {
     marginTop: 10,
     height: 5,
-    width: '50%',
+    width: '60%',
   },
   description2: {
     marginTop: 10,
@@ -74,11 +66,13 @@ const GroupHeaderSkeleton = () => {
   return (
     <Shimmer style={styles.shimmer}>
       <Text style={styles.wrapper}>
-        <View style={[styles.itemContainer, styles.bannerContainer]} />
-        <View style={styles.groupInfoContainer}>
-          <View style={[styles.block, styles.content, styles.title]} />
-          <View style={[styles.block, styles.content, styles.description]} />
-          <View style={[styles.block, styles.content, styles.description2]} />
+        <View>
+          <View style={styles.bannerContainer} />
+          <View style={styles.groupInfoContainer}>
+            <View style={[styles.block, styles.content, styles.title]} />
+            <View style={[styles.block, styles.content, styles.description]} />
+            <View style={[styles.block, styles.content, styles.description2]} />
+          </View>
         </View>
       </Text>
     </Shimmer>

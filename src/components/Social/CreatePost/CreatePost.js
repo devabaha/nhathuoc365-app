@@ -99,9 +99,11 @@ const CreatePost = ({
   }, []);
 
   useEffect(() => {
-    Actions.refresh({
-      right: () => renderPostBtn(),
-    });
+    setTimeout(() =>
+      Actions.refresh({
+        right: () => renderPostBtn(),
+      }),
+    );
   }, [images, contentText, group]);
 
   useEffect(() => {
@@ -203,13 +205,13 @@ const CreatePost = ({
 
   const handleOpenCamera = () => {
     openCamera((selectedImages) => {
-      setImages(selectedImages);
+      setImages(images.concat(selectedImages));
     }, closeModal);
   };
 
   const handleOpenLibrary = () => {
     openLibrary((selectedImages) => {
-      setImages(selectedImages);
+      setImages(images.concat(selectedImages));
     }, closeModal);
   };
 

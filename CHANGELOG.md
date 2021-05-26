@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Create Post, Group.
+### Fixed
+- Wrong params for Filter product News-est and Best-selling mode.
+
 ## [r11.6.3] - 2021-05-20
 ### Added
 - Update moment locale relative time when change language.
