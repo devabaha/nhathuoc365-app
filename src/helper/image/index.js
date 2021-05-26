@@ -4,7 +4,7 @@ import ImagePicker from 'react-native-image-picker';
 import appConfig from 'app-config';
 import {IMAGE_RATIOS} from 'src/constants/image';
 import RNFetchBlob from 'rn-fetch-blob';
-import { getBase64Image } from 'app-packages/tickid-chat/helper';
+import {getBase64Image} from 'app-packages/tickid-chat/helper';
 
 export const getImageSize = (image_ratio, base = appConfig.device.width) => {
   return {
@@ -109,45 +109,63 @@ export const uploadImages = (
   callbackSuccess = () => {},
   callbackError = () => {},
 ) => {
-  images.forEach((image, index) => {
-    const imageData = normalizePostImageData(image);
+  let requests = [];
+  async function uploadImage(image, index) {
+    const imageData = await normalizePostImageData(image);
 
-    console.log(imageData);
-
-    RNFetchBlob.fetch(
+    const request = RNFetchBlob.fetch(
       'POST',
       uploadUrl,
       {
         'Content-Type': 'multipart/form-data',
       },
       [imageData],
-    )
-      .uploadProgress({interval: 250}, (written, total) => {
-        console.log('uploadprogress', written);
+    );
+
+    request
+      .uploadProgress({interval: 150}, (written, total) => {
+        // console.log(index, 'uploadprogress', written, total);
         callbackUploadProgress(written / total, image, index);
       })
       .then((response) => {
         console.log(response);
-        callbackSuccess(response, image, index);
+        const res = JSON.parse(response.data);
+        if (res.status === STATUS_SUCCESS) {
+          callbackSuccess(res, image, index);
+        } else {
+          callbackError(res?.message, image, index);
+          flashShowMessage({
+            type: 'danger',
+            message: res.message,
+          });
+        }
       })
       .catch((error) => {
         console.log(error);
         callbackError(error, image, index);
       });
+
+    return request;
+  }
+
+  images.forEach((image, index) => {
+    requests.push(uploadImage(image, index));
   });
+
+  return requests;
 };
 
 export const normalizePostImageData = async (image) => {
   let base64 = image.uploadPath;
-    if (!image.isBase64) {
-      base64 = await getBase64Image(image.path);
-    }
+  if (!image.isBase64) {
+    base64 = await getBase64Image(image.path);
+  }
 
-    const imageData = {
-      name: 'upload',
-      filename: image.fileName,
-      data: base64,
-    };
+  const imageData = {
+    name: 'upload',
+    filename: image.fileName,
+    data: base64,
+  };
 
-    return imageData;
-}
+  return imageData;
+};

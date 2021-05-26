@@ -1,7 +1,7 @@
-import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalGalleryOptionAndroid';
 import React, {useCallback, useRef, useState, useEffect} from 'react';
 import {
   Alert,
+  BackHandler,
   Keyboard,
   ScrollView,
   StyleSheet,
@@ -13,8 +13,6 @@ import {
 import appConfig from 'app-config';
 
 import ScreenWrapper from 'src/components/ScreenWrapper';
-import {ImageMessageChat} from 'app-packages/tickid-chat/component';
-import Loading from 'src/components/Loading';
 import {Actions} from 'react-native-router-flux';
 import {renderGridImages} from 'app-helper/social';
 import PleasePost from '../components/PleasePost';
@@ -22,77 +20,10 @@ import store from 'app-store';
 import {reaction} from 'mobx';
 import MultilineTextInput from './MultilineTextInput';
 import {openCamera, openLibrary} from 'app-helper/image';
-
-const NUM_COLUMNS = 3;
-const IMAGE_PADDING = 15;
-const IMAGE_WIDTH =
-  (appConfig.device.width - IMAGE_PADDING * (NUM_COLUMNS + 1)) / NUM_COLUMNS;
+import {formatPostStoreData} from 'app-helper/social';
+import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalGalleryOptionAndroid';
 
 const styles = StyleSheet.create({
-  contentContainer: {
-    flexGrow: 1,
-    paddingHorizontal: 15,
-    paddingTop: 15,
-    backgroundColor: '#fff',
-  },
-  emptyContainer: {
-    margin: -15,
-    flex: 1,
-    backgroundColor: appConfig.colors.sceneBackground,
-  },
-
-  imageWrapper: {
-    alignSelf: 'center',
-    marginBottom: 15,
-
-    borderWidth: 1,
-    borderColor: appConfig.colors.sceneBackground,
-    borderRadius: 15,
-    backgroundColor: '#eee',
-  },
-  imageContainer: {
-    width: '100%',
-    height: '100%',
-    margin: 0,
-  },
-
-  addMoreBtn: {
-    flex: 1,
-    backgroundColor: appConfig.colors.sceneBackground,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: IMAGE_PADDING,
-    padding: 15,
-    paddingVertical: 30,
-    borderRadius: 15,
-  },
-  addMoreIcon: {
-    fontSize: 30,
-    color: appConfig.colors.primary,
-  },
-  addMoreTitle: {
-    marginTop: 15,
-    color: '#333',
-    textAlign: 'center',
-  },
-
-  delBtn: {
-    position: 'absolute',
-    right: -10,
-    top: -10,
-    backgroundColor: appConfig.colors.status.danger,
-    borderRadius: 15,
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...elevationShadowStyle(5),
-  },
-  delIcon: {
-    fontSize: 18,
-    color: '#fff',
-  },
-
   list: {
     flexGrow: 1,
     backgroundColor: '#fff',
@@ -121,20 +52,18 @@ const CreatePost = ({
   avatar = store.user_info.img,
   title,
   isOpenImagePicker: isOpenImagePickerProp = false,
-  btnTitle = 'Tải ảnh',
-  onSuccess = () => {},
 }) => {
   const {t} = useTranslation(['common', 'social']);
 
   const isUnmounted = useRef(false);
   const now = useRef(0);
   const uploadedSuccess = useRef(0);
-  const uploaded = useRef(0);
   const uploadRequest = useRef([]);
   const refScrollView = useRef();
   const startOffsetY = useRef(0);
   const offsetY = useRef(0);
   const containerHeight = useRef(0);
+  const canBack = useRef(false);
 
   const [contentText, setContentText] = useState(
     'Cả nhà cùng tìm hiểu thông tin cơ bản về lịch sử ngày Phụ nữ Việt Nam 20/10 nhé!\r\rVào ngày 20 tháng 10 năm 1930, Hội Phụ nữ phản đế Việt Nam (nay đổi tên là Hội Liên hiệp Phụ nữ Việt Nam) chính thức được thành lập, để đánh dấu sự kiện này, Đảng Cộng sản Việt Nam đã quyết định chọn ngày 20 tháng 10 hằng năm làm ngày truyền thống của tổ chức này, đồng thời cũng xem đây là ngày kỷ niệm và tôn vinh phụ nữ Việt Nam, lấy tên là "Ngày Phụ nữ Việt Nam".\r\rTrước năm 1975 tại miền Nam Việt Nam, dưới chính thể Việt Nam Cộng Hòa, Ngày Phụ nữ Việt Nam cũng là ngày tưởng niệm Hai bà Trưng vào ngày 6 tháng 2 âm lịch.\r\rCả nhà cùng tìm hiểu thông tin cơ bản về lịch sử ngày Phụ nữ Việt Nam 20/10 nhé!\r\rVào ngày 20 tháng 10 năm 1930, Hội Phụ nữ phản đế Việt Nam (nay đổi tên là Hội Liên hiệp Phụ nữ Việt Nam) chính thức được thành lập, để đánh dấu sự kiện này, Đảng Cộng sản Việt Nam đã quyết định chọn ngày 20 tháng 10 hằng năm làm ngày truyền thống của tổ chức này, đồng thời cũng xem đây là ngày kỷ niệm và tôn vinh phụ nữ Việt Nam, lấy tên là "Ngày Phụ nữ Việt Nam".\r\rTrước năm 1975 tại miền Nam Việt Nam, dưới chính thể Việt Nam Cộng Hòa, Ngày Phụ nữ Việt Nam cũng là ngày tưởng niệm Hai bà Trưng vào ngày 6 tháng 2 âm lịch.',
@@ -143,8 +72,6 @@ const CreatePost = ({
   const [isOpenImagePicker, setOpenImagePicker] = useState(
     isOpenImagePickerProp,
   );
-  const [isUploadData, setUploadData] = useState(false);
-  const [isLoading, setLoading] = useState(false);
 
   const [editable, setEditable] = useState(true);
 
@@ -178,16 +105,53 @@ const CreatePost = ({
   }, [images, contentText, group]);
 
   useEffect(() => {
-    Actions.refresh({
-      onBack: () => {
+    const handlePop = () => {
+      if (canBack.current || (!contentText && !images?.length)) {
         clearRequests();
         Actions.pop();
-      },
+      } else {
+        Alert.alert(
+          t('social:discardPost'),
+          t('social:discardPostDescription'),
+          [
+            {
+              text: t('social:discardPostConfirm'),
+              style: 'destructive',
+              onPress: () => {
+                clearRequests();
+                Actions.pop();
+              },
+            },
+            {
+              text: t('social:continuePostConfirm'),
+            },
+          ],
+          {
+            cancelable: false,
+          },
+        );
+      }
+    };
+
+    const backHandlerListener = () => {
+      handlePop();
+      return true;
+    };
+
+    BackHandler.addEventListener('hardwareBackPress', backHandlerListener);
+
+    Actions.refresh({
+      onBack: handlePop,
     });
-  }, [clearRequests, uploadedSuccess.current, images]);
+
+    return () => {
+      BackHandler.removeEventListener('hardwareBackPress', backHandlerListener);
+    };
+  }, [clearRequests, contentText, images]);
 
   const handlePost = () => {
     const postData = {
+      id: new Date().getTime(),
       group,
       user: store?.user_info
         ? {
@@ -204,8 +168,10 @@ const CreatePost = ({
     if (!!images?.length) {
       postData.images = images;
     }
+    canBack.current = true;
+    Actions.pop();
 
-    store.socialPostData(postData, t);
+    store.socialCreatePost(postData, t, formatPostStoreData);
   };
 
   const renderPostBtn = () => {
@@ -222,7 +188,7 @@ const CreatePost = ({
           borderRadius: 4,
           right: 12,
         }}>
-        <Text style={{color: '#fff', fontSize: 16}}>Đăng</Text>
+        <Text style={{color: '#fff', fontSize: 16}}>{t('social:post')}</Text>
       </TouchableOpacity>
     );
   };
@@ -230,27 +196,6 @@ const CreatePost = ({
   const clearRequests = useCallback(() => {
     uploadRequest.current.map((request) => request?.cancel && request.cancel());
   }, [uploadRequest.current]);
-
-  const getImages = () => {
-    return images.length ? images.concat([{isAddMore: true}]) : images;
-  };
-
-  const isDisabledUploadData = () => {
-    return (
-      !images?.length || uploaded.current === images.length || isUploadData
-    );
-  };
-
-  const handleDelImage = (index) => {
-    const temp = [...images];
-    temp.splice(index, 1);
-    setImages(temp);
-  };
-
-  const handleUploadData = () => {
-    setLoading(true);
-    setUploadData(true);
-  };
 
   const handleSelectImage = () => {
     setOpenImagePicker(true);
@@ -272,52 +217,11 @@ const CreatePost = ({
     setOpenImagePicker(false);
   };
 
-  const updateUploadedTotal = () => {
-    if (uploaded.current === images.length) {
-      uploaded.current = uploadedSuccess.current;
-      setLoading(false);
-      setUploadData(false);
-      if (isUnmounted && uploadedSuccess.current !== images.length) {
-        flashShowMessage({
-          type: 'danger',
-          message: `Chưa hoàn tất tải ảnh (${uploadedSuccess.current}/${images.length})`,
-        });
-      }
-    }
-  };
-
-  const handleUploadedSuccess = (response, isReUp, index) => {
-    console.log(response);
-    const temp = [...images];
-    temp[index].uploaded = true;
-    temp[index].url = response[0];
-    setImages(images);
-
-    uploadedSuccess.current++;
-    uploaded.current++;
-    updateUploadedTotal();
-    if (uploadedSuccess.current === images.length) {
-      Alert.alert('Tải thành công', 'Tất cả ảnh đã được tải thành công', [
-        {
-          text: 'OK',
-          onPress: () => onSuccess(images),
-        },
-      ]);
-    }
-  };
-
-  const handleUploadFail = (error) => {
-    console.log('upload_image', error);
-    uploaded.current++;
-    updateUploadedTotal();
-  };
-
   const goToEditImages = useCallback(() => {
     Actions.push(appConfig.routes.modalEditImages, {
       title: 'Chỉnh sửa',
       images,
       onChangeImages: (images) => {
-        console.log(images);
         setImages(images);
       },
     });
@@ -330,7 +234,7 @@ const CreatePost = ({
   const handleScrollBeginDrag = (e) => {
     now.current = new Date().getTime();
     startOffsetY.current = e.nativeEvent.contentOffset.y;
-    if (editable) {
+    if (editable && !keyboardHeight) {
       setEditable(false);
     }
   };
@@ -368,7 +272,6 @@ const CreatePost = ({
   //   console.log('render');
   return (
     <ScreenWrapper>
-      {isLoading && <Loading center />}
       <ScrollView
         ref={refScrollView}
         scrollEventThrottle={16}
@@ -386,15 +289,14 @@ const CreatePost = ({
             onPressImages={handleSelectImage}
           />
           <MultilineTextInput
+            autoFocus={!isOpenImagePickerProp}
             editable={editable}
             value={contentText}
             onChangeText={setContentText}
             onContentLayout={handleInputCloneLayout}
           />
-          <TouchableOpacity
-            onPress={goToEditImages}
-            style={{paddingBottom: 15}}>
-            {renderGridImages(images)}
+          <TouchableOpacity onPress={goToEditImages} style={{marginBottom: 15}}>
+            <View pointerEvents="none">{renderGridImages(images)}</View>
           </TouchableOpacity>
         </View>
 

@@ -10,15 +10,18 @@ import {Actions} from 'react-native-router-flux';
 
 import appConfig from 'app-config';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import ListGroupThumbnailSkeleton from './ListGroupThumbnailSkeleton';
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     marginBottom: 15,
+    height: 130,
   },
   contentContainer: {
     paddingLeft: 15,
     paddingVertical: 20,
+    flex: 0,
   },
 
   groupContainer: {
@@ -60,7 +63,7 @@ const Social = ({title, siteId = store.store_data?.id}) => {
   const {t} = useTranslation();
 
   const [thumbnailGroups, setThumbnailGroups] = useState([]);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
 
   const [getThumbnailGroupsRequest] = useState(new APIRequest());
@@ -71,8 +74,8 @@ const Social = ({title, siteId = store.store_data?.id}) => {
     if (!title) {
       setTimeout(() => {
         Actions.refresh({
-          title: t('screen.social.mainTitle')
-        })
+          title: t('screen.social.mainTitle'),
+        });
       });
     }
 
@@ -161,26 +164,29 @@ const Social = ({title, siteId = store.store_data?.id}) => {
   };
 
   const renderThumbnailGroups = () => {
-    return (
-      <FlatList
-        style={styles.container}
-        contentContainerStyle={styles.contentContainer}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        overScrollMode={false}
-        data={thumbnailGroups}
-        renderItem={renderGroup}
-        keyExtractor={(item, index) =>
-          item?.id ? String(item.id) : index.toString()
-        }
-      />
+    return isLoading ? (
+      <ListGroupThumbnailSkeleton />
+    ) : (
+      <View>
+        <FlatList
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          data={thumbnailGroups}
+          renderItem={renderGroup}
+          keyExtractor={(item, index) =>
+            item?.id ? String(item.id) : index.toString()
+          }
+        />
+      </View>
     );
   };
 
   return (
     <Posts
-      ListHeaderComponent={renderThumbnailGroups()}
       onRefresh={onRefresh}
+      ListHeaderComponent={renderThumbnailGroups()}
     />
   );
 };

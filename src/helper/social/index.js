@@ -29,7 +29,7 @@ export const getSocialLikeFlag = (type, feeds) => {
       likeFlag = store.socialNews.get(feeds.id)?.like_flag;
       break;
     case SOCIAL_DATA_TYPES.POST:
-      likeFlag = store.socialPost.get(feeds.id)?.like_flag;
+      likeFlag = store.socialPosts.get(feeds.id)?.like_flag;
       break;
   }
 
@@ -44,7 +44,7 @@ export const getSocialLikeCount = (type, feeds) => {
       likeCount = store.socialNews.get(feeds.id)?.like_count_friendly;
       break;
     case SOCIAL_DATA_TYPES.POST:
-      likeCount = store.socialPost.get(feeds.id)?.like_count_friendly;
+      likeCount = store.socialPosts.get(feeds.id)?.like_count_friendly;
       break;
   }
 
@@ -59,7 +59,7 @@ export const getSocialCommentsCount = (type, feeds) => {
       commentsCount = store.socialNews.get(feeds.id)?.comment_count;
       break;
     case SOCIAL_DATA_TYPES.POST:
-      commentsCount = store.socialPost.get(feeds.id)?.comment_count;
+      commentsCount = store.socialPosts.get(feeds.id)?.comment_count;
       break;
   }
 
@@ -93,6 +93,8 @@ export const likeSocial = (type, feeds) => {
     status: newLikeFlag,
   };
 
+  console.log(data)
+
   APIHandler.social_likes(data)
     .promise()
     .then((res) => {
@@ -104,7 +106,7 @@ export const likeSocial = (type, feeds) => {
       console.log('like_news_response', res);
     })
     .catch((err) => {
-      console.log('like_news_error', err);
+      console.log('like_social_error', err);
       setTimeout(() => {
         updateFunction(feeds.id, {
           like_flag: oldLikeFlag,
@@ -144,4 +146,14 @@ export const getRelativeTime = (
   format = SOCIAL_RELATIVE_TIME_FORMAT_DATE,
 ) => {
   return moment(time, format).fromNow();
+};
+
+export const formatPostStoreData = (post) => {
+  return {
+    like_count: post.like_count || 0,
+    like_count_friendly: calculateLikeCountFriendly(post) || 0,
+    share_count: post.share_count || 0,
+    like_flag: post.like_flag || 0,
+    comment_count: post.comment_count || 0,
+  };
 };

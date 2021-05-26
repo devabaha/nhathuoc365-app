@@ -7,8 +7,8 @@ import ActionInfo from './ActionInfo';
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff'
-  }
+    backgroundColor: '#fff',
+  },
 });
 
 const ActionContainer = ({
@@ -18,11 +18,15 @@ const ActionContainer = ({
   style,
   disableComment,
   disableShare,
+  renderActionBar,
   onActionBarPress = () => {},
   onPressTotalComments = () => {},
 }) => {
   return (
-    <Container style={[styles.container, style]} centerVertical={false} paddingHorizontal={12}>
+    <Container
+      style={[styles.container, style]}
+      centerVertical={false}
+      paddingHorizontal={12}>
       <ActionInfo
         isLiked={isLiked}
         totalReaction={likeCount}
@@ -30,12 +34,16 @@ const ActionContainer = ({
         onPressTotalComments={onPressTotalComments}
         disableComment={disableComment}
       />
-      <ActionBar
-        isLiked={isLiked}
-        disableComment={disableComment}
-        disableShare={disableShare}
-        onActionBarPress={onActionBarPress}
-      />
+      {renderActionBar ? (
+        renderActionBar()
+      ) : (
+        <ActionBar
+          isLiked={isLiked}
+          disableComment={disableComment}
+          disableShare={disableShare}
+          onActionBarPress={onActionBarPress}
+        />
+      )}
     </Container>
   );
 };

@@ -12,10 +12,11 @@ import Container from 'src/components/Layout/Container';
 import Image from 'src/components/Image';
 
 import {getNewsFeedSize} from '../../../helper/image';
+import GroupHeaderSkeleton from './GroupHeaderSkeleton';
 
 const styles = StyleSheet.create({
   titleContainer: {
-    paddingLeft: 30,
+    paddingLeft: appConfig.device.isIOS ? 30 : 0,
     paddingRight: 50,
     flexDirection: 'row',
     alignItems: 'center',
@@ -37,6 +38,32 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+
+  headerInfoContainer: {
+    backgroundColor: '#fff',
+  },
+  bannerContainer: {
+    ...getNewsFeedSize(),
+    borderBottomWidth: 0.5,
+    borderColor: '#ddd',
+  },
+  groupInfoContainer: {
+    padding: 15,
+  },
+  groupName: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#242424',
+  },
+  groupDescription: {
+    fontSize: 16,
+    marginTop: 10,
+    color: '#333',
+  },
+  pleasePostContainer: {
+    marginBottom: 10,
+    marginTop: 5,
+  },
 });
 
 const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
@@ -46,7 +73,7 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
   const isTitleVisible = useRef(false);
   const isTitleInvisible = useRef(true);
 
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [isRefreshing, setRefreshing] = useState(false);
   const [getGroupInfoRequest] = useState(new APIRequest());
 
@@ -96,7 +123,7 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
 
     try {
       const response = await getGroupInfoRequest.promise();
-      console.log(response);
+
       if (response) {
         if (response.status === STATUS_SUCCESS) {
           if (response.data) {
@@ -133,7 +160,7 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
   };
 
   const handlePressContent = useCallback(
-    (isOpenImagePicker = false) => {
+    (isOpenImagePicker) => {
       Actions.push(appConfig.routes.socialCreatePost, {
         group: groupInfo,
         groupId: groupInfo.id,
@@ -147,23 +174,21 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
   const handleScroll = useCallback((e) => {
     if (e.nativeEvent.contentOffset.y > 300) {
       if (isTitleVisible.current) return;
-      console.log('visible');
       isTitleVisible.current = true;
       isTitleInvisible.current = false;
       Animated.timing(animatedTitleOpacity, {
         toValue: 1,
-        duration: 200,
+        duration: 100,
         easing: Easing.quad,
         useNativeDriver: true,
       }).start();
     } else {
       if (isTitleInvisible.current) return;
-      console.log('invisible');
       isTitleVisible.current = false;
       isTitleInvisible.current = true;
       Animated.timing(animatedTitleOpacity, {
         toValue: 0,
-        duration: 200,
+        duration: 100,
         easing: Easing.quad,
         useNativeDriver: true,
       }).start();
@@ -171,47 +196,39 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
   }, []);
 
   renderGroupHeader = () => {
-    return (
+    return isLoading ? (
+      <GroupHeaderSkeleton />
+    ) : (
       <Container centerVertical={false}>
-        <View style={{backgroundColor: '#fff'}}>
+        <View style={styles.headerInfoContainer}>
           <Image
             canTouch
             source={{uri: groupInfo.banner}}
-            containerStyle={{
-              ...getNewsFeedSize(),
-              borderBottomWidth: 0.5,
-              borderColor: '#ddd',
-            }}
+            containerStyle={styles.bannerContainer}
           />
-          <View style={{padding: 15}}>
-            <Text style={{fontSize: 26, fontWeight: 'bold', color: '#242424'}}>
-              {groupInfo.name}
-            </Text>
-            <Text style={{fontSize: 16, marginTop: 10, color: '#333'}}>
-              {groupInfo.desc}
-            </Text>
+          <View style={styles.groupInfoContainer}>
+            <Text style={styles.groupName}>{groupInfo.name}</Text>
+            <Text style={styles.groupDescription}>{groupInfo.desc}</Text>
           </View>
         </View>
 
         <SocialPleasePost
           avatar={store.user_info.img}
-          onPressContent={handlePressContent}
+          onPressContent={() => handlePressContent(false)}
           onPressImages={() => handlePressContent(true)}
-          containerStyle={{marginVertical: 10}}
+          containerStyle={styles.pleasePostContainer}
         />
       </Container>
     );
   };
 
   return (
-    <>
-      <Posts
-        groupId={id}
-        ListHeaderComponent={renderGroupHeader()}
-        onRefresh={onRefresh}
-        onScroll={handleScroll}
-      />
-    </>
+    <Posts
+      groupId={id}
+      onRefresh={onRefresh}
+      onScroll={handleScroll}
+      ListHeaderComponent={renderGroupHeader()}
+    />
   );
 };
 

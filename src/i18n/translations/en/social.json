@@ -12,7 +12,12 @@
   "and": "and",
   "errorPosting": "Error!",
   "posting": "Posting...",
+  "post": "Post",
+  "discardPost": "Discard post?",
+  "discardPostDescription": "If you discard now, you'll lose this post.",
   "emptyComment": "Nothing here yet!",
   "pleasePost": "What's on your mind?",
-  "noPosts": "There are no posts yet"
+  "noPosts": "There are no posts yet",
+  "discardPostConfirm": "Discard Post",
+  "continuePostConfirm": "Keep Editing"
 }

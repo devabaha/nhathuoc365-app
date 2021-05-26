@@ -18,7 +18,7 @@ export const getImageRatio = (image = {width: 1, height: 1}) => {
 
 export const getPostGridImagesType = (images = []) => {
   if(!images.length) return null;
-  
+
   const ratioFirstImage = getImageRatio(images[0]);
   const ratioSecondImage = getImageRatio(images[1]);
 

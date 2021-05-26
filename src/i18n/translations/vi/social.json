@@ -12,7 +12,12 @@
   "and": "và",
   "errorPosting": "Lỗi!",
   "posting": "Đang viết...",
+  "post": "Đăng",
+  "discardPost": "Thoát chỉnh sửa?",
+  "discardPostDescription": "Nếu bạn thoát, bạn sẽ mất nội dung đang soạn.",
   "emptyComment": "Chưa có bình luận!",
   "pleasePost": "Bạn đang nghĩ gì?",
-  "noPosts": "Chưa có bài viết"
+  "noPosts": "Chưa có bài viết",
+  "discardPostConfirm": "Thoát",
+  "continuePostConfirm": "Tiếp tục sửa"
 }

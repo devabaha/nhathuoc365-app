@@ -371,7 +371,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** Social */
     case SERVICES_TYPE.SOCIAL:
       Actions.push(appConfig.routes.social, {
-        // title: service.news?.title || service.title,
+        title: service.title,
         siteId: service.id,
       });
       break;

@@ -1,11 +1,13 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {StyleSheet, Text, View, TextInput} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {StyleSheet, TextInput} from 'react-native';
 
 const styles = StyleSheet.create({
   input: {
     backgroundColor: '#fff',
     fontSize: 16,
     padding: 15,
+    paddingTop: 0,
+    paddingBottom: 0
   },
   inputClone: {
     position: 'absolute',
@@ -17,6 +19,7 @@ const styles = StyleSheet.create({
 const MultilineTextInput = ({
   editable,
   value,
+  autoFocus = true,
   onChangeText = () => {},
   onContentLayout = () => {},
 }) => {
@@ -52,9 +55,10 @@ const MultilineTextInput = ({
   };
 
   const handleChangeText = (text) => {
-    const visibleText = text.slice(0, textInputCursorEnd.current);
     onChangeText(text);
     setContentText(text);
+
+    const visibleText = text.slice(0, textInputCursorEnd.current);
     setContentVisibleText(visibleText);
   };
 
@@ -86,23 +90,16 @@ const MultilineTextInput = ({
         placeholder={t('pleasePost')}
         multiline
         scrollEnabled={false}
-        autoFocus
+        autoFocus={autoFocus}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onLayout={handleInputLayout}
         onChangeText={handleChangeText}
         onSelectionChange={handleSelectionChange}
         editable={editable}
-        onMoveShouldSetResponder={() => {
-          alert('a');
-          return false;
-        }}
-        onStartShouldSetResponder={() => {
-          alert('a');
-          return false;
-        }}
         value={contentText}
       />
+
       <TextInput
         onLayout={handleInputCloneLayout}
         multiline

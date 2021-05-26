@@ -1,12 +1,12 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {FlatList, RefreshControl, StyleSheet, Text, View} from 'react-native';
+import {FlatList, RefreshControl, StyleSheet} from 'react-native';
 import useIsMounted from 'react-is-mounted-hook';
 import {APIRequest} from 'src/network/Entity';
 import store from 'app-store';
 import Feeds from 'src/components/Social/ListFeeds/Feeds';
 import {CONFIG_KEY, isConfigActive} from 'app-helper/configKeyHandler';
 import {
-  calculateLikeCountFriendly,
+  formatPostStoreData,
   getRelativeTime,
   getSocialLikeCount,
   getSocialLikeFlag,
@@ -17,12 +17,26 @@ import {Observer} from 'mobx-react';
 import NoResult from 'src/components/NoResult';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
 import Loading from 'src/components/Loading';
-import Post from 'src/components/Social/ListFeeds/Feeds/Post';
+
+import appConfig from 'app-config';
+import {reaction, toJS} from 'mobx';
+import {ActionBarText} from 'src/components/Social/ListFeeds/Feeds/Feeds';
+import PostsSkeleton from './PostsSkeleton';
 
 const styles = StyleSheet.create({
   loadMore: {
     position: 'relative',
     paddingVertical: 10,
+  },
+  statusText: {
+    padding: 15,
+    textAlign: 'center',
+    color: '#333',
+    fontStyle: 'italic',
+  },
+
+  feedsContainer: {
+    marginBottom: 10,
   },
 });
 
@@ -54,22 +68,51 @@ const Posts = ({
 
     return () => {
       cancelRequests([getPostsRequest]);
-      store.resetSocialPost();
+      store.resetSocialPosts();
     };
   }, []);
 
+  const addPostingData = useCallback(
+    (postingData, postsData = posts) => {
+      if (
+        !!postingData?.group_id &&
+        (groupId === undefined || groupId == postingData.group_id)
+      ) {
+        let tempPosts = [...postsData];
+        tempPosts.unshift(postingData);
+        return tempPosts;
+      }
+
+      return postsData;
+    },
+    [posts],
+  );
+
+  useEffect(() => {
+    const disposer = reaction(
+      () => store.socialPostingData,
+      (postingData) => {
+        if (postingData?.id) {
+          let listPost = [...posts];
+          const index = listPost.findIndex((p) => p.id === postingData.id);
+          if (index === -1) {
+            listPost = addPostingData(postingData);
+            setPosts(listPost);
+          } else if (postingData?.error) {
+            listPost[index].error = postingData?.error;
+            setPosts(listPost);
+          }
+        }
+      },
+    );
+    return () => {
+      disposer();
+    };
+  }, [addPostingData]);
+
   const setStoreSocialPosts = (posts) => {
     const storePosts = {};
-    posts.forEach(
-      (post) =>
-        (storePosts[post.id] = {
-          like_count: post.like_count,
-          like_count_friendly: calculateLikeCountFriendly(post),
-          share_count: post.share_count,
-          like_flag: post.like_flag || 0,
-          comment_count: post.comment_count,
-        }),
-    );
+    posts.forEach((post) => (storePosts[post.id] = formatPostStoreData(post)));
     store.setSocialPosts(storePosts);
   };
 
@@ -89,7 +132,7 @@ const Posts = ({
 
       try {
         const response = await getPostsRequest.promise();
-        console.log(response, data);
+        // console.log('abc', response, data);
         if (response) {
           if (response.status === STATUS_SUCCESS) {
             if (response.data) {
@@ -104,7 +147,7 @@ const Posts = ({
               if (!isRefresh && !!posts?.length) {
                 listPost = [...posts].concat(listPost);
               }
-              console.log(posts)
+
               setStoreSocialPosts(listPost);
               setPosts(listPost);
             }
@@ -178,38 +221,76 @@ const Posts = ({
     handleSocialActionBarPress(SOCIAL_DATA_TYPES.POST, type, feeds);
   }, []);
 
-  const renderPost = ({item: feeds}) => {
+  const handlePostingComplete = () => {
+    if (store.socialPostingData.progress === 100 || store.socialPostingData.error) {
+      setTimeout(() => {
+      store.setSocialPostingData();
+      getPosts(1, page.current * limit.current, true);
+    },500)
+    }
+  };
+
+  const renderStatusText = (feeds) => (
+    <ActionBarText
+      title={feeds.accept_status || t('social:posting')}
+      style={
+        feeds.is_accepted !== undefined &&
+        !feeds.is_accepted && {
+          color: appConfig.colors.status.warning,
+        }
+      }
+    />
+  );
+
+  const renderPost = ({item: feeds, index}) => {
     const group = feeds.group_id != groupId ? feeds.group : undefined;
 
     return (
       <Observer>
-        {() => (
-          <Feeds
-            group={group}
-            commentsCount={feeds.comment_count}
-            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.POST, feeds)}
-            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.POST, feeds)}
-            userName={feeds.user?.name}
-            description={getRelativeTime(feeds.created)}
-            content={feeds.content}
-            images={feeds.images}
-            // thumbnailUrl={feeds.image_url}
-            avatarUrl={feeds.user?.image}
-            containerStyle={{marginBottom: 15}}
-            disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
-            disableShare
-            onPressGroup={() => handlePressGroup(group)}
-            onActionBarPress={(type) => handleActionBarPress(type, feeds)}
-            onPressTotalComments={() =>
-              handleSocialActionBarPress(
-                SOCIAL_DATA_TYPES.POST,
-                SOCIAL_BUTTON_TYPES.COMMENT,
-                feeds,
-                false,
-              )
-            }
-          />
-        )}
+        {() => {
+          let progress = feeds.progress;
+          let error = feeds.error;
+          if (feeds.id === store.socialPostingData?.id) {
+            progress = store.socialPostingData.progress;
+            error = store.socialPostingData?.error;
+          }
+
+          return (
+            <Feeds
+              error={error}
+              isPosting={feeds.id === store.socialPostingData?.id}
+              postingProgress={progress}
+              onPostingProgressComplete={handlePostingComplete}
+              group={group}
+              commentsCount={feeds.comment_count}
+              likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.POST, feeds)}
+              isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.POST, feeds)}
+              userName={feeds.user?.name}
+              description={getRelativeTime(feeds.created)}
+              content={feeds.content}
+              images={feeds.images}
+              avatarUrl={feeds.user?.image}
+              containerStyle={styles.feedsContainer}
+              disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
+              disableShare
+              onPressGroup={() => handlePressGroup(group)}
+              renderActionBar={
+                !!feeds.accept_status || progress !== undefined
+                  ? () => renderStatusText(feeds)
+                  : undefined
+              }
+              onActionBarPress={(type) => handleActionBarPress(type, feeds)}
+              onPressTotalComments={() =>
+                handleSocialActionBarPress(
+                  SOCIAL_DATA_TYPES.POST,
+                  SOCIAL_BUTTON_TYPES.COMMENT,
+                  feeds,
+                  false,
+                )
+              }
+            />
+          );
+        }}
       </Observer>
     );
   };
@@ -223,41 +304,29 @@ const Posts = ({
   };
 
   return (
-    <Observer>
-      {() => {
-        let postingData = [...posts];
-        if (!!Object.keys(store.socialPostingData).length) {
-          postingData.unshift(store.socialPostingData);
-        }
-
-        return (
-          <FlatList
-            data={postingData}
-            renderItem={renderPost}
-            keyExtractor={(item, index) =>
-              item?.id ? String(item.id) : index.toString()
-            }
-            refreshControl={
-              refreshControl || (
-                <RefreshControl
-                  refreshing={isRefreshing}
-                  onRefresh={onRefresh}
-                />
-              )
-            }
-            ListHeaderComponent={ListHeaderComponent}
-            ListEmptyComponent={!isLoading && renderEmpty()}
-            ListFooterComponent={isLoadMore && renderFooter()}
-            onEndReachedThreshold={0.4}
-            onEndReached={handleLoadMore}
-            onMomentumScrollEnd={handleScrollEnd}
-            onScrollEndDrag={handleScrollEnd}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-          />
-        );
-      }}
-    </Observer>
+    <FlatList
+      data={posts}
+      renderItem={renderPost}
+      keyExtractor={(item, index) =>
+        item.id ? String(item.id) : index.toString()
+      }
+      refreshControl={
+        refreshControl || (
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        )
+      }
+      ListHeaderComponent={ListHeaderComponent}
+      ListEmptyComponent={!isLoading && renderEmpty()}
+      ListFooterComponent={
+        isLoading ? <PostsSkeleton /> : isLoadMore && renderFooter()
+      }
+      onEndReachedThreshold={0.4}
+      onEndReached={handleLoadMore}
+      onMomentumScrollEnd={handleScrollEnd}
+      onScrollEndDrag={handleScrollEnd}
+      onScroll={onScroll}
+      scrollEventThrottle={16}
+    />
   );
 };
 

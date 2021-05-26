@@ -36,6 +36,7 @@ const V2o = ({images = []}) => {
   const renderImage = (uri, style, index, overlayTitle, containerProps) => {
     return (
       <GridImage
+        key={index}
         overlayTitle={overlayTitle}
         images={images}
         index={index}

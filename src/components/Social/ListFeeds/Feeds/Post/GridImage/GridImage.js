@@ -42,12 +42,12 @@ const GridImage = ({
   };
 
   return (
-    // <TouchableNativeFeedback onPress={handlePress}>
+    <TouchableNativeFeedback onPress={handlePress}>
       <Container key={index} style={[styles.container, style]} {...containerProps}>
         <Image source={{uri}} style={styles.image} />
         {!!overlayTitle && <Overlay title={overlayTitle} />}
       </Container>
-    // </TouchableNativeFeedback>
+    </TouchableNativeFeedback>
   );
 };
 
