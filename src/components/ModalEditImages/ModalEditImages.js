@@ -1,7 +1,6 @@
 import {openCamera, openLibrary} from 'app-helper/image';
 import React, {useCallback, useEffect, useState} from 'react';
-import {BackHandler, FlatList, StyleSheet, Text, View} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {BackHandler, FlatList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Image from '../Image';
