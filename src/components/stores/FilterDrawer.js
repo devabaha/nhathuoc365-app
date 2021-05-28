@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Platform} from 'react-native';
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
-import Store from 'app-store';
+import store from 'app-store';
 import appConfig from 'app-config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import ListTag from './ListTag';
@@ -24,7 +24,7 @@ function FilterComponent(props) {
 
   const getListFilterTag = async () => {
     try {
-      const siteId = Store.store_data.id;
+      const siteId = store.store_data.id;
       getListFilterTagRequest.data = APIHandler.getListFilterProduct(siteId);
       const response = await getListFilterTagRequest.promise();
       if (response.status === 200) {
@@ -36,11 +36,8 @@ function FilterComponent(props) {
     }
   };
   useEffect(() => {
-    // autorun(() => {
-    //   () => console.log(mobx.toJS(Store.selectedFilter));
-    // });
     reaction(
-      () => Store.selectedFilter,
+      () => store.selectedFilter,
       (data) => {
         console.log({aa: mobx.toJS(data)});
         setDefaultSelected(data);
@@ -56,19 +53,19 @@ function FilterComponent(props) {
   }, []);
 
   const handleCloseFilter = () => {
-    Store.setSelectedFilter({...selectedPrice, ...selectedTag});
+    store.setSelectedFilter({...selectedPrice, ...selectedTag});
     Actions.drawerClose();
     // disposer.current();
   };
 
   const handleSelected = (value) => {
     setSelectedTag(value);
-    // Store.setSelectedFilter(value);
+    // store.setSelectedFilter(value);
   };
 
   const handleSelectedPrice = (value) => {
     setSelectedPrice(value);
-    // Store.setSelectedFilter({...Store.selectedFilter, ...value});
+    // store.setSelectedFilter({...store.selectedFilter, ...value});
   };
 
   return (

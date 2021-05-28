@@ -11,6 +11,7 @@ import {
   MIN_ITEMS_PER_ROW,
 } from '../../components/Home/constants';
 import EventTracker from '../../helper/EventTracker';
+import { showDrawer } from 'src/components/Drawer';
 
 class Home extends Component {
   constructor(props) {
@@ -191,8 +192,8 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-    //     servicesHandler({type: SERVICES_TYPE.SOCIAL,});
-    // return;
+    showDrawer();
+    return;
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {

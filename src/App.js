@@ -22,7 +22,7 @@ import {
   Stack,
   Modal,
   Lightbox,
-  Drawer,
+  Drawer as RNFLDrawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -164,6 +164,8 @@ import {News} from './containers/Social';
 import {ModalComment} from './components/Social';
 import SalesReport from './containers/SalesReport/SalesReport';
 import Social from './containers/Social/Social';
+import {DRAWER_WIDTH} from './constants';
+import Drawer from './components/Drawer';
 
 /**
  * Not allow font scaling
@@ -608,6 +610,7 @@ class App extends Component {
           t={this.props.t}
           setHeader={this.setHeader.bind(this)}
         />
+        <Drawer />
         <FlashMessage icon={'auto'} />
         {this.state.isOpenCodePushModal && (
           <AwesomeAlert
@@ -732,19 +735,6 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
-              {/* <Drawer
-                key="drawer-filter"
-                hideNavBar={true}
-                drawerPosition="right"
-                drawerWidth={350}
-                contentComponent={FilterComponent}>
-                <Scene
-                  key={`${appConfig.routes.store}_1`}
-                  component={StoreContainer}
-                  {...navBarConfig}
-                  back
-                />
-              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -1175,13 +1165,6 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
-                {/* <Drawer
-                  key={appConfig.routes.store}
-                  hideNavBar={true}
-                  drawerPosition="right"
-                  drawerWidth={350}
-                  hideDrawerButton={true}
-                  contentComponent={(props) => <FilterComponent {...props} />}> */}
                 <Stack key={appConfig.routes.store}>
                   <Scene
                     key={`${appConfig.routes.store}_1`}
@@ -1190,7 +1173,6 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
-                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene

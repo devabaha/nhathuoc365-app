@@ -1059,8 +1059,8 @@ class CommonAPIHandler extends BaseHandler {
     return this.getCancelableAPI(api);
   }
 
-  getListFilterProduct(siteId) {
-    const api = url_for(API.FILTER_URL_TAG + siteId + '/product');
+  site_get_tags(siteId) {
+    const api = url_for(API.SITE_GET_TAGS + '/' + siteId + '/' + 'product');
     return this.getCancelableAPI(api);
   }
 

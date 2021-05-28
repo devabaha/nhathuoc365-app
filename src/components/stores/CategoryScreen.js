@@ -1,18 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView, View, RefreshControl, Text} from 'react-native';
+import {StyleSheet, View, RefreshControl} from 'react-native';
 import Swiper from 'react-native-swiper';
 import Animated from 'react-native-reanimated';
 import Items from './Items';
-import ListHeader from './ListHeader';
 import store from 'app-store';
 import {Actions} from 'react-native-router-flux';
 import NoResult from '../NoResult';
 import ListStoreProductSkeleton from './ListStoreProductSkeleton';
-import FilterProduct from './FilterProduct';
 import APIHandler from 'src/network/APIHandler';
-import {filter, isEmpty, isEqual} from 'lodash';
-import mobx, {reaction} from 'mobx';
-import Store from 'app-store';
+import {isEmpty, isEqual} from 'lodash';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';

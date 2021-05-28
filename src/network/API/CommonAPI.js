@@ -433,8 +433,9 @@ class CommonAPI {
   get LOTTERY_TURN() {
     return BaseAPI.apiDomain + 'apiLottery/turn';
   }
-  get FILTER_URL_TAG() {
-    return BaseAPI.apiDomain + 'apiSite/get_tags/';
+
+  get SITE_GET_TAGS() {
+    return BaseAPI.apiDomain + 'apiSite/get_tags';
   }
 
   get USER_LIST_NEWS_CATEGORY() {
@@ -453,6 +454,7 @@ class CommonAPI {
   get SOCIAL_LIKES() {
     return BaseAPI.socialDomain + 'likes/store';
   }
+  
   get INVITED_REVENUE() {
     return BaseAPI.apiDomain + 'apiUser/invited_revenue';
   }
