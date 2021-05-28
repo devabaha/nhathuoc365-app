@@ -215,5 +215,6 @@
 
   "copy": "Sao chép",
   "cancel": "Huỷ",
-  "exit": "Thoát"
+  "addImages": "Thêm ảnh",
+  "addImagesDescription": "Chạm để thêm ảnh"
 }

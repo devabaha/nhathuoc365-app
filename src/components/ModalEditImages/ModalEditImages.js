@@ -1,6 +1,13 @@
 import {openCamera, openLibrary} from 'app-helper/image';
 import React, {useCallback, useEffect, useState} from 'react';
-import {BackHandler, FlatList, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {
+  BackHandler,
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import Image from '../Image';
@@ -43,12 +50,35 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: appConfig.colors.primary,
   },
+
+  totalImagesContainer: {
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    position: 'absolute',
+    bottom: 30,
+    left: 15,
+    borderRadius: 15,
+    backgroundColor: appConfig.colors.status.success,
+    ...elevationShadowStyle(3),
+  },
+  totalImages: {
+    color: '#fff',
+    // color: appConfig.colors.status.success,
+    fontSize: 12,
+  },
+  totalImagesOver: {
+    backgroundColor: appConfig.colors.status.danger,
+  },
 });
 
 const ModalEditImages = ({
   images: imagesProp = [],
+  maxImages,
+  onOverMaxImages = () => {},
   onChangeImages = () => {},
 }) => {
+  const {t} = useTranslation();
+  
   const [images, setImages] = useState(imagesProp);
   const [isOpenImagePicker, setOpenImagePicker] = useState(false);
 
@@ -81,6 +111,12 @@ const ModalEditImages = ({
     [images],
   );
 
+  const checkOverImages = (newImages) => {
+    if(!!maxImages && newImages.length > maxImages){
+      onOverMaxImages(newImages, maxImages)
+    }
+  }
+
   const handleSelectImage = () => {
     setOpenImagePicker(true);
   };
@@ -89,6 +125,7 @@ const ModalEditImages = ({
     openCamera((selectedImages) => {
       const newImages = images.concat(selectedImages);
       setImages(newImages);
+      checkOverImages(newImages)
     }, closeModal);
   };
 
@@ -96,6 +133,7 @@ const ModalEditImages = ({
     openLibrary((selectedImages) => {
       const newImages = images.concat(selectedImages);
       setImages(newImages);
+      checkOverImages(newImages);
     }, closeModal);
   };
 
@@ -132,7 +170,7 @@ const ModalEditImages = ({
       <TouchableOpacity
         style={{width: '100%', height: '100%'}}
         onPress={handleSelectImage}>
-        <NoResult iconName="camera-plus-outline" message="Chạm để thêm ảnh" />
+        <NoResult iconName="camera-plus-outline" message={t('addImagesDescription')} />
       </TouchableOpacity>
     );
   };
@@ -142,7 +180,7 @@ const ModalEditImages = ({
       <TouchableOpacity onPress={handleSelectImage}>
         <Container row center paddingVertical={20} paddingHorizontal={15}>
           <Ionicons name="ios-images" style={styles.icon} />
-          <Text style={styles.title}>Thêm ảnh</Text>
+          <Text style={styles.title}>{t('addImages')}</Text>
         </Container>
       </TouchableOpacity>
     );
@@ -151,13 +189,26 @@ const ModalEditImages = ({
   return (
     <ScreenWrapper style={styles.container}>
       {!!images.length ? (
-        <FlatList
-          data={images}
-          contentContainerStyle={{flexGrow: 1}}
-          renderItem={renderImage}
-          keyExtractor={(item, index) => index.toString()}
-          ListFooterComponent={renderFooter()}
-        />
+        <>
+          <FlatList
+            data={images}
+            contentContainerStyle={{flexGrow: 1}}
+            renderItem={renderImage}
+            keyExtractor={(item, index) => index.toString()}
+            ListFooterComponent={renderFooter()}
+          />
+          {!!maxImages && (
+            <View
+              style={[
+                styles.totalImagesContainer,
+                images.length > maxImages && styles.totalImagesOver,
+              ]}>
+              <Text style={[styles.totalImages]}>
+                {images.length + '/' + maxImages}
+              </Text>
+            </View>
+          )}
+        </>
       ) : (
         renderEmpty()
       )}

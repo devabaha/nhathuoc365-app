@@ -22,11 +22,23 @@ import MultilineTextInput from './MultilineTextInput';
 import {openCamera, openLibrary} from 'app-helper/image';
 import {formatPostStoreData} from 'app-helper/social';
 import ModalGalleryOptionAndroid from 'app-packages/tickid-chat/container/ModalGalleryOptionAndroid';
+import {MAX_TOTAL_UPLOAD_IMAGES} from 'src/constants/social/post';
 
 const styles = StyleSheet.create({
   list: {
     flexGrow: 1,
     backgroundColor: '#fff',
+  },
+
+  btnPostContainer: {
+    padding: 10,
+    paddingVertical: 5,
+    borderRadius: 4,
+    right: 12,
+  },
+  btnPost: {
+    color: '#fff', 
+    fontSize: 16
   },
 
   extraListBottom: {
@@ -43,6 +55,26 @@ const styles = StyleSheet.create({
     opacity: 0,
     width: '100%',
   },
+
+  overImagesContainer: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0,0,0,.7)',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 15,
+  },
+  overImagesTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  overImagesDescription: {
+    textAlign: 'center',
+    color: '#eee',
+    marginTop: 15,
+  },
 });
 
 const CreatePost = ({
@@ -57,7 +89,6 @@ const CreatePost = ({
 
   const isUnmounted = useRef(false);
   const now = useRef(0);
-  const uploadedSuccess = useRef(0);
   const uploadRequest = useRef([]);
   const refScrollView = useRef();
   const startOffsetY = useRef(0);
@@ -152,6 +183,7 @@ const CreatePost = ({
   }, [clearRequests, contentText, images]);
 
   const handlePost = () => {
+    if(!!images?.length && images.length > MAX_TOTAL_UPLOAD_IMAGES) return;
     const postData = {
       id: new Date().getTime(),
       group,
@@ -177,20 +209,21 @@ const CreatePost = ({
   };
 
   const renderPostBtn = () => {
-    const isDisabled = !contentText && !images?.length;
+    const isDisabled =
+      (!contentText && !images?.length) ||
+      images.length > MAX_TOTAL_UPLOAD_IMAGES;
 
     return (
       <TouchableOpacity
         onPress={handlePost}
         disabled={isDisabled}
-        style={{
-          backgroundColor: isDisabled ? '#ccc' : appConfig.colors.primary,
-          padding: 10,
-          paddingVertical: 5,
-          borderRadius: 4,
-          right: 12,
-        }}>
-        <Text style={{color: '#fff', fontSize: 16}}>{t('social:post')}</Text>
+        style={[
+          styles.btnPostContainer,
+          {
+            backgroundColor: isDisabled ? '#ccc' : appConfig.colors.primary,
+          },
+        ]}>
+        <Text style={styles.btnPost}>{t('social:post')}</Text>
       </TouchableOpacity>
     );
   };
@@ -223,6 +256,18 @@ const CreatePost = ({
     Actions.push(appConfig.routes.modalEditImages, {
       title: 'Chỉnh sửa',
       images,
+      maxImages: MAX_TOTAL_UPLOAD_IMAGES,
+      onOverMaxImages: (images, max) => {
+        Alert.alert(
+          t('social:maxTotalPostImagesWarning'),
+          t('social:maxTotalPostImagesDescription', {max}),
+          [
+            {
+              text: t('social:maxTotalPostImagesConfirm'),
+            },
+          ],
+        );
+      },
       onChangeImages: (images) => {
         setImages(images);
       },
@@ -271,6 +316,24 @@ const CreatePost = ({
     }
   };
 
+  const renderOveImagesMessage = () => {
+    return (
+      !!images?.length &&
+      images.length > MAX_TOTAL_UPLOAD_IMAGES && (
+        <View style={styles.overImagesContainer}>
+          <Text style={styles.overImagesTitle}>
+            {t('social:maxTotalPostImagesWarning')}
+          </Text>
+          <Text style={styles.overImagesDescription}>
+            {t('social:maxTotalPostImagesDescription', {
+              max: MAX_TOTAL_UPLOAD_IMAGES,
+            })}
+          </Text>
+        </View>
+      )
+    );
+  };
+
   //   console.log('render');
   return (
     <ScreenWrapper>
@@ -299,6 +362,7 @@ const CreatePost = ({
           />
           <TouchableOpacity onPress={goToEditImages} style={{marginBottom: 15}}>
             <View pointerEvents="none">{renderGridImages(images)}</View>
+            {renderOveImagesMessage()}
           </TouchableOpacity>
         </View>
 

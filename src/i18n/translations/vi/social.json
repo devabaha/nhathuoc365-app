@@ -19,5 +19,8 @@
   "pleasePost": "Bạn đang nghĩ gì?",
   "noPosts": "Chưa có bài viết",
   "discardPostConfirm": "Thoát",
-  "continuePostConfirm": "Tiếp tục sửa"
+  "continuePostConfirm": "Tiếp tục sửa",
+  "maxTotalPostImagesWarning": "Quá nhiều ảnh",
+  "maxTotalPostImagesDescription": "Bạn chỉ có thể tải tối đa {{max}} ảnh.\r\nVui lòng chỉnh sửa lại để đăng bài viết này!",
+  "maxTotalPostImagesConfirm": "OK"
 }
