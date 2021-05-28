@@ -1538,18 +1538,11 @@ class Confirm extends Component {
                   {cart_data.payment_method ? (
                     <View style={styles.paymentMethodContainer}>
                       {cart_data.payment_method.image && (
-                        <CachedImage
-                          mutable
-                          source={{uri: cart_data.payment_method.image}}
-                          style={styles.imagePaymentMethod}
-                        />
-                      )}
-                      {cart_data.payment_method.name && (
-                        <Text style={[styles.address_name]}>
-                          {cart_data.payment_method.name}
-                        </Text>
-                      )}
-                      {!!cart_data?.payment_method_detail?.image && (
+                        // <CachedImage
+                        //   mutable
+                        //   source={{uri: cart_data.payment_method.image}}
+                        //   style={styles.imagePaymentMethod}
+                        // />
                         <CachedImage
                           mutable
                           source={{
@@ -1561,6 +1554,23 @@ class Confirm extends Component {
                           ]}
                         />
                       )}
+                      {cart_data.payment_method.name && (
+                        <Text style={[styles.address_name]}>
+                          {cart_data.payment_method.name}
+                        </Text>
+                      )}
+                      {/* {!!cart_data?.payment_method_detail?.image && (
+                        <CachedImage
+                          mutable
+                          source={{
+                            uri: cart_data?.payment_method_detail?.image,
+                          }}
+                          style={[
+                            styles.imagePaymentMethod,
+                            styles.imagePaymentMethodDetail,
+                          ]}
+                        />
+                      )} */}
                     </View>
                   ) : (
                     <Text style={styles.placeholder}>
@@ -2613,8 +2623,8 @@ const styles = StyleSheet.create({
     marginRight: 7,
   },
   imagePaymentMethodDetail: {
-    marginLeft: 15,
-    marginRight: 15,
+    // marginLeft: 15,
+    // marginRight: 15,
   },
   placeholder: {
     color: '#999999',
