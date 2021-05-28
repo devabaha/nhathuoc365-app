@@ -87,9 +87,7 @@ global.isLinkTickID = (s) => {
 };
 
 global.isWalletAddress = (address) => {
-  return (
-    /^(0x)[0-9a-fA-F]{40}$/.test(address)
-  );
+  return /^(0x)[0-9a-fA-F]{40}$/.test(address);
 };
 
 global.isWalletAddressWithZoneCode = (str) => {
@@ -398,16 +396,6 @@ global.elevationShadowStyle = (
   shadowRadius: 0.8 * elevation,
 });
 
-import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-const options = {
-  enableVibrateFallback: true,
-  ignoreAndroidSystemSettings: true
-};
-
-global.HapticFeedBack = (type, opt = options) => {
-  ReactNativeHapticFeedback.trigger(type, opt);
-};
-
 global.LightenColor = (color, percent) => {
   var num = parseInt(color.replace('#', ''), 16),
     amt = Math.round(2.55 * percent),
@@ -549,3 +537,13 @@ setJSExceptionHandler((error, isFatal) => {
 setNativeExceptionHandler((exceptionString) => {
   console.log('native_exception', error);
 });
+
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: true,
+};
+
+global.hapticFeedBack = (type = 'impactLight', opt = options) => {
+  ReactNativeHapticFeedback.trigger(type, opt);
+};

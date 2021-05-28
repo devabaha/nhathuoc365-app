@@ -255,7 +255,13 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.NEWS_CATEGORY:
       Actions.push(appConfig.routes.notifies, {
         title: service.title,
-        news_type: `/${service.categoryId}`,
+        id: service.categoryId,
+      });
+      break;
+      case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
+      Actions.push(appConfig.routes.notifiesVertical, {
+        title: service.title,
+        id: service.id,
       });
       break;
 
@@ -433,10 +439,19 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** GAMIFICATION */
     /** Lottery */
     case SERVICES_TYPE.LOTTERY_GAME:
-      console.log(service)
+      console.log(service);
       Actions.push(appConfig.routes.lotteryGame, {
         title: service.news?.title || service.title,
-        id: service.id
+        id: service.id,
+      });
+      break;
+
+    /** Social */
+    /** social */
+    case SERVICES_TYPE.SOCIAL:
+      Actions.push(appConfig.routes.social, {
+        // title: service.news?.title || service.title,
+        siteId: service.id,
       });
       break;
     default:

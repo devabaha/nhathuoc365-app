@@ -1,4 +1,11 @@
-import {reaction, observable, action, toJS} from 'mobx';
+import {
+  reaction,
+  observable,
+  action,
+  toJS,
+  computed,
+  extendObservable,
+} from 'mobx';
 import autobind from 'autobind-decorator';
 import {Keyboard, Platform, Linking, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -122,7 +129,7 @@ class Store {
           if (!equal(user, this.user_info)) {
             this.setUserInfo(user);
           }
-          
+
           if (!equal(notifies, this.notify)) {
             this.setNotify(notifies);
           }
@@ -271,6 +278,7 @@ class Store {
   @observable app_data = null;
   @observable deep_link_data = null;
   @observable stores_finish = false;
+  @observable selectedFilter = {};
 
   @action setStoresFinish(flag) {
     this.stores_finish = flag;
@@ -296,6 +304,10 @@ class Store {
 
   @action setDeepLinkData(data) {
     this.deep_link_data = data;
+  }
+
+  @action setSelectedFilter(data) {
+    this.selectedFilter = data;
   }
 
   /*********** home begin **********/
@@ -560,6 +572,20 @@ class Store {
     if (isFirebaseSignedIn) {
       firebaseAuth().signOut();
     }
+  }
+
+  @observable socialNews = observable.map(new Map());
+  @action setSocialNews(socialNews = {}) {
+    this.socialNews.merge(socialNews);
+  }
+
+  @action updateSocialNews(id, data = {}) {
+    let temp = this.socialNews.get(id) || {};
+    this.socialNews.set(id, {...temp, ...data});
+  }
+
+  @action resetSocialNews() {
+    this.socialNews.replace(new Map());
   }
 }
 

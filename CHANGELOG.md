@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [b11.6.3] - 2021-05-28
+- [r11.6.3]
+
 ## [b11.4.8] - 2021-04-16
 - [r11.5.5]
 
@@ -27,6 +30,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bill animatedQuickPaymentTranslateY.
 - key of AwesomeCombo, HomeCardList item.
 - DetailCard in Request hide chat input.
+
+## [r11.6.3] - 2021-05-24
+### Added
+- Update moment locale relative time when change language.
+### Changed
+- Unsubscribe all listener if unmounted in Account.
+- Add site_id for change avatar api.
+- Unpublished FilterProduct.
+- Change 'About us' pressed from webview to Notify by [kienluu612@gmail.com].
+### Fixed
+- Not refresh comments when tap bolt.
+- Not correct clip comment if too long in Android.
+- Logic to clip comment if too long.
+- Upload avatar.
+- Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
+
+## [r11.6.2] - 2021-05-19
+### Added
+- Show month commission in Commission report by [duylinhdang1998@gmail.com].
+
+## [r11.6.1] - 2021-05-18
+### Added
+- Image component with custom render if loading error.
+- ScreenWrapper take sceneBackground as backgroundColor.
+- Common component for social like Feeds, ActionBar.
+- Like, comment, share for news.
+### Changed
+- Container can select reanimated or animated wrapper.
+- UI/ UX, logic of News (Notify) screen.
 
 ## [r11.5.5] - 2021-05-08
 ### Fixed

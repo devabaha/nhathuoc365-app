@@ -48,7 +48,7 @@ class CardWallet extends PureComponent {
 
           if (finished) {
             this.shaking = true;
-            HapticFeedBack('impactHeavy');
+            hapticFeedBack('impactHeavy');
 
             this.backgroundTimeout = setTimeout(
               () => this.handleCancelLongPress(true),

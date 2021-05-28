@@ -5,7 +5,7 @@ import appConfig from '../../config';
 import store from '../../store';
 import FastImage from 'react-native-fast-image';
 import {languages} from '../../i18n/constants';
-import BaseAPI, {ORIGIN_API_DOMAIN} from '../../network/API/BaseAPI';
+import BaseAPI, {LIVE_API_DOMAIN} from '../../network/API/BaseAPI';
 
 class Launch extends Component {
   constructor(props) {
@@ -44,7 +44,7 @@ class Launch extends Component {
     if (
       !store.ignoreChangeDomain &&
       isTestDevice &&
-      BaseAPI.apiDomain === ORIGIN_API_DOMAIN
+      BaseAPI.apiDomain === LIVE_API_DOMAIN
     ) {
       Actions.replace(appConfig.routes.domainSelector);
       return true;

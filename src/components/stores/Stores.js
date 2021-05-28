@@ -26,6 +26,11 @@ import HeaderStoreHomeID from './HeaderStoreHomeID';
 import EventTracker from '../../helper/EventTracker';
 import CategoriesSkeleton from './CategoriesSkeleton';
 import {findNodeHandle} from 'react-native';
+import APIHandler from 'src/network/APIHandler';
+import {APIRequest} from 'src/network/Entity';
+import {reaction} from 'mobx';
+import FilterProduct from './FilterProduct';
+import {isEmpty} from 'lodash';
 
 const CATE_AUTO_LOAD = 'CateAutoLoad';
 const BANNER_ABSOLUTE_HEIGHT =
@@ -39,6 +44,26 @@ const BANNER_VIEW_HEIGHT = BANNER_ABSOLUTE_HEIGHT - STATUS_BAR_HEIGHT;
 const NAV_BAR_HEIGHT = appConfig.device.isIOS ? 64 : 54 + STATUS_BAR_HEIGHT;
 const COLLAPSED_HEADER_VIEW =
   BANNER_ABSOLUTE_HEIGHT - NAV_BAR_HEIGHT - STATUS_BAR_HEIGHT;
+
+const dataSort = [
+  {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false, order: 'asc'},
+  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'asc'},
+  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'asc'},
+  {
+    id: 4,
+    name: 'Giá từ thấp đến cao',
+    value: 'price',
+    isSelected: false,
+    order: 'asc',
+  },
+  {
+    id: 5,
+    name: 'Giá từ cao đến thấp',
+    value: 'price',
+    isSelected: false,
+    order: 'desc',
+  },
+];
 
 class Stores extends Component {
   static propTypes = {
@@ -66,7 +91,6 @@ class Stores extends Component {
         notify_chat: 0
       }
     };
-
     this.unmounted = false;
     this.flatListPagesHeight = [];
     this.refScrollView = React.createRef();
@@ -86,6 +110,36 @@ class Stores extends Component {
   get isGetFullStore() {
     return this.props.categoryId === 0;
   }
+
+  handleEffect = async (value) => {
+    if (isEmpty(value)) {
+      await this.setState({
+        filterParams: {
+          order: this.state.valueSort?.order ?? '',
+          sort_by: this.state.valueSort?.value ?? '',
+        },
+      });
+      return;
+    }
+    let min_price = '';
+    let max_price = '';
+    if (!!value['price']) {
+      min_price = value['price'].min_price;
+      max_price = value['price'].max_price;
+    }
+    const tag_id = Object.values(value)
+      .map((i) => i?.id)
+      .filter(Boolean)
+      .join(',');
+    const params = {
+      min_price,
+      max_price,
+      tag: tag_id,
+      order: !!this.state.valueSort.order ? this.state.valueSort.order : 'asc',
+      sort_by: !isEmpty(this.state.valueSort) ? this.state.valueSort.value : '',
+    };
+    await this.setState({filterParams: params});
+  };
 
   componentDidMount() {
     this._getNotifySite();
@@ -108,12 +162,17 @@ class Stores extends Component {
       });
     });
     this.eventTracker.logCurrentView();
+    reaction(
+      () => store.selectedFilter,
+      (data) => this.handleEffect(data),
+    );
   }
 
   componentWillUnmount() {
     this.unmounted = true;
     // this.state.scrollY.removeListener(this.scrollListener);
     this.eventTracker.clearTracking();
+    store.setSelectedFilter({});
   }
 
   scrollListener = ({ value }) => {
@@ -275,7 +334,6 @@ class Stores extends Component {
     if (this.refs_category_nav) {
       const categories_count = this.state.categories_data.length;
       const end_of_list = categories_count - index - 1 >= 1;
-
       setTimeout(() =>
         willUpdateState(this.unmounted, () => {
           // nav

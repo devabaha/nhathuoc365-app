@@ -56,6 +56,10 @@ import en_resetPassword from './en/resetPassword.json';
 import en_cardWallet from './en/cardWallet.json';
 import en_rateApp from './en/rateApp.json';
 import en_commissionIncomeStatement from './en/commissionIncomeStatement.json';
+import vi_social from './vi/social.json';
+import en_social from './en/social.json';
+import vi_salesReport from './vi/salesReport.json';
+import en_salesReport from './en/salesReport.json';
 
 // zh
 import zh_common from './zh/common.json';
@@ -114,7 +118,9 @@ export default {
     resetPassword: vi_resetPassword,
     cardWallet: vi_cardWallet,
     rateApp: vi_rateApp,
-    commissionIncomeStatement: vi_commissionIncomeStatement
+    commissionIncomeStatement: vi_commissionIncomeStatement,
+    social: vi_social,
+    salesReport: vi_salesReport,
   },
   [languages.en.value]: {
     common: en_common,
@@ -143,7 +149,9 @@ export default {
     resetPassword: en_resetPassword,
     cardWallet: en_cardWallet,
     rateApp: en_rateApp,
-    commissionIncomeStatement: en_commissionIncomeStatement
+    commissionIncomeStatement: en_commissionIncomeStatement,
+    social: en_social,
+    salesReport: en_salesReport,
   },
   [languages.zh.value]: {
     common: zh_common,
@@ -170,6 +178,11 @@ export default {
     searchPlaces: zh_searchPlaces,
     opRegister: zh_opRegister,
     resetPassword: zh_resetPassword,
-    cardWallet: zh_cardWallet
+    cardWallet: zh_cardWallet,
+
+    rateApp: en_rateApp,
+    commissionIncomeStatement: en_commissionIncomeStatement,
+    social: en_social,
+    salesReport: en_salesReport,
   }
 };

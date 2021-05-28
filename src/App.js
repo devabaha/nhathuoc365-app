@@ -22,6 +22,7 @@ import {
   Stack,
   Modal,
   Lightbox,
+  Drawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -191,6 +192,12 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
+import ModalFilter from './components/stores/ModalFilter';
+import FilterComponent from './components/stores/FilterDrawer';
+import {News} from './containers/Social';
+import {ModalComment} from './components/Social';
+import SalesReport from './containers/SalesReport/SalesReport';
+import Social from './containers/Social/Social';
 
 /**
  * Not allow font scaling
@@ -764,6 +771,19 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
+              {/* <Drawer
+                key="drawer-filter"
+                hideNavBar={true}
+                drawerPosition="right"
+                drawerWidth={350}
+                contentComponent={FilterComponent}>
+                <Scene
+                  key={`${appConfig.routes.store}_1`}
+                  component={StoreContainer}
+                  {...navBarConfig}
+                  back
+                />
+              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -814,7 +834,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={Notify}
+                      component={News}
                     />
                   </Stack> */}
                   <Stack
@@ -878,6 +898,26 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ SOCIAL ================ */}
+                <Stack key={appConfig.routes.social}>
+                  <Scene
+                    key={`${appConfig.routes.social}_1`}
+                    component={Social}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL COMMENT ================ */}
+                <Stack key={appConfig.routes.modalComment}>
+                  <Scene
+                    key={`${appConfig.routes.modalComment}_1`}
+                    component={ModalComment}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ PRODUCT STAMPS ================ */}
                 <Stack key={appConfig.routes.productStamps}>
                   <Scene
@@ -905,6 +945,15 @@ class RootRouter extends Component {
                     {...navBarConfig}
                     title={t('screen.commissionIncomeStatement.mainTitle')}
                     component={CommissionIncomeStatement}
+                    back
+                  />
+                </Stack>
+                <Stack key={appConfig.routes.salesReport}>
+                  <Scene
+                    key={`${appConfig.routes.salesReport}_1`}
+                    {...navBarConfig}
+                    title={t('screen.salesReport.mainTitle')}
+                    component={SalesReport}
                     back
                   />
                 </Stack>
@@ -1392,6 +1441,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene
@@ -1467,7 +1517,15 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    title={t('screen.news.mainTitle')}
+                    component={News}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.notifiesVertical}>
+                  <Scene
+                    key={`${appConfig.routes.notifiesVertical}_1`}
                     component={Notify}
                     {...navBarConfig}
                     back
@@ -1971,6 +2029,11 @@ class RootRouter extends Component {
                 key={appConfig.routes.modalComboLocation}
                 component={ModalComboLocation}
               />
+              {/* ================ MODAL FILTER PRODUCT================ */}
+              <Stack
+                key={appConfig.routes.filterProduct}
+                component={ModalFilter}
+              />
             </Lightbox>
 
             {/* ================ MODAL WEBVIEW ================ */}
@@ -1982,7 +2045,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -1992,7 +2054,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -2003,7 +2064,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -2015,7 +2075,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene
@@ -2024,7 +2083,6 @@ class RootRouter extends Component {
                 hideNavBar
               />
             </Stack>
-
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene

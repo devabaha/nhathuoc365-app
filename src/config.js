@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'b11.4.8';
+    return 'b11.6.3';
   }
 
   get appName() {
@@ -44,6 +44,10 @@ class Config {
     return {
       appKey: '2647d461-03d1-43f0-a17a-31375254aca1'
     };
+  }
+
+  get aboutUsID(){
+    return 5088;
   }
 
   get device() {
@@ -164,6 +168,7 @@ class Config {
       qrBarCode: 'qrBarCode',
 
       notifies: 'notifies',
+      notifiesVertical: 'notifiesVertical',
       notifyDetail: 'notify_item',
 
       detailHistoryPayment: 'detail_history_payment',
@@ -226,6 +231,7 @@ class Config {
       modalConfirm: 'modalConfirm',
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
+      modalComment: 'modalComment',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -293,6 +299,10 @@ class Config {
 
       // Gamification
       lotteryGame: 'lotteryGame',
+      filterProduct: 'filterProduct',
+      salesReport: 'saleReport',
+      // Social
+      social: 'social',
     };
   }
 }

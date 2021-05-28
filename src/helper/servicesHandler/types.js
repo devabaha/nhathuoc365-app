@@ -61,6 +61,7 @@ export const SERVICES_TYPE = {
   NEWS: 'news',
   NEWS_DETAIL: 'news_detail',
   NEWS_CATEGORY: 'news_category',
+  NEWS_CATEGORY_VERTICAL: 'news_category_vertical',
 
   /** CHAT */
   CHAT_NOTI: 'chat_noti',
@@ -103,6 +104,7 @@ export const SERVICES_TYPE = {
   COMMISSION_INCOME_STATEMENT: 'commission_income_statement',
 
   /** GAMIFICATION */
-  LOTTERY_GAME: 'lottery_game'
+  LOTTERY_GAME: 'lottery_game',
 
+  SOCIAL: 'social',
 };
