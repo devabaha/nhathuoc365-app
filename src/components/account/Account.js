@@ -437,11 +437,12 @@ class Account extends Component {
         desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
-          Actions.webview({
-            title: t('options.termOfUse.webViewTitle', {
-              appName: APP_NAME_SHOW,
-            }),
-            url: APP_INFO,
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_DETAIL,
+            news: {
+              title: t('options.termOfUse.webViewTitle'),
+              id: appConfig.aboutUsID,
+            },
           }),
         boxIconStyle: [
           styles.boxIconStyle,

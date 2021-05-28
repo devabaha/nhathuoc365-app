@@ -47,7 +47,7 @@ class Config {
   }
 
   get aboutUsID(){
-    return 5088;
+    return 3875;
   }
 
   get device() {
