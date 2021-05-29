@@ -44,7 +44,10 @@
     "qrBarCode": {
       "mainTitle": "Account code",
       "walletAddressTitle": "Wallet address",
-      "scanTitle": "Scan QRCode"
+      "scanTitle": "Scan QRCode",
+      "enterCodeProduct": "Enter code product",
+      "enterCode": "Enter code",
+      "scanCode": "Scan code"
     },
     "transfer": {
       "mainTitle": "Transfer"

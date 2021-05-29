@@ -1702,6 +1702,16 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
+                {/* ================ QR/BAR CODE ================ */}
+                <Stack key={appConfig.routes.qrBarCodeInputable}>
+                  <Scene
+                    key={`${appConfig.routes.qrBarCodeInputable}_1`}
+                    component={QRBarCode}
+                    renderBackButton={CloseButton}
+                    back
+                  />
+                </Stack>
               </Scene>
 
               {/* ================ LIGHT BOX SELECT PROVINCE ================ */}
