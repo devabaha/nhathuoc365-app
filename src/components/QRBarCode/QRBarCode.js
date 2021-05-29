@@ -28,6 +28,9 @@ import EventTracker from '../../helper/EventTracker';
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
 import QRScanner from './QRScanner';
+import Button from '../../components/Button';
+import config from '../../packages/tickid-voucher/config';
+import Loading from '../Loading';
 
 const MAXIMUM_LUMINOUS = 0.7;
 const MIN_LUMINOUS = 0.5;
@@ -65,6 +68,15 @@ const QR_SCAN_AREA = {
 class QRBarCode extends Component {
   static propTypes = {
     mobxStore: PropTypes.object,
+    topContentText: PropTypes.string,
+    placeholder: PropTypes.string,
+    isFromProductStamps: PropTypes.bool,
+    isEnterCode: PropTypes.bool,
+    onCloseEnterCode: PropTypes.func,
+  };
+
+  static defaultProps = {
+    onCloseEnterCode: () => {},
   };
 
   constructor(props) {
@@ -78,6 +90,12 @@ class QRBarCode extends Component {
       title: props.title || props.t('common:screen.qrBarCode.mainTitle'),
       content: props.content ? props.content : props.t('content.description'),
       originLuminous: MIN_LUMINOUS,
+
+      isVisibleBtnEnterCode: false,
+      topContentText: '',
+      placeholder: '',
+      isFromProductStamps: false,
+      isEnterCode: false,
     };
 
     this.unmounted = false;
@@ -87,6 +105,10 @@ class QRBarCode extends Component {
   }
 
   componentDidMount() {
+    if (this.props.isEnterCode) {
+      this.enterCodeManual();
+    }
+
     if (!this.props.address) {
       this._getData();
       this.setTimmer();
@@ -103,6 +125,22 @@ class QRBarCode extends Component {
     this.eventTracker.clearTracking();
     cancelRequests(this.requests);
   }
+
+  enterCodeManual = () => {
+    const {t} = this.props;
+    Actions.push(appConfig.routes.voucherEnterCodeManual, {
+      heading: t('common:screen.qrBarCode.enterCodeProduct'),
+      placeholder: t('common:screen.qrBarCode.enterCode'),
+      onClose: () => {
+        Actions.pop();
+        this.props.onCloseEnterCode();
+      },
+      onSendCode: (code) => {
+        this.checkProductCode(code);
+        Actions.pop();
+      },
+    });
+  };
 
   handleBrightness = () => {
     ScreenBrightness.getBrightness().then((originLuminous) => {
@@ -578,8 +616,8 @@ class QRBarCode extends Component {
       console.log(response);
 
       if (response) {
-        Actions.pop();
         if (response.status === STATUS_SUCCESS && response.data) {
+          Actions.pop();
           Actions.push(appConfig.routes.item, {
             item: response.data.product,
             title: response.data.name,
@@ -587,9 +625,9 @@ class QRBarCode extends Component {
             showBtnProductStamps: true,
           });
         } else {
-          Actions.push(appConfig.routes.searchStore, {
-            qr_code: qrcode,
-          });
+          // Actions.push(appConfig.routes.searchStore, {
+          //   qr_code: qrcode,
+          // });
           flashShowMessage({
             type: 'danger',
             message: response.message || t('common:api.error.message'),
@@ -744,42 +782,51 @@ class QRBarCode extends Component {
               : this.renderMyQRCode()
             : this.renderQRCodeScanner()}
         </View>
-        <View style={styles.bottomView}>
-          <TouchableOpacity
-            style={styles.bottomButton}
-            onPress={() => this.onPressTabButton(0)}
-            activeOpacity={1}>
-            <Icon
-              name="barcode-scan"
-              size={20}
-              color={index == 0 ? global.DEFAULT_COLOR : '#000'}
-            />
-            <Text
-              style={[
-                styles.titleBottomButton,
-                index == 0 ? {color: global.DEFAULT_COLOR} : {color: '#000'},
-              ]}>
-              {title}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.bottomButton}
-            onPress={() => this.onPressTabButton(1)}
-            activeOpacity={1}>
-            <Icon
-              name="qrcode-scan"
-              size={20}
-              color={index == 1 ? global.DEFAULT_COLOR : '#000'}
-            />
-            <Text
-              style={[
-                styles.titleBottomButton,
-                index == 1 ? {color: global.DEFAULT_COLOR} : {color: '#000'},
-              ]}>
-              Scan QRCode
-            </Text>
-          </TouchableOpacity>
-        </View>
+
+        {!!this.props.isVisibleBtnEnterCode ? (
+          <Button
+            containerStyle={styles.enterCodeBtn}
+            onPress={() => this.enterCodeManual()}
+            title={this.props.t('common:screen.qrBarCode.enterCode')}
+          />
+        ) : (
+          <View style={styles.bottomView}>
+            <TouchableOpacity
+              style={styles.bottomButton}
+              onPress={() => this.onPressTabButton(0)}
+              activeOpacity={1}>
+              <Icon
+                name="barcode-scan"
+                size={20}
+                color={index == 0 ? global.DEFAULT_COLOR : '#000'}
+              />
+              <Text
+                style={[
+                  styles.titleBottomButton,
+                  index == 0 ? {color: global.DEFAULT_COLOR} : {color: '#000'},
+                ]}>
+                {title}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.bottomButton}
+              onPress={() => this.onPressTabButton(1)}
+              activeOpacity={1}>
+              <Icon
+                name="qrcode-scan"
+                size={20}
+                color={index == 1 ? global.DEFAULT_COLOR : '#000'}
+              />
+              <Text
+                style={[
+                  styles.titleBottomButton,
+                  index == 1 ? {color: global.DEFAULT_COLOR} : {color: '#000'},
+                ]}>
+                Scan QRCode
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     );
   }
@@ -792,6 +839,32 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
   },
+
+  enterCodeBtn: {
+    position: 'absolute',
+    bottom: 0,
+  },
+
+  getVoucherBtn: {
+    flex: 1,
+    backgroundColor: appConfig.colors.primary,
+    borderRadius: 8,
+    paddingVertical: 14,
+    marginHorizontal: 7,
+    paddingHorizontal: 12,
+  },
+  getVoucherTitle: {
+    color: appConfig.colors.white,
+    textTransform: 'uppercase',
+    fontWeight: '600',
+    fontSize: 16,
+  },
+  btnContentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   topContent: {
     paddingVertical: 16,
     paddingTop: '50%',

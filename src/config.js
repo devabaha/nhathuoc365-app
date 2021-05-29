@@ -46,7 +46,7 @@ class Config {
     };
   }
 
-  get aboutUsID(){
+  get aboutUsID() {
     return 5088;
   }
 
@@ -164,6 +164,7 @@ class Config {
 
       scanQrCode: 'scanQrCode',
       qrBarCode: 'qrBarCode',
+      qrBarCodeInputable: 'qrBarCodeInputable',
 
       notifies: 'notifies',
       notifiesVertical: 'notifiesVertical',
