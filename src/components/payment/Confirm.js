@@ -1537,7 +1537,7 @@ class Confirm extends Component {
                 <View style={{flexDirection: 'row', ...styles.address_content}}>
                   {cart_data.payment_method ? (
                     <View style={styles.paymentMethodContainer}>
-                      {cart_data.payment_method.image && (
+                      {!!cart_data.payment_method.image && (
                         // <CachedImage
                         //   mutable
                         //   source={{uri: cart_data.payment_method.image}}
@@ -2624,7 +2624,7 @@ const styles = StyleSheet.create({
   },
   imagePaymentMethodDetail: {
     // marginLeft: 15,
-    // marginRight: 15,
+    marginRight: 10,
   },
   placeholder: {
     color: '#999999',
