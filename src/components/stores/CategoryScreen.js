@@ -47,6 +47,7 @@ class CategoryScreen extends Component {
     };
 
     this.unmounted = false;
+    this.paramsFilter = {};
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -88,9 +89,6 @@ class CategoryScreen extends Component {
     if (
       (index == cate_index || nextProps.isAutoLoad) &&
       this.state.items_data == null &&
-      Object.keys(this.props).some(
-        (key) => nextProps[key] != this.props[key],
-      ) &&
       !nextState.loading &&
       isEmpty(nextProps.paramsFilter)
     ) {
@@ -103,16 +101,17 @@ class CategoryScreen extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const {item, index, cate_index, isAutoLoad} = this.props;
-    if (
-      index === cate_index &&
+      if (
+      (index === cate_index || isAutoLoad) &&
       !isEmpty(this.props.paramsFilter) &&
       !this.state.loading &&
-      Object.keys(prevProps).some((key) => prevProps[key] != this.props[key]) &&
-      (!isEqual(prevProps.paramsFilter, this.props.paramsFilter) ||
-        isEmpty(this.state.filter_data))
+      (!isEqual(this.paramsFilter, this.props.paramsFilter) ||
+        isEmpty(this.state.items_data))
     ) {
-      console.log('render vo han');
-      this.getItemByFilter(item.id, false);
+
+      this.setState({loading: true})
+      this._getItemByCateIdFromServer(item.id);
+      this.paramsFilter = this.props.paramsFilter;
     }
   }
 
@@ -163,9 +162,7 @@ class CategoryScreen extends Component {
           .then((data) => {
             // delay append data
             setTimeout(() => {
-              if (this.props.index == 0) {
-                layoutAnimation();
-              }
+              layoutAnimation();
 
               this.setState({
                 items_data:
@@ -195,70 +192,7 @@ class CategoryScreen extends Component {
     );
   }
 
-  async getItemByFilter(category_id, loadmore = false) {
-    const store_category_key =
-      STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
-    const site_id = this.props.site_id || store.store_id;
-    if (loadmore) {
-      this.state.page += 1;
-    } else {
-      this.state.page = 0;
-    }
-    if (isEmpty(this.state.filter_data)) {
-      await this.setState({
-        loading: true,
-      });
-    }
-    try {
-      const response = await APIHandler.site_category_product_by_filter(
-        site_id,
-        category_id,
-        this.state.page,
-        this.props.paramsFilter,
-      );
-      if (response && response.status == STATUS_SUCCESS) {
-        if (response.data) {
-          console.log({dataFilter: response.data});
-          setTimeout(() => {
-            if (this.props.index == 0) {
-              layoutAnimation();
-            }
-            const filter_data = loadmore
-              ? [...this.state.filter_data_bak, ...response.data]
-              : response.data;
-            this.setState({
-              filter_data:
-                response.data.length >= STORES_LOAD_MORE
-                  ? [...filter_data, {id: -1, type: 'loadmore'}]
-                  : filter_data,
-              loading: false,
-              fetched: true,
-              refreshing: false,
-              page: this.state.page,
-              filter_data_bak: filter_data,
-            });
-            action(() => {
-              store.setStoresFinish(true);
-            })();
-            // load next category
-            this._loadNextCate();
-          }, 200);
-        } else {
-          this.setState({
-            filter_data: [],
-            loading: false,
-            fetched: true,
-            refreshing: false,
-          });
-          this._loadNextCate();
-        }
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  async _getItemByCateIdFromServer(category_id, delay, loadmore) {
+  async _getItemByCateIdFromServer(category_id, delay = 0, loadmore = false) {
     var store_category_key =
       STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
     const site_id = this.props.site_id || store.store_id;
@@ -268,18 +202,18 @@ class CategoryScreen extends Component {
       this.state.page = 0;
     }
     try {
-      const response = await APIHandler.site_category_product(
+      const response = await APIHandler.site_category_product_by_filter(
         site_id,
         category_id,
         this.state.page,
+        !isEmpty(this.props.paramsFilter) ? this.props.paramsFilter : undefined
       );
+      console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
           // delay append data
           setTimeout(() => {
-            if (this.props.index == 0) {
-              layoutAnimation();
-            }
+            layoutAnimation();
 
             var items_data = loadmore
               ? [...this.state.items_data_bak, ...response.data]
@@ -337,20 +271,17 @@ class CategoryScreen extends Component {
   }
 
   _loadMore = async () => {
-    const {paramsFilter} = this.props;
-    if (!isEmpty(paramsFilter)) {
-      this.getItemByFilter(this.props.item.id, true);
-      return;
-    }
+    this.setState({isLoadMore: true});
     this._getItemByCateIdFromServer(this.props.item.id, 0, true);
   };
 
   render() {
     const {t, paramsFilter} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
-    const dataProducts = !isEmpty(paramsFilter)
-      ? this.state.filter_data
-      : this.state.items_data;
+    // const dataProducts = !isEmpty(paramsFilter)
+    //   ? this.state.filter_data
+    //   : this.state.items_data;
+      const dataProducts = items_data;
     return (
       <>
         <View style={styles.containerScreen}>
@@ -436,7 +367,7 @@ class CategoryScreen extends Component {
               {dataProducts !== null
                 ? dataProducts.map((item, index) => (
                     <Items
-                      key={index}
+                      key={item.id}
                       item={item}
                       index={index}
                       onPress={

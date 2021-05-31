@@ -22,7 +22,7 @@ import {
   Stack,
   Modal,
   Lightbox,
-  Drawer as RNFLDrawer,
+  Drawer as RNRFDrawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -158,13 +158,12 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
-import ModalFilter from './components/stores/ModalFilter';
-import FilterComponent from './components/stores/FilterDrawer';
+import ModalFilter from './components/stores/FilterProduct/ModalFilterProduct/ModalFilter';
+import {FilterDrawer} from './components/stores/FilterProduct';
 import {News} from './containers/Social';
 import {ModalComment} from './components/Social';
 import SalesReport from './containers/SalesReport/SalesReport';
 import Social from './containers/Social/Social';
-import {DRAWER_WIDTH} from './constants';
 import Drawer from './components/Drawer';
 
 /**
@@ -885,6 +884,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
                 <Stack key={appConfig.routes.salesReport}>
                   <Scene
                     key={`${appConfig.routes.salesReport}_1`}
@@ -1166,12 +1166,21 @@ class RootRouter extends Component {
                 </Stack>
 
                 <Stack key={appConfig.routes.store}>
+                  {/* <RNRFDrawer
+                  key={appConfig.routes.store}
+                  // hideNavBar={true}
+                  drawerPosition="right"
+                  drawerWidth={350}
+                  hideDrawerButton={true}
+                  contentComponent={(props) => <FilterDrawer {...props} />}> */}
+
                   <Scene
                     key={`${appConfig.routes.store}_1`}
                     component={StoreContainer}
                     {...navBarConfig}
                     back
                   />
+                  {/* </RNRFDrawer> */}
                 </Stack>
 
                 <Stack key="stores_list">

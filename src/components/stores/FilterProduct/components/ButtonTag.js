@@ -1,18 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import appConfig from 'app-config';
 
 function ButtonTag({text, onPress, checked}) {
-  const [isChecked, setChecked] = useState(false);
-  const [selectedId, setSelectedId] = useState('');
-
-  useEffect(() => {
-    setChecked(checked);
-  }, [checked]);
-
-  const handlePress = () => {
-    onPress?.();
-  };
 
   return (
     <TouchableOpacity
@@ -20,11 +10,13 @@ function ButtonTag({text, onPress, checked}) {
       style={[
         styles.containerStyleTag,
         {
-          backgroundColor: isChecked ? appConfig.primaryColor : '#ECF4FF',
+          backgroundColor: checked ? appConfig.colors.primary : appConfig.colors.sceneBackground,
         },
       ]}
-      onPress={handlePress}>
-      <Text style={{color: isChecked ? '#fff' : '#333'}} numberOfLines={2}>
+      onPress={onPress}>
+      <Text
+        style={[styles.title, {color: checked ? '#fff' : '#333'}]}
+        numberOfLines={2}>
         {text}
       </Text>
     </TouchableOpacity>
@@ -38,8 +30,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderRadius: 3,
-    paddingHorizontal: 3,
+  },
+  title: {
+    textAlign: 'center',
   },
 });
 
-export default ButtonTag;
+const areEquals = (prev, next) => {
+  return prev.text === next.text && prev.checked === next.checked;
+};
+
+export default React.memo(ButtonTag, areEquals);

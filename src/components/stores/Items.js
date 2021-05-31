@@ -33,6 +33,14 @@ class Items extends Component {
     return product.product_type === PRODUCT_TYPES.SERVICE;
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.index !== this.props.index && nextState.loadmore) {
+      this.setState({loadmore: false});
+    }
+
+    return true;
+  }
+
   componentWillUnmount() {
     this.unmounted = true;
     this.setState({loadmore: false});
@@ -207,7 +215,7 @@ class Items extends Component {
             if (onPress) {
               onPress();
             }
-            console.log('tai sao lai chay vao day');
+
             this.setState({
               loadmore: true,
             });

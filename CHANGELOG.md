@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Fix UI, finish logic of Filter Product.
+
 ### Changed
 - Change 'About us' pressed from webview to Notify by [kienluu612@gmail.com].
 ### Fixed
