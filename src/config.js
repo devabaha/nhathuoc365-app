@@ -50,6 +50,10 @@ class Config {
     return 5088;
   }
 
+  get termOfUseID(){
+    return 5088;
+  }
+
   get device() {
     return {
       isIphoneX: isIphoneX(),

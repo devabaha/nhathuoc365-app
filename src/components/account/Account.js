@@ -233,6 +233,7 @@ class Account extends Component {
         iconColor: '#ffffff',
         marginTop: !!premium_name,
       },
+
       {
         key: 'gold_member',
         icon: 'clipboard-text-multiple',
@@ -308,6 +309,7 @@ class Account extends Component {
         isHidden:
           !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
+
       {
         key: 'report_npp',
         icon: 'clipboard',
@@ -349,7 +351,6 @@ class Account extends Component {
         key: '3',
         icon: 'handshake-o',
         label: t('options.termOfUse.label'),
-        desc: t('options.termOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
           servicesHandler({
@@ -369,6 +370,28 @@ class Account extends Component {
         // marginTop: true
       },
 
+      {
+        key: '4',
+        icon: 'text-box-check-outline',
+        iconType: 'MaterialCommunityIcons',
+        label: t('options.termOfUse.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
+            title: t('options.termOfUse.webViewTitle'),
+            id: appConfig.termOfUseID,
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#62459b',
+          },
+        ],
+        iconColor: '#ffffff',
+        // marginTop: true
+      },
+      
       {
         key: '6',
         icon: 'lock-reset',
