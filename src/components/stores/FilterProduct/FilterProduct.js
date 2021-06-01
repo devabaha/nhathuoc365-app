@@ -2,11 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/AntDesign';
-import Animated, {
-  call,
-  Easing,
-  timing,
-} from 'react-native-reanimated';
+import Animated, {call, Easing, timing} from 'react-native-reanimated';
 
 import appConfig from 'app-config';
 import {isEmpty, isEqual} from 'lodash';
@@ -160,17 +156,18 @@ function FilterProduct({
         {!isEmpty(selectedFilter) ? (
           <View style={styles.tagWrapper}>
             {Object.values(selectedFilter).map((tag, index) => (
-              <View key={index} style={styles.tagSelected}>
+              <TouchableOpacity
+                onPress={handleRemoveTag(tag)}
+                key={index}
+                style={styles.tagSelected}>
                 <Text style={styles.tag}>{tag.tag}</Text>
-                <TouchableOpacity
-                  style={styles.removeTagContainer}
-                  onPress={handleRemoveTag(tag)}>
+                <View style={styles.removeTagContainer}>
                   <Icon
                     name="close"
                     style={[styles.icon, styles.smallIcon, styles.activeIcon]}
                   />
-                </TouchableOpacity>
-              </View>
+                </View>
+              </TouchableOpacity>
             ))}
           </View>
         ) : null}
@@ -183,14 +180,12 @@ const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: '#fff',
     width: '100%',
-    borderBottomWidth: .5,
-    borderColor: '#ddd'
+    borderBottomWidth: 0.5,
+    borderColor: '#ddd',
   },
   container: {
     flexDirection: 'row',
-    // alignItems: 'center',
     padding: 10,
-    paddingBottom: 5
   },
   btnFilterLeft: {
     flexDirection: 'row',
@@ -228,9 +223,8 @@ const styles = StyleSheet.create({
   },
   tagWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
     flexWrap: 'wrap',
-    paddingBottom: 7,
+    paddingBottom: 5,
     paddingHorizontal: 10,
   },
   tag: {

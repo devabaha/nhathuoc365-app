@@ -180,7 +180,7 @@ class CommonAPIHandler extends BaseHandler {
     return await this.getAPI(api);
   }
 
-  async site_category_product_by_filter(
+  site_category_product_by_filter(
     store_id,
     category_id,
     page_num,
@@ -195,8 +195,8 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         page_num,
     );
-    console.log({hii: params, category_id});
-    return await this.postAPI(api, params);
+
+    return this.postCancelableAPI(api, params);
   }
 
   /**

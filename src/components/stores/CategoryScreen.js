@@ -9,6 +9,7 @@ import NoResult from '../NoResult';
 import ListStoreProductSkeleton from './ListStoreProductSkeleton';
 import APIHandler from 'src/network/APIHandler';
 import {isEmpty, isEqual} from 'lodash';
+import {APIRequest} from 'src/network/Entity';
 
 const AUTO_LOAD_NEXT_CATE = 'AutoLoadNextCate';
 const STORE_CATEGORY_KEY = 'KeyStoreCategory';
@@ -38,7 +39,6 @@ class CategoryScreen extends Component {
       header_title,
       items_data: null,
       items_data_bak: null,
-      page: 0,
       promotions,
       isAll: item.id == 0,
       fetched: false,
@@ -47,7 +47,10 @@ class CategoryScreen extends Component {
     };
 
     this.unmounted = false;
-    this.paramsFilter = {};
+    this.paramsFilter = undefined;
+    this.getProductsRequest = new APIRequest();
+    this.requests = [this.getProductsRequest];
+    this.page = 0;
   }
 
   // thời gian trễ khi chuyển màn hình
@@ -80,43 +83,46 @@ class CategoryScreen extends Component {
     Events.on(CATE_AUTO_LOAD, CATE_AUTO_LOAD + index, () => {
       Events.removeAll(keyAutoLoad);
     });
-
-    // this.getListFilterTag();
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const {item, index, cate_index} = nextProps;
+    const {item, index, cate_index, isAutoLoad} = nextProps;
+
+    const isUpdateParamsFilter = !isEqual(
+      this.paramsFilter,
+      nextProps.paramsFilter,
+    );
+
     if (
-      (index == cate_index || nextProps.isAutoLoad) &&
-      this.state.items_data == null &&
-      !nextState.loading &&
-      isEmpty(nextProps.paramsFilter)
+      (index == cate_index || isAutoLoad) &&
+      (this.state.items_data == null || isUpdateParamsFilter) &&
+      Object.keys(this.props).some(
+        (key) => nextProps[key] != this.props[key],
+      ) &&
+      !nextState.loading
     ) {
       this.start_time = time();
       // get list products by category_id
-      this._getItemByCateId(item.id);
+      if (isUpdateParamsFilter) {
+        this.paramsFilter = nextProps.paramsFilter;
+      }
+
+      this.setState({loading: true});
+      this._getItemByCateIdFromServer(
+        item.id,
+        300,
+        false,
+        isUpdateParamsFilter,
+        nextProps.paramsFilter,
+      );
     }
     return true;
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    const {item, index, cate_index, isAutoLoad} = this.props;
-      if (
-      (index === cate_index || isAutoLoad) &&
-      !isEmpty(this.props.paramsFilter) &&
-      !this.state.loading &&
-      (!isEqual(this.paramsFilter, this.props.paramsFilter) ||
-        isEmpty(this.state.items_data))
-    ) {
-
-      this.setState({loading: true})
-      this._getItemByCateIdFromServer(item.id);
-      this.paramsFilter = this.props.paramsFilter;
-    }
-  }
-
   componentWillUnmount() {
     this.unmounted = true;
+    this.paramsFilter = {};
+    cancelRequests(this.requests);
   }
 
   // tới màn hình chi tiết item
@@ -128,10 +134,10 @@ class CategoryScreen extends Component {
   }
 
   _onRefresh() {
+    this.page = 0;
     this.setState(
       {
         refreshing: true,
-        page: 0,
       },
       () => {
         this._getItemByCateIdFromServer(this.props.item.id, 1000);
@@ -163,17 +169,17 @@ class CategoryScreen extends Component {
             // delay append data
             setTimeout(() => {
               layoutAnimation();
+              this.page = 1;
 
               this.setState({
                 items_data:
                   data.length > STORES_LOAD_MORE
-                    ? [...data, {id: -1, type: 'loadmore'}]
+                    ? [...data, {id: -1, type: 'loadMore'}]
                     : data,
                 items_data_bak: data,
                 loading: false,
                 fetched: true,
                 refreshing: false,
-                page: 1,
               });
 
               action(() => {
@@ -192,22 +198,31 @@ class CategoryScreen extends Component {
     );
   }
 
-  async _getItemByCateIdFromServer(category_id, delay = 0, loadmore = false) {
+  async _getItemByCateIdFromServer(
+    category_id,
+    delay = 0,
+    loadMore = false,
+    forceUpdate = false,
+    paramsFilter = this.props.paramsFilter,
+  ) {
     var store_category_key =
       STORE_CATEGORY_KEY + store.store_id + category_id + store.user_info.id;
     const site_id = this.props.site_id || store.store_id;
-    if (loadmore) {
-      this.state.page += 1;
+    if (loadMore && !forceUpdate) {
+      this.page++;
     } else {
-      this.state.page = 0;
+      this.page = 0;
     }
     try {
-      const response = await APIHandler.site_category_product_by_filter(
+      this.getProductsRequest.data = APIHandler.site_category_product_by_filter(
         site_id,
         category_id,
-        this.state.page,
-        !isEmpty(this.props.paramsFilter) ? this.props.paramsFilter : undefined
+        this.page,
+        !isEmpty(paramsFilter) ? paramsFilter : undefined,
       );
+      const response = await this.getProductsRequest.promise();
+      if (this.unmounted) return;
+
       console.log(response);
       if (response && response.status == STATUS_SUCCESS) {
         if (response.data) {
@@ -215,19 +230,18 @@ class CategoryScreen extends Component {
           setTimeout(() => {
             layoutAnimation();
 
-            var items_data = loadmore
+            var items_data = loadMore
               ? [...this.state.items_data_bak, ...response.data]
               : response.data;
             this.setState({
               items_data:
                 response.data.length >= STORES_LOAD_MORE
-                  ? [...items_data, {id: -1, type: 'loadmore'}]
+                  ? [...items_data, {id: -1, type: 'loadMore'}]
                   : items_data,
               items_data_bak: items_data,
               loading: false,
               fetched: true,
               refreshing: false,
-              page: this.state.page,
             });
 
             action(() => {
@@ -238,7 +252,7 @@ class CategoryScreen extends Component {
             this._loadNextCate();
 
             // cache in five minutes
-            if (response.data && !loadmore) {
+            if (response.data && !loadMore && isEmpty(paramsFilter)) {
               storage.save({
                 key: store_category_key,
                 data: items_data,
@@ -247,12 +261,13 @@ class CategoryScreen extends Component {
             }
           }, delay || this._delay());
         } else {
-          this.setState({
+          this.setState((prevState) => ({
             loading: false,
             fetched: true,
             refreshing: false,
-            items_data: this.state.items_data_bak,
-          });
+            items_data: forceUpdate ? null : prevState.items_data_bak,
+            items_data_bak: forceUpdate ? null : prevState.items_data_bak,
+          }));
 
           // load next category
           this._loadNextCate();
@@ -276,12 +291,9 @@ class CategoryScreen extends Component {
   };
 
   render() {
-    const {t, paramsFilter} = this.props;
+    const {t} = this.props;
     const {items_data, header_title, fetched, loading} = this.state;
-    // const dataProducts = !isEmpty(paramsFilter)
-    //   ? this.state.filter_data
-    //   : this.state.items_data;
-      const dataProducts = items_data;
+
     return (
       <>
         <View style={styles.containerScreen}>
@@ -364,14 +376,14 @@ class CategoryScreen extends Component {
                 flexWrap: 'wrap',
                 paddingTop: 7,
               }}>
-              {dataProducts !== null
-                ? dataProducts.map((item, index) => (
+              {items_data !== null
+                ? items_data.map((item, index) => (
                     <Items
                       key={item.id}
                       item={item}
                       index={index}
                       onPress={
-                        item.type != 'loadmore'
+                        item.type != 'loadMore'
                           ? this._goItem.bind(this, item)
                           : this._loadMore
                       }
@@ -379,7 +391,7 @@ class CategoryScreen extends Component {
                   ))
                 : null}
             </View>
-            {items_data == null || isEmpty(dataProducts) ? (
+            {items_data == null ? (
               <View style={[styles.containerScreen]}>
                 {fetched && (
                   <NoResult

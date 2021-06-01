@@ -155,7 +155,7 @@ class SubCategory extends Component<SubCategoryProps> {
 
         return (
             Array.isArray(category.list) ?
-                <View style={[styles.subCategoriesContainer, { minWidth: this.state.subCategoriesWidth }]}>
+                <View key={category.id} style={[styles.subCategoriesContainer, { minWidth: this.state.subCategoriesWidth }]}>
                     {category.list.map((childCate, index) => {
                         const isLast = (index + 1) % this.state.itemsPerRow === 0;
                         let extraStyle = {
@@ -174,9 +174,8 @@ class SubCategory extends Component<SubCategoryProps> {
                         }
 
                         return (
-                            <View key={index} style={[styles.categoryWrapper, containerStyle]}>
+                            <View key={childCate.id} style={[styles.categoryWrapper, containerStyle]}>
                                 <Category
-                                    key={index}
                                     title={childCate.name}
                                     image={childCate.image}
                                     containerStyle={[

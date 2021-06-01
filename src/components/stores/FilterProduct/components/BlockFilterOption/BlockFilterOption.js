@@ -72,7 +72,7 @@ const BlockFilterOption = ({
     if (!prevContainerWidth.current && !!containerWidth) {
       Animated.timing(animatedVisible, {
         toValue: 1,
-        duration: 300,
+        duration: 200,
         easing: Easing.quad,
         useNativeDriver: true,
       }).start();

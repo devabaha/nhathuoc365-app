@@ -23,7 +23,7 @@ class Items extends Component {
 
     this.state = {
       buying: false,
-      loadmore: false,
+      loadMore: false,
     };
     this.CTAProduct = new CTAProduct(props.t, this);
   }
@@ -34,8 +34,8 @@ class Items extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    if (nextProps.index !== this.props.index && nextState.loadmore) {
-      this.setState({loadmore: false});
+    if (nextProps.index !== this.props.index && nextState.loadMore) {
+      this.setState({loadMore: false});
     }
 
     return true;
@@ -43,7 +43,7 @@ class Items extends Component {
 
   componentWillUnmount() {
     this.unmounted = true;
-    this.setState({loadmore: false});
+    this.setState({loadMore: false});
   }
 
   handlePressActionBtnProduct = (product, quantity = 1, model = '') => {
@@ -208,7 +208,7 @@ class Items extends Component {
     }
 
     // button load more
-    if (item.type == 'loadmore') {
+    if (item.type == 'loadMore') {
       return (
         <TouchableHighlight
           onPress={() => {
@@ -217,7 +217,7 @@ class Items extends Component {
             }
 
             this.setState({
-              loadmore: true,
+              loadMore: true,
             });
           }}
           underlayColor="transparent">
@@ -231,7 +231,7 @@ class Items extends Component {
                 alignItems: 'center',
               },
             ]}>
-            {this.state.loadmore ? (
+            {this.state.loadMore ? (
               <Indicator size="small" />
             ) : (
               <View

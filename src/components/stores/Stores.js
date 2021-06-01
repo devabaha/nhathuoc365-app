@@ -89,9 +89,9 @@ class Stores extends Component {
     return this.props.categoryId === 0;
   }
 
-  handleEffect = async (value) => {
+  handleEffect = (value) => {
     if (isEmpty(value)) {
-      await this.setState({
+      this.setState({
         filterParams: {
           order: this.state.valueSort?.order ?? '',
           sort_by: this.state.valueSort?.value ?? '',
@@ -116,7 +116,7 @@ class Stores extends Component {
       order: !!this.state.valueSort.order ? this.state.valueSort.order : 'asc',
       sort_by: !isEmpty(this.state.valueSort) ? this.state.valueSort.value : '',
     };
-    await this.setState({filterParams: params});
+    this.setState({filterParams: params});
   };
 
   componentDidMount() {
