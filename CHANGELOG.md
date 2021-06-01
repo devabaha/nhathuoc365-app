@@ -7,12 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Fix UI, finish logic of Filter Product.
-
 ### Changed
 - Change 'About us' pressed from webview to Notify by [kienluu612@gmail.com].
 ### Fixed
 - Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
+- Fix UI, finish logic of Filter Product.
 
 ## [r11.6.3] - 2021-05-24
 ### Added
