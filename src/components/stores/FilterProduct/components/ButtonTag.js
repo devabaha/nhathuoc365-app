@@ -25,11 +25,10 @@ function ButtonTag({text, onPress, checked}) {
 
 const styles = StyleSheet.create({
   containerStyleTag: {
-    backgroundColor: '#ECF4FF',
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 10,
-    borderRadius: 3,
+    borderRadius: 4,
   },
   title: {
     textAlign: 'center',

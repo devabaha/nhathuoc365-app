@@ -9,25 +9,27 @@ import {
 } from 'react-native';
 import KeyboardSpacer from 'react-native-keyboard-spacer';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
 
 import {APIRequest} from 'src/network/Entity';
 import APIHandler from 'src/network/APIHandler';
 import store from 'app-store';
 import appConfig from 'app-config';
-import ListTag from './components/ListTag';
+import ListTag from '../components/ListTag';
 import {getValueFromConfigKey} from 'src/helper/configKeyHandler/configKeyHandler';
 import {CONFIG_KEY} from 'src/helper/configKeyHandler';
-import ListPrice from './components/ListPrice';
+import ListPrice from '../components/ListPrice';
 import {reaction, toJS} from 'mobx';
 import {isEmpty, isEqual} from 'lodash';
-import Button from '../../Button';
+import Button from '../../../Button';
 import useIsMounted from 'react-is-mounted-hook';
-import Loading from '../../Loading';
-import {hideDrawer} from '../../Drawer';
-import ScreenWrapper from '../../ScreenWrapper';
+import {hideDrawer} from '../../../Drawer';
+import ScreenWrapper from '../../../ScreenWrapper';
 import Container from 'src/components/Layout/Container';
+import NoResult from 'src/components/NoResult';
+import FilterDrawerSkeleton from './FilterDrawerSkeleton';
 
-function FilterDrawer(props) {
+function FilterDrawer() {
   const {t} = useTranslation();
   const isMounted = useIsMounted();
 
@@ -35,13 +37,17 @@ function FilterDrawer(props) {
 
   const [isLoading, setLoading] = useState(true);
   const [dataFilterTag, setDataFilterTag] = useState([]);
-  const [defaultSelected, setDefaultSelected] = useState({});
+  const [defaultSelected, setDefaultSelected] = useState(
+    store.selectedFilter || {},
+  );
   const [selectedTag, setSelectedTag] = useState({});
   const [selectedPrice, setSelectedPrice] = useState({});
   const [disabled, setDisabled] = useState(false);
   const priceValueString = getValueFromConfigKey(CONFIG_KEY.FILTER_PRICES_KEY);
 
   const refScrollView = useRef();
+
+  const hasData = !isEmpty(dataFilterTag) || !isEmpty(priceValueString);
 
   const getListFilterTag = async () => {
     try {
@@ -75,9 +81,11 @@ function FilterDrawer(props) {
         message: t('api.error.message'),
       });
     } finally {
-      if (!isMounted()) return;
+      setTimeout(() => {
+        if (!isMounted()) return;
 
-      setLoading(false);
+        setLoading(false);
+      }, 300);
     }
   };
 
@@ -94,7 +102,7 @@ function FilterDrawer(props) {
       () => store.selectedFilter,
       (data) => {
         if (!isEqual(toJS(data), defaultSelected)) {
-          setDefaultSelected(data);
+          setDefaultSelected(toJS(data));
         }
       },
     );
@@ -155,13 +163,14 @@ function FilterDrawer(props) {
   const handleResetFilter = () => {
     setSelectedTag({});
     setSelectedPrice({});
+    setDefaultSelected({});
 
     store.setSelectedFilter({});
   };
 
   return (
     <View style={styles.wrapper}>
-      {isLoading && <Loading center />}
+      {/* {isLoading && <Loading center />} */}
       <View style={styles.maskTop} />
       <View style={styles.maskBottom} />
       <ScreenWrapper containerStyle={styles.safeArea}>
@@ -170,47 +179,61 @@ function FilterDrawer(props) {
             <Text style={styles.title}>Lọc sản phẩm</Text>
           </View>
           <TouchableOpacity onPress={handleCloseFilter}>
-            <AntDesignIcon name="close" style={styles.closeIcon} />
+            <FontAwesome5Icon name="times" style={styles.closeIcon} />
           </TouchableOpacity>
         </Container>
+
         <ScrollView
           ref={refScrollView}
           keyboardShouldPersistTaps="handled"
           style={styles.listContainer}
           contentContainerStyle={styles.contentContainer}>
-          <ListTag
-            data={dataFilterTag}
-            onChangeValue={handleSelected}
-            defaultValue={defaultSelected}
-            isOpen
-          />
-          {!!priceValueString && !isLoading && (
-            <ListPrice
-              title="Giá tiền"
-              defaultValue={defaultSelected}
-              onChangeValue={handleSelectedPrice}
-              onChangePriceRange={checkPriceRange}
-              error={disabled}
-              refScrollView={refScrollView}
+          {isLoading ? (
+            <FilterDrawerSkeleton />
+          ) : hasData ? (
+            <>
+              <ListTag
+                data={dataFilterTag}
+                onChangeValue={handleSelected}
+                defaultValue={defaultSelected}
+                isOpen
+              />
+              {!!priceValueString && (
+                <ListPrice
+                  title="Giá tiền"
+                  defaultValue={defaultSelected}
+                  onChangeValue={handleSelectedPrice}
+                  onChangePriceRange={checkPriceRange}
+                  error={disabled}
+                  refScrollView={refScrollView}
+                />
+              )}
+            </>
+          ) : (
+            <NoResult
+              iconName="filter-remove-outline"
+              message="Chưa có bộ lọc"
             />
           )}
         </ScrollView>
 
-        <Container row style={styles.btnFooterContainer}>
-          <Button
-            containerStyle={styles.btnResetContainer}
-            btnContainerStyle={styles.btnResetContent}
-            onPress={handleResetFilter}>
-            <AntDesignIcon name="sync" style={styles.closeIcon} />
-          </Button>
+        {hasData && (
+          <Container row style={styles.btnFooterContainer}>
+            <Button
+              containerStyle={styles.btnResetContainer}
+              btnContainerStyle={styles.btnResetContent}
+              onPress={handleResetFilter}>
+              <AntDesignIcon name="sync" style={styles.closeIcon} />
+            </Button>
 
-          <Button
-            containerStyle={styles.btnApplyContainer}
-            disabled={disabled}
-            title="Áp dụng"
-            onPress={handleApplyFilter}
-          />
-        </Container>
+            <Button
+              containerStyle={styles.btnApplyContainer}
+              disabled={disabled}
+              title="Áp dụng"
+              onPress={handleApplyFilter}
+            />
+          </Container>
+        )}
         {appConfig.device.isIOS && <KeyboardSpacer />}
       </ScreenWrapper>
     </View>

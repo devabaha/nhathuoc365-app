@@ -158,8 +158,7 @@ import ProductStamps from './containers/ProductStamps';
 import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
-import ModalFilter from './components/stores/FilterProduct/ModalFilterProduct/ModalFilter';
-import {FilterDrawer} from './components/stores/FilterProduct';
+import {FilterDrawer, ModalFilterProduct} from './components/stores/FilterProduct';
 import {News} from './containers/Social';
 import {ModalComment} from './components/Social';
 import SalesReport from './containers/SalesReport/SalesReport';
@@ -1763,7 +1762,7 @@ class RootRouter extends Component {
               {/* ================ MODAL FILTER PRODUCT================ */}
               <Stack
                 key={appConfig.routes.filterProduct}
-                component={ModalFilter}
+                component={ModalFilterProduct}
               />
             </Lightbox>
 

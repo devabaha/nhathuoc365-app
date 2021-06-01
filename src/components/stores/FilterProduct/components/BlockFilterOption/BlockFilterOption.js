@@ -35,8 +35,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
+  showMoreContainer: {
+    alignSelf: 'flex-end',
+  },
   showMoreTitle: {
-    textAlign: 'right',
     fontSize: 13,
     color: '#888',
   },
@@ -129,9 +131,14 @@ const BlockFilterOption = ({
 
   const renderFooter = () => {
     return (
-      <TouchableOpacity hitSlop={HIT_SLOP} onPress={handlePressShowMore}>
+      <TouchableOpacity
+        style={styles.showMoreContainer}
+        hitSlop={HIT_SLOP}
+        onPress={handlePressShowMore}>
         <Text style={styles.showMoreTitle}>
-          {canShowMore() ? 'Xem thêm' : 'Thu gọn'}{' '}
+          {canShowMore()
+            ? `Xem thêm (${tagsProp.length - tags.length})`
+            : 'Thu gọn'}{' '}
           <AntDesignIcon
             style={styles.showMoreIcon}
             name={canShowMore() ? 'down' : 'up'}
@@ -142,11 +149,13 @@ const BlockFilterOption = ({
   };
 
   const animatedVisibleStyle = useRef({
-    opacity: animatedVisible
-  })
+    opacity: animatedVisible,
+  });
 
   return (
-    <Animated.View onLayout={handleContainerLayout} style={[styles.block, animatedVisibleStyle.current]}>
+    <Animated.View
+      onLayout={handleContainerLayout}
+      style={[styles.block, animatedVisibleStyle.current]}>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.tagsContainer}>{renderTags()}</View>
       {isShowFooter() && renderFooter()}

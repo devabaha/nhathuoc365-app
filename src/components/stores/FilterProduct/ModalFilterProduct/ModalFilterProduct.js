@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {Actions} from 'react-native-router-flux';
 import appConfig from 'app-config';
 
-function ModalFilter({
+function ModalFilterProduct({
   onSelectValue = () => {},
   data = [],
   defaultSelected = {},
@@ -118,4 +118,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default memo(ModalFilter);
+export default memo(ModalFilterProduct);
