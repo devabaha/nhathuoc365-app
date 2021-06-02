@@ -357,7 +357,7 @@ class Account extends Component {
             type: SERVICES_TYPE.NEWS_DETAIL,
             news: {
               title: t('options.termOfUse.webViewTitle'),
-              id: appConfig.aboutUsID,
+              id: store?.store_data?.[CONFIG_KEY.ABOUT_US_ID]
             },
           }),
         boxIconStyle: [
@@ -380,7 +380,7 @@ class Account extends Component {
           servicesHandler({
             type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
             title: t('options.termOfUse.webViewTitle'),
-            id: appConfig.termOfUseID,
+            id: store?.store_data?.[CONFIG_KEY.TERMS_OF_USE_ID]
           }),
         boxIconStyle: [
           styles.boxIconStyle,
