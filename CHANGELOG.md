@@ -6,8 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## Added
+- qrBarCodeInputable in ProductStamps.
 ### Changed
 - Update field get About us, Terms of use ID  by [kienluu612@gmail.com].
+- Change default image of selected payment method in Confirm by [kienluu612@gmail.com].
 
 ## [r11.6.3] - 2021-05-24
 ### Added

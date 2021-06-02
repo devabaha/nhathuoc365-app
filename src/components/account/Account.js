@@ -31,6 +31,7 @@ import {APIRequest} from '../../network/Entity';
 import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import { getValueFromConfigKey } from 'app-helper/configKeyHandler/configKeyHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -350,14 +351,14 @@ class Account extends Component {
       {
         key: '3',
         icon: 'handshake-o',
-        label: t('options.termOfUse.label'),
+        label: t('options.termsOfUse.label'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
           servicesHandler({
             type: SERVICES_TYPE.NEWS_DETAIL,
             news: {
-              title: t('options.termOfUse.webViewTitle'),
-              id: store?.store_data?.[CONFIG_KEY.ABOUT_US_ID]
+              title: t('options.termsOfUse.webViewTitle'),
+              id: getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID)
             },
           }),
         boxIconStyle: [
@@ -374,13 +375,13 @@ class Account extends Component {
         key: '4',
         icon: 'text-box-check-outline',
         iconType: 'MaterialCommunityIcons',
-        label: t('options.termOfUse.desc'),
+        label: t('options.termsOfUse.desc'),
         rightIcon: <IconAngleRight />,
         onPress: () =>
           servicesHandler({
             type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
-            title: t('options.termOfUse.webViewTitle'),
-            id: store?.store_data?.[CONFIG_KEY.TERMS_OF_USE_ID]
+            title: t('options.termsOfUse.desc'),
+            id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID)
           }),
         boxIconStyle: [
           styles.boxIconStyle,
