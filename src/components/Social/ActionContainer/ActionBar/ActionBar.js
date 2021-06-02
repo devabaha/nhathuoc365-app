@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const ActionBar = ({isLiked, disableComment, onActionBarPress = () => {}}) => {
+const ActionBar = ({isLiked, disableComment, disableShare, onActionBarPress = () => {}}) => {
   // console.log('render action bar')
   const {t} = useTranslation('social');
 
@@ -34,11 +34,13 @@ const ActionBar = ({isLiked, disableComment, onActionBarPress = () => {}}) => {
           onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.COMMENT)}
         />
       )}
-      <Button
-        title={t('share')}
-        iconName="sharealt"
-        onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.SHARE)}
-      />
+      {!disableShare && (
+        <Button
+          title={t('share')}
+          iconName="sharealt"
+          onPress={() => onActionPress(SOCIAL_BUTTON_TYPES.SHARE)}
+        />
+      )}
     </Container>
   );
 };

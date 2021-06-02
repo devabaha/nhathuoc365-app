@@ -7,10 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.6.4] - 2021-06-03
+## Added
+- Create Post, Group.
+- qrBarCodeInputable in ProductStamps by [lamah.dev@gmail.com].
 ### Changed
-- Change 'About us' pressed from webview to Notify by [kienluu612@gmail.com].
+- Update field get About us, Terms of use ID  by [kienluu612@gmail.com].
+- Change default image of selected payment method in Confirm by [kienluu612@gmail.com].
 ### Fixed
-- Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
+- Wrong params for Filter product News-est and Best-selling mode.
 
 ## [r11.6.3] - 2021-05-24
 ### Added
@@ -19,11 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unsubscribe all listener if unmounted in Account.
 - Add site_id for change avatar api.
 - Unpublished FilterProduct.
+- Change 'About us' pressed from webview to Notify by [kienluu612@gmail.com].
 ### Fixed
 - Not refresh comments when tap bolt.
 - Not correct clip comment if too long in Android.
 - Logic to clip comment if too long.
 - Upload avatar.
+- Disable zoom in webview (NotifyItem, Item) by [lamah.dev@gmail.com].
 
 ## [r11.6.2] - 2021-05-19
 ### Added

@@ -50,7 +50,10 @@
     "qrBarCode": {
       "mainTitle": "Account code",
       "walletAddressTitle": "Wallet address",
-      "scanTitle": "Scan QRCode"
+      "scanTitle": "Scan QRCode",
+      "enterCodeProduct": "Enter code product",
+      "enterCode": "Enter code",
+      "scanCode": "Scan code"
     },
     "transfer": {
       "mainTitle": "Transfer"
@@ -155,6 +158,12 @@
     },
     "salesReport": {
       "mainTitle": "Sales Report"
+    },
+    "social": {
+      "mainTitle": "Social"
+    },
+    "createPost": {
+      "mainTitle": "Create post"
     }
   },
 
@@ -220,5 +229,7 @@
   },
 
   "copy": "Copy",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "addImages": "Add Images",
+  "addImagesDescription": "Tap to select images"
 }

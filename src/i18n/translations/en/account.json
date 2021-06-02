@@ -16,9 +16,9 @@
       "label": "Fanpage {{appName}}",
       "desc": "Facebook Fanpage customer care"
     },
-    "termOfUse": {
-      "label": "About us - Term of use",
-      "desc": "Term of use",
+    "termsOfUse": {
+      "label": "About us",
+      "desc": "Terms of use",
       "webViewTitle": "About us"
     },
     "appInformation": {

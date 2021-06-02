@@ -50,10 +50,6 @@ class Config {
     };
   }
 
-  get aboutUsID(){
-    return 5088;
-  }
-
   get device() {
     return {
       isIphoneX: isIphoneX(),
@@ -168,6 +164,7 @@ class Config {
 
       scanQrCode: 'scanQrCode',
       qrBarCode: 'qrBarCode',
+      qrBarCodeInputable: 'qrBarCodeInputable',
 
       notifies: 'notifies',
       notifiesVertical: 'notifiesVertical',
@@ -234,6 +231,7 @@ class Config {
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
+      modalEditImages: 'modalEditImages',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -275,6 +273,8 @@ class Config {
       salesReport: 'saleReport',
       // Social
       social: 'social',
+      socialGroups: 'socialGroups',
+      socialCreatePost: 'socialCreatePost',
     };
   }
 }

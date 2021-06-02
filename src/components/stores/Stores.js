@@ -32,8 +32,8 @@ const CATE_AUTO_LOAD = 'CateAutoLoad';
 
 const dataSort = [
   {id: 1, name: 'Phổ biến', value: 'ordering', isSelected: false, order: 'asc'},
-  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'asc'},
-  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'asc'},
+  {id: 2, name: 'Bán chạy', value: 'sales', isSelected: false, order: 'desc'},
+  {id: 3, name: 'Mới nhất', value: 'created', isSelected: false, order: 'desc'},
   {
     id: 4,
     name: 'Giá từ thấp đến cao',

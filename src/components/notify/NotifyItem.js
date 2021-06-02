@@ -22,13 +22,13 @@ import {RIGHT_BUTTON_TYPE} from '../RightButtonNavBar/constants';
 import Container from '../Layout/Container';
 import ActionContainer from '../Social/ActionContainer';
 import {
-  getSocialNewsLikeCount,
-  getSocialNewsLikeFlag,
-  getSocialNewsCommentsCount,
-  handleSocialNewsActionBarPress,
+  getSocialLikeCount,
+  getSocialLikeFlag,
+  getSocialCommentsCount,
+  handleSocialActionBarPress,
   calculateLikeCountFriendly,
 } from 'src/helper/social';
-import {SOCIAL_BUTTON_TYPES} from 'src/constants/social';
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {CONFIG_KEY, isConfigActive} from 'src/helper/configKeyHandler';
 
 class NotifyItem extends Component {
@@ -268,16 +268,17 @@ class NotifyItem extends Component {
         {!!item_data && (
           <ActionContainer
             style={styles.actionContainer}
-            isLiked={getSocialNewsLikeFlag(item)}
-            likeCount={getSocialNewsLikeCount(item)}
-            commentsCount={getSocialNewsCommentsCount(item)}
+            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item)}
+            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item)}
+            commentsCount={getSocialCommentsCount(SOCIAL_DATA_TYPES.NEWS, item)}
             disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
             onActionBarPress={(type) =>
-              handleSocialNewsActionBarPress(type, item_data)
+              handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, type, item_data)
             }
             hasInfoExtraBottom={false}
             onPressTotalComments={() =>
-              handleSocialNewsActionBarPress(
+              handleSocialActionBarPress(
+                SOCIAL_DATA_TYPES.NEWS,
                 SOCIAL_BUTTON_TYPES.COMMENT,
                 item,
                 false,

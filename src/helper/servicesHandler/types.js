@@ -94,5 +94,8 @@ export const SERVICES_TYPE = {
   /** GAMIFICATION */
   LOTTERY_GAME: 'lottery_game',
 
+  /** SOCIAL */
   SOCIAL: 'social',
+  SOCIAL_GROUP: 'social_group'
+
 };

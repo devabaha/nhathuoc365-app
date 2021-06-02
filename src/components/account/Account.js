@@ -35,6 +35,7 @@ import BaseAPI from '../../network/API/BaseAPI';
 import Loading from '../Loading';
 import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
+import {getValueFromConfigKey} from 'app-helper/configKeyHandler/configKeyHandler';
 
 class Account extends Component {
   constructor(props) {
@@ -298,6 +299,7 @@ class Account extends Component {
         iconColor: '#ffffff',
         marginTop: !!premium_name,
       },
+
       {
         key: 'gold_member',
         icon: 'clipboard-text-multiple',
@@ -373,9 +375,11 @@ class Account extends Component {
         isHidden:
           !username || !isConfigActive(CONFIG_KEY.DISPLAY_COMMISSION_KEY),
       },
+
       {
         key: 'report_npp',
-        icon: 'clipboard',
+        iconType: 'MaterialCommunityIcons',
+        icon: 'script-text',
         iconColor: '#ffffff',
         size: 22,
         iconSize: 14,
@@ -386,7 +390,7 @@ class Account extends Component {
         boxIconStyle: [
           styles.boxIconStyle,
           {
-            backgroundColor: '#fd6d61',
+            backgroundColor: '#72d4d3',
           },
         ],
         isHidden:
@@ -438,17 +442,17 @@ class Account extends Component {
       {
         key: '3',
         icon: 'handshake-o',
-        label: t('options.termOfUse.label'),
-        desc: t('options.termOfUse.desc'),
+        label: t('options.termsOfUse.label'),
         rightIcon: <IconAngleRight />,
-        onPress: () =>
+        onPress: () => {
           servicesHandler({
             type: SERVICES_TYPE.NEWS_DETAIL,
             news: {
-              title: t('options.termOfUse.webViewTitle'),
-              id: appConfig.aboutUsID,
+              title: t('options.termsOfUse.webViewTitle'),
+              id: getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
             },
-          }),
+          });
+        },
         boxIconStyle: [
           styles.boxIconStyle,
           {
@@ -456,6 +460,30 @@ class Account extends Component {
           },
         ],
         iconColor: '#ffffff',
+        isHidden: !getValueFromConfigKey(CONFIG_KEY.ABOUT_US_ID),
+        // marginTop: true
+      },
+
+      {
+        key: '4',
+        icon: 'text-box-check-outline',
+        iconType: 'MaterialCommunityIcons',
+        label: t('options.termsOfUse.desc'),
+        rightIcon: <IconAngleRight />,
+        onPress: () =>
+          servicesHandler({
+            type: SERVICES_TYPE.NEWS_CATEGORY_VERTICAL,
+            title: t('options.termsOfUse.desc'),
+            id: getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
+          }),
+        boxIconStyle: [
+          styles.boxIconStyle,
+          {
+            backgroundColor: '#62459b',
+          },
+        ],
+        iconColor: '#ffffff',
+        isHidden: !getValueFromConfigKey(CONFIG_KEY.TERMS_OF_USE_ID),
         // marginTop: true
       },
 

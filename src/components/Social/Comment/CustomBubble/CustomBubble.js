@@ -12,6 +12,7 @@ import store from 'app-store';
 import {ActionBtn} from '../BubbleBottom';
 import {IMAGE_COMMENT_HEIGHT} from 'src/constants/social/comments';
 import {getRelativeTime} from 'app-helper/social';
+import SeeMoreBtn from '../../SeeMoreBtn';
 
 const BG_COLOR = '#f0f1f4';
 const BG_HIGHLIGHT_COLOR = '#c9cbd0';
@@ -19,7 +20,6 @@ const BG_HIGHLIGHT_COLOR = '#c9cbd0';
 const CHARACTER_PER_LINE = 40;
 const LINE_HEIGHT = 21;
 const MAX_LINE = 8;
-const MAX_NUM_OF_BREAK_LINE = 5;
 const MAX_LENGTH_TEXT = CHARACTER_PER_LINE * MAX_LINE;
 const MAX_COLLAPSED_HEIGHT =
   LINE_HEIGHT * MAX_LINE + (appConfig.device.isIOS ? LINE_HEIGHT : 10);
@@ -150,8 +150,8 @@ class CustomBubble extends Component {
 
       return (
         currentMessage.length <= MAX_LENGTH_TEXT &&
-        numOfBreakIos <= MAX_NUM_OF_BREAK_LINE &&
-        numOfBreakAndroid <= MAX_NUM_OF_BREAK_LINE
+        numOfBreakIos <= MAX_LINE &&
+        numOfBreakAndroid <= MAX_LINE
       );
     }
 
@@ -240,24 +240,31 @@ class CustomBubble extends Component {
           },
         ]}>
         {!this.state.isShowFullMessage && (
-          <View style={styles.btnShowFullMessageContainer}>
-            <TouchableOpacity
-              hitSlop={HIT_SLOP}
-              activeOpacity={0.9}
-              onPress={this.openFullMessage}
-              style={styles.btnShowFullMessage}>
-              <LinearGradient
-                style={styles.maskShowFullMessage}
-                colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
-                locations={[0.75, 1]}
-                angle={-90}
-                useAngle
-              />
-              <Text style={styles.labelShowFulMessage}>
-                ... {this.props.seeMoreTitle}
-              </Text>
-            </TouchableOpacity>
-          </View>
+          <SeeMoreBtn 
+          title={this.props.seeMoreTitle}
+          lineHeight={LINE_HEIGHT}
+          bgColor={bgColor}
+          onPress={this.openFullMessage}
+          containerStyle={styles.btnShowFullMessageContainer}
+          />
+          // <View style={styles.btnShowFullMessageContainer}>
+          //   <TouchableOpacity
+          //     hitSlop={HIT_SLOP}
+          //     activeOpacity={0.9}
+          //     onPress={this.openFullMessage}
+          //     style={styles.btnShowFullMessage}>
+          //     <LinearGradient
+          //       style={styles.maskShowFullMessage}
+          //       colors={[hexToRgbA(bgColor, 1), hexToRgbA(bgColor, 0)]}
+          //       locations={[0.75, 1]}
+          //       angle={-90}
+          //       useAngle
+          //     />
+          //     <Text style={styles.labelShowFulMessage}>
+          //       ... {this.props.seeMoreTitle}
+          //     </Text>
+          //   </TouchableOpacity>
+          // </View>
         )}
         <MessageText {...props} />
 

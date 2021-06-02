@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     padding: 15,
     flexDirection: 'row',
     paddingTop: Platform.select({
-      android: StatusBar.currentHeight,
+      // android: StatusBar.currentHeight,
       ios: appConfig.device.statusBarHeight * 1.5
     }),
     alignItems: 'center'

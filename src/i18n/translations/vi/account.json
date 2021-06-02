@@ -16,7 +16,7 @@
       "label": "Fanpage {{appName}}",
       "desc": "Facebook Fanpage chăm sóc khách hàng"
     },
-    "termOfUse": {
+    "termsOfUse": {
       "label": "Giới thiệu về chúng tôi",
       "desc": "Điều khoản sử dụng",
       "webViewTitle": "Về chúng tôi"

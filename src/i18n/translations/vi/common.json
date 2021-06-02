@@ -50,7 +50,10 @@
     "qrBarCode": {
       "mainTitle": "Mã tài khoản",
       "walletAddressTitle": "Địa chỉ ví",
-      "scanTitle": "Quét mã QR"
+      "scanTitle": "Quét mã QR",
+      "enterCodeProduct": "Nhập mã sản phẩm",
+      "enterCode": "Nhập mã",
+      "scanCode": "Quét mã"
     },
     "transfer": {
       "mainTitle": "Chuyển khoản"
@@ -147,7 +150,7 @@
       "mainTitle": "Game đoán số"
     },
     "listProductScanned": {
-      "mainTitle": "Sản phẩm đã quét"
+      "mainTitle": "Sản phẩm đã nhận"
     },
     "transaction": {
       "mainTitle": "Giao dịch",
@@ -155,6 +158,12 @@
     },
     "salesReport": {
       "mainTitle": "Báo cáo doanh số giới thiệu"
+    },
+    "social": {
+      "mainTitle": "Cộng đồng"
+    },
+    "createPost": {
+      "mainTitle": "Tạo bài viết"
     }
   },
 
@@ -220,5 +229,7 @@
   },
 
   "copy": "Sao chép",
-  "cancel": "Huỷ"
+  "cancel": "Huỷ",
+  "addImages": "Thêm ảnh",
+  "addImagesDescription": "Chạm để thêm ảnh"
 }

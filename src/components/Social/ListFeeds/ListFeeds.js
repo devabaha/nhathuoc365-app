@@ -34,7 +34,7 @@ const ListFeeds = ({
     //     thumbnailUrl={feeds.image_url}
     //     avatarUrl={feeds.shop_image}
     //     containerStyle={styles.feedsContainer}
-    //     onPostPress={}
+    //     onPressPost={}
     //   />
     // );
   };

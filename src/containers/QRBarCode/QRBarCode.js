@@ -14,6 +14,8 @@ class QRBarCode extends Component {
         from={this.props.from}
         title={this.props.title}
         content={this.props.content}
+        isEnterCode={this.props.isEnterCode}
+        isVisibleBtnEnterCode={this.props.isVisibleBtnEnterCode}
       />
     );
   }
