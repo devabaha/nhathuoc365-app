@@ -12,5 +12,15 @@
   "and": "and",
   "errorPosting": "Error!",
   "posting": "Posting...",
-  "emptyComment": "Nothing here yet!"
+  "post": "Post",
+  "discardPost": "Discard post?",
+  "discardPostDescription": "If you discard now, you'll lose this post.",
+  "emptyComment": "Nothing here yet!",
+  "pleasePost": "What's on your mind?",
+  "noPosts": "There are no posts yet",
+  "discardPostConfirm": "Discard Post",
+  "continuePostConfirm": "Keep Editing",
+  "maxTotalPostImagesWarning": "Too many photos",
+  "maxTotalPostImagesDescription": "You can only upload {{max}} photo(s).\r\nPlease edit to able to post this content!",
+  "maxTotalPostImagesConfirm": "OK"
 }

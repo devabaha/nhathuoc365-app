@@ -149,6 +149,12 @@
     },
     "salesReport": {
       "mainTitle": "Báo cáo doanh số giới thiệu"
+    },
+    "social": {
+      "mainTitle": "Cộng đồng"
+    },
+    "createPost": {
+      "mainTitle": "Tạo bài viết"
     }
   },
 
@@ -214,5 +220,7 @@
   },
 
   "copy": "Sao chép",
-  "cancel": "Huỷ"
+  "cancel": "Huỷ",
+  "addImages": "Thêm ảnh",
+  "addImagesDescription": "Chạm để thêm ảnh"
 }

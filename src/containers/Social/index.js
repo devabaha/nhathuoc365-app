@@ -1,3 +1,5 @@
-import News from './News';
+import {default as SocialNews} from './News';
+import Social from './Social';
+import {default as SocialGroups} from './Groups';
 
-export {News};
+export {SocialNews, Social, SocialGroups};

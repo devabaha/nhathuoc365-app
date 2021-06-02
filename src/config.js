@@ -227,6 +227,7 @@ class Config {
       modalComboLocation: 'modalComboLocation',
       modalWebview: 'modalWebview',
       modalComment: 'modalComment',
+      modalEditImages: 'modalEditImages',
 
       //  Reset password
       resetPassword: 'resetPassword',
@@ -268,6 +269,8 @@ class Config {
       salesReport: 'saleReport',
       // Social
       social: 'social',
+      socialGroups: 'socialGroups',
+      socialCreatePost: 'socialCreatePost',
     };
   }
 }

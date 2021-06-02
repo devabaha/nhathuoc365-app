@@ -149,6 +149,12 @@
     },
     "salesReport": {
       "mainTitle": "Sales Report"
+    },
+    "social": {
+      "mainTitle": "Social"
+    },
+    "createPost": {
+      "mainTitle": "Create post"
     }
   },
 
@@ -214,5 +220,7 @@
   },
 
   "copy": "Copy",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "addImages": "Add Images",
+  "addImagesDescription": "Tap to select images"
 }

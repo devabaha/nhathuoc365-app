@@ -955,8 +955,8 @@ class CommonAPIHandler extends BaseHandler {
     return this.postCancelableAPI(api, data, true);
   }
 
-  invited_revenue(data) {
-    const api = url_for(API.INVITED_REVENUE);
+  user_invited_revenue(data) {
+    const api = url_for(API.USER_INVITED_REVENUE);
     return this.postCancelableAPI(api, data, true);
   }
 
@@ -1124,10 +1124,23 @@ class CommonAPIHandler extends BaseHandler {
   }
 
   /**
+   * get group info
+   *
+   * @param {object} data
+   * @param {number} data.site_id
+   */
+  social_groups_show(id, data) {
+    const api = url_for(API.SOCIAL_GROUPS_SHOW + '/' + id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
    * get list posts
    *
    * @param {object} data
    * @param {number} data.site_id
+   * @param {number} data.limit
+   * @param {number} data.page
    */
   social_posts(data) {
     const api = url_for(API.SOCIAL_POSTS);
@@ -1140,8 +1153,8 @@ class CommonAPIHandler extends BaseHandler {
    * @param {object} data
    * @param {number} data.site_id
    * @param {number} data.group_id
-   * @param {number} data.content
-   * @param {number} data.images
+   * @param {string} data.content
+   * @param {array=} data.images
    */
   social_create_post(data) {
     const api = url_for(API.SOCIAL_CREATE_POST);

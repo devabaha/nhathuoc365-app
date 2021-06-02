@@ -83,6 +83,7 @@ const Pressable = ({
     <RNPressable
       //@ts-ignore
       hitSlop={HIT_SLOP}
+      disabled={!onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       onPress={onPress}

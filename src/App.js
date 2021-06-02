@@ -160,10 +160,10 @@ import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
 import ModalFilter from './components/stores/ModalFilter';
 import FilterComponent from './components/stores/FilterDrawer';
-import {News} from './containers/Social';
-import {ModalComment} from './components/Social';
+import {ModalComment, SocialCreatePost} from './components/Social';
+import {Social, SocialNews, SocialGroups} from './containers/Social';
+import ModalEditImages from './components/ModalEditImages';
 import SalesReport from './containers/SalesReport/SalesReport';
-import Social from './containers/Social/Social';
 
 /**
  * Not allow font scaling
@@ -791,7 +791,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={News}
+                      component={SocialNews}
                     />
                   </Stack>
 
@@ -851,6 +851,36 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.social}_1`}
                     component={Social}
                     {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL GROUPS ================ */}
+                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroups}>
+                  <Scene
+                    key={`${appConfig.routes.socialGroups}_1`}
+                    component={SocialGroups}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL CREATE POST ================ */}
+                <Stack key={appConfig.routes.socialCreatePost}>
+                  <Scene
+                    key={`${appConfig.routes.socialCreatePost}_1`}
+                    component={SocialCreatePost}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL EDIT IMAGES ================ */}
+                <Stack key={appConfig.routes.modalEditImages}>
+                  <Scene
+                    key={`${appConfig.routes.modalEditImages}_1`}
+                    component={ModalEditImages}
+                    {...whiteNavBarConfig}
                     back
                   />
                 </Stack>
@@ -966,7 +996,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.newsTab}_1`}
                     {...navBarConfig}
-                    component={News}
+                    component={SocialNews}
                     back
                   />
                 </Stack>
@@ -1266,7 +1296,7 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    component={News}
+                    component={SocialNews}
                     {...navBarConfig}
                     back
                   />

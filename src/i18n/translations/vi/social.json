@@ -12,5 +12,15 @@
   "and": "và",
   "errorPosting": "Lỗi!",
   "posting": "Đang viết...",
-  "emptyComment": "Chưa có bình luận!"
+  "post": "Đăng",
+  "discardPost": "Thoát chỉnh sửa?",
+  "discardPostDescription": "Nếu bạn thoát, bạn sẽ mất nội dung đang soạn.",
+  "emptyComment": "Chưa có bình luận!",
+  "pleasePost": "Bạn đang nghĩ gì?",
+  "noPosts": "Chưa có bài viết",
+  "discardPostConfirm": "Thoát",
+  "continuePostConfirm": "Tiếp tục sửa",
+  "maxTotalPostImagesWarning": "Quá nhiều ảnh",
+  "maxTotalPostImagesDescription": "Bạn chỉ có thể tải tối đa {{max}} ảnh.\r\nVui lòng chỉnh sửa lại để đăng bài viết này!",
+  "maxTotalPostImagesConfirm": "OK"
 }
