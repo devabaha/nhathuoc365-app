@@ -19,4 +19,8 @@ export const CONFIG_KEY = {
   FILTER_PRICES_KEY: 'filter_prices_key',
 
   DISABLE_SOCIAL_COMMENT: 'disable_social_comment',
+
+  ABOUT_US_ID: 'about_us_id',
+
+  TERMS_OF_USE_ID: 'terms_of_use_id',
 };
