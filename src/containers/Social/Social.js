@@ -167,19 +167,21 @@ const Social = ({title, siteId = store.store_data?.id}) => {
     return isLoading ? (
       <ListGroupThumbnailSkeleton />
     ) : (
-      <View>
-        <FlatList
-          style={styles.container}
-          contentContainerStyle={styles.contentContainer}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          data={thumbnailGroups}
-          renderItem={renderGroup}
-          keyExtractor={(item, index) =>
-            item?.id ? String(item.id) : index.toString()
-          }
-        />
-      </View>
+      !!thumbnailGroups?.length && (
+        <View>
+          <FlatList
+            style={styles.container}
+            contentContainerStyle={styles.contentContainer}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            data={thumbnailGroups}
+            renderItem={renderGroup}
+            keyExtractor={(item, index) =>
+              item?.id ? String(item.id) : index.toString()
+            }
+          />
+        </View>
+      )
     );
   };
 
