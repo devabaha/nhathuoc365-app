@@ -96,9 +96,7 @@ const CreatePost = ({
   const containerHeight = useRef(0);
   const canBack = useRef(false);
 
-  const [contentText, setContentText] = useState(
-    'Cả nhà cùng tìm hiểu thông tin cơ bản về lịch sử ngày Phụ nữ Việt Nam 20/10 nhé!\r\rVào ngày 20 tháng 10 năm 1930, Hội Phụ nữ phản đế Việt Nam (nay đổi tên là Hội Liên hiệp Phụ nữ Việt Nam) chính thức được thành lập, để đánh dấu sự kiện này, Đảng Cộng sản Việt Nam đã quyết định chọn ngày 20 tháng 10 hằng năm làm ngày truyền thống của tổ chức này, đồng thời cũng xem đây là ngày kỷ niệm và tôn vinh phụ nữ Việt Nam, lấy tên là "Ngày Phụ nữ Việt Nam".\r\rTrước năm 1975 tại miền Nam Việt Nam, dưới chính thể Việt Nam Cộng Hòa, Ngày Phụ nữ Việt Nam cũng là ngày tưởng niệm Hai bà Trưng vào ngày 6 tháng 2 âm lịch.\r\rCả nhà cùng tìm hiểu thông tin cơ bản về lịch sử ngày Phụ nữ Việt Nam 20/10 nhé!\r\rVào ngày 20 tháng 10 năm 1930, Hội Phụ nữ phản đế Việt Nam (nay đổi tên là Hội Liên hiệp Phụ nữ Việt Nam) chính thức được thành lập, để đánh dấu sự kiện này, Đảng Cộng sản Việt Nam đã quyết định chọn ngày 20 tháng 10 hằng năm làm ngày truyền thống của tổ chức này, đồng thời cũng xem đây là ngày kỷ niệm và tôn vinh phụ nữ Việt Nam, lấy tên là "Ngày Phụ nữ Việt Nam".\r\rTrước năm 1975 tại miền Nam Việt Nam, dưới chính thể Việt Nam Cộng Hòa, Ngày Phụ nữ Việt Nam cũng là ngày tưởng niệm Hai bà Trưng vào ngày 6 tháng 2 âm lịch.',
-  );
+  const [contentText, setContentText] = useState('');
   const [images, setImages] = useState([]);
   const [isOpenImagePicker, setOpenImagePicker] = useState(
     isOpenImagePickerProp,
