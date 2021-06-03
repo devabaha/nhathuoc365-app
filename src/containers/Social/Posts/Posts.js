@@ -24,6 +24,9 @@ import {ActionBarText} from 'src/components/Social/ListFeeds/Feeds/Feeds';
 import PostsSkeleton from './PostsSkeleton';
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    flexGrow: 1
+  },
   loadMore: {
     position: 'relative',
     paddingVertical: 10,
@@ -222,11 +225,14 @@ const Posts = ({
   }, []);
 
   const handlePostingComplete = () => {
-    if (store.socialPostingData.progress === 100 || store.socialPostingData.error) {
+    if (
+      store.socialPostingData.progress === 100 ||
+      store.socialPostingData.error
+    ) {
       setTimeout(() => {
-      store.setSocialPostingData();
-      getPosts(1, page.current * limit.current, true);
-    },500)
+        store.setSocialPostingData();
+        getPosts(1, page.current * limit.current, true);
+      }, 500);
     }
   };
 
@@ -305,6 +311,7 @@ const Posts = ({
 
   return (
     <FlatList
+      contentContainerStyle={styles.contentContainer}
       data={posts}
       renderItem={renderPost}
       keyExtractor={(item, index) =>
