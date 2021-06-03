@@ -12,7 +12,7 @@ import {
   getSocialLikeFlag,
   handleSocialActionBarPress,
 } from 'app-helper/social';
-import {SOCIAL_DATA_TYPES} from 'src/constants/social';
+import {SOCIAL_BUTTON_TYPES, SOCIAL_DATA_TYPES} from 'src/constants/social';
 import {Observer} from 'mobx-react';
 import NoResult from 'src/components/NoResult';
 import {servicesHandler, SERVICES_TYPE} from 'app-helper/servicesHandler';
