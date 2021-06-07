@@ -269,8 +269,10 @@ class Config {
       salesReport: 'saleReport',
       // Social
       social: 'social',
-      socialGroups: 'socialGroups',
+      socialGroup: 'socialGroup',
       socialCreatePost: 'socialCreatePost',
+
+      webview: 'webview'
     };
   }
 }

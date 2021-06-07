@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {StatusBar, StyleSheet, TouchableOpacity} from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -67,6 +67,11 @@ class ModalComment extends Component {
         ),
       }),
     );
+  }
+  
+
+  componentDidUpdate(prevProps, prevState) {
+    setTimeout(() => StatusBar.setBarStyle('dark-content', true), 800);
   }
 
   handleReload = () => {
