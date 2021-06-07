@@ -5,7 +5,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import appConfig from 'app-config';
 import CameraRoll from '@react-native-community/cameraroll';
 import {handleDownloadImage} from './handleDownloadImage';
-let message = 'Saveddsadadadasdasdasdsads dsad';
+const SAVE_IMAGE_MESSAGE = 'Saved';
 
 let downloaded = 0;
 const handleSaveImage = (data) => {
@@ -77,60 +77,48 @@ const handleSaveSingleImage = async (dataURL, all = false) => {
       : null);
     if (data && !all) {
       flashShowMessage({
-        message: 'Saved',
+        message: '',
         position: 'center',
-        // style: {
-        //   backgroundColor: '#252325',
-        //   opacity: 0.8,
-        //   width: appConfig.device.width / 2.5,
-        //   height: appConfig.device.width / 2.5,
-        //   borderRadius: 20,
-        // },
-        // autoHide: false,
+        titleStyle: {
+          height: 0,
+        },
+        style: {
+          backgroundColor: '#252325',
+          opacity: 0.95,
+          width: appConfig.device.width / 2.4,
+          height: appConfig.device.width / 2.4,
+          borderRadius: 20,
+          alignItems: 'center',
+          justifyContent: 'center',
+        },
+        autoHide: false,
         renderCustomContent: () => {
           return (
-            <View>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: appConfig.device.isAndroid ? -2 : 0,
+                paddingVertical: 10,
+              }}>
               <Icon
-                style={{
-                  position: 'absolute',
-                  left: appConfig.device.width / 10,
-                  top: appConfig.device.width / 12,
-                }}
                 name="check"
                 size={appConfig.device.width / 5}
-                color="#fff"
+                color="#c1c1c2"
               />
+              <Text
+                style={{
+                  color: '#c1c1c2',
+                  fontSize: 20,
+                  fontWeight: '600',
+                  paddingVertical: 5,
+                }}>
+                {message}
+              </Text>
             </View>
-            //     <View
-            //       style={{
-            //         // color: appConfig.colors.white,
-            //         // fontSize: appConfig.device.width / 25,
-            //         // fontWeight: 'bold',
-            //         position: 'absolute',
-            //         backgroundColor: '#fff',
-            //         bottom: -appConfig.device.width / 30,
-            //         left: -appConfig.device.width / 18 + 3,
-            //         width: appConfig.device.width / 2.5,
-            //         height: appConfig.device.width / 10,
-            //         alignItems: 'center',
-            //         justifyContent: 'center',
-            //       }}>
-            //       <Text>{message}</Text>
-            //     </View>
           );
         },
-        // renderFlashMessageIcon: () => (
-        //   <Icon
-        //     style={{
-        //       position: 'absolute',
-        //       left: appConfig.device.width / 10,
-        //       top: appConfig.device.width / 12,
-        //     }}
-        //     name="check"
-        //     size={appConfig.device.width / 5}
-        //     color="#fff"
-        //   />
-        // ),
       });
     }
   } catch (error) {
