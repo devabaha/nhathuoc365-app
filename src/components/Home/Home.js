@@ -184,7 +184,7 @@ class Home extends Component {
   }
 
   get isVisibleLoyaltyBox() {
-    return !isActivePackageOptionConfig(
+    return isActivePackageOptionConfig(
       PACKAGE_OPTIONS_TYPE.DISABLE_PACKAGE_OPTION_LOYALTY_BOX,
     );
   }
