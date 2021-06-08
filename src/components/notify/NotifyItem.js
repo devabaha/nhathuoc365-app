@@ -268,9 +268,9 @@ class NotifyItem extends Component {
         {!!item_data && (
           <ActionContainer
             style={styles.actionContainer}
-            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item)}
-            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item)}
-            commentsCount={getSocialCommentsCount(SOCIAL_DATA_TYPES.NEWS, item)}
+            isLiked={getSocialLikeFlag(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            likeCount={getSocialLikeCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
+            commentsCount={getSocialCommentsCount(SOCIAL_DATA_TYPES.NEWS, item_data)}
             disableComment={isConfigActive(CONFIG_KEY.DISABLE_SOCIAL_COMMENT)}
             onActionBarPress={(type) =>
               handleSocialActionBarPress(SOCIAL_DATA_TYPES.NEWS, type, item_data)
@@ -280,7 +280,7 @@ class NotifyItem extends Component {
               handleSocialActionBarPress(
                 SOCIAL_DATA_TYPES.NEWS,
                 SOCIAL_BUTTON_TYPES.COMMENT,
-                item,
+                item_data,
                 false,
               )
             }

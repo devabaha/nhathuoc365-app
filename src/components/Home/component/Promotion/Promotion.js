@@ -47,10 +47,6 @@ class Promotion extends Component {
     this.paginationLeft = new Animated.Value(0);
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return false;
-  }
-
   renderItem = (promotion, index, dimensionStyle) => {
     return (
       <View

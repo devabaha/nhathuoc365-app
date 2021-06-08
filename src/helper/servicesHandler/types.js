@@ -12,6 +12,7 @@ export const SERVICES_TYPE = {
 
   /** EXTERNAL LINK */
   EXTERNAL_LINK: 'external_link',
+  WEBVIEW: 'webview',
 
   /** QRBARCODE */
   ACCUMULATE_POINTS: 'ACCUMULATE_POINTS_TYPE',

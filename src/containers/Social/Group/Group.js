@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
+const Group = ({id, groupName, siteId = store.store_data?.id}) => {
   const isMounted = useIsMounted();
   const {t} = useTranslation();
 
@@ -232,4 +232,4 @@ const Groups = ({id, groupName, siteId = store.store_data?.id}) => {
   );
 };
 
-export default React.memo(Groups);
+export default React.memo(Group);

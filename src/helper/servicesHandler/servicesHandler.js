@@ -71,6 +71,12 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         Alert.alert(t('common:link.error.message'));
       });
       break;
+    case SERVICES_TYPE.WEBVIEW:
+      Actions.push(appConfig.routes.webview, {
+        title: service.title,
+        url: service.url
+      })
+      break;
 
     /** QRBARCODE */
     case SERVICES_TYPE.ACCUMULATE_POINTS:
@@ -214,7 +220,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             store.setStoreData(response.data);
-            if (response.data.config_menu_categories) {
+            if (response.data.config_menu_categories && service.categoryId === undefined) {
               Actions.push(appConfig.routes.multiLevelCategory, {
                 title: response.data.name,
                 siteId: service.siteId,
@@ -383,7 +389,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
       break;
     /** Social Group */
     case SERVICES_TYPE.SOCIAL_GROUP:
-      Actions.push(appConfig.routes.socialGroups, {
+      Actions.push(appConfig.routes.socialGroup, {
         id: service.id,
         groupName: service.name,
       });

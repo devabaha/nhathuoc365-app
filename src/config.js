@@ -12,7 +12,7 @@ class Config {
   }
 
   get tagVersion() {
-    return 'r11.6.4';
+    return 'r11.6.5';
   }
 
   get appName() {
@@ -273,8 +273,10 @@ class Config {
       salesReport: 'saleReport',
       // Social
       social: 'social',
-      socialGroups: 'socialGroups',
+      socialGroup: 'socialGroup',
       socialCreatePost: 'socialCreatePost',
+
+      webview: 'webview'
     };
   }
 }

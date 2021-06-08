@@ -7,8 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [r11.6.5] - 2021-06-08
+### Added
+- Webview for servicesHandler.
+### Changed
+- Refactor Payment method in Confirm.
+- Product has only 1 attr will be auto selected.
+### Fixed
+- Status bar light-content in Modal Comment being pushed from NotifyItem (temporary fixing, don't know the exactly cause).
+- NotifyItem request wrong info when press total comments.
+
 ## [r11.6.4] - 2021-06-03
-## Added
+### Added
 - Create Post, Group.
 - qrBarCodeInputable in ProductStamps by [lamah.dev@gmail.com].
 ### Changed

@@ -99,7 +99,15 @@ class ItemAttribute extends PureComponent {
                 response.data.attrs,
                 response.data.models,
               );
-              this.setState({viewData, selectedAttrs});
+              this.setState({viewData, selectedAttrs}, () => {
+                const hasOnlyOneOption =
+                  Object.keys(response.data.attrs)?.length === 1 &&
+                  Object.values(response.data.attrs)[0]?.length === 1;
+
+                if (hasOnlyOneOption && this.state.viewData?.[0]?.data?.[0]) {
+                  this.handlePressProductAttr(this.state.viewData[0].data[0]);
+                }
+              });
             }
           } else {
             if (this.isDropShip) {
@@ -357,8 +365,9 @@ class ItemAttribute extends PureComponent {
       this.state.selectedAttrs,
     );
     const disabled =
-      (this.isDropShip && (this.state.selectedModel &&
-        this.state.selectedModel.price_in_number > this.state.dropShipPrice)) ||
+      (this.isDropShip &&
+        this.state.selectedModel &&
+        this.state.selectedModel.price_in_number > this.state.dropShipPrice) ||
       (this.hasAttrs && numberSelectedAttrs === 0) ||
       Object.keys(this.state.viewData).length !== numberSelectedAttrs;
 

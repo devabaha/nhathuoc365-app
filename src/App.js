@@ -166,7 +166,7 @@ import Transaction from './components/payment/Transaction';
 import ModalFilter from './components/stores/ModalFilter';
 import FilterComponent from './components/stores/FilterDrawer';
 import {ModalComment, SocialCreatePost} from './components/Social';
-import {Social, SocialNews, SocialGroups} from './containers/Social';
+import {Social, SocialNews, SocialGroup} from './containers/Social';
 import ModalEditImages from './components/ModalEditImages';
 import SalesReport from './containers/SalesReport/SalesReport';
 
@@ -863,10 +863,10 @@ class RootRouter extends Component {
                 </Stack>
 
                 {/* ================ SOCIAL GROUPS ================ */}
-                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroups}>
+                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroup}>
                   <Scene
-                    key={`${appConfig.routes.socialGroups}_1`}
-                    component={SocialGroups}
+                    key={`${appConfig.routes.socialGroup}_1`}
+                    component={SocialGroup}
                     {...navBarConfig}
                     back
                   />
@@ -1092,6 +1092,12 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.deepLinkOrdersTab}_1`}
                     title="Đơn hàng"
                     component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
@@ -1415,7 +1421,7 @@ class RootRouter extends Component {
                   <Scene key="chat_1" component={Chat} {...navBarConfig} back />
                 </Stack>
 
-                <Stack key="webview">
+                <Stack key={appConfig.routes.webview}>
                   <Scene
                     key="webview_1"
                     component={WebView}
