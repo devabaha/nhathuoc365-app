@@ -7,12 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- DISABLE_PACKAGE_OPTION_LOYALTY_BOX in package options by [lamah.dev@gmail.com].
-
 ## [r11.6.5] - 2021-06-08
 ### Added
 - Webview for servicesHandler.
+- DISABLE_PACKAGE_OPTION_LOYALTY_BOX in package options by [lamah.dev@gmail.com].
 ### Changed
 - Refactor Payment method in Confirm.
 - Product has only 1 attr will be auto selected.
