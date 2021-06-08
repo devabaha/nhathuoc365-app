@@ -6,7 +6,7 @@ import {
   StyleSheet,
   RefreshControl,
   Platform,
-  StatusBar
+  StatusBar,
   // ScrollView,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
@@ -23,11 +23,15 @@ import appConfig from 'app-config';
 import ListProductSkeleton from './component/ListProducts/ListProductSkeleton';
 import HomeCardListSkeleton from './component/HomeCardList/HomeCardListSkeleton';
 import ListServiceSkeleton from './component/ListServices/ListServiceSkeleton';
+import {
+  isActivePackageOptionConfig,
+  PACKAGE_OPTIONS_TYPE,
+} from '../../helper/packageOptionsHandler';
 
 const defaultListener = () => {};
 const STATUS_BAR_STYLE = {
   LIGHT: 'light-content',
-  DARK: 'dark-content'
+  DARK: 'dark-content',
 };
 const {
   set,
@@ -38,7 +42,7 @@ const {
   Value,
   block,
   call,
-  event
+  event,
 } = Animated;
 const EXTRAPOLATE_RANGE = 100;
 
@@ -118,15 +122,15 @@ class Home extends Component {
     animatedHeaderValue: new Value(0),
     statusBarStyle: STATUS_BAR_STYLE.LIGHT,
     showShadow: false,
-    headerHeight: undefined
+    headerHeight: undefined,
   };
 
-  handleAnimatedScroll = ({ value }) => {
+  handleAnimatedScroll = ({value}) => {
     value = Math.round(value);
     if (value <= 0 && this.state.showShadow) {
       this.setState({
         showShadow: false,
-        statusBarStyle: STATUS_BAR_STYLE.LIGHT
+        statusBarStyle: STATUS_BAR_STYLE.LIGHT,
       });
       return;
     }
@@ -134,7 +138,7 @@ class Home extends Component {
     if (value >= EXTRAPOLATE_RANGE * 0.7 && !this.state.showShadow) {
       this.setState({
         showShadow: true,
-        statusBarStyle: STATUS_BAR_STYLE.DARK
+        statusBarStyle: STATUS_BAR_STYLE.DARK,
       });
     }
   };
@@ -179,18 +183,24 @@ class Home extends Component {
     );
   }
 
+  get isVisibleLoyaltyBox() {
+    return !isActivePackageOptionConfig(
+      PACKAGE_OPTIONS_TYPE.DISABLE_PACKAGE_OPTION_LOYALTY_BOX,
+    );
+  }
+
   handleHeaderLayout(e) {
-    const { height } = e.nativeEvent.layout;
+    const {height} = e.nativeEvent.layout;
     if (height !== this.state.headerHeight) {
       this.setState({
-        headerHeight: height
+        headerHeight: height,
       });
     }
   }
 
   showBgrStatusIfOffsetTop = showBgrStatusIfOffsetTop(
     `${appConfig.routes.homeTab}_1`,
-    EXTRAPOLATE_RANGE / 2
+    EXTRAPOLATE_RANGE / 2,
   );
 
   render() {
@@ -205,18 +215,18 @@ class Home extends Component {
       opacity: interpolate(this.state.animatedHeaderValue, {
         inputRange: [-EXTRAPOLATE_RANGE / 2, 0],
         outputRange: [0, 1],
-        extrapolate: Extrapolate.CLAMP
+        extrapolate: Extrapolate.CLAMP,
       }),
       ...elevationShadowStyle(3),
       elevation: interpolate(this.state.animatedHeaderValue, {
         inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
         outputRange: [0, 0, 5],
-        extrapolate: Extrapolate.CLAMP
+        extrapolate: Extrapolate.CLAMP,
       }),
       shadowOpacity: interpolate(this.state.animatedHeaderValue, {
         inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
         outputRange: [0, 0, 0.15],
-        extrapolate: Extrapolate.CLAMP
+        extrapolate: Extrapolate.CLAMP,
       }),
       backgroundColor: color(
         255,
@@ -225,9 +235,9 @@ class Home extends Component {
         interpolate(this.state.animatedHeaderValue, {
           inputRange: [0, EXTRAPOLATE_RANGE / 2, EXTRAPOLATE_RANGE],
           outputRange: [0, 0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
     };
 
     // if (this.state.showShadow) {
@@ -241,8 +251,8 @@ class Home extends Component {
       opacity: interpolate(this.state.animatedHeaderValue, {
         inputRange: [0, EXTRAPOLATE_RANGE],
         outputRange: [0, 1],
-        extrapolate: Extrapolate.CLAMP
-      })
+        extrapolate: Extrapolate.CLAMP,
+      }),
     };
 
     const [r, g, b] = hexToRgbA(appConfig.colors.primary)
@@ -258,9 +268,9 @@ class Home extends Component {
         interpolate(this.state.animatedHeaderValue, {
           inputRange: [0, EXTRAPOLATE_RANGE],
           outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
     };
 
     const searchWrapperStyle = {
@@ -271,9 +281,9 @@ class Home extends Component {
         interpolate(this.state.animatedHeaderValue, {
           inputRange: [0, EXTRAPOLATE_RANGE],
           outputRange: [0, 1],
-          extrapolate: Extrapolate.CLAMP
-        })
-      )
+          extrapolate: Extrapolate.CLAMP,
+        }),
+      ),
     };
 
     return (
@@ -295,8 +305,7 @@ class Home extends Component {
 
         <View
           onLayout={this.handleHeaderLayout.bind(this)}
-          style={styles.headerContainerStyle}
-        >
+          style={styles.headerContainerStyle}>
           <Header
             wrapperStyle={wrapperAnimatedStyle}
             maskSearchWrapperStyle={searchWrapperStyle}
@@ -317,25 +326,25 @@ class Home extends Component {
               {
                 nativeEvent: {
                   contentOffset: {
-                    y: y =>
+                    y: (y) =>
                       block([
                         set(this.state.animatedHeaderValue, y),
                         call([y], ([offsetY]) => {
                           this.showBgrStatusIfOffsetTop({
-                            nativeEvent: { contentOffset: { y: offsetY } }
+                            nativeEvent: {contentOffset: {y: offsetY}},
                           });
-                          this.handleAnimatedScroll({ value: offsetY });
-                        })
-                      ])
-                  }
-                }
-              }
+                          this.handleAnimatedScroll({value: offsetY});
+                        }),
+                      ]),
+                  },
+                },
+              },
             ],
             {
-              useNativeDriver: true
-            }
+              useNativeDriver: true,
+            },
           )}
-          contentContainerStyle={{ paddingTop: this.state.headerHeight || 80 }}
+          contentContainerStyle={{paddingTop: this.state.headerHeight || 80}}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={
@@ -345,8 +354,7 @@ class Home extends Component {
               onRefresh={this.props.onPullToRefresh}
               tintColor={appConfig.colors.white}
             />
-          }
-        >
+          }>
           {/* <Header
             name={name}
             onPressNoti={this.props.onPressNoti}
@@ -354,24 +362,33 @@ class Home extends Component {
           /> */}
 
           <View style={styles.primaryActionsWrapper}>
-            <PrimaryActions
-              walletName={
-                // this.props.userInfo && this.props.userInfo.default_wallet
-                //   ? this.props.userInfo.default_wallet.name
-                //   : ''
-                name
-              }
-              surplus={
-                this.props.userInfo && this.props.userInfo.default_wallet
-                  ? this.props.userInfo.default_wallet.balance_view
-                  : ''
-              }
-              primaryActions={
-                this.props.showPrimaryActions ? this.props.primaryActions : null
-              }
-              onPressItem={this.props.onActionPress}
-              onSurplusNext={this.props.onSurplusNext}
-            />
+            {this.isVisibleLoyaltyBox ? (
+              <PrimaryActions
+                walletName={
+                  // this.props.userInfo && this.props.userInfo.default_wallet
+                  //   ? this.props.userInfo.default_wallet.name
+                  //   : ''
+                  name
+                }
+                surplus={
+                  this.props.userInfo && this.props.userInfo.default_wallet
+                    ? this.props.userInfo.default_wallet.balance_view
+                    : ''
+                }
+                primaryActions={
+                  this.props.showPrimaryActions
+                    ? this.props.primaryActions
+                    : null
+                }
+                onPressItem={this.props.onActionPress}
+                onSurplusNext={this.props.onSurplusNext}
+              />
+            ) : this.hasPromotion && (
+              <Promotion
+                data={this.props.promotions}
+                onPress={this.props.onPromotionPressed}
+              />
+            )}
           </View>
 
           {this.hasServices ? (
@@ -389,7 +406,7 @@ class Home extends Component {
           ) : null}
 
           <View style={styles.contentWrapper}>
-            {this.hasPromotion && (
+            {this.isVisibleLoyaltyBox && this.hasPromotion && (
               <Promotion
                 data={this.props.promotions}
                 onPress={this.props.onPromotionPressed}
@@ -517,7 +534,7 @@ const styles = StyleSheet.create({
     backgroundColor: appConfig.colors.primary,
     width: appConfig.device.width * 3,
     height: appConfig.device.width * 3,
-    borderRadius: appConfig.device.width * 3 * 0.5,
+    // borderRadius: appConfig.device.width * 3 * 0.5,
     position: 'absolute',
     top: -(appConfig.device.width * 3) + appConfig.device.width / 3,
     left: appConfig.device.width / 2 - appConfig.device.width * 1.5,
@@ -536,14 +553,14 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   primaryActionsWrapper: {
-    paddingBottom: 8
+    paddingBottom: 8,
   },
   headerContainerStyle: {
     position: 'absolute',
     top: 0,
     width: '100%',
-    zIndex: 9999
-  }
+    zIndex: 9999,
+  },
 });
 
 export default withTranslation(['home', 'common'])(Home);
