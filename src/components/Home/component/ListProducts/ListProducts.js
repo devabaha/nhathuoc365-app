@@ -127,14 +127,13 @@ class ListProducts extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    marginVertical: 15,
   },
   headingWrapper: {
     flexDirection: 'row',
-    paddingTop: 15,
-    paddingBottom: 5,
     paddingHorizontal: 15,
     justifyContent: 'space-between',
+    marginBottom: 5
   },
   heading: {
     color: '#333',
@@ -150,10 +149,10 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: 5,
+    paddingHorizontal: 10
   },
   itemVerticalWrapper: {
-    width: appConfig.device.width / 2 - 5,
+    width: appConfig.device.width / 2 - 10,
   },
   itemVerticalContainer: {
     width: undefined,

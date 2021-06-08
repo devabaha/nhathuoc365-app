@@ -120,7 +120,7 @@ class Config {
         [CART_PAYMENT_STATUS.CANCEL]: '#ef476f',
       },
       typography: {
-        text: '#2B2B2B'
+        text: '#2B2B2B',
       },
       border: '#E5E5E5',
       icon: '#9F9F9F',
@@ -135,24 +135,35 @@ class Config {
     };
   }
 
-  get styles(){
+  get styles() {
     return {
       typography: {
         heading1: {
           fontSize: 20,
           color: this.colors.typography.text,
-          fontWeight: '500'
+          // fontWeight: '500',
         },
         title: {
           fontSize: 14,
-          color: this.colors.typography.text
+          color: this.colors.typography.text,
         },
         text: {
           fontSize: 12,
-          color: this.colors.typography.text
-        }
-      }
-    }
+          color: this.colors.typography.text,
+        },
+      },
+      shadow: {
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2.25,
+        },
+        shadowOpacity: 0.161,
+        shadowRadius: 3,
+
+        elevation: 5,
+      },
+    };
   }
 
   get routes() {

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import Button from 'react-native-button';
 import {View, Text, StyleSheet, FlatList} from 'react-native';
 
+import appConfig from 'app-config';
 class HomeCardList extends Component {
   render() {
     const props = this.props;
@@ -55,8 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    color: '#333',
-    fontSize: 20,
+    ...appConfig.styles.typography.heading1,
   },
   viewAll: {
     color: '#0084ff',

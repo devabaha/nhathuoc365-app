@@ -43,11 +43,7 @@ class PrimaryActions extends Component {
 
     return (
       <View style={styles.container}>
-        <View
-          style={[
-            styles.actionsWrapper,
-            actionsWrapper,
-          ]}>
+        <View style={[styles.actionsWrapper, actionsWrapper]}>
           <View style={styles.mainContentWrapper}>
             {this.isActiveQRScan ? (
               <View style={styles.pointRechargeBtnContainer}>
@@ -69,9 +65,9 @@ class PrimaryActions extends Component {
                   <View style={styles.pointRechargeBtnSeparator} />
                 </View>
               </View>
-            ) : (null
-              // <View style={{height: 50}} />
-            )}
+            ) : null
+            // <View style={{height: 50}} />
+            }
 
             <Button
               containerStyle={styles.surplusContainer}
@@ -146,15 +142,12 @@ let styles = StyleSheet.create({
     width: appConfig.device.width - 30,
     backgroundColor: '#fff',
     borderRadius: 8,
-    // borderWidth: 0.5,
-    // borderColor: '#ebebeb',
-    overflow: 'hidden',
-    // height: 140,
+    ...appConfig.styles.shadow,
   },
   mainContentWrapper: {
     flexDirection: 'row',
     paddingVertical: 7.5,
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
   },
   walletInfoWrapper: {
     flexDirection: 'row',
@@ -173,7 +166,7 @@ let styles = StyleSheet.create({
   },
   pointRechargeBtnSeparatorContainer: {
     // paddingVertical: 7.5,
-    paddingHorizontal: 12
+    paddingHorizontal: 12,
   },
   pointRechargeBtnSeparator: {
     flex: 1,
@@ -184,7 +177,7 @@ let styles = StyleSheet.create({
     width: '100%',
     flex: 1,
     justifyContent: 'center',
-    paddingVertical: 2
+    paddingVertical: 2,
   },
   walletAction: {
     flex: 1,

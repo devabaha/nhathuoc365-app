@@ -218,11 +218,9 @@ class Promotion extends Component {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    marginVertical: 10,
   },
   slideContainerStyle: {
     position: 'relative',
-    marginTop: 8,
     overflow: 'hidden',
     borderRadius: 8,
   },

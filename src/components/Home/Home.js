@@ -279,9 +279,6 @@ class Home extends Component {
         ? this.props.userInfo.name
         : t('welcome.defaultUserName')
       : t('welcome.defaultUserName');
-    const homeContentWrapper = this.homeThemes(
-      'styles.home.home_content_wrapper',
-    );
 
     return (
       <View style={styles.container}>
@@ -358,7 +355,7 @@ class Home extends Component {
             goToSearch={this.props.goToSearch}
           /> */}
 
-          <View style={styles.primaryActionsWrapper}>
+          <View style={styles.block}>
             <PrimaryActions
               walletName={
                 // this.props.userInfo && this.props.userInfo.default_wallet
@@ -388,122 +385,125 @@ class Home extends Component {
               type={this.props.listServiceType}
               itemsPerRow={this.props.listServiceItemsPerRow}
               onItemPress={this.props.onPressService}
+              containerStyle={styles.block}
             />
           ) : this.props.apiFetching ? (
             <ListServiceSkeleton />
           ) : null}
 
-          <View style={[styles.contentWrapper, homeContentWrapper]}>
-            {this.hasPromotion && (
-              <Promotion
-                data={this.props.promotions}
-                onPress={this.props.onPromotionPressed}
-              />
-            )}
-            {this.hasProduct_groups ? (
-              this.props.product_groups.map((productGroup, index) => {
-                let {id, products, title, display_type} = productGroup;
-                return (
-                  <ListProducts
-                    key={id}
-                    type={display_type}
-                    data={products}
-                    title={title}
-                    onPressProduct={this.props.onPressProduct}
-                    onShowAll={() =>
-                      this.props.onShowAllGroupProduct(productGroup)
-                    }
-                  />
-                );
-              })
-            ) : this.props.apiFetching ? (
-              <ListProductSkeleton />
-            ) : null}
-            {this.hasSites && (
-              <HomeCardList
-                onShowAll={this.props.onShowAllSites}
-                data={this.props.sites}
-                title={
-                  this.props.title_sites
-                    ? this.props.title_sites
-                    : t('sections.favoriteStore.title')
-                }>
-                {({item, index}) => (
-                  <HomeCardItem
-                    selfRequest={(callBack) =>
-                      this.props.onPressSiteItem(item, callBack)
-                    }
-                    title={item.title}
-                    imageUrl={item.image_url}
-                    onPress={() => this.props.onPressSiteItem(item)}
-                    last={this.props.sites.length - 1 === index}
-                  />
-                )}
-              </HomeCardList>
-            )}
-            {this.hasCampaigns && (
-              <HomeCardList
-                onShowAll={this.props.onShowAllCampaigns}
-                data={this.props.campaigns}
-                title={t('sections.voucher.title')}>
-                {({item, index}) => {
-                  return (
-                    <HomeCardItem
-                      title={item.title}
-                      isShowSubTitle={item.point !== '0'}
-                      specialSubTitle={item.point + ' '}
-                      subTitle={item.point_currency}
-                      imageUrl={item.image_url}
-                      onPress={() => this.props.onPressCampaignItem(item)}
-                      last={this.props.campaigns.length - 1 === index}
-                    />
-                  );
-                }}
-              </HomeCardList>
-            )}
+          {this.hasPromotion && (
+            <Promotion
+              containerStyle={styles.promotionBlock}
+              data={this.props.promotions}
+              onPress={this.props.onPromotionPressed}
+            />
+          )}
 
-            {this.hasNewsGroups ? (
-              this.props.news_categories.map((newsGroup, index) => {
-                let {id, news, title} = newsGroup;
+          {this.hasProduct_groups ? (
+            this.props.product_groups.map((productGroup, index) => {
+              let {id, products, title, display_type} = productGroup;
+              return (
+                <ListProducts
+                  key={id}
+                  type={display_type}
+                  data={products}
+                  title={title}
+                  onPressProduct={this.props.onPressProduct}
+                  onShowAll={() =>
+                    this.props.onShowAllGroupProduct(productGroup)
+                  }
+                />
+              );
+            })
+          ) : this.props.apiFetching ? (
+            <ListProductSkeleton />
+          ) : null}
+
+          {this.hasSites && (
+            <HomeCardList
+              onShowAll={this.props.onShowAllSites}
+              data={this.props.sites}
+              title={
+                this.props.title_sites
+                  ? this.props.title_sites
+                  : t('sections.favoriteStore.title')
+              }>
+              {({item, index}) => (
+                <HomeCardItem
+                  selfRequest={(callBack) =>
+                    this.props.onPressSiteItem(item, callBack)
+                  }
+                  title={item.title}
+                  imageUrl={item.image_url}
+                  onPress={() => this.props.onPressSiteItem(item)}
+                  last={this.props.sites.length - 1 === index}
+                />
+              )}
+            </HomeCardList>
+          )}
+          
+          {this.hasCampaigns && (
+            <HomeCardList
+              onShowAll={this.props.onShowAllCampaigns}
+              data={this.props.campaigns}
+              title={t('sections.voucher.title')}>
+              {({item, index}) => {
                 return (
-                  <HomeCardList
-                    key={id}
-                    onShowAll={() => this.props.onShowAllNews(title, id)}
-                    data={news}
-                    title={title}>
-                    {({item, index}) => {
-                      return (
-                        <HomeCardItem
-                          title={item.title}
-                          imageUrl={item.image_url}
-                          onPress={() => this.props.onPressNewItem(item)}
-                          last={this.props.newses.length - 1 === index}
-                        />
-                      );
-                    }}
-                  </HomeCardList>
-                );
-              })
-            ) : this.hasNews ? (
-              <HomeCardList
-                onShowAll={() => this.props.onShowAllNews()}
-                data={this.props.newses}
-                title={t('sections.news.title')}>
-                {({item, index}) => (
                   <HomeCardItem
                     title={item.title}
+                    isShowSubTitle={item.point !== '0'}
+                    specialSubTitle={item.point + ' '}
+                    subTitle={item.point_currency}
                     imageUrl={item.image_url}
-                    onPress={() => this.props.onPressNewItem(item)}
-                    last={this.props.newses.length - 1 === index}
+                    onPress={() => this.props.onPressCampaignItem(item)}
+                    last={this.props.campaigns.length - 1 === index}
                   />
-                )}
-              </HomeCardList>
-            ) : this.props.apiFetching ? (
-              <HomeCardListSkeleton />
-            ) : this.props.apiFetching ? (
-              <HomeCardListSkeleton />
-            ) : null}
-          </View>
+                );
+              }}
+            </HomeCardList>
+          )}
+
+          {this.hasNewsGroups ? (
+            this.props.news_categories.map((newsGroup, index) => {
+              let {id, news, title} = newsGroup;
+              return (
+                <HomeCardList
+                  key={id}
+                  onShowAll={() => this.props.onShowAllNews(title, id)}
+                  data={news}
+                  title={title}>
+                  {({item, index}) => {
+                    return (
+                      <HomeCardItem
+                        title={item.title}
+                        imageUrl={item.image_url}
+                        onPress={() => this.props.onPressNewItem(item)}
+                        last={this.props.newses.length - 1 === index}
+                      />
+                    );
+                  }}
+                </HomeCardList>
+              );
+            })
+          ) : this.hasNews ? (
+            <HomeCardList
+              onShowAll={() => this.props.onShowAllNews()}
+              data={this.props.newses}
+              title={t('sections.news.title')}>
+              {({item, index}) => (
+                <HomeCardItem
+                  title={item.title}
+                  imageUrl={item.image_url}
+                  onPress={() => this.props.onPressNewItem(item)}
+                  last={this.props.newses.length - 1 === index}
+                />
+              )}
+            </HomeCardList>
+          ) : this.props.apiFetching ? (
+            <HomeCardListSkeleton />
+          ) : this.props.apiFetching ? (
+            <HomeCardListSkeleton />
+          ) : null}
         </ScrollView>
 
         <StatusBarBackground />
@@ -548,6 +548,13 @@ let styles = StyleSheet.create({
     top: 0,
     width: '100%',
     zIndex: 9999,
+  },
+
+  promotionBlock: {
+    marginBottom: 15
+  },
+  block: {
+    marginBottom: 20,
   },
 });
 styles = Themes.mergeStyles(styles, homeStyles);

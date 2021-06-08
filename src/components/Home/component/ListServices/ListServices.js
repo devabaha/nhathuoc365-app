@@ -325,7 +325,7 @@ class ListServices extends Component {
     };
 
     return (
-      <Animated.View style={[styles.container, visibleStyle]}>
+      <Animated.View style={[styles.container, visibleStyle, this.props.containerStyle]}>
         <Animated.ScrollView
           scrollEventThrottle={1}
           scrollEnabled={this.scrollEnabled}

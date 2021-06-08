@@ -47,23 +47,6 @@ export const home = {
   }),
   primaryAction: StyleSheet.create({
     actionsWrapper: {
-      overflow: 'visible',
-      ...Platform.select({
-        ios: {
-          shadowColor: '#333',
-          shadowOffset: {
-            width: 1,
-            height: 4,
-          },
-          shadowOpacity: 0.1,
-          shadowRadius: 5,
-        },
-        android: {
-          elevation: 4,
-          borderWidth: Util.pixel,
-          borderColor: '#E1E1E1',
-        },
-      }),
     },
     walletNameLabel: {
       ...appConfig.styles.typography.title,
@@ -73,29 +56,10 @@ export const home = {
     },
     surplus: {
     },
-    shadowWrapper: {
-      // ...Platform.select({
-      //   ios: {
-      //     shadowColor: '#333',
-      //     shadowOffset: {
-      //       width: 1,
-      //       height: 4,
-      //     },
-      //     shadowOpacity: 0.1,
-      //     shadowRadius: 5,
-      //   },
-      //   android: {
-      //     elevation: 4,
-      //     borderWidth: Util.pixel,
-      //     borderColor: '#E1E1E1',
-      //   },
-      // }),
-    },
   }),
   listService: StyleSheet.create({
     container: {
-      paddingVertical: 6,
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     },
   }),
   listProduct: StyleSheet.create({
