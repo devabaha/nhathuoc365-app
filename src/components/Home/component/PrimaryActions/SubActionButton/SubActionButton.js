@@ -5,8 +5,8 @@ import appConfig from 'app-config';
 
 const styles = StyleSheet.create({
   add_store_action_btn: {
-    paddingVertical: 4,
-    paddingHorizontal: 12,
+    // paddingVertical: 4,
+    // paddingHorizontal: 12,
   },
   add_store_action_btn_box: {
     alignItems: 'center',
@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   icon: {
     fontSize: 28,
     color: appConfig.colors.primary,
+    left: 1
   },
 });
 

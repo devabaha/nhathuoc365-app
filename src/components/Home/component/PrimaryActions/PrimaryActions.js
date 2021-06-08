@@ -15,6 +15,7 @@ import Themes from 'src/Themes';
 
 const homeThemes = Themes.getNameSpace('home');
 const primaryActionStyles = homeThemes('styles.home.primaryAction');
+
 class PrimaryActions extends Component {
   get isActivePrimaryActions() {
     return isActivePackageOptionConfig(PACKAGE_OPTIONS_TYPE.PRIMARY_ACTIONS);
@@ -46,7 +47,6 @@ class PrimaryActions extends Component {
           style={[
             styles.actionsWrapper,
             actionsWrapper,
-            primaryActionStyles.shadowWrapper,
           ]}>
           <View style={styles.mainContentWrapper}>
             {this.isActiveQRScan ? (
@@ -69,8 +69,8 @@ class PrimaryActions extends Component {
                   <View style={styles.pointRechargeBtnSeparator} />
                 </View>
               </View>
-            ) : (
-              <View style={{height: 50}} />
+            ) : (null
+              // <View style={{height: 50}} />
             )}
 
             <Button
@@ -143,18 +143,18 @@ let styles = StyleSheet.create({
     alignItems: 'center',
   },
   actionsWrapper: {
-    width: appConfig.device.width - 32,
-    marginHorizontal: 16,
+    width: appConfig.device.width - 30,
     backgroundColor: '#fff',
     borderRadius: 8,
-    borderWidth: 0.5,
-    borderColor: '#ebebeb',
+    // borderWidth: 0.5,
+    // borderColor: '#ebebeb',
     overflow: 'hidden',
     // height: 140,
   },
   mainContentWrapper: {
     flexDirection: 'row',
-    paddingHorizontal: 16,
+    paddingVertical: 7.5,
+    paddingHorizontal: 15
   },
   walletInfoWrapper: {
     flexDirection: 'row',
@@ -165,38 +165,39 @@ let styles = StyleSheet.create({
   pointRechargeBtnContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 15,
-    marginLeft: -15,
+    // marginRight: 15,
+    // marginLeft: -15,
   },
   pointRechargeBtn: {
-    paddingVertical: 10,
+    // paddingVertical: 7.5,
   },
   pointRechargeBtnSeparatorContainer: {
-    paddingVertical: 10,
+    // paddingVertical: 7.5,
+    paddingHorizontal: 12
   },
   pointRechargeBtnSeparator: {
     flex: 1,
-    width: 0.5,
-    backgroundColor: '#ccc',
+    width: 1,
+    backgroundColor: appConfig.colors.border,
   },
   surplusContainer: {
     width: '100%',
     flex: 1,
     justifyContent: 'center',
+    paddingVertical: 2
   },
   walletAction: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 20,
-    borderTopWidth: 0.5,
-    borderColor: '#e5e5e5',
+    paddingVertical: 15,
+    borderTopWidth: 1,
+    borderColor: appConfig.colors.border,
   },
   walletLabelRight: {
     paddingLeft: 5,
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
-    fontWeight: 'bold',
   },
   scanIcon: {
     fontSize: 28,
@@ -204,9 +205,8 @@ let styles = StyleSheet.create({
     // paddingRight: 10
   },
   iconNextWrapper: {
-    fontSize: 20,
-    color: '#2B2B2B',
     lineHeight: 20,
+    marginLeft: 10,
   },
   iconNext: {
     width: 20,
@@ -216,13 +216,9 @@ let styles = StyleSheet.create({
   walletNameLabel: {
     flex: 1,
     paddingRight: 10,
-    color: '#2B2B2B',
-    fontSize: 16,
-    fontWeight: '500',
   },
   surplus: {
-    fontSize: 20,
-    color: '#2B2B2B',
+    ...appConfig.styles.typography.heading1,
   },
   actionButton: {
     flex: 1,
@@ -236,9 +232,8 @@ let styles = StyleSheet.create({
   },
   actionTitle: {
     fontSize: 12,
-    marginTop: 5,
-    color: '#414242',
-    fontWeight: '500',
+    marginTop: 10,
+    color: '#1a1a1a',
   },
 });
 

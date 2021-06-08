@@ -33,8 +33,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontSize: 12,
-    fontWeight: '400',
-    color: '#333',
+    color: '#2B2B2B',
     marginTop: BASE_TITLE_MARGIN,
   },
   notifyWrapper: {

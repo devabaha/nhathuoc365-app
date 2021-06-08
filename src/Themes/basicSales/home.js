@@ -47,28 +47,7 @@ export const home = {
   }),
   primaryAction: StyleSheet.create({
     actionsWrapper: {
-      width: appConfig.device.width - 32,
-      marginHorizontal: 16,
-      backgroundColor: '#fff',
-      borderRadius: 8,
-      borderWidth: 0.5,
-      borderColor: '#ebebeb',
       overflow: 'visible',
-    },
-    walletNameLabel: {
-      color: '#2B2B2B',
-      fontSize: 14,
-      fontWeight: '500',
-    },
-    walletLabelRight: {
-      paddingLeft: 5,
-      alignItems: 'flex-end',
-      justifyContent: 'flex-start',
-      fontWeight: 'bold',
-      fontSize: 20,
-      color: '#2B2B2B',
-    },
-    shadowWrapper: {
       ...Platform.select({
         ios: {
           shadowColor: '#333',
@@ -85,6 +64,32 @@ export const home = {
           borderColor: '#E1E1E1',
         },
       }),
+    },
+    walletNameLabel: {
+      ...appConfig.styles.typography.title,
+    },
+    walletLabelRight: {
+     
+    },
+    surplus: {
+    },
+    shadowWrapper: {
+      // ...Platform.select({
+      //   ios: {
+      //     shadowColor: '#333',
+      //     shadowOffset: {
+      //       width: 1,
+      //       height: 4,
+      //     },
+      //     shadowOpacity: 0.1,
+      //     shadowRadius: 5,
+      //   },
+      //   android: {
+      //     elevation: 4,
+      //     borderWidth: Util.pixel,
+      //     borderColor: '#E1E1E1',
+      //   },
+      // }),
     },
   }),
   listService: StyleSheet.create({
