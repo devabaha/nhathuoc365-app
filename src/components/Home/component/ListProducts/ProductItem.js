@@ -99,14 +99,12 @@ class ProductItem extends PureComponent {
           />
 
           {this.props.discount_percent > 0 && (
-            <DiscountBadge 
-            containerStyle={{position: 'absolute'}}
-            tailSpace={4}
-            label={saleFormat(this.props.discount_percent)}
+            <DiscountBadge
+              containerStyle={styles.saleContainer}
+              contentContainerStyle={styles.saleContentContainer}
+              tailSpace={4}
+              label={saleFormat(this.props.discount_percent)}
             />
-            // <View style={styles.discountBadgeContainer}>
-            //   <Ribbon text={saleFormat(this.props.discount_percent)} />
-            // </View>
           )}
           <View style={[styles.infoWrapper]}>
             <Text style={styles.name} numberOfLines={2}>
@@ -114,41 +112,44 @@ class ProductItem extends PureComponent {
             </Text>
 
             <View style={styles.priceWrapper}>
-              <View>
+              <View style={styles.priceContainer}>
                 {this.props.discount_percent > 0 && (
                   <Text style={styles.discount}>
-                    <Text style={{textDecorationLine: 'line-through'}}>
+                    <Text style={styles.deletedTitle}>
                       {this.props.discount_view}
                     </Text>
                     / {this.props.unit_name}
                   </Text>
                 )}
+                
                 <View style={[styles.priceBox]}>
-                  <Text style={[styles.price]}>{this.props.price_view}</Text>
+                  <Text style={[styles.price]}>
+                    {this.props.price_view}
+                  </Text>
+
+                  <TouchableOpacity
+                    style={styles.item_add_cart_box}
+                    onPress={this.handlePressActionBtnProduct}>
+                    {this.state.buying ? (
+                      <View
+                        style={{
+                          width: 18,
+                          height: 18,
+                        }}>
+                        <Indicator size="small" />
+                      </View>
+                    ) : this.isServiceProduct(item) ? (
+                      <Icon name="calendar-plus-o" size={18} color={appConfig.colors.status.success} />
+                    ) : (
+                      <MaterialIcons
+                        name="add-shopping-cart"
+                        size={18}
+                        color={appConfig.colors.status.success}
+                      />
+                    )}
+                  </TouchableOpacity>
                 </View>
               </View>
-
-              <TouchableOpacity
-                style={styles.item_add_cart_box}
-                onPress={this.handlePressActionBtnProduct}>
-                {this.state.buying ? (
-                  <View
-                    style={{
-                      width: 24,
-                      height: 24,
-                    }}>
-                    <Indicator size="small" />
-                  </View>
-                ) : this.isServiceProduct(item) ? (
-                  <Icon name="calendar-plus-o" size={22} color="#0eac24" />
-                ) : (
-                  <MaterialIcons
-                    name="add-shopping-cart"
-                    size={22}
-                    color={'#0eac24'}
-                  />
-                )}
-              </TouchableOpacity>
             </View>
           </View>
         </TouchableOpacity>
@@ -157,51 +158,58 @@ class ProductItem extends PureComponent {
   }
 }
 
+const MARGIN_ITEM = 5;
+const WIDTH_ITEM = appConfig.device.width / 2 - MARGIN_ITEM * 4;
+
 let styles = StyleSheet.create({
   container: {
-    margin: 5,
+    marginHorizontal: MARGIN_ITEM,
+    marginTop: 10,
+    marginBottom: 0,
+    width: WIDTH_ITEM,
   },
   wrapper: {
-    width: appConfig.device.width / 2 - 40,
     flex: 1,
     borderRadius: 8,
     backgroundColor: '#fff',
-    ...appConfig.styles.shadow
+    ...appConfig.styles.shadow,
   },
   image: {
     width: '100%',
-    height: 150,
+    height: WIDTH_ITEM,
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
   },
   infoWrapper: {
-    alignItems: 'flex-start',
+    flex: 1,
+    padding: 10,
   },
   name: {
-    fontSize: 14,
-    lineHeight: 18,
-    fontWeight: '500',
-    paddingBottom: 5,
+    flex: 1,
+    marginBottom: 8,
+    ...appConfig.styles.typography.title,
   },
   priceWrapper: {
     width: '100%',
-    marginTop: 'auto',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  priceContainer: {
+    flex: 1,
+  },
   discount: {
-    color: '#404040',
-    fontSize: 13,
+    ...appConfig.styles.typography.secondary,
   },
   priceBox: {
     marginTop: 4,
-    paddingVertical: 2,
-    paddingHorizontal: 4,
-    backgroundColor: 'rgba(85, 185, 71, 1)',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   price: {
-    color: '#fff',
+    flex: 1,
+    ...appConfig.styles.typography.heading3,
+    color: appConfig.colors.primary,
   },
   loading: {
     height: '100%',
@@ -219,6 +227,19 @@ let styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: hexToRgbA('#ffffff', 0.8),
     paddingVertical: 2,
+  },
+
+  saleContainer: {
+    position: 'absolute',
+    top: 8,
+  },
+  saleContentContainer: {
+    paddingHorizontal: 7,
+    borderBottomRightRadius: 4,
+    borderTopRightRadius: 4,
+  },
+  deletedTitle: {
+    textDecorationLine: 'line-through',
   },
 });
 

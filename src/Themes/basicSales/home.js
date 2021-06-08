@@ -64,21 +64,20 @@ export const home = {
   }),
   listProduct: StyleSheet.create({
     infoWrapper: {
-      flex: 1,
-      alignItems: 'stretch',
-      backgroundColor: '#fff',
-      padding: 5,
-      borderBottomLeftRadius: 4,
-      borderBottomRightRadius: 4,
+      // flex: 1,
+      // alignItems: 'stretch',
+      // padding: 5,
+      // borderBottomLeftRadius: 4,
+      // borderBottomRightRadius: 4,
     },
     priceBox: {
-      paddingVertical: 2,
-      paddingHorizontal: 4,
-      borderRadius: 4,
-      backgroundColor: 'transparent',
+      // paddingVertical: 2,
+      // paddingHorizontal: 4,
+      // borderRadius: 4,
+      // backgroundColor: 'transparent',
     },
     price: {
-      color: '#FF0000',
+      // color: '#FF0000',
     },
   }),
 };

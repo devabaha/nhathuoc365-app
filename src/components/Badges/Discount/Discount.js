@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content_wrapper: {
-    backgroundColor: appConfig.colors.marigold,
+    backgroundColor: appConfig.colors.sale,
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
@@ -53,14 +53,13 @@ const styles = StyleSheet.create({
   content: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 14,
   },
   tail: {
     position: 'absolute',
     backgroundColor: 'transparent',
     width: 0,
     height: 0,
-    borderTopColor: LightenColor(appConfig.colors.primary, -30),
+    borderTopColor: LightenColor(appConfig.colors.sale, -30),
     borderLeftColor: 'transparent',
   },
 });

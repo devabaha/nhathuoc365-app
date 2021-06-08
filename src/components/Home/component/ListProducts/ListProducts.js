@@ -110,7 +110,9 @@ class ListProducts extends Component {
     return this.hasProducts ? (
       <View style={styles.container}>
         <View style={styles.headingWrapper}>
-          <Text style={styles.heading}>{this.props.title}</Text>
+          <Text numberOfLines={1} style={styles.heading}>
+            {this.props.title}
+          </Text>
           {!!this.props.onShowAll && (
             <Button underlayColor="transparent" onPress={this.props.onShowAll}>
               <Text style={styles.viewAll}>{this.props.t('viewAll')}</Text>
@@ -133,13 +135,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 15,
     justifyContent: 'space-between',
-    marginBottom: 5
+    alignItems: 'center'
   },
   heading: {
-    color: '#333',
-    fontSize: 20,
     flex: 1,
     marginRight: 20,
+    textTransform: 'lowercase',
+    ...appConfig.styles.typography.heading1,
   },
   listHorizontal: {
     paddingHorizontal: 5,
@@ -149,25 +151,23 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 10
+    paddingHorizontal: 10,
   },
   itemVerticalWrapper: {
-    width: appConfig.device.width / 2 - 10,
+    // width: appConfig.device.width / 2 - 10,
   },
   itemVerticalContainer: {
     width: undefined,
     marginLeft: 0,
     marginRight: 0,
-    paddingVertical: 15,
-    paddingHorizontal: 12,
     flex: 1,
   },
   itemVerticalImage: {
     height: (appConfig.device.width / 2) * 0.75,
   },
   viewAll: {
+    ...appConfig.styles.typography.title,
     color: '#0084ff',
-    fontSize: 14,
   },
 });
 

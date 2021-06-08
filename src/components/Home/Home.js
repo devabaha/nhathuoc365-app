@@ -338,7 +338,7 @@ class Home extends Component {
               useNativeDriver: true,
             },
           )}
-          contentContainerStyle={{paddingTop: this.state.headerHeight}}
+          contentContainerStyle={{paddingTop: this.state.headerHeight, paddingBottom: 30}}
           showsVerticalScrollIndicator={false}
           scrollEventThrottle={16}
           refreshControl={

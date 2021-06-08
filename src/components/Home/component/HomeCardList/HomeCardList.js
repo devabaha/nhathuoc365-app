@@ -31,8 +31,8 @@ class HomeCardList extends Component {
           showsHorizontalScrollIndicator={false}
           renderItem={props.children}
           keyExtractor={(item, index) => index.toString()}
-          style={{overflow: 'visible'}}
-          contentContainerStyle={{paddingHorizontal: 5}}
+          style={styles.listContainer}
+          contentContainerStyle={styles.listContentContainer}
         />
       </View>
     );
@@ -50,19 +50,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   showAllBtn: {
-    paddingHorizontal: 5,
-    paddingVertical: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
     ...appConfig.styles.typography.heading1,
+    flex: 1,
+    marginRight: 20,
   },
   viewAll: {
+    ...appConfig.styles.typography.title,
     color: '#0084ff',
-    fontSize: 15,
   },
   listContainer: {
+    overflow: 'visible',
+  },
+  listContentContainer: {
     paddingHorizontal: 7.5,
   },
 });

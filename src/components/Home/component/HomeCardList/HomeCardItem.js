@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import Button from 'react-native-button';
 import {
   View,
   Text,
@@ -9,7 +8,8 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Loading from '../../../Loading';
-import Themes from 'src/Themes';
+
+import appConfig from 'app-config';
 
 class HomeCardItem extends Component {
   state = {
@@ -76,23 +76,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     flexDirection: 'column',
     flex: 1,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#333',
-        shadowOffset: {
-          width: 1,
-          height: 4,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+    ...appConfig.styles.shadow
   },
   container: {
-    marginVertical: 10,
+    marginTop: 10,
     marginHorizontal: 7.5,
   },
   image: {

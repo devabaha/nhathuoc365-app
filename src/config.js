@@ -121,6 +121,7 @@ class Config {
       },
       typography: {
         text: '#2B2B2B',
+        secondary: '#A0A0A0',
       },
       border: '#E5E5E5',
       icon: '#9F9F9F',
@@ -132,6 +133,7 @@ class Config {
       text: '#333',
       placeholder: '#c7c7cd',
       ribbon: '#FD0D1B',
+      sale: '#FD0D1B',
     };
   }
 
@@ -141,7 +143,10 @@ class Config {
         heading1: {
           fontSize: 20,
           color: this.colors.typography.text,
-          // fontWeight: '500',
+        },
+        heading3: {
+          fontSize: 16,
+          color: this.colors.typography.text,
         },
         title: {
           fontSize: 14,
@@ -151,6 +156,10 @@ class Config {
           fontSize: 12,
           color: this.colors.typography.text,
         },
+        secondary: {
+          fontSize: 14,
+          color: this.colors.typography.secondary,
+        }
       },
       shadow: {
         shadowColor: '#000',
