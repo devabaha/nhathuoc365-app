@@ -1,7 +1,4 @@
-import React from 'react';
-import {PermissionsAndroid, View} from 'react-native';
 import i18n from 'i18next';
-
 import RNFetchBlob from 'rn-fetch-blob';
 import appConfig from 'app-config';
 import CameraRoll from '@react-native-community/cameraroll';
@@ -26,7 +23,7 @@ async function hasAndroidPermission() {
 }
 
 const handleSaveSingleImage = async (dataURL, message) => {
-  const t = i18n.getFixedT('image');
+  const t = i18n.getFixedT(undefined, 'common');
   let base64, imageType;
   try {
     const res = await handleDownloadImage(dataURL);
@@ -55,12 +52,12 @@ const handleSaveSingleImage = async (dataURL, message) => {
           .catch((err) => console.log(err))
       : null);
     if (data) {
-      showFlashNotification(t('common:imageSaved'));
+      showFlashNotification(t('saved'));
     }
   } catch (error) {
     flashShowMessage({
       type: 'danger',
-      message: t('api.error.message'),
+      message: t('saveImageFailed'),
     });
     console.log('err_save_single_image', error);
   }

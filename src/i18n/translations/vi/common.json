@@ -223,5 +223,6 @@
   "cancel": "Huỷ",
   "addImages": "Thêm ảnh",
   "addImagesDescription": "Chạm để thêm ảnh",
-  "imageSaved": "Đã lưu"
+  "saved": "Đã lưu",
+  "saveImageFailed": "Lưu ảnh không thành công, vui lòng thử lại."
 }

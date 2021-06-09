@@ -223,5 +223,6 @@
   "cancel": "Cancel",
   "addImages": "Add Images",
   "addImagesDescription": "Tap to select images",
-  "imageSaved": "Saved"
+  "saved": "Saved",
+  "saveImageFailed": "Save image unsuccessfully, please try again."
 }
