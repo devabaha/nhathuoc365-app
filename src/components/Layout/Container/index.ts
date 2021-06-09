@@ -10,4 +10,5 @@ export interface ContainerProps extends ViewProps {
   padding?: number;
   paddingHorizontal?: number;
   paddingVertical?: number;
+  reanimated?: boolean
 }

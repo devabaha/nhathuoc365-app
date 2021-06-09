@@ -191,7 +191,7 @@ class Home extends Component {
 
   handlePressService(service, callBack) {
     const {t} = this.props;
-
+    
     if (service.type === 'chat') {
       this.handlePressButtonChat(this.state.site);
     } else {
@@ -216,11 +216,12 @@ class Home extends Component {
     });
   };
 
-  handleShowAllNews = (title, id) => {
-    Actions.push(appConfig.routes.newsTab, {
-      title,
-      id,
-    });
+  handleShowAllNews = (title, categoryId) => {
+    servicesHandler({type: SERVICES_TYPE.NEWS_CATEGORY, title, categoryId});
+    // Actions.push(appConfig.routes.newsTab, {
+    //   title,
+    //   id,
+    // });
   };
 
   handlePressSiteItem = (store, callBack) => {

@@ -44,7 +44,10 @@
     "qrBarCode": {
       "mainTitle": "Mã tài khoản",
       "walletAddressTitle": "Địa chỉ ví",
-      "scanTitle": "Quét mã QR"
+      "scanTitle": "Quét mã QR",
+      "enterCodeProduct": "Nhập mã sản phẩm",
+      "enterCode": "Nhập mã",
+      "scanCode": "Quét mã"
     },
     "transfer": {
       "mainTitle": "Chuyển khoản"
@@ -132,17 +135,26 @@
       "mainTitle": "Thông tin NPP"
     },
     "commissionIncomeStatement": {
-      "mainTitle": "Báo cáo hoa hồng"
+      "mainTitle": "Báo cáo hoa hồng tháng"
     },
     "lotteryGame": {
       "mainTitle": "Game đoán số"
     },
     "listProductScanned": {
-      "mainTitle": "Sản phẩm đã quét"
+      "mainTitle": "Sản phẩm đã nhận"
     },
     "transaction": {
       "mainTitle": "Giao dịch",
       "paymentTitle": "Thanh toán"
+    },
+    "salesReport": {
+      "mainTitle": "Báo cáo doanh số giới thiệu"
+    },
+    "social": {
+      "mainTitle": "Cộng đồng"
+    },
+    "createPost": {
+      "mainTitle": "Tạo bài viết"
     }
   },
 
@@ -184,5 +196,32 @@
       "title": "Kết nối internet yếu",
       "message": "Bạn có thể phải đợi khi trải nghiệm ứng dụng này."
     }
-  }
+  },
+
+  "time": {
+    "relative": {
+      "future": "%s tới",
+      "past": "%s",
+      "s": "Vừa xong",
+      "ss": "%d giây",
+      "m": "1 phút",
+      "mm": "%d phút",
+      "h": "1 giờ",
+      "hh": "%d giờ",
+      "d": "1 ngày",
+      "dd": "%d ngày",
+      "w": "1 tuần",
+      "ww": "%d tuần",
+      "M": "1 tháng",
+      "MM": "%d tháng",
+      "y": "1 năm",
+      "yy": "%d năm"
+    }
+  },
+
+  "copy": "Sao chép",
+  "cancel": "Huỷ",
+  "addImages": "Thêm ảnh",
+  "addImagesDescription": "Chạm để thêm ảnh",
+  "imageSaved": "Đã lưu"
 }

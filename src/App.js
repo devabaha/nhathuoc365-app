@@ -22,6 +22,7 @@ import {
   Stack,
   Modal,
   Lightbox,
+  Drawer,
 } from 'react-native-router-flux';
 import OneSignal from 'react-native-onesignal';
 import codePush, {LocalPackage} from 'react-native-code-push';
@@ -158,6 +159,11 @@ import ModalComboLocation from './components/ModalComboLocation';
 import APIHandler from './network/APIHandler';
 import Transaction from './components/payment/Transaction';
 import ModalFilter from './components/stores/ModalFilter';
+import FilterComponent from './components/stores/FilterDrawer';
+import {ModalComment, SocialCreatePost} from './components/Social';
+import {Social, SocialNews, SocialGroup} from './containers/Social';
+import ModalEditImages from './components/ModalEditImages';
+import SalesReport from './containers/SalesReport/SalesReport';
 
 /**
  * Not allow font scaling
@@ -726,6 +732,19 @@ class RootRouter extends Component {
         <Overlay key="overlay">
           <Modal key="modal" hideNavBar transitionConfig={getTransitionConfig}>
             <Lightbox key={appConfig.routes.sceneWrapper}>
+              {/* <Drawer
+                key="drawer-filter"
+                hideNavBar={true}
+                drawerPosition="right"
+                drawerWidth={350}
+                contentComponent={FilterComponent}>
+                <Scene
+                  key={`${appConfig.routes.store}_1`}
+                  component={StoreContainer}
+                  {...navBarConfig}
+                  back
+                />
+              </Drawer> */}
               <Scene
                 key="root"
                 titleStyle={{alignSelf: 'center'}}
@@ -772,7 +791,7 @@ class RootRouter extends Component {
                     notifyKey="new_totals">
                     <Scene
                       key={`${appConfig.routes.newsTab}_1`}
-                      component={Notify}
+                      component={SocialNews}
                     />
                   </Stack>
 
@@ -826,6 +845,56 @@ class RootRouter extends Component {
                   </Stack>
                 </Tabs>
 
+                {/* ================ SOCIAL ================ */}
+                <Stack key={appConfig.routes.social}>
+                  <Scene
+                    key={`${appConfig.routes.social}_1`}
+                    component={Social}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL GROUPS ================ */}
+                <Stack headerLayoutPreset={'left'} key={appConfig.routes.socialGroup}>
+                  <Scene
+                    key={`${appConfig.routes.socialGroup}_1`}
+                    component={SocialGroup}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ SOCIAL CREATE POST ================ */}
+                <Stack key={appConfig.routes.socialCreatePost}>
+                  <Scene
+                    key={`${appConfig.routes.socialCreatePost}_1`}
+                    component={SocialCreatePost}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL EDIT IMAGES ================ */}
+                <Stack key={appConfig.routes.modalEditImages}>
+                  <Scene
+                    key={`${appConfig.routes.modalEditImages}_1`}
+                    component={ModalEditImages}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
+                {/* ================ MODAL COMMENT ================ */}
+                <Stack key={appConfig.routes.modalComment}>
+                  <Scene
+                    key={`${appConfig.routes.modalComment}_1`}
+                    component={ModalComment}
+                    {...whiteNavBarConfig}
+                    back
+                  />
+                </Stack>
+
                 {/* ================ PRODUCT STAMPS ================ */}
                 <Stack key={appConfig.routes.productStamps}>
                   <Scene
@@ -853,6 +922,15 @@ class RootRouter extends Component {
                     {...navBarConfig}
                     title={t('screen.commissionIncomeStatement.mainTitle')}
                     component={CommissionIncomeStatement}
+                    back
+                  />
+                </Stack>
+                <Stack key={appConfig.routes.salesReport}>
+                  <Scene
+                    key={`${appConfig.routes.salesReport}_1`}
+                    {...navBarConfig}
+                    title={t('screen.salesReport.mainTitle')}
+                    component={SalesReport}
                     back
                   />
                 </Stack>
@@ -910,6 +988,12 @@ class RootRouter extends Component {
                     title={t('screen.orders.mainTitle')}
                     {...navBarConfig}
                     component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     back
                   />
                 </Stack>
@@ -918,7 +1002,7 @@ class RootRouter extends Component {
                   <Scene
                     key={`${appConfig.routes.newsTab}_1`}
                     {...navBarConfig}
-                    component={Notify}
+                    component={SocialNews}
                     back
                   />
                 </Stack>
@@ -993,6 +1077,12 @@ class RootRouter extends Component {
                     key={`${appConfig.routes.deepLinkOrdersTab}_1`}
                     title="Đơn hàng"
                     component={Orders}
+                    onEnter={() => {
+                      store.setUpdateOrders(true);
+                    }}
+                    onExit={() => {
+                      store.setUpdateOrders(false);
+                    }}
                     {...navBarConfig}
                     back
                   />
@@ -1127,6 +1217,13 @@ class RootRouter extends Component {
                   />
                 </Stack>
 
+                {/* <Drawer
+                  key={appConfig.routes.store}
+                  hideNavBar={true}
+                  drawerPosition="right"
+                  drawerWidth={350}
+                  hideDrawerButton={true}
+                  contentComponent={(props) => <FilterComponent {...props} />}> */}
                 <Stack key={appConfig.routes.store}>
                   <Scene
                     key={`${appConfig.routes.store}_1`}
@@ -1135,6 +1232,7 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+                {/* </Drawer> */}
 
                 <Stack key="stores_list">
                   <Scene
@@ -1210,7 +1308,15 @@ class RootRouter extends Component {
                 <Stack key={appConfig.routes.notifies}>
                   <Scene
                     key={`${appConfig.routes.notifies}_1`}
-                    title={t('screen.news.mainTitle')}
+                    component={SocialNews}
+                    {...navBarConfig}
+                    back
+                  />
+                </Stack>
+
+                <Stack key={appConfig.routes.notifiesVertical}>
+                  <Scene
+                    key={`${appConfig.routes.notifiesVertical}_1`}
                     component={Notify}
                     {...navBarConfig}
                     back
@@ -1300,7 +1406,7 @@ class RootRouter extends Component {
                   <Scene key="chat_1" component={Chat} {...navBarConfig} back />
                 </Stack>
 
-                <Stack key="webview">
+                <Stack key={appConfig.routes.webview}>
                   <Scene
                     key="webview_1"
                     component={WebView}
@@ -1638,6 +1744,16 @@ class RootRouter extends Component {
                     back
                   />
                 </Stack>
+
+                {/* ================ QR/BAR CODE ================ */}
+                <Stack key={appConfig.routes.qrBarCodeInputable}>
+                  <Scene
+                    key={`${appConfig.routes.qrBarCodeInputable}_1`}
+                    component={QRBarCode}
+                    renderBackButton={CloseButton}
+                    back
+                  />
+                </Stack>
               </Scene>
 
               {/* ================ LIGHT BOX SELECT PROVINCE ================ */}
@@ -1721,7 +1837,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW QR/BAR CODE ================ */}
             <Stack key={appConfig.routes.qrBarCode}>
               <Scene
@@ -1731,7 +1846,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.voucherShowBarcode}>
               <Scene
@@ -1742,7 +1856,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL SHOW VOUCHER BARCODE ================ */}
             <Stack key={appConfig.routes.internetBanking}>
               <Scene
@@ -1754,7 +1867,6 @@ class RootRouter extends Component {
                 back
               />
             </Stack>
-
             {/* ================ MODAL TRANSFER RESULT ================ */}
             <Stack key={appConfig.routes.transferResult} panHandlers={null}>
               <Scene
@@ -1763,7 +1875,6 @@ class RootRouter extends Component {
                 hideNavBar
               />
             </Stack>
-
             {/* ================ MODAL TRANSACTION================ */}
             <Stack key={appConfig.routes.transaction} panHandlers={null}>
               <Scene

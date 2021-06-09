@@ -436,6 +436,41 @@ class CommonAPI {
   get FILTER_URL_TAG() {
     return BaseAPI.apiDomain + 'apiSite/get_tags/';
   }
+
+  get USER_LIST_NEWS_CATEGORY() {
+    return BaseAPI.apiDomain + 'apiUser/list_news_category';
+  }
+
+  // Social
+  get SOCIAL_COMMENTS() {
+    return BaseAPI.socialDomain + 'comments';
+  }
+
+  get SOCIAL_COMMENT() {
+    return BaseAPI.socialDomain + 'comments/store';
+  }
+
+  get SOCIAL_LIKES() {
+    return BaseAPI.socialDomain + 'likes/store';
+  }
+  get USER_INVITED_REVENUE() {
+    return BaseAPI.apiDomain + 'apiUser/invited_revenue';
+  }
+  get SOCIAL_GROUPS() {
+    return BaseAPI.socialDomain + 'groups';
+  }
+
+  get SOCIAL_GROUPS_SHOW(){
+    return BaseAPI.socialDomain + 'groups/show';
+  }
+
+  get SOCIAL_POSTS(){
+    return BaseAPI.socialDomain + 'posts';
+  }
+
+  get SOCIAL_CREATE_POST() {
+    return BaseAPI.socialDomain + 'posts/store';
+  }
 }
 
 export default new CommonAPI();

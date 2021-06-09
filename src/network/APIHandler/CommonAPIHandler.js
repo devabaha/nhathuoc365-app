@@ -180,7 +180,12 @@ class CommonAPIHandler extends BaseHandler {
     return await this.getAPI(api);
   }
 
-  async filter_category_product(store_id, category_id, page_num, params) {
+  async site_category_product_by_filter(
+    store_id,
+    category_id,
+    page_num,
+    params,
+  ) {
     const api = url_for(
       API.SITE_CATEGORY_PRODUCT +
         '/' +
@@ -190,6 +195,7 @@ class CommonAPIHandler extends BaseHandler {
         '/' +
         page_num,
     );
+    console.log({hii: params, category_id});
     return await this.postAPI(api, params);
   }
 
@@ -949,6 +955,11 @@ class CommonAPIHandler extends BaseHandler {
     return this.postCancelableAPI(api, data, true);
   }
 
+  user_invited_revenue(data) {
+    const api = url_for(API.USER_INVITED_REVENUE);
+    return this.postCancelableAPI(api, data, true);
+  }
+
   /**
    * @todo Lấy thông tin game đoán số
    *
@@ -1047,9 +1058,107 @@ class CommonAPIHandler extends BaseHandler {
     const api = url_for(API.PAYMENT_CART_PAYMENT + '/' + siteId + '/' + cartId);
     return this.getCancelableAPI(api);
   }
+
   getListFilterProduct(siteId) {
     const api = url_for(API.FILTER_URL_TAG + siteId + '/product');
     return this.getCancelableAPI(api);
+  }
+
+  /**
+   * get list category of news
+   */
+  user_list_news_category() {
+    const api = url_for(API.USER_LIST_NEWS_CATEGORY);
+    return this.getCancelableAPI(api);
+  }
+
+  // SOCIAL
+  /**
+   * get list comments
+   *
+   * @param {object} data
+   * @param {string} data.object name of object
+   * @param {number} data.object_id id of objec
+   */
+  social_comments(data) {
+    const api = url_for(API.SOCIAL_COMMENTS);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * send comment
+   *
+   * @param {object} data
+   * @param {string} data.object name of object
+   * @param {number} data.object_id id of object
+   * @param {number=} data.comment_id id of object
+   */
+  social_comment(data) {
+    const api = url_for(API.SOCIAL_COMMENT);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * like
+   *
+   * @param {object} data
+   * @param {string} data.object name of object
+   * @param {number} data.object_id id of object
+   * @param {number} data.site_id
+   * @param {number} data.status updated like status
+   */
+  social_likes(data) {
+    const api = url_for(API.SOCIAL_LIKES);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get list group
+   *
+   * @param {object} data
+   * @param {number} data.site_id
+   */
+  social_groups(data) {
+    const api = url_for(API.SOCIAL_GROUPS);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get group info
+   *
+   * @param {object} data
+   * @param {number} data.site_id
+   */
+  social_groups_show(id, data) {
+    const api = url_for(API.SOCIAL_GROUPS_SHOW + '/' + id);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * get list posts
+   *
+   * @param {object} data
+   * @param {number} data.site_id
+   * @param {number} data.limit
+   * @param {number} data.page
+   */
+  social_posts(data) {
+    const api = url_for(API.SOCIAL_POSTS);
+    return this.postCancelableAPI(api, data);
+  }
+
+  /**
+   * create post
+   *
+   * @param {object} data
+   * @param {number} data.site_id
+   * @param {number} data.group_id
+   * @param {string} data.content
+   * @param {array=} data.images
+   */
+  social_create_post(data) {
+    const api = url_for(API.SOCIAL_CREATE_POST);
+    return this.postCancelableAPI(api, data);
   }
 }
 

@@ -44,7 +44,10 @@
     "qrBarCode": {
       "mainTitle": "Account code",
       "walletAddressTitle": "Wallet address",
-      "scanTitle": "Scan QRCode"
+      "scanTitle": "Scan QRCode",
+      "enterCodeProduct": "Enter code product",
+      "enterCode": "Enter code",
+      "scanCode": "Scan code"
     },
     "transfer": {
       "mainTitle": "Transfer"
@@ -143,6 +146,15 @@
     "transaction": {
       "mainTitle": "Transaction",
       "paymentTitle": "Payment"
+    },
+    "salesReport": {
+      "mainTitle": "Sales Report"
+    },
+    "social": {
+      "mainTitle": "Social"
+    },
+    "createPost": {
+      "mainTitle": "Create post"
     }
   },
 
@@ -184,5 +196,32 @@
       "title": "Low internet connection",
       "message": "You may have to wait while experiencing the app."
     }
-  }
+  },
+
+  "time": {
+    "relative": {
+      "future": "in %s",
+      "past": "%s",
+      "s": "Just now",
+      "ss": "%d seconds",
+      "m": "1 minute",
+      "mm": "%d minutes",
+      "h": "1 hour",
+      "hh": "%d hours",
+      "d": "1 day",
+      "dd": "%d days",
+      "w": "1 week",
+      "ww": "%d weeks",
+      "M": "1 month",
+      "MM": "%d months",
+      "y": "1 year",
+      "yy": "%d years"
+    }
+  },
+
+  "copy": "Copy",
+  "cancel": "Cancel",
+  "addImages": "Add Images",
+  "addImagesDescription": "Tap to select images",
+  "imageSaved": "Saved"
 }

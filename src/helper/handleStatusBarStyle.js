@@ -24,6 +24,9 @@ export default function handleStatusBarStyle(prevState, newState, action) {
     appConfig.routes.qrBarCode,
     appConfig.routes.modalWebview,
     appConfig.routes.transaction,
+    appConfig.routes.modalComment,
+    appConfig.routes.modalEditImages,
+    appConfig.routes.socialCreatePost,
 
     appConfig.routes.myVoucher,
     appConfig.routes.voucherDetail,

@@ -19,9 +19,9 @@ export default class ItemImageViewer extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      index: 0,
+      imageIndex: 0,
     };
-    this.OPTIONS_LIST = ['Save Image', 'Save All Image', 'Cancel'];
+    this.OPTIONS_LIST = ['Save Image', 'Cancel'];
   }
 
   eventTracker = new EventTracker();
@@ -47,7 +47,7 @@ export default class ItemImageViewer extends Component {
           onLongPress={() => this.actionSheet.show()}
           imageUrls={images}
           index={this.props.index}
-          onChange={(index) => this.setState({index: index})}
+          onChange={(index) => this.setState({imageIndex: index})}
           onPress={() => {
             console.log('click');
           }}
@@ -71,27 +71,18 @@ export default class ItemImageViewer extends Component {
         <ActionSheet
           ref={(ref) => (this.actionSheet = ref)}
           options={this.OPTIONS_LIST}
-          cancelButtonIndex={2}
-          destructiveButtonIndex={2}
+          cancelButtonIndex={1}
+          destructiveButtonIndex={1}
           onPress={(index) => {
-            switch (index) {
-              case 0:
-                handleSaveImage(images[this.state.index].url);
-                break;
-              case 1:
-                // images.map((item) => handleSaveImage(item.url))
-                handleSaveImage(images);
-              default:
-                () => {};
-                break;
-            }
+            index == 0
+              ? handleSaveImage(images[this.state.imageIndex].url)
+              : null;
           }}
         />
       </View>
     );
   }
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

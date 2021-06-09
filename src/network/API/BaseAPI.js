@@ -6,18 +6,25 @@
  */
 import store from 'app-store';
 
-export const ORIGIN_API_DOMAIN = 'https://apiapp.abaha.vn/';
-export const ORIGIN_DEV_API_DOMAIN = 'https://apiapp.tickid.top/';
-export const ORIGIN_SPRINT_DEV_API_DOMAIN = 'https://apiapp.abaha.click/';
-export const ORIGIN_PRE_RELEASE_API_DOMAIN = 'https://apiapp.abaha.link/';
-export const ORIGIN_IMAGE_DOMAIN = 'https://img.abaha.vn/';
+export const LIVE_API_DOMAIN = 'https://apiapp.abaha.vn/';
+export const DEV_API_DOMAIN = 'https://apiapp.tickid.top/';
+export const SPRINT_DEV_API_DOMAIN = 'https://apiapp.abaha.click/';
+export const PRE_RELEASE_API_DOMAIN = 'https://apiapp.abaha.link/';
+
+export const LIVE_IMAGE_DOMAIN = 'https://img.abaha.vn/';
+export const DEV_IMAGE_DOMAIN = 'https://img.tickid.top/';
+
+export const LIVE_SOCIAL_DOMAIN = 'https://social.abaha.vn/';
+export const DEV_SOCIAL_DOMAIN = 'https://social.tickid.top/';
 
 class BaseAPI {
   constructor(
-    apiDomain = ORIGIN_API_DOMAIN,
-    imageDomain = ORIGIN_IMAGE_DOMAIN,
+    apiDomain = LIVE_API_DOMAIN,
+    socialDomain = DEV_SOCIAL_DOMAIN,
+    imageDomain = DEV_IMAGE_DOMAIN,
   ) {
     this._apiDomain = apiDomain;
+    this._socialDomain = socialDomain;
     this._imageDomain = imageDomain;
     store.setBaseAPIDomain(apiDomain);
   }
@@ -26,13 +33,29 @@ class BaseAPI {
     return this._apiDomain;
   }
 
+  get socialDomain() {
+    return this._socialDomain;
+  }
+
   get imageDomain() {
     return this._imageDomain;
   }
 
   set updateAPIDomain(apiDomain) {
     this._apiDomain = apiDomain;
+    this.updateImageDomain =
+      apiDomain === LIVE_API_DOMAIN || apiDomain === PRE_RELEASE_API_DOMAIN
+        ? LIVE_IMAGE_DOMAIN
+        : DEV_IMAGE_DOMAIN;
+    this.updateSocialDomain =
+      apiDomain === LIVE_API_DOMAIN || apiDomain === PRE_RELEASE_API_DOMAIN
+        ? LIVE_SOCIAL_DOMAIN
+        : DEV_SOCIAL_DOMAIN;
     store.setBaseAPIDomain(apiDomain);
+  }
+
+  set updateSocialDomain(socialDomain) {
+    this._socialDomain = socialDomain;
   }
 
   set updateImageDomain(imageDomain) {

@@ -17,29 +17,30 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import Material from 'react-native-vector-icons/MaterialCommunityIcons';
 import {Actions, ActionConst} from 'react-native-router-flux';
-import store from '../../store/Store';
-import ListHeader from '../stores/ListHeader';
-import PopupConfirm from '../PopupConfirm';
-import Sticker from '../Sticker';
-import RightButtonChat from '../RightButtonChat';
-import RightButtonCall from '../RightButtonCall';
+import store from '../../../store/Store';
+import ListHeader from '../../stores/ListHeader';
+import PopupConfirm from '../../PopupConfirm';
+import Sticker from '../../Sticker';
+import RightButtonChat from '../../RightButtonChat';
+import RightButtonCall from '../../RightButtonCall';
 import appConfig from 'app-config';
 import Button from 'react-native-button';
 import {USE_ONLINE} from 'app-packages/tickid-voucher';
-import EventTracker from '../../helper/EventTracker';
-import {ANALYTICS_EVENTS_NAME} from '../../constants';
-import CartItem from './CartItem';
-import Tag from '../Tag';
-import Loading from '../Loading';
-import {CONFIG_KEY, isConfigActive} from '../../helper/configKeyHandler';
-import APIHandler from '../../network/APIHandler';
-import {APIRequest} from '../../network/Entity';
-import Container from '../Layout/Container/Container';
+import EventTracker from '../../../helper/EventTracker';
+import {ANALYTICS_EVENTS_NAME} from '../../../constants';
+import CartItem from '../CartItem';
+import Tag from '../../Tag';
+import Loading from '../../Loading';
+import {CONFIG_KEY, isConfigActive} from '../../../helper/configKeyHandler';
+import APIHandler from '../../../network/APIHandler';
+import {APIRequest} from '../../../network/Entity';
+import Container from '../../Layout/Container/Container';
 import {
   CART_PAYMENT_STATUS,
   CART_PAYMENT_TYPES,
-} from '../../constants/cart/types';
-import RoundButton from '../RoundButton';
+} from '../../../constants/cart/types';
+import RoundButton from '../../RoundButton';
+import {PaymentMethodSection} from './components';
 
 class Confirm extends Component {
   static defaultProps = {
@@ -1477,99 +1478,136 @@ class Confirm extends Component {
           {(!single ||
             !store?.store_data[CONFIG_KEY.SITE_USE_SHIP] ||
             this.state.isConfirming) && (
-            <View
-              style={[
-                styles.rows,
-                styles.borderBottom,
-                styles.mt8,
-                {
-                  paddingTop: 0,
-                  paddingRight: 0,
-                },
-              ]}>
-              <View
-                style={[
-                  styles.address_name_box,
-                  {
-                    paddingTop: 12,
-                  },
-                ]}>
-                <View style={styles.box_icon_label}>
-                  <Icon5
-                    style={styles.icon_label}
-                    name="dollar-sign"
-                    size={15}
-                  />
-                  <Text style={styles.input_label}>
-                    {t('confirm.paymentMethod.title')}
-                  </Text>
-                </View>
-                {this.isUnpaid && (
-                  <View
-                    style={[
-                      styles.address_default_box,
-                      {
-                        position: 'absolute',
-                        top: 0,
-                        right: 0,
-                      },
-                    ]}>
-                    <TouchableHighlight
-                      style={{
-                        paddingVertical: 12,
-                        paddingHorizontal: 15,
-                      }}
-                      underlayColor="transparent"
-                      onPress={() => this._goPaymentMethod(cart_data)}>
-                      <Text
-                        style={[
-                          styles.address_default_title,
-                          styles.title_active,
-                        ]}>
-                        {t('confirm.change')}
-                      </Text>
-                    </TouchableHighlight>
-                  </View>
-                )}
-              </View>
+            <PaymentMethodSection
+              isUnpaid={this.isUnpaid}
+              cartData={cart_data}
+              onPressChange={() => this._goPaymentMethod(cart_data)}
+            />
+            // <View
+            //   style={[
+            //     // styles.rows,
+            //     // styles.borderBottom,
+            //     // styles.mt8,
+            //     {
+            //       paddingTop: 0,
+            //       paddingRight: 0,
+            //       backgroundColor: '#fff',
+            //       zIndex: 1,
+            //       justifyContent: 'center'
+            //     },
+            //   ]}>
+            //     <View style={{backgroundColor: hexToRgbA(appConfig.colors.primary, 0.6), position: 'absolute', width: '100%', height: '100%', transform: [{scale: 1.5}]}}/>
+            //   <View
+            //     style={[
+            //       styles.rows,
+            //       styles.borderBottom,
+            //       styles.mt8,
+            //       {
+            //         paddingTop: 0,
+            //         paddingRight: 0,
+            //       },
+            //       {
+            //         backgroundColor: hexToRgbA(appConfig.colors.primary, 0.05),
+            //         borderColor: appConfig.colors.primary,
+            //         borderTopWidth: 1,
+            //         borderBottomWidth: 1,
+            //       },
+            //     ]}>
+            //     <View
+            //       style={[
+            //         styles.address_name_box,
+            //         {
+            //           paddingTop: 12,
+            //         },
+            //       ]}>
+            //       <View style={styles.box_icon_label}>
+            //         <Icon5
+            //           style={styles.icon_label}
+            //           name="dollar-sign"
+            //           size={15}
+            //         />
+            //         <Text style={styles.input_label}>
+            //           {t('confirm.paymentMethod.title')}
+            //         </Text>
+            //       </View>
+            //       {this.isUnpaid && (
+            //         <View
+            //           style={[
+            //             styles.address_default_box,
+            //             {
+            //               position: 'absolute',
+            //               top: 0,
+            //               right: 0,
+            //             },
+            //           ]}>
+            //           <TouchableHighlight
+            //             style={{
+            //               paddingVertical: 12,
+            //               paddingHorizontal: 15,
+            //             }}
+            //             underlayColor="transparent"
+            //             onPress={() => this._goPaymentMethod(cart_data)}>
+            //             <Text
+            //               style={[
+            //                 styles.address_default_title,
+            //                 styles.title_active,
+            //               ]}>
+            //               {t('confirm.change')}
+            //             </Text>
+            //           </TouchableHighlight>
+            //         </View>
+            //       )}
+            //     </View>
 
-              <View>
-                <View style={{flexDirection: 'row', ...styles.address_content}}>
-                  {cart_data.payment_method ? (
-                    <View style={styles.paymentMethodContainer}>
-                      {cart_data.payment_method.image && (
-                        <CachedImage
-                          mutable
-                          source={{uri: cart_data.payment_method.image}}
-                          style={styles.imagePaymentMethod}
-                        />
-                      )}
-                      {cart_data.payment_method.name && (
-                        <Text style={[styles.address_name]}>
-                          {cart_data.payment_method.name}
-                        </Text>
-                      )}
-                      {!!cart_data?.payment_method_detail?.image && (
-                        <CachedImage
-                          mutable
-                          source={{
-                            uri: cart_data?.payment_method_detail?.image,
-                          }}
-                          style={[
-                            styles.imagePaymentMethod,
-                            styles.imagePaymentMethodDetail,
-                          ]}
-                        />
-                      )}
-                    </View>
-                  ) : (
-                    <Text style={styles.placeholder}>
-                      {t('confirm.paymentMethod.unselected')}
-                    </Text>
-                  )}
-                </View>
-              </View>
-            </View>
+            //     <View>
+            //       <View
+            //         style={{flexDirection: 'row', ...styles.address_content}}>
+            //         {cart_data.payment_method ? (
+            //           <View style={styles.paymentMethodContainer}>
+            //             {!!cart_data.payment_method.image && (
+            //               // <CachedImage
+            //               //   mutable
+            //               //   source={{uri: cart_data.payment_method.image}}
+            //               //   style={styles.imagePaymentMethod}
+            //               // />
+            //               <CachedImage
+            //                 mutable
+            //                 source={{
+            //                   uri: cart_data?.payment_method_detail?.image,
+            //                 }}
+            //                 style={[
+            //                   styles.imagePaymentMethod,
+            //                   styles.imagePaymentMethodDetail,
+            //                 ]}
+            //               />
+            //             )}
+            //             {cart_data.payment_method.name && (
+            //               <Text style={[styles.address_name]}>
+            //                 {cart_data.payment_method.name}
+            //               </Text>
+            //             )}
+            //             {/* {!!cart_data?.payment_method_detail?.image && (
+            //             <CachedImage
+            //               mutable
+            //               source={{
+            //                 uri: cart_data?.payment_method_detail?.image,
+            //               }}
+            //               style={[
+            //                 styles.imagePaymentMethod,
+            //                 styles.imagePaymentMethodDetail,
+            //               ]}
+            //             />
+            //           )} */}
+            //           </View>
+            //         ) : (
+            //           <Text style={styles.placeholder}>
+            //             {t('confirm.paymentMethod.unselected')}
+            //           </Text>
+            //         )}
+            //       </View>
+            //     </View>
+            //   </View>
+            // </View>
           )}
 
           <View
@@ -2613,8 +2651,8 @@ const styles = StyleSheet.create({
     marginRight: 7,
   },
   imagePaymentMethodDetail: {
-    marginLeft: 15,
-    marginRight: 15,
+    // marginLeft: 15,
+    marginRight: 10,
   },
   placeholder: {
     color: '#999999',

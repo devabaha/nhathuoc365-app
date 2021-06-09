@@ -71,6 +71,12 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         Alert.alert(t('common:link.error.message'));
       });
       break;
+    case SERVICES_TYPE.WEBVIEW:
+      Actions.push(appConfig.routes.webview, {
+        title: service.title,
+        url: service.url
+      })
+      break;
 
     /** QRBARCODE */
     case SERVICES_TYPE.ACCUMULATE_POINTS:
@@ -182,7 +188,13 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     case SERVICES_TYPE.NEWS_CATEGORY:
       Actions.push(appConfig.routes.notifies, {
         title: service.title,
-        news_type: `/${service.categoryId}`,
+        id: service.categoryId,
+      });
+      break;
+      case SERVICES_TYPE.NEWS_CATEGORY_VERTICAL:
+      Actions.push(appConfig.routes.notifiesVertical, {
+        title: service.title,
+        id: service.id,
       });
       break;
 
@@ -208,7 +220,7 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
         .then((response) => {
           if (response && response.status == STATUS_SUCCESS) {
             store.setStoreData(response.data);
-            if (response.data.config_menu_categories) {
+            if (response.data.config_menu_categories && service.categoryId === undefined) {
               Actions.push(appConfig.routes.multiLevelCategory, {
                 title: response.data.name,
                 siteId: service.siteId,
@@ -360,10 +372,26 @@ export const servicesHandler = (service, t = () => {}, callBack = () => {}) => {
     /** GAMIFICATION */
     /** Lottery */
     case SERVICES_TYPE.LOTTERY_GAME:
-      console.log(service)
+      console.log(service);
       Actions.push(appConfig.routes.lotteryGame, {
         title: service.news?.title || service.title,
-        id: service.id
+        id: service.id,
+      });
+      break;
+
+    /** SOCIAL */
+    /** Social */
+    case SERVICES_TYPE.SOCIAL:
+      Actions.push(appConfig.routes.social, {
+        title: service.title,
+        siteId: service.id,
+      });
+      break;
+    /** Social Group */
+    case SERVICES_TYPE.SOCIAL_GROUP:
+      Actions.push(appConfig.routes.socialGroup, {
+        id: service.id,
+        groupName: service.name,
       });
       break;
     default:

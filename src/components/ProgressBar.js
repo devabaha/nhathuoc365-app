@@ -10,7 +10,10 @@ const ProgressBar = props => {
     progressDuration,
     indeterminateDuration,
     onCompletion,
-    backgroundColor
+    onProgressChange = () => {},
+    backgroundColor,
+    foregroundColor = "#A6A6A6",
+    containerStyle
   } = props;
 
   const [timer] = useState(new Animated.Value(0));
@@ -40,6 +43,7 @@ const ProgressBar = props => {
         duration: animated ? progressDuration : 0,
         toValue: progress
       }).start(({ finished }) => {
+        onProgressChange();
         finished && onCompletion();
       });
     }
@@ -48,6 +52,7 @@ const ProgressBar = props => {
     indeterminate,
     indeterminateAnimation,
     onCompletion,
+    onProgressChange,
     progress,
     progressDuration,
     timer,
@@ -105,8 +110,8 @@ const ProgressBar = props => {
   });
 
   return (
-    <View>
-      <Animated.View style={[styles.container, { backgroundColor: '#A6A6A6' }]}>
+    <View style={containerStyle}>
+      <Animated.View style={[styles.container, { backgroundColor: foregroundColor }]}>
         <Animated.View
           style={[
             styles.progressBar,
